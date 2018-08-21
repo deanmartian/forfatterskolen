@@ -5,9 +5,11 @@ use App\Http\Controllers\Controller;
 use App\PrivateGroup;
 use App\PrivateGroupDiscussion;
 use App\PrivateGroupMember;
+use App\PrivateGroupMemberPreference;
 use App\Transformer\PrivateGroupDiscussionsTransFormer;
 use App\Transformer\PrivateGroupTransFormer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 
@@ -116,5 +118,47 @@ class PrivateGroupsController extends Controller {
         }
 
         return redirect()->route('learner.private-groups.index');
+    }
+
+    /**
+     * Display preferences page
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function preferences($id)
+    {
+        if($privateGroup = PrivateGroup::find($id)) {
+            $page_title = $privateGroup->name.' Preferences';
+            return view('frontend.learner.pilot-reader.private-groups.preferences', compact('privateGroup',
+                'page_title'));
+        }
+
+        return redirect()->route('learner.private-groups.index');
+    }
+
+    public function setPreference(Request $request)
+    {
+        $preference = $this->viewPreference($request->private_group_id);
+        $data = $request->all();
+        if(! $preference)
+        {
+            $data['user_id'] = Auth::user()->id;
+            if(! PrivateGroupMemberPreference::create($data))
+            {
+                return response()->json(['error' => 'Opss. Something went wrong'], 500);
+            }
+        }else
+        {
+            if(! $preference->update($data))
+            {
+                return response()->json(['error' => 'Opss. Something went wrong'], 500);
+            }
+        }
+        return response()->json(['success' => 'Preferences Saved.', compact('')], 200);
+    }
+
+    public function viewPreference($group_id)
+    {
+        return PrivateGroupMemberPreference::where([ 'user_id' => Auth::user()->id, 'private_group_id' => $group_id ])->first();
     }
 }

@@ -409,6 +409,28 @@ const methods = {
         })
     },
 
+    viewPreference : function()
+    {
+        let group_id = $("[name='group_id']").val();
+        $.get('/account/private-groups/preferences/get/' + group_id)
+            .then(function(response){
+                $("[name=email_notifications_option][value="+response.email_notifications_option+"]").prop('checked', true);
+            })
+    },
+
+    setPreference : function()
+    {
+        let group_id = $("[name='group_id']").val();
+        let email_notifications_option = $("[name='email_notifications_option']:checked").val();
+        $.post('/account/private-groups/preferences/set', {
+            private_group_id : group_id,
+            email_notifications_option : email_notifications_option
+        })
+            .then(function(response){
+                toastr.success(response.success, "Success")
+            })
+    },
+
 };
 
 $("#createPrivateGroupForm").submit(function(e){
@@ -434,4 +456,8 @@ if (current_page === "discussions") {
 
 if (current_page === "books") {
     methods.loadSharedBooks();
+}
+
+if (current_page === "preferences") {
+    methods.viewPreference();
 }

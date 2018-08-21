@@ -266,6 +266,9 @@ Route::group([
         Route::post('/private-groups/discussion/reply/create', 'PrivateGroupDiscussionRepliesController@createReply');
         Route::post('/private-groups/discussion/reply/update', 'PrivateGroupDiscussionRepliesController@updateReply');
         Route::get('/private-groups/{id}/books','PrivateGroupsController@books')->name('learner.private-groups.books');
+        Route::get('/private-groups/{id}/preferences','PrivateGroupsController@preferences')->name('learner.private-groups.preferences');
+        Route::get('/private-groups/preferences/get/{id}','PrivateGroupsController@viewPreference')->name('learner.private-groups.preferences-get');
+        Route::post('/private-groups/preferences/set','PrivateGroupsController@setPreference')->name('learner.private-groups.preferences-set');
         Route::get('/private-groups/shared-book/list/{group_id}','PrivateGroupSharedBookController@listSharedBook');
         Route::post('/private-groups/shared-book/share','PrivateGroupSharedBookController@shareBook');
         Route::post('/private-groups/shared-book/update','PrivateGroupSharedBookController@updateSharedBook');

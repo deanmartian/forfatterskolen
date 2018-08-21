@@ -292,7 +292,8 @@ class FrontendHelpers
         $navs = array(
             array( 'route_name' => 'learner.private-groups.show', 'label' => 'Home' ),
             array( 'route_name' => 'learner.private-groups.discussion', 'label' => 'Discussion' ),
-            array( 'route_name' => 'learner.private-groups.books', 'label' => 'Books' )
+            array( 'route_name' => 'learner.private-groups.books', 'label' => 'Books' ),
+            array( 'route_name' => 'learner.private-groups.preferences', 'label' => 'Preferences' )
         );
 
         if ($navs) {
