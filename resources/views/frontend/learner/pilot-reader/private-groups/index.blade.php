@@ -56,7 +56,7 @@
 
                                                     <div class="ml-2 message-content mt-3">
                                                         <p class="mb-0">
-                                                            <a href="/account/private-groups/1">
+                                                            <a href="{{ route('learner.private-groups.show', $member->private_group->id) }}">
                                                                 {{ $member->private_group->name }}
                                                             </a>
                                                             <span class="badge badge-info color1 py-2">
