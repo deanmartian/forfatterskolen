@@ -64,7 +64,7 @@ const methods = {
 
         list_group.append(`<li class="list-group-item clearfix">
                                 <div class="form-group mb-0 clearfix">
-                                    <span class="text-muted pull-left font-14">
+                                    <span class="text-muted font-14">
                                         Member Since: ${data.member_since}
                                     </span>
 
