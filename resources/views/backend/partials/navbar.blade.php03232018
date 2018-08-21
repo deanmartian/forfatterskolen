@@ -1,0 +1,78 @@
+<?php
+$urlList = array('pulse', 'board');
+?>
+
+<nav class="navbar navbar-default {{ in_array(Request::segment(1), $urlList) ? 'navbar-fixed-top' : '' }}">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#fatterNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span> 
+      </button>
+    </div>
+    <div class="collapse navbar-collapse" id="fatterNavbar">
+  
+      <!-- <button class="btn btn-success navbar-btn btn-sm" data-placement="bottom" data-trigger="focus" data-toggle="popover" data-content='{!! AdminHelpers::newButtonMenu() !!}'><i class="fa fa-plus"></i> New</button> -->
+      <ul class="nav navbar-nav navbar-right">
+        <li @if(Request::is('/')) class="active" @endif><a href="{{route('backend.dashboard')}}">Dashboard</a></li>
+        @if(!Auth::user()->minimal_access)
+        <li @if(Request::is('course')) class="active" @endif><a href="{{route('admin.course.index')}}">Courses</a></li>
+        <li @if(Request::is('free-course')) class="active" @endif><a href="{{route('admin.free-course.index')}}">Free Courses</a></li>
+        <li @if(Request::is('workshop')) class="active" @endif><a href="{{route('admin.workshop.index')}}">Workshops</a></li>
+        @endif
+
+        @if(!Auth::user()->is_editor)
+        <li @if(Request::is('learner')) class="active" @endif><a href="{{route('admin.learner.index')}}">Learners</a></li>
+        @else
+          @if(!Auth::user()->minimal_access)
+          <li @if(Request::is('learner')) class="active" @endif><a href="{{route('admin.learner.index')}}">Learners</a></li>
+          @endif
+        @endif
+
+        @if(!Auth::user()->minimal_access)
+        <li @if(Request::is('assignment')) class="active" @endif><a href="{{route('admin.assignment.index')}}">Assignments</a></li>
+          <li @if(Request::is('publishing')) class="active" @endif><a href="{{route('admin.publishing.index')}}">Publishing</a></li>
+        @endif
+
+        @if(!Auth::user()->minimal_access)
+        <li @if(Request::is('free-manuscript')) class="active" @endif><a href="{{route('admin.free-manuscript.index')}}">Free Manuscripts</a></li>
+        <li @if(Request::is('invoices')) class="active" @endif><a href="{{route('admin.invoice.index')}}">Invoices</a></li>
+        @endif
+
+        @if(!Auth::user()->is_editor)
+          <li @if(Request::is('shop-manuscript')) class="active" @endif><a href="{{route('admin.shop-manuscript.index')}}">Shop Manuscripts</a></li>
+        @else
+          @if(!Auth::user()->minimal_access)
+          <li @if(Request::is('shop-manuscript')) class="active" @endif><a href="{{route('admin.shop-manuscript.index')}}">Shop Manuscripts</a></li>
+          @endif
+        @endif
+
+        @if(!Auth::user()->minimal_access)
+        <li @if(Request::is('faq')) class="active" @endif><a href="{{route('admin.faq.index')}}">FAQs</a></li>
+        <li @if(Request::is('admin')) class="active" @endif><a href="{{route('admin.admin.index')}}">Admins</a></li>
+        <li @if(Request::is('email')) class="active" @endif><a href="{{route('admin.email.index')}}">Email</a></li>
+        @endif
+        <li><a href="#"><i class="fa fa-bell-o"></i></a></li>
+        <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+          {{Auth::user()->fullName}}
+          <i class="fa fa-angle-down"></i>&nbsp;<span class="nav-user-thumb"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li>
+            <form method="POST" action="{{route('auth.logout')}}" class="form-logout">
+              {{csrf_field()}}
+              <button type="submit" class="btn btn-block">Logout</button>
+            </form>
+          </li>
+          {{--<li>
+            <a href="{{ route('admin.pulse.index') }}" class="dapulse-link">Dapulse</a>
+          </li>--}}
+        </ul>
+        </li>
+      </li>
+      </ul>
+    </div>
+  </div>
+</nav>

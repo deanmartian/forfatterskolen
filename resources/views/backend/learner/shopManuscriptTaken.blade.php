@@ -1,0 +1,376 @@
+@extends('backend.layout')
+
+@section('title')
+<title>Shop Manuscript &rsaquo; Forfatterskolen Admin</title>
+@stop
+
+@section('content')
+<div class="page-toolbar">
+	<h3> 
+	<?php $extension = explode('.', basename($shopManuscriptTaken->file)); ?>
+	@if( end($extension) == 'pdf' )
+	<i class="fa fa-file-pdf-o"></i> 
+	@elseif( end($extension) == 'docx' )
+	<i class="fa fa-file-word-o"></i> 
+	@elseif( end($extension) == 'odt' )
+	<i class="fa fa-file-text-o"></i> 
+	@endif
+	{{ $shopManuscriptTaken->shop_manuscript->title }} <em>{{ basename($shopManuscriptTaken->file) }}</em></h3>
+	<div class="navbar-form navbar-right">
+	  	<div class="form-group">
+		  	<form role="search" method="get" action="">
+				<div class="input-group">
+				  	<input type="text" class="form-control" placeholder="Search manuscript..">
+				    <span class="input-group-btn">
+				    	<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+				    </span>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<div class="col-md-12">
+	<div class="margin-top">
+		<div class="col-sm-12">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-sm-12 col-md-7">
+							@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+							<iframe src="/js/ViewerJS/#../..{{ $shopManuscriptTaken->file }}" style="width: 100%; border: 0; height: 600px"></iframe>
+							@elseif( end($extension) == 'docx' )
+							<iframe src="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$shopManuscriptTaken->file}}" style="width: 100%; border: 0; height: 600px"></iframe>
+							@endif
+						</div>
+						<div class="col-sm-12 col-md-5">
+							<div class="pull-right">
+							<button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#synopsisModal">Synopsis</button>
+							<button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#editManuscriptModal"><i class="fa fa-pencil"></i></button>
+								@if( $shopManuscriptTaken->expected_finish )
+									<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#sendEmailModal"><i class="fa fa-envelope"></i></button>
+								@endif
+							<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#updateDocumentModal">Update document</button>
+							</div>
+				  			@if( $shopManuscriptTaken->status == 'Finished' )
+							<span class="label label-success">Finished</span>
+							@elseif( $shopManuscriptTaken->status == 'Started' )
+							<span class="label label-primary">Started</span>
+							@elseif( $shopManuscriptTaken->status == 'Not started' )
+							<span class="label label-warning">Not started</span>
+							@endif
+							<h3 class="no-margin-top">{{ $shopManuscriptTaken->shop_manuscript->title }}</h3>
+							Learner: <a href="{{ route('admin.learner.show', $shopManuscriptTaken->user_id) }}">{{ $shopManuscriptTaken->user->full_name }}</a><br />
+							Filename: {{ basename($shopManuscriptTaken->file) }}<br />
+							Words: {{ $shopManuscriptTaken->words }}<br />
+							Date uploaded: {{ date_format(date_create($shopManuscriptTaken->manuscript_uploaded_date),'M d, Y H:i a') }}<br />
+							Admin: 
+							@if( $shopManuscriptTaken->admin )
+							{{ $shopManuscriptTaken->admin->full_name }}
+							@else
+							<em>Not set</em>
+							@endif<br />
+
+				            Expected finish:
+				            @if( $shopManuscriptTaken->expected_finish )
+				            {{ date_format(date_create($shopManuscriptTaken->expected_finish), 'M d, Y') }}
+				            @else
+				            <em>Not set</em>
+				            @endif
+				            <br />
+
+							<strong>Grade: @if($shopManuscriptTaken->grade)
+									{{$shopManuscriptTaken->grade}}
+								@else
+									<em>Not set</em>
+								@endif
+							</strong>
+							<br>
+							Genre: @if ($shopManuscriptTaken->genre) {{ \App\Http\FrontendHelpers::assignmentType($shopManuscriptTaken->genre) }} @endif
+							<a href="#" data-target="#editGenreModal" data-toggle="modal">Edit Genre</a>
+							<br>
+							Description: {{ $shopManuscriptTaken->description }}
+							<br>
+							@if ($shopManuscriptTaken->synopsis)
+								<a href="{{ route('admin.learner.download_synopsis', $shopManuscriptTaken->id) }}">Download Synopsis</a>
+							@endif
+							<br><br>
+
+							<h4>Feedbacks
+							@if( $shopManuscriptTaken->feedbacks->count() == 0 )
+							<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addFeedbackModal">+ Add feedback</button>
+							@endif</h4>
+							<div class="row margin-top">
+								@foreach($shopManuscriptTaken->feedbacks as $feedback)
+								<div class="col-sm-12">
+									<div class="panel panel-default">
+										<div class="panel-body">
+											<button type="button" class="btn btn-xs btn-danger btn-delete-feedback pull-right" data-action="{{ route('admin.shop-manuscript-taken-feedback.delete', $feedback->id) }}" data-toggle="modal" data-target="#deleteFeedbackModal"><i class="fa fa-trash"></i></button>
+											<strong>Files:</strong> 
+												@foreach( $feedback->filename as $filename )<br />
+												<a href="{{ $filename }}" target="_blank">{{ basename($filename) }}</a>
+												@endforeach
+											<br />
+											<strong>Notes:</strong> {{ $feedback->notes }} <br />
+											<strong>Uploaded on:</strong> {{ $feedback->created_at }} <br />
+										</div>
+									</div>
+								</div>
+								@endforeach
+							</div>
+
+
+							<br />
+							<h4>Comments</h4>
+							<form method="POST" class="margin-top" action="{{ route('shop_manuscript_taken_comment', ['id' => $learner->id, 'shop_manuscript_taken_id' => $shopManuscriptTaken->id]) }}">
+								{{ csrf_field() }}
+								<input type="text" placeholder="Comment" name="comment" class="form-control" required>
+								<div class="text-right margin-top">
+									<button class="btn btn-info btn-sm" type="submit">Add Comment</button>
+								</div>
+							</form>
+							<hr />
+							<div class="margin-top">
+							@foreach( $shopManuscriptTaken->comments as $comment )
+							@if( $comment->user_id == Auth::user()->id )
+							<div class="text-right">
+								<div class="comment owner">
+									<div>{{ $comment->comment }}</div>
+									<div><small><em>You</em></small></div>
+									<small>{{ $comment->created_at }}</small>
+								</div>
+							</div>
+							@else
+							<div>
+								<div class="comment">
+									<div>{{ $comment->comment }}</div>
+									<div><small><em>{{ $comment->user->full_name }}</em></small></div>
+									<small>{{ $comment->created_at }}</small>
+								</div>
+							</div>
+							@endif
+							@endforeach
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="editManuscriptModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Edit manuscript</h4>
+      </div>
+      <div class="modal-body">
+      	<form method="POST" action="{{ route('admin.shop-manuscript-taken.update_taken', $shopManuscriptTaken->id) }}">
+      		{{csrf_field()}}
+      		<div class="form-group">
+      			<label>Editor</label>
+      			<select class="form-control select2" name="feedback_user_id" required>
+      				@foreach( App\User::where('role', 1)->orderBy('id', 'desc')->get()  as $admin)
+      				<option value="{{ $admin->id }}">{{ $admin->full_name }}</option>
+      				@endforeach
+      			</select>
+      		</div>
+			<div class="form-group">
+				<label>Grade</label>
+				<input type="number" step=".1" class="form-control" name="grade" value="{{ $shopManuscriptTaken->grade }}">
+			</div>
+          	<div class="form-group">
+            	<label>Expected finish</label>
+            	<input type="date" class="form-control" name="expected_finish" value="{{ $shopManuscriptTaken->expected_finish }}">
+          	</div>
+  			<button type="submit" class="btn btn-primary pull-right">Update</button>
+  			<div class="clearfix"></div>
+      	</form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+@if( $shopManuscriptTaken->feedbacks->count() == 0 )
+<div id="addFeedbackModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add Feedback</h4>
+      </div>
+      <div class="modal-body">
+      	<form method="POST" action="{{ route('admin.shop-manuscript-taken-feedback.store', $shopManuscriptTaken->id) }}" enctype="multipart/form-data">
+      		{{csrf_field()}}
+      		<div class="form-group">
+      			<label>Files</label>
+				<input type="file" class="form-control" name="files[]" multiple accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text" required>
+      		</div>
+      		<div class="form-group">
+      			<label>Notes</label>
+				<textarea class="form-control" name="notes" rows="6"></textarea>
+      		</div>
+      		Adding a feedback will complete this manuscript.
+  			<button type="submit" class="btn btn-primary pull-right">Add feedback</button>
+  			<div class="clearfix"></div>
+      	</form>
+      </div>
+    </div>
+
+  </div>
+</div>
+@endif
+
+<div id="deleteFeedbackModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Delete feedback</h4>
+      </div>
+      <div class="modal-body">
+      	Are you sure to delete this feedback?
+      	<form method="POST" action="" class="margin-top">
+      		{{csrf_field()}}
+  			<button type="submit" class="btn btn-danger pull-right">Delete feedback</button>
+  			<div class="clearfix"></div>
+      	</form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Update document Modal -->
+<div id="updateDocumentModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Update document</h4>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{{ route('shop_manuscript_taken.update_document', $shopManuscriptTaken->id) }}" enctype="multipart/form-data">
+          {{ csrf_field() }}
+          <div class="form-group">
+          	<input type="file" name="manuscript" class="form-control" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text" required>
+          </div>
+          <div class="text-right margin-top">
+            <button type="submit" class="btn btn-primary">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Synopsis Modal -->
+<div id="synopsisModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Synopsis</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('shop_manuscript_taken.save_synopsis', $shopManuscriptTaken->id) }}" enctype="multipart/form-data">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<input type="file" name="synopsis" class="form-control" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text" required>
+					</div>
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">Save</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+@if( $shopManuscriptTaken->expected_finish )
+	<!-- Send email Modal -->
+	<div id="sendEmailModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Send email</h4>
+				</div>
+				<div class="modal-body">
+					<form method="POST" action="{{ route('admin.shop_manuscript_taken.email', $shopManuscriptTaken->user_id) }}" enctype="multipart/form-data">
+						{{ csrf_field() }}
+						<div class="form-group">
+							<label>Subject</label>
+							<input type="text" name="subject" class="form-control" required value="Forventet dato for tilbakemelding">
+						</div>
+						<div class="form-group">
+							<label>Message</label>
+							<textarea name="message" class="form-control" required rows="8" id="email_content">{{ $emailTemplate ? $emailTemplate->email_content."\nForventet ferdig: ".$shopManuscriptTaken->expected_finish : '' }}</textarea>
+						</div>
+						<input type="hidden" name="from_email" value="{{ $emailTemplate ? $emailTemplate->from_email : 'post@forfatterskolen.no' }}">
+						<div class="text-right margin-top">
+							<button type="submit" class="btn btn-primary">Send</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+@endif
+
+<div id="editGenreModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Edit Genre</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.shop-manuscript-taken.update-genre', $shopManuscriptTaken->id) }}">
+					{{ csrf_field() }}
+					<select class="form-control" name="genre" required>
+						<option value="" disabled="disabled" selected>Select Genre</option>
+						@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
+							<option value="{{ $type['id'] }}"
+							@if ($shopManuscriptTaken->genre == $type['id']) selected @endif> {{ $type['option'] }} </option>
+						@endforeach
+					</select>
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">Save</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+@stop
+
+@section('scripts')
+	<script src="https://cdn.tinymce.com/4/tinymce.min.js"></script>
+<script>
+$(document).ready(function(){
+  $('.btn-delete-feedback').click(function(){
+        var action = $(this).data('action');
+
+        var form = $('#deleteFeedbackModal');
+        form.find('form').attr('action', action);
+    });
+
+    tinymce.init({
+        selector:'#email_content',
+        height : "300",
+        menubar: false,
+        toolbar: 'insert | undo redo |  formatselect | bold italic backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+    });
+});
+</script>
+@stop

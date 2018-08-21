@@ -1,0 +1,119 @@
+<?php
+namespace App\Http\Controllers\Backend;
+
+use App\Blog;
+use App\Http\AdminHelpers;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\BlogRequest;
+use App\Repositories\Services\BlogService;
+
+class BlogController extends Controller
+{
+
+    /**
+     * Storage for survey service
+     * @var BlogService
+     */
+    protected $blogService;
+
+    /**
+     * SurveyController constructor.
+     * @param BlogService $surveyService
+     */
+    public function __construct(BlogService $blogService)
+    {
+        $this->blogService = $blogService;
+    }
+
+    /**
+     * Display the blog list
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function index()
+    {
+        $blogList = $this->blogService->getRecord();
+        return view('backend.blog.index', compact('blogList'));
+    }
+
+    /**
+     * Display the create page
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function create()
+    {
+        $blog = [
+            'id' => '',
+            'title' => '',
+            'description' => '',
+            'author_name' => ''
+
+        ];
+        return view('backend.blog.create', compact('blog'));
+    }
+
+    /**
+     * @param BlogRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(BlogRequest $request)
+    {
+        if ($this->blogService->store($request)) {
+            return redirect()->route('admin.blog.index')->with([
+                'errors' => AdminHelpers::createMessageBag('Blog created successfully.'),
+                'alert_type' => 'success'
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Display the edit page for blog
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function edit($id)
+    {
+        if ($blog = $this->blogService->getRecord($id)) {
+            $blog['author_name'] = $blog['author_name']?: $blog->user->full_name;
+            return view('backend.blog.edit', compact('blog'));
+        }
+        return redirect()->route('admin.blog.index');
+    }
+
+    /**
+     * Update blog
+     * @param $id
+     * @param BlogRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function update($id, BlogRequest $request)
+    {
+        if ($this->blogService->getRecord($id)) {
+            $this->blogService->update($id, $request);
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Blog updated successfully.'),
+                'alert_type' => 'success'
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Delete a survey
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy($id)
+    {
+        if ($this->blogService->getRecord($id)) {
+            $this->blogService->destroy($id);
+            return redirect()->route('admin.blog.index')->with([
+                'errors' => AdminHelpers::createMessageBag('Blog deleted successfully.'),
+                'alert_type' => 'success'
+            ]);
+        }
+        return redirect()->back();
+    }
+}

@@ -1,0 +1,791 @@
+@extends('backend.layout')
+
+@section('title')
+<title>Dashboard &rsaquo; Forfatterskolen Admin</title>
+@stop
+
+@section('content')
+<div class="col-sm-12 col-md-10 dashboard-left">
+	<div class="row">
+		<div class="col-sm-12 @if (!Auth::user()->is_editor) col-md-5 @endif">
+			<!-- Summary  -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default text-center">
+						<div class="panel-body">
+							<h3>{{count(App\User::where('role', 2)->get())}}</h3>
+							Total Learners
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<!-- My assigned manuscripts -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>My assigned manuscripts</h4></div>
+						<table class="table">
+						    <thead>
+						      <tr>
+						        <th>Manuscript</th>
+						        <th>Learner</th>
+						        <th>Type</th>
+						        <th>Status</th>
+								  <th></th>
+						      </tr>
+						    </thead>
+						    <tbody>
+						    	@foreach( $assigned_course_manuscripts as $assigned )
+								<?php $extension = explode('.', basename($assigned->filename)); ?>
+							  	@if( $assigned->status == 'Started' )
+						    	<tr>
+						    		<td><a href="{{ route('admin.manuscript.show', $assigned->id) }}">
+						    			@if( $assigned->filename )
+							    			@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+											<a href="/js/ViewerJS/#../..{{ $assigned->filename }}">{{ basename($assigned->filename) }}</a>
+											@elseif( end($extension) == 'docx' )
+											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$assigned->filename}}">{{ basename($assigned->filename) }}</a>
+											@endif
+						    			@else
+						    			<em>No document</em>
+						    			@endif
+						    		</a></td>
+						    		<td>
+										@if (!Auth::user()->is_editor)
+											<a href="{{route('admin.learner.show', $assigned->courseTaken->user->id)}}">{{ $assigned->courseTaken->user->full_name }}</a>
+										@else
+											{{ $assigned->courseTaken->user->full_name }}
+										@endif
+									</td>
+						    		<td>Course</td>
+						    		<td>
+										<span class="label label-primary">Started</span>
+						    		</td>
+									<td><a href="{{ route('backend.download_manuscript', $assigned->id) }}" class="btn btn-primary btn-xs">Download</a></td>
+						    	</tr>
+						    	@endif
+							    @endforeach
+
+						    	@foreach( $assigned_shop_manuscripts as $assigned )
+								<?php $extension = explode('.', basename($assigned->file)); ?>
+						    	@if( $assigned->status == 'Started' )
+						    	<tr>
+						    		<td><a href="{{ route('shop_manuscript_taken', ['id' => $assigned->user->id, 'shop_manuscript_taken_id' => $assigned->id]) }}">
+						    			@if( $assigned->file )
+						    				@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+											<a href="/js/ViewerJS/#../..{{ $assigned->file }}">{{ basename($assigned->file) }}</a>
+											@elseif( end($extension) == 'docx' )
+											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$assigned->file}}">{{ basename($assigned->file) }}</a>
+											@endif
+						    			@else
+						    			<em>No document</em>
+						    			@endif
+						    		</a></td>
+						    		<td>
+										@if (!Auth::user()->is_editor)
+											<a href="{{route('admin.learner.show', $assigned->user->id)}}">{{ $assigned->user->full_name }}</a>
+										@else
+											{{ $assigned->user->full_name }}
+										@endif
+									</td>
+						    		<td>Shop manuscript</td>
+						    		<td>
+										@if( $assigned->status == 'Started' )
+										<span class="label label-primary">Started</span>
+										@elseif( $assigned->status == 'Not started' )
+										<span class="label label-warning">Not started</span>
+										@endif
+						    		</td>
+									<td><a href="{{ route('backend.download_shop_manuscript', $assigned->id) }}" class="btn btn-primary btn-xs">Download</a></td>
+						    	</tr>
+						    	@endif
+							    @endforeach
+
+						    </tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+		@if (!Auth::user()->is_editor)
+
+			<!-- My assigned free manuscripts -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>My assigned free manuscripts</h4></div>
+						<table class="table">
+						    <thead>
+						      <tr>
+						        <th>User</th>
+						        <th>Email</th>
+						        <th></th>
+						      </tr>
+						    </thead>
+						    <tbody>
+						    	@foreach( $assigned_free_manuscripts as $freeManuscript )
+						    	<tr>
+						    		<td>{{ $freeManuscript->name }}</td>
+						    		<td>{{ $freeManuscript->email }}</td>
+						    		<td><button class="btn btn-xs btn-primary viewManuscriptBtn" data-toggle="modal" data-fields="{{ json_encode($freeManuscript) }}" data-target="#viewManuscriptModal">View</button></td>
+						    	</tr>
+							    @endforeach
+						    </tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+
+
+			<!-- Upcoming Webinars -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>All manuscripts</h4></div>
+						<div class="panel-heading"><h4>Manuscripts</h4></div>
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Manuscript</th>
+									<th>Uploaded By</th>
+									<th>Assigned To</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+							@foreach($manuscripts as $manuscript)
+								@if( $manuscript->status == 'Started' )
+									<tr>
+										<td><a href="{{ route('admin.manuscript.show', $manuscript->id) }}">
+												@if( $manuscript->filename )
+                                                    <?php $extension = explode('.', basename($manuscript->filename)); ?>
+													@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+														<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">{{ basename($manuscript->filename) }}</a>
+													@elseif( end($extension) == 'docx' )
+														<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">{{ basename($manuscript->filename) }}</a>
+													@endif
+												@else
+													<em>No document</em>
+												@endif
+											</a></td>
+										<td><a href="{{route('admin.learner.show', $manuscript->user->id)}}">{{ $manuscript->user->full_name }}</a></td>
+										<td>
+											@if( $manuscript->admin )
+												{{ $manuscript->admin->full_name }}
+											@else
+												<em>Not set</em>
+											@endif
+										</td>
+										<td><a href="{{ route('backend.download_manuscript', $manuscript->id) }}" class="btn btn-primary btn-xs">Download</a></td>
+									</tr>
+								@endif
+							@endforeach
+							</tbody>
+						</table>
+
+						<div class="panel-heading"><h4>Shop Manuscripts</h4></div>
+						<table class="table">
+							<thead>
+							<tr>
+								<th>Manuscript</th>
+								<th>Learner</th>
+								<th>Assigned To</th>
+								<th></th>
+							</tr>
+							</thead>
+							<tbody>
+							@foreach($shopManuscripts as $shopManuscript)
+								@if( $shopManuscript->status == 'Started' )
+									<tr>
+										<td>@if($shopManuscript->is_active)
+												<a href="{{ route('shop_manuscript_taken', ['id' => $shopManuscript->user->id, 'shop_manuscript_taken_id' => $shopManuscript->id]) }}">{{$shopManuscript->shop_manuscript->title}}</a>
+											@else
+												{{$shopManuscript->shop_manuscript->title}}
+											@endif
+										</td>
+										<td><a href="{{ route('admin.learner.show', $shopManuscript->user->id) }}">{{ $shopManuscript->user->full_name }}</a></td>
+										<td>
+											@if( $shopManuscript->admin )
+												{{ $shopManuscript->admin->full_name }}
+											@else
+												<em>Not set</em>
+											@endif
+										</td>
+										<td>
+											<a href="{{ route('backend.download_shop_manuscript', $shopManuscript->id) }}"
+											   class="btn btn-primary btn-xs">Download</a> <br>
+
+											<button type="button" class="btn btn-warning btn-xs margin-top" data-toggle="modal"
+													data-target="#addFeedbackModal"
+												data-action="{{ route('admin.shop-manuscript-taken-feedback.store',
+												$shopManuscript->id) }}"
+												id="addShopManuscriptFeedback">+ Add feedback</button>
+										</td>
+									</tr>
+								@endif
+							@endforeach
+							</tbody>
+						</table>
+						{{--<table class="table">
+						    <tbody>
+						      <tr>
+						        <td>
+						        	<strong>Gorgeous Literary Group Writing</strong><br />
+									<i class="fa fa-file-text-o" aria-hidden="true"></i> Children Courses
+						        </td>
+						        <td class="align-right">
+						        	Webinar Hosts
+						        	<div class="dashboard-webinar-hosts">
+						        		<div></div>
+						        		<div></div>
+						        		<div></div>
+						        	</div>
+						        </td>
+						      </tr>
+						      <tr>
+						        <td>
+						        	<strong>Gorgeous Literary Group Writing</strong><br />
+									<i class="fa fa-file-text-o" aria-hidden="true"></i> Children Courses
+						        </td>
+						        <td class="align-right">
+						        	Webinar Hosts
+						        	<div class="dashboard-webinar-hosts">
+						        		<div></div>
+						        		<div></div>
+						        		<div></div>
+						        	</div>
+						        </td>
+						      </tr>
+						      <tr>
+						        <td>
+						        	<strong>Gorgeous Literary Group Writing</strong><br />
+									<i class="fa fa-file-text-o" aria-hidden="true"></i> Children Courses
+						        </td>
+						        <td class="align-right">
+						        	Webinar Hosts
+						        	<div class="dashboard-webinar-hosts">
+						        		<div></div>
+						        		<div></div>
+						        		<div></div>
+						        	</div>
+						        </td>
+						      </tr>
+						    </tbody>
+						</table>--}}
+					</div>
+				</div>
+			</div>
+
+		@endif
+
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>My Assignments</h4></div>
+						<table class="table">
+							<thead>
+							<tr>
+								<th>Course</th>
+								<th>Learner Id</th>
+								<th></th>
+							</tr>
+							</thead>
+							<tbody>
+							@foreach ($assignedAssignments as $assignedAssignment)
+								<tr>
+									<td>
+										<a href="{{ route('admin.course.show', $assignedAssignment->assignment->course->id) }}">{{ $assignedAssignment->assignment->course->title }}</a>
+									</td>
+									<td>{{ $assignedAssignment->user_id }}</td>
+									<td>
+										<a href="{{ route('backend.download_assigned_manuscript', $assignedAssignment->id) }}"
+										   class="btn btn-primary btn-xs">Download</a>
+                                        <?php
+                                        $learnerExist 	= \App\AssignmentGroupLearner::where('user_id', $assignedAssignment->user_id)->get();
+
+                                        if ($learnerExist) {
+                                            foreach ($learnerExist as $l) {
+                                                $assignment_group_id = $l->assignment_group_id;
+                                                $learner_id = $l->id;
+                                                $assignment_group = \App\AssignmentGroup::where('id', $assignment_group_id)->where('assignment_id', $assignedAssignment->assignment->id)->first();
+                                                if ($assignment_group) {
+                                                    echo '<button type="button" class="btn btn-warning btn-xs margin-top submitFeedbackBtn"
+															data-toggle="modal" data-target="#submitFeedbackModal"
+															data-name="'.$assignedAssignment->user->full_name.'"
+															data-action="'.route('admin.assignment.group.submit_feedback',
+                                                            ['group_id' => $assignment_group_id, 'id' => $learner_id]).'"
+                                                            data-manuscript="'.$assignedAssignment->id.'">'.
+														'Give Feedback</button>';
+                                                } else {
+                                                    echo '<button type="button" class="btn btn-warning btn-xs margin-top submitFeedbackBtn"
+															data-toggle="modal" data-target="#submitFeedbackModal"
+															data-name="'.$assignedAssignment->user->full_name.'"
+															data-action="'.route('assignment.group.manuscript-feedback-no-group',
+                                                            ['id' => $assignedAssignment->id, 'learner_id' => $assignedAssignment->user_id]).'"
+                                                            data-manuscript="'.$assignedAssignment->id.'">'.
+                                                        'Give Feedback</button>';
+												}
+                                            }
+                                        }
+
+                                        ?>
+									</td>
+								</tr>
+							@endforeach
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+
+			<!-- My coaching timer -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>My Coaching Timer</h4></div>
+						<table class="table">
+							<thead>
+							<tr>
+								<th>Learner</th>
+								<th>Date</th>
+								<th>Session Length</th>
+							</tr>
+							</thead>
+							<tbody>
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<!-- end My coaching timer -->
+
+			<!-- My proofing -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>My Proofing</h4></div>
+						<table class="table">
+							<thead>
+							<tr>
+								<th>Manus</th>
+								<th>Learner</th>
+							</tr>
+							</thead>
+							<tbody>
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<!-- end My proofing -->
+
+		</div>
+
+		@if (!Auth::user()->is_editor)
+		<div class="col-sm-12 col-md-7">
+			<!-- Pending Courses -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>Pending Courses</h4></div>
+						<div class="table-responsive">
+							<table class="table">
+							    <thead>
+							      <tr>
+							        <th>Course</th>
+							        <th>Learner</th>
+							        <th>Date Ordered</th>
+							        <th></th>
+							      </tr>
+							    </thead>
+							    <tbody>
+							    	@foreach( $pending_courses as $pending_course )
+							      	<tr>
+								        <td>{{ $pending_course->package->course->title }}</td>
+								        <td>{{ $pending_course->user->full_name }}</td>
+								        <td>{{ $pending_course->created_at }}</td>
+								        <td>
+								        	<form method="POST" action="{{ route('activate_course_taken') }}" class="inline-block">
+												{{ csrf_field() }}
+												<input type="hidden" name="coursetaken_id" value="{{ $pending_course->id }}">
+												<button class="btn btn-warning btn-xs" type="submit"><i class="fa fa-check"></i></button>
+											</form>
+								        	<form method="POST" action="{{ route('delete_course_taken') }}" class="inline-block">
+												{{ csrf_field() }}
+												<input type="hidden" name="coursetaken_id" value="{{ $pending_course->id }}">
+												<button class="btn btn-danger btn-xs" type="submit"><i class="fa fa-trash"></i></button>
+											</form>
+								        </td>
+							      	</tr>
+							      	@endforeach
+							    </tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<!-- Pending Shop Manuscripts -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>Pending Shop Manuscripts</h4></div>
+						<table class="table">
+						    <thead>
+						      <tr>
+						        <th>Manuscript</th>
+						        <th>Learner</th>
+						        <th>Date Ordered</th>
+						        <th></th>
+						      </tr>
+						    </thead>
+						    <tbody>
+						    	@foreach( $pending_shop_manuscripts as $pending_shop_manuscript )
+						      	<tr>
+							        <td>{{ $pending_shop_manuscript->shop_manuscript->title }}</td>
+							        <td>{{ $pending_shop_manuscript->user->full_name }}</td>
+							        <td>{{ $pending_shop_manuscript->created_at }}</td>
+							        <td>
+							        	<form method="POST" action="{{ route('activate_shop_manuscript_taken') }}" class="inline-block">
+											{{ csrf_field() }}
+											<input type="hidden" name="shop_manuscript_id" value="{{ $pending_shop_manuscript->id }}">
+											<button class="btn btn-warning btn-xs" type="submit"><i class="fa fa-check"></i></button>
+										</form>
+							        	<form method="POST" action="{{ route('delete_shop_manuscript_taken') }}" class="inline-block">
+											{{ csrf_field() }}
+											<input type="hidden" name="shop_manuscript_id" value="{{ $pending_shop_manuscript->id }}">
+											<button class="btn btn-danger btn-xs" type="submit"><i class="fa fa-trash"></i></button>
+										</form>
+							        </td>
+						      	</tr>
+						      	@endforeach
+						    </tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+				
+
+
+			<!-- Pending Workshops -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>Pending Workshops</h4></div>
+						<table class="table">
+						    <thead>
+						      <tr>
+						        <th>Manuscript</th>
+						        <th>Learner</th>
+						        <th>Date Ordered</th>
+						        <th></th>
+						      </tr>
+						    </thead>
+						    <tbody>
+						    	@foreach( $pending_workshops as $pending_workshop )
+						      	<tr>
+							        <td>{{ $pending_workshop->workshop->title }}</td>
+							        <td>{{ $pending_workshop->user->full_name }}</td>
+							        <td>{{ $pending_workshop->created_at }}</td>
+							        <td>
+							        	<form method="POST" action="{{ route('admin.package_workshop.approve', $pending_workshop->id) }}" class="inline-block">
+											{{ csrf_field() }}
+											<button class="btn btn-warning btn-xs" type="submit"><i class="fa fa-check"></i></button>
+										</form>
+							        	<form method="POST" action="{{ route('admin.package_workshop.disapprove', $pending_workshop->id) }}" class="inline-block">
+											{{ csrf_field() }}
+											<button class="btn btn-danger btn-xs" type="submit"><i class="fa fa-trash"></i></button>
+										</form>
+							        </td>
+						      	</tr>
+						      	@endforeach
+						    </tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+
+
+			<!-- Pending Assignment Feedbacks -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>Pending Assignment Feedbacks</h4></div>
+						<table class="table">
+						    <thead>
+						      <tr>
+						        <th>Manuscript</th>
+						        <th>Submitted By</th>
+						        <th>Submitted To</th>
+						        <th>Assignment</th>
+						        <th></th>
+						      </tr>
+						    </thead>
+						    <tbody>
+						    	@foreach( $pending_assignment_feedbacks as $assignment_feedback )
+						    	<?php $extension = explode('.', basename($assignment_feedback->filename)); ?>
+						      	<tr>
+							        <td>
+							        	
+										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+										<a href="/js/ViewerJS/#../..{{ $assignment_feedback->filename }}">{{ basename($assignment_feedback->filename) }}</a>
+										@elseif( end($extension) == 'docx' )
+										<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$assignment_feedback->filename}}">{{ basename($assignment_feedback->filename) }}</a>
+										@endif
+							        </td>
+							        <td>{{ $assignment_feedback->user->full_name }}</td>
+							        <td>{{ $assignment_feedback->assignment_group_learner->user->full_name }}</td>
+							        <td><a href="{{ route('admin.assignment.show', ['course_id' => $assignment_feedback->assignment_group_learner->group->assignment->course->id, 'id' => $assignment_feedback->assignment_group_learner->group->assignment->id]) }}">{{ $assignment_feedback->assignment_group_learner->group->assignment->title }}</a></td>
+							        <td>
+										<button type="button" class="btn btn-warning btn-xs approveFeedbackAdminBtn" data-toggle="modal" data-target="#approveFeedbackAdminModal" data-action="{{ route('admin.assignment.group.approve', $assignment_feedback->id) }}"><i class="fa fa-check"></i></button>
+										<button type="button" class="btn btn-xs btn-danger removeFeedbackAdminBtn" data-toggle="modal" data-target="#removeFeedbackAdminModal" data-action="{{ route('admin.assignment.group.remove_feedback', $assignment_feedback->id) }}"><i class="fa fa-trash"></i></button>
+							        </td>
+						      	</tr>
+						      	@endforeach
+						    </tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<!-- Pending Coaching Timer -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>Pending Coaching Timer</h4></div>
+						<table class="table">
+							<thead>
+							<tr>
+							</tr>
+							</thead>
+							<tbody>
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<!-- end Pending Coaching Timer -->
+
+			<!-- Pending Proofing -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>Pending Proofing</h4></div>
+						<table class="table">
+							<thead>
+							<tr>
+								<th>Manus</th>
+								<th>Learner</th>
+							</tr>
+							</thead>
+							<tbody>
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<!-- end Pending Proofing -->
+
+			<!-- Pending Copy Editing -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>Pending Copy Editing</h4></div>
+						<table class="table">
+							<thead>
+							<tr>
+							</tr>
+							</thead>
+							<tbody>
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<!-- end Pending Copy Editing -->
+		</div>
+		@endif
+	</div>
+</div>
+
+<div class="col-sm-12 col-md-2 dashboard-right">
+	<h3 class="actitities-header">Recent Activities</h3>
+	@foreach( $logs as $log )
+	<div class="dashboard-activity" style="color: green">
+		<p>
+			<span class="activ-time">{{ Carbon\Carbon::parse($log->created_at)->diffForHumans() }}</span>
+			{!! $log->activity !!}
+		</p>
+	</div>
+	@endforeach
+</div>
+<div id="approveFeedbackAdminModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+		  <div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal">&times;</button>
+		    <h4 class="modal-title">Approve feedback</h4>
+		  </div>
+		  <div class="modal-body">
+		    <form method="POST" action="">
+		      {{ csrf_field() }}
+		      Are you sure to approve this feedback?
+		      <div class="text-right margin-top">
+		      	<button type="submit" class="btn btn-warning">Approve</button>
+		      </div>
+		    </form>
+		  </div>
+		</div>
+	</div>
+</div>
+
+<div id="removeFeedbackAdminModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+		  <div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal">&times;</button>
+		    <h4 class="modal-title">Delete feedback</h4>
+		  </div>
+		  <div class="modal-body">
+		    <form method="POST" action="">
+		      {{ csrf_field() }}
+		      Are you sure to delete this feedback?
+		      <div class="text-right margin-top">
+		      	<button type="submit" class="btn btn-danger">Delete</button>
+		      </div>
+		    </form>
+		  </div>
+		</div>
+	</div>
+</div>
+
+<div id="viewManuscriptModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-body">
+		  	<p>
+		  		<strong>Name:</strong><br />
+		  		<span id="name"></span><br />
+		  		<br />
+		  		<strong>Email:</strong><br />
+		  		<span id="email"></span><br />
+		  		<br />
+		  		<strong>Manuscript:</strong><br />
+		  		<span id="content"></span>
+		  	</p>
+		  </div>
+		</div>
+	</div>
+</div>
+
+<div id="submitFeedbackModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Submit feedback to <em></em></h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action=""  enctype="multipart/form-data">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>Manuscript</label>
+						<input type="file" class="form-control" required multiple name="filename[]" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+						* Accepted file formats are DOCX, PDF, ODT.
+					</div>
+					<div class="form-group">
+						<label>Available date</label>
+						<input type="date" class="form-control" name="availability">
+					</div>
+					<div class="form-group">
+						<label>Grade</label>
+						<input type="number" class="form-control" step="0.01" name="grade">
+					</div>
+					<input type="hidden" name="manuscript_id">
+					<button type="submit" class="btn btn-primary pull-right margin-top">Submit</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="addFeedbackModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Add Feedback</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" enctype="multipart/form-data">
+					{{csrf_field()}}
+					<div class="form-group">
+						<label>Files</label>
+						<input type="file" class="form-control" name="files[]" multiple accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text" required>
+					</div>
+					<div class="form-group">
+						<label>Notes</label>
+						<textarea class="form-control" name="notes" rows="6"></textarea>
+					</div>
+					Adding a feedback will complete this manuscript.
+					<button type="submit" class="btn btn-primary pull-right">Add feedback</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+@stop
+
+@section('scripts')
+<script>
+	$('.viewManuscriptBtn').click(function(){
+		var fields = $(this).data('fields');
+		var modal = $('#viewManuscriptModal');
+		modal.find('#name').text(fields.name);
+		modal.find('#email').text(fields.email);
+		modal.find('#content').text(fields.content);
+	});
+	$('.approveFeedbackAdminBtn').click(function(){
+		var modal = $('#approveFeedbackAdminModal');
+		var action = $(this).data('action');
+		modal.find('form').attr('action', action);
+	});
+	$('.removeFeedbackAdminBtn').click(function(){
+		var modal = $('#removeFeedbackAdminModal');
+		var action = $(this).data('action');
+		modal.find('form').attr('action', action);
+	});
+
+    $('.submitFeedbackBtn').click(function(){
+        var modal = $('#submitFeedbackModal');
+        var name = $(this).data('name');
+        var action = $(this).data('action');
+        var manuscript_id = $(this).data('manuscript');
+        modal.find('em').text(name);
+        modal.find('form').attr('action', action);
+        modal.find('form').find('input[name=manuscript_id]').val(manuscript_id);
+    });
+
+    $("#addShopManuscriptFeedback").click(function(){
+        var modal = $('#addFeedbackModal');
+        var action = $(this).data('action');
+        modal.find('form').attr('action', action);
+	});
+
+</script>
+@stop

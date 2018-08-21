@@ -1,0 +1,48 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Invoice extends Model
+{
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'invoices';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['user_id', 'fiken_url', 'fiken_weblink', 'pdf_url'];
+
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
+    public function package()
+    {
+        return $this->belongsTo('App\Package');
+    }
+
+    public function payment_plan()
+    {
+        return $this->belongsTo('App\PaymentPlan');
+    }
+
+
+    public function transactions()
+    {
+        return $this->hasMany('App\Transaction')->orderBy('created_at', 'desc');
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return date_format(date_create($value), 'M d, Y h:i a');
+    }
+}

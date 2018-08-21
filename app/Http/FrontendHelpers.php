@@ -1,0 +1,517 @@
+<?php
+
+namespace App\Http;
+use App\PilotReaderBook;
+use App\PilotReaderBookReading;
+use Carbon\Carbon;
+
+class FrontendHelpers
+{
+	public static function InCart($key, $value)
+	{
+        $in_cart = array_search($value, array_column(self::cart(), $key)); // Check if already in cart
+        
+        if( $in_cart === FALSE ) :
+        	return false;
+       	endif;
+
+       	return true;
+	}
+
+
+
+
+	public static function cartIndex($arr_key, $arr_value)
+	{
+		$index = NULL;
+
+		foreach(self::cart() as $key => $value){
+	        if(is_array($value) && $value[$arr_key] == $arr_value) :
+	        	$index = $key;
+	        endif;
+	    }
+
+		return $index;
+	}
+
+
+
+	public static function cart()
+	{
+		$cart = session()->has('cart') ? session('cart') : [];
+		
+		return $cart;
+	}
+
+
+
+	public static function currencyFormat($value)
+	{
+		return 'Kr ' . number_format($value, 2, ",", ".");
+	}
+
+    public static function formatCurrency($value)
+    {
+        return number_format($value, 2, ",", "");
+    }
+
+	public static function lessonAvailability($startedAt, $delay, $period)
+	{
+		if( empty($startedAt) ) return 'Course not started';
+		$availableOn = Carbon::parse($startedAt);
+
+		if(self::isDate($delay)) :
+			$availableOn = date_create($delay);
+		else :
+			$availableOn->addDays($delay);
+		endif;
+
+		return date_format($availableOn, 'M d, Y');
+	}
+
+
+	public static function isDate($string)
+	{
+		$d = \DateTime::createFromFormat('Y-m-d', $string);
+    	return $d && $d->format('Y-m-d') === $string;
+	}
+
+
+    public static function formatDate($date)
+    {
+        return Carbon::parse($date)->format('d.m.Y');
+	}
+
+    public static function formatDateTimeNor($date)
+    {
+        return \Carbon\Carbon::parse($date)->format('d.m.Y').' Klokken '.\Carbon\Carbon::parse($date)->format('H:i');
+    }
+
+
+	public static function isLessonAvailable($startedAt, $delay, $period)
+	{
+		if( empty($startedAt) ) return 'Course not started';
+		$availableOn = strtotime(self::lessonAvailability($startedAt, $delay, $period));
+		$now = time();
+		return $availableOn <= $now;
+	}
+
+
+	public static function hasLessonAccess($course_taken, $lesson)
+	{
+		$access_lessons = $course_taken->access_lessons;
+		return ( in_array($lesson->id, $access_lessons) );
+	}
+
+
+	public static function isCourseAvailable($course)
+	{
+		if( $course->start_date || $course->end_date ) :
+			$now = time();
+			if( $course->start_date ) :
+				if( $now < strtotime($course->start_date)) return false;
+			endif;
+			if( $course->end_date ) :
+				if( $now > strtotime($course->end_date)) return false;
+			endif;
+		endif;
+		return true;
+	}
+
+
+
+	public static function isWebinarAvailable($webinar)
+	{
+		$now = time();
+		if( $now < strtotime($webinar->start_date) ) :
+			return false;
+		endif;
+		return true;
+	}
+
+
+
+	public static function isCourseTakenAvailable($courseTaken)
+	{
+		if( $courseTaken->start_date || $courseTaken->end_date ) :
+			$now = time();
+			if( $courseTaken->start_date ) :
+				if( $now < strtotime($courseTaken->start_date)) return false;
+			endif;
+			if( $courseTaken->end_date ) :
+				if( $now > strtotime($courseTaken->end_date)) return false;
+			endif;
+		endif;
+		return true;
+	}
+
+    public static function roundUpToNearestMultiple($n, $increment = 1000)
+    {
+        return (int) ($increment * ceil($n / $increment));
+    }
+
+    public static function convertMonthLanguage($month_number = NULL)
+    {
+        $monthNames = array(
+            array( 'id' => 1, 'option' => 'januar'),
+            array( 'id' => 2, 'option' => 'februar'),
+            array( 'id' => 3, 'option' => 'mars'),
+            array( 'id' => 4, 'option' => 'april'),
+            array( 'id' => 5, 'option' => 'mai'),
+            array( 'id' => 6, 'option' => 'juni'),
+            array( 'id' => 7, 'option' => 'juli'),
+            array( 'id' => 8, 'option' => 'august'),
+            array( 'id' => 9, 'option' => 'september'),
+            array( 'id' => 10, 'option' => 'oktober'),
+            array( 'id' => 11, 'option' => 'november'),
+            array( 'id' => 12, 'option' => 'desember'),
+        );
+
+        if ($month_number) {
+            foreach ($monthNames as $monthName) {
+                if ($monthName['id'] == $month_number) {
+                    return $monthName['option'];
+                }
+            }
+        }
+
+        return NULL;
+	}
+
+    public static function convertDayLanguage($day_number = NULL)
+    {
+        $dayNumbers = array(
+            array( 'id' => 1, 'option' => 'mandag'),
+            array( 'id' => 2, 'option' => 'tirsdag'),
+            array( 'id' => 3, 'option' => 'onsdag'),
+            array( 'id' => 4, 'option' => 'torsdag'),
+            array( 'id' => 5, 'option' => 'fredag'),
+            array( 'id' => 6, 'option' => 'lørdag'),
+            array( 'id' => 7, 'option' => 'søndag')
+        );
+
+        if ($day_number) {
+            foreach ($dayNumbers as $dayNumber) {
+                if ($dayNumber['id'] == $day_number) {
+                    return $dayNumber['option'];
+                }
+            }
+        }
+
+        return NULL;
+    }
+
+    /**
+     * Pilot reader navigation
+     * @param null $route
+     * @return array
+     */
+    public static function pilotReaderNav($route = NULL)
+    {
+        $navs = array(
+            array( 'route_name' => 'learner.book-author-book-show', 'label' => 'Contents'),
+            array( 'route_name' => 'learner.book-author-book-settings', 'label' => 'Settings'),
+            array( 'route_name' => 'learner.book-author-book-invitation', 'label' => 'Invitations'),
+            array( 'route_name' => 'learner.book-author-book-track-readers', 'label' => 'Track Readers'),
+            array( 'route_name' => 'learner.book-author-book-feedback-list', 'label' => 'Feedbacks'),
+        );
+
+        if ($navs) {
+            foreach ($navs as $nav) {
+                if ($nav['route_name'] == $route) {
+                    return $nav['label'];
+                }
+            }
+        }
+
+        return $navs;
+
+    }
+
+    public static function pilotReaderReaderNav($route = NULL)
+    {
+        $navs = array(
+            array( 'route_name' => 'learner.book-author-book-show', 'label' => 'Contents'),
+            array( 'route_name' => 'learner.book-author-book-settings', 'label' => 'Settings'),
+            array( 'route_name' => 'learner.book-author-book-reader-feedback-list', 'label' => 'My Feedback')
+        );
+
+        if ($navs) {
+            foreach ($navs as $nav) {
+                if ($nav['route_name'] == $route) {
+                    return $nav['label'];
+                }
+            }
+        }
+
+        return $navs;
+    }
+
+    public static function pilotReaderDirectoryNav($route = NULL)
+    {
+        $navs = array(
+            array( 'route_name' => 'learner.reader-directory.index', 'label' => 'Search'),
+            array( 'route_name' => 'learner.reader-directory.about', 'label' => 'About'),
+            array( 'route_name' => 'learner.reader-directory.query-sent-list', 'label' => 'Sent Queries'),
+            array( 'route_name' => 'learner.reader-directory.query-received-list', 'label' => 'Received Queries'),
+        );
+
+        if ($navs) {
+            foreach ($navs as $nav) {
+                if ($nav['route_name'] == $route) {
+                    return $nav['label'];
+                }
+            }
+        }
+
+        return $navs;
+
+    }
+
+    public static function pilotReaderProfileNav($route = NULL)
+    {
+        $navs = array(
+            array( 'route_name' => 'learner.pilot-reader.account.index', 'label' => 'Preferences' ),
+            array( 'route_name' => 'learner.pilot-reader.account.reader-profile', 'label' => 'Reader Profile' )
+        );
+
+        if ($navs) {
+            foreach ($navs as $nav) {
+                if ($nav['route_name'] == $route) {
+                    return $nav['label'];
+                }
+            }
+        }
+
+        return $navs;
+
+    }
+
+    public static function privateGroupsNav($route = NULL)
+    {
+        $navs = array(
+            array( 'route_name' => 'learner.private-groups.show', 'label' => 'Home' ),
+            array( 'route_name' => 'learner.private-groups.discussion', 'label' => 'Discussion' ),
+            array( 'route_name' => 'learner.private-groups.books', 'label' => 'Books' )
+        );
+
+        if ($navs) {
+            foreach ($navs as $nav) {
+                if ($nav['route_name'] == $route) {
+                    return $nav['label'];
+                }
+            }
+        }
+
+        return $navs;
+
+    }
+
+    /**
+     * Check if logged in user is reading the book
+     * @param $book_id
+     * @return \Illuminate\Database\Eloquent\Model|null|static
+     */
+    public static function isReadingBook($book_id)
+    {
+        $readingBook = PilotReaderBookReading::where(['book_id' => $book_id, 'user_id' => \Auth::user()->id])
+            ->whereIn('status',[0,1])->first();
+        return $readingBook;
+    }
+
+    /**
+     * Count the total reader for certain status
+     * @param $book_id
+     * @param $status
+     * @return int
+     */
+    public static function countReaderWithStatus($book_id, $status)
+    {
+        return PilotReaderBookReading::withTrashed()->where(['book_id' => $book_id, 'status' => $status ])->get()->count();
+    }
+
+    public static function getCoachingTimerPlanType($plan_type)
+    {
+        $type_text = '30 min';
+        if ($plan_type == 1) {
+            $type_text = '1 hr';
+        }
+
+        return $type_text;
+    }
+
+    /**
+     * @param $book PilotReaderBook
+     * @param $chapter_id
+     * @return int|string
+     */
+    public static function getChapterTitle($book, $chapter_id)
+    {
+        $chapterCount = 0;
+        foreach ($book->chaptersOnly as $k=>$ch) {
+            if ($chapter_id == $ch->id) {
+                $chapterCount = $k+1;
+            }
+        }
+
+        $settings = $book->settings;
+        $chapter_title = $settings ? $settings->book_units:'Chapter';
+
+        return $chapter_title.' '.$chapterCount;
+    }
+
+    public static function getQuestionnaireTitle($book, $chapter_id)
+    {
+        $chapterCount = 0;
+        foreach ($book->chapterQuestionnaire as $k=>$ch) {
+            if ($chapter_id == $ch->id) {
+                $chapterCount = $k+1;
+            }
+        }
+
+        return 'Questionnaire '.$chapterCount;
+    }
+
+    /**
+     * Change the chapter name if it's empty
+     * @param null $chapter_title
+     * @param $chapter_key
+     * @return null|string
+     */
+    public static function changeChapterName($chapter_title = NULL, $chapter_key)
+    {
+        $chapter_name = $chapter_title;
+        if (!$chapter_title) {
+            $chapter_name = 'Chapter '.$chapter_key;
+        }
+
+        return $chapter_name;
+    }
+
+
+	public static function FikenConnect($url)
+	{
+		$username = "cleidoscope@gmail.com";
+	    $password = "moonfang";
+	    $headers = [];
+	    $headers[] = 'Accept: application/hal+json, application/vnd.error+json';
+	    $headers[] = 'Content-Type: application/hal+json';
+
+		$ch = curl_init($url); 
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $data = curl_exec($ch);
+		$data = json_decode($data);
+
+		return $data;
+	}
+
+
+	
+	public static function get_num_of_words($string) {
+	    $string = preg_replace('/\s+/', ' ', trim($string));
+	    $words = explode(" ", strip_tags($string));
+	    return count($words);
+	}
+
+    /**
+     * Type of assignment uploaded
+     * @param null $id
+     * @return array
+     */
+    public static function assignmentType($id = NULL)
+    {
+        $types = array(
+            array( 'id' => 1, 'option' => 'Barnebok'),
+            array( 'id' => 2, 'option' => 'Fantasy'),
+            array( 'id' => 3, 'option' => 'Skjønnlitterært'),
+            array( 'id' => 4, 'option' => 'Serieroman'),
+            array( 'id' => 5, 'option' => 'Sakprosa'),
+            array( 'id' => 6, 'option' => 'Selvbiografi'),
+            array( 'id' => 7, 'option' => 'Krim'),
+            array( 'id' => 8, 'option' => 'Thriller'),
+            array( 'id' => 9, 'option' => 'Grøsser'),
+            array( 'id' => 10, 'option' => 'Lyrikk'),
+            array( 'id' => 11, 'option' => 'Ungdom'),
+            array( 'id' => 12, 'option' => 'Dokumentar'),
+            array( 'id' => 13, 'option' => 'Sci-fi'),
+            array( 'id' => 14, 'option' => 'Dystopi'),
+            array( 'id' => 15, 'option' => 'Valgfri'),
+        );
+
+        if ($id) {
+            foreach ($types as $type) {
+                if ($type['id'] == $id) {
+                    return $type['option'];
+                }
+            }
+        }
+
+        return $types;
+	}
+
+    public static function formatAssignmentType($id)
+    {
+        $assignmentTypes = explode(', ',$id);
+        $displayTypes = '';
+        foreach ($assignmentTypes as $assignmentType) {
+            $displayTypes .= self::assignmentType($assignmentType).', ';
+        }
+        return rtrim($displayTypes, ', ');
+	}
+
+    /**
+     * Where could it be found in manuscript
+     * Manuscript type for assignment either whole, start, middle or last part of the manuscript
+     * @param null $id
+     * @return array
+     */
+    public static function manuscriptType($id = NULL)
+    {
+        $types = array(
+            array( 'id' => 1, 'option' => 'Hele manuset'),
+            array( 'id' => 2, 'option' => 'Starten av manuset'),
+            array( 'id' => 3, 'option' => 'Midten av manuset'),
+            array( 'id' => 4, 'option' => 'Slutten av manuset'),
+        );
+
+        if ($id) {
+            foreach ($types as $type) {
+                if ($type['id'] == $id) {
+                    return $type['option'];
+                }
+            }
+        }
+
+        return $types;
+	}
+
+    /**
+     * Feedback marks
+     * @param null $setMark
+     * @return array
+     */
+    public static function feedbackMarks($setMark = NULL)
+    {
+        $marks = array(
+            array( 'option' => 'unmarked', 'label' => 'Unmarked'),
+            array( 'option' => 'ignore', 'label' => 'Ignore'),
+            array( 'option' => 'consider', 'label' => 'Consider'),
+            array( 'option' => 'todo', 'label' => 'Todo'),
+            array( 'option' => 'done', 'label' => 'Done'),
+            array( 'option' => 'keep', 'label' => 'Keep'),
+        );
+
+        if ($setMark) {
+            foreach ($marks as $mark) {
+                if ($mark['option'] == $setMark) {
+                    return $mark['label'];
+                }
+            }
+        }
+
+        return $marks;
+	}
+}

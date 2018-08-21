@@ -1,0 +1,84 @@
+<form method="POST" action="{{Request::is('course/testimonial/*/edit')
+? route('admin.course-testimonial.update', $testimonial['id'])
+: route('admin.course-testimonial.store')}}" enctype="multipart/form-data">
+	@if(Request::is('course/testimonial/*/edit'))
+		{{ method_field('PUT') }}
+	@endif
+	{{csrf_field()}}
+
+	<div class="col-sm-12">
+		@if(Request::is('course/testimonial/*/edit'))
+			<h3>Edit <em>{{$testimonial['name']}}</em>
+				<button class="btn btn-primary pull-right" data-toggle="modal" data-target="#cloneTestimonialModal"
+				type="button">
+					<i class="fa fa-copy"></i>
+					Clone
+				</button>
+			</h3>
+		@else
+			<h3>Add New Testimonial</h3>
+		@endif
+	</div>
+
+	<div class="col-sm-12 col-md-8">
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<div class="form-group">
+					<label>Name</label>
+					<input type="text" class="form-control" name="name" value="{{ old('name') ? old('name') : $testimonial['name'] }}" required>
+				</div>
+				<div class="form-group">
+					<label>Testimony</label>
+					<textarea name="testimony" rows="12" id="description-ct" class="form-control" required>{{ old('testimony') ? old('testimony') : $testimonial['testimony'] }}</textarea>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-sm-12 col-md-4">
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<div class="form-group">
+					<label id="course-image">Image</label>
+					<div class="editor-form-image image-file margin-bottom">
+						<div class="image-preview" style="background-image: url('{{$testimonial['user_image']}}')" data-default="{{Auth::user()->profile_image}}" title="Select Image" data-toggle="tooltip" data-placement="bottom"></div>
+						<input type="file" accept="image/*" name="user_image" accept="image/jpg, image/jpeg, image/png">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label>Course</label>
+					<select class="form-control" name="course_id" required>
+						<option value="" disabled="disabled" selected>Select Course</option>
+						@foreach(\App\Course::all() as $course)
+							<option value="{{ $course->id }}" @if ($testimonial['course_id'] == $course->id) selected @endif> {{ $course->title }}</option>
+						@endforeach
+					</select>
+				</div>
+
+				@if(Request::is('course/testimonial/*/edit'))
+					<button type="submit" class="btn btn-primary">Update Testimonial</button>
+					<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteEditorModal">Delete Testimonial</button>
+				@else
+					<button type="submit" class="btn btn-primary btn-block btn-lg">Create Testimonial</button>
+				@endif
+			</div>
+		</div>
+
+		@if ( $errors->any() )
+			<div class="alert alert-danger no-bottom-margin">
+				<ul>
+					@foreach($errors->all() as $error)
+						<li>{{$error}}</li>
+					@endforeach
+				</ul>
+			</div>
+		@endif
+	</div>
+
+</form>
+
+@if(Request::is('course/testimonial/*/edit'))
+	@include('backend.course.testimonials.partials.delete')
+	@include('backend.course.testimonials.partials.clone')
+@endif

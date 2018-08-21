@@ -1,0 +1,396 @@
+<?php
+namespace App\Http\Controllers\Backend;
+
+use App\EmailTemplate;
+use App\Http\AdminHelpers;
+use App\Manuscript;
+use App\ShopManuscriptUpgrade;
+use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Mail\Mailer;
+use Illuminate\Mail\Message;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+use App\ShopManuscript;
+use App\ShopManuscriptsTaken;
+use App\ShopManuscriptTakenFeedback;
+use App\FreeManuscript;
+use Validator;
+use Illuminate\Support\Str;
+use Mail;
+use Swift_Mailer;
+use Swift_Message;
+use Swift_Transport;
+
+class ShopManuscriptController extends Controller
+{
+    /**
+     * ShopManuscriptController constructor.
+     */
+    public function __construct()
+    {
+        // middleware to check if admin have access to this page
+        $this->middleware('checkPageAccess:9');
+    }
+
+
+    public function index(Request $request)
+    {
+        if( $request->tab == 'sold' ) :
+            $shopManuscripts = ShopManuscriptsTaken::orderBy('created_at', 'desc')->paginate(15);
+        elseif( $request->tab == 'manuscripts' ) :
+            $shopManuscripts = Manuscript::orderBy('created_at', 'desc')->paginate(15);
+
+            // check if editor then display only assigned manuscript
+            // or manuscript that don't have an owner/assigned admin
+            if (Auth::user()->is_editor) :
+                $shopManuscripts = Manuscript::where('feedback_user_id', Auth::user()->id)
+                    ->orWhereNull('feedback_user_id')
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(15);
+            endif;
+
+        else :
+            $shopManuscripts = ShopManuscript::orderBy('created_at', 'desc')->paginate(15);
+        endif;
+        $emailTemplate = EmailTemplate::where('page_name', 'Manuscript')->first();
+        $emailTemplateRoute = 'admin.manuscript.add_email_template';
+        $isUpdate = 0;
+        if (count($emailTemplate)) {
+            $emailTemplateRoute = 'admin.manuscript.edit_email_template';
+            $isUpdate = 1;
+        }
+        return view('backend.shop-manuscript.index', compact('shopManuscripts','emailTemplate', 'emailTemplateRoute', 'isUpdate'));
+    }
+
+
+
+    public function store(Request $request)
+    {
+        $validator = $this->validator($request->all());
+        if( $validator->fails() ) return redirect()->back()->withInput()->withErrors($validator);
+
+        $shopManuscript = new ShopManuscript();
+        $shopManuscript->title = $request->title;
+        $shopManuscript->description = $request->description;
+        $shopManuscript->max_words = $request->max_words;
+        $shopManuscript->full_payment_price = $request->full_payment_price;
+        $shopManuscript->months_3_price = $request->months_3_price;
+        $shopManuscript->months_6_price = $request->months_6_price ? $request->months_6_price : 0;
+        $shopManuscript->full_price_product = $request->full_price_product;
+        $shopManuscript->months_3_product = $request->months_3_product;
+        $shopManuscript->months_6_due_date = $request->months_6_due_date ? $request->months_6_due_date : 0;
+        $shopManuscript->full_price_due_date = $request->full_price_due_date;
+        $shopManuscript->months_3_due_date = $request->months_3_due_date;
+        $shopManuscript->upgrade_price = $request->upgrade_price;
+        $shopManuscript->fiken_product = $request->full_price_product;
+        /*$shopManuscript->title = $request->title;
+        $shopManuscript->description = $request->description;
+        $shopManuscript->max_words = $request->max_words;
+        $shopManuscript->price = $request->price;
+        $shopManuscript->split_payment_price = $request->split_payment_price;
+        $shopManuscript->fiken_product = $request->fiken_product;*/
+        $shopManuscript->save();
+        return redirect()->back();
+    }
+
+
+
+    public function update($id, Request $request)
+    {
+        $validator = $this->validator($request->all());
+        if( $validator->fails() ) return redirect()->back()->withInput()->withErrors($validator);
+        $shopManuscript = ShopManuscript::findOrFail($id);
+        $shopManuscript->title = $request->title;
+        $shopManuscript->description = $request->description;
+        $shopManuscript->max_words = $request->max_words;
+        $shopManuscript->full_payment_price = $request->full_payment_price;
+        $shopManuscript->months_3_price = $request->months_3_price;
+        $shopManuscript->full_price_product = $request->full_price_product;
+        $shopManuscript->months_3_product = $request->months_3_product;
+        $shopManuscript->full_price_due_date = $request->full_price_due_date;
+        $shopManuscript->months_3_due_date = $request->months_3_due_date;
+        $shopManuscript->upgrade_price = $request->upgrade_price;
+
+        foreach($request->except('_token') as $key=>$value){
+            // check for the upgrade price set
+            if("upgrade_price_" == substr($key,0,14)){
+                // get the number only
+                $upgrade_shop_manuscript_id = substr(substr($key,strrpos($key,'_')),1, 2);
+                $price = $request->$key;
+                $shopManuscriptUpgrade = ShopManuscriptUpgrade::firstOrNew(['upgrade_shop_manuscript_id' => $upgrade_shop_manuscript_id,
+                    'shop_manuscript_id' => $id]);
+                $shopManuscriptUpgrade->price = $price;
+                $shopManuscriptUpgrade->save();
+            }
+        }
+
+        $shopManuscript->save();
+        return redirect()->back();
+    }
+
+
+
+    public function destroy($id)
+    {
+        $shopManuscript = ShopManuscript::findOrFail($id);
+        $shopManuscript->forceDelete();
+        return redirect()->back();
+    }
+
+
+    public function validator($data)
+    {
+        return Validator::make($data, [
+            'title'                 => 'required|string',
+            'description'           => 'required|string',
+            'max_words'             => 'required|integer',
+            'months_3_price'        => 'required|numeric',
+            'full_price_product'    => 'required|string',
+            'months_3_product'      => 'required|string',
+            'full_price_due_date'   => 'required|string',
+            'months_3_due_date'     => 'required|string',
+        ]);
+    }
+
+
+
+    public function addFeedback($shopManuscriptTakenID, Request $request)
+    {
+        $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($shopManuscriptTakenID);
+        if( $request->hasFile('files') && $shopManuscriptTaken->feedbacks->count() == 0 ) :
+            $files = [];
+            foreach( $request->file('files') as $file ) :
+                $time = Str::random(10).'-'.time();
+                $destinationPath = 'storage/shop-manuscript-taken-feedbacks/'; // upload path
+                $extension = $file->getClientOriginalExtension(); // getting document extension
+                $fileName = $time.'.'.$extension; // rename document
+                $file->move($destinationPath, $fileName);
+                $files[] = '/'.$destinationPath.$fileName;
+            endforeach;
+
+            ShopManuscriptTakenFeedback::create([
+                'shop_manuscript_taken_id' => $shopManuscriptTaken->id,
+                'filename' => json_encode($files),
+                'notes' => $request->notes
+            ]);
+        endif;
+
+        return redirect()->back();
+    }
+
+    public function destroyFeedback($id)
+    {
+        $feedback = ShopManuscriptTakenFeedback::findOrFail($id);
+        $feedback->forceDelete();
+        return redirect()->back();
+    }
+
+
+    // made a fix here
+    // search me to update
+    public function updateTaken($shopManuscriptTakenID, Request $request)
+    {
+        $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($shopManuscriptTakenID);
+        $shopManuscriptTaken->feedback_user_id = $request->feedback_user_id;
+        $shopManuscriptTaken->expected_finish = $request->expected_finish;
+        $shopManuscriptTaken->grade = $request->grade;
+        $shopManuscriptTaken->save();
+
+        $updatedManuscript = ShopManuscriptsTaken::find($shopManuscriptTakenID);
+        if ($updatedManuscript && $updatedManuscript->expected_finish != NULL) {
+            $emailTemplate = EmailTemplate::where('page_name', 'Manuscript')->first();
+
+            $user = User::find($updatedManuscript->user_id);
+
+            $headers = "From: Forfatterskolen<no-reply@forfatterskolen.no>\r\n";
+            $headers .= "MIME-Version: 1.0\r\n";
+            $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+
+            $to = $user->email;
+
+            $email_body = $emailTemplate->email_content."<br/> Expected Finish: ".$request->expected_finish;
+
+            mail($to, 'Forventet dato for tilbakemelding', $email_body, $headers);
+        }
+
+        return redirect()->back();
+    }
+
+
+    public function freeManuscriptIndex()
+    {
+        $freeManuscripts = FreeManuscript::where('is_feedback_sent', '=',0)->orderBy('created_at', 'desc')->get();
+        $archiveManuscripts = FreeManuscript::where('is_feedback_sent', '=',1)->orderBy('created_at', 'desc')->get();
+
+        $emailTemplate = EmailTemplate::where('page_name', 'Free Manuscript')->first();
+        $emailTemplateRoute = 'admin.manuscript.add_email_template';
+        $isUpdate = 0;
+        if (count($emailTemplate)) {
+            $emailTemplateRoute = 'admin.manuscript.edit_email_template';
+            $isUpdate = 1;
+        }
+
+        return view('backend.shop-manuscript.free-manuscripts',
+            compact('freeManuscripts','archiveManuscripts','emailTemplate', 'emailTemplateRoute', 'isUpdate')
+        );
+    }
+
+
+    public function deleteFreeManuscript($id)
+    {
+        $freeManuscripts = FreeManuscript::findOrFail($id);
+        $freeManuscripts->forceDelete();
+        return redirect()->back();
+    }
+
+
+    public function assignEditor($id, Request $request)
+    {
+        $freeManuscripts = FreeManuscript::findOrFail($id);
+        $freeManuscripts->editor_id = $request->editor_id;
+        $freeManuscripts->save();
+        return redirect()->back();
+    }
+
+    /**
+     * Update the genre of the shop manuscript taken
+     * @param $shopManuscriptTakenID
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateGenre($shopManuscriptTakenID, Request $request)
+    {
+        $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($shopManuscriptTakenID);
+        if ($shopManuscriptTaken) {
+            $shopManuscriptTaken->genre = $request->genre;
+            $shopManuscriptTaken->save();
+        }
+        return redirect()->back();
+    }
+
+    public function sendFeedback($id, Request $requests)
+    {
+        $url = 'https://forfatterskolen.api-us1.com';
+
+        $freeManuscripts    = FreeManuscript::findOrFail($id);
+
+        $freeManuscripts->is_feedback_sent = 1;
+        $freeManuscripts->feedback_content = $requests->email_content;
+        $freeManuscripts->save();
+
+        $editor             = User::find($freeManuscripts->editor);
+        $to                 = $freeManuscripts->email;
+        //$from               = $editor->email;
+
+        $params = array(
+            'api_key'      => 'ee9f1cb27fe33c7197d722f434493d4440cf5da6be8114933fd0fdae40fc03a197388b99',
+
+            // this is the action that adds a contact
+            'api_action'   => 'contact_add',
+
+            // define the type of output you wish to get back
+            // possible values:
+            // - 'xml'  :      you have to write your own XML parser
+            // - 'json' :      data is returned in JSON format and can be decoded with
+            //                 json_decode() function (included in PHP since 5.2.0)
+            // - 'serialize' : data is returned in a serialized format and can be decoded with
+            //                 a native unserialize() function
+            'api_output'   => 'serialize',
+        );
+
+        // here we define the data we are posting in order to perform an update
+        $post = array(
+            'email'                    => $freeManuscripts->email,
+            'first_name'               => $freeManuscripts->name,
+            'tags'                     => 'Tekstvurdering',
+            // assign to lists:
+            'p[123]'                   => 51, // example list ID (REPLACE '123' WITH ACTUAL LIST ID, IE: p[5] = 5)
+            'status[123]'              => 1, // 1: active, 2: unsubscribed (REPLACE '123' WITH ACTUAL LIST ID, IE: status[5] = 1)
+            'instantresponders[123]' => 0, // set to 0 to if you don't want to sent instant autoresponders
+        );
+
+        // This section takes the input fields and converts them to the proper format
+        $query = "";
+        foreach( $params as $key => $value ) $query .= urlencode($key) . '=' . urlencode($value) . '&';
+        $query = rtrim($query, '& ');
+
+        // This section takes the input data and converts it to the proper format
+        $data = "";
+        foreach( $post as $key => $value ) $data .= urlencode($key) . '=' . urlencode($value) . '&';
+        $data = rtrim($data, '& ');
+
+        // clean up the url
+        $url = rtrim($url, '/ ');
+
+        // This sample code uses the CURL library for php to establish a connection,
+        // submit your request, and show (print out) the response.
+        if ( !function_exists('curl_init') ) die('CURL not supported. (introduced in PHP 4.0.2)');
+
+        // If JSON is used, check if json_decode is present (PHP 5.2.0+)
+        if ( $params['api_output'] == 'json' && !function_exists('json_decode') ) {
+            die('JSON not supported. (introduced in PHP 5.2.0)');
+        }
+
+        // define a final API request - GET
+        $api = $url . '/admin/api.php?' . $query;
+
+        $request = curl_init($api); // initiate curl object
+        curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+        curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
+        curl_setopt($request, CURLOPT_POSTFIELDS, $data); // use HTTP POST to send form data
+        //curl_setopt($request, CURLOPT_SSL_VERIFYPEER, FALSE); // uncomment if you get no gateway response and are using HTTPS
+        curl_setopt($request, CURLOPT_FOLLOWLOCATION, true);
+
+        $response = (string)curl_exec($request); // execute curl post and store results in $response
+
+        // additional options may be required depending upon your server configuration
+        // you can find documentation on curl options at http://www.php.net/curl_setopt
+        curl_close($request); // close curl object
+
+        if ( !$response ) {
+            die('Nothing was returned. Do you have a connection to Email Marketing server?');
+        }
+
+        $result = unserialize($response);
+
+        $email_content = $requests->email_content;
+
+        ob_start();
+        include base_path().'/resources/views/emails/free-manuscript-feedback.blade.php';
+        $message = ob_get_clean();
+
+        $headers = "From: Forfatterskolen<post@forfatterskolen.no>\r\n";
+        $headers .= "MIME-Version: 1.0\r\n";
+        $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+        //$headers .= 'Reply-To: '. $from . "\r\n";
+
+        $subject = 'Tilbakemelding på din tekst';
+        $from = "post@forfatterskolen.no";
+
+        AdminHelpers::send_mail($to, $subject, $message, $from );
+        //mail($to, 'Subject', $message, $headers);
+
+        return redirect()->back();
+    }
+
+    public function testEmail()
+    {
+        /*AdminHelpers::send_email('Subject','post@forfatterskolen.no','elybutabara@yahoo.com','this is a test only');
+        echo "<br/>sent";*/
+
+        $message = 'Inquiry Message'.PHP_EOL;
+        $message .= 'Name: Ely'.PHP_EOL;
+        $message .= 'Email: elybutabara@gmail.com'.PHP_EOL;
+        $message .= 'Message: this is my message';
+
+        $headers = "From: Forfatterskolen<no-reply@forfatterskolen.no>\r\n";
+        $headers .= "MIME-Version: 1.0\r\n";
+        $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+
+        mail('elybutabara@yahoo.com', 'Inquiry Message', $message, $headers);
+        echo "sent";
+    }
+
+}

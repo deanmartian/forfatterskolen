@@ -1,0 +1,19 @@
+@extends('frontend.layout')
+
+@section('content')
+    <div class="container">
+        <div class="row mt-4">
+            <div class="col-sm-8 col-sm-offset-2 mb-3">
+                <div class="global-card with-border">
+                    <div class="card-body">
+                        <h1 class="card-title font-weight-light with-border-b pb-2">Invitation Link Disabled</h1>
+                        <p class="font-weight-light">
+                            {{ "Sorry. This invitation link is already " }} <i class="font-weight-bold">disabled</i> {{ ". If you believe this was a mistake,
+                            you'll need to contact " }} <strong>{{ $author->first_name . " " . $author->last_name }}</strong> {{ "and ask to re-enable it. " }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection

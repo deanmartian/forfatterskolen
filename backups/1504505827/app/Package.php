@@ -1,0 +1,33 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Package extends Model
+{
+    protected $table = 'packages';
+    protected $fillable = ['course_id', 'variation', 'full_months_price', 'months_3_price', 'months_6_price', 'full_price_product', 'months_3_product', 'months_6_product', 'full_price_due_date', 'months_3_due_date', 'months_6_due_date', 'manuscripts_count' , 'due_date'];
+
+    public function course()
+    {
+        return $this->belongsTo('App\Course')->orderBy('created_at', 'desc');
+    }
+
+    public function shop_manuscripts()
+    {
+    	return $this->hasMany('App\PackageShopManuscript')->orderBy('created_at', 'desc');
+    }
+
+
+    public function workshops()
+    {
+        return $this->hasMany('App\PackageWorkshop')->orderBy('created_at', 'desc');
+    }
+
+
+    public function included_courses()
+    {
+        return $this->hasMany('App\PackageCourse', 'package_id')->orderBy('created_at', 'desc');
+    }
+}

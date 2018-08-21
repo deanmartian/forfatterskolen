@@ -1,0 +1,97 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Course extends Model
+{
+    protected $table = 'courses';
+    protected $fillable = ['title', 'description', 'description_simplemde', 'course_image', 'type', 'email', 'course_plan', 'start_date', 'end_date'];
+
+
+    public function packages()
+    {
+        return $this->hasMany('App\Package')->orderBy('full_payment_price', 'asc');
+    }
+
+
+    public function workshops()
+    {
+        return $this->hasMany('App\Workshop')->orderBy('created_at', 'desc');
+    }
+
+
+    public function webinars()
+    {
+        return $this->hasMany('App\Webinar')->orderBy('start_date', 'asc');
+    }
+
+    public function assignments()
+    {
+        return $this->hasMany('App\Assignment')->orderBy('created_at', 'desc');
+    }
+
+    public function lessons()
+    {
+        return $this->hasMany('App\Lesson')->orderBy('order', 'asc');
+    }
+
+
+    public function similar_courses()
+    {
+        return $this->hasMany('App\SimilarCourse')->orderBy('created_at', 'desc');
+    }
+
+
+    public function getManuscriptsAttribute()
+    {
+        $packages_ids = $this->packages()->pluck('id')->toArray();
+        $coursesTaken_ids = CoursesTaken::whereIn('package_id', $packages_ids)->pluck('id')->toArray();
+        $manuscripts = Manuscript::whereIn('coursetaken_id', $coursesTaken_ids)->orderBy('created_at', 'desc');
+        return $manuscripts;
+    }
+
+    public function getUrlAttribute()
+    {
+        return url('/').'/course/'.$this->attributes['id'];
+    }
+
+    public function getDescriptionRawAttribute()
+    {
+        return strip_tags($this->attributes['description']);
+    }
+
+    public function getLearnersAttribute()
+    {
+        $packageIds = $this->packages()->pluck('id')->toArray();
+        $courseTakers = count($packageIds) > 0 ? CoursesTaken::whereIn('package_id', $packageIds)->where('is_active', true)->orderBy('updated_at', 'desc')->get() : [];
+        return CoursesTaken::whereIn('package_id', $packageIds)->where('is_active', true)->orderBy('updated_at', 'desc');
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return date_format(date_create($value), 'M d, Y h:i a');
+    }
+
+
+
+    public function getStartDateAttribute($value)
+    {
+        if( $value ) :
+            return date_format(date_create($value), 'M d, Y');
+        endif;
+        return false;
+    }
+
+
+
+    public function getEndDateAttribute($value)
+    {
+        if( $value ) :
+            return date_format(date_create($value), 'M d, Y');
+        endif;
+        return false;
+    }
+
+}

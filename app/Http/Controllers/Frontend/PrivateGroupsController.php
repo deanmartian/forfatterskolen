@@ -1,0 +1,120 @@
+<?php
+namespace App\Http\Controllers\Frontend;
+
+use App\Http\Controllers\Controller;
+use App\PrivateGroup;
+use App\PrivateGroupDiscussion;
+use App\PrivateGroupMember;
+use App\Transformer\PrivateGroupDiscussionsTransFormer;
+use App\Transformer\PrivateGroupTransFormer;
+use Illuminate\Http\Request;
+use League\Fractal\Manager;
+use League\Fractal\Resource\Collection;
+
+class PrivateGroupsController extends Controller {
+
+    /**
+     * Display the private groups page
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function index()
+    {
+        $members = PrivateGroupMember::with('private_group')->where('user_id', \Auth::user()->id)->get();
+        return view('frontend.learner.pilot-reader.private-groups.index', compact('members'));
+    }
+
+    /**
+     * Create a new group
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function createGroup(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required|alpha_num_spaces|unique:private_groups|max:50',
+            'contact_email' => 'nullable|email|unique:private_groups'
+        ]);
+        $data = $request->all();
+        \DB::beginTransaction();
+        $model = PrivateGroup::create($data);
+        if(! $model)
+        {
+            \DB::rollback();
+            return response()->json(['error' => 'Opss. Something went wrong'], 500);
+        }
+        $this->addGroupMember(['private_group_id' => $model->id, 'user_id' => \Auth::user()->id, 'role' => 'manager']);
+        \DB::commit();
+
+        $fractal = new Manager();
+        $private_group_members = PrivateGroupMember::where('user_id', \Auth::user()->id)
+            ->where('private_group_id', $model->id)
+            ->get();
+        $resource = new Collection($private_group_members, new PrivateGroupTransFormer());
+        $privateGroup = $fractal->createData($resource)->toArray();
+
+        return response()->json(['success' => 'New Group Created.', 'privateGroup' => $privateGroup['data'][0]], 200);
+    }
+
+    /**
+     * Add a group member
+     * @param $data
+     * @return \Illuminate\Http\JsonResponse
+     */
+    private function addGroupMember($data)
+    {
+        if(! PrivateGroupMember::create($data))
+        {
+            \DB::rollback();
+            return response()->json(['error' => 'Opss. Something went wrong'], 500);
+        }
+    }
+
+    /**
+     * Display a private group
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function show($id)
+    {
+        if($privateGroup = PrivateGroup::find($id)) {
+            $page_title = $privateGroup->name;
+            $announcements = $privateGroup->discussions()->where('is_announcement',1)->get();
+            return view('frontend.learner.pilot-reader.private-groups.show', compact('privateGroup',
+                'page_title', 'announcements'));
+        }
+
+        return redirect()->route('learner.private-groups.index');
+    }
+
+    /**
+     * Update the private group
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateGroup(Request $request)
+    {
+        $data = $request->except('id');
+        $model = PrivateGroup::find($request->id);
+        if(! $model->update($data))
+        {
+            return response()->json(['error' => 'Opss. Something went wrong'], 500);
+        }
+        return response()->json(['success' => 'Group Updated.', 'data' => $model], 200);
+    }
+
+    /**
+     * Display the books page
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function books($id)
+    {
+        if($privateGroup = PrivateGroup::find($id)) {
+            $page_title = $privateGroup->name.' Books';
+            return view('frontend.learner.pilot-reader.private-groups.books', compact('privateGroup',
+                'page_title'));
+        }
+
+        return redirect()->route('learner.private-groups.index');
+    }
+}
