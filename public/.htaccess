@@ -5,6 +5,11 @@
 
     RewriteEngine On
 
+    # force redirect to https
+    RewriteCond %{SERVER_PORT} 80
+    RewriteCond %{HTTP_HOST} ^(www\.)?forfatterskolen\.no
+    RewriteRule ^(.*)$ https://www.forfatterskolen.no/$1 [R,L]
+
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)/$ /$1 [L,R=301]

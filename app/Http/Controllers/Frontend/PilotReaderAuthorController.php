@@ -16,6 +16,7 @@ use App\PilotReaderBookSettings;
 use App\PilotReaderChapterFeedback;
 use App\PilotReaderChapterFeedbackMessage;
 use App\PilotReaderChapterNote;
+use App\PrivateGroupMemberInvitation;
 use App\Transformer\InvitationsTransformer;
 use App\Transformer\NoteTransFormer;
 use App\Transformer\ReadersTransformer;
@@ -50,6 +51,11 @@ class PilotReaderAuthorController extends Controller
             'status'    => 0
         ])->get();
 
+        $groupInvitations = PrivateGroupMemberInvitation::with('group')->where([
+            'email'     => Auth::user()->email,
+            'status'    => 0
+        ])->get();
+
         // get first the books where the logged in user is a collaborator
         $bookCollaborator = Auth::user()->readingBooks()->where('role','=','collaborator')
             ->pluck('book_id')
@@ -64,7 +70,7 @@ class PilotReaderAuthorController extends Controller
         $finishedBooks = Auth::user()->finishedBooks;
 
         return view('frontend.learner.pilot-reader.author-dashboard', compact('invitations', 'readingBooks',
-            'finishedBooks'));
+            'finishedBooks', 'groupInvitations'));
     }
 
     /**

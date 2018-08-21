@@ -14,7 +14,7 @@
         <div class="col-sm-12 col-md-10 sub-right-content white-background">
             <div class="col-sm-12">
                 <div class="col-md-8 col-sm-offset-2 col-sm-12 margin-top">
-                    @if ($invitations->count())
+                    @if ($invitations->count() || $groupInvitations->count())
                         <div class="row pending-invitations">
                             <h5 class="font-16">Pending Invitations</h5>
 
@@ -33,6 +33,25 @@
                                         ['_token' => $invitation->_token, 'action' => 2]) }}"
                                            class="action color danger">Decline</a>
                                     </li>
+                                @endforeach
+
+                                @foreach($groupInvitations as $groupInvitation)
+                                        <li>
+                                            <span class="label">
+                                                <?php
+                                                    $manager = $groupInvitation->group->members()->where(['role' => 'manager'])->first();
+                                                ?>
+                                                {{ $manager->user->full_name }} has invited you to join
+                                                {{ $groupInvitation->group->name }}
+                                            </span>
+
+                                            <a href="{{ route('learner.private-groups.invitation.action',
+                                        ['status' => 1, 'token' => $groupInvitation->token]) }}"
+                                               class="action color success">Accept</a>
+                                            <a href="{{ route('learner.private-groups.invitation.action',
+                                        ['status' => 2, 'token' => $groupInvitation->token]) }}"
+                                               class="action color danger">Decline</a>
+                                        </li>
                                 @endforeach
                             </ul>
                         </div>

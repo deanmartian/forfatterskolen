@@ -12,4 +12,9 @@ class PrivateGroupMember extends Model
     {
         return $this->belongsTo('App\PrivateGroup', 'private_group_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
 }

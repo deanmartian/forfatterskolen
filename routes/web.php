@@ -83,6 +83,11 @@ Route::group([
         Route::post('/book/invite/send','PilotReaderBookSettingsController@unauthenticatedSendInvitation')->name('book.invite.send');
         Route::post('/email/validate', 'PilotReaderBookSettingsController@unauthenticatedEmailValidation');
 
+        // private groups
+        Route::get('/invitation/group/accept/{link_token}', 'PrivateGroupMembersController@openInvitationLink');
+        Route::post('/private-group/email/validate', 'PrivateGroupMembersController@unauthenticatedEmailValidation');
+        Route::post('/private-group/invite/send', 'PrivateGroupMembersController@unauthenticatedSendInvitation');
+
         // Course
         Route::group([
             'prefix' => 'course'
@@ -266,13 +271,20 @@ Route::group([
         Route::post('/private-groups/discussion/reply/create', 'PrivateGroupDiscussionRepliesController@createReply');
         Route::post('/private-groups/discussion/reply/update', 'PrivateGroupDiscussionRepliesController@updateReply');
         Route::get('/private-groups/{id}/books','PrivateGroupsController@books')->name('learner.private-groups.books');
-        Route::get('/private-groups/{id}/preferences','PrivateGroupsController@preferences')->name('learner.private-groups.preferences');
-        Route::get('/private-groups/preferences/get/{id}','PrivateGroupsController@viewPreference')->name('learner.private-groups.preferences-get');
-        Route::post('/private-groups/preferences/set','PrivateGroupsController@setPreference')->name('learner.private-groups.preferences-set');
         Route::get('/private-groups/shared-book/list/{group_id}','PrivateGroupSharedBookController@listSharedBook');
         Route::post('/private-groups/shared-book/share','PrivateGroupSharedBookController@shareBook');
         Route::post('/private-groups/shared-book/update','PrivateGroupSharedBookController@updateSharedBook');
         Route::post('/private-groups/shared-book/remove','PrivateGroupSharedBookController@destroySharedBook');
+        Route::get('/private-groups/{id}/preferences','PrivateGroupsController@preferences')->name('learner.private-groups.preferences');
+        Route::get('/private-groups/preferences/get/{id}','PrivateGroupsController@viewPreference')->name('learner.private-groups.preferences-get');
+        Route::post('/private-groups/preferences/set','PrivateGroupsController@setPreference')->name('learner.private-groups.preferences-set');
+        Route::get('/private-groups/{id}/members','PrivateGroupMembersController@index')->name('learner.private-groups.members');
+        Route::post('/private-groups/member/link/get','PrivateGroupMembersController@getInvitationLink')->name('learner.private-groups.invitation-link.get');
+        Route::get('/private-groups/invitation/{status}/{token}', 'PrivateGroupMembersController@confirmInvitation')->name('learner.private-groups.invitation.action');
+        Route::post('/private-group/invite/send', 'PrivateGroupMembersController@authenticatedSendInvitation');
+        Route::get('/private-groups/{id}/members/invitations/list/{status}','PrivateGroupMembersController@listInvitations');
+        Route::post('/private-groups/member/invitation/cancel','PrivateGroupMembersController@cancelInvitation');
+        Route::post('/private-groups/member/invitation/remove','PrivateGroupMembersController@removeMember');
     });
 
 

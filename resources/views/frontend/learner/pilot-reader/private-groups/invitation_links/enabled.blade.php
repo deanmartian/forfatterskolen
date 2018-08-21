@@ -7,19 +7,18 @@
 @section('content')
     <div class="container">
         <div class="row mt-4">
-            <div class="col-sm-8 col-sm-offset-2 mb-3">
+            <div class="col-md-8 col-sm-offset-2 mb-3">
                 <div class="global-card with-border">
                     <div class="card-body">
-                        <h1 class="card-title font-weight-light with-border-b pb-2 mt-0">Invitation Link</h1>
+                       <h1 class="card-title font-weight-light with-border-b pb-2 mt-0">Invitation Link</h1>
                         <p class="font-weight-light margin-top">
                             @if(Auth::check())
-                                @if($hasAccess || $user_author->id === $book->author_id)
-                                    You already have an access to read <strong><i class="font-weight-bold">{{ $book->title }}</i></strong>
-                                @else
+                               @if($hasAccess)
+                                    You already a member in <i class="font-weight-bold">{{ $group->name }}</i>
+                               @else
                                     @if($send_count < 3)
                                         <div class="form-group font-weight-light display-none" id="resultDiv">
-                                            New <i class="font-weight-bold">invitation</i> has been sent to your account. Please click
-                                            <a href="{{ route('learner.book-author') }}">here</a> to view the invitation.
+                                            New <i class="font-weight-bold">invitation</i> has been sent to your account. Please go to pilotleser page in order to accept or decline it.
                                             Additionally, you will also received an <strong class="font-weight-bold">email</strong> containing the invitation details.
                                         </div>
                                         <div class="form-group font-weight-light" id="requestingDiv">
@@ -31,9 +30,9 @@
                                             {{ "Sorry, you've reached the maximum sending of invitation to your email." }}
                                         </div>
                                     @endif
-                                @endif
+                               @endif
                             @else
-                                {{ "Ready to read "}} <strong><i class="font-weight-bold">{{ $book->title }}</i></strong> by <strong>{{ $author->first_name . " " . $author->last_name }}</strong>{{ "? Just enter your email address below and we'll send you a link to get started. "}}
+                                {{ "Ready to read "}} <i class="font-weight-bold">{{ $group->name }}</i> by <strong>{{ $author->first_name . " " . $author->last_name }}</strong>{{ "? Just enter your email address below and we'll send you a link to get started. "}}
                                 <form id="sentEmailForm">
                                     <div class="row">
                                         <div class="col-md-6 col-md-offset-3">
@@ -54,15 +53,13 @@
 @section('scripts')
     <script src="{{ asset('js/toastr/toastr.min.js') }}"></script>
     <script>
-        let book_id = "{{ $book->id }}";
+        let group_id = "{{ $group->id }}";
         let email = null;
-        let invitation_link = "{{ route('book.invite.send') }}";
         @if(Auth::check())
-                @if(!$hasAccess && $user_author->id !== $book->author_id && $send_count < 3)
-                    email = "{{ Auth::user()->email }}";
-                @endif
-            invitation_link = "{{ route('account.book.invite.send') }}";
+            @if(!$hasAccess && $send_count < 3)
+                email = "{{ Auth::user()->email }}";
+            @endif
         @endif
     </script>
-    <script src="{{ asset('/js/pilot-reader/invitation_link.js') }}"></script>
+    <script src="{{ asset('/js/pilot-reader/private-groups/invitation_link.js') }}"></script>
 @endsection

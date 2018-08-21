@@ -8,7 +8,7 @@ use App\User;
 
 class InvitationsTransformer extends TransformerAbstract
 {
-    public function transform(PilotReaderBookInvitation $invitation)
+    public function transform($invitation)
     {
         return [
             'id' => (int) $invitation->id,

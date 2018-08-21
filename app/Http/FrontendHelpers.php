@@ -3,6 +3,7 @@
 namespace App\Http;
 use App\PilotReaderBook;
 use App\PilotReaderBookReading;
+use App\PrivateGroupMember;
 use Carbon\Carbon;
 
 class FrontendHelpers
@@ -293,7 +294,8 @@ class FrontendHelpers
             array( 'route_name' => 'learner.private-groups.show', 'label' => 'Home' ),
             array( 'route_name' => 'learner.private-groups.discussion', 'label' => 'Discussion' ),
             array( 'route_name' => 'learner.private-groups.books', 'label' => 'Books' ),
-            array( 'route_name' => 'learner.private-groups.preferences', 'label' => 'Preferences' )
+            array( 'route_name' => 'learner.private-groups.preferences', 'label' => 'Preferences' ),
+            array( 'route_name' => 'learner.private-groups.members', 'label' => 'Members' )
         );
 
         if ($navs) {
@@ -306,6 +308,23 @@ class FrontendHelpers
 
         return $navs;
 
+    }
+
+    /**
+     * Check if user is member of the group
+     * @param $group_id
+     * @param $user_id
+     * @return int
+     */
+    public static function isPrivateGroupMember($group_id, $user_id)
+    {
+        $isMember = 0;
+        $groupMember = PrivateGroupMember::where(['private_group_id' => $group_id,'user_id' => $user_id])->first();
+        if ($groupMember) {
+            $isMember++;
+        }
+
+        return $isMember;
     }
 
     /**

@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Http\FrontendHelpers;
 use App\PrivateGroup;
 use App\PrivateGroupDiscussion;
 use App\PrivateGroupMember;
@@ -79,10 +80,12 @@ class PrivateGroupsController extends Controller {
     public function show($id)
     {
         if($privateGroup = PrivateGroup::find($id)) {
-            $page_title = $privateGroup->name;
-            $announcements = $privateGroup->discussions()->where('is_announcement',1)->get();
-            return view('frontend.learner.pilot-reader.private-groups.show', compact('privateGroup',
-                'page_title', 'announcements'));
+            if (FrontendHelpers::isPrivateGroupMember($id, Auth::user()->id)) {
+                $page_title = $privateGroup->name;
+                $announcements = $privateGroup->discussions()->where('is_announcement',1)->get();
+                return view('frontend.learner.pilot-reader.private-groups.show', compact('privateGroup',
+                    'page_title', 'announcements'));
+            }
         }
 
         return redirect()->route('learner.private-groups.index');
@@ -112,9 +115,11 @@ class PrivateGroupsController extends Controller {
     public function books($id)
     {
         if($privateGroup = PrivateGroup::find($id)) {
-            $page_title = $privateGroup->name.' Books';
-            return view('frontend.learner.pilot-reader.private-groups.books', compact('privateGroup',
-                'page_title'));
+            if (FrontendHelpers::isPrivateGroupMember($id, Auth::user()->id)) {
+                $page_title = $privateGroup->name . ' Books';
+                return view('frontend.learner.pilot-reader.private-groups.books', compact('privateGroup',
+                    'page_title'));
+            }
         }
 
         return redirect()->route('learner.private-groups.index');
@@ -128,14 +133,21 @@ class PrivateGroupsController extends Controller {
     public function preferences($id)
     {
         if($privateGroup = PrivateGroup::find($id)) {
-            $page_title = $privateGroup->name.' Preferences';
-            return view('frontend.learner.pilot-reader.private-groups.preferences', compact('privateGroup',
-                'page_title'));
+            if (FrontendHelpers::isPrivateGroupMember($id, Auth::user()->id)) {
+                $page_title = $privateGroup->name . ' Preferences';
+                return view('frontend.learner.pilot-reader.private-groups.preferences', compact('privateGroup',
+                    'page_title'));
+            }
         }
 
         return redirect()->route('learner.private-groups.index');
     }
 
+    /**
+     * Set the preference
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function setPreference(Request $request)
     {
         $preference = $this->viewPreference($request->private_group_id);
@@ -157,6 +169,11 @@ class PrivateGroupsController extends Controller {
         return response()->json(['success' => 'Preferences Saved.', compact('')], 200);
     }
 
+    /**
+     * View preference
+     * @param $group_id
+     * @return \Illuminate\Database\Eloquent\Model|null|static
+     */
     public function viewPreference($group_id)
     {
         return PrivateGroupMemberPreference::where([ 'user_id' => Auth::user()->id, 'private_group_id' => $group_id ])->first();

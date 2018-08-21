@@ -2,11 +2,13 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Http\FrontendHelpers;
 use App\PrivateGroup;
 use App\PrivateGroupDiscussion;
 use App\Transformer\PrivateGroupDiscussionsRepliesTransFormer;
 use App\Transformer\PrivateGroupDiscussionsTransFormer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 
@@ -20,9 +22,11 @@ class PrivateGroupDiscussionsController extends Controller {
     public function index($private_group_id)
     {
         if($privateGroup = PrivateGroup::find($private_group_id)) {
-            $page_title = $privateGroup->name.' Discussion';
-            return view('frontend.learner.pilot-reader.private-groups.discussions', compact('privateGroup',
-                'page_title'));
+            if (FrontendHelpers::isPrivateGroupMember($private_group_id, Auth::user()->id)) {
+                $page_title = $privateGroup->name . ' Discussion';
+                return view('frontend.learner.pilot-reader.private-groups.discussions', compact('privateGroup',
+                    'page_title'));
+            }
         }
 
         return redirect()->route('learner.private-groups.index');
