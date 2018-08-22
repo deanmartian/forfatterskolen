@@ -118,7 +118,9 @@ class FreeManuscriptController extends Controller
             $subject = 'Tilbakemelding på din tekst';
             $from = "post@forfatterskolen.no";
 
-            AdminHelpers::send_mail($to, $subject, $message, $from );
+            /*AdminHelpers::send_mail($to, $subject, $message, $from );*/
+            AdminHelpers::send_email($subject,
+                'post@forfatterskolen.no', $to, $message);
 
             $newFeedbackHistory = new FreeManuscriptFeedbackHistory();
             $newFeedbackHistory->free_manuscript_id = $id;
@@ -234,7 +236,9 @@ class FreeManuscriptController extends Controller
         $subject = 'Tilbakemelding på din tekst';
         $from = "post@forfatterskolen.no";
 
-        AdminHelpers::send_mail($to, $subject, $message, $from );
+        //AdminHelpers::send_mail($to, $subject, $message, $from );
+        AdminHelpers::send_email($subject,
+            'post@forfatterskolen.no', $to, $message);
         //mail($to, 'Subject', $message, $headers);
 
         $newFeedbackHistory = new FreeManuscriptFeedbackHistory();

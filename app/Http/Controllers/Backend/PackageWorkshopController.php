@@ -46,7 +46,8 @@ class PackageWorkshopController extends Controller
        if ($user && $workshop && $workshop->email_title && $workshop->email_body) {
            $to = $user->email;
            $headers = "From: Forfatterskolen<post@forfatterskolen.no>\r\n";
-           mail($to, $workshop->email_title, $workshop->email_body, $headers);
+           //mail($to, $workshop->email_title, $workshop->email_body, $headers);
+           AdminHelpers::send_email($workshop->email_title, 'post@forfatterskolen.no', $to, $workshop->email_body);
        }
 
        $workshopTaken->save();

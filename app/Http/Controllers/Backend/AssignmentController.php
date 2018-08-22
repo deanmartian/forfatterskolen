@@ -399,7 +399,9 @@ class AssignmentController extends Controller
                 $updateAssignment->text_number = $count;
                 $updateAssignment->save();
 
-                AdminHelpers::send_mail( $userEmail, $subject, $message, $from);
+                //AdminHelpers::send_mail( $userEmail, $subject, $message, $from);
+                AdminHelpers::send_email($subject,
+                    'post@forfatterskolen.no', $userEmail, $message);
                 $count++;
             }
 

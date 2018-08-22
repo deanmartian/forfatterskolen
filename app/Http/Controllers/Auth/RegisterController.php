@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\AdminHelpers;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -46,7 +47,9 @@ class RegisterController extends Controller
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
-        mail($user->email, 'Velkommen til Forfatterskolen', view('emails.registration', compact('actionText', 'actionUrl', 'user')), $headers);
+        //mail($user->email, 'Velkommen til Forfatterskolen', view('emails.registration', compact('actionText', 'actionUrl', 'user')), $headers);
+        AdminHelpers::send_email('Velkommen til Forfatterskolen',
+            'post@forfatterskolen.no', $user->email, view('emails.registration', compact('actionText', 'actionUrl', 'user')));
 
         Auth::login($user);
 

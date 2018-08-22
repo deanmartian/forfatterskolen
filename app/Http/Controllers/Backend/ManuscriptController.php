@@ -151,7 +151,8 @@ class ManuscriptController extends Controller
         $message    = nl2br($request->message);
         $subject    = $request->subject;
 
-        AdminHelpers::send_mail( $to, $subject, $message, $from);
+        //AdminHelpers::send_mail( $to, $subject, $message, $from);
+        AdminHelpers::send_email($subject, $from, $to, $message);
         return redirect()->back();
 
         // Send welcome email

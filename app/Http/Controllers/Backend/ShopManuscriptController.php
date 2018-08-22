@@ -212,7 +212,8 @@ class ShopManuscriptController extends Controller
 
             $email_body = $emailTemplate->email_content."<br/> Expected Finish: ".$request->expected_finish;
 
-            mail($to, 'Forventet dato for tilbakemelding', $email_body, $headers);
+            //mail($to, 'Forventet dato for tilbakemelding', $email_body, $headers);
+            AdminHelpers::send_email('Forventet dato for tilbakemelding', 'post@forfatterskolen.no', $to, $email_body);
         }
 
         return redirect()->back();
@@ -369,7 +370,8 @@ class ShopManuscriptController extends Controller
         $subject = 'Tilbakemelding på din tekst';
         $from = "post@forfatterskolen.no";
 
-        AdminHelpers::send_mail($to, $subject, $message, $from );
+        //AdminHelpers::send_mail($to, $subject, $message, $from );
+        AdminHelpers::send_email($subject, $from, $to, $message);
         //mail($to, 'Subject', $message, $headers);
 
         return redirect()->back();

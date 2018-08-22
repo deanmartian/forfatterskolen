@@ -272,7 +272,9 @@ class CourseController extends Controller
 
             foreach($learners as $learner) {
                 $email = $learner->user->email;
-                AdminHelpers::send_mail($email, $subject, $message, $from);
+                //AdminHelpers::send_mail($email, $subject, $message, $from);
+                AdminHelpers::send_email($subject,
+                    'post@forfatterskolen.no', $email, $message);
             }
         }
 
