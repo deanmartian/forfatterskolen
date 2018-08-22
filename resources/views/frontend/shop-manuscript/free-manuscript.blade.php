@@ -92,5 +92,10 @@
 })(jQuery);
 
 $("textarea").textareaCounter({ limit: 500 });
+
+$("form").on('submit',function(){
+    $("[type=submit]").attr('disabled', 'disabled');
+});
+
 </script>
 @stop

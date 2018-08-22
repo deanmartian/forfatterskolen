@@ -6,3 +6,245 @@
 [15-Jun-2018 08:31:00 Europe/Oslo] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 72 bytes) in /home/forfatterskolen/public_html/laravel/app/Http/Controllers/Backend/InvoiceController.php on line 51
 [15-Jun-2018 08:31:32 Europe/Oslo] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 69 bytes) in /home/forfatterskolen/public_html/laravel/app/Http/Controllers/Backend/InvoiceController.php on line 51
 [15-Jun-2018 08:32:26 Europe/Oslo] PHP Fatal error:  Allowed memory size of 33554432 bytes exhausted (tried to allocate 81 bytes) in /home/forfatterskolen/public_html/laravel/app/Http/Controllers/Frontend/LearnerController.php on line 451
+[15-Jun-2018 12:52:07 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../app/Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php:50
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../app/...', '/home/forfatter...', 50, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/laravel/fram in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:52:07 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../app/Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:52:26 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../app/Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php:50
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../app/...', '/home/forfatter...', 50, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/laravel/fram in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:52:26 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../app/Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:52:57 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../app/Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php:50
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../app/...', '/home/forfatter...', 50, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/laravel/fram in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:52:57 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../app/Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:53:57 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../app/Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php:50
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../app/...', '/home/forfatter...', 50, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/laravel/fram in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:53:57 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../app/Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:54:23 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../app/Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php:50
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../app/...', '/home/forfatter...', 50, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/laravel/fram in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:54:23 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../app/Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:54:40 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(app/Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php:50
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(app/Htt...', '/home/forfatter...', 50, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/laravel/framewo in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:54:40 Europe/Oslo] PHP Fatal error:  main(): Failed opening required 'app/Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:54:57 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../../app/Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php:50
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../../a...', '/home/forfatter...', 50, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/laravel/f in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:54:57 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../../app/Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:55:08 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../app/Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/WorkshopController.php:17
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/WorkshopController.php(17): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../app/...', '/home/forfatter...', 17, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/WorkshopController.php(17): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/laravel/f in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/WorkshopController.php on line 17
+[15-Jun-2018 12:55:08 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../app/Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/WorkshopController.php on line 17
+[15-Jun-2018 12:55:16 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../app/Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/WorkshopController.php:17
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/WorkshopController.php(17): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../app/...', '/home/forfatter...', 17, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/WorkshopController.php(17): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/laravel/f in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/WorkshopController.php on line 17
+[15-Jun-2018 12:55:16 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../app/Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/WorkshopController.php on line 17
+[15-Jun-2018 12:55:22 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../app/Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/WorkshopController.php:17
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/WorkshopController.php(17): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../app/...', '/home/forfatter...', 17, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/WorkshopController.php(17): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/laravel/f in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/WorkshopController.php on line 17
+[15-Jun-2018 12:55:22 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../app/Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/WorkshopController.php on line 17
+[15-Jun-2018 12:55:39 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../../../app/Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php:50
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../../....', '/home/forfatter...', 50, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/larave in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:55:39 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../../../app/Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:55:42 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../../../app/Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php:50
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../../....', '/home/forfatter...', 50, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/larave in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:55:42 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../../../app/Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:55:43 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../../../app/Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php:50
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../../....', '/home/forfatter...', 50, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/larave in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:55:43 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../../../app/Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:55:44 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../../../app/Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php:50
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../../....', '/home/forfatter...', 50, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/larave in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:55:44 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../../../app/Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:55:46 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../../../app/Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php:50
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../../....', '/home/forfatter...', 50, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/larave in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:55:46 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../../../app/Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:55:49 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../../../app/Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php:50
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../../....', '/home/forfatter...', 50, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/larave in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:55:49 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../../../app/Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:55:56 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../../../app/Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php:50
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../../....', '/home/forfatter...', 50, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/larave in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:55:56 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../../../app/Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:56:24 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../../../../app/Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php:50
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../../....', '/home/forfatter...', 50, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/lar in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:56:24 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../../../../app/Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:57:02 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../../PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php:50
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../../P...', '/home/forfatter...', 50, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/laravel/framework/ in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:57:02 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../../PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:57:23 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../../../PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php:50
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../../....', '/home/forfatter...', 50, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/laravel/framewo in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:57:23 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../../../PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:57:41 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../../../Http/PaypalIPN/PaypalIPN.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php:50
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../../....', '/home/forfatter...', 50, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php(50): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/laravel/fr in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 12:57:41 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../../../Http/PaypalIPN/PaypalIPN.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/LearnerController.php on line 50
+[15-Jun-2018 13:02:10 Europe/Oslo] PHP Fatal error:  Call to undefined function zip_open() in /home/forfatterskolen/public_html/Docx2Text.php on line 33
+[15-Jun-2018 13:10:29 Europe/Oslo] PHP Fatal error:  Call to undefined function zip_open() in /home/forfatterskolen/public_html/Docx2Text.php on line 33
+[15-Jun-2018 13:11:07 Europe/Oslo] PHP Fatal error:  Call to undefined function zip_open() in /home/forfatterskolen/public_html/Docx2Text.php on line 33
+[16-Jun-2018 10:13:58 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../app/Http/BackupDB/MySQLDump.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Backend/PageController.php:27
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Backend/PageController.php(27): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../app/...', '/home/forfatter...', 27, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Backend/PageController.php(27): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/laravel/framework/src/Ill in /home/forfatterskolen/author-school/app/Http/Controllers/Backend/PageController.php on line 27
+[16-Jun-2018 10:13:58 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../app/Http/BackupDB/MySQLDump.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Backend/PageController.php on line 27
+[16-Jun-2018 10:14:25 Europe/Oslo] PHP Warning:  Uncaught exception 'ErrorException' with message 'require(../app/Http/BackupDB/MySQLDump.php): failed to open stream: No such file or directory' in /home/forfatterskolen/author-school/app/Http/Controllers/Backend/PageController.php:27
+Stack trace:
+#0 /home/forfatterskolen/author-school/app/Http/Controllers/Backend/PageController.php(27): Illuminate\Foundation\Bootstrap\HandleExceptions->handleError(2, 'require(../app/...', '/home/forfatter...', 27, Array)
+#1 /home/forfatterskolen/author-school/app/Http/Controllers/Backend/PageController.php(27): require()
+#2 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(444): include('/home/forfatter...')
+#3 /home/forfatterskolen/author-school/vendor/composer/ClassLoader.php(322): Composer\Autoload\includeFile('/home/forfatter...')
+#4 [internal function]: Composer\Autoload\ClassLoader->loadClass('App\\Http\\Contro...')
+#5 [internal function]: spl_autoload_call('App\\Http\\Contro...')
+#6 /home/forfatterskolen/author-school/vendor/laravel/framework/src/Ill in /home/forfatterskolen/author-school/app/Http/Controllers/Backend/PageController.php on line 27
+[16-Jun-2018 10:14:25 Europe/Oslo] PHP Fatal error:  main(): Failed opening required '../app/Http/BackupDB/MySQLDump.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/app/Http/Controllers/Backend/PageController.php on line 27
+[25-Jun-2018 10:17:48 Europe/Oslo] PHP Fatal error:  Method Illuminate\View\View::__toString() must not throw an exception in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/HomeController.php on line 0
+[25-Jun-2018 10:18:26 Europe/Oslo] PHP Fatal error:  Method Illuminate\View\View::__toString() must not throw an exception in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/HomeController.php on line 0
+[19-Jul-2018 07:52:27 UTC] PHP Warning:  require(/home/forfatterskolen/author-school/bootstrap/../vendor/autoload.php): failed to open stream: No such file or directory in /home/forfatterskolen/author-school/bootstrap/autoload.php on line 17
+[19-Jul-2018 07:52:27 UTC] PHP Fatal error:  require(): Failed opening required '/home/forfatterskolen/author-school/bootstrap/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/forfatterskolen/author-school/bootstrap/autoload.php on line 17
+[25-Jul-2018 02:55:57 Europe/Oslo] PHP Fatal error:  Call to a member function count() on null in /home/forfatterskolen/author-school/storage/framework/views/2464a666ef8a9ac236a4e999f7587b944c8bb7ba.php on line 22
+[07-Aug-2018 10:16:37 Europe/Oslo] PHP Parse error:  syntax error, unexpected end of file in /home/forfatterskolen/author-school/routes/web.php on line 130
+[20-Aug-2018 04:12:08 Europe/Oslo] PHP Fatal error:  Class 'App\Http\Middleware\Auth' not found in /home/forfatterskolen/author-school/app/Http/Middleware/CheckAutoRenewCourses.php on line 83
+[21-Aug-2018 04:13:53 Europe/Oslo] PHP Fatal error:  Class 'App\Transformer\PrivateGroupTransFormer' not found in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/PrivateGroupsController.php on line 54
+[21-Aug-2018 04:14:46 Europe/Oslo] PHP Fatal error:  Class 'App\Transformer\PrivateGroupTransFormer' not found in /home/forfatterskolen/author-school/app/Http/Controllers/Frontend/PrivateGroupsController.php on line 54

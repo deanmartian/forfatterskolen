@@ -71,7 +71,7 @@ $style = [
                     <!-- Email Body -->
                     <tr>
                         <td style="{{ $style['email-body'] }}" width="100%">
-                            <table style="{{ $style['email-body_inner'] }}" align="center" width="570" cellpadding="0" cellspacing="0">
+                            <table style="{{ $style['email-body_inner'] }}" align="left" width="570" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td style="{{ $fontFamily }} {{ $style['email-body_cell'] }}">
                                         From: {{ $name }} <br />
