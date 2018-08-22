@@ -76,7 +76,8 @@ class HomeController extends Controller
             $headers .= "MIME-Version: 1.0\r\n";
             $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
-            mail('post@forfatterskolen.no', 'Inquiry Message', $email_content, $headers);
+            //mail('post@forfatterskolen.no', 'Inquiry Message', $email_content, $headers);
+            AdminHelpers::send_email('Inquiry Message','post@forfatterskolen.no','post@forfatterskolen.no', $email_content);
         }
         return view('frontend.contact-us');
     }
@@ -771,35 +772,12 @@ class HomeController extends Controller
 
     public function testemail()
     {
-        $settings = PilotReaderBookSettings::where('is_reading_reminder_on',1)->get();
-        foreach($settings as $setting) {
-            $reminder_days = $setting->days_of_reminder;
-            $readers = PilotReaderBookReading::where(['book_id' => $setting->book_id])->get();
-            foreach($readers as $reader) {
-                // format the last seen first to remove time on comparison
-                $last_seen = Carbon::parse($reader->last_seen)->format('Y-m-d');
-                $days_diff = Carbon::parse($last_seen)->diffInDays(Carbon::today());
-
-                // check if the day difference is greater than the set reminder days
-                if ($days_diff > $reminder_days) {
-                    $book       = $reader->book;
-                    $to         = $reader->user->email;
-                    $subject    = 'Reading reminder for '.$book->title;
-
-                    $email_data = [
-                        'receiver'      => $reader->user->first_name,
-                        'book_title'    => $book->title,
-                        'days_diff'     => $days_diff,
-                        'book_author'   => $book->author->full_name,
-                        'book_link'     => route('learner.book-author-book-show', $book->id)
-                    ];
-
-                    return view('emails.book_reminder',compact('email_data'));
-                    /*AdminHelpers::send_mail($to, $subject,
-                        view('emails.book_reminder',compact('email_data')),'no-reply@forfatterskolen.no');*/
-                }
-            }
-        }
+        $subject = 'this is the subject';
+        $from = 'post@forfatterskolen.no';
+        $to = 'elybutabara@gmail.com';
+        $content = 'this is a content';
+        AdminHelpers::send_email($subject, $from, $to, $content);
+        echo "sent";
 
     }
 
