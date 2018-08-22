@@ -373,7 +373,9 @@ class ShopController extends Controller
         $headers1 = "From: Forfatterskolen<".$from.">\r\n";
         $headers1 .= "MIME-Version: 1.0\r\n";
         $headers1 .= "Content-Type: text/html; charset=UTF-8\r\n";
-        mail('support@forfatterskolen.no', 'New Course Order', Auth::user()->first_name . ' has ordered the course ' . $package->course->title, $headers1);
+        //mail('support@forfatterskolen.no', 'New Course Order', Auth::user()->first_name . ' has ordered the course ' . $package->course->title, $headers1);
+        AdminHelpers::send_email('New Course Order',
+            'post@forfatterskolen.no', 'support@forfatterskolen.no', Auth::user()->first_name . ' has ordered the course ' . $package->course->title);
 
 
         // Send course email
@@ -384,7 +386,10 @@ class ShopController extends Controller
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
         $user = Auth::user();
         $email_content = $package->course->email;
-        mail($user->email, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
+        //mail($user->email, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
+        AdminHelpers::send_email($package->course->title,
+            'post@forfatterskolen.no', $user->email,
+            view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')));
 
         if( $paymentMode->mode == "Paypal" ) :
             echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">

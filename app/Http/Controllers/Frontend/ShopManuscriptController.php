@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Editor;
+use App\Http\AdminHelpers;
 use App\ShopManuscriptUpgrade;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -121,7 +122,9 @@ class ShopManuscriptController extends Controller
             // Admin notification
             $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
             $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
-            mail($toMail, 'New manuscript submitted for shop manuscript', $message);
+            AdminHelpers::send_email('New manuscript submitted for shop manuscript',
+                'post@forfatterskolen.no',$toMail, $message);
+            //mail($toMail, 'New manuscript submitted for shop manuscript', $message);
         endif;
 
         if ($request->hasFile('synopsis') && $request->file('synopsis')->isValid()) :
@@ -325,7 +328,9 @@ class ShopManuscriptController extends Controller
         // Admin notification
         $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
         $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
-        mail($toMail, 'New manuscript submitted for shop manuscript', $message);
+        //mail($toMail, 'New manuscript submitted for shop manuscript', $message);
+            AdminHelpers::send_email('New manuscript submitted for shop manuscript',
+                'post@forfatterskolen.no', $toMail, $message);
         return redirect()->back();
         }
     }
@@ -425,7 +430,10 @@ class ShopManuscriptController extends Controller
             ]);
             // Admin notification
             $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
-            mail('post@forfatterskolen.no', 'New manuscript submitted for shop manuscript', $message);
+            //mail('post@forfatterskolen.no', 'New manuscript submitted for shop manuscript', $message);
+            $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
+            AdminHelpers::send_email('New manuscript submitted for shop manuscript',
+                'post@forfatterskolen.no', $toMail, $message);
             return redirect()->back();
         }
     }
@@ -744,7 +752,10 @@ class ShopManuscriptController extends Controller
             $headers .= "MIME-Version: 1.0\r\n";
             $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
-            mail('post@forfatterskolen.no', 'Free Manuscript', view('emails.free-manuscript', compact('name', 'email', 'content', 'word_count')), $headers);
+            //mail('post@forfatterskolen.no', 'Free Manuscript', view('emails.free-manuscript', compact('name', 'email', 'content', 'word_count')), $headers);
+            AdminHelpers::send_email('Free Manuscript',
+                'post@forfatterskolen.no', 'post@forfatterskolen.no',
+                view('emails.free-manuscript', compact('name', 'email', 'content', 'word_count')));
             FreeManuscript::create([
                 'name' => $request->name,
                 'email' => $request->email,

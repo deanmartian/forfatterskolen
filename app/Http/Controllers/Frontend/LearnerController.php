@@ -7,6 +7,7 @@ use App\AssignmentGroupLearner;
 use App\CalendarNote;
 use App\Genre;
 use App\Http\AdminHelpers;
+use App\Http\Middleware\Admin;
 use App\Http\Requests\AddWritingGroupRequest;
 use App\LessonDocuments;
 use App\Notification;
@@ -374,7 +375,9 @@ class LearnerController extends Controller
             // Admin notification
             $message = Auth::user()->full_name.' submitted a manuscript for assignment '.$assignment->title;
             $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
-            mail($toMail, 'New manuscript submitted for assignment', $message);
+            //mail($toMail, 'New manuscript submitted for assignment', $message);
+            AdminHelpers::send_email('New manuscript submitted for assignment',
+                'post@forfatterskolen.no', $toMail, $message);
         endif;
 
 
@@ -725,7 +728,9 @@ class LearnerController extends Controller
                     ]);
                     // Admin notification
                     $message = Auth::user()->full_name.' submitted a manuscript for course '.$courseTaken->package->course->title;
-                    mail('post@forfatterskolen.no', 'New manuscript submitted for course', $message);
+                    //mail('post@forfatterskolen.no', 'New manuscript submitted for course', $message);
+                    AdminHelpers::send_email('New manuscript submitted for course',
+                        'post@forfatterskolen.no','post@forfatterskolen.no', $message);
                 else :
                     return abort('503');
                 endif;
@@ -853,7 +858,10 @@ class LearnerController extends Controller
             $courseTaken->save();
 
             // Email to support
-            mail('support@forfatterskolen.no', 'Course Renewed', Auth::user()->first_name . ' has renewed the course ' . $package->course->title);
+            //mail('support@forfatterskolen.no', 'Course Renewed', Auth::user()->first_name . ' has renewed the course ' . $package->course->title);
+            AdminHelpers::send_email('Course Renewed',
+                'post@forfatterskolen.no', 'support@forfatterskolen.no',
+                Auth::user()->first_name . ' has renewed the course ' . $package->course->title);
 
             // Send course email
             $actionText = 'Mine Kurs';
@@ -862,7 +870,9 @@ class LearnerController extends Controller
             $headers .= "MIME-Version: 1.0\r\n";
             $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
             $email_content = $package->course->email;
-            mail($send_to, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
+            //mail($send_to, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
+            AdminHelpers::send_email($package->course->title, 'post@forfatterskolen.no', $send_to,
+                view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')));
 
             if( $paymentMode->mode == "Paypal" ) :
                 echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
@@ -944,7 +954,10 @@ class LearnerController extends Controller
             AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
 
             // Email to support
-            mail('support@forfatterskolen.no', 'All Courses Renewed', Auth::user()->first_name . ' has renewed all the courses');
+            //mail('support@forfatterskolen.no', 'All Courses Renewed', Auth::user()->first_name . ' has renewed all the courses');
+            AdminHelpers::send_email('All Courses Renewed',
+                'post@forfatterskolen.no', 'support@forfatterskolen.no',
+                Auth::user()->first_name . ' has renewed all the courses');
             return redirect(route('front.shop.thankyou'));
         }
 
@@ -1029,7 +1042,10 @@ class LearnerController extends Controller
                     AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
 
                     // Email to support
-                    mail('support@forfatterskolen.no', 'All Courses Renewed', Auth::user()->first_name . ' has renewed all the courses');
+                    //mail('support@forfatterskolen.no', 'All Courses Renewed', Auth::user()->first_name . ' has renewed all the courses');
+                    AdminHelpers::send_email('All Courses Renewed',
+                        'post@forfatterskolen.no', 'support@forfatterskolen.no',
+                        Auth::user()->first_name . ' has renewed all the courses');
                     return redirect(route('front.shop.thankyou'));
                 }
             }
@@ -1309,7 +1325,10 @@ class LearnerController extends Controller
         }
 
         // Email to support
-        mail('support@forfatterskolen.no', 'New Course Order', Auth::user()->first_name . ' has ordered the course ' . $package->course->title);
+        //mail('support@forfatterskolen.no', 'New Course Order', Auth::user()->first_name . ' has ordered the course ' . $package->course->title);
+        AdminHelpers::send_email('New Course Order',
+            'post@forfatterskolen.no', 'support@forfatterskolen.no',
+            Auth::user()->first_name . ' has ordered the course ' . $package->course->title);
 
         // Send course email
         $actionText = 'Mine Kurs';
@@ -1319,7 +1338,10 @@ class LearnerController extends Controller
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
         $user = Auth::user();
         $email_content = $package->course->email;
-        mail($user->email, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
+        //mail($user->email, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
+        AdminHelpers::send_email($package->course->title,
+            'post@forfatterskolen.no', $user->email,
+            view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')));
 
         if( $paymentMode->mode == "Paypal" ) :
             echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
