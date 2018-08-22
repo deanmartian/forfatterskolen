@@ -81,10 +81,13 @@ class PrivateGroupsController extends Controller {
     {
         if($privateGroup = PrivateGroup::find($id)) {
             if (FrontendHelpers::isPrivateGroupMember($id, Auth::user()->id)) {
-                $page_title = $privateGroup->name;
-                $announcements = $privateGroup->discussions()->where('is_announcement',1)->get();
+                $page_title             = $privateGroup->name;
+                $announcements          = $privateGroup->discussions()->where('is_announcement',1)->get();
+                $featured_book_shared   = $privateGroup->books_shared()->where('visibility',1);
+                $featured_books         =  $featured_book_shared->with('book')->orderBy('created_at','desc')->get();
+                $manager                = $privateGroup->manager;
                 return view('frontend.learner.pilot-reader.private-groups.show', compact('privateGroup',
-                    'page_title', 'announcements'));
+                    'page_title', 'announcements', 'featured_books', 'manager'));
             }
         }
 
@@ -117,8 +120,9 @@ class PrivateGroupsController extends Controller {
         if($privateGroup = PrivateGroup::find($id)) {
             if (FrontendHelpers::isPrivateGroupMember($id, Auth::user()->id)) {
                 $page_title = $privateGroup->name . ' Books';
+                $manager    = $privateGroup->manager;
                 return view('frontend.learner.pilot-reader.private-groups.books', compact('privateGroup',
-                    'page_title'));
+                    'page_title', 'manager'));
             }
         }
 
@@ -135,8 +139,9 @@ class PrivateGroupsController extends Controller {
         if($privateGroup = PrivateGroup::find($id)) {
             if (FrontendHelpers::isPrivateGroupMember($id, Auth::user()->id)) {
                 $page_title = $privateGroup->name . ' Preferences';
+                $manager    = $privateGroup->manager;
                 return view('frontend.learner.pilot-reader.private-groups.preferences', compact('privateGroup',
-                    'page_title'));
+                    'page_title', 'manager'));
             }
         }
 

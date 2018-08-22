@@ -17,4 +17,9 @@ class PrivateGroupMember extends Model
     {
         return $this->belongsTo('App\User');
     }
+
+    public function preferences()
+    {
+        return $this->hasMany('App\PrivateGroupMemberPreference', 'user_id');
+    }
 }

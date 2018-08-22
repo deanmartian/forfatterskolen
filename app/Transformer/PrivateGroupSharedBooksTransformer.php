@@ -11,7 +11,7 @@ class PrivateGroupSharedBooksTransFormer extends TransformerAbstract
     public function transform(PrivateGroupSharedBook $shared)
 	{  
         $book = $shared->book;
-        $author = Auth::user();
+        $author = $shared->book->author;
         return [
             'id' => (int) $shared->id,
             'book_id' => (int) $book->id,

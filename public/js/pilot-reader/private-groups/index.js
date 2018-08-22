@@ -229,6 +229,19 @@ const methods = {
 
     },
 
+    toggleLoadingIcon : function(btn, request)
+    {
+        btn.prop('disabled', request === 'show');
+        if(request === 'show')
+        {
+            btn.prepend(`<i class="fa fa-spinner fa-pulse fa-fw"></i> `);
+            btn.addClass("disabled");
+            return
+        }
+        btn.removeClass("disabled");
+        btn.find(".fas").remove()
+    },
+
     saveDiscussion : function(form)
     {
         let self = this;
@@ -248,13 +261,17 @@ const methods = {
         {
             form_data = form_data.replace("is_announcement=on", "is_announcement=1")
         }
+        let btn = form.find("button[type='submit']");
+        this.toggleLoadingIcon(btn, 'show');
         $.post('/account/private-groups/discussions/create', form_data)
             .then(function(response){
+                self.toggleLoadingIcon(btn, 'hide');
                 self.listDiscussion();
                 self.closeDiscussionDivForm();
                 toastr.success(response.success, "Success");
             })
             .catch(function(err){
+                self.toggleLoadingIcon(btn, 'hide');
                 self.clearError(form);
                 let errors = err.responseJSON;
                 let status = err.status;
@@ -758,6 +775,50 @@ const methods = {
                 }
             }
         })
+    },
+
+    notReaderModal: function(book_id, quit_reader) {
+        let modal = $("#bookPreviewModal");
+        modal.modal('show');
+        let loading_div = modal.find(".book-preview-details-load");
+        let details_div = modal.find(".book-preview-details");
+        let btn = modal.find(".btn-outline-primary");
+        loading_div.removeClass('display-none');
+        details_div.addClass('display-none');
+        $("#quit-reader").addClass('display-none');
+        $("#not-reader").addClass('display-none');
+        $.get(`/account/private-groups/shared-book/book/${ book_id }`)
+            .then(function(response){
+                btn.data('value', response.id); // store the book id
+                modal.find(".preview-detail").each(function(){
+                    let element = $(this);
+                    let key = element.data('id').replace('book_', '');
+                    let val = response[key];
+                    element.prev('p.lead').toggle(!!val);
+                    element.html(val)
+                });
+                loading_div.addClass('display-none');
+                details_div.removeClass('display-none');
+                if (quit_reader) {
+                    $("#quit-reader").removeClass('display-none');
+                } else {
+                    $("#not-reader").removeClass('display-none');
+                }
+            })
+    },
+
+    becomeReader : function(el)
+    {
+        let book_id = $(el).data('value');
+        let data = { book_id : book_id };
+        $.post('/account/private-groups/shared-book/book/become-reader', data)
+            .then(function(response){
+                $("#bookPreviewModal").modal('hide');
+                toastr.success(response.success, "Success");
+                setTimeout(function(){
+                    window.location.href = '/account/book-author/book/' + book_id
+                }, 1000)
+            })
     },
 
 };

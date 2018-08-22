@@ -20,7 +20,7 @@
                                     <p class="font-weight-light">
                                         Sorry. This is an invalid invitation request. If you believe this is an error,
                                         please email us and leave your feedback on
-                                        <a href="mailto:support@forfatterskolen.no">support@forfatterskolen.no</a>
+                                        <a href="mailto:post@forfatterskolen.no">post@forfatterskolen.no</a>
                                     </p>
                                 </div>
                             </div>

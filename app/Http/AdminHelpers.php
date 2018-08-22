@@ -99,7 +99,10 @@ class AdminHelpers
 
         //send message
         $mailer = new Swift_Mailer($transport);
-        $mailer->send($message);
+        if ($mailer->send($message)) {
+            return true;
+        }
+        return false;
 	}
 
     public static function send_mail( $to, $subject, $content, $from)

@@ -30,8 +30,9 @@ class PrivateGroupMembersController extends Controller {
         if($privateGroup = PrivateGroup::find($private_group_id)) {
             if (FrontendHelpers::isPrivateGroupMember($private_group_id, Auth::user()->id)) {
                 $page_title = $privateGroup->name . ' Members';
+                $manager    = $privateGroup->manager;
                 return view('frontend.learner.pilot-reader.private-groups.members', compact('privateGroup',
-                    'page_title'));
+                    'page_title', 'manager'));
             }
         }
 
@@ -248,7 +249,7 @@ class PrivateGroupMembersController extends Controller {
             $invitation_data['group_name']  = $group->name;
             $invitation_data['name']        = $sender_name;
 
-            $to         = 'elybutabara@gmail.com';//$email_data['receiver_email'];
+            $to         = $email_data['receiver_email'];
             $subject    = 'Invitation';
 
             AdminHelpers::send_mail($to, $subject,
@@ -312,10 +313,12 @@ class PrivateGroupMembersController extends Controller {
                         }
                     }
                     // add notification
-                    $message = $user->full_name." has <i>accepted</i> your invitation to join <b>".$group->name."</b>";
+                    $message = $user->full_name." has <i>accepted</i> your invitation to join <b>{book_title}</b>";
                     $notification = [
                         'user_id' => $author->id,
-                        'message' => $message
+                        'message' => $message,
+                        'book_id' => $group->id,
+                        'is_group' => 1
                     ];
                     AdminHelpers::createNotification($notification);
 
@@ -336,10 +339,12 @@ class PrivateGroupMembersController extends Controller {
                 }
 
                 // add notification
-                $message = $user->full_name." has <i>declined</i> your invitation to join <b>".$group->name."</b>";
+                $message = $user->full_name." has <i>declined</i> your invitation to join <b>{book_title}</b>";
                 $notification = [
                     'user_id' => $author->id,
-                    'message' => $message
+                    'message' => $message,
+                    'book_id' => $group->id,
+                    'is_group' => 1
                 ];
                 AdminHelpers::createNotification($notification);
                 DB::commit();

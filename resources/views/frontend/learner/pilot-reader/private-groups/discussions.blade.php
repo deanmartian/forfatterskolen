@@ -14,13 +14,15 @@
                         <label for="" class="label-control">Subject</label>
                         <input type="text" name="subject" class="form-control">
                     </div>
-                    <div class="form-group announce-checkbox-div">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" name="is_announcement" class="custom-control-input" id="customCheck1">
-                            <label class="custom-control-label" for="customCheck1">This is an announcement</label>
+                    @if ($manager)
+                        <div class="form-group announce-checkbox-div">
+                            <div class="custom-control custom-checkbox no-left-padding">
+                                <input type="checkbox" name="is_announcement" class="custom-control-input" id="customCheck1">
+                                <label class="custom-control-label" for="customCheck1">This is an announcement</label>
+                            </div>
+                            <small class="text-muted d-inline-block">Announcements are displayed on the group home page. Group members may also set their email preference to 'announcements only', in which case they will not be alerted unless you choose the 'announcement' type.</small>
                         </div>
-                        <small class="text-muted d-inline-block">Announcements are displayed on the group home page. Group members may also set their email preference to 'announcements only', in which case they will not be alerted unless you choose the 'announcement' type.</small>
-                    </div>
+                    @endif
                     <div class="form-group">
                         <label for="" class="label-control">Message</label>
                         <textarea name="message" id="message_editor"></textarea>

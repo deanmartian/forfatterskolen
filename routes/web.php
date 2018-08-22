@@ -275,6 +275,8 @@ Route::group([
         Route::post('/private-groups/shared-book/share','PrivateGroupSharedBookController@shareBook');
         Route::post('/private-groups/shared-book/update','PrivateGroupSharedBookController@updateSharedBook');
         Route::post('/private-groups/shared-book/remove','PrivateGroupSharedBookController@destroySharedBook');
+        Route::get('/private-groups/shared-book/book/{book_id}','PrivateGroupSharedBookController@getBookDetail');
+        Route::post('/private-groups/shared-book/book/become-reader','PrivateGroupSharedBookController@becomeReader');
         Route::get('/private-groups/{id}/preferences','PrivateGroupsController@preferences')->name('learner.private-groups.preferences');
         Route::get('/private-groups/preferences/get/{id}','PrivateGroupsController@viewPreference')->name('learner.private-groups.preferences-get');
         Route::post('/private-groups/preferences/set','PrivateGroupsController@setPreference')->name('learner.private-groups.preferences-set');

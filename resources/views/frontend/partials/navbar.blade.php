@@ -42,7 +42,7 @@
               @endif
             </a>
             <ul class="dropdown-menu notification-list">
-              @foreach(Auth::user()->notifications as $notification)
+              @forelse(Auth::user()->notifications()->where('is_read',0)->get() as $notification)
                 <li id="notif-{{ $notification->id }}" @if(!$notification->is_read)class="unread"@endif>
                   <i class="remove-notif" onclick="layoutMethod.removeNotification({{ $notification->id }})">x</i>
                     <?php
@@ -52,14 +52,28 @@
                       $book           = \App\PilotReaderBook::find($notification->book_id);
                       $book_title     = $book ? $book->title : '';
                       $chapter        = \App\PilotReaderBookChapter::find($notification->chapter_id);
-                      $chapter_title  = $chapter ? $chapter->title : '';
+                      $chapter_title  = $chapter ? ($chapter->title ?:
+                          \App\Http\FrontendHelpers::getChapterTitle($book, $notification->chapter_id))
+                          : '';
+
+                      // check if the notification is for private groups
+                      if($notification->is_group) {
+                          $group = \App\PrivateGroup::find($notification->book_id);
+                          $book_title     = $group ? $group->name : '';
+                          $discussion = \App\PrivateGroupDiscussion::find($notification->chapter_id);
+                          $chapter_title = $discussion ? $discussion->subject : '';
+                      }
 
                       $string_value         = array($book_title, $chapter_title);
                       $notification_message = str_replace($replace_string, $string_value, $phrase);
                     ?>
                     {!! $notification_message !!}
                 </li>
-              @endforeach
+              @empty
+                <li class="text-center">
+                  <b>No unread notification</b>
+                </li>
+              @endforelse
               <li>
                 <a href="{{ route('learner.notifications') }}#">
                   See All

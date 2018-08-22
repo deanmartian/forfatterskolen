@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Auth;
 
 class PrivateGroup extends Model
 {
@@ -26,5 +28,15 @@ class PrivateGroup extends Model
     public function members()
     {
         return $this->hasMany('App\PrivateGroupMember');
+    }
+
+    /**
+     * Get the manager of the group
+     * @return Relation
+     */
+    public function manager()
+    {
+        return $this->hasOne('App\PrivateGroupMember')
+            ->where(['role' => 'manager', 'user_id' => Auth::user()->id]);
     }
 }

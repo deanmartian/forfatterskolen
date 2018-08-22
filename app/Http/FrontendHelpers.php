@@ -88,6 +88,11 @@ class FrontendHelpers
         return \Carbon\Carbon::parse($date)->format('d.m.Y').' Klokken '.\Carbon\Carbon::parse($date)->format('H:i');
     }
 
+    public static function formatByMd($date)
+    {
+        return Carbon::parse($date)->format('M d');
+    }
+
 
 	public static function isLessonAvailable($startedAt, $delay, $period)
 	{

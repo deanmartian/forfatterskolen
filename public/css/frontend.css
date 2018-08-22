@@ -982,6 +982,10 @@ footer .social a{
 	position: absolute;
 }
 
+.notif-link {
+	display: initial !important;
+}
+
 .text-red {
 	color: #f00;
 }
@@ -1108,6 +1112,24 @@ body .reader-directory-search, body .author-view-feedbacks {
 	background-color: #E83945!important;
 }
 
+.bg-info-global {
+	background-color: #17a2b8 !important;
+}
+
+.no-underline {
+	text-decoration: none !important;
+}
+
+.text-info-global {
+	color: #17a2b8!important;
+}
+
+.btn-secondary {
+	color: #fff;
+	background-color: #6c757d;
+	border-color: #6c757d;
+}
+
 .card-header:first-child {
 	border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0;
 }
@@ -1229,6 +1251,16 @@ body .reader-directory-search, body .author-view-feedbacks {
 	margin-top: -.375rem;
 	margin-bottom: 0;
 	font-size: 17px;
+}
+
+.card-footer:last-child {
+	border-radius: 0 0 calc(.25rem - 1px) calc(.25rem - 1px);
+}
+
+.card-footer {
+	padding: .75rem 1.25rem;
+	background-color: rgba(0,0,0,.03);
+	border-top: 1px solid rgba(0,0,0,.125);
 }
 
 .w-space-pre-wrap {

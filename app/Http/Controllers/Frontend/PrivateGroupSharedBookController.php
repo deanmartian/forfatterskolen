@@ -3,10 +3,13 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\PilotReaderBook;
+use App\PilotReaderBookReading;
 use App\PrivateGroup;
 use App\PrivateGroupSharedBook;
 use App\Transformer\PrivateGroupSharedBooksTransFormer;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 
@@ -20,8 +23,15 @@ class PrivateGroupSharedBookController extends Controller {
     public function listSharedBook($group_id)
     {
         $fractal = new Manager();
-        $query = PrivateGroup::find($group_id)->books_shared()->get();
-        $resource = new Collection($query, new PrivateGroupSharedBooksTransFormer());
+        $group = PrivateGroup::find($group_id);
+        $member = $group->members()->where('user_id', Auth::user()->id)->first();
+        $query = $group->books_shared();
+        if($member->role === 'members')
+        {
+            $query = $query->where('visibility', '<>', 0);
+        }
+        $test = $query->get();
+        $resource = new Collection($query->get(), new PrivateGroupSharedBooksTransFormer());
         $book_shared = $fractal->createData($resource)->toArray();
         return response()->json(compact('book_shared'));
     }
@@ -83,6 +93,68 @@ class PrivateGroupSharedBookController extends Controller {
             return response()->json(['error' => 'Opss. Something went wrong'], 500);
         }
         return response()->json(['success' => 'Shared Book Removed'], 200);
+    }
+
+    /**
+     * Get the book details
+     * @param $book_id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getBookDetail($book_id)
+    {
+        $book = PilotReaderBook::find($book_id);
+        $book['word_counts'] = $this->getWordCounts($book->chapters);
+        $book['display_name'] = $book['display_name'] ?: $book->author->full_name;
+        $data = collect($book)->except(['user_id', 'chapters', 'created_at', 'updated_at']);
+        return response()->json($data);
+    }
+
+    /**
+     * Pluralize a word
+     * @param $count
+     * @param $substr
+     * @return string
+     */
+    protected function pluralize($count, $substr)
+    {
+        return $count . " ".$substr . ($count > 0? "s" : "");
+    }
+
+    /*
+     * Get the word count
+     * @return string
+     */
+    protected function getWordCounts($chapters)
+    {
+        $word_counts = 0;
+        foreach ($chapters as $key => $chapter) {
+            $content = htmlspecialchars(trim(strip_tags($chapter->chapter_content)));
+            $word_counts += str_word_count($content);
+        }
+        return $this->pluralize($word_counts, 'word');
+    }
+
+    /**
+     * Set a user to become a reader of a book
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function becomeReader(Request $request)
+    {
+        $data = $request->all();
+        $data['user_id'] = Auth::user()->id;
+        // check if the user already exists then update if not then create new record
+        $reader = PilotReaderBookReading::firstOrNew(['book_id' => $data['book_id'], 'user_id' => Auth::user()->id]);
+        $reader->role           = 'reader';
+        $reader->status         = 0;
+        $reader->started_at     = NULL;
+        $reader->status_date    = NULL;
+        $reader->deleted_at     = NULL;
+        if(! $reader->save())
+        {
+            return response()->json(['error' => 'Opss. Something went wrong'], 500);
+        }
+        return response()->json(['success' => 'You successfully added as a reader'], 200);
     }
     
 }
