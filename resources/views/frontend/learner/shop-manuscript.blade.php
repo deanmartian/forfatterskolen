@@ -134,7 +134,7 @@
 										<thead>
 										<tr>
 											<th>Manus</th>
-											<th>Learner</th>
+											<th>Date Ordered</th>
 										</tr>
 										</thead>
 										<tbody>
