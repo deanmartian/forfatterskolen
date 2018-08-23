@@ -39,7 +39,7 @@
 
     @if(Session::has('compute_manuscript'))
         <div id="computeManuscriptModal" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-sm">
+            <div class="modal-dialog" style="width: 350px">
                 <div class="modal-content">
                     <div class="modal-body text-center">
                         {!! Session::get('compute_manuscript') !!}

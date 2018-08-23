@@ -191,7 +191,7 @@ class HomeController extends Controller
 
                 $message = $word_count.' TEGN <br />
                     <h3  class="no-margin-top">'.number_format($calculated_price, 2).' kr</h3>
-                    <a href="'.route('front.other-service-checkout', ['plan' => 1, 'has_data' => 1]).'">Checkout</a>
+                    <a href="'.route('front.other-service-checkout', ['plan' => 1, 'has_data' => 1]).'">Bestill</a>
                     ';
                 return redirect()->back()->with('compute_manuscript', $message);
             endif;
@@ -419,7 +419,7 @@ class HomeController extends Controller
 
                 $message = $word_count.' TEGN <br />
                     <h3  class="no-margin-top">'.number_format($calculated_price, 2).' kr</h3>
-                    <a href="'.route('front.other-service-checkout',['plan' => 2, 'has_data' => 1]).'">Checkout</a>';
+                    <a href="'.route('front.other-service-checkout',['plan' => 2, 'has_data' => 1]).'">Bestill</a>';
                 return redirect()->back()->with('compute_manuscript', $message);
             endif;
         }

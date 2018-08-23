@@ -21,7 +21,7 @@
                 <input type="file" class="hidden" name="manuscript" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
                 <input type="text" readonly class="form-control" required="" placeholder="CHOOSE A DOCUMENT"
                 id="select-document">
-                <button type="submit" class="margin-top">COMPUTE</button>
+                <button type="submit" class="margin-top">BEREGN PRIS</button>
             </form>
         </div>
 
@@ -40,7 +40,7 @@
 
     @if(Session::has('compute_manuscript'))
         <div id="computeManuscriptModal" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-sm">
+            <div class="modal-dialog" style="width: 350px">
                 <div class="modal-content">
                     <div class="modal-body text-center">
                         {!! Session::get('compute_manuscript') !!}
