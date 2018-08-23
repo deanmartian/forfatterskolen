@@ -72,7 +72,7 @@ $config     = config('services.facebook');
 $client_id  = $config['client_id'];
 $secret     = $config['client_secret'];
 ?>
-    <div class="container">
+    <div class="container blog-read-container">
         <h1 class="text-center">{{ $blog->title }}</h1>
         {!! $blog->description !!}
     </div>

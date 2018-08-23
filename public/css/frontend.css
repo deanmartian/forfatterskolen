@@ -3516,9 +3516,10 @@ h1,h2,h3,h4,h5,h6,strong{
 	font-size: 11pt;
 	left: 55px;
 	position: relative;
-	width: 500px;
+	/*width: 500px;*/
 	margin-top: -15px;
-	top: 20px;
+	/*top: 20px;*/
+	display: inline-block;
 }
 
 .blog-profile {
@@ -3868,6 +3869,15 @@ h1,h2,h3,h4,h5,h6,strong{
 	.blog-right-content {
 		top: 20px;
 		left: 20px;
+	}
+
+	.blog-read-container p:first-of-type {
+		padding-left: 0 !important;
+	}
+
+	.blog-read-container p:first-of-type img {
+		height: 100% !important;
+		width: 100% !important;
 	}
 
 	.copy-editing-container .title {
@@ -4493,7 +4503,8 @@ h1,h2,h3,h4,h5,h6,strong{
 	}
 
 	.white-bg {
-		height: 640px;
+		/*height: 640px;*/
+		min-height: 700px;
 	}
 
 	.copy-editing-container, .coaching-timer-container {

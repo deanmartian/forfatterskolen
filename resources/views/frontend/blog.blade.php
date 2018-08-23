@@ -15,7 +15,8 @@
                     </div>
                     <div class="col-sm-6 blog-right-content">
                         <div class="blog-profile" style="background-image: url({{ asset($blog->author_image ?: $blog->user->profile_image) }});"></div>
-                        <p class="name">{{ $blog->author_name ?: $blog->user->full_name }}</p>
+                        <p class="name mb-0">{{ $blog->author_name ?: $blog->user->full_name }}</p>
+                        <div class="clearfix"></div>
                         <p class="name">{{ $blog->created_at }}</p>
                         <p class="blog-title">{{ strtoupper($blog->title) }}</p>
                         <div class="blog-description">
