@@ -54,7 +54,8 @@ class HomeController extends Controller
         $free_webinars = FreeWebinar::all();
 
         $webinar_pakke = Course::find(17);
-        $next_webinar = $webinar_pakke->webinars()->where('start_date', '>=' ,Carbon::today())->first();
+        $next_webinar = $webinar_pakke->webinars()->where('start_date', '>=' ,Carbon::today())
+            ->where('set_as_replay', 0)->first();
         $next_free_webinar = FreeWebinar::where('start_date', '>=' ,Carbon::today())->first();
         $latest_blog = Blog::orderBy('created_at', 'desc')->first();
 

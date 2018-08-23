@@ -145,7 +145,7 @@
 				  <div id="kursplan" class="tab-pane fade">
 					  @if ($course->id == 17)
 						  <?php
-                          	$webinars = $course->webinars;
+                          	$webinars = $course->webinars()->where('set_as_replay',0)->get();
 						  ?>
 					  		@foreach($webinars->chunk(4) as $webinars)
 								<div class="row">
@@ -230,4 +230,24 @@
 		@endforeach
 	</div>
 </div>
+
+	<?php
+    	$url = Request::input('show_kursplan');
+    	$showKursplan = 0;
+		if ($url) {
+		    $showKursplan = 1;
+		}
+	?>
+@stop
+
+@section('scripts')
+	<script>
+		let showKursplan = parseInt('{{ $showKursplan }}');
+		if (showKursplan === 1) {
+            $('[href="#kursplan"]').trigger('click');
+            $('html, body').animate({
+                scrollTop: $("#kursplan").offset().top
+            }, 1000);
+		}
+	</script>
 @stop

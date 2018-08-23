@@ -60,7 +60,76 @@
 </div>
 </div>
 
-{{--<h3 class="all-course-header"><span class="highlight">Våre</span> kurs</h3>
+{{--<h3 class="all-course-header"><span class="highlight">Våre</span> kurs</h3>--}}
+
+    <div class="col-sm-12 all-course">
+        <div class="container">
+            <div class="col-sm-4">
+                <h3 class="highlight">
+                    Neste webinar
+                </h3>
+                @if ($next_webinar)
+                    <div class="all-course-course">
+                        <div class="image" style="background-image: url({{ $next_webinar->image ?: asset('/images/no_image.png')}})"></div>
+                        <div class="details">
+                            <div class="course-info">
+                                <h4>{{ $next_webinar->title }}</h4>
+                                <p>{{ str_limit(strip_tags($next_webinar->description), 180)}}</p>
+                            </div>
+                        </div>
+                        <a class="buy_now" href="{{ url('/course/17?show_kursplan=1') }}">
+                            Se alle de kommende webinarene
+                        </a>
+                    </div>
+                @endif
+            </div> <!-- end next webinar -->
+
+            <div class="col-sm-4">
+                <h3 class="highlight">
+                    Neste gratis webinar
+                </h3>
+                <div class="all-course-course">
+                    @if($next_free_webinar)
+                        <div class="all-course-course">
+                            <div class="image" style="background-image: url({{ $next_free_webinar->image ?: asset('/images/no_image.png')}})"></div>
+                            <div class="details">
+                                <div class="course-info">
+                                    <h4>{{ $next_free_webinar->title }}</h4>
+                                    <p>{{ str_limit(strip_tags($next_free_webinar->description), 180)}}</p>
+                                </div>
+                            </div>
+                            <a class="buy_now" href="{{ route('front.free-webinar', $next_free_webinar->id) }}">Register Deg</a>
+                        </div>
+                    @endif
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <h3 class="highlight">
+                    Siste blogginnlegg
+                </h3>
+                <div class="all-course-course">
+                    @if($latest_blog)
+                        <div class="all-course-course">
+                            <div class="image" style="background-image: url({{ $latest_blog->image ?: asset('/images/no_image.png')}})"></div>
+                            <div class="details">
+                                <div class="course-info">
+                                    <h4>{{ $latest_blog->title }}</h4>
+                                    <p>{{ str_limit(strip_tags($latest_blog->description), 180)}}</p>
+                                </div>
+                            </div>
+                            <a class="buy_now" href="{{ route('front.read-blog', $latest_blog->id) }}">Les</a>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12" style="background-color: #f00; height: 2px;">
+    </div>
+
+    <div class="clearfix"></div>
+
 <div class="all-course theme-tabs">
     <div class="tabs-container">
         <ul class="nav nav-tabs">
@@ -116,67 +185,8 @@
         </div>
       </div>
     </div>
-</div>--}}
+</div>
 
-    <div class="col-sm-12 all-course">
-        <div class="container">
-            <div class="col-sm-4">
-                <h3 class="highlight">
-                    Next Webinar
-                </h3>
-                @if ($next_webinar)
-                    <div class="all-course-course">
-                        <div class="image" style="background-image: url({{ $next_webinar->image ?: asset('/images/no_image.png')}})"></div>
-                        <div class="details">
-                            <div class="course-info">
-                                <h4>{{ $next_webinar->title }}</h4>
-                                <p>{{ str_limit(strip_tags($next_webinar->description), 180)}}</p>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-            </div> <!-- end next webinar -->
-
-            <div class="col-sm-4">
-                <h3 class="highlight">
-                    Next Free-Webinar
-                </h3>
-                <div class="all-course-course">
-                    @if($next_free_webinar)
-                        <div class="all-course-course">
-                            <div class="image" style="background-image: url({{ $next_free_webinar->image ?: asset('/images/no_image.png')}})"></div>
-                            <div class="details">
-                                <div class="course-info">
-                                    <h4>{{ $next_free_webinar->title }}</h4>
-                                    <p>{{ str_limit(strip_tags($next_free_webinar->description), 180)}}</p>
-                                </div>
-                            </div>
-                            <a class="buy_now" href="{{ route('front.free-webinar', $next_free_webinar->id) }}">View</a>
-                        </div>
-                    @endif
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <h3 class="highlight">
-                    Latest Blog
-                </h3>
-                <div class="all-course-course">
-                    @if($latest_blog)
-                        <div class="all-course-course">
-                            <div class="image" style="background-image: url({{ $latest_blog->image ?: asset('/images/no_image.png')}})"></div>
-                            <div class="details">
-                                <div class="course-info">
-                                    <h4>{{ $latest_blog->title }}</h4>
-                                    <p>{{ str_limit(strip_tags($latest_blog->description), 180)}}</p>
-                                </div>
-                            </div>
-                            <a class="buy_now" href="{{ route('front.read-blog', $latest_blog->id) }}">Read</a>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="clearfix"></div>
 
 <div class="feedbacks">
