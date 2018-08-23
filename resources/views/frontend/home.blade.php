@@ -78,7 +78,7 @@
                             </div>
                         </div>
                         <a class="buy_now" href="{{ url('/course/17?show_kursplan=1') }}">
-                            Se alle de kommende webinarene
+                            Se komplett liste her
                         </a>
                     </div>
                 @endif
