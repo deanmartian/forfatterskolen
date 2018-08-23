@@ -523,6 +523,160 @@
 				</div>
 			</div>
 
+			<!-- correction -->
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addOtherServiceModal"
+					onclick="updateOtherServiceFields(0)">+ Add Korrektur</button>
+					<h4>Korrektur</h4>
+				</div>
+
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+						<tr>
+							<th>Manus</th>
+							<th>Date Ordered</th>
+						</tr>
+						</thead>
+						<tbody>
+						@foreach($learner->corrections as $correction)
+                            <?php $extension = explode('.', basename($correction->file)); ?>
+							<tr>
+								<td>
+									@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+										<a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
+									@elseif( end($extension) == 'docx' )
+										<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+									@endif
+								</td>
+								<td>
+									{{ \App\Http\FrontendHelpers::formatDate($correction->created_at) }}
+								</td>
+							</tr>
+						@endforeach
+						</tbody>
+					</table>
+				</div>
+
+			</div>
+			<!-- end correction -->
+
+			<!-- copy editing -->
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addOtherServiceModal"
+							onclick="updateOtherServiceFields(1)">+ Add Språkvask</button>
+					<h4>Språkvask</h4>
+				</div>
+
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+						<tr>
+							<th>Manus</th>
+							<th>Date Ordered</th>
+						</tr>
+						</thead>
+						<tbody>
+						@foreach($learner->copyEditings as $copy_editing)
+                            <?php $extension = explode('.', basename($copy_editing->file)); ?>
+							<tr>
+								<td>
+									@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+										<a href="/js/ViewerJS/#../../{{ $copy_editing->file }}">{{ basename($copy_editing->file) }}</a>
+									@elseif( end($extension) == 'docx' )
+										<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copy_editing->file}}">{{ basename($copy_editing->file) }}</a>
+									@endif
+								</td>
+								<td>
+									{{ \App\Http\FrontendHelpers::formatDate($copy_editing->created_at) }}
+								</td>
+							</tr>
+						@endforeach
+						</tbody>
+					</table>
+				</div>
+
+			</div>
+			<!-- end copy editing -->
+
+			<!-- coaching timer -->
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal"
+							data-target="#addCoachingSessionModal">
+						+ Add Coaching Session
+					</button>
+					<h4>Coaching Timer</h4>
+				</div>
+
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+						<tr>
+							<th>Manus</th>
+							<th>Learner</th>
+							<th>Suggested Date</th>
+							<th>Approved Date</th>
+						</tr>
+						</thead>
+						<tbody>
+						@foreach($learner->coachingTimers as $coachingTimer)
+                            <?php $extension = explode('.', basename($coachingTimer->file)); ?>
+							<tr>
+								<td>
+									@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+										<a href="/js/ViewerJS/#../../{{ $coachingTimer->file }}">{{ basename($coachingTimer->file) }}</a>
+									@elseif( end($extension) == 'docx' )
+										<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$coachingTimer->file}}">{{ basename($coachingTimer->file) }}</a>
+									@endif
+								</td>
+								<td>
+									<a href="{{ route('admin.learner.show', $coachingTimer->user->id) }}">
+										{{ $coachingTimer->user->full_name }}
+									</a>
+								</td>
+								<td>
+                                    <?php
+                                    $suggested_dates = json_decode($coachingTimer->suggested_date);
+                                    ?>
+									@if($suggested_dates)
+										@for($i =0; $i <= 2; $i++)
+											<div style="margin-top: 5px">
+												{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($suggested_dates[$i]) }}
+												@if (!$coachingTimer->approved_date && !$coachingTimer->is_suggested_by_admin)
+													<button class="btn btn-success btn-xs approveDateBtn"
+															data-toggle="modal" data-target="#approveDateModal"
+															data-date="{{ $suggested_dates[$i] }}"
+															data-action="{{ route('admin.other-service.coaching-timer.approve_date', $coachingTimer->id) }}">
+														<i class="fa fa-check"></i>
+													</button>
+												@endif
+											</div>
+										@endfor
+										@if (!$coachingTimer->approved_date && !$coachingTimer->is_suggested_by_admin)
+											<a href="#suggestDateModal" data-toggle="modal"
+											   class="suggestDateBtn"
+											   data-action="{{ route('admin.other-service.coaching-timer.suggestDate', $coachingTimer->id) }}">Suggest Different Dates</a>
+										@endif
+									@endif
+								</td>
+								<td>
+									{{ $coachingTimer->approved_date ?
+                                    \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
+                                     : ''}}
+								</td>
+							</tr>
+						@endforeach
+						</tbody>
+					</table>
+				</div>
+
+			</div>
+
+			<!-- end coaching timer-->
+
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<h4>Emails</h4>
@@ -1137,6 +1291,105 @@
 
 	</div>
 </div>
+
+<div id="addOtherServiceModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title"></h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" enctype="multipart/form-data" action="{{ route('admin.learner.add-other-service', $learner->id) }}"
+					  onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>Manuscript</label>
+						<input type="file" class="form-control" name="manuscript" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+							   required>
+					</div>
+
+					<div class="form-group">
+						<label>Send Invoice</label> <br>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+							   name="send_invoice">
+					</div>
+					<input type="hidden" name="is_copy_editing">
+					<button class="btn btn-success pull-right" type="submit">
+						Add
+					</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Approve Coaching Timer Date Modal -->
+<div id="approveDateModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Approve Date</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" id="approveDateForm"
+					  onsubmit="disableSubmit(this)">
+					{{csrf_field()}}
+					Are you sure you want to approve this date?
+					<input type="hidden" name="approved_date">
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-success">Approve</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					</div>
+				</form>
+			</div>
+
+		</div>
+
+	</div>
+</div>
+
+<!-- Suggest Date Modal -->
+<div id="suggestDateModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Suggest Session Dates</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" id="suggestDateForm"
+					  onsubmit="disableSubmit(this)">
+					{{csrf_field()}}
+
+					<div class="form-group">
+						<label>Date</label>
+						<input type="datetime-local" class="form-control" name="suggested_date[]" required>
+					</div>
+
+					<div class="form-group">
+						<label>Date</label>
+						<input type="datetime-local" class="form-control" name="suggested_date[]" required>
+					</div>
+
+					<div class="form-group">
+						<label>Date</label>
+						<input type="datetime-local" class="form-control" name="suggested_date[]" required>
+					</div>
+
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-success">Submit</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					</div>
+				</form>
+			</div>
+
+		</div>
+
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -1288,5 +1541,46 @@
             });
         });
 	});
+
+	/*$("#addOtherServiceForm").on('submit',function(){
+	    let submit_btn = $(this).find('[type=submit]');
+	    submit_btn.text('');
+	    submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+        submit_btn.attr('disabled', 'disabled');
+	});*/
+
+    $(".approveDateBtn").click(function(){
+        let action = $(this).data('action');
+        let approved_date = $(this).data('date');
+        let form = $("#approveDateModal").find('form');
+
+        form.attr('action', action);
+        form.find('[name=approved_date]').val(approved_date);
+    });
+
+    $(".suggestDateBtn").click(function(){
+        let action = $(this).data('action');
+        let form = $("#suggestDateModal").find('form');
+
+        form.attr('action', action);
+    });
+
+	function updateOtherServiceFields(type) {
+	    let modal = $("#addOtherServiceModal");
+	    let modal_title = 'Add Korrektur';
+	    if (type === 1) {
+	        modal_title = 'Add Språkvask';
+		}
+
+		modal.find('.modal-title').text(modal_title);
+	    modal.find('form').find('[name=is_copy_editing]').val(type);
+	}
+
+	function disableSubmit(t) {
+        let submit_btn = $(t).find('[type=submit]');
+        submit_btn.text('');
+        submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+        submit_btn.attr('disabled', 'disabled');
+	}
 </script>
 @stop

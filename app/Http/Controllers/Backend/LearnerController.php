@@ -1,9 +1,15 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\CopyEditingManuscript;
+use App\CorrectionManuscript;
 use App\EmailTemplate;
+use App\Helpers\FileToText;
+use App\Http\FikenInvoice;
 use App\Invoice;
 use App\LearnerLogin;
+use App\PaymentMode;
+use App\PaymentPlan;
 use App\Workshop;
 use App\WorkshopMenu;
 use App\WorkshopsTaken;
@@ -678,6 +684,121 @@ class LearnerController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function addOtherService($user_id, Request $request)
+    {
+        if ($user = User::find($user_id)) {
+            $data = $request->except('_token');
+
+            $extensions = ['docx'];
+            if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) :
+                $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
+                $original_filename = $request->manuscript->getClientOriginalName();
+
+                if( !in_array($extension, $extensions) ) :
+                    return redirect()->back()->with([
+                        'alert_type' => 'danger',
+                        'errors' => AdminHelpers::createMessageBag('File type not allowed.'),
+                    ]);
+                endif;
+
+                $destinationPath = 'storage/correction-manuscripts/'; // upload path
+
+                if ($data['is_copy_editing'] == 1) {
+                    $destinationPath = 'storage/copy-editing-manuscripts/'; // upload path
+                }
+
+                $time = time();
+                $fileName = $time.'.'.$extension;//$original_filename; // rename document
+                $request->manuscript->move($destinationPath, $fileName);
+
+                $file = $destinationPath.$fileName;
+
+                $docObj = new FileToText($file);
+                // count characters with space
+                $word_count = strlen($docObj->convertToText()) - 2;
+
+                $word_per_price = 1000;
+                $price_per_word = 30;
+                $title = 'Korrektur';
+
+                if ($data['is_copy_editing'] == 1) {
+                    $word_per_price = 1000;
+                    $price_per_word = 35;
+                    $title = 'Språkvask';
+                }
+
+                $rounded_word       = FrontendHelpers::roundUpToNearestMultiple($word_count);
+                $calculated_price   = ($rounded_word/$word_per_price) * $price_per_word;
+                $productID         = $data['is_copy_editing'] == 1 ? 599886093 : 599110997;
+                $data['price']      = $calculated_price;
+
+                // check if the admin wants to send out invoice
+                if (isset($data['send_invoice'])) {
+                    $paymentMode = PaymentMode::findOrFail(3); // hardcoded faktura payment
+                    $paymentPlan = PaymentPlan::findOrFail(6);
+                    $payment_plan = ( $paymentMode->mode == "Paypal" ) ?  "Hele beløpet" : $paymentPlan->plan;
+
+                    $comment = '(Manuskript: ' . $title . ', ';
+                    $comment .= 'Betalingsmodus: ' . $paymentMode->mode . ', ';
+                    $comment .= 'Betalingsplan: 14 dager)';
+
+                    $dueDate = date("Y-m-d");
+                    $dueDate = Carbon::parse($dueDate);
+
+                    $dueDate->addDays(14);
+
+                    $dueDate = date_format(date_create($dueDate), 'Y-m-d');
+                    $price = $data['price'] * 100;
+
+                    $invoice_fields = [
+                        'user_id'       => $user->id,
+                        'first_name'    => $user->first_name,
+                        'last_name'     => $user->last_name,
+                        'netAmount'     => $price,
+                        'dueDate'       => $dueDate,
+                        'description'   => 'Kursordrefaktura',
+                        'productID'     => $productID,
+                        'email'         => $user->email,
+                        'telephone'     => $user->telephone,
+                        'address'       => $user->street,
+                        'postalPlace'   => $user->city,
+                        'postalCode'    => $user->zip,
+                        'comment'       => $comment,
+                    ];
+
+                    $invoice = new FikenInvoice();
+                    $invoice->create_invoice($invoice_fields);
+                }
+
+                $manuType = 'Correction';
+                if ($data['is_copy_editing'] == 1) {
+                    $manuType = 'Copy Editing';
+                    CopyEditingManuscript::create([
+                        'user_id'       => $user_id,
+                        'file'          => $file,
+                        'payment_price' => $data['price']
+                    ]);
+                } else {
+                    CorrectionManuscript::create([
+                        'user_id'       => $user_id,
+                        'file'          => $file,
+                        'payment_price' => $data['price']
+                    ]);
+                }
+
+
+                return redirect()->back()->with([
+                    'errors' => AdminHelpers::createMessageBag($manuType.' Manuscript added successfully.'),
+                    'alert_type' => 'success',
+                    'not-former-courses' => true
+                ]);
+            endif;
+
+        }
+
+        return redirect()->route('admin.learner.index');
     }
     
 }

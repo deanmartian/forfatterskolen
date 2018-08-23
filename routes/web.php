@@ -385,6 +385,7 @@ Route::group([
         Route::post('/is-manuscript-locked-status', 'LearnerController@updateManuscriptLockedStatus')->name('admin.learner.shop-manuscript-taken-locked-status'); // Manuscript lock status
         Route::get('learner/login_activity/{id}', 'LearnerController@loginActivity')->name('admin.learner.login_activity');
         Route::get('/word-written-goal/{id}/statistic', 'LearnerController@goalStatistic')->name('admin.learner.goal-statistic');
+        Route::post('learner/{id}/add-other-service', 'LearnerController@addOtherService')->name('admin.learner.add-other-service');
 
         Route::delete('learner/invoice/{id}/delete', 'LearnerController@deleteInvoice')->name('admin.learner.invoice.delete');
         Route::delete('learner/course/{course_taken_id}/delete', 'LearnerController@deleteFromCourse')->name('admin.learner.delete-from-course');

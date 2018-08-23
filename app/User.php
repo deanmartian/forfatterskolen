@@ -177,7 +177,7 @@ class User extends Authenticatable
 
     public function corrections()
     {
-        return $this->hasMany('App\CopyEditingManuscript')->orderBy('created_at', 'desc');
+        return $this->hasMany('App\CorrectionManuscript')->orderBy('created_at', 'desc');
     }
 
     public function copyEditings()

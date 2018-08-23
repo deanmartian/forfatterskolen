@@ -42,7 +42,8 @@ class OtherServiceController extends Controller
             $data = $request->except('_token');
             $coachingTimer->update($data);
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Date approved successfully.'),
-                'alert_type' => 'success']);
+                'alert_type' => 'success',
+                'not-former-courses' => true]);
         }
 
         return redirect()->back();
@@ -69,7 +70,8 @@ class OtherServiceController extends Controller
 
             $coachingTimer->update($data);
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Suggested date saved successfully.'),
-                'alert_type' => 'success']);
+                'alert_type' => 'success',
+                'not-former-courses' => true]);
         }
 
         return redirect()->back();
