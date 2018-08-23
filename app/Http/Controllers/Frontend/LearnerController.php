@@ -5,6 +5,7 @@ use App\AssignmentAddon;
 use App\AssignmentFeedbackNoGroup;
 use App\AssignmentGroupLearner;
 use App\CalendarNote;
+use App\CoachingTimerManuscript;
 use App\Genre;
 use App\Http\AdminHelpers;
 use App\Http\Middleware\Admin;
@@ -147,6 +148,23 @@ class LearnerController extends Controller
         return view('frontend.learner.workshop');
     }
 
+    /**
+     * Approve the coaching date set by admin
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function approveCoachingDate($id, Request $request)
+    {
+        if ($coachingTimer = CoachingTimerManuscript::find($id)) {
+            $data = $request->except('_token');
+            $coachingTimer->update($data);
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Date approved successfully.'),
+                'alert_type' => 'success']);
+        }
+
+        return redirect()->back();
+    }
 
 
     public function webinar()
@@ -260,6 +278,18 @@ class LearnerController extends Controller
                 'end' => strtotime($calendar->date) * 1000,
             ];
         endforeach;*/
+
+        $approved_coaching = Auth::user()->coachingTimers()->whereNotNull('approved_date')->get();
+        foreach($approved_coaching as $coaching) {
+            $events[] = [
+                'id' => $coaching->id,
+                'title' => 'Coaching Session at '.date('H:i A',strtotime($coaching->approved_date)),
+                'class' => 'event-inverse',
+                'start' => date('Y-m-d',strtotime($coaching->approved_date)),//strtotime($note->date) * 1000,
+                'end' => date('Y-m-d',strtotime($coaching->approved_date)),//strtotime($note->date) * 1000,
+                'color' => '#f00' // for full calendar
+            ];
+        }
 
 
     	$event_1 = [

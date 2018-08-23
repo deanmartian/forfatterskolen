@@ -98,11 +98,16 @@
 									<tr>
 										<th>Manus</th>
 										<th>Coaching Time</th>
+										<th>Suggested Date</th>
+										<th>Approved Date</th>
 										<th>Date Ordered</th>
 									</tr>
 									</thead>
 									<tbody>
-									@foreach(Auth::user()->coachingTimers as $coachingTimer)
+									<?php
+										$coachingTimers = Auth::user()->coachingTimers()->paginate(5);
+									?>
+									@foreach($coachingTimers as $coachingTimer)
                                         <?php $extension = explode('.', basename($coachingTimer->file)); ?>
 										<tr>
 											<td>
@@ -116,6 +121,33 @@
 												{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($coachingTimer->plan_type) }}
 											</td>
 											<td>
+                                                <?php
+                                                $suggested_dates = json_decode($coachingTimer->suggested_date);
+                                                ?>
+
+												@if($suggested_dates)
+													@for($i =0; $i <= 2; $i++)
+														<div style="margin-top: 5px">
+															{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($suggested_dates[$i]) }}
+															@if (!$coachingTimer->approved_date && $coachingTimer->is_suggested_by_admin)
+																<button class="btn btn-success btn-xs approveDateBtn pull-right"
+																		data-toggle="modal" data-target="#approveDateModal"
+																		data-date="{{ $suggested_dates[$i] }}"
+																		data-action="{{ route('learner.coaching-timer.approve_date', $coachingTimer->id) }}">
+																	<i class="fa fa-check"></i>
+																</button>
+															@endif
+														</div>
+													@endfor
+												@endif
+
+											</td>
+											<td>
+												{{ $coachingTimer->approved_date ?
+                                                \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
+                                                 : ''}}
+											</td>
+											<td>
 												{{ \App\Http\FrontendHelpers::formatDate($coachingTimer->created_at) }}
 											</td>
 										</tr>
@@ -123,6 +155,9 @@
 									</tbody>
 								</table>
 							</div>
+						</div>
+						<div class="pull-right">
+							{{$coachingTimers->render()}}
 						</div>
 					</div>
 				</div>
@@ -132,5 +167,43 @@
 	<div class="clearfix"></div>
 </div>
 
+<!-- Approve Coaching Timer Date Modal -->
+<div id="approveDateModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Approve Date</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="">
+					{{csrf_field()}}
+					Are you sure you want to approve this date?
+					<input type="hidden" name="approved_date">
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-success">Approve</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					</div>
+				</form>
+			</div>
+
+		</div>
+
+	</div>
+</div>
+
+@stop
+
+@section('scripts')
+	<script>
+        $(".approveDateBtn").click(function(){
+            let action = $(this).data('action');
+            let approved_date = $(this).data('date');
+            let form = $("#approveDateModal").find('form');
+
+            form.attr('action', action);
+            form.find('[name=approved_date]').val(approved_date);
+        });
+	</script>
 @stop
 

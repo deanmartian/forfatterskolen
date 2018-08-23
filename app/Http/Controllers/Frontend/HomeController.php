@@ -547,7 +547,13 @@ class HomeController extends Controller
     public function coachingTimerPlaceOrder($plan, Request $request)
     {
         $data = $request->except('_token');
+        $suggested_dates = $data['suggested_date'];
         $newFileLocation = NULL;
+
+        // format the sent suggested dates
+        foreach ($suggested_dates as $k => $suggested_date) {
+            $suggested_dates[$k] = Carbon::parse($suggested_date)->format('Y-m-d H:i:s');
+        }
 
         $title = 'Coaching time';
         if ($plan == 1) {
@@ -611,7 +617,8 @@ class HomeController extends Controller
            'user_id'        => Auth::user()->id,
            'file'           => $newFileLocation,
             'payment_price' => $data['price'],
-            'plan_type'     => $plan
+            'plan_type'     => $plan,
+            'suggested_date' => json_encode($suggested_dates)
         ]);
 
         if( $paymentMode->mode == "Paypal" ) :

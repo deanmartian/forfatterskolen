@@ -93,6 +93,11 @@ class FrontendHelpers
         return Carbon::parse($date)->format('M d');
     }
 
+    public static function formatToYMDtoPrettyDate($date)
+    {
+        return Carbon::parse($date)->format('M d, Y h:i A');
+    }
+
 
 	public static function isLessonAvailable($startedAt, $delay, $period)
 	{

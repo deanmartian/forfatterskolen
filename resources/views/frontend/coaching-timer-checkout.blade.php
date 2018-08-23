@@ -91,6 +91,21 @@
                                 @endif
                             </div>
 
+                            <div class="row mb-25">
+                                <div class="col-sm-4">
+                                    <label>Suggested Session Date</label>
+                                    <input type="datetime-local" class="form-control" name="suggested_date[]" required>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label>Suggested Session Date</label>
+                                    <input type="datetime-local" class="form-control" name="suggested_date[]" required>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label>Suggested Session Date</label>
+                                    <input type="datetime-local" class="form-control" name="suggested_date[]" required>
+                                </div>
+                            </div>
+
                             <div class="form-group">
                                 <label for="email" class="control-label">E-postadresse</label>
                                 <input type="email" id="email" class="form-control" name="email" required @if(Auth::guest()) value="{{old('email')}}" @else value="{{Auth::user()->email}}" readonly @endif>

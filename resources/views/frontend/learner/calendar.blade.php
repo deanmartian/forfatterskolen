@@ -19,6 +19,10 @@
 	.fc-toolbar {
 		text-transform: capitalize;
 	}
+
+	.event-coaching {
+		background-color: #f00;
+	}
 </style>
 @stop
 
@@ -36,6 +40,7 @@
 				<li><span class="guide guide-red"></span>&nbsp;&nbsp;Moduler</li>
 				<li><span class="guide guide-orange"></span>&nbsp;&nbsp;Webinars</li>
 				<li><span class="guide event-inverse"></span>&nbsp;&nbsp;Notes</li>
+				<li><span class="guide event-coaching"></span>&nbsp;&nbsp;Coaching Session</li>
 			</ul>
 			{{--<div class="pull-right form-inline">
 				<div class="btn-group">
