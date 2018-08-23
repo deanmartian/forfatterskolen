@@ -15,7 +15,7 @@
 @section('styles')
     <style>
         /* Fixed/sticky icon bar (vertically aligned 50% from the top of the screen) */
-        .icon-bar {
+        .icon-bar-cont {
             position: fixed;
             top: 50%;
             -webkit-transform: translateY(-50%);
@@ -24,7 +24,7 @@
         }
 
         /* Style the icon bar links */
-        .icon-bar a {
+        .icon-bar-cont a {
             display: block;
             text-align: center;
             padding: 16px;
@@ -34,7 +34,7 @@
         }
 
         /* Style the social media icons with color, if you want */
-        .icon-bar a:hover {
+        .icon-bar-cont a:hover {
             background-color: #000;
         }
 
@@ -77,7 +77,7 @@ $secret     = $config['client_secret'];
         {!! $blog->description !!}
     </div>
 
-<div class="icon-bar">
+<div class="icon-bar-cont">
     <a href="http://www.facebook.com/sharer.php?u={{ route('front.read-blog', $blog->id) }}" class="facebook" target="_new">
         <i class="fa fa-facebook"></i>
     </a>

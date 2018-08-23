@@ -75,6 +75,9 @@
                             <div class="course-info">
                                 <h4>{{ $next_webinar->title }}</h4>
                                 <p>{{ str_limit(strip_tags($next_webinar->description), 180)}}</p>
+                                <div class="bottom-div-display">
+                                    {{ \App\Http\FrontendHelpers::formatDateTimeNor($next_webinar->start_date) }}
+                                </div>
                             </div>
                         </div>
                         <a class="buy_now" href="{{ url('/course/17?show_kursplan=1') }}">
@@ -96,6 +99,9 @@
                                 <div class="course-info">
                                     <h4>{{ $next_free_webinar->title }}</h4>
                                     <p>{{ str_limit(strip_tags($next_free_webinar->description), 180)}}</p>
+                                    <div class="bottom-div-display">
+                                        {{ \App\Http\FrontendHelpers::formatDateTimeNor($next_free_webinar->start_date) }}
+                                    </div>
                                 </div>
                             </div>
                             <a class="buy_now" href="{{ route('front.free-webinar', $next_free_webinar->id) }}">Register Deg</a>

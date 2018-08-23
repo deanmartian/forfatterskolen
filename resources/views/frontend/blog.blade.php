@@ -20,7 +20,7 @@
                         <p class="name">{{ $blog->created_at }}</p>
                         <p class="blog-title">{{ strtoupper($blog->title) }}</p>
                         <div class="blog-description">
-                            {!! strlen($blog->description) > 100 ? substr(strip_tags(html_entity_decode($blog->description)),0,300).'....' : $blog->description !!}
+                            {!! strlen($blog->description) > 200 ? substr(strip_tags(html_entity_decode($blog->description)),0,200).'....' : $blog->description !!}
                             <div class="clearfix"></div>
                             <a href="{{ route('front.read-blog', $blog->id) }}">Read More</a>
                         </div>

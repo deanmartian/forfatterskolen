@@ -248,7 +248,15 @@ h1, h2, h3, h4, h5, h6{
 .all-course-course .details .course-info{
 	height: 170px;
 	max-height: 170px;
+	position: relative;
 }
+
+.bottom-div-display {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+}
+
 .all-course-course .free-details .course-info{
 	height: 60px;
 	max-height: 60px;
@@ -3505,7 +3513,7 @@ h1,h2,h3,h4,h5,h6,strong{
 	/*background-repeat: no-repeat;
 	background-size: cover;
 	background-position: center;*/
-	width: 480px;
+	/*width: 480px;*/
 	padding-left: 0;
 }
 
@@ -3537,7 +3545,7 @@ h1,h2,h3,h4,h5,h6,strong{
 
 .blog-right-content {
 	top: 50px;
-	left: 70px;
+	/*left: 70px;*/
 }
 
 .blog-title {
@@ -3545,7 +3553,7 @@ h1,h2,h3,h4,h5,h6,strong{
 	color: #000;
 	font-family: Lato;
 	font-size: 20pt;
-	top: 45px;
+	margin-top: 45px;
 }
 
 .blog-description {
@@ -3553,8 +3561,7 @@ h1,h2,h3,h4,h5,h6,strong{
 	font-family: Lato;
 	font-size: 11pt;
 	position: relative;
-	margin-top: -15px;
-	top: 60px;
+	margin-top: 10px;
 }
 
 .blog-bg .white-bg:not(:last-child) {
@@ -3870,9 +3877,12 @@ h1,h2,h3,h4,h5,h6,strong{
 		padding: 20px 0 0 40px;
 	}
 
+	.blog-title {
+		margin-top: 35px;
+	}
+
 	.blog-right-content {
 		top: 20px;
-		left: 20px;
 	}
 
 	.blog-read-container p:first-of-type {
@@ -4008,12 +4018,12 @@ h1,h2,h3,h4,h5,h6,strong{
 		font-size: 22px;
 	}
 
-	.blog-image {
+	/*.blog-image {
 		width: 50%;
-	}
+	}*/
 
 	.blog-image img {
-		width: auto;
+		width: 100%;
 	}
 
 	.blog-right-content {
@@ -4260,7 +4270,11 @@ h1,h2,h3,h4,h5,h6,strong{
 	}
 
 	.white-bg {
-		height: 600px;
+		height: 610px;
+	}
+
+	.blog-title {
+		margin-top: 25px;
 	}
 
 	.copy-editing-container {
@@ -4508,7 +4522,7 @@ h1,h2,h3,h4,h5,h6,strong{
 
 	.white-bg {
 		/*height: 640px;*/
-		min-height: 700px;
+		min-height: 620px;
 	}
 
 	.copy-editing-container, .coaching-timer-container {
@@ -4805,5 +4819,9 @@ h1,h2,h3,h4,h5,h6,strong{
 	.coaching-timer-container .left-content .book, .coaching-timer-container .right-content .book {
 		left: 110px;
 		top: 365px;
+	}
+
+	.white-bg {
+		min-height: 630px;
 	}
 }
