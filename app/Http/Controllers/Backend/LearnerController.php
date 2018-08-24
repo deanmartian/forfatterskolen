@@ -808,6 +808,12 @@ class LearnerController extends Controller
         return redirect()->route('admin.learner.index');
     }
 
+    /**
+     * Add coaching session for a user
+     * @param $user_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function addCoachingTimer($user_id, Request $request)
     {
         if ($user = User::find($user_id)) {
