@@ -278,7 +278,7 @@
                     <h1 class="gdpr-title">Dine data, dine valg</h1>
                     <div>
                         <p>
-                            Forfatterskolen er en del av Schibsted Norge, som behandler dine data.
+                            Forfatterskolen som behandler dine data.
                         </p>
                         <p>
                             Dine data er trygge hos oss. Vi bruker dem til å forbedre og tilpasse tjenestene og tilbudene.

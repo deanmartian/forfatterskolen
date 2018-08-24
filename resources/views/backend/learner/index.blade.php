@@ -36,6 +36,7 @@
 			        <th>Courses</th>
 			        <th>Date Joined</th>
 					<th>Admin</th>
+					<th>Auto Renew</th>
 			        <th></th>
 		      	</tr>
 		    </thead>
@@ -52,6 +53,7 @@
 					<td>{{count($learner->coursesTaken)}}</td>
 					<td>{{$learner->created_at}}</td>
 					<td>{{ $learner->is_admin ? 'Yes' : 'No' }}</td>
+					<td>{{ $learner->auto_renew_courses ? 'Yes' : 'No' }}</td>
 					<td><a href="{{route('admin.learner.show', $learner->id)}}" class="btn btn-xs btn-primary pull-right">View Learner</a></td>
 		      	</tr>
 		      	@endforeach

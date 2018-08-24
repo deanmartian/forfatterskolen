@@ -30,7 +30,7 @@
           <li @if(Route::currentRouteName() == 'front.publishing') class="active" @endif><a href="{{ route('front.publishing') }}">Utgitte Elever</a></li>
           {{--<li><a href="http://forfatterreiser.no/">Forfatterreiser</a></li>--}}
           <li><a href="http://www.forfatterdrom.no/">Forlag</a></li>
-          <li><a href="http://forfatterblogg.no/">Forfatterblogg</a></li>
+          <li><a href="{{ route('front.blog') }}">Blogg</a></li>
           <li @if(Route::currentRouteName() == 'front.workshop.index') class="active" @endif><a href="{{ route('front.workshop.index') }}">Workshop</a></li>
           <li @if( Route::currentRouteName() == 'front.faq' ) class="active" @endif><a href="{{ route('front.faq') }}">FAQ</a></li>
           <li @if( Route::currentRouteName() == 'front.contact-us' ) class="active" @endif><a href="{{ route('front.contact-us') }}">Kontakt Oss</a></li>

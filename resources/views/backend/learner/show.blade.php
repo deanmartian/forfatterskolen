@@ -61,6 +61,8 @@
 					@if($learner->address->phone)
 					{{$learner->address->phone}}
 					@endif
+					<br> <br>
+					<b>Auto renew course:</b> {{ $learner->auto_renew_courses ? 'Yes' : 'No' }}
 				</div>
 			</div>
 			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editPasswordModal">Edit Password</button>
