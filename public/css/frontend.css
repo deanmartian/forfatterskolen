@@ -1067,6 +1067,10 @@ footer .social a{
 	padding-left: 0 !important;
 }
 
+.no-right-padding {
+	padding-right: 0 !important;
+}
+
 .tiny {
 	font-size: 13px;
 }
@@ -3852,6 +3856,74 @@ h1,h2,h3,h4,h5,h6,strong{
 .chapter-content .bookmark-active .bookmark.hover::before {
 	content: "\f00d";
 }
+
+.gdpr {
+	background: #f4eded;
+	bottom: 0;
+	box-shadow: 0 0 8px 3px rgba(0, 0, 0, 0.2);
+	color: #252423;
+	font-family: 'Source Sans Pro', sans-serif;
+	position: fixed;
+	z-index: 999;
+}
+
+.gdpr > .container {
+	padding: 25px;
+}
+
+.display-flex {
+	display: flex;
+}
+
+.gdpr-body {
+	flex: 3;
+	font-size: 13px;
+	line-height: 1.32;
+}
+
+.gdpr-body p{
+	font-size: 16px;
+	line-height: 1.5em;
+	margin: 0;
+}
+
+.gdpr-title {
+	font-size: 28px !important;
+	margin: 0 0 .5em;
+}
+
+.gdpr-actions {
+	flex: 1;
+	display: flex;
+	flex-flow: column;
+	justify-content: center;
+	flex-direction: column-reverse;
+}
+
+.gdpr-actions > .btn-agree {
+	background: #E83945;
+	border-radius: 3px !important;
+	border: none;
+	color: #fff;
+	cursor: pointer;
+	font-size: 15px;
+	font-weight: bold;
+	height: initial;
+	line-height: inherit;
+	padding: 10px 14px;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
+.gdpr-actions > a {
+	background: transparent;
+	border: none;
+	color: #E83945;
+	cursor: pointer;
+	padding: 10px 0;
+	text-align: center;
+}
+
 /* media queries */
 @media only screen and (max-width: 1024px) {
 
@@ -4379,6 +4451,23 @@ h1,h2,h3,h4,h5,h6,strong{
 		left: 175px;
 		top: 400px;
 	}
+
+	.gdpr-title {
+		font-size: 20px!important;
+	}
+
+	.gdpr-body p {
+		font-size: 12px;
+	}
+
+	.gdpr-actions>.btn-agree {
+		font-size: 13px;
+		padding: 5px;
+	}
+
+	.gdpr-actions>a {
+		font-size: 13px;
+	}
 }
 
 @media only screen and (max-width: 375px) {
@@ -4675,6 +4764,14 @@ h1,h2,h3,h4,h5,h6,strong{
 		margin-left: 0;
 	}
 
+	.all-course .tabs-container {
+		width: 345px;
+	}
+
+	.theme-tabs li a {
+		font-size: 17px;
+	}
+
 }
 
 @media only screen and (max-width: 320px) {
@@ -4823,5 +4920,9 @@ h1,h2,h3,h4,h5,h6,strong{
 
 	.white-bg {
 		min-height: 630px;
+	}
+
+	.top-navbar {
+		height: 60px;
 	}
 }

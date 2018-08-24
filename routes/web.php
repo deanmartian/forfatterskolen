@@ -24,6 +24,7 @@ Route::group([
         'middleware' => 'logActivity'
     ], function () {
         Route::get('/', 'HomeController@index')->name('front.home'); // Homepage
+        Route::post('/agree-gdpr', 'HomeController@agreeGdpr')->name('front.agree-gdpr');
         Route::get('/testemail', 'HomeController@testEmail');
         Route::get('/contact-us', 'HomeController@contact_us')->name('front.contact-us'); // Contact Us
         Route::post('/contact-us', 'HomeController@contact_us'); // Contact Us

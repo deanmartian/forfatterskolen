@@ -63,6 +63,14 @@ class HomeController extends Controller
             'next_webinar', 'next_free_webinar', 'latest_blog'));
     }
 
+    // set cookie for gdpr
+    public function agreeGdpr()
+    {
+        $cookie_name = "_gdpr";
+        $cookie_value = 1;
+        setcookie($cookie_name, $cookie_value, time() + (86400 * 365), "/"); // 86400 = 1 day
+    }
+
 
 
     public function contact_us(Request $request)

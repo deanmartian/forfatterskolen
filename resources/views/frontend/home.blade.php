@@ -270,4 +270,41 @@
         </div>
     </div>
 </div>
+
+    @if(!isset($_COOKIE['_gdpr']))
+        <div class="col-sm-12 no-left-padding no-right-padding gdpr">
+            <div class="container display-flex">
+                <div class="gdpr-body">
+                    <h1 class="gdpr-title">Dine data, dine valg</h1>
+                    <div>
+                        <p>
+                            Forfatterskolen er en del av Schibsted Norge, som behandler dine data.
+                        </p>
+                        <p>
+                            Dine data er trygge hos oss. Vi bruker dem til å forbedre og tilpasse tjenestene og tilbudene.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="gdpr-actions">
+                    <button class="btn btn-agree" onclick="agreeGdpr()">
+                        JEG FORSTÅR
+                    </button>
+                    {{--<a href="#">Vis meg mer</a>--}}
+                </div>
+            </div>
+        </div>
+    @endif
+@stop
+
+@section('scripts')
+    <script>
+        let url_link = '{{ route('front.agree-gdpr') }}';
+
+        function agreeGdpr() {
+            $.post(url_link).then(function(){
+                $(".gdpr").remove();
+            });
+        }
+    </script>
 @stop
