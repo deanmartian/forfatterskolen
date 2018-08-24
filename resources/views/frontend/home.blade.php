@@ -278,10 +278,10 @@
                     <h1 class="gdpr-title">Dine data, dine valg</h1>
                     <div>
                         <p>
-                            Forfatterskolen som behandler dine data.
+                            Forfatterskolen er den som behandler dine data.
                         </p>
                         <p>
-                            Dine data er trygge hos oss. Vi bruker dem til å forbedre og tilpasse tjenestene og tilbudene.
+                            Dine data er trygge hos oss. Vi bruker dem til å tilpasse tjenestene og tilbudene for deg.
                         </p>
                     </div>
                 </div>
@@ -290,7 +290,7 @@
                     <button class="btn btn-agree" onclick="agreeGdpr()">
                         JEG FORSTÅR
                     </button>
-                    {{--<a href="#">Vis meg mer</a>--}}
+                    <a href="{{ route('front.terms') }}">Vis meg mer</a>
                 </div>
             </div>
         </div>

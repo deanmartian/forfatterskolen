@@ -22,7 +22,7 @@
                         <div class="blog-description">
                             {!! strlen($blog->description) > 200 ? substr(strip_tags(html_entity_decode($blog->description)),0,200).'....' : $blog->description !!}
                             <div class="clearfix"></div>
-                            <a href="{{ route('front.read-blog', $blog->id) }}">Read More</a>
+                            <a href="{{ route('front.read-blog', $blog->id) }}">Les mer</a>
                         </div>
                     </div>
                 </div>

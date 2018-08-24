@@ -17,6 +17,7 @@ use App\PilotReaderBook;
 use App\PilotReaderBookReading;
 use App\PilotReaderBookSettings;
 use App\PublisherBook;
+use App\Settings;
 use App\Solution;
 use App\SolutionArticle;
 use App\SosChildren;
@@ -784,6 +785,12 @@ class HomeController extends Controller
     public function optInTerms()
     {
         return view('frontend.opt-in-terms');
+    }
+
+    public function terms($slug = null)
+    {
+        $terms = Settings::getByName($slug ?: 'terms');
+        return view('frontend.terms', compact('terms'));
     }
 
     public function testemail()

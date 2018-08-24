@@ -65,6 +65,8 @@ Route::group([
         Route::post('/opt-in', 'HomeController@optIn')->name('front.opt-in'); // Opt-in page
         Route::get('/opt-in-terms', 'HomeController@optInTerms')->name('front.opt-in-terms'); // Opt-in page
 
+        Route::get('/terms/{slug?}', 'HomeController@terms')->name('front.terms'); // Opt-in page
+
         Route::get('/shop-manuscript/{id}/checkout', 'ShopManuscriptController@checkout')->name('front.shop-manuscript.checkout'); // Checkout Shop Manuscript
         Route::get('/upgrade-manuscript/{id}/checkout', 'ShopManuscriptController@checkoutUpgradeManuscript')->name('front.shop-manuscript.upgrade-manuscript-checkout'); // Checkout Shop Manuscript
 
