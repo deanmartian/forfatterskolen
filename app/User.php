@@ -184,4 +184,9 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\CopyEditingManuscript')->orderBy('created_at', 'desc');
     }
+
+    public function coachingTimersTaken()
+    {
+        return $this->hasMany('App\CoachingTimerTaken');
+    }
 }

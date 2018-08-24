@@ -92,6 +92,23 @@
 				<div class="tab-pane fade in active" id="nav-coaching">
 					<div class="panel panel-default" style="border-top: 0">
 						<div class="panel-body">
+							<?php
+								$packages = \App\Package::where('has_coaching', 1)->pluck('id');
+                            	$coachingTimerTaken = Auth::user()->coachingTimersTaken()->pluck('course_taken_id');
+								$checkCourseTakenWithCoaching = Auth::user()->coursesTaken()->whereIn('package_id', $packages)
+									->whereNotIn('id', $coachingTimerTaken)->first();
+							?>
+							@if ($checkCourseTakenWithCoaching)
+								<button class="btn btn-xs btn-primary pull-right" data-toggle="modal"
+										data-target="#addCoachingSessionModal"
+								data-action="{{ route('learner.course-taken.coaching-timer.add', $checkCourseTakenWithCoaching->id) }}"
+								id="addCoachingSessionBtn">
+									Add Coaching Lesson
+								</button>
+							@endif
+
+							<div class="clearfix"></div>
+
 							<div class="table-users table-responsive">
 								<table class="table no-margin-bottom">
 									<thead>
@@ -192,6 +209,43 @@
 	</div>
 </div>
 
+<div id="addCoachingSessionModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Add Coaching Session</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action=""
+					  onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+					{{csrf_field()}}
+
+					<div class="form-group">
+						<label>Manuscript</label>
+						<input type="file" class="form-control" name="manuscript"
+							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+					</div>
+
+					@for($i = 1; $i <= 3; $i++)
+						<div class="form-group">
+							<label>Suggested Date</label>
+							<input type="datetime-local" class="form-control" name="suggested_date[]" required>
+						</div>
+					@endfor
+
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-success">Submit</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					</div>
+				</form>
+			</div>
+
+		</div>
+
+	</div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -204,6 +258,20 @@
             form.attr('action', action);
             form.find('[name=approved_date]').val(approved_date);
         });
+
+        $("#addCoachingSessionBtn").click(function(){
+            let action = $(this).data('action');
+            let form = $("#addCoachingSessionModal").find('form');
+
+            form.attr('action', action);
+		});
+
+        function disableSubmit(t) {
+            let submit_btn = $(t).find('[type=submit]');
+            submit_btn.text('');
+            submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+            submit_btn.attr('disabled', 'disabled');
+        }
 	</script>
 @stop
 

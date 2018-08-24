@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\Http\AdminHelpers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -175,6 +176,22 @@ class PackageController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * Update the package if the admin wants to include/remove coaching session
+     * @param $course_id
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function includeCoaching($course_id, $id, Request $request)
+    {
+        if (Course::find($course_id) && $package = Package::find($id)) {
+            $package->has_coaching = $request->has_coaching;
+            $package->save();
+            return redirect()->back();
+        }
+        return redirect()->back();
+    }
 
 
 

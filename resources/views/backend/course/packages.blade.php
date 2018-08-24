@@ -149,6 +149,17 @@
               <button class="btn btn-primary btn-xs pull-right addRelatedCourseBtn" data-toggle="modal" data-target="#addIncludeCourseModal" data-action="{{ route('admin.package_course.store', $package->id) }}" data-package_id="{{ $package->id }}"><i class="fa fa-plus"></i></button>
               Included Courses
             </h4>
+
+            @if (!$package->has_coaching)
+              <div class="clearfix"></div>
+
+              <h4 style="margin-top:5px">
+                <button class="btn btn-primary btn-xs pull-right includeCoachingBtn" data-toggle="modal" data-target="#includeCoachingModal" data-action="{{ route('admin.course.package.include-coaching', ['course_id' => $course->id, 'package_id' => $package->id]) }}"
+                data-include="1"><i class="fa fa-plus"></i></button>
+                Included Coaching Session
+              </h4>
+            @endif
+
             <div class="table-responsive margin-top">
               <table class="table table-bordered table-condensed">
                 <tbody>
@@ -160,6 +171,15 @@
                     </td>
                   </tr>
                   @endforeach
+                  @if ($package->has_coaching)
+                    <tr>
+                      <td>
+                        <button class="btn btn-danger btn-xs pull-right includeCoachingBtn" data-toggle="modal" data-target="#includeCoachingModal" data-action="{{ route('admin.course.package.include-coaching', ['course_id' => $course->id, 'package_id' => $package->id]) }}"
+                                data-include="0"><i class="fa fa-trash"></i></button>
+                        1 hr coaching session
+                      </td>
+                    </tr>
+                  @endif
                 </tbody>
               </table>
             </div>
@@ -858,6 +878,30 @@
 
   </div>
 </div>
+
+<div id="includeCoachingModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="">
+          {{csrf_field()}}
+          <p>
+            Are you sure to <span></span> 1hr coaching session in this package?
+          </p>
+          <input type="hidden" name="has_coaching">
+          <div class="text-right margin-top">
+            <button type="submit" class="btn">Include Session</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
 @stop
 
 
@@ -935,6 +979,19 @@ $(document).ready(function(){
       var variation = Object.values(packages)[i];
       $('#related_package_select').append('<option value="'+package_id+'">'+variation+'</option>');
     }
+  });
+
+  $(".includeCoachingBtn").click(function(){
+      let action        = $(this).data('action');
+      let include_coaching  = parseInt($(this).data('include'));
+      let modal         = $("#includeCoachingModal");
+      let form          = modal.find('form');
+
+      modal.find('.modal-title').text(include_coaching ? 'Include Coaching Session' : 'Remove Coaching Session');
+      modal.find('span').text(include_coaching ? 'include' : 'remove');
+      form.attr('action', action);
+      form.find('[name=has_coaching]').val(include_coaching);
+      form.find('[type=submit]').addClass(include_coaching ? 'btn-primary' : 'btn-danger').text(include_coaching ? 'Include Session' : 'Remove Session');
   });
 
   $('.btndeleteWorkshop').click(function(){

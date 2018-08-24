@@ -119,7 +119,7 @@
 						<p>{!! nl2br($package->description) !!}</p>
 						@if( $package->shop_manuscripts->count() > 0 || 
 							$package->included_courses->count() > 0 ||
-							$package->workshops > 0
+							$package->workshops > 0 || $package->has_coaching
 							)
 							<strong>Inkluderer</strong><br />
 							@if( $package->shop_manuscripts->count() > 0 )
@@ -136,6 +136,10 @@
 							@foreach( $package->included_courses as $included_course )
 							{{ $included_course->included_package->course->title }} ({{ $included_course->included_package->variation }}) <br />
 							@endforeach
+							@endif
+
+							@if ($package->has_coaching)
+								1hr coaching session
 							@endif
 						@endif
 				  	</div>

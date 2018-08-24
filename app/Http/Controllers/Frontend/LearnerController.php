@@ -6,6 +6,7 @@ use App\AssignmentFeedbackNoGroup;
 use App\AssignmentGroupLearner;
 use App\CalendarNote;
 use App\CoachingTimerManuscript;
+use App\CoachingTimerTaken;
 use App\Genre;
 use App\Http\AdminHelpers;
 use App\Http\Middleware\Admin;
@@ -2005,5 +2006,53 @@ class LearnerController extends Controller
         }
 
         return response()->json(['error' => 'Opss. Something went wrong'], 500);
+    }
+
+    public function addCoachingSession($course_taken_id, Request $request)
+    {
+        if ($courseTaken = CoursesTaken::find($course_taken_id)) {
+            $data = $request->except('_token');
+            $suggested_dates = $data['suggested_date'];
+            // format the sent suggested dates
+            foreach ($suggested_dates as $k => $suggested_date) {
+                $suggested_dates[$k] = Carbon::parse($suggested_date)->format('Y-m-d H:i:s');
+            }
+
+            $extensions = ['docx'];
+            $file   = NULL;
+
+            if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) :
+                $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
+                $original_filename = $request->manuscript->getClientOriginalName();
+
+                if( !in_array($extension, $extensions) ) :
+                    return redirect()->back();
+                endif;
+
+                $destinationPath = 'storage/coaching-timer-manuscripts/'; // upload path
+
+                $time = time();
+                $fileName = $time.'.'.$extension;//$original_filename; // rename document0
+                $file = $destinationPath.$fileName;
+                $request->manuscript->move($destinationPath, $fileName);
+            endif;
+
+            $data['plan_type'] = 1;
+
+            CoachingTimerManuscript::create([
+                'user_id'           => Auth::user()->id,
+                'file'              => $file,
+                'plan_type'         => $data['plan_type'],
+                'suggested_date'    => json_encode($suggested_dates)
+            ]);
+
+            CoachingTimerTaken::create([
+                'user_id'           => Auth::user()->id,
+                'course_taken_id'   => $course_taken_id
+            ]);
+
+        }
+
+        return redirect()->back();
     }
 }
