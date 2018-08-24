@@ -617,6 +617,7 @@
 						<tr>
 							<th>Manus</th>
 							<th>Learner</th>
+							<th>Length</th>
 							<th>Suggested Date</th>
 							<th>Approved Date</th>
 						</tr>
@@ -636,6 +637,9 @@
 									<a href="{{ route('admin.learner.show', $coachingTimer->user->id) }}">
 										{{ $coachingTimer->user->full_name }}
 									</a>
+								</td>
+								<td>
+									{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($coachingTimer->plan_type) }}
 								</td>
 								<td>
                                     <?php
@@ -1390,6 +1394,58 @@
 
 	</div>
 </div>
+
+<div id="addCoachingSessionModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Add Coaching Session</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.learner.add-coaching-timer', $learner->id) }}"
+					  onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+					{{csrf_field()}}
+
+					<div class="form-group">
+						<label>Manuscript</label>
+						<input type="file" class="form-control" name="manuscript"
+							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+					</div>
+					
+					<div class="form-group">
+						<label>Session Length</label>
+						<select name="plan_type" class="form-control" required>
+							<option value="" disabled="" selected>-- Select --</option>
+							<option value="2">30 min</option>
+							<option value="1">1 hr</option>
+						</select>
+					</div>
+
+					@for($i = 1; $i <= 3; $i++)
+						<div class="form-group">
+							<label>Suggested Date</label>
+							<input type="datetime-local" class="form-control" name="suggested_date[]" required>
+						</div>
+					@endfor
+
+					<div class="form-group">
+						<label>Send Invoice</label> <br>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+							   name="send_invoice">
+					</div>
+
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-success">Submit</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					</div>
+				</form>
+			</div>
+
+		</div>
+
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -1542,12 +1598,6 @@
         });
 	});
 
-	/*$("#addOtherServiceForm").on('submit',function(){
-	    let submit_btn = $(this).find('[type=submit]');
-	    submit_btn.text('');
-	    submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
-        submit_btn.attr('disabled', 'disabled');
-	});*/
 
     $(".approveDateBtn").click(function(){
         let action = $(this).data('action');

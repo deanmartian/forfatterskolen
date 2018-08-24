@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\CoachingTimerManuscript;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\EmailTemplate;
@@ -686,6 +687,12 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * Add to correction or copy editing
+     * @param $user_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function addOtherService($user_id, Request $request)
     {
         if ($user = User::find($user_id)) {
@@ -800,5 +807,124 @@ class LearnerController extends Controller
 
         return redirect()->route('admin.learner.index');
     }
-    
+
+    public function addCoachingTimer($user_id, Request $request)
+    {
+        if ($user = User::find($user_id)) {
+            $data = $request->except('_token');
+            $data['price'] = 1690;
+            $suggested_dates = $data['suggested_date'];
+            // format the sent suggested dates
+            foreach ($suggested_dates as $k => $suggested_date) {
+                $suggested_dates[$k] = Carbon::parse($suggested_date)->format('Y-m-d H:i:s');
+            }
+
+            $extensions = ['docx'];
+            $file   = NULL;
+
+            if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) :
+                $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
+                $original_filename = $request->manuscript->getClientOriginalName();
+
+                if( !in_array($extension, $extensions) ) :
+                    return redirect()->back()->with([
+                        'alert_type' => 'danger',
+                        'errors' => AdminHelpers::createMessageBag('File type not allowed.'),
+                    ]);
+                endif;
+
+                $destinationPath = 'storage/coaching-timer-manuscripts/'; // upload path
+
+                $time = time();
+                $fileName = $time.'.'.$extension;//$original_filename; // rename document0
+                $file = $destinationPath.$fileName;
+                $request->manuscript->move($destinationPath, $fileName);
+
+                $docObj = new \Docx2Text($destinationPath.$fileName);
+                $docText= $docObj->convertToText();
+                $word_count = FrontendHelpers::get_num_of_words($docText);
+
+                $word_7500_price    = 690;
+                $excess_word        = 0;
+                $excess_word_price  = 0;
+
+                // the initial calculated word is 7500 if excess then calculate the total excess price
+                if ($word_count > 7500) {
+                    $excess_word = $word_count - 7500;
+                    // 69 is the price for every 1250 that is excess
+                    $excess_word_price = ceil($excess_word/1250) * 69;
+                }
+
+                $price = $word_7500_price + $excess_word_price;
+                $data['price'] = $data['price'] + $price;
+
+            endif;
+
+            // check if the admin wants to send an invoice to the user
+            if (isset($data['send_invoice'])) {
+
+                $title = 'Coaching time';
+                if ($data['plan_type'] == 1) {
+                    $title .= ' (1 time)';
+                    $productID = 601355457;
+                } else {
+                    $title .= ' (0,5 time)';
+                    $productID = 601355458;
+                }
+
+                $paymentMode = PaymentMode::findOrFail(3); // hardcoded faktura payment
+                $paymentPlan = PaymentPlan::findOrFail(6);
+                $payment_plan = ( $paymentMode->mode == "Paypal" ) ?  "Hele beløpet" : $paymentPlan->plan;
+
+                $comment = '(Manuskript: ' . $title . ', ';
+                $comment .= 'Betalingsmodus: ' . $paymentMode->mode . ', ';
+                $comment .= 'Betalingsplan: 14 dager)';
+
+                $dueDate = date("Y-m-d");
+                $dueDate = Carbon::parse($dueDate);
+
+                $dueDate->addDays(14);
+
+                $dueDate = date_format(date_create($dueDate), 'Y-m-d');
+                $price = $data['price'] * 100;
+
+                $invoice_fields = [
+                    'user_id'       => $user->id,
+                    'first_name'    => $user->first_name,
+                    'last_name'     => $user->last_name,
+                    'netAmount'     => $price,
+                    'dueDate'       => $dueDate,
+                    'description'   => 'Kursordrefaktura',
+                    'productID'     => $productID,
+                    'email'         => $user->email,
+                    'telephone'     => $user->telephone,
+                    'address'       => $user->street,
+                    'postalPlace'   => $user->city,
+                    'postalCode'    => $user->zip,
+                    'comment'       => $comment,
+                ];
+
+                $invoice = new FikenInvoice();
+                $invoice->create_invoice($invoice_fields);
+            }
+
+            CoachingTimerManuscript::create([
+                'user_id'           => $user_id,
+                'file'              => $file,
+                'payment_price'     => $data['price'],
+                'plan_type'         => $data['plan_type'],
+                'suggested_date'    => json_encode($suggested_dates),
+                'is_suggested_by_admin' => 1
+            ]);
+
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Coaching session added successfully.'),
+                'alert_type' => 'success',
+                'not-former-courses' => true
+            ]);
+
+        }
+
+        return redirect()->route('admin.learner.index');
+    }
 }

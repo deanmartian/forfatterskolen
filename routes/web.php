@@ -386,6 +386,7 @@ Route::group([
         Route::get('learner/login_activity/{id}', 'LearnerController@loginActivity')->name('admin.learner.login_activity');
         Route::get('/word-written-goal/{id}/statistic', 'LearnerController@goalStatistic')->name('admin.learner.goal-statistic');
         Route::post('learner/{id}/add-other-service', 'LearnerController@addOtherService')->name('admin.learner.add-other-service');
+        Route::post('learner/{id}/add-coaching-timer', 'LearnerController@addCoachingTimer')->name('admin.learner.add-coaching-timer');
 
         Route::delete('learner/invoice/{id}/delete', 'LearnerController@deleteInvoice')->name('admin.learner.invoice.delete');
         Route::delete('learner/course/{course_taken_id}/delete', 'LearnerController@deleteFromCourse')->name('admin.learner.delete-from-course');
