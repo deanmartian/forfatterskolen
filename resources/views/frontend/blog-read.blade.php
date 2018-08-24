@@ -113,6 +113,7 @@ $secret     = $config['client_secret'];
                 dispatch.initEvent("click", true, true);
 
                 a.dispatchEvent(dispatch);
+                window.open(url);
             }
             else {
                 let width = window.innerWidth * 0.66 ;
