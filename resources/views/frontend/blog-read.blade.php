@@ -74,7 +74,9 @@ $secret     = $config['client_secret'];
 ?>
     <div class="container blog-read-container">
         <h1 class="text-center">{{ $blog->title }}</h1>
-        {!! $blog->description !!}
+        <div class="col-sm-8 col-sm-offset-2">
+            {!! $blog->description !!}
+        </div>
     </div>
 
 <div class="icon-bar-cont">
