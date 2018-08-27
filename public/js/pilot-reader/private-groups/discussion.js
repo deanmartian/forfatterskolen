@@ -91,7 +91,7 @@ const methods = {
                         <span class="pull-right">${ reply.date }</span>
                     </div>
                     <div class="form-group clearfix mb-0 pb-0">
-                         <div class="lead-17 mb-0">${ reply.message }</div>
+                         <div class="lead-17 mb-0">${ reply.message || '' }</div>
                          <button class="btn btn-outline-primary btn-sm pull-right ${ !reply.is_owner? 'display-none' : ''}" onclick="methods.addForm(this)">Edit</button>
                     </div>
                     <div class="form-group edit display-none mb-0 pb-0 mt-2" data-id="${ reply.id }">
@@ -147,6 +147,19 @@ const methods = {
         parent.prev().removeClass('display-none');
     },
 
+    toggleLoadingIcon : function(btn, request)
+    {
+        btn.prop('disabled', request === 'show');
+        if(request === 'show')
+        {
+            btn.prepend(`<i class="fa fa-spinner fa-pulse fa-fw"></i> `);
+            btn.addClass("disabled");
+            return
+        }
+        btn.removeClass("disabled");
+        btn.find(".fas").remove()
+    },
+
     saveItem : function(el)
     {
         let self = this;
@@ -160,8 +173,10 @@ const methods = {
         {
             data.id = parent.data('id')
         }
+        this.toggleLoadingIcon($(el), 'show');
         $.post(`/account/private-groups/discussion/reply/${ isAdding? 'create' : 'update'}`, data)
             .then(function(response){
+                self.toggleLoadingIcon($(el), 'hide');
                 self.cancelItem(el);
                 self.getDiscussionReplies();
             })

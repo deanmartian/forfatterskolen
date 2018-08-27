@@ -11,6 +11,8 @@ use App\Helpers\Citrix;
 use App\Helpers\FileToText;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
+use App\Mail\DiscussionEmail;
+use App\Mail\DiscussionRepliesEmail;
 use App\PaymentMode;
 use App\PaymentPlan;
 use App\PilotReaderBook;
@@ -803,8 +805,24 @@ class HomeController extends Controller
         $from = 'post@forfatterskolen.no';
         $to = 'elybutabara@gmail.com';
         $content = 'this is a content';
-        AdminHelpers::send_email($subject, $from, $to, $content);
-        echo "sent";
+
+        $email_data = [
+            'sender'            => 'author',
+            'type'              => 'a discussion',
+            'discussion_url'    => route('learner.private-groups.discussion.show', ['id' => 4, 'discussion_id' => 14]),
+            'discussion_title'  => 'title',
+            'group_url'         => route('learner.private-groups.show', 4),
+            'group_title'       => 'group',
+            'email_message'     => 'this is the message'
+        ];
+
+        $email_data['receiver_email'] = 'elybutabara@gmail.com';
+        $email_data['receiver'] = 'test';
+
+        Mail::to($email_data['receiver_email'])->queue(new DiscussionRepliesEmail($email_data));
+        echo 'sent discussion reply';
+        /*print_r($email_data);
+        return view('emails.discussion_replies_new', compact('email_data'));*/
 
     }
 

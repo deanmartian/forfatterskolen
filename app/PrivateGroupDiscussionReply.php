@@ -12,4 +12,9 @@ class PrivateGroupDiscussionReply extends Model
     {
         return $this->belongsTo('App\User');
     }
+
+    public function discussion()
+    {
+        return $this->belongsTo('App\PrivateGroupDiscussion', 'disc_id');
+    }
 }

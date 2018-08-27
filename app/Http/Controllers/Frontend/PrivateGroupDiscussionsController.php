@@ -4,13 +4,16 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
+use App\Mail\DiscussionEmail;
 use App\PrivateGroup;
 use App\PrivateGroupDiscussion;
 use App\Transformer\PrivateGroupDiscussionsRepliesTransFormer;
 use App\Transformer\PrivateGroupDiscussionsTransFormer;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 
@@ -107,7 +110,8 @@ class PrivateGroupDiscussionsController extends Controller {
             {
                 $email_data['receiver_email'] = $member_user->email;
                 $email_data['receiver'] = $member_user->first_name . " " . $member_user->last_name;
-                $this->sendDiscussionEmail($email_data);
+                //$this->sendDiscussionEmail($email_data);
+                Mail::to($email_data['receiver_email'])->queue(new DiscussionEmail($email_data));
             }
         }
 

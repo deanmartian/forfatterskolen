@@ -48,7 +48,9 @@
                                 <div class="lead detail mb-0" data-id="message" id="message">
                                     {!! $discussion->message !!}
                                 </div>
-                                <button class="btn btn-outline-info btn-sm pull-right" onclick="methods.inlineEdit(this)">Edit</button>
+                                @if ($discussion->user->id == Auth::user()->id)
+                                    <button class="btn btn-outline-info btn-sm pull-right" onclick="methods.inlineEdit(this)">Edit</button>
+                                @endif
                             </div>
                             <div class="form-group mt-2 display-none">
                                 <textarea name="message" id="message_editor"></textarea>
