@@ -139,7 +139,7 @@
 							@endif
 
 							@if ($package->has_coaching)
-								1hr coaching session
+								{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($package->has_coaching) }} coaching session
 							@endif
 						@endif
 				  	</div>
