@@ -188,7 +188,6 @@ class PackageController extends Controller
         if (Course::find($course_id) && $package = Package::find($id)) {
             $package->has_coaching = $request->has_coaching;
             $package->save();
-            return redirect()->back();
         }
         return redirect()->back();
     }

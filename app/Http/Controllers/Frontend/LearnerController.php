@@ -2008,10 +2008,12 @@ class LearnerController extends Controller
         return response()->json(['error' => 'Opss. Something went wrong'], 500);
     }
 
-    public function addCoachingSession($course_taken_id, Request $request)
+    public function addCoachingSession(Request $request)
     {
+        $data = $request->except('_token');
+        $course_taken_id = $data['course_taken_id'];
+
         if ($courseTaken = CoursesTaken::find($course_taken_id)) {
-            $data = $request->except('_token');
             $suggested_dates = $data['suggested_date'];
             // format the sent suggested dates
             foreach ($suggested_dates as $k => $suggested_date) {
@@ -2036,8 +2038,6 @@ class LearnerController extends Controller
                 $file = $destinationPath.$fileName;
                 $request->manuscript->move($destinationPath, $fileName);
             endif;
-
-            $data['plan_type'] = 1;
 
             CoachingTimerManuscript::create([
                 'user_id'           => Auth::user()->id,

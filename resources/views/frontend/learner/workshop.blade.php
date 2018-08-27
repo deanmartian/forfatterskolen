@@ -93,15 +93,15 @@
 					<div class="panel panel-default" style="border-top: 0">
 						<div class="panel-body">
 							<?php
-								$packages = \App\Package::where('has_coaching', 1)->pluck('id');
+								$packages = \App\Package::where('has_coaching', '>', 0)->pluck('id');
                             	$coachingTimerTaken = Auth::user()->coachingTimersTaken()->pluck('course_taken_id');
 								$checkCourseTakenWithCoaching = Auth::user()->coursesTaken()->whereIn('package_id', $packages)
-									->whereNotIn('id', $coachingTimerTaken)->first();
+									->whereNotIn('id', $coachingTimerTaken)->get();
 							?>
-							@if ($checkCourseTakenWithCoaching)
+							@if ($checkCourseTakenWithCoaching->count())
 								<button class="btn btn-xs btn-primary pull-right" data-toggle="modal"
 										data-target="#addCoachingSessionModal"
-								data-action="{{ route('learner.course-taken.coaching-timer.add', $checkCourseTakenWithCoaching->id) }}"
+								data-action="{{ route('learner.course-taken.coaching-timer.add') }}"
 								id="addCoachingSessionBtn">
 									Add Coaching Lesson
 								</button>
@@ -234,6 +234,23 @@
 						</div>
 					@endfor
 
+					@if ($checkCourseTakenWithCoaching->count())
+						<div class="form-group">
+							<label>Use Included Session from Course</label>
+							<select name="course_taken_id" class="form-control" required
+							id="course_taken_id">
+								<option value="" disabled selected> -- Select --</option>
+								@foreach($checkCourseTakenWithCoaching as $courseTaken)
+									<option value="{{ $courseTaken->id }}"
+									data-plan="{{ $courseTaken->package->has_coaching }}">
+										{{ $courseTaken->package->course->title }} - {{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($courseTaken->package->has_coaching) }}
+									</option>
+								@endforeach
+							</select>
+						</div>
+						<input type="hidden" name="plan_type">
+					@endif
+
 					<div class="text-right margin-top">
 						<button type="submit" class="btn btn-success">Submit</button>
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -264,6 +281,13 @@
             let form = $("#addCoachingSessionModal").find('form');
 
             form.attr('action', action);
+		});
+
+        $("#course_taken_id").change(function(){
+           let plan = $(this).find(':selected').data('plan');
+            let form = $("#addCoachingSessionModal").find('form');
+
+            form.find('[name=plan_type]').val(plan);
 		});
 
         function disableSubmit(t) {

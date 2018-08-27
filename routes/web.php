@@ -157,7 +157,7 @@ Route::group([
         Route::get('/shop-manuscript/{id}', 'LearnerController@shopManuscriptShow')->name('learner.shop-manuscript.show'); // Shop Manuscript Show Page
         Route::get('/workshop', 'LearnerController@workshop')->name('learner.workshop'); // Workshops Page
         Route::post('/coaching-timer/{id}/approve_date', 'LearnerController@approveCoachingDate')->name('learner.coaching-timer.approve_date');
-        Route::post('/course-taken/{id}/coaching-timer/add', 'LearnerController@addCoachingSession')->name('learner.course-taken.coaching-timer.add');
+        Route::post('/course-taken/coaching-timer/add', 'LearnerController@addCoachingSession')->name('learner.course-taken.coaching-timer.add');
         Route::get('/webinar', 'LearnerController@webinar')->name('learner.webinar'); // Webinars Page
         Route::get('/course-webinar', 'LearnerController@courseWebinar')->name('learner.course-webinar'); // Course Webinars Page
         Route::get('/assignment', 'LearnerController@assignment')->name('learner.assignment'); // Assignments Page
