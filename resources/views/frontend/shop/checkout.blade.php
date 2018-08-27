@@ -281,8 +281,14 @@
 							  *Du kan velge om du vil ha faktura en gang i måneden, eller
 							  èn faktura der du kan betale inn ønsket beløp innen forfallsdatoen
 						  </div>
+
+						  <div class="col-sm-12 margin-top">
+							  <input type="checkbox" required> I agree to the <a href="{{ route('front.terms', 'course-terms') }}"
+							  target="_blank">terms and conditions</a>
+						  </div>
 					  </div>
 					<hr />
+
 					<div class="text-center margin-bottom checkout-total">
 
 						@if( $hasPaidCourse && $package->has_student_discount)
@@ -355,10 +361,8 @@
 <script>
 $(document).ready(function(){
 
-    $("#submitOrder").click(function(e){
-       e.preventDefault();
-       $(this).attr('disabled',true)
-       $("#place_order_form").submit();
+    $("#place_order_form").on('submit',function(){
+        $("#submitOrder").attr('disabled',true);
 	});
 
     var course_id = '<?php echo $course->id?>';

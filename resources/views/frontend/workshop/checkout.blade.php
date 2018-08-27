@@ -118,13 +118,22 @@
 
 				<div class="panel panel-default no-margin-bottom">
 				  <div class="panel-heading"><h4>Betalingsmetode</h4></div>
-				  <div class="panel-body">
+				  <div class="panel-body" style="padding-bottom: 0">
 				  	<select class="form-control" name="payment_mode_id" required>
 				  	@foreach(App\PaymentMode::get() as $paymentMode)
 						<option value="{{$paymentMode->id}}" data-mode="{{ $paymentMode->mode }}">{{$paymentMode->mode}}</option>
 				  	@endforeach
 				  	</select>
 				  	<em><small>Merk: Vi godtar kun full betaling på PAYPAL</small></em>
+
+					  <div class="col-sm-12 margin-top">
+						  <input type="checkbox" required> I agree to the
+						  <a href="{{ route('front.terms', 'workshop-terms') }}"
+							 target="_blank">terms and conditions</a>
+					  </div>
+
+					  <hr>
+
 				   </div>
 					<div class="text-center margin-bottom checkout-total">
 						<?php

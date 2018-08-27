@@ -176,6 +176,13 @@
 						<label for="{{$paymentPlan->plan}}">{{$paymentPlan->plan}} </label>
 				  	</div>
 				  	@endforeach
+
+						<div class="col-sm-12 no-left-padding">
+							<input type="checkbox" required> I agree to the
+							<a href="{{ route('front.terms', 'manuscript-terms') }}"
+							   target="_blank">terms and conditions</a>
+						</div>
+
 					<hr />
 					<div class="text-center margin-bottom checkout-total">
 

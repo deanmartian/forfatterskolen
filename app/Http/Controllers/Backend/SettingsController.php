@@ -22,6 +22,20 @@ class SettingsController extends Controller
             'alert_type' => 'success']);
     }
 
+    /**
+     * Update different terms
+     * @param Request $request terms_type Terms for certain page
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateOtherTerms( Request $request )
+    {
+        Settings::updateOrCreate(['setting_name' => $request->terms_type.'-terms'], ['setting_value' => $request->terms]);
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Terms updated successfully.'),
+            'alert_type' => 'success',
+            'terms_tab' => $request->terms_type]);
+    }
+
     public function updateOptInTerms( Request $request )
     {
         Settings::updateOrCreate(['setting_name' => 'opt_in_terms'], ['setting_value' => $request->opt_in_terms]);

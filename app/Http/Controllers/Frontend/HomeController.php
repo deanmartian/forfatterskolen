@@ -790,7 +790,11 @@ class HomeController extends Controller
     public function terms($slug = null)
     {
         $terms = Settings::getByName($slug ?: 'terms');
-        return view('frontend.terms', compact('terms'));
+        if ($terms) {
+            return view('frontend.terms', compact('terms'));
+        }
+
+        return redirect()->route('front.home');
     }
 
     public function testemail()

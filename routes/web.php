@@ -65,7 +65,7 @@ Route::group([
         Route::post('/opt-in', 'HomeController@optIn')->name('front.opt-in'); // Opt-in page
         Route::get('/opt-in-terms', 'HomeController@optInTerms')->name('front.opt-in-terms'); // Opt-in page
 
-        Route::get('/terms/{slug?}', 'HomeController@terms')->name('front.terms'); // Opt-in page
+        Route::get('/terms/{slug?}', 'HomeController@terms')->name('front.terms'); // Terms page
 
         Route::get('/shop-manuscript/{id}/checkout', 'ShopManuscriptController@checkout')->name('front.shop-manuscript.checkout'); // Checkout Shop Manuscript
         Route::get('/upgrade-manuscript/{id}/checkout', 'ShopManuscriptController@checkoutUpgradeManuscript')->name('front.shop-manuscript.upgrade-manuscript-checkout'); // Checkout Shop Manuscript
@@ -930,6 +930,7 @@ Route::group([
         // Settings
         Route::post('/settings/update/welcome_email', 'SettingsController@updateEmail')->name('admin.settings.update.welcome_email'); // Store Feedback
         Route::post('/settings/update/terms', 'SettingsController@updateTerms')->name('admin.settings.update.terms'); // Store Terms
+        Route::post('/settings/update/other-terms', 'SettingsController@updateOtherTerms')->name('admin.settings.update.other-terms');
         Route::post('/settings/update/opt-in-terms', 'SettingsController@updateOptInTerms')->name('admin.settings.update.opt-in-terms'); // Store Terms
         Route::post('/settings/update/opt-in-description', 'SettingsController@updateOptInDescription')->name('admin.settings.update.opt-in-description'); // Store Terms
 

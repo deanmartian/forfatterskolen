@@ -170,6 +170,12 @@
                             </select>
                             <em><small>Merk: Vi godtar kun full betaling på PAYPAL</small></em>
 
+                            <div class="col-sm-12 no-left-padding">
+                                <input type="checkbox" required> I agree to the
+                                <a href="{{ route('front.terms', 'coaching-terms') }}"
+                                   target="_blank">terms and conditions</a>
+                            </div>
+
                             <hr>
 
                             <div class="text-center margin-bottom checkout-total">

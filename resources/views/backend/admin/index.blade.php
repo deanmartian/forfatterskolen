@@ -138,18 +138,55 @@
 
 			@elseif( Request::input('tab') == 'terms' )
 				<!-- Welcome Email -->
-					<div class="row margin-top">
-						<div class="col-sm-12">
-							<div class="panel panel-default ">
-								<div class="panel-heading">
-									<button type="button" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#editTermsModal"><i class="fa fa-pencil"></i></button>
-								</div>
-								<div class="panel-body">
-									{!! App\Settings::terms() !!}
-								</div>
+				<div class="row margin-top">
+					<div class="col-sm-12">
+						<div class="panel panel-default ">
+							<div class="panel-heading">
+								<button type="button" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#editTermsModal"><i class="fa fa-pencil"></i></button>
+							</div>
+							<div class="panel-body">
+								{!! App\Settings::terms() !!}
 							</div>
 						</div>
+
+						<?php
+							$other_tabs = ['course', 'manuscript', 'workshop', 'coaching'];
+						?>
+
+						<div class="col-sm-12">
+							<nav>
+								<ul class="nav nav-tabs" id="other-terms-tab">
+									@foreach($other_tabs as $other_tab)
+										<li>
+											<a href="#nav-{{ $other_tab }}" data-toggle="tab">{{ ucwords($other_tab === 'coaching' ?
+											'Coaching Timer' :
+											($other_tab === 'manuscript' ? 'Manuscript/Språkvask/Korrektur' : $other_tab)) }}</a>
+										</li>
+									@endforeach
+								</ul>
+							</nav>
+
+							<div class="tab-content">
+								@foreach($other_tabs as $other_tab)
+									<div class="tab-pane fade" id="nav-{{ $other_tab }}">
+										<div class="panel panel-default" style="border-top: 0">
+											<div class="panel-body">
+												<div class="panel-heading">
+													<button type="button" class="btn btn-primary btn-xs pull-right otherTermsBtn" data-toggle="modal" data-target="#editOtherTermsModal"
+															data-terms="{{ App\Settings::getByName($other_tab.'-terms') }}"
+															data-terms-type="{{ $other_tab }}"><i class="fa fa-pencil"></i></button>
+												</div>
+												<div class="panel-body">
+													{!! App\Settings::getByName($other_tab.'-terms') !!}
+												</div>
+											</div>
+										</div>
+									</div>
+								@endforeach
+							</div> <!-- end tab-content -->
+						</div>
 					</div>
+				</div>
 			@else
 				<div class="table-users table-responsive">
 					<table class="table">
@@ -350,7 +387,27 @@
 				</form>
 			</div>
 		</div>
+	</div>
+</div>
 
+<div id="editOtherTermsModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title"></h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.settings.update.other-terms') }}">
+					{{ csrf_field() }}
+					<textarea class="form-control ckeditor" name="terms"></textarea>
+					<input type="hidden" name="terms_type">
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">Save</button>
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -446,6 +503,8 @@
 @section('scripts')
 	<script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 <script>
+
+	let other_terms_tab = '{{ Session::has('terms_tab') ? Session::get('terms_tab'): 'course' }}';
 
     // tinymce
     var editor_config = {
@@ -562,6 +621,30 @@
             charText = "character left";
         }
         $(this).find('.charNum').text(350 - len + " "+charText);
-    })
+    });
+
+    $(".otherTermsBtn").click(function(){
+       let terms = $(this).data('terms');
+       let modal = $("#editOtherTermsModal");
+       let form = modal.find('form');
+       let terms_type = $(this).data('terms-type');
+       modal.find('.modal-title').text(ucFirst(terms_type !== 'coaching' ? terms_type : 'coaching Timer')+' Terms');
+       form.find('textarea').text(terms);
+        form.find('[name=terms_type]').val(terms_type);
+
+        // set the value for textarea editor
+        tinyMCE.activeEditor.setContent(terms);
+	});
+
+    if (other_terms_tab) {
+        $("#other-terms-tab").find('[href="#nav-'+ other_terms_tab + '"]').trigger('click');
+        $("#nav-"+other_terms_tab).addClass('active in');
+	}
+
+    // capitalize the first letter
+    function ucFirst(string)
+    {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
 </script>
 @stop
