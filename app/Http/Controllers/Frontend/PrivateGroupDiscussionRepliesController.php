@@ -83,7 +83,7 @@ class PrivateGroupDiscussionRepliesController extends Controller {
             $email_notifications_option = $preference? $preference->email_notifications_option : 2;
             if( ($email_notifications_option === 1) )
             {
-                $email_data['receiver_email'] = 'elybutabara@gmail.com';//$member_user->email;
+                $email_data['receiver_email'] = $member_user->email;
                 $email_data['receiver'] = $member_user->first_name . " " . $member_user->last_name;
                 //$this->sendDiscussionRepliesEmail($email_data);
                 Mail::to($email_data['receiver_email'])->queue(new DiscussionRepliesEmail($email_data));
