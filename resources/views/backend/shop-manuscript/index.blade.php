@@ -12,7 +12,7 @@
 
 <div class="col-md-12">
  	<ul class="nav nav-tabs margin-top">
-	    <li @if( Request::input('tab') != 'sold' || Request::input('tab') != 'manuscripts') class="active" @endif><a href="?tab=all">Shop Manuscripts</a></li>
+	    <li @if( Request::input('tab') != 'sold' && Request::input('tab') != 'manuscripts') class="active" @endif><a href="?tab=all">Shop Manuscripts</a></li>
 	    <li @if( Request::input('tab') == 'sold' ) class="active" @endif><a href="?tab=sold">Sold Shop Manuscripts</a></li>
 		<li @if( Request::input('tab') == 'manuscripts' ) class="active" @endif><a href="?tab=manuscripts">Manuscripts</a></li>
   	</ul>
@@ -94,6 +94,23 @@
 			@elseif ( Request::input('tab') == 'sold' )
 	  		<div class="panel panel-default" style="border-top: 0">
 		  		<div class="panel-body">
+					<div class="navbar-form navbar-right">
+						<div class="form-group">
+							<form role="search" method="get" action="">
+								<input type="hidden" name="tab" value="sold">
+								<div class="input-group">
+									<input type="text" class="form-control" name="search" placeholder="Search.."
+									value="{{ Request::get('search') }}">
+									<span class="input-group-btn">
+										<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+									</span>
+								</div>
+							</form>
+						</div>
+					</div>
+
+					<div class="clearfix"></div>
+
 					<div class="table-users table-responsive">
 						<table class="table no-margin-bottom">
 							<thead>

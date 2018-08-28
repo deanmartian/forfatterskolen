@@ -34,8 +34,7 @@
                     <div class="col-sm-10">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <form class="" method="POST" action="{{ route('learner.webinar') }}">
-                                    {{ csrf_field() }}
+                                <form class="" method="get" action="{{ route('learner.webinar') }}">
                                     <div class="input-group-global">
                                         <input type="text" name="search_upcoming" class="form-control" placeholder="Søk etter webinar (kommende)" aria-label="Enter here..." aria-describedby="basic-addon2"
                                                value="{{ Request::get('search_upcoming') }}">

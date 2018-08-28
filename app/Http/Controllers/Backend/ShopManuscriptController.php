@@ -39,6 +39,16 @@ class ShopManuscriptController extends Controller
     {
         if( $request->tab == 'sold' ) :
             $shopManuscripts = ShopManuscriptsTaken::orderBy('created_at', 'desc')->paginate(15);
+            if($request->exists('search')):
+                $users = User::where('first_name','like','%'.$request->search.'%')
+                    ->orWhere('last_name','like','%'.$request->search.'%')->pluck('id');
+
+                $shopManuscripts = ShopManuscriptsTaken::whereIn('user_id', $users)
+                    ->orWhere(function ($query) use ($users) {
+                        $query->whereIn('feedback_user_id', $users);
+                    })
+                    ->paginate(15);
+            endif;
         elseif( $request->tab == 'manuscripts' ) :
             $shopManuscripts = Manuscript::orderBy('created_at', 'desc')->paginate(15);
 
