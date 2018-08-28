@@ -65,15 +65,17 @@ class CheckFikenInvoice extends Command
         foreach( $invoices as $invoice ) {
             $fiken_balance = 0;
             $status = 0;
+            $fikeDueDate = NULL;
             foreach( $fikenInvoices as $fikenInvoice ) :
                 if( $invoice->fiken_url == $fikenInvoice->_links->alternate->href ) :
                     $sale = FrontendHelpers::FikenConnect($fikenInvoice->sale);
                     $status = $sale->paid;
                     $fiken_balance = (double)$fikenInvoice->gross/100;
+                    $fikeDueDate = $fikenInvoice->dueDate;
                     break;
                 endif;
             endforeach;
-            $invoice->update(['fiken_is_paid' => $status, 'fiken_balance' => $fiken_balance]);
+            $invoice->update(['fiken_is_paid' => $status, 'fiken_balance' => $fiken_balance, 'fiken_dueDate' => $fikeDueDate]);
         }
 
         return "done checking fiken";
