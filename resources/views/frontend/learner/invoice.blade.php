@@ -37,28 +37,32 @@
 							      break;
 							    endif;
 							endforeach;
-							$fikenError = false;
+							/*$fikenError = false;
 							if( $fikenURL ) :
 							  	$sale = FrontendHelpers::FikenConnect($fikenInvoice->sale);
 							  	$status = $sale->paid ? "BETALT" : "UBETALT";
 							  	$balance = (double)$fikenInvoice->gross/100;
 							else :
 							  	$fikenError = true;
-							endif;
-							$transactions_sum = $invoice->transactions->sum('amount');
+							endif;*/
+                            $transactions_sum = $invoice->transactions->sum('amount');
+
+                            // remove if the above code is uncomment
+							$balance = $invoice->fiken_balance;
+                            $status = $invoice->fiken_is_paid ? "BETALT" : "UBETALT";
 							?>
 							<tr>
 								<td><a href="{{route('learner.invoice.show', $invoice->id)}}">{{$fikenInvoice->invoiceNumber}}</a></td>
 								<td>{{ \Carbon\Carbon::parse($fikenInvoice->dueDate)->format('d.m.Y') }}</td>
 								<td>
-									@if($sale->paid)
+									@if(/*$sale->paid*/ $invoice->fiken_is_paid)
 									{{FrontendHelpers::currencyFormat(0)}}
 									@else
 									{{FrontendHelpers::currencyFormat($balance - $transactions_sum)}}
 									@endif
 								</td>
 								<td>
-									@if($sale->paid)
+									@if(/*$sale->paid*/ $invoice->fiken_is_paid)
 									<span class="label label-success">{{$status}}</span>
 									@else
 									<span class="label label-danger">{{$status}}</span>
