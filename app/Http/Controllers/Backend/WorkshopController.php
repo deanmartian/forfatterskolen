@@ -42,11 +42,15 @@ class WorkshopController extends Controller
 
     public function store(AddWorkshopRequest $request)
     {
+        $this->validate($request, [
+            'description' => 'required'
+        ]);
         $workshop = new Workshop();
         $workshop->title = $request->title;
         $workshop->description = $request->description;
         $workshop->price = $request->price;
         $workshop->date = $request->date;
+        $workshop->faktura_date = $request->faktura_date;
         $workshop->duration = $request->duration;
         $workshop->fiken_product = $request->fiken_product;
         $workshop->seats = $request->seats;
@@ -78,11 +82,15 @@ class WorkshopController extends Controller
 
     public function update($id, AddWorkshopRequest $request)
     {
+        $this->validate($request, [
+            'description' => 'required'
+        ]);
         $workshop = Workshop::findOrFail($id);
         $workshop->title = $request->title;
         $workshop->description = $request->description;
         $workshop->price = $request->price;
         $workshop->date = $request->date;
+        $workshop->faktura_date = $request->faktura_date;
         $workshop->duration = $request->duration;
         $workshop->fiken_product = $request->fiken_product;
         $workshop->seats = $request->seats;

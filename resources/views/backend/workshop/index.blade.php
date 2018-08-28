@@ -28,7 +28,7 @@
 </div>
 
 
-@if ( $errors->any() )
+{{--@if ( $errors->any() )
 <div class="col-sm-4 margin-top">
   <div class="alert alert-danger bottom-margin">
       <ul>
@@ -38,7 +38,7 @@
       </ul>
   </div>
 </div>
-@endif
+@endif--}}
 
 <div class="col-sm-12 margin-top">
   <button type="button" class="btn btn-primary margin-bottom" data-toggle="modal" data-target="#addWorkshopModal">+ Add Workshop</button> 
@@ -121,6 +121,10 @@
                 <label>Date</label>
                 <input type="datetime-local" name="date" placeholder="Date" min="0" required class="form-control">
               </div>
+                <div class="form-group">
+                    <label>Faktura Due Date</label>
+                    <input type="date" name="faktura_date" placeholder="Faktura Due Date" class="form-control">
+                </div>
               <div class="form-group">
                 <label id="course-image">Image</label>
                 <div class="course-form-image image-file margin-bottom">

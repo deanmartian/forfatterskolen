@@ -106,9 +106,11 @@ class WorkshopController extends Controller
         $comment = '(Workshop: ' . $workshop->title . ', ';
         $comment .= 'Betalingsmodus: ' . $payment_mode . ')';
 
-        $dueDate = date("Y-m-d");
+        $dueDate = $workshop->faktura_date ?: date("Y-m-d");
         $dueDate = Carbon::parse($dueDate);
-        $dueDate->addDays(10);
+        if (!$workshop->faktura_date) {
+            $dueDate->addDays(10);
+        }
         $dueDate = date_format(date_create($dueDate), 'Y-m-d');
 
         $invoice_fields = [

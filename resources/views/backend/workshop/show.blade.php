@@ -11,7 +11,7 @@
 @section('content')
 
 <div class="container margin-top">
-	<div class="row">
+	{{--<div class="row">
 		@if ( $errors->any() )
 		<div class="col-sm-4 margin-top">
 		  <div class="alert alert-danger bottom-margin">
@@ -23,7 +23,7 @@
 		  </div>
 		</div>
 		@endif
-	</div>
+	</div>--}}
 
 	<div class="row">
 		<div class="col-sm-12">
@@ -46,10 +46,11 @@
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<h4>About This Workshop</h4>
-					<div class="margin-top margin-bottom">{{ $workshop->description }}</div>
+					<div class="margin-top margin-bottom">{!! $workshop->description !!}</div>
 					<div class="workshop-meta">
 						<div><strong>Price<span class="pull-right">:</span></strong>{{ AdminHelpers::currencyFormat($workshop->price) }}</div>
 						<div><strong>When<span class="pull-right">:</span></strong>{{ date_format(date_create($workshop->date), 'h:i A, dS M Y') }}</div>
+						<div><strong>Faktura Due Date <span class="pull-right">:</span></strong>{{ $workshop->faktura_date ? date_format(date_create($workshop->faktura_date), 'dS M Y') : '' }}</div>
 						<div><strong>Duration<span class="pull-right">:</span></strong>{{ $workshop->duration }} hours</div>
 						<div><strong>Fiken product<span class="pull-right">:</span></strong>{{ $workshop->fiken_product }}</div>
 						<div><strong>Total Seats<span class="pull-right">:</span></strong>{{ $workshop->seats }}</div>
@@ -334,6 +335,10 @@
 	                <label>Date</label>
 	                <input type="datetime-local" name="date" placeholder="Date" value="{{ strftime('%Y-%m-%dT%H:%M:%S', strtotime($workshop->date)) }}" min="0" required class="form-control">
 	              </div>
+					<div class="form-group">
+						<label>Faktura Due Date</label>
+						<input type="date" name="faktura_date" placeholder="Faktura Due Date" value="{{ $workshop->faktura_date ? strftime('%Y-%m-%d', strtotime($workshop->faktura_date)) : '' }}" class="form-control">
+					</div>
 	              <div class="form-group">
 	                <label id="course-image">Image</label>
 	                <div class="course-form-image image-file margin-bottom">
