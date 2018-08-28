@@ -1118,7 +1118,8 @@ body .reader-directory-search, body .author-view-feedbacks {
     margin-left: -1px;
 }
 
-.reader-directory-search .input-group-append, .reader-directory-search .input-group-prepend {
+.reader-directory-search .input-group-append, .reader-directory-search .input-group-prepend
+, .input-group-global .input-group-append, .input-group-global .input-group-prepend {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;

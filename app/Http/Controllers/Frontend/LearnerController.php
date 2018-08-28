@@ -16,6 +16,7 @@ use App\Notification;
 use App\Package;
 use App\PaymentMode;
 use App\PaymentPlan;
+use App\PilotReaderReaderProfile;
 use App\Repositories\Services\CompetitionService;
 use App\Repositories\Services\PublishingService;
 use App\Repositories\Services\WritingGroupService;
@@ -54,6 +55,8 @@ use File;
 use App\Http\FrontendHelpers;
 
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
+
+use Illuminate\Support\Facades\DB;
 use PaypalIPN;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
@@ -168,9 +171,32 @@ class LearnerController extends Controller
     }
 
 
-    public function webinar()
+    public function webinar( Request $request )
     {
-        return view('frontend.learner.webinar');
+        $isPost = 0;
+        $searchResult = [];
+        if ($request->isMethod('post')) {
+            if ($request->exists('search_upcoming')) {
+                $query = DB::table('courses_taken')
+                    ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
+                    ->join('courses', 'packages.course_id', '=', 'courses.id')
+                    ->join('webinars', 'courses.id', '=', 'webinars.course_id')
+                    ->select('webinars.*','courses_taken.id as courses_taken_id','courses.title as course_title')
+                    ->where('user_id',Auth::user()->id)
+                    ->where('courses.id',17) // just added this line to show all webinar pakke webinars
+                    ->whereNotIn('webinars.id',[24, 25, 31])
+                    ->where('webinars.start_date', '>=' ,Carbon::today())
+                    ->where('webinars.title','LIKE','%'.$request->search_upcoming.'%')
+                    ->where('set_as_replay',0)
+                    ->orderBy('courses.type', 'ASC')
+                    ->orderBy('webinars.start_date', 'ASC');
+
+                $searchResult = $query->get();
+            }
+            $isPost = 1;
+        }
+
+        return view('frontend.learner.webinar', compact('searchResult', 'isPost'));
     }
 
     public function courseWebinar()
