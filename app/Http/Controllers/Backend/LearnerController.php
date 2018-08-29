@@ -556,6 +556,14 @@ class LearnerController extends Controller
         $workshop = Workshop::find($request->workshop_id);
         $menu = WorkshopMenu::where('workshop_id', $request->workshop_id)->first();
 
+        if (!$menu) {
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Please add a menu on the workshop before assigning it to learner.'),
+                'alert_type' => 'danger',
+                'not-former-courses' => true
+            ]);
+        }
+
         $workshopTaken = new WorkshopsTaken();
         $workshopTaken->user_id = $request->user_id;
         $workshopTaken->workshop_id = $workshop->id;

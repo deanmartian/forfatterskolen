@@ -1161,7 +1161,7 @@
 				<h4 class="modal-title">Add to workshop</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="{{ route('learner.add_to_workshop') }}">
+				<form method="POST" action="{{ route('learner.add_to_workshop') }}" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
                     <?php
                     $workshops = \App\Workshop::where('is_active', 1)->get();
