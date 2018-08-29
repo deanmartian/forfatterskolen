@@ -2770,6 +2770,13 @@ form .form-group:last-child{
 	padding: 12px;
 	min-height: 256px;
 }
+
+.dashboard-courses .lesson-content-title{
+	box-sizing: border-box;
+	padding: 12px;
+	min-height: 60px;
+}
+
 .dashboard-webinar .webinar-date,
 .dashboard-manuscripts .manuscript-date{
 	color: #ccc;
@@ -2918,6 +2925,13 @@ a.panel-lesson:hover{
 .lesson-body p{
 	margin-bottom: 24px;
 }
+
+.webinar-thumb iframe {
+	height: 185px!important;
+	margin: 0!important;
+	width: 322px!important;
+}
+
 .subscribe-success{
 	box-sizing: border-box;
 	padding: 80px 20px 140px 20px;

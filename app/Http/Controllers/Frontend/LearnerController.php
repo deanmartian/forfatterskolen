@@ -11,6 +11,7 @@ use App\Genre;
 use App\Http\AdminHelpers;
 use App\Http\Middleware\Admin;
 use App\Http\Requests\AddWritingGroupRequest;
+use App\LessonContent;
 use App\LessonDocuments;
 use App\Notification;
 use App\Package;
@@ -174,6 +175,7 @@ class LearnerController extends Controller
     public function webinar( Request $request )
     {
         $isPost = 0;
+        $isReplay = 0;
         $searchResult = [];
 
         if ($request->exists('search_upcoming')) {
@@ -195,7 +197,31 @@ class LearnerController extends Controller
             $isPost = 1;
         }
 
-        return view('frontend.learner.webinar', compact('searchResult', 'isPost'));
+        // check if webinar-pakke is replay
+        $webinarsRepriser = DB::table('courses_taken')
+            ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
+            ->join('courses', 'packages.course_id', '=', 'courses.id')
+            ->join('webinars', 'courses.id', '=', 'webinars.course_id')
+            ->select('webinars.*','courses_taken.id as courses_taken_id','courses.title as course_title')
+            ->where('user_id',Auth::user()->id)
+            ->where('courses.id',17) // just added this line to show all webinar pakke webinars
+            ->where(function($query){
+                $query->whereIn('webinars.id',[24, 25, 31]);
+                $query->orWhere('set_as_replay',1);
+            })
+            //->whereIn('webinars.id',[24, 25, 31]) // remove this to return the original
+            ->orderBy('courses.type', 'ASC')
+            ->orderBy('webinars.start_date', 'ASC')
+            ->get();
+
+        if ($request->exists('search_replay') && $webinarsRepriser) {
+            $searchResult = LessonContent::where('title', 'like', '%'.$request->search_replay.'%')
+                ->get();
+            $isPost = 1;
+            $isReplay = 1;
+        }
+
+        return view('frontend.learner.webinar', compact('searchResult', 'isPost', 'isReplay'));
     }
 
     public function courseWebinar()

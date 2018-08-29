@@ -41,7 +41,15 @@
 		<div class="row">
 			<div class="col-sm-10">
 				<div class="margin-top lesson-body">
-				{!! html_entity_decode($lesson->content) !!}
+					<!-- check if for old structure or new -->
+					@if ($lesson->id <= 169)
+						{!! html_entity_decode($lesson->content) !!}
+					@else
+						@foreach($lesson->lessonContent as $content)
+							<h1>{{ $content->title }}</h1>
+							{!! html_entity_decode($content->lesson_content) !!}
+						@endforeach
+					@endif
 				</div>
 			</div>
 			<div class="col-sm-2">

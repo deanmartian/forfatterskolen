@@ -7,6 +7,7 @@
 @section('styles')
 <link rel="stylesheet" href="{{asset('content_tools/content-tools.min.css')}}">
 <link rel="stylesheet" href="{{asset('fileuploader/src/jquery.fileuploader.css')}}">
+<link rel="stylesheet" href="{{ asset('js/toastr/toastr.min.css') }}">
 @stop
 
 

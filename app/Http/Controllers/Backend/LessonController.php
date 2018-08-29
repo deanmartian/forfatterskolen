@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\AdminHelpers;
+use App\LessonContent;
 use App\LessonDocuments;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -40,6 +41,7 @@ class LessonController extends Controller
     	$course = Course::findOrFail($id);
     	$section = NULL;
         $lesson = [
+            'id' => '',
             'title' => old('title'),
             'content' => old('content'),
             'delay' => old('delay'),
@@ -49,8 +51,28 @@ class LessonController extends Controller
     	return view('backend.lesson.create', compact('course', 'lesson', 'section', 'documents'));
     }
 
-    public function store($course_id, LessonCreateRequest $request)
+    public function store($course_id, Request $request)
     {
+
+        $otherCourseReqFields = [
+            'title' => 'required',
+            'content' => 'required',
+            'delay' => 'required|string|max:50',
+        ];
+
+        $webinarPakkeReqFields = [
+            'title' => 'required',
+            'delay' => 'required|string|max:50',
+        ];
+
+        $reqFields = $otherCourseReqFields;
+
+        if ($course_id == 17) {
+            $reqFields = $webinarPakkeReqFields;
+        }
+
+        $this->validate($request,$reqFields);
+
         $course = Course::findOrFail($course_id);
         $lesson = new Lesson();
         $lesson->course_id = $course->id;
@@ -90,8 +112,29 @@ class LessonController extends Controller
     }
 
 
-    public function update($course_id, $id, LessonUpdateRequest $request)
+    public function update($course_id, $id, Request $request)
     {
+
+        $otherCourseReqFields = [
+            'title' => 'required',
+            'content' => 'required',
+            'delay' => 'required|string|max:50',
+        ];
+
+        $webinarPakkeReqFields = [
+            'title' => 'required',
+            'delay' => 'required|string|max:50',
+        ];
+
+        $reqFields = $otherCourseReqFields;
+
+        if ($course_id == 17 && $id > 169) {
+            $reqFields = $webinarPakkeReqFields;
+        }
+
+        $this->validate($request,$reqFields);
+
+        print_r($request->all());
         $course = Course::findOrFail($course_id);
         $lesson = Lesson::findOrFail($id);
         $lesson->course_id = $course->id;
@@ -184,5 +227,71 @@ class LessonController extends Controller
             $document->forceDelete();
         }
         return redirect()->back();
+    }
+
+    /**
+     * Get the lesson content of a lesson
+     * @param $lesson_id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getLessonContent($lesson_id)
+    {
+        $lessonContent = LessonContent::where('lesson_id', $lesson_id)->get();
+        return response()->json(['data' => $lessonContent]);
+    }
+
+    /**
+     * Add a lesson content for a lesson
+     * @param $lesson_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function addContent($lesson_id, Request $request)
+    {
+        if ($lesson = Lesson::find($lesson_id)) {
+            $titles = $request->title;
+            $videos = $request->lesson_video;
+            $idList = $request->content_id;
+
+            // check if title is not empty
+            //$lesson->lessonContent()->delete();
+
+            foreach($titles as $k => $title) {
+                if ($title) {
+                    $insertContent = [
+                        'title' => $title,
+                        'lesson_content' => $videos[$k]
+                    ];
+
+                    // check if ID is not empty then update the record
+                    if ($idList[$k]) {
+                        $lesson->lessonContent()->where('id', $idList[$k])->first()->update($insertContent);
+                    } else {
+                        $lesson->lessonContent()->create($insertContent);
+                    }
+                }
+            }
+
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Lesson content saved.'),
+                'alert_type' => 'success'
+            ]);
+        }
+        return redirect()->back();
+    }
+
+    /**
+     * Delete a lesson content
+     * @param $content_id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteLessonContent($content_id)
+    {
+        if ($lesson_content = LessonContent::find($content_id)) {
+            $lesson_content->delete();
+            return response()->json(['success' => 'Lesson Content deleted.'], 200);
+        }
+
+        return response()->json(['error' => 'Opss. Something went wrong'], 500);
     }
 }

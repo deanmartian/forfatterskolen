@@ -43,6 +43,11 @@ class Lesson extends Model
         return $this->hasMany('App\LessonDocuments')->orderBy('created_at', 'desc');
     }
 
+    public function lessonContent()
+    {
+        return $this->hasMany('App\LessonContent')->orderBy('created_at', 'desc');
+    }
+
     /**
      * Delete related table/model
      */

@@ -965,3 +965,11 @@ textarea{
 	right: 0;
 	min-width: 300px;
 }
+
+.margin-top {
+	margin-top: 12px;
+}
+
+.padding-left-15 {
+	padding-left: 15px;
+}

@@ -104,7 +104,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a class="buy_now" href="{{ route('front.free-webinar', $next_free_webinar->id) }}">Register Deg</a>
+                            <a class="buy_now" href="{{ route('front.free-webinar', $next_free_webinar->id) }}">Registrer deg</a>
                         </div>
                     @endif
                 </div>
@@ -123,7 +123,7 @@
                                     <p>{{ str_limit(strip_tags($latest_blog->description), 180)}}</p>
                                 </div>
                             </div>
-                            <a class="buy_now" href="{{ route('front.read-blog', $latest_blog->id) }}">Les</a>
+                            <a class="buy_now" href="{{ route('front.read-blog', $latest_blog->id) }}">Les mer</a>
                         </div>
                     @endif
                 </div>

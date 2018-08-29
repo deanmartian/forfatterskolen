@@ -83,21 +83,47 @@
 	{{--</form>--}}
 </div>
 
-
-
-<div class="content-tools-container">
-	<div class="container">
-		{{--<div data-editable data-name="main_content">
-		    {!! $lesson['content'] !!}
-		</div>--}}
-        <div class="form-group">
-            <textarea id="ckeditor" name="content" placeholder="Content">{!! $lesson['content'] !!}</textarea>
+<!-- check if not webinar-pakke -->
+@if ($course->id !== 17)
+    <div class="content-tools-container">
+        <div class="container">
+            {{--<div data-editable data-name="main_content">
+                {!! $lesson['content'] !!}
+            </div>--}}
+            <div class="form-group">
+                <textarea id="ckeditor" name="content" placeholder="Content">{!! $lesson['content'] !!}</textarea>
+            </div>
+            </form>
         </div>
-        </form>
-	</div>
-</div>
+    </div>
+@else
+    @if(!Request::is('course/*/lesson/create'))
+        <div class="content-tools-container">
+            <div class="container">
+                {{-- check if the last lesson id before updating structure --}}
+                @if ($lesson['id'] <= 169)
+                    <div class="form-group">
+                        <textarea id="ckeditor" name="content" placeholder="Content">{!! $lesson['content'] !!}</textarea>
+                    </div>
+                    </form>
+                @else
+                    <button class="btn btn-primary" onclick="methods.addNewStructureContent()"
+                            type="button" id="addNewContentBtn">Add Content</button>
 
-
+                    <form action=""></form>
+                    <form action="{{ route('admin.lesson.add_content', $lesson['id']) }}" id="newStructureForm"
+                    method="POST" enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        <div id="content_container"></div>
+                        <button type="button" class="btn btn-primary margin-top hidden" id="newStructureSaveChanges"
+                        onclick="methods.saveLessonContent(this)">Save Changes</button>
+                    </form>
+                    <input type="hidden" name="webinar_pakke">
+                @endif
+            </div>
+        </div>
+    @endif
+@endif
 
 
 
@@ -107,6 +133,7 @@
 @section('scripts')
 <script src="{{asset('content_tools/content-tools.js')}}"></script>
 <script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
+<script src="{{ asset('js/toastr/toastr.min.js') }}"></script>
 <script>
 jQuery(document).ready(function(){
 	$('#lessonForm').on('submit', function(e){
@@ -128,7 +155,132 @@ jQuery(document).ready(function(){
 	$(".lesson-document-container").hover(function(){
 	    $(this).find('.deleteLessonDocumentBtn').toggle();
     });
+
+	let get_content_url = $("[name=webinar_pakke]").length ? '{{ route('admin.lesson.get_lesson_content', $lesson['id']) }}' : '';
+
+	if ($("[name=webinar_pakke]").length) {
+	    methods.getLessonContents(get_content_url);
+    }
 });
+
+const methods = {
+
+    loadEditor: function(id) {
+        let loadEditor_config = {
+            path_absolute: "{{ URL::to('/') }}",
+            height: '23em',
+            selector: '#'+id,
+            menubar:false,
+            statusbar: false,
+            plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                'searchreplace wordcount visualblocks visualchars code fullscreen',
+                'insertdatetime media nonbreaking save table contextmenu directionality',
+                'emoticons template paste textcolor colorpicker textpattern'],
+            toolbar1: 'media',
+            relative_urls: false,
+            file_browser_callback : function(field_name, url, type, win) {
+                let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
+                let y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
+
+                let cmsURL = loadEditor_config.path_absolute + '/laravel-filemanager?field_name=' + field_name;
+                if (type == 'image') {
+                    cmsURL = cmsURL + '&type=Images';
+                } else {
+                    cmsURL = cmsURL + '&type=Files';
+                }
+
+                tinyMCE.activeEditor.windowManager.open({
+                    file : cmsURL,
+                    title : 'Filemanager',
+                    width : x * 0.8,
+                    height : y * 0.8,
+                    resizable : 'yes',
+                    close_previous : 'no'
+                });
+            }
+        };
+        tinymce.init(loadEditor_config);
+    },
+
+    addNewStructureContent: function() {
+        this.createContent();
+    },
+
+    createContent: function(title = '', content = '', content_id = '') {
+        let id = this.uniqueId()+'_editor';
+        let form = `<div class="newStructureFormContainer margin-top">
+                        <div class="form-group row">
+                            <div class="col-xs-6">
+                                <label>Title</label>
+                                <input class="form-control" type="text" name="title[]" value="${ title }">
+                            </div>
+                        </div>
+                        <div class="newStructureFormContainer">
+                            <div class="form-group row padding-left-15">
+                                <div class="col-xs-8" style="padding-left: 0">
+                                <label>Video</label>
+                                <textarea name="lesson_video[]" id="${ id }">${ content || '' }</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="content_id[]" value="${ content_id }">
+                        <button class='btn btn-danger' onclick='methods.cancelNewStructure(this)' type='button'>Remove</button>
+                    </div>`;
+
+
+        $("#content_container").append(form);
+        $("#newStructureSaveChanges").removeClass('hidden');
+        this.loadEditor(id);
+        if (!content_id) {
+            toastr.success('Content form added.', "Success");
+        }
+    },
+
+    cancelNewStructure: function(el) {
+        $(el).closest('.newStructureFormContainer').remove();
+
+        if ($(".newStructureFormContainer").length === 0) {
+            $("#newStructureSaveChanges").addClass('hidden');
+        }
+
+        let content_id = $(el).closest('.newStructureFormContainer').find('[name="content_id[]"]').val();
+        if (content_id) {
+            this.deleteLessonContent(content_id);
+        } else {
+            toastr.success('Content form removed.', "Success");
+        }
+
+    },
+
+    uniqueId :function() {
+        return Math.round(new Date().getTime() + (Math.random() * 100));
+    },
+
+    saveLessonContent: function(el) {
+        $(el).closest('form').submit();
+    },
+
+    getLessonContents: function(url){
+        let self = this;
+
+        $.get(url).then(function (response) {
+           let contents = response.data;
+           $.each(contents, function(key, content){
+              self.createContent(content.title, content.lesson_content, content.id);
+           });
+        });
+    },
+
+    deleteLessonContent: function(content_id) {
+        $.post('/lesson-content/'+content_id+'/delete-lesson-content', {}).then(function (response) {
+            toastr.success(response.success, "Success");
+        }).catch(function (response) {
+            response = response.responseJSON;
+            toastr.error(response.error, "Error");
+        });
+    }
+
+};
 
 // Define settings for the uploader
 var CLOUDINARY_PRESET_NAME = 'ely_preset';

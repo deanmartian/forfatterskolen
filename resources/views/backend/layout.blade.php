@@ -5,6 +5,7 @@
         @include('backend.partials.backend-css')
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=1.0, user-scalable=no">
         @yield('styles')
+        <meta name="csrf-token" content="{{ csrf_token() }}" />
     </head>
     <body>
         @include('backend.partials.navbar')
@@ -69,6 +70,13 @@
         @endif
 
         @include('backend.partials.scripts')
+        <script>
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+        </script>
         @yield('scripts')
     </body>
 </html>
