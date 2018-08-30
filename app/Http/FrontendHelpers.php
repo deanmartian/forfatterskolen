@@ -544,4 +544,19 @@ class FrontendHelpers
 
         return $marks;
 	}
+
+    public static function checkJpegImg($image)
+    {
+        $getExtension = explode('.', $image);
+        $extension = $getExtension[1];
+        // check if jpeg file
+        if ($extension == 'jpeg') {
+            // if the jpeg can't be found replace it with jpg
+            if (!\File::exists(public_path($image))) {
+                $image = $getExtension[0].'.jpg';
+            }
+        }
+
+        return $image;
+	}
 }

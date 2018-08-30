@@ -1071,6 +1071,11 @@ footer .social a{
 	padding-right: 0 !important;
 }
 
+.no-left-right-padding {
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+
 .tiny {
 	font-size: 13px;
 }
@@ -3394,6 +3399,39 @@ h1,h2,h3,h4,h5,h6,strong{
 	font-size: 30px;
 }
 
+.publishing-author-container {
+	margin-bottom: 28px;
+}
+
+.publishing-author {
+	background-color: rgba(232,58,68,.12);
+	padding: 13px;
+}
+
+.publishing-author .author-pix img{
+	display: inline;
+}
+
+.publishing-author .book-title {
+	padding-left: 55px;
+	color: #e83a44;
+	line-height: normal;
+	margin-bottom: 25px;
+	min-height: 38px;
+	position: relative;
+}
+
+.publishing-author .book-icon{
+	background: url(../images/icon_box.png) no-repeat;
+	content: "";
+	display: inline-block;
+	height: 38px;
+	position: absolute;
+	top: 0;
+	width: 38px;
+	margin-top: 8px;
+}
+
 .page-content .authors>div:nth-child(odd) {
 	background-color: #e83a441f;
 }
@@ -3471,7 +3509,7 @@ h1,h2,h3,h4,h5,h6,strong{
 }
 
 .author-desc>p:first-child {
-	border-left: 3px solid #ffb380;
+	border-left: 3px solid #e83a44;
 	padding-left: 15px;
 }
 
@@ -4075,6 +4113,19 @@ h1,h2,h3,h4,h5,h6,strong{
 	.coaching-timer-container .left-content .book {
 		left: 155px;
 	}
+
+	.publishing-author .author-pix img {
+		height: 165px;
+		width: 125px;
+	}
+
+	.publishing-author-container {
+		margin-bottom: 20px;
+	}
+
+	.publishing-author .book-title {
+		word-wrap: break-word;
+	}
 }
 
 @media only screen and (max-width: 768px) {
@@ -4190,6 +4241,26 @@ h1,h2,h3,h4,h5,h6,strong{
 		left: 190px;
 		top: 375px;
 	}
+
+	.publishing-author .author-pix {
+		height: 140px;
+	}
+
+	.publishing-author .author-pix img {
+		height: 125px;
+		width: 85px;
+	}
+
+	.publishing-author .book-title {
+		font-size: 16px;
+		margin-bottom: 20px;
+		padding-left: 50px;
+	}
+
+	.publishing-author-container {
+		margin-bottom: 15px;
+		width: 100%;
+	}
 }
 
 @media only screen and (max-width: 640px) {
@@ -4300,6 +4371,10 @@ h1,h2,h3,h4,h5,h6,strong{
 	.coaching-timer-container .left-content .book, .coaching-timer-container .right-content .book {
 		left: 100px;
 		top: 395px;
+	}
+
+	.publishing-author .author-pix {
+		height: 140px;
 	}
 
 }
