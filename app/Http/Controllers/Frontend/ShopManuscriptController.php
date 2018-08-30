@@ -732,7 +732,7 @@ class ShopManuscriptController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email',
-            'content' => 'required',
+            'content' => 'required|max:500',
         ]);
 
         if( $validator->fails() ) :
