@@ -39,30 +39,30 @@
                                         <input type="text" name="search_upcoming" class="form-control" placeholder="Søk etter webinar (kommende)" aria-label="Enter here..." aria-describedby="basic-addon2"
                                                value="{{ Request::get('search_upcoming') }}">
                                         <div class="input-group-append">
-                                            <button class="btn btn-outline-success border-color-grey" type="submit"><i class="fa fa-search"></i> Search</button>
+                                            <button class="btn btn-outline-success border-color-grey" type="submit"><i class="fa fa-search"></i> Søk</button>
                                             <a class="btn btn-outline-info border-color-grey" type="reset"
-                                               href="{{ route('learner.webinar') }}"><i class="fa fa-redo"></i> Reset</a>
+                                               href="{{ route('learner.webinar') }}"><i class="fa fa-redo"></i> Nullstill</a>
                                         </div>
                                     </div>
                                 </form> <!-- end searchBoxForm -->
                             </div> <!-- end #simpleSearchbox -->
                         </div>
 
-                        {{--<div class="col-sm-6">
+                        <div class="col-sm-6">
                             <div class="form-group">
                                 <form class="" method="get" action="{{ route('learner.webinar') }}">
                                     <div class="input-group-global">
                                         <input type="text" name="search_replay" class="form-control" placeholder="Søk etter webinar (reprise)" aria-label="Enter here..." aria-describedby="basic-addon2"
                                                value="{{ Request::get('search_replay') }}">
                                         <div class="input-group-append">
-                                            <button class="btn btn-outline-success border-color-grey" type="submit"><i class="fa fa-search"></i> Search</button>
+                                            <button class="btn btn-outline-success border-color-grey" type="submit"><i class="fa fa-search"></i> Søk</button>
                                             <a class="btn btn-outline-info border-color-grey" type="reset"
-                                               href="{{ route('learner.webinar') }}"><i class="fa fa-redo"></i> Reset</a>
+                                               href="{{ route('learner.webinar') }}"><i class="fa fa-redo"></i> Nullstill</a>
                                         </div>
                                     </div>
                                 </form> <!-- end searchBoxForm -->
                             </div> <!-- end #simpleSearchbox -->
-                        </div>--}}
+                        </div>
                     </div>
                 </div>
 
