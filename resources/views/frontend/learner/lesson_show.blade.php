@@ -41,11 +41,33 @@
 		<div class="row">
 			<div class="col-sm-10">
 				<div class="margin-top lesson-body">
+
+					<!-- display search on this lesson only -->
+					@if ($lesson->id == 191)
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<form class="" method="get" action="">
+										<div class="input-group-global">
+											<input type="text" name="search_replay" class="form-control" placeholder="Søk etter webinar (reprise)" aria-label="Enter here..." aria-describedby="basic-addon2"
+												   value="{{ Request::get('search_replay') }}">
+											<div class="input-group-append">
+												<button class="btn btn-outline-success border-color-grey" type="submit"><i class="fa fa-search"></i> Søk</button>
+												<a class="btn btn-outline-info border-color-grey" type="reset"
+												   href="{{ route('learner.course.lesson', ['course_id' => $lesson->course_id, 'id' => $lesson->id]) }}"><i class="fa fa-redo"></i> Nullstill</a>
+											</div>
+										</div>
+									</form> <!-- end searchBoxForm -->
+								</div> <!-- end #simpleSearchbox -->
+							</div>
+						</div>
+					@endif
+
 					<!-- check if for old structure or new -->
 					@if ($lesson->id <= 169)
 						{!! html_entity_decode($lesson->content) !!}
 					@else
-						@foreach($lesson->lessonContent as $content)
+						@foreach($lesson_content as $content)
 							<h1>{{ $content->title }}</h1>
 							{!! html_entity_decode($content->lesson_content) !!}
 						@endforeach

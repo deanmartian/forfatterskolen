@@ -750,13 +750,21 @@ class LearnerController extends Controller
         return view('frontend.learner.terms');
     }
 
-    public function lesson($course_id, $id)
+    public function lesson($course_id, $id, Request $request)
     {
         $course = Course::findOrFail($course_id);
         $lesson = Lesson::findOrFail($id);
+
+        $lesson_content = $lesson->lessonContent;
+
+        if ($request->exists('search_replay') && $lesson->id == 191) {
+            $lesson_content = LessonContent::where('title', 'like', '%'.$request->search_replay.'%')
+                ->get();
+        }
+
         $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course->packages->pluck('id')->toArray())->first();
         if(  $courseTaken || FrontendHelpers::hasLessonAccess($courseTaken, $lesson) ) :
-            return view('frontend.learner.lesson_show', compact('lesson', 'course', 'courseTaken'));
+            return view('frontend.learner.lesson_show', compact('lesson', 'course', 'courseTaken', 'lesson_content'));
         endif;
         return abort('503');
     }
