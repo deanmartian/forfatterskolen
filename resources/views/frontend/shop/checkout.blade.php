@@ -283,8 +283,8 @@
 						  </div>
 
 						  <div class="col-sm-12 margin-top">
-							  <input type="checkbox" required> I agree to the <a href="{{ route('front.terms', 'course-terms') }}"
-							  target="_blank">terms and conditions</a>
+							  <input type="checkbox" required> Jeg aksepterer <a href="{{ route('front.terms', 'course-terms') }}"
+							  target="_new">kjøpsvilkårene</a>
 						  </div>
 					  </div>
 					<hr />
@@ -364,6 +364,11 @@ $(document).ready(function(){
     $("#place_order_form").on('submit',function(){
         $("#submitOrder").attr('disabled',true);
 	});
+
+    $('a[target^="_new"]').click(function() {
+        return openWindow(this.href);
+    });
+
 
     var course_id = '<?php echo $course->id?>';
     var count_package_change = 0; // used to determine the onload
@@ -695,6 +700,30 @@ function payment_plan_change(t) {
         var checkout_total = $('.checkout-total');
         checkout_total.find('span').text(data);
     });
+}
+
+function openWindow(url) {
+
+    if (window.innerWidth <= 640) {
+        // if width is smaller then 640px, create a temporary a elm that will open the link in new tab
+        let a = document.createElement('a');
+        a.setAttribute("href", url);
+        a.setAttribute("target", "_blank");
+
+        let dispatch = document.createEvent("HTMLEvents");
+        dispatch.initEvent("click", true, true);
+
+        a.dispatchEvent(dispatch);
+        window.open(url);
+    }
+    else {
+        let width = window.innerWidth * 0.66 ;
+        // define the height in
+        let height = width * window.innerHeight / window.innerWidth ;
+        // Ratio the hight to the width as the user screen ratio
+        window.open(url , 'newwindow', 'width=' + width + ', height=' + height + ', top=' + ((window.innerHeight - height) / 2) + ', left=' + ((window.innerWidth - width) / 2));
+    }
+    return false;
 }
 </script>
 @stop
