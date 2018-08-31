@@ -58,12 +58,18 @@
 
 @section('scripts')
     <script>
-        $.getScript('//cdn.jsdelivr.net/isotope/1.5.25/jquery.isotope.min.js',function(){
-            /* activate jquery isotope */
-            $('#list-author-books').isotope({
-                itemSelector : '.publishing-author-container'
-            });
+        /*
+        * fire when page is full loaded
+        * */
+        $(window).on('load',function () {
+            $.getScript('//cdn.jsdelivr.net/isotope/1.5.25/jquery.isotope.min.js',function(){
+                /* activate jquery isotope */
+                $('#list-author-books').isotope({
+                    itemSelector : '.publishing-author-container',
+                    isFitWidth: true
+                });
 
+            });
         });
     </script>
 @stop
