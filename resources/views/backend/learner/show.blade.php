@@ -150,10 +150,11 @@
 								<br />
 								Start date: {{ $courseTaken->start_date }}
 								@endif
-								@if( $courseTaken->end_date )
+								{{--@if( $courseTaken->end_date )--}}
 								<br />
-								End date: {{ $courseTaken->end_date }}
-								@endif
+								End date: {{ $courseTaken->end_date ? $courseTaken->end_date
+								: ($courseTaken->started_at ? \Carbon\Carbon::parse($courseTaken->started_at)->addYear(1)->format('M d, Y') : '') }}
+								{{--@endif--}}
 							</p>
 							<button type="button" class="btn btn-xs btn-primary setAvailabilityBtn" style="margin-top: 7px" 
 							data-title="{{ $courseTaken->package->course->title }}"
