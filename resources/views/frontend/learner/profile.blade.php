@@ -80,20 +80,23 @@
 						@if(Auth::user()->diplomas->count())
 							<div class="panel panel-default">
 								<div class="panel-body">
+									<h3 class="mt-0">Kursbevis</h3>
+
 									@foreach(Auth::user()->diplomas()->orderBy('created_at', 'DESC')->get()->chunk('3') as $diploma_chunk)
 										@foreach($diploma_chunk as $diploma)
 											<div class="col-sm-4">
 												<div style="border: 1px solid #ccc" class="text-center">
+													<span>{{ $diploma->course->title }}</span>
 
 													<a href="#previewDiplomaModal" data-toggle="modal"
 													   data-diploma="{{asset($diploma->diploma)}}"
 													   class="previewDiplomaBtn darken">
-														<img src="{{ asset('images/pdf.jpg') }}"
+														<img src="{{ asset('images/diploma.jpg') }}"
 															 style="height: 140px; width: 100%">
 														<span class="message">Preview</span>
 													</a>
 
-													<a href="{{ route('learner.download-diploma', $diploma->id) }}">Download</a>
+													<a href="{{ route('learner.download-diploma', $diploma->id) }}">Last ned</a>
 												</div>
 											</div>
 										@endforeach
