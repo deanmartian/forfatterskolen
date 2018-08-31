@@ -189,7 +189,7 @@ Route::group([
         Route::get('/survey/{id}', 'LearnerController@survey')->name('learner.survey'); // Survey Page
         Route::post('/take-survey/{id}', 'LearnerController@takeSurvey')->name('learner.take-survey'); // Survey Page
         Route::get('/notifications', 'LearnerController@notifications')->name('learner.notifications'); // Survey Page
-
+        Route::get('diploma/{id}/download', 'LearnerController@downloadDiploma')->name('learner.download-diploma');
 
 
         Route::post('/profile', 'LearnerController@profileUpdate')->name('learner.profile.update'); // Profile Update
@@ -392,6 +392,8 @@ Route::group([
         Route::get('/word-written-goal/{id}/statistic', 'LearnerController@goalStatistic')->name('admin.learner.goal-statistic');
         Route::post('learner/{id}/add-other-service', 'LearnerController@addOtherService')->name('admin.learner.add-other-service');
         Route::post('learner/{id}/add-coaching-timer', 'LearnerController@addCoachingTimer')->name('admin.learner.add-coaching-timer');
+        Route::post('learner/{id}/add-diploma', 'LearnerController@addDiploma')->name('admin.learner.add-diploma');
+        Route::get('diploma/{id}/download', 'LearnerController@downloadDiploma')->name('admin.learner.download-diploma');
 
         Route::delete('learner/invoice/{id}/delete', 'LearnerController@deleteInvoice')->name('admin.learner.invoice.delete');
         Route::delete('learner/course/{course_taken_id}/delete', 'LearnerController@deleteFromCourse')->name('admin.learner.delete-from-course');

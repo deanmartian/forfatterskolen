@@ -729,6 +729,48 @@
 				</div>
 			</div>
 
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addDiplomaModal">
+                        + Add Diploma
+                    </button>
+                    <h4>Kursbevis</h4>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Course</th>
+                            <th>Diploma</th>
+                            <th>Date Uploaded</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+						
+						@foreach($learner->diplomas()->orderBy('created_at', 'DESC')->get() as $diploma)
+							<tr>
+								<td>
+									<a href="{{ route('admin.course.show', $diploma->course_id) }}">
+										{{ $diploma->course->title }}
+									</a>
+								</td>
+								<td>{{ \App\Http\AdminHelpers::extractFileName($diploma->diploma) }}</td>
+								<td>{{ $diploma->created_at }}</td>
+								<td>
+									<a href="{{ route('admin.learner.download-diploma', $diploma->id) }}">
+										Download
+									</a>
+								</td>
+							</tr>
+						@endforeach
+						
+						</tbody>
+                    </table>
+                </div>
+            </div>
+
 			<!-- words written -->
 			<div class="panel panel-default">
 				<div class="panel-body">
@@ -1448,6 +1490,46 @@
 		</div>
 
 	</div>
+</div>
+
+<div id="addDiplomaModal" class="modal fade" role="dialog" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add Diploma</h4>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ route('admin.learner.add-diploma', $learner->id) }}"
+                      onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+                    {{csrf_field()}}
+
+                    <div class="form-group">
+                        <label>Course</label>
+                        <select name="course_id" class="form-control select2" required>
+                            <option value="" disabled selected>-- Select Course --</option>
+                            @foreach(\App\Course::all() as $course)
+                                <option value="{{ $course->id }}"> {{ $course->title }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Diploma</label>
+                        <input type="file" class="form-control" name="diploma"
+                               accept="application/pdf" required>
+                    </div>
+
+                    <div class="text-right margin-top">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
 </div>
 @stop
 

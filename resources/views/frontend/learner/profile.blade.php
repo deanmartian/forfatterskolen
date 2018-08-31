@@ -76,6 +76,30 @@
 								</div>
 							</div>
 						</div>
+
+						<div class="panel panel-default">
+							<div class="panel-body">
+								@foreach(Auth::user()->diplomas()->orderBy('created_at', 'DESC')->get()->chunk('3') as $diploma_chunk)
+									@foreach($diploma_chunk as $diploma)
+										<div class="col-sm-4">
+											<div style="border: 1px solid #ccc" class="text-center">
+
+												<a href="#previewDiplomaModal" data-toggle="modal"
+												   data-diploma="{{asset($diploma->diploma)}}"
+												   class="previewDiplomaBtn darken">
+													<img src="{{ asset('images/pdf.jpg') }}"
+														 style="height: 140px; width: 100%">
+													<span class="message">Preview</span>
+												</a>
+
+												<a href="{{ route('learner.download-diploma', $diploma->id) }}">Download</a>
+											</div>
+										</div>
+									@endforeach
+								@endforeach
+							</div>
+						</div>
+
 						@if ( $errors->any() )
 		                <div class="alert alert-danger no-bottom-margin">
 		                    <ul>
@@ -100,4 +124,38 @@
 	<div class="clearfix"></div>
 </div>
 
+	<div id="previewDiplomaModal" class="modal fade" role="dialog" data-backdrop="static">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Preview</h4>
+				</div>
+				<div class="modal-body">
+					<iframe src="" frameborder="0" width="100%" height="550">
+					</iframe>
+				</div>
+			</div>
+		</div>
+	</div>
+
+@stop
+
+@section('scripts')
+	<script>
+		$(".previewDiplomaBtn").click(function(){
+		   let diploma = $(this).data('diploma');
+		   let modal = $("#previewDiplomaModal");
+            modal.find('iframe').attr('src', diploma);
+		});
+
+        $('.darken').hover(
+            function(){
+                $(this).find('.message').fadeIn(1000);
+            },
+            function(){
+                $(this).find('.message').fadeOut(1000);
+            }
+        );
+	</script>
 @stop

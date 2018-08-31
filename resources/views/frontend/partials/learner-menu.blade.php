@@ -18,9 +18,9 @@
 <li @if(Request::is('account/assignment*')) class="active" @endif>
 <a href="{{route('learner.assignment')}}"><i class="fa fa-address-book-o"></i>&nbsp;&nbsp;Oppgaver</a>
 </li>
-<li @if(Request::is('account/book-author*')) class="active" @endif>
+{{--<li @if(Request::is('account/book-author*')) class="active" @endif>
     <a href="{{route('learner.book-author')}}"><i class="fa fa-book"></i>&nbsp;&nbsp;Pilotleser</a>
-</li>
+</li>--}}
 <li @if(Request::is('account/calendar')) class="active" @endif>
 <a href="{{route('learner.calendar')}}"><i class="fa fa-calendar"></i>&nbsp;&nbsp;Kalender</a>
 </li>
@@ -48,7 +48,7 @@
     @endif
 
 <li @if(Request::is('account/profile')) class="active" @endif>
-<a href="{{route('learner.profile')}}"><i class="fa fa-user-o"></i>&nbsp;&nbsp;Profil</a>
+<a href="{{route('learner.profile')}}"><i class="fa fa-user-o"></i>&nbsp;&nbsp;Profil \ Kursbevis</a>
 </li>
 </ul>
 </div>

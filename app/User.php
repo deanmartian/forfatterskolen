@@ -189,4 +189,9 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\CoachingTimerTaken');
     }
+
+    public function diplomas()
+    {
+        return $this->hasMany('App\Diploma');
+    }
 }

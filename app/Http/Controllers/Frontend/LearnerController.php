@@ -7,6 +7,7 @@ use App\AssignmentGroupLearner;
 use App\CalendarNote;
 use App\CoachingTimerManuscript;
 use App\CoachingTimerTaken;
+use App\Diploma;
 use App\Genre;
 use App\Http\AdminHelpers;
 use App\Http\Middleware\Admin;
@@ -2113,5 +2114,21 @@ class LearnerController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * Download the diploma
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function downloadDiploma($id)
+    {
+        $shopManuscriptTaken = Diploma::find($id);
+        if ($shopManuscriptTaken) {
+            $filename = $shopManuscriptTaken->diploma;
+            return response()->download(public_path($filename));
+        }
+
+        return redirect()->route('admin.learner.index');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 use App\CoachingTimerManuscript;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
+use App\Diploma;
 use App\EmailTemplate;
 use App\Helpers\FileToText;
 use App\Http\FikenInvoice;
@@ -937,6 +938,74 @@ class LearnerController extends Controller
                 'not-former-courses' => true
             ]);
 
+        }
+
+        return redirect()->route('admin.learner.index');
+    }
+
+    /**
+     * Add diploma to user
+     * @param $learner_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function addDiploma($learner_id, Request $request)
+    {
+        if ($learner = User::find($learner_id)) {
+            $data = $request->except('_token');
+            $extensions = ['pdf'];
+
+            if ($request->hasFile('diploma') && $request->file('diploma')->isValid()) :
+                $extension = pathinfo($_FILES['diploma']['name'], PATHINFO_EXTENSION);
+                $original_filename = $request->diploma->getClientOriginalName();
+
+                if( !in_array($extension, $extensions) ) :
+                    return redirect()->back()->with([
+                        'alert_type' => 'danger',
+                        'errors' => AdminHelpers::createMessageBag('File type not allowed.'),
+                        'not-former-courses' => true
+                    ]);
+                endif;
+
+                $destinationPath = 'storage/diploma'; // upload path
+
+                // check if path not exists then create it
+                if(!File::exists($destinationPath)) {
+                    File::makeDirectory($destinationPath, $mode = 0777, true, true);
+                }
+
+                $filename = pathinfo($original_filename, PATHINFO_FILENAME);
+                // check the file name and add/increment number if the filename already exists
+                $file = AdminHelpers::checkFileName($destinationPath, $filename, $extension);
+
+                $request->diploma->move($destinationPath, $file);
+
+                $data['diploma'] = $file;
+
+                $learner->diplomas()->create($data);
+
+                return redirect()->back()->with([
+                    'errors'                => AdminHelpers::createMessageBag('Diploma added successfully.'),
+                    'alert_type'            => 'success',
+                    'not-former-courses'    => true
+                ]);
+            endif;
+        }
+
+        return redirect()->route('admin.learner.index');
+    }
+
+    /**
+     * Download the diploma
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function downloadDiploma($id)
+    {
+        $shopManuscriptTaken = Diploma::find($id);
+        if ($shopManuscriptTaken) {
+            $filename = $shopManuscriptTaken->diploma;
+            return response()->download(public_path($filename));
         }
 
         return redirect()->route('admin.learner.index');

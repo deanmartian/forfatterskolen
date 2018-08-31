@@ -446,6 +446,17 @@ class AdminHelpers
     }
 
     /**
+     * Get the file name from the whole file with path
+     * @param $file
+     * @return mixed
+     */
+    public static function extractFileName($file)
+    {
+        $file = explode('/', $file);
+        return end($file);
+    }
+
+    /**
      * Set flash message
      * @param $level
      * @param $message
