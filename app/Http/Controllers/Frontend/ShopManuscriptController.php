@@ -732,8 +732,14 @@ class ShopManuscriptController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email',
-            'content' => 'required|max:500',
+            'content' => 'required',
         ]);
+
+        if (str_word_count($request->content) > 500) {
+            return redirect()->back()->withInput()->with([
+                'errors' => AdminHelpers::createMessageBag('The content may not be greater than 500 words.')
+            ]);
+        }
 
         if( $validator->fails() ) :
             return redirect()->back()->withInput()->withErrors($validator);
