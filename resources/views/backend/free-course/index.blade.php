@@ -304,7 +304,7 @@
                     </div>
                     <div class="form-group">
                         <label>GoToWebinar ID</label>
-                        <input type="text" name="gtwebinar_id" class="form-control" required>
+                        <input type="text" name="gtwebinar_id" class="form-control webinar-id" required>
                     </div>
 
                     <div class="form-group">
@@ -362,7 +362,7 @@
                     </div>
                     <div class="form-group">
                         <label>GoToWebinar ID</label>
-                        <input type="text" name="gtwebinar_id" class="form-control" required>
+                        <input type="text" name="gtwebinar_id" class="form-control webinar-id" required>
                     </div>
 
                     <div class="form-group">
@@ -677,6 +677,14 @@
         modal.find('input[name=first_name]').val(first_name);
         modal.find('input[name=last_name]').val(last_name);
         modal.find('input[name=email]').val(email);
+    });
+
+    $(".webinar-id").keypress(function (e) {
+        //if the letter is not digit then display error and don't type anything
+        if (e.which !== 8 && e.which !== 0 && (e.which < 48 || e.which > 57)) {
+            //display error message
+            return false;
+        }
     });
 </script>
 @stop
