@@ -161,7 +161,11 @@
                                 <div class="col-sm-12 col-md-4">
                                     <div class="webinar-thumb">
                                         <i class="fa fa-play-circle-o"></i>
-                                        <a href="{{ $webinar->link }}">
+                                        <?php
+                                        $coursesTakenEndDate = $coursesTaken->end_date ?: \Carbon\Carbon::parse($coursesTaken->started_at)->addYear(1)->format('Y-m-d');
+                                        ?>
+                                        <a href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
+                                                        ? 'javascript:void(0)' :$webinar->link }}">
                                             <div style="background-image: url({{ $webinar->image }})"></div>
                                         </a>
                                     </div>
@@ -191,7 +195,7 @@
                                                         <a class="btn btn-warning" href="{{ $coursesTaken && $coursesTaken->hasEnded
                                                         ? 'javascript:void(0)' : $webinar->link }}" target="_blank">Repriser</a>
                                                     @else
-                                                            <a class="btn btn-warning" href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                            <a class="btn btn-warning" href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
                                                         ? 'javascript:void(0)' :$webinar->link }}" target="_blank">Registrer Deg</a>
                                                     @endif
                                                 @endif
