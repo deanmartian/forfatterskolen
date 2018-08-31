@@ -77,28 +77,30 @@
 							</div>
 						</div>
 
-						<div class="panel panel-default">
-							<div class="panel-body">
-								@foreach(Auth::user()->diplomas()->orderBy('created_at', 'DESC')->get()->chunk('3') as $diploma_chunk)
-									@foreach($diploma_chunk as $diploma)
-										<div class="col-sm-4">
-											<div style="border: 1px solid #ccc" class="text-center">
+						@if(Auth::user()->diplomas->count())
+							<div class="panel panel-default">
+								<div class="panel-body">
+									@foreach(Auth::user()->diplomas()->orderBy('created_at', 'DESC')->get()->chunk('3') as $diploma_chunk)
+										@foreach($diploma_chunk as $diploma)
+											<div class="col-sm-4">
+												<div style="border: 1px solid #ccc" class="text-center">
 
-												<a href="#previewDiplomaModal" data-toggle="modal"
-												   data-diploma="{{asset($diploma->diploma)}}"
-												   class="previewDiplomaBtn darken">
-													<img src="{{ asset('images/pdf.jpg') }}"
-														 style="height: 140px; width: 100%">
-													<span class="message">Preview</span>
-												</a>
+													<a href="#previewDiplomaModal" data-toggle="modal"
+													   data-diploma="{{asset($diploma->diploma)}}"
+													   class="previewDiplomaBtn darken">
+														<img src="{{ asset('images/pdf.jpg') }}"
+															 style="height: 140px; width: 100%">
+														<span class="message">Preview</span>
+													</a>
 
-												<a href="{{ route('learner.download-diploma', $diploma->id) }}">Download</a>
+													<a href="{{ route('learner.download-diploma', $diploma->id) }}">Download</a>
+												</div>
 											</div>
-										</div>
+										@endforeach
 									@endforeach
-								@endforeach
+								</div>
 							</div>
-						</div>
+						@endif
 
 						@if ( $errors->any() )
 		                <div class="alert alert-danger no-bottom-margin">
