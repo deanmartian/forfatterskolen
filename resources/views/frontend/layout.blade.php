@@ -34,11 +34,12 @@
     </head>
     <body>
 
-    {{--@if(Session::has('new_user_social'))
+    @if(Session::has('new_user_social'))
         <div class="alert alert-success" role="alert" id="fixed_to_bottom_alert">
-            Thank you. The default password is 123.
+            Thank you. The default password is 123. Please update your password
+            <a href="{{ route('learner.profile') }}">here</a>.
         </div>
-    @endif--}}
+    @endif
 
         @include('frontend.partials.navbar')
         @yield('content')
