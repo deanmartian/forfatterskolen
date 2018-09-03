@@ -268,6 +268,7 @@ Route::group([
         Route::post('/notification/{id}/delete','LearnerController@deleteNotification')->name('learner.notification.delete');
         Route::get('/private-groups','PrivateGroupsController@index')->name('learner.private-groups.index');
         Route::get('/private-groups/{id}','PrivateGroupsController@show')->name('learner.private-groups.show');
+        Route::get('/private-groups/{id}/get-data','PrivateGroupsController@getGroupData')->name('learner.private-groups.get-data');
         Route::post('/private-groups/create','PrivateGroupsController@createGroup')->name('learner.private-groups.create');
         Route::post('/private-groups/update','PrivateGroupsController@updateGroup')->name('learner.private-groups.update');
         Route::get('/private-groups/{id}/discussions','PrivateGroupDiscussionsController@index')->name('learner.private-groups.discussion');
@@ -289,6 +290,7 @@ Route::group([
         Route::get('/private-groups/preferences/get/{id}','PrivateGroupsController@viewPreference')->name('learner.private-groups.preferences-get');
         Route::post('/private-groups/preferences/set','PrivateGroupsController@setPreference')->name('learner.private-groups.preferences-set');
         Route::get('/private-groups/{id}/members','PrivateGroupMembersController@index')->name('learner.private-groups.members');
+        Route::get('/private-groups/{id}/edit-group','PrivateGroupsController@editGroup')->name('learner.private-groups.edit-group');
         Route::post('/private-groups/member/link/get','PrivateGroupMembersController@getInvitationLink')->name('learner.private-groups.invitation-link.get');
         Route::get('/private-groups/invitation/{status}/{token}', 'PrivateGroupMembersController@confirmInvitation')->name('learner.private-groups.invitation.action');
         Route::post('/private-group/invite/send', 'PrivateGroupMembersController@authenticatedSendInvitation');

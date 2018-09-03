@@ -4,7 +4,10 @@
     <div class="card-body font-14-body">
         <div class="clearfix">
             <h1 class="font-weight-light float-left">Group Discussion</h1>
-            <button class="btn btn-outline-info btn-sm discussion-btn pull-right mt-3" onclick="methods.showDiscussionDivForm()">New Discussion</button>
+            <!-- check if policy is open discussion -->
+            @if ($manager || (!$manager && $privateGroup->policy == 1))
+                <button class="btn btn-outline-info btn-sm discussion-btn pull-right mt-3" onclick="methods.showDiscussionDivForm()">New Discussion</button>
+            @endif
         </div>
         <div class="collapse mt-2" id="discussionDivForm">
             <div class="card card-body">

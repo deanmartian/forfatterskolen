@@ -821,6 +821,52 @@ const methods = {
             })
     },
 
+    getPrivateGroup: function() {
+        let group_id = $("[name=group_id]").val();
+        $.get('/account/private-groups/'+group_id+'/get-data').then(function(response){
+            let detail = response.data;
+            let form =  $("#editGroupForm");
+            methods.clearError(form);
+            form.find("input[type='radio']").each(function(){
+                let radio = $(this);
+                if(radio.val() == detail.policy)
+                {
+                    radio.prop('checked', true);
+                    return false
+                }
+            });
+            form.find("input[type='text']").each(function(){
+                let key = $(this).prop('name').replace('edit_', '');
+                $(this).val(detail[key])
+            })
+        })
+    },
+
+    editGroup : function(form)
+    {
+        let self = this;
+        let group_id = $("[name='group_id']").val();
+        let arr = form.serializeArray();
+        let data = { id : group_id };
+        $.each(arr, function(key, val){
+            data[val.name.replace("edit_", "")] = val.value
+        });
+        $.post('/account/private-groups/update', data)
+            .then(function(response){
+                toastr.success(response.success, "Success");
+                self.clearError(form);
+                self.getPrivateGroup();
+            })
+            .catch(function(err){
+                self.clearError(form);
+                let errors = err.responseJSON;
+                let status = err.status;
+                if(status === 422)
+                {
+                    self.setError(errors, form);
+                }
+            })
+    }
 };
 
 $("#createPrivateGroupForm").submit(function(e){
@@ -831,6 +877,11 @@ $("#createPrivateGroupForm").submit(function(e){
 $("#createPrivateGroupModal").on('hidden.bs.modal', function(){
     methods.clearInputs($("#createPrivateGroupForm"));
     methods.clearError($("#createPrivateGroupForm"));
+});
+
+$("#editGroupForm").on('submit', function(e){
+    e.preventDefault();
+    methods.editGroup($(this));
 });
 
 $("#discussionForm").submit(function(e){
@@ -859,4 +910,9 @@ if (current_page === "members") {
         e.preventDefault();
         methods.addToUserList(this);
     });
+}
+
+
+if (current_page === "edit-group") {
+    methods.getPrivateGroup();
 }

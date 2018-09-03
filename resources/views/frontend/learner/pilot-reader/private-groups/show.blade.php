@@ -1,7 +1,7 @@
 @extends('frontend.learner.pilot-reader.private-groups.layout')
 
 @section('private-content')
-    <div class="global-card">
+    <div class="global-card font-14-body">
         <div class="card-body">
             <h1 class="font-weight-light detail mt-0">{{ $privateGroup->name }}</h1>
             <div class="form-group welcome-msg-div">

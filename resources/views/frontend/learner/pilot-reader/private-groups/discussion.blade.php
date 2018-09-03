@@ -63,13 +63,16 @@
                             <ul class="list-group list-group-flush no-border-top-bottom font-14-body" id="discussion-replies-ul">
 
                             </ul>
-                            <div class="card card-body mt-2">
-                                <div class="form-group clearfix mb-0 pb-0">
-                                    <span class="d-inline-block mt-1">Have something to add?</span> <button class="btn btn-outline-primary btn-sm pull-right" onclick="methods.addForm(this)">Post a reply</button>
+                            <!-- check if policy is not announcements only -->
+                            @if ($manager || (!$manager && $privateGroup->policy !== 3))
+                                <div class="card card-body mt-2">
+                                    <div class="form-group clearfix mb-0 pb-0">
+                                        <span class="d-inline-block mt-1">Have something to add?</span> <button class="btn btn-outline-primary btn-sm pull-right" onclick="methods.addForm(this)">Post a reply</button>
+                                    </div>
+                                    <div class="form-group add display-none mb-0 pb-0">
+                                    </div>
                                 </div>
-                                <div class="form-group add display-none mb-0 pb-0">
-                                </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
 

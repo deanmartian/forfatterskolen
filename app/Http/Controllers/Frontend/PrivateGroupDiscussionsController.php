@@ -136,8 +136,9 @@ class PrivateGroupDiscussionsController extends Controller {
         if ($discussion = PrivateGroupDiscussion::where(['private_group_id' => $group_id, 'id' => $discussion_id])->first()) {
             $privateGroup = PrivateGroup::find($group_id);
             $page_title = $discussion->subject;
+            $manager    = $privateGroup->manager;
             return view('frontend.learner.pilot-reader.private-groups.discussion', compact('privateGroup',
-                'page_title', 'discussion'));
+                'page_title', 'discussion', 'manager'));
         }
 
         return redirect()->route('learner.private-groups.index');

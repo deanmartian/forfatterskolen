@@ -95,6 +95,42 @@ class PrivateGroupsController extends Controller {
     }
 
     /**
+     * Get private group details
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getGroupData($id)
+    {
+        if ($privateGroup = PrivateGroup::find($id)) {
+            return response()->json(['data' => $privateGroup], 200);
+        }
+
+        return response()->json(['error' => 'Opss. Something went wrong'], 500);
+    }
+
+    /**
+     * Show the edit group page
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function editGroup($id)
+    {
+        if($privateGroup = PrivateGroup::find($id)) {
+            if (FrontendHelpers::isPrivateGroupMember($id, Auth::user()->id)) {
+                $page_title             = $privateGroup->name.' Edit Group';
+                $announcements          = $privateGroup->discussions()->where('is_announcement',1)->get();
+                $featured_book_shared   = $privateGroup->books_shared()->where('visibility',1);
+                $featured_books         =  $featured_book_shared->with('book')->orderBy('created_at','desc')->get();
+                $manager                = $privateGroup->manager;
+                return view('frontend.learner.pilot-reader.private-groups.edit-group', compact('privateGroup',
+                    'page_title', 'announcements', 'featured_books', 'manager'));
+            }
+        }
+
+        return redirect()->route('learner.private-groups.index');
+    }
+
+    /**
      * Update the private group
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
