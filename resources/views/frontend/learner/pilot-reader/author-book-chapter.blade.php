@@ -10,6 +10,10 @@
 
 @section('content')
 
+    <?php
+        $current_version = isset($chapterObj) ? \App\Http\FrontendHelpers::getCurrentChapterVersion($chapterObj) : '';
+        $current_version_content = isset($chapterObj) ? $current_version['content'] : '';
+    ?>
     <div class="account-container">
 
         @include('frontend.partials.learner-menu')
@@ -71,21 +75,35 @@
                         <div class="form-group">
                             <label class="display-block">Content</label>
                             <div id="editor" style="height: 145px">
-                                {!! $chapter['chapter_content'] !!}
+                                {!! $current_version_content !!}
                             </div>
-                            <input type="hidden" name="chapter_content" value="{{ $chapter['chapter_content'] }}">
+                            <input type="hidden" name="chapter_content" value="{{ $current_version_content }}">
                         </div>
 
                         @if($chapter['type'] == 1)
-                        <div class="form-group">
-                            <label for="notify-readers">
-                                <input id="notify-readers" name="notify_readers" type="checkbox" value="true"
-                                @if($chapter['notify_readers']) checked @endif> Notify Readers?
-                            </label>
-                            <div class="hint">
-                                If you check this box, your readers will receive a notification to let them know that you added this chapter.
+                            <div class="form-group">
+                                <label for="notify-readers">
+                                    <input id="notify-readers" name="notify_readers" type="checkbox" value="true"
+                                    @if($chapter['notify_readers']) checked @endif> Notify Readers?
+                                </label>
+                                <div class="hint">
+                                    If you check this box, your readers will receive a notification to let them know that you added this chapter.
+                                </div>
                             </div>
-                        </div>
+                            @if(!Request::is('account/book-author/book/*/chapter/new/*'))
+                                <div class="form-group">
+                                    <div class="custom-control custom-checkbox mt-2 no-left-padding">
+                                        <input type="checkbox" class="custom-control-input" name="save_new_version" id="saveNewVerCheckbox">
+                                        <label class="custom-control-label" for="saveNewVerCheckbox"> <b>Save New Version?</b> </label>
+                                    </div>
+                                    <small class="text-muted d-block is-required-msg">Check this box to save a new version of your work. If you have received feedback on this , we recommend you make changes on a new version, otherwise the feedback left before may no longer make sense. You can compare changes between versions on the chapter screen.</small>
+                                </div>
+                                <div class="form-group mt-2 change_desc_div">
+                                    <label for="" class="label-control font-weight-light">Description of changes</label>
+                                    <textarea name="change_description" cols="30" rows="3" class="form-control"></textarea>
+                                    <small class="text-muted d-block">If you enter a message here it will be shown on the versions menu and compare versions page.</small>
+                                </div>
+                            @endif
                         @endif
 
                         <button class="beta-button color1" id="submit_form">

@@ -18,8 +18,8 @@ class PilotReaderBookChapter extends Model
      * field type 1 = chapter, 2 = questionnaire
      * @var array
      */
-    protected $fillable = ['pilot_reader_book_id', 'title', 'pre_read_guidance', 'post_read_guidance', 'chapter_content', 'notify_readers',
-        'change_desc', 'word_count', 'display_order', 'is_hidden', 'type'];
+    protected $fillable = ['pilot_reader_book_id', 'title', 'pre_read_guidance', 'post_read_guidance', 'notify_readers',
+        'word_count', 'display_order', 'is_hidden', 'type'];
 
     public function book()
     {
@@ -60,4 +60,8 @@ class PilotReaderBookChapter extends Model
         return date_format(date_create($value), 'M d');
     }
 
+    public function versions()
+    {
+        return $this->hasMany('App\PilotReaderBookChapterVersion','chapter_id','id');
+    }
 }

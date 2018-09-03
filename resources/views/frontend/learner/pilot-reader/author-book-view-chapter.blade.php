@@ -1,13 +1,15 @@
 @extends('frontend.layout')
 
 @section('title')
-    <title>{{ $book->title }}, {{ $chapter->title ? $chapter->title : 'Chapter '.$key }} &rsaquo; Forfatterskolen</title>
+    <title>{{ $book->title }}, {{ $chapter->title ? $chapter->title : \App\Http\FrontendHelpers::getChapterTitle($book, $chapter->id)}} &rsaquo; Forfatterskolen</title>
 @stop
 
 @section('content')
 
     <?php
         $reader = $book->readers()->where('user_id', Auth::user()->id)->first();
+        $current_version = \App\Http\FrontendHelpers::getCurrentChapterVersion($chapter);
+        $version_count = \App\Http\FrontendHelpers::getChapterVersionNumber($chapter);
     ?>
     <div class="account-container">
 
@@ -20,21 +22,26 @@
 
                     <div class="chapter-content">
                         <header class="chapter-name">
+                            <div class="form-group">
                             <h1>
                                 @if ($chapter->type == 1)
                                     {{ $chapter->title ? $chapter->title : \App\Http\FrontendHelpers::getChapterTitle($book, $chapter->id) }}
                                 @else
                                     {{ $chapter->title ? $chapter->title : \App\Http\FrontendHelpers::getQuestionnaireTitle($book, $chapter->id) }}
                                 @endif
-                                <span class="pull-right" style="cursor: pointer"
-                                onclick="bookmark.startBookmarking(this)">
-                                    <i class="fa fa-bookmark-o text-danger"></i>
-                                </span>
+
+                                @if ($book->author->id !== Auth::user()->id)
+                                    <span class="pull-right" style="cursor: pointer; font-size: 16px"
+                                    onclick="bookmark.startBookmarking(this)">
+                                        <i class="fa fa-bookmark-o text-danger"></i>
+                                    </span>
+                                @endif
                             </h1>
-                            <div class="hint">{{ ucwords(\App\Http\FrontendHelpers::convertMonthLanguage(
+                            </div>
+                            <div class="hint">Version {{ $version_count }}, {{ ucwords(\App\Http\FrontendHelpers::convertMonthLanguage(
                             \Carbon\Carbon::parse($chapter->created_at)->format('n')
                             )) .' '. \Carbon\Carbon::parse($chapter->created_at)->format('d') .' - '
-                            .$chapter->word_count.' words'
+                            .\App\Http\FrontendHelpers::countWords($current_version->content).' words'
                             }}</div>
                         </header>
 
@@ -46,7 +53,7 @@
                         @endif
 
                         <article id="chapter">
-                            {!! $chapter->chapter_content !!}
+                            {!! $current_version->content !!}
                         </article>
 
                         <div class="post-chapter-nav">

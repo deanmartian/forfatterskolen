@@ -8,6 +8,7 @@ use App\PilotReaderBook;
 use App\Http\Controllers\Controller;
 use App\PilotReaderBookBookmark;
 use App\PilotReaderBookChapter;
+use App\PilotReaderBookChapterVersion;
 use App\PilotReaderBookInvitation;
 use App\PilotReaderBookInvitationLink;
 use App\PilotReaderBookReading;
@@ -537,7 +538,8 @@ class PilotReaderAuthorController extends Controller
                 $data['type']           = $type;
                 $data['word_count']     = str_word_count(strip_tags($data['chapter_content']));
 
-                $book->chapters()->create($data);
+                $chapter = $book->chapters()->create($data);
+                $this->createVersion(['chapter_id' => $chapter->id, 'content' => $data['chapter_content']]);
                 return redirect()->route('learner.book-author-book-show', $book_id);
             }
         }
@@ -555,6 +557,11 @@ class PilotReaderAuthorController extends Controller
         }
 
         return redirect()->route('learner.book-author');
+    }
+
+    private function createVersion($data)
+    {
+        PilotReaderBookChapterVersion::create($data);
     }
 
     /**
@@ -632,9 +639,14 @@ class PilotReaderAuthorController extends Controller
             }
 
             // get previous user id
-            $previous = PilotReaderBookChapter::where('id', '<', $chapter->id)->max('id');
+            $previous = PilotReaderBookChapter::where('id', '<', $chapter->id)
+                ->where('type','=',1)
+                ->max('id');
+
             // get next user id
-            $next = PilotReaderBookChapter::where('id', '>', $chapter->id)->min('id');
+            $next = PilotReaderBookChapter::where('id', '>', $chapter->id)
+                ->where('type','=',1)
+                ->min('id');
 
             // check if the user is a reader
             if ($book->author->id != Auth::user()->id) {
@@ -653,10 +665,12 @@ class PilotReaderAuthorController extends Controller
 
                 // get previous user id
                 $previous = PilotReaderBookChapter::where('id', '<', $chapter->id)
+                    ->where('type','=',1)
                     ->where('is_hidden', 0)->max('id');
 
                 // get next user id
                 $next = PilotReaderBookChapter::where('id', '>', $chapter->id)
+                    ->where('type','=',1)
                     ->where('is_hidden', 0)->min('id');
 
             }
@@ -687,11 +701,23 @@ class PilotReaderAuthorController extends Controller
                 $data['word_count']     = str_word_count(strip_tags($data['chapter_content']));
                 $chapter->update($data);
                 $chapter->save();
+
+                $data['content'] = $data['chapter_content'];
+
+                if ($request->exists('save_new_version')) {
+                    $data['chapter_id'] = $chapter_id;
+                    $this->createVersion($data);
+                } else {
+                    $current_chapter_version = FrontendHelpers::getCurrentChapterVersion($chapter);
+                    $current_chapter_version->update($data);
+                }
+
                 return redirect()->route('learner.book-author-book-show', $book_id);
             }
 
+            $chapterObj = $chapter;
             $chapter = $chapter->toArray();
-            return view('frontend.learner.pilot-reader.author-book-chapter', compact('book', 'chapter'));
+            return view('frontend.learner.pilot-reader.author-book-chapter', compact('book', 'chapter', 'chapterObj'));
         }
 
         return redirect()->route('learner.book-author');
@@ -964,10 +990,12 @@ class PilotReaderAuthorController extends Controller
             $chapter['pilot_reader_book_id'] = $chapter['book_id'];
             $chapter['chapter_content'] = $chapter['content'];
             $chapter['word_count'] = str_word_count(strip_tags($chapter['content']));
-            if(!PilotReaderBookChapter::create($chapter))
+            $model = PilotReaderBookChapter::create($chapter);
+            if(!$model)
             {
                 return response()->json(['error' => 'Opss. Something went wrong'], 500);
             }
+            $this->createVersion(['chapter_id' => $model->id, 'content' => $chapter['chapter_content']]);
         }
         return response()->json(['success' => 'New Chapters Created!'], 200);
     }

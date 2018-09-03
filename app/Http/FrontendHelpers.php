@@ -2,6 +2,7 @@
 
 namespace App\Http;
 use App\PilotReaderBook;
+use App\PilotReaderBookChapter;
 use App\PilotReaderBookReading;
 use App\PrivateGroupMember;
 use Carbon\Carbon;
@@ -388,7 +389,34 @@ class FrontendHelpers
         $settings = $book->settings;
         $chapter_title = $settings ? $settings->book_units:'Chapter';
 
+        // check if the chapter name exists
+        $front = new FrontendHelpers();
+        $chapterCount = $front->checkChapterNameByNumber($chapterCount);
+
+
         return $chapter_title.' '.$chapterCount;
+    }
+
+    /**
+     * Check if the chapter with number already exists then iterate
+     * @param $number
+     * @return int
+     */
+    public function checkChapterNameByNumber($number)
+    {
+
+        $checkChapterName = PilotReaderBookChapter::where('title','=', 'Chapter '.$number)->first();
+        if ($checkChapterName) {
+            $number += 1;
+            return $this->checkChapterNameByNumber($number);
+        } else {
+            return $number;
+        }
+    }
+
+    public static function countWords($words)
+    {
+        return str_word_count(strip_tags($words));
     }
 
     public static function getQuestionnaireTitle($book, $chapter_id)
@@ -417,6 +445,26 @@ class FrontendHelpers
         }
 
         return $chapter_name;
+    }
+
+    /**
+     * Get the chapter version
+     * @param $chapter PilotReaderBookChapter
+     * @return mixed
+     */
+    public static function getChapterVersionNumber($chapter)
+    {
+        return $chapter->versions->count();
+    }
+
+    /**
+     * Get the current chapter version
+     * @param $chapter PilotReaderBookChapter
+     * @return mixed
+     */
+    public static function getCurrentChapterVersion($chapter)
+    {
+        return $chapter->versions()->orderBy('id', 'desc')->first();
     }
 
 
