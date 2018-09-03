@@ -373,12 +373,12 @@
 							    endif;
 							endforeach;
 							$fikenError = false;
-							if( $fikenURL ) :
-							  $sale = FrontendHelpers::FikenConnect($fikenInvoice->sale);
-							  $status = $sale->paid ? "BETALT" : "UBETALT";
-							else :
-							  $fikenError = true;
-							endif;
+                            /*if( $fikenURL ) :
+                              $sale = FrontendHelpers::FikenConnect($fikenInvoice->sale);
+                              $status = $sale->paid ? "BETALT" : "UBETALT";
+                            else :
+                              $fikenError = true;
+                            endif;*/
 							?>
 							<tr>
 		    					<td>
@@ -387,13 +387,18 @@
 		    						@endif
 		    					</td>
 								<td>
-		    						@if( !$fikenError )
+									@if($invoice->fiken_is_paid)
+										<span class="label label-success">BETALT</span>
+									@else
+										<span class="label label-danger">UBETALT</span>
+									@endif
+		    						{{--@if( !$fikenError )
 									@if($sale->paid)
 									<span class="label label-success">{{$status}}</span>
 									@else
 									<span class="label label-danger">{{$status}}</span>
 									@endif
-									@endif
+									@endif--}}
 								</td>
 								<td>{{$invoice->created_at}}</td>
 								<td>
