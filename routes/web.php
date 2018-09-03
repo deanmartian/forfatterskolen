@@ -60,6 +60,8 @@ Route::group([
         Route::get('/gratis-tekstvurdering', 'ShopManuscriptController@freeManuscriptShow')->name('front.free-manuscript.index'); // Free Manuscript
         Route::get('/gratis-tekstvurdering/success', 'ShopManuscriptController@freeManuscriptShowSuccess')->name('front.free-manuscript.success'); // Free Manuscript
         Route::post('/gratis-tekstvurdering/send', 'ShopManuscriptController@freeManuscriptSend')->name('front.free-manuscript.send'); // Free Manuscript Send
+        Route::post('/free-manuscript/set-word-count', 'ShopManuscriptController@freeManuscriptWordCount')->name('front.free-manuscript.set-wordcount');
+
 
         Route::get('/opt-in', 'HomeController@optIn')->name('front.opt-in'); // Opt-in page
         Route::post('/opt-in', 'HomeController@optIn')->name('front.opt-in'); // Opt-in page

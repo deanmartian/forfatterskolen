@@ -94,7 +94,11 @@
                 } else {
                     $("#counter-text").html((options.limit - wordcount)+' ord igjen');
                     $(".btn-theme").text("Send inn").attr('disabled', false);
-                } 
+                }
+
+                $.post('/free-manuscript/set-word-count', {wordcount: wordcount}).then(function(response){
+
+				});
             });
         });
     };

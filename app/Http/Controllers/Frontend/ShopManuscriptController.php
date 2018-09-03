@@ -723,8 +723,12 @@ class ShopManuscriptController extends Controller
         return redirect(route('front.shop.thankyou'));
     }
 
-    
 
+    public function freeManuscriptWordCount(Request $request)
+    {
+        \Session::put('wordcount', $request->wordcount);
+        return response()->json(['data' => $request->wordcount]);
+    }
 
 
     public function freeManuscriptSend( Request $request )
@@ -735,7 +739,9 @@ class ShopManuscriptController extends Controller
             'content' => 'required',
         ]);
 
-        if (str_word_count($request->content) > 500) {
+        $wordcount = Session::get('wordcount');
+
+        if ($wordcount > 500) {
             return redirect()->back()->withInput()->with([
                 'errors' => AdminHelpers::createMessageBag('The content may not be greater than 500 words.')
             ]);
@@ -767,6 +773,9 @@ class ShopManuscriptController extends Controller
                 'email' => $request->email,
                 'content' => $request->content
             ]);
+
+            // forget the wordcount
+            Session::forget('wordcount');
             return redirect(route('front.free-manuscript.success'));
         endif;
     }
