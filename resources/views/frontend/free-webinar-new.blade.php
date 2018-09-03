@@ -184,15 +184,29 @@
                             {{ csrf_field() }}
 
                             <div class="form-group">
-                                <input type="text" name="name" class="form-control" placeholder="Navn" required>
+                                <input type="text" name="name" class="form-control" placeholder="Navn" value="{{ old('name') }}"
+                                       required>
                             </div>
 
                             <div class="form-group">
-                                <input type="email" name="email" class="form-control" placeholder="Epost" required>
+                                <input type="email" name="email" class="form-control" placeholder="Epost" value="{{ old('email') }}"
+                                       required>
                             </div>
 
                             <button type="submit" class="btn btn-primary">Meld meg på</button>
                         </form>
+
+                        <div class="col-sm-12 margin-top">
+                            @if($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul style="list-style: none">
+                                        @foreach($errors->all() as $error)
+                                            <li>{{$error}}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>

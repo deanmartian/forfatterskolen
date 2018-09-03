@@ -698,6 +698,14 @@ class HomeController extends Controller
 
         if ($request->isMethod('post')) {
 
+            $this->validate($request, ['email' => 'required|email']);
+
+            if (str_word_count($request->name) < 2) {
+                return redirect()->back()->withInput()->with([
+                    'errors' => AdminHelpers::createMessageBag('Please input your full name.')
+                ]);
+            }
+
             $explodeName = explode(' ',$request->name);
             $sliced = array_slice($explodeName, 0, -1); // get all except the last
 
@@ -730,7 +738,6 @@ class HomeController extends Controller
             $response = curl_exec($ch);
             $decoded_response = json_decode($response);
 
-            $message = '';
             if (isset($decoded_response->status)) {
                 if ($decoded_response->status == 'APPROVED') {
                     $message = $decoded_response->joinUrl;
@@ -739,6 +746,11 @@ class HomeController extends Controller
             } else {
                 //error
                 $message = $decoded_response->description;
+                if (str_word_count($request->name) < 2) {
+                    return redirect()->back()->withInput()->with([
+                        'errors' => AdminHelpers::createMessageBag($message)
+                    ]);
+                }
             }
 
         }
