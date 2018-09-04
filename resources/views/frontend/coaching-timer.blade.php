@@ -14,21 +14,21 @@
         <div class="row">
             <div class="col-md-6 col-sm-12 col-xs-12 left-content">
                 <div class="image1"><img src="{{ asset('images/bgwhite.png') }}">
-                    <p class="sub">One On One<br>Coaching</p>
+                    <p class="sub">En til en-coaching</p>
                     <p class="link">30 min  |  1190 KR</p>
-                    <p class="desc">Discribe your service here. What makes it great? Use short catchy text to tell ter people what you offer, and the benifits they will receive.</p>
+                    <p class="desc">Ønsker du personlig veiledning på manuset ditt? Her kan du bestille time hos en av våre profesjonelle redaktører.</p>
                     <div class="button1 box"></div>
-                    <a href="{{ route('front.coaching-timer-checkout', 2) }}"><p class="book">book it</p></a>
+                    <a href="{{ route('front.coaching-timer-checkout', 2) }}"><p class="book">Bestill time</p></a>
                 </div>
             </div>
 
             <div class="col-md-6 col-sm-12 col-xs-12 right-content">
                 <div class="image3"><img src="{{ asset('images/bgwhite.png') }}">
-                    <p class="sub">One On One<br>Coaching
-                    <p class="link">1 hr  |  1690 KR</p>
-                    <p class="desc">Discribe your service here. What makes it great? Use short catchy text to tell ter people what you offer, and the benifits they will receive.</p>
+                    <p class="sub">En til en-coaching</p>
+                    <p class="link">60 min  |  1690 KR</p>
+                    <p class="desc">Ønsker du personlig veiledning på manuset ditt? Her kan du bestille time hos en av våre profesjonelle redaktører.</p>
                     <div class="button2 box"></div>
-                    <a href="{{ route('front.coaching-timer-checkout', 1) }}"><p class="book">book it</p></a>
+                    <a href="{{ route('front.coaching-timer-checkout', 1) }}"><p class="book">Bestill time</p></a>
                 </div>
             </div>
         </div>

@@ -3714,16 +3714,16 @@ a.darken:hover img {
 }
 
 .coaching-timer-container .left-content .sub {
-	left: 195px;
+	left: 155px;
 }
 
 .coaching-timer-container .right-content .sub {
-	left: 105px;
+	left: 65px;
 }
 
 .coaching-timer-container .link {
 	position: absolute;
-	top: 170px;
+	top: 120px;
 	color: #636363;
 	font-family: "Lato Light";
 	font-size: 15pt;
@@ -3731,11 +3731,11 @@ a.darken:hover img {
 }
 
 .coaching-timer-container .left-content .link {
-	left: 230px;
+	left: 225px;
 }
 
 .coaching-timer-container .right-content .link {
-	left: 148px;
+	left: 143px;
 }
 
 .coaching-timer-container .desc {
@@ -3746,7 +3746,7 @@ a.darken:hover img {
 	color: #636363;
 	font-family: "Lato";
 	font-size: 15pt;
-	top: 245px;
+	top: 195px;
 }
 
 .coaching-timer-container .book {
@@ -3756,19 +3756,17 @@ a.darken:hover img {
 	text-transform: uppercase;
 	font-size: 15pt;
 	text-align: center;
-	top: 420px;
-	height: 50px;
-	width: 100px;
+	top: 370px;
 	background-color: #e61d41;
-	padding-top: 10px;
+	padding: 10px;
 }
 
 .coaching-timer-container .left-content .book {
-	left: 250px;
+	left: 225px;
 }
 
 .coaching-timer-container .right-content .book {
-	left: 155px;
+	left: 130px;
 }
 
 .copy-editing-container, .coaching-timer-container {
@@ -4130,11 +4128,19 @@ a.darken:hover img {
 	}
 
 	.coaching-timer-container .left-content .sub {
-		left: 90px;
+		left: 40px;
+	}
+
+	.coaching-timer-container .right-content .sub {
+		left: 55px;
 	}
 
 	.coaching-timer-container .left-content .link {
-		left: 130px;
+		left: 115px;
+	}
+
+	.coaching-timer-container .right-content .link {
+		left: 128px;
 	}
 
 	.coaching-timer-container .desc {
@@ -4142,7 +4148,11 @@ a.darken:hover img {
 	}
 
 	.coaching-timer-container .left-content .book {
-		left: 155px;
+		left: 112px;
+	}
+
+	.coaching-timer-container .right-content .book {
+		left: 125px;
 	}
 
 	.publishing-author .author-pix img {
@@ -4261,15 +4271,15 @@ a.darken:hover img {
 	}
 
 	.coaching-timer-container .left-content .sub, .coaching-timer-container .right-content .sub {
-		left: 135px;
+		left: 91px;
 	}
 
 	.coaching-timer-container .left-content .link, .coaching-timer-container .right-content .link {
-		left: 170px;
+		left: 166px;
 	}
 
 	.coaching-timer-container .left-content .book, .coaching-timer-container .right-content .book {
-		left: 190px;
+		left: 161px;
 		top: 375px;
 	}
 
@@ -4387,12 +4397,24 @@ a.darken:hover img {
 		width: 302px;
 	}
 
+	.coaching-timer-container .sub {
+		font-size: 28px;
+	}
+
 	.coaching-timer-container .left-content .sub, .coaching-timer-container .right-content .sub {
-		left: 55px;
+		left: 48.5px;
 	}
 
 	.coaching-timer-container .left-content .link, .coaching-timer-container .right-content .link {
-		left: 88px;
+		left: 80px;
+	}
+
+	.coaching-timer-container .link {
+		top: 118px;
+	}
+
+	.coaching-timer-container .book {
+		font-size: 13pt;
 	}
 
 	.coaching-timer-container .desc {
@@ -4400,7 +4422,7 @@ a.darken:hover img {
 	}
 
 	.coaching-timer-container .left-content .book, .coaching-timer-container .right-content .book {
-		left: 100px;
+		left: 86px;
 		top: 395px;
 	}
 
@@ -4540,6 +4562,10 @@ a.darken:hover img {
 		height: 1325px;
 	}
 
+	.coaching-timer-container .sub {
+		font-size: 28pt;
+	}
+
 	.coaching-timer-container .form-container {
 		padding-left: 27px;
 	}
@@ -4566,22 +4592,23 @@ a.darken:hover img {
 	}
 
 	.coaching-timer-container .left-content .sub, .coaching-timer-container .right-content .sub {
-		left: 125px;
-		top: 50px;
+		left: 80px;
+		top: 70px;
 	}
 
 	.coaching-timer-container .left-content .link, .coaching-timer-container .right-content .link {
-		left: 160px;
-		top: 190px;
+		left: 146px;
+		top: 165px;
 	}
 
 	.coaching-timer-container .desc {
 		width: 87%;
 		margin-left: 28px;
+		top: 235px;
 	}
 
 	.coaching-timer-container .left-content .book, .coaching-timer-container .right-content .book {
-		left: 175px;
+		left: 152px;
 		top: 400px;
 	}
 
@@ -4691,15 +4718,15 @@ a.darken:hover img {
 	}
 
 	.coaching-timer-container .left-content .sub, .coaching-timer-container .right-content .sub {
-		left: 105px;
+		left: 67px;
 	}
 
 	.coaching-timer-container .left-content .link, .coaching-timer-container .right-content .link {
-		left: 140px;
+		left: 131px;
 	}
 
 	.coaching-timer-container .left-content .book, .coaching-timer-container .right-content .book {
-		left: 155px;
+		left: 137px;
 	}
 }
 
@@ -4869,20 +4896,20 @@ a.darken:hover img {
 	}
 
 	.coaching-timer-container .left-content .sub {
-		left: 85px;
+		left: 46px;
 	}
 
 	.coaching-timer-container .right-content .sub {
-		left: 85px;
+		left: 46px;
 		top: 35px;
 	}
 
 	.coaching-timer-container .left-content .link, .coaching-timer-container .right-content .link {
-		left: 120px;
+		left: 110px;
 	}
 
 	.coaching-timer-container .left-content .book, .coaching-timer-container .right-content .book {
-		left: 133px;
+		left: 117px;
 	}
 
 	.coaching-timer-container .desc {
@@ -5022,7 +5049,7 @@ a.darken:hover img {
 
 	.coaching-timer-container .right-content img {
 		width: 305px;
-		height: 435px;
+		height: 415px;
 		margin-left: -8px;
 	}
 
@@ -5031,24 +5058,38 @@ a.darken:hover img {
 		font-size: 23pt;
 	}
 
-	.coaching-timer-container .left-content .link, .coaching-timer-container .right-content .link {
-		left: 98px;
+	.coaching-timer-container .left-content .sub, .coaching-timer-container .right-content .sub {
+		left: 48px;
+	}
+
+	.coaching-timer-container .left-content .link {
+		left: 90px;
 		top: 160px;
 	}
 
+	.coaching-timer-container .right-content .link {
+		left: 90px;
+		top: 130px;
+	}
+
 	.coaching-timer-container .left-content .desc {
-		top: 220px;
+		top: 230px;
 		margin-left: 11px !important;
 	}
 
 	.coaching-timer-container .right-content .desc {
-		top: 220px;
+		top: 200px;
 		margin-left: -3px;
 	}
 
-	.coaching-timer-container .left-content .book, .coaching-timer-container .right-content .book {
-		left: 110px;
+	.coaching-timer-container .left-content .book{
+		left: 95px;
 		top: 365px;
+	}
+
+	.coaching-timer-container .right-content .book {
+		left: 95px;
+		top: 335px;
 	}
 
 	.white-bg {
