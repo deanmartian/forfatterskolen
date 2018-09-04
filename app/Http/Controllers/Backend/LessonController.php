@@ -134,7 +134,6 @@ class LessonController extends Controller
 
         $this->validate($request,$reqFields);
 
-        print_r($request->all());
         $course = Course::findOrFail($course_id);
         $lesson = Lesson::findOrFail($id);
         $lesson->course_id = $course->id;
