@@ -18,10 +18,15 @@ class CopyEditingManuscript extends Model {
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'file', 'payment_price'];
+    protected $fillable = ['user_id', 'file', 'payment_price', 'editor_id'];
 
     public function user()
     {
         return $this->belongsTo('App\User');
+    }
+
+    public function editor()
+    {
+        return $this->belongsTo('App\User', 'editor_id', 'id');
     }
 }

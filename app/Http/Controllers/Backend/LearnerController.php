@@ -794,13 +794,15 @@ class LearnerController extends Controller
                     CopyEditingManuscript::create([
                         'user_id'       => $user_id,
                         'file'          => $file,
-                        'payment_price' => $data['price']
+                        'payment_price' => $data['price'],
+                        'editor_id'     => $request->exists('editor_id') ? $data['editor_id'] : NULL
                     ]);
                 } else {
                     CorrectionManuscript::create([
                         'user_id'       => $user_id,
                         'file'          => $file,
-                        'payment_price' => $data['price']
+                        'payment_price' => $data['price'],
+                        'editor_id'     => $request->exists('editor_id') ? $data['editor_id'] : NULL
                     ]);
                 }
 
@@ -815,6 +817,36 @@ class LearnerController extends Controller
         }
 
         return redirect()->route('admin.learner.index');
+    }
+
+    /**
+     * Assign editor to other service manuscript
+     * @param $service_id
+     * @param $service_type
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function otherServiceAssignEditor($service_id, $service_type, Request $request)
+    {
+        if ($service_type == 1 || $service_type == 2) {
+            if ($service_type == 1) {
+                $copyEditing = CopyEditingManuscript::find($service_id);
+                $copyEditing->editor_id = $request->editor_id;
+                $copyEditing->save();
+            } else {
+                $correction = CorrectionManuscript::find($service_id);
+                $correction->editor_id = $request->editor_id;
+                $correction->save();
+            }
+
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Editor assigned successfully.'),
+                'alert_type' => 'success',
+                'not-former-courses' => true
+            ]);
+        }
+
+        return redirect()->back();
     }
 
     /**

@@ -544,6 +544,7 @@
 						<thead>
 						<tr>
 							<th>Manus</th>
+							<th>Editor</th>
 							<th>Date Ordered</th>
 						</tr>
 						</thead>
@@ -556,6 +557,13 @@
 										<a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
 									@elseif( end($extension) == 'docx' )
 										<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+									@endif
+								</td>
+								<td>
+									@if ($correction->editor_id)
+										{{ $correction->editor->full_name }}
+									@else
+										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $correction->id, 'type' => 2]) }}">Assign Editor</button>
 									@endif
 								</td>
 								<td>
@@ -583,6 +591,7 @@
 						<thead>
 						<tr>
 							<th>Manus</th>
+							<th>Editor</th>
 							<th>Date Ordered</th>
 						</tr>
 						</thead>
@@ -595,6 +604,13 @@
 										<a href="/js/ViewerJS/#../../{{ $copy_editing->file }}">{{ basename($copy_editing->file) }}</a>
 									@elseif( end($extension) == 'docx' )
 										<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copy_editing->file}}">{{ basename($copy_editing->file) }}</a>
+									@endif
+								</td>
+								<td>
+									@if ($copy_editing->editor_id)
+										{{ $copy_editing->editor->full_name }}
+									@else
+										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $copy_editing->id, 'type' => 1]) }}">Assign Editor</button>
 									@endif
 								</td>
 								<td>
@@ -1368,11 +1384,46 @@
 						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
 							   name="send_invoice">
 					</div>
+
+					<div class="form-group">
+						<label>Assign to</label>
+						<select name="editor_id" class="form-control select2">
+							<option value="" disabled="" selected>-- Select Editor --</option>
+							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
+								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
+							@endforeach
+						</select>
+					</div>
+
 					<input type="hidden" name="is_copy_editing">
 					<button class="btn btn-success pull-right" type="submit">
 						Add
 					</button>
 					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="assignEditorModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>Assign editor</label>
+						<select name="editor_id" class="form-control select2" required>
+							<option value="" disabled="" selected>-- Select Editor --</option>
+							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
+								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
+							@endforeach
+						</select>
+					</div>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">Save</button>
+					</div>
 				</form>
 			</div>
 		</div>
@@ -1703,6 +1754,14 @@
         let form = $("#suggestDateModal").find('form');
 
         form.attr('action', action);
+    });
+
+    $('.assignEditorBtn').click(function(){
+        let action = $(this).data('action');
+        let editor = $(this).data('editor');
+        let modal = $('#assignEditorModal');
+        modal.find('select').val(editor);
+        modal.find('form').attr('action', action);
     });
 
 	function updateOtherServiceFields(type) {

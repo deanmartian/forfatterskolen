@@ -194,4 +194,14 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Diploma');
     }
+
+    public function assignedCorrections()
+    {
+        return $this->hasMany('App\CorrectionManuscript','editor_id', 'id')->orderBy('created_at', 'desc');
+    }
+
+    public function assignedCopyEditing()
+    {
+        return $this->hasMany('App\CopyEditingManuscript','editor_id', 'id')->orderBy('created_at', 'desc');
+    }
 }
