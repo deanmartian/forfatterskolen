@@ -195,6 +195,11 @@ class User extends Authenticatable
         return $this->hasMany('App\Diploma');
     }
 
+    public function assignedCoachingTimers()
+    {
+        return $this->hasMany('App\CoachingTimerManuscript','editor_id', 'id')->orderBy('created_at', 'desc');
+    }
+
     public function assignedCorrections()
     {
         return $this->hasMany('App\CorrectionManuscript','editor_id', 'id')->orderBy('created_at', 'desc');

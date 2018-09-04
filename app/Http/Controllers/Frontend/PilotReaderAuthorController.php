@@ -811,9 +811,13 @@ class PilotReaderAuthorController extends Controller
                 return response()->json(['success' => 'Reply Sent!', 'feedback' => $feedbackMessage], 200);
             }
 
+            $chapter    = PilotReaderBookChapter::find($data['chapter_id']);
+            $current_version = FrontendHelpers::getCurrentChapterVersion($chapter);
+
             $feedback = PilotReaderChapterFeedback::firstOrNew([
-                'chapter_id' => $data['chapter_id'],
-                'user_id' => Auth::user()->id
+                'chapter_id'            => $data['chapter_id'],
+                'chapter_version_id'    => $current_version->id,
+                'user_id'               => Auth::user()->id
             ]);
             $feedback->save();
 

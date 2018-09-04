@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\AssignmentManuscript;
+use App\CoachingTimerManuscript;
 use App\CustomAction;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
@@ -62,10 +63,28 @@ class PageController extends Controller
         $assignedAssignments = AssignmentManuscript::where('editor_id', Auth::user()->id)
             ->where('has_feedback',0)
             ->get();
+        $coachingTimers = Auth::user()->assignedCoachingTimers;
+        $pendingCoachingTimers = CoachingTimerManuscript::whereNull('editor_id')->orderBy('created_at','desc')->get();
+
         return view('backend.dashboard', compact('pending_courses', 'pending_shop_manuscripts',
             'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts', 'assigned_free_manuscripts',
             'pending_assignment_feedbacks', 'logs', 'manuscripts','shopManuscripts', 'customActions',
-            'nearlyExpiredCoursesCount', 'pageMetas', 'assignedAssignments'));
+            'nearlyExpiredCoursesCount', 'pageMetas', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers'));
+    }
+
+    /**
+     * Finish an assignment
+     * @param $assignment_id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function finishAssignment($assignment_id)
+    {
+        if ($assignment = AssignmentManuscript::find($assignment_id)) {
+            $assignment->has_feedback = 1;
+            $assignment->save();
+        }
+
+        return redirect()->back();
     }
 
     /**

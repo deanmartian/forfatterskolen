@@ -330,8 +330,9 @@
 												}
                                             }
                                         }
-
                                         ?>
+										<button class="btn btn-success btn-xs margin-top finishAssignmentBtn" data-toggle="modal"
+										data-target="#finishAssignmentModal" data-action="{{ route('backend.assignment.finish', $assignedAssignment->id) }}">Finish</button>
 									</td>
 								</tr>
 							@endforeach
@@ -351,12 +352,29 @@
 							<thead>
 							<tr>
 								<th>Learner</th>
-								<th>Date</th>
+								<th>Approved Date</th>
 								<th>Session Length</th>
 							</tr>
 							</thead>
 							<tbody>
-
+							@foreach($coachingTimers as $coachingTimer)
+                                <?php $extension = explode('.', basename($coachingTimer->file)); ?>
+								<tr>
+									<td>
+										<a href="{{ route('admin.learner.show', $coachingTimer->user->id) }}">
+											{{ $coachingTimer->user->full_name }}
+										</a>
+									</td>
+									<td>
+										{{ $coachingTimer->approved_date ?
+                                        \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
+                                         : ''}}
+									</td>
+									<td>
+										{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($coachingTimer->plan_type) }}
+									</td>
+								</tr>
+							@endforeach
 							</tbody>
 						</table>
 					</div>
@@ -564,10 +582,33 @@
 						<table class="table">
 							<thead>
 							<tr>
+								<th>Learner</th>
+								<th>Approved Date</th>
+								<th>Session Length</th>
+								<th>Action</th>
 							</tr>
 							</thead>
 							<tbody>
-
+							@foreach($pendingCoachingTimers as $coachingTimer)
+								<tr>
+									<td>
+										<a href="{{ route('admin.learner.show', $coachingTimer->user->id) }}">
+											{{ $coachingTimer->user->full_name }}
+										</a>
+									</td>
+									<td>
+										{{ $coachingTimer->approved_date ?
+                                        \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
+                                         : ''}}
+									</td>
+									<td>
+										{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($coachingTimer->plan_type) }}
+									</td>
+									<td>
+										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $coachingTimer->id, 'type' => 3]) }}">Assign Editor</button>
+									</td>
+								</tr>
+							@endforeach
 							</tbody>
 						</table>
 					</div>
@@ -749,6 +790,51 @@
 	</div>
 </div>
 
+<div id="finishAssignmentModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Finish Assignment</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="">
+					{{csrf_field()}}
+					Are you sure you want to finish this assignment?
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-success">Submit</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="assignEditorModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>Assign editor</label>
+						<select name="editor_id" class="form-control select2" required>
+							<option value="" disabled="" selected>-- Select Editor --</option>
+							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
+								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
+							@endforeach
+						</select>
+					</div>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">Save</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -786,6 +872,20 @@
         var action = $(this).data('action');
         modal.find('form').attr('action', action);
 	});
+
+    $(".finishAssignmentBtn").click(function(){
+        let modal = $('#finishAssignmentModal');
+        let action = $(this).data('action');
+        modal.find('form').attr('action', action);
+	});
+
+    $('.assignEditorBtn').click(function(){
+        let action = $(this).data('action');
+        let editor = $(this).data('editor');
+        let modal = $('#assignEditorModal');
+        modal.find('select').val(editor);
+        modal.find('form').attr('action', action);
+    });
 
 </script>
 @stop

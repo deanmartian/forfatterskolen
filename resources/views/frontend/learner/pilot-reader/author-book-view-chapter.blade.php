@@ -104,7 +104,18 @@
                             <div class="chapter-feedback-item">
                             <div class="full-messages">
 
-                                @if (!$chapter->ownFeedback->count())
+                                <?php
+                                    /*$current_version = \App\Http\FrontendHelpers::getCurrentChapterVersion($chapter);
+                                    $ownFeedback = \App\PilotReaderChapterFeedback::where('chapter_id','=',$chapter->id)
+                                        ->where('chapter_version_id','=', $current_version->id)
+                                        ->where('user_id', '=', Auth::user()->id)
+                                        ->first();*/
+                                    /*!$chapter->ownFeedback->count()*/
+                                    $ownFeedback = $chapter->ownFeedback()->where('chapter_version_id','=', $current_version->id)
+                                    ->first();
+                                ?>
+
+                                @if (!$ownFeedback || ($ownFeedback && !$ownFeedback->messages->count()))
                                     <div class="chapter-prompt">
                                         @if($book->author->id == Auth::user()->id)
                                             <p>You haven't added any notes on this chapter.</p>

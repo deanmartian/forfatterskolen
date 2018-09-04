@@ -17,7 +17,7 @@ class PilotReaderChapterFeedback extends Model {
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'chapter_id'];
+    protected $fillable = ['user_id', 'chapter_id', 'chapter_version_id'];
 
     public function chapter()
     {

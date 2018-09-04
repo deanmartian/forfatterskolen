@@ -939,6 +939,9 @@ Route::group([
         Route::get('/calendar', 'PageController@calendar')->name('backend.calendar');
         Route::get('/pilot-reader', 'PageController@pilotReader')->name('backend.pilot-reader');
 
+        // Finish Assignment
+        Route::post('/assignment/{id}/finish', 'PageController@finishAssignment')->name('backend.assignment.finish');
+
         // Settings
         Route::post('/settings/update/welcome_email', 'SettingsController@updateEmail')->name('admin.settings.update.welcome_email'); // Store Feedback
         Route::post('/settings/update/terms', 'SettingsController@updateTerms')->name('admin.settings.update.terms'); // Store Terms
