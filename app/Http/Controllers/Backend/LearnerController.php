@@ -828,13 +828,21 @@ class LearnerController extends Controller
      */
     public function otherServiceAssignEditor($service_id, $service_type, Request $request)
     {
-        if ($service_type == 1 || $service_type == 2) {
+        if ($service_type == 1 || $service_type == 2 || $service_type == 3) {
             if ($service_type == 1) {
                 $copyEditing = CopyEditingManuscript::find($service_id);
                 $copyEditing->editor_id = $request->editor_id;
                 $copyEditing->save();
-            } else {
+            }
+
+            if ($service_type == 2){
                 $correction = CorrectionManuscript::find($service_id);
+                $correction->editor_id = $request->editor_id;
+                $correction->save();
+            }
+
+            if ($service_type == 3){
+                $correction = CoachingTimerManuscript::find($service_id);
                 $correction->editor_id = $request->editor_id;
                 $correction->save();
             }
@@ -860,11 +868,11 @@ class LearnerController extends Controller
         if ($user = User::find($user_id)) {
             $data = $request->except('_token');
             $data['price'] = 1690;
-            $suggested_dates = $data['suggested_date'];
+            /*$suggested_dates = $data['suggested_date'];
             // format the sent suggested dates
             foreach ($suggested_dates as $k => $suggested_date) {
                 $suggested_dates[$k] = Carbon::parse($suggested_date)->format('Y-m-d H:i:s');
-            }
+            }*/
 
             $extensions = ['docx'];
             $file   = NULL;
@@ -960,8 +968,7 @@ class LearnerController extends Controller
                 'file'              => $file,
                 'payment_price'     => $data['price'],
                 'plan_type'         => $data['plan_type'],
-                'suggested_date'    => json_encode($suggested_dates),
-                'is_suggested_by_admin' => 1
+                'editor_id'         => $request->exists('editor_id') ? $data['editor_id'] : NULL
             ]);
 
             return redirect()->back()->with([

@@ -116,6 +116,7 @@
 										<th>Manus</th>
 										<th>Coaching Time</th>
 										<th>Suggested Date</th>
+										<th>Admin Suggested Date</th>
 										<th>Approved Date</th>
 										<th>Date Ordered</th>
 									</tr>
@@ -146,10 +147,30 @@
 													@for($i =0; $i <= 2; $i++)
 														<div style="margin-top: 5px">
 															{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($suggested_dates[$i]) }}
-															@if (!$coachingTimer->approved_date && $coachingTimer->is_suggested_by_admin)
+														</div>
+													@endfor
+												@endif
+
+												@if (!$coachingTimer->approved_date)
+													<a href="#suggestDateModal" data-toggle="modal"
+													   class="suggestDateBtn"
+													   data-action="{{ route('learner.coaching-timer.suggest_date', $coachingTimer->id) }}">Suggest Different Dates</a>
+												@endif
+
+											</td>
+											<td>
+                                                <?php
+                                                	$suggested_dates_admin = json_decode($coachingTimer->suggested_date_admin);
+                                                ?>
+
+												@if($suggested_dates_admin)
+													@for($i =0; $i <= 2; $i++)
+														<div style="margin-top: 5px">
+															{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($suggested_dates_admin[$i]) }}
+															@if (!$coachingTimer->approved_date)
 																<button class="btn btn-success btn-xs approveDateBtn pull-right"
 																		data-toggle="modal" data-target="#approveDateModal"
-																		data-date="{{ $suggested_dates[$i] }}"
+																		data-date="{{ $suggested_dates_admin[$i] }}"
 																		data-action="{{ route('learner.coaching-timer.approve_date', $coachingTimer->id) }}">
 																	<i class="fa fa-check"></i>
 																</button>
@@ -157,7 +178,6 @@
 														</div>
 													@endfor
 												@endif
-
 											</td>
 											<td>
 												{{ $coachingTimer->approved_date ?
@@ -181,6 +201,24 @@
 			</div>
 		</div>
 	</div>
+
+	@if ( $errors->any() )
+        <?php
+        $alert_type = session('alert_type');
+        if(!Session::has('alert_type')) {
+            $alert_type = 'danger';
+        }
+        ?>
+		<div class="alert alert-{{ $alert_type }}" id="fixed_to_bottom_alert">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+			<ul>
+				@foreach($errors->all() as $error)
+					<li>{{$error}}</li>
+				@endforeach
+			</ul>
+		</div>
+	@endif
+
 	<div class="clearfix"></div>
 </div>
 
@@ -263,6 +301,46 @@
 	</div>
 </div>
 
+<!-- Suggest Date Modal -->
+<div id="suggestDateModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Suggest Session Dates</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" id="suggestDateForm"
+					  onsubmit="disableSubmit(this)">
+					{{csrf_field()}}
+
+					<div class="form-group">
+						<label>Date</label>
+						<input type="datetime-local" class="form-control" name="suggested_date[]" required>
+					</div>
+
+					<div class="form-group">
+						<label>Date</label>
+						<input type="datetime-local" class="form-control" name="suggested_date[]" required>
+					</div>
+
+					<div class="form-group">
+						<label>Date</label>
+						<input type="datetime-local" class="form-control" name="suggested_date[]" required>
+					</div>
+
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-success">Submit</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					</div>
+				</form>
+			</div>
+
+		</div>
+
+	</div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -289,6 +367,13 @@
 
             form.find('[name=plan_type]').val(plan);
 		});
+
+        $(".suggestDateBtn").click(function(){
+            let action = $(this).data('action');
+            let form = $("#suggestDateModal").find('form');
+
+            form.attr('action', action);
+        });
 
         function disableSubmit(t) {
             let submit_btn = $(t).find('[type=submit]');

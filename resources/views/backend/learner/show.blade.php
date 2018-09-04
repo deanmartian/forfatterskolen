@@ -642,8 +642,10 @@
 							<th>Manus</th>
 							<th>Learner</th>
 							<th>Length</th>
-							<th>Suggested Date</th>
+							<th>Learner Suggestion</th>
+							<th>Admin Suggestion</th>
 							<th>Approved Date</th>
+							<th>Assigned To</th>
 						</tr>
 						</thead>
 						<tbody>
@@ -673,7 +675,7 @@
 										@for($i =0; $i <= 2; $i++)
 											<div style="margin-top: 5px">
 												{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($suggested_dates[$i]) }}
-												@if (!$coachingTimer->approved_date && !$coachingTimer->is_suggested_by_admin)
+												@if (!$coachingTimer->approved_date)
 													<button class="btn btn-success btn-xs approveDateBtn"
 															data-toggle="modal" data-target="#approveDateModal"
 															data-date="{{ $suggested_dates[$i] }}"
@@ -683,11 +685,28 @@
 												@endif
 											</div>
 										@endfor
-										@if (!$coachingTimer->approved_date && !$coachingTimer->is_suggested_by_admin)
+										{{--@if (!$coachingTimer->approved_date)
 											<a href="#suggestDateModal" data-toggle="modal"
 											   class="suggestDateBtn"
 											   data-action="{{ route('admin.other-service.coaching-timer.suggestDate', $coachingTimer->id) }}">Suggest Different Dates</a>
-										@endif
+										@endif--}}
+									@endif
+								</td>
+								<td>
+                                    <?php
+                                    $suggested_dates_admin = json_decode($coachingTimer->suggested_date_admin);
+                                    ?>
+									@if($suggested_dates_admin)
+										@for($i =0; $i <= 2; $i++)
+											<div style="margin-top: 5px">
+												{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($suggested_dates_admin[$i]) }}
+											</div>
+										@endfor
+									@endif
+									@if (!$coachingTimer->approved_date)
+										<a href="#suggestDateModal" data-toggle="modal"
+										   class="suggestDateBtn"
+										   data-action="{{ route('admin.other-service.coaching-timer.suggestDate', $coachingTimer->id) }}">Suggest Different Dates</a>
 									@endif
 								</td>
 								<td>
@@ -695,6 +714,13 @@
                                     \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
                                      : ''}}
 								</td>
+								<th>
+									@if ($coachingTimer->editor_id)
+										{{ $coachingTimer->editor->full_name }}
+									@else
+										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $coachingTimer->id, 'type' => 3]) }}">Assign Editor</button>
+									@endif
+								</th>
 							</tr>
 						@endforeach
 						</tbody>
@@ -1471,17 +1497,17 @@
 
 					<div class="form-group">
 						<label>Date</label>
-						<input type="datetime-local" class="form-control" name="suggested_date[]" required>
+						<input type="datetime-local" class="form-control" name="suggested_date_admin[]" required>
 					</div>
 
 					<div class="form-group">
 						<label>Date</label>
-						<input type="datetime-local" class="form-control" name="suggested_date[]" required>
+						<input type="datetime-local" class="form-control" name="suggested_date_admin[]" required>
 					</div>
 
 					<div class="form-group">
 						<label>Date</label>
-						<input type="datetime-local" class="form-control" name="suggested_date[]" required>
+						<input type="datetime-local" class="form-control" name="suggested_date_admin[]" required>
 					</div>
 
 					<div class="text-right margin-top">
@@ -1523,12 +1549,15 @@
 						</select>
 					</div>
 
-					@for($i = 1; $i <= 3; $i++)
-						<div class="form-group">
-							<label>Suggested Date</label>
-							<input type="datetime-local" class="form-control" name="suggested_date[]" required>
-						</div>
-					@endfor
+					<div class="form-group">
+						<label>Assign To</label>
+						<select name="editor_id" class="form-control select2">
+							<option value="" disabled="" selected>-- Select Editor --</option>
+							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
+								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
+							@endforeach
+						</select>
+					</div>
 
 					<div class="form-group">
 						<label>Send Invoice</label> <br>

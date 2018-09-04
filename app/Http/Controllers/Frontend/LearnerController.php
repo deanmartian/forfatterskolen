@@ -172,6 +172,32 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * Suggest coaching date
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function suggestCoachingDate($id, Request $request)
+    {
+        if ($coachingTimer = CoachingTimerManuscript::find($id)) {
+            $data = $request->except('_token');
+            $suggested_dates = $data['suggested_date'];
+            // format the sent suggested dates
+            foreach ($suggested_dates as $k => $suggested_date) {
+                $suggested_dates[$k] = Carbon::parse($suggested_date)->format('Y-m-d H:i:s');
+            }
+
+            $data['suggested_date'] = json_encode($suggested_dates);
+
+            $coachingTimer->update($data);
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Suggested date saved successfully.'),
+                'alert_type' => 'success']);
+        }
+
+        return redirect()->back();
+    }
+
 
     public function webinar( Request $request )
     {

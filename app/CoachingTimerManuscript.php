@@ -26,10 +26,15 @@ class CoachingTimerManuscript extends Model {
      * @var array
      */
     protected $fillable = ['user_id', 'file', 'payment_price', 'plan_type', 'suggested_date', 'approved_date',
-        'is_suggested_by_admin'];
+        'suggested_date_admin', 'editor_id'];
 
     public function user()
     {
         return $this->belongsTo('App\User');
+    }
+
+    public function editor()
+    {
+        return $this->belongsTo('App\User', 'editor_id', 'id');
     }
 }

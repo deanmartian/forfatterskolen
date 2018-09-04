@@ -59,14 +59,13 @@ class OtherServiceController extends Controller
     {
         if ($coachingTimer = CoachingTimerManuscript::find($id)) {
             $data = $request->except('_token');
-            $suggested_dates = $data['suggested_date'];
+            $suggested_dates = $data['suggested_date_admin'];
             // format the sent suggested dates
             foreach ($suggested_dates as $k => $suggested_date) {
                 $suggested_dates[$k] = Carbon::parse($suggested_date)->format('Y-m-d H:i:s');
             }
 
-            $data['suggested_date'] = json_encode($suggested_dates);
-            $data['is_suggested_by_admin'] = 1;
+            $data['suggested_date_admin'] = json_encode($suggested_dates);
 
             $coachingTimer->update($data);
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Suggested date saved successfully.'),
