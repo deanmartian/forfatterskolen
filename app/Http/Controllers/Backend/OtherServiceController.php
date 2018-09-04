@@ -76,4 +76,18 @@ class OtherServiceController extends Controller
         return redirect()->back();
     }
 
+    public function setReplay($id, Request $request)
+    {
+        if ($coachingTimer = CoachingTimerManuscript::find($id)) {
+            $data = $request->except('_token');
+
+            $coachingTimer->update($data);
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Replay saved successfully.'),
+                'alert_type' => 'success',
+                'not-former-courses' => true]);
+        }
+
+        return redirect()->back();
+    }
+
 }

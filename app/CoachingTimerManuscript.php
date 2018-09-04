@@ -26,7 +26,7 @@ class CoachingTimerManuscript extends Model {
      * @var array
      */
     protected $fillable = ['user_id', 'file', 'payment_price', 'plan_type', 'suggested_date', 'approved_date',
-        'suggested_date_admin', 'editor_id'];
+        'suggested_date_admin', 'editor_id', 'replay_link'];
 
     public function user()
     {

@@ -646,6 +646,7 @@
 							<th>Admin Suggestion</th>
 							<th>Approved Date</th>
 							<th>Assigned To</th>
+							<th>Replay</th>
 						</tr>
 						</thead>
 						<tbody>
@@ -714,13 +715,22 @@
                                     \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
                                      : ''}}
 								</td>
-								<th>
+								<td>
 									@if ($coachingTimer->editor_id)
 										{{ $coachingTimer->editor->full_name }}
 									@else
 										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $coachingTimer->id, 'type' => 3]) }}">Assign Editor</button>
 									@endif
-								</th>
+								</td>
+								<td>
+									@if ($coachingTimer->replay_link)
+										<a href="{{ $coachingTimer->replay_link }}" target="_blank">
+											View Replay
+										</a>
+									@endif
+									<button class="btn btn-xs btn-primary setReplayBtn" data-toggle="modal"
+											data-target="#setReplayModal" data-action="{{ route('admin.other-service.coaching-timer.set_replay', $coachingTimer->id) }}">Set Replay</button>
+								</td>
 							</tr>
 						@endforeach
 						</tbody>
@@ -1456,6 +1466,25 @@
 	</div>
 </div>
 
+<div id="setReplayModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>Set Replay</label>
+						<input type="url" name="replay_link" class="form-control" required>
+					</div>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">Save</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <!-- Approve Coaching Timer Date Modal -->
 <div id="approveDateModal" class="modal fade" role="dialog" data-backdrop="static">
 	<div class="modal-dialog modal-sm">
@@ -1792,6 +1821,12 @@
         modal.find('select').val(editor);
         modal.find('form').attr('action', action);
     });
+
+    $(".setReplayBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#setReplayModal');
+        modal.find('form').attr('action', action);
+	});
 
 	function updateOtherServiceFields(type) {
 	    let modal = $("#addOtherServiceModal");

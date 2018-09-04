@@ -119,6 +119,7 @@
 										<th>Admin Suggested Date</th>
 										<th>Approved Date</th>
 										<th>Date Ordered</th>
+										<th>Replay</th>
 									</tr>
 									</thead>
 									<tbody>
@@ -186,6 +187,13 @@
 											</td>
 											<td>
 												{{ \App\Http\FrontendHelpers::formatDate($coachingTimer->created_at) }}
+											</td>
+											<td>
+												@if ($coachingTimer->replay_link)
+													<a href="{{ $coachingTimer->replay_link }}" target="_blank">
+														View Replay
+													</a>
+												@endif
 											</td>
 										</tr>
 									@endforeach
