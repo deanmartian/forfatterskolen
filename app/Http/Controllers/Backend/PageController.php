@@ -3,6 +3,8 @@ namespace App\Http\Controllers\Backend;
 
 use App\AssignmentManuscript;
 use App\CoachingTimerManuscript;
+use App\CopyEditingManuscript;
+use App\CorrectionManuscript;
 use App\CustomAction;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
@@ -64,12 +66,18 @@ class PageController extends Controller
             ->where('has_feedback',0)
             ->get();
         $coachingTimers = Auth::user()->assignedCoachingTimers;
+        $corrections = Auth::user()->assignedCorrections;
+        $copyEditings = Auth::user()->assignedCopyEditing;
+
         $pendingCoachingTimers = CoachingTimerManuscript::whereNull('editor_id')->orderBy('created_at','desc')->get();
+        $pendingCorrections = CorrectionManuscript::whereNull('editor_id')->orderBy('created_at','desc')->get();
+        $pendingCopyEditings = CopyEditingManuscript::whereNull('editor_id')->orderBy('created_at','desc')->get();
 
         return view('backend.dashboard', compact('pending_courses', 'pending_shop_manuscripts',
             'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts', 'assigned_free_manuscripts',
             'pending_assignment_feedbacks', 'logs', 'manuscripts','shopManuscripts', 'customActions',
-            'nearlyExpiredCoursesCount', 'pageMetas', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers'));
+            'nearlyExpiredCoursesCount', 'pageMetas', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
+            'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings'));
     }
 
     /**

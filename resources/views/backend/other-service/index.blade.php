@@ -142,11 +142,11 @@
                                                             @endif
                                                         </div>
                                                     @endfor
-                                                        @if (!$coachingTimer->approved_date && !$coachingTimer->is_suggested_by_admin)
+                                                        {{--@if (!$coachingTimer->approved_date && !$coachingTimer->is_suggested_by_admin)
                                                             <a href="#suggestDateModal" data-toggle="modal"
                                                                class="suggestDateBtn"
                                                             data-action="{{ route('admin.other-service.coaching-timer.suggestDate', $coachingTimer->id) }}">Suggest Different Dates</a>
-                                                        @endif
+                                                        @endif--}}
                                                 @endif
                                             </td>
                                             <td>

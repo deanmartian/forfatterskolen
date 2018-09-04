@@ -382,11 +382,11 @@
 			</div>
 			<!-- end My coaching timer -->
 
-			<!-- My proofing -->
+			<!-- My corrections -->
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>My Proofing</h4></div>
+						<div class="panel-heading"><h4>My Corrections</h4></div>
 						<table class="table">
 							<thead>
 							<tr>
@@ -395,13 +395,66 @@
 							</tr>
 							</thead>
 							<tbody>
-
+							@foreach($corrections as $correction)
+                                <?php $extension = explode('.', basename($correction->file)); ?>
+								<tr>
+									<td>
+										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+											<a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
+										@elseif( end($extension) == 'docx' )
+											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+										@endif
+									</td>
+									<td>
+										<a href="{{ route('admin.learner.show', $correction->user->id) }}">
+											{{ $correction->user->full_name }}
+										</a>
+									</td>
+								</tr>
+							@endforeach
 							</tbody>
 						</table>
 					</div>
 				</div>
 			</div>
-			<!-- end My proofing -->
+			<!-- end My corrections -->
+
+			<!-- My Copy Editing -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>My Copy Editing</h4></div>
+						<table class="table">
+							<thead>
+							<tr>
+								<th>Manus</th>
+								<th>Learner</th>
+							</tr>
+							</thead>
+							<tbody>
+							@foreach($copyEditings as $copyEditing)
+                                <?php $extension = explode('.', basename($copyEditing->file)); ?>
+								<tr>
+									<td>
+										@if( end($extension) == 'pdf' || end($copyEditing) == 'odt' )
+											<a href="/js/ViewerJS/#../../{{ $copyEditing->file }}">{{ basename($copyEditing->file) }}</a>
+										@elseif( end($extension) == 'docx' )
+											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copyEditing->file}}">{{ basename($copyEditing->file) }}</a>
+										@endif
+									</td>
+									<td>
+										<a href="{{ route('admin.learner.show', $copyEditing->user->id) }}">
+											{{ $copyEditing->user->full_name }}
+										</a>
+									</td>
+								</tr>
+							@endforeach
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<!-- end My Copy Editing -->
 
 		</div>
 
@@ -585,7 +638,7 @@
 								<th>Learner</th>
 								<th>Approved Date</th>
 								<th>Session Length</th>
-								<th>Action</th>
+								<th></th>
 							</tr>
 							</thead>
 							<tbody>
@@ -620,16 +673,36 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>Pending Proofing</h4></div>
+						<div class="panel-heading"><h4>Pending Corrections</h4></div>
 						<table class="table">
 							<thead>
 							<tr>
 								<th>Manus</th>
 								<th>Learner</th>
+								<th></th>
 							</tr>
 							</thead>
 							<tbody>
-
+							@foreach($pendingCorrections as $correction)
+                                <?php $extension = explode('.', basename($correction->file)); ?>
+								<tr>
+									<td>
+										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+											<a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
+										@elseif( end($extension) == 'docx' )
+											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+										@endif
+									</td>
+									<td>
+										<a href="{{ route('admin.learner.show', $correction->user->id) }}">
+											{{ $correction->user->full_name }}
+										</a>
+									</td>
+									<td>
+										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $correction->id, 'type' => 2]) }}">Assign Editor</button>
+									</td>
+								</tr>
+							@endforeach
 							</tbody>
 						</table>
 					</div>
@@ -645,10 +718,32 @@
 						<table class="table">
 							<thead>
 							<tr>
+								<th>Manus</th>
+								<th>Learner</th>
+								<th></th>
 							</tr>
 							</thead>
 							<tbody>
-
+							@foreach($pendingCopyEditings as $copyEditing)
+                                <?php $extension = explode('.', basename($copyEditing->file)); ?>
+								<tr>
+									<td>
+										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+											<a href="/js/ViewerJS/#../../{{ $copyEditing->file }}">{{ basename($copyEditing->file) }}</a>
+										@elseif( end($extension) == 'docx' )
+											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copyEditing->file}}">{{ basename($correction->file) }}</a>
+										@endif
+									</td>
+									<td>
+										<a href="{{ route('admin.learner.show', $copyEditing->user->id) }}">
+											{{ $copyEditing->user->full_name }}
+										</a>
+									</td>
+									<td>
+										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $copyEditing->id, 'type' => 1]) }}">Assign Editor</button>
+									</td>
+								</tr>
+							@endforeach
 							</tbody>
 						</table>
 					</div>
