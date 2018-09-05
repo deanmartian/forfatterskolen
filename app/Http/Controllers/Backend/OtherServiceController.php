@@ -165,4 +165,28 @@ class OtherServiceController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * Download file
+     * @param $service_id
+     * @param $service_type
+     * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function downloadOtherServiceDoc($service_id, $service_type)
+    {
+        if ($service_type == 1 || $service_type == 2) {
+            $filename = '';
+            if ($service_type == 1 && $copyEditing = CopyEditingManuscript::find($service_id)) {
+                $filename = $copyEditing->file;
+            }
+
+            if ($service_type == 2 && $correction = CorrectionManuscript::find($service_id)){
+                $filename = $correction->file;
+            }
+
+            return response()->download(public_path($filename));
+        }
+
+        return redirect()->route('admin.learner.index');
+    }
+
 }

@@ -386,7 +386,7 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>My Corrections</h4></div>
+						<div class="panel-heading"><h4>My Korrektur</h4></div>
 						<table class="table">
 							<thead>
 							<tr>
@@ -394,6 +394,7 @@
 								<th>Learner</th>
 								<th>Expected Finish</th>
 								<th>Status</th>
+								<th></th>
 								<th></th>
 							</tr>
 							</thead>
@@ -451,6 +452,10 @@
 													data-action="{{ route('admin.other-service.update-status', ['id' => $correction->id, 'type' => 2]) }}"><i class="fa fa-check"></i></button>
 										@endif
 									</td>
+									<td>
+										<a href="{{ route('admin.other-service.download-doc',
+										   ['id' => $correction->id, 'type' => 2]) }}">Download</a>
+									</td>
 								</tr>
 							@endforeach
 							</tbody>
@@ -464,7 +469,7 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>My Copy Editing</h4></div>
+						<div class="panel-heading"><h4>My Språkvask</h4></div>
 						<table class="table">
 							<thead>
 							<tr>
@@ -472,6 +477,7 @@
 								<th>Learner</th>
 								<th>Expected Finish</th>
 								<th>Status</th>
+								<th></th>
 								<th></th>
 							</tr>
 							</thead>
@@ -528,6 +534,11 @@
 													data-service="1"
 													data-action="{{ route('admin.other-service.update-status', ['id' => $copyEditing->id, 'type' => 1]) }}"><i class="fa fa-check"></i></button>
 										@endif
+									</td>
+
+									<td>
+										<a href="{{ route('admin.other-service.download-doc',
+										   ['id' => $copyEditing->id, 'type' => 1]) }}">Download</a>
 									</td>
 								</tr>
 							@endforeach
@@ -755,7 +766,7 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>Pending Corrections</h4></div>
+						<div class="panel-heading"><h4>Pending Korrektur</h4></div>
 						<table class="table">
 							<thead>
 							<tr>
@@ -796,7 +807,7 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>Pending Copy Editing</h4></div>
+						<div class="panel-heading"><h4>Pending Språkvask</h4></div>
 						<table class="table">
 							<thead>
 							<tr>

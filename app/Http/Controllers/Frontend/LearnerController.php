@@ -2160,6 +2160,12 @@ class LearnerController extends Controller
         return redirect()->route('admin.learner.index');
     }
 
+    /**
+     * Download file
+     * @param $service_id
+     * @param $service_type
+     * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
     public function downloadOtherServiceDoc($service_id, $service_type)
     {
         if ($service_type == 1 || $service_type == 2) {
