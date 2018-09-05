@@ -546,6 +546,9 @@
 							<th>Manus</th>
 							<th>Editor</th>
 							<th>Date Ordered</th>
+							<th>Expected Finish</th>
+							<th>Status</th>
+							<th></th>
 						</tr>
 						</thead>
 						<tbody>
@@ -568,6 +571,44 @@
 								</td>
 								<td>
 									{{ \App\Http\FrontendHelpers::formatDate($correction->created_at) }}
+								</td>
+								<td>
+									@if ($correction->expected_finish)
+										{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($correction->expected_finish) }}
+										<br>
+									@endif
+
+									@if ($correction->status !== 2)
+										<a href="#setOtherServiceFinishDateModal" data-toggle="modal"
+										   class="setOtherServiceFinishDateBtn"
+										   data-action="{{ route('admin.other-service.update-expected-finish',
+										   ['id' => $correction->id, 'type' => 2]) }}"
+										   data-finish="{{ $correction->expected_finish ?
+										strftime('%Y-%m-%dT%H:%M:%S', strtotime($correction->expected_finish)) : '' }}">
+											Set Date
+										</a>
+									@endif
+								</td>
+								<td>
+									@if( $correction->status == 2 )
+										<span class="label label-success">Finished</span>
+									@elseif( $correction->status == 1 )
+										<span class="label label-primary">Started</span>
+									@elseif( $correction->status == 0 )
+										<span class="label label-warning">Not started</span>
+									@endif
+								</td>
+								<td>
+									<?php
+										$btnColor = $correction->status == 1 ? 'primary' : 'warning';
+									?>
+
+									@if ($correction->status !== 2)
+										<button class="btn btn-{{ $btnColor }} btn-xs updateOtherServiceStatusBtn" type="button"
+										data-toggle="modal" data-target="#updateOtherServiceStatusModal"
+										data-service="2"
+										data-action="{{ route('admin.other-service.update-status', ['id' => $correction->id, 'type' => 2]) }}"><i class="fa fa-check"></i></button>
+									@endif
 								</td>
 							</tr>
 						@endforeach
@@ -593,6 +634,9 @@
 							<th>Manus</th>
 							<th>Editor</th>
 							<th>Date Ordered</th>
+							<th>Expected Finish</th>
+							<th>Status</th>
+							<th></th>
 						</tr>
 						</thead>
 						<tbody>
@@ -615,6 +659,44 @@
 								</td>
 								<td>
 									{{ \App\Http\FrontendHelpers::formatDate($copy_editing->created_at) }}
+								</td>
+								<td>
+									@if ($copy_editing->expected_finish)
+										{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($copy_editing->expected_finish) }}
+										<br>
+									@endif
+
+									@if ($copy_editing->status !== 2)
+										<a href="#setOtherServiceFinishDateModal" data-toggle="modal"
+										   class="setOtherServiceFinishDateBtn"
+										   data-action="{{ route('admin.other-service.update-expected-finish',
+										   ['id' => $copy_editing->id, 'type' => 1]) }}"
+										   data-finish="{{ $copy_editing->expected_finish ?
+										strftime('%Y-%m-%dT%H:%M:%S', strtotime($copy_editing->expected_finish)) : '' }}">
+											Set Date
+										</a>
+									@endif
+								</td>
+								<td>
+									@if( $copy_editing->status == 2 )
+										<span class="label label-success">Finished</span>
+									@elseif( $copy_editing->status == 1 )
+										<span class="label label-primary">Started</span>
+									@elseif( $copy_editing->status == 0 )
+										<span class="label label-warning">Not started</span>
+									@endif
+								</td>
+								<td>
+                                    <?php
+                                    $btnColor = $copy_editing->status == 1 ? 'primary' : 'warning';
+                                    ?>
+
+									@if ($copy_editing->status !== 2)
+										<button class="btn btn-{{ $btnColor }} btn-xs updateOtherServiceStatusBtn" type="button"
+												data-toggle="modal" data-target="#updateOtherServiceStatusModal"
+												data-service="1"
+												data-action="{{ route('admin.other-service.update-status', ['id' => $copy_editing->id, 'type' => 1]) }}"><i class="fa fa-check"></i></button>
+									@endif
 								</td>
 							</tr>
 						@endforeach
@@ -1485,6 +1567,51 @@
 	</div>
 </div>
 
+<div id="updateOtherServiceStatusModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Update <span></span> Status</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<p>
+						Are you sure to update the status of this record?
+					</p>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="setOtherServiceFinishDateModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title"><span></span> Expected Finish</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>Expected finish date</label>
+						<input type="datetime-local" name="expected_finish" class="form-control" required>
+					</div>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <!-- Approve Coaching Timer Date Modal -->
 <div id="approveDateModal" class="modal fade" role="dialog" data-backdrop="static">
 	<div class="modal-dialog modal-sm">
@@ -1827,6 +1954,28 @@
         let modal = $('#setReplayModal');
         modal.find('form').attr('action', action);
 	});
+
+	$(".updateOtherServiceStatusBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#updateOtherServiceStatusModal');
+        let service = $(this).data('service');
+        let title = 'Korrektur';
+
+        if (service === 1) {
+            title = 'Språkvask';
+		}
+        modal.find('form').attr('action', action);
+        modal.find('.modal-title').find('span').text(title);
+	});
+
+    $(".setOtherServiceFinishDateBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#setOtherServiceFinishDateModal');
+        let finish = $(this).data('finish');
+
+        modal.find('form').attr('action', action);
+        modal.find('form').find('[name=expected_finish]').val(finish);
+    });
 
 	function updateOtherServiceFields(type) {
 	    let modal = $("#addOtherServiceModal");

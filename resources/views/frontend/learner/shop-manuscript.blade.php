@@ -135,6 +135,9 @@
 										<tr>
 											<th>Manus</th>
 											<th>Date Ordered</th>
+											<th>Status</th>
+											<th>Expected Finish</th>
+											<th></th>
 										</tr>
 										</thead>
 										<tbody>
@@ -150,6 +153,25 @@
 												</td>
 												<td>
 													{{ \App\Http\FrontendHelpers::formatDate($editing->created_at) }}
+												</td>
+												<td>
+													@if( $editing->status == 2 )
+														<span class="label label-success">Finished</span>
+													@elseif( $editing->status == 1 )
+														<span class="label label-primary">Started</span>
+													@elseif( $editing->status == 0 )
+														<span class="label label-warning">Not started</span>
+													@endif
+												</td>
+												<td>
+													@if ($editing->expected_finish)
+														{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($editing->expected_finish) }}
+														<br>
+													@endif
+												</td>
+												<td>
+													<a href="{{ route('learner.other-service.download-doc',
+										   ['id' => $editing->id, 'type' => 1]) }}">Download</a>
 												</td>
 											</tr>
 										@endforeach
@@ -169,6 +191,9 @@
 										<tr>
 											<th>Manus</th>
 											<th>Date Ordered</th>
+											<th>Status</th>
+											<th>Expected Finish</th>
+											<th></th>
 										</tr>
 										</thead>
 										<tbody>
@@ -184,6 +209,25 @@
 												</td>
 												<td>
 													{{ \App\Http\FrontendHelpers::formatDate($correction->created_at) }}
+												</td>
+												<td>
+													@if( $correction->status == 2 )
+														<span class="label label-success">Finished</span>
+													@elseif( $correction->status == 1 )
+														<span class="label label-primary">Started</span>
+													@elseif( $correction->status == 0 )
+														<span class="label label-warning">Not started</span>
+													@endif
+												</td>
+												<td>
+													@if ($correction->expected_finish)
+														{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($correction->expected_finish) }}
+														<br>
+													@endif
+												</td>
+												<td>
+													<a href="{{ route('learner.other-service.download-doc',
+										   ['id' => $correction->id, 'type' => 2]) }}">Download</a>
 												</td>
 											</tr>
 										@endforeach

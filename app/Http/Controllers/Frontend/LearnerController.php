@@ -7,6 +7,8 @@ use App\AssignmentGroupLearner;
 use App\CalendarNote;
 use App\CoachingTimerManuscript;
 use App\CoachingTimerTaken;
+use App\CopyEditingManuscript;
+use App\CorrectionManuscript;
 use App\Diploma;
 use App\Genre;
 use App\Http\AdminHelpers;
@@ -2152,6 +2154,24 @@ class LearnerController extends Controller
         $shopManuscriptTaken = Diploma::find($id);
         if ($shopManuscriptTaken) {
             $filename = $shopManuscriptTaken->diploma;
+            return response()->download(public_path($filename));
+        }
+
+        return redirect()->route('admin.learner.index');
+    }
+
+    public function downloadOtherServiceDoc($service_id, $service_type)
+    {
+        if ($service_type == 1 || $service_type == 2) {
+            $filename = '';
+            if ($service_type == 1 && $copyEditing = CopyEditingManuscript::find($service_id)) {
+                $filename = $copyEditing->file;
+            }
+
+            if ($service_type == 2 && $correction = CorrectionManuscript::find($service_id)){
+                $filename = $correction->file;
+            }
+
             return response()->download(public_path($filename));
         }
 

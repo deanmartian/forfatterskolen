@@ -76,6 +76,12 @@ class OtherServiceController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * Set replay for coaching timer
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function setReplay($id, Request $request)
     {
         if ($coachingTimer = CoachingTimerManuscript::find($id)) {
@@ -85,6 +91,75 @@ class OtherServiceController extends Controller
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Replay saved successfully.'),
                 'alert_type' => 'success',
                 'not-former-courses' => true]);
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Update the status of particular service
+     * @param $service_id int Id of the service
+     * @param $service_type int service type identifier
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateStatus($service_id, $service_type)
+    {
+        if ($service_type == 1 || $service_type == 2 || $service_type == 3) {
+            $service = '';
+            if ($service_type == 1) {
+                $copyEditing = CopyEditingManuscript::find($service_id);
+                $copyEditing->status = $copyEditing->status+1;
+                $copyEditing->save();
+                $service = 'Språkvask';
+            }
+
+            if ($service_type == 2){
+                $correction = CorrectionManuscript::find($service_id);
+                $correction->status = $correction->status+1;
+                $correction->save();
+                $service = 'Korrektur';
+            }
+
+            return redirect()->back()->with([
+                'errors'                => AdminHelpers::createMessageBag($service.' status updated successfully.'),
+                'alert_type'            => 'success',
+                'not-former-courses'    => true
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Update the expected finish date
+     * @param $service_id int Id of the service
+     * @param $service_type int service type identifier
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateExpectedFinish($service_id, $service_type, Request $request)
+    {
+        if ($service_type == 1 || $service_type == 2 || $service_type == 3) {
+            $service = '';
+            if ($service_type == 1) {
+                $copyEditing = CopyEditingManuscript::find($service_id);
+                $copyEditing->expected_finish = $request->expected_finish;
+                $copyEditing->save();
+                $service = 'Språkvask';
+            }
+
+            if ($service_type == 2){
+                $correction = CorrectionManuscript::find($service_id);
+                $correction->expected_finish = $request->expected_finish;
+                $correction->save();
+                $service = 'Korrektur';
+            }
+
+            return redirect()->back()->with([
+                'errors'                => AdminHelpers::createMessageBag($service.' expected finish date updated successfully.'),
+                'alert_type'            => 'success',
+                'not-former-courses'    => true
+            ]);
         }
 
         return redirect()->back();
