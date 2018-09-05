@@ -63,14 +63,20 @@
 						</div>
 					@endif
 
-					<!-- check if for old structure or new -->
-					@if ($lesson->id <= 169)
-						{!! html_entity_decode($lesson->content) !!}
+					<!-- check if webinar-pakke -->
+					@if ($course->id == 17)
+						<!-- check if for old structure or new -->
+						@if ($lesson->id <= 169)
+							{!! html_entity_decode($lesson->content) !!}
+						@else
+							@foreach($lesson_content as $content)
+								<h1>{{ $content->title }}</h1>
+								{!! html_entity_decode($content->lesson_content) !!}
+							@endforeach
+						@endif
 					@else
-						@foreach($lesson_content as $content)
-							<h1>{{ $content->title }}</h1>
-							{!! html_entity_decode($content->lesson_content) !!}
-						@endforeach
+						<!-- if course is not webinar pakke then use old structure -->
+						{!! html_entity_decode($lesson->content) !!}
 					@endif
 				</div>
 			</div>
