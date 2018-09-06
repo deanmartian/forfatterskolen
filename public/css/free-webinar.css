@@ -449,6 +449,26 @@ ul#countdown li p.timeRefDays, ul#countdown li p.timeRefHours, ul#countdown li p
     width: 998px;
 }
 
+.free-webinar-container  .left-container {
+    background-color: #f5eced;
+}
+
+.free-webinar-container  .left-container > .presents {
+    margin-top: 20px;
+}
+
+.free-webinar-container  .left-container > .presents .circle {
+    font-family: "Lato Black";
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    font-size: 20px;
+    color: #fff;
+    line-height: 50px;
+    text-align: center;
+    background: #e2e1e1
+}
+
 @media only screen and (max-width: 830px) {
     #headline p {
         padding: 20px 0 50px;

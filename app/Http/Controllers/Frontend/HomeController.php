@@ -211,6 +211,11 @@ class HomeController extends Controller
         return view('frontend.copy-editing');
     }
 
+    public function otherServices()
+    {
+        return view('frontend.other-services');
+    }
+
     /**
      * Display the
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View

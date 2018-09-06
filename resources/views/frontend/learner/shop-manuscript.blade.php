@@ -172,6 +172,14 @@
 												<td>
 													<a href="{{ route('learner.other-service.download-doc',
 										   ['id' => $editing->id, 'type' => 1]) }}">Download</a>
+
+													@if ($editing->feedback)
+														<br>
+														<a href="{{ route('learner.other-service.download-feedback', $editing->feedback->id) }}"
+														   style="color:#eea236">
+															Download Feedback
+														</a>
+													@endif
 												</td>
 											</tr>
 										@endforeach
@@ -228,6 +236,14 @@
 												<td>
 													<a href="{{ route('learner.other-service.download-doc',
 										   ['id' => $correction->id, 'type' => 2]) }}">Download</a>
+
+													@if ($correction->feedback)
+														<br>
+														<a href="{{ route('learner.other-service.download-feedback', $correction->feedback->id) }}"
+														   style="color:#eea236">
+															Download Feedback
+														</a>
+													@endif
 												</td>
 											</tr>
 										@endforeach

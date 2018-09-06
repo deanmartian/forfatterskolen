@@ -455,6 +455,13 @@
 									<td>
 										<a href="{{ route('admin.other-service.download-doc',
 										   ['id' => $correction->id, 'type' => 2]) }}">Download</a>
+										<!-- show only if no feedback is given yet for this correction -->
+										@if (!$correction->feedback)
+											<a href="#addOtherServiceFeedbackModal" data-toggle="modal" style="color:#eea236"
+											class="addOtherServiceFeedbackBtn" data-service="2"
+											data-action="{{ route('admin.other-service.add-feedback',
+											['id' => $correction->id, 'type' => 2]) }}">+ Add feedback</a>
+										@endif
 									</td>
 								</tr>
 							@endforeach
@@ -539,6 +546,14 @@
 									<td>
 										<a href="{{ route('admin.other-service.download-doc',
 										   ['id' => $copyEditing->id, 'type' => 1]) }}">Download</a>
+
+										<!-- show only if no feedback is given yet for this copyEditing -->
+										@if (!$copyEditing->feedback)
+											<a href="#addOtherServiceFeedbackModal" data-toggle="modal" style="color:#eea236"
+											   class="addOtherServiceFeedbackBtn" data-service="1"
+											   data-action="{{ route('admin.other-service.add-feedback',
+											['id' => $copyEditing->id, 'type' => 1]) }}">+ Add feedback</a>
+										@endif
 									</td>
 								</tr>
 							@endforeach
@@ -1068,6 +1083,29 @@
 	</div>
 </div>
 
+<div id="addOtherServiceFeedbackModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><span></span> Add Feedback</h4>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
+                    {{csrf_field()}}
+                    <div class="form-group">
+                        <label>Manuscript</label>
+                        <input type="file" class="form-control" name="manuscript" multiple accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary pull-right">Add feedback</button>
+                    <div class="clearfix"></div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -1140,6 +1178,19 @@
 
         modal.find('form').attr('action', action);
         modal.find('form').find('[name=expected_finish]').val(finish);
+    });
+
+    $(".addOtherServiceFeedbackBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#addOtherServiceFeedbackModal');
+        let service = $(this).data('service');
+        let title = 'Korrektur';
+
+        if (service === 1) {
+            title = 'Språkvask';
+        }
+        modal.find('form').attr('action', action);
+        modal.find('.modal-title').find('span').text(title);
     });
 
     function disableSubmit(t) {

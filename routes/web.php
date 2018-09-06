@@ -51,6 +51,7 @@ Route::group([
         Route::post('coaching-timer/{plan}/place-order', 'HomeController@coachingTimerPlaceOrder')->name('front.coaching-timer-place-order'); // Coaching Timer Page
         Route::get('/copy-editing', 'HomeController@copyEditing')->name('front.copy-editing'); // Copy Editing Page
         Route::post('/copy-editing', 'HomeController@copyEditing')->name('front.copy-editing'); // Copy Editing Page
+        Route::get('/other-services', 'HomeController@otherServices')->name('front.other-services-page');
         Route::get('/other-services/checkout/{plan}/{has_data}', 'HomeController@otherServiceCheckout')->name('front.other-service-checkout');
         Route::post('/other-services/checkout/{plan}/{has_data}', 'HomeController@otherServiceCheckout')->name('front.other-service-checkout');
         Route::post('/other-services/place_order', 'HomeController@otherServiceOrder')->name('front.other-service-place_order');
@@ -194,6 +195,7 @@ Route::group([
         Route::get('/notifications', 'LearnerController@notifications')->name('learner.notifications'); // Survey Page
         Route::get('diploma/{id}/download', 'LearnerController@downloadDiploma')->name('learner.download-diploma');
         Route::get('/other-service/{id}/download/{type}', 'LearnerController@downloadOtherServiceDoc')->name('learner.other-service.download-doc'); // Download assignment feedback
+        Route::get('/other-service/download-feedback/{id}', 'LearnerController@downloadOtherServiceFeedback')->name('learner.other-service.download-feedback');
 
 
         Route::post('/profile', 'LearnerController@profileUpdate')->name('learner.profile.update'); // Profile Update
@@ -861,6 +863,7 @@ Route::group([
         Route::post('/other-service/{id}/update-status/{type}', 'OtherServiceController@updateStatus')->name('admin.other-service.update-status');
         Route::post('/other-service/{id}/update-expected-finish/{type}', 'OtherServiceController@updateExpectedFinish')->name('admin.other-service.update-expected-finish');
         Route::get('/other-service/{id}/download/{type}', 'OtherServiceController@downloadOtherServiceDoc')->name('admin.other-service.download-doc'); // Download assignment feedback
+        Route::post('/other-service/{id}/add-feedback/{type}', 'OtherServiceController@addFeedback')->name('admin.other-service.add-feedback');
 
         // Shop Manuscripts Route
         Route::resource('/shop-manuscript', 'ShopManuscriptController', [

@@ -29,4 +29,10 @@ class CorrectionManuscript extends Model {
     {
         return $this->belongsTo('App\User', 'editor_id', 'id');
     }
+
+    public function feedback()
+    {
+        return $this->hasOne('App\OtherServiceFeedback', 'service_id', 'id')
+            ->where('service_type','=',2);
+    }
 }

@@ -17,6 +17,7 @@ use App\Http\Requests\AddWritingGroupRequest;
 use App\LessonContent;
 use App\LessonDocuments;
 use App\Notification;
+use App\OtherServiceFeedback;
 use App\Package;
 use App\PaymentMode;
 use App\PaymentPlan;
@@ -2182,5 +2183,20 @@ class LearnerController extends Controller
         }
 
         return redirect()->route('admin.learner.index');
+    }
+
+    /**
+     * Download the feedback for other service
+     * @param $feedback_id
+     * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function downloadOtherServiceFeedback($feedback_id)
+    {
+        if ($feedback = OtherServiceFeedback::find($feedback_id)) {
+            $filename = $feedback->manuscript;
+            return response()->download(public_path($filename));
+        }
+
+        return redirect()->back();
     }
 }
