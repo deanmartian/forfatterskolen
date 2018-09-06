@@ -801,6 +801,33 @@ class HomeController extends Controller
         return view('frontend.opt-in');
     }
 
+    /**
+     * Opt in tips page
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function optInRektor(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validates = [
+                'email' => 'required|email',
+                'name' => 'required|regex:/^[\pL\s\-]+$/u|max:100',
+                'terms' => 'required',
+            ];
+
+            // validate the post request
+            $this->validate($request, $validates);
+            $list_id = 64;
+
+            AdminHelpers::addToActiveCampaignList($list_id, $request->except('_token','terms'));
+            return redirect()->back()->with([
+                'opt-in-message' => 1
+            ]);
+        }
+
+        return view('frontend.opt-in-rektor');
+    }
+
     public function optInTerms()
     {
         return view('frontend.opt-in-terms');

@@ -66,6 +66,10 @@ Route::group([
 
         Route::get('/opt-in', 'HomeController@optIn')->name('front.opt-in'); // Opt-in page
         Route::post('/opt-in', 'HomeController@optIn')->name('front.opt-in'); // Opt-in page
+
+        Route::get('/opt-in/rektor-tips', 'HomeController@optInRektor')->name('front.opt-in.rektor-tips'); // Opt-in page
+        Route::post('/opt-in/rektor-tips', 'HomeController@optInRektor')->name('front.opt-in.rektor-tips'); // Opt-in page
+
         Route::get('/opt-in-terms', 'HomeController@optInTerms')->name('front.opt-in-terms'); // Opt-in page
 
         Route::get('/terms/{slug?}', 'HomeController@terms')->name('front.terms'); // Terms page
