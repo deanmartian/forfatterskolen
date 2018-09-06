@@ -8,6 +8,17 @@
 	src: url('../fonts/century-gothic/GOTHICB0.TTF');
 	font-display: block;
 }
+
+@font-face{
+	font-family: 'Lato Black';
+	src: url('../fonts/Lato-Black.TTF');
+}
+
+@font-face{
+	font-family: 'Lato Regular';
+	src: url('../fonts/Lato-Regular.TTF');
+}
+
 body{
 	font-family: 'Century Gothic Regular', sans serif;
 	/*background-color: #f0f3f4;*/
@@ -877,6 +888,11 @@ footer .social a{
 .no-margin{
 	margin: 0 !important;
 }
+
+.no-padding-bottom {
+	padding-bottom: 0;
+}
+
 .workshop-presenters{
 	text-align: center;
 }
@@ -4018,6 +4034,54 @@ a.darken:hover img {
 	height: 397px !important;
 }
 
+.other-services-container {
+	background: url(../images/coffee-background.jpg) no-repeat;
+	background-position: 50%;
+	background-size: cover;
+	color:#fff;
+	font-family: "Lato Black" !important;
+	height: 950px;
+	margin: 0;
+	padding-left: 87px;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+}
+
+.other-services-container .title {
+	margin-top: 340px;
+	font-size: 43pt;
+}
+
+.other-services-container .service-items {
+	margin-top: 210px;
+}
+
+.other-services-container .service-items .box {
+	background-color: rgba(31, 26, 29, 0.7);/*#1f1a1d;*/
+	min-height: 100px;
+	padding: 20px 0 0 15px;
+	font-family: "Lato Regular";
+}
+
+.other-services-container .service-items .box .service-container {
+	margin-left: 15px;
+}
+
+.other-services-container .service-items .box .service-container > .service-name {
+	font-size: 16pt;
+	font-weight: 300;
+}
+
+.other-services-container .service-items .box .service-container > .service-link {
+	color: #e61d41;
+	font-size: 10pt;
+}
+
+.text-uppercase {
+	text-transform: uppercase;
+}
+
 /* media queries */
 @media only screen and (max-width: 1024px) {
 
@@ -4167,6 +4231,40 @@ a.darken:hover img {
 	.publishing-author .book-title {
 		word-wrap: break-word;
 	}
+
+	.other-services-container {
+		height: 700px;
+	}
+
+	.other-services-container .title {
+		margin-top: 230px;
+		font-size: 40pt;
+	}
+
+	.other-services-container .service-items {
+		margin-top: 119px;
+	}
+
+	.other-services-container .service-items .first-image, .other-services-container .service-items .second-image,
+	.other-services-container .service-items .third-image {
+		height: 45px;
+	}
+
+	.other-services-container .service-items .box {
+		padding: 25px 0 0 15px;
+	}
+
+	.other-services-container .service-items .box .service-container {
+		margin-left: 10px;
+	}
+
+	.other-services-container .service-items .box .service-container > .service-name {
+		font-size: 10pt;
+	}
+
+	.other-services-container .service-items .box .service-container > .service-link {
+		font-size: 9pt;
+	}
 }
 
 @media only screen and (max-width: 768px) {
@@ -4302,6 +4400,28 @@ a.darken:hover img {
 		margin-bottom: 15px;
 		width: 100%;
 	}
+
+	.other-services-container {
+		height: 580px;
+		padding-left: 40px;
+	}
+
+	.other-services-container .title {
+		margin-top: 195px;
+		font-size: 32pt;
+	}
+
+	.other-services-container .service-items {
+		margin-top: 95px;
+	}
+
+	.other-services-container .service-items .box {
+		min-height: 80px;
+	}
+
+	.other-services-container .service-items .box {
+		padding: 17px 0 0 15px;
+	}
 }
 
 @media only screen and (max-width: 640px) {
@@ -4428,6 +4548,33 @@ a.darken:hover img {
 
 	.publishing-author .author-pix {
 		height: 140px;
+	}
+
+	.other-services-container {
+		height: 550px;
+		padding-left: 35px;
+	}
+
+	.other-services-container .title {
+		margin-top: 180px;
+		font-size: 30pt;
+	}
+
+	.other-services-container .service-items {
+		margin-top: 105px;
+	}
+
+	.other-services-container .service-items .box .service-container > .service-name {
+		font-size: 9pt;
+	}
+
+	.other-services-container .service-items .box .service-container > .service-link {
+		font-size: 8pt;
+	}
+
+	.other-services-container .service-items .first-image, .other-services-container .service-items .second-image,
+	.other-services-container .service-items .third-image {
+		height: 40px;
 	}
 
 }
@@ -4627,6 +4774,37 @@ a.darken:hover img {
 
 	.gdpr-actions>a {
 		font-size: 13px;
+	}
+
+	.other-services-container {
+		height: 410px;
+		padding-left: 25px;
+	}
+
+	.other-services-container .title {
+		margin-top: 70px;
+		font-size: 25pt;
+	}
+
+	.other-services-container .column-container {
+		width: 80%;
+	}
+
+	.other-services-container .service-items .box {
+		min-height: 60px;
+	}
+
+	.other-services-container .service-items {
+		margin-top: 50px;
+	}
+
+	.other-services-container .service-items .box {
+		padding: 10px 0 0 15px;
+		margin-bottom: 3px;
+	}
+
+	.other-services-container .service-items .box .service-container > .service-name {
+		margin-bottom: 0;
 	}
 }
 
@@ -4932,6 +5110,33 @@ a.darken:hover img {
 		font-size: 17px;
 	}
 
+	.other-services-container {
+		height: 390px;
+		padding-left: 20px;
+	}
+
+	.other-services-container .title {
+		margin-top: 65px;
+		font-size: 24pt;
+	}
+
+	.other-services-container .service-items .first-image, .other-services-container .service-items .second-image,
+	.other-services-container .service-items .third-image {
+		height: 37px;
+	}
+
+	.other-services-container .service-items .box .service-container > .service-name {
+		font-size: 8pt;
+	}
+
+	.other-services-container .service-items .box .service-container > .service-link {
+		font-size: 7pt;
+	}
+
+	.other-services-container .service-items {
+		margin-top: 40px;
+	}
+
 }
 
 @media only screen and (max-width: 320px) {
@@ -5098,5 +5303,36 @@ a.darken:hover img {
 
 	.top-navbar {
 		height: 60px;
+	}
+
+	.other-services-container {
+		height: 330px;
+		padding-left: 20px;
+	}
+
+	.other-services-container .title {
+		margin-top: 45px;
+		font-size: 20pt;
+	}
+
+	.other-services-container .service-items .first-image, .other-services-container .service-items .second-image,
+	.other-services-container .service-items .third-image {
+		height: 30px;
+	}
+
+	.other-services-container .service-items .box {
+		min-height: 52px;
+	}
+
+	.other-services-container .service-items .box .service-container > .service-name {
+		font-size: 7pt;
+	}
+
+	.other-services-container .service-items .box .service-container > .service-link {
+		font-size: 6pt;
+	}
+
+	.other-services-container .service-items .box .service-container {
+		margin-top: -6px;
 	}
 }
