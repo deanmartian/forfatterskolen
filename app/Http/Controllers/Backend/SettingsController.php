@@ -49,5 +49,12 @@ class SettingsController extends Controller
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Description updated successfully.'),
             'alert_type' => 'success']);
     }
+
+    public function updateOptInRektorDescription( Request $request )
+    {
+        Settings::updateOrCreate(['setting_name' => 'opt_in_rektor_description'], ['setting_value' => $request->opt_in_description]);
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Description for Rektor Tips updated successfully.'),
+            'alert_type' => 'success']);
+    }
     
 }

@@ -8,6 +8,10 @@
 	<div class="container">
 		<div class="row">
 
+			<div class="col-sm-12">
+				{!! nl2br(App\Settings::optInRektorDescription()) !!}
+			</div>
+
 			<div class="col-sm-6 col-sm-offset-3">
 
 				@if(Session::has('opt-in-message'))

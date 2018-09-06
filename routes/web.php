@@ -959,6 +959,7 @@ Route::group([
         Route::post('/settings/update/other-terms', 'SettingsController@updateOtherTerms')->name('admin.settings.update.other-terms');
         Route::post('/settings/update/opt-in-terms', 'SettingsController@updateOptInTerms')->name('admin.settings.update.opt-in-terms'); // Store Terms
         Route::post('/settings/update/opt-in-description', 'SettingsController@updateOptInDescription')->name('admin.settings.update.opt-in-description'); // Store Terms
+        Route::post('/settings/update/opt-in-rektor-description', 'SettingsController@updateOptInRektorDescription')->name('admin.settings.update.opt-in-rektor-description'); // Store Terms
 
         Route::resource('/pulse', 'PulseController', [
             'except' => ['create', 'edit'],

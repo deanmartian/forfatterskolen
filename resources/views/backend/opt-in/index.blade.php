@@ -35,6 +35,18 @@
         </div>
     </div>
 
+    <div class="col-sm-12 margin-top">
+        <div class="panel panel-default ">
+            <div class="panel-heading">
+                <button type="button" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#editDescriptionRektorModal"><i class="fa fa-pencil"></i></button>
+                <h4>Description for Rektor Tips</h4>
+            </div>
+            <div class="panel-body">
+                {!! nl2br(App\Settings::optInRektorDescription()) !!}
+            </div>
+        </div>
+    </div>
+
 
     <div id="editTermsModal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-lg">
@@ -68,6 +80,27 @@
                     <form method="POST" action="{{ route('admin.settings.update.opt-in-description') }}">
                         {{ csrf_field() }}
                         <textarea class="form-control ckeditor" name="opt_in_description">{{ App\Settings::optInDescription() }}</textarea>
+                        <div class="text-right margin-top">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="editDescriptionRektorModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Description</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route('admin.settings.update.opt-in-rektor-description') }}">
+                        {{ csrf_field() }}
+                        <textarea class="form-control ckeditor" name="opt_in_description">{{ App\Settings::optInRektorDescription() }}</textarea>
                         <div class="text-right margin-top">
                             <button type="submit" class="btn btn-primary">Save</button>
                         </div>

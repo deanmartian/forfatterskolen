@@ -30,6 +30,11 @@ class Settings extends Model
         return self::getByName('opt_in_description');
     }
 
+    public static function optInRektorDescription()
+    {
+        return self::getByName('opt_in_rektor_description');
+    }
+
     public static function getByName($settingName)
     {
         return self::where('setting_name', $settingName)->pluck('setting_value')->first();
