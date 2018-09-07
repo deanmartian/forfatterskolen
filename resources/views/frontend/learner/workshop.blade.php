@@ -115,11 +115,10 @@
 									<tr>
 										<th>Manus</th>
 										<th>Coaching Time</th>
-										<th>Suggested Date</th>
-										<th>Admin Suggested Date</th>
-										<th>Approved Date</th>
-										<th>Date Ordered</th>
-										<th>Replay</th>
+										<th>min foreslåtte dato</th>
+										<th>Forfatterskolen foreslåtte dato</th>
+										<th>Avtalt dato og tid</th>
+										<th>Reprise</th>
 									</tr>
 									</thead>
 									<tbody>
@@ -147,7 +146,7 @@
 												@if($suggested_dates)
 													@for($i =0; $i <= 2; $i++)
 														<div style="margin-top: 5px">
-															{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($suggested_dates[$i]) }}
+															{{ \App\Http\FrontendHelpers::formatDateTimeNor($suggested_dates[$i]) }}
 														</div>
 													@endfor
 												@endif
@@ -155,7 +154,7 @@
 												@if (!$coachingTimer->approved_date)
 													<a href="#suggestDateModal" data-toggle="modal"
 													   class="suggestDateBtn"
-													   data-action="{{ route('learner.coaching-timer.suggest_date', $coachingTimer->id) }}">Suggest Different Dates</a>
+													   data-action="{{ route('learner.coaching-timer.suggest_date', $coachingTimer->id) }}">Foreslå andre datoer</a>
 												@endif
 
 											</td>
@@ -167,7 +166,7 @@
 												@if($suggested_dates_admin)
 													@for($i =0; $i <= 2; $i++)
 														<div style="margin-top: 5px">
-															{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($suggested_dates_admin[$i]) }}
+															{{ \App\Http\FrontendHelpers::formatDateTimeNor($suggested_dates_admin[$i]) }}
 															@if (!$coachingTimer->approved_date)
 																<button class="btn btn-success btn-xs approveDateBtn pull-right"
 																		data-toggle="modal" data-target="#approveDateModal"
@@ -184,9 +183,6 @@
 												{{ $coachingTimer->approved_date ?
                                                 \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
                                                  : ''}}
-											</td>
-											<td>
-												{{ \App\Http\FrontendHelpers::formatDate($coachingTimer->created_at) }}
 											</td>
 											<td>
 												@if ($coachingTimer->replay_link)
@@ -275,7 +271,7 @@
 
 					@for($i = 1; $i <= 3; $i++)
 						<div class="form-group">
-							<label>Suggested Date</label>
+							<label>min foreslåtte dato</label>
 							<input type="datetime-local" class="form-control" name="suggested_date[]" required>
 						</div>
 					@endfor
@@ -315,7 +311,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Suggest Session Dates</h4>
+				<h4 class="modal-title">Foreslå en dato for coaching time</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" id="suggestDateForm"
@@ -323,23 +319,23 @@
 					{{csrf_field()}}
 
 					<div class="form-group">
-						<label>Date</label>
+						<label>Dato og tid</label>
 						<input type="datetime-local" class="form-control" name="suggested_date[]" required>
 					</div>
 
 					<div class="form-group">
-						<label>Date</label>
+						<label>Dato og tid</label>
 						<input type="datetime-local" class="form-control" name="suggested_date[]" required>
 					</div>
 
 					<div class="form-group">
-						<label>Date</label>
+						<label>Dato og tid</label>
 						<input type="datetime-local" class="form-control" name="suggested_date[]" required>
 					</div>
 
 					<div class="text-right margin-top">
-						<button type="submit" class="btn btn-success">Submit</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-success">Foreslå</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Avbryt</button>
 					</div>
 				</form>
 			</div>

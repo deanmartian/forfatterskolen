@@ -18,9 +18,6 @@
 <li @if(Request::is('account/assignment*')) class="active" @endif>
 <a href="{{route('learner.assignment')}}"><i class="fa fa-address-book-o"></i>&nbsp;&nbsp;Oppgaver</a>
 </li>
-<li @if(Request::is('account/book-author*')) class="active" @endif>
-    <a href="{{route('learner.book-author')}}"><i class="fa fa-book"></i>&nbsp;&nbsp;Pilotleser</a>
-</li>
 <li @if(Request::is('account/calendar')) class="active" @endif>
 <a href="{{route('learner.calendar')}}"><i class="fa fa-calendar"></i>&nbsp;&nbsp;Kalender</a>
 </li>
@@ -33,7 +30,7 @@
 
     @if (Auth::user()->coursesTaken->count())
         <li @if(Request::is('account/publishing')) class="active" @endif>
-            <a href="{{route('learner.publishing')}}"><i class="fa fa-newspaper-o"></i>&nbsp;&nbsp;Forlagsliste (kommer)</a>
+            <a href="{{route('learner.publishing')}}"><i class="fa fa-newspaper-o"></i>&nbsp;&nbsp;Forlagsliste</a>
         </li>
     @endif
 
@@ -43,7 +40,7 @@
 
     @if (Auth::user()->coursesTaken->count())
         <li @if(Request::is('account/writing-groups') || Request::is('account/writing-group/*')) class="active" @endif>
-            <a href="{{route('learner.writing-groups')}}"><i class="fa fa-edit"></i>&nbsp;&nbsp;Skrivegrupper (kommer)</a>
+            <a href="{{route('learner.writing-groups')}}"><i class="fa fa-edit"></i>&nbsp;&nbsp;Skrivegrupper</a>
         </li>
     @endif
 

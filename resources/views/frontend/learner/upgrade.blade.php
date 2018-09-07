@@ -469,7 +469,7 @@
                     <form action="{{ route('learner.upgrade-auto-renew') }}" method="POST">
                         {{ csrf_field() }}
 
-                        Are you sure you want to auto renew the courses?
+                        Er du sikker på at du vil fornye abonnementet ditt automatisk?
 
                         <input type="hidden" name="auto_renew">
                         <div class="text-right margin-top">

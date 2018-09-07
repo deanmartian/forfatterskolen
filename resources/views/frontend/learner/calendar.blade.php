@@ -36,11 +36,11 @@
 			<ul class="calendar-guide">
 				<li><span class="guide guide-blue"></span>&nbsp;&nbsp;Manus</li>
 				<li><span class="guide guide-green"></span>&nbsp;&nbsp;Oppgaver</li>
-				<li><span class="guide guide-purple"></span>&nbsp;&nbsp;Webinars</li>
+				<li><span class="guide guide-purple"></span>&nbsp;&nbsp;Webinarer</li>
 				<li><span class="guide guide-red"></span>&nbsp;&nbsp;Moduler</li>
 				<li><span class="guide guide-orange"></span>&nbsp;&nbsp;Webinars</li>
-				<li><span class="guide event-inverse"></span>&nbsp;&nbsp;Notes</li>
-				<li><span class="guide event-coaching"></span>&nbsp;&nbsp;Coaching Session</li>
+				<li><span class="guide event-inverse"></span>&nbsp;&nbsp;Notater</li>
+				<li><span class="guide event-coaching"></span>&nbsp;&nbsp;Coaching time</li>
 			</ul>
 			{{--<div class="pull-right form-inline">
 				<div class="btn-group">

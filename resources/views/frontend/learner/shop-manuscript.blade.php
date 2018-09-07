@@ -60,7 +60,7 @@
 										<h3 class="no-margin-top" style="margin-bottom: 4px">{{ $shopManuscriptTaken->shop_manuscript->title }}</h3>
 										@if($shopManuscriptTaken->expected_finish)
 											<p>
-												<span class="label label-danger">Expected Finish:</span> {{ $shopManuscriptTaken->expected_finish }}
+												<span class="label label-danger">Forventet ferdig:</span> {{ $shopManuscriptTaken->expected_finish }}
 											</p>
 										@endif
 										<p>
@@ -134,9 +134,9 @@
 										<thead>
 										<tr>
 											<th>Manus</th>
-											<th>Date Ordered</th>
+											<th>Dato bestilt</th>
 											<th>Status</th>
-											<th>Expected Finish</th>
+											<th>Forventet ferdig</th>
 											<th></th>
 										</tr>
 										</thead>
@@ -171,13 +171,13 @@
 												</td>
 												<td>
 													<a href="{{ route('learner.other-service.download-doc',
-										   ['id' => $editing->id, 'type' => 1]) }}">Download</a>
+										   ['id' => $editing->id, 'type' => 1]) }}">Last ned</a>
 
 													@if ($editing->feedback)
 														<br>
 														<a href="{{ route('learner.other-service.download-feedback', $editing->feedback->id) }}"
 														   style="color:#eea236">
-															Download Feedback
+															Last ned tilbakemelding
 														</a>
 													@endif
 												</td>
@@ -198,9 +198,9 @@
 										<thead>
 										<tr>
 											<th>Manus</th>
-											<th>Date Ordered</th>
+											<th>Dato bestilt</th>
 											<th>Status</th>
-											<th>Expected Finish</th>
+											<th>Forventet ferdig</th>
 											<th></th>
 										</tr>
 										</thead>
@@ -235,13 +235,13 @@
 												</td>
 												<td>
 													<a href="{{ route('learner.other-service.download-doc',
-										   ['id' => $correction->id, 'type' => 2]) }}">Download</a>
+										   ['id' => $correction->id, 'type' => 2]) }}">Last ned</a>
 
 													@if ($correction->feedback)
 														<br>
 														<a href="{{ route('learner.other-service.download-feedback', $correction->feedback->id) }}"
 														   style="color:#eea236">
-															Download Feedback
+															Last ned tilbakemelding
 														</a>
 													@endif
 												</td>
