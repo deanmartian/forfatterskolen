@@ -30,7 +30,7 @@
 									<div class="panel-body">
 										<h4 class="no-margin-top no-margin-bottom">{{ $assignment->title }}</h4>
 										{{ $assignment->description }} <br>
-										<b>Frist:</b> <i>{{ $assignment->submission_date }}</i>
+										<b>Frist:</b> <i>{{ \App\Http\FrontendHelpers::formatDateTimeNor2($assignment->submission_date) }}</i>
                                         <?php $manuscript = $assignment->manuscripts->where('user_id', Auth::user()->id)->first(); ?>
                                         <?php $extension = $manuscript ? explode('.', basename($manuscript->filename)) : ''; ?>
 										<div class="margin-top margin-bottom">
@@ -149,7 +149,7 @@
 									<div class="panel-body">
 										<h4 class="no-margin-top no-margin-bottom">{{ $assignment->title }}</h4>
 										{{ $assignment->description }} <br>
-										<b>Frist:</b> <i>{{ $assignment->submission_date }}</i>
+										<b>Frist:</b> <i>{{ \App\Http\FrontendHelpers::formatDateTimeNor2($assignment->submission_date) }}</i>
                                         <?php $manuscript = $assignment->manuscripts->where('user_id', Auth::user()->id)->first(); ?>
                                         <?php $extension = $manuscript ? explode('.', basename($manuscript->filename)) : ''; ?>
 										<div class="margin-top margin-bottom">
