@@ -703,13 +703,7 @@ class HomeController extends Controller
 
         if ($request->isMethod('post')) {
 
-            $this->validate($request, ['email' => 'required|email']);
-
-            if (str_word_count($request->name) < 2) {
-                return redirect()->back()->withInput()->with([
-                    'errors' => AdminHelpers::createMessageBag('Please input your full name.')
-                ]);
-            }
+            $this->validate($request, ['email' => 'required|email', 'first_name' => 'required', 'last_name' => 'required']);
 
             $explodeName = explode(' ',$request->name);
             $sliced = array_slice($explodeName, 0, -1); // get all except the last
@@ -719,8 +713,8 @@ class HomeController extends Controller
             $org_key = '5169031040578858252';
             $web_key = $freeWebinar->gtwebinar_id; // id of the webinar from gotowebinar
 
-            $firstName = implode(" ", $sliced);
-            $lastName = end($explodeName);
+            $firstName = $request->first_name;//implode(" ", $sliced);
+            $lastName = $request->last_name;//end($explodeName);
             $email = $request->email;
 
             $vals['body'] = (object) array(
@@ -759,7 +753,7 @@ class HomeController extends Controller
             }
 
         }
-        return view('frontend.free-webinar-new', compact('freeWebinar'));
+        return view('frontend.free-webinar', compact('freeWebinar'));
         //return view('frontend.free-webinar', compact('freeWebinar'));
     }
 
