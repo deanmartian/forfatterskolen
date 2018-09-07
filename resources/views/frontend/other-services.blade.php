@@ -16,7 +16,7 @@
                     <img src="{{ asset('images/book.png') }}" class="pull-left first-image">
                     <div class="pull-left service-container text-uppercase">
                         <label class="service-name">Coaching Timer</label> <br>
-                        <a href="{{ route('front.coaching-timer') }}" class="service-link">View More > </a>
+                        <a href="{{ route('front.coaching-timer') }}" class="service-link">Les Mer > </a>
                     </div>
                 </div>
             </div>
@@ -25,7 +25,7 @@
                     <img src="{{ asset('images/book-magnify.png') }}" class="pull-left second-image">
                     <div class="pull-left service-container text-uppercase">
                         <label class="service-name">Korrektur</label> <br>
-                        <a href="{{ route('front.correction') }}" class="service-link">View More > </a>
+                        <a href="{{ route('front.correction') }}" class="service-link">Les Mer > </a>
                     </div>
                 </div>
             </div>
@@ -34,7 +34,7 @@
                     <img src="{{ asset('images/check-list.png') }}" class="pull-left third-image">
                     <div class="pull-left service-container text-uppercase">
                         <label class="service-name">SPRÅKVASK</label> <br>
-                        <a href="{{ route('front.copy-editing') }}" class="service-link">View More > </a>
+                        <a href="{{ route('front.copy-editing') }}" class="service-link">Les Mer > </a>
                     </div>
                 </div>
             </div>

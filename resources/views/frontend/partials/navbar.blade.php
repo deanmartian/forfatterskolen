@@ -27,7 +27,7 @@
         <ul class="nav navbar-nav">
           <li @if(Route::currentRouteName() == 'front.course.index') class="active" @endif><a href="{{route('front.course.index')}}">Våre Kurs</a></li>
           <li @if(Route::currentRouteName() == 'front.shop-manuscript.index') class="active" @endif><a href="{{ route('front.shop-manuscript.index') }}">Manusutvikling</a></li>
-          {{--<li @if(Route::currentRouteName() == 'front.other-services-page') class="active" @endif><a href="{{ route('front.other-services-page') }}">Andre Tjenester</a></li>--}}
+          <li @if(Route::currentRouteName() == 'front.other-services-page') class="active" @endif><a href="{{ route('front.other-services-page') }}">Andre Tjenester</a></li>
           <li @if(Route::currentRouteName() == 'front.publishing') class="active" @endif><a href="{{ route('front.publishing') }}">Utgitte Elever</a></li>
           {{--<li><a href="http://forfatterreiser.no/">Forfatterreiser</a></li>--}}
           <li><a href="http://www.forfatterdrom.no/">Forlag</a></li>
