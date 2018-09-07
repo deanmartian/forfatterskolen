@@ -188,7 +188,7 @@ class HomeController extends Controller
                 }*/
 
                 $word_per_price = 1000;
-                $price_per_word = 35;
+                $price_per_word = 30;
                 $rounded_word = FrontendHelpers::roundUpToNearestMultiple($word_count);
 
                 $calculated_price = ($rounded_word/$word_per_price) * $price_per_word;
@@ -421,7 +421,7 @@ class HomeController extends Controller
 
 
                 $word_per_price = 1000;
-                $price_per_word = 30;
+                $price_per_word = 25;
                 $rounded_word = FrontendHelpers::roundUpToNearestMultiple($word_count);
 
                 $calculated_price = ($rounded_word/$word_per_price) * $price_per_word;

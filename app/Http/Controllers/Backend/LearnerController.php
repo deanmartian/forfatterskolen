@@ -736,12 +736,12 @@ class LearnerController extends Controller
                 $word_count = strlen($docObj->convertToText()) - 2;
 
                 $word_per_price = 1000;
-                $price_per_word = 30;
+                $price_per_word = 25;
                 $title = 'Korrektur';
 
                 if ($data['is_copy_editing'] == 1) {
                     $word_per_price = 1000;
-                    $price_per_word = 35;
+                    $price_per_word = 30;
                     $title = 'Språkvask';
                 }
 

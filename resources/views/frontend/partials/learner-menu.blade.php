@@ -28,21 +28,21 @@
         <a href="{{route('learner.upgrade')}}"><i class="fa fa-upload"></i>&nbsp;&nbsp;Kurspakker - Oppgradering</a>
     </li>
 
-    @if (Auth::user()->coursesTaken->count())
+    {{--@if (Auth::user()->coursesTaken->count())
         <li @if(Request::is('account/publishing')) class="active" @endif>
-            <a href="{{route('learner.publishing')}}"><i class="fa fa-newspaper-o"></i>&nbsp;&nbsp;Forlagsliste</a>
+            <a href="{{route('learner.publishing')}}"><i class="fa fa-newspaper-o"></i>&nbsp;&nbsp;Forlagsliste (kommer)</a>
         </li>
-    @endif
+    @endif--}}
 
     <li @if(Request::is('account/competition')) class="active" @endif>
         <a href="{{route('learner.competition')}}"><i class="fa fa-star"></i>&nbsp;&nbsp;Konkurranser</a>
     </li>
 
-    @if (Auth::user()->coursesTaken->count())
+    {{--@if (Auth::user()->coursesTaken->count())
         <li @if(Request::is('account/writing-groups') || Request::is('account/writing-group/*')) class="active" @endif>
-            <a href="{{route('learner.writing-groups')}}"><i class="fa fa-edit"></i>&nbsp;&nbsp;Skrivegrupper</a>
+            <a href="{{route('learner.writing-groups')}}"><i class="fa fa-edit"></i>&nbsp;&nbsp;Skrivegrupper (kommer)</a>
         </li>
-    @endif
+    @endif--}}
 
 <li @if(Request::is('account/profile')) class="active" @endif>
 <a href="{{route('learner.profile')}}"><i class="fa fa-user-o"></i>&nbsp;&nbsp;Profil \ Kursbevis</a>

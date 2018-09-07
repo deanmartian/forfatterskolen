@@ -26,7 +26,7 @@
 
         <div class="image3 container"><img src="{{ asset('images/bgwhite.png') }}">
             <p class="sub">Profesjonell <br>språkvask
-            <p class="link2">1000 tegn  -  35 kroner</p>
+            <p class="link2">1000 tegn  -  30 kroner</p>
             <p class="disc2">
                 Vi tilbyr profesjonell språkvask av alle typer manus. Vi beregner 3 ukers behandlingstid,
                 før du får ditt språkvaskede manus tilbake. Beregn pris ved å laste opp manuset i boksen til venstre

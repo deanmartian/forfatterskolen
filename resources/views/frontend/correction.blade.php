@@ -27,7 +27,7 @@
 
         <div class="image3 container"><img src="{{ asset('images/bgwhite.png') }}">
             <p class="sub">Profesjonell <br>korrektur
-            <p class="link2">1000 tegn  -  30 kroner</p>
+            <p class="link2">1000 tegn  -  25 kroner</p>
             <p class="disc2">
                 Vi tilbyr profesjonell korrektur på alle typer manus. Beregnet behandlingstid fra bestilling er 3 uker.
                 Du kan beregne pris på korrektur ved å laste opp manuset i boksen til venstre (dette er kun en utregning,
