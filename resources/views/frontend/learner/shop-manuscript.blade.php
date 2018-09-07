@@ -171,7 +171,7 @@
 												</td>
 												<td>
 													<a href="{{ route('learner.other-service.download-doc',
-										   ['id' => $editing->id, 'type' => 1]) }}">Last ned</a>
+										   ['id' => $editing->id, 'type' => 1]) }}">Last ned orginal manus</a>
 
 													@if ($editing->feedback)
 														<br>
@@ -235,7 +235,7 @@
 												</td>
 												<td>
 													<a href="{{ route('learner.other-service.download-doc',
-										   ['id' => $correction->id, 'type' => 2]) }}">Last ned</a>
+										   ['id' => $correction->id, 'type' => 2]) }}">Last ned orginal manus</a>
 
 													@if ($correction->feedback)
 														<br>
