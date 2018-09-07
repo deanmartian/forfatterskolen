@@ -221,10 +221,10 @@
 
             // if the date is in the past then put 0
             if (distance < 0) {
-                daysCont.text(0);
-                hoursCont.text(0);
-                minutesCont.text(0);
-                secondsCont.text(0);
+                daysCont.text('00');
+                hoursCont.text('00');
+                minutesCont.text('00');
+                secondsCont.text('00');
             }
         }
     </script>
