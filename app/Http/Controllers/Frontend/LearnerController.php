@@ -1150,9 +1150,7 @@ class LearnerController extends Controller
 
 
                     $invoice = new FikenInvoice();
-                    //$invoice->create_invoice($invoice_fields);
-
-                    print_r($invoice_fields);
+                    $invoice->create_invoice($invoice_fields);
 
                     // update all the started at of each courses taken
                     foreach (Auth::user()->coursesTaken as $coursesTaken) {
