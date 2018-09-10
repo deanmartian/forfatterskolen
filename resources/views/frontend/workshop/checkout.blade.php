@@ -105,14 +105,17 @@
 
 			<div class="col-sm-12 col-md-4">
 				<div class="panel panel-default no-margin-bottom">
-				  <div class="panel-heading"><h4>Menu</h4></div>
+				  <div class="panel-heading"><h4>Allergier</h4></div>
 				  <div class="panel-body">
 				  	<select class="form-control" name="menu_id" required>
 				  	@foreach($workshop->menus as $menu)
 						<option value="{{$menu->id}}">{{$menu->title}}</option>
 				  	@endforeach
 				  	</select>
-				  	<textarea class="form-control margin-top" name="notes" placeholder="Allergy notes" rows="4"></textarea>
+					  <?php
+					  	$notes_placeholder = 'skriv her om du har noen allergier eller andre hensyn vi trenger å vite om før skriveverkstedet'
+					  ?>
+				  	<textarea class="form-control margin-top" name="notes" placeholder="{{ $notes_placeholder }}" rows="4"></textarea>
 				</div>
 				</div>
 

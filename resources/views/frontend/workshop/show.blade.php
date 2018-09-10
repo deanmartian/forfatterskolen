@@ -43,7 +43,7 @@
 			</div>
 
 			<br />
-			<h3>Dagens meny</h3><br />
+			<h3>Praktisk Informasjon</h3><br />
 			<div class="row">
 				@foreach( $workshop->menus as $menu )
 				<div class="col-sm-4 workshop-menu">

@@ -90,7 +90,7 @@
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<button type="button" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#addMenuModal">Add Menu</button>
-					<h4>Menu</h4>
+					<h4>Praktisk Informasjon</h4>
 					<div class="row margin-top">
 						@foreach( $workshop->menus as $menu )
 						<div class="col-sm-6 workshop-menu">
