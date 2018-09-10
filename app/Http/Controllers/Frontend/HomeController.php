@@ -23,6 +23,7 @@ use App\Settings;
 use App\Solution;
 use App\SolutionArticle;
 use App\SosChildren;
+use App\Workshop;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -60,10 +61,15 @@ class HomeController extends Controller
         $next_webinar = $webinar_pakke->webinars()->where('start_date', '>=' ,Carbon::today())
             ->where('set_as_replay', 0)->first();
         $next_free_webinar = FreeWebinar::where('start_date', '>=' ,Carbon::today())->first();
+        // check for workshop that has menu and is for sale and date is greater than equal to today
+        $next_workshop = Workshop::has('menus')->where('date', '>=', Carbon::today())
+            ->where('is_free', '=', 0)
+            ->orderBy('date', 'ASC')->first();
+
         $latest_blog = Blog::orderBy('created_at', 'desc')->first();
 
         return view('frontend.home', compact('popular_courses', 'free_courses', 'free_webinars',
-            'next_webinar', 'next_free_webinar', 'latest_blog'));
+            'next_webinar', 'next_free_webinar', 'next_workshop','latest_blog'));
     }
 
     // set cookie for gdpr

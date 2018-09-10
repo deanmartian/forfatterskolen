@@ -89,7 +89,7 @@
 
             <div class="col-sm-4">
                 <h3 class="highlight">
-                    Neste gratis webinar
+                    {{ !$next_free_webinar && $next_workshop ? 'Neste Workshop' : 'Neste gratis webinar' }}
                 </h3>
                 <div class="all-course-course">
                     @if($next_free_webinar)
@@ -106,6 +106,23 @@
                             </div>
                             <a class="buy_now" href="{{ route('front.free-webinar', $next_free_webinar->id) }}">Registrer deg</a>
                         </div>
+                    @else
+                        <!-- if not upcoming free webinar then look for available upcoming workshop -->
+                        @if($next_workshop)
+                            <div class="all-course-course">
+                                <div class="image" style="background-image: url({{ $next_workshop->image ?: asset('/images/no_image.png')}})"></div>
+                                <div class="details">
+                                    <div class="course-info">
+                                        <h4>{{ $next_workshop->title }}</h4>
+                                        <p>{{ str_limit(strip_tags($next_workshop->description), 180)}}</p>
+                                        <div class="bottom-div-display">
+                                            {{ \App\Http\FrontendHelpers::formatDateTimeNor($next_workshop->start_date) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <a class="buy_now" href="{{ route('front.workshop.show', $next_workshop->id) }}">Les Mer</a>
+                            </div>
+                        @endif
                     @endif
                 </div>
             </div>
