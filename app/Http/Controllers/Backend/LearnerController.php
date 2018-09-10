@@ -968,7 +968,8 @@ class LearnerController extends Controller
                 'file'              => $file,
                 'payment_price'     => $data['price'],
                 'plan_type'         => $data['plan_type'],
-                'editor_id'         => $request->exists('editor_id') ? $data['editor_id'] : NULL
+                'editor_id'         => $request->exists('editor_id') ? $data['editor_id'] : NULL,
+                'is_approved'       => 1
             ]);
 
             return redirect()->back()->with([
@@ -1048,5 +1049,20 @@ class LearnerController extends Controller
         }
 
         return redirect()->route('admin.learner.index');
+    }
+
+    public function approveCoachingTimer($id)
+    {
+        if($coachingTimer = CoachingTimerManuscript::find($id)) {
+            $coachingTimer->is_approved = 1;
+            $coachingTimer->save();
+            return redirect()->back()->with([
+                'errors'                => AdminHelpers::createMessageBag('Coaching timer approved successfully.'),
+                'alert_type'            => 'success',
+                'not-former-courses'    => true
+            ]);
+        }
+
+        return redirect()->route('backend.dashboard');
     }
 }

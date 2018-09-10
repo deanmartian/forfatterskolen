@@ -744,8 +744,9 @@
 							<thead>
 							<tr>
 								<th>Learner</th>
-								<th>Approved Date</th>
+								<th>Learner Suggested Date</th>
 								<th>Session Length</th>
+								<th>Editor</th>
 								<th></th>
 							</tr>
 							</thead>
@@ -758,15 +759,40 @@
 										</a>
 									</td>
 									<td>
-										{{ $coachingTimer->approved_date ?
-                                        \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
-                                         : ''}}
+                                        <?php
+                                        $suggested_dates = json_decode($coachingTimer->suggested_date);
+                                        ?>
+										@if($suggested_dates)
+											@for($i =0; $i <= 2; $i++)
+												<div style="margin-top: 5px">
+													{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($suggested_dates[$i]) }}
+													@if (!$coachingTimer->approved_date)
+														<button class="btn btn-success btn-xs approveDateBtn"
+																data-toggle="modal" data-target="#approveDateModal"
+																data-date="{{ $suggested_dates[$i] }}"
+																data-action="{{ route('admin.other-service.coaching-timer.approve_date', $coachingTimer->id) }}">
+															<i class="fa fa-check"></i>
+														</button>
+													@endif
+												</div>
+											@endfor
+										@endif
 									</td>
 									<td>
 										{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($coachingTimer->plan_type) }}
 									</td>
 									<td>
-										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $coachingTimer->id, 'type' => 3]) }}">Assign Editor</button>
+										@if ($coachingTimer->editor_id)
+											{{ $coachingTimer->editor->full_name }}
+										@else
+											<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $coachingTimer->id, 'type' => 3]) }}">Assign Editor</button>
+										@endif
+									</td>
+									<td>
+										<button class="btn btn-primary btn-xs approveCoachingSessionBtn" data-toggle="modal"
+												data-target="#approveCoachingSessionModal" data-action="{{ route('admin.coaching-timer.approve', $coachingTimer->id) }}">
+											Approve
+										</button>
 									</td>
 								</tr>
 							@endforeach
@@ -1106,6 +1132,27 @@
     </div>
 </div>
 
+<div id="approveCoachingSessionModal" class="modal fade" role="dialog"  data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Approve Coaching Timer</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<p>Are you sure you want to approve this coaching timer?</p>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">Approve</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -1192,6 +1239,12 @@
         modal.find('form').attr('action', action);
         modal.find('.modal-title').find('span').text(title);
     });
+
+    $(".approveCoachingSessionBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#approveCoachingSessionModal');
+        modal.find('form').attr('action', action);
+	});
 
     function disableSubmit(t) {
         let submit_btn = $(t).find('[type=submit]');

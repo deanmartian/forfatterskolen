@@ -197,7 +197,9 @@ class User extends Authenticatable
 
     public function assignedCoachingTimers()
     {
-        return $this->hasMany('App\CoachingTimerManuscript','editor_id', 'id')->orderBy('created_at', 'desc');
+        return $this->hasMany('App\CoachingTimerManuscript','editor_id', 'id')
+            ->where('is_approved', '=', 1)
+            ->orderBy('created_at', 'desc');
     }
 
     public function assignedCorrections()

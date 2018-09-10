@@ -1707,7 +1707,7 @@
 
 					<div class="form-group">
 						<label>Assign To</label>
-						<select name="editor_id" class="form-control select2">
+						<select name="editor_id" class="form-control select2" required>
 							<option value="" disabled="" selected>-- Select Editor --</option>
 							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>

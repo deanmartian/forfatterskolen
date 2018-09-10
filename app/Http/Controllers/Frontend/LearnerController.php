@@ -16,6 +16,7 @@ use App\Http\Middleware\Admin;
 use App\Http\Requests\AddWritingGroupRequest;
 use App\LessonContent;
 use App\LessonDocuments;
+use App\Mail\CoachingSuggestionDateEmail;
 use App\Notification;
 use App\OtherServiceFeedback;
 use App\Package;
@@ -62,6 +63,7 @@ use App\Http\FrontendHelpers;
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use PaypalIPN;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
@@ -192,8 +194,15 @@ class LearnerController extends Controller
             }
 
             $data['suggested_date'] = json_encode($suggested_dates);
+            $data['is_approved'] = 0;
 
             $coachingTimer->update($data);
+
+            $email_data['sender']           = Auth::user()->full_name;
+            $email_data['suggested_dates']  = $data['suggested_date'];
+            $toMail = 'elybutabara@gmail.com';//'Camilla@forfatterskolen.no';
+            // use queue to send email on background
+            Mail::to($toMail)->queue(new CoachingSuggestionDateEmail($email_data));
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Suggested date saved successfully.'),
                 'alert_type' => 'success']);
         }

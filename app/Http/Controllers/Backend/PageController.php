@@ -69,8 +69,8 @@ class PageController extends Controller
         $corrections = Auth::user()->assignedCorrections;
         $copyEditings = Auth::user()->assignedCopyEditing;
 
-        $pendingCoachingTimers = CoachingTimerManuscript::whereNull('suggested_date')
-            ->whereNull('suggested_date_admin')->orderBy('created_at','desc')->get();
+        $pendingCoachingTimers = CoachingTimerManuscript::where('is_approved', '=', 0)
+            ->orderBy('created_at','desc')->get();
         $pendingCorrections = CorrectionManuscript::whereNull('editor_id')->orderBy('created_at','desc')->get();
         $pendingCopyEditings = CopyEditingManuscript::whereNull('editor_id')->orderBy('created_at','desc')->get();
 

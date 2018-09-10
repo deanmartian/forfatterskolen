@@ -404,6 +404,7 @@ Route::group([
         Route::get('/word-written-goal/{id}/statistic', 'LearnerController@goalStatistic')->name('admin.learner.goal-statistic');
         Route::post('learner/{id}/add-other-service', 'LearnerController@addOtherService')->name('admin.learner.add-other-service');
         Route::post('other-service/{id}/assign-editor/{type}', 'LearnerController@otherServiceAssignEditor')->name('admin.other-service.assign-editor');
+        Route::post('coaching-timer/{id}/approve', 'LearnerController@approveCoachingTimer')->name('admin.coaching-timer.approve');
         Route::post('learner/{id}/add-coaching-timer', 'LearnerController@addCoachingTimer')->name('admin.learner.add-coaching-timer');
         Route::post('learner/{id}/add-diploma', 'LearnerController@addDiploma')->name('admin.learner.add-diploma');
         Route::get('diploma/{id}/download', 'LearnerController@downloadDiploma')->name('admin.learner.download-diploma');
