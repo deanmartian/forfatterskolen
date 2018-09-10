@@ -200,7 +200,7 @@ class LearnerController extends Controller
 
             $email_data['sender']           = Auth::user()->full_name;
             $email_data['suggested_dates']  = $data['suggested_date'];
-            $toMail = 'elybutabara@gmail.com';//'Camilla@forfatterskolen.no';
+            $toMail = 'Camilla@forfatterskolen.no';
             // use queue to send email on background
             Mail::to($toMail)->queue(new CoachingSuggestionDateEmail($email_data));
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Suggested date saved successfully.'),

@@ -12,7 +12,7 @@
 <table cellpadding="0" cellspacing="0" border="0" style='font-weight: 300!important;
         font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"'>
     <tr>
-        <td style="padding-top: .3rem">{{ $sender }} suggested new coaching timer dates: <br/>
+        <td style="padding-top: .3rem"><strong><em>{{ $sender }}</em></strong> suggested new coaching timer dates: <br/>
             <?php
                 $suggested_dates = json_decode($suggested_dates);
             ?>
