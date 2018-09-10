@@ -84,7 +84,8 @@
                         data-selected-course="{{ $package->course_type }}"
                         data-course-type="{{ $package->course_type }}"
                                 data-disable-upgrade-price-date="{{ $package->disable_upgrade_price_date }}"
-                                data-disable-upgrade-price="{{ $package->disable_upgrade_price }}"><i class="fa fa-pencil"></i></button>
+                                data-disable-upgrade-price="{{ $package->disable_upgrade_price }}"
+                                data-issue_date="{{ $package->issue_date }}"><i class="fa fa-pencil"></i></button>
 
 						<button type="button" data-target="#deletePackageModal" data-toggle="modal" class="btn btn-danger btn-xs btn-delete-package" data-action="{{route('admin.course.package.destroy', ['course_id' => $course->id, 'package_id' => $package->id])}}" data-variation="{{$package->variation}}" data-id="{{$package->id}}"><i class="fa fa-trash"></i></button>
 					</div>
@@ -390,6 +391,10 @@
                     <label>Due Date (in days)</label>
                     <input type="number" name="full_price_due_date" placeholder="Due Date" min="0" required class="form-control">
                   </div>
+                  <div class="form-group">
+                    <label>Payment From</label>
+                    <input type="date" name="issue_date" placeholder="Payment From" class="form-control">
+                  </div>
                   <div class="form-group upgrade-price-container">
                     <label>Upgrade Price <span class="label-basic"></span></label>
                     <input type="number" step="0.01" name="full_payment_upgrade_price" placeholder="Price" min="0" class="form-control">
@@ -635,6 +640,10 @@
                   <div class="form-group">
                     <label>Due Date (in days)</label>
                     <input type="number" name="full_price_due_date" placeholder="Due Date" min="0" required class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label>Payment From</label>
+                    <input type="date" name="issue_date" placeholder="Payment From" class="form-control">
                   </div>
                   <div class="form-group upgrade-price-container">
                     <label>Upgrade Price <span class="label-basic"></span></label>
@@ -1135,6 +1144,8 @@ $(document).ready(function(){
       var selected_course = $(this).data('selected-course');
       var course_type = $(this).data('course-type');
 
+      let issue_date = $(this).data('issue_date');
+
       var due_date = $(this).data('due-date');
       $('#editPackageModal form').attr('action', action);
       $('#editPackageModal h4 span').text(variation);
@@ -1209,6 +1220,8 @@ $(document).ready(function(){
 
       $('#editPackageModal select[name=course_type]').val(course_type ? course_type : '');
       $('#editPackageModal input[name=disable_upgrade_price_date]').val(disable_upgrade_price_date);
+
+      $('#editPackageModal input[name=issue_date]').val(issue_date);
 
       $(".upgrade-price-container").hide();
       $(".upgrade-price-standard-container").hide();

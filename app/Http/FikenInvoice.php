@@ -1,6 +1,8 @@
 <?php
 namespace App\Http;
 use App\Invoice;
+use Carbon\Carbon;
+
 set_time_limit(300);
 
 
@@ -48,8 +50,10 @@ class FikenInvoice
 	public function create_invoice($post_fields)
 	{
 		$customer = $this->customer($post_fields);
+		// if an issue date is set and not empty then use it else use today
 		$fields = [
-			'issueDate' => date('Y-m-d'), 
+			'issueDate' => isset($post_fields['issueDate']) && $post_fields['issueDate']
+                ? Carbon::parse($post_fields['issueDate'])->format('Y-m-d') :date('Y-m-d'),
 			'dueDate' => $post_fields['dueDate'],
 			'lines' => [[
 				'unitNetAmount' => $post_fields['netAmount'],

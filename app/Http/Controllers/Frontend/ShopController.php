@@ -297,7 +297,8 @@ class ShopController extends Controller
                 'address' => $request->street,
                 'postalPlace' => $request->city,
                 'postalCode' => $request->zip,
-                'comment' => $comment
+                'comment' => $comment,
+                'issueDate' => $package->issue_date
             ];
 
             $invoice = new FikenInvoice();
