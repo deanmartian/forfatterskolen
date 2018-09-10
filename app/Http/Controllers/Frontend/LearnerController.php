@@ -1126,7 +1126,8 @@ class LearnerController extends Controller
                     $price          = (int)1490*100;
                     $product_ID     = $package->full_price_product;
                     $send_to        = $user->email;
-                    $dueDate = date("Y-m-d");
+                    $end_date       = $courseTaken->end_date ? $courseTaken->end_date : date("Y-m-d");
+                    $dueDate        = date("Y-m-d", strtotime(date("Y-m-d", strtotime($end_date)) . " + 1 year"));
 
                     $comment = '(Kurs: ' . $package->course->title . ' ['.$package->variation.'], ';
                     $comment .= 'Betalingsmodus: ' . $payment_mode . ')';
@@ -1149,7 +1150,9 @@ class LearnerController extends Controller
 
 
                     $invoice = new FikenInvoice();
-                    $invoice->create_invoice($invoice_fields);
+                    //$invoice->create_invoice($invoice_fields);
+
+                    print_r($invoice_fields);
 
                     // update all the started at of each courses taken
                     foreach (Auth::user()->coursesTaken as $coursesTaken) {
@@ -1160,7 +1163,7 @@ class LearnerController extends Controller
                         }
 
                         $coursesTaken->started_at = Carbon::now();
-                        $coursesTaken->save();
+                        //$coursesTaken->save();
                     }
 
                     // add to automation
@@ -1168,19 +1171,19 @@ class LearnerController extends Controller
                     $automation_id  = 73;
                     $user_name      = Auth::user()->first_name;
 
-                    AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+                    //AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
 
                     // Email to support
                     //mail('support@forfatterskolen.no', 'All Courses Renewed', Auth::user()->first_name . ' has renewed all the courses');
-                    AdminHelpers::send_email('All Courses Renewed',
+                    /*AdminHelpers::send_email('All Courses Renewed',
                         'post@forfatterskolen.no', 'support@forfatterskolen.no',
                         Auth::user()->first_name . ' has renewed all the courses');
-                    return redirect(route('front.shop.thankyou'));
+                    return redirect(route('front.shop.thankyou'));*/
                 }
             }
         }
 
-        return redirect()->route('learner.upgrade');
+        //return redirect()->route('learner.upgrade');
     }
 
     /**
