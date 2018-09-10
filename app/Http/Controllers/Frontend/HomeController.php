@@ -641,7 +641,8 @@ class HomeController extends Controller
            'file'           => $newFileLocation,
             'payment_price' => $data['price'],
             'plan_type'     => $plan,
-            'suggested_date' => json_encode($suggested_dates)
+            'suggested_date' => json_encode($suggested_dates),
+            'help_with'     => $data['help_with']
         ]);
 
         if( $paymentMode->mode == "Paypal" ) :

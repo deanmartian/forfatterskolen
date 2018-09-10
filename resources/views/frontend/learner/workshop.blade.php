@@ -116,6 +116,7 @@
 										<th>Manus</th>
 										<th>Coaching Time</th>
 										<th>min foreslåtte dato</th>
+										<th>Skriv litt her om hva du vil ha hjelp til</th>
 										<th>Forfatterskolen foreslåtte dato</th>
 										<th>Avtalt dato og tid</th>
 										<th>Reprise</th>
@@ -157,6 +158,13 @@
 													   data-action="{{ route('learner.coaching-timer.suggest_date', $coachingTimer->id) }}">Foreslå andre datoer</a>
 												@endif
 
+											</td>
+											<td>
+												<a href="#viewHelpWithModal" class="viewHelpWithBtn"
+												   data-toggle="modal" data-details="{{ $coachingTimer->help_with }}"
+												data-action="{{ route('learner.coaching-timer.help_with', $coachingTimer->id) }}">
+													View/Edit Help With
+												</a>
 											</td>
 											<td>
                                                 <?php
@@ -345,6 +353,27 @@
 	</div>
 </div>
 
+<div id="viewHelpWithModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Help With</h4>
+			</div>
+			<div class="modal-body">
+				<form action="" method="post" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<textarea name="help_with" id="" cols="30" rows="10" class="form-control"></textarea>
+
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-success">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -377,6 +406,15 @@
             let form = $("#suggestDateModal").find('form');
 
             form.attr('action', action);
+        });
+
+        $(".viewHelpWithBtn").click(function(){
+            let details = $(this).data('details');
+            let action = $(this).data('action');
+            let modal = $("#viewHelpWithModal");
+
+            modal.find('form').attr('action', action);
+            modal.find('[name=help_with]').text(details);
         });
 
         function disableSubmit(t) {

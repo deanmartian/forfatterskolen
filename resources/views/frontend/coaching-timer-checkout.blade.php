@@ -107,6 +107,11 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="">Skriv litt her om hva du vil ha hjelp til</label>
+                                <textarea name="help_with" id="" cols="30" rows="10" class="form-control"></textarea>
+                            </div>
+
+                            <div class="form-group">
                                 <label for="email" class="control-label">E-postadresse</label>
                                 <input type="email" id="email" class="form-control" name="email" required @if(Auth::guest()) value="{{old('email')}}" @else value="{{Auth::user()->email}}" readonly @endif>
                             </div>

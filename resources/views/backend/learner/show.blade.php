@@ -756,6 +756,14 @@
 									<a href="{{ route('admin.learner.show', $coachingTimer->user->id) }}">
 										{{ $coachingTimer->user->full_name }}
 									</a>
+
+									@if ($coachingTimer->help_with)
+										<br>
+										<a href="#viewHelpWithModal" style="color:#eea236" class="viewHelpWithBtn"
+										   data-toggle="modal" data-details="{{ $coachingTimer->help_with }}">
+											View Help With
+										</a>
+									@endif
 								</td>
 								<td>
 									{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($coachingTimer->plan_type) }}
@@ -1804,6 +1812,20 @@
 
     </div>
 </div>
+
+<div id="viewHelpWithModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Help With</h4>
+			</div>
+			<div class="modal-body">
+				<pre></pre>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -2017,6 +2039,13 @@
 
         modal.find('form').attr('action', action);
         modal.find('form').find('[name=expected_finish]').val(finish);
+    });
+
+    $(".viewHelpWithBtn").click(function(){
+        let details = $(this).data('details');
+        let modal = $("#viewHelpWithModal");
+
+        modal.find('.modal-body').find('pre').text(details);
     });
 
 	function updateOtherServiceFields(type) {

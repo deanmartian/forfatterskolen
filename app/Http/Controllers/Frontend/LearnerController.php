@@ -1161,7 +1161,7 @@ class LearnerController extends Controller
                         }
 
                         $coursesTaken->started_at = Carbon::now();
-                        //$coursesTaken->save();
+                        $coursesTaken->save();
                     }
 
                     // add to automation
@@ -1169,19 +1169,19 @@ class LearnerController extends Controller
                     $automation_id  = 73;
                     $user_name      = Auth::user()->first_name;
 
-                    //AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+                    AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
 
                     // Email to support
                     //mail('support@forfatterskolen.no', 'All Courses Renewed', Auth::user()->first_name . ' has renewed all the courses');
-                    /*AdminHelpers::send_email('All Courses Renewed',
+                    AdminHelpers::send_email('All Courses Renewed',
                         'post@forfatterskolen.no', 'support@forfatterskolen.no',
                         Auth::user()->first_name . ' has renewed all the courses');
-                    return redirect(route('front.shop.thankyou'));*/
+                    return redirect(route('front.shop.thankyou'));
                 }
             }
         }
 
-        //return redirect()->route('learner.upgrade');
+        return redirect()->route('learner.upgrade');
     }
 
     /**
@@ -2205,6 +2205,24 @@ class LearnerController extends Controller
         if ($feedback = OtherServiceFeedback::find($feedback_id)) {
             $filename = $feedback->manuscript;
             return response()->download(public_path($filename));
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Update the help with field of coaching timer
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateHelpWith($id, Request $request)
+    {
+        if($coachingTimer = CoachingTimerManuscript::find($id)) {
+            $coachingTimer->help_with = $request->help_with;
+            $coachingTimer->save();
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Skriv litt her om hva du vil ha hjelp til saved successfully.'),
+                'alert_type' => 'success']);
         }
 
         return redirect()->back();
