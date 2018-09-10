@@ -307,6 +307,7 @@
 							<tr>
 								<th>Workshop</th>
 								<th>Date Ordered</th>
+								<th width="250">Notes</th>
 								<th>Status</th>
 								<th></th>
 							</tr>
@@ -318,6 +319,15 @@
 									<a href="{{ route('admin.workshop.show', $workshopTaken->workshop_id) }}">{{ $workshopTaken->workshop->title }}</a>
 								</td>
 								<td>{{$workshopTaken->created_at}}</td>
+								<td>
+									{{ $workshopTaken->notes }} <br>
+									<button class="btn btn-primary btn-xs editWorkshopNoteBtn" data-toggle="modal"
+									data-target="#editWorkshopNoteModal"
+											data-action="{{ route('admin.learner.workshop-taken.update-notes', $workshopTaken->id) }}"
+									data-notes="{{ $workshopTaken->notes }}">
+										Edit Note
+									</button>
+								</td>
 								<td>
 									@if($workshopTaken->is_active)
 									Active
@@ -1397,6 +1407,28 @@
 	</div>
 </div>
 
+<div id="editWorkshopNoteModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Notes</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<textarea name="notes" cols="30" rows="10" class="form-control" required></textarea>
+					</div>
+					<button type="submit" class="btn btn-primary pull-right">Submit</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
 	<div id="learnerNotesModal" class="modal fade" role="dialog">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -1792,6 +1824,16 @@
 			var action = $(this).data('action');
 			$('#lessonAccessModal form').attr('action', action)
 		});
+
+        $(".editWorkshopNoteBtn").click(function(){
+            let notes = $(this).data('notes');
+            let action = $(this).data('action');
+            let modal = $("#editWorkshopNoteModal");
+            let form = modal.find('form');
+
+            form.attr('action', action);
+            form.find('[name=notes]').text(notes);
+        });
 
 
 		$('.setAvailabilityBtn').click(function(){

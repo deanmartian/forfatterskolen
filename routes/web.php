@@ -394,6 +394,7 @@ Route::group([
         Route::post('learner/delete_shop_manuscript_taken', 'LearnerController@delete_shop_manuscript_taken')->name('delete_shop_manuscript_taken');
         Route::post('/learner/{id}/add_shop_manuscript', 'LearnerController@addShopManuscript')->name('admin.shop-manuscript.add_learner'); // Shop Manuscript add learner
         Route::post('/learner/{id}/update_workshop_count', 'LearnerController@updateWorkshopCount')->name('admin.learner.update_workshop_count'); // Update workshop count for learner
+        Route::post('/workshop-taken/{id}/edit-notes', 'LearnerController@updateWorkshopTakenNotes')->name('admin.learner.workshop-taken.update-notes'); // Update workshop count for learner
         Route::post('/course_taken/{id}/set_availability', 'LearnerController@setCourseTakenAvailability')->name('admin.course_taken.set_availability'); // Shop Manuscript add learner
         Route::post('/course_taken/{id}/allow_lesson_access/{lesson_id}', 'LearnerController@allow_lesson_access')->name('admin.course_taken.allow_lesson_access'); //allow_lesson_access
         Route::post('/course_taken/{id}/default_lesson_access/{lesson_id}', 'LearnerController@default_lesson_access')->name('admin.course_taken.default_lesson_access'); //default_lesson_access

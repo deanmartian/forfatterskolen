@@ -1051,6 +1051,11 @@ class LearnerController extends Controller
         return redirect()->route('admin.learner.index');
     }
 
+    /**
+     * Approve a coaching timer
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function approveCoachingTimer($id)
     {
         if($coachingTimer = CoachingTimerManuscript::find($id)) {
@@ -1064,5 +1069,27 @@ class LearnerController extends Controller
         }
 
         return redirect()->route('backend.dashboard');
+    }
+
+    /**
+     * Update the note for a workshop taken
+     * @param $workshop_taken_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateWorkshopTakenNotes($workshop_taken_id, Request $request)
+    {
+        if($workshopTaken = WorkshopsTaken::find($workshop_taken_id)) {
+            $workshopTaken->notes = $request->notes;
+            $workshopTaken->save();
+
+            return redirect()->back()->with([
+                'errors'                => AdminHelpers::createMessageBag('Workshop note updated successfully.'),
+                'alert_type'            => 'success',
+                'not-former-courses'    => true
+            ]);
+        }
+
+        return redirect()->back();
     }
 }
