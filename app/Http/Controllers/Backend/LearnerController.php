@@ -1036,6 +1036,86 @@ class LearnerController extends Controller
     }
 
     /**
+     * Edit diploma details
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function editDiploma($id, Request $request)
+    {
+        if ($diploma = Diploma::find($id)) {
+            $data = $request->except('_token');
+            $extensions = ['pdf'];
+            if ($request->hasFile('diploma') && $request->file('diploma')->isValid()) :
+                $extension = pathinfo($_FILES['diploma']['name'], PATHINFO_EXTENSION);
+                $original_filename = $request->diploma->getClientOriginalName();
+
+                if( !in_array($extension, $extensions) ) :
+                    return redirect()->back()->with([
+                        'alert_type' => 'danger',
+                        'errors' => AdminHelpers::createMessageBag('File type not allowed.'),
+                        'not-former-courses' => true
+                    ]);
+                endif;
+
+                $destinationPath = 'storage/diploma'; // upload path
+
+                // check if path not exists then create it
+                if(!File::exists($destinationPath)) {
+                    File::makeDirectory($destinationPath, $mode = 0777, true, true);
+                }
+
+                // remove the previous file from server
+                if (File::exists($diploma->diploma)) {
+                    File::delete($diploma->diploma);
+                }
+
+                $filename = pathinfo($original_filename, PATHINFO_FILENAME);
+                // check the file name and add/increment number if the filename already exists
+                $file = AdminHelpers::checkFileName($destinationPath, $filename, $extension);
+
+                $request->diploma->move($destinationPath, $file);
+
+                $data['diploma'] = $file;
+            endif;
+
+            $diploma->update($data);
+
+            return redirect()->back()->with([
+                'errors'                => AdminHelpers::createMessageBag('Diploma updated successfully.'),
+                'alert_type'            => 'success',
+                'not-former-courses'    => true
+            ]);
+        }
+        return redirect()->route('admin.learner.index');
+    }
+
+    /**
+     * Delete the diploma the file inclded
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function deleteDiploma($id)
+    {
+        if ($diploma = Diploma::find($id)) {
+
+            // check first if the file exists to prevent error on deleting file
+            if (File::exists($diploma->diploma)) {
+                File::delete($diploma->diploma);
+            }
+
+            $diploma->delete();
+            return redirect()->back()->with([
+                'errors'                => AdminHelpers::createMessageBag('Diploma deleted successfully.'),
+                'alert_type'            => 'success',
+                'not-former-courses'    => true
+            ]);
+        }
+
+        return redirect()->route('admin.learner.index');
+    }
+
+    /**
      * Download the diploma
      * @param $id
      * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse

@@ -919,6 +919,16 @@
 									<a href="{{ route('admin.learner.download-diploma', $diploma->id) }}">
 										Download
 									</a>
+									<button class="btn btn-warning btn-xs editDiplomaBtn"
+									data-toggle="modal" data-target="#editDiplomaModal"
+									data-action="{{ route('admin.learner.edit-diploma', $diploma->id) }}"
+									data-course="{{ $diploma->course_id }}">
+										<i class="fa fa-pencil"></i>
+									</button>
+									<button class="btn btn-danger btn-xs deleteDiplomaBtn" data-toggle="modal" data-target="#deleteDiplomaModal"
+									data-action="{{ route('admin.learner.delete-diploma', $diploma->id) }}">
+										<i class="fa fa-trash"></i>
+									</button>
 								</td>
 							</tr>
 						@endforeach
@@ -1813,6 +1823,72 @@
     </div>
 </div>
 
+<div id="editDiplomaModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Edit Diploma</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action=""
+					  onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+					{{csrf_field()}}
+
+					<div class="form-group">
+						<label>Course</label>
+						<select name="course_id" class="form-control select2" required>
+							<option value="" disabled selected>-- Select Course --</option>
+							@foreach(\App\Course::all() as $course)
+								<option value="{{ $course->id }}"> {{ $course->title }}</option>
+							@endforeach
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label>Diploma</label>
+						<input type="file" class="form-control" name="diploma"
+							   accept="application/pdf">
+					</div>
+
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-success">Submit</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					</div>
+				</form>
+			</div>
+
+		</div>
+
+	</div>
+</div>
+
+<div id="deleteDiplomaModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Delete Diploma</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					{{ method_field('DELETE') }}
+
+					<p>Are you sure you want to delete this diploma?</p>
+
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-danger">Delete</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					</div>
+				</form>
+			</div>
+
+		</div>
+
+	</div>
+</div>
+
 <div id="viewHelpWithModal" class="modal fade" role="dialog">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -2047,6 +2123,22 @@
 
         modal.find('.modal-body').find('pre').text(details);
     });
+
+    $(".editDiplomaBtn").click(function(){
+       let action = $(this).data('action');
+       let course = $(this).data('course');
+       let modal = $('#editDiplomaModal');
+
+       modal.find('form').attr('action', action);
+       modal.find('[name=course_id]').val(course).trigger('change');
+
+	});
+
+    $(".deleteDiplomaBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#deleteDiplomaModal');
+        modal.find('form').attr('action', action);
+	});
 
 	function updateOtherServiceFields(type) {
 	    let modal = $("#addOtherServiceModal");

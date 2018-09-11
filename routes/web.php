@@ -409,6 +409,8 @@ Route::group([
         Route::post('coaching-timer/{id}/approve', 'LearnerController@approveCoachingTimer')->name('admin.coaching-timer.approve');
         Route::post('learner/{id}/add-coaching-timer', 'LearnerController@addCoachingTimer')->name('admin.learner.add-coaching-timer');
         Route::post('learner/{id}/add-diploma', 'LearnerController@addDiploma')->name('admin.learner.add-diploma');
+        Route::post('diploma/{id}/edit', 'LearnerController@editDiploma')->name('admin.learner.edit-diploma');
+        Route::delete('diploma/{id}/delete', 'LearnerController@deleteDiploma')->name('admin.learner.delete-diploma');
         Route::get('diploma/{id}/download', 'LearnerController@downloadDiploma')->name('admin.learner.download-diploma');
 
         Route::delete('learner/invoice/{id}/delete', 'LearnerController@deleteInvoice')->name('admin.learner.invoice.delete');
