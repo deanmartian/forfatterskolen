@@ -85,23 +85,28 @@
                                            value="{{ $data['file_name'] }}"
                                            id="select-document">
                                 </div>
-                                <button type="button" class="margin-top btn btn-theme" id="submit-add-on">Add-on</button>
+                                <button type="button" class="margin-top btn btn-theme" id="submit-add-on">Tillegg</button>
                                 @if(Session::has('compute_manuscript'))
                                     <a href="{{ route('front.coaching-timer-checkout', $data['plan_id']) }}" class="btn btn-default margin-top">Cancel</a>
                                 @endif
                             </div>
 
+                            <div class="form-group">
+                                (ønsker du at redakøren skal lese manuset ditt før timen, kandu laste opp manus her)
+                                tillegg i prisen
+                            </div>
+
                             <div class="row mb-25">
                                 <div class="col-sm-4">
-                                    <label>Suggested Session Date</label>
+                                    <label>Ønsket dato og tid</label>
                                     <input type="datetime-local" class="form-control" name="suggested_date[]" required>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Suggested Session Date</label>
+                                    <label>Ønsket dato og tid</label>
                                     <input type="datetime-local" class="form-control" name="suggested_date[]" required>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label>Suggested Session Date</label>
+                                    <label>Ønsket dato og tid</label>
                                     <input type="datetime-local" class="form-control" name="suggested_date[]" required>
                                 </div>
                             </div>
