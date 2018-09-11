@@ -504,13 +504,13 @@ class HomeController extends Controller
         $plans = [1,2];
         if (in_array($plan, $plans)) {
             $data['price'] = 1690;
-            $data['title'] = 'One on One Coaching(1 hr)';
+            $data['title'] = 'Coaching Time(1 hr)';
             $data['file_location'] = '';
             $data['file_name'] = '';
             $data['plan_id'] = $plan;
             if ($plan == 2) {
                 $data['price'] = 1190;
-                $data['title'] = 'One on One Coaching(30 min)';
+                $data['title'] = 'Coaching Time(30 min)';
             }
 
             if ($request->isMethod('post')) {
