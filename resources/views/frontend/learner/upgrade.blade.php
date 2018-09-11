@@ -75,13 +75,6 @@
 
                 <div class="col-sm-12 margin-top">
                     <div>
-                        <button class="btn btn-primary light-blue" data-target="#renewAllModal" data-toggle="modal">
-                            Forny abonnementet
-                        </button>
-
-                        <b>
-                            Abonnementet utløper:
-                        </b>
 
                         <?php
                         $coursesTaken = Auth::user()->coursesTaken;
@@ -92,7 +85,26 @@
                                 $expiredDate = $courseTaken->end_date;
                             }
                         }
+
+                        $now = new DateTime();
+                        $checkDate = date('m/Y', strtotime($expiredDate));
+                        $input = DateTime::createFromFormat('m/Y', $checkDate);
+                        $diff = $input->diff($now); // Returns DateInterval
+
+                        // m is months
+                        $withinAMonth = $diff->y === 0 && $diff->m <= 1;  // true
+                        //display renew button when the webinar-pakke is going to expire within a month
                         ?>
+
+                        @if($withinAMonth)
+                            <button class="btn btn-primary light-blue" data-target="#renewAllModal" data-toggle="modal">
+                                Forny abonnementet
+                            </button>
+                        @endif
+
+                        <b>
+                            Abonnementet utløper:
+                        </b>
 
                         <em>{{ $expiredDate }}</em>
 
