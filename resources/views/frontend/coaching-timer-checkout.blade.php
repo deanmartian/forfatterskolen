@@ -92,7 +92,7 @@
                             </div>
 
                             <div class="form-group">
-                                (ønsker du at redakøren skal lese manuset ditt før timen, kandu laste opp manus her)
+                                (ønsker du at redakøren skal lese manuset ditt før timen, kan du laste opp manus her)
                                 tillegg i prisen
                             </div>
 
