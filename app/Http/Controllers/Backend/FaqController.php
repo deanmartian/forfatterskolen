@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\Http\AdminHelpers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -35,7 +36,11 @@ class FaqController extends Controller
     		'description' => $request->description
     	]);
 
-    	return redirect()->back();	
+    	return redirect()->back()->with([
+    	    'errors'                => AdminHelpers::createMessageBag('Faq created successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
     }
 
 
@@ -51,7 +56,11 @@ class FaqController extends Controller
     	$faq->description = $request->description;
     	$faq->save();
 
-    	return redirect()->back();	
+    	return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Faq updated successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
     }
 
     public function destroy($id, Request $request)
@@ -59,6 +68,10 @@ class FaqController extends Controller
     	$faq = Faq::findOrFail($id);
     	$faq->forceDelete();
 
-    	return redirect()->back();	
+    	return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Faq deleted successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
     }
 }
