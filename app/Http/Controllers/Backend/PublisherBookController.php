@@ -22,7 +22,7 @@ class PublisherBookController extends Controller {
      */
     public function index()
     {
-        $books = $this->publisherBook->paginate(10);
+        $books = $this->publisherBook->orderBy('id','DESC')->paginate(10);
         return view('backend.publisher-book.index', compact('books'));
     }
 
