@@ -31,7 +31,7 @@ class BlogService {
         if ($id) {
             return $this->blog->find($id);
         }
-        return $this->blog->paginate($page);
+        return $this->blog->orderBy('id', 'DESC')->paginate($page);
     }
 
     /**
