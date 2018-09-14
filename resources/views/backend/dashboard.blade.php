@@ -514,7 +514,7 @@
 									</td>
 									<td>
 										@if ($copyEditing->expected_finish)
-											{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($correction->expected_finish) }}
+											{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($copyEditing->expected_finish) }}
 											<br>
 										@endif
 
@@ -522,9 +522,9 @@
 											<a href="#setOtherServiceFinishDateModal" data-toggle="modal"
 											   class="setOtherServiceFinishDateBtn"
 											   data-action="{{ route('admin.other-service.update-expected-finish',
-										   ['id' => $correction->id, 'type' => 2]) }}"
-											   data-finish="{{ $correction->expected_finish ?
-										strftime('%Y-%m-%dT%H:%M:%S', strtotime($correction->expected_finish)) : '' }}">
+										   ['id' => $copyEditing->id, 'type' => 2]) }}"
+											   data-finish="{{ $copyEditing->expected_finish ?
+										strftime('%Y-%m-%dT%H:%M:%S', strtotime($copyEditing->expected_finish)) : '' }}">
 												Set Date
 											</a>
 										@endif
