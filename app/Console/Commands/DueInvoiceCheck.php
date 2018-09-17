@@ -42,7 +42,7 @@ class DueInvoiceCheck extends Command
     public function handle()
     {
         $from           = 'post@forfatterskolen.no';//$request->from_email;
-        $subject        = 'Due Invoice';
+        $subject        = 'Faktura';
         $dueTomorrow    = Carbon::today()->addDay(1)->format('Y-m-d');
 
         $invoices = Invoice::whereDate('fiken_dueDate',  $dueTomorrow)->get();
@@ -55,7 +55,7 @@ class DueInvoiceCheck extends Command
 
             $message =  'Du har en faktura som har forfall i morgen <br/>
 Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 00393 <br/> Kid nummer: '.$invoice->kid_number.' <br/> 
-<a href="'.route('learner.invoice.show', $invoice->id).'">View Invoice</a> <br><br> <small>*Note: You must be logged in to view the invoice.</small>';
+<a href="'.route('learner.invoice.show', $invoice->id).'">Se faktura</a> <br><br> <small>*Merknad: Du må være innlogget for å se fakturaen.</small>';
 
             AdminHelpers::send_email($subject,
                 $from, $to, $message);

@@ -44,7 +44,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('checkfikeninvoice:command')
             ->everyThirtyMinutes();
         $schedule->command('dueinvoicecheck:command')
-            ->dailyAt('06:00');
+            ->dailyAt('08:00');
     }
 
     /**
