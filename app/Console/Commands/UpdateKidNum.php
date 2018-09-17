@@ -10,21 +10,21 @@ use App\PilotReaderBookSettings;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class CheckFikenInvoice extends Command
+class UpdateKidNum extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'checkfikeninvoice:command';
+    protected $signature = 'updatekidnum:command';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Check Fiken and update the invoice';
+    protected $description = 'Update the kid number of invoices';
 
     /**
      * Create a new command instance.
@@ -61,24 +61,16 @@ class CheckFikenInvoice extends Command
         $fikenInvoices = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};
 
         // get all unpaid invoices to reduce process time
-        $invoices = Invoice::where('fiken_is_paid','=',0)->get();
+        $invoices = Invoice::get();
         foreach( $invoices as $invoice ) {
-            $fiken_balance = 0;
-            $status = 0;
-            $fikeDueDate = NULL;
             $kid = NULL;
             foreach( $fikenInvoices as $fikenInvoice ) :
                 if( $invoice->fiken_url == $fikenInvoice->_links->alternate->href ) :
-                    $sale = FrontendHelpers::FikenConnect($fikenInvoice->sale);
-                    $status = $sale->paid;
-                    $fiken_balance = (double)$fikenInvoice->gross/100;
-                    $fikeDueDate = $fikenInvoice->dueDate;
-                    $kid = $fikenInvoice->kid;
+                    $kid = isset($fikenInvoice->kid) ? $fikenInvoice->kid : NULL;
                     break;
                 endif;
             endforeach;
-            $invoice->update(['fiken_is_paid' => $status, 'fiken_balance' => $fiken_balance, 'fiken_dueDate' => $fikeDueDate,
-                'kid_number' => $kid]);
+            $invoice->update(['kid_number' => $kid]);
         }
 
         return "done checking fiken";

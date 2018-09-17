@@ -11,6 +11,7 @@ use App\Helpers\Citrix;
 use App\Helpers\FileToText;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
+use App\Invoice;
 use App\Mail\DiscussionEmail;
 use App\Mail\DiscussionRepliesEmail;
 use App\PaymentMode;
@@ -846,28 +847,28 @@ class HomeController extends Controller
 
     public function testemail()
     {
-        $subject = 'this is the subject';
-        $from = 'post@forfatterskolen.no';
-        $to = 'elybutabara@gmail.com';
-        $content = 'this is a content';
+        $from       = 'post@forfatterskolen.no';//$request->from_email;
+        $subject    = 'Due Invoice';
+        $dueTomorrow = Carbon::today()->addDay(1)->format('Y-m-d');
 
-        $email_data = [
-            'sender'            => 'author',
-            'type'              => 'a discussion',
-            'discussion_url'    => route('learner.private-groups.discussion.show', ['id' => 4, 'discussion_id' => 14]),
-            'discussion_title'  => 'title',
-            'group_url'         => route('learner.private-groups.show', 4),
-            'group_title'       => 'group',
-            'email_message'     => 'this is the message'
-        ];
+        $invoices = Invoice::whereDate('fiken_dueDate',  $dueTomorrow)->get();
 
-        $email_data['receiver_email'] = 'elybutabara@gmail.com';
-        $email_data['receiver'] = 'test';
+        foreach ($invoices as $invoice) {
+            $balance            = $invoice->fiken_balance;
+            $transactions_sum   = $invoice->transactions->sum('amount');
+            $remaining          = $balance - $transactions_sum;
 
-        Mail::to($email_data['receiver_email'])->queue(new DiscussionRepliesEmail($email_data));
-        echo 'sent discussion reply';
-        /*print_r($email_data);
-        return view('emails.discussion_replies_new', compact('email_data'));*/
+            $to = 'ely@mailinator.com';//$invoice->user->email;
+
+            $message =  'Du har en faktura som har forfall i morgen <br/>
+Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 00393 <br/> Kid nummer: '.$invoice->kid_number.' <br/> 
+<a href="'.route('learner.invoice.show', $invoice->id).'">View Invoice</a> <br><br> <small>*Note: You must be logged in to view the invoice.</small>';
+
+            AdminHelpers::send_email($subject,
+            $from, $to, $message);
+        }
+
+        echo "email sent";
 
     }
 

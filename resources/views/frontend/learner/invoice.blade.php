@@ -25,6 +25,7 @@
 								<th>Restbeløp</th>
 								<th>Status</th>
 								<th>Opprettet</th>
+								<th>Kid Nummer</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -69,6 +70,7 @@
 									@endif
 								</td>
 								<td>{{date_format(date_create($invoice->created_at), 'M d, Y H.i')}}</td>
+								<td> {{ $invoice->kid_number }} </td>
 							</tr>
 							@endforeach
 						</tbody>

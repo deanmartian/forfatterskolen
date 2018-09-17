@@ -18,7 +18,8 @@ class Invoice extends Model
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'fiken_url', 'fiken_weblink', 'pdf_url', 'fiken_is_paid', 'fiken_balance', 'fiken_dueDate', 'balance'];
+    protected $fillable = ['user_id', 'fiken_url', 'fiken_weblink', 'pdf_url', 'fiken_is_paid', 'fiken_balance', 'fiken_dueDate', 'balance',
+        'kid_number'];
 
     public function user()
     {

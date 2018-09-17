@@ -19,7 +19,9 @@ class Kernel extends ConsoleKernel
         Commands\CourseExpiresInAMonth::class,
         Commands\BookReminder::class,
         Commands\CheckFikenInvoice::class,
-        Commands\TestCommand::class
+        Commands\TestCommand::class,
+        Commands\UpdateKidNum::class,
+        Commands\DueInvoiceCheck::class
     ];
 
     /**
@@ -41,6 +43,8 @@ class Kernel extends ConsoleKernel
             ->dailyAt('06:00');
         $schedule->command('checkfikeninvoice:command')
             ->everyThirtyMinutes();
+        $schedule->command('dueinvoicecheck:command')
+            ->dailyAt('06:00');
     }
 
     /**
