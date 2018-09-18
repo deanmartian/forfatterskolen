@@ -8,7 +8,7 @@
 @section('content')
 <div class="container margin-top lesson-body">
 	<?php  
-	$previousLesson = $course->lessons->where('order', '<', $lesson->order)->first();
+	$previousLesson = $course->lessons->where('order', '<', $lesson->order)->last();
 	$nextLesson = $course->lessons->where('order', '>', $lesson->order)->first();
 	?>
 	@if($previousLesson)
@@ -93,5 +93,24 @@
 				</div>
 			</div>
 		</div>
+
+		@if($previousLesson)
+			@if(FrontendHelpers::isLessonAvailable($courseTaken->started_at, $previousLesson->delay, $previousLesson->period) ||
+            FrontendHelpers::hasLessonAccess($courseTaken, $previousLesson))
+				<a class="btn btn-sm btn-primary margin-bottom" href="{{route('learner.course.lesson', ['course_id' => $courseTaken->package->course->id, 'id' => $previousLesson->id])}}"><i class="fa fa-angle-left"></i>&nbsp;&nbsp;{{$previousLesson->title}}</a>
+			@else
+				<button type="button" class="btn btn-sm btn-default disabled"><i class="fa fa-angle-left"></i>&nbsp;&nbsp;{{$previousLesson->title}}</button>
+			@endif
+		@endif
+
+		@if($nextLesson)
+			@if(FrontendHelpers::isLessonAvailable($courseTaken->started_at, $nextLesson->delay, $nextLesson->period) ||
+            FrontendHelpers::hasLessonAccess($courseTaken, $nextLesson))
+				<a class="btn btn-sm btn-primary pull-right" href="{{route('learner.course.lesson', ['course_id' => $courseTaken->package->course->id, 'id' => $nextLesson->id])}}">{{$nextLesson->title}}&nbsp;&nbsp;<i class="fa fa-angle-right"></i></a>
+			@else
+				<button type="button" class="btn btn-sm btn-default disabled pull-right">{{$nextLesson->title}}&nbsp;&nbsp;<i class="fa fa-angle-right"></i></button>
+			@endif
+			<div class="clearfix"></div>
+		@endif
 </div>
 @stop
