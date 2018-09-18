@@ -11,8 +11,41 @@
 	@include('frontend.partials.learner-menu')
 
 	<div class="col-sm-12 col-md-10 sub-right-content">
+
 		<div class="col-sm-12">
 			<a href="{{route('learner.course')}}" class="btn btn-default margin-bottom"><i class="fa fa-angle-left"></i>&nbsp;Se på alle kurs</a>
+		</div>
+
+	@if( $courseTaken->package->course->lessons->count() > 0 )
+		<!-- Lessons -->
+			<div class="col-sm-12">
+				<h3 class="no-margin-top">Leksjoner</h3>
+				<div class="row">
+					@foreach($courseTaken->package->course->lessons as $lesson)
+						<div class="col-sm-4 learner-course-lesson">
+							@if(FrontendHelpers::isLessonAvailable($courseTaken->started_at, $lesson->delay, $lesson->period) ||
+                            FrontendHelpers::hasLessonAccess($courseTaken, $lesson))
+								<a class="panel panel-default panel-lesson" href="{{route('learner.course.lesson', ['course_id' => $courseTaken->package->course->id, 'id' => $lesson->id])}}">
+									<div class="panel-body">
+										<h4>{{$lesson->title}}</h4>
+										<span class="label label-primary">Tilgjengelig</span>
+									</div>
+								</a>
+							@else
+								<div class="panel panel-default panel-lesson inactive">
+									<div class="panel-body">
+										<h4>{{$lesson->title}}</h4>
+										<small>Tilgjengelig på {{FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)}}</small>
+									</div>
+								</div>
+							@endif
+						</div>
+					@endforeach
+				</div>
+			</div>
+		@endif
+
+		<div class="col-sm-12">
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<div class="row">
@@ -63,37 +96,6 @@
 				</div>
 			</div>
 		</div>
-		
-
-		@if( $courseTaken->package->course->lessons->count() > 0 )
-		<!-- Lessons -->
-		<div class="col-sm-12">
-			<h3 class="no-margin-top">Leksjoner</h3>
-			<div class="row">
-				@foreach($courseTaken->package->course->lessons as $lesson)
-				<div class="col-sm-4 learner-course-lesson">
-					@if(FrontendHelpers::isLessonAvailable($courseTaken->started_at, $lesson->delay, $lesson->period) ||
-					FrontendHelpers::hasLessonAccess($courseTaken, $lesson))
-					<a class="panel panel-default panel-lesson" href="{{route('learner.course.lesson', ['course_id' => $courseTaken->package->course->id, 'id' => $lesson->id])}}">
-						<div class="panel-body">
-							<h4>{{$lesson->title}}</h4>
-							<span class="label label-primary">Tilgjengelig</span>
-						</div>
-					</a>
-					@else
-					<div class="panel panel-default panel-lesson inactive">
-						<div class="panel-body">
-							<h4>{{$lesson->title}}</h4>
-							<small>Tilgjengelig på {{FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)}}</small>
-						</div>
-					</div>
-					@endif
-				</div>
-				@endforeach
-			</div>
-		</div>
-		@endif
-
 
 
 		@if( $courseTaken->package->course->webinars->count() > 0 )
@@ -101,7 +103,7 @@
 		<div class="col-sm-12">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<a class="btn btn-primary pull-right btn-xs" href="{{ route('learner.webinar') }}">Se Alt</a>
+					<a class="btn btn-primary pull-right btn-xs" href="{{ route('learner.course-webinar') }}">Se Alt</a>
 					<i class="fa fa-play-circle-o"></i>&nbsp;&nbsp;Webinars
 				</div>
 				<div class="table-responsive">
