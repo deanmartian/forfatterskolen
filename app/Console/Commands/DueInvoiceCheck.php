@@ -45,7 +45,9 @@ class DueInvoiceCheck extends Command
         $subject        = 'Faktura';
         $dueTomorrow    = Carbon::today()->addDay(1)->format('Y-m-d');
 
-        $invoices = Invoice::whereDate('fiken_dueDate',  $dueTomorrow)->get();
+        $invoices = Invoice::whereDate('fiken_dueDate',  $dueTomorrow)
+            ->where('fiken_is_paid', '=',0)
+            ->get();
         foreach ($invoices as $invoice) {
             $balance            = $invoice->fiken_balance;
             $transactions_sum   = $invoice->transactions->sum('amount');
