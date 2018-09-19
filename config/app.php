@@ -183,8 +183,10 @@ return [
         Maatwebsite\Excel\ExcelServiceProvider::class,
 
         // Laravel File manager providers
-        Unisharp\Laravelfilemanager\LaravelFilemanagerServiceProvider::class,
+        UniSharp\LaravelFilemanager\LaravelFilemanagerServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
+
+        Barryvdh\TranslationManager\ManagerServiceProvider::class
     ],
 
     /*

@@ -29,15 +29,15 @@
 							</tr>
 						</thead>
 						<tbody>
-							@foreach(Auth::user()->invoices as $invoice)
+							@foreach($invoices as $invoice)
 							<?php
-							$fikenURL = false;
+							/*$fikenURL = false;
 							foreach( $fikenInvoices as $fikenInvoice ) :
 							    if( $invoice->fiken_url == $fikenInvoice->_links->alternate->href ) :
 							      $fikenURL = true;
 							      break;
 							    endif;
-							endforeach;
+							endforeach;*/
 							/*$fikenError = false;
 							if( $fikenURL ) :
 							  	$sale = FrontendHelpers::FikenConnect($fikenInvoice->sale);
@@ -53,8 +53,8 @@
                             $status = $invoice->fiken_is_paid ? "BETALT" : "UBETALT";
 							?>
 							<tr>
-								<td><a href="{{route('learner.invoice.show', $invoice->id)}}">{{$fikenInvoice->invoiceNumber}}</a></td>
-								<td>{{ \Carbon\Carbon::parse($fikenInvoice->dueDate)->format('d.m.Y') }}</td>
+								<td><a href="{{route('learner.invoice.show', $invoice->id)}}">{{$invoice->invoice_number}}</a></td>
+								<td>{{ \Carbon\Carbon::parse($invoice->fiken_dueDate)->format('d.m.Y') }}</td>
 								<td>
 									@if(/*$sale->paid*/ $invoice->fiken_is_paid)
 									{{FrontendHelpers::currencyFormat(0)}}
@@ -75,6 +75,10 @@
 							@endforeach
 						</tbody>
 					</table>
+				</div>
+
+				<div class="pull-right">
+					{{ $invoices->render() }}
 				</div>
 			</div>
 		</div>

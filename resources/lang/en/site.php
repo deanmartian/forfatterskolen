@@ -1,0 +1,37 @@
+<?php
+
+return array (
+  'admin-menu' => 
+  array (
+    'manuscript' => 'Manuscript',
+    'dashboard' => 'Dashboard',
+    'courses' => 'Courses',
+    'free-courses' => 'Free Courses',
+    'workshops' => 'Workshops',
+    'learners' => 'Learners',
+    'assignments' => 'Assignments',
+    'support' => 'Support',
+    'free-manuscripts' => 'Free Manuscripts',
+    'other-services' => 'Other Services',
+    'invoices' => 'Invoices',
+    'shop-manuscripts' => 'Shop Manuscripts',
+    'faq' => 'FAQ',
+    'admin' => 'Admin',
+  ),
+  'total-learners' => 'Total Learners',
+  'my-assigned-manuscripts' => 'My assigned manuscripts',
+  'my-assigned-free-manuscripts' => 'My assigned free manuscripts',
+  'all-manuscripts' => 'All Manuscripts',
+  'manuscripts' => '[0,1] Manuscript |[2,*] Manuscripts',
+  'shop-manuscripts' => 'Shop Manuscripts',
+  'my-coaching-timer' => 'My Coaching Timer',
+  'my-correction' => 'My Correction',
+  'my-copy-editing' => 'My Copy Editing',
+  'pending-courses' => 'Pending Courses',
+  'pending-shop-manuscripts' => 'Pending Shop Manuscripts',
+  'pending-workshops' => 'Pending Workshops',
+  'pending-assignment-feedbacks' => 'Pending Assignment Feedbacks',
+  'pending-coaching-timer' => 'Pending Coaching Timer',
+  'pending-correction' => 'Pending Correction',
+  'pending-copy-editing' => 'Pending Copy Editing',
+);

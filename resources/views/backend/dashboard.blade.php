@@ -14,7 +14,7 @@
 					<div class="panel panel-default text-center">
 						<div class="panel-body">
 							<h3>{{count(App\User::where('role', 2)->get())}}</h3>
-							Total Learners
+							{{ trans('site.total-learners') }}
 						</div>
 					</div>
 				</div>
@@ -25,7 +25,7 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>My assigned manuscripts</h4></div>
+						<div class="panel-heading"><h4>{{ trans('site.my-assigned-manuscripts') }}</h4></div>
 						<table class="table">
 						    <thead>
 						      <tr>
@@ -144,8 +144,8 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>All manuscripts</h4></div>
-						<div class="panel-heading"><h4>Manuscripts</h4></div>
+						<div class="panel-heading"><h4>{{ trans('site.all-manuscripts') }}</h4></div>
+						<div class="panel-heading"><h4>{{ trans_choice('site.manuscripts', 2) }}</h4></div>
 						<table class="table">
 							<thead>
 								<tr>
@@ -186,7 +186,7 @@
 							</tbody>
 						</table>
 
-						<div class="panel-heading"><h4>Shop Manuscripts</h4></div>
+						<div class="panel-heading"><h4>{{ trans('site.shop-manuscripts') }}</h4></div>
 						<table class="table">
 							<thead>
 							<tr>
@@ -347,7 +347,7 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>My Coaching Timer</h4></div>
+						<div class="panel-heading"><h4>{{ trans('site.my-coaching-timer') }}</h4></div>
 						<table class="table">
 							<thead>
 							<tr>
@@ -394,7 +394,7 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>My Korrektur</h4></div>
+						<div class="panel-heading"><h4>{{ trans('site.my-correction') }}</h4></div>
 						<table class="table">
 							<thead>
 							<tr>
@@ -484,7 +484,7 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>My Språkvask</h4></div>
+						<div class="panel-heading"><h4>{{ trans('site.my-copy-editing') }}</h4></div>
 						<table class="table">
 							<thead>
 							<tr>

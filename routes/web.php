@@ -9,6 +9,10 @@ $admin = 'admin.forfatterskolen.local';
 $admin = 'admin.forfatterskolen.no';*/
 
 
+// get/set the locale
+$locale = App::getLocale();
+App::setLocale($locale);
+
 /**
  * Front End Routes
  *

@@ -1,0 +1,37 @@
+<?php
+
+return array (
+  'admin-menu' => 
+  array (
+    'manuscript' => 'Manusutvikling',
+    'dashboard' => 'Dashboard',
+    'courses' => 'Courses',
+    'free-courses' => 'Free Courses',
+    'learners' => 'Learners',
+    'workshops' => 'Workshops',
+    'assignments' => 'Assignments',
+    'support' => 'Support',
+    'free-manuscripts' => 'Free Manuscripts',
+    'admin' => 'Admin',
+    'faq' => 'FAQ',
+    'invoices' => 'Invoices',
+    'other-services' => 'Other Services',
+    'shop-manuscripts' => 'Shop Manuscripts',
+  ),
+  'all-manuscripts' => 'All Manuscripts',
+  'manuscripts' => '[0,1] Manuscript |[2,*] Manuscripts',
+  'my-assigned-free-manuscripts' => 'My assigned free manuscripts',
+  'my-assigned-manuscripts' => 'My assigned manuscripts',
+  'shop-manuscripts' => 'Shop Manuscripts',
+  'total-learners' => 'Total Learners',
+  'my-coaching-timer' => 'My Coaching Timer',
+  'my-copy-editing' => 'My Språkvask',
+  'my-correction' => 'My Korrektur',
+  'pending-assignment-feedbacks' => 'Pending Assignment Feedbacks',
+  'pending-coaching-timer' => 'Pending Coaching Timer',
+  'pending-copy-editing' => 'Pending Språkvask',
+  'pending-correction' => 'Pending Korrektur',
+  'pending-courses' => 'Pending Courses',
+  'pending-shop-manuscripts' => 'Pending Shop Manuscripts',
+  'pending-workshops' => 'Pending Workshops',
+);
