@@ -12,7 +12,7 @@ class FreeManuscript extends Model
 {
     
     protected $table = 'free_manuscripts';
-    protected $fillable = ['name', 'email', 'content', 'editor_id'];
+    protected $fillable = ['name', 'email', 'content', 'editor_id', 'genre'];
 
 
     public function editor()

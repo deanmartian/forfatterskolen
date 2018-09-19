@@ -54,7 +54,8 @@
 									@if( $freeManuscript->editor )
 										<button class="btn btn-xs btn-success sendFeedbackBtn" data-toggle="modal" data-target="#feedbackModal" data-fields="{{ json_encode($freeManuscript) }}" data-action="{{ route('admin.free-manuscript.send_feedback', $freeManuscript->id) }}">Send Back Feedback</button>
 									@endif
-									<button class="btn btn-xs btn-primary viewManuscriptBtn" data-toggle="modal" data-target="#viewManuscriptModal" data-fields="{{ json_encode($freeManuscript) }}">View</button>
+									<button class="btn btn-xs btn-primary viewManuscriptBtn" data-toggle="modal" data-target="#viewManuscriptModal" data-fields="{{ json_encode($freeManuscript) }}"
+									data-genre="{{ $freeManuscript->genre ? \App\Http\FrontendHelpers::assignmentType($freeManuscript->genre): '' }}">View</button>
 									<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.free-manuscript.assign_editor', $freeManuscript->id) }}" data-editor="{{ $freeManuscript->editor_id }}">Assign Editor</button>
 									<button class="btn btn-xs btn-danger deleteManuscriptBtn" data-toggle="modal" data-target="#deleteManuscriptModal" data-fields="{{ json_encode($freeManuscript) }}" data-action="{{ route('admin.free-manuscript.delete', $freeManuscript->id) }}" style="margin-top: 5px">Delete</button>
 								</td>
@@ -150,6 +151,9 @@
 		  		<strong>Email:</strong><br />
 		  		<span id="email"></span><br />
 		  		<br />
+				<strong>Genre:</strong><br />
+				<span id="genre"></span><br />
+				<br />
 		  		<strong>Manuscript:</strong><br />
 		  		<span id="content"></span>
 		  	</p>
@@ -306,9 +310,11 @@
 
     $('.viewManuscriptBtn').click(function(){
 		var fields = $(this).data('fields');
+		let genre = $(this).data('genre');
 		var modal = $('#viewManuscriptModal');
 		modal.find('#name').text(fields.name);
 		modal.find('#email').text(fields.email);
+        modal.find('#genre').text(genre);
 		modal.find('#content').text(fields.content);
 	});
 

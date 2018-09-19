@@ -47,9 +47,22 @@
 					<input type="email" class="form-control" name="email" required value="{{ old('email') }}">
 				</div>
 				<div class="form-group">
+					<label>Sjanger</label>
+					<select class="form-control" name="genre" required>
+						<option value="" disabled="disabled" selected>Select Genre</option>
+						@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
+							<option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
+						@endforeach
+					</select>
+				</div>
+				<div class="form-group">
 					<label>Din tekst</label>
 					<textarea class="form-control" name="content" required rows="12" placeholder="Maks 500 ord">{{ old('content') }}</textarea>
+					<small>
+						*Kun en innsending per person
+					</small>
 				</div>
+
 				<div class="text-right">
 					<button type="submit" class="btn btn-theme">Send inn</button>
 				</div>

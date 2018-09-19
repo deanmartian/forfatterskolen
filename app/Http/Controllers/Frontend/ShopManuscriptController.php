@@ -736,6 +736,7 @@ class ShopManuscriptController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email',
+            'genre' => 'required',
             'content' => 'required',
         ]);
 
@@ -744,6 +745,14 @@ class ShopManuscriptController extends Controller
         if ($wordcount > 500) {
             return redirect()->back()->withInput()->with([
                 'errors' => AdminHelpers::createMessageBag('The content may not be greater than 500 words.')
+            ]);
+        }
+
+        $existing_emails = FreeManuscript::all()->pluck('email')->toArray();
+        // prevent user from sending multiple manuscript
+        if (in_array($request->email, $existing_emails)) {
+            return redirect()->back()->withInput()->with([
+                'errors' => AdminHelpers::createMessageBag('Sorry but you already sent a manuscript.')
             ]);
         }
 
@@ -771,6 +780,7 @@ class ShopManuscriptController extends Controller
             FreeManuscript::create([
                 'name' => $request->name,
                 'email' => $request->email,
+                'genre' => $request->genre,
                 'content' => $request->content
             ]);
 
