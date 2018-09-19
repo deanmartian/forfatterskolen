@@ -130,7 +130,7 @@
                                         <input type="submit" value="Add keys" class="btn btn-primary">
                                     </form>
                                     <hr style="margin: 20px 0;">
-                                    <h4 style="margin-bottom: 20px">Total: {{ $numTranslations }}, changed: {{ $numChanged }}</h4>
+                                    <h4 style="margin-bottom: 20px">Total: {{ $numTranslations }}, changed: <span id="numChanged">{{ $numChanged }}</span></h4>
                                     <table class="table">
                                         <thead>
                                         <tr>
@@ -192,12 +192,8 @@
             let table = $("table").DataTable({
                 pageLength: 25,
                 createdRow: function(row, data, index) {
-                    // add class to all row
-                    $(row).find('.editable').addClass('editable-pre-wrapped editable-click');
-                    // check if it's empty and add a text
-                    if (!$(row).find('.editable').text()) {
-                        $(row).find('.editable').addClass('editable-empty').text('Empty');
-                    }
+                    $('.editable').editable();
+                    triggerEditableHidden();
                 }
             });
 
@@ -207,18 +203,7 @@
                 }
             });
 
-            $('.editable').editable().on('hidden', function(e, reason){
-                var locale = $(this).data('locale');
-                if(reason === 'save'){
-                    $(this).removeClass('status-0').addClass('status-1');
-                }
-                if(reason === 'save' || reason === 'nochange') {
-                    var $next = $(this).closest('tr').next().find('.editable.locale-'+locale);
-                    setTimeout(function() {
-                        $next.editable('show');
-                    }, 300);
-                }
-            });
+            triggerEditableHidden();
 
             $('.group-select').on('change', function(){
                 var group = $(this).val();
@@ -259,5 +244,31 @@
             });
 
         })
+
+        function triggerEditableHidden() {
+            $('.editable').editable().on('hidden', function(e, reason){
+                var locale = $(this).data('locale');
+                if(reason === 'save'){
+                    $(this).removeClass('status-0').addClass('status-1');
+                }
+                if(reason === 'save' || reason === 'nochange') {
+                    var $next = $(this).closest('tr').next().find('.editable.locale-'+locale);
+                    setTimeout(function() {
+                        $next.editable('show');
+                    }, 300);
+                }
+
+                let changedStatus = $(".status-1").length;
+                $("#numChanged").text(changedStatus);
+
+            });
+        }
+
+        // check every second
+        setInterval(function() {
+            if ($(".success-publish").is(":visible")) {
+                $("#numChanged").text(0);
+            }
+        }, 1000);
     </script>
 @stop

@@ -29,10 +29,10 @@
 						<table class="table">
 						    <thead>
 						      <tr>
-						        <th>Manuscript</th>
-						        <th>Learner</th>
-						        <th>Type</th>
-						        <th>Status</th>
+						        <th>{{ trans_choice('site.manuscripts', 1) }}</th>
+						        <th>{{ trans_choice('site.learners',1) }}</th>
+						        <th>{{ trans('site.type') }}</th>
+						        <th>{{ trans('site.status') }}</th>
 								  <th></th>
 						      </tr>
 						    </thead>
@@ -115,12 +115,12 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>My assigned free manuscripts</h4></div>
+						<div class="panel-heading"><h4>{{ trans('site.my-assigned-free-manuscripts') }}</h4></div>
 						<table class="table">
 						    <thead>
 						      <tr>
-						        <th>User</th>
-						        <th>Email</th>
+						        <th>{{ trans_choice('site.users', 1) }}</th>
+						        <th>{{ trans('site.email') }}</th>
 						        <th></th>
 						      </tr>
 						    </thead>
@@ -149,9 +149,9 @@
 						<table class="table">
 							<thead>
 								<tr>
-									<th>Manuscript</th>
-									<th>Uploaded By</th>
-									<th>Assigned To</th>
+									<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+									<th>{{ trans('site.uploaded-by') }}</th>
+									<th>{{ trans('site.assigned-to') }}</th>
 									<th></th>
 								</tr>
 							</thead>
@@ -190,9 +190,9 @@
 						<table class="table">
 							<thead>
 							<tr>
-								<th>Manuscript</th>
-								<th>Learner</th>
-								<th>Assigned To</th>
+								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+								<th>{{ trans_choice('site.learners', 1) }}</th>
+								<th>{{ trans('site.assigned-to') }}</th>
 								<th></th>
 							</tr>
 							</thead>
@@ -216,13 +216,13 @@
 										</td>
 										<td>
 											<a href="{{ route('backend.download_shop_manuscript', $shopManuscript->id) }}"
-											   class="btn btn-primary btn-xs">Download</a> <br>
+											   class="btn btn-primary btn-xs">{{ trans('site.download') }}</a> <br>
 
 											<button type="button" class="btn btn-warning btn-xs margin-top" data-toggle="modal"
 													data-target="#addFeedbackModal"
 												data-action="{{ route('admin.shop-manuscript-taken-feedback.store',
 												$shopManuscript->id) }}"
-												id="addShopManuscriptFeedback">+ Add feedback</button>
+												id="addShopManuscriptFeedback">+ {{ trans('site.add-feedback') }}</button>
 										</td>
 									</tr>
 								@endif
@@ -284,12 +284,12 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>My Assignments</h4></div>
+						<div class="panel-heading"><h4>{{ trans('site.my-assignments') }}</h4></div>
 						<table class="table">
 							<thead>
 							<tr>
-								<th>Course</th>
-								<th>Learner Id</th>
+								<th>{{ trans_choice('site.courses', 1) }}</th>
+								<th>{{ trans('site.learner-id') }}</th>
 								<th></th>
 							</tr>
 							</thead>
@@ -302,7 +302,7 @@
 									<td>{{ $assignedAssignment->user_id }}</td>
 									<td>
 										<a href="{{ route('backend.download_assigned_manuscript', $assignedAssignment->id) }}"
-										   class="btn btn-primary btn-xs">Download</a>
+										   class="btn btn-primary btn-xs">{{ trans('site.download') }}</a>
                                         <?php
                                         $learnerExist 	= \App\AssignmentGroupLearner::where('user_id', $assignedAssignment->user_id)->get();
 
@@ -351,9 +351,9 @@
 						<table class="table">
 							<thead>
 							<tr>
-								<th>Learner</th>
-								<th>Approved Date</th>
-								<th>Session Length</th>
+								<th>{{ trans_choice('site.learners', 1) }}</th>
+								<th>{{ trans('site.approved-date') }}</th>
+								<th>{{ trans('site.session-length') }}</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -398,10 +398,10 @@
 						<table class="table">
 							<thead>
 							<tr>
-								<th>Manus</th>
-								<th>Learner</th>
-								<th>Expected Finish</th>
-								<th>Status</th>
+								<th>{{ trans_choice('site.manus', 2) }}</th>
+								<th>{{ trans_choice('site.learners', 1) }}</th>
+								<th>{{ trans('site.expected-finish') }}</th>
+								<th>{{ trans('site.status') }}</th>
 								<th></th>
 								<th></th>
 							</tr>
@@ -488,10 +488,10 @@
 						<table class="table">
 							<thead>
 							<tr>
-								<th>Manus</th>
-								<th>Learner</th>
-								<th>Expected Finish</th>
-								<th>Status</th>
+								<th>{{ trans_choice('site.manus', 2) }}</th>
+								<th>{{ trans_choice('site.learners', 1) }}</th>
+								<th>{{ trans('site.expected-finish') }}</th>
+								<th>{{ trans('site.status') }}</th>
 								<th></th>
 								<th></th>
 							</tr>
@@ -580,14 +580,14 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>Pending Courses</h4></div>
+						<div class="panel-heading"><h4>{{ trans('site.pending-courses') }}</h4></div>
 						<div class="table-responsive">
 							<table class="table">
 							    <thead>
 							      <tr>
-							        <th>Course</th>
-							        <th>Learner</th>
-							        <th>Date Ordered</th>
+							        <th>{{ trans_choice('site.courses', 1) }}</th>
+							        <th>{{ trans_choice('site.learners', 1) }}</th>
+							        <th>{{ trans('site.date-ordered') }}</th>
 							        <th></th>
 							      </tr>
 							    </thead>
@@ -623,13 +623,13 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>Pending Shop Manuscripts</h4></div>
+						<div class="panel-heading"><h4>{{ trans('site.pending-shop-manuscripts') }}</h4></div>
 						<table class="table">
 						    <thead>
 						      <tr>
-						        <th>Manuscript</th>
-						        <th>Learner</th>
-						        <th>Date Ordered</th>
+						        <th>{{ trans_choice('site.manuscripts', 1) }}</th>
+						        <th>{{ trans_choice('site.learners', 1) }}</th>
+						        <th>{{ trans('site.date-ordered') }}</th>
 						        <th></th>
 						      </tr>
 						    </thead>
@@ -665,13 +665,13 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>Pending Workshops</h4></div>
+						<div class="panel-heading"><h4>{{ trans('site.pending-workshops') }}</h4></div>
 						<table class="table">
 						    <thead>
 						      <tr>
-						        <th>Manuscript</th>
-						        <th>Learner</th>
-						        <th>Date Ordered</th>
+								  <th>{{ trans_choice('site.manuscripts', 1) }}</th>
+								  <th>{{ trans_choice('site.learners', 1) }}</th>
+								  <th>{{ trans('site.date-ordered') }}</th>
 						        <th></th>
 						      </tr>
 						    </thead>
@@ -705,14 +705,14 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>Pending Assignment Feedbacks</h4></div>
+						<div class="panel-heading"><h4>{{ trans('site.pending-assignment-feedbacks') }}</h4></div>
 						<table class="table">
 						    <thead>
 						      <tr>
-						        <th>Manuscript</th>
-						        <th>Submitted By</th>
-						        <th>Submitted To</th>
-						        <th>Assignment</th>
+						        <th>{{ trans_choice('site.manuscripts', 1) }}</th>
+						        <th>{{ trans('site.submitted-by') }}</th>
+						        <th>{{ trans('site.submitted-to') }}</th>
+						        <th>{{ trans_choice('site.assignments', 1) }}</th>
 						        <th></th>
 						      </tr>
 						    </thead>
@@ -747,14 +747,14 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>Pending Coaching Timer</h4></div>
+						<div class="panel-heading"><h4>{{ trans('site.pending-coaching-timer') }}</h4></div>
 						<table class="table">
 							<thead>
 							<tr>
-								<th>Learner</th>
-								<th>Learner Suggested Date</th>
-								<th>Session Length</th>
-								<th>Editor</th>
+								<th>{{ trans_choice('site.learners', 1) }}</th>
+								<th>{{ trans('site.learner-suggested-date') }}</th>
+								<th>{{ trans('site.session-length') }}</th>
+								<th>{{ trans_choice('site.editors', 1) }}</th>
 								<th></th>
 							</tr>
 							</thead>
@@ -801,13 +801,13 @@
 										@if ($coachingTimer->editor_id)
 											{{ $coachingTimer->editor->full_name }}
 										@else
-											<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $coachingTimer->id, 'type' => 3]) }}">Assign Editor</button>
+											<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $coachingTimer->id, 'type' => 3]) }}">{{ trans('site.assign-editor') }}</button>
 										@endif
 									</td>
 									<td>
 										<button class="btn btn-primary btn-xs approveCoachingSessionBtn" data-toggle="modal"
 												data-target="#approveCoachingSessionModal" data-action="{{ route('admin.coaching-timer.approve', $coachingTimer->id) }}">
-											Approve
+											{{ trans('site.approve') }}
 										</button>
 									</td>
 								</tr>
@@ -823,12 +823,12 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>Pending Korrektur</h4></div>
+						<div class="panel-heading"><h4>{{ trans('site.pending-correction') }}</h4></div>
 						<table class="table">
 							<thead>
 							<tr>
-								<th>Manus</th>
-								<th>Learner</th>
+								<th>{{ trans_choice('site.manus', 2) }}</th>
+								<th>{{ trans_choice('site.learners', 1) }}</th>
 								<th></th>
 							</tr>
 							</thead>
@@ -849,7 +849,7 @@
 										</a>
 									</td>
 									<td>
-										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $correction->id, 'type' => 2]) }}">Assign Editor</button>
+										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.assign-editor') }}</button>
 									</td>
 								</tr>
 							@endforeach
@@ -864,12 +864,12 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>Pending Språkvask</h4></div>
+						<div class="panel-heading"><h4>{{ trans('site.pending-copy-editing') }}</h4></div>
 						<table class="table">
 							<thead>
 							<tr>
-								<th>Manus</th>
-								<th>Learner</th>
+								<th>{{ trans_choice('site.manus', 2) }}</th>
+								<th>{{ trans_choice('site.learners', 1) }}</th>
 								<th></th>
 							</tr>
 							</thead>
@@ -890,7 +890,7 @@
 										</a>
 									</td>
 									<td>
-										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $copyEditing->id, 'type' => 1]) }}">Assign Editor</button>
+										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $copyEditing->id, 'type' => 1]) }}">{{ trans('site.assign-editor') }}</button>
 									</td>
 								</tr>
 							@endforeach
@@ -906,7 +906,7 @@
 </div>
 
 <div class="col-sm-12 col-md-2 dashboard-right">
-	<h3 class="actitities-header">Recent Activities</h3>
+	<h3 class="actitities-header">{{ trans('site.recent-activities') }}</h3>
 	@foreach( $logs as $log )
 	<div class="dashboard-activity" style="color: green">
 		<p>

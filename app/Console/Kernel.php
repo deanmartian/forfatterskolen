@@ -21,7 +21,8 @@ class Kernel extends ConsoleKernel
         Commands\CheckFikenInvoice::class,
         Commands\TestCommand::class,
         Commands\DueInvoiceCheck::class,
-        Commands\UpdateInvoice::class
+        Commands\UpdateInvoice::class,
+        Commands\UpdateKidNum::class
     ];
 
     /**

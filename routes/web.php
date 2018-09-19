@@ -2,11 +2,11 @@
 
 // Domains
 
-$front = 'forfatterskolen.local';
-$admin = 'admin.forfatterskolen.local';
+/*$front = 'forfatterskolen.local';
+$admin = 'admin.forfatterskolen.local';*/
 
-/*$front = 'www.forfatterskolen.no';
-$admin = 'admin.forfatterskolen.no';*/
+$front = 'www.forfatterskolen.no';
+$admin = 'admin.forfatterskolen.no';
 
 
 // get/set the locale
@@ -1024,6 +1024,10 @@ Route::group([
                 'destroy' => 'admin.survey.question.destroy',
             ],
         ]);
+
+        Route::get('translations',function(){
+           return redirect()->to('/translations/view/site');
+        });
 
         Route::prefix('zoom')->group(function () {
             Route::get('/', 'ZoomController@index');
