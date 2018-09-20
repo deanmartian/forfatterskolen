@@ -23,7 +23,7 @@ return array(
 	 *
 	 * @type boolean
 	 */
-	'delete_enabled' => true,
+	'delete_enabled' => false,
 
 	/**
 	 * Exclude specific groups from Laravel Translation Manager. 
