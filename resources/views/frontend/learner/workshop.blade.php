@@ -240,16 +240,16 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Approve Date</h4>
+				<h4 class="modal-title">Godkjenne dato</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="">
 					{{csrf_field()}}
-					Are you sure you want to approve this date?
+					Er du sikker på at du vil godkjenne denne avtalen?
 					<input type="hidden" name="approved_date">
 					<div class="text-right margin-top">
-						<button type="submit" class="btn btn-success">Approve</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-success">Aksepter</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Avslå</button>
 					</div>
 				</form>
 			</div>
