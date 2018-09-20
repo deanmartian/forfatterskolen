@@ -115,9 +115,9 @@
 									<tr>
 										<th>Manus</th>
 										<th>Coaching Time</th>
-										<th>min foreslåtte dato</th>
+										<th>Mine foreslåtte datoer</th>
 										<th>Skriv litt her om hva du vil ha hjelp til</th>
-										<th>Forfatterskolen foreslåtte dato</th>
+										<th>Forfatterskolens foreslåtte datoer</th>
 										<th>Avtalt dato og tid</th>
 										<th>Reprise</th>
 									</tr>
@@ -163,7 +163,7 @@
 												<a href="#viewHelpWithModal" class="viewHelpWithBtn"
 												   data-toggle="modal" data-details="{{ $coachingTimer->help_with }}"
 												data-action="{{ route('learner.coaching-timer.help_with', $coachingTimer->id) }}">
-													View/Edit Help With
+													Trykk her for å skrive hva du trenger hjelp til
 												</a>
 											</td>
 											<td>
