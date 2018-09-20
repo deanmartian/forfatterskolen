@@ -47,7 +47,7 @@
 							<tr>
 								<td>{{ $freeManuscript->name }}</td>
 								<td>{{ $freeManuscript->email }}</td>
-								<td>{{ str_limit($freeManuscript->content, 120) }}</td>
+								<td>{{ str_limit(strip_tags($freeManuscript->content), 120) }}</td>
 								<td>{{ \App\Http\FrontendHelpers::formatDate($freeManuscript->created_at) }}</td>
 								<td>@if( $freeManuscript->editor ) {{ $freeManuscript->editor->full_name }} @endif</td>
 								<td>
@@ -55,7 +55,8 @@
 										<button class="btn btn-xs btn-success sendFeedbackBtn" data-toggle="modal" data-target="#feedbackModal" data-fields="{{ json_encode($freeManuscript) }}" data-action="{{ route('admin.free-manuscript.send_feedback', $freeManuscript->id) }}">Send Back Feedback</button>
 									@endif
 									<button class="btn btn-xs btn-primary viewManuscriptBtn" data-toggle="modal" data-target="#viewManuscriptModal" data-fields="{{ json_encode($freeManuscript) }}"
-									data-genre="{{ $freeManuscript->genre ? \App\Http\FrontendHelpers::assignmentType($freeManuscript->genre): '' }}">View</button>
+									data-genre="{{ $freeManuscript->genre ? \App\Http\FrontendHelpers::assignmentType($freeManuscript->genre): '' }}"
+									data-content="{{ html_entity_decode($freeManuscript->content) }}">View</button>
 									<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.free-manuscript.assign_editor', $freeManuscript->id) }}" data-editor="{{ $freeManuscript->editor_id }}">Assign Editor</button>
 									<button class="btn btn-xs btn-danger deleteManuscriptBtn" data-toggle="modal" data-target="#deleteManuscriptModal" data-fields="{{ json_encode($freeManuscript) }}" data-action="{{ route('admin.free-manuscript.delete', $freeManuscript->id) }}" style="margin-top: 5px">Delete</button>
 								</td>
@@ -85,7 +86,7 @@
 							<tr>
 								<td>{{ $freeManuscript->name }}</td>
 								<td>{{ $freeManuscript->email }}</td>
-								<td>{{ str_limit($freeManuscript->content, 120) }}</td>
+								<td>{{ str_limit(strip_tags($freeManuscript->content), 120) }}</td>
 								<td class="text-center">
 									{{ $freeManuscript->latestFeedbackHistory['date_sent'] }} <br>
 									@if($freeManuscript->latestFeedbackHistory['date_sent'])
@@ -98,7 +99,9 @@
 								<td>@if( $freeManuscript->editor ) {{ $freeManuscript->editor->full_name }} @endif</td>
 								<td>
 									<button class="btn btn-xs btn-success viewFeedbackBtn" data-toggle="modal" data-target="#viewFeedbackModal" data-fields="{{ json_encode($freeManuscript) }}">View Feedback</button>
-									<button class="btn btn-xs btn-primary viewManuscriptBtn" data-toggle="modal" data-target="#viewManuscriptModal" data-fields="{{ json_encode($freeManuscript) }}">View</button>
+									<button class="btn btn-xs btn-primary viewManuscriptBtn" data-toggle="modal" data-target="#viewManuscriptModal" data-fields="{{ json_encode($freeManuscript) }}"
+											data-genre="{{ $freeManuscript->genre ? \App\Http\FrontendHelpers::assignmentType($freeManuscript->genre): '' }}"
+											data-content="{{ html_entity_decode($freeManuscript->content) }}">View</button>
 									<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.free-manuscript.assign_editor', $freeManuscript->id) }}" data-editor="{{ $freeManuscript->editor_id }}">Assign Editor</button>
 									<button class="btn btn-xs btn-danger deleteManuscriptBtn" data-toggle="modal" data-target="#deleteManuscriptModal" data-fields="{{ json_encode($freeManuscript) }}" data-action="{{ route('admin.free-manuscript.delete', $freeManuscript->id) }}">Delete</button>
 									<button class="btn btn-xs btn-info resendFeedbackBtn" data-toggle="modal" data-target="#resendFeedbackModal" data-action="{{ route('admin.free-manuscript.resend-feedback', $freeManuscript->id) }}">Resend</button>
@@ -311,11 +314,12 @@
     $('.viewManuscriptBtn').click(function(){
 		var fields = $(this).data('fields');
 		let genre = $(this).data('genre');
+		let content = $(this).data('content');
 		var modal = $('#viewManuscriptModal');
 		modal.find('#name').text(fields.name);
 		modal.find('#email').text(fields.email);
         modal.find('#genre').text(genre);
-		modal.find('#content').text(fields.content);
+		modal.find('#content').empty().append(content);
 	});
 
 	$('.deleteManuscriptBtn').click(function(){
@@ -383,6 +387,6 @@
 	   modal = $("#resendFeedbackModal");
 	   modal.find('form').attr('action', action);
 	});
-	
+
 </script>
 @stop

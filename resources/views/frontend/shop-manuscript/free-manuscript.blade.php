@@ -49,7 +49,7 @@
 				<div class="form-group">
 					<label>Sjanger</label>
 					<select class="form-control" name="genre" required>
-						<option value="" disabled="disabled" selected>Select Genre</option>
+						<option value="" disabled="disabled" selected>Velg Sjanger</option>
 						@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
 							<option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
 						@endforeach
@@ -57,7 +57,8 @@
 				</div>
 				<div class="form-group">
 					<label>Din tekst</label>
-					<textarea class="form-control" name="content" required rows="12" placeholder="Maks 500 ord">{{ old('content') }}</textarea>
+					<textarea class="form-control" name="content" rows="12" placeholder="Maks 500 ord"
+					id="editor">{{ old('content') }}</textarea>
 					<small>
 						*Kun en innsending per person
 					</small>
@@ -74,6 +75,7 @@
 @stop
 
 @section('scripts')
+	<script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 <script>
 (function($){
     $.fn.textareaCounter = function(options) {
@@ -116,6 +118,82 @@
         });
     };
 })(jQuery);
+
+// tinymce
+let editor_config = {
+    path_absolute: "{{ URL::to('/') }}",
+    height: '15em',
+    selector: '#editor',
+    menubar:false,
+    max_word: 500,
+    plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
+        'searchreplace wordcount visualblocks visualchars code fullscreen',
+        'insertdatetime media nonbreaking save table contextmenu directionality',
+        'emoticons template paste textcolor colorpicker textpattern'],
+    toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript superscript | forecolor backcolor | link | alignleft aligncenter alignright ' +
+    'alignjustify  | removeformat',
+    relative_urls: false,
+    file_browser_callback : function(field_name, url, type, win) {
+        let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
+        let y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
+
+        let cmsURL = editor_config.path_absolute + '/laravel-filemanager?field_name=' + field_name;
+        if (type == 'image') {
+            cmsURL = cmsURL + '&type=Images';
+        } else {
+            cmsURL = cmsURL + '&type=Files';
+        }
+
+        tinyMCE.activeEditor.windowManager.open({
+            file : cmsURL,
+            title : 'Filemanager',
+            width : x * 0.8,
+            height : y * 0.8,
+            resizable : 'yes',
+            close_previous : 'no'
+        });
+    },
+
+    setup: function(ed) {
+        ed.on('keyup', function (e) {
+            let event = e;
+            setTimeout(function() {
+                let writtenWords = $('.mce-wordcount').html();
+                writtenWords = parseInt(writtenWords.replace("words", ""));
+                let maxWord = ed.settings.max_word;
+                let limited = "";
+                let content = ed.getContent();
+                let limit = maxWord - writtenWords;
+                if (writtenWords > maxWord) {
+                    //$('.mce-wordcount').css("color", "red");
+                    limited = $.trim(content).split(" ", maxWord);
+                    limited = limited.join(" ");
+
+                    ed.setContent(limited);
+                    limit = 0;
+                } else {
+                    $("#"+ed.id).next('span').css("color","inherit");
+                }
+
+                if (limit <= 0) {
+                    limit = 0;
+                    $("#"+ed.id).next('span').css("color","red");
+                }
+
+                $("#"+ed.id).next('span').text(limit+' ord igjen');
+
+                $.post('/free-manuscript/set-word-count', {wordcount: writtenWords}).then(function(response){
+
+                });
+            }, 320);
+
+        });
+
+    },
+
+
+};
+tinymce.init(editor_config);
 
 $("textarea").textareaCounter({ limit: 500 });
 
