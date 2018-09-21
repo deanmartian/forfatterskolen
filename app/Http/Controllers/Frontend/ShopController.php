@@ -119,6 +119,15 @@ class ShopController extends Controller
             endif;
         endif;
 
+        // check if webinar-pakke
+        if ($course_id == 17) {
+            $course = Course::findOrFail($course_id);
+            $course_packages = $course->packages->pluck('id')->toArray();
+            $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
+            // check if the user already avails this course
+            if($courseTaken) return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
+        }
+
         $hasPaidCourse = false;
         // check if course bought is not expired yet
         foreach( Auth::user()->coursesTakenNotOld as $courseTaken ) :
