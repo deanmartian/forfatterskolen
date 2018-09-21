@@ -79,7 +79,7 @@ $style = [
                                         Words: {{ $word_count }} <br /><br />
                                         <!-- Intro -->
                                         <p style="{{ $style['paragraph'] }}">
-                                        {{ $content }}
+                                        {!! $content !!}
                                         </p>
 
                                     </td>
