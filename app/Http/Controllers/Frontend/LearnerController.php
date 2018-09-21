@@ -1024,7 +1024,7 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
-    public function courseRenewAll($course_id)
+    public function courseRenewAllDisabled($course_id)
     {
         $courseTaken    = CoursesTaken::find($course_id);
 
