@@ -263,7 +263,7 @@ class ShopController extends Controller
         }*/
 
         $invoiceText = $package->variation;
-
+        $comment .= ' From course order';
         // check if the customer wants to split the invoice
         if (isset($request->split_invoice) && $request->split_invoice) {
             $division   = $paymentPlan->division * 100; // multiply the split count to get the correct value
