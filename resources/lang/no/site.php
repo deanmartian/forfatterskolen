@@ -43,7 +43,7 @@ return array (
   'uploaded-by' => 'Uploaded By',
   'users' => '[0, 1] User |[2,*] Users',
   'download' => 'Download',
-  'add-feedback' => 'Add Feedback',
+  'add-feedback' => 'Add Feedbacks',
   'my-assignments' => 'My Assignments',
   'learner-id' => 'Learner Id',
   'approved-date' => 'Approved Date',

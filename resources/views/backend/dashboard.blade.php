@@ -63,7 +63,7 @@
 						    		<td>
 										<span class="label label-primary">Started</span>
 						    		</td>
-									<td><a href="{{ route('backend.download_manuscript', $assigned->id) }}" class="btn btn-primary btn-xs">Download</a></td>
+									<td><a href="{{ route('backend.download_manuscript', $assigned->id) }}" class="btn btn-primary btn-xs">{{ trans('site.download') }}</a></td>
 						    	</tr>
 						    	@endif
 							    @endforeach
@@ -98,7 +98,7 @@
 										<span class="label label-warning">Not started</span>
 										@endif
 						    		</td>
-									<td><a href="{{ route('backend.download_shop_manuscript', $assigned->id) }}" class="btn btn-primary btn-xs">Download</a></td>
+									<td><a href="{{ route('backend.download_shop_manuscript', $assigned->id) }}" class="btn btn-primary btn-xs">{{ trans('site.download') }}</a></td>
 						    	</tr>
 						    	@endif
 							    @endforeach
@@ -179,7 +179,7 @@
 												<em>Not set</em>
 											@endif
 										</td>
-										<td><a href="{{ route('backend.download_manuscript', $manuscript->id) }}" class="btn btn-primary btn-xs">Download</a></td>
+										<td><a href="{{ route('backend.download_manuscript', $manuscript->id) }}" class="btn btn-primary btn-xs">{{ trans('site.download') }}</a></td>
 									</tr>
 								@endif
 							@endforeach
@@ -462,13 +462,13 @@
 									</td>
 									<td>
 										<a href="{{ route('admin.other-service.download-doc',
-										   ['id' => $correction->id, 'type' => 2]) }}">Download</a>
+										   ['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.download') }}</a>
 										<!-- show only if no feedback is given yet for this correction -->
 										@if (!$correction->feedback)
 											<a href="#addOtherServiceFeedbackModal" data-toggle="modal" style="color:#eea236"
 											class="addOtherServiceFeedbackBtn" data-service="2"
 											data-action="{{ route('admin.other-service.add-feedback',
-											['id' => $correction->id, 'type' => 2]) }}">+ Add feedback</a>
+											['id' => $correction->id, 'type' => 2]) }}">+ {{ trans('site.add-feedback') }}</a>
 										@endif
 									</td>
 								</tr>
@@ -553,14 +553,14 @@
 
 									<td>
 										<a href="{{ route('admin.other-service.download-doc',
-										   ['id' => $copyEditing->id, 'type' => 1]) }}">Download</a>
+										   ['id' => $copyEditing->id, 'type' => 1]) }}">{{ trans('site.download') }}</a>
 
 										<!-- show only if no feedback is given yet for this copyEditing -->
 										@if (!$copyEditing->feedback)
 											<a href="#addOtherServiceFeedbackModal" data-toggle="modal" style="color:#eea236"
 											   class="addOtherServiceFeedbackBtn" data-service="1"
 											   data-action="{{ route('admin.other-service.add-feedback',
-											['id' => $copyEditing->id, 'type' => 1]) }}">+ Add feedback</a>
+											['id' => $copyEditing->id, 'type' => 1]) }}">+ {{ trans('site.add-feedback') }}</a>
 										@endif
 									</td>
 								</tr>
@@ -1012,7 +1012,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Add Feedback</h4>
+				<h4 class="modal-title">{{ trans('site.add-feedback') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" enctype="multipart/form-data">
@@ -1026,7 +1026,7 @@
 						<textarea class="form-control" name="notes" rows="6"></textarea>
 					</div>
 					Adding a feedback will complete this manuscript.
-					<button type="submit" class="btn btn-primary pull-right">Add feedback</button>
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.add-feedback') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -1063,7 +1063,7 @@
 				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<label>Assign editor</label>
+						<label>{{ trans('site.assign-editor') }}</label>
 						<select name="editor_id" class="form-control select2" required>
 							<option value="" disabled="" selected>-- Select Editor --</option>
 							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
@@ -1130,7 +1130,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title"><span></span> Add Feedback</h4>
+                <h4 class="modal-title"><span></span> {{ trans('site.add-feedback') }}</h4>
             </div>
             <div class="modal-body">
                 <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
@@ -1139,7 +1139,7 @@
                         <label>Manuscript</label>
                         <input type="file" class="form-control" name="manuscript" multiple accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf" required>
                     </div>
-                    <button type="submit" class="btn btn-primary pull-right">Add feedback</button>
+                    <button type="submit" class="btn btn-primary pull-right">{{ trans('site.add-feedback') }}</button>
                     <div class="clearfix"></div>
                 </form>
             </div>
