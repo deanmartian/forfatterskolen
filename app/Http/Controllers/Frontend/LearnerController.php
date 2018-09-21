@@ -1120,6 +1120,19 @@ class LearnerController extends Controller
                 $webinarPakkeCourse = CoursesTaken::find($course_id);
 
                 if ($webinarPakkeCourse) {
+                    $expiredDate = $courseTaken->end_date;
+                    $now = new \DateTime();
+                    $checkDate = date('m/Y', strtotime($expiredDate));
+                    $input = \DateTime::createFromFormat('m/Y', $checkDate);
+                    $diff = $input->diff($now); // Returns DateInterval
+
+                    $withinAMonth = $diff->y === 0 && $diff->m <= 1;
+
+                    // check if this is really expired
+                    if (!$withinAMonth) {
+                        return redirect()->back();
+                    }
+
                     $user           = Auth::user();
                     $package        = Package::findOrFail($webinarPakkeCourse->package_id);
                     $payment_mode   = 'Bankoverføring';

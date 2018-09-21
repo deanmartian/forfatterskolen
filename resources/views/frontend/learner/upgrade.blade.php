@@ -412,7 +412,7 @@
                     <h4 class="modal-title">Forny alle kursene for ett år</h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="{{ route('learner.renew-all-courses') }}">
+                    <form method="POST" action="{{ route('learner.renew-all-courses') }}" onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
 
                         <p>Vil du fornye alle kursene dine for ett år ekstra for kroner 1490,?</p>
@@ -549,5 +549,12 @@
             test += '</pre>';
             modal.find('.modal-body').append(test);
         });
+
+        function disableSubmit(t) {
+            let submit_btn = $(t).find('[type=submit]');
+            submit_btn.text('');
+            submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+            submit_btn.attr('disabled', 'disabled');
+        }
     </script>
 @stop
