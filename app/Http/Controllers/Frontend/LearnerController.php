@@ -1103,6 +1103,12 @@ class LearnerController extends Controller
         $user                       = User::find(Auth::user()->id);
         $user->auto_renew_courses   = $request->auto_renew;
         $user->save();
+
+        $user_email     = Auth::user()->email;
+        $automation_id  = 73;
+        $user_name      = Auth::user()->first_name;
+
+        AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
         return redirect()->back();
     }
 
