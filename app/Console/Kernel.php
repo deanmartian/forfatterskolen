@@ -22,7 +22,8 @@ class Kernel extends ConsoleKernel
         Commands\TestCommand::class,
         Commands\DueInvoiceCheck::class,
         Commands\UpdateInvoice::class,
-        Commands\UpdateKidNum::class
+        Commands\UpdateKidNum::class,
+        Commands\WebinarPakkeExpiresInAWeek::class
     ];
 
     /**
@@ -48,6 +49,8 @@ class Kernel extends ConsoleKernel
             ->dailyAt('08:00');
         $schedule->command('updateinvoice:command')
             ->everyTenMinutes();
+        $schedule->command('webinarpakkeexpiresinaweek:command')
+            ->dailyAt('08:00');
     }
 
     /**
