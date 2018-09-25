@@ -76,24 +76,25 @@
 			</div>
 			<?php $assignmentGroups = App\AssignmentGroupLearner::where('user_id', Auth::user()->id)->get(); ?>
 			@if( $assignmentGroups->count() > 0 )
-			<br />
+				<br />
 
-				<hr>
+					<hr>
 
-			<h3 class="margin-top">Grupper</h3>
-			<div class="row">
-				@foreach( $assignmentGroups as $group )
-				<div class="col-sm-12 col-md-4">
-					<div class="panel panel-default">
-						<div class="panel-body">
-							<h4 class="no-margin-top margin-bottom"><a href="{{ route('learner.assignment.group.show', $group->group->id) }}">{{ $group->group->title }}</a></h4>
-							Oppgave: {{ $group->group->assignment->title }} <br>
-							Innleverings dato: {{ $group->group->submission_date }}
+				<h3 class="margin-top">Grupper</h3>
+				<div class="row">
+					@foreach( $assignmentGroups as $group )
+					<div class="col-sm-12 col-md-4">
+						<div class="panel panel-default">
+							<div class="panel-body">
+								<h4 class="no-margin-top margin-bottom"><a href="{{ route('learner.assignment.group.show', $group->group->id) }}">{{ $group->group->title }}</a></h4>
+								Oppgave: {{ $group->group->assignment->title }} <br>
+								Innleverings dato: {{ $group->group->submission_date }}
+							</div>
 						</div>
 					</div>
+					@endforeach
 				</div>
-				@endforeach
-			</div>
+			@endif
 
 			<?php
 				$noGroupWithFeedback = \App\AssignmentFeedbackNoGroup::where('learner_id', Auth::user()->id)
@@ -193,7 +194,6 @@
 					</div>
 				@endforeach
 			</div>
-			@endif
 		</div>
 	</div>
 	<div class="clearfix"></div>
