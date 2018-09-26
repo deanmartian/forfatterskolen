@@ -4,6 +4,60 @@
     <title>Forfatterskolen Publishing</title>
 @stop
 
+@section('styles')
+    <style>
+        .row {
+            margin-left:0;
+            margin-right:0;
+        }
+
+        .item {
+            border: none;
+        }
+
+        /* Isotope Transitions
+        ------------------------------- */
+        .isotope,
+        .isotope .item {
+            -webkit-transition-duration: 0.8s;
+            -moz-transition-duration: 0.8s;
+            -ms-transition-duration: 0.8s;
+            -o-transition-duration: 0.8s;
+            transition-duration: 0.8s;
+        }
+
+        .isotope {
+            -webkit-transition-property: height, width;
+            -moz-transition-property: height, width;
+            -ms-transition-property: height, width;
+            -o-transition-property: height, width;
+            transition-property: height, width;
+        }
+
+        .isotope .item {
+            -webkit-transition-property: -webkit-transform, opacity;
+            -moz-transition-property:    -moz-transform, opacity;
+            -ms-transition-property:     -ms-transform, opacity;
+            -o-transition-property:         top, left, opacity;
+            transition-property:         transform, opacity;
+        }
+
+        @media only screen and (min-width: 1445px) {
+            .row [class*='col-']:not(:first-child),
+            .row [class*='col-']:not(:last-child)
+            {
+                padding-right: 0;
+                padding-left: 0;
+            }
+
+            .container {
+                padding-right: 0;
+                padding-left: 0;
+            }
+        }
+    </style>
+@stop
+
 @section('content')
 
     <div class="container">
@@ -64,9 +118,15 @@
         $(window).on('load',function () {
             $.getScript('//cdn.jsdelivr.net/isotope/1.5.25/jquery.isotope.min.js',function(){
                 /* activate jquery isotope */
-                $('#list-author-books').isotope({
+                let $container = $('#list-author-books').isotope({
                     itemSelector : '.publishing-author-container',
                     isFitWidth: true
+                });
+
+                $(window).smartresize(function(){
+                    $container.isotope({
+                        columnWidth: '.col-sm-4'
+                    });
                 });
 
             });
