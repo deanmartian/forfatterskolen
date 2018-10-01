@@ -67,7 +67,21 @@
 				</div>
 
 			@else
-
+				<div class="row" style="margin-right: 0;">
+					<div class="navbar-form navbar-right">
+						<div class="form-group">
+							<form role="search" method="GET">
+								<input type="hidden" name="tab" value="archive">
+								<div class="input-group">
+									<input type="text" class="form-control" name="search" value="{{Request::input('search')}}" placeholder="Search email..">
+									<span class="input-group-btn">
+							<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+						</span>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
 				<div class="table-users table-responsive">
 					<table class="table">
 						<thead>

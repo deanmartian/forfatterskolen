@@ -37,12 +37,15 @@ class FreeManuscriptController extends Controller
         $this->middleware('checkPageAccess:7');
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $freeManuscripts = FreeManuscript::where('is_feedback_sent', '=',0)->orderBy('created_at', 'desc')->get();
         $archiveManuscripts = FreeManuscript::with('latestFeedbackHistory')
             ->where('is_feedback_sent', '=',1)->orderBy('created_at', 'desc')->paginate(20);
 
+        if( $request->search && !empty($request->search) ) :
+            $archiveManuscripts = FreeManuscript::with('latestFeedbackHistory')->where('email', 'LIKE', '%' . $request->search  . '%')->where('is_feedback_sent', '=',1)->orderBy('created_at', 'desc')->paginate(20);
+        endif;
         $emailTemplate = EmailTemplate::where('page_name', 'Free Manuscript')->first();
         $emailTemplateRoute = 'admin.manuscript.add_email_template';
         $isUpdate = 0;
