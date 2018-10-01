@@ -752,7 +752,8 @@ class ShopManuscriptController extends Controller
         // prevent user from sending multiple manuscript
         if (in_array($request->email, $existing_emails)) {
             return redirect()->back()->withInput()->with([
-                'errors' => AdminHelpers::createMessageBag('Sorry but you already sent a manuscript.')
+                'errors' => AdminHelpers::createMessageBag('Beklager, men du har allerede benyttet deg av dette gratistilbudet
+Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">post@forfatterskolen.no</a>')
             ]);
         }
 

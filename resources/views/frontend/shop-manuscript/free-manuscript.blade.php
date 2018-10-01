@@ -31,7 +31,7 @@
 				<div class="alert alert-danger">
 					<ul>
 						@foreach($errors->all() as $error)
-							<li>{{$error}}</li>
+							<li>{!! $error !!}</li>
 						@endforeach
 					</ul>
 				</div>
@@ -56,7 +56,7 @@
 					</select>
 				</div>
 				<div class="form-group">
-					<label>Din tekst</label>
+					<label>Din tekst (for å lime inn må du bruke lim inn funksjon fra tastaturet, ikke mus) CTRL + V</label>
 					<textarea class="form-control" name="content" rows="12" placeholder="Maks 500 ord"
 					id="editor">{{ old('content') }}</textarea>
 					<small>
