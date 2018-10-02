@@ -872,6 +872,7 @@ Route::group([
 
         Route::post('/other-service/{id}/coaching-timer/approve_date', 'OtherServiceController@approveDate')->name('admin.other-service.coaching-timer.approve_date');
         Route::post('/other-service/{id}/coaching-timer/suggest_date', 'OtherServiceController@suggestDate')->name('admin.other-service.coaching-timer.suggestDate');
+        Route::post('/other-service/set-approved-date', 'OtherServiceController@setApprovedDate')->name('admin.other-service.coaching-timer.set-approved-date');
         Route::post('/other-service/{id}/coaching-timer/set_replay', 'OtherServiceController@setReplay')->name('admin.other-service.coaching-timer.set_replay');
         Route::post('/other-service/{id}/update-status/{type}', 'OtherServiceController@updateStatus')->name('admin.other-service.update-status');
         Route::post('/other-service/{id}/update-expected-finish/{type}', 'OtherServiceController@updateExpectedFinish')->name('admin.other-service.update-expected-finish');

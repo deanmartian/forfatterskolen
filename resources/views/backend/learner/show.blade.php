@@ -742,6 +742,41 @@
 						</tr>
 						</thead>
 						<tbody>
+
+                        <?php
+							$packages = \App\Package::where('has_coaching', '>', 0)->pluck('id');
+							$coachingTimerTaken = $learner->coachingTimersTaken()->pluck('course_taken_id');
+							$checkCourseTakenWithCoaching = $learner->coursesTaken()->whereIn('package_id', $packages)
+								->whereNotIn('id', $coachingTimerTaken)->get();
+							// not yet used coaching session
+                        ?>
+						@foreach($checkCourseTakenWithCoaching as $courseTaken)
+							<tr>
+								<td></td>
+								<td>
+									<a href="{{ route('admin.learner.show', $courseTaken->user->id) }}">
+										{{ $courseTaken->user->full_name }}
+									</a>
+								</td>
+								<td>
+									{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($courseTaken->package->has_coaching) }}
+								</td>
+								<td>
+
+								</td>
+								<td></td>
+								<td>
+									<button class="btn btn-xs btn-warning setApprovedDateBtn" data-toggle="modal" data-target="#setApprovedDateModal"
+									data-course_taken_id="{{ $courseTaken->id }}">
+										Set Approved Date
+									</button>
+								</td>
+								<td></td>
+								<td></td>
+							</tr>
+
+						@endforeach
+
 						@foreach($learner->coachingTimers as $coachingTimer)
                             <?php $extension = explode('.', basename($coachingTimer->file)); ?>
 							<tr>
@@ -1902,6 +1937,31 @@
 		</div>
 	</div>
 </div>
+
+<div id="setApprovedDateModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Set Approved Date</h4>
+			</div>
+			<div class="modal-body">
+				<form action="{{ route('admin.other-service.coaching-timer.set-approved-date') }}" method="POST">
+					{{ csrf_field() }}
+					<input type="hidden" name="user_id" value="{{ $learner->id }}">
+					<input type="hidden" name="course_taken_id" value="{{ $learner->id }}">
+					<div class="form-group">
+						<label>Approved Date</label>
+						<input type="datetime-local" name="approved_date" class="form-control" required>
+					</div>
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -2008,6 +2068,12 @@
             $(this).attr('disabled','disabled');
             $("#deleteFromCourseModal").find('form').submit();
 		});
+
+        $(".setApprovedDateBtn").click(function(){
+            let course_taken_id = $(this).data('course_taken_id');
+            $("#setApprovedDateModal").find('[name=course_taken_id]').val(course_taken_id);
+		});
+
         /*
         * for statistics
         * */

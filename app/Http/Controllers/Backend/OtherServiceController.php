@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Backend;
 
 use App\CoachingTimerManuscript;
+use App\CoachingTimerTaken;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
+use App\CoursesTaken;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\OtherServiceFeedback;
@@ -71,6 +73,29 @@ class OtherServiceController extends Controller
 
             $coachingTimer->update($data);
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Suggested date saved successfully.'),
+                'alert_type' => 'success',
+                'not-former-courses' => true]);
+        }
+
+        return redirect()->back();
+    }
+
+    public function setApprovedDate(Request $request)
+    {
+        $user_id = $request->user_id;
+        $course_taken_id = $request->course_taken_id;
+        if ($request->isMethod('post') && $courseTaken = CoursesTaken::find($course_taken_id)) {
+            CoachingTimerManuscript::create([
+                'user_id'           => $user_id,
+                'approved_date'     => $request->approved_date
+            ]);
+
+            CoachingTimerTaken::create([
+                'user_id'           => $user_id,
+                'course_taken_id'   => $course_taken_id
+            ]);
+
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Approved date saved successfully.'),
                 'alert_type' => 'success',
                 'not-former-courses' => true]);
         }
