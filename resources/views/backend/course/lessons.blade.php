@@ -25,9 +25,9 @@
 				<table class="table table-side-bordered table-white" id="lessonsTable" style="table-layout: fixed">
 					<thead>
 						<tr>
-							<th>Title</th>
-							<th>Availability</th>
-							<th>Created At</th>
+							<th>{{ trans('site.title') }}</th>
+							<th>{{ trans('site.availability') }}</th>
+							<th>{{ trans('site.created-at') }}</th>
 						</tr>
 					</thead>
 					<tbody>

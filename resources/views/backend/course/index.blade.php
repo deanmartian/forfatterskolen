@@ -10,12 +10,12 @@
 
 @section('content')
 <div class="page-toolbar">
-	<h3><i class="fa fa-file-text-o"></i> All Courses</h3>
+	<h3><i class="fa fa-file-text-o"></i> {{ trans('site.all-courses') }}</h3>
 	<div class="navbar-form navbar-right">
 	  	<div class="form-group">
 		  	<form role="search" method="get" action="">
 				<div class="input-group">
-				  	<input type="text" class="form-control" name="search" placeholder="Search course..">
+				  	<input type="text" class="form-control" name="search" placeholder="{{ trans('site.search-course') }}..">
 				    <span class="input-group-btn">
 				    	<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
 				    </span>
@@ -27,24 +27,24 @@
 </div>
 
 <div class="col-md-12">
-	<a class="btn btn-success margin-top" href="{{route('admin.course.create')}}">Add Course</a>
-	<a class="btn btn-primary margin-top" href="{{route('admin.course-testimonial.index')}}">Testimonials</a>
-	<a class="btn btn-primary margin-top" href="{{route('admin.survey.index')}}">Surveys</a>
+	<a class="btn btn-success margin-top" href="{{route('admin.course.create')}}">{{ trans('site.add-course') }}</a>
+	<a class="btn btn-primary margin-top" href="{{route('admin.course-testimonial.index')}}">{{ trans('site.testimonials') }}</a>
+	<a class="btn btn-primary margin-top" href="{{route('admin.survey.index')}}">{{ trans('site.surveys') }}</a>
 	<div class="table-users table-responsive">
 		<table class="table">
 			<thead>
 		    	<tr>
-			        <th>ID</th>
-			        <th>Title</th>
-			        <th>Type</th>
-			        <th>Learners</th>
-			        <th>Lessons</th>
-			        <th>Manuscripts</th>
-					<th>Display Order</th>
-					<th>For Sale</th>
-					<th>Status</th>
-			        <th>Date Created</th>
-					<th>Discounts</th>
+			        <th>{{ trans('site.id') }}</th>
+			        <th>{{ trans('site.title') }}</th>
+			        <th>{{ trans('site.type') }}</th>
+			        <th>{{ trans_choice('site.learners', 2) }}</th>
+			        <th>{{ trans_choice('site.lessons', 2) }}</th>
+			        <th>{{ trans_choice('site.manuscripts', 2) }}</th>
+					<th>{{ trans('site.display-order') }}</th>
+					<th>{{ trans('site.for-sale') }}</th>
+					<th>{{ trans('site.status') }}</th>
+			        <th>{{ trans('site.date-created') }}</th>
+					<th>{{ trans_choice('site.discounts', 2) }}</th>
 		      	</tr>
 		    </thead>
 
@@ -69,7 +69,7 @@
 							   data-id="{{$course->id}}" data-size="mini" @if($course->status) {{ 'checked' }} @endif>
 					</td>
 					<td>{{$course->created_at}}</td>
-					<td><a href="{{ route('admin.course-discount.index', $course->id) }}">View</a></td>
+					<td><a href="{{ route('admin.course-discount.index', $course->id) }}">{{ trans('site.view') }}</a></td>
 		      	</tr>
 		      	@endforeach
 		    </tbody>

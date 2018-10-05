@@ -15,13 +15,13 @@
 				<div class="row">
 					<div class="col-sm-6">
 						<div class="form-group">
-							<label for="title">Lesson Title</label>
+							<label for="title">{{ trans('site.lesson-title') }}</label>
 							<input type="text" class="form-control" name="title" id="title" required value="{{$lesson['title']}}">
 						</div>
 					</div>
 					<div class="col-sm-3">
 						<div class="form-group">
-							<label>Delay type</label>
+							<label>{{ trans('site.delay-type') }}</label>
 							<select class="form-control" id="lesson-delay-toggle">
 								<option value="days">Days</option>
 								<option value="date" @if(AdminHelpers::isDate($lesson['delay'])) selected @endif>Date</option>
@@ -29,7 +29,7 @@
 						</div>
 					</div>
 					<div class="col-sm-3">
-						<label>Delay</label>
+						<label>{{ trans('site.delay') }}</label>
 						<div class="input-group">
 							@if(AdminHelpers::isDate($lesson['delay']))
 						  	<input type="date" class="form-control" name="delay" id="lesson-delay" min="0" required value="{{$lesson['delay']}}">
@@ -128,8 +128,8 @@
 
 
 
-
-
+<span class="title-text hidden">{{ trans('site.title') }}</span>
+<span class="video-text hidden">{{ trans('site.video') }}</span>
 @section('scripts')
 <script src="{{asset('content_tools/content-tools.js')}}"></script>
 <script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
@@ -207,18 +207,20 @@ const methods = {
     },
 
     createContent: function(title = '', content = '', content_id = '') {
+        let title_text = $(".title-text").text();
+        let video_text = $(".video-text").text();
         let id = this.uniqueId()+'_editor';
         let form = `<div class="newStructureFormContainer margin-top">
                         <div class="form-group row">
                             <div class="col-xs-6">
-                                <label>Title</label>
+                                <label>${ title_text }</label>
                                 <input class="form-control" type="text" name="title[]" value="${ title }">
                             </div>
                         </div>
                         <div class="newStructureFormContainer">
                             <div class="form-group row padding-left-15">
                                 <div class="col-xs-8" style="padding-left: 0">
-                                <label>Video</label>
+                                <label>${ video_text }</label>
                                 <textarea name="lesson_video[]" id="${ id }">${ content || '' }</textarea>
                                 </div>
                             </div>

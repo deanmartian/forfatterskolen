@@ -100,7 +100,7 @@
 													data-title="{{ $webinar->title }}"
 													data-action="{{ route('admin.webinar.webinar-presenter.store', ['webinar_id' => $webinar->id]) }}">
 												Add presenter</button>
-											<strong style="font-size: 15px">Presenters</strong> <br />
+											<strong style="font-size: 15px">{{ trans('site.presenters') }}</strong> <br />
 											<div class="clearfix"></div>
 
 											@foreach( $webinar->webinar_presenters as $webinar_presenter )

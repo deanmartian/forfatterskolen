@@ -22,7 +22,7 @@
 						<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#cloneModal"><i class="fa fa-copy"></i> Clone</button>
 					</div>
 
-					<h4>Course Details</h4>
+					<h4>{{ trans('site.course-details') }}</h4>
 				</div>
 				<div class="panel-body panel-course-details">
 					<div class="col-sm-12 col-md-5">
@@ -32,18 +32,18 @@
 						<h3>{{ $course->title }}</h3>
 						<p>{!! nl2br($course->description) !!}</p>
 						<p>
-							<i class="fa fa-bookmark-o"></i> Course Type: {{$course->type}} 
+							<i class="fa fa-bookmark-o"></i> {{ trans('site.course-type') }}: {{$course->type}}
 							@if( $course->start_date )
 							<br />
-							<i class="fa fa-calendar-o"></i> Start date: {{ $course->start_date }} 
+							<i class="fa fa-calendar-o"></i> {{ trans('site.start-date') }}: {{ $course->start_date }}
 							@endif
 							@if( $course->end_date )
 							<br />
-							<i class="fa fa-calendar-o"></i> End date: {{ $course->end_date }} 
+							<i class="fa fa-calendar-o"></i> {{ trans('site.end-date') }}: {{ $course->end_date }}
 							@endif
 						</p>
 						<br /><br />
-						<h4>Course Plan</h4>
+						<h4>{{ trans('site.course-plan') }}</h4>
 						@if ($course->lesson_kursplan()->get()->count())
 							{!! $course->lesson_kursplan()->get()[0]->content !!}
 						@else
@@ -60,14 +60,14 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<a class="pull-right btn btn-xs btn-default" href="{{route('admin.course.show', $course->id)}}?section=lessons">View More</a>
-						<h4>Lessons</h4>
+						<h4>{{ trans_choice('site.lessons', 2) }}</h4>
 					</div>
 					<div class="table-responsive">
 						<table class="table">
 						    <thead>
 						      <tr>
-						        <th>Title</th>
-						        <th>Availability</th>
+						        <th>{{ trans('site.title') }}</th>
+						        <th>{{ trans('site.availability') }}</th>
 						      </tr>
 						    </thead>
 						    <tbody>
@@ -95,14 +95,14 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<a class="pull-right btn btn-xs btn-default" href="{{route('admin.course.show', $course->id)}}?section=packages">View More</a>
-						<h4>Packages</h4>
+						<h4>{{ trans('site.packages') }}</h4>
 					</div>
 					<div class="table-responsive">
 						<table class="table">
 						    <thead>
 						      <tr>
-						        <th>Variation</th>
-						        <th>Price</th>
+						        <th>{{ trans('site.variation') }}</th>
+						        <th>{{ trans('site.price') }}</th>
 						      </tr>
 						    </thead>
 						    <tbody>
@@ -128,16 +128,16 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<a class="pull-right btn btn-xs btn-default" href="{{route('admin.course.show', $course->id)}}?section=manuscripts">View More</a>
-						<h4>Recent Manuscripts Uploaded</h4>
+						<h4>{{ trans('site.recent-manuscripts-uploaded') }}</h4>
 					</div>
 					<div class="table-responsive">
 						<table class="table">
 						    <thead>
 						      <tr>
-						        <th>Manuscript</th>
-						        <th>Words</th>
-						        <th>Learner</th>
-						        <th>Date Uploaded</th>
+						        <th>{{ trans_choice('site.manuscripts', 2) }}</th>
+						        <th>{{ trans_choice('site.words', 2) }}</th>
+						        <th>{{ trans_choice('site.learners', 1) }}</th>
+						        <th>{{ trans('site.date-uploaded') }}</th>
 						      </tr>
 						    </thead>
 						    <tbody>
@@ -161,7 +161,7 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<button class="pull-right btn btn-xs btn-primary" data-toggle="modal" data-target="#editEmailModal">Edit</button>
-						<h4>Email</h4>
+						<h4>{{ trans('site.email') }}</h4>
 					</div>
 					<div class="panel-body">
 					{!! nl2br($course->email) !!}
@@ -175,13 +175,13 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<button class="pull-right btn btn-xs btn-primary" data-toggle="modal" data-target="#addSimilarCourseModal">+ Add</button>
-						<h4>Similar Courses</h4>
+						<h4>{{ trans('site.similar-courses') }}</h4>
 					</div>
 					<div class="table-responsive">
 						<table class="table">
 						    <thead>
 						      <tr>
-						        <th>Course</th>
+						        <th>{{ trans_choice('site.courses', 1) }}</th>
 						        <th></th>
 						      </tr>
 						    </thead>

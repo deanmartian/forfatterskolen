@@ -19,11 +19,11 @@
 				<table class="table table-side-bordered table-white">
 					<thead>
 						<tr>
-					        <th>Manuscript</th>
-					        <th>Words count</th>
-					        <th>Learner</th>
-					        <th>Grade</th>
-					        <th>Date Uploaded</th>
+					        <th>{{ trans_choice('site.manuscripts', 1) }}</th>
+					        <th>{{ trans('site.words-count') }}</th>
+					        <th>{{ trans_choice('site.learners', 1) }}</th>
+					        <th>{{ trans('site.grade') }}</th>
+					        <th>{{ trans('site.date-uploaded') }}</th>
 						</tr>
 					</thead>
 					<tbody>

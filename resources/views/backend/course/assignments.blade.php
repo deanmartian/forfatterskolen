@@ -24,8 +24,8 @@
 				<table class="table table-side-bordered table-white">
 					<thead>
 						<tr>
-							<th>Assignment</th>
-							<th>Manuscripts</th>
+							<th>{{ trans_choice('site.assignments', 1) }}</th>
+							<th>{{ trans_choice('site.manuscripts', 2) }}</th>
 						</tr>
 					</thead>
 					<tbody>

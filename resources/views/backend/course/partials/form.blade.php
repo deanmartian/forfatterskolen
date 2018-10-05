@@ -13,22 +13,22 @@
 		@if(Request::is('course/*/edit'))
 		<h3>Edit <em>{{$course['title']}}</em></h3>
 		@else
-		<h3>Add New Course</h3>
+		<h3>{{ trans('site.add-new-course') }}</h3>
 		@endif
 	</div>
 	<div class="col-sm-12 col-md-8">
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<div class="form-group">
-					<label>Course Title</label>
+					<label>{{ trans('site.course-title') }}</label>
 					<input type="text" class="form-control" name="title" value="{{$course['title']}}" required>
 				</div>
 				<div class="form-group">
-					<label>Description</label>
+					<label>{{ trans('site.description') }}</label>
 					<textarea name="description" rows="12" id="description-ct" class="form-control ckeditor">{{ $course['description'] }}</textarea>
 				</div>
 				<div class="form-group">
-					<label>Course Plan</label>
+					<label>{{ trans('site.course-plan') }}</label>
 					<textarea name="course_plan" rows="10" class="form-control ckeditor">{{ $course['course_plan'] }}</textarea>
 				</div>
 			</div>
@@ -38,36 +38,36 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<div class="form-group">
-					<label id="course-image">Course Image</label>
+					<label id="course-image">{{ trans('site.course-image') }}</label>
 					<div class="course-form-image image-file margin-bottom">
 						<div class="image-preview" style="background-image: url('{{$course['course_image']}}')" data-default="{{Auth::user()->profile_image}}" title="Select Image" data-toggle="tooltip" data-placement="bottom"></div>
 						<input type="file" accept="image/*" name="course_image" accept="image/jpg, image/jpeg, image/png">
 					</div>
 				</div>
 				<div class="form-group">
-					<label>Course Type</label>
+					<label>{{ trans('site.course-type') }}</label>
 					<select class="form-control" name="type" required>
 						<option value="Single" @if($course['type'] == "Single") selected @endif>Single Course</option>
 						<option value="Group" @if($course['type'] == "Group") selected @endif>Group Course</option>
 					</select>
 				</div>
 				<div class="form-group">
-					<label>Start Date</label>
+					<label>{{ trans('site.start-date') }}</label>
 					<input type="date" class="form-control" name="start_date" @if( $course['start_date'] ) value="{{ date_format(date_create($course['start_date']), 'Y-m-d') }}" @endif>
 				</div>
 				<div class="form-group">
-					<label>End Date</label>
+					<label>{{ trans('site.end-date') }}</label>
 					<input type="date" class="form-control" name="end_date" @if( $course['end_date'] ) value="{{ date_format(date_create($course['end_date']), 'Y-m-d') }}" @endif>
 				</div>
 				<div class="form-group">
-					<label>Display Order</label>
+					<label>{{ trans('site.display-order') }}</label>
 					<input type="number" class="form-control" name="display_order" @if( $course['display_order'] ) value="{{ $course['display_order'] }}" @endif>
 				</div>
 				@if(Request::is('course/*/edit'))
-				<button type="submit" class="btn btn-primary">Update Course</button>
-				<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteCourseModal">Delete Course</button>
+				<button type="submit" class="btn btn-primary">{{ trans('site.update-course') }}</button>
+				<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteCourseModal">{{ trans('site.delete-course') }}</button>
 				@else
-				<button type="submit" class="btn btn-primary btn-block btn-lg">Create Course</button>
+				<button type="submit" class="btn btn-primary btn-block btn-lg">{{ trans('site.create-course') }}</button>
 				@endif
 			</div>
 		</div>

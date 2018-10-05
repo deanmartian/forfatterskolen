@@ -6,20 +6,20 @@
 
 @section('content')
     <div class="page-toolbar">
-        <h3><i class="fa fa-file-text-o"></i> {{ $course->title }} Discounts</h3>
+        <h3><i class="fa fa-file-text-o"></i> {{ $course->title }} {{ trans_choice('site.discounts', 2) }}</h3>
         <div class="clearfix"></div>
     </div>
 
     <div class="col-md-12">
         <a class="btn btn-success margin-top" data-target="#discountModal" data-toggle="modal"
-           data-action="{{ route('admin.course-discount.store', $course->id) }}" id="add-discount">Add Discount</a>
+           data-action="{{ route('admin.course-discount.store', $course->id) }}" id="add-discount">{{ trans('site.add-discount') }}</a>
         <div class="table-users table-responsive">
             <table class="table">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Coupon</th>
-                    <th>Discount</th>
+                    <th>{{ trans('site.id') }}</th>
+                    <th>{{ trans('site.coupon') }}</th>
+                    <th>{{ trans_choice('site.discounts', 1) }}</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -57,11 +57,11 @@
                     <form method="POST" action="">
                         {{ csrf_field() }}
                         <div class="form-group">
-                            <label>Coupon</label>
+                            <label>{{ trans('site.coupon') }}</label>
                             <input type="text" class="form-control" name="coupon" required>
                         </div>
                         <div class="form-group">
-                            <label>Discount</label>
+                            <label>{{ trans_choice('site.discounts', 1) }}</label>
                             <input type="number" class="form-control" name="discount" required>
                         </div>
                         <button type="submit" class="btn btn-primary pull-right margin-top">Add</button>
@@ -104,6 +104,8 @@
     <script>
         var generated = [],
             possible  = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        let add_discount = '{{ trans("site.add-discount") }}';
+        let edit_discount = '{{ trans("site.edit-discount") }}';
         function generateCodes(number, length) {
             generated = []; // empty the generated coupon
             for ( var i=0; i < number; i++ ) {
@@ -130,7 +132,7 @@
                 len = 1;
 
             possible  = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            $(".modal-title").text('Add Discount');
+            $(".modal-title").text(add_discount);
 
             var form = $("#discountModal form");
             var action = $(this).data('action');
@@ -160,7 +162,7 @@
                 form.attr('action', action);
                 form.prepend('<input type="hidden" name="_method" value="PUT">');
 
-                $(".modal-title").text('Add Discount');
+                $(".modal-title").text(edit_discount);
             });
         });
     </script>
