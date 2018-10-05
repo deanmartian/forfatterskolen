@@ -890,7 +890,7 @@ Route::group([
             ],
         ]);
         Route::post('/shop-manuscript-taken/{id}/assign_editor', 'ShopManuscriptController@updateTaken')->name('admin.shop-manuscript-taken.update_taken'); // Assign editor
-        Route::post('/shop-manuscript-taken/{id}', 'ShopManuscriptController@addFeedback')->name('admin.shop-manuscript-taken-feedback.store'); // Store Shop Manuscript Feedback
+        Route::post('/shop-manuscript-taken/{id}/add-feedback', 'ShopManuscriptController@addFeedback')->name('admin.shop-manuscript-taken-feedback.store'); // Store Shop Manuscript Feedback
         Route::post('/shop-manuscript-taken/{id}/delete', 'ShopManuscriptController@destroyFeedback')->name('admin.shop-manuscript-taken-feedback.delete'); // Remove Shop Manuscript Feedback
         Route::post('/shop-manuscript-taken/{id}/update-genre', 'ShopManuscriptController@updateGenre')->name('admin.shop-manuscript-taken.update-genre'); // Remove Shop Manuscript Feedback
 

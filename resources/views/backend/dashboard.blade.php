@@ -218,11 +218,10 @@
 											<a href="{{ route('backend.download_shop_manuscript', $shopManuscript->id) }}"
 											   class="btn btn-primary btn-xs">{{ trans('site.download') }}</a> <br>
 
-											<button type="button" class="btn btn-warning btn-xs margin-top" data-toggle="modal"
+											<button type="button" class="btn btn-warning btn-xs margin-top addShopManuscriptFeedback" data-toggle="modal"
 													data-target="#addFeedbackModal"
 												data-action="{{ route('admin.shop-manuscript-taken-feedback.store',
-												$shopManuscript->id) }}"
-												id="addShopManuscriptFeedback">+ {{ trans('site.add-feedback') }}</button>
+												$shopManuscript->id) }}">+ {{ trans('site.add-feedback') }}</button>
 										</td>
 									</tr>
 								@endif
@@ -1215,7 +1214,7 @@
         modal.find('form').find('input[name=manuscript_id]').val(manuscript_id);
     });
 
-    $("#addShopManuscriptFeedback").click(function(){
+    $(".addShopManuscriptFeedback").click(function(){
         var modal = $('#addFeedbackModal');
         var action = $(this).data('action');
         modal.find('form').attr('action', action);
