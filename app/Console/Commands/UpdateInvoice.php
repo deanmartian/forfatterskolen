@@ -62,14 +62,16 @@ class UpdateInvoice extends Command
         foreach( $invoices as $invoice ) {
             $kid            = NULL;
             $invoice_number = NULL;
+            $issueDate      = NULL;
             foreach( $fikenInvoices as $fikenInvoice ) :
                 if( $invoice->fiken_url == $fikenInvoice->_links->alternate->href ) :
                     $kid = isset($fikenInvoice->kid) ? $fikenInvoice->kid : NULL;
                     $invoice_number = isset($fikenInvoice->invoiceNumber) ? $fikenInvoice->invoiceNumber : NULL;
+                    $issueDate = isset($fikenInvoice->issueDate) ? $fikenInvoice->issueDate : NULL;
                     break;
                 endif;
             endforeach;
-            $invoice->update(['kid_number' => $kid, 'invoice_number' => $invoice_number]);
+            $invoice->update(['kid_number' => $kid, 'invoice_number' => $invoice_number, 'fiken_issueDate' => $issueDate]);
         }
 
         return "done checking fiken";

@@ -1,27 +1,7 @@
-<?php
-$fikenURL = false;
-foreach( $fikenInvoices as $fikenInvoice ) :
-    if( $invoice->fiken_url == $fikenInvoice->_links->alternate->href ) :
-      $fikenURL = true;
-      break;
-    endif;
-endforeach;
-$fikenError = false;
-if( $fikenURL ) :
-  $sale = FrontendHelpers::FikenConnect($fikenInvoice->sale);
-  $status = $sale->paid ? "BETALT" : "UBETALT";
-else :
-  $fikenError = true;
-endif;
-?>
 @extends('backend.layout')
 
 @section('title')
-@if( $fikenError )
-<title>Error Invoice &rsaquo; Forfatterskolen Admin</title>
-@else
-<title>Invoice #{{$fikenInvoice->invoiceNumber}} &rsaquo; Forfatterskolen Admin</title>
-@endif
+<title>Invoice #{{$invoice->invoice_number}} &rsaquo; Forfatterskolen Admin</title>
 @stop
 
 @section('content')
@@ -38,30 +18,24 @@ endif;
               <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editInvoiceModal"><i class="fa fa-pencil"></i></button>
               <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteInvoiceModal"><i class="fa fa-trash"></i></button>
             </div>
-            @if( $fikenError )
-            
-            <h4 style="color: red">Error with Fiken URL.</h4>    
 
-            @else
-
-						<h3>Invoice #{{$fikenInvoice->invoiceNumber}}</h3><br />
+						<h3>Invoice #{{$invoice->invoice_number}}</h3><br />
             Learner: <a href="{{route('admin.learner.show', $invoice->user->id)}}">{{$invoice->user->fullname}}</a> <br />
 						Status: 
-						@if($sale->paid)
-						<span class="label label-success">{{$status}}</span>
+						@if($invoice->fiken_is_paid)
+						<span class="label label-success">BETALT</span>
 						@else
-						<span class="label label-danger">{{$status}}</span>
+						<span class="label label-danger">UBETALT</span>
 						@endif <br />
-						Created at: {{$fikenInvoice->issueDate}} <br />
-						Due Date: {{$fikenInvoice->dueDate}}
+						Created at: {{$invoice->fiken_issueDate}} <br />
+						Due Date: {{$invoice->fiken_dueDate}}
 
-            @endif
 
 
 						<div class="margin-top margin-bottom"><strong>Transactions</strong></div>
-            @if(! $fikenError )
-						<?php $balance = (double)$fikenInvoice->gross/100; $total = 0;?>
-            @endif
+
+						<?php $balance = $invoice->fiken_balance; $total = 0;?>
+
 						<div class="table-responsive">
 							<table class="table table-side-bordered">
 								<thead>
@@ -97,10 +71,10 @@ endif;
 										<td colspan="4">No transactions</td>
 									</tr>
 									@endif
-                  @if(! $fikenError )
+
 									<tr class="text-right">
 										<td colspan="3"><h4><strong>Balance:&nbsp;&nbsp;
-                    @if( $sale->paid )
+					@if($invoice->fiken_is_paid)
                     {{FrontendHelpers::currencyFormat(0)}}
                     @else
                     {{FrontendHelpers::currencyFormat($balance - $total)}}
@@ -108,7 +82,7 @@ endif;
                     </strong></h4></td>
 										<td></td>
 									</tr>
-                  @endif
+
 								</tbody>
 							</table>
 						</div>
@@ -232,11 +206,7 @@ endif;
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        @if( $fikenError )
-        <h4 class="modal-title">Edit Invoice</h4>
-        @else
-        <h4 class="modal-title">Edit Invoice #{{$fikenInvoice->invoiceNumber}}</h4>
-        @endif
+        <h4 class="modal-title">Edit Invoice #{{$invoice->invoice_number}}</h4>
       </div>
       <div class="modal-body">
         <form method="POST" action="{{ route('admin.invoice.update', $invoice->id) }}">

@@ -78,18 +78,7 @@ class LearnerController extends Controller
     public function show($id)
     {
         $learner = User::findOrFail($id);
-        $fikenInvoices = [];
-        if( count($learner->invoices) > 0 ) :
-            $ch = curl_init($this->fikenInvoices); 
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
-            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
-            $data = curl_exec($ch);
-            $data = json_decode($data);
-            $fikenInvoices = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};
-        endif;
-        return view('backend.learner.show', compact('learner', 'fikenInvoices'));
+        return view('backend.learner.show', compact('learner'));
     }
 
 

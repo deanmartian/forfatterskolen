@@ -375,14 +375,14 @@
 						<tbody>
 							@foreach($learner->invoices as $invoice)
 							<?php
-							$fikenURL = false;
+							/*$fikenURL = false;
 							foreach( $fikenInvoices as $fikenInvoice ) :
 							    if( $invoice->fiken_url == $fikenInvoice->_links->alternate->href ) :
 							      $fikenURL = true;
 							      break;
 							    endif;
 							endforeach;
-							$fikenError = false;
+							$fikenError = false;*/
                             /*if( $fikenURL ) :
                               $sale = FrontendHelpers::FikenConnect($fikenInvoice->sale);
                               $status = $sale->paid ? "BETALT" : "UBETALT";
@@ -392,9 +392,7 @@
 							?>
 							<tr>
 		    					<td>
-		    						@if( !$fikenError )
-		    						<a href="{{route('admin.invoice.show', $invoice->id)}}">{{ $fikenInvoice->invoiceNumber }}</a>
-		    						@endif
+		    						<a href="{{route('admin.invoice.show', $invoice->id)}}">{{ $invoice->invoice_number }}</a>
 		    					</td>
 								<td>
 									@if($invoice->fiken_is_paid)
