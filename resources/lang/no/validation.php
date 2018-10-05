@@ -1,25 +1,33 @@
 <?php
 
 return array (
-  'accepted' => 'The :attribute must be accepted.',
+  'accepted' => 'The :attribute must be accepted',
   'active_url' => 'The :attribute is not a valid URL.',
   'after' => 'The :attribute must be a date after :date.',
   'after_or_equal' => 'The :attribute must be a date after or equal to :date.',
   'alpha' => 'The :attribute may only contain letters.',
   'alpha_dash' => 'The :attribute may only contain letters, numbers, and dashes.',
   'alpha_num' => 'The :attribute may only contain letters and numbers.',
+  'alpha_num_spaces' => 'The :attribute may only contain letters, numbers and spaces.',
   'array' => 'The :attribute must be an array.',
   'before' => 'The :attribute must be a date before :date.',
   'before_or_equal' => 'The :attribute must be a date before or equal to :date.',
   'between' => 
   array (
-    'numeric' => 'The :attribute must be between :min and :max.',
-    'file' => 'The :attribute must be between :min and :max kilobytes.',
-    'string' => 'The :attribute must be between :min and :max characters.',
     'array' => 'The :attribute must have between :min and :max items.',
+    'file' => 'The :attribute must be between :min and :max kilobytes.',
+    'numeric' => 'The :attribute must be between :min and :max.',
+    'string' => 'The :attribute must be between :min and :max characters.',
   ),
   'boolean' => 'The :attribute field must be true or false.',
   'confirmed' => 'The :attribute confirmation does not match.',
+  'custom' => 
+  array (
+    'attribute-name' => 
+    array (
+      'rule-name' => 'custom-message',
+    ),
+  ),
   'date' => 'The :attribute is not a valid date.',
   'date_format' => 'The :attribute does not match the format :format.',
   'different' => 'The :attribute and :other must be different.',
@@ -39,19 +47,19 @@ return array (
   'json' => 'The :attribute must be a valid JSON string.',
   'max' => 
   array (
-    'numeric' => 'The :attribute may not be greater than :max.',
-    'file' => 'The :attribute may not be greater than :max kilobytes.',
-    'string' => 'The :attribute may not be greater than :max characters.',
     'array' => 'The :attribute may not have more than :max items.',
+    'file' => 'The :attribute may not be greater than :max kilobytes.',
+    'numeric' => 'The :attribute may not be greater than :max.',
+    'string' => 'The :attribute may not be greater than :max characters.',
   ),
   'mimes' => 'The :attribute must be a file of type: :values.',
   'mimetypes' => 'The :attribute must be a file of type: :values.',
   'min' => 
   array (
-    'numeric' => 'The :attribute must be at least :min.',
-    'file' => 'The :attribute must be at least :min kilobytes.',
-    'string' => 'The :attribute must be at least :min characters.',
     'array' => 'The :attribute must have at least :min items.',
+    'file' => 'The :attribute must be at least :min kilobytes.',
+    'numeric' => 'The :attribute must be at least :min.',
+    'string' => 'The :attribute must be at least :min characters.',
   ),
   'not_in' => 'The selected :attribute is invalid.',
   'numeric' => 'The :attribute must be a number.',
@@ -67,22 +75,14 @@ return array (
   'same' => 'The :attribute and :other must match.',
   'size' => 
   array (
-    'numeric' => 'The :attribute must be :size.',
-    'file' => 'The :attribute must be :size kilobytes.',
-    'string' => 'The :attribute must be :size characters.',
     'array' => 'The :attribute must contain :size items.',
+    'file' => 'The :attribute must be :size kilobytes.',
+    'numeric' => 'The :attribute must be :size.',
+    'string' => 'The :attribute must be :size characters.',
   ),
   'string' => 'The :attribute must be a string.',
   'timezone' => 'The :attribute must be a valid zone.',
   'unique' => 'The :attribute has already been taken.',
   'uploaded' => 'The :attribute failed to upload.',
   'url' => 'The :attribute format is invalid.',
-  'alpha_num_spaces' => 'The :attribute may only contain letters, numbers and spaces.',
-  'custom' => 
-  array (
-    'attribute-name' => 
-    array (
-      'rule-name' => 'custom-message',
-    ),
-  ),
 );

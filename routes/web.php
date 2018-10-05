@@ -1030,6 +1030,10 @@ Route::group([
            return redirect()->to('/translations/view/site');
         });
 
+        Route::get('translations/view',function(){
+            return redirect()->to('/translations/view/site');
+        });
+
         Route::prefix('zoom')->group(function () {
             Route::get('/', 'ZoomController@index');
             Route::get('webinar/{user_id}', 'ZoomController@webinars')->name('admin.zoom.webinars');

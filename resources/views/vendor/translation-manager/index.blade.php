@@ -70,7 +70,11 @@
                         <div class="panel panel-default">
                             <div class="panel-body">
                                 <h1 style="margin-top: 0">Translation Manager</h1>
-                                <p>Warning, translations are not visible until they are exported back using the publish button.</p>
+                                <p class="text-muted d-block" style="margin-bottom: 0"><i class="fa fa-exclamation-triangle"></i> Warning, translations are not visible until they are exported back using the publish button.</p>
+                                <p class="text-muted d-block">
+                                    <i class="fa fa-exclamation-circle"></i>
+                                    Note, Please be guided that those words which start with <strong>colon(:)</strong> like <strong>:attribute</strong> and words which surrounded with <strong>underscore(_)</strong> like <strong>_MAX_, _PAGE_, _MIN_, etc</strong> must not be translated to avoid conflicts on the system functionality.
+                                </p>
                                 <div class="alert alert-success success-import" style="display:none;">
                                     <p>Done importing, processed <strong class="counter">N</strong> items! Reload this page to refresh the groups!</p>
                                 </div>
@@ -113,10 +117,12 @@
                                 </p>
                                 <form role="form">
                                     {{ csrf_field() }}
-                                    <div class="form-group hidden">
+                                    <div class="form-group">
                                         <select name="group" id="group" class="form-control group-select">
                                             @foreach($groups as $key => $value)
-                                                <option value="{{ $key }}"{{ $key == $group ? ' selected':'' }}>{{ $value }}</option>
+                                                @if ($key)
+                                                <option value="{{ $key }}"{{ $key == $group ? ' selected':'' }}>{{ ucfirst($value) }}</option>
+                                                @endif
                                             @endforeach
                                         </select>
                                     </div>
@@ -268,6 +274,7 @@
         function publishTranslations(t) {
 
             let publish_translation_link = '{{ action('\Barryvdh\TranslationManager\Controller@postPublish', $group) }}';
+            console.log(publish_translation_link);
             let self = $(t);
 
             $.confirm({
