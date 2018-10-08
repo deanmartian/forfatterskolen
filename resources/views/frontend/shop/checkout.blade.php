@@ -4,6 +4,36 @@
 <title>Checkout &rsaquo; Forfatterskolen</title>
 @stop
 
+@section('styles')
+	<style>
+		.loading {
+			font-size: 20px;
+		}
+
+		.loading:after {
+			overflow: hidden;
+			display: inline-block;
+			vertical-align: bottom;
+			-webkit-animation: ellipsis steps(4,end) 900ms infinite;
+			animation: ellipsis steps(4,end) 900ms infinite;
+			content: "\2026"; /* ascii code for the ellipsis character */
+			width: 0;
+		}
+
+		@keyframes ellipsis {
+			to {
+				width: 1.25em;
+			}
+		}
+
+		@-webkit-keyframes ellipsis {
+			to {
+				width: 1.25em;
+			}
+		}
+	</style>
+@stop
+
 @section('content')
 
 <div class="container">
@@ -353,6 +383,20 @@
 
 </div>
 
+<div id="processOrderModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-body">
+				<p class="text-center">
+					Din ordre blir behandlet
+				</p>
+
+				<div class="loading" style="margin-left: 60px;">Vennligst vent</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <input type="hidden" name="discount_value">
 @stop
 
@@ -362,6 +406,7 @@
 $(document).ready(function(){
 
     $("#place_order_form").on('submit',function(){
+        $("#processOrderModal").modal('show');
         $("#submitOrder").attr('disabled',true);
 	});
 

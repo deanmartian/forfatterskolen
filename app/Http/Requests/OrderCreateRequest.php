@@ -35,4 +35,18 @@ class OrderCreateRequest extends FormRequest
             'package_id' => 'required',
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'street.required' => 'Gate navn er nødvendig',
+            'city.required'  => 'Poststed er nødvendig',
+            'zip.required'  => 'Postnummer er nødvendig',
+        ];
+    }
 }
