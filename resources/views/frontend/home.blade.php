@@ -116,7 +116,7 @@
                                         <h4>{{ $next_workshop->title }}</h4>
                                         <p>{{ str_limit(strip_tags($next_workshop->description), 180)}}</p>
                                         <div class="bottom-div-display">
-                                            {{ \App\Http\FrontendHelpers::formatDateTimeNor($next_workshop->start_date) }}
+                                            {{ \App\Http\FrontendHelpers::formatDateTimeNor($next_workshop->date) }}
                                         </div>
                                     </div>
                                 </div>
