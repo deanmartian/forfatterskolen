@@ -11,7 +11,7 @@
 
 <li @if($section == 'webinars') class="active" @endif><a href="{{route('admin.course.show', $course->id)}}?section=webinars"><i class="fa fa-play-circle-o"></i>&nbsp;&nbsp;{{ trans('site.webinars') }}</a></li>
 
-<li @if($section == 'packages') class="active" @endif><a href="{{route('admin.course.show', $course->id)}}?section=packages"><i class="fa fa-list"></i>&nbsp;&nbsp;{{ trans('site.packages') }}</a></li>
+<li @if($section == 'packages') class="active" @endif><a href="{{route('admin.course.show', $course->id)}}?section=packages"><i class="fa fa-list"></i>&nbsp;&nbsp;{{ trans_choice('site.packages', 2) }}</a></li>
 
 <li @if($section == 'learners') class="active" @endif><a href="{{route('admin.course.show', $course->id)}}?section=learners"><i class="fa fa-users"></i>&nbsp;&nbsp;{{ trans('site.course-learners') }}</a></li>
 

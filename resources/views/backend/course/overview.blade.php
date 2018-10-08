@@ -18,8 +18,8 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<div class="pull-right">
-						<a class="btn btn-sm btn-success" href="{{route('admin.course.edit', $course->id)}}"><i class="fa fa-pencil"></i> Edit</a>
-						<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#cloneModal"><i class="fa fa-copy"></i> Clone</button>
+						<a class="btn btn-sm btn-success" href="{{route('admin.course.edit', $course->id)}}"><i class="fa fa-pencil"></i> {{ trans('site.edit') }}</a>
+						<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#cloneModal"><i class="fa fa-copy"></i> {{ trans('site.clone') }}</button>
 					</div>
 
 					<h4>{{ trans('site.course-details') }}</h4>
@@ -59,7 +59,7 @@
 			<div class="col-sm-12 col-md-6">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<a class="pull-right btn btn-xs btn-default" href="{{route('admin.course.show', $course->id)}}?section=lessons">View More</a>
+						<a class="pull-right btn btn-xs btn-default" href="{{route('admin.course.show', $course->id)}}?section=lessons">{{ trans('site.view-more') }}</a>
 						<h4>{{ trans_choice('site.lessons', 2) }}</h4>
 					</div>
 					<div class="table-responsive">
@@ -94,8 +94,8 @@
 			<div class="col-sm-12 col-md-6">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<a class="pull-right btn btn-xs btn-default" href="{{route('admin.course.show', $course->id)}}?section=packages">View More</a>
-						<h4>{{ trans('site.packages') }}</h4>
+						<a class="pull-right btn btn-xs btn-default" href="{{route('admin.course.show', $course->id)}}?section=packages">{{ trans('site.view-more') }}</a>
+						<h4>{{ trans_choice('site.packages', 2) }}</h4>
 					</div>
 					<div class="table-responsive">
 						<table class="table">
@@ -127,7 +127,7 @@
 			<div class="col-sm-12">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<a class="pull-right btn btn-xs btn-default" href="{{route('admin.course.show', $course->id)}}?section=manuscripts">View More</a>
+						<a class="pull-right btn btn-xs btn-default" href="{{route('admin.course.show', $course->id)}}?section=manuscripts">{{ trans('site.view-more') }}</a>
 						<h4>{{ trans('site.recent-manuscripts-uploaded') }}</h4>
 					</div>
 					<div class="table-responsive">
@@ -160,7 +160,7 @@
 			<div class="col-sm-7">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<button class="pull-right btn btn-xs btn-primary" data-toggle="modal" data-target="#editEmailModal">Edit</button>
+						<button class="pull-right btn btn-xs btn-primary" data-toggle="modal" data-target="#editEmailModal">{{ trans('site.edit') }}</button>
 						<h4>{{ trans('site.email') }}</h4>
 					</div>
 					<div class="panel-body">
@@ -174,7 +174,7 @@
 			<div class="col-sm-5">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<button class="pull-right btn btn-xs btn-primary" data-toggle="modal" data-target="#addSimilarCourseModal">+ Add</button>
+						<button class="pull-right btn btn-xs btn-primary" data-toggle="modal" data-target="#addSimilarCourseModal">+ {{ trans('site.add') }}</button>
 						<h4>{{ trans('site.similar-courses') }}</h4>
 					</div>
 					<div class="table-responsive">
@@ -281,14 +281,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Clone course</h4>
+        <h4 class="modal-title">{{ trans('clone-course') }}</h4>
       </div>
       <div class="modal-body">
       	<form method="POST" action="{{ route('admin.course.clone', $course->id) }}">
       		{{ csrf_field() }}
-      		Are you sure to clone this course? This will also clone course lessons.
+			{{ trans('clone-course-question') }}
       		<div class="text-right margin-top">
-      			<button type="submit" class="btn btn-primary">Clone</button>
+      			<button type="submit" class="btn btn-primary">{{ trans('clone') }}</button>
       		</div>
       	</form>
       </div>

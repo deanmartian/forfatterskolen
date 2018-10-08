@@ -19,7 +19,7 @@
 
 	<div class="col-sm-12 col-md-10 sub-right-content">
 		<div class="col-sm-12">
-			<button type="button" class="btn btn-sm btn-primary margin-bottom" data-toggle="modal" data-target="#addAssignmentModal">Add assignment</button>
+			<button type="button" class="btn btn-sm btn-primary margin-bottom" data-toggle="modal" data-target="#addAssignmentModal">{{ trans('site.add-assignment') }}</button>
 			<div class="table-responsive">
 				<table class="table table-side-bordered table-white">
 					<thead>
@@ -48,26 +48,26 @@
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Add assignment</h4>
+		    <h4 class="modal-title">{{ trans('site.add-assignment') }}</h4>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action="{{route('admin.assignment.store', $course->id)}}">
 		      {{ csrf_field() }}
 		      <div class="form-group">
-		      	<label>Title</label>
-		      	<input type="text" class="form-control" name="title" placeholder="Title" required>
+		      	<label>{{ trans('site.title') }}</label>
+		      	<input type="text" class="form-control" name="title" placeholder="{{ trans('site.title') }}" required>
 		      </div>
 		      <div class="form-group">
-		      	<label>Description</label>
-		      	<textarea class="form-control" name="description" placeholder="Description" rows="6"></textarea>
+		      	<label>{{ trans('site.description') }}</label>
+		      	<textarea class="form-control" name="description" placeholder="{{ trans('site.description') }}" rows="6"></textarea>
 		      </div>
 				<div class="form-group">
-					<label>Submission Date</label>
+					<label>{{ trans('site.submission-date') }}</label>
 					<input type="datetime-local" class="form-control" name="submission_date" required>
 				</div>
 
 				<div class="form-group">
-					<label>Allowed Package</label>
+					<label>{{ trans('site.allowed-package') }}</label>
 						@foreach($course->packages as $package)
 						<div class="form-check">
 							<input class="form-check-input" type="checkbox" value="{{ $package->id }}" name="allowed_package[]">
@@ -79,21 +79,21 @@
 				</div>
 
 				<div class="form-group">
-					<label>Add On Price</label>
+					<label>{{ trans('site.add-on-price') }}</label>
 					<input type="number" class="form-control" name="add_on_price" required>
 				</div>
 
 				<div class="form-group">
-					<label>Max words</label>
+					<label>{{ trans('site.max-words') }}</label>
 					<input type="number" class="form-control" name="max_words">
 				</div>
 
 				<div class="form-group">
-					<label>For Editor</label> <br>
+					<label>{{ trans('site.for-editor') }}</label> <br>
 					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small" name="for_editor">
 				</div>
 
-		      <button type="submit" class="btn btn-primary pull-right margin-top">Add</button>
+		      <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.add') }}</button>
 		      <div class="clearfix"></div>
 		    </form>
 		  </div>

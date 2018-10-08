@@ -12,7 +12,7 @@
 			</form>
 		</div>
 	  	<div class="form-group">
-	  		<a href="{{url('course')}}" class="btn btn-primary">View All Courses</a>
+	  		<a href="{{url('course')}}" class="btn btn-primary">{{ trans('site.view-all-courses') }}</a>
 	  	</div>
 	</div>
 	<div class="clearfix"></div>

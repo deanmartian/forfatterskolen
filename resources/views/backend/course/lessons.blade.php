@@ -17,10 +17,10 @@
 		<div class="col-sm-12 col-md-12">
 			<form class="pull-right" method="POST" action="{{ route('admin.lesson.save_order') }}">
 				{{ csrf_field() }}
-				<button type="submit" class="btn btn-success" id="save_order" disabled>Save Order</button> 
+				<button type="submit" class="btn btn-success" id="save_order" disabled>{{ trans('site.save-order') }}</button>
 				<input type="hidden" name="lesson_order" id="lesson_order">
 			</form>
-			<a class="btn btn-primary margin-bottom" href="{{route('admin.lesson.create', $course->id)}}">+ Add Lesson</a> 
+			<a class="btn btn-primary margin-bottom" href="{{route('admin.lesson.create', $course->id)}}">+ {{ trans('site.add-lesson') }}</a>
 			<div class="table-responsive">
 				<table class="table table-side-bordered table-white" id="lessonsTable" style="table-layout: fixed">
 					<thead>

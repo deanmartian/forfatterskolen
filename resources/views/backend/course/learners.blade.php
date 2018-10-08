@@ -31,10 +31,10 @@
 
 	<div class="col-sm-12 col-md-10 sub-right-content">
 		<div class="col-sm-12 col-md-12">
-			<form class="pull-right form-inline" method="GET"">
+			<form class="pull-right form-inline" method="GET">
 				<div class="input-group">
 					<input type="hidden" name="section"  value="{{ Request::input('section') }}">
-				    <input type="search" class="form-control" name="search" placeholder="Search" value="{{ Request::input('search') }}">
+				    <input type="search" class="form-control" name="search" placeholder="{{ trans('site.search') }}" value="{{ Request::input('search') }}">
 				    <div class="input-group-btn">
 				      <button class="btn btn-default" type="submit">
 				        <i class="glyphicon glyphicon-search"></i>
@@ -51,10 +51,10 @@
 				<table class="table table-side-bordered table-white">
 					<thead>
 						<tr>
-							<th>Learner</th>
-							<th>Learner ID</th>
-							<th>Package</th>
-							<th>Progress</th>
+							<th>{{ trans_choice('site.learners', 1) }}</th>
+							<th>{{ trans('site.learner-id') }}</th>
+							<th>{{ trans_choice('site.packages', 1) }}</th>
+							<th>{{ trans('site.progress') }}</th>
 							<th></th>
 						</tr>
 					</thead>

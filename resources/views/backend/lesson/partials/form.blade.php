@@ -1,5 +1,5 @@
 <div class="container">
-	<a class="btn btn-info margin-bottom" href="{{route('admin.course.show', $course->id)}}?section=lessons"><i class="fa fa-arrow-left"></i> Back to lessons</a>
+	<a class="btn btn-info margin-bottom" href="{{route('admin.course.show', $course->id)}}?section=lessons"><i class="fa fa-arrow-left"></i> {{ trans('site.back-to-lessons') }}</a>
 	@if(Request::is('course/*/lesson/create'))
 	<form action="{{route('admin.lesson.store', $course->id)}}" method="post" enctype="multipart/form-data">
 	@else
@@ -70,10 +70,10 @@
 				<div class="row margin-top">
 					<div class="col-sm-6 col-sm-offset-6 text-right">
 						@if(Request::is('course/*/lesson/create'))
-						<button type="submit" class="btn btn-info">Create Lesson</button>
+						<button type="submit" class="btn btn-info">{{ trans('site.create-lesson') }}</button>
 						@else
-						<button type="submit" class="btn btn-info">Update Lesson</button>
-						<button type="button" data-toggle="modal" data-target="#deleteLessonModal" class="btn btn-danger">Delete Lesson</button>
+						<button type="submit" class="btn btn-info">{{ trans('site.update-lesson') }}</button>
+						<button type="button" data-toggle="modal" data-target="#deleteLessonModal" class="btn btn-danger">{{ trans('site.delete-lesson') }}</button>
 						@endif
 						{{--<textarea id="description-ct" class="hidden" name="content">{{$lesson['content']}}</textarea>--}}
 					</div>
@@ -108,7 +108,7 @@
                     </form>
                 @else
                     <button class="btn btn-primary" onclick="methods.addNewStructureContent()"
-                            type="button" id="addNewContentBtn">Add Content</button>
+                            type="button" id="addNewContentBtn">{{ trans('site.add-content') }}</button>
 
                     <form action=""></form>
                     <form action="{{ route('admin.lesson.add_content', $lesson['id']) }}" id="newStructureForm"
@@ -116,7 +116,7 @@
                         {{ csrf_field() }}
                         <div id="content_container"></div>
                         <button type="button" class="btn btn-primary margin-top hidden" id="newStructureSaveChanges"
-                        onclick="methods.saveLessonContent(this)">Save Changes</button>
+                        onclick="methods.saveLessonContent(this)">{{ trans('site.save-changes') }}</button>
                     </form>
                     <input type="hidden" name="webinar_pakke">
                 @endif
@@ -210,6 +210,7 @@ const methods = {
         let title_text = $(".title-text").text();
         let video_text = $(".video-text").text();
         let id = this.uniqueId()+'_editor';
+        let remove_text = '{{ trans('site.remove') }}';
         let form = `<div class="newStructureFormContainer margin-top">
                         <div class="form-group row">
                             <div class="col-xs-6">
@@ -226,7 +227,7 @@ const methods = {
                             </div>
                         </div>
                         <input type="hidden" name="content_id[]" value="${ content_id }">
-                        <button class='btn btn-danger' onclick='methods.cancelNewStructure(this)' type='button'>Remove</button>
+                        <button class='btn btn-danger' onclick='methods.cancelNewStructure(this)' type='button'>${remove_text}</button>
                     </div>`;
 
 

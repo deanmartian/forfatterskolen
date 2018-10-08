@@ -19,7 +19,7 @@
 
 	<div class="col-sm-12 col-md-10 sub-right-content">
 		<div class="col-sm-12">
-			<a href="{{ route('admin.course.show', $course->id) }}?section=assignments" class="btn btn-sm btn-default margin-bottom" ><i class="fa fa-angle-left"></i> All assignments</a>
+			<a href="{{ route('admin.course.show', $course->id) }}?section=assignments" class="btn btn-sm btn-default margin-bottom" ><i class="fa fa-angle-left"></i> {{ trans('site.all-assignments') }}</a>
 
 			<div class="pull-right">
 				<button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#editAssignmentModal"><i class="fa fa-pencil"></i></button>
@@ -29,31 +29,31 @@
 			<h3 class="no-margin-bottom">{{ $assignment->title }}</h3>
 			<p class="margin-bottom">
 				{{ $assignment->description }} <br>
-				<b>Submission Date:</b> <i>{{ $assignment->submission_date }}</i>
+				<b>{{ trans('site.submission-date') }}:</b> <i>{{ $assignment->submission_date }}</i>
 			</p>
 			
 			<div class="table-responsive">
-				<button type="button" class="pull-right btn btn-primary btn-sm margin-bottom" data-toggle="modal" data-target="#addManuscriptModal">Add manuscript</button>
+				<button type="button" class="pull-right btn btn-primary btn-sm margin-bottom" data-toggle="modal" data-target="#addManuscriptModal">{{ trans('site.add-manuscript') }}</button>
 				@if ($assignment->for_editor && $assignment->manuscripts->count())
 					@if($assignment->generated_filepath)
-						<a href="{{ route('assignment.group.download-generate-doc', $assignment->id) }}" class="pull-right btn btn-success btn-sm margin-bottom margin-right-5">Download Generated File</a>
+						<a href="{{ route('assignment.group.download-generate-doc', $assignment->id) }}" class="pull-right btn btn-success btn-sm margin-bottom margin-right-5">{{ trans('site.download-generated-file') }}</a>
 					@else
-						<a href="{{ route('assignment.group.generate-doc', $assignment->id) }}" class="pull-right btn btn-success btn-sm margin-bottom margin-right-5">Generate</a>
+						<a href="{{ route('assignment.group.generate-doc', $assignment->id) }}" class="pull-right btn btn-success btn-sm margin-bottom margin-right-5">{{ trans('site.generate') }}</a>
 					@endif
 				@endif
-				<h5>Manuscripts</h5>
+				<h5>{{ trans_choice('site.manuscripts', 2) }}</h5>
 				<table class="table table-side-bordered table-white">
 					<thead>
 						<tr>
-							<th>Manuscript</th>
-							<th>Learner</th>
-							<th>Grade</th>
-							<th>Type</th>
-							<th>Hvor</th>
-							<th>Words</th>
-							<th>Text Nr.</th>
-							<th>Feedback Out</th>
-							<th>Editor</th>
+							<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+							<th>{{ trans_choice('site.learners', 1) }}</th>
+							<th>{{ trans('site.grade') }}</th>
+							<th>{{ trans('site.type') }}</th>
+							<th>{{ trans('site.where') }}</th>
+							<th>{{ trans_choice('site.words', 2) }}</th>
+							<th>{{ trans('site.text-nr') }}</th>
+							<th>{{ trans('site.feedback-out') }}</th>
+							<th>{{ trans_choice('site.editors', 1) }}</th>
 							<th width="250"></th>
 						</tr>
 					</thead>
@@ -111,18 +111,18 @@
 								<button class="btn btn-xs btn-primary assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal"
 								data-action="{{ route('assignment.group.assign_manu_editor', $manuscript->id) }}"
 								data-editor="{{ $editor ? $editor->id : "" }}">
-									Assign Editor
+									{{ trans('site.assign-editor') }}
 								</button>
 							</td>
 							<td>
 								<div class="text-right">
-									<a href="{{ route('assignment.group.download_manuscript', $manuscript->id) }}" class="btn btn-primary btn-xs">Download</a>
-									<input type="checkbox" data-toggle="toggle" data-on="Locked"
-										   class="lock-toggle" data-off="Unlocked"
+									<a href="{{ route('assignment.group.download_manuscript', $manuscript->id) }}" class="btn btn-primary btn-xs">{{ trans('site.download') }}</a>
+									<input type="checkbox" data-toggle="toggle" data-on="{{ trans('site.locked') }}"
+										   class="lock-toggle" data-off="{{ trans('site.unlocked') }}"
 										   data-id="{{$manuscript->id}}" data-size="mini" @if($manuscript->locked) {{ 'checked' }} @endif>
-									<button type="button" class="btn btn-info btn-xs replaceManuscriptBtn" data-toggle="modal" data-target="#replaceManuscriptModal" data-action="{{ route('assignment.group.replace_manuscript', $manuscript->id) }}" data-grade="{{ $manuscript->grade }}" data-ass-type="{{ $manuscript->type }}" data-manu-type="{{ $manuscript->manu_type }}">Replace Doc</button>
+									<button type="button" class="btn btn-info btn-xs replaceManuscriptBtn" data-toggle="modal" data-target="#replaceManuscriptModal" data-action="{{ route('assignment.group.replace_manuscript', $manuscript->id) }}" data-grade="{{ $manuscript->grade }}" data-ass-type="{{ $manuscript->type }}" data-manu-type="{{ $manuscript->manu_type }}">{{ trans('site.replace-doc') }}</button>
 									<div class="margin-top">
-									<button type="button" class="btn btn-warning btn-xs setGradeBtn" data-toggle="modal" data-target="#setGradeModal" data-action="{{ route('assignment.group.set_grade', $manuscript->id) }}" data-grade="{{ $manuscript->grade }}">Set Grade</button>
+									<button type="button" class="btn btn-warning btn-xs setGradeBtn" data-toggle="modal" data-target="#setGradeModal" data-action="{{ route('assignment.group.set_grade', $manuscript->id) }}" data-grade="{{ $manuscript->grade }}">{{ trans('site.set-grade') }}</button>
 									<button type="button" class="btn btn-danger btn-xs deleteManuscriptBtn" data-toggle="modal" data-target="#deleteManuscriptModal" data-action="{{ route('assignment.group.delete_manuscript', $manuscript->id) }}"><i class="fa fa-trash"></i></button>
 									<button type="button" class="btn btn-info btn-xs moveAssignmentBtn" data-toggle="modal" data-target="#moveAssignmentModal" data-action="{{ route('assignment.group.move_manuscript', $manuscript->id) }}"><i class="fa fa-arrows"></i></button>
 										<br>
@@ -149,7 +149,7 @@
 															data-action="{{ route('assignment.group.manuscript-feedback-no-group-update',
 														$noGroupHaveFeedback[0]['id']) }}"
 															data-edit="true">
-														Edit Feedback As Admin
+														{{ trans('site.edit-feedback-as-admin') }}
 													</button>
 											@else
 												<button type="button" class="btn btn-primary btn-xs submitFeedbackBtn"
@@ -157,7 +157,7 @@
 														data-name="{{ $manuscript->user->full_name }}"
 														data-action="{{ route('assignment.group.manuscript-feedback-no-group',
 														['id' => $manuscript->id, 'learner_id' => $manuscript->user->id]) }}">
-													Submit Feedback As Admin
+													{{ trans('site.submit-feedback-as-admin') }}
 												</button>
 											@endif
 										@endif
@@ -178,7 +178,7 @@
 								<div class="text-right">
 									<a href="{{ route('assignment.group.download_all_manuscript', $assignment->id) }}"
 									   class="btn btn-primary btn-xs">
-										Download All
+										{{ trans('site.download-all') }}
 									</a>
 								</div>
 							</td>
@@ -190,12 +190,12 @@
 			<div class="table-responsive">
 				<div class="panel panel-default">
 					<div class="panel-body">
-						<h4 class="margin-bottom">Download based on assigned editor</h4>
+						<h4 class="margin-bottom">{{ trans('site.download-based-on-assigned-editor') }}</h4>
 						<form method="POST" action="{{ route('assignment.group.download_editor_manuscript', $assignment->id) }}" enctype="multipart/form-data"
 							  class="form-inline">
 							{{ csrf_field() }}
 							<div class="form-group">
-								<label>Editor</label>
+								<label>{{ trans_choice('site.editors', 1) }}</label>
 								<select class="form-control" name="editor_id" required>
 									<option value="" disabled selected>- Select Editor -</option>
 									@foreach( $editors as $editor )
@@ -204,8 +204,8 @@
 								</select>
 							</div>
 
-							<button type="submit" class="btn btn-primary">Download</button>
-							<a href="{{ route('assignment.group.download-excel-sheet', $assignment->id) }}" class="btn btn-primary" style="margin-left: 100px">Download Excel Sheet</a>
+							<button type="submit" class="btn btn-primary">{{ trans('site.download') }}</button>
+							<a href="{{ route('assignment.group.download-excel-sheet', $assignment->id) }}" class="btn btn-primary" style="margin-left: 100px">{{ trans('site.download-excel-sheet') }}</a>
 						</form>
 					</div>
 				</div>
@@ -221,15 +221,15 @@
 			<!-- start of feedback for assignment without a group -->
 				<div class="panel panel-default">
 					<div class="panel-body">
-						<h4 class="margin-bottom">Feedbacks for assignment without a group</h4>
+						<h4 class="margin-bottom">{{ trans('site.feedbacks-for-assignment-without-a-group') }}</h4>
 						<div class="table-responsive">
 							<table class="table table-bordered" style="background-color: #fff">
 								<thead>
 								<tr>
-									<th>Feedback</th>
-									<th>Submitted by</th>
-									<th>Submitted to</th>
-									<th>Availability</th>
+									<th>{{ trans_choice('site.feedbacks', 1) }}</th>
+									<th>{{ trans('site.submitted-by') }}</th>
+									<th>{{ trans('site.submitted-to') }}</th>
+									<th>{{ trans('site.availability') }}</th>
 								</tr>
 								</thead>
 								<tbody>
@@ -275,13 +275,13 @@
 			@endif
 
 			<div class="table-responsive margin-top">
-				<button type="button" class="pull-right btn btn-primary btn-sm margin-bottom" data-toggle="modal" data-target="#addGroupModal">Create group</button>
-				<h5>Groups</h5>
+				<button type="button" class="pull-right btn btn-primary btn-sm margin-bottom" data-toggle="modal" data-target="#addGroupModal">{{ trans('site.create-group') }}</button>
+				<h5>{{ trans_choice('site.groups', 2) }}</h5>
 				<table class="table table-side-bordered table-white">
 					<thead>
 						<tr>
-							<th>Group</th>
-							<th>Learners</th>
+							<th>{{ trans_choice('site.groups', 1) }}</th>
+							<th>{{ trans_choice('site.learners', 2) }}</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -304,7 +304,7 @@
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Add manuscript</h4>
+		    <h4 class="modal-title">{{ trans('site.add-manuscript') }}</h4>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action="{{ route('assignment.group.upload_manuscript', $assignment->id) }}" enctype="multipart/form-data">
@@ -317,7 +317,7 @@
 
 				?>
 		      	<div class="form-group">
-			      	<label>Learner</label>
+			      	<label>{{ trans_choice('site.learners', 1) }}</label>
 			      	<select class="form-control select2" name="learner_id" required>
 			      		<option value="" disabled selected>- Search learner -</option>
 			      		@foreach( $course->learners->whereNotIn('user_id', $assignmentManuscriptLearners)->get() as $learner )
@@ -326,12 +326,12 @@
 			      	</select>
 		      	</div>
 		      	<div class="form-group">
-			      	<label>Manuscript</label>
+			      	<label>{{ trans_choice('site.manuscripts', 1) }}</label>
 	      			<input type="file" class="form-control" required name="filename" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 	      			* Godkjente fil formater er DOCX, PDF og ODT.
       			</div>
 
-		      	<button type="submit" class="btn btn-primary pull-right margin-top">Submit</button>
+		      	<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
 		      	<div class="clearfix"></div>
 		    </form>
 		  </div>
@@ -344,13 +344,13 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Assign Editor</h4>
+				<h4 class="modal-title">{{ trans('site.assign-editor') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" enctype="multipart/form-data">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<label>Editor</label>
+						<label>{{ trans_choice('site.editors', 1) }}</label>
 						<select class="form-control" name="editor_id" required>
 							<option value="" disabled selected>- Select Editor -</option>
 							@foreach( $editors as $editor )
@@ -359,7 +359,7 @@
 						</select>
 					</div>
 
-					<button type="submit" class="btn btn-primary pull-right margin-top">Submit</button>
+					<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>

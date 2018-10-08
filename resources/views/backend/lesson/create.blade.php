@@ -13,7 +13,7 @@
 @section('content')
 
 <div class="page-toolbar">
-	<h3><i class="fa fa-file-text-o"></i> Create new lesson for {{$course->title}}</h3>
+	<h3><i class="fa fa-file-text-o"></i> {{ trans('site.create-new-lesson-for') }} {{$course->title}}</h3>
 	<div class="navbar-form navbar-right">
 	  	<div class="form-group">
 		  	<form role="search" method="get" action="">
@@ -26,7 +26,7 @@
 			</form>
 		</div>
 	  	<div class="form-group">
-	  		<a href="{{url('course')}}" class="btn btn-primary">View All Courses</a>
+	  		<a href="{{url('course')}}" class="btn btn-primary">{{ trans('site.view-all-courses') }}</a>
 	  	</div>
 	</div>
 	<div class="clearfix"></div>
