@@ -264,6 +264,13 @@ class ShopController extends Controller
 
         $invoiceText = $package->variation;
         $comment .= ' From course order';
+
+        // check if the course is taken and redirect the user to the course page before processing an invoice
+        $alreadyAvailCourse = CoursesTaken::where(['user_id' => Auth::user()->id, 'package_id' => $package->id])->first();
+        if ($alreadyAvailCourse) {
+            return redirect(route('learner.course.show', ['id' => $alreadyAvailCourse->id]));
+        }
+
         // check if the customer wants to split the invoice
         if (isset($request->split_invoice) && $request->split_invoice) {
             $division   = $paymentPlan->division * 100; // multiply the split count to get the correct value
