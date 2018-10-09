@@ -51,6 +51,7 @@ class Kernel extends ConsoleKernel
             ->everyTenMinutes();
         $schedule->command('webinarpakkeexpiresinaweek:command')
             ->dailyAt('08:00');
+        $schedule->command('queue:work --daemon')->everyMinute()->withoutOverlapping();
     }
 
     /**
