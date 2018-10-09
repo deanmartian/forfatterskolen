@@ -112,10 +112,12 @@
 
                     <form action=""></form>
                     <form action="{{ route('admin.lesson.add_content', $lesson['id']) }}" id="newStructureForm"
-                    method="POST" enctype="multipart/form-data">
+                    method="POST" enctype="multipart/form-data" style="display: inline">
                         {{ csrf_field() }}
+                        <button type="button" class="btn btn-primary hidden newStructureSaveChanges"
+                                onclick="methods.saveLessonContent(this)">{{ trans('site.save-changes') }}</button>
                         <div id="content_container"></div>
-                        <button type="button" class="btn btn-primary margin-top hidden" id="newStructureSaveChanges"
+                        <button type="button" class="btn btn-primary margin-top hidden newStructureSaveChanges"
                         onclick="methods.saveLessonContent(this)">{{ trans('site.save-changes') }}</button>
                     </form>
                     <input type="hidden" name="webinar_pakke">
@@ -231,8 +233,8 @@ const methods = {
                     </div>`;
 
 
-        $("#content_container").append(form);
-        $("#newStructureSaveChanges").removeClass('hidden');
+        $("#content_container").prepend(form);
+        $(".newStructureSaveChanges").removeClass('hidden');
         this.loadEditor(id);
         if (!content_id) {
             toastr.success('Content form added.', "Success");
@@ -243,7 +245,7 @@ const methods = {
         $(el).closest('.newStructureFormContainer').remove();
 
         if ($(".newStructureFormContainer").length === 0) {
-            $("#newStructureSaveChanges").addClass('hidden');
+            $(".newStructureSaveChanges").addClass('hidden');
         }
 
         let content_id = $(el).closest('.newStructureFormContainer').find('[name="content_id[]"]').val();
