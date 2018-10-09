@@ -1048,6 +1048,7 @@ footer .social a{
 
 .badge-danger {
 	color: #fff;
+	border-radius: .25rem;
 	background-color: #dc3545;
 }
 
@@ -1231,6 +1232,10 @@ body .reader-directory-search, body .author-view-feedbacks {
 	color: #212529;
 	background-color: #f8f9fa;
 	border-color: #f8f9fa;
+}
+
+.mr-2, .mx-2 {
+	margin-right: .5rem!important;
 }
 
 .ml-2, .mx-2 {

@@ -84,7 +84,8 @@ Route::group([
 
         Route::post('/shop-manuscript/{id}/place_order', 'ShopManuscriptController@place_order')->name('front.shop-manuscript.place_order'); // Checkout Shop Manuscript
         Route::post('/upgrade-manuscript/{id}/place_upgrade', 'ShopManuscriptController@upgradeManuscript')->name('front.shop-manuscript.upgrade-manuscript'); // Checkout Shop Manuscript
-        
+
+        Route::get('/email/confirmation/{token}', 'HomeController@emailConfirmation')->name('front.email-confirmation');
 
         // Test Manuscript (Shop Manuscript)
         Route::post('/test_manuscript', 'ShopManuscriptController@test_manuscript')->name('front.shop-manuscript.test_manuscript'); // Test count shop manuscript
@@ -310,6 +311,16 @@ Route::group([
         Route::get('/private-groups/{id}/members/invitations/list/{status}','PrivateGroupMembersController@listInvitations');
         Route::post('/private-groups/member/invitation/cancel','PrivateGroupMembersController@cancelInvitation');
         Route::post('/private-groups/member/invitation/remove','PrivateGroupMembersController@removeMember');
+
+        // Profile Email
+
+        Route::group(['prefix' => 'email'], function() {
+            Route::get('list', 'LearnerController@listEmails');
+            Route::post('primary/set', 'LearnerController@setPrimaryEmail');
+            Route::post('destroy', 'LearnerController@removeSecondaryEmail');
+            Route::post('confirmation', 'LearnerController@sendEmailConfirmation');
+        });
+
     });
 
 

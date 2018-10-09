@@ -6,6 +6,7 @@ use App\CoachingTimerManuscript;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\CoursesTaken;
+use App\EmailConfirmation;
 use App\FreeWebinar;
 use App\Helpers\Citrix;
 use App\Helpers\FileToText;
@@ -24,6 +25,7 @@ use App\Settings;
 use App\Solution;
 use App\SolutionArticle;
 use App\SosChildren;
+use App\UserEmail;
 use App\Workshop;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -843,6 +845,36 @@ class HomeController extends Controller
         }
 
         return redirect()->route('front.home');
+    }
+
+    public function emailConfirmation($token)
+    {
+        $model = EmailConfirmation::where('token', $token)->first();
+        if (Auth::guest()) {
+            return redirect()->to('/');
+        }
+        if($model)
+        {
+            $data = ['user_id' => $model->user_id, 'user' => $model->user, 'email' => $model->email];
+            if(Auth::user()->id === $data['user_id'])
+            {
+                \DB::beginTransaction();
+                if(! UserEmail::create([ 'user_id' => $model->user_id, 'email' => $model->email]))
+                {
+                    \DB::rollback();
+                    return response()->json(['error' => 'Opss. Something went wrong'], 500);
+                }
+                if(! $model->delete())
+                {
+                    \DB::rollback();
+                    return response()->json(['error' => 'Opss. Something went wrong'], 500);
+                }
+                \DB::commit();
+            }
+            return view('frontend.learner.email.confirm')->with(compact('data'));
+        }
+
+        return view('frontend.learner.email.invalid');
     }
 
     public function testemail()

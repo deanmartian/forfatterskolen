@@ -10,6 +10,7 @@ use App\CoachingTimerTaken;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\Diploma;
+use App\EmailConfirmation;
 use App\Genre;
 use App\Http\AdminHelpers;
 use App\Http\Middleware\Admin;
@@ -17,6 +18,7 @@ use App\Http\Requests\AddWritingGroupRequest;
 use App\LessonContent;
 use App\LessonDocuments;
 use App\Mail\CoachingSuggestionDateEmail;
+use App\Mail\MultipleEmailConfirmation;
 use App\Notification;
 use App\OtherServiceFeedback;
 use App\Package;
@@ -30,6 +32,7 @@ use App\ShopManuscriptUpgrade;
 use App\Survey;
 use App\SurveyAnswer;
 use App\User;
+use App\UserEmail;
 use App\WordWritten;
 use App\WordWrittenGoal;
 use App\WritingGroup;
@@ -2245,5 +2248,91 @@ class LearnerController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * List all user emails
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function listEmails()
+    {
+        $user = Auth::user();
+        $data['primary'] = $user;
+        $data['secondary'] = UserEmail::where('user_id', $user->id)->get();
+        return response()->json($data);
+    }
+
+    /**
+     * Send email confirmation to check if user owns the inputted email
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sendEmailConfirmation(Request $request){
+
+        $this->validate($request, [
+            'email' => 'required|email|unique:users|unique:user_emails',
+        ]);
+
+
+        $email_data = $request->all();
+        $email_data['token'] = md5(microtime());
+        $email_data['user_id'] = Auth::user()->id;
+
+        $saveData['email'] = $email_data['email'];
+        $saveData['user_id'] = Auth::user()->id;
+        $saveEmail = EmailConfirmation::firstOrNew($saveData);
+        $saveEmail->token = $email_data['token'];
+
+        if(! $saveEmail->save())
+        {
+            return response()->json(['error' => 'Opss. Something went wrong'], 500);
+        }
+
+        $email_data['name'] = Auth::user()->first_name;
+
+        Mail::to($email_data['email'])->queue(new MultipleEmailConfirmation($email_data));
+
+
+        return response()->json(['success' => 'Email Confirmation Sent.'], 200);
+    }
+
+    /**
+     * Set Primary Email
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function setPrimaryEmail(Request $request)
+    {
+        DB::beginTransaction();
+        $user           = Auth::user();
+        $user_emails    = UserEmail::find($request->id);
+        $primary        = $user_emails->email;
+        $secondary      = $user->email;
+        if( !$user->update(['email' => $primary]))
+        {
+            DB::rollback();
+            return response()->json(['error' => 'Opss. Something went wrong'], 500);
+        }
+        if(! $user_emails->update(['email' => $secondary]))
+        {
+            DB::rollback();
+            return response()->json(['error' => 'Opss. Something went wrong'], 500);
+        }
+        DB::commit();
+        return response()->json(['success' => 'Secondary email set as primary', 'primary_email' => $primary], 200);
+    }
+
+    /**
+     * Remove a secondary email
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function removeSecondaryEmail(Request $request)
+    {
+        if(! UserEmail::destroy($request->id))
+        {
+            return response()->json(['error' => 'Opss. Something went wrong'], 500);
+        }
+        return response()->json(['success' => 'Secondary email deleted'], 200);
     }
 }
