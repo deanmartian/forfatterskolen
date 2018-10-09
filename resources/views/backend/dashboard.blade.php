@@ -186,7 +186,7 @@
 							</tbody>
 						</table>
 
-						<div class="panel-heading"><h4>{{ trans('site.shop-manuscripts') }}</h4></div>
+						<div class="panel-heading"><h4>{{ trans_choice('site.shop-manuscripts', 2) }}</h4></div>
 						<table class="table">
 							<thead>
 							<tr>

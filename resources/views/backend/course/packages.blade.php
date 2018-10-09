@@ -30,7 +30,7 @@
             @endif
         </div>
 		<div class="col-sm-12">
-			<button type="button" class="btn btn-primary margin-bottom btn-add-package" data-toggle="modal" data-target="#addPackageModal">+ Add Package</button>
+			<button type="button" class="btn btn-primary margin-bottom btn-add-package" data-toggle="modal" data-target="#addPackageModal">+ {{ trans('site.add-package') }}</button>
 		</div>
 		@foreach($course->packages as $k => $package)
 		<div class="col-sm-12 col-md-12">
@@ -127,7 +127,7 @@
           <div class="col-sm-6">
             <h4>
               <button class="btn btn-primary btn-xs pull-right addShopManuscriptBtn" data-package_id="{{ $package->id }}" data-toggle="modal" data-target="#addShopManuscriptModal" data-action="{{ route('admin.package_shop_manuscript.store', $package->id) }}" data-shop_manuscripts_id="{{ json_encode($package->shop_manuscripts()->pluck('shop_manuscript_id')->toArray()) }}"><i class="fa fa-plus"></i></button>
-              {{ trans('site.shop-manuscripts') }}
+              {{ trans_choice('site.shop-manuscripts', 2) }}
             </h4>
             <div class="table-responsive margin-top">
               <table class="table table-bordered table-condensed">
@@ -148,7 +148,7 @@
 
             <h4>
               <button class="btn btn-primary btn-xs pull-right addRelatedCourseBtn" data-toggle="modal" data-target="#addIncludeCourseModal" data-action="{{ route('admin.package_course.store', $package->id) }}" data-package_id="{{ $package->id }}"><i class="fa fa-plus"></i></button>
-              {{ trans('site.include-courses') }}
+              {{ trans_choice('site.include-courses', 2) }}
             </h4>
 
             @if (!$package->has_coaching)
@@ -254,14 +254,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Delete shop manuscript</h4>
+        <h4 class="modal-title">{{ trans('site.delete-shop-manuscript') }}</h4>
       </div>
       <div class="modal-body">
         <form method="POST" action="">
           {{csrf_field()}}
-          Are you sure to delete this shop manuscript?
+          {{ trans('site.delete-shop-manuscript-question') }}
           <div class="text-right margin-top">
-            <button type="submit" class="btn btn-danger">Delete</button>
+            <button type="submit" class="btn btn-danger">{{ trans('site.delete') }}</button>
           </div>
         </form>
       </div>
@@ -276,12 +276,12 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add shop manuscript</h4>
+        <h4 class="modal-title">{{ trans('site.add-shop-manuscript') }}</h4>
       </div>
       <div class="modal-body">
         <form method="POST" action="">
           {{csrf_field()}}
-          <label>Shop manuscript</label>
+          <label>{{ trans_choice('site.shop-manuscripts', 1) }}</label>
           <select class="form-control" required="" name="shop_manuscript_id">
             <option value="" selected disabled>- Select shop manuscript -</option> 
             @foreach(App\ShopManuscript::orderBy('created_at', 'desc')->get() as $shopManuscript)
@@ -289,7 +289,7 @@
             @endforeach
           </select>
           <div class="text-right margin-top">
-            <button type="submit" class="btn btn-primary">Add shop manuscript</button>
+            <button type="submit" class="btn btn-primary">{{ trans('site.add-shop-manuscript') }}</button>
           </div>
         </form>
       </div>
@@ -803,7 +803,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Delete Package <span></span></h4>
+        <h4 class="modal-title">{{ trans('site.delete-package') }} <span></span></h4>
       </div>
       <div class="modal-body">
       	<form method="POST" action="">
@@ -811,10 +811,9 @@
       		{{ method_field('DELETE') }}
       		<input type="hidden" name="variation_id">
       		<p>
-      			WARNING: Deleting a package will also delete the learners who took this course.<br /><br />
-				Are you sure to delete this package?
+              {!! trans('site.delete-package-question') !!}
       		</p>
-      		<button type="submit" class="btn btn-danger btn-block">Delete Package</button>
+      		<button type="submit" class="btn btn-danger btn-block">{{ trans('site.delete-package') }}</button>
       		<div class="clearfix"></div>
       	</form>
       </div>
@@ -832,13 +831,13 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Include course</h4>
+        <h4 class="modal-title">{{ ucfirst(strtolower(trans_choice('site.include-courses', 1))) }}</h4>
       </div>
       <div class="modal-body">
         <form method="POST" action="">
           {{ csrf_field() }}
           <div class="form-group">
-            <label>Course</label>
+            <label>{{ trans_choice('site.courses', 1) }}</label>
             <select class="form-control" required id="related_course_select">
               <option value="" selected disabled>- Select course -</option> 
               @foreach(App\Course::where('id', '<>', $course->id)->orderBy('created_at', 'desc')->get() as $course)
@@ -847,14 +846,14 @@
             </select>
           </div>
           <div class="form-group">
-            <label>Package</label>
+            <label>{{ trans_choice('site.packages', 1) }}</label>
             <select class="form-control" required name="include_package_id" id="related_package_select">
               <option value="" selected disabled>- Select package -</option> 
             </select>
           </div>
           <input type="hidden" name="package_id">
           <div class="text-right margin-top">
-            <button type="submit" class="btn btn-primary">Include course</button>
+            <button type="submit" class="btn btn-primary">{{ ucfirst(strtolower(trans_choice('site.include-courses', 1))) }}</button>
           </div>
         </form>
       </div>
@@ -870,15 +869,15 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Delete included course</h4>
+        <h4 class="modal-title">{{ trans('site.delete-included-course') }}</h4>
       </div>
       <div class="modal-body">
         <form method="POST" action="">
           {{ csrf_field() }}
           {{ method_field('DELETE') }}
-          Are you sure to delete this included course?
+          {{ trans('site.delete-included-course-question') }}
           <div class="text-right margin-top">
-            <button type="submit" class="btn btn-danger">Delete</button>
+            <button type="submit" class="btn btn-danger">{{ trans('site.delete') }}</button>
           </div>
         </form>
       </div>
@@ -892,13 +891,13 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Include Coaching Session</h4>
+        <h4 class="modal-title">{{ trans('site.include-coaching-session') }}</h4>
       </div>
       <div class="modal-body">
         <form method="POST" action="">
           {{csrf_field()}}
           <div class="form-group">
-            <label>Coaching Length</label>
+            <label>{{ trans('site.coaching-length') }}</label>
             <select name="has_coaching" class="form-control" required>
               <option value="" disabled selected> -- Select --</option>
               <option value="2">30min</option>
@@ -906,7 +905,7 @@
             </select>
           </div>
           <div class="text-right margin-top">
-            <button type="submit" class="btn btn-primary">Include Session</button>
+            <button type="submit" class="btn btn-primary">{{ trans('site.include-session') }}</button>
           </div>
         </form>
       </div>
@@ -920,17 +919,17 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Remove Coaching Session</h4>
+        <h4 class="modal-title">{{ trans('site.remove-coaching-session') }}</h4>
       </div>
       <div class="modal-body">
         <form method="POST" action="">
           {{csrf_field()}}
           <p>
-            Are you sure to remove the coaching session in this package?
+            {{ trans('site.remove-coaching-session-question') }}
           </p>
           <input type="hidden" name="has_coaching">
           <div class="text-right margin-top">
-            <button type="submit" class="btn btn-danger">Remove Session</button>
+            <button type="submit" class="btn btn-danger">{{ trans('site.remove-session') }}</button>
           </div>
         </form>
       </div>
