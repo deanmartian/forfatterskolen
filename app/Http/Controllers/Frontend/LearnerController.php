@@ -1149,7 +1149,8 @@ class LearnerController extends Controller
                     $product_ID     = $package->full_price_product;
                     $send_to        = $user->email;
                     $end_date       = $courseTaken->end_date ? $courseTaken->end_date : date("Y-m-d");
-                    $dueDate        = date("Y-m-d", strtotime(date("Y-m-d", strtotime($end_date)) . " + 1 year"));
+                    //$dueDate        = date("Y-m-d", strtotime(date("Y-m-d", strtotime($end_date)) . " + 1 year"));
+                    $dueDate        = date("Y-m-d", strtotime($end_date));
 
                     $comment = '(Kurs: ' . $package->course->title . ' ['.$package->variation.'], ';
                     $comment .= 'Betalingsmodus: ' . $payment_mode . ')';

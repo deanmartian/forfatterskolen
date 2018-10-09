@@ -72,7 +72,8 @@ class WebinarPakkeExpiresInAWeek extends Command {
                 $send_to        = $user->email;
                 $end_date       = $courseTaken->end_date ? $courseTaken->end_date : date("Y-m-d");
                 // add 10 days from today
-                $dueDate        = date('Y-m-d', strtotime(date("Y-m-d") . " +10 days"));
+                //$dueDate        = date('Y-m-d', strtotime(date("Y-m-d") . " +10 days"));
+                $dueDate        = date("Y-m-d", strtotime($end_date));
 
                 $comment = '(Kurs: ' . $package->course->title . ' ['.$package->variation.'], ';
                 $comment .= 'Betalingsmodus: ' . $payment_mode . ')';
