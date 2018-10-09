@@ -2290,7 +2290,9 @@ class LearnerController extends Controller
 
         $email_data['name'] = Auth::user()->first_name;
 
-        Mail::to($email_data['email'])->queue(new MultipleEmailConfirmation($email_data));
+        //Mail::to($email_data['email'])->queue(new MultipleEmailConfirmation($email_data));
+        AdminHelpers::send_email('Email Confirmation',
+            'post@forfatterskolen.no', $email_data['email'], view('emails.email_confirmation', compact('email_data')));
 
 
         return response()->json(['success' => 'Email Confirmation Sent.'], 200);

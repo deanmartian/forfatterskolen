@@ -7,14 +7,14 @@
 <table cellpadding="0" cellspacing="0" border="0" style='font-weight: 300!important;
         font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"'>
     <tr>
-        <td style="padding-top: 1rem">Hei {{ $name }},</td>
+        <td style="padding-top: 1rem">Hei {{ $email_data['name'] }},</td>
     </tr>
     <tr>
-        <td style="padding-top: .3rem">Dette er en automatisk epost fra Forfatterskolen for å bekrefte at du eier denne epost adressen:  <strong>{{ $email }}</strong>.</td>
+        <td style="padding-top: .3rem">Dette er en automatisk epost fra Forfatterskolen for å bekrefte at du eier denne epost adressen:  <strong>{{ $email_data['email'] }}</strong>.</td>
     </tr>
     <tr>
         <td style="padding-top:1.2rem;padding-bottom:0.5rem;">
-            <a href="{{ route("front.email-confirmation",$token) }}" style="text-decoration: none;
+            <a href="{{ route("front.email-confirmation",$email_data['token']) }}" style="text-decoration: none;
                     color: #fff;
                     background: #e83945;
                     border-color: #e83945;
