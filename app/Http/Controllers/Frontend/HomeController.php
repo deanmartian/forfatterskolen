@@ -847,6 +847,11 @@ class HomeController extends Controller
         return redirect()->route('front.home');
     }
 
+    /**
+     * Confirm the secondary email based by token
+     * @param $token
+     * @return $this|\Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
     public function emailConfirmation($token)
     {
         $model = EmailConfirmation::where('token', $token)->first();
