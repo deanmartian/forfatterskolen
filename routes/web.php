@@ -864,6 +864,7 @@ Route::group([
 
         Route::get('/free-manuscript', 'FreeManuscriptController@index')->name('admin.free-manuscript.index');
         Route::post('/free-manuscript/{id}/delete', 'FreeManuscriptController@deleteFreeManuscript')->name('admin.free-manuscript.delete');
+        Route::post('/free-manuscript/{id}/edit-content', 'FreeManuscriptController@editContent')->name('admin.free-manuscript.edit-content');
         Route::post('/free-manuscript/{id}/assign_editor', 'FreeManuscriptController@assignEditor')->name('admin.free-manuscript.assign_editor');
         Route::post('/free-manuscript/{id}/send_feedback', 'FreeManuscriptController@sendFeedback')->name('admin.free-manuscript.send_feedback');
         Route::get('/free-manuscript/{id}/feedback-history', 'FreeManuscriptController@feedbackHistory')->name('admin.free-manuscript.feedback-history');

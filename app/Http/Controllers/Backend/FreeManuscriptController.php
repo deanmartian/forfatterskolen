@@ -74,6 +74,25 @@ class FreeManuscriptController extends Controller
     }
 
     /**
+     * Edit the content from New tab
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function editContent($id, Request $request)
+    {
+        $freeManuscript = FreeManuscript::find($id);
+        if ($freeManuscript) {
+            $freeManuscript->content = $request->manu_content;
+            $freeManuscript->save();
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Free manuscript content updated.'),
+                'alert_type' => 'success']);
+        }
+        return redirect()->back();
+    }
+
+    /**
      * Assign Editor
      * @param $id
      * @param Request $request

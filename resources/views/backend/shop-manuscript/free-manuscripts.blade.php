@@ -47,7 +47,12 @@
 							<tr>
 								<td>{{ $freeManuscript->name }}</td>
 								<td>{{ $freeManuscript->email }}</td>
-								<td>{{ str_limit(strip_tags($freeManuscript->content), 120) }}</td>
+								<td>
+									{{ str_limit(strip_tags($freeManuscript->content), 120) }}<br>
+									<a href="#editContentModal" data-toggle="modal" class="editContentBtn"
+									data-content="{{ $freeManuscript->content }}"
+									data-action="{{ route('admin.free-manuscript.edit-content', $freeManuscript->id) }}">Edit</a>
+								</td>
 								<td>{{ \App\Http\FrontendHelpers::formatDate($freeManuscript->created_at) }}</td>
 								<td>@if( $freeManuscript->editor ) {{ $freeManuscript->editor->full_name }} @endif</td>
 								<td>
@@ -312,6 +317,31 @@
 
 	</div>
 </div>
+
+<div id="editContentModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Edit Content</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>Content</label>
+						<textarea name="manu_content" cols="30" rows="10" class="form-control content" required>
+
+						</textarea>
+					</div>
+					<div class="clearfix"></div>
+					<button type="submit" class="btn btn-success pull-right margin-top">Save</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -342,6 +372,14 @@
 		modal.find('form').attr('action', action);
 	});
 
+	$(".editContentBtn").click(function() {
+        let action = $(this).data('action');
+        let content = $(this).data('content');
+        let modal = $('#editContentModal');
+        modal.find('form').attr('action', action);
+
+        tinyMCE.activeEditor.setContent(content);
+	});
 
 	$(".sendFeedbackBtn").click(function(){
         var action = $(this).data('action');
@@ -401,6 +439,13 @@
 	   modal = $("#resendFeedbackModal");
 	   modal.find('form').attr('action', action);
 	});
+
+    function disableSubmit(t) {
+        let submit_btn = $(t).find('[type=submit]');
+        submit_btn.text('');
+        submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+        submit_btn.attr('disabled', 'disabled');
+    }
 
 </script>
 @stop
