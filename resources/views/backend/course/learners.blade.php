@@ -27,6 +27,21 @@
     else :
         $learners = $course->learners->paginate(25);
     endif;
+
+    $packageIdsOfCourse = $course->packages()->pluck('id')->toArray();
+    $packageCourses = \App\PackageCourse::whereIn('included_package_id', $packageIdsOfCourse)->get()
+        ->pluck('package_id')
+        ->toArray();
+
+    $learnerWithCourse = \App\CoursesTaken::whereIn('package_id', $packageCourses)
+        ->where('is_active', true)
+        ->orderBy('updated_at', 'desc')
+        ->get();
+
+    $hasActiveUsers = 0;
+    if ($learnerWithCourse->count()) {
+        $hasActiveUsers = 1;
+	}
     ?>
 
 	<div class="col-sm-12 col-md-10 sub-right-content">
@@ -46,6 +61,10 @@
 			@if(count($learners) > 0)
 				<button type="button" class="btn btn-success margin-bottom" data-toggle="modal" data-target="#sendEmailModal">{{ trans('site.send-email') }}</button>
 				<a href="{{ route('learner.course.learner-list-excel', $course->id) }}" class="btn btn-default margin-bottom">{{ trans('site.export-learners') }}</a>
+			@endif
+
+			@if ($hasActiveUsers)
+				<a href="{{ route('learner.course.learner-active-list-excel', $course->id) }}" class="btn btn-info margin-bottom">{{ trans('site.export-active-learners') }}</a>
 			@endif
 			<div class="table-responsive">
 				<table class="table table-side-bordered table-white">

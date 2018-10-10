@@ -1,7 +1,9 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\CoursesTaken;
 use App\Package;
+use App\PackageCourse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests;
@@ -309,6 +311,49 @@ class CourseController extends Controller
             });
             })->download('xlsx');
         }
+        return redirect()->back();
+    }
+
+    /**
+     * Course with learners from included package
+     * @param $course_id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function learnerActiveListExcel($course_id)
+    {
+        $course = Course::find($course_id);
+        if ($course) {
+            $excel          = \App::make('excel');
+            $packageIdsOfCourse = $course->packages()->pluck('id')->toArray();
+            $packageCourses = PackageCourse::whereIn('included_package_id', $packageIdsOfCourse)->get()
+                ->pluck('package_id')
+                ->toArray();
+
+            $learnerWithCourse = CoursesTaken::whereIn('package_id', $packageCourses)
+                ->where('is_active', true)
+                ->orderBy('updated_at', 'desc')
+                ->get();
+
+            $learnerList    = [];
+            $learnerList[]  = ['id', 'learner', 'email', 'course','package',]; // first row in excel
+
+            // loop all the learners that have the course (included from other course)
+            foreach ($learnerWithCourse as $learner) {
+                $package = $learner->package;
+                $course = $learner->package->course;
+                $learnerList[] = [$learner->user->id, $learner->user->full_name, $learner->user->email, $course->title, $package->variation];
+            }
+
+            $excel->create($course->title.' Active Learners', function($excel) use ($learnerList) {
+
+                // Build the spreadsheet, passing in the payments array
+                $excel->sheet('sheet1', function($sheet) use ($learnerList) {
+                    // prevent inserting an empty first row
+                    $sheet->fromArray($learnerList, null, 'A1', false, false);
+                });
+            })->download('xlsx');
+        }
+
         return redirect()->back();
     }
 

@@ -253,4 +253,5 @@ Are you sure to delete this package?',
   'expected-finish-date' => 'Expected finish date',
   'approve-coaching-timer' => 'Approve Coaching Timer',
   'approve-coaching-timer-question' => 'Are you sure you want to approve this coaching timer?',
+  'export-active-learners' => 'Export Active Learners',
 );

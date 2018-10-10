@@ -479,6 +479,7 @@ Route::group([
         Route::post('/course-for-sale', 'CourseController@updateForSaleStatus')->name('learner.course.for-sale-status'); // Courses For Sale Status
         Route::post('/course/{id}/send-email-to-learners', 'CourseController@sendEmailToLearners')->name('learner.course.send-email-to-learners'); // Add Learner To Course
         Route::get('/course/{id}/learner-list-excel', 'CourseController@learnerListExcel')->name('learner.course.learner-list-excel'); // Add Learner To Course
+        Route::get('/course/{id}/learner-active-list-excel', 'CourseController@learnerActiveListExcel')->name('learner.course.learner-active-list-excel'); // Add Learner To Course
 
 
         Route::resource('course/{id}/discount', 'CourseDiscountController', [
