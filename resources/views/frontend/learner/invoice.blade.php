@@ -26,6 +26,7 @@
 								<th>Status</th>
 								<th>Opprettet</th>
 								<th>Kid Nummer</th>
+								<th>Konto Nummer</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -71,6 +72,7 @@
 								</td>
 								<td>{{date_format(date_create($invoice->created_at), 'M d, Y H.i')}}</td>
 								<td> {{ $invoice->kid_number }} </td>
+								<td> 9015 18 00393 </td>
 							</tr>
 							@endforeach
 						</tbody>
