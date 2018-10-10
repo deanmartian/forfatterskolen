@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Backend;
 use App\CoursesTaken;
 use App\Package;
 use App\PackageCourse;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests;
@@ -330,18 +332,17 @@ class CourseController extends Controller
                 ->toArray();
 
             $learnerWithCourse = CoursesTaken::whereIn('package_id', $packageCourses)
-                ->where('is_active', true)
+                ->where('end_date','>=', Carbon::now())
+                ->groupBy('user_id')
                 ->orderBy('updated_at', 'desc')
                 ->get();
 
             $learnerList    = [];
-            $learnerList[]  = ['id', 'learner', 'email', 'course','package',]; // first row in excel
+            $learnerList[]  = ['id', 'learner', 'email']; // first row in excel
 
             // loop all the learners that have the course (included from other course)
             foreach ($learnerWithCourse as $learner) {
-                $package = $learner->package;
-                $packageCourse = $learner->package->course;
-                $learnerList[] = [$learner->user->id, $learner->user->full_name, $learner->user->email, $packageCourse->title, $package->variation];
+                $learnerList[] = [$learner->user->id, $learner->user->full_name, $learner->user->email];
             }
 
             $excel->create($course->title.' Active Learners', function($excel) use ($learnerList) {

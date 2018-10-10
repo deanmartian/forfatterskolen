@@ -63,7 +63,8 @@
 				<a href="{{ route('learner.course.learner-list-excel', $course->id) }}" class="btn btn-default margin-bottom">{{ trans('site.export-learners') }}</a>
 			@endif
 
-			@if ($hasActiveUsers)
+			{{-- for webinar pakke only --}}
+			@if (/*$hasActiveUsers*/ $course->id == 17)
 				<a href="{{ route('learner.course.learner-active-list-excel', $course->id) }}" class="btn btn-info margin-bottom">{{ trans('site.export-active-learners') }}</a>
 			@endif
 			<div class="table-responsive">
