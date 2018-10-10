@@ -340,8 +340,8 @@ class CourseController extends Controller
             // loop all the learners that have the course (included from other course)
             foreach ($learnerWithCourse as $learner) {
                 $package = $learner->package;
-                $course = $learner->package->course;
-                $learnerList[] = [$learner->user->id, $learner->user->full_name, $learner->user->email, $course->title, $package->variation];
+                $packageCourse = $learner->package->course;
+                $learnerList[] = [$learner->user->id, $learner->user->full_name, $learner->user->email, $packageCourse->title, $package->variation];
             }
 
             $excel->create($course->title.' Active Learners', function($excel) use ($learnerList) {
