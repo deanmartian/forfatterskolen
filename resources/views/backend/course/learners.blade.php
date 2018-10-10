@@ -42,10 +42,10 @@
 				    </div>
 				  </div> 
 			</form>
-			<button type="button" class="btn btn-primary margin-bottom" data-toggle="modal" data-target="#addLearnerModal">+ Add Learner</button>
+			<button type="button" class="btn btn-primary margin-bottom" data-toggle="modal" data-target="#addLearnerModal">+ {{ trans('site.add-learner') }}</button>
 			@if(count($learners) > 0)
-				<button type="button" class="btn btn-success margin-bottom" data-toggle="modal" data-target="#sendEmailModal">Send Email</button>
-				<a href="{{ route('learner.course.learner-list-excel', $course->id) }}" class="btn btn-default margin-bottom">Export Learners</a>
+				<button type="button" class="btn btn-success margin-bottom" data-toggle="modal" data-target="#sendEmailModal">{{ trans('site.send-email') }}</button>
+				<a href="{{ route('learner.course.learner-list-excel', $course->id) }}" class="btn btn-default margin-bottom">{{ trans('site.export-learners') }}</a>
 			@endif
 			<div class="table-responsive">
 				<table class="table table-side-bordered table-white">
@@ -74,7 +74,7 @@
 								</div>
 							</td>
 							<td>
-								<button type="submit" data-toggle="modal" data-target="#removeLearnerModal" class="btn btn-danger btn-xs pull-right btn-remove-learner" data-learner="{{$learner->user->full_name}}" data-package="{{$learner->package->id}}" data-learner-id="{{$learner->user->id}}">Remove Learner</button>
+								<button type="submit" data-toggle="modal" data-target="#removeLearnerModal" class="btn btn-danger btn-xs pull-right btn-remove-learner" data-learner="{{$learner->user->full_name}}" data-package="{{$learner->package->id}}" data-learner-id="{{$learner->user->id}}">{{ trans('site.remove-learner') }}</button>
 							</td>
 						</tr>
 						@endforeach
@@ -101,14 +101,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Are you sure to remove <strong id="learner_name"></strong> from <strong>{{$course->title}}</strong>?</h4>
+        <h4 class="modal-title">{!! str_replace('_LEARNER_', '<strong id="learner_name"></strong>',trans('site.remove-learner-question')) !!}  <strong>{{$course->title}}</strong>?</h4>
       </div>
       <div class="modal-body">
       	<form method="POST" action="{{route('learner.course.remove.learner')}}">
       		{{csrf_field()}}
       		<input type="hidden" name="learner_id">
       		<input type="hidden" name="package_id">
-      		<button type="submit" class="btn btn-danger btn-block">Remove Learner</button>
+      		<button type="submit" class="btn btn-danger btn-block">{{ trans('site.remove-learner') }}</button>
       	</form>
       </div>
     </div>
@@ -123,7 +123,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add Learner to {{$course->title}}</h4>
+        <h4 class="modal-title">{{ trans('site.add-learner-to') }} {{$course->title}}</h4>
       </div>
       <div class="modal-body">
       	<form method="POST" action="{{route('learner.course.add.learner')}}">
@@ -151,7 +151,7 @@
       			</select>
       		</div>
       		<div class="text-right">
-      			<button type="submit" class="btn btn-primary">Add Learner</button>
+      			<button type="submit" class="btn btn-primary">{{ trans('site.add-learner') }}</button>
       		</div>
       	</form>
       </div>
@@ -167,23 +167,23 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Send email</h4>
+				<h4 class="modal-title">{{ trans('site.send-email') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="{{route('learner.course.send-email-to-learners', $course->id)}}"onsubmit="formSubmitted()">
 				{{csrf_field()}}
 
 					<div class="form-group">
-						<label>Subject</label>
+						<label>{{ trans('site.subject') }}</label>
 						<input type="text" class="form-control" name="subject" required>
 					</div>
 					
 					<div class="form-group">
-						<label>Message</label>
+						<label>{{ trans('site.message') }}</label>
 						<textarea name="message" id="" cols="30" rows="10" class="form-control" required></textarea>
 					</div>
 					<div class="text-right">
-						<input type="submit" class="btn btn-primary" value="Send" id="send_email_btn">
+						<input type="submit" class="btn btn-primary" value="{{ trans('site.send') }}" id="send_email_btn">
 					</div>
 				</form>
 			</div>

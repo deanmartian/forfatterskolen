@@ -129,7 +129,7 @@
 						    	<tr>
 						    		<td>{{ $freeManuscript->name }}</td>
 						    		<td>{{ $freeManuscript->email }}</td>
-						    		<td><button class="btn btn-xs btn-primary viewManuscriptBtn" data-toggle="modal" data-fields="{{ json_encode($freeManuscript) }}" data-target="#viewManuscriptModal">View</button></td>
+						    		<td><button class="btn btn-xs btn-primary viewManuscriptBtn" data-toggle="modal" data-fields="{{ json_encode($freeManuscript) }}" data-target="#viewManuscriptModal">{{ trans('site.view') }}</button></td>
 						    	</tr>
 							    @endforeach
 						    </tbody>
@@ -311,27 +311,27 @@
                                                 $learner_id = $l->id;
                                                 $assignment_group = \App\AssignmentGroup::where('id', $assignment_group_id)->where('assignment_id', $assignedAssignment->assignment->id)->first();
                                                 if ($assignment_group) {
-                                                    echo '<button type="button" class="btn btn-warning btn-xs margin-top submitFeedbackBtn"
+                                                    echo '<button type="button" class="btn btn-warning btn-xs submitFeedbackBtn"
 															data-toggle="modal" data-target="#submitFeedbackModal"
 															data-name="'.$assignedAssignment->user->full_name.'"
 															data-action="'.route('admin.assignment.group.submit_feedback',
                                                             ['group_id' => $assignment_group_id, 'id' => $learner_id]).'"
                                                             data-manuscript="'.$assignedAssignment->id.'">'.
-														'Give Feedback</button>';
+														trans('site.give-feedback').'</button>';
                                                 } else {
-                                                    echo '<button type="button" class="btn btn-warning btn-xs margin-top submitFeedbackBtn"
+                                                    echo '<button type="button" class="btn btn-warning btn-xs submitFeedbackBtn"
 															data-toggle="modal" data-target="#submitFeedbackModal"
 															data-name="'.$assignedAssignment->user->full_name.'"
 															data-action="'.route('assignment.group.manuscript-feedback-no-group',
                                                             ['id' => $assignedAssignment->id, 'learner_id' => $assignedAssignment->user_id]).'"
                                                             data-manuscript="'.$assignedAssignment->id.'">'.
-                                                        'Give Feedback</button>';
+                                                        trans('site.give-feedback').'</button>';
 												}
                                             }
                                         }
                                         ?>
-										<button class="btn btn-success btn-xs margin-top finishAssignmentBtn" data-toggle="modal"
-										data-target="#finishAssignmentModal" data-action="{{ route('backend.assignment.finish', $assignedAssignment->id) }}">Finish</button>
+										<button class="btn btn-success btn-xs finishAssignmentBtn" data-toggle="modal"
+										data-target="#finishAssignmentModal" data-action="{{ route('backend.assignment.finish', $assignedAssignment->id) }}">{{ trans('site.finish') }}</button>
 									</td>
 								</tr>
 							@endforeach
@@ -368,7 +368,7 @@
 											<br>
 											<a href="#viewHelpWithModal" style="color:#eea236" class="viewHelpWithBtn"
 											   data-toggle="modal" data-details="{{ $coachingTimer->help_with }}">
-												View Help With
+												{{ trans('site.view-help-with') }}
 											</a>
 										@endif
 									</td>
@@ -434,7 +434,7 @@
 										   ['id' => $correction->id, 'type' => 2]) }}"
 											   data-finish="{{ $correction->expected_finish ?
 										strftime('%Y-%m-%dT%H:%M:%S', strtotime($correction->expected_finish)) : '' }}">
-												Set Date
+												{{ trans('site.set-date') }}
 											</a>
 										@endif
 									</td>
@@ -524,7 +524,7 @@
 										   ['id' => $copyEditing->id, 'type' => 2]) }}"
 											   data-finish="{{ $copyEditing->expected_finish ?
 										strftime('%Y-%m-%dT%H:%M:%S', strtotime($copyEditing->expected_finish)) : '' }}">
-												Set Date
+												{{ trans('site.set-date') }}
 											</a>
 										@endif
 									</td>
@@ -769,7 +769,7 @@
 											<br>
 											<a href="#viewHelpWithModal" style="color:#eea236" class="viewHelpWithBtn"
 											data-toggle="modal" data-details="{{ $coachingTimer->help_with }}">
-												View Help With
+												{{ trans('site.view-help-with') }}
 											</a>
 										@endif
 									</td>
@@ -920,14 +920,14 @@
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Approve feedback</h4>
+		    <h4 class="modal-title">{{ trans('site.approve-feedback') }}</h4>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action="">
 		      {{ csrf_field() }}
-		      Are you sure to approve this feedback?
+				{{ trans('site.approve-feedback-question') }}
 		      <div class="text-right margin-top">
-		      	<button type="submit" class="btn btn-warning">Approve</button>
+		      	<button type="submit" class="btn btn-warning">{{ trans('site.approve') }}</button>
 		      </div>
 		    </form>
 		  </div>
@@ -940,14 +940,14 @@
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Delete feedback</h4>
+		    <h4 class="modal-title">{{ trans('site.delete-feedback') }}</h4>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action="">
 		      {{ csrf_field() }}
-		      Are you sure to delete this feedback?
+				{{ trans('site.delete-feedback-question') }}
 		      <div class="text-right margin-top">
-		      	<button type="submit" class="btn btn-danger">Delete</button>
+		      	<button type="submit" class="btn btn-danger">{{ trans('site.delete') }}</button>
 		      </div>
 		    </form>
 		  </div>
@@ -960,13 +960,13 @@
 		<div class="modal-content">
 		  <div class="modal-body">
 		  	<p>
-		  		<strong>Name:</strong><br />
+		  		<strong>{{ trans('site.name') }}:</strong><br />
 		  		<span id="name"></span><br />
 		  		<br />
-		  		<strong>Email:</strong><br />
+		  		<strong>{{ trans('site.email') }}:</strong><br />
 		  		<span id="email"></span><br />
 		  		<br />
-		  		<strong>Manuscript:</strong><br />
+		  		<strong>{{ trans_choice('site.manuscripts', 1) }}:</strong><br />
 		  		<span id="content"></span>
 		  	</p>
 		  </div>
@@ -979,26 +979,26 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Submit feedback to <em></em></h4>
+				<h4 class="modal-title">{{ trans('site.submit-feedback-to') }} <em></em></h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action=""  enctype="multipart/form-data">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<label>Manuscript</label>
+						<label>{{ trans_choice('site.manuscripts', 1) }}</label>
 						<input type="file" class="form-control" required multiple name="filename[]" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 						* Accepted file formats are DOCX, PDF, ODT.
 					</div>
 					<div class="form-group">
-						<label>Available date</label>
+						<label>{{ trans('site.available-date') }}</label>
 						<input type="date" class="form-control" name="availability">
 					</div>
 					<div class="form-group">
-						<label>Grade</label>
+						<label>{{ trans('site.grade') }}</label>
 						<input type="number" class="form-control" step="0.01" name="grade">
 					</div>
 					<input type="hidden" name="manuscript_id">
-					<button type="submit" class="btn btn-primary pull-right margin-top">Submit</button>
+					<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -1017,14 +1017,14 @@
 				<form method="POST" action="" enctype="multipart/form-data">
 					{{csrf_field()}}
 					<div class="form-group">
-						<label>Files</label>
+						<label>{{ trans_choice('site.files', 2) }}</label>
 						<input type="file" class="form-control" name="files[]" multiple accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text" required>
 					</div>
 					<div class="form-group">
-						<label>Notes</label>
+						<label>{{ trans_choice('site.notes', 2) }}</label>
 						<textarea class="form-control" name="notes" rows="6"></textarea>
 					</div>
-					Adding a feedback will complete this manuscript.
+					{{ trans('site.add-feedback-note') }}
 					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.add-feedback') }}</button>
 					<div class="clearfix"></div>
 				</form>
@@ -1039,15 +1039,15 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Finish Assignment</h4>
+				<h4 class="modal-title">{{ trans('site.finish-assignment') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="">
 					{{csrf_field()}}
-					Are you sure you want to finish this assignment?
+					{{ trans('site.finish-assignment-question') }}
 					<div class="text-right margin-top">
-						<button type="submit" class="btn btn-success">Submit</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-success">{{ trans('site.submit') }}</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.cancel') }}</button>
 					</div>
 				</form>
 			</div>
@@ -1071,7 +1071,7 @@
 						</select>
 					</div>
 					<div class="text-right">
-						<button class="btn btn-primary" type="submit">Save</button>
+						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
 					</div>
 				</form>
 			</div>
@@ -1084,16 +1084,16 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Update <span></span> Status</h4>
+				<h4 class="modal-title">{!! str_replace('_SERVICE_','<span></span>',trans('site.update-service-status')) !!}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<p>
-						Are you sure to update the status of this record?
+						{{ trans('site.update-service-status-question') }}
 					</p>
 					<div class="text-right">
-						<button class="btn btn-primary" type="submit">Submit</button>
+						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
 					</div>
 				</form>
 			</div>
@@ -1106,17 +1106,17 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title"><span></span> Expected Finish</h4>
+				<h4 class="modal-title"><span></span> {{ trans('site.expected-finish') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<label>Expected finish date</label>
+						<label>{{ trans('site.expected-finish-date') }}</label>
 						<input type="datetime-local" name="expected_finish" class="form-control" required>
 					</div>
 					<div class="text-right">
-						<button class="btn btn-primary" type="submit">Submit</button>
+						<button class="btn btn-primary" type="submit">{{ trans('site.submit') }}</button>
 					</div>
 				</form>
 			</div>
@@ -1135,7 +1135,7 @@
                 <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
                     {{csrf_field()}}
                     <div class="form-group">
-                        <label>Manuscript</label>
+                        <label>{{ trans_choice('site.manuscripts', 1) }}</label>
                         <input type="file" class="form-control" name="manuscript" multiple accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf" required>
                     </div>
                     <button type="submit" class="btn btn-primary pull-right">{{ trans('site.add-feedback') }}</button>
@@ -1152,15 +1152,15 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Approve Coaching Timer</h4>
+				<h4 class="modal-title">{{ trans('site.approve-coaching-timer') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
-					<p>Are you sure you want to approve this coaching timer?</p>
+					<p>{{ trans('site.approve-coaching-timer-question') }}</p>
 					<div class="text-right">
-						<button class="btn btn-primary" type="submit">Approve</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button class="btn btn-primary" type="submit">{{ trans('site.approve') }}</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.cancel') }}</button>
 					</div>
 				</form>
 			</div>
