@@ -8,7 +8,7 @@ class Assignment extends Model
 {
     
     protected $table = 'assignments';
-    protected $fillable = ['course_id', 'title', 'description', 'submission_date', 'allowed_package', 'add_on_price',
+    protected $fillable = ['course_id', 'title', 'description', 'submission_date', 'available_date','allowed_package', 'add_on_price',
         'max_words', 'for_editor', 'generated_filepath'];
 
 
@@ -33,5 +33,10 @@ class Assignment extends Model
     public function getSubmissionDateAttribute($value)
     {
         return $value ? date_format(date_create($value), 'M d, Y h:i A') : NULL;
+    }
+
+    public function getAvailableDateAttribute($value)
+    {
+        return $value ? date_format(date_create($value), 'M d, Y') : NULL;
     }
 }

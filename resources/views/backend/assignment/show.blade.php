@@ -29,7 +29,8 @@
 			<h3 class="no-margin-bottom">{{ $assignment->title }}</h3>
 			<p class="margin-bottom">
 				{{ $assignment->description }} <br>
-				<b>{{ trans('site.submission-date') }}:</b> <i>{{ $assignment->submission_date }}</i>
+				<b>{{ trans('site.submission-date') }}:</b> <i>{{ $assignment->submission_date }}</i> <br>
+				<b>{{ trans('site.available-date') }}:</b> <i>{{ $assignment->available_date }}</i>
 			</p>
 			
 			<div class="table-responsive">
@@ -467,6 +468,12 @@
 					<input type="datetime-local" class="form-control" name="submission_date"
 						   @if( $assignment->submission_date ) value="{{ strftime('%Y-%m-%dT%H:%M:%S', strtotime($assignment->submission_date)) }}" @endif
 					required>
+				</div>
+
+				<div class="form-group">
+					<label>{{ trans('site.available-date') }}</label>
+					<input type="date" class="form-control" name="available_date"
+						   @if( $assignment->available_date ) value="{{ strftime('%Y-%m-%d', strtotime($assignment->available_date)) }}" @endif>
 				</div>
 
 				<div class="form-group">

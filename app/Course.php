@@ -41,6 +41,11 @@ class Course extends Model
                 // check if expired 2 months ago or the end date is not yet set
                 $query->where('submission_date','>', Carbon::now());
             })
+            ->where(function($query) {
+                // check if available date is less than or equal to date or if it's null
+                $query->where('available_date','<=', Carbon::now());
+                $query->orWhereNull('available_date');
+            })
             ->orderBy('created_at', 'desc');
     }
 

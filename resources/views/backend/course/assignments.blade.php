@@ -67,6 +67,11 @@
 				</div>
 
 				<div class="form-group">
+					<label>{{ trans('site.available-date') }}</label>
+					<input type="date" class="form-control" name="available_date">
+				</div>
+
+				<div class="form-group">
 					<label>{{ trans('site.allowed-package') }}</label>
 						@foreach($course->packages as $package)
 						<div class="form-check">

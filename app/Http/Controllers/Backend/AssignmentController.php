@@ -82,6 +82,7 @@ class AssignmentController extends Controller
     			'description' => $request->description,
     			'course_id' => $course->id,
                 'submission_date' => $request->submission_date,
+                'available_date' => $request->available_date,
                 'allowed_package' => isset($request->allowed_package) ? json_encode($request->allowed_package) : NULL,
                 'add_on_price' => $request->add_on_price,
                 'max_words' => (int) $request->max_words,
@@ -103,6 +104,7 @@ class AssignmentController extends Controller
     		$assignment->title = $request->title;
     		$assignment->description = $request->description;
     		$assignment->submission_date = $request->submission_date;
+            $assignment->available_date = $request->available_date;
     		$assignment->allowed_package = isset($request->allowed_package) ? json_encode($request->allowed_package) : NULL;
             $assignment->add_on_price = $request->add_on_price;
             $assignment->max_words = (int) $request->max_words;
