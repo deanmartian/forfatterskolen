@@ -161,7 +161,7 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<button class="pull-right btn btn-xs btn-primary" data-toggle="modal" data-target="#editEmailModal">{{ trans('site.edit') }}</button>
-						<h4>{{ trans('site.email') }}</h4>
+						<h4>{{ trans_choice('site.emails', 1) }}</h4>
 					</div>
 					<div class="panel-body">
 					{!! nl2br($course->email) !!}

@@ -29,12 +29,12 @@
 			<div class="text-center">
 				<h3 class="no-margin-bottom">{{ $group->title }}</h3>
 				<p>
-					Assignment: {{ $group->assignment->title }} <br>
-					Submission Date: {{ $group->submission_date }}
+					{{ trans_choice('site.assignments', 1) }}: {{ $group->assignment->title }} <br>
+					{{ trans('site.submission-date') }}: {{ $group->submission_date }}
 				</p>
 			</div>
 			
-			<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addLearnerModal">Add learner</button>
+			<button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addLearnerModal">{{ trans('site.add-learner') }}</button>
 			<div class="row"> 
 				@foreach( $group->learners as $learner )
 				<div class="col-sm-4">
@@ -55,24 +55,24 @@
 									@elseif( end($extension) == 'docx' )
 									<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">{{ basename($manuscript->filename) }}</a>
 									<br />
-									Grade : @if( $manuscript->grade ) {{ $manuscript->grade }} @else Not set @endif
+											{{ trans('site.grade') }} : @if( $manuscript->grade ) {{ $manuscript->grade }} @else Not set @endif
 									@endif
 								@else
-									<em>No document uploaded</em>
+									<em>{{ trans('site.no-document-uploaded') }}</em>
 								@endif
 							</p>
 
-								<button type="button" class="btn btn-primary btn-sm margin-top setGradeBtn" data-toggle="modal" data-target="#setGradeModal" data-action="{{ route('assignment.group.set_grade', $manuscript->id) }}" data-grade="{{ $manuscript->grade }}">Set Grade</button>
+								<button type="button" class="btn btn-primary btn-sm margin-top setGradeBtn" data-toggle="modal" data-target="#setGradeModal" data-action="{{ route('assignment.group.set_grade', $manuscript->id) }}" data-grade="{{ $manuscript->grade }}">{{ trans('site.set-grade') }}</button>
 							<br>
 								<?php $feedback = App\AssignmentFeedback::where('assignment_group_learner_id', $learner->id)->where('user_id', Auth::user()->id)->where('is_admin', 1)->first(); ?>
 								@if( $feedback )
 								<button type="button" class="btn btn-warning btn-sm margin-top disabled">
-									{{--Feedback submitted as Admin--}}Finished</button> <br />
+									{{--Feedback submitted as Admin--}}{{ trans('site.finished') }}</button> <br />
 								@else
 								<button type="button" class="btn btn-warning btn-sm margin-top submitFeedbackBtn" data-toggle="modal" data-target="#submitFeedbackModal" data-name="{{ $learner->user->full_name }}" data-action="{{ route('admin.assignment.group.submit_feedback', ['group_id' => $group->id, 'id' => $learner->id]) }}"
-								data-manuscript="{{ $manuscript->id }}">Submit feedback as Admin</button>
+								data-manuscript="{{ $manuscript->id }}">{{ trans('site.submit-feedback-as-admin') }}</button>
 								@endif
-								<button type="button" class="btn btn-info btn-sm margin-top submitFeedbackBtnLearner" data-toggle="modal" data-target="#submitFeedbackLearnerModal" data-name="{{ $learner->user->full_name }}" data-action="{{ route('admin.assignment.group.submit_feedback_learner', ['group_id' => $group->id, 'id' => $learner->id]) }}" data-learner_id="{{ $learner->user->id }}">Submit feedback as Learner</button>
+								<button type="button" class="btn btn-info btn-sm margin-top submitFeedbackBtnLearner" data-toggle="modal" data-target="#submitFeedbackLearnerModal" data-name="{{ $learner->user->full_name }}" data-action="{{ route('admin.assignment.group.submit_feedback_learner', ['group_id' => $group->id, 'id' => $learner->id]) }}" data-learner_id="{{ $learner->user->id }}">{{ trans('site.submit-feedback-as-learner') }}</button>
 						</div>
 					</div>
 				</div>
@@ -85,23 +85,23 @@
 			?>
 			@if( $feedbacks->count() > 0 )
 			<br />
-			<h3>Feedbacks
+			<h3>{{ trans_choice('site.feedbacks', 2) }}
 				<a href="{{ route('assignment.group.download_all', ['course_id' => $course->id, 'assignment_id' => $assignment->id, 'id' => $group->id]) }}" class="pull-right btn btn-primary btn-sm">
-					Download All
+					{{ trans('site.download-all') }}
 				</a>
 				<button type="button" class="pull-right btn btn-info btn-sm margin-right-5 updateGroupAvailabilityBtn"
 						data-toggle="modal" data-target="#updateGroupAvailabilityModal" data-availability="{{ $group->availability }}"
 				data-action="{{ route('assignment.group.feedback-availability', ['course_id' => $course->id, 'assignment_id' => $assignment->id, 'id' => $group->id]) }}">
-					Availability
+					{{ trans('site.availability') }}
 				</button>
 			</h3>
 			<div class="table-responsive">
 				<table class="table table-bordered" style="background-color: #fff">
 					<thead>
-						<th>Feedback</th>
-						<th>Submitted by</th>
-						<th>Submitted to</th>
-						<th>Availability</th>
+						<th>{{ trans_choice('site.feedbacks', 1) }}</th>
+						<th>{{ trans('site.submitted-by') }}</th>
+						<th>{{ trans('site.submitted-to') }}</th>
+						<th>{{ trans('site.availability') }}</th>
 						<th></th>
 					</thead>
 					<tbody>
@@ -132,7 +132,7 @@
 							<td>{{ $feedback->availability }}</td>
 							<td>
 								<div class="text-right">
-									<a href="{{ route('assignment.feedback.download_manuscript', $feedback->id) }}" class="btn btn-primary btn-xs">Download</a>
+									<a href="{{ route('assignment.feedback.download_manuscript', $feedback->id) }}" class="btn btn-primary btn-xs">{{ trans('site.download') }}</a>
 									<input type="checkbox" data-toggle="toggle" data-on="Locked"
 										   class="lock-toggle" data-off="Unlocked"
 										   data-id="{{$feedback->id}}" data-size="mini" @if($feedback->locked) {{ 'checked' }} @endif>
@@ -166,14 +166,14 @@
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Approve feedback</h4>
+		    <h4 class="modal-title">{{ trans('site.approve-feedback') }}</h4>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action="">
 		      {{ csrf_field() }}
-		      Are you sure to approve this feedback?
+				{{ trans('site.approve-feedback-question') }}
 		      <div class="text-right margin-top">
-		      	<button type="submit" class="btn btn-warning">Approve</button>
+		      	<button type="submit" class="btn btn-warning">{{ trans('site.approve') }}</button>
 		      </div>
 		    </form>
 		  </div>
@@ -186,16 +186,16 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Set grade</h4>
+				<h4 class="modal-title">{{ trans('site.set-grade') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<label>Grade</label>
+						<label>{{ trans('site.grade') }}</label>
 						<input type="number" class="form-control" step="0.01" name="grade" required>
 					</div>
-					<button type="submit" class="btn btn-primary pull-right">Save</button>
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -208,24 +208,24 @@
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Edit feedback</h4>
+		    <h4 class="modal-title">{{ trans('site.edit-feedback') }}</h4>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action="" enctype="multipart/form-data">
 		      	{{ csrf_field() }}
 	      		<div class="form-group">
-		      		<label>Manuscript</label>
+		      		<label>{{ trans_choice('site.manuscripts', 1) }}</label>
 	  				<input type="file" class="form-control" name="filename" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 	  				* Godkjente fil formater er DOCX, PDF og ODT.
   				</div>
 
 	      		<div class="form-group">
-		      		<label>Availability</label>
+		      		<label>{{ trans('site.availability') }}</label>
 		      		<input type="date" class="form-control" name="availability">
 	      		</div>
 
 		      	<div class="text-right margin-top">
-		      		<button type="submit" class="btn btn-primary">Save</button>
+		      		<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
 		      	</div>
 		    </form>
 		  </div>
@@ -238,19 +238,19 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Set Availability</h4>
+				<h4 class="modal-title">{{ trans('site.set-availability') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" enctype="multipart/form-data">
 					{{ csrf_field() }}
 
 					<div class="form-group">
-						<label>Availability</label>
+						<label>{{ trans('site.availability') }}</label>
 						<input type="date" class="form-control" name="availability">
 					</div>
 
 					<div class="text-right margin-top">
-						<button type="submit" class="btn btn-primary">Save</button>
+						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
 					</div>
 				</form>
 			</div>
@@ -264,24 +264,24 @@
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Edit feedback</h4>
+		    <h4 class="modal-title">{{ trans('site.edit-feedback') }}</h4>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action="" enctype="multipart/form-data">
 		      	{{ csrf_field() }}
 	      		<div class="form-group">
-		      		<label>Manuscript</label>
+		      		<label>{{ trans_choice('site.manuscripts', 1) }}</label>
 	  				<input type="file" class="form-control" name="filename" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 	  				* Accepted file formats are DOCX, PDF, ODT.
   				</div>
 
 	      		<div class="form-group">
-		      		<label>Availability</label>
+		      		<label>{{ trans('site.availability') }}</label>
 		      		<input type="date" class="form-control" name="availability">
 	      		</div>
 
 		      	<div class="text-right margin-top">
-		      		<button type="submit" class="btn btn-primary">Save</button>
+		      		<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
 		      	</div>
 		    </form>
 		  </div>
@@ -295,14 +295,14 @@
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Delete feedback</h4>
+		    <h4 class="modal-title">{{ trans('site.delete-feedback') }}</h4>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action="">
 		      {{ csrf_field() }}
-		      Are you sure to delete this feedback?
+				{{ trans('site.delete-feedback-question') }}
 		      <div class="text-right margin-top">
-		      	<button type="submit" class="btn btn-danger">Delete</button>
+		      	<button type="submit" class="btn btn-danger">{{ trans('site.delete') }}</button>
 		      </div>
 		    </form>
 		  </div>
@@ -316,14 +316,14 @@
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Submit feedback to <em></em></h4>
+		    <h4 class="modal-title">{{ trans('site.submit-feedback-to') }} <em></em></h4>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action=""  enctype="multipart/form-data">
 		      	{{ csrf_field() }}
-		      	Note: This will replace the feedback submitted to a learner if already exists. <br /><br />
+				{{ trans('site.submit-feedback-to-note') }} <br /><br />
 		      	<div class="form-group">
-		      		<label>Submit feedback as</label>
+		      		<label>{{ trans('site.submit-feedback-as') }}</label>
 		      		<select name="learner_id" class="form-control selects2" required>
 						<option value="" selected disabled>- Select learner -</option>
 						@foreach( $group->learners as $learner )
@@ -332,16 +332,16 @@
 		      		</select>
 		      	</div>
 		      	<div class="form-group">
-		      		<label>Manuscript</label>
+		      		<label>{{ trans_choice('site.manuscripts', 1) }}</label>
 	      			<input type="file" class="form-control" required name="filename" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 	      			* Godkjente fil formater er DOCX, PDF og ODT.
       			</div>
 		      	<div class="form-group">
-		      		<label>Available date</label>
+		      		<label>{{ trans('site.available-date') }}</label>
 		      		<input type="date" class="form-control" name="availability">
 		      	</div>
 
-		      	<button type="submit" class="btn btn-primary pull-right margin-top">Submit</button>
+		      	<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
 		      	<div class="clearfix"></div>
 		    </form>
 		  </div>
@@ -354,26 +354,26 @@
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Submit feedback to <em></em></h4>
+		    <h4 class="modal-title">{{ trans('site.submit-feedback-to') }} <em></em></h4>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action=""  enctype="multipart/form-data">
 		      	{{ csrf_field() }}
 		      	<div class="form-group">
-		      		<label>Manuscript</label>
+		      		<label>{{ trans_choice('site.manuscripts', 1) }}</label>
       				<input type="file" class="form-control" required multiple name="filename[]" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
       				* Accepted file formats are DOCX, PDF, ODT.
       			</div>
 		      	<div class="form-group">
-		      		<label>Available date</label>
+		      		<label>{{ trans('site.available-date') }}</label>
 		      		<input type="date" class="form-control" name="availability">
 		      	</div>
 				<div class="form-group">
-					<label>Grade</label>
+					<label>{{ trans('site.grade') }}</label>
 					<input type="number" class="form-control" step="0.01" name="grade">
 				</div>
 				<input type="hidden" name="manuscript_id">
-		      	<button type="submit" class="btn btn-primary pull-right margin-top">Submit</button>
+		      	<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
 		      	<div class="clearfix"></div>
 		    </form>
 		  </div>
@@ -405,12 +405,12 @@ $manuscriptUsers = $assignment->manuscripts->whereNotIn('user_id', $groupLearner
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Add learner</h4>
+		    <h4 class="modal-title">{{ trans('site.add-learner') }}</h4>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action="{{route('assignment.group.add_learner', ['course_id' => $course->id, 'assignment_id' => $assignment->id, 'id' => $group->id])}}">
 		      {{ csrf_field() }}
-		      <label>Learners who submitted a manuscript for this assignment</label>
+		      <label>{{ trans('site.learner-submitted-manuscript-for-assignment') }}</label>
 		      <select class="form-control select2s" name="user_id">
 		      	<option disabled selected value="">- Search learner -</option>
 		      	@foreach( $manuscriptUsers as $manuscriptUser )
@@ -430,7 +430,7 @@ $manuscriptUsers = $assignment->manuscripts->whereNotIn('user_id', $groupLearner
 		      	<option value="{{ $manuscriptUser->user->id }}">{{ $manuscriptUser->user->full_name }} @if($learnerGrade) ({{ $learnerGrade }}) @endif</option>
 		      	@endforeach
 		      </select>
-		      <button type="submit" class="btn btn-primary pull-right margin-top">Add</button>
+		      <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.add') }}</button>
 		      <div class="clearfix"></div>
 		    </form>
 		  </div>
@@ -444,13 +444,13 @@ $manuscriptUsers = $assignment->manuscripts->whereNotIn('user_id', $groupLearner
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Remove learner</h4>
+		    <h4 class="modal-title">{{ trans('site.remove-learner') }}</h4>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action="">
 		      {{ csrf_field() }}
-		      Are you sure to remove this learner?
-		      <button type="submit" class="btn btn-danger pull-right margin-top">Delete</button>
+				{{ trans('site.remove-learner-question-only') }}
+		      <button type="submit" class="btn btn-danger pull-right margin-top">{{ trans('site.delete') }}</button>
 		      <div class="clearfix"></div>
 		    </form>
 		  </div>
@@ -463,15 +463,15 @@ $manuscriptUsers = $assignment->manuscripts->whereNotIn('user_id', $groupLearner
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Delete group</h4>
+		    <h4 class="modal-title">{{ trans('site.delete-group') }}</h4>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action="{{route('admin.assignment-group.destroy', ['course_id' => $course->id, 'assignment_id' => $assignment->id, 'id' => $group->id])}}">
 		      {{ csrf_field() }}
 		      {{ method_field('DELETE') }}
-		      Are you sure to delete this group?
+				{{ trans('site.delete-group-question') }}
 		      <br />
-		      <button type="submit" class="btn btn-danger pull-right margin-top">Delete</button>
+		      <button type="submit" class="btn btn-danger pull-right margin-top">{{ trans('site.delete') }}</button>
 		      <div class="clearfix"></div>
 		    </form>
 		  </div>
@@ -485,29 +485,29 @@ $manuscriptUsers = $assignment->manuscripts->whereNotIn('user_id', $groupLearner
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Edit group</h4>
+		    <h4 class="modal-title">{{ trans('site.edit-group') }}</h4>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action="{{route('admin.assignment-group.update', ['course_id' => $course->id, 'assignment_id' => $assignment->id, 'id' => $group->id])}}">
 		      {{ csrf_field() }}
 		      {{ method_field('PUT') }}
 		      <div class="form-group">
-		      	<label>Title</label>
-		      	<input type="text" class="form-control" name="title" placeholder="Title" required value="{{ $group->title }}">
+		      	<label>{{ trans('site.title') }}</label>
+		      	<input type="text" class="form-control" name="title" placeholder="{{ trans('site.title') }}" required value="{{ $group->title }}">
 		      </div>
 				<div class="form-group">
-					<label>Submission Date</label>
+					<label>{{ trans('site.submission-date') }}</label>
 					<input type="datetime-local" class="form-control" name="submission_date"
 						   @if( $group->submission_date ) value="{{ strftime('%Y-%m-%dT%H:%M:%S', strtotime($group->submission_date)) }}" @endif
 						   required>
 				</div>
 				<div class="form-group">
-					<label>Allow download all feedback</label> <br>
+					<label>{{ trans('site.allow-download-all-feedback') }}</label> <br>
 					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
 						   data-id="{{$group->allow_feedback_download}}" @if($group->allow_feedback_download) {{ 'checked' }} @endif
 					name="allow_feedback_download">
 				</div>
-		      <button type="submit" class="btn btn-primary pull-right margin-top">Save</button>
+		      <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.save') }}</button>
 		      <div class="clearfix"></div>
 		    </form>
 		  </div>

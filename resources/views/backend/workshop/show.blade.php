@@ -116,7 +116,7 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<button class="pull-right btn btn-xs btn-primary" data-toggle="modal" data-target="#editEmailModal">{{ trans('site.edit') }}</button>
-					<h4>{{ trans('site.email') }}</h4>
+					<h4>{{ trans_choice('site.emails', 1) }}</h4>
 				</div>
 				<div class="panel-body">
 					<b>{{ trans('site.subject') }}:</b> {{ $workshop->email_title }} <br>
@@ -435,7 +435,7 @@
 	      		<input type="text" name="last_name" required class="form-control"> 
 	      	</div>
 	      	<div class="form-group">
-	      		<label>{{ trans('site.email') }}</label>
+	      		<label>{{ trans_choice('site.emails', 1) }}</label>
 	      		<input type="email" name="email" required class="form-control"> 
 	      	</div>
 	      	<div class="text-right">
@@ -477,7 +477,7 @@
 	      		<input type="text" name="last_name" required class="form-control"> 
 	      	</div>
 	      	<div class="form-group">
-	      		<label>{{ trans('site.email') }}</label>
+	      		<label>{{ trans_choice('site.emails', 1) }}</label>
 	      		<input type="email" name="email" required class="form-control"> 
 	      	</div>
 	      	<div class="text-right">
@@ -551,7 +551,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">{{ trans('site.email') }}</h4>
+				<h4 class="modal-title">{{ trans_choice('site.emails', 1) }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="{{ route('admin.workshop.update.email', $workshop->id) }}">

@@ -15,12 +15,12 @@
 
 @section('content')
 <div class="page-toolbar">
-	<h3><i class="fa fa-users"></i> All Learners</h3>
+	<h3><i class="fa fa-users"></i> {{ trans('site.all-learners') }}</h3>
 	<div class="navbar-form navbar-right">
 	  	<div class="form-group">
 		  	<form role="search" method="GET" action="{{route('admin.learner.index')}}">
 				<div class="input-group">
-				  	<input type="text" class="form-control" name="search" value="{{Request::input('search')}}" placeholder="Search learner..">
+				  	<input type="text" class="form-control" name="search" value="{{Request::input('search')}}" placeholder="{{ trans('site.search-learner') }}..">
 				    <span class="input-group-btn">
 				    	<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
 				    </span>
@@ -34,7 +34,7 @@
 <div class="col-md-10 col-md-offset-1">
 	<div class="row">
 		<div class="col-md-12">
-		<a href="{{route('admin.learner.index')}}" class="btn btn-default margin-bottom margin-top"><i class="fa fa-angle-left"></i> All Learners</a>
+		<a href="{{route('admin.learner.index')}}" class="btn btn-default margin-bottom margin-top"><i class="fa fa-angle-left"></i> {{ trans('site.all-learners') }}</a>
 		</div>
 		<div class="col-md-3">
 			<div class="panel panel-default">
@@ -62,16 +62,16 @@
 					{{$learner->address->phone}}
 					@endif
 					<br> <br>
-					<b>Auto renew course:</b> {{ $learner->auto_renew_courses ? 'Yes' : 'No' }}
+					<b>{{ trans('site.auto-renew-course') }}:</b> {{ $learner->auto_renew_courses ? 'Yes' : 'No' }}
 				</div>
 			</div>
-			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editPasswordModal">Edit Password</button>
-			<button type="button" class="btn btn-info" data-toggle="modal" data-target="#editContactModal">Edit Contact Info</button>
-			<button type="button" class="margin-top btn btn-danger" data-toggle="modal" data-target="#deleteLearnerModal">Delete Learner</button>
-			<button type="button" class="margin-top btn btn-success" data-toggle="modal" data-target="#learnerNotesModal">Notes</button>
+			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editPasswordModal">{{ trans('site.edit-password') }}</button>
+			<button type="button" class="btn btn-info" data-toggle="modal" data-target="#editContactModal">{{ trans('site.edit-contact-info') }}</button>
+			<button type="button" class="margin-top btn btn-danger" data-toggle="modal" data-target="#deleteLearnerModal">{{ trans('site.delete-learner') }}</button>
+			<button type="button" class="margin-top btn btn-success" data-toggle="modal" data-target="#learnerNotesModal">{{ trans_choice('site.notes', 2) }}</button>
 
 			<div class="former-course-container">
-				<h4>Former Courses</h4>
+				<h4>{{ trans('site.former-courses') }}</h4>
 				<ul>
 					<?php $expiredCoursePackageManuscripts = array(); ?>
 				@foreach ($learner->coursesTakenOld as $oldCourse)
@@ -88,7 +88,7 @@
 
 			@if ($learner->notes)
 			<div class="col-md-12 no-padding margin-top">
-				<b><i>Notes</i></b> <br>
+				<b><i>{{ trans_choice('site.notes', 2) }}</i></b> <br>
 				{!! nl2br($learner->notes) !!}
 			</div>
 			@endif
@@ -114,121 +114,127 @@
             @endif
 		</div>
 		<div class="col-md-9">
-			<h4 class="no-margin-top">Courses Taken</h4>
+			<h4 class="no-margin-top">{{ trans('site.courses-taken') }}</h4>
 			<div class="row">
-				@foreach($learner->coursesTakenNotOld as $courseTaken)
-				<div class="col-sm-6">
-					<div class="panel panel-default">
-						<div class="panel-body">
-							<h4 style="margin-bottom: 7px"><a href="{{route('admin.course.show', $courseTaken->package->course->id)}}?section=learners">{{$courseTaken->package->course->title}}</a></h4>
-							<p class="no-margin-bottom">
-								Status: @if($courseTaken->is_active)
-								Active
-								@else
-								Pending
-								@endif
-								<br />
-								Plan: {{ $courseTaken->package->variation }} <br />
-								@if( $courseTaken->hasStarted )
-								Started at: {{ Carbon\Carbon::parse($courseTaken->started_at)->format('M d, Y H.i') }}
-								@else
-								Started at: <em>Not yet started</em>
-								@endif
-								<br />
-								Expires on: 
-								@if( $courseTaken->hasStarted )
-									@if( $courseTaken->end_date )
-										{{ $courseTaken->end_date }}
-									@else
-										{{ Carbon\Carbon::parse($courseTaken->started_at)->addYears($courseTaken->years)->format('M d, Y H.i') }}
-									@endif
-								@else
-								<em>Not yet started</em>
-								@endif
-								
-								@if( $courseTaken->start_date )
-								<br />
-								Start date: {{ $courseTaken->start_date }}
-								@endif
-								{{--@if( $courseTaken->end_date )--}}
-								<br />
-								End date: {{ $courseTaken->end_date ? $courseTaken->end_date
-								: ($courseTaken->started_at ? \Carbon\Carbon::parse($courseTaken->started_at)->addYear(1)->format('M d, Y') : '') }}
-								{{--@endif--}}
-							</p>
-							<button type="button" class="btn btn-xs btn-primary setAvailabilityBtn" style="margin-top: 7px" 
-							data-title="{{ $courseTaken->package->course->title }}"
-							data-toggle="modal" 
-							data-target="#setAvailabilityModal" 
-							data-action="{{ route('admin.course_taken.set_availability', $courseTaken->id) }}"
-							@if( $courseTaken->start_date )
-							data-start_date="{{ date_format(date_create($courseTaken->start_date), 'Y-m-d') }}" 
-							@endif
-							@if( $courseTaken->end_date )
-							data-end_date="{{ date_format(date_create($courseTaken->end_date), 'Y-m-d') }}"
-							@endif
-							>
-							Set availability</button> 
-
-							@if( !$courseTaken->is_active )
-							<form method="POST" action="{{ route('activate_course_taken') }}" style="margin-top: 7px">
-								{{ csrf_field() }}
-								<input type="hidden" name="coursetaken_id" value="{{ $courseTaken->id }}">
-								<button class="btn btn-warning btn-xs" type="submit"><i class="fa fa-check"></i></button>
-							</form>
-							@endif
-							
-							<div class="margin-top">
-								<button data-toggle="collapse" class="btn btn-xs btn-success" data-target="#lessons-{{ $courseTaken->id }}">Lessons</button>
-							</div>
-
-							<!-- check if webinar-pakke -->
-							@if ($courseTaken->package->course->id == 17)
-								<div class="margin-top">
-									<button class="btn btn-xs btn-danger deleteFromCourseBtn" data-target="#deleteFromCourseModal"
-									data-toggle="modal"
-									data-action="{{ route('admin.learner.delete-from-course', $courseTaken->id) }}">Delete from course</button>
-								</div>
-							@endif
-
-							<div class="collapse" id="lessons-{{ $courseTaken->id }}">
-								<div class="margin-top"><strong>Lessons</strong></div>
-								<div class="table-responsive">
-									<table class="table table-bordered no-margin-bottom">
-										@foreach( $courseTaken->package->course->lessons as $lesson )
-										<tr>
-											<td><a href="{{ route('admin.lesson.edit', ['course_id' => $courseTaken->package->course->id, 'lesson_id' => $lesson->id]) }}">{{ $lesson->title }}</a></td>
-											<td>
-												@if( FrontendHelpers::hasLessonAccess($courseTaken, $lesson) )
-												<button class="btn btn-primary btn-xs defaultAllowAccessBtn" data-toggle="modal" data-target="#lessonDefaultAccessModal" data-action="{{ route('admin.course_taken.default_lesson_access', ['course_taken_id' => $courseTaken->id, 'lesson_id' => $lesson->id]) }}">Default access</button>
+				@foreach($learner->coursesTakenNotOld->chunk(2) as $coursesTaken)
+					<div class="col-sm-12">
+						<div class="row">
+							@foreach($coursesTaken as $courseTaken)
+								<div class="col-sm-6">
+									<div class="panel panel-default">
+										<div class="panel-body">
+											<h4 style="margin-bottom: 7px"><a href="{{route('admin.course.show', $courseTaken->package->course->id)}}?section=learners">{{$courseTaken->package->course->title}}</a></h4>
+											<p class="no-margin-bottom">
+												{{ trans('site.status') }}: @if($courseTaken->is_active)
+													Active
 												@else
-												<button class="btn btn-success btn-xs allowAccessBtn" data-toggle="modal" data-target="#lessonAccessModal" data-action="{{ route('admin.course_taken.allow_lesson_access', ['course_taken_id' => $courseTaken->id, 'lesson_id' => $lesson->id]) }}">Allow access</button>
+													Pending
 												@endif
-											</td>
-										</tr>
-										@endforeach
-									</table>
+												<br />
+												{{ trans('site.plan') }}: {{ $courseTaken->package->variation }} <br />
+												@if( $courseTaken->hasStarted )
+													{{ trans('site.started-at') }}: {{ Carbon\Carbon::parse($courseTaken->started_at)->format('M d, Y H.i') }}
+												@else
+													{{ trans('site.started-at') }}: <em>Not yet started</em>
+												@endif
+												<br />
+												{{ trans('site.expires-on') }}
+												@if( $courseTaken->hasStarted )
+													@if( $courseTaken->end_date )
+														{{ $courseTaken->end_date }}
+													@else
+														{{ Carbon\Carbon::parse($courseTaken->started_at)->addYears($courseTaken->years)->format('M d, Y H.i') }}
+													@endif
+												@else
+													<em>Not yet started</em>
+												@endif
+
+												@if( $courseTaken->start_date )
+													<br />
+													{{ ucfirst(strtolower(trans('site.start-date'))) }}: {{ $courseTaken->start_date }}
+												@endif
+												{{--@if( $courseTaken->end_date )--}}
+												<br />
+												{{ ucfirst(strtolower(trans('site.end-date'))) }}: {{ $courseTaken->end_date ? $courseTaken->end_date
+								: ($courseTaken->started_at ? \Carbon\Carbon::parse($courseTaken->started_at)->addYear(1)->format('M d, Y') : '') }}
+												{{--@endif--}}
+											</p>
+											<button type="button" class="btn btn-xs btn-primary setAvailabilityBtn" style="margin-top: 7px"
+													data-title="{{ $courseTaken->package->course->title }}"
+													data-toggle="modal"
+													data-target="#setAvailabilityModal"
+													data-action="{{ route('admin.course_taken.set_availability', $courseTaken->id) }}"
+													@if( $courseTaken->start_date )
+													data-start_date="{{ date_format(date_create($courseTaken->start_date), 'Y-m-d') }}"
+													@endif
+													@if( $courseTaken->end_date )
+													data-end_date="{{ date_format(date_create($courseTaken->end_date), 'Y-m-d') }}"
+													@endif
+											>
+												{{ trans('site.set-availability') }}</button>
+
+											@if( !$courseTaken->is_active )
+												<form method="POST" action="{{ route('activate_course_taken') }}" style="margin-top: 7px">
+													{{ csrf_field() }}
+													<input type="hidden" name="coursetaken_id" value="{{ $courseTaken->id }}">
+													<button class="btn btn-warning btn-xs" type="submit"><i class="fa fa-check"></i></button>
+												</form>
+											@endif
+
+											<div class="margin-top">
+												<button data-toggle="collapse" class="btn btn-xs btn-success" data-target="#lessons-{{ $courseTaken->id }}">{{ trans_choice('site.lessons', 2) }}</button>
+											</div>
+
+											<!-- check if webinar-pakke -->
+											@if ($courseTaken->package->course->id == 17)
+												<div class="margin-top">
+													<button class="btn btn-xs btn-danger deleteFromCourseBtn" data-target="#deleteFromCourseModal"
+															data-toggle="modal"
+															data-action="{{ route('admin.learner.delete-from-course', $courseTaken->id) }}">{{ trans('site.delete-from-course') }}</button>
+												</div>
+											@endif
+
+											<div class="collapse" id="lessons-{{ $courseTaken->id }}">
+												<div class="margin-top"><strong>{{ trans_choice('site.lessons', 2) }}</strong></div>
+												<div class="table-responsive">
+													<table class="table table-bordered no-margin-bottom">
+														@foreach( $courseTaken->package->course->lessons as $lesson )
+															<tr>
+																<td><a href="{{ route('admin.lesson.edit', ['course_id' => $courseTaken->package->course->id, 'lesson_id' => $lesson->id]) }}">{{ $lesson->title }}</a></td>
+																<td>
+																	@if( FrontendHelpers::hasLessonAccess($courseTaken, $lesson) )
+																		<button class="btn btn-primary btn-xs defaultAllowAccessBtn" data-toggle="modal" data-target="#lessonDefaultAccessModal" data-action="{{ route('admin.course_taken.default_lesson_access', ['course_taken_id' => $courseTaken->id, 'lesson_id' => $lesson->id]) }}">{{ trans('site.default-access') }}</button>
+																	@else
+																		<button class="btn btn-success btn-xs allowAccessBtn" data-toggle="modal" data-target="#lessonAccessModal" data-action="{{ route('admin.course_taken.allow_lesson_access', ['course_taken_id' => $courseTaken->id, 'lesson_id' => $lesson->id]) }}">{{ trans('site.allow-access') }}</button>
+																	@endif
+																</td>
+															</tr>
+														@endforeach
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
-							</div>
+							@endforeach
 						</div>
 					</div>
-				</div>
 				@endforeach
 			</div>
 
 
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addShopManuscriptModal">+ Add Shop Manuscript</button>
-					<h4>Shop Manuscripts</h4>
+					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addShopManuscriptModal">+ {{ ucfirst(trans('site.add-shop-manuscript')) }}</button>
+					<h4>{{ trans_choice('site.shop-manuscripts', 2) }}</h4>
 				</div>
 				<div class="table-responsive">
 					<table class="table">
 						<thead>
 							<tr>
-								<th>Manuscript</th>
-								<th>Date Ordered</th>
-								<th>Status</th>
+								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+								<th>{{ trans('site.date-ordered') }}</th>
+								<th>{{ trans('site.status') }}</th>
 								<th></th>
 							</tr>
 						</thead>
@@ -297,18 +303,18 @@
 						$courseWorkshops += $courseTaken->package->workshops;
 					endforeach;
 					?>
-					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addToWorkshopModal">+ Add to workshop</button>
-						<button class="btn btn-info pull-right btn-xs margin-right-5" data-toggle="modal" data-target="#updateWorkshopCountModal">+ Update workshop count</button>
-					<h4>Workshops <span class="badge">{{ /*$workshopTakenCount >= 0*/ $learner->workshopTakenCount ? $workshopTakenCount : $learner->workshopsTaken->count() + $courseWorkshops }}</span></h4>
+					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addToWorkshopModal">+ {{ trans('site.add-to-workshop') }}</button>
+						<button class="btn btn-info pull-right btn-xs margin-right-5" data-toggle="modal" data-target="#updateWorkshopCountModal">+ {{ trans('site.update-workshop-count') }}</button>
+					<h4>{{ trans_choice('site.workshops', 2) }} <span class="badge">{{ /*$workshopTakenCount >= 0*/ $learner->workshopTakenCount ? $workshopTakenCount : $learner->workshopsTaken->count() + $courseWorkshops }}</span></h4>
 				</div>
 				<div class="table-responsive">
 					<table class="table">
 						<thead>
 							<tr>
-								<th>Workshop</th>
-								<th>Date Ordered</th>
-								<th width="250">Notes</th>
-								<th>Status</th>
+								<th>{{ trans_choice('site.workshops', 1) }}</th>
+								<th>{{ trans('site.date-ordered') }}</th>
+								<th width="250">{{ trans_choice('site.notes', 2) }}</th>
+								<th>{{ trans('site.status') }}</th>
 								<th></th>
 							</tr>
 						</thead>
@@ -325,7 +331,7 @@
 									data-target="#editWorkshopNoteModal"
 											data-action="{{ route('admin.learner.workshop-taken.update-notes', $workshopTaken->id) }}"
 									data-notes="{{ $workshopTaken->notes }}">
-										Edit Note
+										{{ trans('site.edit-note') }}
 									</button>
 								</td>
 								<td>
@@ -359,16 +365,16 @@
 
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addInvoiceModal">+ Add Invoice</button>
-					<h4>Invoices</h4>
+					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addInvoiceModal">+ {{ trans('site.add-invoice') }}</button>
+					<h4>{{ trans_choice('site.invoices', 2) }}</h4>
 				</div>
 				<div class="table-responsive">
 					<table class="table">
 						<thead>
 							<tr>
-								<th>Invoice #</th>
-								<th>Status</th>
-								<th>Created At</th>
+								<th>{{ trans_choice('site.invoices', 1) }} #</th>
+								<th>{{ trans('site.status') }}</th>
+								<th>{{ trans('site.created-at') }}</th>
 								<th></th>
 							</tr>
 						</thead>
@@ -424,20 +430,20 @@
 
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addManuscriptModal">+ Upload Manuscript</button>
-					<h4>Manuscripts</h4>
+					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addManuscriptModal">+ {{ trans('site.upload-manuscript') }}</button>
+					<h4>{{ trans_choice('site.manuscripts', 2) }}</h4>
 				</div>
 				<div class="table-responsive">
 					<table class="table">
 						<thead>
 							<tr>
-								<th>ID</th>
-								<th>Manuscript</th>
-								<th>Words Count</th>
-								<th>Grade</th>
-								<th>Feedbacks</th>
-								<th>Course</th>
-								<th>Date Uploaded</th>
+								<th>{{ trans('site.id') }}</th>
+								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+								<th>{{ ucwords(trans('site.words-count')) }}</th>
+								<th>{{ trans('site.grade') }}</th>
+								<th>{{ trans_choice('site.feedbacks', 2) }}</th>
+								<th>{{ trans_choice('site.courses', 1) }}</th>
+								<th>{{ trans('site.date-uploaded') }}</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -477,14 +483,14 @@
 
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<h4>Assignments</h4>
+					<h4>{{ trans_choice('site.assignments', 2) }}</h4>
 				</div>
 				<div class="table-responsive">
 					<table class="table">
 						<thead>
 							<tr>
-								<th>Assignment</th>
-								<th>Manuscript</th>
+								<th>{{ trans_choice('site.assignments', 1) }}</th>
+								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -543,19 +549,19 @@
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addOtherServiceModal"
-					onclick="updateOtherServiceFields(0)">+ Add Korrektur</button>
-					<h4>Korrektur</h4>
+					onclick="updateOtherServiceFields(0)">+ {{ trans('site.add-correction') }}</button>
+					<h4>{{ trans('site.correction') }}</h4>
 				</div>
 
 				<div class="table-responsive">
 					<table class="table">
 						<thead>
 						<tr>
-							<th>Manus</th>
-							<th>Editor</th>
-							<th>Date Ordered</th>
-							<th>Expected Finish</th>
-							<th>Status</th>
+							<th>{{ trans_choice('site.manus', 2) }}</th>
+							<th>{{ trans_choice('site.editors', 1) }}</th>
+							<th>{{ trans('site.date-ordered') }}</th>
+							<th>{{ trans('site.expected-finish') }}</th>
+							<th>{{ trans('site.status') }}</th>
 							<th></th>
 						</tr>
 						</thead>
@@ -631,19 +637,19 @@
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addOtherServiceModal"
-							onclick="updateOtherServiceFields(1)">+ Add Språkvask</button>
-					<h4>Språkvask</h4>
+							onclick="updateOtherServiceFields(1)">+ {{ trans('site.add-copy-editing') }}</button>
+					<h4>{{ trans('site.copy-editing') }}</h4>
 				</div>
 
 				<div class="table-responsive">
 					<table class="table">
 						<thead>
 						<tr>
-							<th>Manus</th>
-							<th>Editor</th>
-							<th>Date Ordered</th>
-							<th>Expected Finish</th>
-							<th>Status</th>
+							<th>{{ trans_choice('site.manus', 2) }}</th>
+							<th>{{ trans_choice('site.editors', 1) }}</th>
+							<th>{{ trans('site.date-ordered') }}</th>
+							<th>{{ trans('site.expected-finish') }}</th>
+							<th>{{ trans('site.status') }}</th>
 							<th></th>
 						</tr>
 						</thead>
@@ -662,7 +668,7 @@
 									@if ($copy_editing->editor_id)
 										{{ $copy_editing->editor->full_name }}
 									@else
-										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $copy_editing->id, 'type' => 1]) }}">Assign Editor</button>
+										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $copy_editing->id, 'type' => 1]) }}">{{ trans('site.assign-editor') }}</button>
 									@endif
 								</td>
 								<td>
@@ -681,7 +687,7 @@
 										   ['id' => $copy_editing->id, 'type' => 1]) }}"
 										   data-finish="{{ $copy_editing->expected_finish ?
 										strftime('%Y-%m-%dT%H:%M:%S', strtotime($copy_editing->expected_finish)) : '' }}">
-											Set Date
+											{{ trans('site.set-date') }}
 										</a>
 									@endif
 								</td>
@@ -720,23 +726,23 @@
 				<div class="panel-body">
 					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal"
 							data-target="#addCoachingSessionModal">
-						+ Add Coaching Session
+						+ {{ trans('site.add-coaching-session') }}
 					</button>
-					<h4>Coaching Timer</h4>
+					<h4>{{ trans('site.coaching-timer') }}</h4>
 				</div>
 
 				<div class="table-responsive">
 					<table class="table">
 						<thead>
 						<tr>
-							<th>Manus</th>
-							<th>Learner</th>
-							<th>Length</th>
-							<th>Learner Suggestion</th>
-							<th>Admin Suggestion</th>
-							<th>Approved Date</th>
-							<th>Assigned To</th>
-							<th>Replay</th>
+							<th>{{ trans_choice('site.manus', 2) }}</th>
+							<th>{{ trans_choice('site.learners', 1) }}</th>
+							<th>{{ trans('site.length') }}</th>
+							<th>{{ trans('site.learner-suggestion') }}</th>
+							<th>{{ trans('site.admin-suggestion') }}</th>
+							<th>{{ trans('site.approved-date') }}</th>
+							<th>{{ trans('site.assigned-to') }}</th>
+							<th>{{ trans('site.replay') }}</th>
 						</tr>
 						</thead>
 						<tbody>
@@ -766,7 +772,7 @@
 								<td>
 									<button class="btn btn-xs btn-warning setApprovedDateBtn" data-toggle="modal" data-target="#setApprovedDateModal"
 									data-course_taken_id="{{ $courseTaken->id }}">
-										Set Approved Date
+										{{ trans('site.set-approved-date') }}
 									</button>
 								</td>
 								<td></td>
@@ -794,7 +800,7 @@
 										<br>
 										<a href="#viewHelpWithModal" style="color:#eea236" class="viewHelpWithBtn"
 										   data-toggle="modal" data-details="{{ $coachingTimer->help_with }}">
-											View Help With
+											{{ trans('site.view-help-with') }}
 										</a>
 									@endif
 								</td>
@@ -840,7 +846,7 @@
 									@if (!$coachingTimer->approved_date)
 										<a href="#suggestDateModal" data-toggle="modal"
 										   class="suggestDateBtn"
-										   data-action="{{ route('admin.other-service.coaching-timer.suggestDate', $coachingTimer->id) }}">Suggest Different Dates</a>
+										   data-action="{{ route('admin.other-service.coaching-timer.suggestDate', $coachingTimer->id) }}">{{ trans('site.suggest-different-dates') }}</a>
 									@endif
 								</td>
 								<td>
@@ -852,17 +858,17 @@
 									@if ($coachingTimer->editor_id)
 										{{ $coachingTimer->editor->full_name }}
 									@else
-										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $coachingTimer->id, 'type' => 3]) }}">Assign Editor</button>
+										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $coachingTimer->id, 'type' => 3]) }}">{{ trans('site.assign-editor') }}</button>
 									@endif
 								</td>
 								<td>
 									@if ($coachingTimer->replay_link)
 										<a href="{{ $coachingTimer->replay_link }}" target="_blank">
-											View Replay
+											{{ trans('site.view-replay') }}
 										</a>
 									@endif
 									<button class="btn btn-xs btn-primary setReplayBtn" data-toggle="modal"
-											data-target="#setReplayModal" data-action="{{ route('admin.other-service.coaching-timer.set_replay', $coachingTimer->id) }}">Set Replay</button>
+											data-target="#setReplayModal" data-action="{{ route('admin.other-service.coaching-timer.set_replay', $coachingTimer->id) }}">{{ trans('site.set-replay') }}</button>
 								</td>
 							</tr>
 						@endforeach
@@ -876,15 +882,15 @@
 
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<h4>Emails</h4>
+					<h4>{{ trans_choice('site.emails', 2) }}</h4>
 				</div>
 				<div class="table-responsive">
 					<table class="table">
 						<thead>
 							<tr>
-								<th>Subject</th>
-								<th>Date</th>
-								<th>Attachment</th>
+								<th>{{ trans('site.subject') }}</th>
+								<th>{{ trans('site.date') }}</th>
+								<th>{{ trans_choice('site.attachments', 1) }}</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -922,18 +928,18 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addDiplomaModal">
-                        + Add Diploma
+                        + {{ trans('site.add-diploma') }}
                     </button>
-                    <h4>Kursbevis</h4>
+                    <h4>{{ trans_choice('site.diplomas', 2) }}</h4>
                 </div>
 
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
                         <tr>
-                            <th>Course</th>
-                            <th>Diploma</th>
-                            <th>Date Uploaded</th>
+                            <th>{{ trans_choice('site.courses', 1) }}</th>
+                            <th>{{ trans_choice('site.diplomas', 1) }}</th>
+                            <th>{{ trans('site.date-uploaded') }}</th>
                             <th></th>
                         </tr>
                         </thead>
@@ -950,7 +956,7 @@
 								<td>{{ $diploma->created_at }}</td>
 								<td>
 									<a href="{{ route('admin.learner.download-diploma', $diploma->id) }}">
-										Download
+										{{ trans('site.download') }}
 									</a>
 									<button class="btn btn-warning btn-xs editDiplomaBtn"
 									data-toggle="modal" data-target="#editDiplomaModal"
@@ -974,15 +980,15 @@
 			<!-- words written -->
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<h4>Words Written</h4>
+					<h4>{{ trans('site.words-written') }}</h4>
 				</div>
 
 				<div class="table-responsive">
 					<table class="table">
 						<thead>
 						<tr>
-							<th>Words Written</th>
-							<th>Date</th>
+							<th>{{ trans('site.words-written') }}</th>
+							<th>{{ trans('site.date') }}</th>
 						</tr>
 						</thead>
 						<tbody>
@@ -1004,16 +1010,16 @@
 			<!-- words written goal -->
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<h4>Words Written Goal</h4>
+					<h4>{{ trans('site.words-written-goal') }}</h4>
 				</div>
 
 				<div class="table-responsive">
 					<table class="table">
 						<thead>
 						<tr>
-							<th>From</th>
-							<th>To</th>
-							<th>Total Words</th>
+							<th>{{ trans('site.from') }}</th>
+							<th>{{ trans('site.to') }}</th>
+							<th>{{ trans('site.total-words') }}</th>
 						</tr>
 						</thead>
 						<tbody>
@@ -1044,17 +1050,17 @@
 
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<h4>Last 5 Logins</h4>
+					<h4>{{ str_replace('_COUNT_', 5 , trans('site.last-login-count')) }}</h4>
 				</div>
 				<div class="table-responsive">
 					<table class="table">
 						<thead>
 						<tr>
-							<th>Time</th>
-							<th>IP Address</th>
-							<th>Country</th>
-							<th>Provider</th>
-							<th>Platform</th>
+							<th>{{ trans('site.time') }}</th>
+							<th>{{ trans('site.ip-address') }}</th>
+							<th>{{ trans('site.country') }}</th>
+							<th>{{ trans('site.provider') }}</th>
+							<th>{{ trans('site.platform') }}</th>
 						</tr>
 						</thead>
 						<tbody>

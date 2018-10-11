@@ -6,12 +6,12 @@
 
 @section('content')
 <div class="page-toolbar">
-	<h3><i class="fa fa-users"></i> All Learners</h3>
+	<h3><i class="fa fa-users"></i> {{ trans('site.all-learners') }}</h3>
 	<div class="navbar-form navbar-right">
 	  	<div class="form-group">
 		  	<form role="search" method="GET">
 				<div class="input-group">
-				  	<input type="text" class="form-control" name="search" value="{{Request::input('search')}}" placeholder="Search learner..">
+				  	<input type="text" class="form-control" name="search" value="{{Request::input('search')}}" placeholder="{{ trans('site.search-learner') }}..">
 				    <span class="input-group-btn">
 				    	<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
 				    </span>
@@ -27,16 +27,16 @@
 		<table class="table">
 			<thead>
 		    	<tr>
-			        <th>ID</th>
-			        <th>First Name</th>
-			        <th>Last Name</th>
-			        <th>Email</th>
-					<th>Workshop</th>
-					<th>Shop Manuscript</th>
-			        <th>Courses</th>
-			        <th>Date Joined</th>
-					<th>Admin</th>
-					<th>Auto Renew</th>
+			        <th>{{ trans('site.id') }}</th>
+			        <th>{{ trans('site.first-name') }}</th>
+			        <th>{{ trans('site.last-name') }}</th>
+			        <th>{{ trans_choice('site.emails', 1) }}</th>
+					<th>{{ trans_choice('site.workshops',1) }}</th>
+					<th>{{ trans_choice('site.shop-manuscripts', 1) }}</th>
+			        <th>{{ trans_choice('site.courses', 2) }}</th>
+			        <th>{{ trans('site.date-joined') }}</th>
+					<th>{{ trans('site.admin') }}</th>
+					<th>{{ trans('site.auto-renew') }}</th>
 			        <th></th>
 		      	</tr>
 		    </thead>
@@ -54,7 +54,7 @@
 					<td>{{$learner->created_at}}</td>
 					<td>{{ $learner->is_admin ? 'Yes' : 'No' }}</td>
 					<td>{{ $learner->auto_renew_courses ? 'Yes' : 'No' }}</td>
-					<td><a href="{{route('admin.learner.show', $learner->id)}}" class="btn btn-xs btn-primary pull-right">View Learner</a></td>
+					<td><a href="{{route('admin.learner.show', $learner->id)}}" class="btn btn-xs btn-primary pull-right">{{ trans('site.view-learner') }}</a></td>
 		      	</tr>
 		      	@endforeach
 		    </tbody>

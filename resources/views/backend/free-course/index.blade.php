@@ -451,7 +451,7 @@
                         <input type="text" name="last_name" required class="form-control">
                     </div>
                     <div class="form-group">
-                        <label>{{ trans('site.email') }}</label>
+                        <label>{{ trans_choice('site.emails', 1) }}</label>
                         <input type="email" name="email" required class="form-control">
                     </div>
                     <div class="text-right">
@@ -514,7 +514,7 @@
                         <input type="text" name="last_name" required class="form-control">
                     </div>
                     <div class="form-group">
-                        <label>{{ trans('site.email') }}</label>
+                        <label>{{ trans_choice('site.emails', 1) }}</label>
                         <input type="email" name="email" required class="form-control">
                     </div>
                     <div class="text-right">

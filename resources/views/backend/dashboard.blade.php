@@ -120,7 +120,7 @@
 						    <thead>
 						      <tr>
 						        <th>{{ trans_choice('site.users', 1) }}</th>
-						        <th>{{ trans('site.email') }}</th>
+						        <th>{{ trans_choice('site.emails', 1) }}</th>
 						        <th></th>
 						      </tr>
 						    </thead>
@@ -963,7 +963,7 @@
 		  		<strong>{{ trans('site.name') }}:</strong><br />
 		  		<span id="name"></span><br />
 		  		<br />
-		  		<strong>{{ trans('site.email') }}:</strong><br />
+		  		<strong>{{ trans_choice('site.emails', 1) }}:</strong><br />
 		  		<span id="email"></span><br />
 		  		<br />
 		  		<strong>{{ trans_choice('site.manuscripts', 1) }}:</strong><br />
