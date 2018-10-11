@@ -28,50 +28,56 @@
 
 @section('content')
 <div class="page-toolbar">
-	<h3><i class="fa fa-file-text-o"></i> Free Courses</h3>
+	<h3><i class="fa fa-file-text-o"></i> {{ trans('site.free-courses') }}</h3>
 	<div class="clearfix"></div>
 </div>
 
 <div class="margin-top">
 
     <ul class="nav nav-tabs margin-top">
-        <li @if( Request::input('tab') != 'webinar' ) class="active" @endif><a href="?tab=course">Course</a></li>
-        <li @if( Request::input('tab') == 'webinar' ) class="active" @endif><a href="?tab=webinar">Webinar</a></li>
+        <li @if( Request::input('tab') != 'webinar' ) class="active" @endif><a href="?tab=course">{{ trans_choice('site.courses', 1) }}</a></li>
+        <li @if( Request::input('tab') == 'webinar' ) class="active" @endif><a href="?tab=webinar">{{ trans('site.webinars') }}</a></li>
     </ul>
 
     <div class="tab-content">
         <div class="tab-pane fade in active">
             @if( Request::input('tab') != 'webinar' )
                 <div class="col-md-12 margin-bottom margin-top">
-                    <button class="btn btn-success" data-toggle="modal" data-target="#addFreeCourseModal">Add free course</button>
+                    <button class="btn btn-success" data-toggle="modal" data-target="#addFreeCourseModal">{{ trans('site.add-free-course') }}</button>
                 </div>
-                @foreach( $freeCourses as $freeCourse )
-                <div class="col-md-4">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="pull-right">
-                                <button type="button" data-toggle="modal" data-target="#editFreeCourseModal" class="btn btn-info btn-xs editFreeCourseBtn" data-action="{{ route('admin.free-course.update', $freeCourse->id) }}" data-title="{{ $freeCourse->title }}" data-description="{{ $freeCourse->description }}" data-url="{{ $freeCourse->url }}" data-image="{{ $freeCourse->course_image }}"><i class="fa fa-pencil"></i></button>
-                                <button type="button" data-target="#deleteFreeCourseModal" data-toggle="modal" class="btn btn-danger btn-xs deleteFreeCourseBtn" data-action="{{ route('admin.free-course.destroy', $freeCourse->id) }}" data-title="{{ $freeCourse->title }}"><i class="fa fa-trash"></i></button>
+                @foreach($freeCourses->chunk(3) as $freeCourses)
+                    <div class="col-sm-12">
+                        <div class="row">
+                            @foreach( $freeCourses as $freeCourse )
+                            <div class="col-md-4">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="pull-right">
+                                            <button type="button" data-toggle="modal" data-target="#editFreeCourseModal" class="btn btn-info btn-xs editFreeCourseBtn" data-action="{{ route('admin.free-course.update', $freeCourse->id) }}" data-title="{{ $freeCourse->title }}" data-description="{{ $freeCourse->description }}" data-url="{{ $freeCourse->url }}" data-image="{{ $freeCourse->course_image }}"><i class="fa fa-pencil"></i></button>
+                                            <button type="button" data-target="#deleteFreeCourseModal" data-toggle="modal" class="btn btn-danger btn-xs deleteFreeCourseBtn" data-action="{{ route('admin.free-course.destroy', $freeCourse->id) }}" data-title="{{ $freeCourse->title }}"><i class="fa fa-trash"></i></button>
+                                        </div>
+                                        <h4 class="margin-bottom">{{ $freeCourse->title }}</h4>
+                                        <div class="margin-top">
+                                            {!! nl2br($freeCourse->description) !!}
+                                            <br />
+                                            <br />
+                                            {{ strtoupper(trans('site.url')) }}: <a href="{{ $freeCourse->link }}" target="_blank">{{ $freeCourse->url }}</a>
+                                            @if( $freeCourse->course_image )
+                                            <br />
+                                            <img src="{{ $freeCourse->course_image }}" height="150px" class="margin-top">
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <h4 class="margin-bottom">{{ $freeCourse->title }}</h4>
-                            <div class="margin-top">
-                                {!! nl2br($freeCourse->description) !!}
-                                <br />
-                                <br />
-                                URL: <a href="{{ $freeCourse->link }}" target="_blank">{{ $freeCourse->url }}</a>
-                                @if( $freeCourse->course_image )
-                                <br />
-                                <img src="{{ $freeCourse->course_image }}" height="150px" class="margin-top">
-                                @endif
-                            </div>
+                            @endforeach
                         </div>
                     </div>
-                </div>
                 @endforeach
             @else
                 <div class="col-sm-12 margin-top">
                     <button class="btn btn-primary margin-bottom" data-toggle="modal" data-target="#addWebinarModal"
-                            data-backdrop="static">Add Webinar</button>
+                            data-backdrop="static">{{ trans('site.add-webinar') }}</button>
                 </div>
 
                 @foreach($freeWebinars->chunk(3) as $webinar_chunk)
@@ -120,8 +126,8 @@
                                                     data-target="#addPresenterModal"
                                                     data-title="{{ $webinar->title }}"
                                                     data-action="{{ route('admin.free-webinar.presenter.store', ['webinar_id' => $webinar->id]) }}">
-                                                Add presenter</button>
-                                            <strong style="font-size: 15px">Presenters</strong> <br />
+                                                {{ trans('site.add-presenter') }}</button>
+                                            <strong style="font-size: 15px">{{ trans('site.presenters') }}</strong> <br />
                                             <div class="clearfix"></div>
 
                                             @foreach( $webinar->webinar_presenters as $webinar_presenter )
@@ -176,33 +182,33 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add Free Course</h4>
+        <h4 class="modal-title">{{ ucwords(trans('site.add-free-course')) }}</h4>
       </div>
       <div class="modal-body">
         <form method="POST" action="{{ route('admin.free-course.store') }}" enctype="multipart/form-data">
           {{csrf_field()}}
           <div class="form-group">
-          	<label>Title</label>
+          	<label>{{ trans('site.title') }}</label>
           	<input type="text" name="title" class="form-control" required>
           </div>
           <div class="form-group">
-          	<label>Description</label>
+          	<label>{{ trans('site.description') }}</label>
           	<textarea class="form-control" name="description" required rows="6"></textarea>
           </div>
           <div class="form-group">
-          	<label>URL</label>
+          	<label>{{ strtoupper(trans('site.url')) }}</label>
           	<input type="text" name="url" class="form-control" required>
           </div>
 
           <div class="form-group">
-            <label id="course-image">Image</label>
+            <label id="course-image">{{ trans('site.image') }}</label>
             <div class="course-form-image image-file margin-bottom">
               <div class="image-preview" title="Select Image" data-toggle="tooltip" data-placement="bottom"></div>
               <input type="file" accept="image/*" name="course_image" accept="image/jpg, image/jpeg, image/png">
             </div>
           </div>
           <div class="text-right">
-          	<button type="submit" class="btn btn-primary">Add free course</button>
+          	<button type="submit" class="btn btn-primary">{{ trans('site.add-free-course') }}</button>
           </div>
         </form>
       </div>
@@ -219,34 +225,34 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add Free Course</h4>
+        <h4 class="modal-title">{{ trans('site.edit-free-course') }}</h4>
       </div>
       <div class="modal-body">
         <form method="POST" action="" enctype="multipart/form-data">
           {{ csrf_field() }}
           {{ method_field('PUT') }}
           <div class="form-group">
-          	<label>Title</label>
+          	<label>{{ trans('site.title') }}</label>
           	<input type="text" name="title" class="form-control" required>
           </div>
           <div class="form-group">
-          	<label>Description</label>
+          	<label>{{ trans('site.description') }}</label>
           	<textarea class="form-control" name="description" required rows="6"></textarea>
           </div>
           <div class="form-group">
-          	<label>URL</label>
+          	<label>{{ strtoupper(trans('site.url')) }}</label>
           	<input type="text" name="url" class="form-control" required>
           </div>
           
           <div class="form-group">
-            <label id="course-image">Image</label>
+            <label id="course-image">{{ trans('site.image') }}</label>
             <div class="course-form-image image-file margin-bottom">
               <div class="image-preview" title="Select Image" data-toggle="tooltip" data-placement="bottom"></div>
               <input type="file" accept="image/*" name="course_image" accept="image/jpg, image/jpeg, image/png">
             </div>
           </div>
           <div class="text-right">
-          	<button type="submit" class="btn btn-primary">Save</button>
+          	<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
           </div>
         </form>
       </div>
@@ -262,15 +268,15 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Delete Course</h4>
+        <h4 class="modal-title">{{ trans('site.delete-course') }}</h4>
       </div>
       <div class="modal-body">
         <form method="POST" action="" enctype="multipart/form-data">
           {{ csrf_field() }}
           {{ method_field('DELETE') }}
-          <p>Are you sure to delete the free course <strong></strong>?</p>
+          <p>{{ trans('site.delete-free-course-question') }} <strong></strong>?</p>
           <div class="text-right">
-          	<button type="submit" class="btn btn-danger">Delete</button>
+          	<button type="submit" class="btn btn-danger">{{ trans('site.delete') }}</button>
           </div>
         </form>
       </div>
@@ -285,21 +291,21 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Add Webinar</h4>
+                <h4 class="modal-title">{{ trans('site.add-webinar') }}</h4>
             </div>
             <div class="modal-body">
                 <form method="POST" action="{{ route('admin.free-webinar.store') }}" enctype="multipart/form-data">
                     {{ csrf_field() }}
                     <div class="form-group">
-                        <label>Title</label>
+                        <label>{{ trans('site.title') }}</label>
                         <input type="text" name="title" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label>Description</label>
+                        <label>{{ trans('site.description') }}</label>
                         <textarea class="form-control" name="description" required rows="6"></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Start date</label>
+                        <label>{{ trans('site.start-date') }}</label>
                         <input type="datetime-local" name="start_date" class="form-control" required>
                     </div>
                     <div class="form-group">
@@ -313,7 +319,7 @@
                           <div class="image-preview" title="Select Image" data-toggle="tooltip" data-placement="bottom"></div>
                           <input type="file" accept="image/*" name="image" accept="image/jpg, image/jpeg, image/png">
                         </div>--}}
-                        <label for="image">Image</label>
+                        <label for="image">{{ trans('site.image') }}</label>
                         <input type="file" accept="image/*" name="image" id="webinarImage" accept="image/jpg, image/jpeg, image/png"
                                onchange="readURL(this)">
 
@@ -328,7 +334,7 @@
                     </div>
 
                     <div class="text-right">
-                        <button type="submit" class="btn btn-primary">Add webinar</button>
+                        <button type="submit" class="btn btn-primary">{{ trans('site.add-webinar') }}</button>
                     </div>
                 </form>
             </div>
@@ -342,22 +348,22 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Edit Webinar <em></em></h4>
+                <h4 class="modal-title">{{ trans('site.edit-webinar') }} <em></em></h4>
             </div>
             <div class="modal-body">
                 <form method="POST" action="" enctype="multipart/form-data">
                     {{ csrf_field() }}
                     {{ method_field('PUT') }}
                     <div class="form-group">
-                        <label>Title</label>
+                        <label>{{ trans('site.title') }}</label>
                         <input type="text" name="title" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label>Description</label>
+                        <label>{{ trans('site.description') }}</label>
                         <textarea class="form-control" name="description" required rows="6"></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Start date</label>
+                        <label>{{ trans('site.start-date') }}</label>
                         <input type="datetime-local" name="start_date" class="form-control" required>
                     </div>
                     <div class="form-group">
@@ -371,7 +377,7 @@
                           <div class="image-preview" title="Select Image" data-toggle="tooltip" data-placement="bottom"></div>
                           <input type="file" accept="image/*" name="image" accept="image/jpg, image/jpeg, image/png">
                         </div>--}}
-                        <label for="image">Image</label>
+                        <label for="image">{{ trans('site.image') }}</label>
                         <input type="file" accept="image/*" name="image" id="webinarImageEdit" accept="image/jpg, image/jpeg, image/png"
                                onchange="readURLEdit(this)">
 
@@ -386,7 +392,7 @@
                     </div>
 
                     <div class="text-right">
-                        <button type="submit" class="btn btn-primary">Update webinar</button>
+                        <button type="submit" class="btn btn-primary">{{ trans('site.update-webinar') }}</button>
                     </div>
                 </form>
             </div>
@@ -401,15 +407,15 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Delete Webinar <em></em></h4>
+                <h4 class="modal-title">{{ trans('site.delete-webinar') }} <em></em></h4>
             </div>
             <div class="modal-body">
                 <form method="POST" action="" enctype="multipart/form-data">
                     {{ csrf_field() }}
                     {{ method_field('DELETE') }}
-                    <p>Are you sure to delete this webinar?</p>
+                    <p>{{ trans('site.delete-webinar-question') }}</p>
                     <div class="text-right">
-                        <button type="submit" class="btn btn-danger">Delete webinar</button>
+                        <button type="submit" class="btn btn-danger">{{ trans('site.delete-webinar') }}</button>
                     </div>
                 </form>
             </div>
@@ -423,7 +429,7 @@
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="no-margin">Add Presenter to <em></em></h4>
+                <h4 class="no-margin">{{ trans('site.add-presenter-to') }} <em></em></h4>
             </div>
             <div class="modal-body">
                 <form method="POST" enctype="multipart/form-data" action="">
@@ -437,19 +443,19 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>First Name</label>
+                        <label>{{ trans('site.first-name') }}</label>
                         <input type="text" name="first_name" required class="form-control">
                     </div>
                     <div class="form-group">
-                        <label>Last Name</label>
+                        <label>{{ trans('site.last-name') }}</label>
                         <input type="text" name="last_name" required class="form-control">
                     </div>
                     <div class="form-group">
-                        <label>Email</label>
+                        <label>{{ trans('site.email') }}</label>
                         <input type="email" name="email" required class="form-control">
                     </div>
                     <div class="text-right">
-                        <button type="submit" class="btn btn-primary">Add Presenter</button>
+                        <button type="submit" class="btn btn-primary">{{ trans('site.add-presenter') }}</button>
                     </div>
                 </form>
             </div>
@@ -463,15 +469,15 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Delete Presenter <em></em></h4>
+                <h4 class="modal-title">{{ trans('site.delete-presenter') }} <em></em></h4>
             </div>
             <div class="modal-body">
                 <form method="POST" action="" enctype="multipart/form-data">
                     {{ csrf_field() }}
                     {{ method_field('DELETE') }}
-                    <p>Are you sure to delete this presenter?</p>
+                    <p>{{ trans('site.delete-presenter-question') }}</p>
                     <div class="text-right">
-                        <button type="submit" class="btn btn-danger">Delete presenter</button>
+                        <button type="submit" class="btn btn-danger">{{ trans('site.delete-presenter') }}</button>
                     </div>
                 </form>
             </div>
@@ -485,7 +491,7 @@
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="no-margin">Edit Presenter <em></em></h4>
+                <h4 class="no-margin">{{ trans('site.edit-presenter') }} <em></em></h4>
             </div>
             <div class="modal-body">
                 <form method="POST" enctype="multipart/form-data" action="">
@@ -500,19 +506,19 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>First Name</label>
+                        <label>{{ trans('site.first-name') }}</label>
                         <input type="text" name="first_name" required class="form-control">
                     </div>
                     <div class="form-group">
-                        <label>Last Name</label>
+                        <label>{{ trans('site.last-name') }}</label>
                         <input type="text" name="last_name" required class="form-control">
                     </div>
                     <div class="form-group">
-                        <label>Email</label>
+                        <label>{{ trans('site.email') }}</label>
                         <input type="email" name="email" required class="form-control">
                     </div>
                     <div class="text-right">
-                        <button type="submit" class="btn btn-primary">Edit Presenter</button>
+                        <button type="submit" class="btn btn-primary">{{ trans('site.edit-presenter') }}</button>
                     </div>
                 </form>
             </div>

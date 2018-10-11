@@ -11,12 +11,12 @@
 @section('content')
 
 <div class="page-toolbar">
-  <h3><i class="fa fa-file-text-o"></i> All Workshops</h3>
+  <h3><i class="fa fa-file-text-o"></i> {{ trans('site.all-workshops') }}</h3>
   <div class="navbar-form navbar-right">
       <div class="form-group">
         <form role="search" method="get" action="">
         <div class="input-group">
-            <input type="text" class="form-control" name="search" placeholder="Search course..">
+            <input type="text" class="form-control" name="search" placeholder="{{ trans('site.search-course') }}..">
             <span class="input-group-btn">
               <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
             </span>
@@ -41,21 +41,21 @@
 @endif--}}
 
 <div class="col-sm-12 margin-top">
-  <button type="button" class="btn btn-primary margin-bottom" data-toggle="modal" data-target="#addWorkshopModal">+ Add Workshop</button> 
+  <button type="button" class="btn btn-primary margin-bottom" data-toggle="modal" data-target="#addWorkshopModal">+ {{ trans('site.add-workshop') }}</button>
 
   <div class="table-responsive">
     <table class="table table-side-bordered table-white">
       <thead>
         <tr>
-          <th>Title</th>
-          <th>Price</th>
-          <th>Date</th>
-          <th>Duration</th>
-          <th>Seats</th>
-          <th>Location</th>
-          <th>Attendees</th>
-          <th>For Sale</th>
-          <th>Status</th>
+          <th>{{ trans('site.title') }}</th>
+          <th>{{ trans('site.price') }}</th>
+          <th>{{ trans('site.date') }}</th>
+          <th>{{ trans('site.duration') }}</th>
+          <th>{{ trans('site.seats') }}</th>
+          <th>{{ trans('site.location') }}</th>
+          <th>{{ trans('site.attendees') }}</th>
+          <th>{{ trans('site.for-sale') }}</th>
+          <th>{{ trans('site.status') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -98,7 +98,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add Workshop</h4>
+        <h4 class="modal-title">{{ trans('site.add-workshop') }}</h4>
       </div>
       <div class="modal-body">
         <form method="POST" action="" enctype="multipart/form-data">
@@ -106,27 +106,27 @@
           <div class="row">
             <div class="col-sm-6">
               <div class="form-group">
-                <label>Title</label>
-                <input type="text" name="title" placeholder="Title" required class="form-control">
+                <label>{{ trans('site.title') }}</label>
+                <input type="text" name="title" placeholder="{{ trans('site.title') }}" required class="form-control">
               </div>
               <div class="form-group">
-                <label>Description</label>
-                <textarea class="form-control" name="description" placeholder="Description" rows="5" id="editor"></textarea>
+                <label>{{ trans('site.description') }}</label>
+                <textarea class="form-control" name="description" placeholder="{{ trans('site.description') }}" rows="5" id="editor"></textarea>
               </div>
               <div class="form-group">
-                <label>Price</label>
-                <input type="number" step="0.01" name="price" placeholder="Price" min="0" required class="form-control">
+                <label>{{ trans('site.price') }}</label>
+                <input type="number" step="0.01" name="price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
               </div>
               <div class="form-group">
-                <label>Date</label>
-                <input type="datetime-local" name="date" placeholder="Date" min="0" required class="form-control">
+                <label>{{ trans('site.date') }}</label>
+                <input type="datetime-local" name="date" placeholder="{{ trans('site.date') }}" min="0" required class="form-control">
               </div>
                 <div class="form-group">
                     <label>Faktura Due Date</label>
                     <input type="date" name="faktura_date" placeholder="Faktura Due Date" class="form-control">
                 </div>
               <div class="form-group">
-                <label id="course-image">Image</label>
+                <label id="course-image">{{ trans('site.image') }}</label>
                 <div class="course-form-image image-file margin-bottom">
                   <div class="image-preview" title="Select Image" data-toggle="tooltip" data-placement="bottom"></div>
                   <input type="file" accept="image/*" name="image" accept="image/jpg, image/jpeg, image/png">
@@ -134,7 +134,7 @@
               </div>
 
               <div class="form-group">
-                <label>Free</label> <br>
+                <label>{{ trans('site.free') }}</label> <br>
                 <input type="checkbox" data-toggle="toggle" data-on="Yes"
                        class="status-toggle" data-off="No" data-size="small" name="is_free">
               </div>
@@ -142,24 +142,24 @@
             </div>
             <div class="col-sm-6">
               <div class="form-group">
-                <label>Duration (in hours)</label>
-                <input type="number" name="duration" placeholder="Duration" min="0" required class="form-control">
+                <label>{{ trans('site.duration-in-hours') }}</label>
+                <input type="number" name="duration" placeholder="{{ trans('site.duration') }}" min="0" required class="form-control">
               </div>
               <div class="form-group">
                 <label>Fiken product</label>
                 <input type="text" name="fiken_product" placeholder="Fiken product" value="{{ $workshop->fiken_product }}" min="0" required class="form-control">
               </div>
               <div class="form-group">
-                <label>Seats</label>
-                <input type="number" name="seats" placeholder="Seats" min="0" required class="form-control">
+                <label>{{ trans('site.seats') }}</label>
+                <input type="number" name="seats" placeholder="{{ trans('site.seats') }}" min="0" required class="form-control">
               </div>
               <div class="form-group">
-                <label>Location</label>
-                <input type="text" name="location" placeholder="Location" min="0" required class="form-control">
+                <label>{{ trans('site.location') }}</label>
+                <input type="text" name="location" placeholder="{{ trans('site.location') }}" min="0" required class="form-control">
                 <div id="map_edit"></div>
                 <input type="hidden" name="gmap">
               </div>
-              <button type="submit" class="btn btn-primary pull-right">Add Workshop</button>
+              <button type="submit" class="btn btn-primary pull-right">{{ trans('site.add-workshop') }}</button>
             </div>
           </div>
         </form>

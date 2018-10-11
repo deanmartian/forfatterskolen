@@ -31,7 +31,7 @@
                         <td> {{ $discount->coupon }} </td>
                         <td> {{ $discount->discount }} </td>
                         <td>
-                            <button type="button" class="btn btn-primary btn-xs editDiscountModal" data-toggle="modal" data-target="#discountModal" data-action="{{ route('admin.course-discount.update', [$discount->course_id, $discount->id]) }}" data-fields="{{ json_encode($discount) }}"><i class="fa fa-pencil"></i></button>
+                            <button type="button" class="btn btn-primary btn-xs editDiscountBtn" data-toggle="modal" data-target="#discountModal" data-action="{{ route('admin.course-discount.update', [$discount->course_id, $discount->id]) }}" data-fields="{{ json_encode($discount) }}"><i class="fa fa-pencil"></i></button>
                             <button type="button" class="btn btn-danger btn-xs deleteDiscountBtn" data-toggle="modal" data-target="#deleteDiscountModal" data-action="{{ route('admin.course-discount.destroy', [$discount->course_id, $discount->id]) }}"><i class="fa fa-trash"></i></button>
                         </td>
                     </tr>
@@ -64,7 +64,7 @@
                             <label>{{ trans_choice('site.discounts', 1) }}</label>
                             <input type="number" class="form-control" name="discount" required>
                         </div>
-                        <button type="submit" class="btn btn-primary pull-right margin-top">Add</button>
+                        <button type="submit" class="btn btn-primary pull-right margin-top"></button>
                         <div class="clearfix"></div>
                     </form>
                 </div>
@@ -106,6 +106,9 @@
             possible  = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         let add_discount = '{{ trans("site.add-discount") }}';
         let edit_discount = '{{ trans("site.edit-discount") }}';
+        let add_text = '{{ trans("site.add") }}';
+        let edit_text = '{{ trans("site.edit") }}';
+
         function generateCodes(number, length) {
             generated = []; // empty the generated coupon
             for ( var i=0; i < number; i++ ) {
@@ -137,6 +140,7 @@
             var form = $("#discountModal form");
             var action = $(this).data('action');
             form.attr('action', action);
+            form.find('[type=submit]').text(add_text);
 
             generateCodes(num, len);
         });
@@ -152,7 +156,7 @@
                 form.attr('action', action)
             });
 
-            $(".editDiscountModal").click(function(){
+            $(".editDiscountBtn").click(function(){
                 var form = $("#discountModal form");
                 var action = $(this).data('action');
                 var fields = $(this).data('fields');
@@ -161,6 +165,7 @@
                 form.find('input[name=discount]').val(fields.discount);
                 form.attr('action', action);
                 form.prepend('<input type="hidden" name="_method" value="PUT">');
+                form.find('[type=submit]').text(edit_text);
 
                 $(".modal-title").text(edit_discount);
             });

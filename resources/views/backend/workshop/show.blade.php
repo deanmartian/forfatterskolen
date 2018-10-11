@@ -27,7 +27,7 @@
 
 	<div class="row">
 		<div class="col-sm-12">
-			<a href="{{ route('admin.workshop.index') }}" class="btn btn-info margin-bottom"><i class="fa fa-angle-left"></i>&nbsp;&nbsp;All Workshops</a>
+			<a href="{{ route('admin.workshop.index') }}" class="btn btn-info margin-bottom"><i class="fa fa-angle-left"></i>&nbsp;&nbsp;{{ trans('site.all-workshops') }}</a>
 			<div class="workshop-hero text-center" style="background-image: url({{ $workshop->image }})">
 				<span class="editWorkshopButton">
 					<button type="button" class="btn btn-info" data-toggle="modal" data-target="#editWorkshopModal"><i class="fa fa-pencil"></i></button> 
@@ -35,7 +35,7 @@
 				</span>
 				<div>
 					<h2>{{ $workshop->title }}</h2>
-					<div class="margin-bottom">Starts at {{ date_format(date_create($workshop->date), 'h:i A, dS M Y') }}</div>
+					<div class="margin-bottom">{{ trans('site.starts-at') }} {{ date_format(date_create($workshop->date), 'h:i A, dS M Y') }}</div>
 					<!-- <button type="button" class="btn btn-success btn-lg">Invite People</button> -->
 				</div>
 			</div>
@@ -45,15 +45,15 @@
 			<!-- About This Workshop  -->
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<h4>About This Workshop</h4>
+					<h4>{{ trans('site.about-this-workshop') }}</h4>
 					<div class="margin-top margin-bottom">{!! $workshop->description !!}</div>
 					<div class="workshop-meta">
-						<div><strong>Price<span class="pull-right">:</span></strong>{{ AdminHelpers::currencyFormat($workshop->price) }}</div>
-						<div><strong>When<span class="pull-right">:</span></strong>{{ date_format(date_create($workshop->date), 'h:i A, dS M Y') }}</div>
+						<div><strong>{{ trans('site.price') }}<span class="pull-right">:</span></strong>{{ AdminHelpers::currencyFormat($workshop->price) }}</div>
+						<div><strong>{{ trans('site.when') }}<span class="pull-right">:</span></strong>{{ date_format(date_create($workshop->date), 'h:i A, dS M Y') }}</div>
 						<div><strong>Faktura Due Date <span class="pull-right">:</span></strong>{{ $workshop->faktura_date ? date_format(date_create($workshop->faktura_date), 'dS M Y') : '' }}</div>
-						<div><strong>Duration<span class="pull-right">:</span></strong>{{ $workshop->duration }} hours</div>
+						<div><strong>{{ trans('site.duration') }}<span class="pull-right">:</span></strong>{{ $workshop->duration }} hours</div>
 						<div><strong>Fiken product<span class="pull-right">:</span></strong>{{ $workshop->fiken_product }}</div>
-						<div><strong>Total Seats<span class="pull-right">:</span></strong>{{ $workshop->seats }}</div>
+						<div><strong>{{ trans('site.total-seats') }}<span class="pull-right">:</span></strong>{{ $workshop->seats }}</div>
 					</div>
 				</div>
 			</div>
@@ -61,8 +61,8 @@
 			<!-- Presenters  -->
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<button type="button" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#addPresenterModal">Add Presenter</button>
-					<h4>Presenters</h4>
+					<button type="button" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#addPresenterModal">{{ ucwords(trans('site.add-presenter')) }}</button>
+					<h4>{{ trans('site.presenters') }}</h4>
 					<div class="row margin-top">
 						@foreach( $workshop->presenters as $presenter )
 						<div class="col-sm-4 workshop-presenter">
@@ -89,8 +89,8 @@
 			<!-- Menu  -->
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<button type="button" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#addMenuModal">Add Menu</button>
-					<h4>Praktisk Informasjon</h4>
+					<button type="button" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#addMenuModal">{{ trans('site.add-menu') }}</button>
+					<h4>{{ trans('site.practical-information') }}</h4>
 					<div class="row margin-top">
 						@foreach( $workshop->menus as $menu )
 						<div class="col-sm-6 workshop-menu">
@@ -115,12 +115,12 @@
 			<!-- Email  -->
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<button class="pull-right btn btn-xs btn-primary" data-toggle="modal" data-target="#editEmailModal">Edit</button>
-					<h4>Email</h4>
+					<button class="pull-right btn btn-xs btn-primary" data-toggle="modal" data-target="#editEmailModal">{{ trans('site.edit') }}</button>
+					<h4>{{ trans('site.email') }}</h4>
 				</div>
 				<div class="panel-body">
-					<b>Subject:</b> {{ $workshop->email_title }} <br>
-					<b>Body:</b> <br>
+					<b>{{ trans('site.subject') }}:</b> {{ $workshop->email_title }} <br>
+					<b>{{ trans('site.body') }}:</b> <br>
 					{!! nl2br($workshop->email_body) !!}
 				</div>
 			</div>
@@ -131,7 +131,7 @@
 			<!-- People Registered -->
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<h4>{{ $workshop->attendees->count() }} people registered</h4>
+					<h4>{{ $workshop->attendees->count() }} {{ trans('site.people-registered') }}</h4>
 					<div class="progress margin-top">
 					  <?php $percent = floor(( $workshop->attendees->count() / $workshop->seats ) * 100); ?>
 					  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ $percent }}"
@@ -140,26 +140,26 @@
 					  </div>
 					</div>
 					<div style="line-height: 20px">
-						<div>Available Seats: <strong>{{ $workshop->seats - $workshop->attendees->count() }}</strong></div>
+						<div>{{ trans('site.available-seats') }}: <strong>{{ $workshop->seats - $workshop->attendees->count() }}</strong></div>
 					</div>
 					<br />
-					<h4>Attendees</h4>
+					<h4>{{ trans('site.attendees') }}</h4>
 					<hr style="margin: 7px 0" />
 					@foreach( $workshop->taken as $taken )
 					<div style="margin: 7px 0 10px 0">
 						<button type="button" class="btn btn-xs btn-danger pull-right removeAttendeeBtn" data-attendee="{{ $taken->user->full_name }}" data-action="{{ route('admin.workshop.remove_attendee', ['workshop_taken_id' => $taken->id, 'attendee_id' => $taken->user->id]) }}" data-toggle="modal" data-target="#removeAttendeeModal"><i class="fa fa-trash"></i></button>
 						<a href="">{{ $taken->user->full_name }}</a> <br />
-						Menu: <strong>{{ $taken->menu->title }}</strong> <br />
-						Notes: <strong>{{ $taken->notes }}</strong>
+						{{ trans('site.menu') }}: <strong>{{ $taken->menu->title }}</strong> <br />
+						{{ trans_choice('site.notes', 2) }}: <strong>{{ $taken->notes }}</strong>
 					</div>
 					@endforeach
 					<form method="POST" action="{{ route('admin.workshop.download_pdf', $workshop->id) }}" class="inline">
 						{{ csrf_field() }}
-						<button class="btn btn-sm btn-primary" type="submit">Export to PDF</button>
+						<button class="btn btn-sm btn-primary" type="submit">{{ trans('site.export-to-pdf') }}</button>
 					</form>
 
 					@if($workshop->attendees->count() > 0)
-						<button type="button" class="btn btn-success btn-sm inline" data-toggle="modal" data-target="#sendEmailModal">Send Email</button>
+						<button type="button" class="btn btn-success btn-sm inline" data-toggle="modal" data-target="#sendEmailModal">{{ trans('site.send-email') }}</button>
 					@endif
 				</div>
 			</div>
@@ -168,7 +168,7 @@
 			<!-- Location -->
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<h4>Location</h4>
+					<h4>{{ trans('site.location') }}</h4>
 					<div class="margin-top">
 						{{ $workshop->location }}
 						<div id="map"></div>
@@ -186,14 +186,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-      	<h4 class="no-margin">Remove attendee</h4>
+      	<h4 class="no-margin">{{ trans('site.remove-attendee') }}</h4>
       </div>
       <div class="modal-body">
       		<form method="POST" action="">
 		  		{{ csrf_field() }}
-		      	Are you sure to remove attendee <strong></strong>?
+		      	{!! str_replace('_ATTENDEE_', '<strong></strong>', trans('site.remove-attendee-question')) !!}
 		      	<div class="text-right margin-top">
-					<button type="submit" class="btn btn-danger">Remove</button>
+					<button type="submit" class="btn btn-danger">{{ trans('site.remove') }}</button>
 		      	</div>
     		</form>
 	   </div>
@@ -210,15 +210,15 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-      	<h4 class="no-margin">Delete Menu</h4>
+      	<h4 class="no-margin">{{ trans('site.delete-menu') }}</h4>
       </div>
       <div class="modal-body">
       		<form method="POST" action="">
 		  		{{ csrf_field() }}
 		  		{{ method_field('DELETE') }}
-		      	Are you sure to delete menu <strong></strong>?
+		      	{!! str_replace('_NAME_','<strong></strong>', trans('site.delete-menu-question')) !!}
 		      	<div class="text-right margin-top">
-					<button type="submit" class="btn btn-danger">Delete Menu</button>
+					<button type="submit" class="btn btn-danger">{{ trans('site.delete-menu') }}</button>
 		      	</div>
     		</form>
 	   </div>
@@ -234,7 +234,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-      	<h4 class="no-margin">Edit Menu <em></em></h4>
+      	<h4 class="no-margin">{{ trans('site.edit-menu') }} <em></em></h4>
       </div>
       <div class="modal-body">
       	<form method="POST" enctype="multipart/form-data" action="{{ route('admin.course.workshop-menu.store', ['workshop_id' => $workshop->id]) }}">
@@ -249,15 +249,15 @@
 		        </div>
 	      	</div>
       		<div class="form-group">
-	            <label>Title</label>
-	      			<input type="text" name="title" placeholder="Title" required class="form-control">
+	            <label>{{ trans('site.title') }}</label>
+	      			<input type="text" name="title" placeholder="{{ trans('site.title') }}" required class="form-control">
 	      		</div>
 	      	<div class="form-group">
-	      		<label>Description</label>
-	      		<textarea name="description" required class="form-control" rows="8" placeholder="Description"></textarea>
+	      		<label>{{ trans('site.description') }}</label>
+	      		<textarea name="description" required class="form-control" rows="8" placeholder="{{ trans('site.description') }}"></textarea>
 	      	</div>
 	      	<div class="text-right">
-				<button type="submit" class="btn btn-primary">Update Menu</button>
+				<button type="submit" class="btn btn-primary">{{ trans('site.update-menu') }}</button>
 	      	</div>
       	</form>
       </div>
@@ -271,7 +271,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-      	<h4 class="no-margin">Add Menu</h4>
+      	<h4 class="no-margin">{{ trans('site.add-menu') }}</h4>
       </div>
       <div class="modal-body">
       	<form method="POST" enctype="multipart/form-data" action="{{ route('admin.course.workshop-menu.store', ['workshop_id' => $workshop->id]) }}">
@@ -285,15 +285,15 @@
 		        </div>
 	      	</div>
       		<div class="form-group">
-	            <label>Title</label>
-	      			<input type="text" name="title" placeholder="Title" required class="form-control">
+	            <label>{{ trans('site.title') }}</label>
+	      			<input type="text" name="title" placeholder="{{ trans('site.title') }}" required class="form-control">
 	      		</div>
 	      	<div class="form-group">
-	      		<label>Description</label>
-	      		<textarea name="description" required class="form-control" rows="8" placeholder="Description"></textarea>
+	      		<label>{{ trans('site.description') }}</label>
+	      		<textarea name="description" required class="form-control" rows="8" placeholder="{{ trans('site.description') }}"></textarea>
 	      	</div>
 	      	<div class="text-right">
-				<button type="submit" class="btn btn-primary">Add Menu</button>
+				<button type="submit" class="btn btn-primary">{{ trans('site.add-menu') }}</button>
 	      	</div>
       	</form>
       </div>
@@ -310,7 +310,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Edit Workshop <em>{{$workshop->title}}</em></h4>
+        <h4 class="modal-title">{{ trans('site.edit-workshop') }} <em>{{$workshop->title}}</em></h4>
       </div>
       <div class="modal-body">
       	<form method="POST" action="{{route('admin.workshop.update', $workshop->id)}}" enctype="multipart/form-data">
@@ -319,28 +319,28 @@
 	        <div class="row">
 	            <div class="col-sm-6">
 	          		<div class="form-group">
-	                <label>Title</label>
-	          			<input type="text" name="title" placeholder="Title" value="{{ $workshop->title }}" required class="form-control">
+	                <label>{{ trans('site.title') }}</label>
+	          			<input type="text" name="title" placeholder="{{ trans('site.title') }}" value="{{ $workshop->title }}" required class="form-control">
 	          		</div>
 	          		<div class="form-group">
-	                <label>Description</label>
-	          			<textarea class="form-control" name="description" placeholder="Description" rows="5"
+	                <label>{{ trans('site.description') }}</label>
+	          			<textarea class="form-control" name="description" placeholder="{{ trans('site.description') }}" rows="5"
 						id="editor">{{ $workshop->description }}</textarea>
 	          		</div>
 	          		<div class="form-group">
-	                <label>Price</label>
-	          			<input type="number" step="0.01" name="price" placeholder="Price" value="{{ $workshop->price }}" min="0" required class="form-control">
+	                <label>{{ trans('site.price') }}</label>
+	          			<input type="number" step="0.01" name="price" placeholder="{{ trans('site.price') }}" value="{{ $workshop->price }}" min="0" required class="form-control">
 	          		</div>
 	              <div class="form-group">
-	                <label>Date</label>
-	                <input type="datetime-local" name="date" placeholder="Date" value="{{ strftime('%Y-%m-%dT%H:%M:%S', strtotime($workshop->date)) }}" min="0" required class="form-control">
+	                <label>{{ trans('site.date') }}</label>
+	                <input type="datetime-local" name="date" placeholder="{{ trans('site.date') }}" value="{{ strftime('%Y-%m-%dT%H:%M:%S', strtotime($workshop->date)) }}" min="0" required class="form-control">
 	              </div>
 					<div class="form-group">
 						<label>Faktura Due Date</label>
 						<input type="date" name="faktura_date" placeholder="Faktura Due Date" value="{{ $workshop->faktura_date ? strftime('%Y-%m-%d', strtotime($workshop->faktura_date)) : '' }}" class="form-control">
 					</div>
 	              <div class="form-group">
-	                <label id="course-image">Image</label>
+	                <label id="course-image">{{ trans('site.image') }}</label>
 	                <div class="course-form-image image-file margin-bottom">
 	                  <div class="image-preview" style="background-image: url({{ $workshop->image  }})" title="Select Image" data-toggle="tooltip" data-placement="bottom"></div>
 	                  <input type="file" accept="image/*" name="image" accept="image/jpg, image/jpeg, image/png">
@@ -348,7 +348,7 @@
 	              </div>
 
 					<div class="form-group">
-						<label>Free</label> <br>
+						<label>{{ trans('site.free') }}</label> <br>
 						<input type="checkbox" data-toggle="toggle" data-on="Yes"
 							   class="status-toggle" data-off="No" data-size="small" name="is_free"
 							@if($workshop->is_free) {{ 'checked' }} @endif>
@@ -357,7 +357,7 @@
 	            </div>
 	            <div class="col-sm-6">
 	              <div class="form-group">
-	                <label>Duration (in hours)</label>
+	                <label>{{ trans('site.duration-in-hours') }}</label>
 	                <input type="number" name="duration" placeholder="Duration" value="{{ $workshop->duration }}" min="0" required class="form-control">
 	              </div>
 	              <div class="form-group">
@@ -365,16 +365,16 @@
 	                <input type="text" name="fiken_product" placeholder="Fiken product" value="{{ $workshop->fiken_product }}" min="0" required class="form-control">
 	              </div>
 	              <div class="form-group">
-	                <label>Seats</label>
-	                <input type="number" name="seats" placeholder="Seats" value="{{ $workshop->seats }}" min="0" required class="form-control">
+	                <label>{{ trans('site.seats') }}</label>
+	                <input type="number" name="seats" placeholder="{{ trans('site.seats') }}" value="{{ $workshop->seats }}" min="0" required class="form-control">
 	              </div>
 	              <div class="form-group">
-	                <label>Location</label>
-	                <input type="text" name="location" placeholder="Location" value="{{ $workshop->location }}" min="0" required class="form-control">
+	                <label>{{ trans('site.location') }}</label>
+	                <input type="text" name="location" placeholder="{{ trans('site.location') }}" value="{{ $workshop->location }}" min="0" required class="form-control">
 					<div id="map_edit"></div>
 					<input type="hidden" name="gmap" value="{{ $workshop->gmap }}">
 	              </div>
-	          		<button type="submit" class="btn btn-primary pull-right">Update Workshop</button>
+	          		<button type="submit" class="btn btn-primary pull-right">{{ trans('site.update-workshop') }}</button>
 	      		  </div>
 	        </div>
       	</form>
@@ -390,16 +390,15 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4>Delete Workshop</h4>
+        <h4>{{ trans('site.delete-workshop') }}</h4>
       </div>
       <div class="modal-body">
-        Are you sure to delete this workshop?<br />
-        Warning: This cannot be undone.
+		  {!! trans('site.delete-workshop-question') !!}
         <div class="text-right margin-top">
           <form method="POST" action="{{route('admin.workshop.destroy', $workshop->id)}}">
             {{ csrf_field() }}
             {{ method_field('DELETE') }}
-            <button type="submit" class="btn btn-danger">Delete Workshop</button>
+            <button type="submit" class="btn btn-danger">{{ trans('site.delete-workshop') }}</button>
           </form>
         </div>
       </div>
@@ -414,7 +413,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-      	<h4 class="no-margin">Add Presenter</h4>
+      	<h4 class="no-margin">{{ ucwords(trans('site.add-presenter')) }}</h4>
       </div>
       <div class="modal-body">
       	<form method="POST" enctype="multipart/form-data" action="{{ route('admin.course.workshop-presenter.store', ['workshop_id' => $workshop->id]) }}">
@@ -428,19 +427,19 @@
 		        </div>
 	      	</div>
 	      	<div class="form-group">
-	      		<label>First Name</label>
+	      		<label>{{ trans('site.first-name') }}</label>
 	      		<input type="text" name="first_name" required class="form-control"> 
 	      	</div>
 	      	<div class="form-group">
-	      		<label>Last Name</label>
+	      		<label>{{ trans('site.last-name') }}</label>
 	      		<input type="text" name="last_name" required class="form-control"> 
 	      	</div>
 	      	<div class="form-group">
-	      		<label>Email</label>
+	      		<label>{{ trans('site.email') }}</label>
 	      		<input type="email" name="email" required class="form-control"> 
 	      	</div>
 	      	<div class="text-right">
-				<button type="submit" class="btn btn-primary">Add Presenter</button>
+				<button type="submit" class="btn btn-primary">{{ ucwords(trans('site.add-presenter')) }}</button>
 	      	</div>
       	</form>
       </div>
@@ -455,7 +454,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-      	<h4 class="no-margin">Edit Presenter</h4>
+      	<h4 class="no-margin">{{ trans('site.edit-presenter') }}</h4>
       </div>
       <div class="modal-body">
       	<form method="POST" enctype="multipart/form-data" action="">
@@ -470,19 +469,19 @@
 		        </div>
 	      	</div>
 	      	<div class="form-group">
-	      		<label>First Name</label>
+	      		<label>{{ trans('site.first-name') }}</label>
 	      		<input type="text" name="first_name" required class="form-control"> 
 	      	</div>
 	      	<div class="form-group">
-	      		<label>Last Name</label>
+	      		<label>{{ trans('site.last-name') }}</label>
 	      		<input type="text" name="last_name" required class="form-control"> 
 	      	</div>
 	      	<div class="form-group">
-	      		<label>Email</label>
+	      		<label>{{ trans('site.email') }}</label>
 	      		<input type="email" name="email" required class="form-control"> 
 	      	</div>
 	      	<div class="text-right">
-				<button type="submit" class="btn btn-primary">Update Presenter</button>
+				<button type="submit" class="btn btn-primary">{{ trans('site.update-presenter') }}</button>
 	      	</div>
       	</form>
       </div>
@@ -497,15 +496,15 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-      	<h4 class="no-margin">Delete Presenter</h4>
+      	<h4 class="no-margin">{{ trans('site.delete-presenter') }}</h4>
       </div>
       <div class="modal-body">
       		<form method="POST" action="">
 		  		{{ csrf_field() }}
 		  		{{ method_field('DELETE') }}
-		      	Are you sure to delete presenter <strong></strong>?
+		      	{!! str_replace('_PRESENTER_','<strong></strong>',trans('site.delete-presenter-question-with-name')) !!}
 		      	<div class="text-right">
-					<button type="submit" class="btn btn-danger">Delete Presenter</button>
+					<button type="submit" class="btn btn-danger">{{ trans('site.delete-presenter') }}</button>
 		      	</div>
     		</form>
 	   </div>
@@ -521,23 +520,23 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Send email</h4>
+				<h4 class="modal-title">{{ trans('site.send-email') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="{{route('admin.workshop.send_email', $workshop->id)}}" onsubmit="formSubmitted()">
 					{{csrf_field()}}
 
 					<div class="form-group">
-						<label>Subject</label>
+						<label>{{ trans('site.subject') }}</label>
 						<input type="text" class="form-control" name="subject" required>
 					</div>
 
 					<div class="form-group">
-						<label>Message</label>
+						<label>{{ trans('site.message') }}</label>
 						<textarea name="message" id="" cols="30" rows="10" class="form-control" required></textarea>
 					</div>
 					<div class="text-right">
-						<input type="submit" class="btn btn-primary" value="Send" id="send_email_btn">
+						<input type="submit" class="btn btn-primary" value="{{ trans('site.send') }}" id="send_email_btn">
 					</div>
 				</form>
 			</div>
@@ -552,21 +551,21 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Email</h4>
+				<h4 class="modal-title">{{ trans('site.email') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="{{ route('admin.workshop.update.email', $workshop->id) }}">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<label>Subject</label>
+						<label>{{ trans('site.subject') }}</label>
 						<input type="text" name="email_title" class="form-control" value="{{ $workshop->email_title }}" required>
 					</div>
 					<div class="form-group">
-						<label> Body </label>
+						<label> {{ trans('site.body') }} </label>
 						<textarea class="form-control" name="email_body" rows="6" required>{{ $workshop->email_body }}</textarea>
 					</div>
 					<div class="text-right margin-top">
-						<button type="submit" class="btn btn-primary">Save</button>
+						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
 					</div>
 				</form>
 			</div>
