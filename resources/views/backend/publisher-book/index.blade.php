@@ -6,20 +6,20 @@
 
 @section('content')
     <div class="page-toolbar">
-        <h3><i class="fa fa-file"></i> Publisher Book Page</h3>
+        <h3><i class="fa fa-file"></i> {{ trans('site.publisher-book-page') }}</h3>
         <div class="clearfix"></div>
     </div>
 
     <div class="col-md-12">
-        <a href="{{ route('admin.publisher-book.create') }}" class="btn btn-success margin-top">Add Publisher Book</a>
+        <a href="{{ route('admin.publisher-book.create') }}" class="btn btn-success margin-top">{{ trans('site.add-publisher-book') }}</a>
 
         <div class="table-users table-responsive">
             <table class="table">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Title</th>
-                    <th>Display Order</th>
+                    <th>{{ trans('site.id') }}</th>
+                    <th>{{ trans('site.title') }}</th>
+                    <th>{{ trans('site.display-order') }}</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -50,25 +50,7 @@
 
     </div>
 
-    <div id="deletePublisherBookModal" class="modal fade" role="dialog">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Delete Publisher Book</h4>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="">
-                        {{ csrf_field() }}
-                        {{ method_field('DELETE') }}
-                        <p>Are you sure you want to delete this publisher book?</p>
-                        <button type="submit" class="btn btn-danger pull-right margin-top">Delete</button>
-                        <div class="clearfix"></div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('backend.publisher-book.partials.delete')
 
 @stop
 

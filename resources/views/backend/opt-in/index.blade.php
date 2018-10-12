@@ -6,7 +6,7 @@
 
 @section('content')
     <div class="page-toolbar">
-        <h3><i class="fa fa-file"></i>Opt-in Page</h3>
+        <h3><i class="fa fa-file"></i>{{ trans('site.opt-in-page') }}</h3>
         <div class="clearfix"></div>
     </div>
 
@@ -15,7 +15,7 @@
         <div class="panel panel-default ">
             <div class="panel-heading">
                 <button type="button" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#editTermsModal"><i class="fa fa-pencil"></i></button>
-                <h4>Terms</h4>
+                <h4>{{ trans('site.terms') }}</h4>
             </div>
             <div class="panel-body">
                 {!! nl2br(App\Settings::optInTerms()) !!}
@@ -27,7 +27,7 @@
         <div class="panel panel-default ">
             <div class="panel-heading">
                 <button type="button" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#editDescriptionModal"><i class="fa fa-pencil"></i></button>
-                <h4>Description</h4>
+                <h4>{{ trans('site.description') }}</h4>
             </div>
             <div class="panel-body">
                 {!! nl2br(App\Settings::optInDescription()) !!}
@@ -39,7 +39,7 @@
         <div class="panel panel-default ">
             <div class="panel-heading">
                 <button type="button" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#editDescriptionRektorModal"><i class="fa fa-pencil"></i></button>
-                <h4>Description for Rektor Tips</h4>
+                <h4>{{ trans('site.description-for-rektor-tips') }}</h4>
             </div>
             <div class="panel-body">
                 {!! nl2br(App\Settings::optInRektorDescription()) !!}
@@ -53,14 +53,14 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Terms</h4>
+                    <h4 class="modal-title">{{ trans('site.terms') }}</h4>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="{{ route('admin.settings.update.opt-in-terms') }}">
                         {{ csrf_field() }}
                         <textarea class="form-control ckeditor" name="opt_in_terms">{{ App\Settings::optInTerms() }}</textarea>
                         <div class="text-right margin-top">
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
                         </div>
                     </form>
                 </div>
@@ -74,14 +74,14 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Description</h4>
+                    <h4 class="modal-title">{{ trans('site.description') }}</h4>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="{{ route('admin.settings.update.opt-in-description') }}">
                         {{ csrf_field() }}
                         <textarea class="form-control ckeditor" name="opt_in_description">{{ App\Settings::optInDescription() }}</textarea>
                         <div class="text-right margin-top">
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
                         </div>
                     </form>
                 </div>
@@ -95,14 +95,14 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Description</h4>
+                    <h4 class="modal-title">{{ trans('site.description-for-rektor-tips') }}</h4>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="{{ route('admin.settings.update.opt-in-rektor-description') }}">
                         {{ csrf_field() }}
                         <textarea class="form-control ckeditor" name="opt_in_description">{{ App\Settings::optInRektorDescription() }}</textarea>
                         <div class="text-right margin-top">
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
                         </div>
                     </form>
                 </div>

@@ -7,9 +7,9 @@ enctype="multipart/form-data">
 
     <div class="col-sm-12">
         @if(Request::is('publisher-book/*/edit'))
-            <h3>Edit <em>{{$book['title']}}</em></h3>
+            <h3>{{ trans('site.edit') }} <em>{{$book['title']}}</em></h3>
         @else
-            <h3>Add New Publisher Book</h3>
+            <h3>{{ trans('site.add-new-publisher-book') }}</h3>
         @endif
     </div>
 
@@ -17,15 +17,15 @@ enctype="multipart/form-data">
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="form-group">
-                    <label>Title</label>
+                    <label>{{ trans('site.title') }}</label>
                     <input type="text" class="form-control" name="title" value="{{ old('title', $book['title']) }}" required>
                 </div>
                 <div class="form-group">
-                    <label>Description</label>
+                    <label>{{ trans('site.description') }}</label>
                     <textarea name="description" cols="30" rows="10" class="form-control ckeditor">{{ old('description', $book['description']) }}</textarea>
                 </div>
                 <div class="form-group">
-                    <label>Quote Description</label>
+                    <label>{{ trans('site.quote-description') }}</label>
                     <textarea name="quote_description" cols="30" rows="10" class="form-control ckeditor">{{ old('quote_description', $book['quote_description']) }}</textarea>
                 </div>
             </div>
@@ -37,31 +37,31 @@ enctype="multipart/form-data">
             <div class="panel-body">
 
                 <div class="form-group">
-                    <label>Author Image</label>
+                    <label>{{ trans('site.author-image') }}</label>
                     <input type="file" name="author_image" accept="image/*" class="form-control" @if(!Request::is('publisher-book/*/edit')) required @endif>
                 </div>
 
                 <div class="form-group">
-                    <label>Book Image</label>
+                    <label>{{ trans('site.book-image') }}</label>
                     <input type="file" name="book_image" accept="image/*" class="form-control" @if(!Request::is('publisher-book/*/edit')) required @endif>
                 </div>
 
                 <div class="form-group">
-                    <label>Book Image Link</label>
+                    <label>{{ trans('site.book-image-link') }}</label>
                     <input type="url" name="book_image_link" value="{{ old('book_image_link', $book['book_image_link']) }}" class="form-control">
                 </div>
 
                 <div class="form-group">
-                    <label>Display Order</label>
+                    <label>{{ trans('site.display-order') }}</label>
                     <input type="number" step="1" name="display_order" value="{{ old('display_order', $book['display_order']) }}"
                     class="form-control">
                 </div>
 
                 @if(Request::is('publisher-book/*/edit'))
-                    <button type="submit" class="btn btn-primary">Update Publisher Book</button> <br>
-                    <button type="button" class="btn btn-danger margin-top" data-toggle="modal" data-target="#deleteBlogModal">Delete Publisher Book</button>
+                    <button type="submit" class="btn btn-primary">{{ trans('site.update-publisher-book') }}</button> <br>
+                    <button type="button" class="btn btn-danger margin-top" data-toggle="modal" data-target="#deleteBlogModal">{{ trans('site.delete-publisher-book') }}</button>
                 @else
-                    <button type="submit" class="btn btn-primary btn-block btn-lg">Create Publisher Book</button>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">{{ trans('site.create-publisher-book') }}</button>
                 @endif
             </div>
         </div>

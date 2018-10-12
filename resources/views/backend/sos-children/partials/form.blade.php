@@ -6,9 +6,9 @@
 
     <div class="col-sm-12">
         @if(Request::is('sos-children/*/edit'))
-            <h3>Edit <em>{{$document['title']}}</em></h3>
+            <h3>{{ trans('site.edit') }} <em>{{$document['title']}}</em></h3>
         @else
-            <h3>Add New SOS Children Document Video</h3>
+            <h3>{{ trans('site.add-new-sos-children-document-video') }}</h3>
         @endif
     </div>
 
@@ -16,20 +16,20 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="form-group">
-                    <label>Title</label>
+                    <label>{{ trans('site.title') }}</label>
                     <input type="text" class="form-control" name="title" value="{{ $document['title'] }}" required>
                 </div>
                 <div class="form-group">
-                    <label>Description</label>
+                    <label>{{ trans('site.description') }}</label>
                     <textarea name="description" cols="30" rows="10" class="form-control">{{ $document['description'] }}</textarea>
                 </div>
                 <div class="form-group">
-                    <label>Video URL</label>
+                    <label>{{ trans('site.video-url') }}</label>
                     <input type="url" class="form-control" name="video_url" value="{{ $document['video_url'] }}" required>
                 </div>
                 @if(!count($primaryVideo) || $primaryVideo->id == $document['id'])
                     <div class="form-group">
-                        <label>Is Primary Video?</label> <br>
+                        <label>{{ trans('site.is-primary-video') }}?</label> <br>
                         <input type="checkbox" data-toggle="toggle" data-on="Yes"
                                class="for-sale-toggle" data-off="No"
                                name="is_primary">
@@ -43,10 +43,10 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 @if(Request::is('sos-children/*/edit'))
-                    <button type="submit" class="btn btn-primary">Update Document</button>
-                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteDocumentModal">Delete Document</button>
+                    <button type="submit" class="btn btn-primary">{{ trans('site.update-document') }}</button>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteDocumentModal">{{ trans('site.delete-document') }}</button>
                 @else
-                    <button type="submit" class="btn btn-primary btn-block btn-lg">Create Document</button>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">{{ trans('site.create-document') }}</button>
                 @endif
             </div>
         </div>

@@ -15,19 +15,19 @@
             {{ csrf_field() }}
 
             <div class="col-sm-12">
-                <h3>Edit Descriptions</h3>
+                <h3>{{ trans('site.edit-descriptions') }}</h3>
             </div>
 
             <div class="col-sm-12 col-md-8">
                 <div class="panel panel-default">
                     <div class="panel-body">
                         <div class="form-group">
-                            <label>Main Description</label>
+                            <label>{{ trans('site.main-description') }}</label>
                             <textarea name="description" cols="30" rows="10" class="form-control ckeditor">{!! $hasMainDescription ? $hasMainDescription->description : '' !!}</textarea>
                         </div>
 
                         <div class="form-group">
-                            <label>Bottom Description</label>
+                            <label>{{ trans('site.bottom-description') }}</label>
                             <textarea name="bottom_description" cols="30" rows="10" class="form-control ckeditor">{{ $hasMainDescription ? $hasMainDescription->bottom_description : '' }}</textarea>
                         </div>
 
@@ -39,7 +39,7 @@
             <div class="col-sm-12 col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        <button type="submit" class="btn btn-primary btn-block btn-lg">Save Details</button>
+                        <button type="submit" class="btn btn-primary btn-block btn-lg">{{ trans('site.save-details') }}</button>
                     </div>
                 </div>
             </div>

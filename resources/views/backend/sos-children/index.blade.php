@@ -10,13 +10,13 @@
 
 @section('content')
     <div class="page-toolbar">
-        <h3><i class="fa fa-file"></i> SOS Children Page</h3>
+        <h3><i class="fa fa-file"></i> {{ trans('site.sos-children-page') }}</h3>
         <div class="clearfix"></div>
     </div>
 
     <div class="col-md-12">
-        <a href="{{ route('admin.sos-children.create') }}" class="btn btn-success margin-top">Add Document</a>
-        <a href="{{ route('admin.sos-children.get-main-description') }}" class="btn btn-primary margin-top">Edit Descriptions</a>
+        <a href="{{ route('admin.sos-children.create') }}" class="btn btn-success margin-top">{{ trans('site.add-document') }}</a>
+        <a href="{{ route('admin.sos-children.get-main-description') }}" class="btn btn-primary margin-top">{{ trans('site.edit-descriptions') }}</a>
         {{--<button class="btn btn-primary margin-top" data-toggle="modal"
         data-target="#editMainDescriptionModal"
         data-fields="{{ json_encode($hasMainDescription) }}"
@@ -27,9 +27,9 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Title</th>
-                        <th width="600">Description</th>
-                        <th>Video URL</th>
+                        <th>{{ trans('site.title') }}</th>
+                        <th width="600">{{ trans('site.description') }}</th>
+                        <th>{{ trans('site.video-url') }}</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -165,25 +165,7 @@
         </div>
     </div>
 
-    <div id="deleteDocumentModal" class="modal fade" role="dialog">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Delete Document</h4>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="">
-                        {{ csrf_field() }}
-                        {{ method_field('DELETE') }}
-                        <p>Are you sure you want to delete this document?</p>
-                        <button type="submit" class="btn btn-danger pull-right margin-top">Delete</button>
-                        <div class="clearfix"></div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('backend.sos-children.partials.delete')
 @stop
 
 @section('scripts')

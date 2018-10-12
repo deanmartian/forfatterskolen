@@ -9,9 +9,9 @@
 
     <div class="col-sm-12">
         @if(Request::is('solution/*/article/*/edit'))
-            <h3>Edit <em>{{$article['title']}}</em></h3>
+            <h3>{{ trans('site.edit') }} <em>{{$article['title']}}</em></h3>
         @else
-            <h3>Add New Article</h3>
+            <h3>{{ trans('site.add-new-article') }}</h3>
         @endif
     </div>
 
@@ -19,13 +19,13 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div class="form-group">
-                        <label>Title</label>
+                        <label>{{ trans('site.title') }}</label>
                         <input type="text" class="form-control" name="title"
                                value="{{ old('title') ? old('title') : $article['title'] }}" required>
                     </div>
 
                     <div class="form-group">
-                        <label>Details</label>
+                        <label>{{ trans('site.details') }}</label>
                         <textarea name="details" id="editor" cols="30" rows="10" class="form-control"
                                   >{{ old('details') ? old('details') : $article['details'] }}</textarea>
                     </div>
@@ -37,10 +37,10 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     @if(Request::is('solution/*/article/*/edit'))
-                        <button type="submit" class="btn btn-primary">Update Article</button>
-                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteSolutionArticleModal">Delete Article</button>
+                        <button type="submit" class="btn btn-primary">{{ trans('site.update-article') }}</button>
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteSolutionArticleModal">{{ trans('site.delete-article') }}</button>
                     @else
-                        <button type="submit" class="btn btn-primary btn-block btn-lg">Create Article</button>
+                        <button type="submit" class="btn btn-primary btn-block btn-lg">{{ trans('site.create-article') }}</button>
                     @endif
                 </div>
             </div>

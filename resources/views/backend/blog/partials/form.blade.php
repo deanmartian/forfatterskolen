@@ -7,9 +7,9 @@
 
     <div class="col-sm-12">
         @if(Request::is('blog/*/edit'))
-            <h3>Edit <em>{{$blog['title']}}</em></h3>
+            <h3>{{ trans('site.edit') }} <em>{{$blog['title']}}</em></h3>
         @else
-            <h3>Add New Blog</h3>
+            <h3>{{ trans('site.add-new-blog') }}</h3>
         @endif
     </div>
 
@@ -17,11 +17,11 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="form-group">
-                    <label>Title</label>
+                    <label>{{ trans('site.title') }}</label>
                     <input type="text" class="form-control" name="title" value="{{ $blog['title'] }}" required>
                 </div>
                 <div class="form-group">
-                    <label>Description</label>
+                    <label>{{ trans('site.description') }}</label>
                     <textarea name="description" cols="30" rows="10" class="form-control ckeditor">{{ $blog['description'] }}</textarea>
                 </div>
             </div>
@@ -32,28 +32,28 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="form-group">
-                    <label>Image</label>
+                    <label>{{ trans('site.image') }}</label>
                     <input type="file" name="image" class="form-control"
                            accept="image/*" @if(!Request::is('blog/*/edit')) required @endif>
                 </div>
 
                 <div class="form-group">
-                    <label>Author Name</label>
+                    <label>{{ trans('site.author-name') }}</label>
                     <input type="text" name="author_name" class="form-control"
                     value="{{ $blog['author_name'] }}">
                 </div>
 
                 <div class="form-group">
-                    <label>Author Image</label>
+                    <label>{{ trans('site.author-image') }}</label>
                     <input type="file" name="author_image" class="form-control"
                            accept="image/*">
                 </div>
 
                 @if(Request::is('blog/*/edit'))
-                    <button type="submit" class="btn btn-primary">Update Blog</button>
-                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteBlogModal">Delete Blog</button>
+                    <button type="submit" class="btn btn-primary">{{ trans('site.update-blog') }}</button>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteBlogModal">{{ trans('site.delete-blog') }}</button>
                 @else
-                    <button type="submit" class="btn btn-primary btn-block btn-lg">Create Blog</button>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">{{ trans('site.create-blog') }}</button>
                 @endif
             </div>
         </div>

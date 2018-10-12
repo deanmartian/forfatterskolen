@@ -6,12 +6,12 @@
 
 @section('content')
 <div class="page-toolbar">
-	<h3><i class="fa fa-file"></i> All Publishers House</h3>
+	<h3><i class="fa fa-file"></i> {{ trans('site.all-publishers-house') }}</h3>
 	<div class="navbar-form navbar-right">
 		<div class="form-group">
 			<form role="search" method="get" action="">
 				<div class="input-group">
-					<input type="text" class="form-control" name="search" placeholder="Search publisher house..">
+					<input type="text" class="form-control" name="search" placeholder="{{ trans('site.search-publisher-house') }}..">
 					<span class="input-group-btn">
 				    	<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
 				    </span>
@@ -23,23 +23,23 @@
 </div>
 
 <div class="col-md-12">
-	<a class="btn btn-success margin-top" href="{{ route('admin.publishing.create') }}">Create Publisher House</a>
-	<a class="btn btn-success margin-top" href="{{ route('admin.calendar-note.index') }}">Calendar Notes</a>
-	<a class="btn btn-success margin-top" href="{{ route('admin.solution.index') }}">Solutions</a>
-	<a class="btn btn-success margin-top" href="{{ route('admin.sos-children.index') }}">SOS Children</a>
-	<a class="btn btn-success margin-top" href="{{ route('admin.blog.index') }}">Blog</a>
-	<a class="btn btn-success margin-top" href="{{ route('admin.publisher-book.index') }}">Publisher Books</a>
-	<a class="btn btn-success margin-top" href="{{ route('admin.opt-in.index') }}">Opt-in</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.publishing.create') }}">{{ trans('site.create-publisher-house') }}</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.calendar-note.index') }}">{{ trans('site.calendar-notes') }}</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.solution.index') }}">{{ trans_choice('site.solutions', 2) }}</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.sos-children.index') }}">{{ trans('site.sos-children') }}</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.blog.index') }}">{{ trans('site.blog') }}</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.publisher-book.index') }}">{{ trans('site.publisher-books') }}</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.opt-in.index') }}">{{ trans('site.opt-in') }}</a>
 
 	<div class="table-users table-responsive">
 		<table class="table">
 			<thead>
 		    	<tr>
-			        <th>Publishing</th>
-			        <th>Post Address</th>
-			        <th>Phone</th>
-			        <th>Genre</th>
-					<th>Email</th>
+			        <th>{{ trans('site.publishing') }}</th>
+			        <th>{{ trans('site.post-address') }}</th>
+			        <th>{{ trans('site.phone') }}</th>
+			        <th>{{ trans('site.genre') }}</th>
+					<th>{{ trans_choice('site.emails', 1) }}</th>
 		      	</tr>
 		    </thead>
 

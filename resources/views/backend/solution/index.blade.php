@@ -31,20 +31,20 @@
 
 @section('content')
     <div class="page-toolbar">
-        <h3><i class="fa fa-file-text-o"></i> Solutions</h3>
+        <h3><i class="fa fa-file-text-o"></i> {{ trans_choice('site.solutions', 2) }}</h3>
         <div class="clearfix"></div>
     </div>
 
     <div class="col-md-12">
-        <button class="btn btn-success margin-top" data-target="#addSolutionModal" data-toggle="modal">Add Solution</button>
+        <button class="btn btn-success margin-top" data-target="#addSolutionModal" data-toggle="modal">{{ trans('site.add-solution') }}</button>
         <div class="table-users table-responsive">
             <table class="table">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Solution</th>
-                    <th>Description</th>
-                    <th>Is Instruction</th>
+                    <th>{{ trans('site.id') }}</th>
+                    <th>{{ trans_choice('site.solutions', 1) }}</th>
+                    <th>{{ trans('site.description') }}</th>
+                    <th>{{ trans('site.is-instruction') }}</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -56,7 +56,9 @@
                             <td>{{ $solution->description }}</td>
                             <td>{{ $solution->is_instruction ? 'Yes' : 'No' }}</td>
                             <td>
-                                <a href="{{ route('admin.solution-article.index', $solution->id) }}" class="btn btn-xs btn-success">Articles</a>
+                                <a href="{{ route('admin.solution-article.index', $solution->id) }}" class="btn btn-xs btn-success">
+                                    {{ trans_choice('site.articles', 2) }}
+                                </a>
                                 <button class="btn btn-xs btn-primary editSolutionBtn" data-fields="{{ json_encode($solution) }}" data-action="{{ route('admin.solution.update', $solution->id) }}" data-toggle="modal" data-target="#editSolutionModal"><i class="fa fa-pencil"></i></button>
                                 <button class="btn btn-xs btn-danger deleteSolutionBtn" data-action="{{ route('admin.solution.destroy', $solution->id) }}" data-toggle="modal" data-target="#deleteSolutionModal"><i class="fa fa-trash"></i></button>
                             </td>
@@ -77,28 +79,28 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Add Solution</h4>
+                    <h4 class="modal-title">{{ trans('site.add-solution') }}</h4>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="{{ route('admin.solution.store') }}" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         <div class="form-group">
-                            <label>Title</label>
-                            <input type="text" class="form-control" name="title" placeholder="Title" required>
+                            <label>{{ trans('site.title') }}</label>
+                            <input type="text" class="form-control" name="title" placeholder="{{ trans('site.title') }}" required>
                         </div>
                         <div class="form-group">
-                            <label>Description</label>
-                            <textarea class="form-control" name="description" placeholder="Title" required rows="8"></textarea>
+                            <label>{{ trans('site.description') }}</label>
+                            <textarea class="form-control" name="description" placeholder="{{ trans('site.description') }}" required rows="8"></textarea>
                         </div>
 
                         <div class="form-group">
-                            <label>Is Instruction?</label> <br>
+                            <label>{{ trans('site.is-instruction') }}?</label> <br>
                             <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
                                    name="is_instruction" data-width="84">
                         </div>
 
                         <div class="form-group" id="image_form_group">
-                            <label for="image">Image</label>
+                            <label for="image">{{ trans('site.image') }}</label>
                             <input type="file" accept="image/*" name="image" id="webinarImage" accept="image/jpg, image/jpeg, image/png"
                                    {{--onchange="readURL(this)"--}}>
 
@@ -112,7 +114,7 @@
                             <img id="webinarImagePreview" src="#" alt="your image" />
                         </div>
 
-                        <button type="submit" class="btn btn-primary pull-right margin-top">Save</button>
+                        <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.save') }}</button>
                         <div class="clearfix"></div>
                     </form>
                 </div>
@@ -125,28 +127,28 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Edit Solution</h4>
+                    <h4 class="modal-title">{{ trans('site.edit-solution') }}</h4>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         {{ method_field('PUT') }}
                         <div class="form-group">
-                            <label>Title</label>
-                            <input type="text" class="form-control" name="title" placeholder="Title" required>
+                            <label>{{ trans('site.title') }}</label>
+                            <input type="text" class="form-control" name="title" placeholder="{{ trans('site.title') }}" required>
                         </div>
                         <div class="form-group">
-                            <label>Description</label>
-                            <textarea class="form-control" name="description" placeholder="Title" required rows="8"></textarea>
+                            <label>{{ trans('site.description') }}</label>
+                            <textarea class="form-control" name="description" placeholder="{{ trans('site.description') }}" required rows="8"></textarea>
                         </div>
                         <div class="form-group">
-                            <label>Is Instruction?</label> <br>
+                            <label>{{ trans('site.is-instruction') }}?</label> <br>
                             <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
                                    name="is_instruction" data-width="84">
                         </div>
 
                         <div class="form-group" id="image_form_group_edit">
-                            <label for="image">Image</label>
+                            <label for="image">{{ trans('site.image') }}</label>
                             <input type="file" accept="image/*" name="image" id="webinarImageEdit" accept="image/jpg, image/jpeg, image/png"
                                    {{--onchange="readURLEdit(this)"--}}>
 
@@ -160,7 +162,7 @@
                             <img id="webinarImagePreviewEdit" src="#" alt="your image" />
                         </div>
 
-                        <button type="submit" class="btn btn-primary pull-right margin-top">Save</button>
+                        <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.save') }}</button>
                         <div class="clearfix"></div>
                     </form>
                 </div>
@@ -173,16 +175,15 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Delete Solution</h4>
+                    <h4 class="modal-title">{{ trans('site.delete-solution') }}</h4>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="">
                         {{ csrf_field() }}
                         {{ method_field('DELETE') }}
-                        <b>Are you sure to delete this solution?</b> <br>
-                        <em>*This would also delete the articles</em>
+                        {!! trans('site.delete-solution-question') !!}
                         <br />
-                        <button type="submit" class="btn btn-danger pull-right margin-top">Delete</button>
+                        <button type="submit" class="btn btn-danger pull-right margin-top">{{ trans('site.delete') }}</button>
                         <div class="clearfix"></div>
                     </form>
                 </div>

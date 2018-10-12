@@ -11,14 +11,14 @@
     </div>
 
     <div class="col-md-12">
-        <a href="{{ route('admin.solution.index') }}" class="btn btn-default margin-top">< Back</a>
-        <a href="{{ route('admin.solution-article.create', $solution->id) }}" class="btn btn-success margin-top">Add Article</a>
+        <a href="{{ route('admin.solution.index') }}" class="btn btn-default margin-top">< {{ trans('site.back') }}</a>
+        <a href="{{ route('admin.solution-article.create', $solution->id) }}" class="btn btn-success margin-top">{{ trans('site.add-article') }}</a>
         <div class="table-users table-responsive">
             <table class="table">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Article</th>
+                    <th>{{ trans('site.id') }}</th>
+                    <th>{{ trans_choice('site.articles', 1) }}</th>
                     <th></th>
                 </tr>
                 </thead>

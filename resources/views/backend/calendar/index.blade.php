@@ -6,19 +6,19 @@
 
 @section('content')
     <div class="page-toolbar">
-        <h3><i class="fa fa-calendar"></i> Calendar Notes</h3>
+        <h3><i class="fa fa-calendar"></i> {{ trans('site.calendar-notes') }}</h3>
         <div class="clearfix"></div>
     </div>
     <div class="col-md-12">
-        <a class="btn btn-success margin-top" href="{{ route('admin.calendar-note.create') }}">Add Note</a>
+        <a class="btn btn-success margin-top" href="{{ route('admin.calendar-note.create') }}">{{ trans('site.add-note') }}</a>
         <div class="table-users table-responsive">
             <table class="table">
                 <thead>
                 <tr>
-                    <th>Id</th>
-                    <th>Course</th>
-                    <th>Note</th>
-                    <th>Date</th>
+                    <th>{{ trans('site.id') }}</th>
+                    <th>{{ trans_choice('site.courses', 1) }}</th>
+                    <th>{{ trans_choice('site.notes', 1) }}</th>
+                    <th>{{ trans('site.date') }}</th>
                 </tr>
                 </thead>
                 <tbody>
