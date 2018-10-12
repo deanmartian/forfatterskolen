@@ -326,7 +326,7 @@
 								</td>
 								<td>{{$workshopTaken->created_at}}</td>
 								<td>
-									{{ $workshopTaken->notes }} <br>
+									{{ $workshopTaken->notes }} @if($workshopTaken->notes)<br> @endif
 									<button class="btn btn-primary btn-xs editWorkshopNoteBtn" data-toggle="modal"
 									data-target="#editWorkshopNoteModal"
 											data-action="{{ route('admin.learner.workshop-taken.update-notes', $workshopTaken->id) }}"
@@ -1091,15 +1091,15 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Set default access for this lesson</h4>
+        <h4 class="modal-title">{{ trans('site.set-default-access-for-this-lesson') }}</h4>
       </div>
 
       <div class="modal-body">
       	<form method="POST">
       		{{ csrf_field() }}
-      		Set default learner access for this lesson?
+			{{ trans('site.set-default-access-for-this-lesson-question') }}
       		<div class="text-right margin-top">
-      			<button type="submit" class="btn btn-primary">Confirm</button>
+      			<button type="submit" class="btn btn-primary">{{ trans('site.confirm') }}</button>
       		</div>
       	</form>
       </div>
@@ -1115,15 +1115,15 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Allow access for this lesson</h4>
+        <h4 class="modal-title">{{ trans('site.allow-access-for-this-lesson') }}</h4>
       </div>
 
       <div class="modal-body">
       	<form method="POST">
       		{{ csrf_field() }}
-      		Allow learner access for this lesson?
+			{{ trans('site.allow-access-for-this-lesson-question') }}
       		<div class="text-right margin-top">
-      			<button type="submit" class="btn btn-primary">Confirm</button>
+      			<button type="submit" class="btn btn-primary">{{ trans('site.confirm') }}</button>
       		</div>
       	</form>
       </div>
@@ -1139,22 +1139,22 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Set dates for <strong></strong></h4>
+        <h4 class="modal-title">{{ trans('site.set-dates-for') }} <strong></strong></h4>
       </div>
 
       <div class="modal-body">
       	<form method="POST">
       		{{ csrf_field() }}
       		<div class="form-group">
-      			<label>Start date</label>
+      			<label>{{ ucfirst(strtolower(trans('site.start-date'))) }}</label>
       			<input type="date" class="form-control" name="start_date">
       		</div>
       		<div class="form-group">
-      			<label>End date</label>
+      			<label>{{ ucfirst(strtolower(trans('site.end-date'))) }}</label>
       			<input type="date" class="form-control" name="end_date">
       		</div>
       		<div class="text-right">
-      			<button type="submit" class="btn btn-primary">Save</button>
+      			<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
       		</div>
       	</form>
       </div>
@@ -1170,7 +1170,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add Shop Manuscript</h4>
+        <h4 class="modal-title">{{ ucwords(trans('site.add-shop-manuscript')) }}</h4>
       </div>
       <div class="modal-body">
       	<form method="POST" enctype="multipart/form-data" action="{{ route('admin.shop-manuscript.add_learner', $learner->id) }}">
@@ -1179,7 +1179,7 @@
 			$shopManuscripts = \App\ShopManuscript::all();
 			?>
       		<div class="form-group">
-      			<label>Shop manuscript</label>
+      			<label>{{ trans_choice('site.shop-manuscripts', 1) }}</label>
       			<select class="form-control select2" name="shop_manuscript_id" required>
       				<option value="" selected disabled>- Search shop manuscript -</option>
 					@foreach($shopManuscripts as $shopManuscript)
@@ -1188,11 +1188,11 @@
   				</select>
       		</div>
       		<div class="form-group">
-      			<label>File</label>
+      			<label>{{ trans('site.file') }}</label>
       			<div><em>* Godkjente fil formater er DOCX, PDF og ODT.</em></div>
       			<input type="file" class="form-control" name="manuscript" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
       		</div>
-      		<button type="submit" class="btn btn-primary pull-right">Add shop manuscript</button>
+      		<button type="submit" class="btn btn-primary pull-right">{{ trans('site.add-shop-manuscript') }}</button>
       		<div class="clearfix"></div>
       	</form>
       </div>
@@ -1210,7 +1210,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add Invoice for {{ $learner->fullname }}</h4>
+        <h4 class="modal-title">{{ trans('site.add-invoice-for') }} {{ $learner->fullname }}</h4>
       </div>
       <div class="modal-body">
       	<form method="POST" action="{{ route('admin.invoice.store') }}">
@@ -1224,7 +1224,7 @@
   				<label>PDF URL</label>
   				<input type="text" name="pdf_url" class="form-control" required>
       		</div>
-      		<button type="submit" class="btn btn-primary pull-right">Create Invoice</button>
+      		<button type="submit" class="btn btn-primary pull-right">{{ trans('site.create-invoice') }}</button>
       		<div class="clearfix"></div>
       	</form>
       </div>
@@ -1240,7 +1240,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Upload Manuscript</h4>
+        <h4 class="modal-title">{{ trans('site.upload-manuscript') }}</h4>
       </div>
       <div class="modal-body">
       	<form method="POST" enctype="multipart/form-data" action="{{ route('admin.manuscript.store') }}">
@@ -1262,7 +1262,7 @@
       				</select>
       			</div>
       		</div>
-      		<button type="submit" class="btn btn-primary pull-right">Upload manuscript</button>
+      		<button type="submit" class="btn btn-primary pull-right">{{ trans('site.upload-manuscript') }}</button>
       		<div class="clearfix"></div>
       	</form>
       </div>
@@ -1278,7 +1278,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Edit password</h4>
+        <h4 class="modal-title">{{ trans('site.edit-password') }}</h4>
       </div>
       <div class="modal-body">
       	<form method="POST" action="{{ route('admin.learner.update', $learner->id) }}">
@@ -1286,14 +1286,14 @@
       		{{ method_field('PUT') }}
       		<input type="hidden" name="field" value="password">
       		<div class="form-group">
-      			<label>New password</label>
+      			<label>{{ trans('site.new-password') }}</label>
       			<input type="password" class="form-control" name="password" required>
       		</div>
       		<div class="form-group">
-      			<label>Confirm password</label>
+      			<label>{{ trans('site.confirm-password') }}</label>
       			<input type="password" class="form-control" name="password_confirmation" required>
       		</div>
-      		<button type="submit" class="btn btn-primary pull-right">Save</button>
+      		<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
       		<div class="clearfix"></div>
       	</form>
       </div>
@@ -1308,7 +1308,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Edit contact info</h4>
+        <h4 class="modal-title">{{ trans('site.edit-contact-info') }}</h4>
       </div>
       <div class="modal-body">
       	<form method="POST" action="{{ route('admin.learner.update', $learner->id) }}">
@@ -1317,35 +1317,35 @@
       		<input type="hidden" name="field" value="contact">
       		<div class="row form-group">
       			<div class="col-sm-6">
-	      			<label>First name</label>
+	      			<label>{{ trans('site.first-name') }}</label>
 	      			<input type="tel" class="form-control" name="first_name" value="{{ $learner->first_name }}">
       			</div>
       			<div class="col-sm-6">
-	      			<label>Last name</label>
+	      			<label>{{ trans('site.last-name') }}</label>
 	      			<input type="text" class="form-control" name="last_name" value="{{ $learner->last_name }}">
 	      		</div>
       		</div>
       		<div class="row form-group">
       			<div class="col-sm-6">
-	      			<label>Phone</label>
+	      			<label>{{ trans('site.phone') }}</label>
 	      			<input type="tel" class="form-control" name="phone" value="{{ $learner->address->phone }}">
       			</div>
       			<div class="col-sm-6">
-	      			<label>Street</label>
+	      			<label>{{ trans('site.street') }}</label>
 	      			<input type="text" class="form-control" name="street" value="{{ $learner->address->street }}">
 	      		</div>
       		</div>
       		<div class="row form-group">
       			<div class="col-sm-6">
-	      			<label>ZIP</label>
+	      			<label>{{ strtoupper(trans('site.zip')) }}</label>
 	      			<input type="text" class="form-control" name="zip" value="{{ $learner->address->zip }}">
 	      		</div>
       			<div class="col-sm-6">
-	      			<label>City</label>
+	      			<label>{{ trans('site.city') }}</label>
 	      			<input type="text" class="form-control" name="city" value="{{ $learner->address->city }}">
 	      		</div>
       		</div>
-      		<button type="submit" class="btn btn-primary pull-right">Save</button>
+      		<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
       		<div class="clearfix"></div>
       	</form>
       </div>
@@ -1360,17 +1360,16 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Delete learner</h4>
+        <h4 class="modal-title">{{ trans('site.delete-learner') }}</h4>
       </div>
       <div class="modal-body">
       	<form method="POST" action="{{ route('admin.learner.delete', $learner->id) }}">
       		{{ csrf_field() }}
       		{{ method_field('DELETE') }}
-      		Are you sure to delete this learner? <br />
-      		<em>Warning: This cannot be undone.</em>
+			{!! trans('site.delete-learner-question') !!}
 
       		<div class="checkbox margin-top">
-				<label><input type="checkbox" id="moveToggle" name="moveStatus">Move courses taken, shop manuscripts, and invoices to an account</label>
+				<label><input type="checkbox" id="moveToggle" name="moveStatus">{{ trans('site.move-learner-course-manu-invoice') }}</label>
 			</div>
 
       		<div id="moveRelationships" class="hidden">
@@ -1383,17 +1382,17 @@
 	      			</select>
 	      		</div>
 	      		<div class="checkbox">
-					<label><input type="checkbox" name="moveItems[]" value="courses_taken">Courses Taken</label>
+					<label><input type="checkbox" name="moveItems[]" value="courses_taken">{{ trans('site.courses-taken') }}</label>
 				</div>
 	      		<div class="checkbox">
-					<label><input type="checkbox" name="moveItems[]" value="shop_manuscripts">Shop Manuscripts</label>
+					<label><input type="checkbox" name="moveItems[]" value="shop_manuscripts">{{ trans_choice('site.shop-manuscripts', 2) }}</label>
 				</div>
 	      		<div class="checkbox">
-					<label><input type="checkbox" name="moveItems[]" value="invoices">Invoices</label>
+					<label><input type="checkbox" name="moveItems[]" value="invoices">{{ trans_choice('site.invoices', 2) }}</label>
 				</div>
       		</div>
 
-      		<button type="submit" class="btn btn-danger pull-right">Delete</button>
+      		<button type="submit" class="btn btn-danger pull-right">{{ trans('site.delete') }}</button>
       		<div class="clearfix"></div>
       	</form>
       </div>
@@ -1407,7 +1406,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Add to workshop</h4>
+				<h4 class="modal-title">{{ trans('site.add-to-workshop') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="{{ route('learner.add_to_workshop') }}" onsubmit="disableSubmit(this)">
@@ -1416,7 +1415,7 @@
                     $workshops = \App\Workshop::where('is_active', 1)->get();
                     ?>
 					<div class="form-group">
-						<label>Shop manuscript</label>
+						<label>{{ trans_choice('site.shop-manuscripts', 1) }}</label>
 						<select class="form-control select2" name="workshop_id" required>
 							<option value="" selected disabled>- Search workshop -</option>
 							@foreach($workshops as $workshop)
@@ -1430,7 +1429,7 @@
 						</select>
 					</div>
 					<input type="hidden" name="user_id" value="{{ $learner->id }}">
-					<button type="submit" class="btn btn-primary pull-right">Submit</button>
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.submit') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -1444,19 +1443,19 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Update workshop count</h4>
+				<h4 class="modal-title">{{ trans('site.update-workshop-count') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="{{ route('admin.learner.update_workshop_count', $learner->id) }}">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<label>Workshop Count</label>
+						<label>{{ trans('site.workshop-count') }}</label>
 						<input type="number" name="workshop_count" step="1" class="form-control"
 							   value="{{ $learner->workshopTakenCount ? $learner->workshopTakenCount->workshop_count : ''}}"
 							   required>
 					</div>
 
-					<button type="submit" class="btn btn-primary pull-right">Submit</button>
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.submit') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -1469,7 +1468,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Notes</h4>
+				<h4 class="modal-title">{{ trans_choice('site.notes', 2) }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" onsubmit="disableSubmit(this)">
@@ -1477,7 +1476,7 @@
 					<div class="form-group">
 						<textarea name="notes" cols="30" rows="10" class="form-control" required></textarea>
 					</div>
-					<button type="submit" class="btn btn-primary pull-right">Submit</button>
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.submit') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -1491,7 +1490,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h4 class="modal-title">Notes</h4>
+					<h4 class="modal-title">{{ trans_choice('site.notes', 2) }}</h4>
 				</div>
 				<div class="modal-body">
 					<form method="POST" action="{{ route('learner.add_notes', $learner->id) }}">
@@ -1499,7 +1498,7 @@
 						<div class="form-group">
 							<textarea name="notes" id="" cols="30" rows="10" class="form-control" required>{!! $learner->notes !!}</textarea>
 						</div>
-						<button type="submit" class="btn btn-primary pull-right">Submit</button>
+						<button type="submit" class="btn btn-primary pull-right">{{ trans('site.submit') }}</button>
 						<div class="clearfix"></div>
 					</form>
 				</div>
@@ -1527,16 +1526,16 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Delete Invoice</h4>
+				<h4 class="modal-title">{{ trans('site.delete-invoice') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="">
 					{{ csrf_field() }}
 					{{ method_field('delete') }}
 					<p>
-						Are you sure you want to delete this invoice?
+						{{ trans('site.delete-invoice-question') }}
 					</p>
-					<button class="btn btn-danger pull-right" id="submitDeleteInvoice">Delete Invoice</button>
+					<button class="btn btn-danger pull-right" id="submitDeleteInvoice">{{ trans('site.delete-invoice') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -1550,17 +1549,16 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Delete from Course</h4>
+				<h4 class="modal-title">{{ trans('site.delete-from-course') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="">
 					{{ csrf_field() }}
 					{{ method_field('delete') }}
 					<p>
-						Are you sure you want to delete this learner from Webinar-pakke? <br>
-						<em>This cannot be undone</em>
+						{!! trans('site.delete-from-webinar-pakke-question') !!}
 					</p>
-					<button class="btn btn-danger pull-right" id="submitDeleteFromCourse">Delete</button>
+					<button class="btn btn-danger pull-right" id="submitDeleteFromCourse">{{ trans('site.delete') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -1581,19 +1579,19 @@
 					  onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<label>Manuscript</label>
+						<label>{{ trans_choice('site.manuscripts', 1) }}</label>
 						<input type="file" class="form-control" name="manuscript" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 							   required>
 					</div>
 
 					<div class="form-group">
-						<label>Send Invoice</label> <br>
+						<label>{{ trans('site.send-invoice') }}</label> <br>
 						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
 							   name="send_invoice">
 					</div>
 
 					<div class="form-group">
-						<label>Assign to</label>
+						<label>{{ trans('site.assign-to') }}</label>
 						<select name="editor_id" class="form-control select2">
 							<option value="" disabled="" selected>-- Select Editor --</option>
 							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
@@ -1604,7 +1602,7 @@
 
 					<input type="hidden" name="is_copy_editing">
 					<button class="btn btn-success pull-right" type="submit">
-						Add
+						{{ trans('site.add') }}
 					</button>
 					<div class="clearfix"></div>
 				</form>
@@ -1644,11 +1642,11 @@
 				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<label>Set Replay</label>
+						<label>{{ trans('site.set-replay') }}</label>
 						<input type="url" name="replay_link" class="form-control" required>
 					</div>
 					<div class="text-right">
-						<button class="btn btn-primary" type="submit">Save</button>
+						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
 					</div>
 				</form>
 			</div>
@@ -1733,7 +1731,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Suggest Session Dates</h4>
+				<h4 class="modal-title">{{ trans('site.suggest-session-dates') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" id="suggestDateForm"
@@ -1741,23 +1739,23 @@
 					{{csrf_field()}}
 
 					<div class="form-group">
-						<label>Date</label>
+						<label>{{ trans('site.date') }}</label>
 						<input type="datetime-local" class="form-control" name="suggested_date_admin[]" required>
 					</div>
 
 					<div class="form-group">
-						<label>Date</label>
+						<label>{{ trans('site.date') }}</label>
 						<input type="datetime-local" class="form-control" name="suggested_date_admin[]" required>
 					</div>
 
 					<div class="form-group">
-						<label>Date</label>
+						<label>{{ trans('site.date') }}</label>
 						<input type="datetime-local" class="form-control" name="suggested_date_admin[]" required>
 					</div>
 
 					<div class="text-right margin-top">
-						<button type="submit" class="btn btn-success">Submit</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-success">{{ trans('site.submit') }}</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.cancel') }}</button>
 					</div>
 				</form>
 			</div>
@@ -1772,7 +1770,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Add Coaching Session</h4>
+				<h4 class="modal-title">{{ trans('site.add-coaching-session') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="{{ route('admin.learner.add-coaching-timer', $learner->id) }}"
@@ -1780,13 +1778,13 @@
 					{{csrf_field()}}
 
 					<div class="form-group">
-						<label>Manuscript</label>
+						<label>{{ trans_choice('site.manuscripts', 1) }}</label>
 						<input type="file" class="form-control" name="manuscript"
 							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
 					</div>
 					
 					<div class="form-group">
-						<label>Session Length</label>
+						<label>{{ trans('site.session-length') }}</label>
 						<select name="plan_type" class="form-control" required>
 							<option value="" disabled="" selected>-- Select --</option>
 							<option value="2">30 min</option>
@@ -1795,7 +1793,7 @@
 					</div>
 
 					<div class="form-group">
-						<label>Assign To</label>
+						<label>{{ ucwords(trans('site.assign-to')) }}</label>
 						<select name="editor_id" class="form-control select2" required>
 							<option value="" disabled="" selected>-- Select Editor --</option>
 							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
@@ -1805,14 +1803,14 @@
 					</div>
 
 					<div class="form-group">
-						<label>Send Invoice</label> <br>
+						<label>{{ trans('site.send-invoice') }}</label> <br>
 						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
 							   name="send_invoice">
 					</div>
 
 					<div class="text-right margin-top">
-						<button type="submit" class="btn btn-success">Submit</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-success">{{ trans('site.submit') }}</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.cancel') }}</button>
 					</div>
 				</form>
 			</div>
@@ -1827,7 +1825,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Add Diploma</h4>
+                <h4 class="modal-title">{{ trans('site.add-diploma') }}</h4>
             </div>
             <div class="modal-body">
                 <form method="POST" action="{{ route('admin.learner.add-diploma', $learner->id) }}"
@@ -1835,7 +1833,7 @@
                     {{csrf_field()}}
 
                     <div class="form-group">
-                        <label>Course</label>
+                        <label>{{ trans_choice('site.courses', 1) }}</label>
                         <select name="course_id" class="form-control select2" required>
                             <option value="" disabled selected>-- Select Course --</option>
                             @foreach(\App\Course::all() as $course)
@@ -1845,14 +1843,14 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Diploma</label>
+                        <label>{{ trans_choice('site.diplomas', 1) }}</label>
                         <input type="file" class="form-control" name="diploma"
                                accept="application/pdf" required>
                     </div>
 
                     <div class="text-right margin-top">
-                        <button type="submit" class="btn btn-success">Submit</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">{{ trans('site.submit') }}</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.cancel') }}</button>
                     </div>
                 </form>
             </div>
@@ -1867,7 +1865,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Edit Diploma</h4>
+				<h4 class="modal-title">{{ trans('site.edit-diploma') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action=""
@@ -1875,7 +1873,7 @@
 					{{csrf_field()}}
 
 					<div class="form-group">
-						<label>Course</label>
+						<label>{{ trans_choice('site.courses', 1) }}</label>
 						<select name="course_id" class="form-control select2" required>
 							<option value="" disabled selected>-- Select Course --</option>
 							@foreach(\App\Course::all() as $course)
@@ -1885,14 +1883,14 @@
 					</div>
 
 					<div class="form-group">
-						<label>Diploma</label>
+						<label>{{ trans_choice('site.diplomas', 1) }}</label>
 						<input type="file" class="form-control" name="diploma"
 							   accept="application/pdf">
 					</div>
 
 					<div class="text-right margin-top">
-						<button type="submit" class="btn btn-success">Submit</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-success">{{ trans('site.submit') }}</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.cancel') }}</button>
 					</div>
 				</form>
 			</div>
@@ -1907,18 +1905,18 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Delete Diploma</h4>
+				<h4 class="modal-title">{{ trans('site.delete-diploma') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					{{ method_field('DELETE') }}
 
-					<p>Are you sure you want to delete this diploma?</p>
+					<p>{{ trans('site.delete-diploma-question') }}</p>
 
 					<div class="text-right margin-top">
-						<button type="submit" class="btn btn-danger">Delete</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-danger">{{ trans('site.delete') }}</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.cancel') }}</button>
 					</div>
 				</form>
 			</div>
@@ -1947,7 +1945,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Set Approved Date</h4>
+				<h4 class="modal-title">{{ trans('site.set-approved-date') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form action="{{ route('admin.other-service.coaching-timer.set-approved-date') }}" method="POST">
@@ -1955,11 +1953,11 @@
 					<input type="hidden" name="user_id" value="{{ $learner->id }}">
 					<input type="hidden" name="course_taken_id" value="{{ $learner->id }}">
 					<div class="form-group">
-						<label>Approved Date</label>
+						<label>{{ trans('site.approved-date') }}</label>
 						<input type="datetime-local" name="approved_date" class="form-control" required>
 					</div>
 					<div class="text-right margin-top">
-						<button type="submit" class="btn btn-primary">Submit</button>
+						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
 					</div>
 				</form>
 			</div>
@@ -2212,9 +2210,11 @@
 
 	function updateOtherServiceFields(type) {
 	    let modal = $("#addOtherServiceModal");
-	    let modal_title = 'Add Korrektur';
+	    let add_correction_text = "{{ trans('site.add-correction') }}";
+	    let add_copy_editing_text = "{{ trans('site.add-copy-editing') }}";
+	    let modal_title = add_correction_text;
 	    if (type === 1) {
-	        modal_title = 'Add Språkvask';
+	        modal_title = add_copy_editing_text;
 		}
 
 		modal.find('.modal-title').text(modal_title);

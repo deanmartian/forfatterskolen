@@ -5,13 +5,13 @@
 @stop
 
 @section('title')
-<title>Login Activity for {{ $login->created_at }}</title>
+<title>{{ trans('site.login-activity-for') }} {{ $login->created_at }}</title>
 @stop
 
 @section('content')
 
 <div class="page-toolbar">
-    <h3><i class="fa fa-file-text-o"></i> Login Activity for {{ date('M d, Y', strtotime($login->created_at)) }}</h3>
+    <h3><i class="fa fa-file-text-o"></i> {{ trans('site.login-activity-for') }} {{ date('M d, Y', strtotime($login->created_at)) }}</h3>
     <div class="clearfix"></div>
 </div>
 
@@ -21,8 +21,8 @@
         <table class="table table-side-bordered table-white">
             <thead>
             <tr>
-                <th>Activity</th>
-                <th>Date</th>
+                <th>{{ trans('site.activity') }}</th>
+                <th>{{ trans('site.date') }}</th>
             </tr>
             </thead>
             <tbody>
