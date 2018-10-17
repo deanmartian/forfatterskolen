@@ -6,15 +6,15 @@
 
 @section('content')
 <div class="page-toolbar">
-	<h3><i class="fa fa-file-text-o"></i> All Shop Manuscripts</h3>
-	<a href="javascript:void(0)" data-toggle="modal" data-target="#manuscriptEmailTemplate"> Email Template</a>
+	<h3><i class="fa fa-file-text-o"></i> {{ trans('site.all-shop-manuscripts') }}</h3>
+	<a href="javascript:void(0)" data-toggle="modal" data-target="#manuscriptEmailTemplate"> {{ trans('site.email-template') }}</a>
 </div>
 
 <div class="col-md-12">
  	<ul class="nav nav-tabs margin-top">
-	    <li @if( Request::input('tab') != 'sold' && Request::input('tab') != 'manuscripts') class="active" @endif><a href="?tab=all">Shop Manuscripts</a></li>
-	    <li @if( Request::input('tab') == 'sold' ) class="active" @endif><a href="?tab=sold">Sold Shop Manuscripts</a></li>
-		<li @if( Request::input('tab') == 'manuscripts' ) class="active" @endif><a href="?tab=manuscripts">Manuscripts</a></li>
+	    <li @if( Request::input('tab') != 'sold' && Request::input('tab') != 'manuscripts') class="active" @endif><a href="?tab=all">{{ trans_choice('site.shop-manuscripts', 2) }}</a></li>
+	    <li @if( Request::input('tab') == 'sold' ) class="active" @endif><a href="?tab=sold">{{ trans('site.sold-shop-manuscripts') }}</a></li>
+		<li @if( Request::input('tab') == 'manuscripts' ) class="active" @endif><a href="?tab=manuscripts">{{ trans_choice('site.manuscripts', 2) }}</a></li>
   	</ul>
 	<div class="tab-content">
 	  	<div class="tab-pane fade in active">
@@ -25,16 +25,16 @@
 							<table class="table no-margin-bottom">
 								<thead>
 								<tr>
-									<th>ID</th>
-									<th>Manuscript</th>
-									<th>Words count</th>
-									<th>Course</th>
-									<th>Grade</th>
-									<th>Feedbacks</th>
-									<th>Uploaded by</th>
-									<th>Date Uploaded</th>
-									<th>Status</th>
-									<th>Assigned admin</th>
+									<th>{{ trans('site.id') }}</th>
+									<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+									<th>{{ trans('site.words-count') }}</th>
+									<th>{{ trans_choice('site.courses', 1) }}</th>
+									<th>{{ trans('site.grade') }}</th>
+									<th>{{ trans_choice('site.feedbacks', 2) }}</th>
+									<th>{{ trans('site.uploaded-by') }}</th>
+									<th>{{ trans('site.date-uploaded') }}</th>
+									<th>{{ trans('site.status') }}</th>
+									<th>{{ trans('site.assigned-admin') }}</th>
 								</tr>
 								</thead>
 								<tbody>
@@ -99,7 +99,7 @@
 							<form role="search" method="get" action="">
 								<input type="hidden" name="tab" value="sold">
 								<div class="input-group">
-									<input type="text" class="form-control" name="search" placeholder="Search.."
+									<input type="text" class="form-control" name="search" placeholder="{{ trans('site.search') }}.."
 									value="{{ Request::get('search') }}">
 									<span class="input-group-btn">
 										<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
@@ -115,11 +115,11 @@
 						<table class="table no-margin-bottom">
 							<thead>
 						    	<tr>
-							        <th>Manuscript</th>
-							        <th>Learner</th>
-							        <th>Date Sold</th>
-							        <th>Status</th>
-							        <th>Assigned admin</th>
+							        <th>{{ trans_choice('site.manuscripts', 1) }}</th>
+							        <th>{{ trans_choice('site.learners', 1) }}</th>
+							        <th>{{ trans('site.date-sold') }}</th>
+							        <th>{{ trans('site.status') }}</th>
+							        <th>{{ trans('site.assigned-admin') }}</th>
 							        <th></th>
 						      	</tr>
 						    </thead>
@@ -179,16 +179,16 @@
 			@else
 				<div class="panel panel-default no-padding-bottom" style="border-top: 0">
 					<div class="panel-body">
-						<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addShopManuscriptModal">Add Shop Manuscript</button>
+						<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addShopManuscriptModal">{{ ucwords(trans('site.add-shop-manuscript')) }}</button>
 						<div class="table-users table-responsive">
 							<table class="table no-margin-bottom">
 								<thead>
 								<tr>
-									<th>Title</th>
-									<th>Description</th>
-									<th>Max Words</th>
-									<th>Full Payment Price</th>
-									<th>3 Months Payment</th>
+									<th>{{ trans('site.title') }}</th>
+									<th>{{ trans('site.description') }}</th>
+									<th>{{ ucwords(trans('site.max-words')) }}</th>
+									<th>{{ trans('site.full-payment-price') }}</th>
+									<th>3 {{ trans('site.months-payment') }}</th>
 									<th></th>
 								</tr>
 								</thead>
@@ -231,7 +231,7 @@
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal">&times;</button>
-	        <h4 class="modal-title">Add shop manuscript</h4>
+	        <h4 class="modal-title">{{ trans('site.add-shop-manuscript') }}</h4>
 	      </div>
 	      <div class="modal-body">
 	      	<form method="POST" action="{{ route('admin.shop-manuscript.store') }}">
@@ -239,67 +239,67 @@
 	      		<div class="row">
 	      			<div class="col-sm-5">
 			      		<div class="form-group">
-			      			<label>Title</label>
+			      			<label>{{ trans('site.title') }}</label>
 			      			<input type="text" class="form-control" name="title" required>
 			      		</div>
 			      		<div class="form-group">
-			      			<label>Description</label>
+			      			<label>{{ trans('site.description') }}</label>
 			      			<textarea class="form-control" name="description" rows="8" required></textarea>
 			      		</div>
 			      		<div class="form-group">
-			      			<label>Max Words</label>
+			      			<label>{{ ucwords(trans('site.max-words')) }}</label>
 			      			<input type="number" class="form-control" name="max_words" required>
 			      		</div>
 			      	</div>
 			      	<div class="col-sm-7">
 		              <ul class="nav nav-tabs">
-		                <li class="active"><a data-toggle="tab" href="#fullprice">Full Payment</a></li>
-		                <li><a data-toggle="tab" href="#3months">3 Months</a></li>
-						  <li><a data-toggle="tab" href="#upgradeprice">Upgrade Price</a></li>
+		                <li class="active"><a data-toggle="tab" href="#fullprice">{{ trans('site.full-payment') }}</a></li>
+		                <li><a data-toggle="tab" href="#3months">3 {{ trans('site.months') }}</a></li>
+						  <li><a data-toggle="tab" href="#upgradeprice">{{ trans('site.upgrade-price') }}</a></li>
 		              </ul>
 		              <div class="tab-content">
 		                <div id="fullprice" class="tab-pane fade in active">
-		                  <h4>Full Payment Price</h4>
+		                  <h4>{{ trans('site.full-payment-price') }}</h4>
 		                  <div class="form-group">
-		                    <label>Price</label>
-		                    <input type="number" step="0.01" name="full_payment_price" placeholder="Price" min="0" required class="form-control">
+		                    <label>{{ trans('site.price') }}</label>
+		                    <input type="number" step="0.01" name="full_payment_price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
 		                  </div>
 		                  <div class="form-group">
 		                    <label>Fiken Product ID</label>
 		                    <input type="text" name="full_price_product" placeholder="Fiken Product ID" required class="form-control">
 		                  </div>
 		                  <div class="form-group">
-		                    <label>Due Date (in days)</label>
-		                    <input type="number" name="full_price_due_date" placeholder="Due Date" min="0" required class="form-control">
+		                    <label>{{ trans('site.due-date-in-days') }}</label>
+		                    <input type="number" name="full_price_due_date" placeholder="{{ trans('site.due-date') }}" min="0" required class="form-control">
 		                  </div>
 		                </div>
 		                <div id="3months" class="tab-pane fade">
-		                  <h4>3 Months Payment Price</h4>
+		                  <h4>{{ str_replace('_MONTH_NUMBER_',3,trans('site.months-payment-price')) }}</h4>
 		                  <div class="form-group">
-		                    <label>Price</label>
-		                    <input type="number" step="0.01" name="months_3_price" placeholder="Price" min="0" required class="form-control">
+		                    <label>{{ trans('site.price') }}</label>
+		                    <input type="number" step="0.01" name="months_3_price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
 		                  </div>
 		                  <div class="form-group">
 		                    <label>Fiken Product ID</label>
 		                    <input type="text" name="months_3_product" placeholder="Fiken Product ID" required class="form-control">
 		                  </div>
 		                  <div class="form-group">
-		                    <label>Due Date (in days)</label>
-		                    <input type="number" name="months_3_due_date" placeholder="Due Date" min="0" required class="form-control">
+		                    <label>{{ trans('site.due-date-in-days') }}</label>
+		                    <input type="number" name="months_3_due_date" placeholder="{{ trans('site.due-date') }}" min="0" required class="form-control">
 		                  </div>
 		                </div>
 					  <div id="upgradeprice" class="tab-pane fade">
-						  <h4>Upgrade Price</h4>
+						  <h4>{{ trans('site.upgrade-price') }}</h4>
 						  <div class="form-group">
-							  <label>Price</label>
-							  <input type="number" step="0.01" name="upgrade_price" placeholder="Price" min="0" required class="form-control">
+							  <label>{{ trans('site.price') }}</label>
+							  <input type="number" step="0.01" name="upgrade_price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
 						  </div>
 					  </div>
 		              </div>
 		            </div>
 	      		</div>
 
-	      		<button type="submit" class="btn btn-primary pull-right">Add</button>
+	      		<button type="submit" class="btn btn-primary pull-right">{{ trans('site.add') }}</button>
 	      		<div class="clearfix"></div>
 	      	</form>
 	      </div>
@@ -314,7 +314,7 @@
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal">&times;</button>
-	        <h4 class="modal-title">Edit shop manuscript</h4>
+	        <h4 class="modal-title">{{ trans('site.edit-shop-manuscript') }}</h4>
 	      </div>
 	      <div class="modal-body">
 	      	<form method="POST" action="{{ route('admin.shop-manuscript.store') }}">
@@ -323,60 +323,60 @@
 	      		<div class="row">
 	      			<div class="col-sm-5">
 			      		<div class="form-group">
-			      			<label>Title</label>
-			      			<input type="text" class="form-control" name="title" required>
+			      			<label>{{ trans('site.title') }}</label>
+			      			<input type="text" class="form-control" name="{{ trans('site.title') }}" required>
 			      		</div>
 			      		<div class="form-group">
-			      			<label>Description</label>
+			      			<label>{{ trans('site.description') }}</label>
 			      			<textarea class="form-control" name="description" rows="8" required></textarea>
 			      		</div>
 			      		<div class="form-group">
-			      			<label>Max Words</label>
+			      			<label>{{ ucwords(trans('site.max-words')) }}</label>
 			      			<input type="number" class="form-control" name="max_words" required>
 			      		</div>
 			      	</div>
 			      	<div class="col-sm-7">
 		              <ul class="nav nav-tabs">
-		                <li class="active"><a data-toggle="tab" href="#fullpriceedit">Full Payment</a></li>
-		                <li><a data-toggle="tab" href="#3monthsedit">3 Months</a></li>
-						  <li><a data-toggle="tab" href="#upgradeedit">Upgrade Price</a></li>
+		                <li class="active"><a data-toggle="tab" href="#fullpriceedit">{{ trans('site.full-payment') }}</a></li>
+		                <li><a data-toggle="tab" href="#3monthsedit">3 {{ trans('site.months') }}</a></li>
+						  <li><a data-toggle="tab" href="#upgradeedit">{{ trans('site.upgrade-price') }}</a></li>
 		              </ul>
 		              <div class="tab-content">
 		                <div id="fullpriceedit" class="tab-pane fade in active">
-		                  <h4>Full Payment Price</h4>
+		                  <h4>{{ trans('site.full-payment-price') }}</h4>
 		                  <div class="form-group">
-		                    <label>Price</label>
-		                    <input type="number" step="0.01" name="full_payment_price" placeholder="Price" min="0" required class="form-control">
+		                    <label>{{ trans('site.price') }}</label>
+		                    <input type="number" step="0.01" name="full_payment_price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
 		                  </div>
 		                  <div class="form-group">
 		                    <label>Fiken Product ID</label>
 		                    <input type="text" name="full_price_product" placeholder="Fiken Product ID" required class="form-control">
 		                  </div>
 		                  <div class="form-group">
-		                    <label>Due Date (in days)</label>
-		                    <input type="number" name="full_price_due_date" placeholder="Due Date" min="0" required class="form-control">
+		                    <label>{{ trans('site.due-date-in-days') }}</label>
+		                    <input type="number" name="full_price_due_date" placeholder="{{ trans('site.due-date') }}" min="0" required class="form-control">
 		                  </div>
 		                </div>
 		                <div id="3monthsedit" class="tab-pane fade">
-		                  <h4>3 Months Payment Price</h4>
+		                  <h4>{{ str_replace('_MONTH_NUMBER_', 3, trans('site.months-payment-price')) }}</h4>
 		                  <div class="form-group">
-		                    <label>Price</label>
-		                    <input type="number" step="0.01" name="months_3_price" placeholder="Price" min="0" required class="form-control">
+		                    <label>{{ trans('site.price') }}</label>
+		                    <input type="number" step="0.01" name="months_3_price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
 		                  </div>
 		                  <div class="form-group">
 		                    <label>Fiken Product ID</label>
 		                    <input type="text" name="months_3_product" placeholder="Fiken Product ID" required class="form-control">
 		                  </div>
 		                  <div class="form-group">
-		                    <label>Due Date (in days)</label>
-		                    <input type="number" name="months_3_due_date" placeholder="Due Date" min="0" required class="form-control">
+		                    <label>{{ trans('site.due-date-in-days') }}</label>
+		                    <input type="number" name="months_3_due_date" placeholder="{{ trans('site.due-date') }}" min="0" required class="form-control">
 		                  </div>
 		                </div>
 					  <div id="upgradeedit" class="tab-pane fade">
-						  <h4>Upgrade Price</h4>
+						  <h4>{{ trans('site.upgrade-price') }}</h4>
 						  <div class="form-group">
-							  <label>Price</label>
-							  <input type="number" step="0.01" name="upgrade_price" placeholder="Price" min="0" required class="form-control">
+							  <label>{{ trans('site.price') }}</label>
+							  <input type="number" step="0.01" name="upgrade_price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
 						  </div>
 						  <div id="manuscript-list-container"></div>
 					  </div>
@@ -384,7 +384,7 @@
 		            </div>
 	      		</div>
 
-	      		<button type="submit" class="btn btn-primary pull-right">Save</button>
+	      		<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
 	      		<div class="clearfix"></div>
 	      	</form>
 	      </div>
@@ -399,15 +399,15 @@
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal">&times;</button>
-	        <h4 class="modal-title">Delete <em></em></h4>
+	        <h4 class="modal-title">{{ trans('site.delete') }} <em></em></h4>
 	      </div>
 	      <div class="modal-body">
 	      	<form method="POST" action="">
 	      		{{ csrf_field() }}
 	      		{{ method_field('DELETE') }}
-		      	Are you sure to delete this shop manuscript?
+				{{ trans('site.delete-shop-manuscript-question') }}
 		      	<div class="text-right margin-top">
-	      			<button class="btn btn-danger" type="submit">Delete</button>
+	      			<button class="btn btn-danger" type="submit">{{ trans('site.delete') }}</button>
 	      		</div>
 	      	</form>
 	      </div>
@@ -421,7 +421,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Email Template</h4>
+				<h4 class="modal-title">{{ trans('site.email-template') }}</h4>
 			</div>
 			<div class="modal-body">
                 <?php
@@ -441,14 +441,14 @@
 						<?php echo e(method_field('PUT')); ?>
 					<?php endif; ?>
 					<div class="form-group">
-						<label>Body</label>
+						<label>{{ trans('site.body') }}</label>
 						<textarea name="email_content" cols="30" rows="10" class="form-control test" required
 								  id="freeManuscriptEmailContent"><?php echo e($emailTemplate ? $emailTemplate->email_content : ''); ?></textarea>
 					</div>
 
 					<input type="hidden" name="page_name" value="Manuscript">
 
-					<button type="submit" class="btn btn-primary pull-right">Save</button>
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>

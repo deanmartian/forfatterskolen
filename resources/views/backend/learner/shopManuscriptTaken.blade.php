@@ -46,12 +46,12 @@
 						</div>
 						<div class="col-sm-12 col-md-5">
 							<div class="pull-right">
-							<button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#synopsisModal">Synopsis</button>
+							<button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#synopsisModal">{{ trans('site.synopsis') }}</button>
 							<button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#editManuscriptModal"><i class="fa fa-pencil"></i></button>
 								@if( $shopManuscriptTaken->expected_finish )
 									<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#sendEmailModal"><i class="fa fa-envelope"></i></button>
 								@endif
-							<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#updateDocumentModal">Update document</button>
+							<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#updateDocumentModal">{{ trans('site.update-document') }}</button>
 							</div>
 				  			@if( $shopManuscriptTaken->status == 'Finished' )
 							<span class="label label-success">Finished</span>
@@ -61,18 +61,18 @@
 							<span class="label label-warning">Not started</span>
 							@endif
 							<h3 class="no-margin-top">{{ $shopManuscriptTaken->shop_manuscript->title }}</h3>
-							Learner: <a href="{{ route('admin.learner.show', $shopManuscriptTaken->user_id) }}">{{ $shopManuscriptTaken->user->full_name }}</a><br />
-							Filename: {{ basename($shopManuscriptTaken->file) }}<br />
-							Words: {{ $shopManuscriptTaken->words }}<br />
-							Date uploaded: {{ date_format(date_create($shopManuscriptTaken->manuscript_uploaded_date),'M d, Y H:i a') }}<br />
-							Admin: 
+							{{ trans_choice('site.learners', 1) }}: <a href="{{ route('admin.learner.show', $shopManuscriptTaken->user_id) }}">{{ $shopManuscriptTaken->user->full_name }}</a><br />
+							{{ trans('site.filename') }}: {{ basename($shopManuscriptTaken->file) }}<br />
+							{{ trans_choice('site.words', 2) }}: {{ $shopManuscriptTaken->words }}<br />
+							{{ trans('site.date-uploaded') }}: {{ date_format(date_create($shopManuscriptTaken->manuscript_uploaded_date),'M d, Y H:i a') }}<br />
+							{{ trans('site.admin') }}:
 							@if( $shopManuscriptTaken->admin )
 							{{ $shopManuscriptTaken->admin->full_name }}
 							@else
 							<em>Not set</em>
 							@endif<br />
 
-				            Expected finish:
+							{{ trans('site.expected-finish') }}:
 				            @if( $shopManuscriptTaken->expected_finish )
 				            {{ date_format(date_create($shopManuscriptTaken->expected_finish), 'M d, Y') }}
 				            @else
@@ -80,26 +80,26 @@
 				            @endif
 				            <br />
 
-							<strong>Grade: @if($shopManuscriptTaken->grade)
+							<strong>{{ trans('site.grade') }}: @if($shopManuscriptTaken->grade)
 									{{$shopManuscriptTaken->grade}}
 								@else
 									<em>Not set</em>
 								@endif
 							</strong>
 							<br>
-							Genre: @if ($shopManuscriptTaken->genre) {{ \App\Http\FrontendHelpers::assignmentType($shopManuscriptTaken->genre) }} @endif
-							<a href="#" data-target="#editGenreModal" data-toggle="modal">Edit Genre</a>
+							{{ trans('site.genre') }}: @if ($shopManuscriptTaken->genre) {{ \App\Http\FrontendHelpers::assignmentType($shopManuscriptTaken->genre) }} @endif
+							<a href="#" data-target="#editGenreModal" data-toggle="modal">{{ trans('site.edit-genre') }}</a>
 							<br>
-							Description: {{ $shopManuscriptTaken->description }}
+							{{ trans('site.description') }}: {{ $shopManuscriptTaken->description }}
 							<br>
 							@if ($shopManuscriptTaken->synopsis)
-								<a href="{{ route('admin.learner.download_synopsis', $shopManuscriptTaken->id) }}">Download Synopsis</a>
+								<a href="{{ route('admin.learner.download_synopsis', $shopManuscriptTaken->id) }}">{{ trans('site.download-synopsis') }}</a>
 							@endif
 							<br><br>
 
-							<h4>Feedbacks
+							<h4>{{ trans_choice('site.feedbacks', 2) }}
 							@if( $shopManuscriptTaken->feedbacks->count() == 0 )
-							<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addFeedbackModal">+ Add feedback</button>
+							<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addFeedbackModal">+ {{ trans('site.add-feedback') }}</button>
 							@endif</h4>
 							<div class="row margin-top">
 								@foreach($shopManuscriptTaken->feedbacks as $feedback)
@@ -107,13 +107,13 @@
 									<div class="panel panel-default">
 										<div class="panel-body">
 											<button type="button" class="btn btn-xs btn-danger btn-delete-feedback pull-right" data-action="{{ route('admin.shop-manuscript-taken-feedback.delete', $feedback->id) }}" data-toggle="modal" data-target="#deleteFeedbackModal"><i class="fa fa-trash"></i></button>
-											<strong>Files:</strong> 
+											<strong>{{ trans_choice('site.files', 2) }}:</strong>
 												@foreach( $feedback->filename as $filename )<br />
 												<a href="{{ $filename }}" target="_blank">{{ basename($filename) }}</a>
 												@endforeach
 											<br />
-											<strong>Notes:</strong> {{ $feedback->notes }} <br />
-											<strong>Uploaded on:</strong> {{ $feedback->created_at }} <br />
+											<strong>{{ trans_choice('site.notes', 2) }}:</strong> {{ $feedback->notes }} <br />
+											<strong>{{ trans('site.uploaded-on') }}:</strong> {{ $feedback->created_at }} <br />
 										</div>
 									</div>
 								</div>
@@ -122,12 +122,12 @@
 
 
 							<br />
-							<h4>Comments</h4>
+							<h4>{{ trans_choice('site.comments', 2) }}</h4>
 							<form method="POST" class="margin-top" action="{{ route('shop_manuscript_taken_comment', ['id' => $learner->id, 'shop_manuscript_taken_id' => $shopManuscriptTaken->id]) }}">
 								{{ csrf_field() }}
-								<input type="text" placeholder="Comment" name="comment" class="form-control" required>
+								<input type="text" placeholder="{{ trans_choice('site.comments', 1) }}" name="comment" class="form-control" required>
 								<div class="text-right margin-top">
-									<button class="btn btn-info btn-sm" type="submit">Add Comment</button>
+									<button class="btn btn-info btn-sm" type="submit">{{ trans('site.add-comment') }}</button>
 								</div>
 							</form>
 							<hr />
@@ -137,7 +137,7 @@
 							<div class="text-right">
 								<div class="comment owner">
 									<div>{{ $comment->comment }}</div>
-									<div><small><em>You</em></small></div>
+									<div><small><em>{{ trans('site.you') }}</em></small></div>
 									<small>{{ $comment->created_at }}</small>
 								</div>
 							</div>
@@ -165,13 +165,13 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Edit manuscript</h4>
+        <h4 class="modal-title">{{ trans('site.edit-manuscript') }}</h4>
       </div>
       <div class="modal-body">
       	<form method="POST" action="{{ route('admin.shop-manuscript-taken.update_taken', $shopManuscriptTaken->id) }}">
       		{{csrf_field()}}
       		<div class="form-group">
-      			<label>Editor</label>
+      			<label>{{ trans_choice('site.editors', 1) }}</label>
       			<select class="form-control select2" name="feedback_user_id" required>
       				@foreach( App\User::where('role', 1)->orderBy('id', 'desc')->get()  as $admin)
       				<option value="{{ $admin->id }}">{{ $admin->full_name }}</option>
@@ -179,14 +179,14 @@
       			</select>
       		</div>
 			<div class="form-group">
-				<label>Grade</label>
+				<label>{{ trans('site.grade') }}</label>
 				<input type="number" step=".1" class="form-control" name="grade" value="{{ $shopManuscriptTaken->grade }}">
 			</div>
           	<div class="form-group">
-            	<label>Expected finish</label>
+            	<label>{{ trans('site.expected-finish') }}</label>
             	<input type="date" class="form-control" name="expected_finish" value="{{ $shopManuscriptTaken->expected_finish }}">
           	</div>
-  			<button type="submit" class="btn btn-primary pull-right">Update</button>
+  			<button type="submit" class="btn btn-primary pull-right">{{ trans('site.update') }}</button>
   			<div class="clearfix"></div>
       	</form>
       </div>
@@ -202,21 +202,21 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add Feedback</h4>
+        <h4 class="modal-title">{{ trans('site.add-feedback') }}</h4>
       </div>
       <div class="modal-body">
       	<form method="POST" action="{{ route('admin.shop-manuscript-taken-feedback.store', $shopManuscriptTaken->id) }}" enctype="multipart/form-data">
       		{{csrf_field()}}
       		<div class="form-group">
-      			<label>Files</label>
+      			<label>{{ trans_choice('site.files', 2) }}</label>
 				<input type="file" class="form-control" name="files[]" multiple accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text" required>
       		</div>
       		<div class="form-group">
-      			<label>Notes</label>
+      			<label>{{ trans_choice('site.notes', 2) }}</label>
 				<textarea class="form-control" name="notes" rows="6"></textarea>
       		</div>
-      		Adding a feedback will complete this manuscript.
-  			<button type="submit" class="btn btn-primary pull-right">Add feedback</button>
+			{{ trans('site.add-feedback-note') }}
+  			<button type="submit" class="btn btn-primary pull-right">{{ trans('site.add-feedback') }}</button>
   			<div class="clearfix"></div>
       	</form>
       </div>
@@ -231,13 +231,13 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Delete feedback</h4>
+        <h4 class="modal-title">{{ trans('site.delete-feedback') }}</h4>
       </div>
       <div class="modal-body">
-      	Are you sure to delete this feedback?
+		  {{ trans('site.delete-feedback-question') }}
       	<form method="POST" action="" class="margin-top">
       		{{csrf_field()}}
-  			<button type="submit" class="btn btn-danger pull-right">Delete feedback</button>
+  			<button type="submit" class="btn btn-danger pull-right">{{ trans('site.delete-feedback') }}</button>
   			<div class="clearfix"></div>
       	</form>
       </div>
@@ -252,7 +252,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Update document</h4>
+        <h4 class="modal-title">{{ trans('site.update-document') }}</h4>
       </div>
       <div class="modal-body">
         <form method="POST" action="{{ route('shop_manuscript_taken.update_document', $shopManuscriptTaken->id) }}" enctype="multipart/form-data">
@@ -261,7 +261,7 @@
           	<input type="file" name="manuscript" class="form-control" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text" required>
           </div>
           <div class="text-right margin-top">
-            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="submit" class="btn btn-primary">{{ trans('site.update') }}</button>
           </div>
         </form>
       </div>
@@ -276,7 +276,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Synopsis</h4>
+				<h4 class="modal-title">{{ trans('site.synopsis') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="{{ route('shop_manuscript_taken.save_synopsis', $shopManuscriptTaken->id) }}" enctype="multipart/form-data">
@@ -285,7 +285,7 @@
 						<input type="file" name="synopsis" class="form-control" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text" required>
 					</div>
 					<div class="text-right margin-top">
-						<button type="submit" class="btn btn-primary">Save</button>
+						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
 					</div>
 				</form>
 			</div>
@@ -301,22 +301,22 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h4 class="modal-title">Send email</h4>
+					<h4 class="modal-title">{{ trans('site.send-email') }}</h4>
 				</div>
 				<div class="modal-body">
 					<form method="POST" action="{{ route('admin.shop_manuscript_taken.email', $shopManuscriptTaken->user_id) }}" enctype="multipart/form-data">
 						{{ csrf_field() }}
 						<div class="form-group">
-							<label>Subject</label>
+							<label>{{ trans('site.subject') }}</label>
 							<input type="text" name="subject" class="form-control" required value="Forventet dato for tilbakemelding">
 						</div>
 						<div class="form-group">
-							<label>Message</label>
+							<label>{{ trans('site.message') }}</label>
 							<textarea name="message" class="form-control" required rows="8" id="email_content">{{ $emailTemplate ? $emailTemplate->email_content."\nForventet ferdig: ".$shopManuscriptTaken->expected_finish : '' }}</textarea>
 						</div>
 						<input type="hidden" name="from_email" value="{{ $emailTemplate ? $emailTemplate->from_email : 'post@forfatterskolen.no' }}">
 						<div class="text-right margin-top">
-							<button type="submit" class="btn btn-primary">Send</button>
+							<button type="submit" class="btn btn-primary">{{ trans('site.send') }}</button>
 						</div>
 					</form>
 				</div>
@@ -330,7 +330,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Edit Genre</h4>
+				<h4 class="modal-title">{{ trans('site.edit-genre') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="{{ route('admin.shop-manuscript-taken.update-genre', $shopManuscriptTaken->id) }}">
@@ -343,7 +343,7 @@
 						@endforeach
 					</select>
 					<div class="text-right margin-top">
-						<button type="submit" class="btn btn-primary">Save</button>
+						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
 					</div>
 				</form>
 			</div>
