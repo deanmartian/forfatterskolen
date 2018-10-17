@@ -6,15 +6,15 @@
 
 @section('content')
     <div class="page-toolbar">
-        <h3><i class="fa fa-file-text-o"></i> Other Services</h3>
+        <h3><i class="fa fa-file-text-o"></i> {{ trans('site.other-services') }}</h3>
         <div class="clearfix"></div>
     </div>
 
     <div class="margin-top">
         <ul class="nav nav-tabs margin-top">
-            <li @if( Request::input('tab') == 'coaching-timer' || Request::input('tab') == '') class="active" @endif><a href="?tab=coaching-timer">Coaching Timer</a></li>
-            <li @if( Request::input('tab') == 'correction' ) class="active" @endif><a href="?tab=correction">Correction</a></li>
-            <li @if( Request::input('tab') == 'copy-editing' ) class="active" @endif><a href="?tab=copy-editing">Copy Editing</a></li>
+            <li @if( Request::input('tab') == 'coaching-timer' || Request::input('tab') == '') class="active" @endif><a href="?tab=coaching-timer">{{ trans('site.coaching-timer') }}</a></li>
+            <li @if( Request::input('tab') == 'correction' ) class="active" @endif><a href="?tab=correction">{{ trans('site.correction') }}</a></li>
+            <li @if( Request::input('tab') == 'copy-editing' ) class="active" @endif><a href="?tab=copy-editing">{{ trans('site.copy-editing') }}</a></li>
         </ul>
 
         <div class="tab-content">
@@ -26,12 +26,12 @@
                                 <table class="table no-margin-bottom">
                                     <thead>
                                     <tr>
-                                        <th>Manus</th>
-                                        <th>Learner</th>
-                                        <th>Editor</th>
-                                        <th>Date Ordered</th>
-                                        <th>Expected Finish</th>
-                                        <th>Status</th>
+                                        <th>{{ trans_choice('site.manus', 2) }}</th>
+                                        <th>{{ trans_choice('site.learners', 1) }}</th>
+                                        <th>{{ trans_choice('site.editors', 1) }}</th>
+                                        <th>{{ trans('site.date-ordered') }}</th>
+                                        <th>{{ trans('site.expected-finish') }}</th>
+                                        <th>{{ trans('site.status') }}</th>
                                         <th></th>
                                     </tr>
                                     </thead>
@@ -55,7 +55,7 @@
                                                 @if ($correction->editor_id)
                                                     {{ $correction->editor->full_name }}
                                                 @else
-                                                    <button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $correction->id, 'type' => 2]) }}">Assign Editor</button>
+                                                    <button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.assign-editor') }}</button>
                                                 @endif
                                             </td>
                                             <td>
@@ -74,7 +74,7 @@
 										   ['id' => $correction->id, 'type' => 2]) }}"
                                                        data-finish="{{ $correction->expected_finish ?
 										strftime('%Y-%m-%dT%H:%M:%S', strtotime($correction->expected_finish)) : '' }}">
-                                                        Set Date
+                                                        {{ trans('site.set-date') }}
                                                     </a>
                                                 @endif
                                             </td>
@@ -117,12 +117,12 @@
                                 <table class="table no-margin-bottom">
                                     <thead>
                                     <tr>
-                                        <th>Manus</th>
-                                        <th>Learner</th>
-                                        <th>Editor</th>
-                                        <th>Date Ordered</th>
-                                        <th>Expected Finish</th>
-                                        <th>Status</th>
+                                        <th>{{ trans_choice('site.manus', 2) }}</th>
+                                        <th>{{ trans_choice('site.learners', 1) }}</th>
+                                        <th>{{ trans_choice('site.editors', 1) }}</th>
+                                        <th>{{ trans('site.date-ordered') }}</th>
+                                        <th>{{ trans('site.expected-finish') }}</th>
+                                        <th>{{ trans('site.status') }}</th>
                                         <th></th>
                                     </tr>
                                     </thead>
@@ -146,7 +146,7 @@
                                                     @if ($editing->editor_id)
                                                         {{ $editing->editor->full_name }}
                                                     @else
-                                                        <button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $editing->id, 'type' => 1]) }}">Assign Editor</button>
+                                                        <button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $editing->id, 'type' => 1]) }}">{{ trans('site.assign-editor') }}</button>
                                                     @endif
                                                 </td>
                                                 <td>
@@ -165,7 +165,7 @@
 										   ['id' => $editing->id, 'type' => 1]) }}"
                                                            data-finish="{{ $editing->expected_finish ?
 										strftime('%Y-%m-%dT%H:%M:%S', strtotime($editing->expected_finish)) : '' }}">
-                                                            Set Date
+                                                            {{ trans('site.set-date') }}
                                                         </a>
                                                     @endif
                                                 </td>
@@ -208,14 +208,14 @@
                                 <table class="table no-margin-bottom">
                                     <thead>
                                     <tr>
-                                        <th>Manus</th>
-                                        <th>Learner</th>
-                                        <th>Length</th>
-                                        <th>Learner Suggestion</th>
-                                        <th>Admin Suggestion</th>
-                                        <th>Approved Date</th>
-                                        <th>Assigned To</th>
-                                        <th>Replay</th>
+                                        <th>{{ trans_choice('site.manus', 2) }}</th>
+                                        <th>{{ trans_choice('site.learners', 1) }}</th>
+                                        <th>{{ trans('site.length') }}</th>
+                                        <th>{{ trans('site.learner-suggestion') }}</th>
+                                        <th>{{ trans('site.admin-suggestion') }}</th>
+                                        <th>{{ trans('site.approved-date') }}</th>
+                                        <th>{{ trans('site.assigned-to') }}</th>
+                                        <th>{{ trans('site.replay') }}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -271,7 +271,7 @@
                                                 @if (!$coachingTimer->approved_date)
                                                     <a href="#suggestDateModal" data-toggle="modal"
                                                        class="suggestDateBtn"
-                                                       data-action="{{ route('admin.other-service.coaching-timer.suggestDate', $coachingTimer->id) }}">Suggest Different Dates</a>
+                                                       data-action="{{ route('admin.other-service.coaching-timer.suggestDate', $coachingTimer->id) }}">{{ trans('site.suggest-different-dates') }}</a>
                                                 @endif
                                             </td>
                                             <td>
@@ -283,17 +283,17 @@
                                                 @if ($coachingTimer->editor_id)
                                                     {{ $coachingTimer->editor->full_name }}
                                                 @else
-                                                    <button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $coachingTimer->id, 'type' => 3]) }}">Assign Editor</button>
+                                                    <button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $coachingTimer->id, 'type' => 3]) }}">{{ trans('site.assign-editor') }}</button>
                                                 @endif
                                             </td>
                                             <td>
                                                 @if ($coachingTimer->replay_link)
                                                     <a href="{{ $coachingTimer->replay_link }}" target="_blank">
-                                                        View Replay
+                                                        {{ trans('site.view-replay') }}
                                                     </a> <br>
                                                 @endif
                                                 <button class="btn btn-xs btn-primary setReplayBtn" data-toggle="modal"
-                                                        data-target="#setReplayModal" data-action="{{ route('admin.other-service.coaching-timer.set_replay', $coachingTimer->id) }}">Set Replay</button>
+                                                        data-target="#setReplayModal" data-action="{{ route('admin.other-service.coaching-timer.set_replay', $coachingTimer->id) }}">{{ trans('site.set-replay') }}</button>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -317,16 +317,16 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Approve Date</h4>
+                    <h4 class="modal-title">{{ trans('site.approve-date') }}</h4>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="">
                         {{csrf_field()}}
-                        Are you sure you want to approve this date?
+                        {{ trans('site.approve-date-question') }}
                         <input type="hidden" name="approved_date">
                         <div class="text-right margin-top">
-                            <button type="submit" class="btn btn-success">Approve</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-success">{{ trans('site.approve') }}</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.cancel') }}</button>
                         </div>
                     </form>
                 </div>
@@ -342,7 +342,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Suggest Session Dates</h4>
+                    <h4 class="modal-title">{{ trans('site.suggest-session-dates') }}</h4>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" id="suggestDateForm"
@@ -350,23 +350,23 @@
                         {{csrf_field()}}
 
                         <div class="form-group">
-                            <label>Date</label>
+                            <label>{{ trans('site.date') }}</label>
                             <input type="datetime-local" class="form-control" name="suggested_date_admin[]" required>
                         </div>
 
                         <div class="form-group">
-                            <label>Date</label>
+                            <label>{{ trans('site.date') }}</label>
                             <input type="datetime-local" class="form-control" name="suggested_date_admin[]" required>
                         </div>
 
                         <div class="form-group">
-                            <label>Date</label>
+                            <label>{{ trans('site.date') }}</label>
                             <input type="datetime-local" class="form-control" name="suggested_date_admin[]" required>
                         </div>
 
                         <div class="text-right margin-top">
-                            <button type="submit" class="btn btn-success">Submit</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-success">{{ trans('site.submit') }}</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.cancel') }}</button>
                         </div>
                     </form>
                 </div>
@@ -383,7 +383,7 @@
                     <form method="POST" action="" onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
                         <div class="form-group">
-                            <label>Assign editor</label>
+                            <label>{{ trans('site.assign-editor') }}</label>
                             <select name="editor_id" class="form-control select2" required>
                                 <option value="" disabled="" selected>-- Select Editor --</option>
                                 @foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
@@ -392,7 +392,7 @@
                             </select>
                         </div>
                         <div class="text-right">
-                            <button class="btn btn-primary" type="submit">Save</button>
+                            <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
                         </div>
                     </form>
                 </div>
@@ -407,11 +407,11 @@
                     <form method="POST" action="" onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
                         <div class="form-group">
-                            <label>Set Replay</label>
+                            <label>{{ trans('site.set-replay') }}</label>
                             <input type="url" name="replay_link" class="form-control" required>
                         </div>
                         <div class="text-right">
-                            <button class="btn btn-primary" type="submit">Save</button>
+                            <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
                         </div>
                     </form>
                 </div>
@@ -424,16 +424,16 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Update <span></span> Status</h4>
+                    <h4 class="modal-title">{!! str_replace('_SERVICE_','<span></span>',trans('site.update-service-status')) !!}</h4>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
                         <p>
-                            Are you sure to update the status of this record?
+                            {{ trans('site.update-service-status-question') }}
                         </p>
                         <div class="text-right">
-                            <button class="btn btn-primary" type="submit">Submit</button>
+                            <button class="btn btn-primary" type="submit">{{ trans('site.submit') }}</button>
                         </div>
                     </form>
                 </div>
@@ -446,17 +446,17 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title"><span></span> Expected Finish</h4>
+                    <h4 class="modal-title"><span></span> {{ trans('site.expected-finish') }}</h4>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
                         <div class="form-group">
-                            <label>Expected finish date</label>
+                            <label>{{ trans('site.expected-finish-date') }}</label>
                             <input type="datetime-local" name="expected_finish" class="form-control" required>
                         </div>
                         <div class="text-right">
-                            <button class="btn btn-primary" type="submit">Submit</button>
+                            <button class="btn btn-primary" type="submit">{{ trans('site.submit') }}</button>
                         </div>
                     </form>
                 </div>

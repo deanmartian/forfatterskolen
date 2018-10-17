@@ -484,4 +484,7 @@ Warning: This cannot be undone.',
   'delete-free-manuscript-question' => 'Are you sure to delete this free manuscript?',
   'delete-free-manuscript' => 'Delete free manuscript',
   'send-feedback' => 'Send Feedback',
+  'other-services' => 'Other Services',
+  'approve-date' => 'Approve Date',
+  'approve-date-question' => 'Are you sure you want to approve this date?',
 );
