@@ -19,7 +19,7 @@
               <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteInvoiceModal"><i class="fa fa-trash"></i></button>
             </div>
 
-						<h3>Invoice #{{$invoice->invoice_number}}</h3><br />
+						<h3>{{ trans('site.invoice-nr') }}{{$invoice->invoice_number}}</h3><br />
             Learner: <a href="{{route('admin.learner.show', $invoice->user->id)}}">{{$invoice->user->fullname}}</a> <br />
 						Status: 
 						@if($invoice->fiken_is_paid)
@@ -27,12 +27,12 @@
 						@else
 						<span class="label label-danger">UBETALT</span>
 						@endif <br />
-						Created at: {{$invoice->fiken_issueDate}} <br />
-						Due Date: {{$invoice->fiken_dueDate}}
+						{{ trans('site.created-at') }}: {{$invoice->fiken_issueDate}} <br />
+						{{ trans('site.due-date') }}: {{$invoice->fiken_dueDate}}
 
 
 
-						<div class="margin-top margin-bottom"><strong>Transactions</strong></div>
+						<div class="margin-top margin-bottom"><strong>{{ trans_choice('site.transactions', 2) }}</strong></div>
 
 						<?php $balance = $invoice->fiken_balance; $total = 0;?>
 
@@ -40,9 +40,9 @@
 							<table class="table table-side-bordered">
 								<thead>
 									<tr>
-										<th>Mode</th>
-										<th>Mode Transaction</th>
-										<th class="text-right">Amount</th>
+										<th>{{ trans('site.mode') }}</th>
+										<th>{{ trans('site.mode-transaction') }}</th>
+										<th class="text-right">{{ trans('site.amount') }}</th>
 										<th class="text-right"></th>
 									</tr>
 								</thead>
@@ -62,18 +62,18 @@
 									<?php $total += $transaction->amount; ?>
 									@endforeach
 									<tr class="text-right">
-										<td colspan="2"><strong>Total</strong></td>
+										<td colspan="2"><strong>{{ trans('site.total') }}</strong></td>
 										<td>{{FrontendHelpers::currencyFormat($total)}}</td>
 										<td></td>
 									</tr>
 									@else
 									<tr class="text-center text-muted">
-										<td colspan="4">No transactions</td>
+										<td colspan="4">{{ trans('site.no-transactions') }}</td>
 									</tr>
 									@endif
 
 									<tr class="text-right">
-										<td colspan="3"><h4><strong>Balance:&nbsp;&nbsp;
+										<td colspan="3"><h4><strong>{{ trans('site.balance') }}:&nbsp;&nbsp;
 					@if($invoice->fiken_is_paid)
                     {{FrontendHelpers::currencyFormat(0)}}
                     @else
@@ -86,7 +86,7 @@
 								</tbody>
 							</table>
 						</div>
-						<button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#addTransactionModal">+ Add Transaction</button>
+						<button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#addTransactionModal">+ {{ trans('site.add-transaction') }}</button>
             @if ( $errors->any() )
             <br />
             <br />
@@ -111,13 +111,13 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add Transaction</h4>
+        <h4 class="modal-title">{{ trans('site.add-transaction') }}</h4>
       </div>
       <div class="modal-body">
       	<form method="POST" action="{{route('admin.transaction.store', $invoice->id)}}">
       		{{csrf_field()}}
       		<div class="form-group">
-      			<label>Mode of Payment</label>
+      			<label>{{ trans('site.mode-of-payment') }}</label>
       			<select class="form-control" name="mode" required>
       				<option value="" disabled selected>- Select Mode -</option>
       				<option value="Paypal">Paypal</option>
@@ -125,14 +125,14 @@
       			</select>
       		</div>
       		<div class="form-group">
-      			<label>Transaction ID</label>
+      			<label>{{ trans('site.transaction-id') }}</label>
       			<input type="text" class="form-control" name="mode_transaction" required>
       		</div>
       		<div class="form-group">
-      			<label>Amount</label>
+      			<label>{{ trans('site.amount') }}</label>
 				<input type="number" step="0.01" min="0.01" class="form-control" name="amount" required>
       		</div>
-  			<button type="submit" class="btn btn-primary pull-right">Add Transaction</button>
+  			<button type="submit" class="btn btn-primary pull-right">{{ trans('site.add-transaction') }}</button>
   			<div class="clearfix"></div>
       	</form>
       </div>
@@ -147,14 +147,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Edit Transaction</h4>
+        <h4 class="modal-title">{{ trans('site.edit-transaction') }}</h4>
       </div>
       <div class="modal-body">
       	<form method="POST" action="">
       		{{csrf_field()}}
       		<input type="hidden" name="transaction_id">
       		<div class="form-group">
-      			<label>Mode of Payment</label>
+      			<label>{{ trans('site.mode-of-payment') }}</label>
       			<select class="form-control" name="mode" required>
       				<option value="" disabled selected>- Select Mode -</option>
       				<option value="Paypal">Paypal</option>
@@ -162,14 +162,14 @@
       			</select>
       		</div>
       		<div class="form-group">
-      			<label>Transaction ID</label>
+      			<label>{{ trans('site.transaction-id') }}</label>
       			<input type="text" class="form-control" name="mode_transaction" required>
       		</div>
       		<div class="form-group">
-      			<label>Amount</label>
+      			<label>{{ trans('site.amount') }}</label>
 				<input type="number" step="0.01" min="0.01" class="form-control" name="amount" required>
       		</div>
-  			<button type="submit" class="btn btn-primary pull-right">Update Transaction</button>
+  			<button type="submit" class="btn btn-primary pull-right">{{ trans('site.update-transaction') }}</button>
   			<div class="clearfix"></div>
       	</form>
       </div>
@@ -184,14 +184,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Delete Transaction</h4>
+        <h4 class="modal-title">{{ trans('site.delete-transaction') }}</h4>
       </div>
       <div class="modal-body">
-      	Are you sure to delete this transaction?
+		  {{ trans('site.delete-transaction-question') }}
       	<form method="POST" action="">
       		{{csrf_field()}}
       		<input type="hidden" name="transaction_id">
-  			<button type="submit" class="btn btn-danger pull-right margin-top">Delete Transaction</button>
+  			<button type="submit" class="btn btn-danger pull-right margin-top">{{ trans('site.delete-transaction') }}</button>
   			<div class="clearfix"></div>
       	</form>
       </div>
@@ -206,7 +206,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Edit Invoice #{{$invoice->invoice_number}}</h4>
+        <h4 class="modal-title">{{ trans('site.edit-invoice-nr') }}{{$invoice->invoice_number}}</h4>
       </div>
       <div class="modal-body">
         <form method="POST" action="{{ route('admin.invoice.update', $invoice->id) }}">
@@ -218,14 +218,14 @@
             <input type="text" name="fiken_url" class="form-control" value="{{ $invoice->fiken_url }}" required>
           </div>
           <div class="form-group">
-            <label>PDF URL</label>
+            <label>{{ trans('site.pdf-url') }}</label>
             <input type="text" name="pdf_url" class="form-control" value="{{ $invoice->pdf_url }}" required>
           </div>
           <div class="form-group">
-            <label>Balance</label>
+            <label>{{ trans('site.balance') }}</label>
             <input type="number" step="0.01" name="balance" class="form-control" value="{{ $invoice->balance }}">
           </div>
-          <button type="submit" class="btn btn-primary pull-right">Update Invoice</button>
+          <button type="submit" class="btn btn-primary pull-right">{{ trans('site.update-invoice') }}</button>
           <div class="clearfix"></div>
         </form>
       </div>
@@ -240,15 +240,15 @@
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
-        <h4>Delete Invoice</h4>
+        <h4>{{ trans('site.delete-invoice') }}</h4>
       </div>
       <div class="modal-body">
-        Are you sure to delete this invoice?
+		  {{ trans('site.delete-invoice-question') }}
         <div class="text-right margin-top">
           <form method="POST">
             {{ csrf_field() }}
             {{ method_field('DELETE') }}
-            <button type="submit" class="btn btn-danger">Delete Invoice</button>
+            <button type="submit" class="btn btn-danger">{{ trans('site.delete-invoice') }}</button>
           </form>
         </div>
       </div>

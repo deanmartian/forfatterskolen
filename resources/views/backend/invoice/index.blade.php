@@ -11,49 +11,26 @@
 		<table class="table">
 			<thead>
 		    	<tr>
-			        <th>Invoice #</th>
-			        <th>Learner</th>
-			        <th>Status</th>
-			        <th>PDF URL</th>
-			        <th>Date Created</th>
+			        <th>{{ trans('site.invoice-nr') }}</th>
+			        <th>{{ trans_choice('site.learners', 1) }}</th>
+			        <th>{{ trans('site.status') }}</th>
+			        <th>{{ trans('site.pdf-url') }}</th>
+			        <th>{{ trans('site.date-created') }}</th>
 		      	</tr>
 		    </thead>
 
 		    <tbody>
 		    	@foreach($invoices as $invoice)
-		    	<?php
-				$fikenURL = false;
-				foreach( $fikenInvoices as $fikenInvoice ) :
-				    if( $invoice->fiken_url == $fikenInvoice->_links->alternate->href ) :
-				      $fikenURL = true;
-				      break;
-				    endif;
-				endforeach;
-				$fikenError = false;
-				if( $fikenURL ) :
-				  	$sale = FrontendHelpers::FikenConnect($fikenInvoice->sale);
-				  	$status = $sale->paid ? "BETALT" : "UBETALT";
-				else :
-				  	$fikenError = true;
-				endif;
-				?>
-
 		    	<tr>
 		    		<td>
-		    			@if( !$fikenError )
-						<a href="{{route('admin.invoice.show', $invoice->id)}}">{{$fikenInvoice->invoiceNumber}}</a>
-						@else
-		    			<a style="color: red" href="{{route('admin.invoice.show', $invoice->id)}}">Error in Fiken URL</a>
-						@endif
+						<a href="{{route('admin.invoice.show', $invoice->id)}}">{{$invoice->invoice_number}}</a>
 		    		</td>
 					<td><a href="{{route('admin.learner.show', $invoice->user->id)}}">{{$invoice->user->fullname}}</a></td>
 		    		<td>
-		    			@if( !$fikenError )
-						@if($sale->paid)
-						<span class="label label-success">{{$status}}</span>
+						@if($invoice->fiken_is_paid)
+							<span class="label label-success">BETALT</span>
 						@else
-						<span class="label label-danger">{{$status}}</span>
-						@endif
+							<span class="label label-danger">UBETALT</span>
 						@endif
 					</td>
 		    		<td><a href="{{$invoice->pdf_url}}" target="_blank">View PDF</a></td>
