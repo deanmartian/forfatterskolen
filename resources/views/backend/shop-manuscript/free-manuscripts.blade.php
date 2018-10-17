@@ -14,15 +14,15 @@
 
 @section('content')
 <div class="page-toolbar">
-	<h3><i class="fa fa-file-text-o"></i> Free Manuscripts</h3>
-	<a href="#" data-toggle="modal" data-target="#freeManuscriptEmailTemplate"> Email Template</a>
+	<h3><i class="fa fa-file-text-o"></i> {{ trans('site.free-manuscripts') }}</h3>
+	<a href="#" data-toggle="modal" data-target="#freeManuscriptEmailTemplate"> {{ trans('site.email-template') }}</a>
 </div>
 
 <div class="col-md-12">
 
 	<ul class="nav nav-tabs margin-top">
-		<li @if( Request::input('tab') != 'archive' ) class="active" @endif><a href="?tab=new">New</a></li>
-		<li @if( Request::input('tab') == 'archive' ) class="active" @endif><a href="?tab=archive">Archive</a></li>
+		<li @if( Request::input('tab') != 'archive' ) class="active" @endif><a href="?tab=new">{{ trans('site.new') }}</a></li>
+		<li @if( Request::input('tab') == 'archive' ) class="active" @endif><a href="?tab=archive">{{ trans('site.archive') }}</a></li>
 	</ul>
 
 	<div class="tab-content">
@@ -33,11 +33,11 @@
 					<table class="table">
 						<thead>
 						<tr>
-							<th>Name</th>
-							<th>Email</th>
-							<th width="600">Content</th>
-							<th>Date Received</th>
-							<th>Editor</th>
+							<th>{{ trans('site.name') }}</th>
+							<th>{{ trans_choice('site.emails', 1) }}</th>
+							<th width="600">{{ trans('site.content') }}</th>
+							<th>{{ trans('site.date-received') }}</th>
+							<th>{{ trans_choice('site.editors', 1) }}</th>
 							<th></th>
 						</tr>
 						</thead>
@@ -51,19 +51,19 @@
 									{{ str_limit(strip_tags($freeManuscript->content), 120) }}<br>
 									<a href="#editContentModal" data-toggle="modal" class="editContentBtn"
 									data-content="{{ $freeManuscript->content }}"
-									data-action="{{ route('admin.free-manuscript.edit-content', $freeManuscript->id) }}">Edit</a>
+									data-action="{{ route('admin.free-manuscript.edit-content', $freeManuscript->id) }}">{{ trans('site.edit') }}</a>
 								</td>
 								<td>{{ \App\Http\FrontendHelpers::formatDate($freeManuscript->created_at) }}</td>
 								<td>@if( $freeManuscript->editor ) {{ $freeManuscript->editor->full_name }} @endif</td>
 								<td>
 									@if( $freeManuscript->editor )
-										<button class="btn btn-xs btn-success sendFeedbackBtn" data-toggle="modal" data-target="#feedbackModal" data-fields="{{ json_encode($freeManuscript) }}" data-action="{{ route('admin.free-manuscript.send_feedback', $freeManuscript->id) }}">Send Back Feedback</button>
+										<button class="btn btn-xs btn-success sendFeedbackBtn" data-toggle="modal" data-target="#feedbackModal" data-fields="{{ json_encode($freeManuscript) }}" data-action="{{ route('admin.free-manuscript.send_feedback', $freeManuscript->id) }}">{{ trans('site.send-back-feedback') }}</button>
 									@endif
 									<button class="btn btn-xs btn-primary viewManuscriptBtn" data-toggle="modal" data-target="#viewManuscriptModal" data-fields="{{ json_encode($freeManuscript) }}"
 									data-genre="{{ $freeManuscript->genre ? \App\Http\FrontendHelpers::assignmentType($freeManuscript->genre): '' }}"
-									data-content="{{ html_entity_decode($freeManuscript->content) }}">View</button>
-									<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.free-manuscript.assign_editor', $freeManuscript->id) }}" data-editor="{{ $freeManuscript->editor_id }}">Assign Editor</button>
-									<button class="btn btn-xs btn-danger deleteManuscriptBtn" data-toggle="modal" data-target="#deleteManuscriptModal" data-fields="{{ json_encode($freeManuscript) }}" data-action="{{ route('admin.free-manuscript.delete', $freeManuscript->id) }}" style="margin-top: 5px">Delete</button>
+									data-content="{{ html_entity_decode($freeManuscript->content) }}">{{ trans('site.view') }}</button>
+									<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.free-manuscript.assign_editor', $freeManuscript->id) }}" data-editor="{{ $freeManuscript->editor_id }}">{{ trans('site.assign-editor') }}</button>
+									<button class="btn btn-xs btn-danger deleteManuscriptBtn" data-toggle="modal" data-target="#deleteManuscriptModal" data-fields="{{ json_encode($freeManuscript) }}" data-action="{{ route('admin.free-manuscript.delete', $freeManuscript->id) }}" style="margin-top: 5px">{{ trans('site.delete') }}</button>
 								</td>
 							</tr>
 						@endforeach
@@ -78,7 +78,7 @@
 							<form role="search" method="GET">
 								<input type="hidden" name="tab" value="archive">
 								<div class="input-group">
-									<input type="text" class="form-control" name="search" value="{{Request::input('search')}}" placeholder="Search email..">
+									<input type="text" class="form-control" name="search" value="{{Request::input('search')}}" placeholder="{{ trans('site.search-email') }}..">
 									<span class="input-group-btn">
 							<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
 						</span>
@@ -91,11 +91,11 @@
 					<table class="table">
 						<thead>
 						<tr>
-							<th>Name</th>
-							<th>Email</th>
-							<th width="500">Content</th>
-							<th>Date Sent</th>
-							<th>Editor</th>
+							<th>{{ trans('site.name') }}</th>
+							<th>{{ trans_choice('site.emails', 1) }}</th>
+							<th width="500">{{ trans('site.content') }}</th>
+							<th>{{ trans('site.date-sent') }}</th>
+							<th>{{ trans_choice('site.editors', 1) }}</th>
 							<th></th>
 						</tr>
 						</thead>
@@ -117,13 +117,13 @@
 								</td>
 								<td>@if( $freeManuscript->editor ) {{ $freeManuscript->editor->full_name }} @endif</td>
 								<td>
-									<button class="btn btn-xs btn-success viewFeedbackBtn" data-toggle="modal" data-target="#viewFeedbackModal" data-fields="{{ json_encode($freeManuscript) }}">View Feedback</button>
+									<button class="btn btn-xs btn-success viewFeedbackBtn" data-toggle="modal" data-target="#viewFeedbackModal" data-fields="{{ json_encode($freeManuscript) }}">{{ trans('site.view-feedback') }}</button>
 									<button class="btn btn-xs btn-primary viewManuscriptBtn" data-toggle="modal" data-target="#viewManuscriptModal" data-fields="{{ json_encode($freeManuscript) }}"
 											data-genre="{{ $freeManuscript->genre ? \App\Http\FrontendHelpers::assignmentType($freeManuscript->genre): '' }}"
-											data-content="{{ html_entity_decode($freeManuscript->content) }}">View</button>
-									<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.free-manuscript.assign_editor', $freeManuscript->id) }}" data-editor="{{ $freeManuscript->editor_id }}">Assign Editor</button>
-									<button class="btn btn-xs btn-danger deleteManuscriptBtn" data-toggle="modal" data-target="#deleteManuscriptModal" data-fields="{{ json_encode($freeManuscript) }}" data-action="{{ route('admin.free-manuscript.delete', $freeManuscript->id) }}">Delete</button>
-									<button class="btn btn-xs btn-info resendFeedbackBtn" data-toggle="modal" data-target="#resendFeedbackModal" data-action="{{ route('admin.free-manuscript.resend-feedback', $freeManuscript->id) }}">Resend</button>
+											data-content="{{ html_entity_decode($freeManuscript->content) }}">{{ trans('site.view') }}</button>
+									<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.free-manuscript.assign_editor', $freeManuscript->id) }}" data-editor="{{ $freeManuscript->editor_id }}">{{ trans('site.assign-editor') }}</button>
+									<button class="btn btn-xs btn-danger deleteManuscriptBtn" data-toggle="modal" data-target="#deleteManuscriptModal" data-fields="{{ json_encode($freeManuscript) }}" data-action="{{ route('admin.free-manuscript.delete', $freeManuscript->id) }}">{{ trans('site.delete') }}</button>
+									<button class="btn btn-xs btn-info resendFeedbackBtn" data-toggle="modal" data-target="#resendFeedbackModal" data-action="{{ route('admin.free-manuscript.resend-feedback', $freeManuscript->id) }}">{{ trans('site.resend') }}</button>
 								</td>
 							</tr>
 						@endforeach
@@ -145,7 +145,7 @@
 		  	<form method="POST" action="">
 		  		{{ csrf_field() }}
 		  		<div class="form-group">
-		  			<label>Assign editor</label>
+		  			<label>{{ trans('site.assign-editor') }}</label>
 		  			<select name="editor_id" class="form-control">
 		  				@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
 		  				<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
@@ -153,7 +153,7 @@
 		  			</select>
 		  		</div>
 		  		<div class="text-right">
-		  			<button class="btn btn-primary" type="submit">Save</button>
+		  			<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
 		  		</div>
 		  	</form>
 		  </div>
@@ -167,16 +167,16 @@
 		<div class="modal-content">
 		  <div class="modal-body">
 		  	<p>
-		  		<strong>Name:</strong><br />
+		  		<strong>{{ trans('site.name') }}:</strong><br />
 		  		<span id="name"></span><br />
 		  		<br />
-		  		<strong>Email:</strong><br />
+		  		<strong>{{ trans_choice('site.emails', 1) }}:</strong><br />
 		  		<span id="email"></span><br />
 		  		<br />
-				<strong>Genre:</strong><br />
+				<strong>{{ trans('site.genre') }}:</strong><br />
 				<span id="genre"></span><br />
 				<br />
-		  		<strong>Manuscript:</strong><br />
+		  		<strong>{{ trans_choice('site.manuscripts', 1) }}:</strong><br />
 		  		<span id="content"></span>
 		  	</p>
 		  </div>
@@ -189,13 +189,13 @@
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Delete free manuscript</h4>
+		    <h4 class="modal-title">{{ trans('site.delete-free-manuscript') }}</h4>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action="">
 		      {{ csrf_field() }}
-		      Are you sure to delete this free manuscript?
-		      <button type="submit" class="btn btn-danger pull-right margin-top">Delete</button>
+				{{ trans('site.delete-free-manuscript-question') }}
+		      <button type="submit" class="btn btn-danger pull-right margin-top">{{ trans('site.delete') }}</button>
 		      <div class="clearfix"></div>
 		    </form>
 		  </div>
@@ -208,17 +208,17 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Send Feedback</h4>
+                <h4 class="modal-title">{{ trans('site.send-feedback') }}</h4>
             </div>
             <div class="modal-body">
                 <form method="POST" action="" id="sendFeedbackForm">
                     {{ csrf_field() }}
 					<div class="form-group">
-						<label>Body</label>
+						<label>{{ trans('site.body') }}</label>
 						<textarea name="email_content" cols="30" rows="10" class="form-control content" required><?php echo e($emailTemplate ? $emailTemplate->email_content : ''); ?></textarea>
 					</div>
                     <div class="clearfix"></div>
-                    <button type="submit" class="btn btn-success pull-right margin-top" id="sendFeedbackEmail">Send</button>
+                    <button type="submit" class="btn btn-success pull-right margin-top" id="sendFeedbackEmail">{{ trans('site.send') }}</button>
                     <div class="clearfix"></div>
                 </form>
             </div>
@@ -231,7 +231,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">View Feedback</h4>
+				<h4 class="modal-title">{{ trans('site.view-feedback') }}</h4>
 			</div>
 			<div class="modal-body">
 			</div>
@@ -244,7 +244,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Email Template</h4>
+				<h4 class="modal-title">{{ trans('site.email-template') }}</h4>
 			</div>
 			<div class="modal-body">
                 <?php
@@ -265,14 +265,14 @@
 					<?php endif; ?>
 					<input type="hidden" name="from_email" value="post@forfatterskolen.no">
 					<div class="form-group">
-						<label>Body</label>
+						<label>{{ trans('site.body') }}</label>
 						<textarea name="email_content" cols="30" rows="10" class="form-control test" required
 						id="freeManuscriptEmailContent"><?php echo e($emailTemplate ? $emailTemplate->email_content : ''); ?></textarea>
 					</div>
 
 					<input type="hidden" name="page_name" value="Free Manuscript">
 
-					<button type="submit" class="btn btn-primary pull-right">Save</button>
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -286,7 +286,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Email Template</h4>
+				<h4 class="modal-title">{{ trans('site.email-template') }}</h4>
 			</div>
 			<div class="modal-body">
 			</div>
@@ -301,15 +301,15 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Resend Feedback</h4>
+				<h4 class="modal-title">{{ trans('site.resend-feedback') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form action="" method="POST">
 					{{ csrf_field() }}
 					<p>
-						Are you sure you want to resend the feedback?
+						{{ trans('site.resend-feedback-question') }}
 					</p>
-					<button class="btn btn-primary pull-right">Resend</button>
+					<button class="btn btn-primary pull-right">{{ trans('site.resend') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -323,19 +323,19 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Edit Content</h4>
+				<h4 class="modal-title">{{ trans('site.edit-content') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<label>Content</label>
+						<label>{{ trans('site.content') }}</label>
 						<textarea name="manu_content" cols="30" rows="10" class="form-control content" required>
 
 						</textarea>
 					</div>
 					<div class="clearfix"></div>
-					<button type="submit" class="btn btn-success pull-right margin-top">Save</button>
+					<button type="submit" class="btn btn-success pull-right margin-top">{{ trans('site.save') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
