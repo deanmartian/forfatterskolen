@@ -330,6 +330,7 @@ class CourseController extends Controller
             $packageCourses = PackageCourse::whereIn('included_package_id', $packageIdsOfCourse)->get()
                 ->pluck('package_id')
                 ->toArray();
+            $packageCourses[] = 29; // add the actual package id of webinar-pakke
 
             $learnerWithCourse = CoursesTaken::whereIn('package_id', $packageCourses)
                 ->where('end_date','>=', Carbon::now())
