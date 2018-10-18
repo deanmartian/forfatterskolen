@@ -29,8 +29,8 @@ class OptInController extends Controller {
      */
     public function index()
     {
-        $optIns = $this->optInService->getRecord();
-        return view('backend.opt-in.index', compact('optIns'));
+        $optInList = $this->optInService->getRecord();
+        return view('backend.opt-in.index', compact('optInList'));
     }
 
     /**

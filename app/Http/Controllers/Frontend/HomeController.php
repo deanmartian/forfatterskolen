@@ -15,6 +15,7 @@ use App\Http\FrontendHelpers;
 use App\Invoice;
 use App\Mail\DiscussionEmail;
 use App\Mail\DiscussionRepliesEmail;
+use App\OptIn;
 use App\PaymentMode;
 use App\PaymentPlan;
 use App\PilotReaderBook;
@@ -780,12 +781,20 @@ class HomeController extends Controller
 
     /**
      * Display/insert opt-in
+     * @param $slug
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function optIn(Request $request)
+    public function optIn($slug = null, Request $request)
     {
-        if ($request->isMethod('post')) {
+
+        $optIn = OptIn::find(1);
+
+        if ($slug) {
+            $optIn = OptIn::getBySlug($slug ?: 'terms');
+        }
+
+        if ($request->isMethod('post') && $optIn) {
             $validates = [
                 'email' => 'required|email',
                 'name' => 'required|regex:/^[\pL\s\-]+$/u|max:100',
@@ -794,15 +803,18 @@ class HomeController extends Controller
 
             // validate the post request
             $this->validate($request, $validates);
-            $list_id = 60;
-
+            $list_id = $optIn->list_id;
             AdminHelpers::addToActiveCampaignList($list_id, $request->except('_token','terms'));
             return redirect()->back()->with([
                 'opt-in-message' => 1
             ]);
         }
 
-        return view('frontend.opt-in');
+        if ($optIn) {
+            return view('frontend.opt-in', compact('optIn'));
+        }
+
+        return redirect()->route('front.home');
     }
 
     /**

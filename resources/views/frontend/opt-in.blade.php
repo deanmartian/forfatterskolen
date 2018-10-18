@@ -9,7 +9,7 @@
 		<div class="row">
 
 			<div class="col-sm-12">
-				{!! nl2br(App\Settings::optInDescription()) !!}
+				{!! nl2br($optIn->description) !!}
 			</div>
 
 			<div class="col-sm-6 col-sm-offset-3">

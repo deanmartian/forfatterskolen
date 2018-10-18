@@ -16,5 +16,10 @@ class OptIn extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'email'];
+    protected $fillable = ['name', 'slug', 'list_id', 'description'];
+
+    public static function getBySlug($slug)
+    {
+        return self::where('slug', $slug)->first();
+    }
 }
