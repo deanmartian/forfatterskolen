@@ -186,13 +186,23 @@
                         </div>
 
                         <div class="form-group">
+                            <label> Main Description </label>
+                            <textarea class="form-control ckeditor" name="main_description" id="main_description"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label> Form Description </label>
+                            <textarea class="form-control ckeditor" name="form_description" id="form_description"></textarea>
+                        </div>
+
+                        <div class="form-group">
                             <label>{{ trans('site.list-id') }}</label>
                             <input type="number" class="form-control" name="list_id" required min="1">
                         </div>
 
                         <div class="form-group">
                             <label> {{ trans('site.description') }} </label>
-                            <textarea class="form-control ckeditor" name="description"></textarea>
+                            <textarea class="form-control ckeditor" name="description" id="description"></textarea>
                         </div>
                         <div class="text-right margin-top">
                             <button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
@@ -245,6 +255,13 @@
             'alignjustify  | removeformat',
             toolbar2: 'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code | print fullscreen',
             relative_urls: false,
+            content_css: ['//fonts.googleapis.com/css?family=Montserrat:400,500'],
+            font_formats: "Andale Mono=andale mono,monospace;Arial=arial,helvetica,sans-serif;Arial Black=arial black,sans-serif;" +
+            "Book Antiqua=book antiqua,palatino,serif;Comic Sans MS=comic sans ms,sans-serif;Courier New=courier new,courier,monospace;" +
+            "Georgia=georgia,palatino,serif;Helvetica=helvetica,arial,sans-serif;Impact=impact,sans-serif;Montserrat=montserrat, sans-serif; Symbol=symbol;" +
+            "Tahoma=tahoma,arial,helvetica,sans-serif;Terminal=terminal,monaco,monospace;Times New Roman=times new roman,times,serif;" +
+            "Trebuchet MS=trebuchet ms,geneva,sans-serif;Verdana=verdana,geneva,sans-serif;Webdings=webdings;Wingdings=wingdings,zapf dingbats;",
+            fontsize_formats: "8px 10px 12px 14px 16px 18px 20px 24px 36px 40px",
             file_browser_callback : function(field_name, url, type, win) {
                 var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
                 var y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
@@ -302,8 +319,11 @@
             optInModal.find('.modal-title').empty().append(translations.edit_opt_in +' <em>'+fields.name+'</em>');
             $.each(fields, function(k, v){
                 optInModal.find("[name="+k+"]").val(v);
-                if (k === 'description') {
-                    tinyMCE.activeEditor.setContent(v);
+                if (k === 'main_description' || k === 'form_description' || k === 'description') {
+                    tinyMCE.get(k).setContent('');
+                    if (v !== null) {
+                        tinyMCE.get(k).setContent(v);
+                    }
                 }
             });
         });

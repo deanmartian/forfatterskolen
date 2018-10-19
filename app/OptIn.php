@@ -16,7 +16,7 @@ class OptIn extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'slug', 'list_id', 'description'];
+    protected $fillable = ['name', 'slug', 'list_id', 'main_description', 'form_description', 'description'];
 
     public static function getBySlug($slug)
     {

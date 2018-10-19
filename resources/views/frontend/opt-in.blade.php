@@ -5,64 +5,92 @@
 @stop
 
 @section('content')
-	<div class="container">
-		<div class="row">
+    <div id="opt-in-page">
+        <div class="row no-left-right-margin">
+            <div class="image-container">
+                <img src="{{ asset('images/opt-in/header.png') }}" alt="" />
 
-			<div class="col-sm-12">
-				{!! nl2br($optIn->description) !!}
-			</div>
+                <div id="main_desc_container" class="">
+                    {!! nl2br($optIn->main_description) !!}
+                </div>
+            </div>
+        </div>
 
-			<div class="col-sm-6 col-sm-offset-3">
+        <div class="row no-left-right-margin border-bottom">
+            <div class="container form-container">
+                <div class="col-sm-6 left-content">
+                    {!! nl2br($optIn->form_description) !!}
 
-				@if(Session::has('opt-in-message'))
-					<div class="alert alert-success" role="alert">
-						Takk for at du skrev deg på, du vil snart få en epost i innboksen din.
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-				@endif
+                    <form class="margin-bottom" method="POST" action="">
+                        {{ csrf_field() }}
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="name" required value="{{ old('name') }}"
+                            placeholder="Fornavn">
+                        </div>
+                        <div class="form-group">
+                            <input type="email" class="form-control" name="email" required value="{{ old('email') }}"
+                            placeholder="E-post">
+                        </div>
+                        <div class="form-group mb-0">
+                            <input type="checkbox" name="terms" required>
+                            <label>Jeg aksepterer <a href="{{ route('front.opt-in-terms') }}" target="_blank">vilkårene</a></label>
+                        </div>
 
-				<form class="margin-bottom" method="POST" action="">
-					{{ csrf_field() }}
-					<div class="form-group">
-						<label>Fornavn</label>
-						<input type="text" class="form-control" name="name" required value="{{ old('name') }}">
-					</div>
-					<div class="form-group">
-						<label>E-post</label>
-						<input type="email" class="form-control" name="email" required value="{{ old('email') }}">
-					</div>
-					<div class="form-group">
-						<input type="checkbox" name="terms" required>
-						<label>Jeg aksepterer <a href="{{ route('front.opt-in-terms') }}" target="_blank">vilkårene</a></label>
-					</div>
-					<div class="text-right">
-						<button type="submit" class="btn btn-theme">Send inn</button>
-					</div>
-				</form>
-				<br />
+                        <div class="row">
+                            <div class="col-md-8 col-sm-7">
+                                <p class="note">
+                                    PS! Vi respekterer personvernretten og deler ikke e-posten din med noen.
+                                </p>
+                            </div>
+                            <div class="col-md-4 col-sm-5">
+                                <button type="submit" class="btn btn-submit">Send inn</button>
+                            </div>
+                        </div>
+                    </form>
 
-				@if ( $errors->any() )
-					<div class="alert alert-danger bottom-margin">
-						<ul>
-							@foreach($errors->all() as $error)
-								<li>{{$error}}</li>
-							@endforeach
-						</ul>
-					</div>
-				@endif
-			</div>
-		</div>
-	</div>
+                    @if(Session::has('opt-in-message'))
+                        <div class="alert alert-success" role="alert">
+                            Takk for at du skrev deg på, du vil snart få en epost i innboksen din.
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
+
+                    @if ( $errors->any() )
+                        <div class="alert alert-danger bottom-margin">
+                            <ul>
+                                @foreach($errors->all() as $error)
+                                    <li>{{$error}}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                </div>
+                <div class="col-sm-5 col-sm-offset-1 description-container">
+                    {!! nl2br($optIn->description) !!}
+                </div>
+            </div>
+        </div>
+
+        <div class="row no-left-right-margin static-details-container">
+            <div class="container jumbotron">
+                Forfatterskolen har jobbet med kjente forfattere og redaktører i mange år, og hatt flere eminente
+                webinar-gjester. Tipsene du får er hentet fra oss selv, og forfattere som
+                <span class="red">Tove Nilsen, Ingvar Ambjørnsen,
+                Tom Egeland, Maja Lunde, Gro Dahle og Herbjørg Wassmo. </span>
+            </div>
+        </div>
+
+    </div>
 @stop
 
 @section('scripts')
-	<script>
-		$(".btn-theme").click(function(e){
-		    e.preventDefault();
-		   $(this).attr('disabled', true).text('Sende...');
-		   $("form").submit();
-		});
-	</script>
+    <script>
+        $(".btn-submit").click(function(e){
+            e.preventDefault();
+            $(this).attr('disabled', true).text('Sende...');
+            $("form").submit();
+        });
+    </script>
 @stop
