@@ -6,9 +6,9 @@
 
 @section('content')
     <div id="opt-in-page">
-        <div class="row no-left-right-margin">
+        <div class="container">
             <div class="image-container">
-                <img src="{{ asset('images/opt-in/header.png') }}" alt="" />
+                <div class="logo-image"></div>
 
                 <div id="main_desc_container" class="">
                     {!! nl2br($optIn->main_description) !!}
