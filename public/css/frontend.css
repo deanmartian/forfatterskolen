@@ -4127,13 +4127,13 @@ a.darken:hover img {
 }
 
 #opt-in-page .image-container {
-	background-image: url("../images/opt-in/header2.png");
-	background-position: 0 -110px;
+	background-image: url(../images/opt-in/header2.png);
+	background-position: 0 -120px;
 	background-repeat: no-repeat;
 	background-size: cover;
-	min-height: 650px;
+	min-height: 500px;
 	position: relative;
-	width: 100%; /* for IE 6 */
+	width: 100%;
 }
 
 #opt-in-page .image-container .logo-image {
@@ -4149,7 +4149,7 @@ a.darken:hover img {
 
 #opt-in-page .image-container #main_desc_container {
 	position: absolute;
-	top: 150px;
+	top: 50px;
 	left: 60px;
 	width: 37%;
 }
@@ -4410,7 +4410,7 @@ a.darken:hover img {
 
 	#opt-in-page .image-container {
 		background-position: 0 -100px;
-		min-height: 527px;
+		min-height: 450px;
 	}
 
 	#opt-in-page .image-container .logo-image {
@@ -4419,9 +4419,9 @@ a.darken:hover img {
 	}
 
 	#opt-in-page .image-container #main_desc_container {
-		left: 45px;
-		top: 100px;
-		width: 47%;
+		left: 30px;
+		top: 15px;
+		width: 41%;
 	}
 
 	#opt-in-page .form-container {
@@ -4594,8 +4594,8 @@ a.darken:hover img {
 	}
 
 	#opt-in-page .image-container {
-		background-position: 0 -30px;
-		min-height: 500px;
+		background-position: 0 -75px;
+		min-height: 400px;
 	}
 
 	#opt-in-page .image-container .logo-image {
@@ -4612,9 +4612,9 @@ a.darken:hover img {
 	}
 
 	#opt-in-page .image-container #main_desc_container {
-		top: 90px;
-		left: 30px;
-		width: 48%;
+		left: 20px;
+		top: 0;
+		width: 40%;
 	}
 
 	#opt-in-page #main_desc_container h2 > span {
@@ -4780,8 +4780,8 @@ a.darken:hover img {
 	}
 
 	#opt-in-page .image-container {
-		background-position: -36px -45px;
-		min-height: 440px;
+		background-position: 0 -60px;
+		min-height: 460px;
 	}
 
 	#opt-in-page .image-container .logo-image {
@@ -4794,9 +4794,9 @@ a.darken:hover img {
 	}
 
 	#opt-in-page .image-container #main_desc_container {
-		top: 90px;
+		top: 0;
 		left: 15px;
-		width: 75%;
+		width: 49%;
 	}
 
 	#opt-in-page .jumbotron {
@@ -5053,8 +5053,9 @@ a.darken:hover img {
 	}
 
 	#opt-in-page .image-container {
-		background-position: -50px -30px;
-		min-height: 350px;
+		background-color: #e8e5ea;
+		background-image: none;
+		min-height: 270px;
 	}
 
 	#opt-in-page .image-container img {
@@ -5062,7 +5063,7 @@ a.darken:hover img {
 	}
 
 	#opt-in-page .image-container #main_desc_container {
-		top: 65px;
+		top: 0;
 		left: 10px;
 		width: 95%;
 	}
@@ -5091,7 +5092,7 @@ a.darken:hover img {
 	}
 
 	#opt-in-page .form-container {
-		padding: 0;
+		padding: 20px 0;
 	}
 
 	#opt-in-page .jumbotron {
@@ -5213,8 +5214,7 @@ a.darken:hover img {
 	}
 
 	#opt-in-page .image-container {
-		background-position: -37px -35px;
-		min-height: 400px;
+		min-height: 310px;
 	}
 
 	#opt-in-page .image-container #main_desc_container p > span {
@@ -5455,12 +5455,6 @@ a.darken:hover img {
 		margin-top: 40px;
 	}
 
-	#opt-in-page .image-container #main_desc_container {
-		top: 60px;
-		left: 10px;
-		width: 94%;
-	}
-
 	#opt-in-page .jumbotron {
 		padding: 20px 22px;
 	}
@@ -5668,10 +5662,6 @@ a.darken:hover img {
 		font-size: 23px !important;
 	}
 
-	#opt-in-page .image-container #main_desc_container {
-		top: 50px;
-	}
-
 	#opt-in-page .form-container h3 > span {
 		font-size: 23px !important;
 	}
@@ -5686,6 +5676,6 @@ a.darken:hover img {
 
 	#opt-in-page .image-container {
 		background-position: -60px -35px;
-		min-height: 410px;
+		min-height: 340px;
 	}
 }

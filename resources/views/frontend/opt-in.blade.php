@@ -8,7 +8,7 @@
     <div id="opt-in-page">
         <div class="container">
             <div class="image-container">
-                <div class="logo-image"></div>
+                {{--<div class="logo-image"></div>--}}
 
                 <div id="main_desc_container" class="">
                     {!! nl2br($optIn->main_description) !!}
