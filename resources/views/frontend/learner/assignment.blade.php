@@ -232,7 +232,8 @@
 				<h4 class="modal-title">Last opp manus</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="" enctype="multipart/form-data">
+				<form method="POST" action="" enctype="multipart/form-data"
+				onsubmit="disableSubmit(this);">
 					{{ csrf_field() }}
 					* Godkjente fil formater er DOCX.
 					<input type="file" class="form-control margin-top" required name="filename" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
@@ -306,7 +307,7 @@
 				<h4 class="modal-title">Replace manuscript</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="" enctype="multipart/form-data">
+				<form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>Manuscript</label>
@@ -332,7 +333,7 @@
 			<div class="modal-body">
 				Are you sure to delete this manuscript?
 				Warning: This cannot be undone.
-				<form method="POST" action="">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<button type="submit" class="btn btn-danger pull-right margin-top">Delete</button>
 					<div class="clearfix"></div>

@@ -17,6 +17,8 @@ use App\Http\Middleware\Admin;
 use App\Http\Requests\AddWritingGroupRequest;
 use App\LessonContent;
 use App\LessonDocuments;
+use App\Mail\SendEmailMessageOnly;
+use App\Mail\AssignmentSubmittedEmail;
 use App\Mail\CoachingSuggestionDateEmail;
 use App\Mail\MultipleEmailConfirmation;
 use App\Notification;
@@ -499,13 +501,20 @@ class LearnerController extends Controller
             // Admin notification
             $message = Auth::user()->full_name.' submitted a manuscript for assignment '.$assignment->title;
             $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
-            //mail($toMail, 'New manuscript submitted for assignment', $message);
-            AdminHelpers::send_email('New manuscript submitted for assignment',
-                'post@forfatterskolen.no', $toMail, $message);
+
+            $email_data['email_message'] = $message;
+            // use queue to send email on background
+            Mail::to($toMail)->queue(new AssignmentSubmittedEmail($email_data));
+
+            // notify user
+            $user_email = Auth::user()->email;
+            $confirm_email['email_message'] = 'Oppgaven din er levert, har vi problemer med filen vil vi ta kontakt med med deg.';
+            Mail::to($user_email)->queue(new SendEmailMessageOnly($confirm_email));
+
+            return redirect()->back()->with('success', true);
         endif;
 
-
-        return redirect()->back()->with('success', true);
+        return redirect()->back();
     }
 
 
@@ -1704,6 +1713,7 @@ class LearnerController extends Controller
 
         if ($assignmentManuscript) {
             if ( $request->hasFile('filename') && $request->file('filename')->isValid() ) {
+                $oldManuscript = $assignmentManuscript->filename;
                 $time = time();
                 $destinationPath = 'storage/assignment-manuscripts/'; // upload path
                 $extensions = ['pdf', 'docx', 'odt'];
@@ -1742,6 +1752,16 @@ class LearnerController extends Controller
                 $assignmentManuscript->filename = '/'.$fileName;
                 $assignmentManuscript->words = $word_count;
                 $assignmentManuscript->save();
+
+                // delete the old file from the server
+                if (File::exists(public_path($oldManuscript))) {
+                    File::delete(public_path($oldManuscript));
+                }
+
+                // notify user
+                $user_email = Auth::user()->email;
+                $confirm_email['email_message'] = 'Oppgaven din er levert, har vi problemer med filen vil vi ta kontakt med med deg.';
+                Mail::to($user_email)->queue(new SendEmailMessageOnly($confirm_email));
             }
         }
 
@@ -1756,6 +1776,13 @@ class LearnerController extends Controller
     public function deleteAssignmentManuscript($id)
     {
         $manuscript = AssignmentManuscript::findOrFail($id);
+
+        // delete the file from the server
+        $oldManuscript = $manuscript->filename;
+        if (File::exists(public_path($oldManuscript))) {
+            File::delete(public_path($oldManuscript));
+        }
+
         $manuscript->forceDelete();
         return redirect()->back();
     }

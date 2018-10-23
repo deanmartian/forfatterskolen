@@ -71,6 +71,13 @@
                });
             });
 
+            function disableSubmit(t) {
+                let submit_btn = $(t).find('[type=submit]');
+                submit_btn.text('');
+                submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+                submit_btn.attr('disabled', 'disabled');
+            }
+
             const layoutMethod = {
                 removeNotification: function(id) {
 
