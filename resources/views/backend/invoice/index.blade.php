@@ -33,7 +33,7 @@
 							<span class="label label-danger">UBETALT</span>
 						@endif
 					</td>
-		    		<td><a href="{{$invoice->pdf_url}}" target="_blank">View PDF</a></td>
+		    		<td><a href="{{$invoice->pdf_url}}" target="_blank">{{ trans('site.view-pdf') }}</a></td>
 		    		<td>{{$invoice->created_at}}</td>
 		      	</tr>
 		      	@endforeach

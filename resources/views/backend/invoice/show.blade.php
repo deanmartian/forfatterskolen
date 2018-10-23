@@ -20,7 +20,7 @@
             </div>
 
 						<h3>{{ trans('site.invoice-nr') }}{{$invoice->invoice_number}}</h3><br />
-            Learner: <a href="{{route('admin.learner.show', $invoice->user->id)}}">{{$invoice->user->fullname}}</a> <br />
+						{{ trans_choice('site.learners', 1) }}: <a href="{{route('admin.learner.show', $invoice->user->id)}}">{{$invoice->user->fullname}}</a> <br />
 						Status: 
 						@if($invoice->fiken_is_paid)
 						<span class="label label-success">BETALT</span>

@@ -529,4 +529,5 @@ Warning: This cannot be undone.',
   'list-id' => 'List ID',
   'delete-opt-in' => 'Delete Opt-in',
   'delete-opt-in-question' => 'Are you sure you want to delete this opt-in?',
+  'view-pdf' => 'View PDF',
 );
