@@ -483,7 +483,8 @@ class LearnerController extends Controller
             endif;
 
             // check if the assignment is for editor only and if it meets the max word
-            if ($assignment->for_editor && $word_count > $assignment->max_words) {
+            /*$assignment->for_editor && */
+            if ($word_count > $assignment->max_words) {
                 return redirect()->back()->with(['errorMaxWord' => true, 'editorMaxWord' => $assignment->max_words]);
             }
 
