@@ -195,7 +195,7 @@ class WorkshopController extends Controller
             foreach ($attendees as $attendee) {
                 $email = $attendee->user->email;
                 //AdminHelpers::send_mail($email, $subject, $message, $from);
-                AdminHelpers::send_email($subject, $from, $email, $message);
+                AdminHelpers::send_email($subject, $from, $email, nl2br($message));
             }
         }
 

@@ -528,12 +528,12 @@
 
 					<div class="form-group">
 						<label>{{ trans('site.subject') }}</label>
-						<input type="text" class="form-control" name="subject" required>
+						<input type="text" class="form-control" name="subject" required value="{{ $workshop->email_title }}">
 					</div>
 
 					<div class="form-group">
 						<label>{{ trans('site.message') }}</label>
-						<textarea name="message" id="" cols="30" rows="10" class="form-control" required></textarea>
+						<textarea name="message" id="" cols="30" rows="10" class="form-control" required>{{ $workshop->email_body }}</textarea>
 					</div>
 					<div class="text-right">
 						<input type="submit" class="btn btn-primary" value="{{ trans('site.send') }}" id="send_email_btn">
