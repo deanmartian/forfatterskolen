@@ -61,7 +61,7 @@
                                             {!! nl2br($freeCourse->description) !!}
                                             <br />
                                             <br />
-                                            {{ strtoupper(trans('site.url')) }}: <a href="{{ $freeCourse->link }}" target="_blank">{{ $freeCourse->url }}</a>
+                                            {{ strtoupper(trans('site.url')) }}: <a href="{{ $freeCourse->url }}" target="_blank">{{ $freeCourse->url }}</a>
                                             @if( $freeCourse->course_image )
                                             <br />
                                             <img src="{{ $freeCourse->course_image }}" height="150px" class="margin-top">
