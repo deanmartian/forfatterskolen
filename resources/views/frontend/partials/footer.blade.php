@@ -2,10 +2,10 @@
 <div class="start-today centered">
     <h5 class="font-regular">Vil du ha profesjonell tilbakemelding på en smakebit av din personlige tekst, helt gratis? Send den inn ved å trykke på knappen under.</h5>
     <div></div>
-    <a class="btn btn-orange btn-lg" href="/gratis-tekstvurdering">Ja, dette vil jeg ha!</a>
-    <div>
+    <a class="btn" href="/gratis-tekstvurdering">Ja, dette vil jeg ha!</a>
+    {{--<div>
     	<small>Du får svar innen fem virkedager</small>
-    </div>
+    </div>--}}
 </div>
 @endif
 

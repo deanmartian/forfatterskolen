@@ -40,6 +40,16 @@
 	text-rendering: optimizeLegibility;
 }
 
+@font-face {
+	font-family: 'Montserrat Regular';
+	src: url('../fonts/montserrat/MontserratAlternates-Regular.otf'); /* IE9 Compat Modes */
+	src: url('../fonts/montserrat/MontserratAlternates-Regular.otf?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+	url('../fonts/montserrat/MontserratAlternates-Regular.otf') format('truetype');
+	font-style: normal;
+	font-weight: normal;
+	text-rendering: optimizeLegibility;
+}
+
 @font-face{
 	font-family: 'BebasNeue Bold';
 	src: url('../fonts/BebasNeue-Bold.ttf');
@@ -441,20 +451,40 @@ h1, h2, h3, h4, h5, h6{
 	font-size: 15px;
 	color: #eee;
 }
-.start-today{
-	background-color: #fff;
-	padding: 40px 10px;
-	border-top: solid 1px #ccc;
+.start-today {
+	background-image: url(../images/girl-reading.png);
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	background-position: center;
+	height: 657px;
+	padding: 92px 10px;
 }
-.start-today h5{
+.start-today h5 {
 	display: inline-block;
-	width: 800px;
+	font-family: "Montserrat Regular";
+	width: 75%;
 	max-width: 100%;
 	margin:0;
 	line-height: 36px;
 	font-size: 28px;
-	margin-bottom: 20px;
 }
+
+.start-today a {
+	background-color: #852736;
+	border-radius: 5px !important;
+	font-family: "Montserrat Regular";
+	font-size: 23px;
+	color: #fff;
+	margin-top: 50px;
+	padding: 6px 20px;
+	text-transform: none;
+}
+
+.start-today a:hover {
+	background-color: #6b1220;
+	color: #fff;
+}
+
 .home-subscribe-form{
 	background-color: #852635;
 	color: #fff;
@@ -4435,6 +4465,10 @@ a.darken:hover img {
 	#opt-in-page .jumbotron {
 		padding: 40px 68px;
 	}
+
+	.start-today {
+		height: 630px;
+	}
 }
 
 @media only screen and (max-width: 768px) {
@@ -4624,6 +4658,22 @@ a.darken:hover img {
 	#opt-in-page .jumbotron {
 		padding: 40px 52px;
 	}
+
+	.start-today {
+		height: 440px;
+		padding: 60px 10px;
+	}
+
+	.start-today h5 {
+		font-size: 25px;
+		width: 85%;
+	}
+
+	.start-today a {
+		font-size: 20px;
+		margin-top: 30px;
+	}
+
 }
 
 @media only screen and (max-width: 640px) {
@@ -4821,6 +4871,12 @@ a.darken:hover img {
 
 	#opt-in-page .description-container p > span {
 		font-size: 18px !important;
+	}
+
+	.start-today {
+		background-size: cover;
+		height: 420px;
+		padding: 30px 10px;
 	}
 }
 
@@ -5107,6 +5163,15 @@ a.darken:hover img {
 		padding: 40px 0;
 	}
 
+	.start-today h5 {
+		font-size: 20px;
+		width: 96%;
+	}
+
+	.start-today a {
+		font-size: 18px;
+		margin-top: 20px;
+	}
 }
 
 @media only screen and (max-width: 375px) {
@@ -5223,6 +5288,14 @@ a.darken:hover img {
 
 	#opt-in-page .jumbotron {
 		padding: 20px 26px;
+	}
+
+	.start-today {
+		padding: 20px 10px;
+	}
+
+	.start-today a {
+		margin-top: 10px;
 	}
 }
 
@@ -5677,5 +5750,14 @@ a.darken:hover img {
 	#opt-in-page .image-container {
 		background-position: -60px -35px;
 		min-height: 340px;
+	}
+
+	.start-today h5 {
+		font-size: 18px;
+		width: 100%;
+	}
+
+	.start-today a {
+		font-size: 14px;
 	}
 }
