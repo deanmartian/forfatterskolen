@@ -683,6 +683,8 @@
 							        <td>
 							        	<form method="POST" action="{{ route('admin.package_workshop.approve', $pending_workshop->id) }}" class="inline-block">
 											{{ csrf_field() }}
+											<input type="hidden" name="workshop_user_id" value="{{ $pending_workshop->user_id }}">
+											<input type="hidden" name="workshop_id" value="{{ $pending_workshop->workshop_id }}">
 											<button class="btn btn-warning btn-xs" type="submit"><i class="fa fa-check"></i></button>
 										</form>
 							        	<form method="POST" action="{{ route('admin.package_workshop.disapprove', $pending_workshop->id) }}" class="inline-block">
