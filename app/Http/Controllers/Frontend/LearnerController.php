@@ -39,6 +39,7 @@ use App\WordWritten;
 use App\WordWrittenGoal;
 use App\WritingGroup;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -821,6 +822,39 @@ class LearnerController extends Controller
         return abort('503');
     }
 
+    /**
+     * Download lesson as pdf file
+     * @param $course_id
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function downloadLesson($course_id, $id)
+    {
+        $course = Course::findOrFail($course_id);
+        $lesson = Lesson::findOrFail($id);
+
+        $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course->packages->pluck('id')->toArray())->first();
+
+        // set a cookie to re-enable download button
+        $cookie_name = "_lesson_dl";
+        $cookie_value = 1;
+        setcookie($cookie_name, $cookie_value, time() + 60, "/"); // 86400 = 1 day
+
+        if(  $courseTaken || FrontendHelpers::hasLessonAccess($courseTaken, $lesson) ) :
+            $content = $lesson->content;
+            $title = $lesson->title;
+            $pdf = PDF::loadView('frontend.pdf.lesson', compact('content', 'title'));
+
+            // set a cookie to re-enable download button
+            $cookie_name = "_lesson_dl";
+            $cookie_value = 1;
+            setcookie($cookie_name, $cookie_value, time() + 600, "/"); // 86400 = 1 day
+
+            return $pdf->download($lesson->title.'.pdf');
+        endif;
+
+        return redirect()->back();
+    }
 
 
 

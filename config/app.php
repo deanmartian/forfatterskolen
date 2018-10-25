@@ -186,7 +186,8 @@ return [
         UniSharp\LaravelFilemanager\LaravelFilemanagerServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
 
-        Barryvdh\TranslationManager\ManagerServiceProvider::class
+        Barryvdh\TranslationManager\ManagerServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
     ],
 
     /*

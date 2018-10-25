@@ -29,7 +29,16 @@
 		@endif
 		<div class="clearfix"></div>
 	@endif
-	
+
+		@if ($course->id != 17)
+		<div class="row">
+			<div class="col-sm-12">
+				<a class="btn btn-info download-btn" href="{{ route('learner.course.download-lesson', ['course_id' => $course->id, 'id' => $lesson->id]) }}"
+				onclick="disableButton(this)">Download</a>
+			</div>
+		</div>
+		@endif
+
 	<div class="text-center">
 		<br />
 		<br />
@@ -86,7 +95,7 @@
 						<b>Dokumenter og skjemaer</b>
 						<ul style="padding-left: 15px">
 							@foreach($lesson->documents as $document)
-								<li><a href="{{ route('learner.lesson.download-lesson-document', $document->id) }}">{{ $document->name }}</a></li>
+								<li style="word-break: break-all;"><a href="{{ route('learner.lesson.download-lesson-document', $document->id) }}">{{ $document->name }}</a></li>
 							@endforeach
 						</ul>
 					@endif
@@ -113,4 +122,45 @@
 			<div class="clearfix"></div>
 		@endif
 </div>
+@stop
+
+@section('scripts')
+	<script>
+        function disableButton(t) {
+            let btn = $(t);
+            btn.text('');
+            btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+            btn.attr('disabled', 'disabled');
+		}
+
+		setInterval(function(){
+		    checkCookie();
+		}, 1000);
+
+        // check cookie to re-enable download button
+        function checkCookie() {
+            let cookie = getCookie("_lesson_dl");
+            if (cookie !== "") {
+                document.cookie = "_lesson_dl=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                $(".download-btn").text('')
+                    .append('Download')
+                	.removeAttr('disabled');
+            }
+        }
+
+        function getCookie(cname) {
+            let name = cname + "=";
+            let ca = document.cookie.split(';');
+            for(let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+	</script>
 @stop

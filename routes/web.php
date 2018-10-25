@@ -164,6 +164,7 @@ Route::group([
         Route::get('/profile', 'LearnerController@profile')->name('learner.profile'); // Profile Page
         Route::get('/terms', 'LearnerController@terms')->name('learner.terms'); // Terms Page
         Route::get('/course/{course_id}/lesson/{id}', 'LearnerController@lesson')->name('learner.course.lesson'); // Lesson Page
+        Route::get('/course/{course_id}/lesson/{id}/download', 'LearnerController@downloadLesson')->name('learner.course.download-lesson'); // Download Lesson Page
         Route::get('/manuscript/{id}', 'LearnerController@manuscriptShow')->name('learner.manuscript.show'); // Manuscript Single Page
         Route::get('/shop-manuscript', 'LearnerController@shopManuscript')->name('learner.shop-manuscript'); // Shop Manuscripts Page
         Route::get('/shop-manuscript/{id}', 'LearnerController@shopManuscriptShow')->name('learner.shop-manuscript.show'); // Shop Manuscript Show Page
