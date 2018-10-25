@@ -6,6 +6,7 @@ use App\Helpers\DocumentParser;
 use App\Helpers\Html2Text;
 use App\Helpers\PdfParser;
 use App\Http\FrontendHelpers;
+use App\Mail\AssignmentManuscriptEmailToList;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -328,6 +329,66 @@ class AssignmentController extends Controller
 
         return redirect()->back();
 
+    }
+
+    /**
+     * Export list of emails
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function exportEmailList($id)
+    {
+        $assignment             = Assignment::find($id);
+        $assignmentManuscripts  = AssignmentManuscript::where('assignment_id', $id)->get();
+
+        if ($assignmentManuscripts) {
+
+            $excel              = \App::make('excel');
+            $manuscripts        = $assignment->manuscripts;
+            $emailList          = [];
+
+            // loop all the learners
+            foreach ($manuscripts as $manuscript) {
+                $emailList[] = [$manuscript->user->email];
+            }
+
+            $excel->create($assignment->title.' Emails', function($excel) use ($emailList) {
+
+                // Build the spreadsheet, passing in the payments array
+                $excel->sheet('sheet1', function($sheet) use ($emailList) {
+                    // prevent inserting an empty first row
+                    $sheet->fromArray($emailList, null, 'A1', false, false);
+                });
+            })->download('xlsx');
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Send email to the learners that sent assignment
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function sendEmailToList($id, Request $request)
+    {
+        $assignment     = Assignment::find($id);
+        $manuscripts    = $assignment->manuscripts;
+
+        if ($manuscripts) {
+            foreach($manuscripts as $manuscript) {
+                $userEmail = $manuscript->user->email;
+                $emailData['data'] = $request->except('_token');
+                // queue sending of email for fast loading
+                \Mail::to($userEmail)->queue(new AssignmentManuscriptEmailToList($emailData));
+            }
+
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Email sent successfully.'),
+                'alert_type' => 'success']);
+        }
+
+        return redirect()->back();
     }
 
     /**

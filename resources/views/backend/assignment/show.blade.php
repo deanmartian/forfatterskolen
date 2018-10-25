@@ -42,8 +42,11 @@
 						<a href="{{ route('assignment.group.generate-doc', $assignment->id) }}" class="pull-right btn btn-success btn-sm margin-bottom margin-right-5">{{ trans('site.generate') }}</a>
 					@endif
 				@endif
+				@if($assignment->manuscripts->count())
+					<button type="button" class="pull-right btn btn-info btn-sm margin-bottom margin-right-5"  data-toggle="modal" data-target="#sendEmailModal">{{ trans('site.send-email') }}</button>
+				@endif
 				<h5>{{ trans_choice('site.manuscripts', 2) }}</h5>
-				<table class="table table-side-bordered table-white">
+				<table class="table table-side-bordered table-white" style="margin-bottom: 0">
 					<thead>
 						<tr>
 							<th>{{ trans_choice('site.manuscripts', 1) }}</th>
@@ -123,69 +126,68 @@
 										   data-id="{{$manuscript->id}}" data-size="mini" @if($manuscript->locked) {{ 'checked' }} @endif>
 									<button type="button" class="btn btn-info btn-xs replaceManuscriptBtn" data-toggle="modal" data-target="#replaceManuscriptModal" data-action="{{ route('assignment.group.replace_manuscript', $manuscript->id) }}" data-grade="{{ $manuscript->grade }}" data-ass-type="{{ $manuscript->type }}" data-manu-type="{{ $manuscript->manu_type }}">{{ trans('site.replace-doc') }}</button>
 									<div class="margin-top">
-									<button type="button" class="btn btn-warning btn-xs setGradeBtn" data-toggle="modal" data-target="#setGradeModal" data-action="{{ route('assignment.group.set_grade', $manuscript->id) }}" data-grade="{{ $manuscript->grade }}">{{ trans('site.set-grade') }}</button>
-									<button type="button" class="btn btn-danger btn-xs deleteManuscriptBtn" data-toggle="modal" data-target="#deleteManuscriptModal" data-action="{{ route('assignment.group.delete_manuscript', $manuscript->id) }}"><i class="fa fa-trash"></i></button>
-									<button type="button" class="btn btn-info btn-xs moveAssignmentBtn" data-toggle="modal" data-target="#moveAssignmentModal" data-action="{{ route('assignment.group.move_manuscript', $manuscript->id) }}"><i class="fa fa-arrows"></i></button>
+										<button type="button" class="btn btn-warning btn-xs setGradeBtn" data-toggle="modal" data-target="#setGradeModal" data-action="{{ route('assignment.group.set_grade', $manuscript->id) }}" data-grade="{{ $manuscript->grade }}">{{ trans('site.set-grade') }}</button>
+										<button type="button" class="btn btn-danger btn-xs deleteManuscriptBtn" data-toggle="modal" data-target="#deleteManuscriptModal" data-action="{{ route('assignment.group.delete_manuscript', $manuscript->id) }}"><i class="fa fa-trash"></i></button>
+										<button type="button" class="btn btn-info btn-xs moveAssignmentBtn" data-toggle="modal" data-target="#moveAssignmentModal" data-action="{{ route('assignment.group.move_manuscript', $manuscript->id) }}"><i class="fa fa-arrows"></i></button>
 										<br>
 										<div class="margin-top">
-									@if($manuscript->editor_id)
+											@if($manuscript->editor_id)
 
-										<?php
-											$learner_list = [];
-											foreach($assignment->groups as $group) {
-											    foreach($group->learners as $learner) {
-                                                    $learner_list[] = $learner['user_id'];
-												}
-											}
-											$noGroupHaveFeedback = \App\AssignmentFeedbackNoGroup::where([
-											    'assignment_manuscript_id' => $manuscript->id,
-												'learner_id' => $manuscript->user->id
-											])->get();
-										?>
-										@if(!in_array($manuscript->user_id,$learner_list))
-											@if($noGroupHaveFeedback->count())
-													<button type="button" class="btn btn-primary btn-xs submitFeedbackBtn"
-															data-toggle="modal" data-target="#submitFeedbackModal"
-															data-name="{{ $manuscript->user->full_name }}"
-															data-action="{{ route('assignment.group.manuscript-feedback-no-group-update',
-														$noGroupHaveFeedback[0]['id']) }}"
-															data-edit="true">
-														{{ trans('site.edit-feedback-as-admin') }}
-													</button>
-											@else
-												<button type="button" class="btn btn-primary btn-xs submitFeedbackBtn"
-														data-toggle="modal" data-target="#submitFeedbackModal"
-														data-name="{{ $manuscript->user->full_name }}"
-														data-action="{{ route('assignment.group.manuscript-feedback-no-group',
-														['id' => $manuscript->id, 'learner_id' => $manuscript->user->id]) }}">
-													{{ trans('site.submit-feedback-as-admin') }}
-												</button>
+												<?php
+													$learner_list = [];
+													foreach($assignment->groups as $group) {
+														foreach($group->learners as $learner) {
+															$learner_list[] = $learner['user_id'];
+														}
+													}
+													$noGroupHaveFeedback = \App\AssignmentFeedbackNoGroup::where([
+														'assignment_manuscript_id' => $manuscript->id,
+														'learner_id' => $manuscript->user->id
+													])->get();
+												?>
+												@if(!in_array($manuscript->user_id,$learner_list))
+													@if($noGroupHaveFeedback->count())
+															<button type="button" class="btn btn-primary btn-xs submitFeedbackBtn"
+																	data-toggle="modal" data-target="#submitFeedbackModal"
+																	data-name="{{ $manuscript->user->full_name }}"
+																	data-action="{{ route('assignment.group.manuscript-feedback-no-group-update',
+																$noGroupHaveFeedback[0]['id']) }}"
+																	data-edit="true">
+																{{ trans('site.edit-feedback-as-admin') }}
+															</button>
+													@else
+														<button type="button" class="btn btn-primary btn-xs submitFeedbackBtn"
+																data-toggle="modal" data-target="#submitFeedbackModal"
+																data-name="{{ $manuscript->user->full_name }}"
+																data-action="{{ route('assignment.group.manuscript-feedback-no-group',
+																['id' => $manuscript->id, 'learner_id' => $manuscript->user->id]) }}">
+															{{ trans('site.submit-feedback-as-admin') }}
+														</button>
+													@endif
+												@endif
 											@endif
-										@endif
-									@endif
+										</div>
 									</div>
 								</div>
 							</td>
 						</tr>
 						@endforeach
-						<tr>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td style="padding-right: 21%">
-								<div class="text-right">
-									<a href="{{ route('assignment.group.download_all_manuscript', $assignment->id) }}"
-									   class="btn btn-primary btn-xs">
-										{{ trans('site.download-all') }}
-									</a>
-								</div>
-							</td>
-						</tr>
 					</tbody>
 				</table>
+				<div style="margin-bottom: 20px; background-color: #fff; padding: 8px; border: solid 1px #ddd; border-top: none">
+					@if($assignment->manuscripts->count())
+						<div class="text-center">
+							<a href="{{ route('assignment.group.download_all_manuscript', $assignment->id) }}"
+							   class="btn btn-primary btn-xs">
+								{{ trans('site.download-all') }}
+							</a>
+
+							<a href="{{ route('assignment.group.export_email_list', $assignment->id) }}" class="btn btn-success btn-xs">
+								Export Email List
+							</a>
+						</div>
+					@endif
+				</div>
 			</div>
 
 			<div class="table-responsive">
@@ -687,6 +689,38 @@
 		</div>
 	</div>
 </div>
+
+<!--send email modal-->
+
+<div id="sendEmailModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.send-email') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{route('assignment.group.send-email-to-list', $assignment->id)}}" onsubmit="formSubmitted(this)">
+					{{csrf_field()}}
+
+					<div class="form-group">
+						<label>{{ trans('site.subject') }}</label>
+						<input type="text" class="form-control" name="subject" required>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.message') }}</label>
+						<textarea name="message" id="" cols="30" rows="10" class="form-control" required></textarea>
+					</div>
+					<div class="text-right">
+						<input type="submit" class="btn btn-primary" value="{{ trans('site.send') }}" id="send_email_btn">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!--end email modal-->
 @stop
 
 @section('scripts')
@@ -778,5 +812,10 @@
             modal.find('form').find('input[type=file]').attr('required', 'required');
 		}
     });
+
+    function formSubmitted(t) {
+        let send_email = $(t).find("[type=submit]");
+        send_email.val('Sending....').attr('disabled', true);
+    }
 </script>
 @stop

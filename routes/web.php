@@ -696,6 +696,8 @@ Route::group([
         Route::post('assignment_manuscript/update-feedback/{id}', 'AssignmentController@manuscriptFeedbackNoGroupUpdate')->name('assignment.group.manuscript-feedback-no-group-update');
         Route::get('assignment/{id}/download', 'AssignmentController@downloadManuscript')->name('assignment.group.download_manuscript');
         Route::get('assignment/{id}/downloadAll', 'AssignmentController@downloadAllManuscript')->name('assignment.group.download_all_manuscript');
+        Route::get('assignment/{id}/exportEmailList', 'AssignmentController@exportEmailList')->name('assignment.group.export_email_list');
+        Route::post('assignment/{id}/send-email-to-list', 'AssignmentController@sendEmailToList')->name('assignment.group.send-email-to-list');
         Route::get('assignment/{id}/generate-doc', 'AssignmentController@generateDoc')->name('assignment.group.generate-doc');
         Route::get('assignment/{id}/download-generate-doc', 'AssignmentController@downloadGenerateDoc')->name('assignment.group.download-generate-doc');
         Route::get('assignment/{id}/download-excel-sheet', 'AssignmentController@downloadExcelSheet')->name('assignment.group.download-excel-sheet');
