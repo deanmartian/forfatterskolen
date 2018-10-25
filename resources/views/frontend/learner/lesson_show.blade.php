@@ -34,7 +34,7 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<a class="btn btn-info download-btn" href="{{ route('learner.course.download-lesson', ['course_id' => $course->id, 'id' => $lesson->id]) }}"
-				onclick="disableButton(this)">Download</a>
+				onclick="disableButton(this)">Last ned utskriftsvennlig pdf av leksjonen</a>
 			</div>
 		</div>
 		@endif
@@ -129,7 +129,7 @@
         function disableButton(t) {
             let btn = $(t);
             btn.text('');
-            btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+            btn.append('<i class="fa fa-spinner fa-pulse"></i> Vennligst vent...');
             btn.attr('disabled', 'disabled');
 		}
 
@@ -143,7 +143,7 @@
             if (cookie !== "") {
                 document.cookie = "_lesson_dl=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                 $(".download-btn").text('')
-                    .append('Download')
+                    .append('Last ned utskriftsvennlig pdf av leksjonen')
                 	.removeAttr('disabled');
             }
         }
