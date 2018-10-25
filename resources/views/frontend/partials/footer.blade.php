@@ -1,12 +1,14 @@
-@if( Route::currentRouteName() != 'front.free-manuscript.index' )
-<div class="start-today centered">
-    <h5 class="font-regular">Vil du ha profesjonell tilbakemelding på en smakebit av din personlige tekst, helt gratis? Send den inn ved å trykke på knappen under.</h5>
-    <div></div>
-    <a class="btn" href="/gratis-tekstvurdering">Ja, dette vil jeg ha!</a>
-    {{--<div>
-    	<small>Du får svar innen fem virkedager</small>
-    </div>--}}
-</div>
+@if( Route::currentRouteName() != 'front.free-manuscript.index')
+	@if (Auth::guest())
+		<div class="start-today centered">
+			<h5 class="font-regular">Vil du ha profesjonell tilbakemelding på en smakebit av din personlige tekst, helt gratis? Send den inn ved å trykke på knappen under.</h5>
+			<div></div>
+			<a class="btn" href="/gratis-tekstvurdering">Ja, dette vil jeg ha!</a>
+			{{--<div>
+				<small>Du får svar innen fem virkedager</small>
+			</div>--}}
+		</div>
+	@endif
 @endif
 
 <footer>
