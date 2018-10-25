@@ -4247,7 +4247,7 @@ a.darken:hover img {
 	margin-bottom: 0;
 	padding: 40px 93px;
 	text-align: center;
-	word-break: break-all;
+	/*word-break: break-all;*/
 }
 
 #opt-in-page .jumbotron .red {
@@ -4850,7 +4850,7 @@ a.darken:hover img {
 	}
 
 	#opt-in-page .jumbotron {
-		padding: 40px 61px;
+		padding: 40px 20px;
 	}
 
 	#opt-in-page .form-container {
