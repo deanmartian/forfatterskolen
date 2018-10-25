@@ -78,6 +78,7 @@ return array (
   'uploaded' => 'The :attribute failed to upload.',
   'url' => 'The :attribute format is invalid.',
   'alpha_num_spaces' => 'The :attribute may only contain letters, numbers and spaces.',
+    'alpha_spaces' => 'The :attribute may only contain letters and spaces.',
   'custom' => 
   array (
     'attribute-name' => 

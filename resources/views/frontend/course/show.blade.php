@@ -16,16 +16,57 @@
 	<div class="row">
 		<div class="col-sm-12 col-md-6">
 			<div class="course-image" style="background-image: url({{$course->course_image}})"></div>
+
+			@if ($course->is_free)
+				<form action="{{ route('front.course.getFreeCourse', $course->id) }}" method="POST">
+					{{ csrf_field() }}
+					<input type="hidden" name="type" value="1">
+					@if (Auth::guest())
+
+						<div class="form-group mb-3">
+							<input type="text" class="form-control" placeholder="Fornavn" name="first_name"
+								   value="{{ old('first_name') }}" required>
+						</div>
+
+						<div class="form-group mb-3">
+							<input type="text" class="form-control" placeholder="Etternavn" name="last_name"
+								   value="{{ old('last_name') }}" required>
+						</div>
+
+						<div class="form-group mb-3">
+							<input type="email" class="form-control" placeholder="Epost" name="email"
+								   value="{{ old('email') }}" required>
+						</div>
+						<button class="btn btn-theme btn-block">Get Free Course</button>
+					@else
+						<input type="hidden" name="type" value="2">
+						<button class="btn btn-theme btn-block">Get Free Course</button>
+					@endif
+				</form>
+
+				@if ( $errors->any() )
+					<div class="alert alert-danger margin-top">
+						<ul>
+							@foreach($errors->all() as $error)
+								<li>{{$error}}</li>
+							@endforeach
+						</ul>
+					</div>
+				@endif
+			@endif
+
 		</div>
 		<div class="col-sm-12 col-md-6">
 			<h2>{{$course->title}}</h2>
 
-			<div class="course-price">Fra {{FrontendHelpers::currencyFormat($isBetween && $course->packages[0]->full_payment_sale_price
-			? $course->packages[0]->full_payment_sale_price
-			: $course->packages[0]->full_payment_price)}} kroner</div>
-			<br />
+			@if (!$course->is_free)
+				<div class="course-price">Fra {{FrontendHelpers::currencyFormat($isBetween && $course->packages[0]->full_payment_sale_price
+				? $course->packages[0]->full_payment_sale_price
+				: $course->packages[0]->full_payment_price)}} kroner</div>
+				<br />
+			@endif
 			@if(Auth::guest())
-				@if ($course->for_sale)
+				@if ($course->for_sale && !$course->is_free)
 					<a class="btn btn-theme btn-lg" href="{{route('front.course.checkout', ['id' => $course->id])}}">Bestill Kurset</a>
 				@endif
 			@else
@@ -36,7 +77,7 @@
 				@if($courseTaken)
 					<a href="{{route('learner.course.show', ['id' => $courseTaken->id])}}" class="btn btn-theme btn-lg">Fortsett Kurset</a>
 				@else
-					@if ($course->for_sale)
+					@if ($course->for_sale && !$course->is_free)
 						<a class="btn btn-theme btn-lg" href="{{route('front.course.checkout', ['id' => $course->id])}}">Bestill Kurset</a>
 					@endif
 				@endif
@@ -48,12 +89,14 @@
 			{!! nl2br($course->description) !!}
 			</p>
 
-			<div class="course-price">Fra {{FrontendHelpers::currencyFormat($isBetween && $course->packages[0]->full_payment_sale_price
-			? $course->packages[0]->full_payment_sale_price
-			: $course->packages[0]->full_payment_price)}} kroner</div>
-			<br />
+			@if (!$course->is_free)
+				<div class="course-price">Fra {{FrontendHelpers::currencyFormat($isBetween && $course->packages[0]->full_payment_sale_price
+				? $course->packages[0]->full_payment_sale_price
+				: $course->packages[0]->full_payment_price)}} kroner</div>
+				<br />
+			@endif
 			@if(Auth::guest())
-				@if ($course->for_sale)
+				@if ($course->for_sale && !$course->is_free)
 					<a class="btn btn-theme btn-lg" href="{{route('front.course.checkout', ['id' => $course->id])}}">Bestill Kurset</a>
 				@endif
 			@else
@@ -64,7 +107,7 @@
 				@if($courseTaken)
 				<a href="{{route('learner.course.show', ['id' => $courseTaken->id])}}" class="btn btn-theme btn-lg">Fortsett Kurset</a>
 				@else
-					@if ($course->for_sale)
+					@if ($course->for_sale && !$course->is_free)
 						<a class="btn btn-theme btn-lg" href="{{route('front.course.checkout', ['id' => $course->id])}}">Bestill Kurset</a>
 					@endif
 				@endif
@@ -81,8 +124,10 @@
 		<div class="col-sm-12">
 			<div class="theme-tabs">
 				<ul class="nav nav-tabs">
-				  <li class="active"><a data-toggle="tab" href="#packages"><span>Skrivepakke detaljer</span></a></li>
-				  <li>
+					@if (!$course->is_free)
+				  		<li class="active"><a data-toggle="tab" href="#packages"><span>Skrivepakke detaljer</span></a></li>
+					@endif
+				  <li {{ $course->is_free ? 'class=active' : '' }}>
 					  <a data-toggle="tab" href="#kursplan">
 						  <span>{{ $course->id == 17 ? 'Planlagte webinarer' : 'Kursplan' }}</span> <!-- check if webinar-pakke -->
 					  </a>
@@ -93,7 +138,8 @@
 				</ul>
 
 				<div class="tab-content course-tabs">
-				  <div id="packages" class="tab-pane fade in active package">
+					@if (!$course->is_free)
+				  		<div id="packages" class="tab-pane fade in active package">
 				  
 					@foreach($course->packages as $package)
 						<?php
@@ -146,7 +192,8 @@
 				  	@endforeach
 
 				  </div>
-				  <div id="kursplan" class="tab-pane fade">
+					@endif
+				  <div id="kursplan" class="tab-pane fade @if($course->is_free)in active @endif">
 					  @if ($course->id == 17)
 						  <?php
                           	$webinars = $course->webinars()->where('set_as_replay',0)->get();

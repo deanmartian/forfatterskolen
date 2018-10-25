@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers\Frontend;
 
+use App\Http\AdminHelpers;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests;
@@ -35,6 +37,29 @@ class CourseController extends Controller
         endif;
 
     	return view('frontend.course.show', compact('course', 'in_cart', 'cartIndex'));
+    }
+
+    public function getFreeCourse(Request $request)
+    {
+        $allowedTypes = [1 ,2];
+        if (in_array($request->type, $allowedTypes)) {
+            if ($request->type == 1) {
+                $this->validate($request, ['email' => 'required|email|unique:users',
+                    'first_name' => 'required|alpha_spaces', 'last_name' => 'required|alpha_spaces']);
+
+                // register new user
+                $new_user               = new User();
+                $new_user->email        = $request->email;
+                $new_user->first_name   = $request->first_name;
+                $new_user->last_name    = $request->last_name;
+                $new_user->password     = bcrypt('Z5C5E5M2jv');
+                $new_user->save();
+                Auth::login($new_user);
+
+                // send email
+            }
+        }
+        return redirect()->back();
     }
 
 }

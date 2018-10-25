@@ -74,6 +74,7 @@ class CourseController extends Controller
             'start_date' => '',
             'end_date' => '',
             'display_order' => '',
+            'is_free' => ''
         ];
         return view('backend.course.create', compact('course'));
     }
@@ -106,6 +107,7 @@ class CourseController extends Controller
         $course->type = $request->type;
         $course->start_date = $request->start_date;
         $course->end_date = $request->end_date;
+        $course->is_free = isset($request->is_free) ? 1 : 0;
         $course->save();
         return redirect(route('admin.course.show', $course->id));
     }
@@ -253,6 +255,29 @@ class CourseController extends Controller
 
         if ($course) {
             $course->for_sale = $request->for_sale;
+            $course->save();
+            $success = TRUE;
+        }
+
+        return response()->json([
+            'data' => [
+                'success' => $success,
+            ]
+        ]);
+    }
+
+    /**
+     * Update is free field
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateIsFreeStatus(Request $request)
+    {
+        $course = Course::find($request->course_id);
+        $success = false;
+
+        if ($course) {
+            $course->is_free = $request->is_free;
             $course->save();
             $success = TRUE;
         }

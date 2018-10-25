@@ -44,6 +44,7 @@
 					<th>{{ trans('site.for-sale') }}</th>
 					<th>{{ trans('site.status') }}</th>
 			        <th>{{ trans('site.date-created') }}</th>
+					<th>Free</th>
 					<th>{{ trans_choice('site.discounts', 2) }}</th>
 		      	</tr>
 		    </thead>
@@ -69,6 +70,11 @@
 							   data-id="{{$course->id}}" data-size="mini" @if($course->status) {{ 'checked' }} @endif>
 					</td>
 					<td>{{$course->created_at}}</td>
+					<td>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes"
+							   class="is-free-toggle" data-off="No"
+							   data-id="{{$course->id}}" data-size="mini" @if($course->is_free) {{ 'checked' }} @endif>
+					</td>
 					<td><a href="{{ route('admin.course-discount.index', $course->id) }}">{{ trans('site.view') }}</a></td>
 		      	</tr>
 		      	@endforeach
@@ -112,6 +118,20 @@
                    url:'/course-for-sale',
                    headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                    data: { "course_id" : course_id, 'for_sale' : check_val },
+                   success: function(data){
+                   }
+               });
+		   });
+
+		   $(".is-free-toggle").change(function(){
+               let course_id = $(this).attr('data-id');
+               let is_checked = $(this).prop('checked');
+               let check_val = is_checked ? 1 : 0;
+               $.ajax({
+                   type:'POST',
+                   url:'/course-is-free',
+                   headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                   data: { "course_id" : course_id, 'is_free' : check_val },
                    success: function(data){
                    }
                });

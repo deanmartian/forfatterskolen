@@ -1,5 +1,6 @@
 @section('styles')
 <link rel="stylesheet" href="{{asset('simplemde/simplemde.min.css')}}">
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 @stop
 @if(Request::is('course/*/edit'))
 @include('backend.course.partials.delete')
@@ -63,6 +64,14 @@
 					<label>{{ trans('site.display-order') }}</label>
 					<input type="number" class="form-control" name="display_order" @if( $course['display_order'] ) value="{{ $course['display_order'] }}" @endif>
 				</div>
+
+				<div class="form-group">
+					<label>Free</label> <br>
+					<input type="checkbox" data-toggle="toggle" data-on="Yes" name="is_free"
+						   class="for-sale-toggle" data-off="No"
+						   @if($course['is_free']) {{ 'checked' }} @endif>
+				</div>
+
 				@if(Request::is('course/*/edit'))
 				<button type="submit" class="btn btn-primary">{{ trans('site.update-course') }}</button>
 				<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteCourseModal">{{ trans('site.delete-course') }}</button>
@@ -85,6 +94,7 @@
 
 	@section('scripts')
 		<script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
+		<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 		<script>
             // tinymce
             var editor_config = {

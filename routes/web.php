@@ -112,6 +112,7 @@ Route::group([
             Route::get('/{id}/checkout', 'ShopController@checkout')->name('front.course.checkout'); // Checkout
             Route::post('/{id}/checkout/place_order', 'ShopController@place_order')->name('front.course.place_order'); // Place Order
             Route::get('/{id}/check_discount/', 'ShopController@checkDiscount')->name('front.course.checkDiscount'); // Check Discount
+            Route::post('/{id}/get-free/', 'CourseController@getFreeCourse')->name('front.course.getFreeCourse'); // Check Discount
         });
 
 
@@ -478,6 +479,7 @@ Route::group([
         Route::post('/course/learner/remove', 'LearnerController@removeLearner')->name('learner.course.remove.learner'); // Remove Learner From Course
         Route::post('/course-status', 'CourseController@updateStatus')->name('learner.course.status'); // Courses Page
         Route::post('/course-for-sale', 'CourseController@updateForSaleStatus')->name('learner.course.for-sale-status'); // Courses For Sale Status
+        Route::post('/course-is-free', 'CourseController@updateIsFreeStatus')->name('learner.course.is-free-status'); // Courses For Sale Status
         Route::post('/course/{id}/send-email-to-learners', 'CourseController@sendEmailToLearners')->name('learner.course.send-email-to-learners'); // Add Learner To Course
         Route::get('/course/{id}/learner-list-excel', 'CourseController@learnerListExcel')->name('learner.course.learner-list-excel'); // Add Learner To Course
         Route::get('/course/{id}/learner-active-list-excel', 'CourseController@learnerActiveListExcel')->name('learner.course.learner-active-list-excel'); // Add Learner To Course

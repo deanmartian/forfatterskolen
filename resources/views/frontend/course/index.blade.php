@@ -35,20 +35,20 @@
 
 			<div class="row courses-list">
 				@foreach( $courses as $course )
-				@if( FrontendHelpers::isCourseAvailable($course) )
-				<div class="col-sm-12 col-md-4">
-					<div class="all-course-course">
-						<div class="image" style="background-image: url({{$course->course_image}})"></div>
-						<div class="details">
-							<div class="course-info">
-								<h4>{{ $course->title }}</h4>
-								<p>{{ str_limit(strip_tags($course->description), 180)}}</p>
+					@if( \App\Http\FrontendHelpers::isCourseAvailable($course) || $course->is_free)
+					<div class="col-sm-12 col-md-4">
+						<div class="all-course-course">
+							<div class="image" style="background-image: url({{$course->course_image}})"></div>
+							<div class="details">
+								<div class="course-info">
+									<h4>{{ $course->title }}</h4>
+									<p>{{ str_limit(strip_tags($course->description), 180)}}</p>
+								</div>
 							</div>
+							<a class="buy_now" href="{{ route('front.course.show', $course->id) }}">Les mer</a>
 						</div>
-						<a class="buy_now" href="{{ route('front.course.show', $course->id) }}">Les mer</a>
 					</div>
-				</div>
-				@endif
+					@endif
 				@endforeach
 			</div>
 		</div>
