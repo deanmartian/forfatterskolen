@@ -51,7 +51,9 @@
 									{{ str_limit(strip_tags($freeManuscript->content), 120) }}<br>
 									<a href="#editContentModal" data-toggle="modal" class="editContentBtn"
 									data-content="{{ $freeManuscript->content }}"
-									data-action="{{ route('admin.free-manuscript.edit-content', $freeManuscript->id) }}">{{ trans('site.edit') }}</a>
+									data-action="{{ route('admin.free-manuscript.edit-content', $freeManuscript->id) }}">
+										Her kan du også nå putte in ekstra tekst
+									</a>
 								</td>
 								<td>{{ \App\Http\FrontendHelpers::formatDate($freeManuscript->created_at) }}</td>
 								<td>@if( $freeManuscript->editor ) {{ $freeManuscript->editor->full_name }} @endif</td>
