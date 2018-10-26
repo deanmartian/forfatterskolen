@@ -127,6 +127,7 @@ Route::group([
         });
 
         Route::get('/thankyou', 'ShopController@thankyou')->name('front.shop.thankyou'); // Thank You
+        Route::get('/thank-you', 'HomeController@thankyou')->name('front.thank-you'); // Thank You
 
 
         /*Route::post('/cart/add', 'ShopController@add_to_cart')->name('front.shop.add_to_cart'); // Add To Cart
@@ -484,6 +485,18 @@ Route::group([
         Route::get('/course/{id}/learner-list-excel', 'CourseController@learnerListExcel')->name('learner.course.learner-list-excel'); // Add Learner To Course
         Route::get('/course/{id}/learner-active-list-excel', 'CourseController@learnerActiveListExcel')->name('learner.course.learner-active-list-excel'); // Add Learner To Course
 
+
+        // Email Out Route
+        Route::resource('/course/{id}/email-out', 'EmailOutController', [
+            'except' => 'show',
+            'names' => [
+                'create' => 'admin.email-out.create',
+                'store' => 'admin.email-out.store',
+                'edit' => 'admin.email-out.edit',
+                'update' => 'admin.email-out.update',
+                'destroy' => 'admin.email-out.destroy',
+            ],
+        ]);
 
         Route::resource('course/{id}/discount', 'CourseDiscountController', [
             'except' => ['show', 'create', 'edit'],

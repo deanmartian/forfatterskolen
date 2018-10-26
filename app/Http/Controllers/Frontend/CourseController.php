@@ -86,8 +86,7 @@ class CourseController extends Controller
             $courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
             $courseTaken->is_active = 0;
             $courseTaken->save();
-
-            return redirect(route('front.shop.thankyou'));
+            return redirect()->route('front.thank-you');
         }
         return redirect()->back();
     }

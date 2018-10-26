@@ -13,7 +13,10 @@
                         <div><img src="{{asset('images/thankyou.png')}}"></div>
                     </div>
                     <div class="thankyou-content">
-                        <h3>Takk for bestillingen!</h3>
+                        <h3>Takk for at du meldte deg på!</h3>
+                        <p>
+                            Du vil nå få tilsendt en epost!
+                        </p>
                     </div>
                 </div>
             </div>
