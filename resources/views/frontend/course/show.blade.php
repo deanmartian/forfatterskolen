@@ -18,11 +18,10 @@
 			<div class="course-image" style="background-image: url({{$course->course_image}})"></div>
 
 			@if ($course->is_free)
-				<form action="{{ route('front.course.getFreeCourse', $course->id) }}" method="POST">
+				<form action="{{ route('front.course.getFreeCourse', $course->id) }}" method="POST"
+				onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
-					<input type="hidden" name="type" value="1">
 					@if (Auth::guest())
-
 						<div class="form-group mb-3">
 							<input type="text" class="form-control" placeholder="Fornavn" name="first_name"
 								   value="{{ old('first_name') }}" required>
@@ -37,10 +36,15 @@
 							<input type="email" class="form-control" placeholder="Epost" name="email"
 								   value="{{ old('email') }}" required>
 						</div>
-						<button class="btn btn-theme btn-block">Get Free Course</button>
+						<button class="btn btn-theme btn-block" type="submit">Get Free Course</button>
 					@else
-						<input type="hidden" name="type" value="2">
-						<button class="btn btn-theme btn-block">Get Free Course</button>
+						<?php
+                        	$course_packages = $course->packages->pluck('id')->toArray();
+                        	$courseTaken = App\CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
+						?>
+						@if (!$courseTaken)
+							<button class="btn btn-theme btn-block" type="submit">Get Free Course</button>
+						@endif
 					@endif
 				</form>
 

@@ -70,7 +70,7 @@
 						<div>Kursstart dato: {{ $courseTaken->package->course->start_date }}</div>
 						@endif
 						@if( $courseTaken->package->course->end_date )
-						<div>Kursstart dato: {{ $courseTaken->package->course->end_date }}</div>
+						<div>Slutt dato: {{ $courseTaken->package->course->end_date }}</div>
 						@endif
 						@if( $courseTaken->start_date )
 						<div>Start date: {{ $courseTaken->start_date }}</div>

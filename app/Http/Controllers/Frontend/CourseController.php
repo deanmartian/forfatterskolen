@@ -1,7 +1,9 @@
 <?php
 namespace App\Http\Controllers\Frontend;
 
+use App\CoursesTaken;
 use App\Http\AdminHelpers;
+use App\Mail\FreeCourseNewUserEmail;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -39,13 +41,25 @@ class CourseController extends Controller
     	return view('frontend.course.show', compact('course', 'in_cart', 'cartIndex'));
     }
 
-    public function getFreeCourse(Request $request)
+    /**
+     * Free course
+     * @param $course_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function getFreeCourse($course_id, Request $request)
     {
-        $allowedTypes = [1 ,2];
-        if (in_array($request->type, $allowedTypes)) {
-            if ($request->type == 1) {
-                $this->validate($request, ['email' => 'required|email|unique:users',
-                    'first_name' => 'required|alpha_spaces', 'last_name' => 'required|alpha_spaces']);
+        $course = Course::find($course_id);
+        if ($course && $course->is_free) {
+            $package = $course->packages()->first();
+
+            if (Auth::guest()) {
+                $this->validate($request,
+                    [
+                        'email'         => 'required|email|unique:users',
+                        'first_name'    => 'required|alpha_spaces',
+                        'last_name'     => 'required|alpha_spaces'
+                    ]);
 
                 // register new user
                 $new_user               = new User();
@@ -57,7 +71,23 @@ class CourseController extends Controller
                 Auth::login($new_user);
 
                 // send email
+                $email_data['email_message'] = $course->email;
+                $toEmail = $request->email;
+                \Mail::to($toEmail)->queue(new FreeCourseNewUserEmail($email_data));
             }
+
+            // check if the course is taken and redirect the user to the course page before processing the free course
+            $alreadyAvailCourse = CoursesTaken::where(['user_id' => Auth::user()->id, 'package_id' => $package->id])->first();
+            if ($alreadyAvailCourse) {
+                return redirect(route('learner.course.show', ['id' => $alreadyAvailCourse->id]));
+            }
+
+            // create new course taken
+            $courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
+            $courseTaken->is_active = 0;
+            $courseTaken->save();
+
+            return redirect(route('front.shop.thankyou'));
         }
         return redirect()->back();
     }
