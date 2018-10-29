@@ -4255,6 +4255,18 @@ a.darken:hover img {
 }
 
 /* media queries */
+@media only screen and (max-width: 1440px) {
+	.start-today {
+		height: 657px;
+	}
+}
+
+@media only screen and (max-width: 1366px) {
+	.start-today {
+		height: 680px;
+	}
+}
+
 @media only screen and (max-width: 1024px) {
 
 	#children-container .first-document > .right-content {
