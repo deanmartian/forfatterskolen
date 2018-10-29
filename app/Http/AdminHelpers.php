@@ -28,7 +28,8 @@ class AdminHelpers
 
 	public static function courseSubpages()
 	{
-		$subpages = ['overview', 'lessons', 'manuscripts', 'videos', 'assignments', 'webinars', 'workshops', 'dripping', 'packages', 'learners'];
+		$subpages = ['overview', 'lessons', 'manuscripts', 'videos', 'assignments', 'webinars', 'workshops', 'dripping',
+            'packages', 'learners', 'email-out'];
 		return $subpages;
 	}
 

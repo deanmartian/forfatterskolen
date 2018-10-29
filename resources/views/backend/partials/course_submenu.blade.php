@@ -15,5 +15,9 @@
 
 <li @if($section == 'learners') class="active" @endif><a href="{{route('admin.course.show', $course->id)}}?section=learners"><i class="fa fa-users"></i>&nbsp;&nbsp;{{ trans('site.course-learners') }}</a></li>
 
+@if ($course->id !== 17)
+    <li @if($section == 'email-out') class="active" @endif><a href="{{route('admin.course.show', $course->id)}}?section=email-out"><i class="fa fa-envelope"></i>&nbsp;&nbsp;{{ trans('site.email-out') }}</a></li>
+@endif
+
 </ul>
 </div>

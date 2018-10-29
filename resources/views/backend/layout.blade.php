@@ -76,6 +76,13 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+
+            function disableSubmit(t) {
+                let submit_btn = $(t).find('[type=submit]');
+                submit_btn.text('');
+                submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+                submit_btn.attr('disabled', 'disabled');
+            }
         </script>
         @yield('scripts')
     </body>

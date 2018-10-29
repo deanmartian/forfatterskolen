@@ -89,6 +89,11 @@ class Course extends Model
         return $this->hasMany('App\CourseTestimonial');
     }
 
+    public function emailOut()
+    {
+        return $this->hasMany('App\EmailOut');
+    }
+
     //for deleting the children
     /*public static function boot()
     {

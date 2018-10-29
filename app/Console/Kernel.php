@@ -23,7 +23,8 @@ class Kernel extends ConsoleKernel
         Commands\DueInvoiceCheck::class,
         Commands\UpdateInvoice::class,
         Commands\UpdateKidNum::class,
-        Commands\WebinarPakkeExpiresInAWeek::class
+        Commands\WebinarPakkeExpiresInAWeek::class,
+        Commands\CourseEmailOut::class
     ];
 
     /**
@@ -50,6 +51,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('updateinvoice:command')
             ->everyTenMinutes();
         $schedule->command('webinarpakkeexpiresinaweek:command')
+            ->dailyAt('08:00');
+        $schedule->command('courseemailout:command')
             ->dailyAt('08:00');
         $schedule->command('queue:work --daemon')->everyMinute()->withoutOverlapping();
     }
