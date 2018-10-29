@@ -48,21 +48,146 @@
             color: white;
         }
 
-        .google {
-            background: #dd4b39;
-            color: white;
+        .smGlobalBtn { /* global button class */
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            border:2px solid #ddd; /* add border to the buttons */
+            box-shadow: 0 3px 3px #999;
+            padding: 0px;
+            text-decoration: none;
+            text-align: center;
+            color: #fff;
+            font-size: 25px;
+            font-weight: normal;
+            line-height: 2em;
+            border-radius: 27px;
+            -moz-border-radius:27px;
+            -webkit-border-radius:27px;
         }
 
-        .linkedin {
-            background: #007bb5;
-            color: white;
+        /* facebook button class*/
+        .facebookBtn{
+            background: #4060A5;
         }
 
-        .youtube {
-            background: #bb0000;
-            color: white;
+        .facebookBtn:before{ /* use :before to add the relevant icons */
+            font-family: "FontAwesome";
+            content: "\f09a"; /* add facebook icon */
         }
 
+        .facebookBtn:hover{
+            color: #4060A5;
+            background: #fff;
+            border-color: #4060A5; /* change the border color on mouse hover */
+        }
+
+        /* twitter button class*/
+        .twitterBtn{
+            background: #00ABE3;
+        }
+
+        .twitterBtn:before{
+            font-family: "FontAwesome";
+            content: "\f099"; /* add twitter icon */
+
+        }
+
+        .twitterBtn:hover{
+            color: #00ABE3;
+            background: #fff;
+            border-color: #00ABE3;
+        }
+
+        /* google plus button class*/
+        .googleplusBtn{
+            background: #e64522;
+        }
+
+        .googleplusBtn:before{
+            font-family: "FontAwesome";
+            content: "\f0d5"; /* add googleplus icon */
+        }
+
+        .googleplusBtn:hover{
+            color: #e64522;
+            background: #fff;
+            border-color: #e64522;
+        }
+
+        /* linkedin button class*/
+        .linkedinBtn{
+            background: #0094BC;
+        }
+
+        .linkedinBtn:before{
+            font-family: "FontAwesome";
+            content: "\f0e1"; /* add linkedin icon */
+        }
+
+        .linkedinBtn:hover{
+            color: #0094BC;
+            background: #fff;
+            border-color: #0094BC;
+        }
+
+        /* pinterest button class*/
+        .pinterestBtn{
+            background: #cb2027;
+        }
+
+        .pinterestBtn:before{
+            font-family: "FontAwesome";
+            content: "\f0d2"; /* add pinterest icon */
+        }
+
+        .pinterestBtn:hover{
+            color: #cb2027;
+            background: #fff;
+            border-color: #cb2027;
+        }
+
+        /* tumblr button class*/
+        .tumblrBtn{
+            background: #3a5876;
+        }
+
+        .tumblrBtn:before{
+            font-family: "FontAwesome";
+            content: "\f173"; /* add tumblr icon */
+        }
+
+        .tumblrBtn:hover{
+            color: #3a5876;
+            background: #fff;
+            border-color: #3a5876;
+        }
+
+        /* rss button class*/
+        .rssBtn{
+            background: #e88845;
+        }
+
+        .rssBtn:before{
+            font-family: "FontAwesome";
+            content: "\f09e"; /* add rss icon */
+        }
+
+        .rssBtn:hover{
+            color: #e88845;
+            background: #fff;
+            border-color: #e88845;
+        }
+
+        #social-container {
+            margin: 20px 0;
+        }
+
+        #social-container a:hover {
+            text-decoration: none;
+        }
     </style>
 @stop
 
@@ -76,22 +201,21 @@ $secret     = $config['client_secret'];
         <h1 class="text-center">{{ $blog->title }}</h1>
         <div class="col-sm-8 col-sm-offset-2">
             {!! $blog->description !!}
+
+            <div id="social-container">
+                <a href="http://www.facebook.com/sharer.php?u={{ route('front.read-blog', $blog->id) }}"
+                   class="facebookBtn smGlobalBtn" target="_new">
+                </a>
+
+                <a href="https://twitter.com/share?url={{ route('front.read-blog', $blog->id) }};text={{ $blog->title }}"
+                   class="twitterBtn smGlobalBtn" target="_new">
+                </a>
+                {{--<a href="#" class="google"><i class="fa fa-pinterest"></i></a>
+                <a href="#" class="linkedin"><i class="fa fa-linkedin"></i></a>
+                <a href="#" class="youtube"><i class="fa fa-youtube"></i></a>--}}
+            </div>
         </div>
     </div>
-
-<div class="icon-bar-cont">
-    <a href="http://www.facebook.com/sharer.php?u={{ route('front.read-blog', $blog->id) }}" class="facebook" target="_new">
-        <i class="fa fa-facebook"></i>
-    </a>
-
-    <a href="https://twitter.com/share?url={{ route('front.read-blog', $blog->id) }};text={{ $blog->title }}" class="twitter" target="_new">
-        <i class="fa fa-twitter"></i>
-    </a>
-    {{--<a href="#" class="google"><i class="fa fa-pinterest"></i></a>
-    <a href="#" class="linkedin"><i class="fa fa-linkedin"></i></a>
-    <a href="#" class="youtube"><i class="fa fa-youtube"></i></a>--}}
-</div>
-
 @stop
 
 @section('scripts')
