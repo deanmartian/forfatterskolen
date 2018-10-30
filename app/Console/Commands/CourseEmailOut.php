@@ -43,17 +43,29 @@ class CourseEmailOut extends Command
      */
     public function handle()
     {
-        $emailOutList = EmailOut::all();
+        $today = Carbon::today()->format('Y-m-d');
+        $emailOutList = EmailOut::whereDate('delay', '=', $today)->get();
         foreach($emailOutList as $emailOut) {
+            $packages = $emailOut->course->packages->pluck('id')->toArray();
+            $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
+                ->get();
 
-            if (FrontendHelpers::isDate($emailOut->delay)) {
-                $emailDate = $emailOut->delay;
-            } else {
-                $emailDate = Carbon::now()->subDays($emailOut->delay)->format('Y-m-d');
+            // loop the result and send email
+            foreach ($coursesTaken as $courseTaken) {
+                $toMail = $courseTaken->user->email;
+                $emailData['email_subject'] = $emailOut->subject;
+                $emailData['email_message'] = $emailOut->message;
+
+                // add email to queue
+                \Mail::to($toMail)->queue(new SubjectBodyEmail($emailData));
             }
+        }
 
-            $package = $emailOut->course->packages->first();
-            $coursesTaken = CoursesTaken::where('package_id', $package->id)
+        $emailOutListDay = EmailOut::where('delay', 'NOT LIKE', '%-%')->get();
+        foreach ($emailOutListDay as $emailOut) {
+            $emailDate = Carbon::now()->subDays($emailOut->delay)->format('Y-m-d');
+            $packages = $emailOut->course->packages->pluck('id')->toArray();
+            $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
                 ->where(function($query) use ($emailDate) {
                     $query->whereDate('started_at', '=', $emailDate);
                     $query->orWhereDate('start_date', '=', $emailDate);
