@@ -6,14 +6,14 @@
 
 @section('content')
 <div class="page-toolbar">
-	<h3><i class="fa fa-question-circle"></i> FAQs</h3>
+	<h3><i class="fa fa-question-circle"></i> {{ trans('site.faqs') }}</h3>
 </div>
 
 <br />
 <div class="col-sm-8 col-sm-offset-2">
-	<button class="btn btn-primary margin-bottom" data-toggle="modal" data-target="#addFaqModal">Add FAQ</button>
-	<a href="{{ route('admin.competition.index') }}" class="btn btn-primary margin-bottom">Konkurranser</a>
-	<a href="{{ route('admin.writing-group.index') }}" class="btn btn-primary margin-bottom">Skrivegrupper</a>
+	<button class="btn btn-primary margin-bottom" data-toggle="modal" data-target="#addFaqModal">{{ trans('site.add-faq') }}</button>
+	<a href="{{ route('admin.competition.index') }}" class="btn btn-primary margin-bottom">{{ trans_choice('site.competitions', 2) }}</a>
+	<a href="{{ route('admin.writing-group.index') }}" class="btn btn-primary margin-bottom">{{ trans_choice('site.writing-groups', 2) }}</a>
 	@foreach( $faqs as $faq )
 	<div class="panel panel-default">
 		<div class="panel-body">
@@ -34,20 +34,20 @@
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Add FAQ</h4>
+		    <h4 class="modal-title">{{ trans('site.add-faq') }}</h4>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action="{{ route('admin.faq.store') }}">
 		      {{ csrf_field() }}
 		      <div class="form-group">
-		      	<label>Title</label>
-		      	<input type="text" class="form-control" name="title" placeholder="Title" required>
+		      	<label>{{ trans('site.title') }}</label>
+		      	<input type="text" class="form-control" name="title" placeholder="{{ trans('site.title') }}" required>
 		      </div>
 		      <div class="form-group">
-		      	<label>Description</label>
-		      	<textarea class="form-control editor" name="description" placeholder="Title" rows="8"></textarea>
+		      	<label>{{ trans('site.description') }}</label>
+		      	<textarea class="form-control editor" name="description" placeholder="{{ trans('site.description') }}" rows="8"></textarea>
 		      </div>
-		      <button type="submit" class="btn btn-primary pull-right margin-top">Save</button>
+		      <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.save') }}</button>
 		      <div class="clearfix"></div>
 		    </form>
 		  </div>
@@ -60,21 +60,21 @@
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Edit FAQ</h4>
+		    <h4 class="modal-title">{{ trans('site.edit-faq') }}</h4>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action="">
 		      {{ csrf_field() }}
 		      {{ method_field('PUT') }}
 		      <div class="form-group">
-		      	<label>Title</label>
-		      	<input type="text" class="form-control" name="title" placeholder="Title" required>
+		      	<label>{{ trans('site.title') }}</label>
+		      	<input type="text" class="form-control" name="title" placeholder="{{ trans('site.title') }}" required>
 		      </div>
 		      <div class="form-group">
-		      	<label>Description</label>
-		      	<textarea class="form-control editor" name="description" placeholder="Title" rows="8"></textarea>
+		      	<label>{{ trans('site.description') }}</label>
+		      	<textarea class="form-control editor" name="description" placeholder="{{ trans('site.description') }}" rows="8"></textarea>
 		      </div>
-		      <button type="submit" class="btn btn-primary pull-right margin-top">Save</button>
+		      <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.save') }}</button>
 		      <div class="clearfix"></div>
 		    </form>
 		  </div>
@@ -87,15 +87,15 @@
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Delete FAQ</h4>
+		    <h4 class="modal-title">{{ trans('site.delete-faq') }}</h4>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action="{{ route('admin.faq.store') }}">
 		      {{ csrf_field() }}
 		      {{ method_field('DELETE') }}
-		      Are you sure to delete this FAQ?
+				{{ trans('site.delete-faq-question') }}
 		      <br />
-		      <button type="submit" class="btn btn-danger pull-right margin-top">Delete</button>
+		      <button type="submit" class="btn btn-danger pull-right margin-top">{{ trans('site.delete') }}</button>
 		      <div class="clearfix"></div>
 		    </form>
 		  </div>

@@ -8,15 +8,15 @@
 
 	<div class="col-sm-12">
 		@if(Request::is('course/video/testimonial/*/edit'))
-			<h3>Edit <em>{{$testimonial['name']}}</em>
+			<h3>{{ trans('site.edit') }} <em>{{$testimonial['name']}}</em>
 				<button class="btn btn-primary pull-right" data-toggle="modal" data-target="#cloneTestimonialModal"
 						type="button">
 					<i class="fa fa-copy"></i>
-					Clone
+					{{ trans('site.clone') }}
 				</button>
 			</h3>
 		@else
-			<h3>Add New Testimonial</h3>
+			<h3>{{ trans('site.add-new-testimonial') }}</h3>
 		@endif
 	</div>
 
@@ -24,11 +24,11 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<div class="form-group">
-					<label>Name</label>
+					<label>{{ trans('site.name') }}</label>
 					<input type="text" class="form-control" name="name" value="{{ old('name') ? old('name') : $testimonial['name'] }}" required>
 				</div>
 				<div class="form-group">
-					<label>Testimony</label>
+					<label>{{ trans('site.testimony') }}</label>
 					<textarea name="testimony" rows="12" id="description-ct" class="form-control">{{ old('testimony') ? old('testimony') : $testimonial['testimony'] }}</textarea>
 				</div>
 			</div>
@@ -39,7 +39,7 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<div class="form-group">
-					<label id="course-image">Video</label>
+					<label id="course-image">{{ trans('site.video') }}</label>
 					<div class="editor-form-video video-file margin-bottom">
 						<video width="330" controls >
 							<source src="{{ URL::asset($testimonial['user_image']) }}" id="video_here">
@@ -50,7 +50,7 @@
 				</div>
 
 				<div class="form-group">
-					<label>Course</label>
+					<label>{{ trans_choice('site.courses', 1) }}</label>
 					<select class="form-control" name="course_id" required>
 						<option value="" disabled="disabled" selected>Select Course</option>
 						@foreach(\App\Course::all() as $course)
@@ -60,10 +60,10 @@
 				</div>
 
 				@if(Request::is('course/video/testimonial/*/edit'))
-					<button type="submit" class="btn btn-primary">Update Testimonial</button>
-					<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteEditorModal">Delete Testimonial</button>
+					<button type="submit" class="btn btn-primary">{{ trans('site.update-testimonial') }}</button>
+					<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteEditorModal">{{ trans('site.delete-testimonial') }}</button>
 				@else
-					<button type="submit" class="btn btn-primary btn-block btn-lg">Create Testimonial</button>
+					<button type="submit" class="btn btn-primary btn-block btn-lg">{{ trans('site.create-testimonial') }}</button>
 				@endif
 			</div>
 		</div>

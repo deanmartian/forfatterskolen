@@ -28,7 +28,7 @@
 
 <div class="col-md-12">
 	<a class="btn btn-success margin-top" href="{{route('admin.course.create')}}">{{ trans('site.add-course') }}</a>
-	<a class="btn btn-primary margin-top" href="{{route('admin.course-testimonial.index')}}">{{ trans('site.testimonials') }}</a>
+	<a class="btn btn-primary margin-top" href="{{route('admin.course-testimonial.index')}}">{{ trans_choice('site.testimonials',2) }}</a>
 	<a class="btn btn-primary margin-top" href="{{route('admin.survey.index')}}">{{ trans('site.surveys') }}</a>
 	<div class="table-users table-responsive">
 		<table class="table">

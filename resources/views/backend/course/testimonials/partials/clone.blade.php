@@ -5,15 +5,15 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Clone <em>{{$testimonial['name']}}</em></h4>
+        <h4 class="modal-title">{{ trans('site.clone') }} <em>{{$testimonial['name']}}</em></h4>
       </div>
       <div class="modal-body">
         <form method="POST" action="{{route('admin.course-testimonial.clone', $testimonial['id'])}}">
           {{csrf_field()}}
           <p>
-            Are you sure to clone this testimonial?
+            {{ trans('site.clone-testimonial-question') }}
           </p>
-          <button type="submit" class="btn btn-primary pull-right">Clone</button>
+          <button type="submit" class="btn btn-primary pull-right">{{ trans('site.clone') }}</button>
           <div class="clearfix"></div>
         </form>
       </div>

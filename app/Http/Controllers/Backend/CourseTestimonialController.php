@@ -15,7 +15,7 @@ class CourseTestimonialController extends Controller {
      */
     public function index()
     {
-        $testimonials = CourseTestimonial::all();
+        $testimonials = CourseTestimonial::paginate(15);
         return view('backend.course.testimonials.index', compact('testimonials'));
     }
 

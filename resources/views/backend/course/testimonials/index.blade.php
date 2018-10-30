@@ -6,22 +6,22 @@
 
 @section('content')
     <div class="page-toolbar">
-        <h3><i class="fa fa-file-text-o"></i> All Testimonials</h3>
+        <h3><i class="fa fa-file-text-o"></i> {{ trans('site.all-testimonials') }}</h3>
         <div class="clearfix"></div>
     </div>
 
     <div class="col-md-12">
-        <a class="btn btn-success margin-top" href="{{route('admin.course-testimonial.create')}}">Add Testimonial</a>
-        <a class="btn btn-success margin-top" href="{{route('admin.course-video-testimonial.create')}}">Add Video Testimonial</a>
+        <a class="btn btn-success margin-top" href="{{route('admin.course-testimonial.create')}}">{{ trans('site.add-testimonial') }}</a>
+        <a class="btn btn-success margin-top" href="{{route('admin.course-video-testimonial.create')}}">{{ trans('site.add-video-testimonial') }}</a>
 
         <div class="table-users table-responsive">
             <table class="table">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Course</th>
-                    <th>Testimonial</th>
+                    <th>{{ trans('site.id') }}</th>
+                    <th>{{ trans('site.name') }}</th>
+                    <th>{{ trans_choice('site.courses',1) }}</th>
+                    <th>{{ trans_choice('site.testimonials',1) }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -45,6 +45,10 @@
                     @endforeach
                 </tbody>
             </table>
+
+            <div class="pull-right">
+                {{ $testimonials->render() }}
+            </div>
         </div>
     </div>
 @stop
