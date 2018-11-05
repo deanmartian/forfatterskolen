@@ -14,6 +14,10 @@
         @yield('title')
         @include('frontend.partials.frontend-css')
 
+        <!--[if lt IE 9]>
+        <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
         <?php
             $pageMeta = \App\PageMeta::where('url', url()->current())->first();
         ?>
@@ -41,9 +45,20 @@
         </div>
     @endif
 
-        @include('frontend.partials.navbar')
+        @if(Route::currentRouteName() != 'front.shop-manuscript.index')
+            @include('frontend.partials.navbar')
+        @else
+            @include('frontend.partials.navbar-new')
+        @endif
+
         @yield('content')
-        @include('frontend.partials.footer')
+
+        @if(Route::currentRouteName() != 'front.shop-manuscript.index')
+            @include('frontend.partials.footer')
+        @else
+            @include('frontend.partials.footer-new')
+        @endif
+
         @include('frontend.partials.scripts')
         <script>
             $.ajaxSetup({
@@ -68,6 +83,15 @@
                           .catch(function(response){
                           })
                   }
+               });
+
+               $(".navbar-toggler").click(function(){
+                   // opposite of how it usually works
+                   if (!$("#mainNav").hasClass('show')) {
+                        $(".navbar-default").show();
+                   } else {
+                       $(".navbar-default").slideUp();
+                   }
                });
             });
 
