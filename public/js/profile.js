@@ -18,7 +18,7 @@ const methods = {
                     email_list.append(`
                     <li class="list-group-item py-2"> 
                         <span class="pull-left mt-0">${ value.email }</span>
-                        <h5 class="pull-right mb-0 mt-0"><span class="badge badge-info p-2 mr-2 hand" onclick="methods.setPrimaryEmail(${ value.id })">Set Primary</span><span class="badge badge-danger p-2 hand" onclick="methods.removeSecondaryEmail(${ value.id })">Remove</span></h5>   
+                        <h5 class="pull-right mb-0 mt-0"><span class="badge badge-info p-2 mr-2 hand" onclick="methods.setPrimaryEmail(${ value.id }, this)">Set Primary</span><span class="badge badge-danger p-2 hand" onclick="methods.removeSecondaryEmail(${ value.id })">Remove</span></h5>   
                     </li>
                 `)
                 })
@@ -56,8 +56,9 @@ const methods = {
             })
     },
 
-    setPrimaryEmail : function(id){
+    setPrimaryEmail : function(id, t){
         let self = this;
+        let self_span = $(t);
         $.confirm({
             title: 'Set as Primary Email',
             content: 'Are you sure to set this as a primary email?',
@@ -68,12 +69,16 @@ const methods = {
                     text: 'Ok',
                     btnClass: 'btn-blue',
                     action: function(){
+
+                        self_span.prepend('<i class="fa fa-spinner fa-pulse mr-2"></i>');
+
                         $.post('/account/email/primary/set', {
                             id : id
                         })
                             .then(function(response){
                                 $("#profile_email").val(response.primary_email);
                                 self.listEmails();
+                                self_span.find('i').remove();
                                 toastr.success(response.success, 'Success');
                             })
                     }

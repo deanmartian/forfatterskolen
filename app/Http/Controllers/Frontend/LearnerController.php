@@ -2384,6 +2384,21 @@ class LearnerController extends Controller
             return response()->json(['error' => 'Opss. Something went wrong'], 500);
         }
         DB::commit();
+
+        $searchEmail = $secondary;
+        $result = AdminHelpers::getActiveCampaignDataByEmail($searchEmail);
+        // check if exists in any list
+        if (isset($result['lists'])) {
+            // check if subscriber in list 40
+            if (isset($result['lists'][40])) {
+                $list_data = $result['lists'][40];
+                $user_id = $list_data['subscriberid'];
+
+                $newEmail = $primary;
+                AdminHelpers::updateActiveCampaignContactEmailForList($user_id, $newEmail, 40);
+            }
+        }
+
         return response()->json(['success' => 'Secondary email set as primary', 'primary_email' => $primary], 200);
     }
 
