@@ -129,38 +129,44 @@
         <div class="last-section">
             <div class="container">
                 <div class="col-sm-5 other-services-container">
-                    <div class="row box-white">
-                        <div class="col-sm-3">
-                            <img src="{{ asset('images-new/other-services/open-book.png') }}">
-                        </div>
+                    <a href="{{ route('front.coaching-timer') }}">
+                        <div class="row box-white">
+                            <div class="col-sm-3">
+                                <img src="{{ asset('images-new/other-services/open-book.png') }}">
+                            </div>
 
-                        <div class="col-sm-9">
-                            <h1>Coaching Timer</h1>
-                            <a href="{{ route('front.coaching-timer') }}" class="link-with-arrow">Les Mer</a>
+                            <div class="col-sm-9">
+                                <h1>Coaching Timer</h1>
+                                <a href="{{ route('front.coaching-timer') }}" class="link-with-arrow">Les Mer</a>
+                            </div>
                         </div>
-                    </div>
+                    </a>
 
-                    <div class="row box-white">
-                        <div class="col-sm-3">
-                            <img src="{{ asset('images-new/other-services/book.png') }}">
-                        </div>
+                    <a href="{{ route('front.correction') }}">
+                        <div class="row box-white">
+                            <div class="col-sm-3">
+                                <img src="{{ asset('images-new/other-services/book.png') }}">
+                            </div>
 
-                        <div class="col-sm-9">
-                            <h1>Korrektur</h1>
-                            <a href="{{ route('front.correction') }}" class="link-with-arrow">Les Mer</a>
+                            <div class="col-sm-9">
+                                <h1>Korrektur</h1>
+                                <a href="{{ route('front.correction') }}" class="link-with-arrow">Les Mer</a>
+                            </div>
                         </div>
-                    </div>
+                    </a>
 
-                    <div class="row box-white">
-                        <div class="col-sm-3">
-                            <img src="{{ asset('images-new/other-services/list.png') }}">
-                        </div>
+                    <a href="{{ route('front.copy-editing') }}">
+                        <div class="row box-white">
+                            <div class="col-sm-3">
+                                <img src="{{ asset('images-new/other-services/list.png') }}">
+                            </div>
 
-                        <div class="col-sm-9">
-                            <h1>Språkvåsk</h1>
-                            <a href="{{ route('front.copy-editing') }}" class="link-with-arrow">Les Mer</a>
+                            <div class="col-sm-9">
+                                <h1>Språkvåsk</h1>
+                                <a href="{{ route('front.copy-editing') }}" class="link-with-arrow">Les Mer</a>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </div>
         </div>

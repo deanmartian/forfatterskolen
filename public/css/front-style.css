@@ -499,6 +499,11 @@ start today section
 
 .manuscript-page .box-white h1 {
     font-size: 40px;
+    color: #fff
+}
+
+.manuscript-page .box-white a:hover {
+    text-decoration: none;
 }
 
 .link-with-arrow {
