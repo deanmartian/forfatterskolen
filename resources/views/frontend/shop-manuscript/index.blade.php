@@ -32,7 +32,7 @@
                         sider, samt konkrete råd og innspill på hvordan du kan jobbe videre. Manuset vil bli lest av en
                         av våre profesjonelle konsulenter.
                     </p>
-                    <button class="btn site-btn-global-w-arrow">Redaktører</button>
+                    <button class="btn site-btn-global-w-arrow" data-toggle="modal" data-target="#editorsModal">Redaktører</button>
                 </div>
             </div>
         </div>
@@ -166,6 +166,60 @@
         </div>
     </div>
 
+    <div class="modal fade" role="dialog" id="editorsModal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        X
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {{--@foreach($editors->chunk(3) as $editor_chunk)
+                        <div class="row masonry-grid">
+                            @foreach($editor_chunk as $editor)
+                                <div class="col-sm-4 masonry-column">
+                                    <div class="panel panel-default">
+                                        <div class="panel-header">
+                                        </div>
+                                        <div class="panel-body text-center">
+                                            <div class="editor-circle">
+                                                <img src="{{ asset($editor['editor_image']) }}" alt="" class="rounded-circle">
+                                            </div>
+                                            <p>
+                                                <strong class="editor-name">{{ $editor['name'] }}</strong> {{ $editor['description'] }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endforeach--}}
+                    <div class="card-columns">
+                        @foreach($editors->chunk(3) as $editor_chunk)
+                            <div class="card-container">
+                            @foreach($editor_chunk as $editor)
+                                <div class="card">
+                                    <div class="card-header">
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <div class="editor-circle">
+                                            <img src="{{ asset($editor['editor_image']) }}" alt="" class="rounded-circle">
+                                        </div>
+                                        <p>
+                                            <strong class="editor-name">{{ $editor['name'] }}</strong> {{ $editor['description'] }}
+                                        </p>
+                                    </div>
+                                </div>
+                            @endforeach
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @stop
 
 @section('scripts')
@@ -192,6 +246,8 @@
                     e.preventDefault();
                 }
             });
+
+            $("#editorsModal").modal('show');
         });
     </script>
 @stop

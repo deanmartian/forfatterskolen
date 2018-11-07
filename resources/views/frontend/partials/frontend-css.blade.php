@@ -2,9 +2,8 @@
 <link rel="stylesheet" href="{{asset('css/vendor.min.css')}}">
 <link rel="stylesheet" href="{{asset('css/ie-vendor.min.css')}}">
 @if(Route::currentRouteName() == 'front.shop-manuscript.index')
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="{{asset('css/front-style.css')}}">
 @else
     <link rel="stylesheet" href="{{asset('css/frontend.min.css?v='.time())}}">
