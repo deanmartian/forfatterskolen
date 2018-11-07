@@ -220,6 +220,33 @@
         </div>
     </div>
 
+    @if(Session::has('manuscript_test'))
+        <div id="manuscriptTestModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        {!! Session::get('manuscript_test') !!}
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <div id="testManuscriptModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Regn ut for meg</h4>
+                </div>
+                <div class="modal-body">
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 @stop
 
 @section('scripts')
@@ -246,8 +273,6 @@
                     e.preventDefault();
                 }
             });
-
-            $("#editorsModal").modal('show');
         });
     </script>
 @stop

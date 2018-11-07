@@ -28,9 +28,19 @@
     font-display: block;
 }
 
-body{
+*, .modal a {
     font-family: 'Barlow Light', sans serif;
     font-size: 15px;
+}
+
+.h3, h3 {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.btn-theme {
+    background-color: #e83945;
+    color: #fff!important;
 }
 
 .navbar {
