@@ -49,7 +49,7 @@
         <ul class="navbar-nav login-nav">
             <li class="nav-item">
                 <a class="nav-link login-link" href="{{route('auth.login.show')}}">
-                    <span>Login</span>
+                    <span>Min Side</span>
                 </a>
             </li>
         </ul>
