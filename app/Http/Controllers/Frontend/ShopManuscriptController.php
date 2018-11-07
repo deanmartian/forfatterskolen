@@ -516,8 +516,8 @@ class ShopManuscriptController extends Controller
 
     	endif;
 
-        $message = $word_count.' ORD <br />
-        <h3  class="no-margin-top">'.$price.'</h3>
+        $message = 'Manuset ditt er på '.$word_count.' ord <br />
+        <h3  class="no-margin-top">Prisen for ditt manus er kroner: '.$price.'</h3>
         <a href="'.$button_link.'" class="btn btn-theme">Bestill nå</a>';
     	return redirect()->back()->with('manuscript_test', $message);
     }
