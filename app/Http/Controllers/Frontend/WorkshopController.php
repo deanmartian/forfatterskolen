@@ -23,7 +23,7 @@ class WorkshopController extends Controller
    
     public function index()
     {
-        $workshops = Workshop::orderBy('created_at', 'desc')->get();
+        $workshops = Workshop::orderBy('faktura_date', 'ASC')->get();
         return view('frontend.workshop.index', compact('workshops'));
     }
 
