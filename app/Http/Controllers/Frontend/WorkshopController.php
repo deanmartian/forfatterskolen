@@ -81,6 +81,12 @@ class WorkshopController extends Controller
             $isFree = 1;
         }
 
+        // check if the user already have this workshop
+        $alreadyAvailWorkshop = WorkshopsTaken::where(['workshop_id' => $workshop->id, 'user_id' => Auth::user()->id])->get();
+        if ($alreadyAvailWorkshop->count()) {
+            return redirect()->route('learner.workshop');
+        }
+
         $workshopTaken = new WorkshopsTaken();
         $workshopTaken->user_id = Auth::user()->id;
         $workshopTaken->workshop_id = $workshop->id;

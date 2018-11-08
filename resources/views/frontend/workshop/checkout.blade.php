@@ -44,7 +44,8 @@
 		<div class="col-sm-12">
 			<h4>Bestillingsskjema for {{ $workshop->title }}</h4>
 		</div>
-		<form class="form-theme" method="POST" enctype="multipart/form-data" action="{{ route('front.workshop.place_order', ['id' => $workshop->id]) }}">
+		<form class="form-theme" method="POST" enctype="multipart/form-data" action="{{ route('front.workshop.place_order', ['id' => $workshop->id]) }}"
+		onsubmit="disableSubmit(this)">
 			{{csrf_field()}}
 			<div class="col-sm-12 col-md-8">
 				<div class="panel panel-default">
