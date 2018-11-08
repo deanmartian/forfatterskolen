@@ -10,7 +10,8 @@
         <div class="container main-container">
             <div class="row">
                 <div class="col-sm-12 top-page-container">
-                    <img src="{{ asset('images-new/adult-reading-book.jpg') }}" alt="">
+                    {{--<img src="{{ asset('images-new/adult-reading-book.jpg') }}" alt="">--}}
+                    <iframe src="https://fast.wistia.com/embed/medias/scuv6yv5qy" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
                 </div>
             </div>
         </div>
