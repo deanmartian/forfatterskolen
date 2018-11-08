@@ -273,7 +273,7 @@
 		    <form method="POST" action="" enctype="multipart/form-data">
 		      	{{ csrf_field() }}
       			* Godkjente fil formater er DOCX, PDF og ODT.
-      			<input type="file" class="form-control margin-top" required name="filename" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+      			<input type="file" class="form-control margin-top" required name="filename" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 
 				<div class="form-group margin-top">
 					Sjanger
@@ -311,7 +311,7 @@
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>Manuscript</label>
-						<input type="file" class="form-control" required name="filename" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+						<input type="file" class="form-control" required name="filename" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 						* Godkjente fil formater er DOCX, PDF og ODT.
 					</div>
 
@@ -342,6 +342,20 @@
 		</div>
 	</div>
 </div>
+
+@if(Session::has('manuscript_test_error'))
+	<div id="manuscriptTestErrorModal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-body text-center">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
+					{!! Session::get('manuscript_test_error') !!}
+				</div>
+			</div>
+		</div>
+	</div>
+@endif
 @stop
 
 @section('scripts')
@@ -353,6 +367,10 @@
 	@if (Session::has('errorMaxWord'))
 		$('#errorMaxword').modal('show');
     @endif
+
+	@if(Session::has('manuscript_test_error'))
+    	$('#manuscriptTestErrorModal').modal('show');
+	@endif
 
 $('.submitManuscriptBtn').click(function(){
 		var form = $('#submitManuscriptModal form');

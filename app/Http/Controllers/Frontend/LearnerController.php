@@ -452,7 +452,7 @@ class LearnerController extends Controller
             $time = time();
             $destinationPath = 'storage/assignment-manuscripts/'; // upload path
 
-            $extensions = ['pdf', 'docx', 'odt'];
+            $extensions = ['pdf', 'doc', 'docx', 'odt'];
             if ($assignment->for_editor) {
                 $extensions = ['docx'];
             }
@@ -466,7 +466,9 @@ class LearnerController extends Controller
             $request->filename->move($destinationPath, end($expFileName));
 
             if( !in_array($extension, $extensions) ) :
-                return redirect()->back();
+                return redirect()->back()->withInput()->with(
+                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                );
             endif;
 
             // count words
@@ -478,6 +480,9 @@ class LearnerController extends Controller
               $docObj = new \Docx2Text($destinationPath.end($expFileName));
               $docText= $docObj->convertToText();
               $word_count = FrontendHelpers::get_num_of_words($docText);
+            elseif($extension == "doc") :
+                $docText = FrontendHelpers::readWord($destinationPath.end($expFileName));
+                $word_count = FrontendHelpers::get_num_of_words($docText);
             elseif($extension == "odt") :
               $doc = odt2text($destinationPath.end($expFileName));
               $word_count = FrontendHelpers::get_num_of_words($doc);
@@ -1751,7 +1756,7 @@ class LearnerController extends Controller
                 $oldManuscript = $assignmentManuscript->filename;
                 $time = time();
                 $destinationPath = 'storage/assignment-manuscripts/'; // upload path
-                $extensions = ['pdf', 'docx', 'odt'];
+                $extensions = ['pdf', 'doc', 'docx', 'odt'];
                 $extension = pathinfo($_FILES['filename']['name'],PATHINFO_EXTENSION); // getting document extension
                 $actual_name = Auth::user()->id;
                 $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
@@ -1761,7 +1766,9 @@ class LearnerController extends Controller
                 $request->filename->move($destinationPath, end($expFileName));
 
                 if( !in_array($extension, $extensions) ) :
-                    return redirect()->back();
+                    return redirect()->back()->withInput()->with(
+                        'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                    );
                 endif;
 
                 // count words
@@ -1773,6 +1780,9 @@ class LearnerController extends Controller
                 elseif($extension == "docx") :
                     $docObj = new \Docx2Text($destinationPath.end($expFileName));
                     $docText= $docObj->convertToText();
+                    $word_count = FrontendHelpers::get_num_of_words($docText);
+                elseif($extension == "doc") :
+                    $docText = FrontendHelpers::readWord($destinationPath.end($expFileName));
                     $word_count = FrontendHelpers::get_num_of_words($docText);
                 elseif($extension == "odt") :
                     $doc = odt2text($destinationPath.end($expFileName));
