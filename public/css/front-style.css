@@ -37,6 +37,10 @@
     font-weight: 600;
 }
 
+.close {
+    font-size: 2rem;
+}
+
 .btn-theme {
     background-color: #e83945;
     color: #fff!important;

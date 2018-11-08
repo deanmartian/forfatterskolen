@@ -275,7 +275,7 @@
       		<div class="form-group">
       		* Godkjente fil formater er DOCX, PDF og ODT.</div>
       		<div class="form-group">
-      			<input type="file" class="form-control" required name="manuscript" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+      			<input type="file" class="form-control" required name="manuscript" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
       		</div>
 			<div class="form-group">
 				<label for="">Sjanger</label>
@@ -288,7 +288,7 @@
 			</div>
 			<div class="form-group">
 				<label for="">Synopsis (valgfritt)</label>
-				<input type="file" class="form-control" name="synopsis" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+				<input type="file" class="form-control" name="synopsis" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 			</div>
 			<div class="form-group">
 				<label for="">Noen ord om manuset (valgfritt)</label>
@@ -316,7 +316,7 @@
 					<div class="form-group">
 						* Godkjente fil formater er DOCX, PDF og ODT.</div>
 					<div class="form-group">
-						<input type="file" class="form-control" required name="manuscript" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+						<input type="file" class="form-control" required name="manuscript" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 					</div>
 					<div class="form-group">
 						<label for="">Sjanger</label>
@@ -329,7 +329,7 @@
 					</div>
 					<div class="form-group">
 						<label for="">Synopsis (valgfritt)</label>
-						<input type="file" class="form-control" name="synopsis" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+						<input type="file" class="form-control" name="synopsis" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 					</div>
 					<div class="form-group">
 						<label for="">Noen ord om manuset (valgfritt)</label>
@@ -391,6 +391,20 @@
 	</div>
 </div>
 
+@if(Session::has('manuscript_test_error'))
+	<div id="manuscriptTestErrorModal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-body text-center">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
+					{!! Session::get('manuscript_test_error') !!}
+				</div>
+			</div>
+		</div>
+	</div>
+@endif
+
 @if (session('exceed'))
 	<input type="hidden" name="exceed">
 @endif
@@ -404,6 +418,10 @@
 	if (has_exceed) {
 	    $("#exceedModal").modal();
 	}
+
+	@if(Session::has('manuscript_test_error'))
+    	$('#manuscriptTestErrorModal').modal('show');
+	@endif
 
 	$('.uploadManuscriptBtn').click(function(){
 		var form = $('#uploadManuscriptModal form');

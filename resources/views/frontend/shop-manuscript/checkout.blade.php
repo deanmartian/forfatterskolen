@@ -64,9 +64,17 @@
 				  <div class="panel-heading"><h4>Brukerinformasjon</h4></div>
 				  <div class="panel-body">
 				  	<div class="form-group">
+						@if(Session::has('manuscript_test_error'))
+							<div class="alert alert-danger">
+								<ul>
+									<li>{{ Session::get('manuscript_test_error') }}</li>
+								</ul>
+							</div>
+						@endif
+
 				  		<div id="manuscript-file">
 					  		<label for="manuscript" class="control-label">Last opp manuskriptet</label>
-					  		<input type="file" id="manuscript" class="form-control" name="manuscript" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text" required>
+					  		<input type="file" id="manuscript" class="form-control" name="manuscript" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text" required>
 						</div>
 				  		<label for="send_to_email" style="margin-top: 7px"><input type="checkbox" name="send_to_email" id="send_to_email">&nbsp;&nbsp;Send til E-post</label>
 				  	</div>
@@ -75,7 +83,7 @@
 						  <select class="form-control" name="genre" required>
 							  <option value="" disabled="disabled" selected>Velg sjanger</option>
 							  @foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
-								  <option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
+								  <option value="{{ $type['id'] }}" @if (old('genre') == $type['id']) selected @endif> {{ $type['option'] }} </option>
 							  @endforeach
 						  </select>
 					  </div>
@@ -88,7 +96,7 @@
 					  @endif
 					  <div class="form-group">
 						  <label for="">Noen ord om manuset (valgfritt)</label>
-						  <textarea name="description" id="" cols="30" rows="10" class="form-control"></textarea>
+						  <textarea name="description" id="" cols="30" rows="10" class="form-control">{{ old('description') }}</textarea>
 					  </div>
 				  	<div class="form-group">
 				  		<label for="email" class="control-label">E-postadresse</label>

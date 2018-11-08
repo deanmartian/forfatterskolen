@@ -88,7 +88,7 @@ class ShopManuscriptController extends Controller
         $shopManuscriptTaken->shop_manuscript_id    = $shopManuscript->id;
 
 
-        $extensions = ['pdf', 'docx', 'odt'];
+        $extensions = ['pdf', 'doc' ,'docx', 'odt'];
         $word_count = 0;
         
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) :
@@ -96,7 +96,9 @@ class ShopManuscriptController extends Controller
             $original_filename = $request->manuscript->getClientOriginalName();
 
             if( !in_array($extension, $extensions) ) :
-                return redirect()->back();
+                return redirect()->back()->withInput()->with(
+                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                );
             endif;
 
             $time = time();
@@ -111,6 +113,9 @@ class ShopManuscriptController extends Controller
               $docObj = new \Docx2Text($destinationPath.$fileName);
               $docText= $docObj->convertToText();
               $word_count = FrontendHelpers::get_num_of_words($docText);
+            elseif($extension == "doc") :
+                $docText = $this->readWord($destinationPath.$fileName);
+                $word_count = FrontendHelpers::get_num_of_words($docText);
             elseif($extension == "odt") :
               $doc = odt2text($destinationPath.$fileName);
               $word_count = FrontendHelpers::get_num_of_words($doc);
@@ -237,7 +242,7 @@ class ShopManuscriptController extends Controller
     public function upload_manuscript($id, Request $request)
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->firstOrFail();
-        $extensions = ['pdf', 'docx', 'odt'];
+        $extensions = ['pdf', 'doc', 'docx', 'odt'];
 
         
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) :
@@ -245,7 +250,9 @@ class ShopManuscriptController extends Controller
             $original_filename = $request->manuscript->getClientOriginalName();
 
             if( !in_array($extension, $extensions) ) :
-                return redirect()->back();
+                return redirect()->back()->with(
+                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                );
             endif;
 
             $time = time();
@@ -260,6 +267,9 @@ class ShopManuscriptController extends Controller
               $docObj = new \Docx2Text($destinationPath.$fileName);
               $docText= $docObj->convertToText();
               $word_count = FrontendHelpers::get_num_of_words($docText);
+            elseif($extension == "doc") :
+                $docText = $this->readWord($destinationPath.$fileName);
+                $word_count = FrontendHelpers::get_num_of_words($docText);
             elseif($extension == "odt") :
               $doc = odt2text($destinationPath.$fileName);
               $word_count = FrontendHelpers::get_num_of_words($doc);
@@ -273,7 +283,9 @@ class ShopManuscriptController extends Controller
             $extension = pathinfo($_FILES['synopsis']['name'],PATHINFO_EXTENSION);
 
             if( !in_array($extension, $extensions) ) :
-                return redirect()->back();
+                return redirect()->back()->with(
+                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                );
             endif;
 
             $time = time();
@@ -344,7 +356,7 @@ class ShopManuscriptController extends Controller
     public function updateUploadedManuscript($id, Request $request)
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->first();
-        $extensions = ['pdf', 'docx', 'odt'];
+        $extensions = ['pdf', 'doc', 'docx', 'odt'];
 
 
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) :
@@ -352,7 +364,9 @@ class ShopManuscriptController extends Controller
             $original_filename = $request->manuscript->getClientOriginalName();
 
             if( !in_array($extension, $extensions) ) :
-                return redirect()->back();
+                return redirect()->back()->with(
+                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                );
             endif;
 
             $time = time();
@@ -367,6 +381,9 @@ class ShopManuscriptController extends Controller
                 $docObj = new \Docx2Text($destinationPath.$fileName);
                 $docText= $docObj->convertToText();
                 $word_count = FrontendHelpers::get_num_of_words($docText);
+            elseif($extension == "doc") :
+                $docText = $this->readWord($destinationPath.$fileName);
+                $word_count = FrontendHelpers::get_num_of_words($docText);
             elseif($extension == "odt") :
                 $doc = odt2text($destinationPath.$fileName);
                 $word_count = FrontendHelpers::get_num_of_words($doc);
@@ -380,7 +397,9 @@ class ShopManuscriptController extends Controller
             $extension = pathinfo($_FILES['synopsis']['name'],PATHINFO_EXTENSION);
 
             if( !in_array($extension, $extensions) ) :
-                return redirect()->back();
+                return redirect()->back()->with(
+                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                );
             endif;
 
             $time = time();
@@ -454,14 +473,16 @@ class ShopManuscriptController extends Controller
 
     public function test_manuscript(Request $request)
     {
-        $extensions = ['pdf', 'docx', 'odt'];
+        $extensions = ['pdf', 'doc', 'docx', 'odt'];
 
     	if( $request->hasFile('manuscript') &&  $request->file('manuscript')->isValid() ) :
     		$extension = pathinfo($_FILES['manuscript']['name'],PATHINFO_EXTENSION);
     		$original_filename = $request->manuscript->getClientOriginalName();
 
     		if( !in_array($extension, $extensions) ) :
-                return redirect()->back();
+                return redirect()->back()->with(
+                    'manuscript_test_error', '<h3>Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT</h3>'
+                );
             endif;
 
             $time = time();
@@ -476,6 +497,9 @@ class ShopManuscriptController extends Controller
               $docObj = new \Docx2Text($destinationPath.$fileName);
               $docText= $docObj->convertToText();
               $word_count = FrontendHelpers::get_num_of_words($docText);
+            elseif($extension == "doc") :
+                $docText = $this->readWord($destinationPath.$fileName);
+                $word_count = FrontendHelpers::get_num_of_words($docText);
             elseif($extension == "odt") :
               $doc = odt2text($destinationPath.$fileName);
               $word_count = FrontendHelpers::get_num_of_words($doc);
@@ -622,7 +646,7 @@ class ShopManuscriptController extends Controller
             ->where('upgrade_shop_manuscript_id', $id)->first();
 
 
-        $extensions = ['pdf', 'docx', 'odt'];
+        $extensions = ['pdf', 'doc', 'docx', 'odt'];
         $shopManuscriptTaken->shop_manuscript_id = $shopManuscript->id;
 
 
@@ -631,7 +655,9 @@ class ShopManuscriptController extends Controller
             $original_filename = $request->manuscript->getClientOriginalName();
 
             if( !in_array($extension, $extensions) ) :
-                return redirect()->back();
+                return redirect()->back()->withInput()->with(
+                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                );
             endif;
 
             $time = time();
@@ -645,6 +671,9 @@ class ShopManuscriptController extends Controller
             elseif($extension == "docx") :
                 $docObj = new \Docx2Text($destinationPath.$fileName);
                 $docText= $docObj->convertToText();
+                $word_count = FrontendHelpers::get_num_of_words($docText);
+            elseif($extension == "doc") :
+                $docText = $this->readWord($destinationPath.$fileName);
                 $word_count = FrontendHelpers::get_num_of_words($docText);
             elseif($extension == "odt") :
                 $doc = odt2text($destinationPath.$fileName);
@@ -791,8 +820,39 @@ Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">po
         endif;
     }
 
+    function readWord($filename) {
+        if(file_exists($filename))
+        {
+            if(($fh = fopen($filename, 'r')) !== false )
+            {
+                $headers = fread($fh, 0xA00);
 
+                // 1 = (ord(n)*1) ; Document has from 0 to 255 characters
+                $n1 = ( ord($headers[0x21C]) - 1 );
 
- 
+                // 1 = ((ord(n)-8)*256) ; Document has from 256 to 63743 characters
+                $n2 = ( ( ord($headers[0x21D]) - 8 ) * 256 );
+
+                // 1 = ((ord(n)*256)*256) ; Document has from 63744 to 16775423 characters
+                $n3 = ( ( ord($headers[0x21E]) * 256 ) * 256 );
+
+                // 1 = (((ord(n)*256)*256)*256) ; Document has from 16775424 to 4294965504 characters
+                $n4 = ( ( ( ord($headers[0x21F]) * 256 ) * 256 ) * 256 );
+
+                // Total length of text in the document
+                $textLength = ($n1 + $n2 + $n3 + $n4);
+
+                $extracted_plaintext = fread($fh, $textLength);
+
+                // if you want to see your paragraphs in a new line, do this
+                // return nl2br($extracted_plaintext);
+                return $extracted_plaintext;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 
 }

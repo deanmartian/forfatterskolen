@@ -52,7 +52,7 @@
                             <div class="form-group">
                                 <div id="manuscript-file">
                                     <label for="manuscript" class="control-label">Manuscript file</label>
-                                    <input type="file" id="manuscript" class="form-control" name="manuscript" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text" required>
+                                    <input type="file" id="manuscript" class="form-control" name="manuscript" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text" required>
                                 </div>
                                 <label for="send_to_email" style="margin-top: 7px"><input type="checkbox" name="send_to_email" id="send_to_email">&nbsp;&nbsp;Send til epost</label>
                             </div>
@@ -141,12 +141,30 @@
 
     </div>
 
+    @if(Session::has('manuscript_test_error'))
+        <div id="manuscriptTestErrorModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
+                        {!! Session::get('manuscript_test_error') !!}
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
 @stop
 
 
 @section('scripts')
     <script>
         $(document).ready(function(){
+
+            @if(Session::has('manuscript_test_error'))
+                $('#manuscriptTestErrorModal').modal('show');
+            @endif
 
             $('input[name=send_to_email]').change(function(){
                 if( $(this).is(':checked') ){

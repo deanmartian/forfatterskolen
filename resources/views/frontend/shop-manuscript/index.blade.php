@@ -49,11 +49,11 @@
 
                         <form method="POST" enctype="multipart/form-data" action="{{ route('front.shop-manuscript.test_manuscript') }}">
                             {{ csrf_field() }}
-                            <input type="file" class="hidden" name="manuscript" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+                            <input type="file" class="hidden" name="manuscript" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
                             <label class="mb-4">
                                 <span class="instruction">Dette er bare en ordteller, og gir ingen form for kjøp</span>
                                 <br>
-                                <span class="note"><i class="info-icon"></i> merk: godkjente filformat er DOCX, PDF og ODT.</span>
+                                <span class="note"><i class="info-icon"></i> merk: godkjente filformat er DOC, DOCX, PDF og ODT.</span>
                             </label>
                             <div class="input-group mb-4">
                                 <input type="text" readonly class="form-control" required>
@@ -238,6 +238,20 @@
         </div>
     @endif
 
+    @if(Session::has('manuscript_test_error'))
+        <div id="manuscriptTestErrorModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
+                        {!! Session::get('manuscript_test_error') !!}
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <div id="testManuscriptModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -259,8 +273,13 @@
     <script>
         $(document).ready(function(){
             @if(Session::has('manuscript_test'))
-            $('#manuscriptTestModal').modal('show');
-                    @endif
+                $('#manuscriptTestModal').modal('show');
+            @endif
+
+            @if(Session::has('manuscript_test_error'))
+                $('#manuscriptTestErrorModal').modal('show');
+            @endif
+
             let form = $('#testManuscript form');
             $('.select-manuscript').click(function(){
                 form.find('input[type=file]').click();
