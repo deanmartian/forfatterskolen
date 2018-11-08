@@ -422,8 +422,11 @@ class AssignmentController extends Controller
                     $pdf  =  new \PdfToText ( public_path($manuscript->filename) ) ;
                     $readDoc = $pdf->Text;
 
-                } elseif ($fileExtension == 'docx' || $fileExtension == 'doc') {
+                } elseif ($fileExtension == 'docx') {
                     $readDoc = $this->read_docx(public_path($manuscript->filename));/*$manuscript->filename*/
+
+                } elseif ($fileExtension == 'doc') {
+                    $readDoc = FrontendHelpers::readWord(public_path($manuscript->filename));
                 } else {
                     //$readDoc = odt2text(public_path($manuscript->filename));
                     $odtToHtml = DocumentParser::parseFromFile(public_path($manuscript->filename));

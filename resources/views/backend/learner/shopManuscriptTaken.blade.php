@@ -40,7 +40,7 @@
 						<div class="col-sm-12 col-md-7">
 							@if( end($extension) == 'pdf' || end($extension) == 'odt' )
 							<iframe src="/js/ViewerJS/#../..{{ $shopManuscriptTaken->file }}" style="width: 100%; border: 0; height: 600px"></iframe>
-							@elseif( end($extension) == 'docx' )
+							@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
 							<iframe src="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$shopManuscriptTaken->file}}" style="width: 100%; border: 0; height: 600px"></iframe>
 							@endif
 						</div>
