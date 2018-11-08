@@ -21,13 +21,34 @@
         </button>
 
         <div class="navbar-collapse collapse" id="footer-body">
-            <ul class="nav navbar-nav w-100" id="footer-options">
+            {{--<ul class="nav navbar-nav w-100" id="footer-options">
                 <li class="nav-item"><a href="#" class="nav-link">Om oss</a></li>
                 <li class="nav-item"><a href="#" class="nav-link">Skriveblogg</a></li>
                 <li class="nav-item"><a href="#" class="nav-link">Kontakt oss</a></li>
                 <li class="nav-item"><a href="#" class="nav-link">Logg inn</a></li>
                 <li class="nav-item"><a href="#" class="nav-link">Register deg her tt</a></li>
                 <li class="nav-item"><a href="#" class="nav-link">Kjop kurs</a></li>
+            </ul>--}}
+
+            <ul class="navbar-nav nav-fill" id="footer-options">
+                <li class="nav-item @if(Route::currentRouteName() == 'front.course.index') active @endif">
+                    <a href="{{route('front.course.index')}}" class="nav-link">Våre Kurs</a>
+                </li>
+                <li class="nav-item @if(Route::currentRouteName() == 'front.shop-manuscript.index') active @endif">
+                    <a href="{{route('front.shop-manuscript.index')}}" class="nav-link">Manusutvikling</a>
+                </li>
+                <li class="nav-item @if(Route::currentRouteName() == 'front.blog') active @endif">
+                    <a href="{{ route('front.blog') }}" class="nav-link">Blogg</a>
+                </li>
+                <li class="nav-item @if(Route::currentRouteName() == 'front.workshop.index') active @endif">
+                    <a href="{{route('front.workshop.index')}}" class="nav-link">Workshop</a>
+                </li>
+                <li class="nav-item @if(Route::currentRouteName() == 'front.faq') active @endif">
+                    <a href="{{route('front.faq')}}" class="nav-link">FAQ</a>
+                </li>
+                <li class="nav-item @if(Route::currentRouteName() == 'front.contact-us') active @endif">
+                    <a href="{{route('front.contact-us')}}" class="nav-link">Kontakt Oss</a>
+                </li>
             </ul>
 
             <ul class="navbar-nav ml-auto">

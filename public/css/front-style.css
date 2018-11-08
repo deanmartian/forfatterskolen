@@ -64,7 +64,7 @@
     font-family: "Barlow Regular", sans serif;
 }
 
-.navbar-default .navbar-nav {
+.navbar-default .navbar-nav, .navbar-inverse .nav-fill {
     width: 100%;
 }
 
