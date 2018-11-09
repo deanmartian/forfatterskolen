@@ -219,6 +219,26 @@ class AdminHelpers
     }
 
     /**
+     * Get the group where the learner is assigned
+     * @param $assignment_id
+     * @param $learner_id
+     * @return null
+     */
+    public static function getLearnerAssignmentGroup($assignment_id, $learner_id)
+    {
+        $assignmentGroups = \App\AssignmentGroup::where('assignment_id', $assignment_id)->pluck('id')->toArray();
+        if ($assignmentGroups) {
+            $groupLearner = \App\AssignmentGroupLearner::whereIn('assignment_group_id', $assignmentGroups)
+                ->where('user_id', $learner_id)->first();
+            if ($groupLearner) {
+                return [ 'id' => $groupLearner->group->id, 'title' => $groupLearner->group->title];
+            }
+        }
+
+        return NULL;
+    }
+
+    /**
      * Get learner list
      * @param null $id
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null

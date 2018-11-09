@@ -56,6 +56,7 @@
 							<th>{{ trans('site.where') }}</th>
 							<th>{{ trans_choice('site.words', 2) }}</th>
 							<th>{{ trans('site.text-nr') }}</th>
+							<th>{{ trans_choice('site.groups', 1) }}</th>
 							<th>{{ trans('site.feedback-out') }}</th>
 							<th>{{ trans_choice('site.editors', 1) }}</th>
 							<th width="250"></th>
@@ -88,6 +89,15 @@
 							</td>
 							<td> {{ $manuscript->words }} </td>
 							<td> {{ $manuscript->text_number }} </td>
+							<td>
+								<a href="{{ route('admin.assignment-group.show',
+								['course_id' => $course->id,
+								'assignment_id' => $assignment->id,
+								'id' => \App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['id']]
+								) }}">
+									{{ \App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['title'] }}
+								</a>
+							</td>
 							<td>
 
                                 <?php
