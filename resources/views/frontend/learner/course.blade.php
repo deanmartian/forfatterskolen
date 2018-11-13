@@ -83,7 +83,7 @@
 							@if( $courseTaken->is_active )
 								@if($courseTaken->hasStarted)
 									@if($courseTaken->hasEnded)
-									<a class="btn btn-danger disabled">UTLØPT</a>
+									<button class="btn btn-info" data-toggle="modal" data-target="#renewAllModal">Forny abonnement</button>
 									@else
 									<a class="btn btn-primary" href="{{route('learner.course.show', ['id' => $courseTaken->id])}}">Fortsett med dette kurset&nbsp;&nbsp;<i class="fa fa-arrow-right"></i></a>
 										{{-- check if course is webinar-pakke --}}
@@ -205,7 +205,7 @@
 				<h4 class="modal-title">Forny alle kursene for ett år</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="">
+				<form method="POST" action="{{ route('learner.renew-all-courses') }}" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 
 					<p>Vil du fornye alle kursene dine for ett år ekstra for kroner 1490,?</p>
