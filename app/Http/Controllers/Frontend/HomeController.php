@@ -147,8 +147,9 @@ class HomeController extends Controller
      */
     public function blog()
     {
-        $blogs = Blog::orderBy('created_at','DESC')->get();
-        return view('frontend.blog', compact('blogs'));
+        $mainBlog = Blog::orderBy('created_at','DESC')->first();
+        $blogs = Blog::where('id','!=', $mainBlog->id)->orderBy('created_at','DESC')->get();
+        return view('frontend.blog', compact('mainBlog','blogs'));
     }
 
     /**
