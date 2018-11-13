@@ -45,7 +45,10 @@
         </div>
     @endif
 
-        @if(Route::currentRouteName() != 'front.shop-manuscript.index')
+        <?php
+        $newDesignPages = ['front.shop-manuscript.index', 'front.publishing']
+        ?>
+        @if(!in_array(Route::currentRouteName(), $newDesignPages))
             @include('frontend.partials.navbar')
         @else
             @include('frontend.partials.navbar-new')
@@ -53,7 +56,7 @@
 
         @yield('content')
 
-        @if(Route::currentRouteName() != 'front.shop-manuscript.index')
+        @if(!in_array(Route::currentRouteName(), $newDesignPages))
             @include('frontend.partials.footer')
         @else
             @include('frontend.partials.footer-new')

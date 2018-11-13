@@ -46,6 +46,18 @@
     color: #fff!important;
 }
 
+.nav-user-thumb {
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 50%;
+    cursor: default;
+    display: inline-block;
+    height: 18px;
+    vertical-align: middle;
+    width: 18px;
+}
+
 .navbar {
     padding: .5rem 12rem;
     margin-bottom: 0;
@@ -619,6 +631,101 @@ start today section
 }
 /* end manuscript page editors modal */
 
+/* publishing page */
+
+.publishing-page {
+    background-color: #eff0f7;
+    background-image: url(../images-new/publishing-bg.jpg);
+    background-size: auto 50%;
+    background-repeat: no-repeat;
+    background-position-x: right;
+    background-position-y: -20px;
+    padding: 50px 0;
+}
+
+.publishing-page .grid-item {
+    margin-bottom: 30px;
+}
+
+.publishing-page .col-sm-6 {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.publishing-page .page-title {
+    font-size: 39px;
+}
+
+.publishing-page .page-description {
+    font-size: 17px;
+    margin-bottom: 40px;
+    margin-top: 20px;
+}
+
+.publishing-page .book-authors-container {
+    height: 1000px;
+}
+
+.publishing-page .card {
+    border: none;
+}
+
+.publishing-page .card .card-body {
+    padding: 40px 10px 10px 10px;
+}
+
+.publishing-page .card .left-container {
+    float: left;
+    transform: translate(-10px);
+    width: 20%;
+}
+
+.publishing-page .card .left-container img {
+    border: 4px solid #fff;
+    margin-bottom: 20px;
+}
+
+.publishing-page .card .right-container {
+    float: right;
+    padding-left: 15px;
+    padding-right: 30px;
+    width: 79%;
+}
+
+.publishing-page .card .right-container .book-title {
+    font-size: 30px;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+.publishing-page .card .right-container .book-description {
+    line-height: 25px;
+    margin-bottom: 20px;
+}
+
+.publishing-page .card .right-container .book-quote {
+    color: #aeaeae;
+}
+
+.publishing-page .card .right-container .book-quote  em {
+    font-size: 14px;
+    font-style: normal;
+    line-height: 25px;
+}
+
+.publishing-page .left-quote:before {
+    content: " ";
+    display: block;
+    background-image: url(../images-new/two-quotes.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    margin: 0 60px;
+    width: 30px;
+    height: 30px;
+}
+
+/* end publishing page */
+
 footer .navbar-inverse {
     background-color: #2b2829;
     padding: 1rem 12rem;
@@ -842,6 +949,18 @@ footer .footer-bottom p {
         margin: 15px 10px 10px 10px;
     }
 
+    .publishing-page {
+        background-size: auto 40%;
+    }
+
+    .publishing-page .page-title {
+        font-size: 33px;
+    }
+
+    .publishing-page .card .right-container .book-title {
+        font-size: 28px;
+    }
+
 }
 
 @media only screen and (max-width: 768px) {
@@ -1021,6 +1140,41 @@ footer .footer-bottom p {
 
     #editorsModal .modal-body p {
         margin: 10px 0 0 0;
+    }
+
+    .publishing-page {
+        background-size: auto 27%;
+        padding: 30px 0;
+    }
+
+    .publishing-page .page-title {
+        font-size: 27px;
+    }
+
+    .publishing-page .page-description {
+        margin-bottom: 30px;
+    }
+
+    .publishing-page .card .right-container .book-title {
+        font-size: 23px;
+    }
+
+    .publishing-page .card .card-body {
+        padding: 30px 10px 10px 10px;
+    }
+
+    .publishing-page .card .left-container {
+        width: 25%;
+    }
+
+    .publishing-page .card .right-container {
+        padding-left: 10px;
+        padding-right: 20px;
+        width: 74%;
+    }
+
+    .publishing-page .left-quote:before {
+        margin: 0 40px;
     }
 }
 
@@ -1209,6 +1363,32 @@ footer .footer-bottom p {
         width: 90px;
     }
 
+    .publishing-page {
+        background-image: none;
+    }
+
+    .publishing-page .page-title {
+        font-size: 30px;
+    }
+
+    .publishing-page .card .card-body {
+        padding: 20px 10px 10px 10px;
+    }
+
+    .publishing-page .left-quote:before {
+        margin: 0 30px;
+        width: 25px;
+        height: 25px;
+    }
+
+    .publishing-page .col-sm-6 {
+        padding-left: 15px;
+        padding-right: 10px;
+    }
+
+    .publishing-page .grid-item {
+        margin-bottom: 20px;
+    }
 
 }
 
@@ -1349,6 +1529,19 @@ footer .footer-bottom p {
         height: 89px;
         width: 89px;
     }
+
+    .publishing-page .col-sm-6 {
+        padding-left: 15px;
+        padding-right: 0;
+    }
+
+    .publishing-page .left-quote:before {
+        margin: 0 50px;
+    }
+
+    .publishing-page .page-title {
+        font-size: 28px;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -1385,6 +1578,14 @@ footer .footer-bottom p {
     #editorsModal .modal-body {
         padding: 25px 20px;
     }
+
+    .publishing-page .page-title {
+        font-size: 25px;
+    }
+
+    .publishing-page .left-quote:before {
+        margin: 0 47px;
+    }
 }
 
 @media only screen and (max-width: 360px) {
@@ -1398,6 +1599,10 @@ footer .footer-bottom p {
 
     .manuscript-page .third-section .details {
         padding: 25px 15px;
+    }
+
+    .publishing-page .page-title {
+        font-size: 24px;
     }
 }
 
@@ -1424,5 +1629,9 @@ footer .footer-bottom p {
 
     .manuscript-page .third-section {
         height: 410px;
+    }
+
+    .publishing-page .page-title {
+        font-size: 21px;
     }
 }
