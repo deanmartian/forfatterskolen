@@ -83,7 +83,7 @@ class FikenInvoice
 		//print_r($data);
 
 		$headers = $this->get_headers_from_curl_response($data);
-		$location = $headers['Location'];
+		$location = $headers['location'];
 		$fiken_url = $this->get_weblink_from_api($location);
 		$fiken_url = $fiken_url->_links->alternate->href;
 		$pdf_url = $this->get_pdf_url($location);

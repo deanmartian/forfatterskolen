@@ -127,8 +127,8 @@ class ShopManuscriptController extends Controller
             // Admin notification
             $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
             $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
-            AdminHelpers::send_email('New manuscript submitted for shop manuscript',
-                'post@forfatterskolen.no',$toMail, $message);
+            /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
+                'post@forfatterskolen.no',$toMail, $message);*/
             //mail($toMail, 'New manuscript submitted for shop manuscript', $message);
         endif;
 
@@ -154,10 +154,6 @@ class ShopManuscriptController extends Controller
                 .' ord, du må bestille <a href="'.route('front.shop-manuscript.checkout', $nextPlan->id).'">'
                 .$nextPlan->title.'</a>.']);
         }
-        $shopManuscriptTaken->is_active = false;
-        $shopManuscriptTaken->save();
-
-
 
         $paymentMode = PaymentMode::findOrFail($request->payment_mode_id);
         $paymentPlan = PaymentPlan::findOrFail($request->payment_plan_id);
@@ -206,6 +202,10 @@ class ShopManuscriptController extends Controller
 
         $invoice = new FikenInvoice();
         $invoice->create_invoice($invoice_fields);
+
+        // wait for the invoice to be saved first before saving the shop manuscript taken
+        $shopManuscriptTaken->is_active = false;
+        $shopManuscriptTaken->save();
 
         if( $request->update_address ) :
             $address = Address::firstOrNew(['user_id' => Auth::user()->id]);
