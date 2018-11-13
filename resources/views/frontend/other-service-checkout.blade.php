@@ -164,9 +164,9 @@
                             <em><small>Merk: Vi godtar kun full betaling på PAYPAL</small></em>
 
                             <div class="col-sm-12 margin-top no-left-padding">
-                                <input type="checkbox" required> I agree to the
+                                <input type="checkbox" required> Jeg aksepterer
                                 <a href="{{ route('front.terms', 'manuscript-terms') }}"
-                                   target="_blank">terms and conditions</a>
+                                   target="_blank">kjøpsvilkårene</a>
                             </div>
 
                             <hr>
