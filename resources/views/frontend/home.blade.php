@@ -55,11 +55,12 @@
             <div class="col-sm-4"><button type="submit" class="btn btn-orange btn-block btn-lg">Ja, jeg vil ha gratis tips!</button></div>
             <div class="col-sm-4 col-sm-offset-8">
                 <input type="checkbox" name="terms" required="">
-                <label style="color:#fff;">Jeg aksepterer <a href="{{ route('front.opt-in-terms') }}" target="_blank">vilkårene</a>
+                <label style="color:#fff; font-weight: normal">Jeg aksepterer <a href="{{ route('front.opt-in-terms') }}" target="_blank">vilkårene</a>
                 </label>
+                <span><em>Vi deler ikke e-postadressen din med noen</em></span>
             </div>
         <div class="clearfix"></div>
-            <span><em>PS! Vi deler ikke e-postadressen din med noen</em></span>
+
     </div>
 </form>
 </div>
