@@ -112,21 +112,37 @@
 								<h2><span class="highlight">KONTAKT</span>  OSS I DAG</h2> <br /><br /><br />
 							</div>
 							<div class="col-sm-5">
-								<form method="POST" action="">
+								<form method="POST" action="" onsubmit="disableSubmit(this)">
 									{{ csrf_field() }}
 									<div class="form-group">
-										<input type="text" class="form-control" name="fullname" placeholder="Navn" required>
+										<input type="text" class="form-control" name="fullname" placeholder="Navn" required
+										value="{{ old('fullname') }}">
 									</div>
 									<div class="form-group">
-										<input type="email" class="form-control" name="email" placeholder="E-postadresse" required>
+										<input type="email" class="form-control" name="email" placeholder="E-postadresse" required
+											   value="{{ old('email') }}">
 									</div>
 									<div class="form-group">
-										<textarea class="form-control" rows="8" name="message" placeholder="Skriv inn meldingen din" required></textarea>
+										<textarea class="form-control" rows="8" name="message" placeholder="Skriv inn meldingen din" required>{{ old('message') }}</textarea>
 									</div>
+
+									{!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJS() !!}
+									{!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display() !!}
+
 									<div class="text-right margin-bottom">
 										<button type="submit" class="btn btn-theme">Send</button>
 									</div>
 								</form>
+
+								@if ( $errors->any() )
+									<div class="alert alert-danger no-bottom-margin">
+										<ul>
+											@foreach($errors->all() as $error)
+												<li>{{$error}}</li>
+											@endforeach
+										</ul>
+									</div>
+								@endif
 							</div>
 							<div class="col-sm-1"></div>
 							<div class="col-sm-6">

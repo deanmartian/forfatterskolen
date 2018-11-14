@@ -90,6 +90,13 @@ class HomeController extends Controller
     {
         if ($request->isMethod('post')) {
 
+            $validates = [
+                'g-recaptcha-response' => 'required|captcha'
+            ];
+
+            // validate the post request
+            $this->validate($request, $validates);
+
             $email_content = 'From: '.$request->fullname."<br/>";
             $email_content .= 'Email: '.$request->email."<br/>";
             $email_content .= 'Message: '.$request->message;
