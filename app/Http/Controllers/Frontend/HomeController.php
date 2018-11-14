@@ -871,6 +871,7 @@ class HomeController extends Controller
             $validates = [
                 'email' => 'required|email',
                 'name' => 'required|regex:/^[\pL\s\-]+$/u|max:100',
+                'last_name' => 'required|regex:/^[\pL\s\-]+$/u|max:100',
                 'terms' => 'required',
             ];
 

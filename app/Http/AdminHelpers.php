@@ -358,6 +358,9 @@ class AdminHelpers
             $post["p[".$list_id."]"] = $list_id; // $list_id IS THE LIST ID
             $post["status[".$list_id."]"] = 1; // $list_id IS THE LIST ID, 1 = ACTIVE STATUS
             $post["first_name_list[".$list_id."]"] = $data['name']; // (OPTIONAL) CHANGE FIRST NAME FOR ONLY THIS NEW LIST
+            if (isset($data['last_name'])) {
+                $post["last_name_list[".$list_id."]"] = $data['last_name']; // (OPTIONAL) CHANGE FIRST NAME FOR ONLY THIS NEW LIST
+            }
             $edit = AdminHelpers::curl($url, $params, $post);
             return true;
 

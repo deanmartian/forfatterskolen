@@ -45,8 +45,9 @@
     <p>Vil du ha vår inspirerende skriveplan? Få den gratis her!</p>
     <div class="row">
             <div class="col-sm-4"><input type="text" name="name" class="form-control input-lg" placeholder="Fornavn" required></div>
+            <div class="col-sm-4"><input type="text" name="last_name" class="form-control input-lg" placeholder="Etternavn" required></div>
             <div class="col-sm-4"><input type="email" name="email" class="form-control input-lg" placeholder="Epost" required></div>
-            <div class="col-sm-4"><button type="submit" class="btn btn-orange btn-block btn-lg">Ja, jeg vil ha gratis tips!</button></div>
+            <div class="col-sm-4 col-sm-offset-8"><button type="submit" class="btn btn-orange btn-block btn-lg">Ja, jeg vil ha gratis tips!</button></div>
             <div class="col-sm-4 col-sm-offset-8">
                 <input type="checkbox" name="terms" required="">
                 <label style="color:#fff; font-weight: normal">Jeg aksepterer <a href="{{ route('front.opt-in-terms') }}" target="_blank">vilkårene</a>
