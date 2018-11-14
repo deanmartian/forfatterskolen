@@ -67,6 +67,7 @@ Route::group([
         Route::post('/gratis-tekstvurdering/send', 'ShopManuscriptController@freeManuscriptSend')->name('front.free-manuscript.send'); // Free Manuscript Send
         Route::post('/free-manuscript/set-word-count', 'ShopManuscriptController@freeManuscriptWordCount')->name('front.free-manuscript.set-wordcount');
 
+        Route::post('/', 'HomeController@homeOptIn')->name('front.home'); // Homepage
 
         Route::get('/opt-in/{slug?}', 'HomeController@optIn')->name('front.opt-in'); // Opt-in page
         Route::post('/opt-in/{slug?}', 'HomeController@optIn')->name('front.opt-in'); // Opt-in page

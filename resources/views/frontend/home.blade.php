@@ -40,17 +40,11 @@
 <h3>for deg som vil gjøre alvor av skrivedrømmen</h3>
 
 <div class="container">
-<form method="POST" action="https://forfatterskolen.activehosted.com/proc.php" id="_form_1312_">
+<form method="POST" action="{{ route('front.home') }}">
+    {{ csrf_field() }}
     <p>Vil du ha vår inspirerende skriveplan? Få den gratis her!</p>
     <div class="row">
-            <input type="hidden" name="u" value="1312" />
-            <input type="hidden" name="f" value="1312" />
-            <input type="hidden" name="s" />
-            <input type="hidden" name="c" value="0" />
-            <input type="hidden" name="m" value="0" />
-            <input type="hidden" name="act" value="sub" />
-            <input type="hidden" name="v" value="2" />
-            <div class="col-sm-4"><input type="text" name="fullname" class="form-control input-lg" placeholder="Fornavn" required></div>
+            <div class="col-sm-4"><input type="text" name="name" class="form-control input-lg" placeholder="Fornavn" required></div>
             <div class="col-sm-4"><input type="email" name="email" class="form-control input-lg" placeholder="Epost" required></div>
             <div class="col-sm-4"><button type="submit" class="btn btn-orange btn-block btn-lg">Ja, jeg vil ha gratis tips!</button></div>
             <div class="col-sm-4 col-sm-offset-8">

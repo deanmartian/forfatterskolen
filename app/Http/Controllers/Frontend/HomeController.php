@@ -861,6 +861,30 @@ class HomeController extends Controller
     }
 
     /**
+     * Opt in form in home page
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function homeOptIn(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validates = [
+                'email' => 'required|email',
+                'name' => 'required|regex:/^[\pL\s\-]+$/u|max:100',
+                'terms' => 'required',
+            ];
+
+            // validate the post request
+            $this->validate($request, $validates);
+            $list_id = 10;
+            AdminHelpers::addToActiveCampaignList($list_id, $request->except('_token','terms'));
+            return redirect()->route('front.subscribe-success');
+        }
+
+        return redirect()->back();
+    }
+
+    /**
      * Confirm the secondary email based by token
      * @param $token
      * @return $this|\Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
