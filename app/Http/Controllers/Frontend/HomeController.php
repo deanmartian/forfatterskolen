@@ -154,10 +154,25 @@ class HomeController extends Controller
      */
     public function blog()
     {
-        $mainBlog = Blog::orderBy('created_at','DESC')->first();
-        $blogs = Blog::where('id','!=', $mainBlog->id)->orderBy('created_at','DESC')->get();
-        return view('frontend.blog', compact('mainBlog','blogs'));
+        $blogs = Blog::orderBy('created_at','DESC')->get();
+
+        return view('frontend.blog', compact('blogs'));
     }
+
+    /*public function blog(Request $request)
+    {
+        $mainBlog = Blog::orderBy('created_at','DESC')->first();
+        $blogs = Blog::where('id','!=', $mainBlog->id)
+            ->orderBy('created_at','DESC')
+            ->simplePaginate(4);
+
+        // check if ajax to display the page without loading
+        if ($request->ajax()) {
+            return response()->json(\View::make('frontend.blog-post', array('blogs' => $blogs))->render());
+        }
+
+        return view('frontend.blog-new', compact('mainBlog','blogs'));
+    }*/
 
     /**
      * Display the blog content
@@ -878,7 +893,7 @@ class HomeController extends Controller
             $validates = [
                 'email' => 'required|email',
                 'name' => 'required|regex:/^[\pL\s\-]+$/u|max:100',
-                'last_name' => 'required|regex:/^[\pL\s\-]+$/u|max:100',
+                'g-recaptcha-response' => 'required|captcha',
                 'terms' => 'required',
             ];
 
