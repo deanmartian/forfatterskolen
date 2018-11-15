@@ -668,6 +668,7 @@ start today section
 
 .publishing-page .book-authors-container {
     height: 1000px;
+    overflow: hidden;
 }
 
 .publishing-page .card {

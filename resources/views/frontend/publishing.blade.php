@@ -95,9 +95,12 @@
             }
         });
 
-        $('.grid').masonry({
-            // options
-            itemSelector : '.grid-item'
+        // call the function once fully loaded
+        $(window).on('load', function() {
+            $('.grid').masonry({
+                // options
+                itemSelector : '.grid-item'
+            });
         });
     </script>
 @stop
