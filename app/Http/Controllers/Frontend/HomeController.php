@@ -152,14 +152,14 @@ class HomeController extends Controller
      * Display all blog
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function blog()
+    /*public function blog()
     {
         $blogs = Blog::orderBy('created_at','DESC')->get();
 
         return view('frontend.blog', compact('blogs'));
-    }
+    }*/
 
-    /*public function blog(Request $request)
+    public function blog(Request $request)
     {
         $mainBlog = Blog::orderBy('created_at','DESC')->first();
         $blogs = Blog::where('id','!=', $mainBlog->id)
@@ -172,7 +172,7 @@ class HomeController extends Controller
         }
 
         return view('frontend.blog-new', compact('mainBlog','blogs'));
-    }*/
+    }
 
     /**
      * Display the blog content
