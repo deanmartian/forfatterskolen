@@ -1044,6 +1044,72 @@ start today section
 
 /* end blog page */
 
+/* thank you page */
+
+.thank-you-page {
+    background-image: url(../images-new/thankyou-bg.png);
+    background-size: 100% 92%;
+    background-repeat: no-repeat;
+    color: #fff;
+    padding: 100px 0 120px 0;
+}
+
+.thank-you-page .thumb {
+    height: 100px;
+}
+
+.thank-you-page h1 {
+    font-size: 34px;
+    font-family: "Barlow Regular", sans serif;
+    margin: 40px 0 20px 0;
+}
+
+.thank-you-page p {
+    font-family: "Barlow Regular", sans serif;
+    font-size: 19px;
+    margin-bottom: 30px;
+    text-align: justify;
+}
+
+.thank-you-page .buy-btn {
+    border: 1px solid #fff;
+    color: #fff;
+    padding: 7px 20px;
+}
+
+.thank-you-page .buy-btn:after {
+    background-image: url(../images-new/left-arrow.png);
+}
+
+.thank-you-page .buy-btn:hover {
+    border: 1px solid #c79090;
+    color: #c79090;
+}
+
+.thank-you-page .buy-btn:hover .fa {
+    color: #c79090;
+}
+
+.thank-you-page .buy-btn:hover:after {
+    background-image: url(../images-new/left-arrow-red.png);
+}
+
+.thank-you-page .fa {
+    color: #fff;
+}
+
+.thank-you-page .right-container {
+    padding-top: 70px;
+    text-align: center;
+}
+
+.thank-you-page .right-container img {
+    filter: brightness(70%); /* darken the image */
+    height: 530px;
+}
+
+/* end thank you page */
+
 footer .navbar-inverse {
     background-color: #2b2829;
     padding: 1rem 12rem;
@@ -1317,6 +1383,19 @@ footer .footer-bottom p {
 
     .blog-page .sidebar .testimonial-container .card-body {
         padding: 20px 40px 40px 40px;
+    }
+
+    .thank-you-page {
+        background-size: 100% 94%;
+        padding: 60px 0 120px 0;
+    }
+
+    .thank-you-page .left-container {
+        padding-left: 30px;
+    }
+
+    .thank-you-page .right-container img {
+        height: 480px;
     }
 
 }
@@ -1625,6 +1704,27 @@ footer .footer-bottom p {
 
     .blog-page .sidebar .workshop-container .card-body li a {
         font-size: 16px;
+    }
+
+    .thank-you-page {
+        padding: 40px 0 120px 0;
+    }
+
+    .thank-you-page .thumb {
+        height: 80px;
+    }
+
+    .thank-you-page h1 {
+        font-size: 30px;
+        margin: 30px 0 20px 0;
+    }
+
+    .thank-you-page p {
+        font-size: 17px;
+    }
+
+    .thank-you-page .right-container img {
+        height: 370px;
     }
 }
 
@@ -1941,6 +2041,34 @@ footer .footer-bottom p {
     .blog-page .sidebar .workshop-container .card-body {
         padding: 10px;
     }
+
+    .thank-you-page {
+        background-size: 100% 90%;
+    }
+
+    .thank-you-page .left-container {
+        padding-left: 0;
+    }
+
+    .thank-you-page h1 {
+        font-size: 27px;
+        margin: 20px 0 15px 0;
+    }
+
+    .thank-you-page .right-container img {
+        object-fit: cover;
+        height: 336px;
+        width: 100%;
+    }
+
+    .thank-you-page p {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+
+    .thank-you-page .buy-btn {
+        font-size: 15px;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -2221,6 +2349,26 @@ footer .footer-bottom p {
     .blog-page .sidebar .workshop-container .card-body li a {
         font-size: 17px;
     }
+
+    .thank-you-page {
+        background-color: rgba(132, 60, 70);
+        background-image: none;
+        padding: 15px 0;
+    }
+
+    .thank-you-page .left-container {
+        padding-left: 15px;
+    }
+
+    .thank-you-page .right-container {
+        padding-top: 15px;
+    }
+
+    .thank-you-page .right-container img {
+        object-fit: cover;
+        height: 450px;
+        width: 100%;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -2293,6 +2441,15 @@ footer .footer-bottom p {
     .blog-page .blog-column .details .button-container .social-container {
         margin-left: 145px;
     }
+
+    .thank-you-page .thumb {
+        height: 70px;
+    }
+
+    .thank-you-page .right-container img {
+        object-fit: cover;
+        height: 400px;
+    }
 }
 
 @media only screen and (max-width: 360px) {
@@ -2326,6 +2483,10 @@ footer .footer-bottom p {
 
     .blog-page .blog-column .details .button-container .social-container {
         margin-left: 130px;
+    }
+
+    .thank-you-page .right-container img {
+        height: 320px;
     }
 }
 
