@@ -5,19 +5,19 @@
 @stop
 
 @section('content')
-    <div class="container thankyou-container">
-        <div class="row">
-            <div class="col-sm-6 col-sm-offset-3 text-center">
-                <div class="thankyou">
-                    <div class="thankyou-header">
-                        <div><img src="{{asset('images/thankyou.png')}}"></div>
-                    </div>
-                    <div class="thankyou-content">
-                        <h3>Takk for at du meldte deg på!</h3>
-                        <p>
-                            Du vil nå få tilsendt en epost!
-                        </p>
-                    </div>
+    <div class="thank-you-page">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6 left-container">
+                    <img src="{{ asset('images-new/thumb-icon.png') }}" alt="" class="thumb">
+                    <h1>Takk for at du meldte deg på!</h1>
+                    <p>
+                        Du vil nå få tilsendt en epost!
+                    </p>
+                </div>
+
+                <div class="col-sm-6 right-container">
+                    <img src="{{ asset('images-new/thankyou-hero.jpg') }}" alt="">
                 </div>
             </div>
         </div>

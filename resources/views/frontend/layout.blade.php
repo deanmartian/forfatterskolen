@@ -46,7 +46,7 @@
     @endif
 
         <?php
-        $newDesignPages = ['front.shop-manuscript.index', 'front.publishing', 'front.blog', 'front.shop.thankyou']
+        $newDesignPages = ['front.shop-manuscript.index', 'front.publishing', 'front.blog', 'front.shop.thankyou', 'front.thank-you']
         ?>
         @if(!in_array(Route::currentRouteName(), $newDesignPages))
             @include('frontend.partials.navbar')

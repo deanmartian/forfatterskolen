@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="{{asset('css/vendor.min.css')}}">
 <link rel="stylesheet" href="{{asset('css/ie-vendor.min.css')}}">
 <?php
-    $newDesignPages = ['front.shop-manuscript.index', 'front.publishing', 'front.blog', 'front.shop.thankyou']
+    $newDesignPages = ['front.shop-manuscript.index', 'front.publishing', 'front.blog', 'front.shop.thankyou', 'front.thank-you']
 ?>
 @if(in_array(Route::currentRouteName(), $newDesignPages))
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
