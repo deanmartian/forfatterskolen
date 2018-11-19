@@ -1,6 +1,7 @@
 <script type="text/javascript" src="{{asset('js/jquery-3.2.1.min.js')}}"></script>
 <?php
-$newDesignPages = ['front.shop-manuscript.index', 'front.publishing', 'front.blog', 'front.shop.thankyou', 'front.thank-you']
+$newDesignPages = ['front.shop-manuscript.index', 'front.publishing', 'front.blog', 'front.shop.thankyou', 'front.thank-you',
+    'front.course.index']
 ?>
 @if(in_array(Route::currentRouteName(), $newDesignPages))
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"

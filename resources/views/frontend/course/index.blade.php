@@ -5,59 +5,69 @@
 @stop
 
 @section('content')
-	@if(Auth::user())
-		<div class="account-container">
-		@include('frontend.partials.learner-menu')
-			<div class="col-sm-12 col-md-10 sub-right-content">
-				<div class="col-sm-12">
-	@endif
-					<div class="container">
-			<div class="courses-hero text-center">
-				<div class="row">
-					<div class="col-sm-12">
-						<h2><span class="highlight">VÅRE</span> KURS</h2>
-						Å skrive et manus kan være en utfordring. Det mangler sjelden på ideer og lyst, <br />
-						men hvordan komme i gang? Og hvordan lykkes med å skrive et godt manus – uten å gi opp på veien? Fortvil ikke, vi har skreddersydde kurs til å hjelpe deg. I tillegg får du profesjonell veiledning og en uunnværlig heiagjeng.
-					</div>
-				</div>
-			</div>
-		</div>
+	<div class="course-page">
+		<div class="header">
+			<div class="container text-center">
+				<h1>
+					Våre Kurs
+				</h1>
 
-					<div class="container">
-			<div class="row">
-				<div class="col-sm-10 col-sm-offset-1">
-					<p class="text-center courses-description">
-					Forfatterskolens nettbaserte skrivekurs tar deg fem steg til ferdig manus – i ditt tempo. Gjennom praktiske maler, nyttige tips og inspirerende øvelser, får du kunnskapen og selvtilliten du trenger for å skrive ditt manus – med profesjonelle veiledere og en heiagjeng som følger deg gjennom hele kursperioden.<br /><br />
+				<p>
+					Å skrive et manus kan være en utfordring. Det mangler sjelden på ideer og lyst,
+					men hvordan komme i gang? Og hvordan lykkes med å skrive et godt manus – uten å gi opp på veien?
+					Fortvil ikke, vi har skreddersydde kurs til å hjelpe deg. I tillegg får du profesjonell veiledning
+					og en uunnværlig heiagjeng.
+				</p>
+			</div>
+
+			<div class="row sub-header">
+				<p>
+					Forfatterskolens nettbaserte skrivekurs tar deg fem steg til ferdig manus – i ditt tempo. Gjennom
+					praktiske maler, nyttige tips og inspirerende øvelser, får du kunnskapen og selvtilliten du trenger
+					for å skrive ditt manus – med profesjonelle veiledere og en heiagjeng som følger deg gjennom hele
+					kursperioden.
+				</p>
+
+				<p class="highlight">
 					Vi er der for deg – hele veien!
-					</p>
-				</div>
-			</div>
+				</p>
+			</div> <!-- end sub-header -->
+		</div> <!-- end header -->
 
-			<div class="row courses-list">
-				@foreach( $courses as $course )
-					@if( \App\Http\FrontendHelpers::isCourseAvailable($course) || $course->is_free)
-					<div class="col-sm-12 col-md-4">
-						<div class="all-course-course">
-							<div class="image" style="background-image: url({{$course->course_image}})"></div>
-							<div class="details">
-								<div class="course-info">
-									<h4>{{ $course->title }}</h4>
-									<p>{{ str_limit(strip_tags($course->description), 180)}}</p>
+		<div class="container courses-list-container">
+			@foreach($courses->chunk(3) as $courses_chunk)
+				<div class="row">
+					@foreach($courses_chunk as $course)
+							@if( \App\Http\FrontendHelpers::isCourseAvailable($course) || $course->is_free)
+								<div class="col-sm-4">
+									<div class="course">
+										<div class="course-header" style="background-image: url({{$course->course_image}})">
+											{{--<div class="header-content">
+												<div class="pull-left">
+													testing
+												</div>
+												<div class="pull-right">
+													test
+												</div>
+											</div>--}}
+
+											<a href="{{ route('front.course.show', $course->id) }}" class="btn btn-details">Details</a>
+										</div>
+										<div class="course-body">
+											<h2>
+												{{ $course->title }}
+											</h2>
+
+											<p class="color-b4">{{ str_limit(strip_tags($course->description), 180)}}</p>
+
+											<a href="{{ route('front.course.show', $course->id) }}" class="btn buy-btn">Les Mer</a>
+										</div>
+									</div>
 								</div>
-							</div>
-							<a class="buy_now" href="{{ route('front.course.show', $course->id) }}">Les mer</a>
-						</div>
-					</div>
-					@endif
-				@endforeach
-			</div>
-		</div>
-	@if(Auth::user())
+							@endif
+					@endforeach
 				</div>
-			</div>
-
-		<div class="clearfix"></div>
+			@endforeach
+		</div> <!-- end courses-list-container -->
 	</div>
-	@endif
-
 @stop
