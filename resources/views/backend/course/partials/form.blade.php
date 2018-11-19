@@ -64,6 +64,10 @@
 					<label>{{ trans('site.display-order') }}</label>
 					<input type="number" class="form-control" name="display_order" @if( $course['display_order'] ) value="{{ $course['display_order'] }}" @endif>
 				</div>
+				<div class="form-group">
+					<label>Instructor</label>
+					<input type="text" class="form-control" name="instructor" @if( $course['instructor'] ) value="{{ $course['instructor'] }}" @endif>
+				</div>
 
 				<div class="form-group">
 					<label>Free</label> <br>

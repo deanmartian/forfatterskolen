@@ -74,7 +74,8 @@ class CourseController extends Controller
             'start_date' => '',
             'end_date' => '',
             'display_order' => '',
-            'is_free' => ''
+            'is_free' => '',
+            'instructor' => ''
         ];
         return view('backend.course.create', compact('course'));
     }
@@ -108,6 +109,7 @@ class CourseController extends Controller
         $course->start_date = $request->start_date;
         $course->end_date = $request->end_date;
         $course->is_free = isset($request->is_free) ? 1 : 0;
+        $course->instructor = $request->instructor;
         $course->save();
         return redirect(route('admin.course.show', $course->id));
     }
@@ -156,6 +158,7 @@ class CourseController extends Controller
         $course->type = $request->type;
         $course->start_date = $request->start_date;
         $course->end_date = $request->end_date;
+        $course->instructor = $request->instructor;
         $course->save();
         return redirect(route('admin.course.show', $course->id));
     }
