@@ -42,16 +42,23 @@
 								<div class="col-sm-4">
 									<div class="course">
 										<div class="course-header" style="background-image: url({{$course->course_image}})">
-											{{--<div class="header-content">
-												<div class="pull-left">
-													testing
-												</div>
-												<div class="pull-right">
-													test
-												</div>
-											</div>--}}
+											<div class="header-content">
+												@if ($course->instructor)
+													<div class="left-container">
+														<small>Instructor</small>
+														<h2><i class="img-icon"></i>{{ $course->instructor }}</h2>
+													</div>
+												@endif
 
-											<a href="{{ route('front.course.show', $course->id) }}" class="btn btn-details">Details</a>
+												@if ($course->start_date)
+													<div class="right-container">
+														<small>Date</small>
+														<h2><i class="img-icon"></i>{{ \App\Http\FrontendHelpers::formatDate($course->start_date) }}</h2>
+													</div>
+												@endif
+											</div>
+
+											<a href="{{ route('front.course.show', $course->id) }}" class="btn btn-details">Detaljer</a>
 										</div>
 										<div class="course-body">
 											<h2>
@@ -60,7 +67,7 @@
 
 											<p class="color-b4">{{ str_limit(strip_tags($course->description), 180)}}</p>
 
-											<a href="{{ route('front.course.show', $course->id) }}" class="btn buy-btn">Les Mer</a>
+											<a href="{{ route('front.course.show', $course->id) }}" class="btn buy-btn">Les mer</a>
 										</div>
 									</div>
 								</div>

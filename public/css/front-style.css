@@ -1211,11 +1211,39 @@ start today section
 
 .course-page .courses-list-container .course-header .header-content {
     color: #fff;
-    padding: 20px;
+    padding: 20px 40px;
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
+}
+
+.course-page .courses-list-container .course-header .header-content h2 {
+    font-size: 16px;
+}
+
+.course-page .courses-list-container .course-header .header-content .left-container {
+    float: left;
+}
+
+.course-page .courses-list-container .course-header .header-content .right-container {
+    float: right;
+}
+
+.course-page .courses-list-container .course-header .header-content .left-container i:before {
+    background-image: url(../images-new/icon/user.png);
+    position: absolute;
+    transform: translate(-26px,0);
+    height: 18px;
+    width: 18px;
+}
+
+.course-page .courses-list-container .course-header .header-content .right-container i:before {
+    background-image: url(../images-new/icon/calendar-white.png);
+    position: absolute;
+    transform: translate(-26px,0);
+    height: 18px;
+    width: 18px;
 }
 
 .course-page .courses-list-container .course-header .btn-details {
@@ -1588,6 +1616,10 @@ footer .footer-bottom p {
         height: 230px;
         padding: 20px 10px;
     }
+
+    .course-page .courses-list-container .course-header .header-content .right-container {
+        float: left;
+    }
 }
 
 @media only screen and (max-width: 768px) {
@@ -1953,6 +1985,20 @@ footer .footer-bottom p {
     .course-page .courses-list-container .course-header .btn-details {
         font-size: 14px;
         padding: 3px 15px;
+    }
+
+    .course-page .courses-list-container .course-header .header-content {
+        padding: 10px 40px;
+    }
+
+    .course-page .courses-list-container .course-header .header-content h2 {
+        font-size: 13px;
+    }
+
+    .course-page .courses-list-container .course-header .header-content .left-container i:before,
+    .course-page .courses-list-container .course-header .header-content .right-container i:before{
+        height: 16px;
+        width: 16px;
     }
 }
 
@@ -2367,6 +2413,24 @@ footer .footer-bottom p {
         height: 12px;
         margin: 4px 0 0 15px;
     }
+
+    .course-page .courses-list-container .course-header .header-content {
+        font-size: 12px;
+        padding: 0 30px;
+    }
+
+    .course-page .courses-list-container .course-header .header-content h2 {
+        font-size: 12px;
+    }
+
+    .course-page .courses-list-container .course-header .header-content small {
+        font-size: 10px;
+    }
+
+    .course-page .courses-list-container .course-header .header-content .left-container i:before,
+    .course-page .courses-list-container .course-header .header-content .right-container i:before{
+        transform: translate(-20px,0);
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -2725,6 +2789,30 @@ footer .footer-bottom p {
     .course-page .courses-list-container .course-header .btn-details {
         font-size: 15px;
     }
+
+    .course-page .courses-list-container .course-header .header-content {
+        font-size: 12px;
+        padding: 10px 40px;
+    }
+
+    .course-page .courses-list-container .course-header .header-content .right-container {
+        float: right;
+    }
+
+    .course-page .courses-list-container .course-header .header-content h2 {
+        font-size: 16px;
+    }
+
+    .course-page .courses-list-container .course-header .header-content small {
+        font-size: 12px;
+    }
+
+    .course-page .courses-list-container .course-header .header-content .left-container i:before,
+    .course-page .courses-list-container .course-header .header-content .right-container i:before {
+        height: 18px;
+        width: 18px;
+        transform: translate(-26px,0);
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -2856,6 +2944,11 @@ footer .footer-bottom p {
     .course-page .courses-list-container .course-header {
         height: 190px;
     }
+
+    .course-page .courses-list-container .course-header .header-content {
+        font-size: 12px;
+        padding: 10px 35px;
+    }
 }
 
 @media only screen and (max-width: 320px) {
@@ -2938,5 +3031,16 @@ footer .footer-bottom p {
 
     .course-page .courses-list-container .course-body {
         height: 240px;
+    }
+
+    .course-page .courses-list-container .course-header .header-content h2 {
+        font-size: 13px;
+    }
+
+    .course-page .courses-list-container .course-header .header-content .left-container i:before,
+    .course-page .courses-list-container .course-header .header-content .right-container i:before {
+        height: 16px;
+        width: 16px;
+        transform: translate(-22px,0);
     }
 }
