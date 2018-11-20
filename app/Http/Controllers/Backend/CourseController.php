@@ -204,6 +204,18 @@ class CourseController extends Controller
             $clone_lesson->push();
         endforeach;
 
+        foreach( $course->packages as $package ):
+            $clone_package = $package->replicate();
+            $clone_package->course_id = $clone_course->id;
+            $clone_package->push();
+        endforeach;
+
+        foreach( $course->webinars as $webinar ):
+            $clone_webinar = $webinar->replicate();
+            $clone_webinar->course_id = $clone_course->id;
+            $clone_webinar->push();
+        endforeach;
+
         return redirect(route('admin.course.show', $clone_course->id));
     }
 

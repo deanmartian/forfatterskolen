@@ -281,14 +281,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">{{ trans('clone-course') }}</h4>
+        <h4 class="modal-title">{{ trans('site.clone-course') }}</h4>
       </div>
       <div class="modal-body">
       	<form method="POST" action="{{ route('admin.course.clone', $course->id) }}">
       		{{ csrf_field() }}
-			{{ trans('clone-course-question') }}
+			{{ trans('site.clone-course-question') }}
       		<div class="text-right margin-top">
-      			<button type="submit" class="btn btn-primary">{{ trans('clone') }}</button>
+      			<button type="submit" class="btn btn-primary">{{ trans('site.clone') }}</button>
       		</div>
       	</form>
       </div>
