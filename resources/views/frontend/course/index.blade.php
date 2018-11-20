@@ -45,7 +45,7 @@
 											<div class="header-content">
 												@if ($course->instructor)
 													<div class="left-container">
-														<small>Foreleser</small>
+														<small>Kursholder</small>
 														<h2><i class="img-icon"></i>{{ $course->instructor }}</h2>
 													</div>
 												@endif
