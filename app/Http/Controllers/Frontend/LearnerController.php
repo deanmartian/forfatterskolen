@@ -1302,7 +1302,7 @@ class LearnerController extends Controller
 
         $payment_plan = ( $paymentMode->mode == "Paypal" ) ?  "Hele beløpet" : $paymentPlan->plan;
 
-        $dueDate = date("Y-m-d");
+        $dueDate = date("Y-m-d", strtotime($package->issue_date ? $package->issue_date : date('Y-m-d')));
         $dueDate = Carbon::parse($dueDate);
         $payment_plan = trim($payment_plan);
 
@@ -1449,7 +1449,8 @@ class LearnerController extends Controller
             $price      = round($price/$division, 2); // round the value to the nearest tenths
             $price      = (int)$price*100;
             for ($i=1; $i <= $paymentPlan->division; $i++ ) { // loop based on the split count
-                $dueDate =  Carbon::today()->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
+                $issue_date = $package->issue_date ? $package->issue_date : date('Y-m-d');
+                $dueDate = Carbon::parse($issue_date)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
                 $invoice_fields = [
                     'user_id' => Auth::user()->id,
                     'first_name' => Auth::user()->first_name,
