@@ -35,6 +35,18 @@
 
         <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}" />
         @yield('styles')
+
+        <!-- ConnectRetarget PowerPixel -->
+        <script>
+            let CRConfig = {
+                'pixel_prefix':'forfatterskolen',
+                'init_fb':true,
+                'fb_pixel_id':'216415385555961'
+            };
+        </script>
+        <script src='//connectio.s3.amazonaws.com/connect-retarget.js?v=1.1'></script>
+        <noscript><img height='1' width='1' style='display:none' src='https://www.facebook.com/tr?id=216415385555961&ev=PageView&noscript=1' /></noscript>
+        <!-- End ConnectRetarget PowerPixel -->
     </head>
     <body>
 
