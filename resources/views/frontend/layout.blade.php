@@ -59,7 +59,7 @@
 
         <?php
         $newDesignPages = ['front.shop-manuscript.index', 'front.publishing', 'front.blog', 'front.shop.thankyou',
-            'front.thank-you', 'front.course.index']
+            'front.thank-you', 'front.course.index', 'front.course.show']
         ?>
         @if(!in_array(Route::currentRouteName(), $newDesignPages))
             @include('frontend.partials.navbar')

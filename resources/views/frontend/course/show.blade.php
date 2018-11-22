@@ -4,304 +4,376 @@
 <title>{{$course->title}} &rsaquo; Forfatterskolen</title>
 @stop
 
+@section('styles')
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+@stop
+
 @section('content')
-<div class="container course-details-container">
+
     <?php
-    $today 	= \Carbon\Carbon::today()->format('Y-m-d');
-    $from 	= \Carbon\Carbon::parse($course->packages[0]->full_payment_sale_price_from)->format('Y-m-d');
-    $to 	= \Carbon\Carbon::parse($course->packages[0]->full_payment_sale_price_to)->format('Y-m-d');
-    $isBetween = (($today >= $from) && ($today <= $to)) ? 1 : 0;
+		$today 	= \Carbon\Carbon::today()->format('Y-m-d');
+		$from 	= \Carbon\Carbon::parse($course->packages[0]->full_payment_sale_price_from)->format('Y-m-d');
+		$to 	= \Carbon\Carbon::parse($course->packages[0]->full_payment_sale_price_to)->format('Y-m-d');
+		$isBetween = (($today >= $from) && ($today <= $to)) ? 1 : 0;
+		$start_date = \Carbon\Carbon::parse($course->start_date);
     ?>
 
-	<div class="row">
-		<div class="col-sm-12 col-md-6">
-			<div class="course-image" style="background-image: url({{$course->course_image}})"></div>
+	<div class="course-single-page">
+		<div class="header">
+			<div class="container text-center">
+				<h1>{{$course->title}}</h1>
+				@if (!$course->is_free)
+					<span class="course-price">
+						Fra {{\App\Http\FrontendHelpers::currencyFormat($isBetween && $course->packages[0]->full_payment_sale_price
+						? $course->packages[0]->full_payment_sale_price
+						: $course->packages[0]->full_payment_price)}} kroner
+					</span>
+				@endif
 
-			@if ($course->is_free)
-				<form action="{{ route('front.course.getFreeCourse', $course->id) }}" method="POST"
-				onsubmit="disableSubmit(this)">
-					{{ csrf_field() }}
-					@if (Auth::guest())
-						<div class="form-group mb-3">
-							<input type="text" class="form-control" placeholder="Fornavn" name="first_name"
-								   value="{{ old('first_name') }}" required>
-						</div>
+				<div class="sub-header">
+					<a href="{{route('front.course.checkout', ['id' => $course->id])}}" class="btn buy-course">Bestill Kurset</a>
+					Velkommen til Forfatterskolen. Vi gleder oss til å hjelpe deg med å nå forfatterdrømmen din!
+				</div>
+			</div>
+		</div> <!-- end header -->
 
-						<div class="form-group mb-3">
-							<input type="text" class="form-control" placeholder="Etternavn" name="last_name"
-								   value="{{ old('last_name') }}" required>
-						</div>
-
-						<div class="form-group mb-3">
-							<input type="email" class="form-control" placeholder="Epost" name="email"
-								   value="{{ old('email') }}" required>
-						</div>
-						<button class="btn btn-theme btn-block" type="submit">Get Free Course</button>
-					@else
-						<?php
-                        	$course_packages = $course->packages->pluck('id')->toArray();
-                        	$courseTaken = App\CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
-						?>
-						@if (!$courseTaken)
-							<button class="btn btn-theme btn-block" type="submit">Get Free Course</button>
-						@endif
-					@endif
-				</form>
-
-				@if ( $errors->any() )
-					<div class="alert alert-danger margin-top">
-						<ul>
-							@foreach($errors->all() as $error)
-								<li>{{$error}}</li>
-							@endforeach
-						</ul>
+		<div class="container single-content">
+			<div class="row course-image-row" style="background-image: url({{$course->course_image}})">
+				@if ($course->start_date)
+					<div class="date-container">
+						<h1>
+							{{ $start_date->format('d') }}
+						</h1>
+						<h2>
+							{{ strtoupper($start_date->format('M')) }}
+						</h2>
 					</div>
 				@endif
-			@endif
+			</div> <!-- end course-image-row -->
 
-		</div>
-		<div class="col-sm-12 col-md-6">
-			<h2>{{$course->title}}</h2>
-
-			@if (!$course->is_free)
-				<div class="course-price">Fra {{FrontendHelpers::currencyFormat($isBetween && $course->packages[0]->full_payment_sale_price
-				? $course->packages[0]->full_payment_sale_price
-				: $course->packages[0]->full_payment_price)}} kroner</div>
-				<br />
-			@endif
-			@if(Auth::guest())
-				@if ($course->for_sale && !$course->is_free)
-					<a class="btn btn-theme btn-lg" href="{{route('front.course.checkout', ['id' => $course->id])}}">Bestill Kurset</a>
-				@endif
-			@else
-                <?php
-                $course_packages = $course->packages->pluck('id')->toArray();
-                $courseTaken = App\CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
-                ?>
-				@if($courseTaken)
-					<a href="{{route('learner.course.show', ['id' => $courseTaken->id])}}" class="btn btn-theme btn-lg">Fortsett Kurset</a>
-				@else
-					@if ($course->for_sale && !$course->is_free)
-						<a class="btn btn-theme btn-lg" href="{{route('front.course.checkout', ['id' => $course->id])}}">Bestill Kurset</a>
-					@endif
-				@endif
-			@endif
-
-			<br />
-			<br />
-			<p>
-			{!! nl2br($course->description) !!}
-			</p>
-
-			@if (!$course->is_free)
-				<div class="course-price">Fra {{FrontendHelpers::currencyFormat($isBetween && $course->packages[0]->full_payment_sale_price
-				? $course->packages[0]->full_payment_sale_price
-				: $course->packages[0]->full_payment_price)}} kroner</div>
-				<br />
-			@endif
-			@if(Auth::guest())
-				@if ($course->for_sale && !$course->is_free)
-					<a class="btn btn-theme btn-lg" href="{{route('front.course.checkout', ['id' => $course->id])}}">Bestill Kurset</a>
-				@endif
-			@else
-				<?php 
-				$course_packages = $course->packages->pluck('id')->toArray(); 
-				$courseTaken = App\CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
-				?>
-				@if($courseTaken)
-				<a href="{{route('learner.course.show', ['id' => $courseTaken->id])}}" class="btn btn-theme btn-lg">Fortsett Kurset</a>
-				@else
-					@if ($course->for_sale && !$course->is_free)
-						<a class="btn btn-theme btn-lg" href="{{route('front.course.checkout', ['id' => $course->id])}}">Bestill Kurset</a>
-					@endif
-				@endif
-			@endif
-
-
-		</div>
-	</div>
-
-	<br /><br /><br />
-	
-	<!-- Packages -->
-	<div class="row">
-		<div class="col-sm-12">
-			<div class="theme-tabs">
-				<ul class="nav nav-tabs">
-					@if (!$course->is_free)
-				  		<li class="active"><a data-toggle="tab" href="#packages"><span>Skrivepakke detaljer</span></a></li>
-					@endif
-				  <li {{ $course->is_free ? 'class=active' : '' }}>
-					  <a data-toggle="tab" href="#kursplan">
-						  <span>{{ $course->id == 17 ? 'Planlagte webinarer' : 'Kursplan' }}</span> <!-- check if webinar-pakke -->
-					  </a>
-				  </li>
-					@if($course->testimonials->count())
-					<li><a data-toggle="tab" href="#testimonial"><span>Tilbakemelding fra elever</span></a></li>
-					@endif
-				</ul>
-
-				<div class="tab-content course-tabs">
-					@if (!$course->is_free)
-				  		<div id="packages" class="tab-pane fade in active package">
-				  
-					@foreach($course->packages as $package)
-						<?php
-                          $from 		= \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
-                          $to 			= \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
-                          $isBetween 	= (($today >= $from) && ($today <= $to)) ? 1 : 0;
-						  ?>
-
-					  @if ($isBetween && $package->full_payment_sale_price)
-							<h4><i class="fa fa-cube package-icon"></i>{{$package->variation}} -
-								<span class="line-through margin-right-5">
-									{{FrontendHelpers::currencyFormat($package->full_payment_price)}}
-								</span>
-								<span class="font-red">
-									Salg {{FrontendHelpers::currencyFormat($package->full_payment_sale_price)}}
-								</span>
-							</h4>
-					  @else
-							<h4><i class="fa fa-cube package-icon"></i>{{$package->variation}} -
-								{{FrontendHelpers::currencyFormat($package->full_payment_price)}}</h4>
-					  @endif
-				  	<div class="package-details">
-						<p>{!! nl2br($package->description) !!}</p>
-						@if( $package->shop_manuscripts->count() > 0 || 
-							$package->included_courses->count() > 0 ||
-							$package->workshops > 0 || $package->has_coaching
-							)
-							<strong>Inkluderer</strong><br />
-							@if( $package->shop_manuscripts->count() > 0 )
-							@foreach( $package->shop_manuscripts as $shop_manuscripts )
-							{{ $shop_manuscripts->shop_manuscript->title }} <br />
-							@endforeach
-							@endif
-
-							@if( $package->workshops )
-							{{ $package->workshops }} workshops <br />
-							@endif
-
-							@if( $package->included_courses->count() > 0 )
-							@foreach( $package->included_courses as $included_course )
-							{{ $included_course->included_package->course->title }} ({{ $included_course->included_package->variation }}) <br />
-							@endforeach
-							@endif
-
-							@if ($package->has_coaching)
-								{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($package->has_coaching) }} coaching session
-							@endif
-						@endif
-				  	</div>
-				  	@endforeach
-
-				  </div>
-					@endif
-				  <div id="kursplan" class="tab-pane fade @if($course->is_free)in active @endif">
-					  @if ($course->id == 17)
-						  <?php
-                          	$webinars = $course->webinars()->where('set_as_replay',0)->get();
-						  ?>
-					  		@foreach($webinars->chunk(4) as $webinars)
-								<div class="row">
-								  @foreach($webinars as $webinar)
-									  <div class="col-sm-3">
-										  <div class="all-course-course">
-											  <div class="image" style="background-image: url({{ $webinar->image ?: asset('/images/no_image.png')}})"></div>
-											  <div class="details">
-												  <div class="course-info">
-													  <h4>{{ $webinar->title }}</h4>
-													  <p>{{ str_limit(strip_tags($webinar->description), 180)}}</p>
-												  </div>
-											  </div>
-										  </div>
-									  </div>
-								  @endforeach
+			@if ($course->is_free)
+				<div class="row free-course-form-row">
+					<form action="{{ route('front.course.getFreeCourse', $course->id) }}" method="POST"
+						  onsubmit="disableSubmit(this)" class="form-inline">
+						{{ csrf_field() }}
+							@if (Auth::guest())
+								<div class="form-group col-md-3">
+									<input type="text" class="form-control" placeholder="Fornavn" name="first_name"
+										   value="{{ old('first_name') }}" required>
 								</div>
-							@endforeach
-					  @else
-						  @if ($course->lesson_kursplan()->get()->count())
-							  {!! $course->lesson_kursplan()->get()[0]->content !!}
-						  @else
-							  {!! nl2br($course->course_plan) !!}
-						  @endif
-					  @endif
-				  </div>
-
-					@if($course->testimonials->count())
-						<div id="testimonial" class="tab-pane fade course-testimonials text-center">
-							@foreach($course->testimonials->chunk(3) as $testimonial_chunk)
-								<div class="row">
-									@foreach($testimonial_chunk as $testimonial)
-										<div class="col-lg-4 col-md-12 mb-4">
-											<!--card-->
-											<div class="card testimonial-card">
-												@if($testimonial->is_video)
-													<video height="194" controls>
-														<source src="{{ URL::asset($testimonial['user_image']) }}">
-													</video>
-												@else
-													<div class="card-head"></div>
-													<div class="avatar">
-														<img src="{{$testimonial['user_image'] ? asset($testimonial['user_image']) : asset('images/user.png')}}">
-													</div>
-												@endif
-												<div class="card-body">
-													<h4>
-														<strong>{{ $testimonial['name'] }}</strong>
-													</h4>
-													<hr>
-													<p class="dark-grey-text">{{ $testimonial['testimony'] }}</p>
-												</div>
-											</div>
-											<!--card-->
-										</div>
-									@endforeach
+								<div class="form-group col-md-3">
+									<input type="text" class="form-control" placeholder="Etternavn" name="last_name"
+										   value="{{ old('last_name') }}" required>
 								</div>
-							@endforeach
+								<div class="form-group col-md-3">
+									<input type="email" class="form-control" placeholder="Epost" name="email"
+										   value="{{ old('email') }}" required>
+								</div>
+
+								<div class="form-group col-md-3">
+									<button type="submit" class="btn btn-theme">Get Free Course</button>
+								</div>
+							@else
+								<?php
+								$course_packages = $course->packages->pluck('id')->toArray();
+								$courseTaken = App\CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
+								?>
+								@if (!$courseTaken)
+									<button class="btn btn-theme" type="submit">Get Free Course</button>
+								@endif
+							@endif
+					</form>
+
+					@if ( $errors->any() )
+						<div class="alert alert-danger margin-top">
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<ul>
+								@foreach($errors->all() as $error)
+									<li>{{$error}}</li>
+								@endforeach
+							</ul>
 						</div>
 					@endif
 				</div>
+			@endif
+
+			<div class="row details-container">
+				<div class="theme-tabs">
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="nav-item">
+							<a data-toggle="tab" href="#overview" class="nav-link active" role="tab">
+								<span>Overview</span> <!-- check if webinar-pakke -->
+							</a>
+						</li>
+						@if (!$course->is_free)
+							<li class="nav-item">
+								<a data-toggle="tab" href="#packages" class="nav-link" role="tab"><span>Skrivepakke detaljer</span></a>
+							</li>
+						@endif
+						<li class="nav-item">
+							<a data-toggle="tab" href="#kursplan" class="nav-link" role="tab">
+								<span>{{ $course->id == 17 ? 'Planlagte webinarer' : 'Kursplan' }}</span> <!-- check if webinar-pakke -->
+							</a>
+						</li>
+						@if($course->testimonials->count())
+							<li class="nav-item">
+								<a data-toggle="tab" href="#testimonials" class="nav-link" role="tab">
+									<span>Tilbakemelding fra elever</span>
+								</a>
+							</li>
+						@endif
+					</ul>
+
+					<div class="tab-content course-tabs">
+
+						<div id="overview" class="tab-pane fade in active" role="tabpanel">
+							{!! nl2br($course->description) !!}
+							@if (!$course->is_free)
+								<p class="course-price">
+									Fra {{\App\Http\FrontendHelpers::currencyFormat($isBetween && $course->packages[0]->full_payment_sale_price
+									? $course->packages[0]->full_payment_sale_price
+									: $course->packages[0]->full_payment_price)}} kroner
+								</p>
+							@endif
+						</div> <!-- end overview -->
+
+						@if (!$course->is_free)
+							<div id="packages" class="tab-pane fade" role="tabpanel">
+								@foreach($course->packages as $package)
+                                    <?php
+                                    $from 		= \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
+                                    $to 			= \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
+                                    $isBetween 	= (($today >= $from) && ($today <= $to)) ? 1 : 0;
+                                    ?>
+
+									@if ($isBetween && $package->full_payment_sale_price)
+										<h4><i class="img-icon"></i>{{$package->variation}} -
+											<span class="line-through margin-right-5">
+												{{FrontendHelpers::currencyFormat($package->full_payment_price)}}
+											</span>
+											<span class="font-red">
+												Salg {{FrontendHelpers::currencyFormat($package->full_payment_sale_price)}}
+											</span>
+										</h4>
+									@else
+										<h4><i class="img-icon"></i>{{$package->variation}} -
+											{{FrontendHelpers::currencyFormat($package->full_payment_price)}}</h4>
+									@endif
+									<div class="package-details">
+										<p>{!! nl2br($package->description) !!}</p>
+										@if( $package->shop_manuscripts->count() > 0 ||
+                                            $package->included_courses->count() > 0 ||
+                                            $package->workshops > 0 || $package->has_coaching
+                                            )
+											<strong>Inkluderer</strong><br />
+											@if( $package->shop_manuscripts->count() > 0 )
+												@foreach( $package->shop_manuscripts as $shop_manuscripts )
+													{{ $shop_manuscripts->shop_manuscript->title }} <br />
+												@endforeach
+											@endif
+
+											@if( $package->workshops )
+												{{ $package->workshops }} workshops <br />
+											@endif
+
+											@if( $package->included_courses->count() > 0 )
+												@foreach( $package->included_courses as $included_course )
+													{{ $included_course->included_package->course->title }} ({{ $included_course->included_package->variation }}) <br />
+												@endforeach
+											@endif
+
+											@if ($package->has_coaching)
+												{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($package->has_coaching) }} coaching session
+											@endif
+										@endif
+									</div>
+								@endforeach
+							</div> <!-- end packages -->
+						@endif
+
+						<div id="kursplan" class="tab-pane fade" role="tabpanel">
+							@if ($course->id == 17)
+                                <?php
+                                $webinars = $course->webinars()->where('set_as_replay',0)->get();
+                                ?>
+								<div class="row webinars-container">
+
+									<?php
+										$webinars_chunk = $webinars->chunk(9);
+									?>
+
+									<div id="webinars-carousel" class="carousel slide global-carousel"
+										 data-ride="carousel" data-interval="false">
+
+										<!-- Indicators -->
+										<ul class="carousel-indicators">
+											@for($i=0; $i<=$webinars_chunk->count() - 1;$i++)
+												<li data-target="#webinars-carousel" data-slide-to="{{$i}}"
+													@if($i == 0) class="active" @endif></li>
+											@endfor
+										</ul>
+
+										<!-- The slideshow -->
+										<div class="container carousel-inner no-padding">
+											@foreach($webinars_chunk as $k => $webinars)
+												<div class="carousel-item {{ $k==0 ? 'active' : '' }}">
+													@foreach($webinars as $webinar)
+														<div class="col-md-4">
+															<div class="panel panel-default">
+																<div class="panel-body">
+																	<div class="image-container"
+																		 style="background-image:url({{ $webinar->image
+																		 ?: asset('/images/no_image.png')}})"></div>
+																	<div class="webinar-details">
+																		<span class="theme-text title">
+																			{{ $webinar->title }}
+																		</span>
+																		<p>{{ str_limit(strip_tags($webinar->description), 180)}}</p>
+																	</div>
+																</div>
+															</div>
+														</div>
+													@endforeach
+												</div>
+											@endforeach
+										</div>
+
+										<!-- Left and right controls -->
+										<a class="carousel-control-prev" href="#webinars-carousel" data-slide="prev">
+											<span class="carousel-control-prev-icon"></span>
+										</a>
+										<a class="carousel-control-next" href="#webinars-carousel" data-slide="next">
+											<span class="carousel-control-next-icon"></span>
+										</a>
+
+									</div> <!-- end testimonials-carouse -->
+								</div> <!-- end testimonial-container -->
+							@else
+								@if ($course->lesson_kursplan()->get()->count())
+									{!! $course->lesson_kursplan()->get()[0]->content !!}
+								@else
+									{!! nl2br($course->course_plan) !!}
+								@endif
+							@endif
+						</div> <!-- end kursplan -->
+
+						@if($course->testimonials->count())
+							<div id="testimonials" class="tab-pane fade course-testimonials text-center" role="tabpanel">
+								<div class="card-columns global-card-columns">
+									@foreach($course->testimonials->chunk(3) as $testimonial_chunk)
+										<div class="card-container">
+											@foreach($testimonial_chunk as $testimonial)
+												<div class="card testimonial-card">
+													@if($testimonial->is_video)
+														<video controls>
+															<source src="{{ URL::asset($testimonial['user_image']) }}">
+														</video>
+													@else
+														<div class="card-header"></div>
+													@endif
+
+													<div class="card-body">
+														@if(!$testimonial->is_video)
+															<div class="avatar">
+																<img src="{{$testimonial['user_image'] ? asset($testimonial['user_image']) : asset('images/user.png')}}"
+																	 class="rounded-circle">
+															</div>
+															<div class="divider"></div>
+														@endif
+
+														<p class="dark-grey-text">{{ $testimonial['testimony'] }}</p>
+													</div>
+													<div class="card-footer">
+														{{ $testimonial['name'] }}
+													</div>
+												</div>
+											@endforeach
+										</div>
+									@endforeach
+								</div> <!-- end card-columns -->
+							</div> <!-- end testimonials -->
+						@endif
+
+					</div> <!-- end course-tabs -->
+				</div> <!-- end theme-tabs -->
+			</div> <!-- end details-container -->
+		</div> <!-- end container -->
+
+		<div class="similar-courses">
+			<div class="container">
+				<h1 class="text-center">Se Tilsvarende Kurs</h1>
+
+				<div class="row similar-courses-row">
+					@foreach( $course->similar_courses as $similar_course )
+						<div class="col-sm-4">
+							<div class="course">
+								<div class="course-header" style="background-image: url({{$course->course_image}})">
+									<div class="header-content">
+										@if ($similar_course->similar_course->instructor)
+											<div class="left-container">
+												<small>Kursholder</small>
+												<h2><i class="img-icon"></i>{{ $similar_course->similar_course->instructor }}</h2>
+											</div>
+										@endif
+
+										@if ($similar_course->similar_course->start_date)
+											<div class="right-container">
+												<small>Date</small>
+												<h2><i class="img-icon"></i>{{ \App\Http\FrontendHelpers::formatDate($similar_course->similar_course->start_date) }}</h2>
+											</div>
+										@endif
+									</div>
+
+									<a href="{{ route('front.course.show', $similar_course->similar_course->id) }}" class="btn btn-details">Detaljer</a>
+								</div>
+								<div class="course-body">
+									<h2>
+										{{ $similar_course->similar_course->title }}
+									</h2>
+
+									<p class="color-b4">{{ str_limit(strip_tags($similar_course->similar_course->description), 180)}}</p>
+
+									<a href="{{ route('front.course.show', $similar_course->similar_course->id) }}" class="btn buy-btn">Les mer</a>
+								</div>
+							</div>
+						</div>
+					@endforeach
+				</div>
 			</div>
-		</div>
-	</div>
+		</div> <!-- end similar courses -->
+	</div> <!-- end course-single-page -->
 
 
-	<div class="row similar-courses">
-		<div class="col-sm-12 text-center margin-bottom all-caps"><h3><span class="highlight">Se</span> tilsvarende kurs</h3></div>
-		@foreach( $course->similar_courses as $similar_course )
-		<div class="col-sm-12 col-md-4">
-            <div class="all-course-course">
-                <div class="image" style="background-image: url({{ $similar_course->similar_course->course_image }})"></div>
-                <div class="details">
-                	<div class="course-info">
-	                    <h4>{{ $similar_course->similar_course->title }}</h4>
-						<p>{{ str_limit(strip_tags($similar_course->similar_course->description), 180)}}</p>
-					</div>
-                </div>
-                <a class="buy_now" href="{{ route('front.course.show', $similar_course->similar_course->id) }}">Les mer</a>
-            </div>
-		</div>
-		@endforeach
-	</div>
-</div>
-
-	<?php
-    	$url = Request::input('show_kursplan');
-    	$showKursplan = 0;
+    <?php
+		$url = Request::input('show_kursplan');
+		$showKursplan = 0;
 		if ($url) {
-		    $showKursplan = 1;
+			$showKursplan = 1;
 		}
-	?>
+    ?>
 @stop
 
 @section('scripts')
+	<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+
 	<script>
-		let showKursplan = parseInt('{{ $showKursplan }}');
-		if (showKursplan === 1) {
+
+		let containers = ['overview', 'packages', 'kursplan', 'testimonials'];
+		$.each(containers, function(k, v){
+            $("#"+v).mCustomScrollbar({
+                theme: "minimal-dark",
+                scrollInertia: 500
+            });
+		});
+
+        let showKursplan = parseInt('{{ $showKursplan }}');
+        if (showKursplan === 1) {
             $('[href="#kursplan"]').trigger('click');
             $('html, body').animate({
-                scrollTop: $("#kursplan").offset().top
+                scrollTop: $(".course-tabs").offset().top
             }, 1000);
 		}
 	</script>
