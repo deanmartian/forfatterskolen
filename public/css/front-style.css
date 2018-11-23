@@ -1616,6 +1616,23 @@ start today section
     font-size: 20px;
 }
 
+#coursePlanDataModal .modal-body {
+    padding: 40px 20px;
+}
+
+#coursePlanDataModal table {
+    border: transparent;
+    border-color: transparent;
+    border-style: none !important;
+    float: none !important;
+    margin: 0 auto;
+}
+
+#coursePlanDataModal table > tbody > tr:first-child {
+    background-color: #e83a47;
+    color: #fff;
+}
+
 /* end course single page */
 
 /* theme tabs */
@@ -1685,6 +1702,14 @@ start today section
 }
 
 /* end global carousel */
+
+/* global modal */
+
+.global-modal .modal-content {
+    border-radius: 0;
+}
+
+/* end global modal */
 
 footer .navbar-inverse {
     background-color: #2b2829;
@@ -2508,6 +2533,10 @@ blockquote {
         margin: 20px 0;
     }
 
+    #coursePlanDataModal .modal-body {
+        overflow-x: auto;
+        padding: 20px 10px;
+    }
     /* theme tab */
     .theme-tabs li a {
         padding: 20px;

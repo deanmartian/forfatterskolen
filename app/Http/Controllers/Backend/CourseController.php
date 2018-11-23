@@ -71,6 +71,7 @@ class CourseController extends Controller
             'course_image' => '',
             'type' => '',
             'course_plan' => '',
+            'course_plan_data' => '',
             'start_date' => '',
             'end_date' => '',
             'display_order' => '',
@@ -133,6 +134,7 @@ class CourseController extends Controller
         $course->title = $request->title;
         $course->description = $request->description;
         $course->course_plan = $request->course_plan;
+        $course->course_plan_data = $request->course_plan_data;
         $course->display_order = is_numeric($request->display_order) ? $request->display_order : 0;
 
         if ($request->hasFile('course_image') && $request->file('course_image')->isValid()) :

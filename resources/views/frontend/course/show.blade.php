@@ -104,7 +104,7 @@
 					<ul class="nav nav-tabs" role="tablist">
 						<li class="nav-item">
 							<a data-toggle="tab" href="#overview" class="nav-link active" role="tab">
-								<span>Overview</span> <!-- check if webinar-pakke -->
+								<span>Oversikt</span> <!-- check if webinar-pakke -->
 							</a>
 						</li>
 						@if (!$course->is_free)
@@ -256,6 +256,12 @@
 								@else
 									{!! nl2br($course->course_plan) !!}
 								@endif
+
+								@if ($course->course_plan_data)
+									<button class="btn buy-btn" data-toggle="modal" data-target="#coursePlanDataModal">
+										View Schedule
+									</button>
+								@endif
 							@endif
 						</div> <!-- end kursplan -->
 
@@ -344,6 +350,18 @@
 			</div>
 		</div> <!-- end similar courses -->
 	</div> <!-- end course-single-page -->
+
+	@if ($course->course_plan_data)
+		<div class="modal fade global-modal" role="dialog" id="coursePlanDataModal">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-body text-center">
+						{!! $course->course_plan_data !!}
+					</div>
+				</div>
+			</div>
+		</div>
+	@endif
 
 
     <?php

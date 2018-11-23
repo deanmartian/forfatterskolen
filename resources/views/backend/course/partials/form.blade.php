@@ -32,6 +32,10 @@
 					<label>{{ trans('site.course-plan') }}</label>
 					<textarea name="course_plan" rows="10" class="form-control ckeditor">{{ $course['course_plan'] }}</textarea>
 				</div>
+				<div class="form-group">
+					<label>Course Plan Data</label>
+					<textarea name="course_plan_data" rows="10" class="form-control ckeditor">{{ $course['course_plan_data'] }}</textarea>
+				</div>
 			</div>
 		</div>
 	</div>
