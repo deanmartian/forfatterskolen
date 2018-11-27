@@ -1,8 +1,8 @@
 <?php
 namespace App\Http\TFPDF;
 
-//use App\Http\TFPDF\Font\Unifont\TTFontFile;
-require '../app/Http/TFPDF/font/unifont/TTFontFile.php';
+use TTFontFile;
+//require '../app/Http/TFPDF/font/unifont/TTFontFile.php';
 /*******************************************************************************
 * tFPDF (based on FPDF 1.7)                                                    *
 *                                                                              *
