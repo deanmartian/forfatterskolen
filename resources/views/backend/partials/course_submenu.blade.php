@@ -17,6 +17,8 @@
 
 @if ($course->id !== 17)
     <li @if($section == 'email-out') class="active" @endif><a href="{{route('admin.course.show', $course->id)}}?section=email-out"><i class="fa fa-envelope"></i>&nbsp;&nbsp;{{ trans('site.email-out') }}</a></li>
+@else
+        <li @if($section == 'reward-coupons') class="active" @endif><a href="{{route('admin.course.show', $course->id)}}?section=reward-coupons"><i class="fa fa-star"></i>&nbsp;&nbsp;Reward Coupons</a></li>
 @endif
 
 </ul>

@@ -436,6 +436,67 @@ class ShopController extends Controller
     }
 
     /**
+     * Claim course reward
+     * @param $course_id
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function claimReward($course_id, Request $request)
+    {
+        $course = Course::find($course_id);
+        if ($course->rewardCoupons()->count()) {
+            if ($request->isMethod('post')) {
+                $reward = $course->rewardCoupons()->where('coupon', $request->coupon)->first();
+
+                // check if the coupon is already been used
+                if ($reward->is_used) {
+                    return redirect()->back()->withInput()->with(['errors' => AdminHelpers::createMessageBag('Coupon is already used.')]);
+                }
+
+                $reward->is_used = 1;
+                $reward->save();
+
+                if( $request->update_address ) :
+                    $address = Address::firstOrNew(['user_id' => Auth::user()->id]);
+                    $address->street = $request->street;
+                    $address->city = $request->city;
+                    $address->zip = $request->zip;
+                    $address->phone = $request->phone;
+                    $address->save();
+                endif;
+
+                $course_packages = $course->packages->pluck('id')->toArray();
+                $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
+
+                // check if the user already avails this course
+                if($courseTaken) {
+                    $courseTaken->is_active = 1;
+                    // add one month to the end date
+                    $courseTaken->end_date = Carbon::parse($courseTaken->end_date)->addMonth(1);//Carbon::now()->addMonth(1);
+                } else {
+                    $package = Package::findOrFail($request->package_id);
+
+                    if (!$package) {
+                        return redirect()->back();
+                    }
+
+                    $courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
+                    $courseTaken->is_active = 1;
+                    $courseTaken->started_at = Carbon::now();
+                    $courseTaken->end_date = Carbon::now()->addMonth(1);
+                }
+
+                $courseTaken->save();
+
+                return redirect()->route('learner.course');
+            }
+            return view('frontend.shop.claim-reward', compact('course'));
+        }
+
+        return redirect()->route('front.course.index');
+    }
+
+    /**
      * Get the payment plan options to display in plan section
      * @param $id
      * @return \Illuminate\Http\JsonResponse

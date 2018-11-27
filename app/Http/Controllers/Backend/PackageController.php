@@ -85,6 +85,7 @@ class PackageController extends Controller
             $package->months_12_enable      = $months_12_enable;
 
             $package->issue_date = $request->issue_date;
+            $package->is_reward = $request->is_reward;
 
             $package->save();
             return redirect()->back();
@@ -163,6 +164,7 @@ class PackageController extends Controller
             $package->months_12_enable      = $months_12_enable;
 
             $package->issue_date = $request->issue_date;
+            $package->is_reward = $request->is_reward;
 
             $package->save();
         endif;

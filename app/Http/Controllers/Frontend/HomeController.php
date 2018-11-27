@@ -1056,4 +1056,17 @@ Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 
         }
 
     }
+
+    public function upviralCallback()
+    {
+        Settings::create([
+           'setting_name' => 'test',
+            'setting_value' => \Request::input('reward_name')
+        ]);
+    }
+
+    public function testUpviralRef($code = NULL)
+    {
+        return view('frontend.upviral-ref', compact('code'));
+    }
 }

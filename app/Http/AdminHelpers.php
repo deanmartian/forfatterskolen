@@ -29,7 +29,7 @@ class AdminHelpers
 	public static function courseSubpages()
 	{
 		$subpages = ['overview', 'lessons', 'manuscripts', 'videos', 'assignments', 'webinars', 'workshops', 'dripping',
-            'packages', 'learners', 'email-out'];
+            'packages', 'learners', 'email-out', 'reward-coupons'];
 		return $subpages;
 	}
 
@@ -39,7 +39,7 @@ class AdminHelpers
 			return true;
 		else :
 			return abort('404');
-			die();
+			/*die();*/
 		endif;
 	}
 

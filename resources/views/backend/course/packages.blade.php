@@ -18,7 +18,7 @@
 	@include('backend.partials.course_submenu')
 
 	<div class="col-sm-12 col-md-10 sub-right-content">
-		<div class="col-sm-4">
+		{{--<div class="col-sm-4">
 			@if ( $errors->any() )
             <div class="alert alert-danger bottom-margin">
                 <ul>
@@ -28,15 +28,25 @@
                 </ul>
             </div>
             @endif
-        </div>
+        </div>--}}
 		<div class="col-sm-12">
 			<button type="button" class="btn btn-primary margin-bottom btn-add-package" data-toggle="modal" data-target="#addPackageModal">+ {{ trans('site.add-package') }}</button>
+          <button type="button" class="btn btn-success margin-bottom btn-add-reward" data-toggle="modal" data-target="#rewardPackageModal"
+          data-action="{{route('admin.course.package.store', ['id' => $course->id])}}"
+          data-title="Add Reward Package for {{$course->title}}">+ Add Reward Package</button>
 		</div>
 		@foreach($course->packages as $k => $package)
 		<div class="col-sm-12 col-md-12">
 			<div class="panel panel-default panel-package">
 				<div class="panel-heading">
 					<div class="pull-right">
+                        @if ($package->is_reward)
+                        <button type="button" class="btn btn-info btn-xs btn-edit-reward" data-toggle="modal" data-target="#rewardPackageModal"
+                                data-action="{{route('admin.course.package.update', ['course_id' => $course->id, 'package_id' => $package->id])}}"
+                                data-title="Edit Reward Package for {{$course->title}}"
+                        data-variation="{{ $package->variation }}" data-id="{{ $package->id }}"
+                                data-description="{{ $package->description }}" ><i class="fa fa-pencil"></i></button>
+                        @else
 						<button type="button" data-target="#editPackageModal" data-toggle="modal" class="btn btn-info btn-xs btn-edit-package" 
             data-action="{{route('admin.course.package.update', ['course_id' => $course->id, 'package_id' => $package->id])}}" 
             data-variation="{{ $package->variation }}" 
@@ -86,6 +96,7 @@
                                 data-disable-upgrade-price-date="{{ $package->disable_upgrade_price_date }}"
                                 data-disable-upgrade-price="{{ $package->disable_upgrade_price }}"
                                 data-issue_date="{{ $package->issue_date }}"><i class="fa fa-pencil"></i></button>
+                        @endif
 
 						<button type="button" data-target="#deletePackageModal" data-toggle="modal" class="btn btn-danger btn-xs btn-delete-package" data-action="{{route('admin.course.package.destroy', ['course_id' => $course->id, 'package_id' => $package->id])}}" data-variation="{{$package->variation}}" data-id="{{$package->id}}"><i class="fa fa-trash"></i></button>
 					</div>
@@ -543,6 +554,60 @@
     </div>
 
   </div>
+</div>
+
+<!-- add reward package modal -->
+<div id="rewardPackageModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"></h4>
+            </div>
+
+            <div class="modal-body">
+                <form method="POST" action="">
+                    {{csrf_field()}}
+                    <input type="hidden" name="variation_id">
+                    <input type="hidden" name="is_reward" value="1">
+
+                    <?php
+                        $required_fields = [
+                            'manuscripts_count'         => 0,
+                            'full_payment_price'        => 0,
+                            'months_3_price'            => 0,
+                            'months_6_price'            => 0,
+                            'months_12_price'           => 0,
+                            'full_price_product'        => 0,
+                            'months_3_product'          => 0,
+                            'months_6_product'          => 0,
+                            'months_12_product'         => 0,
+                            'full_price_due_date'       => 1,
+                            'months_3_due_date'         => 1,
+                            'months_6_due_date'         => 1,
+                            'months_12_due_date'        => 1,
+                            'course_type'               => 1];
+
+                        foreach($required_fields as $field => $value) {
+                            echo '<input type="hidden" name="'.$field.'" value="'.$value.'">';
+                        }
+                    ?>
+
+                        <div class="form-group">
+                            <label>{{ trans('site.variation') }}</label>
+                            <input type="text" name="variation" placeholder="{{ trans('site.variation') }}" required class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>{{ trans('site.description') }}</label>
+                            <textarea class="form-control" name="description" placeholder="{{ trans('site.description') }}" required rows="5"></textarea>
+                        </div>
+
+                    <button type="submit" class="btn btn-primary pull-right"></button>
+                    <div class="clearfix"></div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -1256,6 +1321,31 @@ $(document).ready(function(){
       $('#deletePackageModal h4 span').text(variation);
       $('#deletePackageModal input[name=variation_id]').val(variation_id);
       $('#deletePackageModal input[name=price]').val(price);
+  });
+
+  let reward_modal = $("#rewardPackageModal");
+  $(".btn-add-reward").click(function(){
+      let action = $(this).data('action');
+      let title = $(this).data('title');
+      reward_modal.find('.modal-title').empty().text(title);
+      reward_modal.find('form').attr('action', action);
+      reward_modal.find('[name=_method]').remove();
+      reward_modal.find('[type=submit]').text('Create Package');
+  });
+
+  $(".btn-edit-reward").click(function(){
+      let action = $(this).data('action');
+      let title = $(this).data('title');
+      let id = $(this).data('id');
+      let variation = $(this).data('variation');
+      let description = $(this).data('description');
+      reward_modal.find('.modal-title').empty().text(title);
+      reward_modal.find('form').attr('action', action);
+      reward_modal.find('form').prepend('<input type="hidden" name="_method" value="PUT">');
+      reward_modal.find('[type=submit]').text('Update Package');
+      reward_modal.find('[name=variation_id]').val(id);
+      reward_modal.find('[name=variation]').val(variation);
+      reward_modal.find('[name=description]').text(description);
   });
 });
 </script>

@@ -104,6 +104,8 @@ Route::group([
         Route::post('/private-group/email/validate', 'PrivateGroupMembersController@unauthenticatedEmailValidation');
         Route::post('/private-group/invite/send', 'PrivateGroupMembersController@unauthenticatedSendInvitation');
 
+        Route::get('/ref/{code?}', 'HomeController@testUpviralRef'); // Upviral ref page
+
         // Course
         Route::group([
             'prefix' => 'course'
@@ -114,6 +116,8 @@ Route::group([
             Route::post('/{id}/checkout/place_order', 'ShopController@place_order')->name('front.course.place_order'); // Place Order
             Route::get('/{id}/check_discount/', 'ShopController@checkDiscount')->name('front.course.checkDiscount'); // Check Discount
             Route::post('/{id}/get-free/', 'CourseController@getFreeCourse')->name('front.course.getFreeCourse'); // Check Discount
+            Route::get('/{id}/claim-reward', 'ShopController@claimReward')->name('front.course.claim-reward'); // Claim Reward
+            Route::post('/{id}/claim-reward', 'ShopController@claimReward')->name('front.course.claim-reward'); // Claim Reward
         });
 
 
@@ -496,6 +500,18 @@ Route::group([
                 'edit' => 'admin.email-out.edit',
                 'update' => 'admin.email-out.update',
                 'destroy' => 'admin.email-out.destroy',
+            ],
+        ]);
+
+        // Course Reward Coupon Route
+        Route::resource('/course/{course_id}/reward-coupons', 'CourseRewardCouponController', [
+            'except' => 'show',
+            'names' => [
+                'create' => 'admin.reward-coupons.create',
+                'store' => 'admin.reward-coupons.store',
+                'edit' => 'admin.reward-coupons.edit',
+                'update' => 'admin.reward-coupons.update',
+                'destroy' => 'admin.reward-coupons.destroy',
             ],
         ]);
 

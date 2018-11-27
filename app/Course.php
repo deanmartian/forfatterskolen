@@ -14,7 +14,16 @@ class Course extends Model
 
     public function packages()
     {
-        return $this->hasMany('App\Package')->orderBy('full_payment_price', 'asc');
+        return $this->hasMany('App\Package')
+            ->where('is_reward', 0)
+            ->orderBy('full_payment_price', 'asc');
+    }
+
+    public function rewardPackages()
+    {
+        return $this->hasMany('App\Package')
+            ->where('is_reward', 1)
+            ->orderBy('full_payment_price', 'asc');
     }
 
 
@@ -93,6 +102,11 @@ class Course extends Model
     public function emailOut()
     {
         return $this->hasMany('App\EmailOut');
+    }
+
+    public function rewardCoupons()
+    {
+        return $this->hasMany('App\CourseRewardCoupon');
     }
 
     //for deleting the children
