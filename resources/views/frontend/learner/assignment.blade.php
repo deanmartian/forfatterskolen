@@ -40,7 +40,7 @@
 										@if( $manuscript )
 											@if( end($extension) == 'pdf' || end($extension) == 'odt' )
 												<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">{{ basename($manuscript->filename) }}</a>
-											@elseif( end($extension) == 'docx' )
+											@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
 												<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">{{ basename($manuscript->filename) }}</a>
 											@endif
 
@@ -160,7 +160,7 @@
 										@if( $manuscript )
 											@if( end($extension) == 'pdf' || end($extension) == 'odt' )
 												<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">{{ basename($manuscript->filename) }}</a>
-											@elseif( end($extension) == 'docx' )
+											@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
 												<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">{{ basename($manuscript->filename) }}</a>
 											@endif
 
@@ -235,8 +235,8 @@
 				<form method="POST" action="" enctype="multipart/form-data"
 				onsubmit="disableSubmit(this);">
 					{{ csrf_field() }}
-					* Godkjente fil formater er DOCX.
-					<input type="file" class="form-control margin-top" required name="filename" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+					* Godkjente fil formater er DOC, DOCX.
+					<input type="file" class="form-control margin-top" required name="filename" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document">
 
 					<div class="form-group margin-top">
 						Sjanger
@@ -270,7 +270,7 @@
 		    <h4 class="modal-title">Last opp manus</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="" enctype="multipart/form-data">
+		    <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this);">
 		      	{{ csrf_field() }}
       			* Godkjente fil formater er DOC, DOCX, PDF og ODT.
       			<input type="file" class="form-control margin-top" required name="filename" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">

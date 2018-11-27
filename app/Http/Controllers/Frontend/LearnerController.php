@@ -454,7 +454,7 @@ class LearnerController extends Controller
 
             $extensions = ['pdf', 'doc', 'docx', 'odt'];
             if ($assignment->for_editor) {
-                $extensions = ['docx'];
+                $extensions = ['docx', 'doc'];
             }
 
             $extension = pathinfo($_FILES['filename']['name'],PATHINFO_EXTENSION); // getting document extension

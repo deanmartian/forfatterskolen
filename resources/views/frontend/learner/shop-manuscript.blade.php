@@ -273,7 +273,7 @@
       	<form method="POST" enctype="multipart/form-data" action="">
       		{{ csrf_field() }}
       		<div class="form-group">
-      		* Godkjente fil formater er DOCX, PDF og ODT.</div>
+      		* Godkjente fil formater er DOC, DOCX, PDF og ODT.</div>
       		<div class="form-group">
       			<input type="file" class="form-control" required name="manuscript" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
       		</div>
@@ -314,7 +314,7 @@
 				<form method="POST" enctype="multipart/form-data" action="">
 					{{ csrf_field() }}
 					<div class="form-group">
-						* Godkjente fil formater er DOCX, PDF og ODT.</div>
+						* Godkjente fil formater er DOC, DOCX, PDF og ODT.</div>
 					<div class="form-group">
 						<input type="file" class="form-control" required name="manuscript" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 					</div>
