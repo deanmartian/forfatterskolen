@@ -24,7 +24,8 @@ class Kernel extends ConsoleKernel
         Commands\UpdateInvoice::class,
         Commands\UpdateKidNum::class,
         Commands\WebinarPakkeExpiresInAWeek::class,
-        Commands\CourseEmailOut::class
+        Commands\CourseEmailOut::class,
+        Commands\LockFinishedManuscript::class
     ];
 
     /**
@@ -54,6 +55,8 @@ class Kernel extends ConsoleKernel
             ->dailyAt('08:00');
         $schedule->command('courseemailout:command')
             ->dailyAt('08:00');
+        $schedule->command('lockfinishedmanuscript:command')
+            ->everyThirtyMinutes();
         $schedule->command('queue:work --daemon')->everyMinute()->withoutOverlapping();
     }
 
