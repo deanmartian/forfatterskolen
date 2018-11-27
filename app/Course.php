@@ -19,6 +19,12 @@ class Course extends Model
             ->orderBy('full_payment_price', 'asc');
     }
 
+    public function allPackages()
+    {
+        return $this->hasMany('App\Package')
+            ->orderBy('full_payment_price', 'asc');
+    }
+
     public function rewardPackages()
     {
         return $this->hasMany('App\Package')
