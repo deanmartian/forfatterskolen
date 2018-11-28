@@ -109,7 +109,7 @@ class CourseRewardCouponController extends Controller {
             $filename = 'coupon-codes';
             $handle = fopen($filename.".txt", "w");
             foreach($course->rewardCoupons as $rewardCoupon) {
-                fwrite($handle, $rewardCoupon['coupon'].PHP_EOL);
+                fwrite($handle, $rewardCoupon['coupon']."\r\n");
             }
             fclose($handle);
             header('Content-Type: application/octet-stream');
