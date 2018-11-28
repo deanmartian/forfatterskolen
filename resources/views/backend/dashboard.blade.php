@@ -4,6 +4,15 @@
 <title>Dashboard &rsaquo; Forfatterskolen Admin</title>
 @stop
 
+@section('styles')
+	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+	<style>
+		.panel {
+			overflow-x: auto;
+		}
+	</style>
+@stop
+
 @section('content')
 <div class="col-sm-12 col-md-10 dashboard-left">
 	<div class="row">
@@ -192,6 +201,7 @@
 							<tr>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 								<th>{{ trans_choice('site.learners', 1) }}</th>
+								<th>Locked</th>
 								<th>{{ trans('site.assigned-to') }}</th>
 								<th></th>
 							</tr>
@@ -207,6 +217,14 @@
 											@endif
 										</td>
 										<td><a href="{{ route('admin.learner.show', $shopManuscript->user->id) }}">{{ $shopManuscript->user->full_name }}</a></td>
+										<td>
+											@if ($shopManuscript->file)
+												<input type="checkbox" data-toggle="toggle" data-on="Locked"
+													   class="is-manuscript-locked-toggle" data-off="Unlocked"
+													   data-id="{{$shopManuscript->id}}" data-size="mini"
+												@if($shopManuscript->is_manuscript_locked) {{ 'checked' }} @endif>
+											@endif
+										</td>
 										<td>
 											@if( $shopManuscript->admin )
 												{{ $shopManuscript->admin->full_name }}
@@ -1187,6 +1205,7 @@
 @stop
 
 @section('scripts')
+	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
 	$('.viewManuscriptBtn').click(function(){
 		var fields = $(this).data('fields');
@@ -1283,6 +1302,19 @@
 
        modal.find('.modal-body').find('pre').text(details);
 	});
+
+    $(".is-manuscript-locked-toggle").change(function(){
+        let shopManuscriptTakenId = $(this).attr('data-id');
+        let is_checked = $(this).prop('checked');
+        let check_val = is_checked ? 1 : 0;
+        $.ajax({
+            type:'POST',
+            url:'/is-manuscript-locked-status',
+            data: { "shop_manuscript_taken_id" : shopManuscriptTakenId, 'is_manuscript_locked' : check_val },
+            success: function(data){
+            }
+        });
+    });
 
     function disableSubmit(t) {
         let submit_btn = $(t).find('[type=submit]');
