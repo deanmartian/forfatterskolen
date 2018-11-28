@@ -75,4 +75,94 @@ class CourseRewardCouponController extends Controller {
         return redirect()->route('admin.course.show', ['id' => $course->id, 'section' => 'reward-coupons']);
     }
 
+    /**
+     * Create multiple reward coupon
+     * @param $course_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function multipleStore($course_id, Request $request)
+    {
+        $course = Course::find($course_id);
+
+        if ($course) {
+            $numCodesToGenerate = $request->coupon_count;
+            $this->couponIterator($numCodesToGenerate, $course_id);
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Reward Coupons created successfully.'),
+                'alert_type' => 'success'
+            ]);
+        }
+
+        return redirect()->route('admin.course.show', ['id' => $course->id, 'section' => 'reward-coupons']);
+    }
+
+    /**
+     * Export the coupon codes to a text file
+     * @param $course_id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function exportToText($course_id)
+    {
+        $course = Course::find($course_id);
+        if ($course) {
+            $filename = 'coupon-codes';
+            $handle = fopen($filename.".txt", "w");
+            foreach($course->rewardCoupons as $rewardCoupon) {
+                fwrite($handle, $rewardCoupon['coupon'].PHP_EOL);
+            }
+            fclose($handle);
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename='.basename($filename.'.txt'));
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($filename.'.txt'));
+            readfile($filename.'.txt');
+            exit;
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Creating multiple coupon iterator
+     * @param $count
+     * @param $course_id
+     * @return null
+     */
+    function couponIterator($count, $course_id) {
+        for ($i = 0; $i < $count; $i++) {
+            $code = $this->generateCouponCode();
+
+            $checkReward = CourseRewardCoupon::where('coupon', '=', $code)
+                ->where('course_id','=', $course_id)
+                ->get();
+
+            // check if the coupon code already exists for that course then re-run the iterator
+            if ($checkReward->count() > 0) {
+                $newCount = $count - 1;
+                return $this->couponIterator($newCount, $course_id);
+            }
+
+            CourseRewardCoupon::create([
+                'course_id' => $course_id,
+                'coupon' => $code
+            ]);
+        }
+        return null;
+    }
+
+    /**
+     * Generate coupon code
+     * @return string
+     */
+    function generateCouponCode() {
+        $possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        $res = '';
+        for ($i = 0; $i < 6; $i++) {
+            $res .= $possible[mt_rand(0, strlen($possible)-1)];
+        }
+        return $res;
+    }
 }

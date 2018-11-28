@@ -25,6 +25,13 @@
                         data-target="#rewardModal"
                         data-action="{{ route('admin.reward-coupons.store', $course->id) }}"
                 data-title="Add Reward Coupon">+ Add Reward Coupon</button>
+
+                <button type="button" class="btn btn-success margin-bottom btn-add-multiple-reward" data-toggle="modal"
+                        data-target="#multipleRewardModal">+ Add Multiple Coupon Codes</button>
+
+                <a href="{{ route('admin.reward-coupons.export-to-text', $course->id) }}" class="btn btn-info margin-bottom">
+                    Export as Txt File
+                </a>
             </div>
 
             <div class="col-sm-12 col-md-12">
@@ -95,7 +102,32 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> <!-- end rewardModal -->
+
+    <div id="multipleRewardModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add Multiple Reward Modal</h4>
+                </div>
+
+                <div class="modal-body">
+                    <form method="POST" action="{{route('admin.reward-coupons.multiple-store', ['id' => $course->id])}}" onsubmit="disableSubmit(this)">
+                        {{csrf_field()}}
+
+                        <div class="form-group">
+                            <label>Reward Coupon Count</label>
+                            <input type="number" name="coupon_count" placeholder="Coupon Count" class="form-control"
+                                   step="1" min="1" required>
+                        </div>
+                        <button type="submit" class="btn btn-success pull-right">Submit</button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div> <!-- end multiple reward modal -->
 
     <div id="deleteRewardModal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-sm">

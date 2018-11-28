@@ -515,6 +515,12 @@ Route::group([
             ],
         ]);
 
+        Route::post('/course/{course_id}/reward-coupons/multiple-store', 'CourseRewardCouponController@multipleStore')
+            ->name('admin.reward-coupons.multiple-store');
+
+        Route::get('/course/{course_id}/reward-coupons/export-to-text', 'CourseRewardCouponController@exportToText')
+            ->name('admin.reward-coupons.export-to-text');
+
         Route::resource('course/{id}/discount', 'CourseDiscountController', [
             'except' => ['show', 'create', 'edit'],
             'names' => [
