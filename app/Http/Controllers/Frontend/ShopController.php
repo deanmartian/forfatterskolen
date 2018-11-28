@@ -448,6 +448,10 @@ class ShopController extends Controller
             if ($request->isMethod('post')) {
                 $reward = $course->rewardCoupons()->where('coupon', $request->coupon)->first();
 
+                if (!$reward) {
+                    return redirect()->back()->withInput()->with(['errors' => AdminHelpers::createMessageBag('Invalid coupon.')]);
+                }
+
                 // check if the coupon is already been used
                 if ($reward->is_used) {
                     return redirect()->back()->withInput()->with(['errors' => AdminHelpers::createMessageBag('Coupon is already used.')]);
