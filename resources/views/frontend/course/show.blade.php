@@ -31,7 +31,23 @@
 				@endif
 
 				<div class="sub-header">
-					<a href="{{route('front.course.checkout', ['id' => $course->id])}}" class="btn buy-course">Bestill Kurset</a>
+					@if(Auth::guest())
+						@if ($course->for_sale && !$course->is_free)
+							<a href="{{route('front.course.checkout', ['id' => $course->id])}}" class="btn buy-course">Bestill Kurset</a>
+						@endif
+					@else
+                        <?php
+                        $course_packages = $course->allPackages->pluck('id')->toArray();
+                        $courseTaken = App\CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
+                        ?>
+						@if($courseTaken)
+							<a href="{{route('learner.course.show', ['id' => $courseTaken->id])}}" class="btn buy-course">Fortsett Kurset</a>
+						@else
+							@if ($course->for_sale && !$course->is_free)
+									<a href="{{route('front.course.checkout', ['id' => $course->id])}}" class="btn buy-course">Bestill Kurset</a>
+							@endif
+						@endif
+					@endif
 					Velkommen til Forfatterskolen. Vi gleder oss til å hjelpe deg med å nå forfatterdrømmen din!
 				</div>
 			</div>
