@@ -42,6 +42,34 @@ class ShopController extends Controller
     }
 
     /**
+     * Apply discount page
+     * @param $course_id
+     * @param $coupon
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
+     */
+    public function applyDiscount($course_id, $coupon)
+    {
+        $course = Course::find($course_id);
+        if (!$course) {
+            return redirect()->route('front.course.index');
+        }
+
+        $discountData = $course->discounts()->where('coupon', '=', $coupon)->first();
+
+        if (!$discountData) {
+            return redirect()->route('front.course.checkout', $course_id);
+        }
+
+        if( !Auth::guest() ) :
+            $course_packages = $course->packages->pluck('id')->toArray();
+            $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
+            if($courseTaken) return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
+        endif;
+
+        return view('frontend.shop.applied-discount', compact('course', 'coupon', 'discountData'));
+    }
+
+    /**
      * Check the discount for the course
      * @param $course_id
      * @param Request $request
