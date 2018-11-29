@@ -101,7 +101,12 @@
 						<button type="button" data-target="#deletePackageModal" data-toggle="modal" class="btn btn-danger btn-xs btn-delete-package" data-action="{{route('admin.course.package.destroy', ['course_id' => $course->id, 'package_id' => $package->id])}}" data-variation="{{$package->variation}}" data-id="{{$package->id}}"><i class="fa fa-trash"></i></button>
 					</div>
 
-					<h4>{{$package->variation}}</h4>
+					<h4>
+                        {{$package->variation}}
+                        @if ($package->is_reward)
+                            <span class="label label-success" style="font-size: 10px">Reward</span>
+                        @endif
+                    </h4>
 				</div>
 				<div class="panel-body row">
           <div class="col-sm-6"> 
