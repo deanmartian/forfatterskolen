@@ -330,7 +330,7 @@
 					  </div>
 
 					  <div id="discount-wrapper" class="text-center margin-bottom">
-						  <h4>Rabatt</h4>
+						  <h4>Din rabatt</h4>
 						  <span id="discount-display" style="font-size: 22px">{{ \App\Http\FrontendHelpers::currencyFormat($discountData->discount) }}</span>
 					  </div>
 

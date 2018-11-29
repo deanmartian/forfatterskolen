@@ -38,7 +38,7 @@
 								@if( $manuscript->filename )
 									@if( end($extension) == 'pdf' || end($extension) == 'odt' )
 									<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">{{ basename($manuscript->filename) }}</a>
-									@elseif( end($extension) == 'docx' )
+									@elseif( end($extension) == 'docx' || end($extension) == 'doc')
 									<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">{{ basename($manuscript->filename) }}</a>
 									@endif
 
