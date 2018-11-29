@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CourseDiscount extends Model
 {
-    protected $fillable = ['course_id', 'coupon', 'discount'];
+    protected $fillable = ['course_id', 'coupon', 'discount', 'valid_from', 'valid_to'];
 
     public function course()
     {

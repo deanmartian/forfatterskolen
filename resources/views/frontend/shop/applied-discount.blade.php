@@ -217,10 +217,6 @@
 								}
 
 							}
-
-					  	/*$full_payment_price = $hasPaidCourse ? $package->full_payment_price - 1500 : $package->full_payment_price;
-					  	$months_3_price = $hasPaidCourse ? $package->months_3_price - 1500 : $package->months_3_price;
-					  	$months_6_price = $hasPaidCourse ? $package->months_6_price - 1500 : $package->months_6_price;*/
 					  	?>
 							<div class="package-option">
 								<input type="radio" name="package_id"
@@ -228,29 +224,42 @@
 									   data-full_payment_price="{{ FrontendHelpers::currencyFormat($full_payment_price) }}"
 									   data-months_3_price="{{ FrontendHelpers::currencyFormat($months_3_price) }}"
 									   data-months_6_price="{{ FrontendHelpers::currencyFormat($months_6_price) }}"
-									   data-full_payment_price_number="{{ $full_payment_price - $discountData->discount }}"
-									   data-months_3_price_number="{{ $months_3_price - $discountData->discount }}"
-									   data-months_6_price_number="{{ $months_6_price - $discountData->discount }}"
-									   data-months_12_price_number="{{ $months_12_price - $discountData->discount }}"
+									   data-months_12_price="{{ FrontendHelpers::currencyFormat($months_12_price) }}"
+									   data-full_payment_price_number="{{ $full_payment_price }}"
+									   data-dis_full_payment_price_number="{{ $full_payment_price - $discountData->discount }}"
+									   data-months_3_price_number="{{ $months_3_price }}"
+									   data-dis_months_3_price_number="{{ $months_3_price - $discountData->discount }}"
+									   data-months_6_price_number="{{ $months_6_price }}"
+									   data-dis_months_6_price_number="{{ $months_6_price - $discountData->discount }}"
+									   data-months_12_price_number="{{ $months_12_price }}"
+									   data-dis_months_12_price_number="{{ $months_12_price - $discountData->discount }}"
 
 									   @if ($isBetweenFull && $package->full_payment_sale_price)
 									   		data-full_payment_sale_price = "{{ FrontendHelpers::currencyFormat($full_payment_sale_price) }}"
 									   		data-full_payment_sale_price_number = "{{ $full_payment_sale_price }}"
+									   		data-dis_full_payment_sale_price = "{{ FrontendHelpers::currencyFormat($full_payment_sale_price - $discountData->discount) }}"
+									   		data-dis_payment_sale_price_number = "{{ $full_payment_sale_price - $discountData->discount }}"
 									   @endif
 
 									   @if ($isBetweenMonths3 && $package->months_3_sale_price)
 									   		data-months_3_sale_price = "{{ FrontendHelpers::currencyFormat($months_3_sale_price) }}"
 									   		data-months_3_sale_price_number = "{{ $months_3_sale_price }}"
+									   		data-dis_months_3_sale_price = "{{ FrontendHelpers::currencyFormat($months_3_sale_price - $discountData->discount) }}"
+									   		data-dis_months_3_sale_price_number = "{{ $months_3_sale_price - $discountData->discount }}"
 									   @endif
 
 									   @if ($isBetweenMonths6 && $package->months_6_sale_price)
 									   		data-months_6_sale_price = "{{ FrontendHelpers::currencyFormat($months_6_sale_price) }}"
 									   		data-months_6_sale_price_number = "{{ $months_6_sale_price }}"
+									   		data-dis_months_6_sale_price = "{{ FrontendHelpers::currencyFormat($months_6_sale_price - $discountData->discount) }}"
+									   		data-dis_months_6_sale_price_number = "{{ $months_6_sale_price - $discountData->discount }}"
 									   @endif
 
 									   @if ($isBetweenMonths12 && $package->months_12_sale_price)
-										   data-months_12_sale_price = "{{ FrontendHelpers::currencyFormat($months_12_sale_price) }}"
-										   data-months_12_sale_price_number = "{{ $months_12_sale_price }}"
+										   	data-months_12_sale_price = "{{ FrontendHelpers::currencyFormat($months_12_sale_price) }}"
+										   	data-months_12_sale_price_number = "{{ $months_12_sale_price }}"
+									   		data-dis_months_12_sale_price = "{{ FrontendHelpers::currencyFormat($months_12_sale_price - $discountData->discount) }}"
+									   		data-dis_months_12_sale_price_number = "{{ $months_12_sale_price - $discountData->discount }}"
 									   @endif
 
 									   required>
@@ -287,12 +296,7 @@
 				  <div class="panel-body">
 					  <div class="row">
 						  <div class="col-sm-6" id="paymentPlanContainer">
-							{{--@foreach(App\PaymentPlan::orderBy('division', 'asc')->get() as $paymentPlan)
-								<div class="payment-option">
-									<input type="radio" @if($paymentPlan->plan == 'Full Payment') checked @endif name="payment_plan_id" value="{{$paymentPlan->id}}" data-plan="{{trim($paymentPlan->plan)}}" id="{{$paymentPlan->plan}}" required>
-									<label for="{{$paymentPlan->plan}}">{{$paymentPlan->plan}} </label>
-								</div>
-						  @endforeach--}}
+
 						  </div>
 						  <div class="col-sm-6" style="margin-top: 8px" id="splitInvoiceContainer">
 							  <b>Månedlig faktura?*</b>
@@ -320,8 +324,17 @@
 					  </div>
 					<hr />
 
-					<div class="text-center margin-bottom checkout-total">
+					  <div id="price-wrapper" class="text-center margin-bottom">
+						  <h4>Price</h4>
+						  <span id="price-display" style="font-size: 22px"></span>
+					  </div>
 
+					  <div id="discount-wrapper" class="text-center margin-bottom">
+						  <h4>Rabatt</h4>
+						  <span id="discount-display" style="font-size: 22px">{{ \App\Http\FrontendHelpers::currencyFormat($discountData->discount) }}</span>
+					  </div>
+
+					<div class="text-center checkout-total">
 						@if( $hasPaidCourse && $package->has_student_discount)
 							@if($course->type == "Single")
 								<strong>Du har en rabatt som elev på Kr 500,00</strong> <br /><br />
@@ -339,11 +352,11 @@
 							@if( $hasPaidCourse && $package->has_student_discount)
 								{{--check if course is Webinar-pakke and apply 500 only--}}
 									@if($course->type == "Single")
-										{{ FrontendHelpers::currencyFormat($standard_price->full_payment_price - 500) }}
+										{{ FrontendHelpers::currencyFormat($standard_price->full_payment_price - ($discountData->discount + 500)) }}
 									@endif
 
 									@if($course->type == "Group")
-										{{ FrontendHelpers::currencyFormat($standard_price->full_payment_price - 1000) }}
+										{{ FrontendHelpers::currencyFormat($standard_price->full_payment_price - ($discountData->discount + 1000)) }}
 									@endif
 							@else
 							{{ FrontendHelpers::currencyFormat($standard_price->full_payment_price) }}
@@ -353,11 +366,11 @@
 						<span>
 						@if( $hasPaidCourse && $package->has_student_discount)
 								@if($course->type == "Single")
-									{{ FrontendHelpers::currencyFormat($course->packages[0]->full_payment_price - 500) }}
+									{{ FrontendHelpers::currencyFormat($course->packages[0]->full_payment_price - ($discountData->discount + 500)) }}
 								@endif
 
 								@if($course->type == "Group")
-									{{ FrontendHelpers::currencyFormat($course->packages[0]->full_payment_price - 1000) }}
+									{{ FrontendHelpers::currencyFormat($course->packages[0]->full_payment_price - ($discountData->discount + 1000)) }}
 								@endif
 						@else
 						{{ FrontendHelpers::currencyFormat($course->packages[0]->full_payment_price) }}
@@ -366,11 +379,6 @@
 						@endif
 
 					</div>
-
-						<div id="discount-wrapper" class="hide text-center">
-							<h4>Rabatt</h4>
-							<span id="discount-display" style="font-size: 22px"></span>
-						</div>
 
 				  	<button type="submit" class="btn btn-theme btn-lg btn-block" id="submitOrder">Bestill</button>
 				  </div>
@@ -430,6 +438,7 @@ $(document).ready(function(){
 
     $('input[name=package_id]').on('change', function(){
     	var checkout_total = $('.checkout-total');
+    	let price_display = $("#price-display");
         $('input:radio[name=split_invoice]').prop('disabled', true);
         $('input:radio[name=split_invoice]').prop('checked', false);
 		generatePackagePaymentOption($(this).val());
@@ -440,10 +449,14 @@ $(document).ready(function(){
         if ($('input[name=payment_plan_id]:checked').length > 0) {
             var plan = $('input[name=payment_plan_id]:checked').data('plan');
             if( plan == 'Hele beløpet' ) {
-                var price = $(this).data('full_payment_price');
-				var price_value = $(this).attr('data-full_payment_sale_price_number')
-					? $(this).data('full_payment_sale_price_number')
-					: $(this).data('full_payment_price_number');
+                var price = $(this).attr('data-full_payment_sale_price_number')
+                    ? $(this).data('full_payment_sale_price')
+                    : $(this).data('full_payment_price');
+                price_display.text(price);
+
+				var price_value = $(this).attr('data-dis_full_payment_sale_price_number')
+					? $(this).data('dis_full_payment_sale_price_number')
+					: $(this).data('dis_full_payment_price_number');
                 new_total = price_value;
 
 				 if ($("input[name=discount_value]").val()) {
@@ -451,10 +464,14 @@ $(document).ready(function(){
 					 new_total = price_value - discount_value;
 				 }
             } else if( plan == '3 måneder' ) {
-                var price = $(this).data('months_3_price');
-                var price_value = $(this).attr('data-months_3_sale_price_number')
-                    ? $(this).data('months_3_sale_price_number')
-                    : $(this).data('months_3_price_number');
+                var price = $(this).attr('data-months_3_sale_price')
+                    ? $(this).data('months_3_sale_price')
+                    : $(this).data('months_3_price');
+                price_display.text(price);
+
+                var price_value = $(this).attr('data-dis_months_3_sale_price_number')
+                    ? $(this).data('dis_months_3_sale_price_number')
+                    : $(this).data('dis_months_3_price_number');
                 new_total = price_value;
 
                 if ($("input[name=discount_value]").val()) {
@@ -462,10 +479,14 @@ $(document).ready(function(){
                     new_total = price_value - discount_value;
                 }
             } else if( plan == '6 måneder' ) {
-                var price = $(this).data('months_6_price');
-                var price_value = $(this).attr('data-months_6_sale_price_number')
-                    ? $(this).data('months_6_sale_price_number')
-                    : $(this).data('months_6_price_number');
+                var price = $(this).attr('data-months_6_sale_price')
+                    ? $(this).data('months_6_sale_price')
+                    : $(this).data('months_6_price');
+                price_display.text(price);
+
+                var price_value = $(this).attr('data-dis_months_6_sale_price_number')
+                    ? $(this).data('dis_months_6_sale_price_number')
+                    : $(this).data('dis_months_6_price_number');
                 new_total = price_value;
 
                 if ($("input[name=discount_value]").val()) {
@@ -474,9 +495,15 @@ $(document).ready(function(){
                 }
             }
         } else {
-            new_total = $(this).attr('data-full_payment_sale_price_number')
-                ? $(this).data('full_payment_sale_price_number')
-                : $(this).data('full_payment_price_number');
+            new_total = $(this).attr('data-dis_full_payment_sale_price_number')
+                ? $(this).data('dis_full_payment_sale_price_number')
+                : $(this).data('dis_full_payment_price_number');
+
+            let price = $(this).attr('data-full_payment_sale_price')
+                ? $(this).data('full_payment_sale_price')
+                : $(this).data('full_payment_price');
+            	price_display.text(price);
+
             if ($("input[name=discount_value]").val()) {
                 var discount_value = $("input[name=discount_value]").val();
                 var price_value = $(this).attr('data-full_payment_sale_price_number')
@@ -682,14 +709,20 @@ $(document).ready(function(){
 function payment_plan_change(t) {
 
     var checkout_total = $('.checkout-total');
+    let price_display = $("#price-display");
     var plan = $(t).data('plan');
     var new_total = 0;
     $('input:radio[name=split_invoice]').prop('disabled', false);
 
     if( plan == 'Hele beløpet' ) {
-        new_total = $('input[name=package_id]:checked').attr('data-full_payment_sale_price_number')
-            ? $('input[name=package_id]:checked').data('full_payment_sale_price_number')
-            : $('input[name=package_id]:checked').data('full_payment_price_number');
+        new_total = $('input[name=package_id]:checked').attr('data-dis_full_payment_sale_price_number')
+            ? $('input[name=package_id]:checked').data('dis_full_payment_sale_price_number')
+            : $('input[name=package_id]:checked').data('dis_full_payment_price_number');
+
+        let price = $('input[name=package_id]:checked').attr('data-full_payment_sale_price')
+            ? $('input[name=package_id]:checked').data('full_payment_sale_price')
+            : $('input[name=package_id]:checked').data('full_payment_price');
+        price_display.text(price);
 
         var price_value = $('input[name=package_id]:checked').attr('data-full_payment_sale_price_number')
             ? $('input[name=package_id]:checked').data('full_payment_sale_price_number')
@@ -703,9 +736,14 @@ function payment_plan_change(t) {
         $('input:radio[name=split_invoice]').prop('disabled', true);
         $('input:radio[name=split_invoice]').prop('checked', false);
     } else if( plan == '3 måneder' ) {
-        new_total = $('input[name=package_id]:checked').attr('data-months_3_sale_price_number')
-            ? $('input[name=package_id]:checked').data('months_3_sale_price_number')
-            : $('input[name=package_id]:checked').data('months_3_price_number');
+        new_total = $('input[name=package_id]:checked').attr('data-dis_months_3_sale_price_number')
+            ? $('input[name=package_id]:checked').data('dis_months_3_sale_price_number')
+            : $('input[name=package_id]:checked').data('dis_months_3_price_number');
+
+        let price = $('input[name=package_id]:checked').attr('data-months_3_sale_price')
+            ? $('input[name=package_id]:checked').data('months_3_sale_price')
+            : $('input[name=package_id]:checked').data('months_3_price');
+        price_display.text(price);
 
         var price_value = $('input[name=package_id]:checked').attr('data-months_3_sale_price_number')
             ? $('input[name=package_id]:checked').data('months_3_sale_price_number')
@@ -716,9 +754,14 @@ function payment_plan_change(t) {
             new_total = price_value - discount_value;
         }
     } else if( plan == '6 måneder' ) {
-        new_total = $('input[name=package_id]:checked').attr('data-months_6_sale_price_number')
-            ? $('input[name=package_id]:checked').data('months_6_sale_price_number')
-            : $('input[name=package_id]:checked').data('months_6_price_number');
+        new_total = $('input[name=package_id]:checked').attr('data-dis_months_6_sale_price_number')
+            ? $('input[name=package_id]:checked').data('dis_months_6_sale_price_number')
+            : $('input[name=package_id]:checked').data('dis_months_6_price_number');
+
+        let price = $('input[name=package_id]:checked').attr('data-months_6_sale_price')
+            ? $('input[name=package_id]:checked').data('months_6_sale_price')
+            : $('input[name=package_id]:checked').data('months_6_price');
+        price_display.text(price);
 
         var price_value = $('input[name=package_id]:checked').attr('data-months_6_sale_price_number')
             ? $('input[name=package_id]:checked').data('months_6_sale_price_number')
@@ -729,9 +772,14 @@ function payment_plan_change(t) {
             new_total = price_value - discount_value;
         }
     } else if( plan == '12 måneder' ) {
-        new_total = $('input[name=package_id]:checked').attr('data-months_12_sale_price_number')
-            ? $('input[name=package_id]:checked').data('months_12_sale_price_number')
-            : $('input[name=package_id]:checked').data('months_12_price_number');
+        new_total = $('input[name=package_id]:checked').attr('data-dis_months_12_sale_price_number')
+            ? $('input[name=package_id]:checked').data('dis_months_12_sale_price_number')
+            : $('input[name=package_id]:checked').data('dis_months_12_price_number');
+
+        let price = $('input[name=package_id]:checked').attr('data-months_12_sale_price')
+            ? $('input[name=package_id]:checked').data('months_12_sale_price')
+            : $('input[name=package_id]:checked').data('months_12_price');
+        price_display.text(price);
 
         var price_value = $('input[name=package_id]:checked').attr('data-months_12_sale_price_number')
             ? $('input[name=package_id]:checked').data('months_12_sale_price_number')

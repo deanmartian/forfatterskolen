@@ -20,6 +20,8 @@
                     <th>{{ trans('site.id') }}</th>
                     <th>{{ trans('site.coupon') }}</th>
                     <th>{{ trans_choice('site.discounts', 1) }}</th>
+                    <th>Valid From</th>
+                    <th>Valid To</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -30,6 +32,8 @@
                         <td> {{ $discount->id }} </td>
                         <td> {{ $discount->coupon }} </td>
                         <td> {{ $discount->discount }} </td>
+                        <td> {{ $discount->valid_from ? \App\Http\FrontendHelpers::formatDate($discount->valid_from) : ''}} </td>
+                        <td> {{ $discount->valid_to ? \App\Http\FrontendHelpers::formatDate($discount->valid_to) : ''}} </td>
                         <td>
                             <button type="button" class="btn btn-primary btn-xs editDiscountBtn" data-toggle="modal" data-target="#discountModal" data-action="{{ route('admin.course-discount.update', [$discount->course_id, $discount->id]) }}" data-fields="{{ json_encode($discount) }}"><i class="fa fa-pencil"></i></button>
                             <button type="button" class="btn btn-danger btn-xs deleteDiscountBtn" data-toggle="modal" data-target="#deleteDiscountModal" data-action="{{ route('admin.course-discount.destroy', [$discount->course_id, $discount->id]) }}"><i class="fa fa-trash"></i></button>
@@ -64,6 +68,14 @@
                             <label>{{ trans_choice('site.discounts', 1) }}</label>
                             <input type="number" class="form-control" name="discount" required>
                         </div>
+                        <div class="form-group">
+                            <label>Valid From</label>
+                            <input type="date" name="valid_from" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Valid To</label>
+                            <input type="date" name="valid_to" class="form-control">
+                        </div>
                         <button type="submit" class="btn btn-primary pull-right margin-top"></button>
                         <div class="clearfix"></div>
                     </form>
@@ -92,12 +104,6 @@
             </div>
         </div>
     </div>
-
-    @if($flash = session('message.content'))
-        <div class="alert alert-{{ session('message.level') }}" role="alert" id="fixed_to_bottom_alert">
-            {{ $flash }}
-        </div>
-    @endif
 @stop
 
 @section('scripts')
@@ -163,6 +169,8 @@
 
                 form.find('input[name=coupon]').val(fields.coupon);
                 form.find('input[name=discount]').val(fields.discount);
+                form.find('input[name=valid_from]').val(fields.valid_from);
+                form.find('input[name=valid_to]').val(fields.valid_to);
                 form.attr('action', action);
                 form.prepend('<input type="hidden" name="_method" value="PUT">');
                 form.find('[type=submit]').text(edit_text);

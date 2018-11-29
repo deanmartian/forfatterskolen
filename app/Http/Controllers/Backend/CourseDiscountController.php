@@ -37,14 +37,22 @@ class CourseDiscountController extends Controller
      */
     public function store($course_id, Request $request)
     {
+
+        if ($request->valid_from && !$request->valid_to) {
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Please add a valid to value.'),
+                'alert_type' => 'danger']);
+        }
+
         CourseDiscount::create([
-            'course_id' => $course_id,
-            'coupon' => $request->coupon,
-            'discount' => $request->discount
+            'course_id'     => $course_id,
+            'coupon'        => $request->coupon,
+            'discount'      => $request->discount,
+            'valid_from'    => $request->valid_from,
+            'valid_to'      => $request->valid_to
         ]);
 
-        AdminHelpers::addFlashMessage('success', 'Discount added successfully.');
-        return redirect()->back();
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Discount added successfully.'),
+            'alert_type' => 'success']);
     }
 
     public function update($course_id, $discount_id, Request $request)
@@ -57,9 +65,12 @@ class CourseDiscountController extends Controller
 
         $discount->coupon = $request->coupon;
         $discount->discount = $request->discount;
+        $discount->valid_from = $request->valid_from;
+        $discount->valid_to = $request->valid_to;
 
         if ($discount->save()) {
-            AdminHelpers::addFlashMessage('success', 'Discount updated successfully.');
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Discount updated successfully.'),
+                'alert_type' => 'success']);
         }
 
         return redirect()->back();
@@ -75,8 +86,8 @@ class CourseDiscountController extends Controller
     {
         $discount = CourseDiscount::findOrFail($discount_id);
         $discount->forceDelete();
-        AdminHelpers::addFlashMessage('success', 'Discount deleted successfully.');
-        return redirect()->back();
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Discount deleted successfully.'),
+            'alert_type' => 'success']);
     }
 
 }
