@@ -1621,6 +1621,7 @@ start today section
 }
 
 #coursePlanDataModal table {
+    width: 98% !important;
     border: transparent;
     border-color: transparent;
     border-style: none !important;
