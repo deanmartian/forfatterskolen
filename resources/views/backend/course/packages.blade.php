@@ -31,11 +31,9 @@
         </div>--}}
 		<div class="col-sm-12">
                 <button type="button" class="btn btn-primary margin-bottom btn-add-package" data-toggle="modal" data-target="#addPackageModal">+ {{ trans('site.add-package') }}</button>
-            @if ($course->id == 17)
-              <button type="button" class="btn btn-success margin-bottom btn-add-reward" data-toggle="modal" data-target="#rewardPackageModal"
-              data-action="{{route('admin.course.package.store', ['id' => $course->id])}}"
-              data-title="Add Reward Package for {{$course->title}}">+ Add Reward Package</button>
-            @endif
+                  <button type="button" class="btn btn-success margin-bottom btn-add-reward" data-toggle="modal" data-target="#rewardPackageModal"
+                  data-action="{{route('admin.course.package.store', ['id' => $course->id])}}"
+                  data-title="Add Reward Package for {{$course->title}}">+ Add Reward Package</button>
 		</div>
 		@foreach($course->allPackages as $k => $package)
 		<div class="col-sm-12 col-md-12">

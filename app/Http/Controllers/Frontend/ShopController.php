@@ -529,7 +529,9 @@ class ShopController extends Controller
                     $courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
                     $courseTaken->is_active = 1;
                     $courseTaken->started_at = Carbon::now();
-                    $courseTaken->end_date = Carbon::now()->addMonth(1);
+
+                    // check if webinar-pakke or not to specify the correct end date
+                    $courseTaken->end_date = ($course_id == 17) ? Carbon::now()->addMonth(1) : Carbon::now()->addYear(1);
                 }
 
                 $courseTaken->save();
