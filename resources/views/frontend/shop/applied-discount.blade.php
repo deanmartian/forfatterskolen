@@ -325,7 +325,7 @@
 					<hr />
 
 					  <div id="price-wrapper" class="text-center margin-bottom">
-						  <h4>Price</h4>
+						  <h4>Pris</h4>
 						  <span id="price-display" style="font-size: 22px"></span>
 					  </div>
 
