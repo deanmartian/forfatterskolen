@@ -332,6 +332,7 @@ class ShopManuscriptController extends Controller
         } else {
         $shopManuscriptTaken->genre         = $request->genre;
         $shopManuscriptTaken->description   = $request->description;
+        $shopManuscriptTaken->manuscript_uploaded_date = Carbon::now()->toDateTimeString();
         $shopManuscriptTaken->save();
 
         Log::create([

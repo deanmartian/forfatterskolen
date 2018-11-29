@@ -64,7 +64,8 @@
 							{{ trans_choice('site.learners', 1) }}: <a href="{{ route('admin.learner.show', $shopManuscriptTaken->user_id) }}">{{ $shopManuscriptTaken->user->full_name }}</a><br />
 							{{ trans('site.filename') }}: {{ basename($shopManuscriptTaken->file) }}<br />
 							{{ trans_choice('site.words', 2) }}: {{ $shopManuscriptTaken->words }}<br />
-							{{ trans('site.date-uploaded') }}: {{ date_format(date_create($shopManuscriptTaken->manuscript_uploaded_date),'M d, Y H:i a') }}<br />
+							{{ trans('site.date-uploaded') }}: {{ $shopManuscriptTaken->manuscript_uploaded_date ?
+							date_format(date_create($shopManuscriptTaken->manuscript_uploaded_date),'M d, Y H:i a') : '' }}<br />
 							{{ trans('site.admin') }}:
 							@if( $shopManuscriptTaken->admin )
 							{{ $shopManuscriptTaken->admin->full_name }}
