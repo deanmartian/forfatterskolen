@@ -43,11 +43,11 @@
 @stop
 
 @section('content')
-    @if ($code)
+    @if (Request::input('ref_id'))
         <div class="container mb-3">
             <div class="col-sm-6 col-sm-offset-3">
                 <div class="card">
-                    <form name='upviralForm61426' id='' method='post' action='https://app.upviral.com/site/parse_new_users/call/ajax/campId/61426'>
+                    <form name='upviralForm61832' id='' method='post' action='https://app.upviral.com/site/parse_new_users/call/ajax/campId/61832'>
                         <div class='form-group'>
                             <input type='text' name='name'  class='form-control' value='' placeholder="Name" required>
                         </div>
@@ -56,20 +56,20 @@
                         </div>
                         <div class='form-group'>
                             <input type='submit' name='upviralsubmit'  value='Submit' class="btn" style="color: #fff">
-                            <input type='hidden' name='reflink' value='{{ $code }}'>
+                            <input type='hidden' name='reflink' value='{{ Request::input('ref_id') }}'>
                         </div>
                     </form>
                 </div>
 
-                <script>window.UpviralConfig = { camp : 'GA$GM$' }</script>
+                <script>window.UpviralConfig = { camp : 'SR4GM$' }</script>
                 <script language='javascript' src='https://snippet.upviral.com/upviral.js'></script>
             </div>
         </div>
     @else
-        <iframe class="uvembed61426" frameborder="0" src="https://static.upviral.com/loader.html" style="display: block; margin: 0 auto"></iframe>
+        <iframe class="uvembed61832" frameborder="0" src="https://static.upviral.com/loader.html" style="display: block; margin: 0 auto"></iframe>
         <script>
             window.UpviralConfig = {
-                camp: "GA$GM$",
+                camp: "SR4GM$",
                 widget_style:'iframe',
                 width:"500px"}
         </script>

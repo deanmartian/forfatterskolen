@@ -104,7 +104,8 @@ Route::group([
         Route::post('/private-group/email/validate', 'PrivateGroupMembersController@unauthenticatedEmailValidation');
         Route::post('/private-group/invite/send', 'PrivateGroupMembersController@unauthenticatedSendInvitation');
 
-        Route::get('/ref/{code?}', 'HomeController@testUpviralRef'); // Upviral ref page
+        Route::get('/webinar-pakke-campaign', 'HomeController@webinarPakkeRef'); // Webinar-pakke campaign page
+        Route::get('/test-campaign', 'HomeController@testCampaign'); // Upviral ref page
 
         // Course
         Route::group([

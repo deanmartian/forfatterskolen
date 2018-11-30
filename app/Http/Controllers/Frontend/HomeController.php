@@ -1057,16 +1057,13 @@ Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 
 
     }
 
-    public function upviralCallback()
+    public function webinarPakkeRef()
     {
-        Settings::create([
-           'setting_name' => 'test',
-            'setting_value' => \Request::input('reward_name')
-        ]);
+        return view('frontend.upviral-campaign.webinar-pakke');
     }
 
-    public function testUpviralRef($code = NULL)
+    public function testCampaign()
     {
-        return view('frontend.upviral-ref', compact('code'));
+        return view('frontend.upviral-campaign.test');
     }
 }
