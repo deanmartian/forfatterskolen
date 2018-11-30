@@ -215,8 +215,10 @@
                                     $months_6_sale_price = $package->months_6_sale_price - 1000;
                                     $months_12_sale_price = $package->months_12_sale_price - 1000;
 								}
-
 							}
+
+							$couponDiscount = $discountData && !$errors->any() ? $discountData->discount : 0;
+
 					  	?>
 							<div class="package-option">
 								<input type="radio" name="package_id"
@@ -226,40 +228,40 @@
 									   data-months_6_price="{{ FrontendHelpers::currencyFormat($months_6_price) }}"
 									   data-months_12_price="{{ FrontendHelpers::currencyFormat($months_12_price) }}"
 									   data-full_payment_price_number="{{ $full_payment_price }}"
-									   data-dis_full_payment_price_number="{{ $full_payment_price - $discountData->discount }}"
+									   data-dis_full_payment_price_number="{{ $full_payment_price - $couponDiscount }}"
 									   data-months_3_price_number="{{ $months_3_price }}"
-									   data-dis_months_3_price_number="{{ $months_3_price - $discountData->discount }}"
+									   data-dis_months_3_price_number="{{ $months_3_price - $couponDiscount }}"
 									   data-months_6_price_number="{{ $months_6_price }}"
-									   data-dis_months_6_price_number="{{ $months_6_price - $discountData->discount }}"
+									   data-dis_months_6_price_number="{{ $months_6_price - $couponDiscount }}"
 									   data-months_12_price_number="{{ $months_12_price }}"
-									   data-dis_months_12_price_number="{{ $months_12_price - $discountData->discount }}"
+									   data-dis_months_12_price_number="{{ $months_12_price - $couponDiscount }}"
 
 									   @if ($isBetweenFull && $package->full_payment_sale_price)
 									   		data-full_payment_sale_price = "{{ FrontendHelpers::currencyFormat($full_payment_sale_price) }}"
 									   		data-full_payment_sale_price_number = "{{ $full_payment_sale_price }}"
-									   		data-dis_full_payment_sale_price = "{{ FrontendHelpers::currencyFormat($full_payment_sale_price - $discountData->discount) }}"
-									   		data-dis_payment_sale_price_number = "{{ $full_payment_sale_price - $discountData->discount }}"
+									   		data-dis_full_payment_sale_price = "{{ FrontendHelpers::currencyFormat($full_payment_sale_price - $couponDiscount) }}"
+									   		data-dis_payment_sale_price_number = "{{ $full_payment_sale_price - $couponDiscount }}"
 									   @endif
 
 									   @if ($isBetweenMonths3 && $package->months_3_sale_price)
 									   		data-months_3_sale_price = "{{ FrontendHelpers::currencyFormat($months_3_sale_price) }}"
 									   		data-months_3_sale_price_number = "{{ $months_3_sale_price }}"
-									   		data-dis_months_3_sale_price = "{{ FrontendHelpers::currencyFormat($months_3_sale_price - $discountData->discount) }}"
-									   		data-dis_months_3_sale_price_number = "{{ $months_3_sale_price - $discountData->discount }}"
+									   		data-dis_months_3_sale_price = "{{ FrontendHelpers::currencyFormat($months_3_sale_price - $couponDiscount) }}"
+									   		data-dis_months_3_sale_price_number = "{{ $months_3_sale_price - $couponDiscount }}"
 									   @endif
 
 									   @if ($isBetweenMonths6 && $package->months_6_sale_price)
 									   		data-months_6_sale_price = "{{ FrontendHelpers::currencyFormat($months_6_sale_price) }}"
 									   		data-months_6_sale_price_number = "{{ $months_6_sale_price }}"
-									   		data-dis_months_6_sale_price = "{{ FrontendHelpers::currencyFormat($months_6_sale_price - $discountData->discount) }}"
-									   		data-dis_months_6_sale_price_number = "{{ $months_6_sale_price - $discountData->discount }}"
+									   		data-dis_months_6_sale_price = "{{ FrontendHelpers::currencyFormat($months_6_sale_price - $couponDiscount) }}"
+									   		data-dis_months_6_sale_price_number = "{{ $months_6_sale_price - $couponDiscount }}"
 									   @endif
 
 									   @if ($isBetweenMonths12 && $package->months_12_sale_price)
 										   	data-months_12_sale_price = "{{ FrontendHelpers::currencyFormat($months_12_sale_price) }}"
 										   	data-months_12_sale_price_number = "{{ $months_12_sale_price }}"
-									   		data-dis_months_12_sale_price = "{{ FrontendHelpers::currencyFormat($months_12_sale_price - $discountData->discount) }}"
-									   		data-dis_months_12_sale_price_number = "{{ $months_12_sale_price - $discountData->discount }}"
+									   		data-dis_months_12_sale_price = "{{ FrontendHelpers::currencyFormat($months_12_sale_price - $couponDiscount) }}"
+									   		data-dis_months_12_sale_price_number = "{{ $months_12_sale_price - $couponDiscount }}"
 									   @endif
 
 									   required>
@@ -331,7 +333,7 @@
 
 					  <div id="discount-wrapper" class="text-center margin-bottom">
 						  <h4>Din rabatt</h4>
-						  <span id="discount-display" style="font-size: 22px">{{ \App\Http\FrontendHelpers::currencyFormat($discountData->discount) }}</span>
+						  <span id="discount-display" style="font-size: 22px">{{ \App\Http\FrontendHelpers::currencyFormat($couponDiscount) }}</span>
 					  </div>
 
 					<div class="text-center checkout-total">
@@ -352,11 +354,11 @@
 							@if( $hasPaidCourse && $package->has_student_discount)
 								{{--check if course is Webinar-pakke and apply 500 only--}}
 									@if($course->type == "Single")
-										{{ FrontendHelpers::currencyFormat($standard_price->full_payment_price - ($discountData->discount + 500)) }}
+										{{ FrontendHelpers::currencyFormat($standard_price->full_payment_price - ($couponDiscount + 500)) }}
 									@endif
 
 									@if($course->type == "Group")
-										{{ FrontendHelpers::currencyFormat($standard_price->full_payment_price - ($discountData->discount + 1000)) }}
+										{{ FrontendHelpers::currencyFormat($standard_price->full_payment_price - ($couponDiscount + 1000)) }}
 									@endif
 							@else
 							{{ FrontendHelpers::currencyFormat($standard_price->full_payment_price) }}
@@ -366,11 +368,11 @@
 						<span>
 						@if( $hasPaidCourse && $package->has_student_discount)
 								@if($course->type == "Single")
-									{{ FrontendHelpers::currencyFormat($course->packages[0]->full_payment_price - ($discountData->discount + 500)) }}
+									{{ FrontendHelpers::currencyFormat($course->packages[0]->full_payment_price - ($couponDiscount + 500)) }}
 								@endif
 
 								@if($course->type == "Group")
-									{{ FrontendHelpers::currencyFormat($course->packages[0]->full_payment_price - ($discountData->discount + 1000)) }}
+									{{ FrontendHelpers::currencyFormat($course->packages[0]->full_payment_price - ($couponDiscount + 1000)) }}
 								@endif
 						@else
 						{{ FrontendHelpers::currencyFormat($course->packages[0]->full_payment_price) }}

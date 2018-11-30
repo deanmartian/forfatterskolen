@@ -57,7 +57,26 @@ class ShopController extends Controller
         $discountData = $course->discounts()->where('coupon', '=', $coupon)->first();
 
         if (!$discountData) {
-            return redirect()->route('front.course.checkout', $course_id);
+            return view('frontend.shop.applied-discount', compact('course', 'coupon', 'discountData'))
+                ->with([
+                    'errors' => AdminHelpers::createMessageBag('Invalid coupon code.')
+                ]);
+            //return redirect()->route('front.course.checkout', $course_id);
+        }
+
+        if ($discountData->valid_to) {
+            $valid_from = Carbon::parse($discountData->valid_from)->format('Y-m-d');
+            $valid_to   = Carbon::parse($discountData->valid_to)->format('Y-m-d');
+            $today      = Carbon::today()->format('Y-m-d');
+
+            if ( ($today >= $valid_from) && ($today <= $valid_to)) {
+                echo "valid date <br/>";
+            } else {
+                return view('frontend.shop.applied-discount', compact('course', 'coupon', 'discountData'))
+                    ->with([
+                    'errors' => AdminHelpers::createMessageBag('Coupon is already expired.')
+                ]);
+            }
         }
 
         if( !Auth::guest() ) :
