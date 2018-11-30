@@ -70,11 +70,11 @@ class ShopController extends Controller
             $today      = Carbon::today()->format('Y-m-d');
 
             if ( ($today >= $valid_from) && ($today <= $valid_to)) {
-                echo "valid date <br/>";
+                //echo "valid date <br/>";
             } else {
                 return view('frontend.shop.applied-discount', compact('course', 'coupon', 'discountData'))
                     ->with([
-                    'errors' => AdminHelpers::createMessageBag('Coupon is already expired.')
+                    'errors' => AdminHelpers::createMessageBag('Rabattkupongen er ugyldig eller utløpt.')
                 ]);
             }
         }
@@ -263,10 +263,10 @@ class ShopController extends Controller
                 $today      = Carbon::today()->format('Y-m-d');
 
                 if ( ($today >= $valid_from) && ($today <= $valid_to)) {
-                    echo "valid date <br/>";
+                    //echo "valid date <br/>";
                 } else {
                     return redirect()->back()->withInput()->with([
-                        'errors' => AdminHelpers::createMessageBag('Coupon is already expired.')
+                        'errors' => AdminHelpers::createMessageBag('Rabattkupongen er ugyldig eller utløpt.')
                     ]);
                 }
             }
