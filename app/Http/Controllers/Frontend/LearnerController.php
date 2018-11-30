@@ -737,6 +737,15 @@ class LearnerController extends Controller
             FrontendHelpers::isCourseTakenAvailable($courseTaken) &&
             FrontendHelpers::isCourseAvailable($courseTaken->package->course) ) :
             $courseTaken->started_at = date('Y-m-d h:i:s');
+
+            /*
+             * check if validity date is greater than 0 and
+             * set an end date (this is for courses that is for sale for a month)
+             */
+            if ($courseTaken->package->validity_period > 0) {
+                $courseTaken->end_date = Carbon::today()->addMonth($courseTaken->package->validity_period);
+            }
+
             $courseTaken->save();
             return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
         endif;

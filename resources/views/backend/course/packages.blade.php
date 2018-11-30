@@ -95,7 +95,8 @@
                         data-course-type="{{ $package->course_type }}"
                                 data-disable-upgrade-price-date="{{ $package->disable_upgrade_price_date }}"
                                 data-disable-upgrade-price="{{ $package->disable_upgrade_price }}"
-                                data-issue_date="{{ $package->issue_date }}"><i class="fa fa-pencil"></i></button>
+                                data-issue_date="{{ $package->issue_date }}"
+                        data-validity_period="{{ $package->validity_period }}"><i class="fa fa-pencil"></i></button>
                         @endif
 
 						<button type="button" data-target="#deletePackageModal" data-toggle="modal" class="btn btn-danger btn-xs btn-delete-package" data-action="{{route('admin.course.package.destroy', ['course_id' => $course->id, 'package_id' => $package->id])}}" data-variation="{{$package->variation}}" data-id="{{$package->id}}"><i class="fa fa-trash"></i></button>
@@ -363,6 +364,10 @@
                        class="disable-upgrade-price-toggle" data-off="No"
                        name="disable_upgrade_price" data-width="84">
               </div>
+            <div class="form-group">
+                <label>Validity Period (in month)</label>
+                <input type="number" class="form-control" name="validity_period" step="1">
+            </div>
               <div class="form-group">
                 <label>{{ trans('site.student-discount') }}</label> <br>
                 <input type="checkbox" data-toggle="toggle" data-on="Enable"
@@ -666,6 +671,10 @@
                        class="disable-upgrade-price-toggle" data-off="No"
                        name="disable_upgrade_price" data-width="84">
               </div>
+                <div class="form-group">
+                    <label>Validity Period (in month)</label>
+                    <input type="number" class="form-control" name="validity_period" step="1">
+                </div>
               <div class="form-group">
                 <label>{{ trans('site.student-discount') }}</label> <br>
                 <input type="checkbox" data-toggle="toggle" data-on="Enable"
@@ -1214,6 +1223,7 @@ $(document).ready(function(){
       var course_type = $(this).data('course-type');
 
       let issue_date = $(this).data('issue_date');
+      let validity_period = $(this).data('validity_period');
 
       var due_date = $(this).data('due-date');
       $('#editPackageModal form').attr('action', action);
@@ -1291,6 +1301,7 @@ $(document).ready(function(){
       $('#editPackageModal input[name=disable_upgrade_price_date]').val(disable_upgrade_price_date);
 
       $('#editPackageModal input[name=issue_date]').val(issue_date);
+      $('#editPackageModal input[name=validity_period]').val(validity_period);
 
       $(".upgrade-price-container").hide();
       $(".upgrade-price-standard-container").hide();

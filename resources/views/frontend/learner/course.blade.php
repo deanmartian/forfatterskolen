@@ -69,14 +69,20 @@
 						@if( $courseTaken->package->course->start_date )
 						<div>Kursstart dato: {{ $courseTaken->package->course->start_date }}</div>
 						@endif
+						{{--original code for slutt dato the other just don't have an else
 						@if( $courseTaken->package->course->end_date )
 						<div>Slutt dato: {{ $courseTaken->package->course->end_date }}</div>
-						@endif
+						@endif--}}
 						@if( $courseTaken->start_date )
 						<div>Start date: {{ $courseTaken->start_date }}</div>
+						@else
 						@endif
 						@if( $courseTaken->end_date )
-						<div>Slutt dato: {{ $courseTaken->end_date }}</div>
+							<div>Slutt dato: {{ $courseTaken->end_date }}</div>
+						@else
+							@if( $courseTaken->package->course->end_date )
+								<div>Slutt dato: {{ $courseTaken->package->course->end_date }}</div>
+							@endif
 						@endif
 
 						<div class="text-right margin-top">

@@ -202,7 +202,8 @@ class LearnerController extends Controller
         //added this line
         if ($courseTaken->package->course->type == 'Group') {
             $courseTaken->started_at = Carbon::now();
-            $courseTaken->end_date = Carbon::today()->addYear(1);
+            $courseTaken->end_date = $courseTaken->package->validity_period > 0
+                ? Carbon::today()->addMonth($courseTaken->package->validity_period) : Carbon::today()->addYear(1);
             $isGroupCourse++;
         }
 
@@ -228,7 +229,8 @@ class LearnerController extends Controller
                     $includedCourse->started_at = Carbon::now(); // added this one
                 }
 
-                $includedCourse->end_date = Carbon::today()->addYear(1); // added this one
+                $includedCourse->end_date = $courseTaken->package->validity_period > 0
+                    ? Carbon::today()->addMonth($courseTaken->package->validity_period) : Carbon::today()->addYear(1);
                 $includedCourse->is_active = true;
                 $includedCourse->save();
             endforeach;
@@ -238,8 +240,10 @@ class LearnerController extends Controller
         // then update all of the end date to the same date
         if ($isGroupCourse > 0) {
             $user_id = $courseTaken->user_id;
+            $end_date = $courseTaken->package->validity_period > 0
+                ? Carbon::today()->addMonth($courseTaken->package->validity_period) : Carbon::today()->addYear(1);
             CoursesTaken::where('user_id', $user_id)
-                ->update(['end_date' => Carbon::today()->addYear(1)]);
+                ->update(['end_date' => $end_date]);
         }
 
         return redirect()->back();
