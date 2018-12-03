@@ -828,6 +828,12 @@ class HomeController extends Controller
             $this->validate($request, $validates);
             $list_id = $optIn->list_id;
             AdminHelpers::addToActiveCampaignList($list_id, $request->except('_token','terms'));
+
+            $slugList = ['dikt'];
+            if (in_array($slug, $slugList)) {
+                return redirect()->route('front.opt-in.thanks', $slug);
+            }
+
             return redirect()->back()->with([
                 'opt-in-message' => 1
             ]);
@@ -835,6 +841,54 @@ class HomeController extends Controller
 
         if ($optIn) {
             return view('frontend.opt-in', compact('optIn'));
+        }
+
+        return redirect()->route('front.home');
+    }
+
+    /**
+     * Display the thank you page for optin
+     * @param null $slug
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function optInThanks($slug = null)
+    {
+        $webinar_pakke = Course::find(17);
+        $next_webinars = $webinar_pakke->webinars()->where('start_date', '>=' ,Carbon::today())
+            ->where('set_as_replay', 0)->get();
+
+        $optIn = OptIn::getBySlug($slug ?: 'terms');
+
+        if ($optIn) {
+            switch ($slug) {
+                case 'dikt' :
+                    return view('frontend.opt-in-thanks.dikt', compact('next_webinars'));
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        return redirect()->route('front.home');
+    }
+
+    public function optInReferral($slug = null, Request $request)
+    {
+        $optIn = OptIn::getBySlug($slug ?: 'terms');
+        if ($optIn) {
+            $data = [];
+            switch ($slug) {
+                case 'dikt' :
+                    $data['camp'] = 'SR4GM$';
+                    $data['camp_id'] = 61832;
+                    $data['image'] = 'poem-bg-low-blur.png';
+                    break;
+
+                default:
+                    break;
+            }
+            return view('frontend.opt-in-thanks.referral', compact('slug', 'data'));
         }
 
         return redirect()->route('front.home');

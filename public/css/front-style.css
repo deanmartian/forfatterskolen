@@ -34,6 +34,18 @@
     font-display: block;
 }
 
+@font-face{
+    font-family: 'Montserrat Regular';
+    src: url('../fonts/montserrat/Montserrat-Regular.otf');
+    font-display: block;
+}
+
+@font-face{
+    font-family: 'Montserrat Medium';
+    src: url('../fonts/montserrat/Montserrat-Medium.otf');
+    font-display: block;
+}
+
 *, .modal a {
     font-family: 'Barlow Light', sans serif;
 }
@@ -1636,6 +1648,224 @@ start today section
 
 /* end course single page */
 
+/* opt-in thanks page */
+
+.opt-in-thanks {
+    background-color: #f5f5f5;
+    padding: 70px;
+}
+
+.opt-in-thanks .dikt-page .main-image-container {
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 414px;
+    position: relative;
+}
+
+.opt-in-thanks .dikt-page .main-image-container:before {
+    content: '';
+    background-color: #000;
+    opacity: .12;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.opt-in-thanks .dikt-page .thank-you-card {
+    border: none;
+    box-shadow: 1px 5px 32px 0 rgba(191, 191, 191, 0.22);
+    padding: 70px 137px;
+    text-align: center;
+}
+
+.opt-in-thanks .dikt-page h1 {
+    font-family: "Barlow Medium", sans serif;
+    font-size: 30px;
+}
+
+.opt-in-thanks .dikt-page .thank-you-card .bg-site-red {
+    color: #fff;
+    font-family: "Montserrat Regular", sans serif;
+    margin: 40px auto 0 auto;
+    width: 75%;
+}
+
+.opt-in-thanks .dikt-page .pdf-icon:before {
+    background-image: url(../images-new/pdf.png);
+}
+
+.opt-in-thanks .dikt-page .gift-icon:before {
+    background-image: url(../images-new/gift.png);
+    height: 60px;
+    width: 60px;
+}
+
+.opt-in-thanks .description-container {
+    color: #fff;
+    padding: 40px 30px;
+}
+
+.opt-in-thanks .description-container h2 {
+    font-family: "Barlow Medium", sans serif;
+    font-size: 23px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+.opt-in-thanks  .description-container p {
+    font-size: 18px;
+}
+
+.opt-in-thanks .dikt-page .description-container {
+    background-image: url(../images-new/opt-in-thanks/dikt-description-bg.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.opt-in-thanks .description-container .point-details-container {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-top: 35px;
+}
+
+.opt-in-thanks .description-container .point-details-container > .left-container {
+    background-color: #fff;
+    border-radius: 5px;
+    color: #e83a46;
+    font-family: "Barlow Medium", sans serif;
+    font-size: 40px;
+    padding: 0;
+}
+
+.opt-in-thanks .description-container .point-details-container > .right-container {
+    font-size: 16px;
+    line-height: 20px;
+    padding-left: 25px;
+}
+
+.opt-in-thanks .form-container {
+    font-family: "Montserrat Regular", sans serif;
+    font-size: 16px;
+}
+
+.opt-in-thanks .form-container b {
+    font-family: "Montserrat Medium", sans serif;
+    font-weight: normal;
+}
+
+.opt-in-thanks .form-container [class*="col-"] {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.opt-in-thanks .form-container .form-control {
+    font-family: "Montserrat Regular", sans serif;
+    padding: 20px;
+}
+
+.opt-in-thanks .form-container form {
+    margin-top: 20px;
+}
+
+.opt-in-thanks .form-container .bg-site-red {
+    background-color: #e83a47 !important;
+    color: #fff;
+    font-family: "Montserrat Regular", sans serif;
+    font-size: 14px;
+    padding: 18px 10px;
+    width: 100%;
+}
+
+.opt-in-thanks .form-container .coupon-icon:before {
+    background-image: url(../images-new/opt-in-thanks/coupon.png);
+    display: block;
+    margin: 0 auto;
+    height: 34px;
+    width: 34px;
+}
+
+.opt-in-thanks .dikt-page .form-container {
+    background-image: url(../images-new/opt-in-thanks/dikt-form-bg.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #fff;
+    padding: 30px 30px 20px 30px;
+    text-align: center;
+}
+
+.opt-in-thanks .dikt-page .testimonial-container {
+    margin-top: 80px;
+}
+
+.opt-in-thanks .testimonial-container {
+    background-color: #fff;
+    box-shadow: 1px 5px 32px 0 rgba(191, 191, 191, 0.2);
+    border-radius: 5px;
+    margin-top: 20px;
+    padding: 50px 50px 100px 50px;
+}
+
+.opt-in-thanks .testimonial-container .title {
+    color: #032322;
+    font-family: "Barlow Light",sans serif;
+}
+
+.opt-in-thanks .testimonial-container .carousel-indicators {
+    bottom: -15px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.opt-in-thanks .testimonial-container .carousel-item {
+    margin-top: 95px;
+}
+
+.opt-in-thanks .testimonial-container .card {
+    background-color: #f4f4f4;
+    border: none;
+    min-height: 133px
+}
+
+.opt-in-thanks .testimonial-container .card .editor-circle {
+    background-color: #fff;
+    height: 120px;
+    border-radius: 50%;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    margin: -75px auto 0 auto;
+    text-align: center;
+    width: 120px;
+}
+
+.opt-in-thanks .testimonial-container .card .editor-circle img {
+    height: 85%;
+    margin-top: 9px;
+    width: 85%;
+    object-fit: cover;
+}
+
+.opt-in-thanks .testimonial-container .card h2 {
+    margin-top: 15px;
+}
+
+/* end opt-in thanks page */
+
+/* opt-in referral page */
+
+.opt-in-referral {
+    background-repeat: no-repeat;
+    background-size: 100% 70%;
+    height: 800px;
+    padding-top: 200px;
+}
+
+/* end opt-in referral page*/
+
 /* theme tabs */
 
 .theme-tabs {
@@ -2100,6 +2330,40 @@ blockquote {
     .course-single-page .testimonial-card video {
         height: 161px;
     }
+
+    .opt-in-thanks {
+        padding: 50px;
+    }
+
+    .opt-in-thanks .dikt-page .main-image-container {
+        height: 332px;
+    }
+
+    .opt-in-thanks .dikt-page .thank-you-card {
+        padding: 64px 70px;
+    }
+
+    .opt-in-thanks .description-container {
+        padding: 30px 20px;
+    }
+
+    .opt-in-thanks .dikt-page .form-container {
+        padding: 30px 15px 20px 15px;
+    }
+
+    .opt-in-thanks .form-container .bg-site-red {
+        font-size: 11px;
+        padding: 21px 10px;
+    }
+
+    .opt-in-thanks .dikt-page .testimonial-container {
+        margin-top: 50px;
+    }
+
+    .opt-in-referral {
+        height: 670px;
+        padding-top: 160px;
+    }
 }
 
 @media only screen and (max-width: 768px) {
@@ -2538,6 +2802,104 @@ blockquote {
         overflow-x: auto;
         padding: 20px 10px;
     }
+
+    .course-single-page .webinars-container .carousel-control-prev {
+        right: 12%;
+    }
+
+    .course-single-page .webinars-container .carousel-control-next {
+        right: 3%;
+    }
+
+    .course-single-page .webinars-container .panel-body {
+        min-height: 531px;
+    }
+
+    .opt-in-thanks {
+        padding: 40px 0;
+    }
+
+    .opt-in-thanks .dikt-page [class*="col-"] {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .opt-in-thanks .dikt-page .main-image-container {
+        height: 267px;
+    }
+
+    .opt-in-thanks .dikt-page .gift-icon:before {
+        height: 50px;
+        width: 50px;
+    }
+
+    .opt-in-thanks .dikt-page .thank-you-card {
+        padding: 30px 30px;
+    }
+
+    .opt-in-thanks .description-container {
+        padding: 20px 10px;
+    }
+
+    .opt-in-thanks .description-container h2 {
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+
+    .opt-in-thanks .description-container p {
+        font-size: 17px;
+    }
+
+    .opt-in-thanks .description-container .point-details-container {
+        margin-top: 25px;
+    }
+
+    .opt-in-thanks .dikt-page .form-container {
+        padding: 15px 10px 15px 10px;
+    }
+
+    .opt-in-thanks .form-container form [class*="col-"] {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .opt-in-thanks .form-container form .form-group {
+        margin-bottom: 0;
+    }
+
+    .opt-in-thanks .form-container .bg-site-red {
+        padding: 16px 5px;
+    }
+
+    .opt-in-thanks .testimonial-container .carousel-indicators {
+        bottom: -5px;
+    }
+
+    .opt-in-thanks .testimonial-container {
+        padding: 50px 20px 80px 20px;
+    }
+
+    .opt-in-thanks .testimonial-container .card h2 {
+        margin-top: 15px;
+        font-size: 18px;
+    }
+
+    .opt-in-thanks .description-container .point-details-container > .right-container {
+        padding-left: 20px;
+    }
+
+    .opt-in-thanks .form-container .form-control {
+        border-radius: 0;
+    }
+
+    .opt-in-thanks .form-container form {
+        margin-top: 10px;
+    }
+
+    .opt-in-thanks .dikt-page .testimonial-container {
+        margin-top: 30px;
+    }
+
     /* theme tab */
     .theme-tabs li a {
         padding: 20px;
@@ -3077,6 +3439,79 @@ blockquote {
     .course-single-page .webinars-container .image-container {
         height: 230px;
     }
+
+    .opt-in-thanks .dikt-page .main-image-container {
+        height: 346px;
+    }
+
+    .opt-in-thanks .dikt-page h1 {
+        font-size: 25px;
+    }
+
+    .opt-in-thanks .dikt-page .thank-you-card {
+        padding: 30px 45px;
+    }
+
+    .opt-in-thanks .dikt-page .thank-you-card .bg-site-red {
+        margin: 10px auto 0 auto;
+        width: 100%;
+    }
+
+    .opt-in-thanks .description-container h2 {
+        font-size: 20px;
+    }
+
+    .opt-in-thanks .description-container .point-details-container > .right-container {
+        padding-left: 5px;
+    }
+
+    .opt-in-thanks .form-container .d-flex {
+        display: block !important;
+    }
+
+    .opt-in-thanks .form-container form .form-group {
+        margin-bottom: 5px;
+    }
+
+    .opt-in-thanks .form-container .form-control {
+        border-radius: .25rem;
+        padding: 10px;
+    }
+
+    .opt-in-thanks .form-container .bg-site-red {
+        font-size: 15px;
+        padding: 0 5px;
+    }
+
+    .opt-in-thanks .form-container .coupon-icon:before {
+        height: 25px;
+        width: 25px;
+    }
+
+    .opt-in-thanks .testimonial-container {
+        padding: 30px 0 80px 0;
+    }
+
+    .opt-in-thanks .testimonial-container .carousel-item {
+        margin-top: 80px;
+    }
+
+    .opt-in-thanks .testimonial-container .card {
+        margin-top: 70px;
+    }
+
+    .opt-in-thanks .testimonial-container .title {
+        font-size: 30px;
+    }
+
+    .opt-in-thanks .testimonial-container .card h2 {
+        font-size: 20px;
+    }
+
+    .opt-in-referral {
+        height: 610px;
+        padding-top: 110px;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -3546,6 +3981,22 @@ blockquote {
         height: 200px;
     }
 
+    .opt-in-thanks .dikt-page .main-image-container {
+        height: 264px;
+    }
+
+    .opt-in-thanks .dikt-page .thank-you-card {
+        padding: 25px;
+    }
+
+    .opt-in-thanks .dikt-page h1 {
+        font-size: 20px;
+    }
+
+    .opt-in-thanks .description-container .point-details-container > .left-container {
+        font-size: 30px;
+    }
+
 }
 
 @media only screen and (max-width: 375px) {
@@ -3660,6 +4111,10 @@ blockquote {
         padding-left: 7px;
         padding-right: 7px;
     }
+
+    .opt-in-thanks .dikt-page .main-image-container {
+        height: 238px;
+    }
 }
 
 @media only screen and (max-width: 360px) {
@@ -3753,6 +4208,10 @@ blockquote {
 
     .theme-tabs li a > span {
         font-size: 16px;
+    }
+
+    .opt-in-thanks .dikt-page .main-image-container {
+        height: 228px;
     }
 }
 
@@ -3907,5 +4366,9 @@ blockquote {
 
     .course-single-page .testimonial-card video {
         height: 140px;
+    }
+
+    .opt-in-thanks .dikt-page .main-image-container {
+        height: 202px;
     }
 }

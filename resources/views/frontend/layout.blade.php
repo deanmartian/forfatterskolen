@@ -59,7 +59,7 @@
 
         <?php
         $newDesignPages = ['front.shop-manuscript.index', 'front.publishing', 'front.blog', 'front.shop.thankyou',
-            'front.thank-you', 'front.course.index', 'front.course.show']
+            'front.thank-you', 'front.course.index', 'front.course.show', 'front.opt-in.thanks']
         ?>
         @if(!in_array(Route::currentRouteName(), $newDesignPages))
             @include('frontend.partials.navbar')
@@ -115,6 +115,11 @@
                 let submit_btn = $(t).find('[type=submit]');
                 submit_btn.text('');
                 submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+                submit_btn.attr('disabled', 'disabled');
+            }
+
+            function disableSubmitOrigText(t) {
+                let submit_btn = $(t).find('[type=submit]');
                 submit_btn.attr('disabled', 'disabled');
             }
 

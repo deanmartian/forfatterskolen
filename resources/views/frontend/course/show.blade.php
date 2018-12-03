@@ -236,7 +236,7 @@
 											@foreach($webinars_chunk as $k => $webinars)
 												<div class="carousel-item {{ $k==0 ? 'active' : '' }}">
 													@foreach($webinars as $webinar)
-														<div class="col-md-4">
+														<div class="col-md-4 col-sm-12">
 															<div class="panel panel-default">
 																<div class="panel-body">
 																	<div class="image-container"
