@@ -857,12 +857,18 @@ class HomeController extends Controller
         $next_webinars = $webinar_pakke->webinars()->where('start_date', '>=' ,Carbon::today())
             ->where('set_as_replay', 0)->get();
 
-        $optIn = OptIn::getBySlug($slug ?: 'terms');
+        $optIn = 1;//OptIn::getBySlug($slug ?: 'terms');
 
         if ($optIn) {
             switch ($slug) {
                 case 'dikt' :
-                    return view('frontend.opt-in-thanks.dikt', compact('next_webinars'));
+                    $data['camp_id'] = 61832;
+                    return view('frontend.opt-in-thanks.dikt', compact('next_webinars', 'slug', 'data'));
+                    break;
+
+                case 'children':
+                    $data['camp_id'] = 61832;
+                    return view('frontend.opt-in-thanks.children', compact('next_webinars', 'slug', 'data'));
                     break;
 
                 default:
@@ -875,7 +881,7 @@ class HomeController extends Controller
 
     public function optInReferral($slug = null, Request $request)
     {
-        $optIn = OptIn::getBySlug($slug ?: 'terms');
+        $optIn = 1;//OptIn::getBySlug($slug ?: 'terms');
         if ($optIn) {
             $data = [];
             switch ($slug) {
@@ -883,6 +889,12 @@ class HomeController extends Controller
                     $data['camp'] = 'SR4GM$';
                     $data['camp_id'] = 61832;
                     $data['image'] = 'poem-bg-low-blur.png';
+                    break;
+
+                case 'children' :
+                    $data['camp'] = 'SR4GM$';
+                    $data['camp_id'] = 61832;
+                    $data['image'] = 'children-bg.png';
                     break;
 
                 default:

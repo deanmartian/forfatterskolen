@@ -1,5 +1,7 @@
 <div class="description-container text-center">
-    <i class="img-icon gift-icon"></i>
+    @if ($slug == 'dikt')
+        <i class="img-icon gift-icon"></i>
+    @endif
     <h2>You know what?</h2>
     <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.

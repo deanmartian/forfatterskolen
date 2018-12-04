@@ -1680,23 +1680,23 @@ start today section
     text-align: center;
 }
 
-.opt-in-thanks .dikt-page h1 {
+.opt-in-thanks h1 {
     font-family: "Barlow Medium", sans serif;
     font-size: 30px;
 }
 
-.opt-in-thanks .dikt-page .thank-you-card .bg-site-red {
+.opt-in-thanks .thank-you-card .bg-site-red {
     color: #fff;
     font-family: "Montserrat Regular", sans serif;
     margin: 40px auto 0 auto;
     width: 75%;
 }
 
-.opt-in-thanks .dikt-page .pdf-icon:before {
+.opt-in-thanks .pdf-icon:before {
     background-image: url(../images-new/pdf.png);
 }
 
-.opt-in-thanks .dikt-page .gift-icon:before {
+.opt-in-thanks .gift-icon:before {
     background-image: url(../images-new/gift.png);
     height: 60px;
     width: 60px;
@@ -1748,9 +1748,10 @@ start today section
     padding-left: 25px;
 }
 
-.opt-in-thanks .form-container {
+.opt-in-thanks .form-container .form-section {
     font-family: "Montserrat Regular", sans serif;
     font-size: 16px;
+    text-align: center;
 }
 
 .opt-in-thanks .form-container b {
@@ -1795,7 +1796,6 @@ start today section
     background-size: cover;
     color: #fff;
     padding: 30px 30px 20px 30px;
-    text-align: center;
 }
 
 .opt-in-thanks .dikt-page .testimonial-container {
@@ -1851,6 +1851,70 @@ start today section
 
 .opt-in-thanks .testimonial-container .card h2 {
     margin-top: 15px;
+}
+
+.opt-in-thanks .children-page .main-image-container {
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 414px;
+    position: relative;
+}
+
+.opt-in-thanks .children-page .left-container {
+    padding-right: 0;
+}
+
+.opt-in-thanks .children-page .right-container {
+    padding-left: 0;
+}
+
+.opt-in-thanks .children-page .thank-you-card {
+    background-image: url(../images-new/opt-in-thanks/sun-star-bg.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    box-shadow: 1px 5px 32px 0 rgba(191, 191, 191, 0.22);
+    padding: 133px 105px;
+    text-align: center;
+}
+
+.opt-in-thanks .children-page .thank-you-card .bg-site-red {
+    width: 85%;
+}
+
+.opt-in-thanks .children-page .cloud-container {
+    background-image: url(../images-new/opt-in-thanks/cloud.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    position: absolute;
+    height: 150px;
+    width: 250px;
+    top: -45px;
+    right: -57px;
+}
+
+.opt-in-thanks .children-page .description-container {
+    padding: 40px 60px;
+}
+
+.opt-in-thanks .children-page .details-section {
+    background-image: url(../images-new/opt-in-thanks/children-red-bg.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    margin-bottom: 30px;
+    margin-top: 50px;
+}
+
+.opt-in-thanks .children-page .form-column {
+    color: #fff;
+    padding: 50px 30px;
+    text-align: center;
+}
+
+.opt-in-thanks .children-page .form-column .form-section {
+    background-color: #862736;
+    margin-top: 20px;
+    padding: 30px;
 }
 
 /* end opt-in thanks page */
@@ -2057,6 +2121,10 @@ blockquote {
 
 .bg-site-red {
     background-color: #e83945!important;
+}
+
+.bg-white {
+    background-color: #fff;
 }
 
 .select-manuscript {
@@ -2363,6 +2431,33 @@ blockquote {
     .opt-in-referral {
         height: 670px;
         padding-top: 160px;
+    }
+
+    .opt-in-thanks .children-page .main-image-container {
+        height: 319px;
+    }
+
+    .opt-in-thanks .children-page .thank-you-card {
+        padding: 85px 50px;
+    }
+
+    .opt-in-thanks .children-page .cloud-container {
+        height: 130px;
+        width: 200px;
+        top: -45px;
+        right: -15px;
+    }
+
+    .opt-in-thanks .children-page .description-container {
+        padding: 40px 50px;
+    }
+
+    .opt-in-thanks .children-page .form-column {
+        padding: 50px 20px;
+    }
+
+    .opt-in-thanks .children-page .form-column .form-section {
+        padding: 20px;
     }
 }
 
@@ -2828,7 +2923,7 @@ blockquote {
         height: 267px;
     }
 
-    .opt-in-thanks .dikt-page .gift-icon:before {
+    .opt-in-thanks .gift-icon:before {
         height: 50px;
         width: 50px;
     }
@@ -2898,6 +2993,38 @@ blockquote {
 
     .opt-in-thanks .dikt-page .testimonial-container {
         margin-top: 30px;
+    }
+
+    .opt-in-thanks .children-page .main-image-container {
+        height: 247px;
+    }
+
+    .opt-in-thanks .children-page .thank-you-card {
+        padding: 50px 10px;
+    }
+
+    .opt-in-thanks .children-page .cloud-container {
+        height: 80px;
+        width: 150px;
+        top: -26px;
+        right: -10px;
+    }
+
+    .opt-in-thanks .children-page .details-section {
+        margin-bottom: 10px;
+        margin-top: 30px;
+    }
+
+    .opt-in-thanks .children-page .description-container {
+        padding: 20px 15px;
+    }
+
+    .opt-in-thanks .children-page .form-column {
+        padding: 60px 10px;
+    }
+
+    .opt-in-thanks .children-page .form-column .form-section {
+        padding: 15px;
     }
 
     /* theme tab */
@@ -3444,7 +3571,7 @@ blockquote {
         height: 346px;
     }
 
-    .opt-in-thanks .dikt-page h1 {
+    .opt-in-thanks h1 {
         font-size: 25px;
     }
 
@@ -3452,7 +3579,7 @@ blockquote {
         padding: 30px 45px;
     }
 
-    .opt-in-thanks .dikt-page .thank-you-card .bg-site-red {
+    .opt-in-thanks .thank-you-card .bg-site-red {
         margin: 10px auto 0 auto;
         width: 100%;
     }
@@ -3511,6 +3638,28 @@ blockquote {
     .opt-in-referral {
         height: 610px;
         padding-top: 110px;
+    }
+
+    .opt-in-thanks .children-page .main-image-container {
+        height: 340px;
+        background-size: 100% 100%;
+    }
+
+    .opt-in-thanks .children-page .left-container {
+        padding-right: 15px;
+    }
+
+    .opt-in-thanks .children-page .right-container {
+        margin-top: 30px;
+        padding-left: 15px;
+    }
+
+    .opt-in-thanks .children-page .details-section {
+        display: block;
+    }
+
+    .opt-in-thanks .children-page .form-column {
+        padding: 20px 10px;
     }
 }
 
@@ -3989,7 +4138,7 @@ blockquote {
         padding: 25px;
     }
 
-    .opt-in-thanks .dikt-page h1 {
+    .opt-in-thanks h1 {
         font-size: 20px;
     }
 
@@ -3997,6 +4146,21 @@ blockquote {
         font-size: 30px;
     }
 
+    .opt-in-thanks .children-page .main-image-container {
+        height: 255px;
+    }
+
+    .opt-in-thanks .children-page .cloud-container {
+        right: 5px;
+    }
+
+    .opt-in-thanks .children-page .thank-you-card {
+        padding: 65px 40px;
+    }
+
+    .opt-in-thanks .children-page .description-container, .opt-in-thanks .children-page .form-column {
+        padding: 15px 0;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -4114,6 +4278,14 @@ blockquote {
 
     .opt-in-thanks .dikt-page .main-image-container {
         height: 238px;
+    }
+
+    .opt-in-thanks .children-page .main-image-container {
+        height: 238px;
+    }
+
+    .opt-in-thanks .children-page .thank-you-card {
+        padding: 65px 15px;
     }
 }
 
@@ -4370,5 +4542,21 @@ blockquote {
 
     .opt-in-thanks .dikt-page .main-image-container {
         height: 202px;
+    }
+
+    .opt-in-thanks .children-page .main-image-container {
+        height: 202px;
+    }
+
+    .opt-in-thanks .children-page .thank-you-card {
+        padding: 65px 0;
+    }
+
+    .opt-in-thanks .children-page .thank-you-card .bg-site-red {
+        width: 90%;
+    }
+
+    .opt-in-thanks .children-page .form-column .form-section {
+        padding: 10px;
     }
 }
