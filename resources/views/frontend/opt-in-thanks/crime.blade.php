@@ -6,26 +6,22 @@
 
 @section('content')
     <div class="opt-in-thanks" style="background-color: #f9f9f9">
-        <div class="container children-page">
+        <div class="container crime-page">
             @if (!Request::input('ref_id'))
                 <div class="row">
-                    <div class="col-md-6 left-container">
-                        <div class="main-image-container" style="background-image: url({{ asset('images-new/opt-in-thanks/children-video-image.jpg') }})"></div>
-                    </div>
-                    <div class="col-md-6 right-container">
-                        <div class="thank-you-card">
-                            <div class="cloud-container"></div>
-                            <h1>
-                                Thank you for signing up for the free pdf.
-                            </h1>
-                            <button class="btn bg-site-red btn-block">
-                                <i class="img-icon pdf-icon"></i> Download the free pdf here
-                            </button>
+                    <div class="col-md-12">
+                        <div class="main-container">
+                            <img src="{{ asset('images-new/opt-in-thanks/crime-video-image.jpg') }}" alt="">
+                            <div class="thank-you-card">
+                                <h1>
+                                    Thank you for signing up for the free pdf.
+                                </h1>
+                                <button class="btn bg-site-red">
+                                    <i class="img-icon pdf-icon"></i> Download the free pdf here
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="row">
                     <div class="col-md-12">
                         <div class="details-section">
                             <div class="col-md-6">

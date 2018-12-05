@@ -1,5 +1,8 @@
 <div class="form-container">
-    @if ($slug != 'dikt' && !Request::input('ref_id'))
+    <?php
+        $slugList = ['children', 'crime'];
+    ?>
+    @if (in_array($slug, $slugList) && !Request::input('ref_id'))
         <i class="img-icon gift-icon"></i> <br>
     @endif
 

@@ -871,6 +871,11 @@ class HomeController extends Controller
                     return view('frontend.opt-in-thanks.children', compact('next_webinars', 'slug', 'data'));
                     break;
 
+                case 'crime':
+                    $data['camp_id'] = 61832;
+                    return view('frontend.opt-in-thanks.crime', compact('next_webinars', 'slug', 'data'));
+                    break;
+
                 default:
                     break;
             }
@@ -895,6 +900,12 @@ class HomeController extends Controller
                     $data['camp'] = 'SR4GM$';
                     $data['camp_id'] = 61832;
                     $data['image'] = 'children-bg.png';
+                    break;
+
+                case 'crime' :
+                    $data['camp'] = 'SR4GM$';
+                    $data['camp_id'] = 61832;
+                    $data['image'] = 'crime-bg.png';
                     break;
 
                 default:

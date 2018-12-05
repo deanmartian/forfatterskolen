@@ -1892,29 +1892,68 @@ start today section
     right: -57px;
 }
 
-.opt-in-thanks .children-page .description-container {
+.opt-in-thanks .children-page .description-container, .opt-in-thanks .crime-page .description-container {
     padding: 40px 60px;
 }
 
 .opt-in-thanks .children-page .details-section {
     background-image: url(../images-new/opt-in-thanks/children-red-bg.png);
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: 100% 100%;
     display: flex;
     margin-bottom: 30px;
     margin-top: 50px;
 }
 
-.opt-in-thanks .children-page .form-column {
+.opt-in-thanks .children-page .form-column, .opt-in-thanks .crime-page .form-column {
     color: #fff;
     padding: 50px 30px;
     text-align: center;
 }
 
-.opt-in-thanks .children-page .form-column .form-section {
+.opt-in-thanks .children-page .form-column .form-section, .opt-in-thanks .crime-page .form-column .form-section {
     background-color: #862736;
     margin-top: 20px;
     padding: 30px;
+}
+
+.opt-in-thanks .crime-page .main-container {
+    box-shadow: 1px 5px 32px 0 rgba(191, 191, 191, 0.22);
+    display: inline-block;
+    padding: 30px 40px;
+}
+
+.opt-in-thanks .crime-page .main-container img {
+    height: 500px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.opt-in-thanks .crime-page .thank-you-card {
+    padding: 30px 0 10px 0;
+}
+
+.opt-in-thanks .crime-page .thank-you-card h1 {
+    display: inline;
+}
+
+.opt-in-thanks .crime-page .thank-you-card .bg-site-red {
+    display: inline;
+    float: right;
+    margin: 0;
+    padding: 5px 20px;
+    width: auto;
+}
+
+.opt-in-thanks .crime-page .details-section {
+    background-image: url(../images-new/opt-in-thanks/crime-red-bg.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    display: flex;
+}
+
+.opt-in-thanks .crime-page .testimonial-container {
+    margin-top: 0;
 }
 
 /* end opt-in thanks page */
@@ -2448,16 +2487,20 @@ blockquote {
         right: -15px;
     }
 
-    .opt-in-thanks .children-page .description-container {
+    .opt-in-thanks .children-page .description-container, .opt-in-thanks .crime-page .description-container {
         padding: 40px 50px;
     }
 
-    .opt-in-thanks .children-page .form-column {
+    .opt-in-thanks .children-page .form-column, .opt-in-thanks .crime-page .form-column {
         padding: 50px 20px;
     }
 
-    .opt-in-thanks .children-page .form-column .form-section {
+    .opt-in-thanks .children-page .form-column .form-section, .opt-in-thanks .crime-page .form-column .form-section {
         padding: 20px;
+    }
+
+    .opt-in-thanks .crime-page .main-container img {
+        height: 430px;
     }
 }
 
@@ -3015,16 +3058,35 @@ blockquote {
         margin-top: 30px;
     }
 
-    .opt-in-thanks .children-page .description-container {
+    .opt-in-thanks .children-page .description-container, .opt-in-thanks .crime-page .description-container {
         padding: 20px 15px;
     }
 
-    .opt-in-thanks .children-page .form-column {
+    .opt-in-thanks .children-page .form-column, .opt-in-thanks .crime-page .form-column {
         padding: 60px 10px;
     }
 
-    .opt-in-thanks .children-page .form-column .form-section {
+    .opt-in-thanks .children-page .form-column .form-section, .opt-in-thanks .crime-page .form-column .form-section {
         padding: 15px;
+    }
+
+    .opt-in-thanks .crime-page .main-container img {
+        height: 360px;
+    }
+
+    .opt-in-thanks .crime-page .thank-you-card {
+        display: grid;
+        text-align: center;
+        width: 100%;
+    }
+
+    .opt-in-thanks .crime-page .thank-you-card h1 {
+        display: block;
+    }
+
+    .opt-in-thanks .crime-page .thank-you-card .bg-site-red {
+        display: block;
+        margin: 0 auto;
     }
 
     /* theme tab */
@@ -3649,17 +3711,21 @@ blockquote {
         padding-right: 15px;
     }
 
-    .opt-in-thanks .children-page .right-container {
+    .opt-in-thanks .children-page .right-container, .opt-in-thanks .crime-page .right-container {
         margin-top: 30px;
         padding-left: 15px;
     }
 
-    .opt-in-thanks .children-page .details-section {
+    .opt-in-thanks .children-page .details-section, .opt-in-thanks .crime-page .details-section {
         display: block;
     }
 
-    .opt-in-thanks .children-page .form-column {
+    .opt-in-thanks .children-page .form-column, .opt-in-thanks .crime-page .form-column {
         padding: 20px 10px;
+    }
+
+    .opt-in-thanks .crime-page .main-container img {
+        height: 285px;
     }
 }
 
@@ -4158,8 +4224,17 @@ blockquote {
         padding: 65px 40px;
     }
 
-    .opt-in-thanks .children-page .description-container, .opt-in-thanks .children-page .form-column {
+    .opt-in-thanks .crime-page .main-container {
+        padding: 30px;
+    }
+
+    .opt-in-thanks .children-page .description-container, .opt-in-thanks .children-page .form-column,
+    .opt-in-thanks .crime-page .description-container, .opt-in-thanks .crime-page .form-column{
         padding: 15px 0;
+    }
+
+    .opt-in-thanks .crime-page .main-container img {
+        height: 190px;
     }
 }
 
@@ -4286,6 +4361,10 @@ blockquote {
 
     .opt-in-thanks .children-page .thank-you-card {
         padding: 65px 15px;
+    }
+
+    .opt-in-thanks .crime-page .main-container {
+        padding: 20px;
     }
 }
 
@@ -4556,7 +4635,15 @@ blockquote {
         width: 90%;
     }
 
-    .opt-in-thanks .children-page .form-column .form-section {
+    .opt-in-thanks .children-page .form-column .form-section, .opt-in-thanks .crime-page .form-column .form-section {
         padding: 10px;
+    }
+
+    .opt-in-thanks .crime-page .main-container {
+        padding: 10px 5px;
+    }
+
+    .opt-in-thanks .crime-page .main-container img {
+        height: 180px;
     }
 }
