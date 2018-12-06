@@ -898,6 +898,18 @@ Route::group([
             ],
         ]);
 
+        Route::resource('/poem', 'PoemController', [
+            'except' => ['show'],
+            'names' => [
+                'index' => 'admin.poem.index',
+                'create' => 'admin.poem.create',
+                'store' => 'admin.poem.store',
+                'edit' => 'admin.poem.edit',
+                'update' => 'admin.poem.update',
+                'destroy' => 'admin.poem.destroy',
+            ]
+        ]);
+
         Route::resource('/solution/{solution_id}/article','SolutionArticleController', [
             'except' => ['show'],
             'names' => [
