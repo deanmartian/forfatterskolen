@@ -1,5 +1,8 @@
 <div class="description-container text-center">
-    @if ($slug == 'dikt')
+    <?php
+        $slugList = ['dikt', 'fiction'];
+    ?>
+    @if (in_array($slug, $slugList))
         <i class="img-icon gift-icon"></i>
     @endif
     <h2>You know what?</h2>

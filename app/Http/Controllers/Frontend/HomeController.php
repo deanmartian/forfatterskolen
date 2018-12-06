@@ -876,6 +876,11 @@ class HomeController extends Controller
                     return view('frontend.opt-in-thanks.crime', compact('next_webinars', 'slug', 'data'));
                     break;
 
+                case 'fiction':
+                    $data['camp_id'] = 61832;
+                    return view('frontend.opt-in-thanks.fiction', compact('next_webinars', 'slug', 'data'));
+                    break;
+
                 default:
                     break;
             }
@@ -884,7 +889,12 @@ class HomeController extends Controller
         return redirect()->route('front.home');
     }
 
-    public function optInReferral($slug = null, Request $request)
+    /**
+     * Display the referral points page
+     * @param null $slug
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function optInReferral($slug = null)
     {
         $optIn = 1;//OptIn::getBySlug($slug ?: 'terms');
         if ($optIn) {
@@ -906,6 +916,12 @@ class HomeController extends Controller
                     $data['camp'] = 'SR4GM$';
                     $data['camp_id'] = 61832;
                     $data['image'] = 'crime-bg.png';
+                    break;
+
+                case 'fiction' :
+                    $data['camp'] = 'SR4GM$';
+                    $data['camp_id'] = 61832;
+                    $data['image'] = 'fiction-bg.png';
                     break;
 
                 default:

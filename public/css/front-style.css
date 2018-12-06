@@ -1860,11 +1860,11 @@ start today section
     position: relative;
 }
 
-.opt-in-thanks .children-page .left-container {
+.opt-in-thanks .children-page .left-container, .opt-in-thanks .fiction-page .left-container {
     padding-right: 0;
 }
 
-.opt-in-thanks .children-page .right-container {
+.opt-in-thanks .children-page .right-container, .opt-in-thanks .fiction-page .right-container {
     padding-left: 0;
 }
 
@@ -1877,7 +1877,7 @@ start today section
     text-align: center;
 }
 
-.opt-in-thanks .children-page .thank-you-card .bg-site-red {
+.opt-in-thanks .children-page .thank-you-card .bg-site-red, .opt-in-thanks .fiction-page .thank-you-card .bg-site-red {
     width: 85%;
 }
 
@@ -1956,6 +1956,40 @@ start today section
     margin-top: 0;
 }
 
+.opt-in-thanks .fiction-page .main-image-container {
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 414px;
+    position: relative;
+}
+
+.opt-in-thanks .fiction-page .thank-you-card {
+    box-shadow: 1px 5px 32px 0 rgba(191, 191, 191, 0.22);
+    padding: 133px 105px;
+    text-align: center;
+}
+
+.opt-in-thanks .fiction-page .details-section {
+    display: flex;
+    margin-bottom: 30px;
+    margin-top: 50px;
+}
+
+.opt-in-thanks .fiction-page .details-section .left-column {
+    background-color: #e83a46;
+}
+
+.opt-in-thanks .fiction-page .details-section .right-column {
+    box-shadow: 1px 5px 32px 0 rgba(191, 191, 191, 0.22);
+}
+
+.opt-in-thanks .fiction-page .form-column .form-container {
+    position: absolute;
+    top: 50%;
+    left: 11%;
+    width: 80%;
+    transform: translateY(-50%);
+}
 /* end opt-in thanks page */
 
 /* opt-in referral page */
@@ -2472,11 +2506,11 @@ blockquote {
         padding-top: 160px;
     }
 
-    .opt-in-thanks .children-page .main-image-container {
+    .opt-in-thanks .children-page .main-image-container, .opt-in-thanks .fiction-page .main-image-container {
         height: 319px;
     }
 
-    .opt-in-thanks .children-page .thank-you-card {
+    .opt-in-thanks .children-page .thank-you-card, .opt-in-thanks .fiction-page .thank-you-card {
         padding: 85px 50px;
     }
 
@@ -2501,6 +2535,11 @@ blockquote {
 
     .opt-in-thanks .crime-page .main-container img {
         height: 430px;
+    }
+
+    .opt-in-thanks .fiction-page .form-column .form-container {
+        left: 8%;
+        width: 85%;
     }
 }
 
@@ -3038,11 +3077,11 @@ blockquote {
         margin-top: 30px;
     }
 
-    .opt-in-thanks .children-page .main-image-container {
+    .opt-in-thanks .children-page .main-image-container, .opt-in-thanks .fiction-page .main-image-container {
         height: 247px;
     }
 
-    .opt-in-thanks .children-page .thank-you-card {
+    .opt-in-thanks .children-page .thank-you-card, .opt-in-thanks .fiction-page .thank-you-card {
         padding: 50px 10px;
     }
 
@@ -3053,12 +3092,13 @@ blockquote {
         right: -10px;
     }
 
-    .opt-in-thanks .children-page .details-section {
+    .opt-in-thanks .children-page .details-section, .opt-in-thanks .fiction-page .details-section {
         margin-bottom: 10px;
         margin-top: 30px;
     }
 
-    .opt-in-thanks .children-page .description-container, .opt-in-thanks .crime-page .description-container {
+    .opt-in-thanks .children-page .description-container, .opt-in-thanks .crime-page .description-container,
+    .opt-in-thanks .fiction-page .description-container {
         padding: 20px 15px;
     }
 
@@ -3087,6 +3127,11 @@ blockquote {
     .opt-in-thanks .crime-page .thank-you-card .bg-site-red {
         display: block;
         margin: 0 auto;
+    }
+
+    .opt-in-thanks .fiction-page .form-column .form-container {
+        left: 5%;
+        width: 90%;
     }
 
     /* theme tab */
@@ -3707,7 +3752,7 @@ blockquote {
         background-size: 100% 100%;
     }
 
-    .opt-in-thanks .children-page .left-container {
+    .opt-in-thanks .children-page .left-container, .opt-in-thanks .fiction-page .left-container {
         padding-right: 15px;
     }
 
@@ -3716,7 +3761,8 @@ blockquote {
         padding-left: 15px;
     }
 
-    .opt-in-thanks .children-page .details-section, .opt-in-thanks .crime-page .details-section {
+    .opt-in-thanks .children-page .details-section, .opt-in-thanks .crime-page .details-section,
+    .opt-in-thanks .fiction-page .details-section {
         display: block;
     }
 
@@ -3726,6 +3772,27 @@ blockquote {
 
     .opt-in-thanks .crime-page .main-container img {
         height: 285px;
+    }
+
+    .opt-in-thanks .fiction-page  .right-container {
+        padding-left: 15px;
+    }
+
+    .opt-in-thanks .fiction-page  .details-section .right-container {
+        margin-top: 30px;
+        padding-left: 15px;
+    }
+
+    .opt-in-thanks .fiction-page .main-image-container {
+        height: 300px;
+    }
+
+    .opt-in-thanks .fiction-page .form-column .form-container {
+        left: 0;
+        padding: 20px 10px;
+        position: relative;
+        transform: none;
+        width: auto;
     }
 }
 
@@ -4212,7 +4279,7 @@ blockquote {
         font-size: 30px;
     }
 
-    .opt-in-thanks .children-page .main-image-container {
+    .opt-in-thanks .children-page .main-image-container, .opt-in-thanks .fiction-page .main-image-container {
         height: 255px;
     }
 
@@ -4220,7 +4287,7 @@ blockquote {
         right: 5px;
     }
 
-    .opt-in-thanks .children-page .thank-you-card {
+    .opt-in-thanks .children-page .thank-you-card, .opt-in-thanks .fiction-page .thank-you-card {
         padding: 65px 40px;
     }
 
@@ -4229,7 +4296,8 @@ blockquote {
     }
 
     .opt-in-thanks .children-page .description-container, .opt-in-thanks .children-page .form-column,
-    .opt-in-thanks .crime-page .description-container, .opt-in-thanks .crime-page .form-column{
+    .opt-in-thanks .crime-page .description-container, .opt-in-thanks .crime-page .form-column,
+    .opt-in-thanks .fiction-page .description-container, .opt-in-thanks .fiction-page .form-column {
         padding: 15px 0;
     }
 
@@ -4355,11 +4423,11 @@ blockquote {
         height: 238px;
     }
 
-    .opt-in-thanks .children-page .main-image-container {
+    .opt-in-thanks .children-page .main-image-container, .opt-in-thanks .fiction-page .main-image-container {
         height: 238px;
     }
 
-    .opt-in-thanks .children-page .thank-you-card {
+    .opt-in-thanks .children-page .thank-you-card, .opt-in-thanks .fiction-page .thank-you-card {
         padding: 65px 15px;
     }
 
@@ -4463,6 +4531,10 @@ blockquote {
 
     .opt-in-thanks .dikt-page .main-image-container {
         height: 228px;
+    }
+
+    .opt-in-thanks .fiction-page .main-image-container {
+        height: 220px;
     }
 }
 
@@ -4627,11 +4699,11 @@ blockquote {
         height: 202px;
     }
 
-    .opt-in-thanks .children-page .thank-you-card {
+    .opt-in-thanks .children-page .thank-you-card, .opt-in-thanks .fiction-page .thank-you-card {
         padding: 65px 0;
     }
 
-    .opt-in-thanks .children-page .thank-you-card .bg-site-red {
+    .opt-in-thanks .children-page .thank-you-card .bg-site-red, .opt-in-thanks .fiction-page .thank-you-card .bg-site-red {
         width: 90%;
     }
 
@@ -4645,5 +4717,9 @@ blockquote {
 
     .opt-in-thanks .crime-page .main-container img {
         height: 180px;
+    }
+
+    .opt-in-thanks .fiction-page .main-image-container {
+        height: 195px;
     }
 }
