@@ -14,10 +14,10 @@
                             <img src="{{ asset('images-new/opt-in-thanks/crime-video-image.jpg') }}" alt="">
                             <div class="thank-you-card">
                                 <h1>
-                                    Thank you for signing up for the free pdf.
+                                    Takk for at du skrev deg på! Nå kan du laste ned din gratis PDF.
                                 </h1>
                                 <button class="btn bg-site-red">
-                                    <i class="img-icon pdf-icon"></i> Download the free pdf here
+                                    <i class="img-icon pdf-icon"></i> Last ned din gratis PDF
                                 </button>
                             </div>
                         </div>

@@ -16,10 +16,10 @@
                         <div class="thank-you-card">
                             <div class="cloud-container"></div>
                             <h1>
-                                Thank you for signing up for the free pdf.
+                                Takk for at du skrev deg på! Nå kan du laste ned din gratis PDF.
                             </h1>
                             <button class="btn bg-site-red btn-block">
-                                <i class="img-icon pdf-icon"></i> Download the free pdf here
+                                <i class="img-icon pdf-icon"></i> Last ned din gratis PDF
                             </button>
                         </div>
                     </div>
