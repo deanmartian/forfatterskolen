@@ -890,6 +890,36 @@ class HomeController extends Controller
     }
 
     /**
+     * Download the opt-inf file
+     * @param null $slug
+     * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function downloadOptIn($slug = null)
+    {
+        $optIn = 1;//OptIn::getBySlug($slug ?: 'terms');
+
+        if ($optIn) {
+            $file = 'storage/opt-in-files/';
+            switch ($slug) {
+                case 'children' :
+                    $file = $file.'Barnebok_skrive_for_ulike_aldre.pdf';
+                    break;
+
+                case 'crime' :
+                    $file = $file.'Gratiskurs_Krimkurs.pdf';
+                    break;
+
+                default:
+                    $file = $file.'Diktkurset.pdf';
+                    break;
+            }
+            echo $file;
+            return response()->download(public_path($file));
+        }
+        return redirect()->route('front.home');
+    }
+
+    /**
      * Display the referral points page
      * @param null $slug
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View

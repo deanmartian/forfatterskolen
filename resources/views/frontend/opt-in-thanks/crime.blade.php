@@ -16,9 +16,9 @@
                                 <h1>
                                     Takk for at du skrev deg på! Nå kan du laste ned din gratis PDF.
                                 </h1>
-                                <button class="btn bg-site-red">
+                                <a href="{{ route('front.opt-in.download', 'crime') }}" class="btn bg-site-red">
                                     <i class="img-icon pdf-icon"></i> Last ned din gratis PDF
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>

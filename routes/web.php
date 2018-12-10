@@ -71,6 +71,7 @@ Route::group([
 
         Route::get('/opt-in/{slug?}', 'HomeController@optIn')->name('front.opt-in'); // Opt-in page
         Route::post('/opt-in/{slug?}', 'HomeController@optIn')->name('front.opt-in'); // Opt-in page
+        Route::get('/opt-in/{slug?}/download', 'HomeController@downloadOptIn')->name('front.opt-in.download'); // Download Opt-in file
 
         // opt in thank you pages
         Route::get('/opt-in/thanks/{slug?}', 'HomeController@optInThanks')->name('front.opt-in.thanks');
