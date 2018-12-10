@@ -91,6 +91,10 @@ class HomeController extends Controller
         if ($request->isMethod('post')) {
 
             $validates = [
+                'fullname' => 'required|alpha_spaces',
+                'email' => 'required|email',
+                'message' => 'required',
+                'terms' => 'required',
                 'g-recaptcha-response' => 'required|captcha'
             ];
 
@@ -107,6 +111,8 @@ class HomeController extends Controller
 
             //mail('post@forfatterskolen.no', 'Inquiry Message', $email_content, $headers);
             AdminHelpers::send_email('Inquiry Message','post@forfatterskolen.no','post@forfatterskolen.no', $email_content);
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Thank you for messaging us.'),
+                'alert_type' => 'success']);
         }
         return view('frontend.contact-us');
     }

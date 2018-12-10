@@ -59,7 +59,8 @@
 
         <?php
         $newDesignPages = ['front.shop-manuscript.index', 'front.publishing', 'front.blog', 'front.shop.thankyou',
-            'front.thank-you', 'front.course.index', 'front.course.show', 'front.opt-in.thanks', 'front.opt-in.referral']
+            'front.thank-you', 'front.course.index', 'front.course.show', 'front.opt-in.thanks', 'front.opt-in.referral',
+            'front.contact-us']
         ?>
         @if(!in_array(Route::currentRouteName(), $newDesignPages))
             @include('frontend.partials.navbar')
