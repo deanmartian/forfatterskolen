@@ -913,7 +913,6 @@ class HomeController extends Controller
                     $file = $file.'Diktkurset.pdf';
                     break;
             }
-            echo $file;
             return response()->download(public_path($file));
         }
         return redirect()->route('front.home');
