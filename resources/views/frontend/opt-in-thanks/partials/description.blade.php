@@ -1,8 +1,9 @@
 <div class="description-container text-center">
     <?php
-        $slugList = ['dikt', 'fiction'];
+        $slugList = ['fiction'];
+        $slugIdList = [3]; //dikt
     ?>
-    @if (in_array($slug, $slugList))
+    @if (in_array($optIn->id, $slugIdList) || in_array($slug, $slugList))
         <i class="img-icon gift-icon"></i>
     @endif
     <h2>Vet du hva?</h2>

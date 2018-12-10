@@ -1,8 +1,8 @@
 <div class="form-container">
     <?php
-        $slugList = ['children', 'crime'];
+        $slugIdList = [4, 5]; //gratis-krimkurs (crime), aldersgrupper (children)
     ?>
-    @if (in_array($slug, $slugList) && !Request::input('ref_id'))
+    @if (in_array($optIn->id, $slugIdList) && !Request::input('ref_id'))
         <i class="img-icon gift-icon"></i> <br>
     @endif
 

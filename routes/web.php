@@ -75,7 +75,7 @@ Route::group([
 
         // opt in thank you pages
         Route::get('/opt-in/thanks/{slug?}', 'HomeController@optInThanks')->name('front.opt-in.thanks');
-        Route::get('/opt-in/ref/{slug?}', 'HomeController@optInReferral')->name('front.opt-in.thanks');
+        Route::get('/opt-in/ref/{slug?}', 'HomeController@optInReferral')->name('front.opt-in.referral');
 
         /*Route::get('/opt-in/rektor-tips', 'HomeController@optInRektor')->name('front.opt-in.rektor-tips'); // Opt-in page
         Route::post('/opt-in/rektor-tips', 'HomeController@optInRektor')->name('front.opt-in.rektor-tips'); // Opt-in page*/
