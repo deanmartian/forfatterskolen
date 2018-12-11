@@ -73,7 +73,7 @@
 
             <div class="row secondary-container">
                 <div class="col-md-6">
-                    <h1>Vår Eminente Ståb</h1>
+                    <h1>Vår eminente stab</h1>
                     <div class="row stab-row">
                         <ul>
                             <li>

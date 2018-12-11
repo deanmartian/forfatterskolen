@@ -111,7 +111,7 @@ class HomeController extends Controller
 
             //mail('post@forfatterskolen.no', 'Inquiry Message', $email_content, $headers);
             AdminHelpers::send_email('Inquiry Message','post@forfatterskolen.no','post@forfatterskolen.no', $email_content);
-            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Thank you for messaging us.'),
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Din melding er sendt'),
                 'alert_type' => 'success']);
         }
         return view('frontend.contact-us');
