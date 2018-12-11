@@ -130,7 +130,7 @@
                                         </p>
                                         <i class="fa fa-envelope"></i> <a href="mailto:support@forfatterskolen.no">support@forfatterskolen.no</a>
                                         <br>
-                                        <i class="img-icon arrows-h"></i> <a href="mailto:support@forfatterskolen.no">Fjernsupport</a>
+                                        <i class="sprite team-viewer"></i> <a href="mailto:support@forfatterskolen.no">Fjernsupport</a>
                                     </div>
                                 </div>
                             </li>
@@ -158,7 +158,7 @@
                             <div class="row contact-info-container">
                                 <div class="col-md-10 pl-0">
                                     <p>
-                                        <i class="img-icon marker"></i>
+                                        <i class="sprite marker"></i>
                                         <span>Postboks 9233, 3028 Drammen</span>
                                     </p>
                                     <p>
@@ -166,19 +166,19 @@
                                         <span>post@forfatterskolen.no</span>
                                     </p>
                                     <p>
-                                        <i class="img-icon telephone"></i>
+                                        <i class="sprite telephone"></i>
                                         <span>+47 411 23 555</span>
                                     </p>
                                     <p>
-                                        <i class="img-icon twitter"></i>
+                                        <i class="sprite-social twitter"></i>
                                         <span>
-                                            <i class="img-icon pinterest"></i>
+                                            <i class="sprite-social pinterest"></i>
                                         </span>
                                         <span>
-                                            <i class="img-icon instagram"></i>
+                                            <i class="sprite-social instagram"></i>
                                         </span>
                                         <span>
-                                            <i class="img-icon facebook"></i>
+                                            <i class="sprite-social facebook"></i>
                                         </span>
                                     </p>
                                 </div>

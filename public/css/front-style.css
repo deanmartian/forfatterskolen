@@ -2589,6 +2589,32 @@ blockquote {
 
 /*end override form-control read-only*/
 
+/* sprites */
+.sprite {
+    background: url(../images-new/icon/ttm.png) no-repeat top left;
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+}
+
+.sprite-social {
+    background: url(../images-new/social-icons/social.png) no-repeat top left;
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+}
+
+
+.sprite.marker { background-position: 0 0; }
+.sprite.team-viewer { background-position: 0 -26px; }
+.sprite.telephone { background-position: 0 -52px; }
+
+.sprite-social.facebook {  background-position: 0 0; }
+.sprite-social.twitter {  background-position: 0 -156px; }
+.sprite-social.pinterest {  background-position: 0 -104px; }
+.sprite-social.instagram {  background-position: 0 -52px; }
+/* end sprites*/
+
 /**
  media query
  */
