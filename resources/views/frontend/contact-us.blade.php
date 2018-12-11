@@ -30,8 +30,7 @@
                         </div>
                         <div class="col-md-10 first-description">
                             <h2>
-                                Forfatterskolen er en nettbasert skriveskole, med kurs innenfor flere sjangre. Se våre
-                                kurs her: Forfatterskolens varierte og skreddersydde tilbud.
+                                Forfatterskolen er en nettbasert skriveskole, med kurs innenfor flere sjangre.
                             </h2>
                         </div>
                     </div>
@@ -138,7 +137,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <h1>Kontakt Oss I Dag</h1>
+                    <h1>Kontakt oss i dag</h1>
                     <div class="row contact-row">
                         <div class="col-md-12">
                             <div class="row">
