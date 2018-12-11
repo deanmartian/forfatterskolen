@@ -1,7 +1,15 @@
 @extends('frontend.layout')
 
 @section('title')
-    <title>Shop Manuscripts &rsaquo; Forfatterskolen</title>
+    <?php
+        $pageMeta = \App\PageMeta::where('url', url()->current())->first();
+    ?>
+
+    @if ($pageMeta)
+        <title>{{ $pageMeta->meta_title }}</title>
+    @else
+        <title>Shop Manuscripts &rsaquo; Forfatterskolen</title>
+    @endif
 @stop
 
 @section('content')
