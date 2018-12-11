@@ -130,7 +130,7 @@
                                         </p>
                                         <i class="fa fa-envelope"></i> <a href="mailto:support@forfatterskolen.no">support@forfatterskolen.no</a>
                                         <br>
-                                        <i class="sprite team-viewer"></i> <a href="mailto:support@forfatterskolen.no">Fjernsupport</a>
+                                        <i class="sprite team-viewer"></i> <a href="https://get.teamviewer.com/g2nvg34">Fjernsupport</a>
                                     </div>
                                 </div>
                             </li>
