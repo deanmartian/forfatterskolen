@@ -206,7 +206,6 @@
                                         PS! Vi respekterer personvernretten og deler ikke e-posten din med noen.
                                     </p>
 
-                                    {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJS() !!}
                                     {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display() !!}
 
                                     <div class="mt-4">
@@ -250,6 +249,7 @@
 @stop
 
 @section('scripts')
+    {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJS() !!}
     <script>
         /* increase textarea height */
         let textarea = document.querySelector('textarea');
