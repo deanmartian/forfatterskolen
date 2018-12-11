@@ -27,7 +27,7 @@
         </div>
         <div class="col-md-10 col-sm-12 text-left right-container">
             Hvis du deler lenken, og får 10 av dine venner til å skrive seg på, får du hele 1000 kroner i rabatt på vårt
-            kommende {{ $slug == 'children' ? 'barnebokkurs' : 'krimkurs' }}.
+            kommende {{ $optIn->id == 5 ? 'barnebokkurs' : 'krimkurs' }}.
         </div>
     </div> <!-- end point-details-container -->
 </div> <!-- end description-container -->
