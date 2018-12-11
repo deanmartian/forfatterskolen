@@ -954,13 +954,13 @@ class HomeController extends Controller
 
         if ($optIn) {
             $file = 'storage/opt-in-files/';
-            switch ($slug) {
-                case 'children' :
-                    $file = $file.'Barnebok_skrive_for_ulike_aldre.pdf';
+            switch ($optIn->id) {
+                case 4 :
+                    $file = $file.'Gratiskurs_Krimkurs.pdf';
                     break;
 
-                case 'crime' :
-                    $file = $file.'Gratiskurs_Krimkurs.pdf';
+                case 5 :
+                    $file = $file.'Barnebok_skrive_for_ulike_aldre.pdf';
                     break;
 
                 default:
