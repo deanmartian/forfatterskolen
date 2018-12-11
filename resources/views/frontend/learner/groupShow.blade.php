@@ -68,7 +68,7 @@
 								@if( $feedback )
 								<button type="button" class="btn btn-warning btn-sm margin-top disabled">
 									@if( $feedback->is_active ) Tilbakemelding levert
-									@else Pending
+									@else levert
 									@endif
 								</button>
 
