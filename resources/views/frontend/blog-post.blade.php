@@ -55,16 +55,16 @@
         <ul class="pagination">
             {{-- Previous Page Link --}}
             @if ($blogs->onFirstPage())
-                <li class="disabled"><span>Older Posts</span></li>
+                <li class="disabled"><span>Nyeste blogginnlegg</span></li>
             @else
-                <li><a href="{{ $blogs->previousPageUrl() }}" rel="prev">Older Posts</a></li>
+                <li><a href="{{ $blogs->previousPageUrl() }}" rel="prev">Nyeste blogginnlegg</a></li>
             @endif
 
             {{-- Next Page Link --}}
             @if ($blogs->hasMorePages())
-                <li><a href="{{ $blogs->nextPageUrl() }}" rel="next">Newer Posts</a></li>
+                <li><a href="{{ $blogs->nextPageUrl() }}" rel="next">Eldre blogginnlegg</a></li>
             @else
-                <li class="disabled"><span>Newer Posts</span></li>
+                <li class="disabled"><span>Eldre blogginnlegg</span></li>
             @endif
         </ul>
     @endif
