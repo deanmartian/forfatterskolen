@@ -64,7 +64,7 @@
                     </p>
                     <p>
                         Interessert i kurs eller noe annet skriverelatert? Send oss en mail:
-                        <a href="mailto:post@forfatterskolen.no" class="text-theme">post@forfatterskolen.no</a>.
+                        <a href="mailto:post@forfatterskolen.no" class="theme-text">post@forfatterskolen.no</a>.
                     </p>
                 </div> <!-- end description-container -->
 
@@ -162,23 +162,25 @@
                                     </p>
                                     <p>
                                         <i class="fa fa-envelope"></i>
-                                        <span>post@forfatterskolen.no</span>
+                                        <a href="mailto:post@forfatterskolen.no" class="theme-text">post@forfatterskolen.no</a>
                                     </p>
                                     <p>
                                         <i class="sprite telephone"></i>
                                         <span>+47 411 23 555</span>
                                     </p>
                                     <p>
-                                        <i class="sprite-social twitter"></i>
-                                        <span>
+                                        <a href="https://twitter.com/Forfatterrektor" target="_blank" class="ml-0">
+                                            <i class="sprite-social twitter"></i>
+                                        </a>
+                                        <a href="https://www.pinterest.ph/forfatterskolenofficial/" target="_blank">
                                             <i class="sprite-social pinterest"></i>
-                                        </span>
-                                        <span>
+                                        </a>
+                                        <a href="https://www.instagram.com/forfatterskolen_norge/" target="_blank">
                                             <i class="sprite-social instagram"></i>
-                                        </span>
-                                        <span>
+                                        </a>
+                                        <a href="https://www.pinterest.ph/forfatterskolenofficial/" target="_blank">
                                             <i class="sprite-social facebook"></i>
-                                        </span>
+                                        </a>
                                     </p>
                                 </div>
                             </div> <!-- end contact-info-container -->
