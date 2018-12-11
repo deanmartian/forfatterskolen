@@ -868,19 +868,19 @@ class HomeController extends Controller
         if ($optIn) {
             switch ($optIn->id) {
                 case 3 : //dikt
-                    $data['camp_id'] = 61832;
+                    $data['camp_id'] = 61319;
                     return view('frontend.opt-in-thanks.dikt', compact('next_webinars', 'slug', 'data',
                         'optIn'));
                     break;
 
                 case 4: //gratis-krimkurs
-                    $data['camp_id'] = 61832;
+                    $data['camp_id'] = 61855;
                     return view('frontend.opt-in-thanks.crime', compact('next_webinars', 'slug', 'data',
                         'optIn'));
                     break;
 
                 case 5:
-                    $data['camp_id'] = 61832;
+                    $data['camp_id'] = 62483;
                     return view('frontend.opt-in-thanks.children', compact('next_webinars', 'slug', 'data',
                         'optIn'));
                     break;
@@ -910,21 +910,21 @@ class HomeController extends Controller
         if ($optIn) {
             $data = [];
             switch ($optIn->id) {
-                case 3 :
-                    $data['camp'] = 'SR4GM$';
-                    $data['camp_id'] = 61832;
+                case 3 : // dikt
+                    $data['camp'] = '&M4(M$';
+                    $data['camp_id'] = 61319;
                     $data['image'] = 'poem-bg-low-blur.png';
                     break;
 
                 case 4 :
-                    $data['camp'] = 'SR4GM$';
-                    $data['camp_id'] = 61832;
+                    $data['camp'] = '844GM$';
+                    $data['camp_id'] = 61855;
                     $data['image'] = 'crime-bg.png';
                     break;
 
                 case 5 :
-                    $data['camp'] = 'SR4GM$';
-                    $data['camp_id'] = 61832;
+                    $data['camp'] = 'MRMSA$';
+                    $data['camp_id'] = 62483;
                     $data['image'] = 'children-bg.png';
                     break;
 
