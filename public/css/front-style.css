@@ -691,7 +691,7 @@ start today section
     font-size: 39px;
 }
 
-.publishing-page .page-description {
+.publishing-page .page-description, .faq-page .page-description {
     font-size: 17px;
     margin-bottom: 40px;
     margin-top: 20px;
@@ -2148,6 +2148,7 @@ start today section
     margin-top: 10px;
 }
 
+.contact-page .secondary-container .contact-info-container a,
 .contact-page .secondary-container .contact-info-container span {
     font-size: 16px;
     margin-left: 10px;
@@ -2198,6 +2199,114 @@ start today section
 }
 
 /* end contact page */
+
+/* faq page */
+.faq-page {
+    background-color: #f9f9f9;
+    background-image: url(../images-new/faq-bg.png);
+    background-position-x: right;
+    background-position-y: -20px;
+    background-repeat: no-repeat;
+    background-size: auto 678px;
+    padding: 50px 0;
+}
+
+.faq-page .page-title {
+    font-size: 37px;
+}
+
+.faq-page .page-description {
+    color: #999999;
+}
+
+.faq-page .sub-header {
+    margin-bottom: 30px;
+}
+
+.faq-page .sub-header .panel {
+    border: none;
+    box-shadow: 1px 1px 15.36px 0.64px rgba(187, 187, 187, 0.27);
+}
+
+.faq-page .sub-header .panel > .panel-body {
+    min-height: 244px;
+    padding: 40px 25px;
+    text-align: center;
+}
+
+.faq-page .sub-header .panel > .panel-body > img {
+    height: 50px;
+}
+
+.faq-page .sub-header .panel > .panel-body > h2 {
+    font-family: "Barlow Regular", sans serif;
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+
+.faq-page .sub-header .panel > .panel-body > p {
+    color: #999999;
+    font-size: 17px;
+}
+
+.faq-page .panel-group .panel {
+    border: none;
+    border-left: 3px solid #862736;
+    border-radius: 0;
+    box-shadow: 1px 1px 15.36px 0.64px rgba(187, 187, 187, 0.27);
+}
+
+.faq-page .panel-group .panel > .panel-heading {
+    background-color: #fff;
+    border-radius: 0;
+    padding: 20px 30px;
+}
+
+.faq-page .panel-group .panel > .panel-heading > .panel-title a {
+    font-size: 20px;
+}
+
+.faq-page .panel-group .panel > .panel-heading > .panel-title .img-icon:before {
+    background-image: url(../images-new/question-mark.png);
+    height: 25px;
+    margin-right: 10px;
+    width: 25px;
+}
+
+.faq-page .panel-group .panel .panel-body > p {
+    color: #686868;
+    font-size: 17px;
+}
+
+.faq-page .panel-default>.panel-heading+.panel-collapse>.panel-body {
+    padding: 30px;
+}
+
+.faq-page .faq-container {
+    margin-bottom: 30px;
+}
+
+.faq-page .author-container img {
+    height: 100px;
+}
+
+.panel-heading  a:after {
+    font-family: 'FontAwesome';
+    content: "\f068";
+    color: #828282;
+    float: right;
+}
+.panel-heading a.collapsed:after {
+    /* symbol for "collapsed" panels */
+    content: "\f067";
+}
+
+.panel-heading  a:hover, .panel-heading a:focus {
+    color: #862736;
+    text-decoration: none;
+}
+
+/* end faq page */
 
 /* theme tabs */
 
@@ -2942,6 +3051,18 @@ blockquote {
     .contact-page .secondary-container .contact-row {
         background-position-y: -30px;
     }
+
+    .faq-page {
+        background-size: auto 585px;
+    }
+
+    .faq-page .page-title {
+        font-size: 31px;
+    }
+
+    .faq-page .sub-header .panel > .panel-body {
+        min-height: 269px;
+    }
 }
 
 @media only screen and (max-width: 768px) {
@@ -3128,7 +3249,7 @@ blockquote {
         padding: 30px 0;
     }
 
-    .publishing-page .page-title {
+    .publishing-page .page-title, .faq-page .page-title {
         font-size: 27px;
     }
 
@@ -3571,6 +3692,19 @@ blockquote {
         padding: 30px 15px;
     }
 
+    .faq-page {
+        background-size: auto 425px;
+    }
+
+    .faq-page .sub-header .panel > .panel-body {
+        min-height: 274px;
+        padding: 30px 15px;
+    }
+
+    .faq-page .sub-header .panel > .panel-body > img {
+        height: 43px;
+    }
+
     /* theme tab */
     .theme-tabs li a {
         padding: 20px;
@@ -3767,7 +3901,7 @@ blockquote {
         background-image: none;
     }
 
-    .publishing-page .page-title {
+    .publishing-page .page-title, .faq-page .page-title {
         font-size: 30px;
     }
 
@@ -4270,6 +4404,21 @@ blockquote {
         padding: 30px 20px;
     }
 
+    .faq-page {
+        background-image: none;
+    }
+
+    .faq-page .sub-header .panel > .panel-body {
+        min-height: inherit;
+    }
+
+    .faq-page .sub-header .panel > .panel-body > img {
+        height: 50px;
+    }
+
+    .faq-page .panel-group .panel > .panel-heading > .panel-title a {
+        font-size: 18px;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -4839,6 +4988,15 @@ blockquote {
     .contact-page .secondary-container .contact-row .author {
         text-align: center;
     }
+
+    .faq-page .page-title {
+        font-size: 26px;
+    }
+
+    .faq-page .author-container .pull-left {
+        text-align: center;
+        width: 100%;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -4987,6 +5145,10 @@ blockquote {
     .contact-page .secondary-container .save-data-container {
         padding: 20px;
     }
+
+    .faq-page .page-title {
+        font-size: 24px;
+    }
 }
 
 @media only screen and (max-width: 360px) {
@@ -5109,6 +5271,10 @@ blockquote {
 
     .contact-page .secondary-container .contact-row {
         background-position-y: -20px;
+    }
+
+    .faq-page .page-title {
+        font-size: 23px;
     }
 }
 
@@ -5313,5 +5479,13 @@ blockquote {
 
     .contact-page .secondary-container {
         margin-top: 1305px;
+    }
+
+    .faq-page .page-title {
+        font-size: 20px;
+    }
+
+    .faq-page .page-description {
+        font-size: 16px;
     }
 }
