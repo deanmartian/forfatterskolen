@@ -133,6 +133,26 @@
                                     </div>
                                 </div>
                             </li>
+                            <li>
+                                <div class="row">
+                                    <div class="col-sm-2 stab-image">
+                                        <img src="{{ asset('images/silje.jpg')  }}" class="rounded-circle">
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <h2>
+                                            Silje Reistad
+                                        </h2>
+                                        <p>
+                                            Silje er ansvarlig for sosiale medier, og stepper inn som webinarvert i ny
+                                            og ne. Hun elsker å snakke med elever og følgere, så ikke nøl med å legge
+                                            igjen kommentarer på vår Facebook og Instagram. Silje har bakgrunn som
+                                            journalist og har tidligere jobbet med sosiale medier for blant annet Topp
+                                            og VG.
+                                        </p>
+                                        <i class="fa fa-envelope"></i> <a href="mailto:silje@forfatterskolen.no">silje@forfatterskolen.no</a>
+                                    </div>
+                                </div>
+                            </li>
                         </ul>
                     </div>
                 </div>
