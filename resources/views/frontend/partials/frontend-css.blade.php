@@ -4,12 +4,13 @@
 <?php
     $newDesignPages = ['front.shop-manuscript.index', 'front.publishing', 'front.blog', 'front.shop.thankyou', 'front.thank-you',
         'front.course.index', 'front.course.show', 'front.opt-in.thanks', 'front.opt-in.referral', 'front.contact-us',
-        'front.faq']
+        'front.faq', 'front.read-blog']
 ?>
 @if(in_array(Route::currentRouteName(), $newDesignPages))
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{asset('css/front-style.min.css?v='.time())}}">
+    <link rel="stylesheet" href="{{asset('css/front-style.css')}}">
+    {{--<link rel="stylesheet" href="{{asset('css/front-style.min.css?v='.time())}}">--}}
 @else
     <link rel="stylesheet" href="{{asset('css/frontend.min.css?v='.time())}}">
 @endif

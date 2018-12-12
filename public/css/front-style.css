@@ -60,6 +60,11 @@ a, div, p, input, .form-control, button, .btn {
     font-size: 15px;
 }
 
+a {
+    color: #337ab7;
+    text-decoration: none;
+}
+
 .fa {
     color: #852635;
 }
@@ -2308,6 +2313,30 @@ start today section
 
 /* end faq page */
 
+/* blog-read-container page */
+
+/* end blog-read-container page */
+.blog-read-container h1 {
+    font-size: 36px;
+}
+
+.blog-read-container h1, .blog-read-container h2, .blog-read-container h3, .blog-read-container h4,
+.blog-read-container h5, .blog-read-container h6 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.blog-read-container p:first-of-type img {
+    display: block;
+    height: 397px!important;
+    margin-left: auto;
+    margin-right: auto;
+    width: 559px!important;
+}
+
+.blog-read-container p:first-of-type {
+    padding-left: 0!important;
+}
 /* theme tabs */
 
 .theme-tabs {
@@ -3069,6 +3098,11 @@ blockquote {
 
     .faq-page .sub-header .panel > .panel-body {
         min-height: 269px;
+    }
+
+    .blog-read-container p:first-of-type img {
+        height: 100%!important;
+        width: 100%!important;
     }
 }
 

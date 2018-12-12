@@ -38,7 +38,7 @@
             background-color: #000;
         }
 
-        .facebook {
+        /*.facebook {
             background: #3B5998;
             color: white;
         }
@@ -46,7 +46,7 @@
         .twitter {
             background: #55ACEE;
             color: white;
-        }
+        }*/
 
         .smGlobalBtn { /* global button class */
             display: inline-block;
@@ -199,7 +199,7 @@ $secret     = $config['client_secret'];
 ?>
     <div class="container blog-read-container">
         <h1 class="text-center">{{ $blog->title }}</h1>
-        <div class="col-sm-8 col-sm-offset-2">
+        <div class="col-md-8 col-sm-offset-2">
             {!! $blog->description !!}
 
             <div id="social-container">
