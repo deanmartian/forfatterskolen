@@ -54,22 +54,26 @@
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="https://twitter.com/Forfatterrektor" target="_blank">
-                        <img src="{{asset('images-new/social-icons/twitter-white.png')}}" class="social-image">
+                        <i class="sprite-social twitter-white"></i>
+                        {{--<img src="{{asset('images-new/social-icons/twitter-white.png')}}" class="social-image">--}}
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="https://www.pinterest.ph/forfatterskolenofficial/" target="_blank">
-                        <img src="{{asset('images-new/social-icons/pinterest-white.png')}}" class="social-image">
+                        <i class="sprite-social pinterest-white"></i>
+                        {{--<img src="{{asset('images-new/social-icons/pinterest-white.png')}}" class="social-image">--}}
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="https://www.instagram.com/forfatterskolen_norge/" target="_blank">
-                        <img src="{{asset('images-new/social-icons/instagram-white.png')}}" class="social-image">
+                        <i class="sprite-social instagram-white"></i>
+                        {{--<img src="{{asset('images-new/social-icons/instagram-white.png')}}" class="social-image">--}}
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="https://www.facebook.com/bliforfatter/" target="_blank">
-                        <img src="{{asset('images-new/social-icons/facebook-white.png')}}" class="social-image">
+                        <i class="sprite-social facebook-white"></i>
+                        {{--<img src="{{asset('images-new/social-icons/facebook-white.png')}}" class="social-image">--}}
                     </a>
                 </li>
             </ul>

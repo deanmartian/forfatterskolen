@@ -2702,6 +2702,7 @@ blockquote {
 .sprite {
     background: url(../images-new/icon/ttm.png) no-repeat top left;
     display: inline-block;
+    vertical-align: middle;
     height: 16px;
     width: 16px;
 }
@@ -2709,6 +2710,7 @@ blockquote {
 .sprite-social {
     background: url(../images-new/social-icons/social.png) no-repeat top left;
     display: inline-block;
+    vertical-align: middle;
     height: 16px;
     width: 16px;
 }
@@ -2722,6 +2724,11 @@ blockquote {
 .sprite-social.twitter {  background-position: 0 -156px; }
 .sprite-social.pinterest {  background-position: 0 -104px; }
 .sprite-social.instagram {  background-position: 0 -52px; }
+
+.sprite-social.facebook-white {  background-position: 0 -26px; }
+.sprite-social.twitter-white {  background-position: 0 -182px; }
+.sprite-social.pinterest-white {  background-position: 0 -130px; }
+.sprite-social.instagram-white {  background-position: 0 -78px; }
 /* end sprites*/
 
 /**

@@ -17,22 +17,26 @@
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
                 <a class="nav-link" href="https://twitter.com/Forfatterrektor" target="_blank">
-                    <img src="{{asset('images-new/social-icons/twitter.png')}}" class="social-image">
+                    <i class="sprite-social twitter"></i>
+                    {{--<img src="{{asset('images-new/social-icons/twitter.png')}}" class="social-image">--}}
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="https://www.pinterest.ph/forfatterskolenofficial/" target="_blank">
-                    <img src="{{asset('images-new/social-icons/pinterest.png')}}" class="social-image">
+                    <i class="sprite-social pinterest"></i>
+                    {{--<img src="{{asset('images-new/social-icons/pinterest.png')}}" class="social-image">--}}
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="https://www.instagram.com/forfatterskolen_norge/" target="_blank">
-                    <img src="{{asset('images-new/social-icons/instagram.png')}}" class="social-image">
+                    <i class="sprite-social instagram"></i>
+                    {{--<img src="{{asset('images-new/social-icons/instagram.png')}}" class="social-image">--}}
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="https://www.facebook.com/bliforfatter/" target="_blank">
-                    <img src="{{asset('images-new/social-icons/facebook.png')}}" class="social-image">
+                    <i class="sprite-social facebook"></i>
+                    {{--<img src="{{asset('images-new/social-icons/facebook.png')}}" class="social-image">--}}
                 </a>
             </li>
             @if (Auth::guest())
