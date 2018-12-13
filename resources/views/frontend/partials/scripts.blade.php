@@ -2,7 +2,7 @@
 <?php
 $newDesignPages = ['front.shop-manuscript.index', 'front.publishing', 'front.blog', 'front.shop.thankyou', 'front.thank-you',
     'front.course.index', 'front.course.show', 'front.opt-in.thanks', 'front.opt-in.referral', 'front.contact-us',
-    'front.faq', 'front.read-blog']
+    'front.faq', 'front.read-blog', 'front.coaching-timer']
 ?>
 @if(in_array(Route::currentRouteName(), $newDesignPages))
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"

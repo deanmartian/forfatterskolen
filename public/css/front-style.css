@@ -65,6 +65,11 @@ a {
     text-decoration: none;
 }
 
+.red-underline-hover:hover {
+    color: #852635;
+    text-decoration: underline;
+}
+
 .fa {
     color: #852635;
 }
@@ -2218,6 +2223,7 @@ start today section
 
 .faq-page .page-title {
     font-size: 37px;
+    margin-bottom: 40px;
 }
 
 .faq-page .page-description {
@@ -2244,6 +2250,7 @@ start today section
 }
 
 .faq-page .sub-header .panel > .panel-body > h2 {
+    color: #000000;
     font-family: "Barlow Regular", sans serif;
     margin-bottom: 10px;
     margin-top: 20px;
@@ -2315,7 +2322,6 @@ start today section
 
 /* blog-read-container page */
 
-/* end blog-read-container page */
 .blog-read-container h1 {
     font-size: 36px;
 }
@@ -2337,6 +2343,96 @@ start today section
 .blog-read-container p:first-of-type {
     padding-left: 0!important;
 }
+/* end blog-read-container page */
+
+/* coaching timer page */
+
+.coaching-timer-page {
+    background: linear-gradient( rgba(255, 255, 255, .75), rgba(255, 255, 255, .75) ),
+    url(../images-new/ctimer-bg.png) no-repeat 0 -205px / 100% 90%; /* shorthand color, image, repeat, position, size*/
+    margin-bottom: 100px;
+    padding-top: 75px
+}
+
+.coaching-timer-page h1 {
+    font-family: "Barlow Regular", sans serif;
+    font-size: 35px;
+}
+
+.coaching-timer-page .details-container {
+    color: #fff;
+    margin-top: 60px;
+}
+
+.coaching-timer-page .circle {
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    background-color: transparent;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    height: 180px;
+    margin: 0 auto;
+    position: relative;
+    width: 180px;
+}
+
+.coaching-timer-page .smaller-circle {
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    background-color: #fff;
+    border-radius: 50%;
+    height: 145px;
+    margin: 9%;
+    padding-top: 22%;
+    text-align: center;
+    width: 145px;
+}
+
+.coaching-timer-page .details-container .left-column {
+    background: linear-gradient( rgba(56, 56, 56, .63), rgba(56, 56, 56, .63) ), url(../images-new/ctimer-left.jpg);
+}
+
+.coaching-timer-page .details-container .right-column {
+    background: linear-gradient( rgba(56, 56, 56, .63), rgba(56, 56, 56, .63) ), url(../images-new/ctimer-right.jpg);
+}
+
+.coaching-timer-page .details-container .left-column,
+.coaching-timer-page .details-container .right-column {
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 80px;
+}
+
+.coaching-timer-page .details-container .smaller-circle h1 {
+    color: #323232;
+    font-family: "Barlow Light", sans serif;
+    font-size: 30px;
+    margin: 0;
+}
+
+.coaching-timer-page .details-container h1 {
+    font-size: 23px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.coaching-timer-page .details-container .buy-btn {
+    border: 1px solid #fff;
+    color: #fff;
+    margin-top: 30px;
+}
+
+.coaching-timer-page .details-container .buy-btn:after {
+    background-image: url(../images-new/left-arrow.png);
+}
+
+.coaching-timer-page .details-container .buy-btn:hover {
+    color: #a7a7a7;
+    border-color: #a7a7a7;
+}
+
+/* end coaching timer page */
+
 /* theme tabs */
 
 .theme-tabs {
@@ -3104,6 +3200,16 @@ blockquote {
         height: 100%!important;
         width: 100%!important;
     }
+
+    .coaching-timer-page {
+        background-position-y: -160px;
+        background-size: 100% 80%;
+        padding-top: 60px;
+    }
+
+    .coaching-timer-page .details-container {
+        margin-top: 30px;
+    }
 }
 
 @media only screen and (max-width: 768px) {
@@ -3744,6 +3850,18 @@ blockquote {
 
     .faq-page .sub-header .panel > .panel-body > img {
         height: 43px;
+    }
+
+    .coaching-timer-page {
+        background-position-y: -110px;
+        background-size: 100% 70%;
+        margin-bottom: 50px;
+        padding-top: 30px;
+    }
+
+    .coaching-timer-page .details-container .left-column,
+    .coaching-timer-page .details-container .right-column {
+        padding: 20px 10px;
     }
 
     /* theme tab */
@@ -4460,6 +4578,19 @@ blockquote {
     .faq-page .panel-group .panel > .panel-heading > .panel-title a {
         font-size: 18px;
     }
+
+    .coaching-timer-page {
+        background-size: 100% 45%;
+    }
+
+    .coaching-timer-page .details-container .left-column,
+    .coaching-timer-page .details-container .right-column {
+        padding: 80px;
+    }
+
+    .coaching-timer-page .details-container .right-column {
+        margin-top: 20px;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -5038,6 +5169,25 @@ blockquote {
         text-align: center;
         width: 100%;
     }
+
+    .coaching-timer-page .details-container .left-column,
+    .coaching-timer-page .details-container .right-column {
+        padding: 20px 15px 5px 15px;
+    }
+
+    .coaching-timer-page .circle {
+        height: 150px;
+        width: 150px;
+    }
+
+    .coaching-timer-page .smaller-circle {
+        height: 120px;
+        width: 120px;
+    }
+
+    .coaching-timer-page .details-container .smaller-circle h1 {
+        font-size: 28px;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -5316,6 +5466,10 @@ blockquote {
 
     .faq-page .page-title {
         font-size: 23px;
+    }
+
+    .coaching-timer-page {
+        background-size: 100% 35%;
     }
 }
 

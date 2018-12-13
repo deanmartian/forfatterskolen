@@ -11,44 +11,48 @@
             <div class="row">
                 <div class="col-md-6 col-sm-12">
                     <h1 class="page-title">
-                        Svår På Dine Sporsmål Om Kurset
+                        Svar på dine spørsmål om kurset
                     </h1>
-                    <p class="page-description">
+                    {{--<p class="page-description">
                         Mange av Forfatterskolens elever har etter hvert fått gitt ut bøkene sine, og flere kommer
                         etter. Vi har fulgt elevene underveis, mange helt fra starten. Det gjør at vi kanskje er litt
                         ekstra stolte, og gjerne vil gi dem litt ekstra ballast på veien. På disse sidene kan du derfor
                         bli litt bedre kjent med noen av dem, og ikke minst: bøkene deres. Kanskje du blir den neste?
-                    </p>
+                    </p>--}}
                 </div>
             </div> <!-- end row -->
 
             <div class="row sub-header">
                 <div class="col-md-4">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <img src="{{ asset('images-new/go-to-webinar.png') }}" alt="">
-                            <h2>
-                                Webinarer
-                            </h2>
-                            <p>
-                                Her er det hjelpevideoer  på webinarer
-                            </p>
+                    <a href="{{ route('front.support-articles', 3) }}" class="red-underline-hover">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <img src="{{ asset('images-new/go-to-webinar.png') }}" alt="">
+                                <h2>
+                                    Webinarer
+                                </h2>
+                                <p>
+                                    Her er det hjelpevideoer  på webinarer
+                                </p>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="col-md-4">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <img src="{{ asset('images-new/pen-paper.png') }}" alt="">
-                            <h2>
-                                Kom i gang
-                            </h2>
-                            <p>
-                                For nye elever så har vi laget noen hjelpevideoer hvordan en kommer igang.
-                            </p>
+                    <a href="{{ route('front.support-articles', 4) }}" class="red-underline-hover">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <img src="{{ asset('images-new/pen-paper.png') }}" alt="">
+                                <h2>
+                                    Kom i gang
+                                </h2>
+                                <p>
+                                    For nye elever så har vi laget noen hjelpevideoer hvordan en kommer igang.
+                                </p>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="col-md-4">
