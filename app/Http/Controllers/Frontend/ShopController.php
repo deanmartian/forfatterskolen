@@ -401,7 +401,8 @@ class ShopController extends Controller
         // Check for shop manuscripts
         if( $package->shop_manuscripts->count() > 0 ) :
             foreach( $package->shop_manuscripts as $shop_manuscript ) :
-            $shopManuscriptTaken = ShopManuscriptsTaken::firstOrNew(['user_id' => Auth::user()->id, 'shop_manuscript_id' => $shop_manuscript->shop_manuscript_id]);
+            //$shopManuscriptTaken = ShopManuscriptsTaken::firstOrNew(['user_id' => Auth::user()->id, 'shop_manuscript_id' => $shop_manuscript->shop_manuscript_id]);
+            $shopManuscriptTaken = new ShopManuscriptsTaken();
             $shopManuscriptTaken->user_id = Auth::user()->id;
             $shopManuscriptTaken->shop_manuscript_id = $shop_manuscript->shop_manuscript_id;
             $shopManuscriptTaken->is_active = false;
