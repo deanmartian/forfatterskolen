@@ -2433,6 +2433,183 @@ start today section
 
 /* end coaching timer page */
 
+/* support page */
+
+.support-tabs h1 {
+    font-weight: bolder;
+    margin-top: 20px;
+}
+
+.support-tabs .row {
+    margin-bottom: -10px;
+}
+
+.support-tabs>div {
+    background: #f6f5f5;
+    padding: 10px;
+}
+
+.support>.col-sm-4 {
+    margin-right: 10px;
+    padding: 24px 16px 22px;
+    text-align: center;
+    width: 32.4%;
+}
+.instruction-card {
+    background-color: #fff;
+    border: 0;
+    font-weight: 400;
+}
+
+.instruction-card a, .support-card a {
+    color: #0539f7;
+    text-decoration: none;
+    width: 100%;
+}
+
+.instruction-card .instruction-icon {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin: 8px;
+}
+
+.instruction-card .instruction-icon>img {
+    border: 0;
+    height: 131px;
+    object-fit: scale-down;
+    vertical-align: middle;
+    width: 249px;
+}
+
+.instruction-card h2 {
+    color: #333;
+    font-weight: bolder;
+    line-height: 20px;
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+
+.instruction-card p {
+    color: #393939;
+    font-size: 14px;
+    line-height: 20px;
+    margin: 0;
+    max-width: 100%;
+}
+
+.instruction-card a:hover>h2, .support-card a:hover>h3 {
+    text-decoration: underline;
+}
+
+.support>.col-sm-3 {
+    margin-right: 10px;
+    padding: 24px 16px 22px;
+    width: 24%;
+}
+.support-card {
+    background-color: #fff;
+    border: 0;
+    font-weight: 400;
+}
+
+.support-card h3 {
+    color: #333;
+    font-weight: bolder;
+    line-height: 20px;
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+
+.support-card p {
+    color: #393939;
+    line-height: 20px;
+    margin: 0;
+    max-width: 100%;
+}
+
+/* end support page */
+
+/* support article page */
+
+.articles>.breadcrumb {
+    background-color: #f6f5f5;
+    font-size: 16px;
+    padding: 8px 16px;
+    margin: 15px 0;
+}
+
+.articles>.breadcrumb a {
+    margin-right: 7px;
+}
+
+.articles>.breadcrumb :last-child {
+    font-weight: bolder;
+}
+
+.articles>.breadcrumb a, .articles>.breadcrumb span {
+    color: #3c3c7d;
+    font-size: 16px;
+}
+
+.articles .heading {
+    color: #110751;
+    font-weight: bolder;
+    padding-left: 8px;
+    padding-top: 15px;
+}
+
+.articles h1, .articles h2 {
+    font-weight: bolder;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.articles .info-text {
+    color: #393939;
+    padding-left: 8px;
+}
+
+.articles>section {
+    background: #f6f5f5;
+    padding: 10px;
+}
+
+.article-list {
+    margin-bottom: 20px;
+}
+
+.article-list a {
+    text-decoration: none;
+}
+
+.article-row {
+    background: #fff;
+    box-sizing: border-box;
+    display: block;
+    list-style: none;
+    margin: 10px 0;
+    max-width: 100%;
+    padding: 24px 16px 22px;
+}
+
+.article-row h2 {
+    color: #110751;
+    font-weight: bolder;
+    line-height: 20px;
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+
+.article-row p {
+    color: #393939;
+    line-height: 20px;
+    margin: 0;
+    max-width: 100%;
+}
+
+/* end support article page */
+
 /* theme tabs */
 
 .theme-tabs {
@@ -2643,6 +2820,10 @@ blockquote {
     color:#fff;
     font-size: 20px;
     padding: .375rem 2rem;
+}
+
+.margin-bottom {
+    margin-bottom: 12px!important;
 }
 
 .arrows-h:before {
