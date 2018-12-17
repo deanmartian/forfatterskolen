@@ -192,7 +192,8 @@ class ShopController extends Controller
         $payment_plan = ( $paymentMode->mode == "Paypal" ) ?  "Hele beløpet" : $paymentPlan->plan;
 
 
-        $dueDate = date("Y-m-d");
+        /* check if there's an issue date set ir not then use today*/
+        $dueDate = $package->issue_date ?: date("Y-m-d");
         $dueDate = Carbon::parse($dueDate);
         $payment_plan = trim($payment_plan);
 
@@ -375,7 +376,7 @@ class ShopController extends Controller
                 'postalPlace' => $request->city,
                 'postalCode' => $request->zip,
                 'comment' => $comment,
-                'issueDate' => $package->issue_date
+                /*'issueDate' => $package->issue_date*/
             ];
 
             $invoice = new FikenInvoice();
