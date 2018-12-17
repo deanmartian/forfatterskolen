@@ -57,6 +57,21 @@
         </div>
     @endif
 
+    <?php
+        $shopManuscriptAdvisory = \App\Http\FrontendHelpers::getShopManuscriptAdvisory();
+        $from_date              = \Carbon\Carbon::parse($shopManuscriptAdvisory->from_date);
+        $to_date                = \Carbon\Carbon::parse($shopManuscriptAdvisory->to_date);
+        $isBetweenDate          = \Carbon\Carbon::today()->between($from_date, $to_date);
+        $included_pages         = unserialize($shopManuscriptAdvisory->page_included);
+    ?>
+        {{-- check if advisory could be displayed today and current page is included --}}
+        @if($isBetweenDate && in_array(Route::currentRouteName(), $included_pages))
+            <div class="alert shop-manuscript-advisory" role="alert" id="fixed_to_bottom_alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                {{ $shopManuscriptAdvisory->advisory }}
+            </div>
+        @endif
+
         <?php
         $newDesignPages = ['front.shop-manuscript.index', 'front.publishing', 'front.blog', 'front.shop.thankyou',
             'front.thank-you', 'front.course.index', 'front.course.show', 'front.opt-in.thanks', 'front.opt-in.referral',

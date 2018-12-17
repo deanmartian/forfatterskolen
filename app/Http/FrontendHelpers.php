@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http;
+use App\Advisory;
 use App\PilotReaderBook;
 use App\PilotReaderBookChapter;
 use App\PilotReaderBookReading;
@@ -216,6 +217,35 @@ class FrontendHelpers
         }
 
         return NULL;
+    }
+
+    /**
+     * List of front pages and the route name
+     * @return array
+     */
+    public static function frontPageList()
+    {
+        return array(
+            ['page_name' => 'Front Page', 'page_route' => 'front.home'],
+            ['page_name' => 'Course Page', 'page_route' => 'front.course.index'],
+            ['page_name' => 'Course Single Page', 'page_route' => 'front.course.show'],
+            ['page_name' => 'Course Checkout Page', 'page_route' => 'front.course.checkout'],
+            ['page_name' => 'Shop Manuscript Page', 'page_route' => 'front.shop-manuscript.index'],
+            ['page_name' => 'Shop Manuscript Checkout Page', 'page_route' => 'front.shop-manuscript.checkout'],
+            ['page_name' => 'Publishing Page', 'page_route' => 'front.publishing'],
+            ['page_name' => 'Blog Page', 'page_route' => 'front.blog'],
+            ['page_name' => 'Blog Single Page', 'page_route' => 'front.read-blog'],
+            ['page_name' => 'Workshop Page', 'page_route' => 'front.workshop.index'],
+            ['page_name' => 'Workshop Single Page', 'page_route' => 'front.workshop.show'],
+            ['page_name' => 'Workshop Checkout Page', 'page_route' => 'front.workshop.checkout'],
+            ['page_name' => 'Faq Page', 'page_route' => 'front.faq'],
+            ['page_name' => 'Contact Us Page', 'page_route' => 'front.contact-us'],
+        );
+    }
+
+    public static function getShopManuscriptAdvisory()
+    {
+        return Advisory::getShopManuscriptAdvisory();
     }
 
     /**

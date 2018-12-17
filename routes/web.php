@@ -1044,6 +1044,9 @@ Route::group([
         Route::post('/settings/update/opt-in-description', 'SettingsController@updateOptInDescription')->name('admin.settings.update.opt-in-description'); // Store Terms
         Route::post('/settings/update/opt-in-rektor-description', 'SettingsController@updateOptInRektorDescription')->name('admin.settings.update.opt-in-rektor-description'); // Store Terms
 
+        // Advisories
+        Route::put('/advisory/{id}', 'AdvisoryController@update')->name('admin.advisory.update');
+
         Route::resource('/pulse', 'PulseController', [
             'except' => ['create', 'edit'],
             'names' => [

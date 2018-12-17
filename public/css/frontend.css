@@ -4254,6 +4254,72 @@ a.darken:hover img {
 	font-weight: 500;
 }
 
+.shop-manuscript-advisory {
+	background-color: #ffc;
+	border: 1px solid rgba(187, 187, 187, 0.50);
+	border-radius: 0;
+	font-weight: bolder;
+	width: 20em;
+	padding:1em;
+	opacity: 0;
+
+	-moz-box-shadow:5px 5px 7px rgba(33,33,33,1);
+	-webkit-box-shadow: 5px 5px 7px rgba(33,33,33,.5);
+	box-shadow: 5px 5px 7px rgba(33,33,33,.5);
+
+	-webkit-animation:slideInFromLeft ease-in 1;  /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+	-moz-animation:slideInFromLeft ease-in 1;
+	animation:slideInFromLeft ease-in 1;
+
+	-webkit-animation-fill-mode:forwards;  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+	-moz-animation-fill-mode:forwards;
+	animation-fill-mode:forwards;
+
+	-webkit-animation-duration:1s;
+	-moz-animation-duration:1s;
+	animation-duration:1s;
+}
+/* animations */
+/* from left to right animation*/
+@keyframes slideInFromLeft {
+	0% {
+		transform: translateX(-100%);
+		opacity: 0;
+	}
+	100% {
+		transform: translateX(0);
+		opacity: 1;
+	}
+}
+
+@-moz-keyframes slideInFromLeft {
+	0% {
+		transform: translateX(-100%);
+		opacity: 0;
+	}
+	100% {
+		transform: translateX(0);
+		opacity: 1;
+	}
+}
+
+@-webkit-keyframes slideInFromLeft {
+	0% {
+		transform: translateX(-100%);
+		opacity: 0;
+	}
+	100% {
+		transform: translateX(0);
+		opacity: 1;
+	}
+}
+
+/* fade-in animation*/
+@-webkit-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@-moz-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+/*end of animations*/
+
 /* media queries */
 @media only screen and (max-width: 1440px) {
 	.start-today {

@@ -70,6 +70,14 @@
 
             </div> <!-- end main-container -->
 
+            @if($hasAdvisory)
+                <div class="row advisory text-center">
+                    <div class="col-sm-12">
+                        <h2>{{ $advisory->advisory }}</h2>
+                    </div>
+                </div>
+            @endif
+
             <div class="row secondary-container">
                 <div class="col-md-6">
                     <h1>Vår eminente stab</h1>

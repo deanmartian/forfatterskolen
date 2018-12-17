@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Frontend;
 
+use App\Advisory;
 use App\Blog;
 use App\CoachingTimerManuscript;
 use App\CopyEditingManuscript;
@@ -114,7 +115,17 @@ class HomeController extends Controller
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Din melding er sendt'),
                 'alert_type' => 'success']);
         }
-        return view('frontend.contact-us');
+
+        $advisory       = Advisory::find(1);
+        $from_date      = Carbon::parse($advisory->from_date);
+        $to_date        = Carbon::parse($advisory->to_date);
+        $checkBetween   = Carbon::today()->between($from_date, $to_date);
+        $hasAdvisory    = 0;
+        if ($checkBetween) {
+            $hasAdvisory++;
+        }
+
+        return view('frontend.contact-us', compact('hasAdvisory', 'advisory'));
     }
 
 

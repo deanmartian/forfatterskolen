@@ -61,7 +61,7 @@ a, div, p, input, .form-control, button, .btn {
 }
 
 a {
-    color: #337ab7;
+    color: #862736;
     text-decoration: none;
 }
 
@@ -2214,6 +2214,13 @@ start today section
     padding: 30px;
 }
 
+.contact-page .advisory {
+    box-shadow: 2px 1px 18px 3px rgba(187, 187, 187, 0.38);
+    margin-top: 250px;
+    margin-bottom: -210px;
+    padding: 20px;
+}
+
 /* end contact page */
 
 /* faq page */
@@ -2616,6 +2623,41 @@ start today section
 
 /* end support article page */
 
+/* checkout page */
+.checkout-page {
+    background: url(../images-new/checkout-bg.png) no-repeat 0 -225px / 100%;
+    padding-top: 100px;
+}
+
+.checkout-page h2 {
+    font-family: "Barlow Regular", sans serif;
+    margin-bottom: 15px;
+}
+
+.checkout-page .panel {
+    border-radius: 0;
+    border: 2px solid #c8c8c8;
+    padding: 30px 40px;
+}
+
+.checkout-page .panel .panel-heading {
+    background-color: #862736;
+    border-radius: 0;
+    color: #fff;
+    font-family: "Barlow Regular", sans serif;
+    font-size: 18px;
+    padding-left: 25px;
+}
+
+.panel-heading-underlined {
+    border-bottom: 2px solid #e8e8e8;
+    color: #323232;
+    font-family: "Barlow Regular", sans serif;
+    font-size: 18px;
+    padding: 10px 15px 15px 0;
+}
+/* end checkout page*/
+
 /* theme tabs */
 
 .theme-tabs {
@@ -2762,6 +2804,10 @@ blockquote {
     color: #862736;
 }
 
+.font-barlow-regular {
+    font-family: "Barlow Regular", sans serif;
+}
+
 .clearfix {
     clear: both;
 }
@@ -2888,6 +2934,122 @@ blockquote {
     width: 16px;
 }
 
+.loginBtn {
+    border: none;
+    border-radius: .2em;
+    box-sizing: border-box;
+    color: #fff;
+    line-height: 34px;
+    margin-top: .2em;
+    padding: 0 15px 0 46px;
+    position: relative;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.loginBtn:before {
+    box-sizing: border-box;
+    content: "";
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 34px;
+}
+
+.loginBtn--google {
+    background: #dd4b39;
+}
+
+.loginBtn--facebook {
+    background-color: #4c69ba;
+    background-image: linear-gradient(#4c69ba,#3b55a0);
+    text-shadow: 0 -1px 0 #354c8c;
+}
+
+.loginBtn--google:before {
+    background: url(../images/icons/google.png) 6px 6px no-repeat;
+    border-right: 1px solid #bb3f30;
+}
+
+.loginBtn--facebook:before {
+    background: url(../images/icons/facebook.png) 6px 6px no-repeat;
+    border-right: 1px solid #364e92;
+}
+
+#fixed_to_bottom_alert {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999999;
+}
+
+.shop-manuscript-advisory {
+    background-color: #ffc;
+    border: 1px solid rgba(187, 187, 187, 0.50);
+    border-radius: 0;
+    font-weight: bolder;
+    width: 20em;
+    padding:1em;
+    opacity: 0;
+
+    -moz-box-shadow:5px 5px 7px rgba(33,33,33,1);
+    -webkit-box-shadow: 5px 5px 7px rgba(33,33,33,.5);
+    box-shadow: 5px 5px 7px rgba(33,33,33,.5);
+
+    -webkit-animation:slideInFromLeft ease-in 1;  /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+    -moz-animation:slideInFromLeft ease-in 1;
+    animation:slideInFromLeft ease-in 1;
+
+    -webkit-animation-fill-mode:forwards;  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+    -moz-animation-fill-mode:forwards;
+    animation-fill-mode:forwards;
+
+    -webkit-animation-duration:1s;
+    -moz-animation-duration:1s;
+    animation-duration:1s;
+}
+/* animations */
+/* from left to right animation*/
+@keyframes slideInFromLeft {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@-moz-keyframes slideInFromLeft {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes slideInFromLeft {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* fade-in animation*/
+@-webkit-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@-moz-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+/*end of animations*/
+
 /* custom checkbox */
 .custom-checkbox > [type="checkbox"],
 .custom-checkbox > label{
@@ -2979,6 +3141,106 @@ blockquote {
     border: 1px solid #E4E4E4 !important;
 }
 /* end custom checkbox */
+
+/* custom radio*/
+.custom-radio [type="radio"]:checked, .custom-radio [type="radio"]:not(:checked),
+.custom-checkbox [type="checkbox"]:not(:checked), .custom-checkbox [type="checkbox"]:checked {
+    position: absolute;
+    left: -9999px;
+}
+
+.custom-radio [type="radio"]:checked + label, .custom-radio [type="radio"]:not(:checked) + label {
+    font-family: "Barlow Medium", sans serif;
+    position: relative;
+    padding-left: 30px;
+    cursor: pointer;
+    line-height: 20px;
+    display: inline-block;
+}
+
+.custom-radio [type="radio"]:checked + label:before, .custom-radio [type="radio"]:not(:checked) + label:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 100%;
+}
+
+.custom-radio [type="radio"]:not(:checked) + label:before {
+    border: 1px solid #ddd;
+    background: #d8d8d8;
+}
+
+.custom-radio [type="radio"]:checked + label:before {
+    border: 1.5px solid #c12938;
+    background: #fff;
+}
+
+.custom-radio [type="radio"]:checked + label:after, .custom-radio [type="radio"]:not(:checked) + label:after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background: #c12938;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    border-radius: 100%;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+}
+
+.custom-radio [type="radio"]:not(:checked) + label:after {
+    opacity: 0;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+}
+
+.custom-radio [type="radio"]:checked + label:after {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+}
+/* end custom radio */
+
+/* override form-control */
+label {
+    color: #323232;
+    font-family: "Barlow Medium", sans serif;
+    font-size: 16px;
+    font-weight: normal;
+    margin-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-control {
+    box-shadow: 0 0 8px 0 rgba(212, 212, 212, 0.3);
+    color: #979797 !important;
+    font-family: "Montserrat Regular", sans serif;
+    padding: 18px;
+}
+
+.form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #979797;
+    opacity: 1; /* Firefox */
+}
+
+.form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: #979797;
+}
+
+.form-control::-ms-input-placeholder { /* Microsoft Edge */
+    color: #979797;
+}
+
+.large-input {
+    padding: 21px;
+}
+/* end override form-control*/
 
 /*override form-control read-only*/
 

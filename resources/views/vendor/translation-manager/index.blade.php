@@ -61,6 +61,7 @@
             <li><a href="{{ route('admin.admin.index') }}?tab=options">Options</a></li>
             <li><a href="{{ route('admin.admin.index') }}?tab=terms">Terms</a></li>
             <li class="active"><a href="{{ action('\Barryvdh\TranslationManager\Controller@getView') }}/site">Translations</a></li>
+            <li><a href="{{ route('admin.admin.index') }}?tab=advisory">Advisory</a></li>
         </ul>
 
         <div class="tab-content">

@@ -32,6 +32,7 @@
 		<li @if( Request::input('tab') == 'options' ) class="active" @endif><a href="?tab=options">Options</a></li>
 		<li @if( Request::input('tab') == 'terms' ) class="active" @endif><a href="?tab=terms">Terms</a></li>
 		<li><a href="{{ action('\Barryvdh\TranslationManager\Controller@getView') }}/site">Translations</a></li>
+		<li @if( Request::input('tab') == 'advisory' ) class="active" @endif><a href="?tab=advisory">Advisory</a></li>
 	</ul>
 
 	<div class="tab-content">
@@ -188,6 +189,36 @@
 						</div>
 					</div>
 				</div>
+			@elseif( Request::input('tab') == 'advisory')
+					<div class="row margin-top">
+						<div class="col-sm-12">
+							<div class="panel panel-default ">
+								<div class="panel-heading">
+									<button type="button" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#editContactAdvisoryModal"><i class="fa fa-pencil"></i></button>
+									<h4>Contact Page Advisory</h4>
+								</div>
+								<div class="panel-body">
+									{!! nl2br(\App\Advisory::getContactAdvisory()->advisory) !!}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row margin-top">
+						<div class="col-sm-12">
+							<div class="panel panel-default ">
+								<div class="panel-heading">
+									<button type="button" class="btn btn-primary btn-xs pull-right btnEditShopAdvisory"
+											data-toggle="modal" data-target="#editShopManuscriptAdvisoryModal"
+									data-pages="{{ json_encode(unserialize(\App\Advisory::find(2)->page_included)) }}"><i class="fa fa-pencil"></i></button>
+									<h4>Shop Manuscript Advisory</h4>
+								</div>
+								<div class="panel-body">
+									{!! nl2br(\App\Advisory::find(2)->advisory) !!}
+								</div>
+							</div>
+						</div>
+					</div>
 			@else
 				<div class="table-users table-responsive">
 					<table class="table">
@@ -499,6 +530,86 @@
 		</div>
 	</div>
 </div>
+
+<div id="editContactAdvisoryModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Contact Page Advisory</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.advisory.update', 1) }}">
+					{{ csrf_field() }}
+					{{ method_field('PUT') }}
+					<div class="form-group">
+						<label>From</label>
+						<input type="date" name="from_date" class="form-control" value="{{ \App\Advisory::getContactAdvisory()->from_date }}"
+							   required>
+					</div>
+					<div class="form-group">
+						<label>To</label>
+						<input type="date" name="to_date" class="form-control" value="{{ \App\Advisory::getContactAdvisory()->to_date }}">
+					</div>
+					<div class="form-group">
+						<label for="">Advisory</label>
+						<textarea class="form-control" name="advisory" rows="6">{{ \App\Advisory::getContactAdvisory()->advisory }}</textarea>
+					</div>
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">Save</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="editShopManuscriptAdvisoryModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Shop Manuscript Advisory</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.advisory.update', 2) }}">
+					{{ csrf_field() }}
+					{{ method_field('PUT') }}
+					<div class="form-group">
+						<label>From</label>
+						<input type="date" name="from_date" class="form-control" value="{{ \App\Advisory::find(2)->from_date }}"
+							   required>
+					</div>
+					<div class="form-group">
+						<label>To</label>
+						<input type="date" name="to_date" class="form-control" value="{{ \App\Advisory::find(2)->to_date }}">
+					</div>
+					<div class="form-group">
+						<label for="">Advisory</label>
+						<textarea class="form-control" name="advisory" rows="6">{{ \App\Advisory::find(2)->advisory }}</textarea>
+					</div>
+					<div class="form-group">
+						<label for="">Included Page</label> <br>
+						@foreach(\App\Http\FrontendHelpers::frontPageList() as $page)
+							<input type="checkbox" name="pageList[]" value="{{ $page['page_route'] }}">
+							{{ $page['page_name'] }} <br>
+						@endforeach
+					</div>
+					<div class="form-group">
+						<input type="radio" onclick="checkAllBok('editShopManuscriptAdvisoryModal')"
+							   name="check_indicator"> <b>Check All</b>
+						<input type="radio" onclick="uncheckAllBok('editShopManuscriptAdvisoryModal')" style="margin-left: 5px"
+							   name="check_indicator"> <b>Uncheck All</b>
+					</div>
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">Save</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -637,6 +748,12 @@
         tinyMCE.activeEditor.setContent(terms);
 	});
 
+    $(".btnEditShopAdvisory").click(function(){
+       $.each($(this).data('pages'),function(k, v){
+           $("#editShopManuscriptAdvisoryModal").find("input[value='" + v + "']").prop('checked', true);
+       })
+	});
+
     if (other_terms_tab) {
         $("#other-terms-tab").find('[href="#nav-'+ other_terms_tab + '"]').trigger('click');
         $("#nav-"+other_terms_tab).addClass('active in');
@@ -646,6 +763,14 @@
     function ucFirst(string)
     {
         return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    function checkAllBok(parent) {
+		$("#"+parent).find('[type=checkbox]').prop('checked', true);
+	}
+
+    function uncheckAllBok(parent) {
+        $("#"+parent).find('[type=checkbox]').prop('checked', false);
     }
 </script>
 @stop
