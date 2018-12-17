@@ -339,7 +339,9 @@ class ShopController extends Controller
             $price      = round($price/$division, 2); // round the value to the nearest tenths
             $price      = (int)$price*100;
             for ($i=1; $i <= $paymentPlan->division; $i++ ) { // loop based on the split count
-                $dueDate =  Carbon::today()->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
+                /*Carbon::today() - this is the old instead of Carbon parse*/
+                $dueDate = $package->issue_date ?: date("Y-m-d");
+                $dueDate =  Carbon::parse($dueDate)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
                 $invoice_fields = [
                     'user_id' => Auth::user()->id,
                     'first_name' => $request->first_name,
