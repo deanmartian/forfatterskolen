@@ -4,7 +4,8 @@
 <?php
     $newDesignPages = ['front.shop-manuscript.index', 'front.publishing', 'front.blog', 'front.shop.thankyou', 'front.thank-you',
         'front.course.index', 'front.course.show', 'front.opt-in.thanks', 'front.opt-in.referral', 'front.contact-us',
-        'front.faq', 'front.read-blog', 'front.coaching-timer', 'front.support', 'front.support-articles', 'front.support-article']
+        'front.faq', 'front.read-blog', 'front.coaching-timer', 'front.support', 'front.support-articles',
+        'front.support-article', 'front.course.checkout']
 ?>
 @if(in_array(Route::currentRouteName(), $newDesignPages))
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"

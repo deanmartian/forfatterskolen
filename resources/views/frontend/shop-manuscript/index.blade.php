@@ -65,7 +65,7 @@
                                 <span class="note"><i class="info-icon"></i> merk: godkjente filformat er DOC, DOCX, PDF og ODT.</span>
                             </label>
                             <div class="input-group mb-4">
-                                <input type="text" readonly class="form-control" required>
+                                <input type="text" readonly class="form-control disabled" required>
                                 <div class="input-group-append">
                                     <button class="btn bg-site-red select-manuscript" type="button">Velg dokument</button>
                                 </div>

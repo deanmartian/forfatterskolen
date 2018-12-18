@@ -189,6 +189,17 @@ class ShopController extends Controller
         $package = Package::findOrFail($request->package_id);
         $add_to_automation = 0;
 
+        $monthNumbers = [3 => 'months_3_enable', 6 => 'months_6_enable', 12 => 'months_12_enable'];
+        // check if monthly payment is selected
+        if (array_key_exists($paymentPlan->division, $monthNumbers)) {
+            foreach($monthNumbers as $month => $field) {
+                // check if the payment plan selected is allowed
+                if ($month == $paymentPlan->division && $package->$field == 0) {
+                    return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Invalid payment plan')]);
+                }
+            }
+        }
+
         $payment_plan = ( $paymentMode->mode == "Paypal" ) ?  "Hele beløpet" : $paymentPlan->plan;
 
 
