@@ -200,7 +200,7 @@
                                         <a href="https://twitter.com/Forfatterrektor" target="_blank" class="ml-0">
                                             <i class="sprite-social twitter"></i>
                                         </a>
-                                        <a href="https://www.pinterest.ph/forfatterskolenofficial/" target="_blank">
+                                        <a href="https://no.pinterest.com/forfatterskolen_norge/" target="_blank">
                                             <i class="sprite-social pinterest"></i>
                                         </a>
                                         <a href="https://www.instagram.com/forfatterskolen_norge/" target="_blank">
