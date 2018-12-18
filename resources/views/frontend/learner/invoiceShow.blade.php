@@ -18,7 +18,7 @@ endif;
 ?>
 
 @section('title')
-<title>Invoice #{{$fikenInvoice->invoiceNumber}} &rsaquo; Forfatterskolen</title>
+<title>Faktura #{{$fikenInvoice->invoiceNumber}} &rsaquo; Forfatterskolen</title>
 @stop
 
 
@@ -31,15 +31,15 @@ endif;
 		<div class="col-sm-12">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h2 class="margin-bottom">Invoice #{{$fikenInvoice->invoiceNumber}}</h2>
+					<h2 class="margin-bottom">Faktura #{{$fikenInvoice->invoiceNumber}}</h2>
 					Status: 
 					@if($sale->paid)
 					<span class="label label-success">{{$status}}</span>
 					@else
 					<span class="label label-danger">{{$status}}</span>
 					@endif <br />
-					Created at: {{$fikenInvoice->issueDate}} <br />
-					Due Date: {{$fikenInvoice->dueDate}}
+					Opprettet: {{$fikenInvoice->issueDate}} <br />
+					Forfallsdato: {{$fikenInvoice->dueDate}}
 				</div>
 				<div class="panel-body">
 					<div class="row">
@@ -48,15 +48,15 @@ endif;
 							<br />
        					</div>
 						<div class="col-sm-12 col-md-5">
-							<div class="margin-bottom"><strong>Transactions</strong></div>
+							<div class="margin-bottom"><strong>Transaksjoner</strong></div>
 							<?php $balance = (double)$fikenInvoice->gross/100; $total = 0;?>
 							<div class="table-responsive">
 								<table class="table table-striped">
 									<thead>
 										<tr>
-											<th>Mode</th>
-											<th>Mode Transaction</th>
-											<th class="text-right">Amount</th>
+											<th>Metode</th>
+											<th>Betalings metode</th>
+											<th class="text-right">Beløp</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -70,18 +70,18 @@ endif;
 										<?php $total += $transaction->amount; ?>
 										@endforeach
 										<tr class="text-right">
-											<td colspan="2"><strong>Total</strong></td>
+											<td colspan="2"><strong>Totalt</strong></td>
 											<td>{{FrontendHelpers::currencyFormat($total)}}</td>
 										</tr>
 										@else
 										<tr class="text-center text-muted">
-											<td colspan="3">No transactions</td>
+											<td colspan="3">Ingen transaksjoner</td>
 										</tr>
 										@endif
 										<tr class="text-right">
 											<td colspan="3">
 												<h4>
-												<strong>Balance:&nbsp;&nbsp;
+												<strong>Balanse:&nbsp;&nbsp;
 												@if( $sale->paid )
 												{{FrontendHelpers::currencyFormat(0)}}
 												@else
