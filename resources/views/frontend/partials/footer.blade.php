@@ -55,7 +55,7 @@
 				<div class="col-md-12">
 					Copyright © 2016 Forfatterskolen. All Rights Reserved
 					<div class="social pull-right">
-						<a href="https://www.pinterest.ph/forfatterskolenofficial/" target="_blank"><i class="fa fa-pinterest"></i></a>
+						<a href="https://no.pinterest.com/forfatterskolen_norge/" target="_blank"><i class="fa fa-pinterest"></i></a>
 					    <a href="https://www.facebook.com/bliforfatter/" target="_blank"><i class="fa fa-facebook"></i></a>
 					    <a href="https://twitter.com/Forfatterrektor" target="_blank"><i class="fa fa-twitter"></i></a>
 					    <a href="https://www.instagram.com/forfatterskolen_norge/" target="_blank"><i class="fa fa-instagram"></i></a>

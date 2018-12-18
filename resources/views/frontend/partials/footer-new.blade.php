@@ -59,7 +59,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="https://www.pinterest.ph/forfatterskolenofficial/" target="_blank">
+                    <a class="nav-link" href="https://no.pinterest.com/forfatterskolen_norge/" target="_blank">
                         <i class="sprite-social pinterest-white"></i>
                         {{--<img src="{{asset('images-new/social-icons/pinterest-white.png')}}" class="social-image">--}}
                     </a>
