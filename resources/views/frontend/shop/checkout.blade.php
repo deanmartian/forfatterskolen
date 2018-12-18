@@ -140,7 +140,7 @@
 					<div class="col-lg-4">
 						<!-- Payment Details -->
 						<div class="panel panel-default no-margin-bottom">
-							<div class="panel-heading-underlined">Kurspakke</div>
+							<div class="panel-heading-underlined pt-0">Kurspakke</div>
 							<div class="panel-body px-0 pb-0">
 								@foreach($course->packages as $k => $package)
 									<?php
