@@ -34,7 +34,7 @@
                                             <div class="form-group custom-checkbox">
                                                 <input type="checkbox" name="terms" id="terms" required>
                                                 <label for="terms">Jeg aksepterer <a href="{{ route('front.opt-in-terms') }}"
-                                                                                     class="font-weight-bold" target="_blank">kjøpsvilkårene</a></label>
+                                                                                     class="font-weight-bold" target="_blank">vilkårene</a></label>
                                             </div>
 
                                             {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJS() !!}
@@ -317,7 +317,7 @@
                                             <div class="col-md-6 left-container">
                                                 <div class="image-container">
                                                     <img src="{{$popular_course->course_image}}" alt="">
-                                                    <h2>Course</h2>
+                                                    <h2>Kurs</h2>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 right-container">
@@ -355,7 +355,7 @@
                                                         <div class="col-sm-6 image-item">
                                                             <div class="image-container">
                                                                 <img src="{{$popular_course->course_image}}" alt="">
-                                                                <h4>Course</h4>
+                                                                <h4>Kurs</h4>
                                                             </div>
                                                         </div>
                                                         <div class="col-sm-6 details-item">
@@ -471,14 +471,14 @@
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h1 class="text-center">Poems from students</h1>
+                        <h1 class="text-center">Dikt fra våre elever</h1>
                     </div>
 
                     <?php
                         $poems_chunk = $poems->chunk(3);
                     ?>
                     <div id="poems-carousel" class="carousel slide global-carousel" data-ride="carousel"
-                         data-interval="false">
+                         data-interval="10000">
                         <!-- Indicators -->
                         <ul class="carousel-indicators">
                             @for($i=0; $i<=$poems_chunk->count() - 1;$i++)
