@@ -22,6 +22,7 @@ use App\PaymentPlan;
 use App\PilotReaderBook;
 use App\PilotReaderBookReading;
 use App\PilotReaderBookSettings;
+use App\Poem;
 use App\PublisherBook;
 use App\Settings;
 use App\Solution;
@@ -72,9 +73,10 @@ class HomeController extends Controller
             ->orderBy('date', 'ASC')->first();
 
         $latest_blog = Blog::orderBy('created_at', 'desc')->first();
+        $poems = Poem::orderBy('created_at', 'desc')->get();
 
         return view('frontend.home', compact('popular_courses', 'free_courses', 'free_webinars',
-            'next_webinar', 'next_free_webinar', 'next_workshop','latest_blog'));
+            'next_webinar', 'next_free_webinar', 'next_workshop','latest_blog', 'poems'));
     }
 
     // set cookie for gdpr

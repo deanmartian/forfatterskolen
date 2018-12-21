@@ -5,326 +5,533 @@
 @stop
 
 @section('content')
-    {{--<div id="banner">
-        <video autoplay muted loop id="myVideo">
-            <source src="{{ URL::asset('video/background.mp4') }}" type="video/mp4">
-        </video>
-
-        <div class="content">
-            <h1>Vi tilbyr kurs og veiledning</h1>
-            <h3>for deg som vil gjøre alvor av skrivedrømmen</h3>
-
+    <div class="front-page">
+        <div class="header">
             <div class="container">
-                <form method="POST" action="https://forfatterskolen.activehosted.com/proc.php" id="_form_1312_">
-                    <p>Vil du ha vår inspirerende skriveplan? Få den gratis her!</p>
-                    <div class="row">
-                        <input type="hidden" name="u" value="1312" />
-                        <input type="hidden" name="f" value="1312" />
-                        <input type="hidden" name="s" />
-                        <input type="hidden" name="c" value="0" />
-                        <input type="hidden" name="m" value="0" />
-                        <input type="hidden" name="act" value="sub" />
-                        <input type="hidden" name="v" value="2" />
-                        <div class="col-sm-4"><input type="text" name="fullname" class="form-control input-lg" placeholder="Fornavn" required></div>
-                        <div class="col-sm-4"><input type="email" name="email" class="form-control input-lg" placeholder="Epost" required></div>
-                        <div class="col-sm-4"><button type="submit" class="btn btn-orange btn-block btn-lg">Ja, jeg vil ha gratis tips!</button></div>
-                        <span><em>PS! Vi deler ikke e-postadressen din med noen</em></span>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>--}}
-<div class="hero">
-<div>
-<h1>Vi tilbyr kurs og veiledning</h1>
-<h3>for deg som vil gjøre alvor av skrivedrømmen</h3>
+                <div class="row">
+                    <div class="col-lg-6 col-md-offset-6 col-md-12">
+                        <div class="form-container">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <h1 class="title">Vi tilbyr kurs og veiledning</h1>
+                                    <p class="mt-4">For deg som vil gjøre alvor av skrivedrømmen</p>
 
-<div class="container">
-<form method="POST" action="{{ route('front.home') }}">
-    {{ csrf_field() }}
-    <p>Vil du ha vår inspirerende skriveplan? Få den gratis her!</p>
-    <div class="row">
-            <div class="col-sm-4"><input type="text" name="name" class="form-control input-lg" placeholder="Fornavn" required></div>
-            <div class="col-sm-4"><input type="email" name="email" class="form-control input-lg" placeholder="Epost" required></div>
-            <div class="col-sm-4"><button type="submit" class="btn btn-orange btn-block btn-lg">Ja, jeg vil ha gratis tips!</button></div>
-            <div class="col-sm-4 col-sm-offset-8">
-                <input type="checkbox" name="terms" required="">
-                <label style="color:#fff; font-weight: normal">Jeg aksepterer <a href="{{ route('front.opt-in-terms') }}" target="_blank">vilkårene</a>
-                </label>
-                {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJS() !!}
-                {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display() !!}
-                <span><em>Vi deler ikke e-postadressen din med noen</em></span>
+                                    <div class="form-details">
+                                        <h2>Vil du ha vår inspirerende skriveplan? Få den gratis her!</h2>
+                                        <hr>
 
-                @if ( $errors->any() )
-                    <div class="alert alert-danger no-bottom-margin">
-                        <ul>
-                            @foreach($errors->all() as $error)
-                                <li>{{$error}}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-            </div>
-        <div class="clearfix"></div>
+                                        <form method="POST" action="{{ route('front.home') }}">
+                                            {{ csrf_field() }}
 
-    </div>
-</form>
-</div>
-</div>
-</div>
+                                            <div class="form-group">
+                                                <input type="text" name="name" class="form-control" placeholder="Fornavn" required>
+                                            </div>
 
-{{--<h3 class="all-course-header"><span class="highlight">Våre</span> kurs</h3>--}}
+                                            <div class="form-group">
+                                                <input type="email" name="email" class="form-control" placeholder="Epost" required>
+                                            </div>
 
-    <div class="col-sm-12 all-course">
-        <div class="container">
-            <div class="col-sm-4">
-                <h3 class="highlight">
-                    Neste webinar
-                </h3>
-                @if ($next_webinar)
-                    <div class="all-course-course">
-                        <div class="image" style="background-image: url({{ $next_webinar->image ?: asset('/images/no_image.png')}})"></div>
-                        <div class="details">
-                            <div class="course-info">
-                                <h4>{{ $next_webinar->title }}</h4>
-                                <p>{{ str_limit(strip_tags($next_webinar->description), 180)}}</p>
-                                <div class="bottom-div-display">
-                                    {{ \App\Http\FrontendHelpers::formatDateTimeNor($next_webinar->start_date) }}
-                                </div>
-                            </div>
-                        </div>
-                        <a class="buy_now" href="{{ url('/course/17?show_kursplan=1') }}">
-                            Se komplett liste her
-                        </a>
-                    </div>
-                @endif
-            </div> <!-- end next webinar -->
+                                            <div class="form-group custom-checkbox">
+                                                <input type="checkbox" name="terms" id="terms" required>
+                                                <label for="terms">Jeg aksepterer <a href="{{ route('front.opt-in-terms') }}"
+                                                                                     class="font-weight-bold" target="_blank">kjøpsvilkårene</a></label>
+                                            </div>
 
-            <div class="col-sm-4">
-                <h3 class="highlight">
-                    {{ !$next_free_webinar && $next_workshop ? 'Neste Workshop' : 'Neste gratis webinar' }}
-                </h3>
-                <div class="all-course-course">
-                    @if($next_free_webinar)
-                        <div class="all-course-course">
-                            <div class="image" style="background-image: url({{ $next_free_webinar->image ?: asset('/images/no_image.png')}})"></div>
-                            <div class="details">
-                                <div class="course-info">
-                                    <h4>{{ $next_free_webinar->title }}</h4>
-                                    <p>{{ str_limit(strip_tags($next_free_webinar->description), 180)}}</p>
-                                    <div class="bottom-div-display">
-                                        {{ \App\Http\FrontendHelpers::formatDateTimeNor($next_free_webinar->start_date) }}
+                                            {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJS() !!}
+                                            {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display() !!}
+                                            <span>PS! Vi deler ikke e-postadressen din med noen</span>
+
+                                            <button type="submit" class="btn site-btn-global">Ja, jeg vil ha gratis tips!</button>
+
+                                            @if ( $errors->any() )
+                                                <div class="alert alert-danger no-bottom-margin mt-3">
+                                                    <ul>
+                                                        @foreach($errors->all() as $error)
+                                                            <li>{{$error}}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            @endif
+                                        </form>
+
                                     </div>
                                 </div>
                             </div>
-                            <a class="buy_now" href="{{ route('front.free-webinar', $next_free_webinar->id) }}">Registrer deg</a>
-                        </div>
-                    @else
-                        <!-- if not upcoming free webinar then look for available upcoming workshop -->
-                        @if($next_workshop)
-                            <div class="all-course-course">
-                                <div class="image" style="background-image: url({{ $next_workshop->image ?: asset('/images/no_image.png')}})"></div>
-                                <div class="details">
-                                    <div class="course-info">
-                                        <h4>{{ $next_workshop->title }}</h4>
+                        </div> <!-- end form-container -->
+                    </div> <!-- end col-md-6 -->
+                </div> <!-- end row -->
+            </div> <!-- end container -->
+        </div> <!-- end header -->
+
+        <div class="first-container">
+            <div class="container">
+                <div class="row first-container-row">
+                    <div class="col-md-4">
+                        <div class="card" style="background: linear-gradient(rgba(56, 56, 56, .45), rgba(56, 56, 56, .45)),
+                                url({{ /*$next_webinar ? ($next_webinar->image ?: asset('/images-new/front-page/coffee-paper.png'))
+                                :*/ asset('/images-new/front-page/coffee-paper.png')}}) center / cover;">
+                            <div class="card-header">
+                                <h3>
+                                    Neste webinar
+                                </h3>
+                            </div>
+                            <div class="card-body text-center">
+                                @if ($next_webinar)
+                                    <h1>
+                                        {{ $next_webinar->title }}
+                                    </h1>
+                                    <div class="date-time-cont">
+                                        <i class="img-icon16 icon-calendar-red"></i>
+                                        <span>{{ \App\Http\FrontendHelpers::formatDate($next_webinar->start_date) }}</span>
+                                        <i class="img-icon16 icon-clock-red ml-3"></i>
+                                        <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($next_webinar->start_date) }}</span>
+                                    </div>
+
+                                    <p>{{ str_limit(strip_tags($next_webinar->description), 180)}}</p>
+
+                                    <div class="button-container">
+                                        <a class="btn buy-btn" href="{{ url('/course/17?show_kursplan=1') }}">
+                                            Se komplett liste her
+                                        </a>
+                                    </div>
+                                @endif
+                            </div> <!-- end card-body -->
+                        </div> <!-- end card -->
+                    </div> <!-- end col-md-4 -->
+
+                    <div class="col-md-4">
+                        <?php
+                            $image = asset('/images-new/front-page/hand-pen.png');
+                            /*if($next_free_webinar) {
+                                $image = $next_free_webinar->image ?: asset('/images-new/front-page/hand-pen.png');
+                            } else {
+                                if ($next_workshop) {
+                                    $image = $next_workshop->image ?: asset('/images-new/front-page/hand-pen.png');
+                                }
+                            }*/
+                        ?>
+                        <div class="card" style="background: linear-gradient(rgba(56, 56, 56, .45), rgba(56, 56, 56, .45)),
+                                url({{ $image }}) center / cover;">
+                            <div class="card-header">
+                                <h3>
+                                    {{ !$next_free_webinar && $next_workshop ? 'Neste Workshop' : 'Neste gratis webinar' }}
+                                </h3>
+                            </div>
+                            <div class="card-body text-center">
+                                @if($next_free_webinar)
+                                    <h1>
+                                        {{ $next_free_webinar->title }}
+                                    </h1>
+                                    <div class="date-time-cont">
+                                        <i class="img-icon16 icon-calendar-red"></i>
+                                        <span>{{ \App\Http\FrontendHelpers::formatDate($next_free_webinar->start_date) }}</span>
+                                        <i class="img-icon16 icon-clock-red ml-3"></i>
+                                        <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($next_free_webinar->start_date) }}</span>
+                                    </div>
+
+                                    <p>{{ str_limit(strip_tags($next_free_webinar->description), 180)}}</p>
+
+                                    <div class="button-container">
+                                        <a class="btn buy-btn" href="{{ route('front.free-webinar', $next_free_webinar->id) }}">
+                                            Registrer deg
+                                        </a>
+                                    </div>
+                                @else
+                                    @if($next_workshop)
+                                        <h1>
+                                            {{ $next_workshop->title }}
+                                        </h1>
+                                        <div class="date-time-cont">
+                                            <i class="img-icon16 icon-calendar-red"></i>
+                                            <span>{{ \App\Http\FrontendHelpers::formatDate($next_workshop->date) }}</span>
+                                            <i class="img-icon16 icon-clock-red ml-3"></i>
+                                            <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($next_workshop->date) }}</span>
+                                        </div>
+
                                         <p>{{ str_limit(strip_tags($next_workshop->description), 180)}}</p>
-                                        <div class="bottom-div-display">
-                                            {{ \App\Http\FrontendHelpers::formatDateTimeNor($next_workshop->date) }}
+
+                                        <div class="button-container">
+                                            <a class="btn buy-btn" href="{{ route('front.workshop.show', $next_workshop->id) }}">
+                                                Les mer
+                                            </a>
+                                        </div>
+                                    @endif
+                                @endif
+                            </div>
+                        </div> <!-- end card -->
+                    </div> <!-- end col-md-4 -->
+
+                    <div class="col-md-4">
+                        <div class="card" style="background: linear-gradient(rgba(56, 56, 56, .45), rgba(56, 56, 56, .45)),
+                                url({{ /*$latest_blog ? ($latest_blog->image ?: asset('/images-new/front-page/girl-coffee.png'))
+                                :*/ asset('/images-new/front-page/girl-coffee.png')}}) center / cover;">
+                            <div class="card-header">
+                                <h3>
+                                    Siste blogginnlegg
+                                </h3>
+                            </div>
+                            <div class="card-body text-center">
+                                @if ($latest_blog)
+                                    <h1>
+                                        {{ $latest_blog->title }}
+                                    </h1>
+                                    <div class="date-time-cont">
+                                        <i class="img-icon16 icon-calendar-red"></i>
+                                        <span>{{ \App\Http\FrontendHelpers::formatDate($latest_blog->created_at) }}</span>
+                                    </div>
+
+                                    <p>{{ str_limit(strip_tags($latest_blog->description), 180)}}</p>
+
+                                    <div class="button-container">
+                                        <a class="btn buy-btn" href="{{ route('front.read-blog', $latest_blog->id) }}">
+                                            Les mer
+                                        </a>
+                                    </div>
+                                @endif
+                            </div> <!-- end card-body -->
+                        </div> <!-- end card -->
+                    </div> <!-- end col-md-4 -->
+                </div> <!-- end first-container-row -->
+
+                <div class="row testimonial-row">
+                    <div class="col-md-12">
+                        <h1 class="text-center">Hva våre elever sier</h1>
+                        <div id="testimonials-carousel" class="carousel slide global-carousel"
+                             data-ride="carousel" data-interval="10000">
+
+                            <ul class="carousel-indicators">
+                                <li data-target="#testimonials-carousel" data-slide-to="0" class="active"></li>
+                                <li data-target="#testimonials-carousel" data-slide-to="1"1></li>
+                                <li data-target="#testimonials-carousel" data-slide-to="2"></li>
+                            </ul>
+
+                            <!-- The slideshow -->
+                            <div class="container carousel-inner no-padding">
+                                <div class="carousel-item active">
+                                    <div class="col-md-12">
+                                        <div class="row testimonial-details-row">
+                                            <div class="col-md-3 image-container" style="background-image: url({{ asset('images/feedback1.jpg') }})">
+                                                <img src="{{ asset('images/book-covers/linda.jpg') }}" alt="">
+                                            </div>
+                                            <div class="col-md-9 details-container">
+                                                <h1>Linda Skomakerstuen</h1>
+                                                <h3>debutant på Gyldendal i 2017</h3>
+                                                <blockquote>
+                                                    "Boken min, ”Uten vesentlige feil eller mangler” kom ut på Gyldendal
+                                                    våren 2017. Og med hånden på hjertet: Jeg vet ikke om jeg hadde
+                                                    klart det uten Forfatterskolen, og den støtten det ligger i å være
+                                                    en del av et skrivefellesskap. Jeg vil fortsette å la meg inspirere
+                                                    av Rektor Kristine og hennes medarbeidere på Forfatterskolen. Og
+                                                    ikke minst: Elevene".
+                                                </blockquote>
+                                            </div>
                                         </div>
                                     </div>
+                                </div> <!-- end carousel-item -->
+
+                                <div class="carousel-item">
+                                    <div class="col-md-12">
+                                        <div class="row testimonial-details-row">
+                                            <div class="col-md-3 image-container" style="background-image: url({{ asset('images/feedback2.jpg') }})">
+                                                <img src="{{ asset('images/book-covers/petter.jpg') }}" alt="">
+                                            </div>
+                                            <div class="col-md-9 details-container">
+                                                <h1>Petter Fergestad</h1>
+                                                <h3>Forfatterdrøm i 2017</h3>
+                                                <blockquote>
+                                                    "Det har vært en utrolig stor glede å bli kjent med rektor Kristine
+                                                    Henningsen og resten av forfatterskolen. Jeg har lært å skrive med
+                                                    hjertet uten å miste hodet, og lært å se forskjellen. Samarbeidet
+                                                    har resultert i at min debutroman, Armageddon-algoritmen, kom ut i
+                                                    2017. Kristine har enestående evner til å inspirere og oppmuntre, og
+                                                    kan trekke på et imponerende nettverk av ressurspersoner. Hjertelig
+                                                    anbefalt.".
+                                                </blockquote>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!-- end carousel-item -->
+
+                                <div class="carousel-item">
+                                    <div class="col-md-12">
+                                        <div class="row testimonial-details-row">
+                                            <div class="col-md-3 image-container" style="background-image: url({{ asset('images/feedback3.jpg') }})">
+                                                <img src="{{ asset('images/book-covers/wenche.jpg') }}" alt="">
+                                            </div>
+                                            <div class="col-md-9 details-container">
+                                                <h1>Wenche Fuglseth Spjelkavik</h1>
+                                                <h3>debutant på Pax Forlag i 2017</h3>
+                                                <blockquote>
+                                                    "Å samtidig være medlem i Forfatterskolen og denne fantastiske
+                                                    gruppen har vært avgjørende for å greie å stå løpet ut. Har
+                                                    diskutert prosjektet med Kristine tidligere og hun er velvilligheten
+                                                    selv. Bøyer meg i støvet og har stor respekt for henne og jobben hun
+                                                    gjør. Jeg vil være elev for alltid Wenche, utgitt fagbokforfatter
+                                                    med: Å miste et barn"
+                                                </blockquote>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!-- end carousel-item -->
+
+                            </div> <!-- end carousel-inner -->
+
+                            <!-- Left and right controls -->
+                            <a class="carousel-control-prev" href="#testimonials-carousel" data-slide="prev">
+                                <span class="carousel-control-prev-icon"></span>
+                            </a>
+                            <a class="carousel-control-next" href="#testimonials-carousel" data-slide="next">
+                                <span class="carousel-control-next-icon"></span>
+                            </a>
+
+                        </div> <!-- end testimonials-carousel -->
+                    </div> <!-- end col-md-12 -->
+                </div> <!-- end testimonial-row -->
+            </div><!-- end container -->
+        </div> <!-- end first-container -->
+
+        <div class="course-container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 video-container">
+                        {{--<iframe src="https://fast.wistia.com/embed/medias/scuv6yv5qy" frameborder="0" allowfullscreen="allowfullscreen"></iframe>--}}
+                        <img src="{{ asset('images-new/adult-reading-book.jpg') }}" alt="">
+                    </div>
+                </div>
+
+                <div class="row all-course theme-tabs">
+                    <div class="tabs-container">
+                        <ul class="nav nav-tabs">
+                            <li><a data-toggle="tab" href="#home" class="active"><span>Populære kurs</span></a></li>
+                            <li><a data-toggle="tab" href="#menu1"><span>Gratis kurs</span></a></li>
+                        </ul>
+                    </div> <!-- end tabs-container -->
+
+                    <div class="tab-content">
+                        <div id="home" class="tab-pane fade in active">
+                            <div class="container">
+                                <?php $featured = 0 ?>
+                                @foreach( $popular_courses as $popular_course )
+                                    @if( FrontendHelpers::isCourseAvailable($popular_course) && $featured == 0)
+                                        <div class="row featured-item">
+                                            <div class="col-md-6 left-container">
+                                                <div class="image-container">
+                                                    <img src="{{$popular_course->course_image}}" alt="">
+                                                    <h2>Course</h2>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 right-container">
+                                                <div class="details-container">
+                                                    <h1>{{ $popular_course->title}}</h1>
+                                                    <p>{{ str_limit(strip_tags($popular_course->description), 250)}}</p>
+
+                                                    <a href="{{ route('front.course.show', $popular_course->id) }}"
+                                                       class="link-with-arrow-red font-16">Les mer</a>
+
+                                                    <div class="date-time-cont">
+                                                        @if ($popular_course->start_date)
+                                                            <i class="img-icon16 icon-calendar"></i>
+                                                            <span>{{ \App\Http\FrontendHelpers::formatDate($popular_course->start_date) }}</span>
+                                                        @endif
+                                                        {{--<i class="img-icon16 icon-clock ml-5"></i>
+                                                        <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($popular_course->start_date) }}</span>--}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php $featured++?>
+                                    @endif
+                                @endforeach
+
+                                <?php $counter = 0 ?>
+                                <div class="row courses-container">
+                                    @foreach( $popular_courses as $popular_course )
+                                        @if( FrontendHelpers::isCourseAvailable($popular_course) )
+                                            @if ($counter == 0)
+                                                <?php $counter++?>
+                                            @else
+                                                <div class="col-md-6 mt-5 course-item">
+                                                    <div class="row">
+                                                        <div class="col-sm-6 image-item">
+                                                            <div class="image-container">
+                                                                <img src="{{$popular_course->course_image}}" alt="">
+                                                                <h4>Course</h4>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6 details-item">
+                                                            <div class="details-container">
+                                                                <h3>{{ str_limit(strip_tags($popular_course->title), 40)}}</h3>
+                                                                <p>{{ str_limit(strip_tags($popular_course->description), 130)}}</p>
+
+                                                                <a href="{{ route('front.course.show', $popular_course->id) }}"
+                                                                   class="link-with-arrow-red font-16">Les mer</a>
+
+                                                                <div class="date-time-cont">
+                                                                    @if ($popular_course->start_date)
+                                                                        <i class="img-icon16 icon-calendar"></i>
+                                                                        <span>{{ \App\Http\FrontendHelpers::formatDate($popular_course->start_date) }}</span>
+                                                                    @endif
+                                                                    {{--<i class="img-icon16 icon-clock ml-5"></i>
+                                                                    <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($popular_course->start_date) }}</span>--}}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        @endif
+                                    @endforeach
                                 </div>
-                                <a class="buy_now" href="{{ route('front.workshop.show', $next_workshop->id) }}">Les Mer</a>
                             </div>
-                        @endif
-                    @endif
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <h3 class="highlight">
-                    Siste blogginnlegg
-                </h3>
-                <div class="all-course-course">
-                    @if($latest_blog)
-                        <div class="all-course-course">
-                            <div class="image" style="background-image: url({{ $latest_blog->image ?: asset('/images/no_image.png')}})"></div>
-                            <div class="details">
-                                <div class="course-info">
-                                    <h4>{{ $latest_blog->title }}</h4>
-                                    <p>{{ str_limit(strip_tags($latest_blog->description), 180)}}</p>
+                            <a class="btn site-btn-global mt-5" href="{{ route('front.course.index') }}">Se alle kurs</a>
+                        </div>
+
+                        <div id="menu1" class="tab-pane fade in">
+                            <div class="container">
+                                <?php $featured = 0 ?>
+                                @foreach( $free_courses as $free_course )
+                                    @if( \App\Http\FrontendHelpers::isCourseAvailable($free_course) && $featured == 0)
+                                        <div class="row featured-item">
+                                            <div class="col-md-6 left-container">
+                                                <div class="image-container">
+                                                    <img src="{{$free_course->course_image}}" alt="">
+                                                    <h2>Course</h2>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 right-container">
+                                                <div class="details-container">
+                                                    <h1>{{ $free_course->title}}</h1>
+                                                    <p>{{ str_limit(strip_tags($free_course->description), 250)}}</p>
+
+                                                    <a href="{{ $free_course->url }}"
+                                                       class="link-with-arrow-red font-16">Les mer</a>
+
+                                                    <div class="date-time-cont">
+                                                        @if ($free_course->start_date)
+                                                            <i class="img-icon16 icon-calendar"></i>
+                                                            <span>{{ \App\Http\FrontendHelpers::formatDate($free_course->start_date) }}</span>
+                                                        @endif
+                                                        {{--<i class="img-icon16 icon-clock ml-5"></i>
+                                                        <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($free_course->start_date) }}</span>--}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php $featured++?>
+                                    @endif
+                                @endforeach
+
+                                <?php $counter = 0 ?>
+                                <div class="row courses-container">
+                                    @foreach( $free_courses as $free_course )
+                                        @if( \App\Http\FrontendHelpers::isCourseAvailable($free_course) )
+                                            @if ($counter == 0)
+                                                <?php $counter++?>
+                                            @else
+                                                <div class="col-md-6 mt-5 course-item">
+                                                    <div class="row">
+                                                        <div class="col-sm-6 image-item">
+                                                            <div class="image-container">
+                                                                <img src="{{$free_course->course_image}}" alt="">
+                                                                <h4>Course</h4>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6 details-item">
+                                                            <div class="details-container">
+                                                                <h3>{{ str_limit(strip_tags($free_course->title), 40)}}</h3>
+                                                                <p>{{ str_limit(strip_tags($free_course->description), 130)}}</p>
+
+                                                                <a href="{{ $free_course->url }}"
+                                                                   class="link-with-arrow-red font-16">Les mer</a>
+
+                                                                <div class="date-time-cont">
+                                                                    @if ($free_course->start_date)
+                                                                        <i class="img-icon16 icon-calendar"></i>
+                                                                        <span>{{ \App\Http\FrontendHelpers::formatDate($free_course->start_date) }}</span>
+                                                                    @endif
+                                                                    {{--<i class="img-icon16 icon-clock ml-5"></i>
+                                                                    <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($popular_course->start_date) }}</span>--}}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div> <!-- end course-item -->
+                                            @endif
+                                        @endif
+                                    @endforeach
+                                </div> <!-- end courses-container -->
+                            </div> <!-- end container -->
+                        </div> <!-- end menu1 -->
+                    </div> <!-- end tab-content -->
+                </div> <!-- end all-course -->
+            </div> <!-- end container -->
+        </div> <!-- end course-container -->
+
+        <div class="poems-container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h1 class="text-center">Poems from students</h1>
+                    </div>
+
+                    <?php
+                        $poems_chunk = $poems->chunk(3);
+                    ?>
+                    <div id="poems-carousel" class="carousel slide global-carousel" data-ride="carousel"
+                         data-interval="false">
+                        <!-- Indicators -->
+                        <ul class="carousel-indicators">
+                            @for($i=0; $i<=$poems_chunk->count() - 1;$i++)
+                                <li data-target="#poems-carousel" data-slide-to="{{$i}}" @if($i == 0) class="active" @endif></li>
+                            @endfor
+                        </ul>
+
+                        <!-- The slideshow -->
+                        <div class="container carousel-inner no-padding">
+                            @foreach($poems_chunk as $k => $poems)
+                                <div class="carousel-item {{ $k==0 ? 'active' : '' }}">
+                                    @foreach($poems as $i => $poem)
+                                        <?php $i+=2;/* to make it divisible by 3 */?>
+
+                                        {{-- check if not divisible by 3 --}}
+                                        <div class="row">
+                                            @if ($i %3 != 0)
+                                                <div class="col-sm-3">
+                                                    <div class="panel panel-default">
+                                                        <img src="{{ asset($poem->author_image) }}" alt="">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-9">
+                                                    <div class="poem-details">
+                                                        <h2> {{ $poem->title }} </h2>
+                                                        <h3> {{ $poem->author }} </h3>
+                                                        <p> {!! $poem->poem !!} </p>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <div class="col-sm-9">
+                                                    <div class="poem-details">
+                                                        <h2> {{ $poem->title }} </h2>
+                                                        <h3> {{ $poem->author }} </h3>
+                                                        <p> {!! $poem->poem !!} </p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="panel panel-default">
+                                                        <img src="{{ asset($poem->author_image) }}" alt="">
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endforeach
                                 </div>
-                            </div>
-                            <a class="buy_now" href="{{ route('front.read-blog', $latest_blog->id) }}">Les mer</a>
+                            @endforeach
                         </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-sm-12" style="background-color: #f00; height: 2px;">
-    </div>
-
-    <div class="clearfix"></div>
-
-<div class="all-course theme-tabs">
-    <div class="tabs-container">
-        <ul class="nav nav-tabs">
-          <li class="active"><a data-toggle="tab" href="#home"><span>Populære kurs</span></a></li>
-          <li><a data-toggle="tab" href="#menu1"><span>Gratis kurs</span></a></li>
-        </ul>
-    </div>
-    <div class="tab-content">
-      <div id="home" class="tab-pane fade in active">
-        <div class="container">
-            <div class="row">
-                @foreach( $popular_courses as $popular_course )
-                @if( FrontendHelpers::isCourseAvailable($popular_course) )
-                <div class="col-sm-4">
-                    <div class="all-course-course">
-                        <div class="image" style="background-image: url({{$popular_course->course_image}})"></div>
-                        <div class="details">
-                            <div class="course-info">
-                                <h4>{{ $popular_course->title }}</h4>
-                                <p>{{ str_limit(strip_tags($popular_course->description), 180)}}</p>
-                            </div>
-                        </div>
-                        <a class="buy_now" href="{{ route('front.course.show', $popular_course->id) }}">Les mer</a>
-                    </div>
-                </div>
-                @endif
-                @endforeach
-            </div>
-        </div>
-
-        <br />
-        <a class="btn btn-theme" href="{{ route('front.course.index') }}">Se alle kurs</a>
-      </div>
-
-      <div id="menu1" class="tab-pane fade">
-        <div class="container">
-            <div class="row">
-                @foreach( $free_courses as $free_course )
-                <div class="col-sm-4">
-                    <div class="all-course-course">
-                        <div class="image" style="background-image: url({{ $free_course->course_image }})"></div>
-                        <div class="details">
-                            <div class="course-info">
-                                <h4>{{ $free_course->title }}</h4>
-                                <p>{{ str_limit(strip_tags($free_course->description), 180)}}</p>
-                            </div>
-                        </div>
-                        <a class="buy_now" href="{{ $free_course->url }}">Les mer</a>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-        </div>
-      </div>
-    </div>
-</div>
-
-    <div class="clearfix"></div>
-
-<div class="feedbacks">
-    <h3><span class="highlight">Hva</span> våre elever sier</h3>
-    <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="10000">
-      <ol class="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
-      </ol>
-
-      <div class="carousel-inner text-center">
-        <div class="item active">
-            <div class="feedback">
-                <div class="feedback-thumb" style="background-image: url({{ asset('images/feedback1.jpg') }})"></div>
-                <div class="book-cover"><img src="{{ asset('images/book-covers/linda.jpg') }}" height="130"></div>
-                <em>"Boken min, ”Uten vesentlige feil eller mangler” kom ut på Gyldendal våren 2017. Og med hånden på hjertet: Jeg vet ikke om jeg hadde klart det uten Forfatterskolen, og den støtten det ligger i å være en del av et skrivefellesskap. Jeg vil fortsette å la meg inspirere av Rektor Kristine og hennes medarbeidere på Forfatterskolen. Og ikke minst: Elevene".</em>
-                <span>- Linda Skomakerstuen, debutant på Gyldendal i 2017</span>
-            </div>
-        </div>
-
-        <div class="item">
-            <div class="feedback">
-                <div class="feedback-thumb" style="background-image: url({{ asset('images/feedback2.jpg') }})"></div>
-                <div class="book-cover"><img src="{{ asset('images/book-covers/petter.jpg') }}" height="130"></div>
-                <em>"Det har vært en utrolig stor glede å bli kjent med rektor Kristine Henningsen og resten av forfatterskolen. Jeg har lært å skrive med hjertet uten å miste hodet, og lært å se forskjellen. Samarbeidet har resultert i at min debutroman, Armageddon-algoritmen, kom ut i 2017. Kristine har enestående evner til å inspirere og oppmuntre, og kan trekke på et imponerende nettverk av ressurspersoner. Hjertelig anbefalt.".</em>
-                <span>- Petter Fergestad, Forfatterdrøm i 2017</span>
-            </div>
-        </div>
-
-        <div class="item">
-            <div class="feedback">
-                <div class="feedback-thumb" style="background-image: url({{ asset('images/feedback3.jpg') }})"></div>
-                <div class="book-cover"><img src="{{ asset('images/book-covers/wenche.jpg') }}" height="130"></div>
-                <em>"Å samtidig være medlem i Forfatterskolen og denne fantastiske gruppen har vært avgjørende for å greie å stå løpet ut. Har diskutert prosjektet med Kristine tidligere og hun er velvilligheten selv. Bøyer meg i støvet og har stor respekt for henne og jobben hun gjør. Jeg vil være elev for alltid Wenche, utgitt fagbokforfatter med: Å miste et barn".</em>
-                <span>- Wenche Fuglseth Spjelkavik, debutant på Pax Forlag i 2017</span>
-            </div>
-        </div>
-      </div>
-    </div>
-</div>
-
-
-<div class="this-we">
-    <h3 class="text-center"><span class="highlight">Dette</span> tilbyr vi</h3>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="ic text-center">
-                    <img src="{{asset('/images/ic_inkpot.png')}}">
-                    <div>
-                    <h5>Unikt skrivemiljø</h5>
-                    Vi har et støttende, inspirerende og utviklende skrivemiljø på skolen – med plass til flere!
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="ic text-center">
-                    <img src="{{asset('/images/ic_light.png')}}">
-                    <div>
-                    <h5>Hva skjer?</h5>
-                    Vi tipser og holder deg oppdatert på alt som skjer på skrivefronten
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 text-center">
-                <div class="ic">
-                    <img src="{{asset('/images/ic_about.png')}}">
-                    <div>
-                    <h5>Om oss</h5>
-                    Forfatterskolen tilbyr flere typer kurs og veiledning for deg som vil gjøre alvor av forfatterdrømmen
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-    @if(!isset($_COOKIE['_gdpr']))
-        <div class="col-sm-12 no-left-padding no-right-padding gdpr">
-            <div class="container display-flex">
-                <div class="gdpr-body">
-                    <h1 class="gdpr-title">Dine data, dine valg</h1>
-                    <div>
-                        <p>
-                            Forfatterskolen er den som behandler dine data.
-                        </p>
-                        <p>
-                            Dine data er trygge hos oss. Vi bruker dem til å tilpasse tjenestene og tilbudene for deg.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="gdpr-actions">
-                    <button class="btn btn-agree" onclick="agreeGdpr()">
-                        JEG FORSTÅR
-                    </button>
-                    <a href="{{ route('front.terms') }}">Vis meg mer</a>
-                </div>
-            </div>
-        </div>
-    @endif
 @stop
 
 @section('scripts')

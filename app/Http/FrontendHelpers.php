@@ -85,6 +85,11 @@ class FrontendHelpers
         return Carbon::parse($date)->format('d.m.Y');
 	}
 
+    public static function getTimeFromDT($date)
+    {
+        return Carbon::parse($date)->format('H:i');
+    }
+
     public static function formatDateTimeNor($date)
     {
         return \Carbon\Carbon::parse($date)->format('d.m.Y').' Klokken '.\Carbon\Carbon::parse($date)->format('H:i');
