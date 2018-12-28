@@ -1399,7 +1399,7 @@ margin-right: 5px;
 
 /* course single page */
 
-.course-single-page .single-content {
+.course-single-page .single-content, .workshop-single-page .single-content {
     padding-bottom: 100px;
 }
 
@@ -1464,7 +1464,7 @@ margin-right: 5px;
     padding: 5px 30px;
 }
 
-.course-single-page .header .sub-header {
+.course-single-page .header .sub-header, .workshop-single-page .header .sub-header {
     background-color: #fff;
     border-radius: 53px;
     color: #000;
@@ -1475,7 +1475,7 @@ margin-right: 5px;
     width: 880px;
 }
 
-.course-single-page .header .sub-header .buy-course {
+.course-single-page .header .sub-header .buy-course, .workshop-single-page .header .sub-header .buy-course {
     background-color: #862736;
     border-radius: 40px;
     color: #fff;
@@ -1486,7 +1486,7 @@ margin-right: 5px;
     left: 37%;
 }
 
-.course-single-page .course-image-row {
+.course-single-page .course-image-row, .workshop-single-page .workshop-image-row {
     background-position: 50%;
     background-size: cover;
     height: 600px;
@@ -1494,7 +1494,7 @@ margin-right: 5px;
     position: relative;
 }
 
-.course-single-page .course-image-row .date-container {
+.course-single-page .course-image-row .date-container, .workshop-single-page .workshop-image-row .date-container {
     background-color: #e83a47;
     bottom: 0;
     color: #fff;
@@ -1503,15 +1503,15 @@ margin-right: 5px;
     text-align: center;
 }
 
-.course-single-page .course-image-row .date-container h1 {
+.course-single-page .course-image-row .date-container h1, .workshop-single-page .workshop-image-row .date-container h1 {
     font-size: 40px;
 }
 
-.course-single-page .course-image-row .date-container h2 {
+.course-single-page .course-image-row .date-container h2, .workshop-single-page .workshop-image-row .date-container h2 {
     font-size: 20px;
 }
 
-.course-single-page .details-container {
+.course-single-page .details-container, .workshop-single-page .details-container {
     box-shadow: 1px 1px 6px 1px rgba(210, 210, 210, 0.46);
     margin-top: 20px;
 }
@@ -3256,6 +3256,116 @@ margin-right: 5px;
 
 /* end workshop page*/
 
+/* workshop single page */
+
+.workshop-single-page .header {
+    background: linear-gradient( rgba(0, 0, 0, 0.54), rgba(0, 0, 0, 0.54) ), url(../images-new/workshop-single.jpg)
+    no-repeat bottom / cover;
+    color: #fff;
+    height: 455px;
+    position: relative;
+}
+
+.workshop-single-page .header .container {
+    padding: 130px 130px 0 130px;
+}
+
+.workshop-single-page .header h1 {
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+.workshop-single-page .header .workshop-start {
+    background-color: #e83a47;
+    border-radius: 7px;
+    color: #fff;
+    display: inline-block;
+    font-size: 23px;
+    margin-top: 10px;
+    padding: 5px 30px;
+}
+
+.workshop-single-page .header .sub-header {
+    bottom: -80px;
+    border-radius: 83px;
+    padding: 40px 50px;
+}
+
+.workshop-single-page .header .sub-header .buy-course {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20%;
+}
+
+.workshop-single-page .workshop-presenter .presenter-image {
+    background-color: #eee;
+    background-image: url(../images/user.png);
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 50%;
+    margin-right: 15px;
+    height: 60px;
+    width: 60px;
+}
+
+.workshop-single-page .workshop-presenter .presenter-details .title {
+    color: #bdbdbd;
+}
+
+.workshop-single-page .workshop-presenter .presenter-details .name {
+    font-family: "Barlow Medium", sans serif;
+}
+
+.workshop-single-page .workshop-info {
+    color: #999999;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.workshop-single-page .workshop-info span {
+    font-size: 16px;
+    margin-right: 30px;
+}
+
+.workshop-single-page .workshop-image-row {
+    height: 570px;
+    margin-top: 70px;
+}
+
+.workshop-single-page .details-container {
+    margin-top: 0;
+    padding: 50px;
+}
+
+.workshop-single-page .information-container {
+    margin-top: 40px;
+    width: 100%;
+}
+
+.workshop-single-page .information-container .row {
+    margin-top: 50px;
+}
+
+.workshop-single-page .information-container h1 {
+    border-bottom: 2px solid #e8e8e8;
+    font-family: "Barlow Medium", sans serif;
+    font-size: 27px;
+    padding-bottom: 25px;
+}
+
+.workshop-single-page .information-container .left-container img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+}
+
+.workshop-single-page .workshop-info .date-time-cont div, .workshop-single-page .workshop-info .loc-price-cont div{
+    display: inline-block;
+}
+
+/* end workshop single page */
+
 /* theme tabs */
 
 .theme-tabs {
@@ -3499,6 +3609,18 @@ blockquote {
     height: 16px;
     margin-right: 0;
     width: 16px;
+}
+
+.icon-marker:before {
+    background-image: url(../images-new/icon/marker20.png);
+}
+
+.icon-clock3:before {
+    background-image: url(../images-new/icon/clock3.png);
+}
+
+.icon-price-tag:before {
+    background-image: url(../images-new/icon/price-tag.png);
 }
 
 .telephone:before {
@@ -4297,6 +4419,30 @@ select.form-control {
         background-position: top right;
         background-size: 60%;
     }
+
+    .workshop-single-page .header {
+        height: 430px;
+    }
+
+    .workshop-single-page .header .sub-header {
+        bottom: -80px;
+        border-radius: 83px;
+        padding: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .workshop-single-page .header .sub-header .buy-course {
+        font-size: 20px;
+    }
+
+    .workshop-single-page .course-image-row {
+        height: 500px;
+    }
+
+    .workshop-single-page .information-container .left-container img {
+        height: 120px;
+    }
 }
 
 @media only screen and (max-width: 768px) {
@@ -5032,6 +5178,58 @@ select.form-control {
     .workshop-page .card-body .buy-btn {
         margin-bottom: 10px !important;
         padding: 10px 20px;
+    }
+
+    .workshop-single-page .header {
+        height: 315px;
+    }
+
+    .workshop-single-page .header .container {
+        padding: 60px 60px 0 60px;
+    }
+
+    .workshop-single-page .header h1 {
+        font-size: 30px;
+    }
+
+    .workshop-single-page .header .workshop-start {
+        font-size: 20px;
+    }
+
+    .workshop-single-page .header .sub-header {
+        bottom: -80px;
+        max-width: 720px;
+        padding: 30px 20px;
+    }
+
+    .workshop-single-page .workshop-info span {
+        font-size: 15px;
+        margin-right: 10px;
+    }
+
+    .workshop-single-page .presenter-container {
+        padding-right: 0;
+    }
+
+    .workshop-single-page .workshop-presenter .presenter-image {
+        margin-right: 5px;
+    }
+
+    .workshop-single-page .workshop-image-row {
+        margin-top: 80px;
+    }
+
+    .workshop-single-page .workshop-image-row {
+        height: 440px;
+    }
+
+    .workshop-single-page .details-container {
+        margin-top: 0;
+        padding: 30px;
+    }
+
+    .workshop-single-page .information-container .left-container img {
+        height: 85px;
     }
 
     /* theme tab */
@@ -5873,6 +6071,68 @@ select.form-control {
     .workshop-page .card-body .buy-btn {
         padding: 10px 30px;
     }
+
+    .workshop-single-page .header {
+        height: 260px;
+    }
+
+    .workshop-single-page .header h1 {
+        font-size: 25px;
+        margin-bottom: 5px;
+    }
+
+    .workshop-single-page .header .container {
+        padding: 35px 0 0 0;
+    }
+
+    .workshop-single-page .header .workshop-start {
+        font-size: 17px;
+    }
+
+    .workshop-single-page .header .sub-header {
+        bottom: -50px;
+        max-width: 540px;
+        padding: 30px;
+    }
+
+    .workshop-single-page .header .sub-header {
+        bottom: -130px;
+    }
+
+    .workshop-single-page .header .sub-header .buy-course {
+        width: 26%;
+    }
+
+    .workshop-single-page .workshop-image-row {
+        height: 370px;
+        margin-top: 130px;
+    }
+
+    .workshop-single-page .workshop-image-row .date-container {
+        padding: 7px 30px;
+    }
+
+    .workshop-single-page .workshop-image-row .date-container h1 {
+        font-size: 30px;
+    }
+
+    .workshop-image-row .date-container h2 {
+        font-size: 18px !important;
+    }
+
+    .workshop-single-page .workshop-info {
+        padding-left: 15px;
+    }
+
+    .workshop-single-page .information-container .left-container {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .workshop-single-page .information-container .left-container img {
+        height: 190px;
+        width: 190px;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -6592,6 +6852,46 @@ select.form-control {
     .workshop-page .header p {
         padding-right: 0;
     }
+
+    .workshop-single-page .header {
+        height: 180px;
+    }
+
+    .workshop-single-page .header .container {
+        padding: 20px 0 0 0;
+    }
+
+    .workshop-single-page .header h1 {
+        font-size: 20px;
+    }
+
+    .workshop-single-page .header .workshop-start {
+        font-size: 15px;
+    }
+
+    .workshop-single-page .header .sub-header {
+        bottom: -183px;
+        max-width: 430px;
+        padding: 25px 15px;
+    }
+
+    .workshop-single-page .header .sub-header .buy-course {
+        font-size: 15px;
+        width: 32%;
+    }
+
+    .workshop-single-page .presenter-container {
+        padding-left: 5px !important;
+    }
+
+    .workshop-single-page .workshop-info {
+        padding-left: 40px;
+    }
+
+    .workshop-single-page .workshop-image-row {
+        height: 276px;
+        margin-top: 190px;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -6765,6 +7065,33 @@ select.form-control {
     .front-page .testimonial-row .carousel .testimonial-details-row h1 {
         font-size: 27px;
     }
+
+    .workshop-single-page .header .container {
+        padding: 30px 0 0 0;
+    }
+
+    .workshop-single-page .header h1 {
+        font-size: 21px;
+    }
+
+    .workshop-single-page .header .sub-header {
+        bottom: -185px;
+        max-width: 373px;
+        padding: 25px 0;
+    }
+
+    .workshop-single-page .workshop-image-row {
+        height: 250px;
+    }
+
+    .workshop-single-page .information-container .row {
+        margin-top: 30px;
+    }
+
+    .workshop-single-page .information-container .left-container img {
+        height: 180px;
+        width: 180px;
+    }
 }
 
 @media only screen and (max-width: 360px) {
@@ -6913,6 +7240,14 @@ select.form-control {
     .front-page .all-course .tab-content .image-container img,
     .front-page .poems-container .panel img {
         height: 200px;
+    }
+
+    .workshop-single-page .header .sub-header {
+        padding: 25px 10px;
+    }
+
+    .workshop-single-page .workshop-info {
+        padding-left: 46px;
     }
 }
 
@@ -7154,5 +7489,51 @@ select.form-control {
 
     .front-page .all-course .tab-content .image-container img, .front-page .poems-container .panel img {
         height: 190px;
+    }
+
+    .workshop-single-page .header .sub-header {
+        bottom: -235px;
+        max-width: 320px;
+    }
+
+    .workshop-single-page .header .sub-header .buy-course {
+        padding: 5px 30px;
+    }
+
+    .workshop-single-page .presenter-container {
+        padding-left: 0 !important;
+    }
+
+    .workshop-single-page .workshop-info {
+        padding-left: 60px;
+    }
+
+    .workshop-single-page .workshop-image-row {
+        margin-top: 250px;
+    }
+
+    .workshop-single-page .workshop-image-row {
+        height: 210px;
+    }
+
+    .workshop-single-page .workshop-image-row .date-container {
+        padding: 7px 24px;
+    }
+
+    .workshop-single-page .workshop-image-row .date-container h1 {
+        font-size: 20px;
+    }
+
+    .workshop-image-row .date-container h2 {
+        font-size: 15px !important;
+    }
+
+    .workshop-single-page .details-container {
+        padding: 20px;
+    }
+
+    .workshop-single-page .information-container .left-container img {
+        height: 160px;
+        width: 160px;
     }
 }
