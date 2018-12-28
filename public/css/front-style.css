@@ -3733,6 +3733,21 @@ blockquote {
     -moz-animation-duration:1s;
     animation-duration:1s;
 }
+
+.loading {
+    font-size: 20px;
+}
+
+.loading:after {
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: bottom;
+    -webkit-animation: ellipsis steps(4,end) 900ms infinite;
+    animation: ellipsis steps(4,end) 900ms infinite;
+    content: "\2026"; /* ascii code for the ellipsis character */
+    width: 0;
+}
+
 /* animations */
 /* from left to right animation*/
 @keyframes slideInFromLeft {
@@ -3765,6 +3780,19 @@ blockquote {
     100% {
         transform: translateX(0);
         opacity: 1;
+    }
+}
+
+/* add ellipsis */
+@keyframes ellipsis {
+    to {
+        width: 1.25em;
+    }
+}
+
+@-webkit-keyframes ellipsis {
+    to {
+        width: 1.25em;
     }
 }
 

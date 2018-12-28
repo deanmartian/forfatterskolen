@@ -34,7 +34,7 @@
 							@endif
 							@if ( $errors->any() )
 								<div class="col-sm-12">
-									<div class="alert alert-danger no-bottom-margin">
+									<div class="alert alert-danger mb-0">
 										<ul>
 											@foreach($errors->all() as $error)
 												<li>{!! $error !!}</li>
@@ -139,7 +139,7 @@
 					@endif
 					<div class="col-lg-4">
 						<!-- Payment Details -->
-						<div class="panel panel-default no-margin-bottom">
+						<div class="panel panel-default mb-0">
 							<div class="panel-heading-underlined pt-0">Kurspakke</div>
 							<div class="panel-body px-0 pb-0">
 								@foreach($course->packages as $k => $package)
@@ -556,6 +556,8 @@
                     paymentPlanContainer.find('[type=radio][value='+v.id+']').attr('disabled', false)
 						.closest('.payment-option').show();
                 });
+
+                paymentPlanContainer.find('.payment-option:first-of-type').find('[type=radio]').prop('checked', true);
             });
         }
 
