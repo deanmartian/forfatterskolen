@@ -127,8 +127,8 @@ class ShopManuscriptController extends Controller
             // Admin notification
             $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
             $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
-            /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
-                'post@forfatterskolen.no',$toMail, $message);*/
+            AdminHelpers::send_email('New manuscript submitted for shop manuscript',
+                'post@forfatterskolen.no',$toMail, $message);
             //mail($toMail, 'New manuscript submitted for shop manuscript', $message);
         endif;
 
