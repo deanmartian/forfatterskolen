@@ -12,11 +12,12 @@
 				<div class="col-lg-8">
 					<div class="panel panel-default">
 						@if(Auth::guest())
-							<div>
+							{{--<div>
 								Allerede elev? Klikk <a href="#" data-toggle="collapse" data-target="#checkoutLogin"
 														class="font-barlow-regular">her</a> for å logge inn.
 							</div>
-							<form id="checkoutLogin" class="collapse @if($errors->first('login_error')) fade in @endif" action="{{route('frontend.login.checkout.store')}}" method="POST">
+							<form id="checkoutLogin" class="collapse @if($errors->first('login_error')) fade in @endif" action="{{route('frontend.login.checkout.store')}}" method="POST">--}}
+							<form id="checkoutLogin" action="{{route('frontend.login.checkout.store')}}" method="POST">
 								{{csrf_field()}}
 								<div class="row">
 									<div class="form-group col-sm-4">
