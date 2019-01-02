@@ -20,6 +20,13 @@
 							<form id="checkoutLogin" action="{{route('frontend.login.checkout.store')}}" method="POST">
 								{{csrf_field()}}
 								<div class="row">
+									<div class="col-sm-12">
+											<span>
+												Er du allerede registrert hos oss må du logge inn her
+											</span>
+									</div>
+								</div>
+								<div class="row">
 									<div class="form-group col-sm-4">
 										<input type="email" name="email" placeholder="Epost-adresse" class="form-control" value="{{old('email')}}" required>
 										<p style="margin-top: 7px;"><a href="{{ route('auth.login.show') }}?t=passwordreset" tabindex="-1">Glemt Passord?</a></p>

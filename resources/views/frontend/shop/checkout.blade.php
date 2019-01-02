@@ -19,6 +19,13 @@
 							<form id="checkoutLogin" class="collapse @if($errors->first('login_error')) fade in @endif" action="{{route('frontend.login.checkout.store')}}" method="POST">--}}
 								<form id="checkoutLogin" action="{{route('frontend.login.checkout.store')}}" method="POST">
 								{{csrf_field()}}
+									<div class="row">
+										<div class="col-sm-12">
+											<span>
+												Er du allerede registrert hos oss må du logge inn her
+											</span>
+										</div>
+									</div>
 								<div class="row">
 									<div class="form-group col-sm-4">
 										<input type="email" name="email" placeholder="Epost-adresse" class="form-control" value="{{old('email')}}" required>
