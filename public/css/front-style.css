@@ -3987,6 +3987,10 @@ select.form-control {
     padding-left: 10px;
 }
 
+input[type=file].form-control {
+    padding: 2px;
+}
+
 .form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: #979797;
     opacity: 1; /* Firefox */
