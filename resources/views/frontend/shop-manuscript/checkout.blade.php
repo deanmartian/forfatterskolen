@@ -46,7 +46,7 @@
 							</div>
 						@endif
 
-						<form class="form-theme" method="POST" action="{{ route('front.shop-manuscript.place_order', ['id' => $shopManuscript->id]) }}"
+						<form class="form-theme" method="POST" enctype="multipart/form-data" action="{{ route('front.shop-manuscript.place_order', ['id' => $shopManuscript->id]) }}"
 							  id="place_order_form">
 							{{csrf_field()}}
 
