@@ -152,6 +152,14 @@
 						</div>
 
 						<div class="checkout-total mt-3">
+                            <?php
+                            $courseWorkshops = 0;
+                            if (Auth::user()) {
+                                foreach( Auth::user()->coursesTaken as $courseTaken ) {
+                                    $courseWorkshops += $courseTaken->package->workshops;
+                                }
+                            }
+                            ?>
 							<h3>Totalt:
 								@if (Auth::user())
 									@if (Auth::user()->workshopsTaken->count() == 0 && $courseWorkshops > 0)
