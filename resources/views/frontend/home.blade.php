@@ -504,16 +504,40 @@
                                                 <div class="col-sm-9">
                                                     <div class="poem-details">
                                                         <h2> {{ $poem->title }} </h2>
-                                                        <h3> {{ $poem->author }} </h3>
-                                                        <p> {!! $poem->poem !!} </p>
+                                                        <h3 class="mb-5"> {{ $poem->author }} </h3>
+                                                        <?php
+                                                            $html   = $poem->poem;
+                                                            // remove first empty array value using array_filter
+                                                            $content = array_filter(explode("<p>", $html));
+                                                            // divided the array in 2
+                                                            $pieces = array_chunk($content, ceil(count($content) / 2));
+                                                            foreach($pieces as $piece) {
+                                                                echo '<div class="col-md-6 px-0">';
+                                                                    echo '<p>'.implode('</p><p>', $piece).'</p>';
+                                                                echo '</div>';
+                                                            }
+                                                        ?>
+                                                        {{--{!! $poem->poem !!}--}}
                                                     </div>
                                                 </div>
                                             @else
                                                 <div class="col-sm-9">
                                                     <div class="poem-details">
                                                         <h2> {{ $poem->title }} </h2>
-                                                        <h3> {{ $poem->author }} </h3>
-                                                        <p> {!! $poem->poem !!} </p>
+                                                        <h3 class="mb-5"> {{ $poem->author }} </h3>
+                                                        <?php
+                                                            $html   = $poem->poem;
+                                                            // remove first empty array value using array_filter
+                                                            $content = array_filter(explode("<p>", $html));
+                                                            // divided the array in 2
+                                                            $pieces = array_chunk($content, ceil(count($content) / 2));
+                                                            foreach($pieces as $piece) {
+                                                                echo '<div class="col-md-6 px-0">';
+                                                                    echo '<p>'.implode('</p><p>', $piece).'</p>';
+                                                                echo '</div>';
+                                                            }
+                                                        ?>
+                                                        {{--{!! $poem->poem !!}--}}
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-3">
