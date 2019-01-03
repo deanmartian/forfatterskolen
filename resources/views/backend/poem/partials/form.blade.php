@@ -74,6 +74,7 @@
             'alignjustify  | removeformat',
             toolbar2: 'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code | print fullscreen',
             relative_urls: false,
+            fontsize_formats: "8px 10px 12px 14px 16px 18px 20px 24px 36px 40px",
             file_browser_callback : function(field_name, url, type, win) {
                 var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
                 var y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
