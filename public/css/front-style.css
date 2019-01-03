@@ -41,6 +41,18 @@
 }
 
 @font-face{
+    font-family: 'Barlow LightItalic';
+    src: url('../fonts/Barlow/Barlow-LightItalic.ttf');
+    font-display: block;
+}
+
+@font-face{
+    font-family: 'Barlow MediumItalic';
+    src: url('../fonts/Barlow/Barlow-MediumItalic.ttf');
+    font-display: block;
+}
+
+@font-face{
     font-family: 'Montserrat Regular';
     src: url('../fonts/montserrat/Montserrat-Regular.otf');
     font-display: block;
@@ -3119,7 +3131,7 @@ margin-right: 5px;
 }
 
 .front-page .poems-container .panel img {
-    height: 200px;
+    height: 239px;
     object-fit: cover;
     width: 100%;
 }
@@ -3365,6 +3377,98 @@ margin-right: 5px;
 }
 
 /* end workshop single page */
+
+/* copy editing page */
+.other-service-page {
+    min-height: 500px;
+    padding-bottom: 150px;
+    padding-top: 100px;
+}
+
+.copy-editing-page {
+    background: linear-gradient( rgba(0, 0, 0, .25), rgba(0, 0, 0, .25)), url(../images-new/copy-editing-bg.jpg)
+    no-repeat bottom / cover;
+}
+
+.other-service-page h1 {
+    color: #fff;
+    font-family: "Barlow Regular", sans serif;
+    font-size: 32px;
+}
+
+.other-service-page .price-container h3 {
+    color: #852635;
+    font-weight: normal;
+}
+
+.other-service-page .form-container {
+    background-color: #fff;
+    margin-top: 50px;
+}
+
+.other-service-page .circle {
+    background-color: transparent;
+    border: 2px solid #964653;
+    height: 160px;
+    border-radius: 50%;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    margin: 0 auto;
+    position: relative;
+    width: 160px;
+}
+
+.other-service-page .circle-white {
+    background-color: #fff;
+    box-shadow: 1px 1px 8px 0 rgba(169, 169, 169, 0.34);
+    height: 125px;
+    border-radius: 50%;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    margin: 10%;
+    padding-top: 24%;
+    text-align: center;
+    width: 125px;
+}
+
+.other-service-page .details-container {
+    padding: 40px 50px 40px 15px;
+}
+
+.other-service-page .details-container h1 {
+    color: #212529;
+    font-size: 26px;
+}
+
+.other-service-page .details-container .buy-btn {
+    font-size: 16px;
+    float: right;
+    padding: 6px 22px;
+}
+
+.other-service-page .details-container p {
+    margin-top: 22px;
+}
+
+.other-service-page .details-container span:first-of-type {
+    font-family: "Barlow LightItalic", sans serif;
+}
+
+.other-service-page .details-container span:last-of-type {
+    font-family: "Barlow MediumItalic", sans serif;
+}
+
+.other-service-page .select-manuscript {
+    font-size: 18px;
+    padding: .375rem 3rem;
+}
+
+.other-service-page .form-control {
+    color: #999999;
+    font-size: 15px;
+}
+
+/* end copy editing page */
 
 /* theme tabs */
 
@@ -5268,6 +5372,10 @@ textarea.form-control {
         height: 85px;
     }
 
+    .other-service-page .details-container {
+        padding-right: 30px;
+    }
+
     /* theme tab */
     .theme-tabs li a {
         padding: 20px;
@@ -6169,6 +6277,30 @@ textarea.form-control {
         height: 190px;
         width: 190px;
     }
+
+    .other-service-page {
+        padding-bottom: 90px;
+        padding-top: 40px;
+    }
+
+    .other-service-page .form-container {
+        margin-top: 30px;
+    }
+
+    .other-service-page .price-container {
+        padding-top: 40px;
+    }
+
+    .other-service-page .details-container {
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+
+    .other-service-page .details-container .buy-btn:after {
+        height: 16px;
+        margin: 5px 0 0 10px;
+        width: 16px;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -6928,6 +7060,39 @@ textarea.form-control {
         height: 276px;
         margin-top: 190px;
     }
+
+    .other-service-page {
+        padding-bottom: 70px;
+        padding-top: 30px;
+    }
+
+    .other-service-page .details-container p {
+        margin-top: 0;
+    }
+
+    .other-service-page .details-container .buy-btn {
+        float: none;
+        margin-top: 10px;
+    }
+
+    .other-service-page .details-container, .other-service-page .price-container {
+        padding-top: 30px;
+    }
+
+    .other-service-page .circle {
+        height: 140px;
+        width: 140px;
+    }
+
+    .other-service-page .circle-white {
+        height: 115px;
+        margin: 8%;
+        width: 115px;
+    }
+
+    .other-service-page .select-manuscript {
+        padding: .375rem 2rem;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -7127,6 +7292,29 @@ textarea.form-control {
     .workshop-single-page .information-container .left-container img {
         height: 180px;
         width: 180px;
+    }
+
+    .other-service-page {
+        padding-bottom: 50px;
+    }
+
+    .other-service-page .form-container {
+        margin-top: 15px;
+    }
+
+    .other-service-page .circle {
+        height: 125px;
+        width: 125px;
+    }
+
+    .other-service-page .circle-white {
+        height: 105px;
+        margin: 7%;
+        width: 105px;
+    }
+
+    .other-service-page .select-manuscript {
+        padding: .375rem 1rem;
     }
 }
 
@@ -7571,5 +7759,9 @@ textarea.form-control {
     .workshop-single-page .information-container .left-container img {
         height: 160px;
         width: 160px;
+    }
+
+    .other-service-page .details-container h1 {
+        font-size: 25px;
     }
 }

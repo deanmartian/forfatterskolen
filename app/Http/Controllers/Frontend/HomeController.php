@@ -254,7 +254,7 @@ class HomeController extends Controller
                 ]);
 
                 $message = $word_count.' TEGN <br />
-                    <h3  class="no-margin-top">'.number_format($calculated_price, 2).' kr</h3>
+                    <h1>'.number_format($calculated_price, 2).' kr</h1>
                     <a href="'.route('front.other-service-checkout', ['plan' => 1, 'has_data' => 1]).'">Bestill</a>
                     ';
                 return redirect()->back()->with('compute_manuscript', $message);
