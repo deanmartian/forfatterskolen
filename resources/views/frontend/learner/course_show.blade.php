@@ -129,7 +129,8 @@
 		@endif
 
 
-		@if( $courseTaken->package->manuscripts_count > 0 )
+		<?php $isHidden = 1?>
+		@if( $courseTaken->package->manuscripts_count > 0 && !$isHidden)
 		<!-- Manuscripts Uploaded -->
 		<div class="col-sm-12">
 			<div class="panel panel-default">
