@@ -596,8 +596,8 @@ class HomeController extends Controller
                     $price = $word_7500_price + $excess_word_price;
                     $data['price'] = $data['price'] + $price;
 
-                    $message = '<h2 class="no-margin-top">Add On </h2>'.$word_count.' ORD <br />
-                    <h3  class="no-margin-top">'.number_format($price, 2).' kr</h3>';
+                    $message = '<h1>Add On </h1>'.$word_count.' ORD <br />
+                    <h2>'.number_format($price, 2).' kr</h2>';
                     return redirect()->back()->with('compute_manuscript', $message)->with('data', $data);
                 endif;
             }

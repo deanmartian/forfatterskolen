@@ -120,6 +120,10 @@ a {
     border-color: #ccc !important;
 }
 
+[type="datetime-local"] {
+    font-size: 14px;
+}
+
 .nav-user-thumb {
     background-position: 50%;
     background-repeat: no-repeat;

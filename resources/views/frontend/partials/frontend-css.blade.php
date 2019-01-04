@@ -7,7 +7,8 @@
         'front.faq', 'front.read-blog', 'front.coaching-timer', 'front.support', 'front.support-articles',
         'front.support-article', 'front.course.checkout', 'front.home', 'front.free-manuscript.success',
         'front.workshop.index', 'front.workshop.show', 'front.course.apply-discount', 'front.shop-manuscript.checkout',
-        'front.workshop.checkout', 'front.copy-editing', 'front.correction', 'front.other-service-checkout']
+        'front.workshop.checkout', 'front.copy-editing', 'front.correction', 'front.other-service-checkout',
+        'front.coaching-timer-checkout']
 ?>
 @if(in_array(Route::currentRouteName(), $newDesignPages))
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
