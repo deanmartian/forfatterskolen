@@ -103,6 +103,23 @@ a {
     color: #fff!important;
 }
 
+.btn-common-red {
+    background-color: #e83945;
+    color: #fff !important;
+}
+
+.btn-common-red:hover {
+    background-color: #cb1f2b;
+}
+
+.btn-common-padding {
+    padding: 6px 12px;
+}
+
+.btn-default {
+    border-color: #ccc !important;
+}
+
 .nav-user-thumb {
     background-position: 50%;
     background-repeat: no-repeat;
