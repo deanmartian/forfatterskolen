@@ -3390,6 +3390,11 @@ margin-right: 5px;
     no-repeat bottom / cover;
 }
 
+.correction-page {
+    background: linear-gradient( rgba(0, 0, 0, .25), rgba(0, 0, 0, .25)), url(../images-new/correction-bg.jpg)
+    no-repeat bottom / cover;
+}
+
 .other-service-page h1 {
     color: #fff;
     font-family: "Barlow Regular", sans serif;
