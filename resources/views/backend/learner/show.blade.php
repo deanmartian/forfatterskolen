@@ -240,7 +240,7 @@
 						</thead>
 						<tbody>
 							@foreach($learner->shopManuscriptsTaken as $shopManuscriptTaken)
-								@if (!in_array($shopManuscriptTaken->package_shop_manuscripts_id,$expiredCoursePackageManuscripts))
+								{{--@if (!in_array($shopManuscriptTaken->package_shop_manuscripts_id,$expiredCoursePackageManuscripts))--}}
 									<tr>
 										<td>
 											@if($shopManuscriptTaken->is_active)
@@ -280,7 +280,7 @@
 											</form>
 										</td>
 									</tr>
-								@endif
+								{{--@endif--}}
 							@endforeach
 						</tbody>
 					</table>
