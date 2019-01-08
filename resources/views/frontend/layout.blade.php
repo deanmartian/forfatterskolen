@@ -87,7 +87,11 @@
             @include('frontend.partials.navbar')
         @else
             @if (in_array(Route::currentRouteName(),$loggedInPages))
-                @include('frontend.partials.learner-nav')
+                @if (Auth::user())
+                    @include('frontend.partials.learner-nav')
+                @else
+                    @include('frontend.partials.navbar-new')
+                @endif
             @else
                 @include('frontend.partials.navbar-new')
             @endif
@@ -132,6 +136,27 @@
                    let learnerMenuCurrentClass = learnerMenuI.attr('class').split(' ')[1];
                    let newMenuClass = learnerMenuCurrentClass+'-red';
                    learnerMenuI.removeClass(learnerMenuCurrentClass).addClass(newMenuClass);
+               }
+
+               /*let mobileLearnerMenu = $("#mobile-learner-menu");
+               mobileLearnerMenu.find('.navbar-toggler').on('click',function(){
+                  $(".mobile-learner-menu").toggleClass('d-block');
+               });*/
+
+               $(".portal-menu").find('.navbar-toggler').on('click', function(){
+                   let portalTogglerI = $(this).find('i');
+                   if (portalTogglerI.hasClass('fa-chevron-down')) {
+                       portalTogglerI.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+                   } else {
+                       portalTogglerI.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+                   }
+               });
+
+               let portalNavI = $("#portalNav").find('div.active').find('i');
+               if(portalNavI.length) {
+                   let portalNavCurrentClass = portalNavI.attr('class').split(' ')[1];
+                   let newPortalNavClass = portalNavCurrentClass+'-red';
+                   portalNavI.removeClass(portalNavCurrentClass).addClass(newPortalNavClass);
                }
 
                $(".navbar-toggler").click(function(){

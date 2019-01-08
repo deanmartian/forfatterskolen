@@ -125,3 +125,149 @@
         @include('frontend.partials.learner-menu-new')
     </div>
 </div>
+
+<div id="mobile-learner-menu" class="navbar navbar-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavMobile">
+        <img src="" alt="">
+    </button>
+
+    <a class="navbar-brand mx-auto" href="{{url('')}}">
+        <img src="{{asset('images-new/logo.png')}}">
+    </a>
+</div>
+
+<div class="navbar navbar-default2 mobile-learner-menu">
+    <div class="navbar-collapse collapse" id="mainNavMobile">
+        <ul class="navbar-nav nav-fill">
+            <li class="nav-item @if(Route::currentRouteName() == 'front.course.index') active @endif">
+                <a href="{{route('front.course.index')}}" class="nav-link">Våre Kurs</a>
+            </li>
+            <li class="nav-item @if(Route::currentRouteName() == 'front.shop-manuscript.index') active @endif">
+                <a href="{{route('front.shop-manuscript.index')}}" class="nav-link">Manusutvikling</a>
+            </li>
+            <li class="nav-item @if(Route::currentRouteName() == 'front.publishing') active @endif">
+                <a href="{{ route('front.publishing') }}" class="nav-link">Utgitte Elever</a>
+            </li>
+            <li class="nav-item @if(Route::currentRouteName() == 'front.blog') active @endif">
+                <a href="{{ route('front.blog') }}" class="nav-link">Blogg</a>
+            </li>
+            <li class="nav-item @if(Route::currentRouteName() == 'front.workshop.index') active @endif">
+                <a href="{{route('front.workshop.index')}}" class="nav-link">Workshop</a>
+            </li>
+            <li class="nav-item @if(Route::currentRouteName() == 'front.faq') active @endif">
+                <a href="{{route('front.faq')}}" class="nav-link">FAQ</a>
+            </li>
+            <li class="nav-item @if(Route::currentRouteName() == 'front.contact-us') active @endif">
+                <a href="{{route('front.contact-us')}}" class="nav-link">Kontakt Oss</a>
+            </li>
+
+            @if (Auth::user())
+                <li class="nav-item">
+                    <a href="" class="dropdown-item d-inline-block w-auto mb-2">
+                        <form method="POST" action="{{route('auth.logout')}}" class="form-logout">
+                            {{csrf_field()}}
+                            <button type="submit" class="btn">Logg av</button>
+                        </form>
+                    </a>
+                </li>
+            @endif
+        </ul>
+    </div>
+</div>
+
+<div class="portal-menu">
+    <button class="navbar-toggler text-center w-100" type="button" data-toggle="collapse" data-target="#portalNav">
+        PORTAL MENU &nbsp;<i class="fa fa-chevron-down font-white"></i>
+    </button>
+
+    <div class="navbar-collapse collapse" id="portalNav">
+        <div class="col-sm-4 col-xs-6 @if(Request::is('account/course*')) active @endif">
+            <div>
+                <a href="{{route('front.course.index')}}">
+                    <i class="sprite-menu student-cap d-block"></i>
+                    Mine Kurs
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4 col-xs-6 @if(Request::is('account/shop-manuscript*')) active @endif">
+            <div>
+                <a href="{{route('learner.shop-manuscript')}}">
+                    <i class="sprite-menu file d-block"></i>
+                    Manusrkipter
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4 col-xs-6 @if(Request::is('account/workshop*')) active @endif">
+            <div>
+                <a href="{{route('learner.workshop')}}">
+                    <i class="sprite-menu briefcase d-block"></i>
+                    Skriveverksted
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4 col-xs-6 @if(Request::is('account/webinar*')) active @endif">
+            <div>
+                <a href="{{route('learner.webinar')}}">
+                    <i class="sprite-menu play-button d-block"></i>
+                    Mandagswebinarer
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4 col-xs-6 @if(Request::is('account/course-webinar*')) active @endif">
+            <div>
+                <a href="{{route('learner.course-webinar')}}">
+                    <i class="sprite-menu play-button d-block"></i>
+                    Kurs webinarer
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4 col-xs-6 @if(Request::is('account/assignment*')) active @endif">
+            <div>
+                <a href="{{route('learner.assignment')}}">
+                    <i class="sprite-menu agenda d-block"></i>
+                    Oppgaver
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4 col-xs-6 @if(Request::is('account/invoice*')) active @endif">
+            <div>
+                <a href="{{route('learner.invoice')}}">
+                    <i class="sprite-menu calendar d-block"></i>
+                    Kalender
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4 col-xs-6 @if(Request::is('account/workshop*')) active @endif">
+            <div>
+                <a href="{{route('learner.workshop')}}">
+                    <i class="sprite-menu list-on-window d-block"></i>
+                    Fakturaer
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4 col-xs-6 @if(Request::is('account/upgrade*')) active @endif">
+            <div>
+                <a href="{{route('learner.upgrade')}}">
+                    <i class="sprite-menu internet d-block"></i>
+                    Kurspakker - Oppgradering
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4 col-xs-6 @if(Request::is('account/competition*')) active @endif">
+            <div>
+                <a href="{{route('learner.competition')}}">
+                    <i class="sprite-menu star d-block"></i>
+                    Konkurranser
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4 col-xs-6 @if(Request::is('account/profile*')) active @endif">
+            <div>
+                <a href="{{route('learner.profile')}}">
+                    <i class="sprite-menu user d-block"></i>
+                    Profil \ Kursbevis
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -2507,4 +2507,23 @@ class LearnerController extends Controller
 
         return $events;
     }
+
+    public static function dashboardAssignment()
+    {
+        $assignments = [];
+        $coursesTaken = Auth::user()->coursesTaken;
+        $addOns = AssignmentAddon::where('user_id', \Auth::user()->id)->pluck('assignment_id')->toArray();
+
+        foreach( $coursesTaken as $course ) :
+            foreach( $course->package->course->activeAssignments as $assignment ) :
+                $allowed_package = json_decode($assignment->allowed_package);
+                $package_id = $course->package->id;
+                // check if the assignment is allowed on the learners package or there's no set package allowed
+                if ((!is_null($allowed_package) && in_array($package_id,$allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)) {
+                    $assignments[] = $assignment;
+                }
+            endforeach;
+        endforeach;
+        return $assignments;
+    }
 }
