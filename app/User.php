@@ -82,14 +82,8 @@ class User extends Authenticatable
 
     public function coursesTakenOld()
     {
-        $webinarPakkePackages = Course::find(17)->packages()->pluck('id')->toArray();
         return $this->hasMany('App\CoursesTaken')
-            /*->where('end_date','<=', Carbon::now()->subDays(60)) original code without the where $query*/
-            ->where(function($query) {
-                $query->where('end_date','<=', Carbon::now()->subDays(60))
-                    ->orWhere('created_at', '<=', Carbon::now()->subYear(1));
-            })
-            ->whereNotIn('package_id', $webinarPakkePackages)
+            ->where('end_date','<=', Carbon::now()->subDays(60))
             ->orderBy('created_at', 'desc');
     }
 

@@ -116,7 +116,7 @@
 		<div class="col-md-9">
 			<h4 class="no-margin-top">{{ trans('site.courses-taken') }}</h4>
 			<div class="row">
-				@foreach($learner->coursesTakenNotOld2->chunk(2) as $coursesTaken)
+				@foreach($learner->coursesTakenNotOld->chunk(2) as $coursesTaken)
 					<div class="col-sm-12">
 						<div class="row">
 							@foreach($coursesTaken as $courseTaken)
