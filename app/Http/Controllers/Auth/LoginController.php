@@ -56,7 +56,7 @@ class LoginController extends Controller
 
             \Session::put('learner_login_id', $login->id);
 
-            return redirect(route('learner.course'));
+            return redirect(route('learner.dashboard'));
         endif;
 
         return redirect()->back()->withInput()->withErrors('Wrong password');

@@ -2435,4 +2435,76 @@ class LearnerController extends Controller
         }
         return response()->json(['success' => 'Secondary email deleted'], 200);
     }
+
+    public static function dashboardCalendar()
+    {
+        $events = [];
+        $today = Carbon::today();
+        foreach( Auth::user()->coursesTaken as $courseTaken ) :
+            // Course lessons
+            foreach( $courseTaken->package->course->lessons as $lesson ) :
+                $availability = strtotime(FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)) * 1000;
+                $newAvailability = date('Y-m-d',strtotime(FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)));
+                $events[] = [
+                    'id' => $lesson->course->id,
+                    'title' => 'Lesson: ' . $lesson->title . ' from ' . $lesson->course->title,
+                    'class' => 'event-important',
+                    'start' => $newAvailability,//$availability,
+                    'end' => $newAvailability,//$availability,
+                    'color' => '#d95e66'
+                ];
+            endforeach;
+
+            // Course webinars
+            foreach( $courseTaken->package->course->webinars as $webinar ) :
+                $events[] = [
+                    'id' => $webinar->course->id,
+                    'title' => 'Webinar: ' . $webinar->title . ' from ' . $webinar->course->title,
+                    'class' => 'event-warning',
+                    'start' => date('Y-m-d',strtotime($webinar->start_date)),//strtotime($webinar->start_date) * 1000,
+                    'end' => date('Y-m-d',strtotime($webinar->start_date)),//strtotime($webinar->start_date) * 1000,
+                    'color' => '#ff9c00'
+                ];
+            endforeach;
+
+            // manuscripts
+            foreach ($courseTaken->manuscripts as $manuscript) :
+                $events[] = [
+                    'id' => $courseTaken->package->course->id,
+                    'title' => 'Manus: ' . basename($manuscript->filename). ' from '.$courseTaken->package->course->title,
+                    'class' => 'event-info',
+                    'start' => date('Y-m-d',strtotime($manuscript->expected_finish)),//strtotime($manuscript->expected_finish) * 1000,
+                    'end' => date('Y-m-d',strtotime($manuscript->expected_finish)),//strtotime($manuscript->expected_finish) * 1000,
+                    'color' => '#29b5f5'
+                ];
+            endforeach;
+
+            // assignments
+            foreach ($courseTaken->package->course->assignments as $assignment) :
+                $events[] = [
+                    'id' => $assignment->course->id,
+                    'title' => 'Oppgaver: ' . $assignment->title. ' from '.$assignment->course->title,
+                    'class' => 'event-success-new',
+                    'start' => date('Y-m-d',strtotime($assignment->submission_date)),//strtotime($assignment->submission_date) * 1000,
+                    'end' => date('Y-m-d',strtotime($assignment->submission_date)),//strtotime($assignment->submission_date) * 1000,
+                    'color' => '#44af5e'
+                ];
+            endforeach;
+
+            // get the calendar notes created by admin for certain course only
+            foreach ($courseTaken->package->course->notes as $note):
+                $events[] = [
+                    'id' => $note->id,
+                    'title' => $note->note,
+                    'class' => 'event-inverse',
+                    'start' => date('Y-m-d',strtotime($note->from_date)),//strtotime($note->date) * 1000,
+                    'end' => date('Y-m-d',strtotime($note->to_date)),//strtotime($note->date) * 1000,
+                    'color' => '#1b1b1b' // for full calendar
+                ];
+            endforeach;
+
+        endforeach;
+
+        return $events;
+    }
 }

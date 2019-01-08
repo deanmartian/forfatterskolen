@@ -79,17 +79,23 @@
             'front.support-articles', 'front.support-article', 'front.course.checkout', 'front.home',
             'front.free-manuscript.success', 'front.workshop.index', 'front.workshop.show', 'front.course.apply-discount',
             'front.shop-manuscript.checkout', 'front.workshop.checkout', 'front.copy-editing', 'front.correction',
-            'front.other-service-checkout', 'front.coaching-timer-checkout']
+            'front.other-service-checkout', 'front.coaching-timer-checkout'];
+
+        $loggedInPages = ['learner.dashboard'];
         ?>
-        @if(!in_array(Route::currentRouteName(), $newDesignPages))
+        @if(!in_array(Route::currentRouteName(), $newDesignPages) && !in_array(Route::currentRouteName(), $loggedInPages))
             @include('frontend.partials.navbar')
         @else
-            @include('frontend.partials.navbar-new')
+            @if (in_array(Route::currentRouteName(),$loggedInPages))
+                @include('frontend.partials.learner-nav')
+            @else
+                @include('frontend.partials.navbar-new')
+            @endif
         @endif
 
         @yield('content')
 
-        @if(!in_array(Route::currentRouteName(), $newDesignPages))
+        @if(!in_array(Route::currentRouteName(), $newDesignPages) && !in_array(Route::currentRouteName(), $loggedInPages))
             @include('frontend.partials.footer')
         @else
             @include('frontend.partials.footer-new')
@@ -120,6 +126,13 @@
                           })
                   }
                });
+
+               let learnerMenuI = $(".learner-menu").find('li.active').find('i');
+               if (learnerMenuI.length) {
+                   let learnerMenuCurrentClass = learnerMenuI.attr('class').split(' ')[1];
+                   let newMenuClass = learnerMenuCurrentClass+'-red';
+                   learnerMenuI.removeClass(learnerMenuCurrentClass).addClass(newMenuClass);
+               }
 
                $(".navbar-toggler").click(function(){
                    // opposite of how it usually works

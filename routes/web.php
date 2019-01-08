@@ -161,7 +161,7 @@ Route::group([
         'namespace' => 'Frontend',
         'prefix' => 'account',
     ], function(){
-        //Route::get('/dashboard', 'LearnerController@dashboard')->name('learner.dashboard'); // Dashboard Page
+        Route::get('/dashboard', 'LearnerController@dashboard')->name('learner.dashboard'); // Dashboard Page
         Route::get('/course', 'LearnerController@course')->name('learner.course')->middleware('checkAutoRenewCourses'); // Courses Page
         Route::get('/course/{id}', 'LearnerController@courseShow')->name('learner.course.show'); // Single Course Page
         Route::post('/course/{id}/renew-all', 'LearnerController@courseRenewAll')->name('learner.course.renew-all'); // Single Course Page

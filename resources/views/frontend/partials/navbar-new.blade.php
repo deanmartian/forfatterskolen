@@ -88,25 +88,38 @@
             @if (Auth::user())
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
+                        <span class="nav-user-thumb mr-2" style="background-image: url('{{Auth::user()->profile_image}}')"></span>
                         Hei {{Auth::user()->first_name}}
-                        &nbsp;<span class="nav-user-thumb" style="background-image: url('{{Auth::user()->profile_image}}')"></span>
                     </a>
-                    <div class="dropdown-menu">
-                        <a href="{{route('learner.course')}}" class="dropdown-item">Mine Kurs</a>
-                        <a href="{{route('learner.shop-manuscript')}}" class="dropdown-item">Manuskripter</a>
-                        <a href="{{route('learner.workshop')}}" class="dropdown-item">Workshops</a>
-                        <a href="{{route('learner.webinar')}}" class="dropdown-item">Webinars</a>
-                        <a href="{{route('learner.assignment')}}" class="dropdown-item">Oppgaver</a>
-                        <a href="{{route('learner.calendar')}}" class="dropdown-item">Kalender</a>
-                        <a href="{{route('learner.profile')}}" class="dropdown-item">Profil</a>
-                        <a href="{{route('learner.invoice')}}" class="dropdown-item">Fakturaer</a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <div class="account-details">
+                            <div class="row align-items-center mx-0">
+                                <div class="col-sm-4 text-center">
+                                    <span class="user-thumb mr-2" style="background-image: url('{{Auth::user()->profile_image}}')"></span>
+                                </div>
+                                <div class="col-sm-8 info">
+                                    <p>{{ ucfirst(Auth::user()->first_name)}} <br>
+                                        {{Auth::user()->email}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="link-container">
+                            <a href="{{route('learner.course')}}" class="dropdown-item">Mine Kurs</a>
+                            <a href="{{route('learner.shop-manuscript')}}" class="dropdown-item">Manuskripter</a>
+                            <a href="{{route('learner.workshop')}}" class="dropdown-item">Workshops</a>
+                            <a href="{{route('learner.webinar')}}" class="dropdown-item">Webinars</a>
+                            <a href="{{route('learner.assignment')}}" class="dropdown-item">Oppgaver</a>
+                            <a href="{{route('learner.calendar')}}" class="dropdown-item">Kalender</a>
+                            <a href="{{route('learner.profile')}}" class="dropdown-item">Profil</a>
+                            <a href="{{route('learner.invoice')}}" class="dropdown-item">Fakturaer</a>
 
-                        <a href="" class="dropdown-item">
-                            <form method="POST" action="{{route('auth.logout')}}" class="form-logout">
-                                {{csrf_field()}}
-                                <button type="submit" class="btn">Logg av</button>
-                            </form>
-                        </a>
+                            <a href="" class="dropdown-item d-inline-block w-auto mb-2">
+                                <form method="POST" action="{{route('auth.logout')}}" class="form-logout">
+                                    {{csrf_field()}}
+                                    <button type="submit" class="btn btn-circle">Logg av</button>
+                                </form>
+                            </a>
+                        </div>
                     </div>
                 </li>
             @endif
