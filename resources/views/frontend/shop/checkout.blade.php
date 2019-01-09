@@ -252,7 +252,7 @@
 										<option value="{{$paymentMode->id}}" data-mode="{{ $paymentMode->mode }}">{{$paymentMode->mode}}</option>
 									@endforeach
 								</select>
-								<em><small>Merk: Vi godtar kun full betaling på PAYPAL</small></em>
+								{{--<em><small>Merk: Vi godtar kun full betaling på PAYPAL</small></em>--}}
 							</div>
 
 							<div class="panel-heading-underlined">Rabattkupong</div>
