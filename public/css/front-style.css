@@ -6818,6 +6818,7 @@ textarea.form-control {
 
     #mobile-learner-menu .navbar-toggler {
         float: left;
+        border: none;
     }
 
     #mobile-learner-menu .navbar-brand{
@@ -6826,6 +6827,65 @@ textarea.form-control {
 
     #mainNavMobile .navbar-nav {
         margin: 0;
+    }
+
+    .learner-container .dashboard-course .image-container img, .dashboard-webinar-container .image-container {
+        height: 300px;
+    }
+
+    .dashboard-course .course-details {
+        margin-bottom: 10px;
+        margin-top: 20px;
+    }
+
+    .learner-container .dashboard-course .course-item .site-btn-global {
+        font-size: 17px;
+        padding: 8px 10px;
+    }
+
+    .dashboard-calendar {
+        margin-top: 20px;
+    }
+
+    .learner-container .dashboard-calendar .calendar-item {
+        padding: 20px 30px;
+    }
+
+    .learner-container .dashboard-calendar .calendar-item .date-container {
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+
+    .divider-center-text:before, .divider-center-text:after {
+        width: 35%;
+    }
+
+    .divider-center-text:before {
+        left: 4%;
+    }
+
+    .divider-center-text:after {
+        right: 4%;
+    }
+
+    .dashboard-last-container .global-card:last-child {
+        margin-top: 10px;
+    }
+
+    #mainNav .dropdown-menu {
+        margin: 0 auto;
+    }
+
+    .dropdown-menu:before, .dropdown-menu:after {
+        display: none;
+    }
+
+    .no-left-padding {
+        padding-left: 15px;
+    }
+
+    .no-right-padding {
+        padding-right: 15px;
     }
 }
 
@@ -7619,6 +7679,47 @@ textarea.form-control {
     .other-service-page .select-manuscript {
         padding: .375rem 2rem;
     }
+
+    #mobile-learner-menu {
+        padding: 1.5rem 1rem;
+    }
+
+    #mobile-learner-menu .navbar-brand {
+        margin-left: 50px !important;
+    }
+
+    .portal-menu #portalNav {
+        padding: 20px;
+    }
+
+    .dropdown-menu .account-details {
+        padding: 15px 0;
+    }
+
+    .dropdown-menu .account-details .info {
+        padding-left: 30px;
+    }
+
+    .learner-container {
+        padding: 30px 0;
+    }
+
+    .learner-container .dashboard-course .image-container img, .dashboard-webinar-container .image-container {
+        height: 200px;
+    }
+
+    .divider-center-text:before, .divider-center-text:after {
+        width: 30%;
+    }
+
+    .divider-center-text {
+        margin: 20px 0;
+    }
+
+    .dashboard-last-container {
+        margin-top: 20px;
+    }
+
 }
 
 @media only screen and (max-width: 375px) {
@@ -7841,6 +7942,10 @@ textarea.form-control {
 
     .other-service-page .select-manuscript {
         padding: .375rem 1rem;
+    }
+
+    #mobile-learner-menu .navbar-brand {
+        margin-left: 25px !important;
     }
 }
 

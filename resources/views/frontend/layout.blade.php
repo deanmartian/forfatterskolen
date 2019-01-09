@@ -167,6 +167,14 @@
                        $(".navbar-default").slideUp();
                    }
                });
+
+                $(window).resize(function() {
+                    if ($(window).width() > 640) {
+                        $("#mainNav").parent(".navbar-expand-md").show();
+                    } else {
+                        $("#mainNav").parent(".navbar-expand-md").hide();
+                    }
+                });
             });
 
             function disableSubmit(t) {

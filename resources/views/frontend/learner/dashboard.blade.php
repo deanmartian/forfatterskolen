@@ -25,7 +25,7 @@
                                         <div class="col-md-3 image-container">
                                             <img src="{{$courseTaken->package->course->course_image}}" alt="">
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 course-details">
                                             <h3 class="font-weight-normal">
                                                 {{$courseTaken->package->course->title}}
                                             </h3>
@@ -79,13 +79,16 @@
                                 $counter = 1;
                             ?>
                             @foreach($uniqueStart as $k => $start)
+                                <?php
+                                    $parseStart = \Carbon\Carbon::parse($start);
+                                ?>
                                 @if ($counter <= 2)
                                     <div class="col-md-12 calendar-item">
                                         <div class="row">
                                             <div class="col-md-4 date-container text-center d-flex">
                                                 <div class="align-self-center w-100">
-                                                    <span>NOVEMBER</span>
-                                                    <h1>29</h1>
+                                                    <span>{{ $parseStart->format('F') }}</span>
+                                                    <h1>{{ $parseStart->format('d') }}</h1>
                                                 </div>
                                             </div>
                                             <div class="col-md-8">
