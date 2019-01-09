@@ -197,7 +197,7 @@
                     <div class="col-md-12">
                         <h1 class="text-center">Hva våre elever sier</h1>
                         <div id="testimonials-carousel" class="carousel slide global-carousel"
-                             data-ride="carousel" data-interval="10000">
+                             data-ride="carousel" data-interval="15000">
 
                             <ul class="carousel-indicators">
                                 <li data-target="#testimonials-carousel" data-slide-to="0" class="active"></li>
