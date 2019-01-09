@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,500');
+
 @font-face{
     font-family: 'Barlow Light';
     src: url('../fonts/Barlow/Barlow-Light.ttf');
@@ -61,6 +63,12 @@
 @font-face{
     font-family: 'Montserrat Medium';
     src: url('../fonts/montserrat/Montserrat-Medium.otf');
+    font-display: block;
+}
+
+@font-face{
+    font-family: 'Century Gothic Bold';
+    src: url('../fonts/century-gothic/GOTHICB0.TTF');
     font-display: block;
 }
 
@@ -3836,6 +3844,82 @@ margin-right: 5px;
 }
 /* end global card */
 
+/* opt-in page */
+#opt-in-page .image-container {
+    background-image: url(../images/opt-in/header2-smaller.png);
+    background-position: 0 -120px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin-top: 20px;
+    min-height: 500px;
+    position: relative;
+    width: 100%;
+}
+
+#opt-in-page .image-container #main_desc_container {
+    left: 60px;
+    position: absolute;
+    top: 50px;
+    width: 37%;
+}
+
+#opt-in-page .image-container #main_desc_container > h1, h2, h3, h4, h5, h6 {
+    font-family: "Century Gothic Bold", sans serif;
+}
+
+#opt-in-page .image-container #main_desc_container h2, #opt-in-page .image-container #main_desc_container h2 strong {
+    font-size: 30px;
+}
+
+#opt-in-page .image-container #main_desc_container > p, #opt-in-page .image-container #main_desc_container > span {
+    font-family: Century Gothic Regular,sans serif;
+    font-size: 16px;
+}
+
+#opt-in-page .form-container {
+    padding: 60px 0;
+}
+
+#opt-in-page .static-details-container {
+    padding: 70px 0;
+}
+
+#opt-in-page .description-container {
+    margin-top: 55px;
+}
+
+#opt-in-page .form-container .left-content form {
+    margin-top: 30px;
+}
+
+#opt-in-page .form-container .left-content .form-group {
+    margin-bottom: 10px;
+}
+
+.no-left-right-margin {
+    margin-left: 0!important;
+    margin-right: 0!important;
+}
+
+#opt-in-page .jumbotron {
+    background-color: #e8e5ea;
+    border-radius: 5px;
+    font-family: Montserrat;
+    font-size: 19px;
+    margin-bottom: 0;
+    padding: 40px 93px;
+    text-align: center;
+}
+
+#opt-in-page .jumbotron .red {
+    font-size: 19px;
+    font-weight: 500;
+}
+.red {
+    color: red;
+}
+/* end opt-in page */
+
 /* theme tabs */
 
 .theme-tabs {
@@ -5043,6 +5127,25 @@ textarea.form-control {
     #learnerNav.navbar-light {
         padding: 1rem 4rem;
     }
+
+    #opt-in-page .image-container {
+        background-position: 0 -100px;
+        min-height: 450px;
+    }
+
+    #opt-in-page .image-container #main_desc_container {
+        left: 30px;
+        top: 15px;
+        width: 41%;
+    }
+
+    #opt-in-page .form-container {
+        padding: 40px 0;
+    }
+
+    #opt-in-page .jumbotron {
+        padding: 40px 68px;
+    }
 }
 
 @media only screen and (max-width: 768px) {
@@ -5884,6 +5987,37 @@ textarea.form-control {
 
     .global-card .card-body {
         overflow: scroll;
+    }
+
+    #opt-in-page .image-container {
+        background-position: 0 -75px;
+        min-height: 383px;
+    }
+
+    #opt-in-page .image-container #main_desc_container {
+        left: 20px;
+        top: 0;
+        width: 40%;
+    }
+
+    #opt-in-page .image-container #main_desc_container h2, #opt-in-page .image-container #main_desc_container h2 strong {
+        font-size: 28px;
+    }
+
+    #opt-in-page .image-container #main_desc_container h2 {
+        margin-top: 10px;
+    }
+
+    #opt-in-page .form-container {
+        padding: 20px 0;
+    }
+
+    #opt-in-page .static-details-container {
+        padding: 40px 0;
+    }
+
+    #opt-in-page .jumbotron {
+        padding: 40px 52px;
     }
 
     /* theme tab */
@@ -6887,6 +7021,23 @@ textarea.form-control {
     .no-right-padding {
         padding-right: 15px;
     }
+
+    #opt-in-page .container {
+        max-width: 600px;
+    }
+
+    #opt-in-page .image-container {
+        background-position: 0 -60px;
+        min-height: 490px;
+    }
+
+    #opt-in-page .description-container {
+        margin-top: 45px;
+    }
+
+    #opt-in-page .jumbotron {
+        padding: 40px 20px;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -7720,6 +7871,25 @@ textarea.form-control {
         margin-top: 20px;
     }
 
+    #opt-in-page .image-container {
+        background-color: #e8e5ea;
+        background-image: none;
+        min-height: 280px;
+    }
+
+    #opt-in-page .image-container #main_desc_container {
+        left: 10px;
+        top: 0;
+        width: 95%;
+    }
+
+    #opt-in-page .description-container {
+        margin-top: 40px;
+    }
+
+    #opt-in-page .form-container {
+        padding: 20px 0;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -7947,6 +8117,14 @@ textarea.form-control {
     #mobile-learner-menu .navbar-brand {
         margin-left: 25px !important;
     }
+
+    #opt-in-page .image-container {
+        min-height: 310px;
+    }
+
+    #opt-in-page .jumbotron {
+        padding: 20px 26px;
+    }
 }
 
 @media only screen and (max-width: 360px) {
@@ -8103,6 +8281,10 @@ textarea.form-control {
 
     .workshop-single-page .workshop-info {
         padding-left: 46px;
+    }
+
+    #opt-in-page .image-container {
+        min-height: 330px;
     }
 }
 
@@ -8394,5 +8576,9 @@ textarea.form-control {
 
     .other-service-page .details-container h1 {
         font-size: 25px;
+    }
+
+    #opt-in-page .jumbotron {
+        padding: 20px 25px;
     }
 }

@@ -7,73 +7,77 @@
 @section('content')
     <div id="opt-in-page">
         <div class="container">
-            <div class="image-container">
-                {{--<div class="logo-image"></div>--}}
+            <div class="row">
+                <div class="image-container">
+                    {{--<div class="logo-image"></div>--}}
 
-                <div id="main_desc_container" class="">
-                    {!! nl2br($optIn->main_description) !!}
+                    <div id="main_desc_container" class="">
+                        {!! nl2br($optIn->main_description) !!}
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="row no-left-right-margin border-bottom">
+        <div class="col-sm-12 no-left-right-margin border-bottom">
             <div class="container form-container">
-                <div class="col-sm-6 left-content">
-                    {!! nl2br($optIn->form_description) !!}
+                <div class="row">
+                    <div class="col-md-6 left-content">
+                        {!! nl2br($optIn->form_description) !!}
 
-                    <form class="margin-bottom" method="POST" action="">
-                        {{ csrf_field() }}
-                        <div class="form-group">
-                            <input type="text" class="form-control" name="name" required value="{{ old('name') }}"
-                            placeholder="Fornavn">
-                        </div>
-                        <div class="form-group">
-                            <input type="email" class="form-control" name="email" required value="{{ old('email') }}"
-                            placeholder="E-post">
-                        </div>
-                        <div class="form-group mb-0">
-                            <input type="checkbox" name="terms" required>
-                            <label>Jeg aksepterer <a href="{{ route('front.opt-in-terms') }}" target="_blank">vilkårene</a></label>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-8 col-sm-7">
-                                <p class="note">
-                                    PS! Vi respekterer personvernretten og deler ikke e-posten din med noen.
-                                </p>
+                        <form class="margin-bottom" method="POST" action="">
+                            {{ csrf_field() }}
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="name" required value="{{ old('name') }}"
+                                placeholder="Fornavn">
                             </div>
-                            <div class="col-md-4 col-sm-5">
-                                <button type="submit" class="btn btn-submit">Send inn</button>
+                            <div class="form-group">
+                                <input type="email" class="form-control" name="email" required value="{{ old('email') }}"
+                                placeholder="E-post">
                             </div>
-                        </div>
-                    </form>
+                            <div class="form-group mb-0">
+                                <input type="checkbox" name="terms" required>
+                                <label>Jeg aksepterer <a href="{{ route('front.opt-in-terms') }}" target="_blank">vilkårene</a></label>
+                            </div>
 
-                    @if(Session::has('opt-in-message'))
-                        <div class="alert alert-success" role="alert">
-                            Takk for at du skrev deg på, du vil snart få en epost i innboksen din.
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    @endif
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <p class="note">
+                                        PS! Vi respekterer personvernretten og deler ikke e-posten din med noen.
+                                    </p>
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn site-btn-global">Send inn</button>
+                                </div>
+                            </div>
+                        </form>
 
-                    @if ( $errors->any() )
-                        <div class="alert alert-danger bottom-margin">
-                            <ul>
-                                @foreach($errors->all() as $error)
-                                    <li>{{$error}}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-                </div>
-                <div class="col-sm-5 col-sm-offset-1 description-container">
-                    {!! nl2br($optIn->description) !!}
+                        @if(Session::has('opt-in-message'))
+                            <div class="alert alert-success" role="alert">
+                                Takk for at du skrev deg på, du vil snart få en epost i innboksen din.
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        @endif
+
+                        @if ( $errors->any() )
+                            <div class="alert alert-danger bottom-margin">
+                                <ul>
+                                    @foreach($errors->all() as $error)
+                                        <li>{{$error}}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                    </div>
+                    <div class="col-md-5 col-sm-offset-1 description-container">
+                        {!! nl2br($optIn->description) !!}
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="row no-left-right-margin static-details-container">
+        <div class="col-sm-12 no-left-right-margin static-details-container">
             <div class="container jumbotron">
                 Forfatterskolen har jobbet med kjente forfattere og redaktører i mange år, og hatt flere eminente
                 webinar-gjester. Tipsene du får er hentet fra oss selv, og forfattere som
@@ -81,7 +85,7 @@
                 Tom Egeland, Maja Lunde, Gro Dahle og Herbjørg Wassmo. </span>
             </div>
         </div>
-
+<div class="clearfix"></div>
     </div>
 @stop
 

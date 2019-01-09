@@ -79,7 +79,7 @@
             'front.support-articles', 'front.support-article', 'front.course.checkout', 'front.home',
             'front.free-manuscript.success', 'front.workshop.index', 'front.workshop.show', 'front.course.apply-discount',
             'front.shop-manuscript.checkout', 'front.workshop.checkout', 'front.copy-editing', 'front.correction',
-            'front.other-service-checkout', 'front.coaching-timer-checkout'];
+            'front.other-service-checkout', 'front.opt-in', 'front.coaching-timer-checkout'];
 
         $loggedInPages = ['learner.dashboard'];
         ?>
