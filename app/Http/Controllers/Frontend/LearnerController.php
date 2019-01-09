@@ -1235,14 +1235,18 @@ class LearnerController extends Controller
 
                     // update all the started at of each courses taken
                     foreach (Auth::user()->coursesTaken as $coursesTaken) {
-                        // check if course taken have set end date and add one year to it
-                        if ($coursesTaken->end_date) {
-                            $addYear = date("Y-m-d", strtotime(date("Y-m-d", strtotime($coursesTaken->end_date)) . " + 1 year"));
-                            $coursesTaken->end_date = $addYear;
-                        }
+                        $formerCourse = Auth::user()->coursesTakenOld()->pluck('id')->toArray();
+                        // check if course is not former course
+                        if (!in_array($coursesTaken->id, $formerCourse)){
+                            // check if course taken have set end date and add one year to it
+                            if ($coursesTaken->end_date) {
+                                $addYear = date("Y-m-d", strtotime(date("Y-m-d", strtotime($coursesTaken->end_date)) . " + 1 year"));
+                                $coursesTaken->end_date = $addYear;
+                            }
 
-                        $coursesTaken->started_at = Carbon::now();
-                        $coursesTaken->save();
+                            $coursesTaken->started_at = Carbon::now();
+                            $coursesTaken->save();
+                        }
                     }
 
                     // add to automation
