@@ -25,7 +25,6 @@
 <div class="col-md-12">
 	<button class="btn btn-primary margin-top" data-toggle="modal" data-target="#addAdminModal">Create admin</button>
 	<a class="btn btn-primary margin-top" href="{{ route('admin.admin.export_nearly_expired_courses') }}">Export Nearly Expired Courses</a>
-	<a class="btn btn-success margin-top" href="{{ route('admin.editor.index') }}">Editors</a>
 
 	<ul class="nav nav-tabs margin-top">
 		<li @if( Request::input('tab') == 'admin' || Request::input('tab') == '') class="active" @endif><a href="?tab=admin">Admin</a></li>
