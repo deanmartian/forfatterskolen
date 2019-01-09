@@ -87,7 +87,7 @@
                                         <div class="row">
                                             <div class="col-md-4 date-container text-center d-flex">
                                                 <div class="align-self-center w-100">
-                                                    <span>{{ $parseStart->format('F') }}</span>
+                                                    <span>{{ ucfirst(\App\Http\FrontendHelpers::convertMonthLanguage($parseStart->format('n'))) }}</span>
                                                     <h1>{{ $parseStart->format('d') }}</h1>
                                                 </div>
                                             </div>
