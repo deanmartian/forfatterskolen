@@ -9,6 +9,16 @@ class PageMetaController extends Controller
 {
 
     /**
+     * Display the index page
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function index()
+    {
+        $pageMetas = PageMeta::all();
+        return view('backend.page-meta.index', compact('pageMetas'));
+    }
+
+    /**
      * Create new page meta
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse

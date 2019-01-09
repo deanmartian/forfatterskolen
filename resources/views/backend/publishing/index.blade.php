@@ -31,6 +31,7 @@
 	<a class="btn btn-success margin-top" href="{{ route('admin.publisher-book.index') }}">{{ trans('site.publisher-books') }}</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.opt-in.index') }}">{{ trans('site.opt-in') }}</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.poem.index') }}">Poem</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.page_meta.index') }}">Page Meta</a>
 
 	<div class="table-users table-responsive">
 		<table class="table">
