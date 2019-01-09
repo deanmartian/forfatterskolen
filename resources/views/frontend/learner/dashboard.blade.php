@@ -15,7 +15,7 @@
                         <div class="card-header">
                             <h1>
                                 Mine Kurs
-                                <a href="{{ route('learner.course') }}" class="float-right view-all">View all</a>
+                                <a href="{{ route('learner.course') }}" class="float-right view-all">Se alle</a>
                             </h1>
                         </div>
                         <div class="card-body">
@@ -64,7 +64,7 @@
                         <div class="card-header">
                             <h1>
                                 Kalender
-                                <a href="{{ route('learner.calendar') }}" class="float-right view-all">See more</a>
+                                <a href="{{ route('learner.calendar') }}" class="float-right view-all">Ser mer</a>
                             </h1>
                         </div>
                         <div class="card-body">
@@ -208,7 +208,7 @@
                         <div class="card-header">
                             <h1>
                                 Oppgaver
-                                <a href="{{ route('learner.assignment') }}" class="float-right view-all">View all</a>
+                                <a href="{{ route('learner.assignment') }}" class="float-right view-all">Se alle</a>
                             </h1>
                         </div>
                         <div class="card-body py-0">
@@ -259,7 +259,7 @@
                         <div class="card-header">
                             <h1>
                                 Mine Fakturaer
-                                <a href="{{ route('learner.invoice') }}" class="float-right view-all">View all</a>
+                                <a href="{{ route('learner.invoice') }}" class="float-right view-all">Se alle</a>
                             </h1>
                         </div>
                         <div class="card-body py-0">

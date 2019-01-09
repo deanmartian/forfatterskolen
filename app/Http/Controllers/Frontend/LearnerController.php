@@ -2451,7 +2451,7 @@ class LearnerController extends Controller
                 $newAvailability = date('Y-m-d',strtotime(FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)));
                 $events[] = [
                     'id' => $lesson->course->id,
-                    'title' => 'Lesson: ' . $lesson->title . ' from ' . $lesson->course->title,
+                    'title' => 'Leksjon: ' . $lesson->title . ' from ' . $lesson->course->title,
                     'class' => 'event-important',
                     'start' => $newAvailability,//$availability,
                     'end' => $newAvailability,//$availability,
