@@ -3366,6 +3366,11 @@ margin-right: 5px;
     padding: 20px 30px;
 }
 
+.front-page .poems-container .poem-details p,
+.front-page .poems-container .poem-details p > span{
+    font-family: "Barlow Light", sans serif !important;
+}
+
 .front-page .poems-container .poem-details h2 {
     font-family: "Barlow SemiBold", sans serif;
 }
@@ -3863,7 +3868,9 @@ margin-right: 5px;
     width: 37%;
 }
 
-#opt-in-page .image-container #main_desc_container > h1, h2, h3, h4, h5, h6 {
+#opt-in-page .image-container #main_desc_container > h1, #opt-in-page .image-container #main_desc_container > h2,
+#opt-in-page .image-container #main_desc_container > h3, #opt-in-page .image-container #main_desc_container > h4,
+#opt-in-page .image-container #main_desc_container > h5, #opt-in-page .image-container #main_desc_container > h6 {
     font-family: "Century Gothic Bold", sans serif;
 }
 
@@ -3919,6 +3926,92 @@ margin-right: 5px;
     color: red;
 }
 /* end opt-in page */
+
+/* free manuscript */
+.free-manuscripts-hero {
+    background-image: url(../images/free-manuscript-hero.jpg)!important;
+    background-color: #000;
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 150px 40px;
+    position: relative;
+    box-sizing: border-box;
+    color: #eee;
+    margin: 30px 0;
+}
+
+.free-manuscripts-hero:after {
+    background-color: rgba(0,0,0,.3);
+    content: "";
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
+.free-manuscripts-hero h2 {
+    font-family: "Barlow Bold", sans serif;
+    font-size: 30px;
+    line-height: 50px;
+    margin-bottom: 30px;
+    margin-top: 0;
+}
+
+.free-manuscripts-hero h2 .highlight {
+    font-family: "Barlow Bold", sans serif;
+    border-bottom: 2px solid #e83945;
+    box-sizing: border-box;
+    padding-bottom: 4px;
+}
+
+.courses-description {
+    font-family: "Barlow Regular", sans serif;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+/* end free manuscript */
+
+/* login page */
+.login-container {
+    /*background-color: #f9f9f9;*/
+    background: linear-gradient( rgba(249, 249, 249, .89), rgba(249, 249, 249, .89) ),
+    url(../images-new/login/login-bg.jpg) no-repeat top / cover;
+    padding: 100px 0;
+}
+
+.login-container .container {
+    max-width: 1020px;
+}
+
+.login-container .left-container {
+    background: linear-gradient( rgba(0, 0, 0, .33), rgba(0, 0, 0, .33) ),url(../images-new/login/left-bg.jpg) no-repeat
+    -300px -240px / 1000px 800px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    min-height: 500px;
+    padding-right: 0;
+    position: relative;
+}
+
+.login-container .left-container .signup-tab {
+    right: 0;
+    top: 20%;
+    position: absolute;
+}
+
+.login-container .left-container .nav-link {
+    color:#fff;
+}
+
+.login-container .right-container {
+    background-color: #fff;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+/* end login page */
 
 /* theme tabs */
 
@@ -7038,6 +7131,14 @@ textarea.form-control {
     #opt-in-page .jumbotron {
         padding: 40px 20px;
     }
+
+    .free-manuscripts-hero {
+        padding: 100px 20px;
+    }
+
+    .free-manuscripts-hero h2 {
+        font-size: 28px;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -7890,6 +7991,14 @@ textarea.form-control {
     #opt-in-page .form-container {
         padding: 20px 0;
     }
+
+    .free-manuscripts-hero {
+        padding: 70px 10px;
+    }
+
+    .free-manuscripts-hero h2 {
+        font-size: 22px;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -8124,6 +8233,15 @@ textarea.form-control {
 
     #opt-in-page .jumbotron {
         padding: 20px 26px;
+    }
+
+    .free-manuscripts-hero {
+        padding: 60px 10px;
+    }
+
+    .free-manuscripts-hero h2 {
+        font-size: 21px;
+        line-height: 38px;
     }
 }
 

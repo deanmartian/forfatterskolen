@@ -8,7 +8,7 @@
 <div class="container">
 	<div class="courses-hero free-manuscripts-hero text-center">
 		<div class="row" style="position: relative; z-index: 10">
-			<div class="col-sm-12">
+			<div class="col-md-12">
 				<h2><span class="highlight">PRØV</span> EN GRATIS TEKSTVURDERING</h2>
 			</div>
 		</div>
@@ -18,15 +18,14 @@
 
 <div class="container">
 	<div class="row">
-		<div class="col-sm-10 col-sm-offset-1">
+		<div class="col-md-10 col-sm-offset-1">
 			<p class="text-center courses-description">
 			Har du lyst til å få en profesjonell tilbakemelding på din tekst? Skriv inn valgfri tekst i skjemaet under maks 500 ord.
 			</p>
-			<br /><br />
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-sm-6 col-sm-offset-3">
+		<div class="col-md-6 col-sm-offset-3">
 			@if($errors->any())
 				<div class="alert alert-danger">
 					<ul>

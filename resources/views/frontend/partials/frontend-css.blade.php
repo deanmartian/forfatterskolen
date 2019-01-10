@@ -8,7 +8,8 @@
         'front.support-article', 'front.course.checkout', 'front.home', 'front.free-manuscript.success',
         'front.workshop.index', 'front.workshop.show', 'front.course.apply-discount', 'front.shop-manuscript.checkout',
         'front.workshop.checkout', 'front.copy-editing', 'front.correction', 'front.other-service-checkout',
-        'front.coaching-timer-checkout', 'front.opt-in', 'learner.dashboard']
+        'front.coaching-timer-checkout', 'front.opt-in', 'learner.dashboard', /*'auth.login.show',*/ 'front.webinar-thanks',
+        'front.free-manuscript.index']
 ?>
 @if(in_array(Route::currentRouteName(), $newDesignPages))
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
