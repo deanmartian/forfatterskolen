@@ -446,6 +446,18 @@ class ShopController extends Controller
             AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
         }
 
+        // check if the course has activecampaign list then add the user
+        if ($package->course->auto_list_id > 0) {
+            $list_id = $package->course->auto_list_id;
+            $listData = [
+                'email' => Auth::user()->email,
+                'name' => Auth::user()->first_name,
+                'last_name' => Auth::user()->last_name
+            ];
+
+            AdminHelpers::addToActiveCampaignList($list_id, $listData);
+        }
+
         /*// Check for workshops
         if( $package->workshops->count() > 0 ) :
             foreach( $package->workshops as $workshop ) :

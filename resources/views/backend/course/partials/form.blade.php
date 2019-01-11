@@ -74,6 +74,11 @@
 				</div>
 
 				<div class="form-group">
+					<label>Automation List ID</label>
+					<input type="number" class="form-control" name="auto_list_id" @if( $course['auto_list_id'] ) value="{{ $course['auto_list_id'] }}" @endif>
+				</div>
+
+				<div class="form-group">
 					<label>Free</label> <br>
 					<input type="checkbox" data-toggle="toggle" data-on="Yes" name="is_free"
 						   class="for-sale-toggle" data-off="No"
