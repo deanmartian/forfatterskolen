@@ -900,7 +900,7 @@
 										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
 											<a href="/js/ViewerJS/#../../{{ $copyEditing->file }}">{{ basename($copyEditing->file) }}</a>
 										@elseif( end($extension) == 'docx' )
-											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copyEditing->file}}">{{ basename($correction->file) }}</a>
+											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copyEditing->file}}">{{ basename($copyEditing->file) }}</a>
 										@endif
 									</td>
 									<td>
