@@ -1746,6 +1746,16 @@ margin-right: 5px;
     font-size: 20px;
 }
 
+.course-single-page .course-image-row .photographer-container {
+    background-color: #e83a47;
+    bottom: 0;
+    right: 0;
+    color: #fff;
+    padding: 10px 35px;
+    position: absolute;
+    text-align: center;
+}
+
 .course-single-page .details-container, .workshop-single-page .details-container {
     box-shadow: 1px 1px 6px 1px rgba(210, 210, 210, 0.46);
     margin-top: 20px;
@@ -6725,7 +6735,8 @@ textarea.form-control {
         height: 370px;
     }
 
-    .course-single-page .course-image-row .date-container {
+    .course-single-page .course-image-row .date-container,
+    .course-single-page .course-image-row .photographer-container {
         padding: 7px 30px;
     }
 
@@ -6735,6 +6746,10 @@ textarea.form-control {
 
     .course-single-page .course-image-row .date-container h2 {
         font-size: 18px;
+    }
+
+    .course-single-page .course-image-row .photographer-container h1 {
+        font-size: 23px;
     }
 
     .course-single-page .free-course-form-row .form-group {
@@ -8208,6 +8223,14 @@ textarea.form-control {
 
     .login-container .right-container .social-btn-container .loginBtn--google {
         margin-top: 10px;
+    }
+
+    .course-single-page .course-image-row .photographer-container {
+        padding: 7px 10px;
+    }
+
+    .course-single-page .course-image-row .photographer-container h1 {
+        font-size: 16px;
     }
 }
 

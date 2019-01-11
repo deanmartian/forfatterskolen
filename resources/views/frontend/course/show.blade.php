@@ -65,6 +65,12 @@
 						</h2>
 					</div>
 				@endif
+
+				@if($course->photographer)
+					<div class="photographer-container">
+						<h1>Foto: {{ $course->photographer }}</h1>
+					</div>
+				@endif
 			</div> <!-- end course-image-row -->
 
 			@if ($course->is_free)
