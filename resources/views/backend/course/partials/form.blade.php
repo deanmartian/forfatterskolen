@@ -74,7 +74,7 @@
 				</div>
 
 				<div class="form-group">
-					<label>Automation List ID</label>
+					<label>List ID</label>
 					<input type="number" class="form-control" name="auto_list_id" @if( $course['auto_list_id'] ) value="{{ $course['auto_list_id'] }}" @endif>
 				</div>
 
