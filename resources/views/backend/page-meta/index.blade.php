@@ -63,7 +63,7 @@
                     <h4 class="modal-title">Page Meta</h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="{{ route('admin.page_meta.store') }}" onsubmit="disableSubmit(this)">
+                    <form method="POST" enctype="multipart/form-data" action="{{ route('admin.page_meta.store') }}" onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
                         <div class="form-group">
                             <label>Page Url</label>
@@ -72,6 +72,10 @@
                         <div class="form-group">
                             <label>Meta Title</label>
                             <input type="text" name="meta_title" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Meta Image</label>
+                            <input type="file" name="meta_image" accept="image/jpg, image/jpeg, image/png">
                         </div>
                         <div class="form-group">
                             <label>Meta Description</label>
@@ -96,7 +100,7 @@
                     <h4 class="modal-title">Edit Page Meta</h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                    <form method="POST" enctype="multipart/form-data" action="" onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
                         {{ method_field('PUT') }}
                         <div class="form-group">
@@ -106,6 +110,10 @@
                         <div class="form-group">
                             <label>Meta Title</label>
                             <input type="text" name="meta_title" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Meta Image</label>
+                            <input type="file" name="meta_image" accept="image/jpg, image/jpeg, image/png">
                         </div>
                         <div class="form-group">
                             <label>Meta Description</label>

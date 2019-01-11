@@ -25,6 +25,9 @@
         @if ($pageMeta)
             <meta name="title" content="{{ $pageMeta->meta_title }}">
             <meta name="description" content="{{ $pageMeta->meta_description }}">
+            @if ($pageMeta->meta_image)
+                <meta property="og:image" content="{{ asset($pageMeta->meta_image) }}">
+            @endif
         @endif
         <meta name="keywords" content="forfatterskolen,forfatter,forfatter kurs,course,shop manuscript">
         <meta name="nosnippets">
