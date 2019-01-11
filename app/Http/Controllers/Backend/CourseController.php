@@ -77,7 +77,8 @@ class CourseController extends Controller
             'display_order' => '',
             'is_free' => '',
             'instructor' => '',
-            'auto_list_id' => ''
+            'auto_list_id' => '',
+            'photographer' => ''
         ];
         return view('backend.course.create', compact('course'));
     }
@@ -113,6 +114,7 @@ class CourseController extends Controller
         $course->is_free = isset($request->is_free) ? 1 : 0;
         $course->instructor = $request->instructor;
         $course->auto_list_id = $request->auto_list_id ?: 0;
+        $course->photographer = $request->photographer;
         $course->save();
         return redirect(route('admin.course.show', $course->id));
     }
@@ -164,6 +166,7 @@ class CourseController extends Controller
         $course->end_date = $request->end_date;
         $course->instructor = $request->instructor;
         $course->auto_list_id = $request->auto_list_id ?: 0;
+        $course->photographer = $request->photographer;
         $course->save();
         return redirect(route('admin.course.show', $course->id));
     }

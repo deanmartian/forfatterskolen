@@ -9,7 +9,8 @@ class Course extends Model
 {
     protected $table = 'courses';
     protected $fillable = ['title', 'description', 'description_simplemde', 'course_image', 'type', 'email',
-        'course_plan', 'course_plan_data','start_date', 'end_date', 'extend_courses', 'instructor', 'auto_list_id'];
+        'course_plan', 'course_plan_data','start_date', 'end_date', 'extend_courses', 'instructor', 'auto_list_id',
+        'photographer'];
 
 
     public function packages()

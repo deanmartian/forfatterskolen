@@ -50,6 +50,10 @@
 					</div>
 				</div>
 				<div class="form-group">
+					<label>Photographer</label>
+					<input type="text" class="form-control" name="photographer" @if( $course['photographer'] ) value="{{ $course['photographer'] }}" @endif>
+				</div>
+				<div class="form-group">
 					<label>{{ trans('site.course-type') }}</label>
 					<select class="form-control" name="type" required>
 						<option value="Single" @if($course['type'] == "Single") selected @endif>Single Course</option>
@@ -74,7 +78,7 @@
 				</div>
 
 				<div class="form-group">
-					<label>List ID</label>
+					<label>Active Campaign List ID</label>
 					<input type="number" class="form-control" name="auto_list_id" @if( $course['auto_list_id'] ) value="{{ $course['auto_list_id'] }}" @endif>
 				</div>
 
