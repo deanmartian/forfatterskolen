@@ -474,8 +474,11 @@
                     payment_plan_id.filter('[id="Hele beløpet"]').parent().removeClass('disabled');
                     payment_plan_id.filter('[id="Hele beløpet"]').prop('disabled', false);
 
-                    let price = $('input:radio[name=package_id]:checked').data('full_payment_price');
-                    $('.checkout-total span').text(price);
+                    let price = $('input:radio[name=package_id]:checked').data('dis_full_payment_price_number');
+                    $.get('/format_money/'+price, {}, function(){}, 'json').done(function(data){
+                        let checkout_total = $('.checkout-total');
+                        checkout_total.find('span.total-display').text(data);
+                    });
                     $('input:radio[name=split_invoice]').prop('disabled', true);
                 } else {
                     payment_plan_id.parent().removeClass('disabled');
