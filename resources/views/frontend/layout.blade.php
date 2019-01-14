@@ -85,7 +85,7 @@
             'front.other-service-checkout', 'front.opt-in', 'front.coaching-timer-checkout', 'front.webinar-thanks',
             'front.free-manuscript.index', 'front.course.claim-reward', 'auth.login.show'];
 
-        $loggedInPages = ['learner.dashboard', 'learner.course'];
+        $loggedInPages = ['learner.dashboard', 'learner.account.search', 'learner.course'];
         ?>
         @if(!in_array(Route::currentRouteName(), $newDesignPages) && !in_array(Route::currentRouteName(), $loggedInPages))
             @include('frontend.partials.navbar')

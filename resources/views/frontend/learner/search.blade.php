@@ -8,52 +8,48 @@
 
 @section('content')
 <div class="account-container">
-	
-	@include('frontend.partials.learner-menu')
+	<div class="learner-container">
+		<div class="container">
+			@include('frontend.partials.learner-search-new')
 
-	<div class="col-sm-12 col-md-10 sub-right-content">
-		<div class="col-sm-12">
+			<p>
+				Results for '<strong>{{ Request::input('search') }}</strong>'
+			</p>
 
-			@include('frontend.partials.learner-search')
-		  	Results for '<strong>{{ Request::input('search') }}</strong>'
-			
-			@foreach($courses as $course) 
-			<div style="margin-bottom: 18px">
-				<h4 class="no-margin-bottom"><a href="{{route('learner.course')}}">{{ $course->package->course->title }}</a></h4>
-				<p>{!! str_limit($course->package->course->description, 120) !!}</p>
-			</div>
+			@foreach($courses as $course)
+				<div class="mb-4">
+					<a href="{{route('learner.course')}}" class="font-20 font-barlow-regular">{{ $course->package->course->title }}</a>
+					<p>{!! str_limit($course->package->course->description, 120) !!}</p>
+				</div>
 			@endforeach
-			
-			@foreach($assignments as $assignment) 
+
+			@foreach($assignments as $assignment)
 				@foreach( $assignment->package->course->assignments as $assignment_i )
-				<div style="margin-bottom: 18px">
-					<h4 class="no-margin-bottom"><a href="{{route('learner.assignment')}}">{{ $assignment_i->title }}</a></h4>
-				<p>{!! str_limit($assignment_i->description, 120) !!}</p>
-				</div>
+					<div class="mb-4">
+						<a href="{{route('learner.assignment')}}" class="font-20 font-barlow-regular">{{ $assignment_i->title }}</a>
+						<p>{!! str_limit($assignment_i->description, 120) !!}</p>
+					</div>
 				@endforeach
 			@endforeach
 
-
-			@foreach($webinars as $webinar) 
+			@foreach($webinars as $webinar)
 				@foreach( $webinar->package->course->webinars as $webinar_i )
-				<div style="margin-bottom: 18px">
-					<h4 class="no-margin-bottom"><a href="{{route('learner.webinar')}}">{{ $webinar_i->title }}</a></h4>
-				<p>{!! str_limit($webinar_i->description, 120) !!}</p>
-				</div>
+					<div class="mb-4">
+						<a href="{{route('learner.webinar')}}" class="font-20 font-barlow-regular">{{ $webinar_i->title }}</a>
+						<p>{!! str_limit($webinar_i->description, 120) !!}</p>
+					</div>
 				@endforeach
 			@endforeach
 
 
-			@foreach($workshops as $workshop) 
-			<div style="margin-bottom: 18px">
-				<h4 class="no-margin-bottom"><a href="{{route('learner.workshop')}}">{{ $workshop->workshop->title }}</a></h4>
-				<p>{!! str_limit($workshop->workshop->description, 120) !!}</p>
-			</div>
+			@foreach($workshops as $workshop)
+				<div class="mb-4">
+					<a href="{{route('learner.workshop')}}" class="font-20 font-barlow-regular">{{ $workshop->workshop->title }}</a>
+					<p>{!! str_limit($workshop->workshop->description, 120) !!}</p>
+				</div>
 			@endforeach
-
 		</div>
 	</div>
-	<div class="clearfix"></div>
 </div>
 
 @stop
