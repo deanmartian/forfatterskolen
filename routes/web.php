@@ -119,8 +119,10 @@ Route::group([
             Route::get('/', 'CourseController@index')->name('front.course.index'); // Course Listing
             Route::get('/{id}', 'CourseController@show')->name('front.course.show'); // Course Details
             Route::get('/{id}/checkout', 'ShopController@checkout')->name('front.course.checkout'); // Checkout
+            Route::get('/{id}/checkout-test', 'ShopController@checkoutTest')->name('front.course.checkout-test'); // Checkout
             Route::get('/{id}/discount/{coupon}', 'ShopController@applyDiscount')->name('front.course.apply-discount'); // Checkout
             Route::post('/{id}/checkout/place_order', 'ShopController@place_order')->name('front.course.place_order'); // Place Order
+            Route::post('/{id}/checkout/place_order_test', 'ShopController@place_order_test')->name('front.course.place_order_test'); // Place Order
             Route::get('/{id}/check_discount/', 'ShopController@checkDiscount')->name('front.course.checkDiscount'); // Check Discount
             Route::post('/{id}/get-free/', 'CourseController@getFreeCourse')->name('front.course.getFreeCourse'); // Check Discount
             Route::get('/{id}/claim-reward', 'ShopController@claimReward')->name('front.course.claim-reward'); // Claim Reward
