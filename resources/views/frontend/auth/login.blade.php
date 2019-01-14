@@ -75,6 +75,25 @@ Password Reset
 										</a>
 									</div>
 								</form>
+
+								<div class="clearfix"></div>
+
+								@if (Session::has('passwordreset_success'))
+									<div class="alert alert-success no-bottom-margin  d-flex mt-3">
+										{{Session::get('passwordreset_success')}}
+									</div>
+								@endif
+
+								@if ( $errors->any() )
+									<div class="alert alert-danger no-bottom-margin d-flex mt-3">
+										<ul>
+											@foreach($errors->all() as $error)
+												<li>{{$error}}</li>
+											@endforeach
+										</ul>
+									</div>
+								@endif
+
 							</div> <!-- end login pane -->
 							<div id="register" class="tab-pane fade @if(Request::input('t') == 'register') in active @endif" role="tabpanel">
 								<form method="post" method="post" action="{{route('frontend.register.store')}}" onsubmit="disableSubmit(this)">
@@ -126,6 +145,25 @@ Password Reset
 										</a>
 									</div>
 								</form>
+
+								<div class="clearfix"></div>
+
+								@if (Session::has('passwordreset_success'))
+									<div class="alert alert-success no-bottom-margin  d-flex mt-3">
+										{{Session::get('passwordreset_success')}}
+									</div>
+								@endif
+
+								@if ( $errors->any() )
+									<div class="alert alert-danger no-bottom-margin d-flex mt-3">
+										<ul>
+											@foreach($errors->all() as $error)
+												<li>{{$error}}</li>
+											@endforeach
+										</ul>
+									</div>
+								@endif
+
 							</div> <!-- end register pane -->
 							<div id="passwordreset" class="tab-pane fade @if(Request::input('t') == 'passwordreset') in active @endif" role="tabpanel">
 								<form method="post" action="{{route('frontend.passwordreset.store')}}" onsubmit="disableSubmit(this)">
@@ -141,25 +179,27 @@ Password Reset
 									<button type="submit" class="btn site-btn-global">Tilbakestill passord ditt</button>
 									<div class="clearfix"></div>
 								</form>
+
+								<div class="clearfix"></div>
+
+								@if (Session::has('passwordreset_success'))
+									<div class="alert alert-success no-bottom-margin  d-flex mt-3">
+										{{Session::get('passwordreset_success')}}
+									</div>
+								@endif
+
+								@if ( $errors->any() )
+									<div class="alert alert-danger no-bottom-margin d-flex mt-3">
+										<ul>
+											@foreach($errors->all() as $error)
+												<li>{{$error}}</li>
+											@endforeach
+										</ul>
+									</div>
+								@endif
+
 							</div> <!-- end passwordreset pane -->
 						</div> <!-- end tab-content -->
-
-						@if (Session::has('passwordreset_success'))
-							<div class="alert alert-success no-bottom-margin">
-								{{Session::get('passwordreset_success')}}
-							</div>
-						@endif
-
-						@if ( $errors->any() )
-							<div class="alert alert-danger no-bottom-margin">
-								<ul>
-									@foreach($errors->all() as $error)
-										<li>{{$error}}</li>
-									@endforeach
-								</ul>
-							</div>
-						@endif
-
 					</div> <!-- end d-table-cell -->
 				</div> <!-- end d-table -->
 			</div> <!-- end right-container -->
