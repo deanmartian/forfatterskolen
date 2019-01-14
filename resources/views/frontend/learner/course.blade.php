@@ -29,7 +29,7 @@
 									@if( $courseTaken->is_active )
 										@if($courseTaken->hasStarted)
 											@if($courseTaken->hasEnded)
-												<button class="btn btn-info" data-toggle="modal" data-target="#renewAllModal">Forny abonnement</button>
+												<button class="btn btn-info w-100 rounded-0" data-toggle="modal" data-target="#renewAllModal">Forny abonnement</button>
 											@else
 												<a class="btn site-btn-global-w-arrow w-100 rounded-0" href="{{route('learner.course.show', ['id' => $courseTaken->id])}}">
 													Fortsett med dette kurset
