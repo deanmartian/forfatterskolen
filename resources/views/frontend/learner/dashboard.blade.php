@@ -158,7 +158,7 @@
                             $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
                             $coursesTakenEndDate = $coursesTaken->end_date ?: \Carbon\Carbon::parse($coursesTaken->started_at)->addYear(1)->format('Y-m-d');
                         ?>
-                        <div class="col-md-3">
+                        <div class="col-md-3 mb-4">
                             <a href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
                                                     ? 'javascript:void(0)' :$webinar->link }}">
                                 <div class="image-container" style="background-image: url({{ $webinar->image }})">
@@ -185,7 +185,7 @@
                             $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
                             $coursesTakenEndDate = $coursesTaken->end_date ?: \Carbon\Carbon::parse($coursesTaken->started_at)->addYear(1)->format('Y-m-d');
                         ?>
-                        <div class="col-md-3">
+                        <div class="col-md-3 mb-4">
                             <a href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
                                                 ? 'javascript:void(0)' :$webinar->link }}">
                                 <div class="image-container" style="background-image: url({{ $webinar->image }})">
