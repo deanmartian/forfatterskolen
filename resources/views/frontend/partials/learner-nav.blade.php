@@ -183,7 +183,7 @@
     <div class="navbar-collapse collapse" id="portalNav">
         <div class="col-sm-4 col-xs-6 @if(Request::is('account/course*')) active @endif">
             <div>
-                <a href="{{route('front.course.index')}}">
+                <a href="{{route('learner.course')}}">
                     <i class="sprite-menu student-cap d-block"></i>
                     Mine Kurs
                 </a>
