@@ -343,6 +343,7 @@ class AdminHelpers
             $contact_id = $exists['id'];
             $post = array(
                 "email" => $exists["email"],
+                "first_name" => $data['name'],
                 "id" => $contact_id
             );
             foreach ($exists["lists"] as $list)
@@ -359,6 +360,7 @@ class AdminHelpers
             $post["status[".$list_id."]"] = 1; // $list_id IS THE LIST ID, 1 = ACTIVE STATUS
             $post["first_name_list[".$list_id."]"] = $data['name']; // (OPTIONAL) CHANGE FIRST NAME FOR ONLY THIS NEW LIST
             if (isset($data['last_name'])) {
+                $post["last_name"] = $data['last_name']; // (OPTIONAL) CHANGE FIRST NAME FOR ONLY THIS NEW LIST
                 $post["last_name_list[".$list_id."]"] = $data['last_name']; // (OPTIONAL) CHANGE FIRST NAME FOR ONLY THIS NEW LIST
             }
             $edit = AdminHelpers::curl($url, $params, $post);
@@ -380,12 +382,83 @@ class AdminHelpers
             $post["status[".$list_id."]"] = 1; // $list_id IS THE LIST ID, 1 = ACTIVE STATUS
             $post["first_name_list[".$list_id."]"] = $data['name']; // (OPTIONAL) CHANGE FIRST NAME FOR ONLY THIS NEW LIST
             if (isset($data['last_name'])) {
+                $post['last_name'] = $data['last_name'];
                 $post["last_name_list[".$list_id."]"] = $data['last_name']; // (OPTIONAL) CHANGE FIRST NAME FOR ONLY THIS NEW LIST
             }
             $add =  AdminHelpers::curl($url, $params, $post);
             return true;
         }
 	}
+
+    public static function addToActiveCampaignListTest($list_id, $data)
+    {
+        $url = 'https://forfatterskolen.api-us1.com';
+
+        $params = array(
+            'api_key'      => 'ee9f1cb27fe33c7197d722f434493d4440cf5da6be8114933fd0fdae40fc03a197388b99',
+            'api_output'   => 'serialize'
+        );
+
+        // CHECK IF SUBSCRIBER EXISTS
+        $params["api_action"] = "contact_view_email";
+        $params["email"] = $data['email'];
+        $exists = AdminHelpers::curl($url, $params, array());
+
+        if ($exists['result_code']) {
+            // SUBSCRIBER IS FOUND IN THE SYSTEM - EDIT THEM
+            $params["api_action"] = "contact_edit";
+
+            // ARRAY OF VALUES TO BE POSTED
+            $contact_id = $exists['id'];
+            $post = array(
+                "email" => $exists["email"],
+                "first_name" => $data['name'],
+                "id" => $contact_id
+            );
+            foreach ($exists["lists"] as $list)
+            {
+                // RETAIN THEIR EXISTING LISTS
+                $post["p[" . $list["listid"] . "]"] = $list["listid"];
+
+                // RETAIN THEIR EXISTING STATUSES
+                $post["status[" . $list["listid"] . "]"] = $list["status"];
+            }
+
+            // ADD ANY NEW LISTS?
+            $post["p[".$list_id."]"] = $list_id; // $list_id IS THE LIST ID
+            $post["status[".$list_id."]"] = 1; // $list_id IS THE LIST ID, 1 = ACTIVE STATUS
+            $post["first_name_list[".$list_id."]"] = $data['name']; // (OPTIONAL) CHANGE FIRST NAME FOR ONLY THIS NEW LIST
+            if (isset($data['last_name'])) {
+                $post["last_name"] = $data['last_name']; // (OPTIONAL) CHANGE FIRST NAME FOR ONLY THIS NEW LIST
+                $post["last_name_list[".$list_id."]"] = $data['last_name']; // (OPTIONAL) CHANGE FIRST NAME FOR ONLY THIS NEW LIST
+            }
+            $edit = AdminHelpers::curl($url, $params, $post);
+            return true;
+
+        } else {
+            // SUBSCRIBER IS NOT FOUND - ADD THEM
+
+            $params["api_action"] = "contact_add";
+
+            // ARRAY OF VALUES TO BE POSTED
+            $post = array(
+                "email" => $data['email'],
+                "first_name" => $data['name']
+            );
+
+            // ADD TO LIST
+            $post["p[".$list_id."]"] = $list_id; // $list_id IS THE LIST ID
+            $post["status[".$list_id."]"] = 1; // $list_id IS THE LIST ID, 1 = ACTIVE STATUS
+            //$post["first_name_list[".$list_id."]"] = $data['name']; // (OPTIONAL) CHANGE FIRST NAME FOR ONLY THIS NEW LIST
+            if (isset($data['last_name'])) {
+                $post['last_name'] = $data['last_name'];
+                //$post["last_name_list[".$list_id."]"] = $data['last_name']; // (OPTIONAL) CHANGE FIRST NAME FOR ONLY THIS NEW LIST
+            }
+            $add =  AdminHelpers::curl($url, $params, $post);
+            return "add".$post;
+            return true;
+        }
+    }
 
     /**
      * Get active campaign data by searching email
