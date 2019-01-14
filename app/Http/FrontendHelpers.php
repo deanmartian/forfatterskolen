@@ -122,7 +122,7 @@ class FrontendHelpers
 
 	public static function hasLessonAccess($course_taken, $lesson)
 	{
-		$access_lessons = $course_taken->access_lessons;
+		$access_lessons = $course_taken ? $course_taken->access_lessons : []; //$course_taken->access_lessons
 		return ( in_array($lesson->id, $access_lessons) );
 	}
 
