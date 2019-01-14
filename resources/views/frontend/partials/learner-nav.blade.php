@@ -193,7 +193,7 @@
             <div>
                 <a href="{{route('learner.shop-manuscript')}}">
                     <i class="sprite-menu file d-block"></i>
-                    Manusrkipter
+                    Manuskripter
                 </a>
             </div>
         </div>

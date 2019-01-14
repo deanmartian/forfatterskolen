@@ -9,7 +9,7 @@
         <li class="nav-item @if(Request::is('account/shop-manuscript*')) active @endif">
             <a class="nav-link" href="{{route('learner.shop-manuscript')}}">
                 <i class="sprite-menu file d-block"></i>
-                Manusrkipter
+                Manuskripter
             </a>
         </li>
         <li class="nav-item @if(Request::is('account/workshop*')) active @endif">
