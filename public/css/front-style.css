@@ -6397,6 +6397,10 @@ textarea.form-control {
         width: 10%;
     }
 
+    .ss-overflow-x-scroll {
+        overflow-x: scroll;
+    }
+
     /* theme tab */
     .theme-tabs li a {
         padding: 20px;

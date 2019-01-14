@@ -10,7 +10,7 @@
         'front.workshop.checkout', 'front.copy-editing', 'front.correction', 'front.other-service-checkout',
         'front.coaching-timer-checkout', 'front.opt-in', 'front.webinar-thanks',  'front.free-manuscript.index',
         'front.course.claim-reward', 'auth.login.show', 'learner.dashboard', 'learner.account.search', 'learner.course',
-        'learner.course.show']
+        'learner.course.show', 'learner.course.lesson']
 ?>
 @if(in_array(Route::currentRouteName(), $newDesignPages))
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
