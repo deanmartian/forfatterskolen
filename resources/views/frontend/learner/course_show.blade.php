@@ -6,181 +6,197 @@
 
 
 @section('content')
-<div class="account-container">
-	
-	@include('frontend.partials.learner-menu')
-
-	<div class="col-sm-12 col-md-10 sub-right-content">
-
-		<div class="col-sm-12">
-			<a href="{{route('learner.course')}}" class="btn btn-default margin-bottom"><i class="fa fa-angle-left"></i>&nbsp;Se på alle kurs</a>
-		</div>
-
-	@if( $courseTaken->package->course->lessons->count() > 0 )
-		<!-- Lessons -->
+<div class="learner-container course-show-page">
+	<div class="container">
+		<div class="row">
 			<div class="col-sm-12">
-				<h3 class="no-margin-top">Leksjoner</h3>
-				<div class="row">
-					@foreach($courseTaken->package->course->lessons as $lesson)
-						<div class="col-sm-4 learner-course-lesson">
-							@if(FrontendHelpers::isLessonAvailable($courseTaken->started_at, $lesson->delay, $lesson->period) ||
-                            FrontendHelpers::hasLessonAccess($courseTaken, $lesson))
-								<a class="panel panel-default panel-lesson" href="{{route('learner.course.lesson', ['course_id' => $courseTaken->package->course->id, 'id' => $lesson->id])}}">
+				<h1>
+					Leksjoner <a href="{{route('learner.course')}}" class="color-black font-barlow-regular ml-3">Se på alle kurs</a>
+				</h1>
+
+				<div class="theme-tabs">
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="nav-item">
+							<a data-toggle="tab" href="#lessons" class="nav-link active" role="tab">
+								<span>Lessons</span> <!-- check if webinar-pakke -->
+							</a>
+						</li>
+						<li class="nav-item">
+							<a data-toggle="tab" href="#course-details" class="nav-link" role="tab">
+								<span>Course Details</span></a>
+						</li>
+						<li class="nav-item">
+							<a data-toggle="tab" href="#webinars" class="nav-link" role="tab">
+								<span>Webinars</span> <!-- check if webinar-pakke -->
+							</a>
+						</li>
+					</ul>
+
+					<div class="tab-content">
+						@if( $courseTaken->package->course->lessons->count() > 0 )
+							<div id="lessons" class="tab-pane fade in active" role="tabpanel">
+								<div class="row">
+									@foreach($courseTaken->package->course->lessons as $lesson)
+										<div class="col-md-4 learner-course-lesson mb-5">
+											@if(\App\Http\FrontendHelpers::isLessonAvailable($courseTaken->started_at, $lesson->delay, $lesson->period) ||
+											\App\Http\FrontendHelpers::hasLessonAccess($courseTaken, $lesson))
+												<a href="{{route('learner.course.lesson', ['course_id' => $courseTaken->package->course->id, 'id' => $lesson->id])}}">
+													<div class="panel panel-default global-panel">
+														<div class="panel-body">
+															<span class="label label-red font-weight-normal mb-3 d-inline-block">Tilgjengelig</span>
+															<h3 class="color-black font-weight-normal font-barlow-regular">{{$lesson->title}}</h3>
+														</div>
+														<div class="bottom-line"></div>
+													</div>
+												</a>
+											@else
+												<div class="panel panel-default global-panel inactive">
+													<div class="panel-body">
+														<h3 class="font-weight-normal font-barlow-regular">{{$lesson->title}}</h3>
+														<small>Tilgjengelig på {{\App\Http\FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)}}</small>
+													</div>
+													<div class="bottom-line"></div>
+												</div>
+											@endif
+										</div>
+									@endforeach
+								</div>
+							</div>
+
+							<div id="course-details" class="tab-pane fade" role="tabpanel">
+								<div class="panel panel-default">
 									<div class="panel-body">
-										<h4>{{$lesson->title}}</h4>
-										<span class="label label-primary">Tilgjengelig</span>
+										<div class="row">
+											<div class="col-sm-12 col-lg-3">
+												<div class="course-list-thumb" style="background-image: url({{$courseTaken->package->course->course_image}})"></div>
+											</div>
+											<div class="col-sm-12 col-lg-9 course-list-details">
+												<p class="pull-right">
+													<i class="fa fa-calendar"></i>&nbsp; Startet - {{date_format(date_create($courseTaken->started_at), 'M d, Y H.i') }}<br />
+
+													<i class="fa fa-calendar-times-o"></i>&nbsp; Expires on -
+													@if ($courseTaken->end_date)
+														{{ $courseTaken->end_date }} {{Carbon\Carbon::parse($courseTaken->started_at)->format('H.i') }}
+													@else
+														{{Carbon\Carbon::parse($courseTaken->started_at)->addyears($courseTaken->years)->format('M d, Y H.i') }}
+													@endif
+												</p>
+												<h3>{{$courseTaken->package->course->title}}</h3>
+												<p>
+													{!! $courseTaken->package->course->description !!}
+												</p>
+												<ul class="course-list-meta margin-bottom">
+													<li><i class="fa fa-folder-o"></i>&nbsp;{{count($courseTaken->package->course->lessons)}} Lessons</li>
+												</ul>
+												@if( $courseTaken->package->shop_manuscripts->count() > 0 ||
+                                                    $courseTaken->package->included_courses->count() > 0 ||
+                                                    $courseTaken->package->workshops > 0
+                                                    )
+													<strong>Inkluderer</strong><br />
+													@if( $courseTaken->package->shop_manuscripts->count() > 0 )
+														@foreach( $courseTaken->package->shop_manuscripts as $shop_manuscripts )
+															{{ $shop_manuscripts->shop_manuscript->title }} <br />
+														@endforeach
+													@endif
+
+													@if( $courseTaken->package->workshops )
+														{{ $courseTaken->package->workshops }} workshops <br />
+													@endif
+
+													@if( $courseTaken->package->included_courses->count() > 0 )
+														@foreach( $courseTaken->package->included_courses as $included_course )
+															{{ $included_course->included_package->course->title }} ({{ $included_course->included_package->variation }}) <br />
+														@endforeach
+													@endif
+												@endif
+											</div>
+										</div>
 									</div>
-								</a>
-							@else
-								<div class="panel panel-default panel-lesson inactive">
-									<div class="panel-body">
-										<h4>{{$lesson->title}}</h4>
-										<small>Tilgjengelig på {{FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)}}</small>
+								</div>
+							</div>
+
+							<div id="webinars" class="tab-pane fade" role="tabpanel">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<a class="btn btn-primary pull-right btn-xs no-after" href="{{ route('learner.course-webinar') }}">Se Alt</a>
+										<i class="fa fa-play-circle-o"></i>&nbsp;&nbsp;Webinars
+									</div>
+									<div class="table-responsive">
+										<table class="table">
+											<thead>
+											<tr>
+												<th>Webinar</th>
+												<th>Dato start</th>
+											</tr>
+											</thead>
+											<tbody>
+											@foreach( $courseTaken->package->course->webinars as $webinar )
+												<tr>
+													<td><strong>{{ $webinar->title }}</strong></td>
+													<td>{{ date_format(date_create($webinar->start_date), 'M d, Y H.i') }}</td>
+												</tr>
+											@endforeach
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+
+                            <?php $isHidden = 1?>
+							@if( $courseTaken->package->manuscripts_count > 0 && !$isHidden)
+							<!-- Manuscripts Uploaded -->
+								<div class="col-sm-12">
+									<div class="panel panel-default">
+										<div class="panel-heading">
+											@if( $courseTaken->manuscripts->count() < $courseTaken->package->manuscripts_count  )
+												<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addManuscriptModal">+ Last opp manuskript</button>
+											@else
+												<button class="btn btn-primary disabled pull-right btn-xs">+ Last opp manuskript</button>
+											@endif
+											<i class="fa fa-file-word-o"></i>&nbsp;&nbsp;Manuskripter opplastet
+										</div>
+										<div class="table-responsive">
+											<table class="table">
+												<thead>
+												<tr>
+													<th>Manus</th>
+													<th>Ord</th>
+													<th>Dato opplastet</th>
+													<th>Status</th>
+													<th></th>
+												</tr>
+												</thead>
+												<tbody>
+												@foreach( $courseTaken->manuscripts as $manuscript )
+													<tr>
+														<td><a href="{{ route('learner.manuscript.show', $manuscript->id) }}">{{ basename($manuscript->filename) }}</a></td>
+														<td>{{ $manuscript->word_count }}</td>
+														<td>{{ date_format(date_create($manuscript->created_at), 'M d, Y H.i') }}</td>
+														<td>
+															@if( $manuscript->status == 'Finished' )
+																<span class="label label-success">Finished</span>
+															@elseif( $manuscript->status == 'Started' )
+																<span class="label label-primary">Started</span>
+															@elseif( $manuscript->status == 'Not started' )
+																<span class="label label-warning">Not started</span>
+															@endif
+														</td>
+														<td><a class="btn btn-primary btn-xs pull-right" href="{{ route('learner.manuscript.show', $manuscript->id) }}">Se på manuskript</a></td>
+													</tr>
+												@endforeach
+												</tbody>
+											</table>
+										</div>
 									</div>
 								</div>
 							@endif
-						</div>
-					@endforeach
-				</div>
-			</div>
-		@endif
 
-		<div class="col-sm-12">
-			<div class="panel panel-default">
-				<div class="panel-body">
-					<div class="row">
-						<div class="col-sm-12 col-md-3">
-							<div class="course-list-thumb" style="background-image: url({{$courseTaken->package->course->course_image}})"></div>
-						</div>
-						<div class="col-sm-12 col-md-9 course-list-details">
-							<p class="pull-right">
-								<i class="fa fa-calendar"></i>&nbsp; Startet - {{date_format(date_create($courseTaken->started_at), 'M d, Y H.i') }}<br />
-
-								<i class="fa fa-calendar-times-o"></i>&nbsp; Expires on -
-								@if ($courseTaken->end_date)
-									{{ $courseTaken->end_date }} {{Carbon\Carbon::parse($courseTaken->started_at)->format('H.i') }}
-								@else
-									{{Carbon\Carbon::parse($courseTaken->started_at)->addyears($courseTaken->years)->format('M d, Y H.i') }}
-								@endif
-							</p>
-							<h3>{{$courseTaken->package->course->title}}</h3>
-							<p>
-							{!! $courseTaken->package->course->description !!}
-							</p>
-							<ul class="course-list-meta margin-bottom">
-								<li><i class="fa fa-folder-o"></i>&nbsp;{{count($courseTaken->package->course->lessons)}} Lessons</li>
-							</ul>
-							@if( $courseTaken->package->shop_manuscripts->count() > 0 || 
-								$courseTaken->package->included_courses->count() > 0 ||
-								$courseTaken->package->workshops > 0
-								)
-								<strong>Inkluderer</strong><br />
-								@if( $courseTaken->package->shop_manuscripts->count() > 0 )
-								@foreach( $courseTaken->package->shop_manuscripts as $shop_manuscripts )
-								{{ $shop_manuscripts->shop_manuscript->title }} <br />
-								@endforeach
-								@endif
-
-								@if( $courseTaken->package->workshops )
-								{{ $courseTaken->package->workshops }} workshops <br />
-								@endif
-
-								@if( $courseTaken->package->included_courses->count() > 0 )
-								@foreach( $courseTaken->package->included_courses as $included_course )
-								{{ $included_course->included_package->course->title }} ({{ $included_course->included_package->variation }}) <br />
-								@endforeach
-								@endif
-							@endif
-						</div>
-					</div>
-				</div>
-			</div>
+						@endif
+					</div> <!-- end tab-content-->
+				</div> <!-- end theme tabs-->
+			</div> <!-- end col-sm-12 -->
 		</div>
-
-
-		@if( $courseTaken->package->course->webinars->count() > 0 )
-		<!-- Course Webinars -->
-		<div class="col-sm-12">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<a class="btn btn-primary pull-right btn-xs" href="{{ route('learner.course-webinar') }}">Se Alt</a>
-					<i class="fa fa-play-circle-o"></i>&nbsp;&nbsp;Webinars
-				</div>
-				<div class="table-responsive">
-					<table class="table">
-						<thead>
-							<tr>
-								<th>Webinar</th>
-								<th>Dato start</th>
-							</tr>
-						</thead>
-						<tbody>
-							@foreach( $courseTaken->package->course->webinars as $webinar )
-							<tr>
-								<td><strong>{{ $webinar->title }}</strong></td>
-								<td>{{ date_format(date_create($webinar->start_date), 'M d, Y H.i') }}</td>
-							</tr>
-							@endforeach
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-		@endif
-
-
-		<?php $isHidden = 1?>
-		@if( $courseTaken->package->manuscripts_count > 0 && !$isHidden)
-		<!-- Manuscripts Uploaded -->
-		<div class="col-sm-12">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					@if( $courseTaken->manuscripts->count() < $courseTaken->package->manuscripts_count  )
-					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addManuscriptModal">+ Last opp manuskript</button>
-					@else
-					<button class="btn btn-primary disabled pull-right btn-xs">+ Last opp manuskript</button>
-					@endif
-					<i class="fa fa-file-word-o"></i>&nbsp;&nbsp;Manuskripter opplastet
-				</div>
-				<div class="table-responsive">
-					<table class="table">
-						<thead>
-							<tr>
-								<th>Manus</th>
-								<th>Ord</th>
-								<th>Dato opplastet</th>
-								<th>Status</th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>
-							@foreach( $courseTaken->manuscripts as $manuscript )
-							<tr>
-								<td><a href="{{ route('learner.manuscript.show', $manuscript->id) }}">{{ basename($manuscript->filename) }}</a></td>
-								<td>{{ $manuscript->word_count }}</td>
-								<td>{{ date_format(date_create($manuscript->created_at), 'M d, Y H.i') }}</td>
-								<td>
-									@if( $manuscript->status == 'Finished' )
-									<span class="label label-success">Finished</span>
-									@elseif( $manuscript->status == 'Started' )
-									<span class="label label-primary">Started</span>
-									@elseif( $manuscript->status == 'Not started' )
-									<span class="label label-warning">Not started</span>
-									@endif
-								</td>
-								<td><a class="btn btn-primary btn-xs pull-right" href="{{ route('learner.manuscript.show', $manuscript->id) }}">Se på manuskript</a></td>
-							</tr>
-							@endforeach
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-		@endif
-
-
 	</div>
-	<div class="clearfix"></div>
 </div>
 
 

@@ -3833,6 +3833,38 @@ margin-right: 5px;
 
 /* end learner dashboard container*/
 
+/* course show page */
+.course-show-page h1:before {
+    content: '';
+    display: inline-block;
+    background-image: url(../images-new/icon/book.png);
+    height: 20px;
+    width: 20px;
+    margin-right: 10px;
+}
+
+.course-list-thumb {
+    background-color: #333;
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 150px;
+    margin-bottom: 12px;
+}
+
+.btn-group-xs>.btn, .btn-xs {
+    padding: 1px 5px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+
+.no-after:after {
+    display: none;
+}
+
+/* end course show page */
+
 /* global card */
 
 .global-card {
@@ -3858,6 +3890,33 @@ margin-right: 5px;
     padding: 20px 0;
 }
 /* end global card */
+
+/* global panel */
+.global-panel {
+    border: none;
+    border-radius: 0;
+    height: 100%;
+    margin-bottom: 0;
+    position: relative;
+}
+
+.global-panel .panel-body {
+    margin-bottom: 20px;
+    padding: 30px;
+}
+
+.global-panel .bottom-line {
+    bottom: 0;
+    background-color: #862736;
+    height: 7px;
+    position: absolute;
+    width: 100%;
+}
+
+.panel.inactive {
+    opacity: .5;
+}
+/* end global panel */
 
 /* opt-in page */
 #opt-in-page .image-container {
@@ -4306,6 +4365,14 @@ blockquote {
 
 .font-20 {
     font-size: 20px;
+}
+
+.label-red {
+    background-color: #e83a46;
+}
+
+.color-black {
+    color: #323232;
 }
 
 .clearfix {
