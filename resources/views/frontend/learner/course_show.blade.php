@@ -18,16 +18,16 @@
 					<ul class="nav nav-tabs" role="tablist">
 						<li class="nav-item">
 							<a data-toggle="tab" href="#lessons" class="nav-link active" role="tab">
-								<span>Lessons</span> <!-- check if webinar-pakke -->
+								<span>Leksjoner</span> <!-- check if webinar-pakke -->
 							</a>
 						</li>
 						<li class="nav-item">
 							<a data-toggle="tab" href="#course-details" class="nav-link" role="tab">
-								<span>Course Details</span></a>
+								<span>Kurs plan</span></a>
 						</li>
 						<li class="nav-item">
 							<a data-toggle="tab" href="#webinars" class="nav-link" role="tab">
-								<span>Webinars</span> <!-- check if webinar-pakke -->
+								<span>Kurs webinarer</span> <!-- check if webinar-pakke -->
 							</a>
 						</li>
 					</ul>
