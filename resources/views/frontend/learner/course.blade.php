@@ -80,8 +80,8 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
+				<h3 class="modal-title">Renew Course</h3>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Renew Course</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="{{ route('learner.course.renew') }}" enctype="multipart/form-data">
@@ -110,7 +110,7 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title">Forny alle kursene for ett år</h4>
+				<h3 class="modal-title">Forny alle kursene for ett år</h3>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="{{ route('learner.renew-all-courses') }}" onsubmit="disableSubmit(this)">
