@@ -319,6 +319,14 @@
 									@endif
 								@endif
 
+								<div id="price-wrapper" class="hide">
+									<h3>Pris: <span id="price-display" class="theme-text font-barlow-regular"></span></h3>
+								</div>
+
+								<div id="discount-wrapper" class="hide">
+									<h3>Rabatt: <span id="discount-display" class="theme-text font-barlow-regular"></span></h3>
+								</div>
+
 								<h3>Totalt:
 
 									<?php $standard_price = $course->packages->where('variation', 'Standard Kurs')->first(); ?>
@@ -353,9 +361,6 @@
 										</span>
 									@endif
 								</h3>
-									<div id="discount-wrapper" class="hide" style="margin-top: -10px">
-										<h3>Rabatt: <span id="discount-display" class="theme-text font-barlow-regular"></span></h3>
-									</div>
 
 									<button type="submit" class="btn site-btn-global-w-arrow" id="submitOrder">Bestill</button>
 							</div>
@@ -426,6 +431,23 @@
                         : $(this).data('full_payment_price_number');
                     new_total = price_value - discount_value;
                 }
+
+                if ($(this).attr('data-full_payment_sale_price_number')) {
+                    let orig_price = $(this).data('full_payment_price_number');
+                    let sale_price = $(this).data('full_payment_sale_price_number');
+                    let discount_price = orig_price - sale_price;
+
+                    $("#discount-wrapper").removeClass('hide');
+                    $("#price-wrapper").removeClass('hide');
+                    $("#price-display").text($(this).data('full_payment_price'));
+
+                    $.get('/format_money/'+discount_price, {}, function(){}, 'json').done(function(data){
+                        $("#discount-display").text(data);
+                    });
+				} else {
+                    $("#discount-wrapper").addClass('hide');
+                    $("#price-wrapper").addClass('hide');
+				}
 
                 $.get('/format_money/'+new_total, {}, function(){}, 'json').done(function(data){
                     let checkout_total = $('.checkout-total');
@@ -597,6 +619,10 @@
 
                 split_invoice.prop('disabled', true);
                 split_invoice.prop('checked', false);
+
+                // check for sale price
+                checkSalePrice(checked_package_id, 'full_payment_price_number', 'full_payment_sale_price_number', 'full_payment_price');
+
             } else if( plan === '3 måneder' ) {
                 new_total = checked_package_id.attr('data-months_3_sale_price_number')
                     ? checked_package_id.data('months_3_sale_price_number')
@@ -609,6 +635,8 @@
                 if (discount_value) {
                     new_total = price_value - discount_value;
                 }
+
+                checkSalePrice(checked_package_id, 'months_3_price_number', 'months_3_sale_price_number', 'months_3_price');
             } else if( plan === '6 måneder' ) {
                 new_total = checked_package_id.attr('data-months_6_sale_price_number')
                     ? checked_package_id.data('months_6_sale_price_number')
@@ -621,6 +649,7 @@
                 if (discount_value) {
                     new_total = price_value - discount_value;
                 }
+               checkSalePrice(checked_package_id, 'months_6_price_number', 'months_6_sale_price_number', 'months_6_price');
             } else if( plan === '12 måneder' ) {
                 new_total = checked_package_id.attr('data-months_12_sale_price_number')
                     ? checked_package_id.data('months_12_sale_price_number')
@@ -633,12 +662,32 @@
                 if (discount_value) {
                     new_total = price_value - discount_value;
                 }
+               checkSalePrice(checked_package_id, 'months_12_price_number', 'months_12_sale_price_number', 'months_12_price');
             }
             $.get('/format_money/'+new_total, {}, function(){}, 'json').done(function(data){
                 let checkout_total = $('.checkout-total');
                 checkout_total.find('span.total-display').text(data);
             });
         }
+
+        function checkSalePrice(checked_package_id, orig, sale, pris) {
+            if (checked_package_id.attr('data-'+sale)) {
+                let orig_price = checked_package_id.data(orig);
+                let sale_price = checked_package_id.data(sale);
+                let discount_price = orig_price - sale_price;
+
+                $("#discount-wrapper").removeClass('hide');
+                $("#price-wrapper").removeClass('hide');
+                $("#price-display").text(checked_package_id.data(pris));
+
+                $.get('/format_money/'+discount_price, {}, function(){}, 'json').done(function(data){
+                    $("#discount-display").text(data);
+                });
+            } else {
+                $("#discount-wrapper").addClass('hide');
+                $("#price-wrapper").addClass('hide');
+            }
+		}
 
         function openWindow(url) {
 
