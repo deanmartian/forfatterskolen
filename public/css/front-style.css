@@ -149,6 +149,7 @@ a {
 
 [type="datetime-local"] {
     font-size: 14px;
+    padding: 5px !important;
 }
 
 .nav-user-thumb {
@@ -3853,8 +3854,8 @@ margin-right: 5px;
 }
 
 .btn-group-xs>.btn, .btn-xs {
-    padding: 1px 5px;
-    font-size: 12px;
+    padding: 2px 6px;
+    font-size: 13px;
     line-height: 1.5;
     border-radius: 3px;
 }
@@ -4215,6 +4216,16 @@ margin-right: 5px;
 
 /* end learner courses container*/
 
+/* workshop page */
+.learner-workshop-image {
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 200px;
+    position: relative;
+}
+/* end workshop page */
+
 /* theme tabs */
 
 .theme-tabs {
@@ -4367,6 +4378,12 @@ blockquote {
     border-color: #28a745 !important;
 }
 
+.btn-primary {
+    color: #fff !important;
+    background-color: #337ab7 !important;
+    border-color: #2e6da4 !important;
+}
+
 .font-barlow-regular {
     font-family: "Barlow Regular", sans serif;
 }
@@ -4383,6 +4400,10 @@ blockquote {
     font-size: 16px;
 }
 
+.font-15 {
+    font-size: 15px !important;
+}
+
 .font-20 {
     font-size: 20px;
 }
@@ -4393,6 +4414,17 @@ blockquote {
 
 .color-black {
     color: #323232;
+}
+
+.color-white {
+    color: #fff !important;
+}
+
+#fixed_to_bottom_alert {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999999;
 }
 
 .clearfix {
