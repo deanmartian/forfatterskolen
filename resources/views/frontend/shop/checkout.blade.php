@@ -432,22 +432,7 @@
                     new_total = price_value - discount_value;
                 }
 
-                if ($(this).attr('data-full_payment_sale_price_number')) {
-                    let orig_price = $(this).data('full_payment_price_number');
-                    let sale_price = $(this).data('full_payment_sale_price_number');
-                    let discount_price = orig_price - sale_price;
-
-                    $("#discount-wrapper").removeClass('hide');
-                    $("#price-wrapper").removeClass('hide');
-                    $("#price-display").text($(this).data('full_payment_price'));
-
-                    $.get('/format_money/'+discount_price, {}, function(){}, 'json').done(function(data){
-                        $("#discount-display").text(data);
-                    });
-				} else {
-                    $("#discount-wrapper").addClass('hide');
-                    $("#price-wrapper").addClass('hide');
-				}
+                checkSalePrice($(this), 'full_payment_price_number', 'full_payment_sale_price_number', 'full_payment_price');
 
                 $.get('/format_money/'+new_total, {}, function(){}, 'json').done(function(data){
                     let checkout_total = $('.checkout-total');
