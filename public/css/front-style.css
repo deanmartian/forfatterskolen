@@ -4371,6 +4371,14 @@ blockquote {
     font-family: "Barlow Regular", sans serif;
 }
 
+.font-barlow-bold {
+    font-family: "Barlow Bold", sans serif;
+}
+
+.font-barlow-semi-bold {
+    font-family: "Barlow SemiBold", sans serif;
+}
+
 .font-16 {
     font-size: 16px;
 }
