@@ -212,7 +212,7 @@
                             </h1>
                         </div>
                         <div class="card-body py-0">
-                            <table class="table">
+                            <table class="table table-global">
                                 <tbody>
                                     @foreach(\App\Http\Controllers\Frontend\LearnerController::dashboardAssignment() as $assignment)
                                         <?php
@@ -263,7 +263,7 @@
                             </h1>
                         </div>
                         <div class="card-body py-0">
-                            <table class="table">
+                            <table class="table table-global">
                                 <thead>
                                     <tr>
                                         <th>Fakturanummer</th>

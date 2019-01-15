@@ -122,7 +122,7 @@
 										<i class="fa fa-play-circle-o"></i>&nbsp;&nbsp;Webinars
 									</div>
 									<div class="table-responsive">
-										<table class="table">
+										<table class="table table-global">
 											<thead>
 											<tr>
 												<th>Webinar</th>

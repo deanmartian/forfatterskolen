@@ -3889,6 +3889,18 @@ margin-right: 5px;
 .global-card .card-body {
     padding: 20px 0;
 }
+
+.card-global {
+    height: 100%;
+}
+
+.card-global .card-body {
+    padding: 20px;
+}
+
+.card-global .card-footer {
+    padding: 10px 20px;
+}
 /* end global card */
 
 /* global panel */
@@ -4939,6 +4951,21 @@ textarea.form-control {
 
 /*end override form-control read-only*/
 
+/* override table */
+.table-global>thead>tr>th {
+    vertical-align: bottom;
+    border-bottom: 1px solid #ddd;
+    font-family: "Barlow Regular", sans serif;
+    font-size: 15px;
+    font-weight: normal;
+}
+
+.table-global>tbody>tr>td, .table-global>tbody>tr>th, .table-global>tfoot>tr>td,
+.table-global>tfoot>tr>th, .table-global>thead>tr>td, .table-global>thead>tr>th {
+    padding: 12px 20px;
+}
+/* end ovveride table*/
+
 /* sprites */
 .sprite {
     background: url(../images-new/icon/ttm.png) no-repeat top left;
@@ -5093,6 +5120,10 @@ textarea.form-control {
 
     footer .navbar-brand {
         width: 270px;
+    }
+
+    .learner-container {
+        padding-top: 80px;
     }
 
     .start-today {
@@ -6401,6 +6432,18 @@ textarea.form-control {
         overflow-x: scroll;
     }
 
+    .learner-manuscript-page .learner-search-container .input-group-btn {
+        width: 5%;
+    }
+
+    .global-panel .panel-body, .card-global .card-body {
+        padding: 20px;
+    }
+
+    .card-global .card-footer {
+        padding: 10px 15px;
+    }
+
     /* theme tab */
     .theme-tabs li a {
         padding: 20px;
@@ -7484,6 +7527,18 @@ textarea.form-control {
     .learner-container .adjust-left {
         padding-left: 0;
     }
+
+    .learner-manuscript-page .learner-search-container .input-group-btn {
+        width: 3%;
+    }
+
+    .global-panel .panel-body {
+        padding: 20px;
+    }
+
+    .card-global .card-footer {
+        padding: 10px 20px;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -8393,6 +8448,10 @@ textarea.form-control {
     .adjust-left-padding, .learner-container .adjust-left {
         padding-left: 15px;
     }
+
+    .learner-container .learner-manuscript-page .adjust-left-padding {
+        padding-left: 0;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -8649,6 +8708,10 @@ textarea.form-control {
 
     .login-container .left-container .signup-tab>li, .login-container .left-container .signup-tab>li>a {
         display: unset;
+    }
+
+    .learner-manuscript-page .learner-search-container .input-group-btn {
+        width: 4%;
     }
 }
 

@@ -10,12 +10,13 @@
         'front.workshop.checkout', 'front.copy-editing', 'front.correction', 'front.other-service-checkout',
         'front.coaching-timer-checkout', 'front.opt-in', 'front.webinar-thanks',  'front.free-manuscript.index',
         'front.course.claim-reward', 'auth.login.show', 'learner.dashboard', 'learner.account.search', 'learner.course',
-        'learner.course.show', 'learner.course.lesson']
+        'learner.course.show', 'learner.course.lesson', 'learner.shop-manuscript']
 ?>
 @if(in_array(Route::currentRouteName(), $newDesignPages))
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{asset('css/front-style.min.css?v='.time())}}">
+    <link rel="stylesheet" href="{{asset('css/front-style.css?v='.time())}}">
+    {{--<link rel="stylesheet" href="{{asset('css/front-style.min.css?v='.time())}}">--}}
 @else
     <link rel="stylesheet" href="{{asset('css/frontend.min.css?v='.time())}}">
 @endif
