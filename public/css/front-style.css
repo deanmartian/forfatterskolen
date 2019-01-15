@@ -4224,6 +4224,19 @@ margin-right: 5px;
     height: 200px;
     position: relative;
 }
+
+.learner-workshop-page h1 > a {
+    float: right;
+    word-break: break-word;
+    white-space: inherit;
+    word-wrap: break-word;
+}
+
+.learner-workshop-page .card-footer a {
+    word-break: break-word;
+    white-space: inherit;
+    word-wrap: break-word;
+}
 /* end workshop page */
 
 /* theme tabs */
@@ -7578,6 +7591,11 @@ textarea.form-control {
 
     .card-global .card-footer {
         padding: 10px 20px;
+    }
+
+    .learner-workshop-page h1 > a {
+        float: left;
+        margin-top: 10px;
     }
 }
 

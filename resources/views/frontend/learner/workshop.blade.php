@@ -5,17 +5,21 @@
 @stop
 
 @section('content')
-<div class="learner-container">
+<div class="learner-container learner-workshop-page">
 	<div class="container">
-		<h1 class="font-barlow-regular mb-0">Påmeldte skriveverksted(er)
+		<div class="row">
+			<div class="col-sm-12">
+				<h1 class="font-barlow-regular mb-0 w-100">Påmeldte skriveverksted(er)
 
-			@if(!count(Auth::user()->workshopsTaken))
-				<a href="{{ route('front.workshop.index') }}" class="btn site-btn-global float-right font-15">
-					Klikk her for fremtidige workshoper eller for bestilling
-				</a>
-			@endif
+					@if(!count(Auth::user()->workshopsTaken))
+						<a href="{{ route('front.workshop.index') }}" class="btn site-btn-global font-15">
+							Klikk her for fremtidige workshoper eller for bestilling
+						</a>
+					@endif
 
-		</h1>
+				</h1>
+			</div>
+		</div>
 
 		<div class="row">
 			@foreach( Auth::user()->workshopsTaken as $workshop )
