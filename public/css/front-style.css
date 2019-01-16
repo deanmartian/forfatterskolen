@@ -3805,6 +3805,8 @@ margin-right: 5px;
     color: #92a0b1;
     margin: 30px 0;
     position: relative;
+    text-align: center;
+    width: 100%;
 }
 
 .divider-center-text:before,
@@ -4344,9 +4346,36 @@ margin-right: 5px;
     top: 3px;
     position: absolute;
 }
-
-
 /* end webinar page */
+
+/* learner assignment page */
+.learner-assignment .card-header h2 {
+    position: relative;
+}
+
+.learner-assignment .card-header h2 i {
+    margin-right: 30px;
+}
+
+.learner-assignment .card-header h2 i:before {
+    content: '';
+    height: 18px;
+    width: 18px;
+    top: 4px;
+    position: absolute;
+}
+
+.learner-assignment .card-header .site-btn-global {
+    word-break: break-word;
+    white-space: inherit;
+    word-wrap: break-word;
+}
+
+.h2-font {
+    color: #323232;
+    font-size: 2rem;
+}
+/* end learner assignment page */
 
 /* theme tabs */
 
@@ -4542,6 +4571,10 @@ blockquote {
     color: #fff !important;
 }
 
+.contract-sign:before {
+    background: url(../images-new/icon/contract-sign.png) no-repeat center / cover;
+}
+
 #fixed_to_bottom_alert {
     position: fixed;
     bottom: 20px;
@@ -4560,6 +4593,11 @@ blockquote {
     font-family: "Barlow Regular",sans serif;
     font-size: 17px;
     padding: 5px 20px;
+}
+
+.site-btn-global-sm {
+    font-size: 13px;
+    padding: 3px 2px;
 }
 
 .site-btn-global-w-arrow {
@@ -6628,6 +6666,10 @@ textarea.form-control {
         margin-right: 2px;
     }
 
+    .learner-assignment .divider-center-text:before, .learner-assignment .divider-center-text:after {
+        width: 38%;
+    }
+
     /* theme tab */
     .theme-tabs li a {
         padding: 20px;
@@ -7736,6 +7778,30 @@ textarea.form-control {
     .webinar-thumb iframe {
         height: 281px !important;
     }
+
+    .learner-assignment .site-btn-global-sm {
+        margin-top: 10px;
+    }
+
+    .learner-assignment .feedback-section {
+        margin-top: 30px;
+    }
+
+    .learner-assignment .feedback-section .site-btn-global-sm {
+        margin-top: 0;
+    }
+
+    .learner-assignment .divider-center-text:before {
+        left: 0;
+    }
+
+    .learner-assignment .divider-center-text:after {
+        right: 0;
+    }
+
+    .learner-assignment .divider-center-text:before, .learner-assignment .divider-center-text:after {
+        width: 33%;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -8669,6 +8735,10 @@ textarea.form-control {
     .webinar-thumb div {
         height: 230px;
     }
+
+    .learner-assignment .divider-center-text:before, .learner-assignment .divider-center-text:after {
+        width: 29%;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -9119,6 +9189,14 @@ textarea.form-control {
     .webinar-search-container .input-group-btn {
         width: 25%;
     }
+
+    .learner-assignment .divider-center-text:before, .learner-assignment .divider-center-text:after {
+        width: 27%;
+    }
+
+    .learner-assignment .feedback-section .site-btn-global-sm {
+        width: 25% !important;
+    }
 }
 
 @media only screen and (max-width: 320px) {
@@ -9425,5 +9503,9 @@ textarea.form-control {
 
     .webinar-search-container .input-group-btn {
         width: 28%;
+    }
+
+    .learner-assignment .divider-center-text:before, .learner-assignment .divider-center-text:after {
+        width: 23%;
     }
 }

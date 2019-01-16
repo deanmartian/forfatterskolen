@@ -4,62 +4,40 @@
 <title>Assignments &rsaquo; Forfatterskolen</title>
 @stop
 
-
-@section('styles')
-	<style>
-		.no-padding-left {
-			padding-left: 0;
-		}
-	</style>
-@stop
-
 @section('content')
-<div class="account-container">
-	
-	@include('frontend.partials.learner-menu')
 
-	<div class="col-sm-12 col-md-10 sub-right-content">
-		<div class="col-sm-12">
-			<h3 class="no-margin-top">Oppgaver</h3>
+	<div class="learner-container learner-assignment">
+		<div class="container">
 			<div class="row">
-				@foreach(array_chunk($assignments, 3) as $assignment_chunk)
-					<div class="col-sm-12">
-						@foreach($assignment_chunk as $assignment)
-							<div class="col-md-4 no-padding-left">
-								<div class="panel panel-default">
-									<div class="panel-body">
-										<h4 class="no-margin-top no-margin-bottom">{{ $assignment->title }}</h4>
-										{{ $assignment->description }} <br>
-										<b>Frist:</b> <i>{{ \App\Http\FrontendHelpers::formatDateTimeNor2($assignment->submission_date) }}</i>
-                                        <?php $manuscript = $assignment->manuscripts->where('user_id', Auth::user()->id)->first(); ?>
-                                        <?php $extension = $manuscript ? explode('.', basename($manuscript->filename)) : ''; ?>
-										<div class="margin-top margin-bottom">
-											Kurs: {{ $assignment->course->title }} <br />
-											@if( $manuscript )Ord:  {{ $manuscript->words }} <br />@endif
-										</div>
-										@if( $manuscript )
-											@if( end($extension) == 'pdf' || end($extension) == 'odt' )
-												<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">{{ basename($manuscript->filename) }}</a>
-											@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
-												<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">{{ basename($manuscript->filename) }}</a>
-											@endif
+				<div class="col-md-12">
+					<h1 class="font-barlow-regular">
+						Oppgaver
+					</h1>
+				</div>
 
-											@if (!$manuscript->locked)
-												<div class="pull-right">
-													<button type="button" class="btn btn-sm btn-info editManuscriptBtn" data-toggle="modal" data-target="#editManuscriptModal" data-action="{{ route('learner.assignment.replace_manuscript', $manuscript->id) }}"><i class="fa fa-pencil"></i></button>
-													<button type="button" class="btn btn-sm btn-danger deleteManuscriptBtn" data-toggle="modal" data-target="#deleteManuscriptModal" data-action="{{ route('learner.assignment.delete_manuscript', $manuscript->id) }}"><i class="fa fa-trash"></i></button>
-												</div>
-											@endif
-										@else
+				<div class="clearfix"></div>
+				@foreach($assignments as $assignment)
+					<div class="col-md-6 mt-5">
+						<div class="card card-global">
+                            <?php $manuscript = $assignment->manuscripts->where('user_id', Auth::user()->id)->first(); ?>
+                            <?php $extension = $manuscript ? explode('.', basename($manuscript->filename)) : ''; ?>
+
+							<div class="card-header p-4">
+								<div class="row">
+									<div class="col-md-9">
+										<h2><i class="contract-sign"></i> {{ $assignment->title }}</h2>
+									</div>
+									<div class="col-md-3">
+										@if (!$manuscript)
 											@if($assignment->for_editor)
-												<button class="btn btn-primary submitEditorManuscriptBtn" data-toggle="modal"
+												<button class="btn site-btn-global site-btn-global-sm w-100 submitEditorManuscriptBtn" data-toggle="modal"
 														data-target="#submitEditorManuscriptModal"
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif>
 													Last opp manus
 												</button>
 											@else
-												<button class="btn btn-primary submitManuscriptBtn" data-toggle="modal"
+												<button class="btn site-btn-global site-btn-global-sm w-100 submitManuscriptBtn" data-toggle="modal"
 														data-target="#submitManuscriptModal"
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif>
@@ -68,118 +46,161 @@
 											@endif
 										@endif
 									</div>
-								</div>
-							</div>
-						@endforeach
-					</div>
+								</div> <!-- end row -->
+							</div> <!-- end card-header -->
+							<div class="card-body p-4">
+								<p>
+									{{ $assignment->description }}
+								</p>
+
+								<span class="font-barlow-regular">Frist:</span>
+								<span>{{ \App\Http\FrontendHelpers::formatDateTimeNor2($assignment->submission_date) }}</span>
+								@if( $manuscript )
+									<div class="mt-3">
+										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+											<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">
+												{{ basename($manuscript->filename) }}
+											</a>
+										@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
+											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">
+												{{ basename($manuscript->filename) }}
+											</a>
+										@endif
+
+										@if (!$manuscript->locked)
+											<div class="pull-right">
+												<button type="button" class="btn btn-sm btn-info editManuscriptBtn"
+														data-toggle="modal" data-target="#editManuscriptModal"
+														data-action="{{ route('learner.assignment.replace_manuscript', $manuscript->id) }}">
+													<i class="fa fa-pencil"></i>
+												</button>
+												<button type="button" class="btn btn-sm btn-danger deleteManuscriptBtn"
+														data-toggle="modal" data-target="#deleteManuscriptModal"
+														data-action="{{ route('learner.assignment.delete_manuscript', $manuscript->id) }}">
+													<i class="fa fa-trash"></i>
+												</button>
+											</div>
+										@endif
+									</div>
+								@endif
+							</div> <!-- end card-body -->
+							<div class="card-footer p-4">
+								<span class="font-barlow-regular">Kurs:</span>
+								<span>{{ $assignment->course->title }}</span>
+							</div> <!-- end card-body-->
+						</div> <!-- end card -->
+					</div> <!-- end col-md-6 -->
 				@endforeach
-			</div>
-			<?php $assignmentGroups = App\AssignmentGroupLearner::where('user_id', Auth::user()->id)->get(); ?>
-			@if( $assignmentGroups->count() > 0 )
-				<br />
+			</div> <!-- end assignment section -->
 
-					<hr>
-
-				<h3 class="margin-top">Grupper</h3>
-				<div class="row">
-					@foreach( $assignmentGroups as $group )
-					<div class="col-sm-12 col-md-4">
-						<div class="panel panel-default">
-							<div class="panel-body">
-								<h4 class="no-margin-top margin-bottom"><a href="{{ route('learner.assignment.group.show', $group->group->id) }}">{{ $group->group->title }}</a></h4>
-								Oppgave: {{ $group->group->assignment->title }} <br>
-								Innleverings dato: {{ $group->group->submission_date }}
-							</div>
-						</div>
-					</div>
-					@endforeach
-				</div>
-			@endif
-
-			<?php
-				$noGroupWithFeedback = \App\AssignmentFeedbackNoGroup::where('learner_id', Auth::user()->id)
-                    ->orderBy('created_at', 'desc')
-					->get();
-			?>
-			@if($noGroupWithFeedback->count() > 0)
-				<hr>
-				<h3 class="margin-top">Tilbakemelding fra redaktør</h3>
-				<div class="row">
-					<div class="col-sm-4">
-						<div class="panel panel-default">
-							<div class="panel-body">
-								@foreach( $noGroupWithFeedback as $feedback )
-									@if( $feedback->is_active && (!$feedback->availability ||  date('Y-m-d') >= $feedback->availability) )
-                                        <?php
-                                        $files = explode(',',$feedback->filename);
-                                        $filesDisplay = '';
-
-                                        foreach ($files as $file) {
-                                            $extension = explode('.', basename($file));
-
-                                            if (end($extension) == 'pdf' || end($extension) == 'odt') {
-                                                $filesDisplay .= '<a href="/js/ViewerJS/#../..'.trim($file).'">'.basename($file).'</a>, ';
-                                            } else {
-                                                $filesDisplay .= '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').trim($file).'">'.basename($file).'</a>, ';
-                                            }
-                                        }
-
-                                        echo trim($filesDisplay, ', ');
-                                        ?>
-
-										@if( $feedback->is_admin ) - Admin @endif
-
-										<a href="{{route('learner.assignment.no-group-feedback.download', $feedback->id)}}" class="pull-right btn btn-primary btn-xs">Last ned</a>
-										<div class="clearfix" style="margin-top: 5px"></div>
-									@endif
+			<div class="row">
+				<div class="col-md-12 mt-5">
+					<div class="row">
+						<div class="col-md-6">
+							<h1 class="font-barlow-regular">Grupper</h1>
+                            <?php $assignmentGroups = App\AssignmentGroupLearner::where('user_id', Auth::user()->id)->get(); ?>
+							@if( $assignmentGroups->count() > 0 )
+								@foreach( $assignmentGroups as $group )
+									<div class="card mt-5">
+										<div class="card-header p-4">
+											<h2>
+												<i class="contract-sign"></i>
+												<a href="{{ route('learner.assignment.group.show', $group->group->id) }}"
+												class="h2-font">
+													{{ $group->group->title }}
+												</a>
+											</h2>
+										</div>
+										<div class="card-body p-4">
+											<span class="d-block">Oppgave: {{ $group->group->assignment->title }}</span>
+											<span>Innleverings dato: {{ $group->group->submission_date }}</span>
+										</div>
+									</div>
 								@endforeach
-							</div>
-						</div>
-					</div>
-				</div>
-			@endif
+							@endif
+						</div> <!-- end group section -->
 
-				<hr>
+						<div class="col-md-6 feedback-section">
+							<h1 class="font-barlow-regular">Tilbakemelding fra redaktør</h1>
 
-			<div class="row">
-				@foreach(array_chunk($expiredAssignments, 3) as $assignment_chunk)
-					<div class="col-sm-12">
-						@foreach($assignment_chunk as $assignment)
-							<div class="col-md-4 no-padding-left">
-								<div class="panel panel-default">
-									<div class="panel-body">
-										<h4 class="no-margin-top no-margin-bottom">{{ $assignment->title }}</h4>
-										{{ $assignment->description }} <br>
-										<b>Frist:</b> <i>{{ \App\Http\FrontendHelpers::formatDateTimeNor2($assignment->submission_date) }}</i>
-                                        <?php $manuscript = $assignment->manuscripts->where('user_id', Auth::user()->id)->first(); ?>
-                                        <?php $extension = $manuscript ? explode('.', basename($manuscript->filename)) : ''; ?>
-										<div class="margin-top margin-bottom">
-											Kurs: {{ $assignment->course->title }} <br />
-											@if( $manuscript )Ord:  {{ $manuscript->words }} <br />@endif
-										</div>
-										@if( $manuscript )
-											@if( end($extension) == 'pdf' || end($extension) == 'odt' )
-												<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">{{ basename($manuscript->filename) }}</a>
-											@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
-												<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">{{ basename($manuscript->filename) }}</a>
-											@endif
+							<div class="card mt-5">
+								<div class="card-header p-4">
+									<h2>
+										<i class="contract-sign"></i>
+										Redaktor
+									</h2>
+								</div>
+								<div class="card-body p-4">
+                                    <?php
+                                    $noGroupWithFeedback = \App\AssignmentFeedbackNoGroup::where('learner_id', Auth::user()->id)
+										->orderBy('created_at', 'desc')
+                                        ->get();
+                                    ?>
+									@if($noGroupWithFeedback->count() > 0)
+										@foreach( $noGroupWithFeedback as $feedback )
+											@if( $feedback->is_active && (!$feedback->availability ||  date('Y-m-d') >= $feedback->availability) )
+												<div class="mb-4">
+													<?php
+													$files = explode(',',$feedback->filename);
+													$filesDisplay = '';
 
-											@if (!$manuscript->locked)
-												<div class="pull-right">
-													<button type="button" class="btn btn-sm btn-info editManuscriptBtn" data-toggle="modal" data-target="#editManuscriptModal" data-action="{{ route('learner.assignment.replace_manuscript', $manuscript->id) }}"><i class="fa fa-pencil"></i></button>
-													<button type="button" class="btn btn-sm btn-danger deleteManuscriptBtn" data-toggle="modal" data-target="#deleteManuscriptModal" data-action="{{ route('learner.assignment.delete_manuscript', $manuscript->id) }}"><i class="fa fa-trash"></i></button>
+													foreach ($files as $file) {
+														$extension = explode('.', basename($file));
+
+														if (end($extension) == 'pdf' || end($extension) == 'odt') {
+															$filesDisplay .= '<a href="/js/ViewerJS/#../..'.trim($file).'">'.basename($file).'</a>, ';
+														} else {
+															$filesDisplay .= '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').trim($file).'">'.basename($file).'</a>, ';
+														}
+													}
+
+													echo trim($filesDisplay, ', ');
+													?>
+
+													@if( $feedback->is_admin ) - Admin @endif
+
+													<a href="{{route('learner.assignment.no-group-feedback.download', $feedback->id)}}"
+													   class="pull-right btn site-btn-global site-btn-global-sm" style="width: 20%">
+														Last ned
+													</a>
 												</div>
 											@endif
-										@else
+										@endforeach
+									@endif
+								</div>
+							</div>
+						</div> <!-- end feedback section -->
+
+					</div> <!-- end row -->
+				</div> <!-- end col-md-12 -->
+			</div> <!-- end group and feedback section-->
+
+			<div class="divider-center-text">
+				PAST ASSIGNMENTS
+			</div>
+
+			<div class="row past-assignment grid">
+				@foreach($expiredAssignments as $assignment)
+                    <?php $manuscript = $assignment->manuscripts->where('user_id', Auth::user()->id)->first(); ?>
+                    <?php $extension = $manuscript ? explode('.', basename($manuscript->filename)) : ''; ?>
+					<div class="col-md-6 mb-5 grid-item">
+						<div class="card">
+							<div class="card-header py-4">
+								<div class="row">
+									<div class="col-md-9">
+										<h2><i class="contract-sign"></i> {{ $assignment->title }}</h2>
+									</div>
+									<div class="col-md-3">
+										@if (!$manuscript)
 											@if($assignment->for_editor)
-												<button class="btn btn-primary submitEditorManuscriptBtn" data-toggle="modal"
+												<button class="btn site-btn-global site-btn-global-sm w-100 submitEditorManuscriptBtn" data-toggle="modal"
 														data-target="#submitEditorManuscriptModal"
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif>
 													Last opp manus
 												</button>
 											@else
-												<button class="btn btn-primary submitManuscriptBtn" data-toggle="modal"
+												<button class="btn site-btn-global site-btn-global-sm w-100 submitManuscriptBtn" data-toggle="modal"
 														data-target="#submitManuscriptModal"
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif>
@@ -187,18 +208,56 @@
 												</button>
 											@endif
 										@endif
-									</div>
-								</div>
-							</div>
-						@endforeach
-					</div>
-				@endforeach
-			</div>
-		</div>
-	</div>
-	<div class="clearfix"></div>
+									</div> <!-- end column -->
+								</div> <!-- end row-->
+							</div> <!-- end card-header -->
+							<div class="card-body">
+								<p>
+									{{ $assignment->description }}
+								</p>
 
-</div>
+								<span class="font-barlow-regular">Frist:</span>
+								<span>{{ \App\Http\FrontendHelpers::formatDateTimeNor2($assignment->submission_date) }}</span>
+								@if( $manuscript )
+									<div class="mt-3">
+										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+											<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">
+												{{ basename($manuscript->filename) }}
+											</a>
+										@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
+											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">
+												{{ basename($manuscript->filename) }}
+											</a>
+										@endif
+
+										@if (!$manuscript->locked)
+											<div class="pull-right">
+												<button type="button" class="btn btn-sm btn-info editManuscriptBtn"
+														data-toggle="modal" data-target="#editManuscriptModal"
+														data-action="{{ route('learner.assignment.replace_manuscript', $manuscript->id) }}">
+													<i class="fa fa-pencil"></i>
+												</button>
+												<button type="button" class="btn btn-sm btn-danger deleteManuscriptBtn"
+														data-toggle="modal" data-target="#deleteManuscriptModal"
+														data-action="{{ route('learner.assignment.delete_manuscript', $manuscript->id) }}">
+													<i class="fa fa-trash"></i>
+												</button>
+											</div>
+										@endif
+									</div>
+								@endif
+							</div> <!-- end card-body -->
+							<div class="card-footer p-4">
+								<span class="font-barlow-regular">Kurs:</span>
+								<span>{{ $assignment->course->title }}</span>
+							</div> <!-- end card-body-->
+						</div> <!-- end card -->
+					</div> <!-- end grid-item -->
+				@endforeach
+			</div> <!-- end past-assignment section -->
+
+		</div> <!-- end container -->
+	</div> <!-- end learner-container -->
 
 <div id="submitSuccessModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
@@ -206,7 +265,9 @@
 		  <div class="modal-body text-center">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
 		    <div style="color: green; font-size: 24px"><i class="fa fa-check"></i></div>
-		  	Din oppgave har blitt levert!
+			  <p>
+				  Din oppgave har blitt levert!
+			  </p>
 		  </div>
 		</div>
 	</div>
@@ -218,7 +279,9 @@
 			<div class="modal-body text-center">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
-				Antall ord er for mange, maks {{ Session::get('editorMaxWord') }} ord. Rediger teksten og send inn på nytt.
+				<p>
+					Antall ord er for mange, maks {{ Session::get('editorMaxWord') }} ord. Rediger teksten og send inn på nytt.
+				</p>
 			</div>
 		</div>
 	</div>
@@ -228,18 +291,25 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
+				<h3 class="modal-title">Last opp manus</h3>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Last opp manus</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" enctype="multipart/form-data"
 				onsubmit="disableSubmit(this);">
 					{{ csrf_field() }}
-					* Godkjente fil formater er DOC, DOCX.
-					<input type="file" class="form-control margin-top" required name="filename" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+					<div class="form-group">
+						<label>
+							* Godkjente fil formater er DOC, DOCX.
+						</label>
+						<input type="file" class="form-control" required name="filename" accept="application/msword,
+						application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+					</div>
 
-					<div class="form-group margin-top">
-						Sjanger
+					<div class="form-group">
+						<label>
+							Sjanger
+						</label>
 						<select class="form-control" name="type" required>
 							<option value="" disabled="disabled" selected>Select Type</option>
 							@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
@@ -249,12 +319,14 @@
 					</div>
 
 					<div class="form-group">
-						Hvor i manuset <br>
+						<label class="d-block">
+							Hvor i manuset
+						</label>
 						@foreach(\App\Http\FrontendHelpers::manuscriptType() as $manu)
 							<input type="radio" name="manu_type" value="{{ $manu['id'] }}" required> <label>{{ $manu['option'] }}</label> <br>
 						@endforeach
 					</div>
-					<button type="submit" class="btn btn-primary pull-right margin-top">Upload</button>
+					<button type="submit" class="btn btn-primary pull-right">Upload</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -266,17 +338,25 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 		  <div class="modal-header">
-		    <button type="button" class="close" data-dismiss="modal">&times;</button>
-		    <h4 class="modal-title">Last opp manus</h4>
+		    <h3 class="modal-title">Last opp manus</h3>
+			  <button type="button" class="close" data-dismiss="modal">&times;</button>
 		  </div>
 		  <div class="modal-body">
 		    <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this);">
 		      	{{ csrf_field() }}
-      			* Godkjente fil formater er DOC, DOCX, PDF og ODT.
-      			<input type="file" class="form-control margin-top" required name="filename" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+				<div class="form-group">
+					<label>
+						* Godkjente fil formater er DOC, DOCX, PDF og ODT.
+					</label>
+					<input type="file" class="form-control margin-top" required name="filename" accept="application/msword,
+					application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+					application/vnd.oasis.opendocument.text">
+				</div>
 
-				<div class="form-group margin-top">
-					Sjanger
+				<div class="form-group">
+					<label>
+						Sjanger
+					</label>
 					<select class="form-control" name="type" required>
 						<option value="" disabled="disabled" selected>Select Type</option>
 						@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
@@ -286,12 +366,12 @@
 				</div>
 
 				<div class="form-group">
-					Hvor i manuset <br>
+					<label class="d-block">Hvor i manuset</label>
 					@foreach(\App\Http\FrontendHelpers::manuscriptType() as $manu)
 						<input type="radio" name="manu_type" value="{{ $manu['id'] }}" required> <label>{{ $manu['option'] }}</label> <br>
 					@endforeach
 				</div>
-		      	<button type="submit" class="btn btn-primary pull-right margin-top">Upload</button>
+		      	<button type="submit" class="btn btn-primary pull-right">Upload</button>
 		      	<div class="clearfix"></div>
 		    </form>
 		  </div>
@@ -303,8 +383,8 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
+				<h3 class="modal-title">Replace manuscript</h3>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Replace manuscript</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
@@ -315,7 +395,7 @@
 						* Godkjente fil formater er DOC, DOCX, PDF og ODT.
 					</div>
 
-					<button type="submit" class="btn btn-primary pull-right margin-top">Submit</button>
+					<button type="submit" class="btn btn-primary pull-right">Submit</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -327,12 +407,14 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
+				<h3 class="modal-title">Delete manuscript</h3>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Delete manuscript</h4>
 			</div>
 			<div class="modal-body">
-				Are you sure to delete this manuscript?
-				Warning: This cannot be undone.
+				<p>
+					Are you sure to delete this manuscript?
+					Warning: This cannot be undone.
+				</p>
 				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<button type="submit" class="btn btn-danger pull-right margin-top">Delete</button>
@@ -359,7 +441,17 @@
 @stop
 
 @section('scripts')
+	<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script>
 <script>
+
+    // call the function once fully loaded
+    $(window).on('load', function() {
+        $('.grid').masonry({
+            // options
+            itemSelector : '.grid-item'
+        });
+    });
+
 	@if (Session::has('success'))
 	$('#submitSuccessModal').modal('show');
 	@endif
@@ -372,27 +464,27 @@
     	$('#manuscriptTestErrorModal').modal('show');
 	@endif
 
-$('.submitManuscriptBtn').click(function(){
-		var form = $('#submitManuscriptModal form');
-		var action = $(this).data('action');
+	$('.submitManuscriptBtn').click(function(){
+		let form = $('#submitManuscriptModal form');
+        let action = $(this).data('action');
 		form.attr('action', action);
 	});
 
     $('.submitEditorManuscriptBtn').click(function(){
-        var form = $('#submitEditorManuscriptModal form');
-        var action = $(this).data('action');
+        let form = $('#submitEditorManuscriptModal form');
+        let action = $(this).data('action');
         form.attr('action', action);
     });
 
     $('.editManuscriptBtn').click(function(){
-        var form = $('#editManuscriptModal form');
-        var action = $(this).data('action');
+        let form = $('#editManuscriptModal form');
+        let action = $(this).data('action');
         form.attr('action', action);
     });
 
     $('.deleteManuscriptBtn').click(function(){
-        var form = $('#deleteManuscriptModal form');
-        var action = $(this).data('action');
+        let form = $('#deleteManuscriptModal form');
+        let action = $(this).data('action');
         form.attr('action', action)
     });
 </script>

@@ -144,7 +144,7 @@
                     ->orderBy('webinars.start_date', 'ASC')
                     ->get();
                 ?>
-                <div class="divider-center-text w-100 text-center">MINE WEBINAR</div>
+                <div class="divider-center-text">MINE WEBINAR</div>
 
                 @foreach($webinarsRepriser as $webinar)
                     <?php
