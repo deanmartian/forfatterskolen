@@ -87,7 +87,7 @@
 
         $loggedInPages = ['learner.dashboard', 'learner.account.search', 'learner.course', 'learner.course.show',
             'learner.course.lesson', 'learner.shop-manuscript', 'learner.shop-manuscript.show', 'learner.workshop',
-            'learner.webinar'];
+            'learner.webinar', 'learner.course-webinar'];
         ?>
         @if(!in_array(Route::currentRouteName(), $newDesignPages) && !in_array(Route::currentRouteName(), $loggedInPages))
             @include('frontend.partials.navbar')

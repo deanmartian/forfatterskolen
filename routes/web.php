@@ -192,6 +192,7 @@ Route::group([
         Route::get('/webinar', 'LearnerController@webinar')->name('learner.webinar'); // Webinars Page
         Route::post('/webinar', 'LearnerController@webinar')->name('learner.webinar'); // Webinars Page
         Route::get('/course-webinar', 'LearnerController@courseWebinar')->name('learner.course-webinar'); // Course Webinars Page
+        Route::post('/course-webinar', 'LearnerController@courseWebinar')->name('learner.course-webinar'); // Course Webinars Page
         Route::get('/assignment', 'LearnerController@assignment')->name('learner.assignment'); // Assignments Page
         Route::post('assignment/{id}/replace_manuscript', 'LearnerController@replaceAssignmentManuscript')->name('learner.assignment.replace_manuscript');
         Route::post('assignment/{id}/delete_manuscript', 'LearnerController@deleteAssignmentManuscript')->name('learner.assignment.delete_manuscript');

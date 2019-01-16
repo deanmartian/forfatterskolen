@@ -3718,6 +3718,7 @@ margin-right: 5px;
 
 .learner-container {
     background-color: #f3f5f7;
+    min-height: 500px;
     padding-bottom: 50px;
     padding-top: 50px;
 }
