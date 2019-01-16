@@ -1,6 +1,6 @@
 <div class="row learner-menu navbar-expand-md">
     <ul class="navbar-nav nav-fill">
-        <li class="nav-item @if(Request::is('account/course*')) active @endif">
+        <li class="nav-item @if(!Request::is('account/course-webinar') && Request::is('account/course*')) active @endif">
             <a class="nav-link" href="{{route('learner.course')}}">
                 <i class="sprite-menu student-cap d-block"></i>
                 Mine Kurs
