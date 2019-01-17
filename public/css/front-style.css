@@ -4365,7 +4365,7 @@ margin-right: 5px;
     position: absolute;
 }
 
-.learner-assignment .card-header .site-btn-global {
+.learner-assignment .card-header .site-btn-global, .learner-assignment-show .site-btn-global {
     word-break: break-word;
     white-space: inherit;
     word-wrap: break-word;
@@ -4545,6 +4545,10 @@ blockquote {
 
 .font-barlow-semi-bold {
     font-family: "Barlow SemiBold", sans serif;
+}
+
+.font-barlow-italic {
+    font-family: "Barlow Italic", sans serif;
 }
 
 .font-16 {
