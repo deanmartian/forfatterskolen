@@ -78,7 +78,8 @@ class CourseController extends Controller
             'is_free' => '',
             'instructor' => '',
             'auto_list_id' => '',
-            'photographer' => ''
+            'photographer' => '',
+            'hide_price' => ''
         ];
         return view('backend.course.create', compact('course'));
     }
@@ -115,6 +116,7 @@ class CourseController extends Controller
         $course->instructor = $request->instructor;
         $course->auto_list_id = $request->auto_list_id ?: 0;
         $course->photographer = $request->photographer;
+        $course->hide_price = isset($request->hide_price) ? 1 : 0;
         $course->save();
         return redirect(route('admin.course.show', $course->id));
     }
@@ -167,6 +169,8 @@ class CourseController extends Controller
         $course->instructor = $request->instructor;
         $course->auto_list_id = $request->auto_list_id ?: 0;
         $course->photographer = $request->photographer;
+        $course->is_free = isset($request->is_free) ? 1 : 0;
+        $course->hide_price = isset($request->hide_price) ? 1 : 0;
         $course->save();
         return redirect(route('admin.course.show', $course->id));
     }

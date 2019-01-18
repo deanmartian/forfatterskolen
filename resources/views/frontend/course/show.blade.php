@@ -22,7 +22,7 @@
 		<div class="header">
 			<div class="container text-center">
 				<h1>{{$course->title}}</h1>
-				@if (!$course->is_free)
+				@if (!$course->is_free && !$course->hide_price)
 					<span class="course-price">
 						Fra {{\App\Http\FrontendHelpers::currencyFormat($isBetween && $course->packages[0]->full_payment_sale_price
 						? $course->packages[0]->full_payment_sale_price
@@ -32,7 +32,7 @@
 
 				<div class="sub-header">
 					@if(Auth::guest())
-						@if ($course->for_sale && !$course->is_free)
+						@if ($course->for_sale && !$course->is_free && !$course->hide_price)
 							<a href="{{route('front.course.checkout', ['id' => $course->id])}}" class="btn buy-course">Bestill Kurset</a>
 						@endif
 					@else
@@ -43,7 +43,7 @@
 						@if($courseTaken)
 							<a href="{{route('learner.course.show', ['id' => $courseTaken->id])}}" class="btn buy-course">Fortsett Kurset</a>
 						@else
-							@if ($course->for_sale && !$course->is_free)
+							@if ($course->for_sale && !$course->is_free && !$course->hide_price)
 									<a href="{{route('front.course.checkout', ['id' => $course->id])}}" class="btn buy-course">Bestill Kurset</a>
 							@endif
 						@endif

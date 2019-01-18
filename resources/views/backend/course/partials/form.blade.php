@@ -89,6 +89,13 @@
 						   @if($course['is_free']) {{ 'checked' }} @endif>
 				</div>
 
+				<div class="form-group">
+					<label>Hide Price</label> <br>
+					<input type="checkbox" data-toggle="toggle" data-on="Yes" name="hide_price"
+						   class="for-sale-toggle" data-off="No"
+					@if($course['hide_price']) {{ 'checked' }} @endif>
+				</div>
+
 				@if(Request::is('course/*/edit'))
 				<button type="submit" class="btn btn-primary">{{ trans('site.update-course') }}</button>
 				<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteCourseModal">{{ trans('site.delete-course') }}</button>

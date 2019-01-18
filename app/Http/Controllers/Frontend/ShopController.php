@@ -38,6 +38,10 @@ class ShopController extends Controller
             if($courseTaken) return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
         endif;
 
+        if ($course->hide_price) {
+            return redirect()->route('front.course.show', $course->id);
+        }
+
     	return view('frontend.shop.checkout', compact('course'));
     }
 
