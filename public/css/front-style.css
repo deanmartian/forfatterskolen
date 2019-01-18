@@ -6977,6 +6977,75 @@ textarea.form-control {
         max-width: 340px;
     }
 
+    .henrik-page .header h1 {
+        font-size: 35px;
+    }
+
+    .henrik-page .first-container {
+        margin-bottom: 50px;
+        margin-top: 40px;
+    }
+
+    .henrik-page .first-container .owner-image-container {
+        height: 410px;
+    }
+
+    .henrik-page .first-container .owner-details-container {
+        padding: 0;
+    }
+
+    .henrik-page .first-container .owner-details {
+        padding: 30px 10px;
+    }
+
+    .henrik-page .question-container .container {
+        padding: 0 74px;
+    }
+
+    .henrik-page .third-container {
+        margin-bottom: 50px;
+        margin-top: 50px;
+    }
+
+    .henrik-page .third-container .left-container {
+        padding: 18px;
+    }
+
+    .henrik-page .third-container .presenter-container .carousel-item img {
+        height: 220px;
+    }
+
+    .henrik-page .third-container .presenter-container .carousel-control-next {
+        right: 4.5%;
+    }
+
+    .henrik-page .third-container .presenter-container .carousel-control-prev {
+        right: 10.5%;
+    }
+
+    .henrik-page .third-container .presenter-container .story-details {
+        margin-top: 25px;
+        padding: 25px;
+    }
+
+    .henrik-page .third-container .contemporary-writer {
+        padding: 0 40px;
+    }
+
+    .henrik-page .fifth-container {
+        background-position: bottom right;
+        padding-bottom: 50px;
+        padding-top: 50px;
+    }
+
+    .henrik-page .fifth-container .left-container {
+        padding: 20px;
+    }
+
+    .henrik-page .fifth-container .border-bottom {
+        padding-bottom: 10px;
+    }
+
     /* theme tab */
     .theme-tabs li a {
         padding: 20px;
@@ -8109,6 +8178,90 @@ textarea.form-control {
     .learner-assignment .divider-center-text:before, .learner-assignment .divider-center-text:after {
         width: 33%;
     }
+
+    .henrik-page {
+        background-size: 100% 300px;
+        background-position: 3px -5px;
+        padding-top: 50px;
+    }
+
+    .henrik-page .header img {
+        max-width: 280px;
+    }
+
+    .henrik-page .first-container {
+        margin-bottom: 40px;
+        margin-top: 30px;
+    }
+
+    .henrik-page .first-container .owner-image-container {
+        height: 345px;
+    }
+
+    .henrik-page .first-container .owner-details-container {
+        padding: 14px;
+    }
+
+    .henrik-page .question-container {
+        padding: 40px 0;
+    }
+
+    .henrik-page .question-container .container {
+        padding: 0;
+    }
+
+    .henrik-page .third-container {
+        margin-bottom: 40px;
+        margin-top: 40px;
+    }
+
+    .henrik-page .third-container .left-container {
+        box-shadow: none;
+        padding: 15px 30px;
+    }
+
+    .henrik-page .third-container .left-container > div {
+        box-shadow: 3px 4px 9px 0 rgba(212, 212, 212, 0.47);
+        padding: 20px;
+    }
+
+    .henrik-page .third-container .presenter-container .carousel-item img {
+        height: 315px;
+    }
+
+    .henrik-page .third-container .presenter-container .carousel-control-next {
+        right: 3%;
+    }
+
+    .henrik-page .third-container .presenter-container .carousel-control-prev {
+        right: 9%;
+    }
+
+    .henrik-page .third-container .contemporary-writer {
+        padding: 0 10px;
+    }
+
+    .henrik-page .fourth-container {
+        min-height: 680px;
+        padding: 40px 0;
+    }
+
+    .henrik-page .fourth-container .testimonial-container {
+        padding: 15px;
+    }
+
+    .henrik-page .fourth-container .carousel-inner {
+        margin-left: 0;
+    }
+
+    .henrik-page .fifth-container {
+        padding-bottom: 30px;
+        padding-top: 30px;
+    }
+
+    .henrik-page .last-container {
+        padding: 20px;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -9046,6 +9199,121 @@ textarea.form-control {
     .learner-assignment .divider-center-text:before, .learner-assignment .divider-center-text:after {
         width: 29%;
     }
+
+    .henrik-page {
+        background-size: 100% 250px;
+        padding-top: 40px;
+    }
+
+    .henrik-page .header img {
+        max-width: 234px;
+    }
+
+    .henrik-page .header h1 {
+        font-size: 25px;
+    }
+
+    .henrik-page .header h2 {
+        font-size: 21px;
+    }
+
+    .henrik-page .first-container {
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
+
+    .henrik-page .first-container .owner-image-container {
+        height: 260px;
+    }
+
+    .henrik-page .question-container {
+        padding: 30px 15px;
+    }
+
+    .henrik-page .question-container:after {
+        background: none;
+    }
+
+    .henrik-page .question-container p {
+        font-size: 15px;
+    }
+
+    .henrik-page .question-container h1 {
+        font-size: 2.5rem;
+    }
+
+    .henrik-page .third-container {
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
+
+    .henrik-page .third-container .presenter-container .carousel-item img {
+        height: 240px;
+    }
+
+    .henrik-page .third-container .presenter-container .carousel-control-next {
+        right: 4%;
+    }
+
+    .henrik-page .third-container .presenter-container .carousel-control-prev {
+        right: 10%;
+    }
+
+    .henrik-page .third-container .presenter-container .story-details {
+        margin-top: 15px;
+        padding: 15px;
+    }
+
+    .henrik-page .third-container .contemporary-writer {
+        margin-top: 35px;
+    }
+
+    .henrik-page .third-container .contemporary-writer h1, .henrik-page .fourth-container h1 {
+        font-size: 2.5rem;
+    }
+
+    .henrik-page .third-container .contemporary-writer .font-16 {
+        font-size: 15px;
+    }
+
+    .henrik-page .fourth-container .h-100 {
+        height: auto !important;
+    }
+
+    .henrik-page .fourth-container {
+        min-height: 0;
+        height: auto;
+        padding-bottom: 75px;
+    }
+
+    .henrik-page .fifth-container {
+        padding-bottom: 20px;
+        padding-top: 20px;
+    }
+
+    .henrik-page .fifth-container h1 {
+        font-size: 2.5rem;
+    }
+
+    .henrik-page .fifth-container p, .henrik-page .fifth-container a {
+        font-size: 15px;
+    }
+
+    .henrik-page .fifth-container .left-container {
+        padding: 15px;
+    }
+
+    .henrik-page .fifth-container .right-container {
+        padding: 20px 15px;
+    }
+
+    .henrik-page .last-container {
+        padding: 15px;
+    }
+
+    .henrik-page .last-container h1 {
+        font-size: 2.5rem;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -9314,6 +9582,31 @@ textarea.form-control {
 
     .webinar-thumb div {
         height: 200px;
+    }
+
+    .henrik-page {
+        background-size: 100% 145px;
+        padding-top: 30px;
+    }
+
+    .henrik-page .header img {
+        max-width: 210px;
+    }
+
+    .henrik-page .first-container .owner-image-container {
+        height: 230px;
+    }
+
+    .henrik-page .third-container {
+        margin-top: 0;
+    }
+
+    .henrik-page .third-container .left-container > div {
+        padding: 10px;
+    }
+
+    .henrik-page .third-container .presenter-container .carousel-item img {
+        height: 212px;
     }
 }
 
@@ -9814,5 +10107,49 @@ textarea.form-control {
 
     .learner-assignment .divider-center-text:before, .learner-assignment .divider-center-text:after {
         width: 23%;
+    }
+
+    .henrik-page .header img {
+        max-width: 190px;
+    }
+
+    .henrik-page .header h2 {
+        font-size: 19px;
+    }
+
+    .henrik-page .header h1 {
+        font-size: 22px;
+    }
+
+    .henrik-page .first-container .owner-image-container {
+        height: 200px;
+    }
+
+    .henrik-page .first-container .owner-details {
+        padding: 10px;
+    }
+
+    .henrik-page .third-container .left-container {
+        padding: 15px;
+    }
+
+    .henrik-page .third-container .presenter-container {
+        padding: 0;
+    }
+
+    .henrik-page .third-container .presenter-container .carousel-control-next {
+        right: 4.5%;
+    }
+
+    .henrik-page .third-container .presenter-container .carousel-control-prev {
+        right: 10.5%;
+    }
+
+    .henrik-page .last-container {
+        padding: 10px;
+    }
+
+    .henrik-page .last-container h1 {
+        font-size: 24px;
     }
 }
