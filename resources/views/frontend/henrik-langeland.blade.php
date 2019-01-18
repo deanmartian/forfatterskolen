@@ -194,7 +194,7 @@
                         <!-- The slideshow -->
                         <div class="container carousel-inner row">
                             <div class="carousel-item active">
-                                <div class="col-md-6 h-100">
+                                <div class="col-sm-6 col-xs-12 h-100">
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
@@ -208,7 +208,7 @@
                                         </div> <!-- end testimonial-container-->
                                     </div>
                                 </div> <!-- end column -->
-                                <div class="col-md-6 h-100">
+                                <div class="col-sm-6 col-xs-12 h-100">
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
@@ -226,7 +226,7 @@
                             </div>  <!-- end carousel-item -->
 
                             <div class="carousel-item">
-                                <div class="col-md-6 h-100">
+                                <div class="col-sm-6 col-xs-12 h-100">
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
@@ -242,7 +242,7 @@
                                         </div> <!-- end testimonial-container-->
                                     </div>
                                 </div> <!-- end column -->
-                                <div class="col-md-6 h-100">
+                                <div class="col-sm-6 col-xs-12 h-100">
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
@@ -260,7 +260,7 @@
                             </div> <!-- end carousel-item -->
 
                             <div class="carousel-item">
-                                <div class="col-md-6 h-100">
+                                <div class="col-sm-6 col-xs-12 h-100">
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
@@ -274,7 +274,7 @@
                                         </div> <!-- end testimonial-container-->
                                     </div>
                                 </div> <!-- end column -->
-                                <div class="col-md-6 h-100">
+                                <div class="col-sm-6 col-xs-12 h-100">
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
@@ -291,7 +291,7 @@
                             </div> <!-- end carousel-item -->
 
                             <div class="carousel-item">
-                                <div class="col-md-6 h-100">
+                                <div class="col-sm-6 col-xs-12 h-100">
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
@@ -306,7 +306,7 @@
                                         </div> <!-- end testimonial-container-->
                                     </div>
                                 </div> <!-- end column -->
-                                <div class="col-md-6 h-100">
+                                <div class="col-sm-6 col-xs-12 h-100">
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
