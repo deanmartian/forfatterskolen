@@ -144,8 +144,10 @@ class CourseController extends Controller
         $course->display_order = is_numeric($request->display_order) ? $request->display_order : 0;
 
         if ($request->hasFile('course_image') && $request->file('course_image')->isValid()) :
+            $checkImageExistCount = Course::where('course_image', 'LIKE', '%'.$course->course_image.'%')
+                ->get()->count();
             $image = substr($course->course_image, 1);
-            if( File::exists($image) ) :
+            if( File::exists($image) && $checkImageExistCount < 2) :
                 File::delete($image);
             endif;
             $destinationPath = 'storage/course-images/'; // upload path
