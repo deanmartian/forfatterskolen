@@ -44,10 +44,15 @@
 			<div class="panel-body">
 				<div class="form-group">
 					<label id="course-image">{{ trans('site.course-image') }}</label>
-					<div class="course-form-image image-file margin-bottom">
+					<div class="course-form-image image-file">
 						<div class="image-preview" style="background-image: url('{{$course['course_image']}}')" data-default="{{Auth::user()->profile_image}}" title="Select Image" data-toggle="tooltip" data-placement="bottom"></div>
 						<input type="file" accept="image/*" name="course_image" accept="image/jpg, image/jpeg, image/png">
 					</div>
+
+					<p class="text-center">
+						<small class="text-muted">1140*600</small>
+					</p>
+
 				</div>
 				<div class="form-group">
 					<label>Photographer</label>
