@@ -188,6 +188,7 @@
                             <li data-target="#testimonials-carousel" data-slide-to="0" class="active"></li>
                             <li data-target="#testimonials-carousel" data-slide-to="1"></li>
                             <li data-target="#testimonials-carousel" data-slide-to="2"></li>
+                            <li data-target="#testimonials-carousel" data-slide-to="3"></li>
                         </ul>
 
                         <!-- The slideshow -->
@@ -229,12 +230,14 @@
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
-                                                «Kurset er håndfast og konkret, avmystifiserer litterær skriving og legger
-                                                vekt på håndverket, med mange gode tips til struktur og arbeidsprosess.»
+                                                «Det finnes mange der ute som kan fiksjonsskrivingens håndverk, og som
+                                                kan akademisk litterær analyse, men ikke mange som kan begge deler. Det
+                                                kan Henrik. Kombinasjonen av solid akademisk bakgrunn og hands-on
+                                                håndverkskunnskap er nok det som gjør kurset hans så bra.»
                                             </p>
 
                                             <p class="font-montserrat-medium theme-text mb-0 mt-4">
-                                                — Maja Lunde, forfatter
+                                                — Espen Ytreberg, professor i medievitenskap
                                             </p>
                                         </div> <!-- end testimonial-container-->
                                     </div>
@@ -243,13 +246,13 @@
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
-                                                «En super kursleder, teoretisk sterk, flink til å trekke ut nyttige
-                                                prinsipper både fra litteraturen og ’kokebøkene’ om litteratur. Inspirerende
-                                                å se hvordan han jobber selv. Han gir gode, presise råd og er engasjert.»
+                                                «Verktøyene og metodene Langeland sverger til er nyttige for alle, og
+                                                uansett hvordan man velger å forholde seg til tekst, bør man ha
+                                                grunnleggende kjennskap til tradisjonell dramaturgi.»
                                             </p>
 
                                             <p class="font-montserrat-medium theme-text mb-0 mt-4">
-                                                — Anders Danielsen Lie, forfatter og skuespiller
+                                                — Nicolai Houm, forfatter og redaktør
                                             </p>
                                         </div> <!-- end testimonial-container-->
                                     </div>
@@ -261,12 +264,12 @@
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
-                                                «Kurset er håndfast og konkret, avmystifiserer litterær skriving og legger
-                                                vekt på håndverket, med mange gode tips til struktur og arbeidsprosess.»
+                                                «Det er fint å få en gjennomgang av det teoretiske ved skrivefaget
+                                                konsentrert over en helg.»
                                             </p>
 
                                             <p class="font-montserrat-medium theme-text mb-0 mt-4">
-                                                — Maja Lunde, forfatter
+                                                — Axel Hellstenius, manus- og barnebokforfatter
                                             </p>
                                         </div> <!-- end testimonial-container-->
                                     </div>
@@ -275,13 +278,44 @@
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
-                                                «En super kursleder, teoretisk sterk, flink til å trekke ut nyttige
-                                                prinsipper både fra litteraturen og ’kokebøkene’ om litteratur. Inspirerende
-                                                å se hvordan han jobber selv. Han gir gode, presise råd og er engasjert.»
+                                                «Dette var et supert kurs. Akkurat det jeg trengte for å sette ting på
+                                                plass i eget hode, og i egen tekst.»
                                             </p>
 
                                             <p class="font-montserrat-medium theme-text mb-0 mt-4">
-                                                — Anders Danielsen Lie, forfatter og skuespiller
+                                                — Gro T. Fykse, forfatter
+                                            </p>
+                                        </div> <!-- end testimonial-container-->
+                                    </div>
+                                </div> <!-- end column -->
+                            </div> <!-- end carousel-item -->
+
+                            <div class="carousel-item">
+                                <div class="col-md-6 h-100">
+                                    <div class="card card-global rounded-0">
+                                        <div class="testimonial-container my-auto">
+                                            <p class="font-montserrat-regular">
+                                                «Kurset var helt avgjørende for meg. Jeg trodde at jeg hadde skrevet
+                                                ferdig halve debutboken min, men etter kurset dro jeg hjem og skrev om
+                                                hele romanen.»
+                                            </p>
+
+                                            <p class="font-montserrat-medium theme-text mb-0 mt-4">
+                                                — Kristine Tofte, forfatter
+                                            </p>
+                                        </div> <!-- end testimonial-container-->
+                                    </div>
+                                </div> <!-- end column -->
+                                <div class="col-md-6 h-100">
+                                    <div class="card card-global rounded-0">
+                                        <div class="testimonial-container my-auto">
+                                            <p class="font-montserrat-regular">
+                                                «Anbefalast! Henrik Langeland er ein framifrå kurshaldar og
+                                                skriveinspirator.»
+                                            </p>
+
+                                            <p class="font-montserrat-medium theme-text mb-0 mt-4">
+                                                — Per Roger Sandvik, biblioteksjef Nesodden
                                             </p>
                                         </div> <!-- end testimonial-container-->
                                     </div>
@@ -317,7 +351,7 @@
 
                             <p class="mt-4 mb-0">
                                 <span class="font-montserrat-medium">Alle spørsmål kan rettes til:</span> Randi Faye,
-                                telefon 924 18 373, Randi.faye@cappelendamm.no
+                                telefon 924 18 373, <a href="mailto:randi.faye@cappelendamm.no">randi.faye@cappelendamm.no</a>
                             </p>
                         </div>
                     </div>
@@ -336,7 +370,7 @@
                         </h1>
 
                         <p class="mt-4 mb-0">
-                            Send bindende påmelding til: randi.faye@cappelendamm.no
+                            Send bindende påmelding til: <a href="mailto:randi.faye@cappelendamm.no">randi.faye@cappelendamm.no</a>
                             <span class="d-block font-16 font-montserrat-light">Navn, mobil og epost på deltaker</span>
                             <span class="d-block font-16 font-montserrat-light">Faktura vil bli tilsendt.</span>
                         </p>

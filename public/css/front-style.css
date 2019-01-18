@@ -4603,7 +4603,8 @@ margin-right: 5px;
     padding: 29px;
 }
 
-.henrik-page .fifth-container p {
+.henrik-page .fifth-container p,
+.henrik-page .fifth-container a {
     font-family: "Montserrat Light", sans serif;
     font-size: 16px;
     line-height: 33px;
