@@ -67,6 +67,12 @@
 }
 
 @font-face{
+    font-family: 'Montserrat Light';
+    src: url('../fonts/montserrat/Montserrat-Light.otf');
+    font-display: block;
+}
+
+@font-face{
     font-family: 'Century Gothic Bold';
     src: url('../fonts/century-gothic/GOTHICB0.TTF');
     font-display: block;
@@ -4377,6 +4383,252 @@ margin-right: 5px;
 }
 /* end learner assignment page */
 
+/* henrik langeland page */
+.henrik-page {
+    background: linear-gradient( rgba(255, 255, 255, .85), rgba(255, 255, 255, .85)),
+    url(../images-new/langeland/bg-image.png) no-repeat 3px -15px / 100% 700px;
+    padding-top: 130px;
+}
+
+.henrik-page .header img {
+    width: auto;
+    max-width: 400px;
+}
+
+.henrik-page .header h1 {
+    font-family: "Barlow Medium", sans serif;
+    font-size: 40px;
+    margin-top: 10px;
+}
+
+.henrik-page .header h2 {
+    font-size: 26px;
+}
+
+.henrik-page .first-container {
+    margin-bottom: 60px;
+    margin-top: 50px;
+}
+
+.henrik-page .first-container .owner-image-container {
+    background: url(../images-new/langeland/henrik.jpg) no-repeat left / cover;
+    border-radius: 5px;
+    height: 562px;
+}
+
+.henrik-page .first-container .owner-details-container {
+    padding: 50px;
+}
+
+.henrik-page .first-container .owner-details {
+    box-shadow: 3px 4px 9px 0 rgba(212, 212, 212, 0.47);
+    padding: 30px 61px;
+}
+
+.henrik-page .first-container .owner-details ul {
+    list-style-type: none;
+}
+
+.henrik-page .first-container .owner-details ul > li {
+    font-size: 16px;
+    padding-top: 10px;
+    position: relative;
+}
+
+.henrik-page .first-container .owner-details ul > li:before {
+    content: '';
+    position: absolute;
+    background: url(../images-new/icon/tick-inside-circle.png) no-repeat center / cover;
+    height: 18px;
+    width: 18px;
+    top: 14px;
+    margin-left: -35px;
+}
+
+.henrik-page .question-container {
+    background-color: #efecef;
+    padding: 50px 0;
+    position: relative;
+}
+
+.henrik-page .question-container:after {
+    content: '';
+    position: absolute;
+    background: url(../images-new/langeland/question-bg.jpg) no-repeat left bottom/ contain;
+    height: 100%;
+    top: 0;
+    width: 100%;
+}
+
+.henrik-page .question-container h1 {
+    font-size: 30px;
+}
+
+.henrik-page .question-container p {
+    font-family: "Montserrat Light", sans serif;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.henrik-page .question-container .container {
+    padding: 0 204px;
+    position: relative;
+    z-index: 1;
+}
+
+.henrik-page .third-container {
+    margin-bottom: 60px;
+    margin-top: 60px;
+}
+
+.henrik-page .third-container  .left-container {
+    box-shadow: 3px 4px 9px 0 rgba(212, 212, 212, 0.47);
+    padding: 30px;
+}
+
+.henrik-page .third-container  .left-container p {
+    font-family: "Montserrat Light", sans serif;
+    font-size: 15px;
+}
+
+.henrik-page .third-container .presenter-container .carousel-item img {
+    font-size: 55px;
+    height: 350px;
+    background-color: #f00;
+    object-fit: cover;
+    width: 100%;
+}
+
+.henrik-page .third-container .presenter-container .carousel-control-prev .carousel-control-prev-icon,
+.henrik-page .third-container .presenter-container .carousel-control-next .carousel-control-next-icon {
+    background: none;
+}
+
+.henrik-page .third-container .presenter-container .carousel-control-prev .carousel-control-prev-icon:before,
+.henrik-page .third-container .presenter-container .carousel-control-next .carousel-control-next-icon:before {
+    font-family: FontAwesome;
+    font-size: 15px;
+}
+
+.henrik-page .third-container .presenter-container .carousel-control-prev .carousel-control-prev-icon:before {
+    content: '\f053';
+}
+
+.henrik-page .third-container .presenter-container .carousel-control-next .carousel-control-next-icon:before {
+    content: '\f054';
+}
+
+.henrik-page .third-container .presenter-container .carousel-control-prev,
+.henrik-page .third-container .presenter-container .carousel-control-next {
+    background-color: #e83a47;
+    height: 30px;
+    left: unset;
+    opacity: 1;
+    top: unset;
+    width: 6%;
+}
+
+.henrik-page .third-container .presenter-container .carousel-control-prev:hover,
+.henrik-page .third-container .presenter-container .carousel-control-next:hover {
+    opacity: .5;
+}
+
+.henrik-page .third-container .presenter-container .carousel-control-prev {
+    right: 8.7%;
+}
+
+.henrik-page .third-container .presenter-container .carousel-control-next {
+    right: 2.7%;
+}
+
+.henrik-page .third-container .presenter-container .story-details {
+    box-shadow: 3px 4px 9px 0 rgba(212, 212, 212, 0.47);
+    margin-top: 30px;
+    padding: 35px;
+    text-align: center;
+}
+
+.henrik-page .third-container .contemporary-writer {
+    margin-top: 60px;
+    padding: 0 226px;
+}
+
+.henrik-page .third-container .contemporary-writer h1, .henrik-page .fourth-container h1 {
+    font-size: 30px;
+}
+
+.henrik-page .fourth-container {
+    background: linear-gradient(rgba(0, 0, 0, .8), rgba(0, 0, 0, .8)),
+    url(../images-new/langeland/testimonial-bg.png) no-repeat center / cover;
+    color: #fff;
+    min-height: 500px;
+    padding: 60px 0;
+}
+
+.henrik-page .fourth-container .head p {
+    font-size: 17px;
+}
+
+.henrik-page .fourth-container .carousel-indicators {
+    bottom: -50px;
+    margin: 0 auto;
+}
+
+.henrik-page .fourth-container .carousel-indicators li {
+    border: none;
+    height: 12px;
+    margin: 0;
+    margin-right: 10px;
+    width: 12px;
+}
+
+.henrik-page .fourth-container .testimonial-container {
+    background-color: #fff;
+    color: #323232;
+    padding: 30px;
+}
+
+.henrik-page .fifth-container {
+    background: url(../images-new/langeland/book-subtle-bg.png) no-repeat center right / contain;
+    padding-bottom: 60px;
+    padding-top: 60px;
+}
+
+.henrik-page .fifth-container h1 {
+    font-size: 30px;
+}
+
+.henrik-page .fifth-container .left-container {
+    box-shadow: 3px 4px 9px 0 rgba(212, 212, 212, 0.47);
+    padding: 29px;
+}
+
+.henrik-page .fifth-container p {
+    font-family: "Montserrat Light", sans serif;
+    font-size: 16px;
+    line-height: 33px;
+}
+
+.henrik-page .fifth-container .border-bottom {
+    border-bottom: 1px solid #e6e6e6;
+    padding-bottom: 15px;
+}
+
+.henrik-page .fifth-container .right-container {
+    padding: 20px 40px;
+}
+
+.henrik-page .last-container {
+    background-color: #852736;
+    color: #fff;
+    padding: 30px;
+}
+
+.henrik-page .last-container h1 {
+    font-size: 35px;
+}
+/* end henrik langeland page */
+
 /* theme tabs */
 
 .theme-tabs {
@@ -4549,6 +4801,18 @@ blockquote {
 
 .font-barlow-italic {
     font-family: "Barlow Italic", sans serif;
+}
+
+.font-barlow-medium {
+    font-family: "Barlow Medium", sans serif;
+}
+
+.font-montserrat-light {
+    font-family: "Montserrat Light", sans serif;
+}
+
+.font-montserrat-medium {
+    font-family: "Montserrat Medium", sans serif;
 }
 
 .font-16 {
@@ -5741,6 +6005,35 @@ textarea.form-control {
     .webinar-search-container .input-group-btn {
         width: 28%;
     }
+
+    .henrik-page {
+        background-size: 100% 580px;
+        padding-top: 90px;
+    }
+
+    .henrik-page .first-container .owner-image-container {
+        height: 100%;
+    }
+
+    .henrik-page .third-container .presenter-container .carousel-item img {
+        height: 315px;
+    }
+
+    .henrik-page .third-container .presenter-container .carousel-control-next {
+        right: 3%;
+    }
+
+    .henrik-page .third-container .presenter-container .carousel-control-prev {
+        right: 9%;
+    }
+
+    .henrik-page .third-container .contemporary-writer {
+        padding: 0 137px;
+    }
+
+    .henrik-page .fourth-container {
+        min-height: 550px;
+    }
 }
 
 @media only screen and (max-width: 768px) {
@@ -6672,6 +6965,15 @@ textarea.form-control {
 
     .learner-assignment .divider-center-text:before, .learner-assignment .divider-center-text:after {
         width: 38%;
+    }
+
+    .henrik-page {
+        background-size: 100% 430px;
+        padding-top: 70px;
+    }
+
+    .henrik-page .header img {
+        max-width: 340px;
     }
 
     /* theme tab */

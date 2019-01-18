@@ -1207,6 +1207,11 @@ Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 
         return view('frontend.upviral-campaign.webinar-pakke');
     }
 
+    public function henrikPage()
+    {
+        return view('frontend.henrik-langeland');
+    }
+
     public function testCampaign()
     {
         return view('frontend.upviral-campaign.test');

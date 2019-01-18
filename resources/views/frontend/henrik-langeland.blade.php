@@ -1,0 +1,356 @@
+@extends('frontend.layout')
+
+@section('title')
+    <title>Henrik Langeland Page</title>
+@stop
+
+@section('content')
+
+    <div class="henrik-page">
+        <div class="container">
+            <div class="row header">
+                <div class="col-md-12 text-center">
+                    <img src="{{ asset('images-new/langeland/header-image.png') }}" alt="">
+                    <h2 class="theme-text">
+                        En perfekt gave til den skriveglade!
+                    </h2>
+                    <h1>
+                        Fortellekunst: Skrivekurs med <br>
+                        Henrik H. Langeland
+                    </h1>
+                </div>
+            </div>
+
+            <div class="row first-container">
+                <div class="col-md-6">
+                    <div class="owner-image-container">
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex owner-details-container">
+                    <div class="align-self-center owner-details">
+                        <p>
+                            Henrik H. Langeland(f. 1972) fikk sitt gjennombrudd som forfatter med romanen Wonderboy i
+                            2003. Han har skrevet flere romaner og sakprosabøker.
+                        </p>
+
+                        <ul>
+                            <li>
+                                Hva gjør en god fortelling god?
+                            </li>
+                            <li>
+                                Hvorfor er det slik at vi synes noen historier er kjedelige, mens vi lar oss begeistre
+                                av andre?
+                            </li>
+                            <li>
+                                Hvorfor er det slik at vi synes noen historier er kjedelige, mens vi lar oss begeistre
+                                av andre?
+                            </li>
+                        </ul>
+
+                        <p>
+                            Å skrive en fortelling er noe alle synes er vanskelig. Så er det da heller ingen enkel kunst.
+                        </p>
+                    </div> <!-- end owner-details-->
+                </div> <!-- end owner-details-container -->
+            </div> <!-- end first-container -->
+        </div> <!-- end container -->
+
+        <div class="question-container">
+            <div class="container text-center">
+                <h1 class="font-barlow-medium theme-text">
+                    Hvordan skape bedre fortellinger?
+                </h1>
+
+                <p>
+                    Henrik Langeland skrivekurs retter seg mot dem som vil lære seg de konkrete mekanismene den godt
+                    skrevne fortellingen re basert på. Siden 2008 har over tusen mennesker deltatt på seminarene hans -
+                    ikke bare skjønnlitterære forfattere, men alle med ambisjoner om å skape bedre fortellinger. Kurset
+                    er nyttig for enhver som har en historie de vil formidle på best mulig måte, enten man er i
+                    startfasen, ønsker å komme videre i prosessen eller allerede har publisert tekster.
+                </p>
+            </div> <!-- end container -->
+        </div> <!-- end question-container -->
+
+        <div class="third-container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 d-flex left-container">
+                        <div class="align-self-center">
+                            <h1 class="font-barlow-medium theme-text mb-0">
+                                To kursdager
+                            </h1>
+                            <p class="mt-5">
+                                Gjennom to intensive dager går Langeland gjennom de grunnleggende bestanddelene i
+                                fortellekunsten. Temaer som forholdet mellom språk og handling, interessevekkere,
+                                tidsperspektiver, spenningsstrukturer, faktaformidling, verdivendinger, kapitteloppbygging,
+                                karakterutvikling og synsvinkelbruk blir presentert slik at deltakerne forstår hvordan disse
+                                elementene sammen virker i å skape en levende og interessant fortelling - en fortelling man
+                                kan bli fengslet av.
+                            </p>
+
+                            <p class="mt-5">
+                                I kurset tar også Langeland opp de rent praktiske delene ved skriveprosessen, slik som
+                                stoffinnsamling, arbeidsrutiner og forlagsrelasjoner.
+                            </p>
+
+                            <p class="mt-5">
+                                Det inneholder dessuten en egen del om å skrive manus for film og tv-serier.
+                            </p>
+
+                            <p class="mt-5">
+                                Skrivekurset er foredragsbasert. Deltakerne skal ikke levere inn egne tekster, men det er
+                                anledning til å stille spørsmål og delta i diskusjoner.
+                            </p>
+                        </div> <!-- end left-container-->
+                    </div> <!-- end left column -->
+                    <div class="col-md-6 presenter-container">
+                        <div id="presenter-carousel" class="carousel slide"
+                             data-ride="carousel" data-interval="10000">
+
+                            <!-- The slideshow -->
+                            <div class="container carousel-inner no-padding">
+                                <div class="carousel-item active">
+                                    <img src="{{ asset('images-new/langeland/maja-text.jpg') }}" alt="">
+                                </div>
+
+                                <div class="carousel-item">
+                                    <img src="{{ asset('images-new/langeland/henrik-med-text.jpg') }}" alt="">
+                                </div>
+                            </div> <!-- end carouse-inner -->
+
+                            <!-- Left and right controls -->
+                            <a class="carousel-control-prev" href="#presenter-carousel" data-slide="prev">
+                                <span class="carousel-control-prev-icon"></span>
+                            </a>
+                            <a class="carousel-control-next" href="#presenter-carousel" data-slide="next">
+                                <span class="carousel-control-next-icon"></span>
+                            </a>
+                        </div> <!-- end presenter-carousel -->
+
+                        <div class="col-md-12">
+                            <div class="story-details">
+                                <h1 class="font-barlow-medium theme-text mb-0">
+                                    Ut og stjæle hester og Fortellekunst
+                                </h1>
+                                <p class="font-montserrat-light mt-4">
+                                    Mange ev eksemplene vil bli hentet fra
+                                    <span class="font-montserrat-medium">Per Pettersons Ut og stjæle hester</span>, så
+                                    det er en fordel a ha lest den romanen i forkant. Seminaret er basert på Langelands
+                                    <span class="font-montserrat-medium">
+                                        Fortellekunst. En håndbok i litterære teknikker,
+                                    </span> men inneholder også et utvidet materiale. I tillegg pleier Langeland a
+                                    invitere en special guest, gjerne en forfatter eller forlagsredaktør, for å samtale
+                                    om det praktiske arbeidet i å skape gode fortellinger.
+                                </p>
+                            </div> <!-- end story-details -->
+                        </div> <!-- end col-md-12 -->
+                    </div> <!-- end presenter-container-->
+                </div> <!-- end row -->
+
+                <div class="row contemporary-writer">
+                    <div class="container text-center">
+                        <h1 class="font-barlow-medium theme-text mb-0">
+                            En av våre lebende samtidsforfattere
+                        </h1>
+
+                        <p class="font-montserrat-light font-16 mt-5">
+                            Kursleder Henrik H. Langeland er en av våre ledende samtidsforfattere og har utgitt en rekke bøker,
+                            blant annet romanene Wonderboy, Francis Meyers lidenskap, Fyrsten og Verdensmestrene. Han har
+                            doktorgraden i litteraturvitenskap på en avhandling om Marcel Proust, vært redaktør for tidsskriftet
+                            Vinduet og har hatt en rekke engasjementer i norsk nærings- og samfunnsliv.
+                        </p>
+                    </div>
+                </div> <!-- end contemporary-writer-->
+            </div> <!-- end container -->
+        </div> <!-- end third-container -->
+
+        <div class="fourth-container">
+            <div class="container">
+                <div class="col-md-8 head">
+                    <div class="row">
+                        <h1 class="font-barlow-medium">
+                            Et legendarisk skrivekurs
+                        </h1>
+
+                        <p class="mt-4 font-montserrat-regular">
+                            Kurset er åpent for alle, og opp gjennom årene har svært mange deltakere har hatt stort utbytte av å
+                            delta på Langelands fortellekunst-seminar. Her er noen tilbakemeldinger:
+                        </p>
+                    </div>
+                </div> <!-- end head-->
+
+                <div class="col-md-12 px-0 mt-5">
+                    <div id="testimonials-carousel" class="carousel slide"
+                         data-ride="carousel" data-interval="10000">
+
+                        <!-- Indicators -->
+                        <ul class="carousel-indicators">
+                            <li data-target="#testimonials-carousel" data-slide-to="0" class="active"></li>
+                            <li data-target="#testimonials-carousel" data-slide-to="1"></li>
+                            <li data-target="#testimonials-carousel" data-slide-to="2"></li>
+                        </ul>
+
+                        <!-- The slideshow -->
+                        <div class="container carousel-inner row">
+                            <div class="carousel-item active">
+                                <div class="col-md-6 h-100">
+                                    <div class="card card-global rounded-0">
+                                        <div class="testimonial-container my-auto">
+                                            <p class="font-montserrat-regular">
+                                                «Kurset er håndfast og konkret, avmystifiserer litterær skriving og legger
+                                                vekt på håndverket, med mange gode tips til struktur og arbeidsprosess.»
+                                            </p>
+
+                                            <p class="font-montserrat-medium theme-text mb-0 mt-4">
+                                                — Maja Lunde, forfatter
+                                            </p>
+                                        </div> <!-- end testimonial-container-->
+                                    </div>
+                                </div> <!-- end column -->
+                                <div class="col-md-6 h-100">
+                                    <div class="card card-global rounded-0">
+                                        <div class="testimonial-container my-auto">
+                                            <p class="font-montserrat-regular">
+                                                «En super kursleder, teoretisk sterk, flink til å trekke ut nyttige
+                                                prinsipper både fra litteraturen og ’kokebøkene’ om litteratur. Inspirerende
+                                                å se hvordan han jobber selv. Han gir gode, presise råd og er engasjert.»
+                                            </p>
+
+                                            <p class="font-montserrat-medium theme-text mb-0 mt-4">
+                                                — Anders Danielsen Lie, forfatter og skuespiller
+                                            </p>
+                                        </div> <!-- end testimonial-container-->
+                                    </div>
+                                </div> <!-- end column -->
+                            </div>  <!-- end carousel-item -->
+
+                            <div class="carousel-item">
+                                <div class="col-md-6 h-100">
+                                    <div class="card card-global rounded-0">
+                                        <div class="testimonial-container my-auto">
+                                            <p class="font-montserrat-regular">
+                                                «Kurset er håndfast og konkret, avmystifiserer litterær skriving og legger
+                                                vekt på håndverket, med mange gode tips til struktur og arbeidsprosess.»
+                                            </p>
+
+                                            <p class="font-montserrat-medium theme-text mb-0 mt-4">
+                                                — Maja Lunde, forfatter
+                                            </p>
+                                        </div> <!-- end testimonial-container-->
+                                    </div>
+                                </div> <!-- end column -->
+                                <div class="col-md-6 h-100">
+                                    <div class="card card-global rounded-0">
+                                        <div class="testimonial-container my-auto">
+                                            <p class="font-montserrat-regular">
+                                                «En super kursleder, teoretisk sterk, flink til å trekke ut nyttige
+                                                prinsipper både fra litteraturen og ’kokebøkene’ om litteratur. Inspirerende
+                                                å se hvordan han jobber selv. Han gir gode, presise råd og er engasjert.»
+                                            </p>
+
+                                            <p class="font-montserrat-medium theme-text mb-0 mt-4">
+                                                — Anders Danielsen Lie, forfatter og skuespiller
+                                            </p>
+                                        </div> <!-- end testimonial-container-->
+                                    </div>
+                                </div> <!-- end column -->
+                            </div> <!-- end carousel-item -->
+
+                            <div class="carousel-item">
+                                <div class="col-md-6 h-100">
+                                    <div class="card card-global rounded-0">
+                                        <div class="testimonial-container my-auto">
+                                            <p class="font-montserrat-regular">
+                                                «Kurset er håndfast og konkret, avmystifiserer litterær skriving og legger
+                                                vekt på håndverket, med mange gode tips til struktur og arbeidsprosess.»
+                                            </p>
+
+                                            <p class="font-montserrat-medium theme-text mb-0 mt-4">
+                                                — Maja Lunde, forfatter
+                                            </p>
+                                        </div> <!-- end testimonial-container-->
+                                    </div>
+                                </div> <!-- end column -->
+                                <div class="col-md-6 h-100">
+                                    <div class="card card-global rounded-0">
+                                        <div class="testimonial-container my-auto">
+                                            <p class="font-montserrat-regular">
+                                                «En super kursleder, teoretisk sterk, flink til å trekke ut nyttige
+                                                prinsipper både fra litteraturen og ’kokebøkene’ om litteratur. Inspirerende
+                                                å se hvordan han jobber selv. Han gir gode, presise råd og er engasjert.»
+                                            </p>
+
+                                            <p class="font-montserrat-medium theme-text mb-0 mt-4">
+                                                — Anders Danielsen Lie, forfatter og skuespiller
+                                            </p>
+                                        </div> <!-- end testimonial-container-->
+                                    </div>
+                                </div> <!-- end column -->
+                            </div> <!-- end carousel-item -->
+                        </div> <!-- end carouse-inner -->
+                    </div> <!-- end presenter-carousel -->
+                </div> <!-- end col-md-12 -->
+            </div> <!-- end container -->
+        </div> <!-- end fourth-container -->
+
+        <div class="fifth-container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 d-flex left-container">
+                        <div class="align-self-center">
+                            <h1 class="font-barlow-medium mb-0 theme-text">
+                                Praktiske opplysninger
+                            </h1>
+
+                            <p class="mt-4 mb-0">
+                                Seminaret arrangeres over to påfølgende dager, fem timer per dag inkludert pauser.
+                            </p>
+
+                            <p class="mt-4 mb-0 border-bottom">
+                                <span class="font-montserrat-medium">Hvor:</span> Det foregår i Cappelen Damm-huset i
+                                sentrum av Oslo. Adressen er Akersgata 47/49, 0180 OSLO
+                            </p>
+
+                            <p class="mt-4 mb-0 border-bottom">
+                                <span class="font-montserrat-medium">Pris:</span> kr 1950,- og kr 1750,- for studenter
+                            </p>
+
+                            <p class="mt-4 mb-0">
+                                <span class="font-montserrat-medium">Alle spørsmål kan rettes til:</span> Randi Faye,
+                                telefon 924 18 373, Randi.faye@cappelendamm.no
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 right-container">
+                        <h1 class="font-barlow-medium mb-0 theme-text">
+                            Kursdatoer 2019
+                        </h1>
+
+                        <p class="mt-4 mb-5 border-bottom" style="padding-bottom: 30px">
+                            Det arrangeres tre kurs årlig, to helgekurs og ett kveldskurs. Det første kurset er: Lørdag
+                            2. og søndag 3.februar, begge dager 10.00-15.00
+                        </p>
+
+                        <h1 class="font-barlow-medium mb-0 theme-text">
+                            Påmelding
+                        </h1>
+
+                        <p class="mt-4 mb-0">
+                            Send bindende påmelding til: randi.faye@cappelendamm.no
+                            <span class="d-block font-16 font-montserrat-light">Navn, mobil og epost på deltaker</span>
+                            <span class="d-block font-16 font-montserrat-light">Faktura vil bli tilsendt.</span>
+                        </p>
+                    </div>
+                </div>
+            </div> <!-- end container -->
+        </div> <!-- end fifth-container -->
+
+        <div class="last-container">
+            <div class="container text-center">
+                <h1 class="font-barlow-regular">Velkommen til skrivekurs!</h1>
+            </div>
+        </div>
+
+    </div> <!-- end henrik-page -->
+
+@stop
