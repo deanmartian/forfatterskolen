@@ -129,7 +129,7 @@
 								<span>Oversikt</span> <!-- check if webinar-pakke -->
 							</a>
 						</li>
-						@if (!$course->is_free)
+						@if (!$course->is_free && !$course->hide_price)
 							<li class="nav-item">
 								<a data-toggle="tab" href="#packages" class="nav-link" role="tab"><span>Skrivepakke detaljer</span></a>
 							</li>
@@ -171,21 +171,17 @@
                                     ?>
 
 									@if ($isBetween && $package->full_payment_sale_price)
-										<h4><i class="img-icon"></i>{{$package->variation}}
-											@if (!$course->hide_price)-
-												<span class="line-through margin-right-5">
-													{{FrontendHelpers::currencyFormat($package->full_payment_price)}}
-												</span>
-												<span class="font-red">
-													Salg {{FrontendHelpers::currencyFormat($package->full_payment_sale_price)}}
-												</span>
-											@endif
+										<h4><i class="img-icon"></i>{{$package->variation}} -
+											<span class="line-through margin-right-5">
+												{{FrontendHelpers::currencyFormat($package->full_payment_price)}}
+											</span>
+											<span class="font-red">
+												Salg {{FrontendHelpers::currencyFormat($package->full_payment_sale_price)}}
+											</span>
 										</h4>
 									@else
-										<h4><i class="img-icon"></i>{{$package->variation}}
-											@if (!$course->hide_price)-
+										<h4><i class="img-icon"></i>{{$package->variation}}-
 											{{FrontendHelpers::currencyFormat($package->full_payment_price)}}</h4>
-											@endif
 									@endif
 									<div class="package-details">
 										<p>{!! nl2br($package->description) !!}</p>
