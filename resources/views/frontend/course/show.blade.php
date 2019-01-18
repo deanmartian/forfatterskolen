@@ -152,7 +152,7 @@
 
 						<div id="overview" class="tab-pane fade in active" role="tabpanel">
 							{!! nl2br($course->description) !!}
-							@if (!$course->is_free)
+							@if (!$course->is_free && !$course->hide_price)
 								<p class="course-price">
 									Fra {{\App\Http\FrontendHelpers::currencyFormat($isBetween && $course->packages[0]->full_payment_sale_price
 									? $course->packages[0]->full_payment_sale_price
