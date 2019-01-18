@@ -171,17 +171,21 @@
                                     ?>
 
 									@if ($isBetween && $package->full_payment_sale_price)
-										<h4><i class="img-icon"></i>{{$package->variation}} -
-											<span class="line-through margin-right-5">
-												{{FrontendHelpers::currencyFormat($package->full_payment_price)}}
-											</span>
-											<span class="font-red">
-												Salg {{FrontendHelpers::currencyFormat($package->full_payment_sale_price)}}
-											</span>
+										<h4><i class="img-icon"></i>{{$package->variation}}
+											@if (!$course->hide_price)-
+												<span class="line-through margin-right-5">
+													{{FrontendHelpers::currencyFormat($package->full_payment_price)}}
+												</span>
+												<span class="font-red">
+													Salg {{FrontendHelpers::currencyFormat($package->full_payment_sale_price)}}
+												</span>
+											@endif
 										</h4>
 									@else
-										<h4><i class="img-icon"></i>{{$package->variation}} -
+										<h4><i class="img-icon"></i>{{$package->variation}}
+											@if (!$course->hide_price)-
 											{{FrontendHelpers::currencyFormat($package->full_payment_price)}}</h4>
+											@endif
 									@endif
 									<div class="package-details">
 										<p>{!! nl2br($package->description) !!}</p>
