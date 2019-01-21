@@ -74,8 +74,8 @@
                     <div class="date-container">
                         <h2>
                             <i class="calendar"></i>
-                            {{ ucwords(\App\Http\FrontendHelpers::convertMonthLanguage($date->format('n'))) }}
                             {{ $date->format('d') }}
+                            {{ ucwords(\App\Http\FrontendHelpers::convertMonthLanguage($date->format('n'))) }}
                         </h2>
 
                         <h2>
