@@ -40,7 +40,7 @@
 
     <div class="free-webinar-page">
         <div class="header text-center">
-            <h1>Hvordan Skrive En Roman?</h1>
+            <h1>{{ $webinarTitle }}</h1>
         </div>
 
         <div class="container small-container">
