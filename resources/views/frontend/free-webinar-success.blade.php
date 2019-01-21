@@ -4,22 +4,14 @@
 <title>Thank You for Subscribing &rsaquo; Forfatterskolen</title>
 @stop
 
-@section('styles')
-	<style>
-		.margin-top-50 {
-			margin-top: 50px;
-		}
-	</style>
-@stop
-
 @section('content')
 <div class="container">
 	<div class="row">
 		<div class="col-sm-10 col-sm-offset-1">
 			<div class="panel">
 				<div class="panel-body">
-					<h1 class="text-center">Gøy at du meldte deg på!</h1>
-					<section class="clearfix margin-top-50">
+					<h1 class="text-center font-barlow-bold mt-4">Gøy at du meldte deg på!</h1>
+					<section class="clearfix mt-5">
 						<p>
 							Vi bekrefter at vi har mottatt din påmeldelse til vårt webinar den
 							{{ \App\Http\FrontendHelpers::formatDateTimeNor($freeWebinar->start_date) }}.
@@ -37,14 +29,15 @@
 						<p>
 							​Om du ikke har vært på webinar før, kan du sjekke tilkoblingen din her:
 							<a href="https://support.logmeininc.com/gotowebinar/joincheck?c_name=email&c_prod=g2w?
-							role=attendee&source=registrantReminderEmail&language=spanish" target="_blank" class="">
+							role=attendee&source=registrantReminderEmail&language=spanish" target="_blank"
+							   class="font-barlow-regular">
 								Trykk her for å teste!</a>
 						</p>
 
 							<img src="{{ asset('images/kristine.png') }}"
 							width="188" height="143" class="margin-top">
 
-						<p class="margin-top">
+						<p class="mt-4">
 							Kristine S.Henningsen
 						</p>
 
