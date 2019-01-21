@@ -42,8 +42,7 @@
                                 av andre?
                             </li>
                             <li>
-                                Hvorfor er det slik at vi synes noen historier er kjedelige, mens vi lar oss begeistre
-                                av andre?
+                                Og hvilke grep er det forfattere bruker for å skape fortellinger vi blir oppslukt av?
                             </li>
                         </ul>
 
@@ -63,7 +62,7 @@
 
                 <p>
                     Henrik Langeland skrivekurs retter seg mot dem som vil lære seg de konkrete mekanismene den godt
-                    skrevne fortellingen re basert på. Siden 2008 har over tusen mennesker deltatt på seminarene hans -
+                    skrevne fortellingen er basert på. Siden 2008 har over tusen mennesker deltatt på seminarene hans -
                     ikke bare skjønnlitterære forfattere, men alle med ambisjoner om å skape bedre fortellinger. Kurset
                     er nyttig for enhver som har en historie de vil formidle på best mulig måte, enten man er i
                     startfasen, ønsker å komme videre i prosessen eller allerede har publisert tekster.
@@ -150,7 +149,7 @@
                 <div class="row contemporary-writer">
                     <div class="container text-center">
                         <h1 class="font-barlow-medium theme-text mb-0">
-                            En av våre lebende samtidsforfattere
+                            En av våre ledende samtidsforfattere
                         </h1>
 
                         <p class="font-montserrat-light font-16 mt-5">
