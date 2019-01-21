@@ -9,10 +9,10 @@
         'front.workshop.index', 'front.workshop.show', 'front.course.apply-discount', 'front.shop-manuscript.checkout',
         'front.workshop.checkout', 'front.copy-editing', 'front.correction', 'front.other-service-checkout',
         'front.coaching-timer-checkout', 'front.opt-in', 'front.webinar-thanks',  'front.free-manuscript.index',
-        'front.course.claim-reward', 'auth.login.show', 'front.henrik', 'learner.dashboard', 'learner.account.search', 'learner.course',
-        'learner.course.show', 'learner.course.lesson', 'learner.shop-manuscript', 'learner.shop-manuscript.show',
-        'learner.workshop', 'learner.webinar', 'learner.course-webinar', 'learner.assignment',
-        'learner.assignment.group.show']
+        'front.course.claim-reward', 'front.free-webinar', 'auth.login.show', 'front.henrik', 'learner.dashboard',
+        'learner.account.search', 'learner.course', 'learner.course.show', 'learner.course.lesson',
+        'learner.shop-manuscript', 'learner.shop-manuscript.show', 'learner.workshop', 'learner.webinar',
+        'learner.course-webinar', 'learner.assignment', 'learner.assignment.group.show']
 ?>
 @if(in_array(Route::currentRouteName(), $newDesignPages))
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
