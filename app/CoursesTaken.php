@@ -55,6 +55,16 @@ class CoursesTaken extends Model
         return false;
     }
 
+    public function getEndDateWithValueAttribute()
+    {
+        if(!$this->attributes['end_date'] ) {
+            $date = \Carbon\Carbon::parse($this->attributes['started_at']);
+            return $date->addYear(1);
+        } else {
+            return date_format(date_create($this->attributes['end_date']), 'M d, Y');
+        }
+    }
+
 
 
     public function getHasStartedAttribute()

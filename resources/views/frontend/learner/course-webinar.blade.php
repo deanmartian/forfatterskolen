@@ -106,7 +106,7 @@
                                         <div class="webinar-header">
                                             <h4>
                                                 <i class="book"></i> Kurs:
-                                                <a href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                <a href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date_with_value))
                                                         ? 'javascript:void(0)' : route('learner.course.show', ['id' => $webinar->courses_taken_id]) }}">{{ $webinar->course_title }}</a>
                                             </h4>
                                         </div>
@@ -136,7 +136,7 @@
                                                         <i class="img-icon icon-right-arrow"></i>
                                                     </a>
                                                 @else
-                                                    <a class="btn site-btn-global w-100 rounded-0" href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                    <a class="btn site-btn-global w-100 rounded-0" href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date_with_value))
                                                         ? 'javascript:void(0)' :$webinar->link }}" target="_blank">
                                                         Registrer Deg
                                                         <i class="img-icon icon-right-arrow"></i>
@@ -168,11 +168,13 @@
                                         </a>
                                     </div>
                                     <div class="card-body">
-                                        <?php $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);?>
+                                        <?php $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
+                                            print_r($coursesTaken);
+                                        ?>
                                         <div class="webinar-header">
                                             <h4>
                                                 <i class="book"></i> Kurs:
-                                                <a href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                <a href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date_with_value))
                                                     ? 'javascript:void(0)' : route('learner.course.show', ['id' => $webinar->courses_taken_id]) }}">{{ $webinar->course_title }}</a>
                                             </h4>
 
@@ -210,7 +212,7 @@
                                                         <i class="img-icon icon-right-arrow"></i>
                                                     </a>
                                                 @else
-                                                    <a class="btn site-btn-global w-100 rounded-0" href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                    <a class="btn site-btn-global w-100 rounded-0" href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date_with_value))
                                                     ? 'javascript:void(0)' :$webinar->link }}" target="_blank">
                                                         Registrer Deg
                                                         <i class="img-icon icon-right-arrow"></i>
@@ -242,7 +244,7 @@
                                             <div class="webinar-header">
                                                 <h4>
                                                     <i class="book"></i> Kurs:
-                                                    <a href="{{ \Carbon\Carbon::parse($result->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                    <a href="{{ \Carbon\Carbon::parse($result->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date_with_value))
                                                         ? 'javascript:void(0)' : route('learner.course.show', ['id' => $result->courses_taken_id]) }}">{{ $result->course_title }}</a>
                                                 </h4>
 
@@ -276,7 +278,7 @@
                                                         <i class="img-icon icon-right-arrow"></i>
                                                     </a>
                                                 @else
-                                                    <a class="btn site-btn-global w-100 rounded-0" href="{{ \Carbon\Carbon::parse($result->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                    <a class="btn site-btn-global w-100 rounded-0" href="{{ \Carbon\Carbon::parse($result->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date_with_value))
                                                             ? 'javascript:void(0)' :$result->link }}" target="_blank">
                                                         Registrer Deg
                                                         <i class="img-icon icon-right-arrow"></i>
