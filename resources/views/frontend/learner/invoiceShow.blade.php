@@ -15,6 +15,8 @@ if( $fikenURL ) :
 else :
   $fikenError = true;
 endif;
+
+print_r($fikenInvoice);
 ?>
 
 @section('title')

@@ -9,7 +9,7 @@ $newDesignPages = ['front.shop-manuscript.index', 'front.publishing', 'front.blo
     'front.webinar-thanks', 'front.free-manuscript.index', 'front.course.claim-reward', 'front.free-webinar',
     'auth.login.show', 'front.henrik', 'front.free-webinar-thanks', 'learner.account.search', 'learner.course', 'learner.course.show',
     'learner.shop-manuscript', 'learner.shop-manuscript.show', 'learner.workshop', 'learner.webinar',
-    'learner.course-webinar', 'learner.assignment', 'learner.assignment.group.show', 'learner.calendar']
+    'learner.course-webinar', 'learner.assignment', 'learner.assignment.group.show', 'learner.calendar', 'learner.invoice']
 ?>
 @if(in_array(Route::currentRouteName(), $newDesignPages))
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
