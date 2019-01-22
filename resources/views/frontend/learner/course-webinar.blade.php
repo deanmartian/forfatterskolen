@@ -169,7 +169,6 @@
                                     </div>
                                     <div class="card-body">
                                         <?php $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
-                                            print_r($coursesTaken);
                                         ?>
                                         <div class="webinar-header">
                                             <h4>
