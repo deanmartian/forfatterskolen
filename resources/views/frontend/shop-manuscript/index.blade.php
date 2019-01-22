@@ -36,12 +36,12 @@
                         og vet hvor sårbart det er å overlate et manus til andre. Hos oss kan du være sikker på at vi
                         vil det beste for deg og ditt prosjekt. Dessuten behandles alle manus konfidensielt.
                     </p>
-                    <p class="mb-5">
+                    <p class="mb-0">
                         Når vi har mottatt ditt manus gir vi deg en skriftlig tilbakemelding om tekstens sterke og svake
                         sider, samt konkrete råd og innspill på hvordan du kan jobbe videre. Manuset vil bli lest av en
                         av våre profesjonelle konsulenter.
                     </p>
-                    <button class="btn site-btn-global-w-arrow" data-toggle="modal" data-target="#editorsModal">Redaktører</button>
+                    {{--<button class="btn site-btn-global-w-arrow" data-toggle="modal" data-target="#editorsModal">Redaktører</button>--}}
                 </div>
             </div>
         </div>
