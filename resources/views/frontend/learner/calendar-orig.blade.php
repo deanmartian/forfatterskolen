@@ -7,30 +7,62 @@
 @section('styles')
 <link rel="stylesheet" href="{{asset('bootstrap-calendar/css/calendar.min.css')}}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.css">
+<style>
+	.fc table {
+		background-color: #fff;
+	}
+	/*hide the full calendar title and time grid container*/
+	.fc-left, .fc-time-grid-container {
+		display: none;
+	}
+
+	.fc-toolbar {
+		text-transform: capitalize;
+	}
+
+	.event-coaching {
+		background-color: #f00;
+	}
+</style>
 @stop
 
 @section('content')
-	<div class="learner-container learner-calendar">
-		<div class="container">
-			<div class="row">
-				<div class="card w-100 rounded-0 py-4">
-					<ul class="calendar-guide">
-						<li class="guide-blue">Manus</li>
-						<li class="guide-green">Oppgaver</li>
-						<li class="guide-purple">Webinarer</li>
-						<li class="guide-pink">Moduler</li>
-						<li class="guide-orange">Webinars</li>
-						<li class="guide-inverse">Notater</li>
-						<li class="guide-red">Coaching time</li>
-					</ul>
-				</div>
-			</div>
+<div class="account-container">
+	
+	@include('frontend.partials.learner-menu')
 
-			<div class="row">
-				<div id="full-calendar"></div>
-			</div>
+	<div class="col-sm-12 col-md-10 sub-right-content">
+		<div class="col-sm-12">
+			<ul class="calendar-guide">
+				<li><span class="guide guide-blue"></span>&nbsp;&nbsp;Manus</li>
+				<li><span class="guide guide-green"></span>&nbsp;&nbsp;Oppgaver</li>
+				<li><span class="guide guide-purple"></span>&nbsp;&nbsp;Webinarer</li>
+				<li><span class="guide guide-red"></span>&nbsp;&nbsp;Moduler</li>
+				<li><span class="guide guide-orange"></span>&nbsp;&nbsp;Webinars</li>
+				<li><span class="guide event-inverse"></span>&nbsp;&nbsp;Notater</li>
+				<li><span class="guide event-coaching"></span>&nbsp;&nbsp;Coaching time</li>
+			</ul>
+			{{--<div class="pull-right form-inline">
+				<div class="btn-group">
+					<button class="btn btn-primary" data-calendar-nav="prev"><< Forrige</button>
+					<button class="btn btn-success" data-calendar-nav="today">Idag</button>
+					<button class="btn btn-primary" data-calendar-nav="next">Neste >></button>
+				</div>
+				<div class="btn-group">
+					<button class="btn btn-warning" data-calendar-view="year">År</button>
+					<button class="btn btn-warning active" data-calendar-view="month">Måned</button>
+					<button class="btn btn-warning" data-calendar-view="week">Uke</button>
+					<button class="btn btn-warning" data-calendar-view="day">Dag</button>
+				</div>
+			</div>--}}
+			<div class="clearfix"></div>
+			{{--<div id="calendar"></div>--}}
+			<div id="full-calendar"></div>
 		</div>
 	</div>
+	<div class="clearfix"></div>
+</div>
+
 @stop
 
 
@@ -45,21 +77,21 @@
 $('#full-calendar').fullCalendar({
 		locale: 'nb',
         header: { right: 'prev,today,next, month,agendaWeek,agendaDay',
-			/*center: 'title'*/}, // display the month title
+			center: 'title'}, // display the month title
 		buttonText: {
             today:	'Idag',
             month:	'Måned',
             week:	'Uke',
             day:	'Dag',
-			prev:	'Forrige',
-			next:	'Neste'
+			prev:	'<< Forrige',
+			next:	'Neste >>'
         },
 		titleFormat: 'MMMM YYYY', // format the month title
         columnFormat: 'dddd',
 		eventRender: function(eventObj, $el) {
             $el.popover({
                 title: eventObj.title,
-                content: /*eventObj.description*/'',
+                content: eventObj.description,
                 trigger: 'hover',
                 placement: 'top',
                 container: 'body'
@@ -72,7 +104,7 @@ $('#full-calendar').fullCalendar({
 		]
 	});
 
-	let calendar = $("#calendar").calendar(
+	var calendar = $("#calendar").calendar(
 		{
 			language: 'no-NO',
 			tmpl_path: "{{asset('bootstrap-calendar/tmpls')}}/",
@@ -85,14 +117,14 @@ $('#full-calendar').fullCalendar({
 	);			
 
 	$('.btn-group button[data-calendar-nav]').each(function() {
-        let $this = $(this);
+		var $this = $(this);
 		$this.click(function() {
 			calendar.navigate($this.data('calendar-nav'));
 		});
 	});
 
 	$('.btn-group button[data-calendar-view]').each(function() {
-        let $this = $(this);
+		var $this = $(this);
 		$this.click(function() {
 			calendar.view($this.data('calendar-view'));
 		});

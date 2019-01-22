@@ -4630,6 +4630,180 @@ margin-right: 5px;
 }
 /* end henrik langeland page */
 
+/* learner calendar */
+.learner-calendar .card {
+    border: 1px solid #e8e8e8;
+}
+
+.calendar-guide {
+    margin-bottom: 0;
+    padding-left: 20px;
+}
+
+.calendar-guide li {
+    color: #fff;
+    display: inline-block;
+    font-family: "Barlow Regular", sans serif;
+    margin-right: 10px;
+    min-width: 100px;
+    padding: 0 10px;
+    text-align: center;
+}
+
+.calendar-guide li.guide-blue {
+    background-color: #29b5f5;
+}
+
+.calendar-guide li.guide-green {
+    background-color: #44af5e;
+}
+
+.calendar-guide li.guide-purple {
+    background-color: #7266ba;
+}
+
+.calendar-guide li.guide-pink {
+    background-color: #d95e66;
+}
+
+.calendar-guide li.guide-orange {
+    background-color: #ff9c00;
+}
+
+.calendar-guide li.guide-inverse {
+    background-color: #323232;
+}
+
+.calendar-guide li.guide-red {
+    background-color: #ff0000;
+}
+
+.learner-calendar .fc-header-toolbar {
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid #e8e8e8;
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.fc .fc-toolbar>*>:first-child {
+    margin-right: 10px;
+}
+
+.learner-calendar .fc-header-toolbar h2 {
+    font-family: "Barlow Regular", sans serif;
+    font-size: 2.5rem;
+}
+
+.learner-calendar .fc-header-toolbar .fc-button {
+    background-color: #f9f9f9;
+    background-image: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    font-family: "Barlow Regular", sans serif;
+    padding: 0 25px;
+    text-shadow: none;
+}
+
+.learner-calendar .fc-header-toolbar .fc-button:disabled,
+.learner-calendar .fc-header-toolbar .fc-today-button {
+    background-color: #eaebeb;
+}
+
+.learner-calendar .fc-header-toolbar .fc-button:hover,
+.learner-calendar .fc-header-toolbar .fc-button.fc-state-active {
+    background-color: #f0f3f4;
+}
+
+.learner-calendar .fc-header-toolbar .fc-prev-button,
+.learner-calendar .fc-header-toolbar .fc-next-button {
+    background-color: #862736;
+    color: #fff;
+}
+
+.learner-calendar .fc-header-toolbar .fc-prev-button:hover,
+.learner-calendar .fc-header-toolbar .fc-next-button:hover {
+    background-color: #611c27;
+}
+
+.learner-calendar .fc-header-toolbar .fc-prev-button:before,
+.learner-calendar .fc-header-toolbar .fc-next-button:before {
+    content: "";
+    display: block;
+    background-image: url(../images-new/left-arrow.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    width: 18px;
+    height: 18px;
+}
+
+.learner-calendar .fc-header-toolbar .fc-prev-button:before {
+    float: left;
+    margin: 3px 15px 0 -10px;
+}
+
+.learner-calendar .fc-header-toolbar .fc-next-button:before {
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    float: right;
+    margin: 3px -10px 0 15px;
+}
+
+.learner-calendar .fc-view-container {
+    margin-top: 40px;
+}
+
+.learner-calendar table {
+    background-color: #fff;
+    border: 1px solid #e8e8e8;
+}
+
+.learner-calendar table, thead, tbody {
+    border-color: #e8e8e8 !important;
+}
+
+.learner-calendar table th {
+    padding: 10px;
+}
+
+.learner-calendar tr>td>.fc-day-grid-event {
+    margin: 2px 5px;
+    padding: 5px;
+}
+
+.learner-calendar .fc-widget-header span,
+.learner-calendar .fc-day-number{
+    font-family: "Barlow Regular", sans serif;
+}
+
+.learner-calendar .fc-title {
+    color: #fff;
+}
+
+.learner-calendar .fc-content {
+    font-size: 13px;
+}
+
+.popover-header {
+    font-family: "Barlow Light", sans serif;
+    font-size: 13px;
+    font-weight: normal;
+    padding: 10px 20px 5px;
+    border: none;
+}
+
+.popover {
+    border: none;
+}
+
+.popover .arrow:before, .popover .arrow:after {
+    content: '';
+    display: none;
+}
+
+/* end learner calendar */
+
 /* theme tabs */
 
 .theme-tabs {
@@ -6035,6 +6209,18 @@ textarea.form-control {
     .henrik-page .fourth-container {
         min-height: 550px;
     }
+
+    .calendar-guide li {
+        padding: 0 3px;
+    }
+
+    .calendar-guide li:last-child {
+        margin-top: 5px;
+    }
+
+    .learner-calendar .fc-header-toolbar .fc-button {
+        padding: 0 20px;
+    }
 }
 
 @media only screen and (max-width: 768px) {
@@ -7044,6 +7230,27 @@ textarea.form-control {
 
     .henrik-page .fifth-container .border-bottom {
         padding-bottom: 10px;
+    }
+
+    .learner-calendar .fc-header-toolbar .fc-button {
+        padding: 0 15px;
+    }
+
+    .fc .fc-toolbar>*>:first-child {
+        margin-right: 0;
+    }
+
+    .fc-toolbar .fc-right {
+        float: left !important;
+        margin-top: 5px;
+    }
+
+    .learner-calendar .fc-view-container {
+        margin-top: 20px;
+    }
+
+    .fc-view, .fc-view>table {
+        overflow: scroll;
     }
 
     /* theme tab */
@@ -8262,6 +8469,22 @@ textarea.form-control {
     .henrik-page .last-container {
         padding: 20px;
     }
+
+    .learner-calendar table th {
+        width: 90px;
+    }
+
+    .learner-calendar table td {
+        width: 110px;
+    }
+
+    .fc-day-grid-container {
+        overflow: unset !important;
+    }
+
+    .fc-unthemed td {
+        border-color: transparent;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -9314,6 +9537,18 @@ textarea.form-control {
     .henrik-page .last-container h1 {
         font-size: 2.5rem;
     }
+
+    .calendar-guide li {
+        min-width: 116px;
+    }
+
+    .calendar-guide li:last-child {
+        margin-top: 0;
+    }
+
+    .fc .fc-toolbar>*>* {
+        margin-left: 0 !important;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -9608,6 +9843,15 @@ textarea.form-control {
     .henrik-page .third-container .presenter-container .carousel-item img {
         height: 212px;
     }
+
+    .calendar-guide li {
+        margin-bottom: 5px;
+        min-width: 161px;
+    }
+
+    .calendar-guide li:last-child {
+        margin-bottom: 0;
+    }
 }
 
 @media only screen and (max-width: 360px) {
@@ -9796,6 +10040,10 @@ textarea.form-control {
 
     .learner-assignment .feedback-section .site-btn-global-sm {
         width: 25% !important;
+    }
+
+    .calendar-guide li {
+        min-width: 153px;
     }
 }
 
@@ -10151,5 +10399,9 @@ textarea.form-control {
 
     .henrik-page .last-container h1 {
         font-size: 24px;
+    }
+
+    .calendar-guide li {
+        min-width: 133px;
     }
 }
