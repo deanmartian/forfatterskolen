@@ -90,7 +90,7 @@
             'learner.course.lesson', 'learner.shop-manuscript', 'learner.shop-manuscript.show', 'learner.workshop',
             'learner.webinar', 'learner.course-webinar', 'learner.assignment', 'learner.assignment.group.show',
             'learner.calendar', 'learner.invoice', 'learner.upgrade', 'learner.get-upgrade-manuscript',
-            'learner.get-upgrade-assignment'];
+            'learner.get-upgrade-assignment', 'learner.get-upgrade-course'];
         ?>
         @if(!in_array(Route::currentRouteName(), $newDesignPages) && !in_array(Route::currentRouteName(), $loggedInPages))
             @include('frontend.partials.navbar')

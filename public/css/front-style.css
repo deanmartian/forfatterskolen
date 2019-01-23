@@ -4832,6 +4832,11 @@ margin-right: 5px;
     justify-content: flex-end!important;
 }
 
+.small-note {
+    color: #acacac;
+    font-size: 14px;
+}
+
 /* end learner upgrade page */
 
 /* theme tabs */
