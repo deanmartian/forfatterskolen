@@ -207,9 +207,13 @@ a {
     margin-right: 30px;
 }
 
-#learnerNav .navbar-toggler img,
-#mobile-learner-menu .navbar-toggler img {
-    content:url(../images-new/icon/menu2.png);
+#learnerNav .navbar-toggler i,
+#mobile-learner-menu .navbar-toggler i {
+    /*content:url(../images-new/icon/menu2.png);*/
+    background: url(../images-new/icon/menu2.png) no-repeat center / cover;
+    display: block;
+    height: 25px;
+    width: 35px;
 }
 
 #learnerNav .navbar-default {
@@ -218,9 +222,12 @@ a {
     width: 100%;
 }
 
-#learnerNav .navbar-toggler[aria-expanded='true'] img,
-#mobile-learner-menu .navbar-toggler[aria-expanded='true'] img {
-    content: url(../images-new/icon/multiply.png);
+#learnerNav .navbar-toggler[aria-expanded='true'] i,
+#mobile-learner-menu .navbar-toggler[aria-expanded='true'] i {
+    /*content: url(../images-new/icon/multiply.png);*/
+    background: url(../images-new/icon/multiply.png) no-repeat center / cover;
+    height: 20px;
+    width: 20px;
 }
 
 #learnerNav .navbar-nav .nav-link {
@@ -5561,7 +5568,8 @@ label {
     box-shadow: 0 0 8px 0 rgba(212, 212, 212, 0.3);
     color: #979797 !important;
     font-family: "Montserrat Regular", sans serif;
-    padding: 20px;
+    /*padding: 20px;*/
+    height: 42px;
 }
 
 select.form-control {
@@ -5747,7 +5755,7 @@ textarea.form-control {
 
     #learnerNav.navbar-light .navbar-brand
     {
-        position: initial;
+        position: relative;
         left: 0;
         transform: none;
         padding: 0;

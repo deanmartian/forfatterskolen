@@ -4,7 +4,8 @@
     </a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav">
-        <img src="" alt="">
+        {{--<img src="" alt="">--}}
+        <i></i>
     </button>
 
     <div class="navbar navbar-default" style="">
