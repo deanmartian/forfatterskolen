@@ -35,6 +35,12 @@ class Settings extends Model
         return self::getByName('opt_in_rektor_description');
     }
 
+    public static function getAllTerms()
+    {
+        $termsList = ['terms', 'course-terms', 'manuscript-terms', 'workshop-terms', 'coaching-terms'];
+        return self::whereIn('setting_name', $termsList)->get();
+    }
+
     public static function getByName($settingName)
     {
         return self::where('setting_name', $settingName)->pluck('setting_value')->first();

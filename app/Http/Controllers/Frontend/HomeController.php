@@ -1019,9 +1019,9 @@ class HomeController extends Controller
 
     public function terms($slug = null)
     {
-        $terms = Settings::getByName($slug ?: 'terms');
-        if ($terms) {
-            return view('frontend.terms', compact('terms'));
+        $terms = $slug == 'all' ? Settings::getAllTerms() :Settings::getByName($slug ?: 'terms');
+        if ($terms || $slug == 'all') {
+            return view('frontend.terms', compact('terms', 'slug'));
         }
 
         return redirect()->route('front.home');

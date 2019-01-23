@@ -110,7 +110,8 @@
 
     <div class="col-sm-12 footer-bottom text-center">
         <p>
-            Copyright &copy; 2016 Forfatterskolen, All Rights Reserved
+            Copyright &copy; 2016 Forfatterskolen, All Rights Reserved |
+            <a href="{{ route('front.terms', 'all') }}" class="color-white">Vilkår</a>
         </p>
     </div>
 </footer>
