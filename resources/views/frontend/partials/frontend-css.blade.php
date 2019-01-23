@@ -13,7 +13,7 @@
         'learner.account.search', 'learner.course', 'learner.course.show', 'learner.course.lesson',
         'learner.shop-manuscript', 'learner.shop-manuscript.show', 'learner.workshop', 'learner.webinar',
         'learner.course-webinar', 'learner.assignment', 'learner.assignment.group.show', 'learner.calendar',
-        'learner.invoice', 'learner.upgrade', 'learner.get-upgrade-manuscript']
+        'learner.invoice', 'learner.upgrade', 'learner.get-upgrade-manuscript', 'learner.get-upgrade-assignment']
 ?>
 @if(in_array(Route::currentRouteName(), $newDesignPages))
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"

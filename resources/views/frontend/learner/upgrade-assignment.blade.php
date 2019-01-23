@@ -9,73 +9,66 @@
 @stop
 
 @section('content')
-    <div class="account-container">
+    <div class="learner-container">
+        <div class="container">
 
-        @include('frontend.partials.learner-menu')
-
-        <div class="col-sm-12 col-md-10 sub-right-content">
-            <div class="col-sm-12">
-
-                <div class="row">
-                    <div class="col-sm-4">
-                        <h3 class="no-margin-top">@yield('heading')</h3>
-                    </div>
-                </div>
-
-                <div class="col-sm-12 col-md-8">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <h4>{{ $assignment->title }}</h4>
-                            <b>Beskrivelse:</b>
-                            {{ $assignment->description }} <br>
-                            <b>Frist:</b>
-                            {{ \Carbon\Carbon::parse($assignment->submission_date)->format('d.m.Y') }}
-                            Klokken
-                            {{ \Carbon\Carbon::parse($assignment->submission_date)->format('H:i') }}
-                            <br>
-                            <b>Pris:</b>
-                            {{ \App\Http\FrontendHelpers::currencyFormat($assignment->add_on_price) }} <br>
-                            <b>Maks antall ord:</b>
-                            {{ $assignment->max_words }} ord
-                        </div>
-                    </div>
-                </div>
-
-                <form action="{{ route('learner.upgrade-assignment', $assignment->id) }}" class="form-theme"
-                      method="POST">
+            <form action="{{ route('learner.upgrade-assignment', $assignment->id) }}" class="form-theme"
+                  method="POST">
                 {{ csrf_field() }}
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h1 class="font-barlow-regular mb-4">
+                            @yield('heading')
+                        </h1>
+                    </div> <!-- end col-sm-12 -->
 
-                    <div class="col-sm-12 col-md-4">
-                        <!-- Payment Details -->
-                        <div class="panel panel-default no-margin-bottom">
-                            <div class="panel-heading"><h4>Betalingsmetode</h4></div>
-                            <div class="panel-body">
-                                <select class="form-control" name="payment_mode_id" required>
+                    <div class="col-md-8">
+                        <div class="panel panel-default">
+                            <div class="panel-body p-5">
+                                <h3>{{ $assignment->title }}</h3>
+                                <b>Beskrivelse:</b>
+                                {{ $assignment->description }} <br>
+                                <b>Frist:</b>
+                                {{ \Carbon\Carbon::parse($assignment->submission_date)->format('d.m.Y') }}
+                                Klokken
+                                {{ \Carbon\Carbon::parse($assignment->submission_date)->format('H:i') }}
+                                <br>
+                                <b>Pris:</b>
+                                {{ \App\Http\FrontendHelpers::currencyFormat($assignment->add_on_price) }} <br>
+                                <b>Maks antall ord:</b>
+                                {{ $assignment->max_words }} ord
+                            </div> <!-- end panel-body -->
+                        </div> <!-- end panel -->
+                    </div> <!-- end col-lg-8-->
+
+                    <div class="col-md-4">
+                        <div class="panel panel-default p-5">
+                            <div class="panel-heading-underlined">Betalingsmetode</div>
+                            <div class="panel-body px-0 pb-0">
+                                <select class="form-control" name="payment_mode_id" required data-size="15">
                                     @foreach(App\PaymentMode::get() as $paymentMode)
                                         <option value="{{$paymentMode->id}}" data-mode="{{ $paymentMode->mode }}">{{$paymentMode->mode}}</option>
                                     @endforeach
                                 </select>
-                                <em><small>Merk: Vi godtar kun full betaling på PAYPAL</small></em>
+                                <em>
+                                    <small class="font-barlow-regular">
+                                        Merk: Vi godtar kun full betaling på PAYPAL
+                                    </small>
+                                </em>
 
-                                <hr>
+                                <h3 class="font-barlow-regular font-weight-normal my-4">Totalt:
+                                    <span class="theme-text font-barlow-regular">
+                                        {{ App\Http\FrontendHelpers::currencyFormat($assignment->add_on_price) }}
+                                    </span>
+                                </h3>
 
-                                <div class="text-center margin-bottom checkout-total">
-                                    <h4>Totalt</h4>
-                                    <span>{{ FrontendHelpers::currencyFormat($assignment->add_on_price) }}</span>
-                                </div>
+                                <button type="submit" class="btn site-btn-global-w-arrow mt-2 d-block">Bestill</button>
+                            </div>
+                        </div> <!-- end panel-default -->
+                    </div> <!-- end col-md-4 -->
 
-                                <button type="submit" class="btn btn-theme btn-lg btn-block">Bestill</button>
-
-                            </div><!-- end of panel-body -->
-                        </div><!-- end of panel panel-default no-margin-bottom -->
-                    </div>
-
-                </form>
-
-            </div>
-        </div>
-
-        <div class="clearfix"></div>
-
-    </div>
+                </div> <!-- end row -->
+            </form> <!-- end form -->
+        </div> <!-- end container -->
+    </div> <!-- end learner-container -->
 @stop
