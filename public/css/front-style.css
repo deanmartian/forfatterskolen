@@ -4235,7 +4235,7 @@ margin-right: 5px;
     background-position: 50%;
     background-repeat: no-repeat;
     background-size: cover;
-    height: 30vh;
+    height: 165px;
 }
 
 .learner-courses-container .learner-course .course-details {
@@ -7301,6 +7301,10 @@ textarea.form-control {
         margin-top: 10px;
     }
 
+    .learner-courses-container .learner-course .course-thumb {
+        height: 345px;
+    }
+
     /* theme tab */
     .theme-tabs li a {
         padding: 20px;
@@ -8533,6 +8537,10 @@ textarea.form-control {
     .fc-unthemed td {
         border-color: transparent;
     }
+
+    .learner-courses-container .learner-course .course-thumb {
+        height: 300px;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -9607,6 +9615,10 @@ textarea.form-control {
     .learner-upgrade .card:first-child .card-header h4:not(:first-child) {
         margin-top: 10px;
     }
+
+    .learner-courses-container .learner-course .course-thumb {
+        height: 265px;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -9910,6 +9922,10 @@ textarea.form-control {
     .calendar-guide li:last-child {
         margin-bottom: 0;
     }
+
+    .learner-courses-container .learner-course .course-thumb {
+        height: 235px;
+    }
 }
 
 @media only screen and (max-width: 360px) {
@@ -10102,6 +10118,10 @@ textarea.form-control {
 
     .calendar-guide li {
         min-width: 153px;
+    }
+
+    .learner-courses-container .learner-course .course-thumb {
+        height: 220px;
     }
 }
 
@@ -10461,5 +10481,9 @@ textarea.form-control {
 
     .calendar-guide li {
         min-width: 133px;
+    }
+
+    .learner-courses-container .learner-course .course-thumb {
+        height: 180px;
     }
 }
