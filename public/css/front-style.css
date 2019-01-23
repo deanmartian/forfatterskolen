@@ -4839,6 +4839,13 @@ margin-right: 5px;
 
 /* end learner upgrade page */
 
+/* terms page */
+.terms-page h1, .terms-page h2, .terms-page h3 {
+    font-family: "Barlow SemiBold", sans serif;
+    font-weight: normal;
+}
+/* end terms page */
+
 /* theme tabs */
 
 .theme-tabs {
