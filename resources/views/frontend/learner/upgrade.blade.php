@@ -164,9 +164,9 @@
                                                     @if ($displayBtn)
                                                         <a href="{{ route('learner.get-upgrade-course',
                                                             ['course_taken_id' => $courseTaken->id, 'package_id' => $package->id]) }}"
-                                                           class="btn btn-primary btn-xs orange">
+                                                           class="btn site-btn-global site-btn-global-sm">
                                                             Oppgrader {{ $package->variation }}
-                                                        </a> <div class="clearfix margin-top-5"></div>
+                                                        </a> <div class="clearfix mt-1"></div>
                                                     @endif
                                                 @endforeach
                                                 {{--<button class="btn btn-primary btn-sm upgradePackageBtn"
