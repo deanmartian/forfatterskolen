@@ -23,7 +23,7 @@
                         </h1>
                     </div>
 
-                    <div class="col-lg-8">
+                    <div class="col-md-8">
                         <div class="panel panel-default">
                             <div class="panel-body p-5">
                                 <div class="row mt-4">
@@ -61,7 +61,7 @@
                         </div> <!-- end panel-default -->
                     </div> <!-- end col-lg-8 -->
 
-                    <div class="col-lg-4">
+                    <div class="col-md-4">
                         <div class="panel panel-default p-5">
                             <div class="panel-heading-underlined">Betalingsmetode</div>
                             <div class="panel-body px-0 pb-0">
