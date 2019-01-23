@@ -7,7 +7,7 @@ $newDesignPages = ['front.shop-manuscript.index', 'front.publishing', 'front.blo
     'front.course.apply-discount', 'front.shop-manuscript.checkout', 'front.workshop.checkout', 'front.copy-editing',
     'front.correction', 'front.other-service-checkout', 'front.coaching-timer-checkout', 'front.opt-in', 'learner.dashboard',
     'front.webinar-thanks', 'front.free-manuscript.index', 'front.course.claim-reward', 'front.free-webinar',
-    'auth.login.show', 'front.henrik', 'front.free-webinar-thanks', 'front.terms', 'learner.account.search',
+    'auth.login.show', 'front.henrik', 'front.free-webinar-thanks', 'front.terms', 'front.opt-in-terms', 'learner.account.search',
     'learner.course', 'learner.course.show', 'learner.shop-manuscript', 'learner.shop-manuscript.show',
     'learner.workshop', 'learner.webinar', 'learner.course-webinar', 'learner.assignment',
     'learner.assignment.group.show', 'learner.calendar', 'learner.invoice', 'learner.upgrade',
