@@ -440,7 +440,7 @@
     </div>
 
     <div id="viewPackageDescriptionModal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title">Kurspakke innhold</h3>
