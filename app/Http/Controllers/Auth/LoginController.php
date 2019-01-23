@@ -113,7 +113,7 @@ class LoginController extends Controller
     public function handleFacebookCallback()
     {
 
-        $redirectPage = \Session::get('redirect_page')[0];
+        $redirectPage = route('learner.dashboard');//\Session::get('redirect_page')[0];
 
         // add fields function to get specific fields *optional
         $userFacebook = Socialite::driver('facebook')
@@ -159,7 +159,7 @@ class LoginController extends Controller
     public function handleGoogleCallback()
     {
 
-        $redirectPage = \Session::get('redirect_page')[0];
+        $redirectPage = route('learner.dashboard');//\Session::get('redirect_page')[0];
 
         $userGoogle = Socialite::driver('google')
             ->stateless()
