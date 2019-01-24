@@ -76,9 +76,12 @@
                                         return $i['start'];
                                     }
                                 }, $dashboardCalendar));
+
+                                $filteredUniqueStart = array_filter($uniqueStart); // filter empty
+                                sort($filteredUniqueStart); // sort the result
                                 $counter = 1;
                             ?>
-                            @foreach($uniqueStart as $k => $start)
+                            @foreach($filteredUniqueStart as $k => $start)
                                 <?php
                                     $parseStart = \Carbon\Carbon::parse($start);
                                 ?>
@@ -93,14 +96,23 @@
                                             </div>
                                             <div class="col-md-8">
                                                 <?php $calendarCounter = 1;?>
-                                                @foreach($dashboardCalendar as $ck =>$calendar)
+                                                {{--@foreach($dashboardCalendar as $ck =>$calendar)
                                                     @if ($calendarCounter <= 2)
                                                         <p>
                                                             {{ $calendar['title'] }}
                                                         </p>
-                                                    @endif
-                                                    <?php $calendarCounter++?>
-                                                @endforeach
+                                                    @endif--}}
+                                                    <?php /*$calendarCounter++;*/?>
+                                                {{--@endforeach--}}
+
+                                                    @foreach($dashboardCalendar as $calendar)
+                                                        @if ($calendar['start'] == $start && $calendarCounter <= 2)
+                                                            <p>
+                                                                {{ $calendar['title'] }}
+                                                            </p>
+                                                            <?php $calendarCounter++;?>
+                                                        @endif
+                                                    @endforeach
                                             </div>
                                         </div>
                                     </div>

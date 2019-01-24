@@ -2496,62 +2496,85 @@ class LearnerController extends Controller
             foreach( $courseTaken->package->course->lessons as $lesson ) :
                 $availability = strtotime(FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)) * 1000;
                 $newAvailability = date('Y-m-d',strtotime(FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)));
-                $events[] = [
-                    'id' => $lesson->course->id,
-                    'title' => 'Leksjon: ' . $lesson->title . ' from ' . $lesson->course->title,
-                    'class' => 'event-important',
-                    'start' => $newAvailability,//$availability,
-                    'end' => $newAvailability,//$availability,
-                    'color' => '#d95e66'
-                ];
+
+                if (Carbon::parse($newAvailability)->gte($today)) {
+                    $events[] = [
+                        'id' => $lesson->course->id,
+                        'title' => 'Leksjon: ' . $lesson->title . ' from ' . $lesson->course->title,
+                        'class' => 'event-important',
+                        'start' => $newAvailability,//$availability,
+                        'end' => $newAvailability,//$availability,
+                        'color' => '#d95e66'
+                    ];
+                }
             endforeach;
 
             // Course webinars
             foreach( $courseTaken->package->course->webinars as $webinar ) :
-                $events[] = [
-                    'id' => $webinar->course->id,
-                    'title' => 'Webinar: ' . $webinar->title . ' from ' . $webinar->course->title,
-                    'class' => 'event-warning',
-                    'start' => date('Y-m-d',strtotime($webinar->start_date)),//strtotime($webinar->start_date) * 1000,
-                    'end' => date('Y-m-d',strtotime($webinar->start_date)),//strtotime($webinar->start_date) * 1000,
-                    'color' => '#ff9c00'
-                ];
+                $start = date('Y-m-d',strtotime($webinar->start_date));
+                $end = date('Y-m-d',strtotime($webinar->start_date));
+
+                if (Carbon::parse($start)->gte($today)) {
+                    $events[] = [
+                        'id' => $webinar->course->id,
+                        'title' => 'Webinar: ' . $webinar->title . ' from ' . $webinar->course->title,
+                        'class' => 'event-warning',
+                        'start' => $start,//strtotime($webinar->start_date) * 1000,
+                        'end' => $end,//strtotime($webinar->start_date) * 1000,
+                        'color' => '#ff9c00'
+                    ];
+                }
             endforeach;
 
             // manuscripts
             foreach ($courseTaken->manuscripts as $manuscript) :
-                $events[] = [
-                    'id' => $courseTaken->package->course->id,
-                    'title' => 'Manus: ' . basename($manuscript->filename). ' from '.$courseTaken->package->course->title,
-                    'class' => 'event-info',
-                    'start' => date('Y-m-d',strtotime($manuscript->expected_finish)),//strtotime($manuscript->expected_finish) * 1000,
-                    'end' => date('Y-m-d',strtotime($manuscript->expected_finish)),//strtotime($manuscript->expected_finish) * 1000,
-                    'color' => '#29b5f5'
-                ];
+                $start = date('Y-m-d',strtotime($manuscript->expected_finish));
+                $end = date('Y-m-d',strtotime($manuscript->expected_finish));
+
+                if (Carbon::parse($start)->gte($today)) {
+                    $events[] = [
+                        'id' => $courseTaken->package->course->id,
+                        'title' => 'Manus: ' . basename($manuscript->filename) . ' from ' . $courseTaken->package->course->title,
+                        'class' => 'event-info',
+                        'start' => $start,//strtotime($manuscript->expected_finish) * 1000,
+                        'end' => $end,//strtotime($manuscript->expected_finish) * 1000,
+                        'color' => '#29b5f5'
+                    ];
+                }
             endforeach;
 
             // assignments
             foreach ($courseTaken->package->course->assignments as $assignment) :
-                $events[] = [
-                    'id' => $assignment->course->id,
-                    'title' => 'Oppgaver: ' . $assignment->title. ' from '.$assignment->course->title,
-                    'class' => 'event-success-new',
-                    'start' => date('Y-m-d',strtotime($assignment->submission_date)),//strtotime($assignment->submission_date) * 1000,
-                    'end' => date('Y-m-d',strtotime($assignment->submission_date)),//strtotime($assignment->submission_date) * 1000,
-                    'color' => '#44af5e'
-                ];
+                $start = date('Y-m-d',strtotime($assignment->submission_date));
+                $end = date('Y-m-d',strtotime($assignment->submission_date));
+
+                if (Carbon::parse($start)->gte($today)) {
+                    $events[] = [
+                        'id' => $assignment->course->id,
+                        'title' => 'Oppgaver: ' . $assignment->title . ' from ' . $assignment->course->title,
+                        'class' => 'event-success-new',
+                        'start' => $start,//strtotime($assignment->submission_date) * 1000,
+                        'end' => $end,//strtotime($assignment->submission_date) * 1000,
+                        'color' => '#44af5e'
+                    ];
+                }
             endforeach;
 
             // get the calendar notes created by admin for certain course only
             foreach ($courseTaken->package->course->notes as $note):
-                $events[] = [
-                    'id' => $note->id,
-                    'title' => $note->note,
-                    'class' => 'event-inverse',
-                    'start' => date('Y-m-d',strtotime($note->from_date)),//strtotime($note->date) * 1000,
-                    'end' => date('Y-m-d',strtotime($note->to_date)),//strtotime($note->date) * 1000,
-                    'color' => '#1b1b1b' // for full calendar
-                ];
+                $start = date('Y-m-d',strtotime($note->from_date));
+                $end = date('Y-m-d',strtotime($note->to_date));
+
+                if (Carbon::parse($start)->gte($today)) {
+                    $events[] = [
+                        'id' => $note->id,
+                        'title' => $note->note,
+                        'class' => 'event-inverse',
+                        'start' => $start,//strtotime($note->date) * 1000,
+                        'end' => $end,//strtotime($note->date) * 1000,
+                        'color' => '#1b1b1b' // for full calendar
+                    ];
+                }
             endforeach;
 
         endforeach;
