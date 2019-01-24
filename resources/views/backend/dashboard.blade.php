@@ -203,6 +203,7 @@
 								<th>{{ trans_choice('site.learners', 1) }}</th>
 								<th>Locked</th>
 								<th>{{ trans('site.assigned-to') }}</th>
+								<th>Expected Finish</th>
 								<th></th>
 							</tr>
 							</thead>
@@ -232,6 +233,7 @@
 												<em>Not set</em>
 											@endif
 										</td>
+										<td>{{ $shopManuscript->expected_finish }}</td>
 										<td>
 											<a href="{{ route('backend.download_shop_manuscript', $shopManuscript->id) }}"
 											   class="btn btn-primary btn-xs">{{ trans('site.download') }}</a> <br>
