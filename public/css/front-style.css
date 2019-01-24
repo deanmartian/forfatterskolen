@@ -4322,37 +4322,40 @@ margin-right: 5px;
     transform: translate(-50%,-50%);
 }
 
-.learner-webinar-page .webinar-header {
+.learner-webinar-page .webinar-header, .learner-competition .competition-header {
     border-bottom: 1px solid #e8e8e8;
     margin-bottom: 15px;
     padding-bottom: 10px;
 }
 
-.learner-webinar-page .webinar-header h4 {
+.learner-webinar-page .webinar-header h4, .learner-competition .competition-header h4 {
     display: block;
     font-family: "Barlow Regular", sans serif;
     font-size: 16px;
     position: relative;
 }
 
-.learner-webinar-page .webinar-header a {
+.learner-webinar-page .webinar-header a, .learner-competition .competition-header span {
     font-family: "Barlow Regular", sans serif;
     font-size: 16px;
 }
 
-.learner-webinar-page .webinar-header h4 i {
+.learner-webinar-page .webinar-header h4 i, .learner-competition .competition-header h4 i {
     margin-right: 25px;
 }
 
-.learner-webinar-page .webinar-header h4 > i.book:before {
+.learner-webinar-page .webinar-header h4 > i.book:before,
+.learner-competition .competition-header h4 > i.book:before {
     background: url(../images-new/open-book.png) no-repeat center / cover;
 }
 
-.learner-webinar-page .webinar-header h4 > i.calendar:before {
+.learner-webinar-page .webinar-header h4 > i.calendar:before,
+.learner-competition .competition-header h4 > i.calendar:before {
     background: url(../images-new/calendar.png) no-repeat center / cover;
 }
 
-.learner-webinar-page .webinar-header h4 > i:before {
+.learner-webinar-page .webinar-header h4 > i:before,
+.learner-competition .competition-header h4 > i:before{
     content: '';
     height: 16px;
     width: 16px;
