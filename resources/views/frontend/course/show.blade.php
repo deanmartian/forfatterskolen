@@ -148,7 +148,7 @@
 						@endif
 					</ul>
 
-					<div class="tab-content course-tabs">
+					<div class="tab-content course-tabs pt-0">
 
 						<div id="overview" class="tab-pane fade in active" role="tabpanel">
 							{!! nl2br($course->description) !!}
@@ -241,23 +241,60 @@
 										<div class="container carousel-inner no-padding">
 											@foreach($webinars_chunk as $k => $webinars)
 												<div class="carousel-item {{ $k==0 ? 'active' : '' }}">
-													@foreach($webinars as $webinar)
-														<div class="col-md-4 col-sm-12">
-															<div class="panel panel-default">
-																<div class="panel-body">
-																	<div class="image-container"
-																		 style="background-image:url({{ $webinar->image
-																		 ?: asset('/images/no_image.png')}})"></div>
-																	<div class="webinar-details">
-																		<span class="theme-text title">
-																			{{ $webinar->title }}
-																		</span>
-																		<p>{{ str_limit(strip_tags($webinar->description), 180)}}</p>
+													<div class="row">
+														@foreach($webinars as $webinar)
+															<div class="col-md-4 col-sm-12 mt-5">
+																<div class="card card-global border-0">
+																	<div class="card-header p-0 border-0 webinar-thumb">
+																		<div style="background-image:url({{ $webinar->image
+																			 ?: asset('/images/no_image.png')}})"></div>
 																	</div>
-																</div>
+																	<div class="card-body">
+																		<div class="webinar-header">
+																			<h4>
+																				<i class="calendar"></i>
+																				Starter
+																				{{ \Carbon\Carbon::parse($webinar->start_date)->format('d.m.Y') }}
+																				Klokken
+																				{{ \Carbon\Carbon::parse($webinar->start_date)->format('H:i') }}
+																			</h4>
+																		</div>
+
+																		<div class="webinar-details">
+																			<h2 class="h2">
+																				{{ $webinar->title }}
+																			</h2>
+																			<p class="note-color my-4">
+																				{{ str_limit(strip_tags($webinar->description), 180)}}
+																			</p>
+																		</div>
+																	</div> <!-- end card-body -->
+																	<div class="card-footer border-0 p-0">
+																		@if(Auth::guest())
+																			@if ($course->for_sale && !$course->is_free && !$course->hide_price)
+																				<a href="{{route('front.course.checkout', ['id' => $course->id])}}"
+																				   class="btn site-btn-global w-100 rounded-0">Bestill Kurset</a>
+																			@endif
+																		@else
+                                                                            <?php
+                                                                            $course_packages = $course->allPackages->pluck('id')->toArray();
+                                                                            $courseTaken = App\CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
+                                                                            ?>
+																			@if($courseTaken)
+																				<a href="{{route('learner.course.show', ['id' => $courseTaken->id])}}"
+																				   class="btn site-btn-global w-100 rounded-0">Fortsett Kurset</a>
+																			@else
+																				@if ($course->for_sale && !$course->is_free && !$course->hide_price)
+																					<a href="{{route('front.course.checkout', ['id' => $course->id])}}"
+																					   class="btn site-btn-global w-100 rounded-0">Bestill Kurset</a>
+																				@endif
+																			@endif
+																		@endif
+																	</div>
+																</div> <!-- end card -->
 															</div>
-														</div>
-													@endforeach
+														@endforeach
+													</div>
 												</div>
 											@endforeach
 										</div>

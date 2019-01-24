@@ -1775,7 +1775,7 @@ margin-right: 5px;
     margin-top: 20px;
 }
 
-.course-single-page .course-tabs {
+.course-single-page .course-tabs > .tab-pane {
     padding: 40px 50px;
 }
 
@@ -1846,6 +1846,10 @@ margin-right: 5px;
 .course-single-page .course-tabs #overview, .course-single-page .course-tabs #packages,
 .course-single-page .course-tabs #kursplan, .course-single-page .course-tabs #testimonials {
     max-height: 1620px;
+}
+
+.course-single-page .course-tabs #kursplan {
+    background-color: #f3f5f7;
 }
 
 .course-single-page .testimonial-card {
@@ -4322,13 +4326,14 @@ margin-right: 5px;
     transform: translate(-50%,-50%);
 }
 
-.learner-webinar-page .webinar-header, .learner-competition .competition-header {
+.learner-webinar-page .webinar-header, .learner-competition .competition-header, .course-single-page .webinar-header {
     border-bottom: 1px solid #e8e8e8;
     margin-bottom: 15px;
     padding-bottom: 10px;
 }
 
-.learner-webinar-page .webinar-header h4, .learner-competition .competition-header h4 {
+.learner-webinar-page .webinar-header h4, .learner-competition .competition-header h4,
+.course-single-page .webinar-header h4 {
     display: block;
     font-family: "Barlow Regular", sans serif;
     font-size: 16px;
@@ -4340,7 +4345,8 @@ margin-right: 5px;
     font-size: 16px;
 }
 
-.learner-webinar-page .webinar-header h4 i, .learner-competition .competition-header h4 i {
+.learner-webinar-page .webinar-header h4 i, .learner-competition .competition-header h4 i,
+.course-single-page .webinar-header h4 i {
     margin-right: 25px;
 }
 
@@ -4350,12 +4356,14 @@ margin-right: 5px;
 }
 
 .learner-webinar-page .webinar-header h4 > i.calendar:before,
-.learner-competition .competition-header h4 > i.calendar:before {
+.learner-competition .competition-header h4 > i.calendar:before,
+.course-single-page .webinar-header h4 > i.calendar:before {
     background: url(../images-new/calendar.png) no-repeat center / cover;
 }
 
 .learner-webinar-page .webinar-header h4 > i:before,
-.learner-competition .competition-header h4 > i:before{
+.learner-competition .competition-header h4 > i:before,
+.course-single-page .webinar-header h4 > i:before {
     content: '';
     height: 16px;
     width: 16px;
@@ -5005,6 +5013,10 @@ blockquote {
     color: #fff !important;
     background-color: #337ab7 !important;
     border-color: #2e6da4 !important;
+}
+
+.h2 {
+    font-size: 2rem !important;
 }
 
 .font-barlow-regular {
@@ -6008,7 +6020,7 @@ textarea.form-control {
         height: 500px;
     }
 
-    .course-single-page .course-tabs {
+    .course-single-page .course-tabs > .tab-pane {
         padding: 40px;
     }
 
@@ -6694,7 +6706,7 @@ textarea.form-control {
         padding-bottom: 60px;
     }
 
-    .course-single-page .course-tabs {
+    .course-single-page .course-tabs > .tab-pane {
         padding: 30px;
     }
 
