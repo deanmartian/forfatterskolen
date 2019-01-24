@@ -41,7 +41,7 @@ class CompetitionService {
      */
     public function getActiveRecords()
     {
-        return $this->competition->where('start_date','>', Carbon::now())->get();
+        return $this->competition->where('start_date','>', Carbon::now())->orderBy('start_date', 'ASC')->get();
     }
 
     /**
