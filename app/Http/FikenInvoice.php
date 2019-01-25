@@ -83,16 +83,23 @@ class FikenInvoice
 		//print_r($data);
 
 		$headers = $this->get_headers_from_curl_response($data);
-		$location = $headers['location'];
+		$location = isset($headers['location']) ? $headers['location'] : $headers['Location'] ;
 		$fiken_url = $this->get_weblink_from_api($location);
 		$fiken_url = $fiken_url->_links->alternate->href;
 		$pdf_url = $this->get_pdf_url($location);
+		$fikenInvoice = $this->get_invoice_data($location);
 
 		if(!empty($fiken_url)) :
 			$invoice = new Invoice;
 			$invoice->user_id = $post_fields['user_id'];
 			$invoice->fiken_url = $fiken_url;
 			$invoice->pdf_url = $pdf_url;
+			$invoice->gross = $fikenInvoice->gross;
+			$invoice->kid_number = isset($fikenInvoice->kid) ? $fikenInvoice->kid : NULL;
+			$invoice->invoice_number = isset($fikenInvoice->invoiceNumber) ? $fikenInvoice->invoiceNumber : NULL;
+			$invoice->fiken_issueDate = isset($fikenInvoice->issueDate) ? $fikenInvoice->issueDate : NULL;
+            $invoice->fiken_dueDate = isset($fikenInvoice->dueDate) ? $fikenInvoice->dueDate : NULL;
+            $invoice->fiken_balance = $fikenInvoice->gross/100;
 			$invoice->save();
 		endif;
 		
@@ -159,8 +166,22 @@ class FikenInvoice
         return $data->invoiceNumber;
 	}
 
-
-
+    /**
+     * Get invoice date to be parsed and save on db to limit the CRON
+     * @param $url
+     * @return mixed
+     */
+    public function get_invoice_data($url) {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        $data = json_decode($data);
+        return $data;
+    }
 
 
 

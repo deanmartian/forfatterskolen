@@ -50,16 +50,16 @@ class Kernel extends ConsoleKernel
             ->everyThirtyMinutes();
         $schedule->command('dueinvoicecheck:command')
             ->dailyAt('08:00');
-        $schedule->command('updateinvoice:command')
-            ->everyTenMinutes();
+        /*$schedule->command('updateinvoice:command')
+            ->everyTenMinutes();*/
         $schedule->command('webinarpakkeexpiresinaweek:command')
             ->dailyAt('08:00');
         $schedule->command('courseemailout:command')
             ->dailyAt('08:00');
         $schedule->command('lockfinishedmanuscript:command')
             ->everyThirtyMinutes();
-        $schedule->command('updategross:command')
-            ->dailyAt('06:00');
+        /*$schedule->command('updategross:command')
+            ->dailyAt('06:00');*/
         $schedule->command('queue:work --daemon')->everyMinute()->withoutOverlapping();
     }
 
