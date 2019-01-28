@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\CoursesTaken;
+use App\EmailOutLog;
 use App\Package;
 use App\PackageCourse;
 use App\User;
@@ -323,7 +324,9 @@ class CourseController extends Controller
         $course = Course::find($id);
         if ($course) {
 
-            $learners   = $course->learners->get();
+            $learners   = isset($request->check_all) || isset($request->learners) ?
+                $course->learners->whereIn('user_id', $request->learners)->get()
+                : $course->learners->get();
             $subject    = $request->subject;
             $message    = nl2br($request->message);
             $from       = 'post@forfatterskolen.no';
@@ -334,6 +337,19 @@ class CourseController extends Controller
                 AdminHelpers::send_email($subject,
                     'post@forfatterskolen.no', $email, $message);
             }
+
+            $selected_learners = NULL;
+            if (isset($request->check_all) || isset($request->learners)) {
+                $selected_learners = json_encode($request->learners);
+            }
+
+            $emailOutLog = [
+                'course_id' => $id,
+                'subject' => $subject,
+                'message' => $message,
+                'learners' => $selected_learners
+            ];
+            EmailOutLog::create($emailOutLog);
         }
 
         return redirect()->back();

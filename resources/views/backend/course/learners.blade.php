@@ -24,6 +24,15 @@
                 ;
             })
             ->paginate(25);
+
+    	if (is_numeric($search)) :
+            $emailOutLearnerSearch = $course->emailOutLog()->where('id', $search)->first();
+            if ($emailOutLearnerSearch) {
+                $emailOutLearnerSearch = json_decode($emailOutLearnerSearch->learners);
+                $learners = $course->learners->whereIn('user_id', $emailOutLearnerSearch)->paginate(25);
+            }
+		endif;
+
     else :
         $learners = $course->learners->paginate(25);
     endif;
@@ -42,6 +51,8 @@
     if ($learnerWithCourse->count()) {
         $hasActiveUsers = 1;
 	}
+
+    $emailOutLog = $course->emailOutLog()->paginate(20);
     ?>
 
 	<div class="col-sm-12 col-md-10 sub-right-content">
@@ -49,7 +60,8 @@
 			<form class="pull-right form-inline" method="GET">
 				<div class="input-group">
 					<input type="hidden" name="section"  value="{{ Request::input('section') }}">
-				    <input type="search" class="form-control" name="search" placeholder="{{ trans('site.search') }}" value="{{ Request::input('search') }}">
+				    <input type="search" class="form-control" name="search" placeholder="{{ trans('site.search') }}" value="{{ is_numeric(Request::input('search'))
+				    ?'': Request::input('search') }}">
 				    <div class="input-group-btn">
 				      <button class="btn btn-default" type="submit">
 				        <i class="glyphicon glyphicon-search"></i>
@@ -67,46 +79,98 @@
 			@if (/*$hasActiveUsers*/ $course->id == 17)
 				<a href="{{ route('learner.course.learner-active-list-excel', $course->id) }}" class="btn btn-info margin-bottom">{{ trans('site.export-active-learners') }}</a>
 			@endif
-			<div class="table-responsive">
-				<table class="table table-side-bordered table-white">
-					<thead>
-						<tr>
-							<th>{{ trans_choice('site.learners', 1) }}</th>
-							<th>{{ trans('site.learner-id') }}</th>
-							<th>{{ trans_choice('site.packages', 1) }}</th>
-							<th>{{ trans('site.progress') }}</th>
-							<th></th>
-						</tr>
-					</thead>
-					<tbody>
-						@if(count($learners) > 0)
-						@foreach( $learners as $learner)
-						<tr>
-							<td><a href="{{route('admin.learner.show', $learner->user->id)}}">{{$learner->user->full_name}}</a></td>
-							<td>{{ $learner->user->id }}</td>
-							<td>{{$learner->package->variation}}</td>
-							<td>
-								<div class="progress learner-progress">
-								  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="70"
-								  aria-valuemin="0" aria-valuemax="100" style="width:70%">
-								  70% Complete
-								  </div>
-								</div>
-							</td>
-							<td>
-								<button type="submit" data-toggle="modal" data-target="#removeLearnerModal" class="btn btn-danger btn-xs pull-right btn-remove-learner" data-learner="{{$learner->user->full_name}}" data-package="{{$learner->package->id}}" data-learner-id="{{$learner->user->id}}">{{ trans('site.remove-learner') }}</button>
-							</td>
-						</tr>
-						@endforeach
-						@endif
-					</tbody>
-				</table>
-			</div>
 
-			@if(count($course->learners) > 0)
-			<div class="pull-right">{!! $learners->appends(Request::all())->render() !!}</div>
-			<div class="clearfix"></div>
-			@endif
+			<ul class="nav nav-tabs margin-top">
+				<li class="active"><a href="#learners" data-toggle="tab">Learners</a></li>
+				<li><a href="#logs" data-toggle="tab">Email Out Log</a></li>
+			</ul>
+
+			<div class="tab-content">
+				<div class="tab-pane fade in active margin-top" id="learners" role="tabpanel">
+					<div class="table-responsive">
+						<table class="table table-side-bordered table-white">
+							<thead>
+							<tr>
+								<th>{{ trans_choice('site.learners', 1) }}</th>
+								<th>{{ trans('site.learner-id') }}</th>
+								<th>{{ trans_choice('site.packages', 1) }}</th>
+								<th>{{ trans('site.progress') }}</th>
+								<th></th>
+							</tr>
+							</thead>
+							<tbody>
+							@if(count($learners) > 0)
+								@foreach( $learners as $learner)
+									<tr>
+										<td><a href="{{route('admin.learner.show', $learner->user->id)}}">{{$learner->user->full_name}}</a></td>
+										<td>{{ $learner->user->id }}</td>
+										<td>{{$learner->package->variation}}</td>
+										<td>
+											<div class="progress learner-progress">
+												<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="70"
+													 aria-valuemin="0" aria-valuemax="100" style="width:70%">
+													70% Complete
+												</div>
+											</div>
+										</td>
+										<td>
+											<button type="submit" data-toggle="modal" data-target="#removeLearnerModal" class="btn btn-danger btn-xs pull-right btn-remove-learner" data-learner="{{$learner->user->full_name}}" data-package="{{$learner->package->id}}" data-learner-id="{{$learner->user->id}}">{{ trans('site.remove-learner') }}</button>
+										</td>
+									</tr>
+								@endforeach
+							@endif
+							</tbody>
+						</table>
+					</div>
+
+					@if(count($course->learners) > 0)
+						<div class="pull-right">{!! $learners->appends(Request::all())->render() !!}</div>
+						<div class="clearfix"></div>
+					@endif
+				</div> <!-- end learner-tab -->
+
+				<div class="tab-pane fade margin-top" id="logs" role="tabpanel">
+					<div class="table-responsive">
+						<table class="table table-side-bordered table-white">
+							<thead>
+							<tr>
+								<th>Subject</th>
+								<th>Message</th>
+								<th>Date Sent</th>
+								<th></th>
+							</tr>
+							</thead>
+							<tbody>
+								@foreach($emailOutLog as $log)
+									<tr>
+										<td>{{ $log->subject }}</td>
+										<td>{{ $log->message }}</td>
+										<td>{{ $log->date_sent }}</td>
+										<td>
+											@if($log->learners)
+												<form class="" method="GET">
+													<div class="input-group">
+														<input type="hidden" name="section" value="{{ Request::input('section') }}">
+														<input type="hidden" class="form-control" name="search" value="{{ $log->id }}">
+														<button class="btn btn-primary" type="submit">
+															Filter Learners
+														</button>
+													</div>
+												</form>
+											@endif
+										</td>
+									</tr>
+								@endforeach
+							</tbody>
+						</table>
+					</div>
+
+					@if(count($emailOutLog) > 0)
+						<div class="pull-right">{!! $emailOutLog->appends(Request::all())->render() !!}</div>
+						<div class="clearfix"></div>
+					@endif
+				</div> <!-- end send email out log -->
+			</div>
 		</div>
 	</div>
 	<div class="clearfix"></div>
@@ -202,6 +266,18 @@
 						<label>{{ trans('site.message') }}</label>
 						<textarea name="message" id="" cols="30" rows="10" class="form-control" required></textarea>
 					</div>
+
+					<label>Learners</label> <br>
+					<input type="checkbox" name="check_all"> <label for="">Check/Uncheck All</label>
+					<div class="form-group" style="max-height: 300px; overflow-y: scroll; margin-top: 10px">
+						@if(count($course->learners->get()) > 0)
+							@foreach( $course->learners->get() as $learner)
+								<input type="checkbox" name="learners[]" value="{{ $learner->user->id }}">
+								<label>{{ $learner->user->full_name }}</label> <br>
+							@endforeach
+						@endif
+					</div>
+
 					<div class="text-right">
 						<input type="submit" class="btn btn-primary" value="{{ trans('site.send') }}" id="send_email_btn">
 					</div>
@@ -220,5 +296,13 @@
 		    var send_email = $("#send_email_btn");
             send_email.val('Sending....').attr('disabled', true);
 		}
+
+		$("[name=check_all]").click(function(){
+		   if ($(this).prop('checked')) {
+		    	$("[type=checkbox]").prop('checked', true);
+        	} else {
+               $("[type=checkbox]").prop('checked', false);
+		   }
+		});
 	</script>
 @stop

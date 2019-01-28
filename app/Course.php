@@ -111,6 +111,11 @@ class Course extends Model
         return $this->hasMany('App\EmailOut');
     }
 
+    public function emailOutLog()
+    {
+        return $this->hasMany('App\EmailOutLog');
+    }
+
     public function rewardCoupons()
     {
         return $this->hasMany('App\CourseRewardCoupon');
