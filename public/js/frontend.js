@@ -28,7 +28,8 @@ $(document).ready(function(){
                 oFReader.readAsDataURL(this.files[0]);
                 console.log(this.files[0]);
                 oFReader.onload = function (oFREvent) {
-                $('.image-file .image-preview').css('background-image', 'url('+oFREvent.target.result+')');
+                $('.image-file .image-preview').css('background-image', 'url('+oFREvent.target.result+')')
+                    .closest('form').submit();
                 }
             }
         }

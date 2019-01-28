@@ -15,7 +15,7 @@
         'learner.shop-manuscript.show', 'learner.workshop', 'learner.webinar', 'learner.course-webinar',
         'learner.assignment', 'learner.assignment.group.show', 'learner.calendar', 'learner.invoice', 'learner.upgrade',
         'learner.get-upgrade-manuscript', 'learner.get-upgrade-assignment', 'learner.get-upgrade-course',
-        'learner.competition']
+        'learner.competition', 'learner.profile']
 ?>
 @if(in_array(Route::currentRouteName(), $newDesignPages))
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"

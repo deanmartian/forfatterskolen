@@ -45,6 +45,18 @@ class User extends Authenticatable
         return $address;
     }
 
+    public function getSocialAttribute()
+    {
+        $social = \App\UserSocial::where('user_id', $this->attributes['id'])->first();
+
+        if( !$social ) :
+            $empty_social = new \App\UserSocial();
+            return $empty_social;
+        endif;
+
+        return $social;
+    }
+
     public function getManuscriptsAttribute()
     {
         $coursesTaken = $this->coursesTaken->pluck('id')->toArray();

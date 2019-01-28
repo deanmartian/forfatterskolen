@@ -7,175 +7,344 @@
 @section('styles')
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
 	<link rel="stylesheet" href="{{ asset('js/toastr/toastr.min.css') }}">
-	<style>
-		.list-group {
-			display: -webkit-box;
-			display: -ms-flexbox;
-			display: flex;
-			-webkit-box-orient: vertical;
-			-webkit-box-direction: normal;
-			-ms-flex-direction: column;
-			flex-direction: column;
-			padding-left: 0;
-			margin-bottom: 0;
-		}
-	</style>
 @stop
 
 @section('content')
-<div class="account-container">
-	
-	@include('frontend.partials.learner-menu')
 
-	<div class="col-sm-12 col-md-10 sub-right-content">
-		<div class="col-sm-12">
-			<form method="POST" action="{{route('learner.profile.update')}}" enctype="multipart/form-data">
-				{{csrf_field()}}
-				<div class="row">
-					<div class="col-sm-12 col-md-6">
-						<div class="panel panel-default">
-							<div class="panel-body">
-								<h4>Profil</h4>
-								<br />
-								<div class="user-image image-file margin-bottom">
-									<div class="image-preview" style="background-image: url('{{Auth::user()->profile_image}}')" data-default="{{Auth::user()->profile_image}}" title="Select Image" data-toggle="tooltip" data-placement="bottom"></div>
-									<input type="file" accept="image/*" name="image">
-								</div>
-								<div class="form-group">
-									<label>Epost</label>
-									<input type="email" class="form-control" disabled readonly value="{{Auth::user()->email}}" id="profile_email">
-								</div>
-								<div class="form-group">
-									<label>Fornavn</label>
-									<input type="text" class="form-control" autocomplete='off' name="first_name" value="{{Auth::user()->first_name}}" required>
-								</div>
-								<div class="form-group">
-									<label>Etternavn</label>
-									<input type="text" class="form-control" autocomplete='off' name="last_name" value="{{Auth::user()->last_name}}" required>
-								</div>
+	<div class="learner-container learner-profile">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-4">
+					<div class="card">
+						<div class="card-body p-5">
+							<div class="user-image image-file text-center">
+								<form method="POST" action="{{route('learner.profile.update-photo')}}" enctype="multipart/form-data"
+									  id="photo-form">
+									{{csrf_field()}}
+									<div class="circle">
+										<div class="image-preview" style="background-image: url('{{Auth::user()->profile_image}}')" data-default="{{Auth::user()->profile_image}}"
+											 title="Select Image" data-toggle="tooltip" data-placement="bottom"></div>
+										<input type="file" accept="image/*" name="image">
+									</div>
+								</form>
 							</div>
-						</div>
-						<div class="panel panel-default">
-							<div class="panel-body">
-								<h4>Sikkerhet</h4>
-								<br />
-								<div class="form-group">
-									<label>Nytt passord</label>
-									<input type="password" class="form-control" autocomplete='off' name="new_password">
-								</div>
-								<div class="form-group">
-									<label>Gammelt passord</label>
-									<input type="password" class="form-control" autocomplete='off' name="old_password">
-								</div>
+							<div class="text-center">
+								<h1 class="font-barlow-regular mt-4">
+									{{Auth::user()->full_name}}
+								</h1>
+								<span class="note-color font-16">
+									{{Auth::user()->email}}
+								</span>
 							</div>
+
+							<h3 class="font-weight-normal font-barlow-regular mt-4">
+								<span class="note-color d-block font-15">
+									Adresse
+								</span>
+								{{ Auth::user()->address->street.', '.Auth::user()->address->zip.' '.Auth::user()->address->city }}
+							</h3>
+
+							<h3 class="font-weight-normal font-barlow-regular mt-3">
+								<span class="note-color d-block font-15">
+									Telefon
+								</span>
+								{{ Auth::user()->address->phone }}
+							</h3>
+
+							<h3 class="font-weight-normal font-barlow-regular mt-3">
+								<span class="note-color d-block font-15">
+									Facebook
+								</span>
+								{{ Auth::user()->social->facebook ?: 'None' }}
+							</h3>
+
+							<h3 class="font-weight-normal font-barlow-regular mt-3">
+								<span class="note-color d-block font-15">
+									Instagram
+								</span>
+								{{ Auth::user()->social->instagram ?: 'None' }}
+							</h3>
+						</div> <!-- end card-body -->
+					</div> <!-- end card -->
+
+					<div class="card my-5 site-link-container">
+						<div class="card-body p-5">
+							<a href="{{ route('learner.invoice') }}" class="invoice-link">Mine Fakturaer</a>
+							<a href="{{ route('learner.assignment') }}" class="assignment-link">Oppgaver</a>
+							<a href="{{ route('learner.upgrade') }}" class="upgrade-link">Oppgradering</a>
 						</div>
 					</div>
-					<div class="col-sm-12 col-md-6">
-						<div class="panel panel-default">
-							<div class="panel-body">
-								<h4>Adresse</h4>
-								<br />
-								<div class="form-group">
-									<label>Gate</label>
-									<input type="text" class="form-control" autocomplete='off' name="street" value="{{Auth::user()->address->street}}">
-								</div>
-								<div class="form-group">
-									<label>Postnummer</label>
-									<input type="text" class="form-control" autocomplete='off' name="zip" value="{{Auth::user()->address->zip}}">
-								</div>
-								<div class="form-group">
-									<label>Sted</label>
-									<input type="text" class="form-control" autocomplete='off' name="city" value="{{Auth::user()->address->city}}">
-								</div>
-								<div class="form-group">
-									<label>Telefon</label>
-									<input type="tel" class="form-control" autocomplete='off' name="phone" value="{{Auth::user()->address->phone}}">
-								</div>
-							</div>
-						</div>
+				</div> <!-- end col-md-4 -->
 
-						@if(Auth::user()->diplomas->count())
-							<div class="panel panel-default">
-								<div class="panel-body">
-									<h3 class="mt-0">Kursbevis</h3>
+				<div class="col-md-8">
+					<div class="card">
+						<div class="card-body p-0">
+							<div class="theme-tabs">
+								<ul class="nav nav-tabs pl-5" role="tablist">
+									<li class="nav-item">
+										<a data-toggle="tab" href="#profile-panel" class="nav-link active" role="tab">
+											<span>Profil</span>
+										</a>
+									</li>
+									<li class="nav-item">
+										<a data-toggle="tab" href="#email-panel" class="nav-link" role="tab">
+											<span>Epost Adresser</span>
+										</a>
+									</li>
+									<li class="nav-item">
+										<a data-toggle="tab" href="#diploma-panel" class="nav-link" role="tab">
+											<span>Kursbevis</span>
+										</a>
+									</li>
+								</ul> <!-- end nav-tabs-->
 
-									@foreach(Auth::user()->diplomas()->orderBy('created_at', 'DESC')->get()->chunk('3') as $diploma_chunk)
-										@foreach($diploma_chunk as $diploma)
-											<div class="col-sm-4">
-												<div style="border: 1px solid #ccc" class="text-center">
-													<span>{{ $diploma->course->title }}</span>
+								<div class="tab-content p-0">
+									<div id="profile-panel" class="tab-pane fade in active" role="tabpanel">
+										<form method="POST" action="{{route('learner.profile.update')}}" enctype="multipart/form-data"
+										onsubmit="disableSubmit(this)">
+											{{csrf_field()}}
+											<section>
+												<div class="col-md-10 text-center">
 
-													<a href="#previewDiplomaModal" data-toggle="modal"
-													   data-diploma="{{asset($diploma->diploma)}}"
-													   class="previewDiplomaBtn darken">
-														<img src="{{ asset('images/diploma.jpg') }}"
-															 style="height: 140px; width: 100%">
-														<span class="message">Preview</span>
-													</a>
+													<div class="form-group row">
+														<label class="col-sm-3 col-form-label"></label>
+														<div class="col-sm-9">
+															<h1 class="text-left font-barlow-regular">Profil</h1>
+														</div>
+													</div>
 
-													<a href="{{ route('learner.download-diploma', $diploma->id) }}">Last ned</a>
+													<div class="form-group row">
+														<label class="col-sm-3 col-form-label">Epost</label>
+														<div class="col-sm-9">
+															<input type="email" class="form-control" disabled readonly
+																   value="{{Auth::user()->email}}" id="profile_email">
+														</div>
+													</div>
+
+													<div class="form-group row">
+														<label class="col-sm-3 col-form-label">Fornavn</label>
+														<div class="col-sm-9">
+															<input type="text" class="form-control" autocomplete='off'
+																   name="first_name" value="{{Auth::user()->first_name}}" required>
+														</div>
+													</div>
+
+													<div class="form-group row">
+														<label class="col-sm-3 col-form-label">Etternavn</label>
+														<div class="col-sm-9">
+															<input type="text" class="form-control" autocomplete='off'
+																   name="last_name" value="{{Auth::user()->last_name}}" required>
+														</div>
+													</div>
+												</div>
+											</section> <!-- profile section-->
+
+											<section>
+												<div class="col-md-10 text-center">
+													<div class="form-group row">
+														<label class="col-sm-3 col-form-label"></label>
+														<div class="col-sm-9">
+															<h1 class="text-left font-barlow-regular">Adresse</h1>
+														</div>
+													</div>
+
+													<div class="form-group row">
+														<label class="col-sm-3 col-form-label">Gate</label>
+														<div class="col-sm-9">
+															<input type="text" class="form-control" autocomplete='off'
+																   name="street" value="{{Auth::user()->address->street}}">
+														</div>
+													</div>
+
+													<div class="form-group row">
+														<label class="col-sm-3 col-form-label">Postnummer</label>
+														<div class="col-sm-9">
+															<input type="text" class="form-control" autocomplete='off'
+																   name="zip" value="{{Auth::user()->address->zip}}">
+														</div>
+													</div>
+
+													<div class="form-group row">
+														<label class="col-sm-3 col-form-label">Sted</label>
+														<div class="col-sm-9">
+															<input type="text" class="form-control" autocomplete='off'
+																   name="city" value="{{Auth::user()->address->city}}">
+														</div>
+													</div>
+
+													<div class="form-group row">
+														<label class="col-sm-3 col-form-label">Telefon</label>
+														<div class="col-sm-9">
+															<input type="tel" class="form-control" autocomplete='off'
+																   name="phone" value="{{Auth::user()->address->phone}}">
+														</div>
+													</div>
+												</div>
+											</section> <!-- end address section -->
+
+											<section>
+												<div class="col-md-10 text-center">
+													<div class="form-group row">
+														<label class="col-sm-3 col-form-label"></label>
+														<div class="col-sm-9">
+															<h1 class="text-left font-barlow-regular">Social</h1>
+														</div>
+													</div>
+
+													<div class="form-group row">
+														<label class="col-sm-3 col-form-label">Facebook</label>
+														<div class="col-sm-9">
+															<input type="text" class="form-control" autocomplete='off'
+																   name="facebook" value="{{Auth::user()->social->facebook}}">
+														</div>
+													</div>
+
+													<div class="form-group row">
+														<label class="col-sm-3 col-form-label">Instagram</label>
+														<div class="col-sm-9">
+															<input type="text" class="form-control" autocomplete='off'
+																   name="instagram" value="{{Auth::user()->social->instagram}}">
+														</div>
+													</div>
+												</div>
+											</section> <!-- end social section -->
+
+											<section>
+												<div class="col-md-10 text-center">
+													<div class="form-group row">
+														<label class="col-sm-3 col-form-label"></label>
+														<div class="col-sm-9">
+															<h1 class="text-left font-barlow-regular">Sikkerhet</h1>
+														</div>
+													</div>
+
+													<div class="form-group row">
+														<label class="col-sm-3 col-form-label">Nytt passord</label>
+														<div class="col-sm-9">
+															<input type="password" class="form-control" autocomplete='off'
+																   name="new_password">
+														</div>
+													</div>
+
+													<div class="form-group row">
+														<label class="col-sm-3 col-form-label">Gammelt passord</label>
+														<div class="col-sm-9">
+															<input type="password" class="form-control" autocomplete='off'
+																   name="old_password">
+														</div>
+													</div>
+												</div>
+											</section> <!-- end password section-->
+
+											<section>
+												<div class="col-md-10 text-center">
+													<div class="form-group row mb-0">
+														<div class="col-sm-9 text-left col-md-offset-3">
+															<button type="submit" class="btn site-btn-global">
+																Oppdater profilen
+															</button>
+															<a href="{{ route('learner.profile') }}" class="btn light-button">
+																Cancel
+															</a>
+														</div>
+													</div>
+												</div>
+											</section>
+										</form>
+
+										@if ( $errors->any() )
+											<div class="alert alert-danger mx-4">
+												<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+												<ul>
+													@foreach($errors->all() as $error)
+														<li>{{$error}}</li>
+													@endforeach
+												</ul>
+											</div>
+										@endif
+										@if(session()->has('profile_success'))
+											<div class="alert alert-success mx-4">
+												<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+												{{ session()->get('profile_success') }}
+											</div>
+										@endif
+
+									</div> <!-- end profile panel -->
+
+									<div id="email-panel" class="tab-pane fade" role="tabpanel">
+										<section class="d-block email-container">
+											<h1 class="font-barlow-regular">
+												Epost Adresser
+											</h1>
+
+											<p class="note-color mt-4">
+												Om du skal bruke flere epost adresser i systemet, eller skal endre epost adresse,
+												så er det «Hoved» epost adressen som skal brukes med å logge inn med og epost vil bli kun sendt til «hoved» adressen din.
+											</p>
+
+											<ul class="list-group mt-5" id="email-list">
+											</ul>
+
+											<h2 class="font-barlow-regular mt-5">
+												Legg til ny epost adresse
+											</h2>
+
+											<div class="form-group mb-0">
+												<div class="input-group mt-5">
+													<input type="text" class="form-control" name="email"
+														   placeholder="Din nye epost adresse" aria-label="Recipient's email address"
+														   aria-describedby="basic-addon2" autocomplete="off" onkeyup="methods.sendConfirmation(event)">
+													<div class="input-group-append">
+														<button class="btn site-btn-global rounded-0 email-btn" type="button"
+																onclick="methods.sendConfirmation()">
+															<i class="plus"></i>
+														</button>
+													</div>
 												</div>
 											</div>
-										@endforeach
-									@endforeach
-								</div>
-							</div>
-						@endif
 
-						@if ( $errors->any() )
-		                <div class="alert alert-danger no-bottom-margin">
-		                    <ul>
-		                    @foreach($errors->all() as $error)
-		                    <li>{{$error}}</li>
-		                    @endforeach
-		                    </ul>
-		                </div>
-		                @endif
-		                @if(session()->has('profile_success'))
-					    <div class="alert alert-success">
-					        {{ session()->get('profile_success') }}
-					    </div>
-						@endif
-					</div>
-				</div>
+											<p class="note-color mt-5">
+												Du vil motta en epost når du har lagt til ny epost adresse. Denne må du
+												godkjenne før du kan bruke denne nye adressen. Kun godkjente epost
+												adresser kan være «hoved» adresse
+											</p>
 
-				<button type="submit" class="btn btn-primary">Oppdater profilen</button>
-			</form>
-		</div>
+										</section>
+									</div> <!-- end email panel-->
 
-		<div class="col-sm-12 margin-top">
-			<div class="row">
-				<div class="col-sm-12 col-md-6">
-					<div class="panel panel-default">
-						<div class="panel-body">
-							<h4>Epost Adresser</h4>
-							<hr>
-							<div class="form-group email-container">
-								<small class="text-muted d-block">
-									Om du skal bruke flere epost adresser i systemet, eller skal endre epost adresse,
-									så er det «Hoved» epost adressen som skal brukes med å logge inn med og epost vil bli kun sendt til «hoved» adressen din.
-								</small>
-								<ul class="list-group mt-2" id="email-list">
-								</ul>
-								<div class="form-group mt-1 mb-1">
-									<label class="lead ml-2 mb-1 mt-2">Legg til ny epost adresse</label>
-									<div class="input-group-global mb-0">
-										<input type="text" class="form-control" name="email" placeholder="Din nye epost adresse" aria-label="Recipient's email address" aria-describedby="basic-addon2" autocomplete="off" onkeyup="methods.sendConfirmation(event)">
-										<div class="input-group-append">
-											<button class="btn btn-info email-btn" type="button" onclick="methods.sendConfirmation()"><i class="fa fa-plus-circle"></i></button>
-										</div>
+									<div id="diploma-panel" class="tab-pane fade" role="tabpanel">
+										<section class="d-block">
+											<h1 class="font-barlow-regular">
+												Kursbevis
+											</h1>
+
+											<div class="row">
+												@foreach(Auth::user()->diplomas()->orderBy('created_at', 'DESC')->get() as $diploma)
+													<div class="col-lg-4 col-md-6">
+														<div class="card card-global">
+															<div class="card-body text-center">
+																<img src="{{ asset('images-new/diploma.png') }}" alt="">
+																<h3 class="font-weight-normal">
+																	{{ $diploma->course->title }}
+																</h3>
+
+																<a href="{{ route('learner.download-diploma', $diploma->id) }}"
+																class="btn site-btn-global">Last ned</a>
+															</div>
+														</div>
+													</div>
+												@endforeach
+											</div>
+										</section>
 									</div>
-								</div>
-								<small class="text-muted d-block">{{ "Du vil motta en epost når du har lagt til ny epost adresse. Denne må du godkjenne før du kan bruke denne nye adressen. Kun godkjente epost adresser kan være «hoved» adresse" }}</small>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="clearfix"></div>
-</div>
+								</div> <!-- end tab-content -->
+							</div> <!-- end theme-tabs -->
+						</div> <!-- end card-body -->
+					</div> <!-- end card -->
+				</div> <!-- end col-md-8 -->
+			</div> <!-- end row -->
+		</div> <!-- end container -->
+	</div> <!-- end learner-container -->
 
 	<div id="previewDiplomaModal" class="modal fade" role="dialog" data-backdrop="static">
 		<div class="modal-dialog">

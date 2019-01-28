@@ -35,6 +35,7 @@ use App\Survey;
 use App\SurveyAnswer;
 use App\User;
 use App\UserEmail;
+use App\UserSocial;
 use App\WordWritten;
 use App\WordWrittenGoal;
 use App\WritingGroup;
@@ -855,9 +856,45 @@ class LearnerController extends Controller
         $address->phone = $request->phone;
         $address->save();
 
+        // User Social
+        $social = UserSocial::firstOrNew(['user_id' => Auth::user()->id]);
+        $social->facebook = $request->facebook;
+        $social->instagram = $request->instagram;
+        $social->save();
+
         return redirect()->back()->with('profile_success', 'Profile successfully updated.');
     }
 
+    /**
+     * Update the profile image of user
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function profileUpdatePhoto(Request $request)
+    {
+        if ($request->hasFile('image') && $request->file('image')->isValid()) :
+            $image = substr(Auth::user()->profile_image, 1);
+            if( Auth::user()->hasProfileImage && File::exists($image) ) :
+                File::delete($image);
+            endif;
+            $destinationPath = 'storage/profile-images/'; // upload path
+            $extension = $request->image->extension(); // getting image extension
+            $fileName = time().'.'.$extension; // renameing image
+            $request->image->move($destinationPath, $fileName);
+            // optimize image
+            if ( strtolower( $extension ) == "png" ) :
+                $image = imagecreatefrompng($destinationPath.$fileName);
+                imagepng($image, $destinationPath.$fileName, 9);
+            else :
+                $image = imagecreatefromjpeg($destinationPath.$fileName);
+                imagejpeg($image, $destinationPath.$fileName, 70);
+            endif;
+            Auth::user()->profile_image = '/'.$destinationPath.$fileName;
+            Auth::user()->save();
+        endif;
+
+        return redirect()->back();
+    }
 
     public function terms()
     {

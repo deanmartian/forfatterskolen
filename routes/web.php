@@ -229,6 +229,7 @@ Route::group([
 
 
         Route::post('/profile', 'LearnerController@profileUpdate')->name('learner.profile.update'); // Profile Update
+        Route::post('/profile/photo', 'LearnerController@profileUpdatePhoto')->name('learner.profile.update-photo'); // Profile Update
         Route::post('/course/take', 'LearnerController@takeCourse')->name('learner.course.take'); // Take Course
         Route::post('/course/{id}/uploadManuscript', 'LearnerController@uploadManuscript')->name('learner.course.uploadManuscript'); // Upload manuscript to course
         Route::post('/shop-manuscript/{id}/comment', 'LearnerController@shopManuscriptPostComment')->name('learner.shop-manuscript.post-comment'); // Shop Manuscript Show Page

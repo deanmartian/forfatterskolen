@@ -158,6 +158,10 @@ a {
     padding: 5px !important;
 }
 
+.card {
+    border-color: #e8e8e8;
+}
+
 .nav-user-thumb {
     background-position: 50%;
     background-repeat: no-repeat;
@@ -4857,6 +4861,178 @@ margin-right: 5px;
 }
 /* end terms page */
 
+/* profile page */
+.user-image .circle {
+    background-color: #fff;
+    border: 1px solid #eaeaea;
+    height: 120px;
+    border-radius: 50%;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    margin: 0 auto;
+    padding: 7px;
+    width: 120px;
+}
+
+.user-image .image-preview {
+    border-radius: 50%;
+    background-color: #ccc;
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: inline-block;
+    height: 105px;
+    width: 105px;
+}
+
+.image-file input[type=file] {
+    display: none;
+}
+
+.image-file .image-preview:hover {
+    cursor: pointer;
+    opacity: .8;
+}
+
+.learner-profile .site-link-container a {
+    color: #323232;
+    display: block;
+    font-family: "Barlow Regular", sans serif;
+    margin-bottom: 10px;
+}
+
+.learner-profile .site-link-container a:last-child {
+    margin-bottom: 0;
+}
+
+.learner-profile .site-link-container a:before {
+    content: '';
+    background: url(../images-new/icon/menu-sprite.png) no-repeat top left;
+    background-size: cover;
+    display: inline-block;
+    height: 14px;
+    margin-right: 15px;
+    width: 14px;
+}
+
+.learner-profile .site-link-container .invoice-link:before {
+    background-position: 0 -262px;
+}
+
+.learner-profile .site-link-container .assignment-link:before {
+    background-position: 0 0;
+}
+
+.learner-profile .site-link-container .upgrade-link:before {
+    background-position: 0 -105px;
+}
+
+.learner-profile section {
+    border-bottom: 1px solid #e8e8e8;
+    display: flex;
+    padding: 20px;
+    position: relative;
+}
+
+.learner-profile section label {
+    font-family: "Barlow Regular", sans serif;
+}
+
+.learner-profile section:last-child {
+    border-bottom: none;
+}
+
+.learner-profile #email-panel {
+    padding: 20px 50px;
+}
+
+.learner-profile #email-list {
+    color: #999999;
+    width: 80%;
+}
+
+.learner-profile #email-list .badge {
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.learner-profile #email-list .badge-success {
+    background-color: #852735;
+}
+
+.learner-profile #email-panel .input-group {
+    border-left: 1px solid #ced4da;
+    width: 80%;
+}
+
+.learner-profile #email-panel .input-group i.plus:before {
+    content: '';
+    background: url(../images-new/icon/add.png) no-repeat center / cover;
+    display: block;
+    height: 20px;
+    width: 20px;
+}
+
+.learner-profile #email-panel small {
+    font-size: 13px;
+}
+
+.learner-profile #diploma-panel {
+    padding: 40px 50px;
+}
+
+.learner-profile #diploma-panel section {
+    padding: 0;
+}
+
+.learner-profile #diploma-panel [class*="col-"] {
+    margin-bottom: 30px;
+    margin-top: 20px;
+}
+
+.learner-profile #diploma-panel img {
+    height: 60px;
+    margin-bottom: 20px;
+    width: 60px;
+}
+
+.learner-profile #diploma-panel .card {
+    border-color: transparent;
+    box-shadow: 4px 3px 16px 0 rgba(223, 223, 223, 0.57);
+    position: relative;
+}
+
+.learner-profile #diploma-panel .card:hover {
+    background-color: #f7f8fa;
+    border-color: #d7d7d7;
+}
+
+.learner-profile #diploma-panel h3 {
+    margin-bottom: 25px;
+}
+
+.learner-profile #diploma-panel a {
+    bottom: -19px;
+    position: absolute;
+    transform: translate(-50%);
+}
+
+.learner-profile #diploma-panel .card:hover a {
+    background-color: #323232;
+}
+
+.light-button {
+    background-color: #e83a47;
+    color: #fff;
+    padding: 5px 20px;
+}
+
+.hand {
+    cursor: pointer;
+}
+
+/* end profile page */
+
 /* theme tabs */
 
 .theme-tabs {
@@ -7320,6 +7496,18 @@ textarea.form-control {
         height: 345px;
     }
 
+    .learner-profile #email-panel {
+        padding: 10px 20px;
+    }
+
+    .learner-profile #diploma-panel {
+        padding: 30px 40px;
+    }
+
+    .learner-profile #email-list, .learner-profile #email-panel .input-group {
+        width: 100%;
+    }
+
     /* theme tab */
     .theme-tabs li a {
         padding: 20px;
@@ -9633,6 +9821,10 @@ textarea.form-control {
 
     .learner-courses-container .learner-course .course-thumb {
         height: 265px;
+    }
+
+    .learner-profile #profile-panel form [class*="col-"] {
+        text-align: left !important;
     }
 }
 

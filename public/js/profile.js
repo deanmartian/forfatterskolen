@@ -9,16 +9,18 @@ const methods = {
                 let secondary = response.secondary;
                 email_list.html("");
                 email_list.append(`
-                <li class="list-group-item py-2"> 
+                <li class="list-group-item py-3 px-4"> 
                     <span class="pull-left mt-0">${ primary.email }</span>
-                    <h5 class="pull-right mb-0 mt-0"><span class="badge badge-success p-2">Hoved</span></h5>   
+                    <h5 class="pull-right mb-0 mt-0"><span class="badge badge-success py-2 px-4">Hoved</span></h5>   
                 </li>
             `);
                 $.each( secondary, function(key, value){
                     email_list.append(`
-                    <li class="list-group-item py-2"> 
+                    <li class="list-group-item py-3 px-4"> 
                         <span class="pull-left mt-0">${ value.email }</span>
-                        <h5 class="pull-right mb-0 mt-0"><span class="badge badge-info p-2 mr-2 hand" onclick="methods.setPrimaryEmail(${ value.id }, this)">Set Primary</span><span class="badge badge-danger p-2 hand" onclick="methods.removeSecondaryEmail(${ value.id })">Remove</span></h5>   
+                        <h5 class="pull-right mb-0 mt-0"><span class="badge badge-info py-2 px-4 mr-2 hand" 
+                        onclick="methods.setPrimaryEmail(${ value.id }, this)">Set Primary</span>
+                        <span class="badge badge-danger py-2 px-4 hand" onclick="methods.removeSecondaryEmail(${ value.id })">Remove</span></h5>   
                     </li>
                 `)
                 })
@@ -42,7 +44,7 @@ const methods = {
                 self.clearError(form);
                 self.clearInputs(form);
                 self.setLoadingIcon(email_btn);
-                toastr.success(response.success, 'Success')
+                toastr.success(response.success, 'Success');
             })
             .catch(function(err){
                 self.clearError(form);
@@ -116,9 +118,9 @@ const methods = {
     },
 
     setLoadingIcon : function(btn){
-        let icon = btn.find("i.fa");
-        let spinner = "fa-spinner fa-pulse fa-fw";
-        let plus = "fa-plus-circle";
+        let icon = btn.find("i");
+        let spinner = "fa fa-spinner fa-pulse fa-fw";
+        let plus = "plus";
         let has_spinner = icon.hasClass('fa-spinner');
         has_spinner? btn.removeClass("disabled") : btn.addClass("disabled");
         btn.prop('disabled', !has_spinner);
