@@ -200,7 +200,8 @@ class HomeController extends Controller
      */
     public function readBlog($id)
     {
-        if($blog = Blog::find($id)) {
+        $blog = Blog::find($id);
+        if($blog && $blog->status == 1) {
             return view('frontend.blog-read', compact('blog'));
         }
 
