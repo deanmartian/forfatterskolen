@@ -3,6 +3,7 @@ namespace App\Repositories\Services;
 
 use App\Blog;
 use App\Http\Requests\BlogRequest;
+use Illuminate\Http\Request;
 
 class BlogService {
 
@@ -59,6 +60,7 @@ class BlogService {
         endif;
 
         $requestData['user_id'] = \Auth::user()->id;
+        $requestData['status'] = isset($request->status) ? 1 : 0;
         return $this->blog->create($requestData);
     }
 
@@ -91,6 +93,7 @@ class BlogService {
             $requestData['author_image'] = '/'.$destinationPath.$fileName;
         endif;
 
+        $requestData['status'] = isset($request->status) ? 1 : 0;
         return $blog->update($requestData);
     }
 
@@ -113,5 +116,18 @@ class BlogService {
             $blog->forceDelete();
         }
         return false;
+    }
+
+    /**
+     * Update Blog status
+     * @param $id
+     * @param Request $request
+     * @return bool
+     */
+    public function updateStatus($id, $request)
+    {
+        $blog = $this->getRecord($id);
+        $requestData = $request->toArray();
+        return $blog->update($requestData);
     }
 }

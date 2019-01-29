@@ -869,6 +869,8 @@ Route::group([
         Route::post('/sos-children/edit-main-description', 'SosChildrenController@editMainDescription')
             ->name('admin.sos-children.main-description');
 
+        Route::put('/blog/status-update/{id}', 'BlogController@statusUpdate')
+            ->name('admin.sos-children.main-description');
         Route::resource('/blog','BlogController', [
             'except' => ['show'],
             'names' => [

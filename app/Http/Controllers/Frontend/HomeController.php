@@ -180,8 +180,8 @@ class HomeController extends Controller
 
     public function blog(Request $request)
     {
-        $mainBlog = Blog::orderBy('created_at','DESC')->first();
-        $blogs = Blog::where('id','!=', $mainBlog->id)
+        $mainBlog = Blog::activeOnly()->orderBy('created_at','DESC')->first();
+        $blogs = Blog::activeOnly()->where('id','!=', $mainBlog->id)
             ->orderBy('created_at','DESC')
             ->simplePaginate(4);
 

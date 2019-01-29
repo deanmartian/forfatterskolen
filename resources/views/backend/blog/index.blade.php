@@ -1,5 +1,9 @@
 @extends('backend.layout')
 
+@section('styles')
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+@stop
+
 @section('title')
     <title>Blog &rsaquo; Forfatterskolen Admin</title>
 @stop
@@ -19,6 +23,7 @@
                 <tr>
                     <th>{{ trans('site.id') }}</th>
                     <th>{{ trans('site.title') }}</th>
+                    <th>{{ trans('site.status') }}</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -31,6 +36,11 @@
                             </a>
                         </td>
                         <td>{{ $blog->title }}</td>
+                        <td>
+                            <input type="checkbox" data-toggle="toggle" data-on="Active"
+                                   class="status-toggle" data-off="Draft"
+                                   data-id="{{$blog->id}}" data-size="mini" @if($blog->status) {{ 'checked' }} @endif>
+                        </td>
                         <td>
                             <a href="{{ route('admin.blog.edit', $blog->id) }}" class="btn btn-info btn-xs">
                                 <i class="fa fa-pencil"></i>
@@ -57,10 +67,23 @@
         $(document).ready(function(){
 
             $(".deleteBlogBtn").click(function(){
-                var action        = $(this).data('action'),
+                let action        = $(this).data('action'),
                     modal           = $("#deleteBlogModal"),
                     form          = modal.find('form');
                 form.attr('action', action);
+            });
+
+            $(".status-toggle").change(function(){
+                let blog_id = $(this).attr('data-id');
+                let is_checked = $(this).prop('checked');
+                let check_val = is_checked ? 1 : 0;
+                $.ajax({
+                    type:'PUT',
+                    url:'/blog/status-update/'+blog_id,
+                    data: { 'status' : check_val },
+                    success: function(data){
+                    }
+                });
             });
         });
     </script>

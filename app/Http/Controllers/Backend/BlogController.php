@@ -6,6 +6,7 @@ use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BlogRequest;
 use App\Repositories\Services\BlogService;
+use Illuminate\Http\Request;
 
 class BlogController extends Controller
 {
@@ -45,7 +46,8 @@ class BlogController extends Controller
             'id' => '',
             'title' => '',
             'description' => '',
-            'author_name' => ''
+            'author_name' => '',
+            'status' => ''
 
         ];
         return view('backend.blog.create', compact('blog'));
@@ -115,5 +117,23 @@ class BlogController extends Controller
             ]);
         }
         return redirect()->back();
+    }
+
+    /**
+     * Update blog status
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function statusUpdate($id, Request $request)
+    {
+        if (!$this->blogService->getRecord($id)) {
+            $response = AdminHelpers::createMessageBag('Invalid blog.');
+            return response()->json(['message' => $response ]);
+        }
+
+        $response = AdminHelpers::createMessageBag('Status updated');
+        $this->blogService->updateStatus($id, $request);
+        return response()->json(['message' => $response ]);
     }
 }

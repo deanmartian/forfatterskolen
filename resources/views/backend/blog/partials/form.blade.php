@@ -49,6 +49,12 @@
                            accept="image/*">
                 </div>
 
+                <div class="form-group">
+                    <label style="display: block;">{{ trans('site.status') }}</label>
+                    <input type="checkbox" data-toggle="toggle" data-on="Active" data-off="Draft" name="status"
+                           {{ Request::is('blog/*/edit') ? ($blog['status'] ? 'checked' : '') : 'checked' }}>
+                </div>
+
                 @if(Request::is('blog/*/edit'))
                     <button type="submit" class="btn btn-primary">{{ trans('site.update-blog') }}</button>
                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteBlogModal">{{ trans('site.delete-blog') }}</button>
@@ -61,6 +67,7 @@
 </form>
 
 @section('scripts')
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
     <script>
         // tinymce

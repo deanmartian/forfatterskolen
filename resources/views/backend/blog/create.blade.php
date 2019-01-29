@@ -1,5 +1,9 @@
 @extends('backend.layout')
 
+@section('styles')
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+@stop
+
 @section('title')
     <title>Create New Blog &rsaquo; Forfatterskolen Admin</title>
 @stop
