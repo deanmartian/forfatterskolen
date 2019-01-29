@@ -99,6 +99,13 @@ class User extends Authenticatable
             ->orderBy('created_at', 'desc');
     }
 
+    public function coursesTakenNotExpired()
+    {
+        return $this->hasMany('App\CoursesTaken')
+            ->where('end_date','<=', Carbon::now()->subDays(1))
+            ->orderBy('created_at', 'desc');
+    }
+
     public function shopManuscriptsTaken()
     {
         return $this->hasMany('App\ShopManuscriptsTaken')->orderBy('created_at', 'desc');

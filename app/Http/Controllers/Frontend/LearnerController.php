@@ -1254,6 +1254,88 @@ class LearnerController extends Controller
         $user_name      = Auth::user()->first_name;
 
         AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+
+        // check if webinar-pakke is already expired and renew it
+
+        $monthDate = \Carbon\Carbon::now()->format('Y-m-d');
+        // get courses taken by end date
+        $coursesTaken = Auth::user()->coursesTaken()->whereHas('package', function($query){
+            $query->where('course_id', 17);
+        })->whereNotNull('end_date')->where('end_date', '<=', $monthDate)->get();
+
+        // get courses taken by started at field
+        $coursesTakenByStartDate = Auth::user()->coursesTaken()->whereHas('package', function($query){
+            $query->where('course_id', 17);
+        })
+            ->whereNotNull('started_at')
+            ->whereNull('end_date')
+            ->whereDate('started_at',$monthDate)
+            ->get();
+
+        $coursesTaken = $coursesTaken->merge($coursesTakenByStartDate)->all();
+        foreach ($coursesTaken as $courseTaken) {
+            $user           = $courseTaken->user;
+            $package        = Package::findOrFail($courseTaken->package_id);
+            $payment_mode   = 'Bankoverføring';
+            $price          = (int)1490*100;
+            $product_ID     = $package->full_price_product;
+            $send_to        = $user->email;
+            $end_date       = $courseTaken->end_date ? $courseTaken->end_date : date("Y-m-d");
+            // add 10 days from today
+            //$dueDate        = date('Y-m-d', strtotime(date("Y-m-d") . " +10 days"));
+            $dueDate        = date("Y-m-d", strtotime($end_date));
+
+            $comment = '(Kurs: ' . $package->course->title . ' ['.$package->variation.'], ';
+            $comment .= 'Betalingsmodus: ' . $payment_mode . ')';
+
+            $invoice_fields = [
+                'user_id'       => $user->id,
+                'first_name'    => $user->first_name,
+                'last_name'     => $user->last_name,
+                'netAmount'     => $price,
+                'dueDate'       => $dueDate,
+                'description'   => 'Kursordrefaktura',
+                'productID'     => $product_ID,
+                'email'         => $send_to,
+                'telephone'     => $user->address->phone,
+                'address'       => $user->address->street,
+                'postalPlace'   => $user->address->city,
+                'postalCode'    => $user->address->zip,
+                'comment'       => $comment
+            ];
+
+
+            $invoice = new FikenInvoice();
+            $invoice->create_invoice($invoice_fields);
+
+            // update all the started at of each courses taken
+            $extraText = ' and other course.';
+            $courseCounter = 0;
+            foreach ($courseTaken->user->coursesTaken as $coursesTaken) {
+                $notExpiredCourses = $courseTaken->user->coursesTakenNotExpired()->pluck('id')->toArray();
+                // check if there's other course that's not expired yet and update it
+                if (!in_array($coursesTaken->id, $notExpiredCourses)) {
+                    // check if course taken have set end date and add one year to it
+                    if ($coursesTaken->end_date) {
+                        $addYear = date("Y-m-d", strtotime(date("Y-m-d", strtotime($coursesTaken->end_date)) . " + 1 year"));
+                        $coursesTaken->end_date = $addYear;
+                    }
+
+                    $coursesTaken->started_at = Carbon::now();
+                    $coursesTaken->save();
+                    $courseCounter++;
+                }
+            }
+
+            // Email to support
+            $from = 'post@forfatterskolen.no';
+            $to = 'support@forfatterskolen.no';
+            $messageText = $user_name . ' has renewed webinar-pakke';
+            $message = $courseCounter > 1 ? $messageText.$extraText : $messageText;
+            AdminHelpers::send_email('Webinar-pakke Course Renewed',
+                $from, $to, $message);
+        }
+
         return redirect()->back();
     }
 
