@@ -39,11 +39,17 @@ enctype="multipart/form-data">
                 <div class="form-group">
                     <label>{{ trans('site.author-image') }}</label>
                     <input type="file" name="author_image" accept="image/*" class="form-control" @if(!Request::is('publisher-book/*/edit')) required @endif>
+                    <p class="text-center">
+                        <small class="text-muted">146*105</small>
+                    </p>
                 </div>
 
                 <div class="form-group">
                     <label>{{ trans('site.book-image') }}</label>
                     <input type="file" name="book_image" accept="image/*" class="form-control" @if(!Request::is('publisher-book/*/edit')) required @endif>
+                    <p class="text-center">
+                        <small class="text-muted">146*105</small>
+                    </p>
                 </div>
 
                 <div class="form-group">

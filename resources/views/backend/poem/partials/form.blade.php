@@ -35,6 +35,9 @@
                 <div class="form-group">
                     <label>{{ trans('site.author-image') }}</label>
                     <input type="file" name="author_image" accept="image/*" class="form-control">
+                    <p class="text-center">
+                        <small class="text-muted">270*308</small>
+                    </p>
                 </div>
 
                 <div class="form-group">

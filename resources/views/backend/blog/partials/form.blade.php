@@ -35,6 +35,9 @@
                     <label>{{ trans('site.image') }}</label>
                     <input type="file" name="image" class="form-control"
                            accept="image/*" @if(!Request::is('blog/*/edit')) required @endif>
+                    <p class="text-center">
+                        <small class="text-muted">560*1120</small>
+                    </p>
                 </div>
 
                 <div class="form-group">
