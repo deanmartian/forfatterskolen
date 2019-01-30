@@ -94,6 +94,7 @@ Route::group([
         Route::get('/email/confirmation/{token}', 'HomeController@emailConfirmation')->name('front.email-confirmation');
 
         Route::get('/henrik-langeland', 'HomeController@henrikPage')->name('front.henrik'); // Upviral ref page
+        Route::get('/poems', 'HomeController@poems')->name('front.poems'); // Poems page
 
         // Test Manuscript (Shop Manuscript)
         Route::post('/test_manuscript', 'ShopManuscriptController@test_manuscript')->name('front.shop-manuscript.test_manuscript'); // Test count shop manuscript

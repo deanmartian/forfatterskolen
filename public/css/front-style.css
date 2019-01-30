@@ -5033,6 +5033,59 @@ margin-right: 5px;
 
 /* end profile page */
 
+/* poems page */
+.poems-page {
+    padding-bottom: 80px;
+}
+
+.poems-page .header {
+    background: url("../images-new/poems-page-header.png") no-repeat top right / 900px 400px;
+    height: 400px;
+    padding-top: 100px;
+}
+
+.poems-page .header h1 {
+    font-size: 40px;
+}
+
+.poems-page .card {
+    border-color: transparent;
+    border-radius: 10px;
+    box-shadow: 3px 4px 29px 0 rgba(168, 168, 168, 0.45);
+}
+
+.poems-page .card .card-header {
+    border-bottom: none;
+    padding: 20px 20px 0;
+}
+
+.poems-page .card .card-header .img-container {
+    background-color: #323232;
+    background-position: top center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 10px;
+    height: 270px;
+}
+
+.poems-page .card .card-header .author-container {
+    border-bottom: 1px solid #e7e7e7;
+    margin-top: 10px;
+    padding-bottom: 15px;
+}
+
+.poems-page .card .card-body .poem-text-container {
+    height: 300px;
+    padding: 20px;
+}
+
+.poems-page .mCSB_outside+.mCS-minimal-dark.mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+    background-color: #f1f1f1;
+    width: 8px;
+}
+
+/* end poems page */
+
 /* theme tabs */
 
 .theme-tabs {
@@ -6456,6 +6509,12 @@ textarea.form-control {
     .learner-calendar .fc-header-toolbar .fc-button {
         padding: 0 20px;
     }
+
+    .poems-page .header {
+        background-size: 735px 350px;
+        height: 350px;
+        padding-top: 80px;
+    }
 }
 
 @media only screen and (max-width: 768px) {
@@ -7506,6 +7565,24 @@ textarea.form-control {
 
     .learner-profile #email-list, .learner-profile #email-panel .input-group {
         width: 100%;
+    }
+
+    .poems-page .header {
+        background-size: 580px 300px;
+        height: 300px;
+        padding-top: 40px;
+    }
+
+    .poems-page .card .card-header {
+        padding: 10px 10px 0;
+    }
+
+    .poems-page .card .card-body .poem-text-container {
+        padding: 10px;
+    }
+
+    .poems-page .card .card-header .img-container {
+        height: 220px;
     }
 
     /* theme tab */
@@ -8744,6 +8821,26 @@ textarea.form-control {
     .learner-courses-container .learner-course .course-thumb {
         height: 300px;
     }
+
+    .poems-page .header {
+        background-size: 570px 240px;
+        height: 325px;
+        padding-top: 60px;
+    }
+
+    .poems-page .header p {
+        margin-top: 140px !important;
+    }
+
+    .poems-page .card .card-header {
+        padding: 20px 20px 0;
+    }
+
+    .poems-page .card .card-header .img-container {
+        background-color: #fff;
+        background-size: contain;
+        height: 270px;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -9826,6 +9923,24 @@ textarea.form-control {
     .learner-profile #profile-panel form [class*="col-"] {
         text-align: left !important;
     }
+
+    .poems-page .header {
+        background-size: 380px 159px;
+        height: 290px;
+        padding-top: 40px;
+    }
+
+    .poems-page .header h1 {
+        font-size: 35px;
+    }
+
+    .poems-page .header p {
+        margin-top: 90px !important;
+    }
+
+    .poems-page .card .card-header .img-container {
+        height: 200px;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -10330,6 +10445,18 @@ textarea.form-control {
     .learner-courses-container .learner-course .course-thumb {
         height: 220px;
     }
+
+    .poems-page .header {
+        background-size: 365px 150px;
+    }
+
+    .poems-page .header h1 {
+        font-size: 32px;
+    }
+
+    .poems-page .header p {
+        margin-top: 80px !important;
+    }
 }
 
 @media only screen and (max-width: 320px) {
@@ -10692,5 +10819,18 @@ textarea.form-control {
 
     .learner-courses-container .learner-course .course-thumb {
         height: 180px;
+    }
+
+    .poems-page .header {
+        background-size: 300px 130px;
+        height: 250px;
+    }
+
+    .poems-page .header h1 {
+        font-size: 25px;
+    }
+
+    .poems-page .header p {
+        margin-top: 60px !important;
     }
 }
