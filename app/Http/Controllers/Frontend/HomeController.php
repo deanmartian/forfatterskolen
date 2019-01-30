@@ -970,7 +970,7 @@ class HomeController extends Controller
             $file = 'storage/opt-in-files/';
             switch ($optIn->id) {
                 case 4 :
-                    $file = $file.'Gratiskurs_Krimkurs.pdf';
+                    $file = $file.'Gratiskurs_Krimkurs_FS.pdf';
                     break;
 
                 case 5 :
@@ -1211,6 +1211,12 @@ Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 
     public function henrikPage()
     {
         return view('frontend.henrik-langeland');
+    }
+
+    public function poems()
+    {
+        $poems = Poem::orderBy('created_at', 'desc')->get();
+        return view('frontend.poems', compact('poems'));
     }
 
     public function testCampaign()
