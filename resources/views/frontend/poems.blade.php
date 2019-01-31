@@ -13,11 +13,11 @@
         <div class="header">
             <div class="container">
                 <div class="col-md-6">
-                    <h1 class="font-barlow-regular">Poems</h1>
+                    <h1 class="font-barlow-regular">Diktforum</h1>
                     <p class="mt-5">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-                        et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                        aliquip ex ea .
+                        Vi har så mange elever som skriver de vakreste dikt, så vi syns de fortjener litt oppmerksomhet.
+                        Hver uke presenterer vi derfor et nytt dikt fra en av våre elever som vi publiserer her, for å
+                        få vist frem litt av mangfoldet blant elevene våre.
                     </p>
                 </div>
             </div> <!-- end container -->
