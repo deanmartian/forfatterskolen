@@ -503,6 +503,10 @@
                                         }
                                     ?>
                                 </div>
+
+                                <a class="btn site-btn-global mt-5 pull-right" href="{{ route('front.poems') }}">
+                                    Les flere dikt
+                                </a>
                             </div>
                         </div>
                 </div> <!-- end row -->
