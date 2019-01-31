@@ -16,10 +16,15 @@ class OptIn extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'slug', 'list_id', 'main_description', 'form_description', 'description'];
+    protected $fillable = ['name', 'slug', 'list_id', 'main_description', 'form_description', 'description', 'pdf_file'];
 
     public static function getBySlug($slug)
     {
         return self::where('slug', $slug)->first();
+    }
+
+    public function getPdfFileNameAttribute()
+    {
+        return last(explode('/', $this->attributes['pdf_file']));
     }
 }

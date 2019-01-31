@@ -25,6 +25,7 @@
                     <th>{{ trans('site.slug') }}</th>
                     <th>{{ trans('site.list-id') }}</th>
                     <th width="500">{{ trans('site.description') }}</th>
+                    <th>PDF File</th>
                     <th width="100"></th>
                 </tr>
                 </thead>
@@ -37,6 +38,9 @@
                             <td>{{ $optIn->slug }}</td>
                             <td>{{ $optIn->list_id }}</td>
                             <td>{{ str_limit(strip_tags($optIn->description), 120) }}</td>
+                            <td>
+                                {{ $optIn->pdf_file_name }}
+                            </td>
                             <td>
                                 <button class="btn btn-info btn-xs editOptInBtn"
                                 data-toggle="modal" data-target="#optInModal"
@@ -171,7 +175,7 @@
                     <h4 class="modal-title"></h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="" id="optInForm">
+                    <form method="POST" action="" id="optInForm" enctype="multipart/form-data">
                         {{ csrf_field() }}
 
                         <div class="form-group">
@@ -204,6 +208,12 @@
                             <label> {{ trans('site.description') }} </label>
                             <textarea class="form-control ckeditor" name="description" id="description"></textarea>
                         </div>
+
+                        <div class="form-group">
+                            <label> PDF File</label>
+                            <input type="file" name="pdf_file" class="form-control">
+                        </div>
+
                         <div class="text-right margin-top">
                             <button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
                         </div>

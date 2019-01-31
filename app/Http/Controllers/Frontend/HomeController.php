@@ -968,7 +968,8 @@ class HomeController extends Controller
 
         if ($optIn) {
             $file = 'storage/opt-in-files/';
-            switch ($optIn->id) {
+            $downloadFile = $optIn->pdf_file ?: $file.'Diktkurset.pdf';
+            /*switch ($optIn->id) {
                 case 4 :
                     $file = $file.'Gratiskurs_Krimkurs_FS.pdf';
                     break;
@@ -980,8 +981,8 @@ class HomeController extends Controller
                 default:
                     $file = $file.'Diktkurset.pdf';
                     break;
-            }
-            return response()->download(public_path($file));
+            }*/
+            return response()->download(public_path($downloadFile));
         }
         return redirect()->route('front.home');
     }

@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories\Services;
 
+use App\Http\AdminHelpers;
 use App\OptIn;
 use Illuminate\Http\Request;
 
@@ -42,6 +43,22 @@ class OptInService {
     public function store($request)
     {
         $data = $request->all();
+
+        if ($request->hasFile('pdf_file')) :
+            $destinationPath = 'storage/opt-in-files'; // upload path
+            $extensions = ['pdf'];
+            $extension = pathinfo($_FILES['pdf_file']['name'],PATHINFO_EXTENSION); // getting document extension
+            $actual_name = pathinfo($_FILES['pdf_file']['name'],PATHINFO_FILENAME); ;
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+
+            $expFileName = explode('/', $fileName);
+
+            if( in_array($extension, $extensions) ) :
+                $request->pdf_file->move($destinationPath, end($expFileName));
+                $data['pdf_file'] = $fileName;
+            endif;
+        endif;
+
         return $this->optIn->create($data);
     }
 
@@ -54,6 +71,22 @@ class OptInService {
     public function update($optIn, $request)
     {
         $data = $request->toArray();
+
+        if ($request->hasFile('pdf_file')) :
+            $destinationPath = 'storage/opt-in-files'; // upload path
+            $extensions = ['pdf'];
+            $extension = pathinfo($_FILES['pdf_file']['name'],PATHINFO_EXTENSION); // getting document extension
+            $actual_name = pathinfo($_FILES['pdf_file']['name'],PATHINFO_FILENAME); ;
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+
+            $expFileName = explode('/', $fileName);
+
+            if( in_array($extension, $extensions) ) :
+                $request->pdf_file->move($destinationPath, end($expFileName));
+                $data['pdf_file'] = $fileName;
+            endif;
+        endif;
+
         return $optIn->update($data);
     }
 
