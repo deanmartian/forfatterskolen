@@ -471,7 +471,7 @@
             </div> <!-- end container -->
         </div> <!-- end course-container -->
 
-        <div class="poem-container" style="display: none">
+        <div class="poem-container">
             <div class="container">
                 <div class="row">
                     <?php
@@ -509,7 +509,7 @@
             </div> <!-- end container -->
         </div> <!-- end poem container-->
 
-        <div class="poems-container">
+        <div class="poems-container" style="display: none">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
