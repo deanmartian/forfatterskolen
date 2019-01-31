@@ -4,6 +4,10 @@
 <title>Forfatterskolen</title>
 @stop
 
+@section('styles')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+@stop
+
 @section('content')
     <div class="front-page">
         <div class="header">
@@ -467,6 +471,44 @@
             </div> <!-- end container -->
         </div> <!-- end course-container -->
 
+        <div class="poem-container" style="display: none">
+            <div class="container">
+                <div class="row">
+                    <?php
+                        $latestPoem = $poems->first();
+                    ?>
+                    <h1 class="font-barlow-regular text-center w-100 title">Ukens dikt</h1>
+
+                        <div class="card w-100">
+                            <div class="card-header">
+                                <div class="title-container">
+                                    <h1 class="font-quicksand-medium">{{ $latestPoem->title }}</h1>
+                                    <h2 class="font-quicksand-medium">{{ $latestPoem->author }}</h2>
+                                </div>
+                                <div class="image-container"
+                                     style="background-image: url({{ asset($latestPoem->author_image) }})"></div>
+                            </div>
+                            <div class="card-body">
+                                <div class="poem-text-container">
+                                    <?php
+                                        $html   = $latestPoem->poem;
+                                        // remove first empty array value using array_filter
+                                        $content = array_filter(explode("<p>", $html));
+                                        // divided the array in 2
+                                        $pieces = array_chunk($content, ceil(count($content) / 2));
+                                        foreach($pieces as $piece) {
+                                            echo '<div class="col-sm-6 px-0">';
+                                                echo '<p>'.implode('</p><p>', $piece).'</p>';
+                                            echo '</div>';
+                                        }
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+                </div> <!-- end row -->
+            </div> <!-- end container -->
+        </div> <!-- end poem container-->
+
         <div class="poems-container">
             <div class="container">
                 <div class="row">
@@ -559,6 +601,7 @@
 @stop
 
 @section('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
     <script>
         let url_link = '{{ route('front.agree-gdpr') }}';
 
@@ -567,5 +610,11 @@
                 $(".gdpr").remove();
             });
         }
+
+        $(".poem-text-container").mCustomScrollbar({
+            theme: "minimal-dark",
+            scrollInertia: 500,
+
+        });
     </script>
 @stop
