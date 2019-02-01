@@ -1224,4 +1224,18 @@ Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 
     {
         return view('frontend.upviral-campaign.test');
     }
+
+    public function testFiken()
+    {
+        $sales = new FikenInvoice();
+        $sales = $sales->getSales();
+        $sales = $sales->_embedded->{'https://fiken.no/api/v1/rel/sales'};
+
+        foreach ($sales as $sale) {
+            //echo "<pre>";
+            print_r($sale);
+            echo "<br/><br/>";
+            //echo "</pre>";
+        }
+    }
 }

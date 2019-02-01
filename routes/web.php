@@ -30,6 +30,7 @@ Route::group([
         Route::get('/', 'HomeController@index')->name('front.home'); // Homepage
         Route::post('/agree-gdpr', 'HomeController@agreeGdpr')->name('front.agree-gdpr');
         Route::get('/testemail', 'HomeController@testEmail');
+        Route::get('/test-fiken', 'HomeController@testFiken');
         Route::get('/contact-us', 'HomeController@contact_us')->name('front.contact-us'); // Contact Us
         Route::post('/contact-us', 'HomeController@contact_us'); // Contact Us
         Route::get('/faq', 'HomeController@faq')->name('front.faq'); // FAQ

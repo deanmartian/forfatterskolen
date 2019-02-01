@@ -19,6 +19,7 @@ class FikenInvoice
 	protected $fiken_create_invoice_service;
 	protected $fiken_bank_account;
 	protected $fiken_product;
+	protected $fiken_sales;
 
 	
 	protected $headers = [];
@@ -37,6 +38,7 @@ class FikenInvoice
 		$this->fiken_create_invoice_service = $fiken_company."/create-invoice-service";
 		$this->fiken_bank_account = $fiken_company."/bank-accounts/55204077"; // Demo: 313581398  Forfatterskolen: 55204077 DemoAS: 279632077
 		$this->fiken_product = $fiken_company."/products/";
+		$this->fiken_sales = $fiken_company."/sales/";
 
 		$this->headers[] = 'Accept: application/hal+json, application/vnd.error+json';
 		$this->headers[] = 'Content-Type: application/hal+json';
@@ -121,6 +123,29 @@ class FikenInvoice
 		curl_close($ch);
 		$data = json_decode($data);
 		return $data;
+	}
+
+    public function getSales()
+    {
+        $params = 'date=2019-01-31';
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $this->fiken_sales.'?'.$params ); //Url together with parameters
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //Return data instead printing directly in Browser
+        curl_setopt($ch, CURLOPT_VERBOSE, 1);
+        curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+
+        $response = curl_exec($ch);
+        // Then, after your curl_exec call:
+        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $header = substr($response, 0, $header_size);
+        $body = substr($response, $header_size);
+
+        curl_close($ch);
+        /*return $this->headers;*/
+        return json_decode($body);
 	}
 
 
