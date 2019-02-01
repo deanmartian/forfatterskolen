@@ -40,4 +40,9 @@ class Workshop extends Model
     {
         return $this->hasMany('App\WorkshopsTaken')->orderBy('created_at', 'desc');
     }
+
+    public function emailLog()
+    {
+        return $this->hasMany('App\WorkshopEmailLog')->orderBy('created_at', 'desc');
+    }
 }

@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\AdminHelpers;
+use App\WorkshopEmailLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests;
@@ -36,7 +37,8 @@ class WorkshopController extends Controller
     public function show($id)
     {
         $workshop = Workshop::findOrFail($id);
-        return view('backend.workshop.show', compact('workshop'));
+        $emailLog = $workshop->emailLog()->paginate(5);
+        return view('backend.workshop.show', compact('workshop', 'emailLog'));
     }
 
 
@@ -188,7 +190,10 @@ class WorkshopController extends Controller
     {
         $workshop = Workshop::find($id);
         if ($workshop) {
-            $attendees = $workshop->attendees;
+            $attendees = isset($request->check_all) || isset($request->learners) ?
+                $workshop->attendees->whereIn('user_id', $request->learners)
+                : $workshop->attendees;
+
             $subject    = $request->subject;
             $message    = $request->message;
             $from       = 'post@forfatterskolen.no';
@@ -197,9 +202,38 @@ class WorkshopController extends Controller
                 //AdminHelpers::send_mail($email, $subject, $message, $from);
                 AdminHelpers::send_email($subject, $from, $email, nl2br($message));
             }
+
+            $selected_attendees = NULL;
+            if (isset($request->check_all) || isset($request->learners)) {
+                $selected_attendees = json_encode($request->learners);
+            }
+
+            $emailLog = [
+                'workshop_id' => $id,
+                'subject' => $subject,
+                'message' => $message,
+                'learners' => $selected_attendees
+            ];
+            WorkshopEmailLog::create($emailLog);
         }
 
-        return redirect()->back();
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Email sent successfully.'),
+            'alert_type' => 'success']);
+    }
+
+    /**
+     * View the log of emails
+     * @param $log_id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function viewEmailLogAttendees($log_id) {
+        $log = WorkshopEmailLog::find($log_id);
+        $attendees = [];
+        foreach( json_decode($log->learners) as $learner) {
+            $user = User::find($learner);
+            $attendees[route('admin.learner.show', $user->id)] = $user ? $user->full_name : '';
+        }
+        return response()->json($attendees);
     }
 
     /**

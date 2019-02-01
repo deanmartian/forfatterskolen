@@ -2,6 +2,7 @@
 
 @section('styles')
 	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
 @stop
 
 @section('title')
@@ -125,6 +126,51 @@
 				</div>
 			</div>
 			<!-- end of Email  -->
+
+			<!-- Email Log -->
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4>Email Log</h4>
+				</div>
+				<div class="panel-body">
+					<div class="table-responsive">
+						<table class="table table-side-bordered table-white">
+							<thead>
+								<tr>
+									<th>Subject</th>
+									<th>Message</th>
+									<th width="150">Date Sent</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+							@foreach($emailLog as $log)
+								<tr>
+									<td>{{ $log->subject }}</td>
+									<td>{!! nl2br($log->message) !!}</td>
+									<td>{{ $log->date_sent }}</td>
+									<td>
+										@if($log->learners)
+											<a href="#viewAttendeesModal" data-toggle="modal" class="viewAttendeeBtn"
+											data-action="{{ route('admin.workshop.send_email_log', $log->id) }}">
+												View Attendees
+											</a>
+										@else
+											All
+										@endif
+									</td>
+								</tr>
+							@endforeach
+							</tbody>
+						</table>
+					</div>
+
+					<div class="pull-right">
+						{{ $emailLog->render() }}
+					</div>
+				</div>
+			</div>
+			<!-- end Email Log -->
 		</div>
 
 		<div class="col-sm-4">
@@ -182,26 +228,42 @@
 
 <!-- Remove attendee Modal -->
 <div id="removeAttendeeModal" class="modal fade" role="dialog">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-      	<h4 class="no-margin">{{ trans('site.remove-attendee') }}</h4>
-      </div>
-      <div class="modal-body">
-      		<form method="POST" action="">
-		  		{{ csrf_field() }}
-		      	{!! str_replace('_ATTENDEE_', '<strong></strong>', trans('site.remove-attendee-question')) !!}
-		      	<div class="text-right margin-top">
-					<button type="submit" class="btn btn-danger">{{ trans('site.remove') }}</button>
-		      	</div>
-    		</form>
-	   </div>
-      </div>
-    </div>
-  </div>
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="no-margin">{{ trans('site.remove-attendee') }}</h4>
+		  	</div>
+			<div class="modal-body">
+				<form method="POST" action="">
+					{{ csrf_field() }}
+					{!! str_replace('_ATTENDEE_', '<strong></strong>', trans('site.remove-attendee-question')) !!}
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-danger">{{ trans('site.remove') }}</button>
+					</div>
+				</form>
+		   </div>
+	  </div>
+	</div>
 </div>
 
+<!-- View attendees modal-->
+<div id="viewAttendeesModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="no-margin">Attendees</h4>
+			</div>
+			<div class="modal-body">
+				<div class="attendee-container" style="height: 300px">
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- end view attendees modal-->
 
 
 <!-- Delete Menu Modal -->
@@ -535,6 +597,22 @@
 						<label>{{ trans('site.message') }}</label>
 						<textarea name="message" id="" cols="30" rows="10" class="form-control" required>{{ $workshop->email_body }}</textarea>
 					</div>
+
+					<div class="form-group">
+						<label>Learners</label>
+						<small class="text-muted">*Note: If on one is selected, it would send to all</small> <br>
+						<input type="checkbox" name="check_all"> <label for="">Check/Uncheck All</label>
+					</div>
+
+					<div class="form-group attendee-container" style="height: 200px; margin-top: 10px">
+						@if($workshop->attendees->count() > 0)
+							@foreach( $workshop->attendees as $attendee)
+								<input type="checkbox" name="learners[]" value="{{ $attendee->user->id }}">
+								<label>{{ $attendee->user->full_name }}</label> <br>
+							@endforeach
+						@endif
+					</div>
+
 					<div class="text-right">
 						<input type="submit" class="btn btn-primary" value="{{ trans('site.send') }}" id="send_email_btn">
 					</div>
@@ -578,6 +656,7 @@
 
 @section('scripts')
 	<script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
 <script>
 
 	$('.removeAttendeeBtn').click(function(){
@@ -647,6 +726,31 @@
 		form.find('.modal-body strong').text(first_name+ ' ' +last_name);
 		form.find('form').attr('action', action);
 	});
+
+    $(".attendee-container").mCustomScrollbar({
+        theme: "minimal-dark",
+        scrollInertia: 500,
+    });
+
+    $("[name=check_all]").click(function(){
+        if ($(this).prop('checked')) {
+            $("#sendEmailModal").find("[type=checkbox]").prop('checked', true);
+        } else {
+            $("#sendEmailModal").find("[type=checkbox]").prop('checked', false);
+        }
+    });
+
+    $(".viewAttendeeBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $("#viewAttendeesModal");
+        $.get(action, function(data){
+            modal.find('.attendee-container').find('.mCSB_container').empty();
+            $.each(data,function(k, v) {
+                modal.find('.attendee-container').find('.mCSB_container')
+					.append('<a href="'+k+'"><label style="cursor: pointer">'+v+'</label></a><br/>');
+			});
+		});
+    });
 
 	function initMap() {
 		@if( $workshop->gmap )

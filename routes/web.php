@@ -608,6 +608,7 @@ Route::group([
         Route::post('workshop/{workshop_taken_id}/attendee/{attendee_id}', 'WorkshopController@removeAttendee')->name('admin.workshop.remove_attendee');
         Route::post('workshop/{id}/download_pdf', 'WorkshopController@downloadAttendees')->name('admin.workshop.download_pdf');
         Route::post('workshop/{id}/send_email', 'WorkshopController@sendEmailToAttendees')->name('admin.workshop.send_email');
+        Route::get('workshop/{id}/view_email_attendees', 'WorkshopController@viewEmailLogAttendees')->name('admin.workshop.send_email_log');
         Route::post('/workshop-status', 'WorkshopController@updateStatus')->name('admin.workshop.status'); // Courses Page
         Route::post('/workshop-for-sale', 'WorkshopController@updateForSaleStatus')->name('admin.workshop.for-sale-status'); // Courses For Sale Status
         Route::post('workshop/{id}/update/email', 'WorkshopController@update_email')->name('admin.workshop.update.email');
