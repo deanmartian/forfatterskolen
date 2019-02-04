@@ -68,6 +68,16 @@
 
                                 <button type="submit" class="btn site-btn-global w-25">Send inn</button>
                             </form>
+
+                            @if($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach($errors->all() as $error)
+                                            <li>{!! $error !!}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div> <!-- end column -->
