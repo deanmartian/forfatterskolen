@@ -57,6 +57,7 @@
 							<th>{{ trans_choice('site.words', 2) }}</th>
 							<th>{{ trans('site.text-nr') }}</th>
 							<th>{{ trans_choice('site.groups', 1) }}</th>
+							<th>Join Group</th>
 							<th>{{ trans('site.feedback-out') }}</th>
 							<th>{{ trans_choice('site.editors', 1) }}</th>
 							<th width="250"></th>
@@ -97,6 +98,9 @@
 								) }}">
 									{{ \App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['title'] }}
 								</a>
+							</td>
+							<td>
+								{{ $manuscript->join_group ? 'Yes' : 'No' }}
 							</td>
 							<td>
 
@@ -519,6 +523,12 @@
 					<label>{{ trans('site.for-editor') }}</label> <br>
 					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small" name="for_editor"
 					@if ($assignment->for_editor) checked @endif>
+				</div>
+
+				<div class="form-group">
+					<label>Show Join Group Question</label> <br>
+					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small" name="show_join_group_question"
+					   @if ($assignment->show_join_group_question) checked @endif>
 				</div>
 
 		      <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.save') }}</button>

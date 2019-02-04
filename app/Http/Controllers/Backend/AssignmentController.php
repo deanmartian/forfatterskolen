@@ -87,7 +87,8 @@ class AssignmentController extends Controller
                 'allowed_package' => isset($request->allowed_package) ? json_encode($request->allowed_package) : NULL,
                 'add_on_price' => $request->add_on_price,
                 'max_words' => (int) $request->max_words,
-                'for_editor' => isset($request->for_editor) ? 1 : 0
+                'for_editor' => isset($request->for_editor) ? 1 : 0,
+                'show_join_group_question' => isset($request->show_join_group_question) ? 1 : 0
     		]);
 
     	endif;
@@ -110,6 +111,7 @@ class AssignmentController extends Controller
             $assignment->add_on_price = $request->add_on_price;
             $assignment->max_words = (int) $request->max_words;
             $assignment->for_editor = isset($request->for_editor) ? 1 : 0;
+            $assignment->show_join_group_question = isset($request->show_join_group_question) ? 1 : 0;
     		$assignment->save();
     	endif;
     	return redirect()->back();

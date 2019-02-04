@@ -1,5 +1,9 @@
 @extends('frontend.layout')
 
+@section('styles')
+	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+@stop
+
 @section('title')
 <title>Assignments &rsaquo; Forfatterskolen</title>
 @stop
@@ -33,6 +37,7 @@
 												<button class="btn site-btn-global site-btn-global-sm w-100 submitEditorManuscriptBtn" data-toggle="modal"
 														data-target="#submitEditorManuscriptModal"
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
+														data-show-group-question="{{ $assignment->show_join_group_question }}"
 														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif>
 													Last opp manus
 												</button>
@@ -40,6 +45,7 @@
 												<button class="btn site-btn-global site-btn-global-sm w-100 submitManuscriptBtn" data-toggle="modal"
 														data-target="#submitManuscriptModal"
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
+														data-show-group-question="{{ $assignment->show_join_group_question }}"
 														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif>
 													Last opp manus
 												</button>
@@ -196,6 +202,7 @@
 												<button class="btn site-btn-global site-btn-global-sm w-100 submitEditorManuscriptBtn" data-toggle="modal"
 														data-target="#submitEditorManuscriptModal"
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
+														data-show-group-question="{{ $assignment->show_join_group_question }}"
 														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif>
 													Last opp manus
 												</button>
@@ -203,6 +210,7 @@
 												<button class="btn site-btn-global site-btn-global-sm w-100 submitManuscriptBtn" data-toggle="modal"
 														data-target="#submitManuscriptModal"
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
+														data-show-group-question="{{ $assignment->show_join_group_question }}"
 														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif>
 													Last opp manus
 												</button>
@@ -326,6 +334,14 @@
 							<input type="radio" name="manu_type" value="{{ $manu['id'] }}" required> <label>{{ $manu['option'] }}</label> <br>
 						@endforeach
 					</div>
+
+					<div class="join-question-container hide">
+						<div class="form-group">
+							<label>Ønsker du å gi og få tilbakemeldinger fra andre elever?</label> <br>
+							<input type="checkbox" data-toggle="toggle" data-on="Ja" data-off="Nei" data-size="small" name="join_group">
+						</div>
+					</div>
+
 					<button type="submit" class="btn btn-primary pull-right">Upload</button>
 					<div class="clearfix"></div>
 				</form>
@@ -371,6 +387,14 @@
 						<input type="radio" name="manu_type" value="{{ $manu['id'] }}" required> <label>{{ $manu['option'] }}</label> <br>
 					@endforeach
 				</div>
+
+				<div class="join-question-container hide">
+					<div class="form-group">
+						<label>Ønsker du å gi og få tilbakemeldinger fra andre elever?</label> <br>
+						<input type="checkbox" data-toggle="toggle" data-on="Ja" data-off="Nei" data-size="small" name="join_group">
+					</div>
+				</div>
+
 		      	<button type="submit" class="btn btn-primary pull-right">Upload</button>
 		      	<div class="clearfix"></div>
 		    </form>
@@ -442,6 +466,7 @@
 
 @section('scripts')
 	<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script>
+	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
 
     // call the function once fully loaded
@@ -467,13 +492,27 @@
 	$('.submitManuscriptBtn').click(function(){
 		let form = $('#submitManuscriptModal form');
         let action = $(this).data('action');
+        let show_group_question = $(this).data('show-group-question');
 		form.attr('action', action);
+
+		if (show_group_question) {
+		    form.find('.join-question-container').removeClass('hide');
+		} else {
+            form.find('.join-question-container').addClass('hide');
+		}
 	});
 
     $('.submitEditorManuscriptBtn').click(function(){
         let form = $('#submitEditorManuscriptModal form');
         let action = $(this).data('action');
+        let show_group_question = $(this).data('show-group-question');
         form.attr('action', action);
+
+        if (show_group_question) {
+            form.find('.join-question-container').removeClass('hide');
+        } else {
+            form.find('.join-question-container').addClass('hide');
+        }
     });
 
     $('.editManuscriptBtn').click(function(){

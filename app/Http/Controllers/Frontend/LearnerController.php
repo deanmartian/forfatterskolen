@@ -542,6 +542,11 @@ class LearnerController extends Controller
                 return redirect()->back()->with(['errorMaxWord' => true, 'editorMaxWord' => $assignment->max_words]);
             }
 
+            $join_group = 0;
+            if ($assignment->show_join_group_question) {
+                $join_group = isset($request->join_group) ? 1 : 0;
+            }
+
             AssignmentManuscript::create([
                 'assignment_id' => $assignment->id,
                 'user_id' => Auth::user()->id,
@@ -549,6 +554,7 @@ class LearnerController extends Controller
                 'words' => $word_count,
                 'type' => $request->type,
                 'manu_type' => $request->manu_type,
+                'join_group' => $join_group
             ]);
             Log::create([
                 'activity' => '<strong>'.Auth::user()->full_name.'</strong> submitted a manuscript for assignment '.$assignment->title

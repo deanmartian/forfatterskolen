@@ -398,7 +398,8 @@
 		}
 
 $groupLearners = $group->learners->pluck('user_id')->toArray();
-$manuscriptUsers = $assignment->manuscripts->whereNotIn('user_id', $groupLearners)->whereNotIn('user_id', $filteredLearners);
+$manuscriptUsers = $assignment->manuscripts->whereNotIn('user_id', $groupLearners)->whereNotIn('user_id', $filteredLearners)
+->where('join_group', '=', 1); // added the join group field to filter if the user wants to join a group
 ?>
 <div id="addLearnerModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">

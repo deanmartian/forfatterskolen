@@ -7,7 +7,8 @@ class AssignmentManuscript extends Model
 {
     
     protected $table = 'assignment_manuscripts';
-    protected $fillable = ['assignment_id', 'user_id', 'filename', 'words', 'grade', 'type', 'manu_type', 'editor_id'];
+    protected $fillable = ['assignment_id', 'user_id', 'filename', 'words', 'grade', 'type', 'manu_type', 'editor_id',
+        'join_group'];
 
 
 

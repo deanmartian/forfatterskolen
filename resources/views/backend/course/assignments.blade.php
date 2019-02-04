@@ -98,6 +98,12 @@
 					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small" name="for_editor">
 				</div>
 
+				<div class="form-group">
+					<label>Show Join Group Question</label> <br>
+					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small" name="show_join_group_question"
+					checked>
+				</div>
+
 		      <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.add') }}</button>
 		      <div class="clearfix"></div>
 		    </form>
