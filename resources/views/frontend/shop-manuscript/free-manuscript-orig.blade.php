@@ -5,75 +5,71 @@
 @stop
 
 @section('content')
-<div class="free-manuscript-page">
-    <div class="header">
-        <div class="container text-center">
-            <h1>Prøv en gratis tekstvurdering</h1>
-            <p>
-                Har du lyst til å få en profesjonell tilbakemelding på din tekst? Skriv inn valgfri tekst i skjemaet
-                under maks 500 ord.
-            </p>
-        </div>
-    </div> <!-- end header-->
+<div class="container">
+	<div class="courses-hero free-manuscripts-hero text-center">
+		<div class="row" style="position: relative; z-index: 10">
+			<div class="col-md-12">
+				<h2><span class="highlight">PRØV</span> EN GRATIS TEKSTVURDERING</h2>
+			</div>
+		</div>
+	</div>
+</div>
 
-    <div class="body">
-        <div class="container">
-            <div class="row form-container">
-                <div class="col-lg-8 col-md-12 col-md-offset-2">
-                    <div class="card">
-                        <div class="card-body">
-                            <h2 class="title">
-                                Gratis manusutvikling
-                            </h2>
 
-                            <form class="margin-bottom" method="POST" action="{{ route('front.free-manuscript.send') }}">
-                                {{ csrf_field() }}
+<div class="container">
+	<div class="row">
+		<div class="col-md-10 col-sm-offset-1">
+			<p class="text-center courses-description">
+			Har du lyst til å få en profesjonell tilbakemelding på din tekst? Skriv inn valgfri tekst i skjemaet under maks 500 ord.
+			</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6 col-sm-offset-3">
+			@if($errors->any())
+				<div class="alert alert-danger">
+					<ul>
+						@foreach($errors->all() as $error)
+							<li>{!! $error !!}</li>
+						@endforeach
+					</ul>
+				</div>
+			@endif
+			<form class="margin-bottom" method="POST" action="{{ route('front.free-manuscript.send') }}">
+				{{ csrf_field() }}
+				<div class="form-group">
+					<label>Ditt navn</label>
+					<input type="text" class="form-control" name="name" required value="{{ old('name') }}">
+				</div>
+				<div class="form-group">
+					<label>E-post</label>
+					<input type="email" class="form-control" name="email" required value="{{ old('email') }}">
+				</div>
+				<div class="form-group">
+					<label>Sjanger</label>
+					<select class="form-control" name="genre" required>
+						<option value="" disabled="disabled" selected>Velg Sjanger</option>
+						@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
+							<option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
+						@endforeach
+					</select>
+				</div>
+				<div class="form-group">
+					<label>Din tekst (for å lime inn må du bruke lim inn funksjon fra tastaturet, ikke mus) CTRL + V</label>
+					<textarea class="form-control" name="content" rows="12" placeholder="Maks 500 ord"
+					id="editor">{{ old('content') }}</textarea>
+					<small>
+						*Kun en innsending per person
+					</small>
+				</div>
 
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fa at-icon"></i></span>
-                                    </div>
-                                    <input type="email" name="email" class="form-control no-border-left"
-                                           placeholder="Epost" required value="{{old('email')}}">
-                                </div>
-
-                                <div class="input-group mt-5">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fa user-icon"></i></span>
-                                    </div>
-                                    <input type="text" name="name" class="form-control no-border-left"
-                                           placeholder="Ditt navn" required value="{{old('name')}}">
-                                </div>
-
-                                <div class="form-group mt-5">
-                                    <select class="form-control" name="genre" required>
-                                        <option value="" disabled="disabled" selected>Velg Sjanger</option>
-                                        @foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
-                                            <option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="font-quicksand-regular mb-4" style="font-size: 14px">
-                                        Din tekst (for å lime inn må du bruke lim inn funksjon fra tastaturet, ikke mus)
-                                        CTRL + V
-                                    </label>
-                                    <textarea class="form-control" name="content" rows="12" placeholder="Maks 500 ord"
-                                              id="editor">{{ old('content') }}</textarea>
-                                    <span class="note-color">
-                                        *Kun en innsending per person
-                                    </span>
-                                </div>
-
-                                <button type="submit" class="btn site-btn-global w-25">Send inn</button>
-                            </form>
-                        </div>
-                    </div>
-                </div> <!-- end column -->
-            </div> <!-- end row -->
-        </div> <!-- end container -->
-    </div> <!-- end body -->
+				<div class="text-right">
+					<button type="submit" class="btn btn-theme">Send inn</button>
+				</div>
+			</form>
+			<br />
+		</div>
+	</div>
 </div>
 @stop
 

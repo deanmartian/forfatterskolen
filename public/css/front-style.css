@@ -4151,6 +4151,99 @@ margin-right: 5px;
     margin-bottom: 20px;
 }
 
+.free-manuscript-page .header {
+    background: linear-gradient(rgba(58, 58, 58, .52), rgba(58, 58, 58, .52)),
+    url(../images-new/free-manuscript-header.jpg) no-repeat bottom / cover;
+    color: #fff;
+    height: 460px;
+    padding: 90px 400px;
+    position: relative;
+}
+
+.free-manuscript-page .header h1 {
+    font-size: 42px;
+    letter-spacing: 1px;
+}
+
+.free-manuscript-page .header p {
+    font-family: "Quicksand Light", sans serif;
+    font-size: 19px;
+    margin-top: 25px;
+}
+
+.free-manuscript-page .body {
+    background: url(../images-new/free-manuscript-body.png) no-repeat bottom / cover;
+}
+
+.free-manuscript-page .body .form-container {
+    transform: translateY(-175px);
+}
+
+.free-manuscript-page .body .form-container .card {
+    border-color: transparent;
+    border-radius: 0;
+    box-shadow: 0 0 14.72px 1.28px rgba(204, 204, 204, 0.37);
+    padding: 50px 60px;
+    position: relative;
+}
+
+.free-manuscript-page .body .form-container h2 {
+    background-color: #e83a46;
+    border-radius: 5px;
+    color: #fff;
+    left: 50%;
+    margin-bottom: 0;
+    padding: 10px;
+    position: absolute;
+    transform: translate(-50%);
+    text-align: center;
+    top: -25px;
+    width: 40%;
+}
+
+.free-manuscript-page .body .form-container .input-group .input-group-text {
+    background-color: #fff;
+    border-color: #b9b9b9;
+    padding: 12px 18px;
+}
+
+.free-manuscript-page .body .form-container .input-group .form-control,
+.free-manuscript-page .body .form-container .form-control {
+    border-color: #b9b9b9;
+    color: #5b5b5b !important;
+}
+
+.free-manuscript-page .body .form-container .form-control::placeholder {
+    color: #5b5b5b;
+    font-family: "Montserrat Regular", sans serif;
+    font-size: 16px;
+    opacity: 1; /* Firefox */
+}
+
+.free-manuscript-page .body .form-container .form-control:-ms-input-placeholder {
+    color: #5b5b5b;
+    font-family: "Montserrat Regular", sans serif;
+}
+.free-manuscript-page .body .form-container .form-control::-ms-input-placeholder {
+    color: #5b5b5b;
+    font-family: "Montserrat Regular", sans serif;
+}
+
+.free-manuscript-page .body .form-container select {
+    padding: 0 15px;
+    background:#FFFFFF url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2218%22%20height%3D%2212%22%20viewBox%3D%220%200%2010%2010%22%3E%3Cpath%20d%3D%22M4.33%209.5L0%201L9.66%201z%22%20fill%3D%22%23a8a8a8%22%2F%3E%3C%2Fsvg%3E') right 13px center no-repeat;
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.free-manuscript-page .body .form-container #counter-text {
+    color: #999999 !important;
+    font-size: 15px !important;
+}
 /* end free manuscript */
 
 /* login page */
@@ -6610,6 +6703,10 @@ textarea.form-control {
     .front-page .poem-container .title {
         margin-bottom: 70px;
     }
+
+    .free-manuscript-page .header {
+        padding: 90px 200px;
+    }
 }
 
 @media only screen and (max-width: 768px) {
@@ -7701,6 +7798,19 @@ textarea.form-control {
 
     .front-page .poem-container .poem-text-container p, .front-page .poem-container .poem-text-container p > span {
         font-size: 17px !important;
+    }
+
+    .free-manuscript-page .header {
+        height: 280px;
+        padding: 30px 85px;
+    }
+
+    .free-manuscript-page .body .form-container {
+        transform: translateY(-70px);
+    }
+
+    .free-manuscript-page .body .form-container .card {
+        padding: 40px 30px;
     }
 
     /* theme tab */
@@ -8978,6 +9088,31 @@ textarea.form-control {
         right: 50px;
         width: 150px;
     }
+
+    .free-manuscript-page .header {
+        height: 250px;
+        padding: 30px 45px;
+    }
+
+    .free-manuscript-page .header h1 {
+        font-size: 30px;
+    }
+
+    .free-manuscript-page .header p {
+        font-size: 18px;
+    }
+
+    .free-manuscript-page .body .form-container h2 {
+        width: 50%;
+    }
+
+    .free-manuscript-page .body .form-container {
+        transform: translateY(-50px);
+    }
+
+    .free-manuscript-page .body .form-container .card {
+        padding: 35px 20px;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -10088,6 +10223,41 @@ textarea.form-control {
         right: 20px;
         width: 120px;
     }
+
+    .free-manuscript-page .header {
+        height: 170px;
+        padding: 20px 0;
+    }
+
+    .free-manuscript-page .header h1 {
+        font-size: 25px;
+    }
+
+    .free-manuscript-page .header p {
+        font-size: 16px;
+        margin-top: 12px;
+    }
+
+    .free-manuscript-page .body {
+        padding-bottom: 30px;
+    }
+
+    .free-manuscript-page .body .form-container {
+        transform: translateY(0);
+    }
+
+    .free-manuscript-page .body .form-container h2 {
+        width: 70%;
+    }
+
+    .free-manuscript-page .body .form-container .card {
+        padding: 28px 10px;
+    }
+
+    .free-manuscript-page .body .form-container .site-btn-global {
+        width: 30% !important;
+    }
+
 }
 
 @media only screen and (max-width: 375px) {
@@ -10608,6 +10778,14 @@ textarea.form-control {
     .poems-page .header p {
         margin-top: 80px !important;
     }
+
+    .free-manuscript-page .header h1 {
+        font-size: 24px;
+    }
+
+    .free-manuscript-page .body .form-container .site-btn-global {
+        width: 40% !important;
+    }
 }
 
 @media only screen and (max-width: 320px) {
@@ -10983,5 +11161,27 @@ textarea.form-control {
 
     .poems-page .header p {
         margin-top: 60px !important;
+    }
+
+    .free-manuscript-page .header {
+        height: 150px;
+        padding: 10px 0;
+    }
+
+    .free-manuscript-page .header h1 {
+        font-size: 21px;
+    }
+
+    .free-manuscript-page .header p {
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    .free-manuscript-page .body .form-container h2 {
+        width: 80%;
+    }
+
+    .free-manuscript-page .body .form-container .mce-menubtn.mce-fixed-width span {
+        width: 50px;
     }
 }
