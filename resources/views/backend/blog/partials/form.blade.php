@@ -53,6 +53,12 @@
                 </div>
 
                 <div class="form-group">
+                    <label>Schedule Date</label>
+                    <input type="date" class="form-control" name="schedule"
+                       @if($blog['schedule']) value="{{ date_format(date_create($blog['schedule']), 'Y-m-d') }}" @endif>
+                </div>
+
+                <div class="form-group">
                     <label style="display: block;">{{ trans('site.status') }}</label>
                     <input type="checkbox" data-toggle="toggle" data-on="Active" data-off="Draft" name="status"
                            {{ Request::is('blog/*/edit') ? ($blog['status'] ? 'checked' : '') : 'checked' }}>

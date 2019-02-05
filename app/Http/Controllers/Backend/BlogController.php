@@ -47,7 +47,8 @@ class BlogController extends Controller
             'title' => '',
             'description' => '',
             'author_name' => '',
-            'status' => ''
+            'status' => '',
+            'schedule' => ''
 
         ];
         return view('backend.blog.create', compact('blog'));

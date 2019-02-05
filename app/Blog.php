@@ -1,6 +1,7 @@
 <?php
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Blog extends Model
@@ -17,7 +18,8 @@ class Blog extends Model
      *
      * @var array
      */
-    protected $fillable = ['title', 'description', 'user_id', 'image', 'author_name', 'author_image', 'status'];
+    protected $fillable = ['title', 'description', 'user_id', 'image', 'author_name', 'author_image', 'status',
+        'schedule'];
 
     public function user()
     {
@@ -31,6 +33,10 @@ class Blog extends Model
 
     public static function activeOnly()
     {
-        return self::where('status','=', 1);
+        return self::where('status','=', 1)
+            ->where(function($query) {
+                $query->whereDate('schedule', '<=', Carbon::today()->format('Y-m-d'))
+                ->orWhereNull('schedule');
+            });
     }
 }
