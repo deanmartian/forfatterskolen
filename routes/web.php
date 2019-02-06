@@ -871,7 +871,7 @@ Route::group([
         Route::get('/sos-children/edit-main-description', 'SosChildrenController@getEditMainDescription')
             ->name('admin.sos-children.get-main-description');
         Route::post('/sos-children/edit-main-description', 'SosChildrenController@editMainDescription')
-            ->name('admin.sos-children.main-description');
+            ->name('admin.sos-children.post-main-description');
 
         Route::put('/blog/status-update/{id}', 'BlogController@statusUpdate')
             ->name('admin.sos-children.main-description');

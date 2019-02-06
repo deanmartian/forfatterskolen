@@ -11,7 +11,7 @@
 @section('content')
 <div class="container padding-top">
     <div class="row">
-        <form method="POST" action="{{ route('admin.sos-children.main-description') }}">
+        <form method="POST" action="{{ route('admin.sos-children.post-main-description') }}">
             {{ csrf_field() }}
 
             <div class="col-sm-12">

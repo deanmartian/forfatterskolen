@@ -72,7 +72,7 @@
                     <h4 class="modal-title">Edit Main Description</h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="{{ route('admin.sos-children.main-description') }}">
+                    <form method="POST" action="{{ route('admin.sos-children.post-main-description') }}">
                         {{ csrf_field() }}
                         <div class="form-group">
                             <label>Description</label>
