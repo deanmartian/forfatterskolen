@@ -41,6 +41,12 @@ enctype="multipart/form-data">
                     <input type="file" name="author_image" accept="image/*" class="form-control" @if(!Request::is('publisher-book/*/edit')) required @endif>
                     <p class="text-center">
                         <small class="text-muted">146*105</small>
+                        <br>
+                        <small class="text-muted">
+                            <a href="{{ asset($book['author_image']) }}" target="_blank">
+                                {{ \App\Http\AdminHelpers::extractFileName($book['author_image']) }}
+                            </a>
+                        </small>
                     </p>
                 </div>
 
@@ -49,6 +55,12 @@ enctype="multipart/form-data">
                     <input type="file" name="book_image" accept="image/*" class="form-control" @if(!Request::is('publisher-book/*/edit')) required @endif>
                     <p class="text-center">
                         <small class="text-muted">146*105</small>
+                        <br>
+                        <small class="text-muted">
+                            <a href="{{ asset($book['book_image']) }}" target="_blank">
+                                {{ \App\Http\AdminHelpers::extractFileName($book['book_image']) }}
+                            </a>
+                        </small>
                     </p>
                 </div>
 
