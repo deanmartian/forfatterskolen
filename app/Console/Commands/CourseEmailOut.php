@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\CoursesTaken;
+use App\CronLog;
 use App\EmailOut;
 use App\Http\FrontendHelpers;
 use App\Invoice;
@@ -44,6 +45,7 @@ class CourseEmailOut extends Command
     public function handle()
     {
         $today = Carbon::today()->format('Y-m-d');
+        CronLog::create(['activity' => 'CourseEmailOut CRON running.']);
         $emailOutList = EmailOut::whereDate('delay', '=', $today)->get();
         foreach($emailOutList as $emailOut) {
             $packages = $emailOut->course->packages->pluck('id')->toArray();
@@ -56,8 +58,10 @@ class CourseEmailOut extends Command
                 $emailData['email_subject'] = $emailOut->subject;
                 $emailData['email_message'] = $emailOut->message;
 
+                CronLog::create(['activity' => 'CourseEmailOut adding to email queue '.$toMail]);
                 // add email to queue
                 \Mail::to($toMail)->queue(new SubjectBodyEmail($emailData));
+                CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$toMail]);
             }
         }
 
@@ -74,13 +78,17 @@ class CourseEmailOut extends Command
 
             // loop the result and send email
             foreach ($coursesTaken as $courseTaken) {
-                $toMail = $courseTaken->user->email;
+                $toMail = 'ely@mailinator.com';//$courseTaken->user->email;
                 $emailData['email_subject'] = $emailOut->subject;
                 $emailData['email_message'] = $emailOut->message;
 
+                CronLog::create(['activity' => 'CourseEmailOut adding to email queue '.$toMail]);
                 // add email to queue
                 \Mail::to($toMail)->queue(new SubjectBodyEmail($emailData));
+                CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$toMail]);
             }
         }
+
+        CronLog::create(['activity' => 'CourseEmailOut CRON done running.']);
     }
 }
