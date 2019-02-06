@@ -59,7 +59,8 @@
                                 <a href="{{ route('admin.solution-article.index', $solution->id) }}" class="btn btn-xs btn-success">
                                     {{ trans_choice('site.articles', 2) }}
                                 </a>
-                                <button class="btn btn-xs btn-primary editSolutionBtn" data-fields="{{ json_encode($solution) }}" data-action="{{ route('admin.solution.update', $solution->id) }}" data-toggle="modal" data-target="#editSolutionModal"><i class="fa fa-pencil"></i></button>
+                                <button class="btn btn-xs btn-primary editSolutionBtn" data-fields="{{ json_encode($solution) }}" data-action="{{ route('admin.solution.update', $solution->id) }}"
+                                        data-filename="{{ \App\Http\AdminHelpers::extractFileName($solution->image) }}" data-toggle="modal" data-target="#editSolutionModal"><i class="fa fa-pencil"></i></button>
                                 <button class="btn btn-xs btn-danger deleteSolutionBtn" data-action="{{ route('admin.solution.destroy', $solution->id) }}" data-toggle="modal" data-target="#deleteSolutionModal"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr>
@@ -151,6 +152,7 @@
                             <label for="image">{{ trans('site.image') }}</label>
                             <input type="file" accept="image/*" name="image" id="webinarImageEdit" accept="image/jpg, image/jpeg, image/png"
                                    {{--onchange="readURLEdit(this)"--}}>
+                            <span class="image-name"></span>
 
                             <input type="hidden" name="x" />
                             <input type="hidden" name="y" />
@@ -212,6 +214,7 @@
             var form = $('#editSolutionModal form');
             var fields = $(this).data('fields');
             var action = $(this).data('action');
+            let filename = $(this).data('filename');
             form.attr('action', action);
             form.find('input[name=title]').val(fields.title);
             form.find('textarea[name=description]').val(fields.description);
@@ -220,6 +223,7 @@
                 image_form_group_edit.show();
                 $("#editSolutionModal").find('input[name=is_instruction]').bootstrapToggle('on');
             }
+            $("#editSolutionModal").find('.image-name').text(filename);
         });
 
         $("#addSolutionModal").find("input[name=is_instruction]").change(function(){
