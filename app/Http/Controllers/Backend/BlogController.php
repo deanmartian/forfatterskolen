@@ -46,7 +46,9 @@ class BlogController extends Controller
             'id' => '',
             'title' => '',
             'description' => '',
+            'image' => '',
             'author_name' => '',
+            'author_image' => '',
             'status' => '',
             'schedule' => ''
 

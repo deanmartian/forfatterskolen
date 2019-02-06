@@ -37,6 +37,12 @@
                            accept="image/*" @if(!Request::is('blog/*/edit')) required @endif>
                     <p class="text-center">
                         <small class="text-muted">560*1120</small>
+                        <br>
+                        <small class="text-muted">
+                            <a href="{{ asset($blog['image']) }}" target="_blank">
+                                {{ \App\Http\AdminHelpers::extractFileName($blog['image']) }}
+                            </a>
+                        </small>
                     </p>
                 </div>
 
@@ -50,6 +56,13 @@
                     <label>{{ trans('site.author-image') }}</label>
                     <input type="file" name="author_image" class="form-control"
                            accept="image/*">
+                    <p class="text-center">
+                        <small class="text-muted">
+                            <a href="{{ asset($blog['author_image']) }}" target="_blank">
+                                {{ \App\Http\AdminHelpers::extractFileName($blog['author_image']) }}
+                            </a>
+                        </small>
+                    </p>
                 </div>
 
                 <div class="form-group">
