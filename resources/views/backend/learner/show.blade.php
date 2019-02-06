@@ -192,6 +192,15 @@
 															data-toggle="modal"
 															data-action="{{ route('admin.learner.delete-from-course', $courseTaken->id) }}">{{ trans('site.delete-from-course') }}</button>
 												</div>
+
+												<div class="margin-top">
+													<button class="btn btn-xs btn-info renewCourseBtn" data-toggle="modal"
+													data-target="#renewCourseModal"
+													data-action="{{ route('admin.learner.renew-course', ['learner_id' => $learner->id,
+													'course_taken_id' => $courseTaken->id]) }}">
+														Renew Course
+													</button>
+												</div>
 											@endif
 
 											<div class="collapse" id="lessons-{{ $courseTaken->id }}">
@@ -1082,6 +1091,29 @@
 				</div>
 			</div>
 
+		</div>
+	</div>
+</div>
+
+<div id="renewCourseModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Renew Course</h4>
+			</div>
+
+			<div class="modal-body">
+				<form method="POST" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<p>
+						Are you sure to renew course?
+					</p>
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">{{ trans('site.confirm') }}</button>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
 </div>
@@ -2064,6 +2096,11 @@
             let action = $(this).data('action');
             $("#deleteFromCourseModal").find('form').attr('action', action);
 		});
+
+        $(".renewCourseBtn").click(function(){
+            let action = $(this).data('action');
+            $("#renewCourseModal").find('form').attr('action', action);
+        });
 
         $("#submitDeleteFromCourse").click(function(e){
             e.preventDefault();

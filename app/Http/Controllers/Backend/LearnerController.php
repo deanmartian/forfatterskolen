@@ -385,6 +385,68 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * Renew a learners course
+     * @param $learner_id
+     * @param $course_taken_id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function renewCourse($learner_id, $course_taken_id)
+    {
+        $courseTaken = CoursesTaken::where(['user_id' => $learner_id, 'id' => $course_taken_id])->first();
+        if ($courseTaken) {
+            $user           = User::find($learner_id);
+            $package        = Package::findOrFail($courseTaken->package_id);
+            $payment_mode   = 'Bankoverføring';
+            $price          = (int)1490*100;
+            $product_ID     = 280763803;//$package->full_price_product;
+            $send_to        = $user->email;
+            $dueDate        = Carbon::today()->format('Y-m-d');
+
+            $comment = '(Kurs: ' . $package->course->title . ' ['.$package->variation.'], ';
+            $comment .= 'Betalingsmodus: ' . $payment_mode . ')';
+
+            $invoice_fields = [
+                'user_id'       => $user->id,
+                'first_name'    => $user->first_name,
+                'last_name'     => $user->last_name,
+                'netAmount'     => $price,
+                'dueDate'       => $dueDate,
+                'description'   => 'Kursordrefaktura',
+                'productID'     => $product_ID,
+                'email'         => $send_to,
+                'telephone'     => $user->address->phone,
+                'address'       => $user->address->street,
+                'postalPlace'   => $user->address->city,
+                'postalCode'    => $user->address->zip,
+                'comment'       => $comment
+            ];
+
+            $invoice = new FikenInvoice();
+            $invoice->create_invoice($invoice_fields);
+
+            // check if course taken have set end date and add one year to it
+            if ($courseTaken->end_date) {
+                $addYear = date("Y-m-d", strtotime(date("Y-m-d", strtotime($courseTaken->end_date)) . " + 1 year"));
+                $courseTaken->end_date = $addYear;
+            }
+
+            $courseTaken->started_at = Carbon::now();
+            $courseTaken->save();
+
+            // add to automation
+            $user_email     = $user->email;
+            $automation_id  = 73;
+            $user_name      = $user->first_name;
+
+            AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Webinar-pakke renewed'),
+            'alert_type' => 'success']);
+
+        }
+        return redirect()->back();
+    }
+    
     public function updateDocumentShopManuscriptTaken($id, Request $request)
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($id);
