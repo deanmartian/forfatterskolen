@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\CronLog;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
 use App\Invoice;
@@ -41,6 +42,8 @@ class DueInvoiceCheck extends Command
      */
     public function handle()
     {
+        CronLog::create(['activity' => 'DueInvoiceCheck CRON running.']);
+
         $from           = 'post@forfatterskolen.no';//$request->from_email;
         $subject        = 'Faktura';
         $dueTomorrow    = Carbon::today()->addDay(1)->format('Y-m-d');
@@ -61,8 +64,9 @@ Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 
 
             AdminHelpers::send_email($subject,
                 $from, $to, $message);
+            CronLog::create(['activity' => 'DueInvoiceCheck CRON sent email to '.$to]);
         }
 
-        return "email sent";
+        CronLog::create(['activity' => 'DueInvoiceCheck CRON done running.']);
     }
 }

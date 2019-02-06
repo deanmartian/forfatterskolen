@@ -33,6 +33,7 @@
 	<a class="btn btn-success margin-top" href="{{ route('admin.poem.index') }}">Poem</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.page_meta.index') }}">Page Meta</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.editor.index') }}">Editors</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.cron-log.index') }}">CRON Logs</a>
 
 	<div class="table-users table-responsive">
 		<table class="table">

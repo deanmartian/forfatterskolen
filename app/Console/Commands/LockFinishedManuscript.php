@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\CronLog;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
 use App\Invoice;
@@ -42,12 +43,16 @@ class LockFinishedManuscript extends Command
      */
     public function handle()
     {
+        CronLog::create(['activity' => 'LockFinishedManuscript CRON running.']);
         $manuscriptsTakenList = ShopManuscriptsTaken::whereNotNull('file')->get();
         foreach ($manuscriptsTakenList as $manuscriptTaken) {
             if ($manuscriptTaken->feedbacks->count() > 0) {
                 $manuscriptTaken->is_manuscript_locked = 1;
                 $manuscriptTaken->save();
+
+                CronLog::create(['activity' => 'LockFinishedManuscript CRON updated manuscript taken id '.$manuscriptTaken->id]);
             }
         }
+        CronLog::create(['activity' => 'LockFinishedManuscript CRON done running.']);
     }
 }

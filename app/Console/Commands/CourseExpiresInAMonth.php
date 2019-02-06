@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\CoursesTaken;
+use App\CronLog;
 use App\Http\AdminHelpers;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -39,6 +40,7 @@ class CourseExpiresInAMonth extends Command {
      */
     public function handle()
     {
+        CronLog::create(['activity' => 'CourseExpiresInAMonth CRON running.']);
         $monthDate = Carbon::now()->addDays(30)->format('Y-m-d');
 
         // get courses taken by end date
@@ -67,7 +69,10 @@ class CourseExpiresInAMonth extends Command {
             // check if auto renew courses is not set
             if (!$courseTaken->user->auto_renew_courses) {
                 AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+                CronLog::create(['activity' => 'CourseExpiresInAMonth CRON added '.$user_name.' to automation '.$automation_id]);
             }
         }
+
+        CronLog::create(['activity' => 'CourseExpiresInAMonth CRON done running.']);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\CronLog;
 use App\User;
 use Illuminate\Console\Command;
 
@@ -38,6 +39,7 @@ class DontAvailAnythingCommand extends Command
      */
     public function handle()
     {
+        CronLog::create(['activity' => 'DontAvailAnything CRON running.']);
         $yesterday = date("Y-m-d", strtotime( '-1 days' ) ); // get the date yesterday
         $users = User::whereDate('created_at', $yesterday )->get(); // get users created yesterday
         foreach($users as $user) {
@@ -53,7 +55,10 @@ class DontAvailAnythingCommand extends Command
                 Vi ønsker deg en god dag! <br/><br/> Hilsen oss i Forfatterskolen";
 
                 mail($user->email, $subject, $message, $headers);
+                CronLog::create(['activity' => 'DontAvailAnything CRON sent email to '.$user->email]);
             }
         }
+
+        CronLog::create(['activity' => 'DontAvailAnything CRON done running.']);
     }
 }

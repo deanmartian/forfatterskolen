@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\CoursesTaken;
+use App\CronLog;
 use App\Notification;
 use App\User;
 use Carbon\Carbon;
@@ -975,6 +976,11 @@ class AdminHelpers
         $messageBag = new MessageBag();
         $messageBag->add('errors', $message);
         return $messageBag;
+    }
+
+    public static function getCronLogs()
+    {
+        return CronLog::orderBy('id', 'desc')->paginate(15);
     }
 
     /**

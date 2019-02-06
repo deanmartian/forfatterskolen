@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\CoursesTaken;
+use App\CronLog;
 use App\Http\AdminHelpers;
 use App\Http\FikenInvoice;
 use App\Package;
@@ -41,6 +42,7 @@ class WebinarPakkeExpiresInAWeek extends Command {
      */
     public function handle()
     {
+        CronLog::create(['activity' => 'WebinarPakkeExpiresInAWeek CRON running.']);
         $monthDate = Carbon::now()->addDays(7)->format('Y-m-d');
 
         // get courses taken by end date
@@ -127,7 +129,10 @@ class WebinarPakkeExpiresInAWeek extends Command {
                 AdminHelpers::send_email('All Courses Renewed',
                     $from, $to,
                     $user_name . ' has renewed all the courses');
+                CronLog::create(['activity' => 'WebinarPakkeExpiresInAWeek CRON renewed the courses for user '.$user->id]);
             }
         }
+
+        CronLog::create(['activity' => 'WebinarPakkeExpiresInAWeek CRON done running.']);
     }
 }

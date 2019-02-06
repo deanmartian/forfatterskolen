@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\CronLog;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
 use App\Invoice;
@@ -43,6 +44,7 @@ class CheckFikenInvoice extends Command
      */
     public function handle()
     {
+        CronLog::create(['activity' => 'CheckFikenInvoice CRON running.']);
         $fikenInvoices = "https://fiken.no/api/v1/companies/forfatterskolen-as/invoices";
         $username = "cleidoscope@gmail.com";
         $password = "moonfang";
@@ -79,8 +81,10 @@ class CheckFikenInvoice extends Command
             endforeach;
             $invoice->update(['fiken_is_paid' => $status, 'fiken_balance' => $fiken_balance, 'fiken_dueDate' => $fikeDueDate,
                 'kid_number' => $kid]);
+            CronLog::create(['activity' => 'CheckFikenInvoice CRON updated an invoice with kid_number '.$kid]);
         }
 
+        CronLog::create(['activity' => 'CheckFikenInvoice CRON done running.']);
         return "done checking fiken";
     }
 }

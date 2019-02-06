@@ -1027,6 +1027,10 @@ Route::group([
             ],
         ]);
 
+        Route::get('cron-log', function(){
+            return view('backend.support.cron-log');
+        })->name('admin.cron-log.index');
+
         //Calendar Notes
         Route::resource('/calendar-note', 'CalendarNoteController', [
             'except' => 'show',
