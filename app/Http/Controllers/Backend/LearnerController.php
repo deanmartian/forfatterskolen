@@ -401,7 +401,7 @@ class LearnerController extends Controller
             $price          = (int)1490*100;
             $product_ID     = 280763803;//$package->full_price_product;
             $send_to        = $user->email;
-            $dueDate        = Carbon::today()->format('Y-m-d');
+            $dueDate        = Carbon::today()->addDay(14)->format('Y-m-d');
 
             $comment = '(Kurs: ' . $package->course->title . ' ['.$package->variation.'], ';
             $comment .= 'Betalingsmodus: ' . $payment_mode . ')';
