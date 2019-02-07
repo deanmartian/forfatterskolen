@@ -1,5 +1,9 @@
 @extends('backend.layout')
 
+@section('styles')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+@stop
+
 @section('title')
     <title>Email Out &rsaquo; {{$course->title}} &rsaquo; Forfatterskolen Admin</title>
 @stop
@@ -30,7 +34,7 @@
                             @foreach($course->emailOut as $email)
                                 <tr>
                                     <td>{{ $email->subject }}</td>
-                                    <td>{!! str_limit($email->message, 100) !!}</td>
+                                    <td>{!! str_limit(strip_tags($email->message), 100) !!}</td>
                                     <td>
                                         @if(\App\Http\AdminHelpers::isDate($email->delay))
                                             {{date_format(date_create($email->delay), 'M d, Y')}}
@@ -81,7 +85,15 @@
 
                         <div class="form-group">
                             <label>Message</label>
-                            <textarea name="message" cols="30" rows="10" class="form-control" required></textarea>
+                            <textarea name="message" cols="30" rows="10" class="form-control editor"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="display: block">From</label>
+                            <input type="text" class="form-control" placeholder="Name" style="width: 49%; display: inline;"
+                                name="from_name">
+                            <input type="email" class="form-control" placeholder="Email" style="width: 49%; display: inline;"
+                                name="from_email">
                         </div>
 
                         <div class="form-group">
@@ -134,6 +146,7 @@
 @stop
 
 @section('scripts')
+    <script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
     <script>
         let translations = {
             add_email: '{{ trans('site.add-email') }}',
@@ -142,6 +155,43 @@
 
         let emailModal = $("#emailModal");
         let emailModalForm = emailModal.find('form');
+
+        // tinymce editor config and intitalization
+        let editor_config = {
+            path_absolute: "{{ URL::to('/') }}",
+            height: '15em',
+            selector: '.editor',
+            plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                'searchreplace wordcount visualblocks visualchars code fullscreen',
+                'insertdatetime media nonbreaking save table contextmenu directionality',
+                'emoticons template paste textcolor colorpicker textpattern'],
+            toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript superscript | forecolor backcolor | ',
+            toolbar2: 'link | alignleft aligncenter alignright ' +
+            'alignjustify  | removeformat',
+            toolbar3:'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code | print fullscreen',
+            relative_urls: false,
+            file_browser_callback : function(field_name, url, type, win) {
+                let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
+                let y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
+
+                let cmsURL = editor_config.path_absolute + '/laravel-filemanager?field_name=' + field_name;
+                if (type == 'image') {
+                    cmsURL = cmsURL + '&type=Images';
+                } else {
+                    cmsURL = cmsURL + '&type=Files';
+                }
+
+                tinyMCE.activeEditor.windowManager.open({
+                    file : cmsURL,
+                    title : 'Filemanager',
+                    width : x * 0.8,
+                    height : y * 0.8,
+                    resizable : 'yes',
+                    close_previous : 'no'
+                });
+            }
+        };
+        tinymce.init(editor_config);
 
         $(".addEmailBtn").click(function(){
             let action = $(this).data('action');
@@ -155,6 +205,7 @@
                    prependDelayInput(input_group, 'number', 'days');
                } else {
                    $(v).val('');
+                   $(tinymce.get('message').getBody()).html('');
                }
             });
         });
@@ -174,6 +225,10 @@
                    } else {
                        prependDelayInput(input_group, 'number', value);
                    }
+               }
+
+               if (field === 'message') {
+                   $(tinymce.get('message').getBody()).html(value);
                }
             });
         });

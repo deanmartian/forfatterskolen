@@ -11,16 +11,20 @@ class SubjectBodyEmail extends Mailable
 
     public $email_message;
     public $email_subject;
+    public $from_name;
+    public $from_email;
 
     public function __construct($email_data)
     {
         $this->email_message = $email_data['email_message'];
         $this->email_subject = $email_data['email_subject'];
+        $this->from_name = $email_data['from_name'] ? $email_data['from_name'] : 'Forfatterskolen';
+        $this->from_email = $email_data['from_email'] ? $email_data['from_email'] : 'post@forfatterskolen.no';
     }
 
     public function build()
     {
-        return $this->from('post@forfatterskolen.no', 'Forfatterskolen')
+        return $this->from($this->from_email, $this->from_name)
             ->subject($this->email_subject)
             ->view('emails.subject_body');
     }

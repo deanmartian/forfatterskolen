@@ -57,6 +57,8 @@ class CourseEmailOut extends Command
                 $toMail = $courseTaken->user->email;
                 $emailData['email_subject'] = $emailOut->subject;
                 $emailData['email_message'] = $emailOut->message;
+                $emailData['from_name'] = $emailOut->from_name;
+                $emailData['from_email'] = $emailOut->from_email;
 
                 CronLog::create(['activity' => 'CourseEmailOut adding to email queue '.$toMail]);
                 // add email to queue
@@ -78,9 +80,11 @@ class CourseEmailOut extends Command
 
             // loop the result and send email
             foreach ($coursesTaken as $courseTaken) {
-                $toMail = 'ely@mailinator.com';//$courseTaken->user->email;
+                $toMail = $courseTaken->user->email;
                 $emailData['email_subject'] = $emailOut->subject;
                 $emailData['email_message'] = $emailOut->message;
+                $emailData['from_name'] = $emailOut->from_name;
+                $emailData['from_email'] = $emailOut->from_email;
 
                 CronLog::create(['activity' => 'CourseEmailOut adding to email queue '.$toMail]);
                 // add email to queue
