@@ -140,7 +140,8 @@
 									<th>Subject</th>
 									<th>Message</th>
 									<th width="150">Date Sent</th>
-									<th></th>
+									<th>From</th>
+									<th>Recipient</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -149,6 +150,10 @@
 									<td>{{ $log->subject }}</td>
 									<td>{!! nl2br($log->message) !!}</td>
 									<td>{{ $log->date_sent }}</td>
+									<td>
+										{{ $log->from_name ?: 'Forfatterskolen' }} <br>
+										{{ $log->from_email ?: 'post@forfatterskolen.no' }}
+									</td>
 									<td>
 										@if($log->learners)
 											<a href="#viewAttendeesModal" data-toggle="modal" class="viewAttendeeBtn"
@@ -386,8 +391,8 @@
 	          		</div>
 	          		<div class="form-group">
 	                <label>{{ trans('site.description') }}</label>
-	          			<textarea class="form-control" name="description" placeholder="{{ trans('site.description') }}" rows="5"
-						id="editor">{{ $workshop->description }}</textarea>
+	          			<textarea class="form-control editor" name="description" placeholder="{{ trans('site.description') }}"
+								  rows="5">{{ $workshop->description }}</textarea>
 	          		</div>
 	          		<div class="form-group">
 	                <label>{{ trans('site.price') }}</label>
@@ -595,12 +600,20 @@
 
 					<div class="form-group">
 						<label>{{ trans('site.message') }}</label>
-						<textarea name="message" id="" cols="30" rows="10" class="form-control" required>{{ $workshop->email_body }}</textarea>
+						<textarea name="message" id="" cols="30" rows="10" class="form-control editor" required>{{ nl2br($workshop->email_body) }}</textarea>
+					</div>
+
+					<div class="form-group">
+						<label style="display: block">From</label>
+						<input type="text" class="form-control" placeholder="Name" style="width: 49%; display: inline;"
+							   name="from_name">
+						<input type="email" class="form-control" placeholder="Email" style="width: 49%; display: inline;"
+							   name="from_email">
 					</div>
 
 					<div class="form-group">
 						<label>Learners</label>
-						<small class="text-muted">*Note: If on one is selected, it would send to all</small> <br>
+						<small class="text-muted">*Note: If no one is selected, it would send to all</small> <br>
 						<input type="checkbox" name="check_all"> <label for="">Check/Uncheck All</label>
 					</div>
 
@@ -800,7 +813,7 @@
     var editor_config = {
         path_absolute: "{{ URL::to('/') }}",
         height: '15em',
-        selector: '#editor',
+        selector: '.editor',
         plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
             'searchreplace wordcount visualblocks visualchars code fullscreen',
             'insertdatetime media nonbreaking save table contextmenu directionality',

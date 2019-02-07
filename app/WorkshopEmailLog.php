@@ -18,7 +18,7 @@ class WorkshopEmailLog extends Model
      *
      * @var array
      */
-    protected $fillable = ['workshop_id', 'subject', 'message', 'learners'];
+    protected $fillable = ['workshop_id', 'subject', 'message', 'learners', 'from_name', 'from_email'];
 
     public function workshop()
     {

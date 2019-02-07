@@ -190,17 +190,27 @@ class WorkshopController extends Controller
     {
         $workshop = Workshop::find($id);
         if ($workshop) {
+
+            $this->validate($request,
+                [
+                    'subject' => 'required',
+                    'message' => 'required'
+                ]
+            );
+
             $attendees = isset($request->check_all) || isset($request->learners) ?
                 $workshop->attendees->whereIn('user_id', $request->learners)
                 : $workshop->attendees;
 
             $subject    = $request->subject;
             $message    = $request->message;
-            $from       = 'post@forfatterskolen.no';
+            $from_email = $request->from_email ?: 'post@forfatterskolen.no';
+            $from_name  = $request->from_name ?: 'Forfatterskolen';
+
             foreach ($attendees as $attendee) {
                 $email = $attendee->user->email;
                 //AdminHelpers::send_mail($email, $subject, $message, $from);
-                AdminHelpers::send_email($subject, $from, $email, nl2br($message));
+                AdminHelpers::send_email($subject, $from_email, $email, $message, $from_name);
             }
 
             $selected_attendees = NULL;
@@ -212,7 +222,9 @@ class WorkshopController extends Controller
                 'workshop_id' => $id,
                 'subject' => $subject,
                 'message' => $message,
-                'learners' => $selected_attendees
+                'learners' => $selected_attendees,
+                'from_name' => $from_name,
+                'from_email' => $from_email
             ];
             WorkshopEmailLog::create($emailLog);
         }
