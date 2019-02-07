@@ -324,18 +324,26 @@ class CourseController extends Controller
         $course = Course::find($id);
         if ($course) {
 
+            $this->validate($request,
+                [
+                    'subject' => 'required',
+                    'message' => 'required'
+                ]
+            );
+
             $learners   = isset($request->check_all) || isset($request->learners) ?
                 $course->learners->whereIn('user_id', $request->learners)->get()
                 : $course->learners->get();
             $subject    = $request->subject;
             $message    = nl2br($request->message);
-            $from       = 'post@forfatterskolen.no';
+            $from_email = $request->from_email ?: 'post@forfatterskolen.no';
+            $from_name  = $request->from_name ?: 'Forfatterskolen';
 
             foreach($learners as $learner) {
                 $email = $learner->user->email;
                 //AdminHelpers::send_mail($email, $subject, $message, $from);
                 AdminHelpers::send_email($subject,
-                    'post@forfatterskolen.no', $email, $message);
+                    $from_email, $email, $message, $from_name);
             }
 
             $selected_learners = NULL;
@@ -347,9 +355,13 @@ class CourseController extends Controller
                 'course_id' => $id,
                 'subject' => $subject,
                 'message' => $message,
-                'learners' => $selected_learners
+                'learners' => $selected_learners,
+                'from_name' => $from_name,
+                'from_email' => $from_email
             ];
             EmailOutLog::create($emailOutLog);
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Mail sent successfully.'),
+                'alert_type' => 'success']);
         }
 
         return redirect()->back();

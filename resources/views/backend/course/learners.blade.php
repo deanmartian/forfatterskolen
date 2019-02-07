@@ -136,7 +136,8 @@
 							<tr>
 								<th>Subject</th>
 								<th>Message</th>
-								<th>Date Sent</th>
+								<th width="200">Date Sent</th>
+								<th>From</th>
 								<th></th>
 							</tr>
 							</thead>
@@ -144,8 +145,12 @@
 								@foreach($emailOutLog as $log)
 									<tr>
 										<td>{{ $log->subject }}</td>
-										<td>{{ $log->message }}</td>
+										<td>{!!  $log->message !!}</td>
 										<td>{{ $log->date_sent }}</td>
+										<td>
+											{{ $log->from_name ?: 'Forfatterskolen' }} <br>
+											{{ $log->from_email ?: 'post@forfaterskolen.no' }}
+										</td>
 										<td>
 											@if($log->learners)
 												<form class="" method="GET">
@@ -264,7 +269,15 @@
 					
 					<div class="form-group">
 						<label>{{ trans('site.message') }}</label>
-						<textarea name="message" id="" cols="30" rows="10" class="form-control" required></textarea>
+						<textarea name="message" id="" cols="30" rows="10" class="form-control editor"></textarea>
+					</div>
+
+					<div class="form-group">
+						<label style="display: block">From</label>
+						<input type="text" class="form-control" placeholder="Name" style="width: 49%; display: inline;"
+							   name="from_name">
+						<input type="email" class="form-control" placeholder="Email" style="width: 49%; display: inline;"
+							   name="from_email">
 					</div>
 
 					<label>Learners</label> <br>
@@ -291,6 +304,7 @@
 @stop
 
 @section('scripts')
+	<script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 	<script>
 		function formSubmitted() {
 		    var send_email = $("#send_email_btn");
@@ -304,5 +318,42 @@
                $("[type=checkbox]").prop('checked', false);
 		   }
 		});
+
+        // tinymce editor config and intitalization
+        let editor_config = {
+            path_absolute: "{{ URL::to('/') }}",
+            height: '15em',
+            selector: '.editor',
+            plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                'searchreplace wordcount visualblocks visualchars code fullscreen',
+                'insertdatetime media nonbreaking save table contextmenu directionality',
+                'emoticons template paste textcolor colorpicker textpattern'],
+            toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript superscript | forecolor backcolor | ',
+            toolbar2: 'link | alignleft aligncenter alignright ' +
+            'alignjustify  | removeformat',
+            toolbar3:'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code | print fullscreen',
+            relative_urls: false,
+            file_browser_callback : function(field_name, url, type, win) {
+                let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
+                let y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
+
+                let cmsURL = editor_config.path_absolute + '/laravel-filemanager?field_name=' + field_name;
+                if (type == 'image') {
+                    cmsURL = cmsURL + '&type=Images';
+                } else {
+                    cmsURL = cmsURL + '&type=Files';
+                }
+
+                tinyMCE.activeEditor.windowManager.open({
+                    file : cmsURL,
+                    title : 'Filemanager',
+                    width : x * 0.8,
+                    height : y * 0.8,
+                    resizable : 'yes',
+                    close_previous : 'no'
+                });
+            }
+        };
+        tinymce.init(editor_config);
 	</script>
 @stop

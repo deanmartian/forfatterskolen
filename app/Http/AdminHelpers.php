@@ -79,7 +79,16 @@ class AdminHelpers
         Notification::create($data);
 	}
 
-    public static function send_email($subject, $from, $to, $content)
+    /**
+     * Send email using Swift Mailer
+     * @param $subject
+     * @param $from
+     * @param $to
+     * @param $content
+     * @param string $from_name Not required field with default value
+     * @return bool
+     */
+    public static function send_email($subject, $from, $to, $content, $from_name='Forfatterskolen')
     {
 
         $host = env('MAIL_HOST');
@@ -95,7 +104,7 @@ class AdminHelpers
         //set message
         $message = Swift_Message::newInstance();
         $message->setSubject($subject);
-        $message->setFrom($from);
+        $message->setFrom($from, $from_name);
         $message->setTo($to);
         $message->setBody($content, 'text/html');
 

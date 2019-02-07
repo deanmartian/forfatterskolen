@@ -18,7 +18,7 @@ class EmailOutLog extends Model
      *
      * @var array
      */
-    protected $fillable = ['course_id', 'subject', 'message', 'learners'];
+    protected $fillable = ['course_id', 'subject', 'message', 'learners', 'from_name', 'from_email'];
 
     public function course()
     {
