@@ -335,7 +335,7 @@ class CourseController extends Controller
                 $course->learners->whereIn('user_id', $request->learners)->get()
                 : $course->learners->get();
             $subject    = $request->subject;
-            $message    = nl2br($request->message);
+            $message    = $request->message;
             $from_email = $request->from_email ?: 'post@forfatterskolen.no';
             $from_name  = $request->from_name ?: 'Forfatterskolen';
 
