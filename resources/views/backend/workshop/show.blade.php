@@ -141,6 +141,7 @@
 									<th>Message</th>
 									<th width="150">Date Sent</th>
 									<th>From</th>
+									<th>Attachment</th>
 									<th>Recipient</th>
 								</tr>
 							</thead>
@@ -153,6 +154,13 @@
 									<td>
 										{{ $log->from_name ?: 'Forfatterskolen' }} <br>
 										{{ $log->from_email ?: 'post@forfatterskolen.no' }}
+									</td>
+									<td>
+										<a href="{{ asset($log->attachment) }}" download>
+											{{ $log->attachment
+                                                ? \App\Http\AdminHelpers::extractFileName($log->attachment)
+                                                : '' }}
+										</a>
 									</td>
 									<td>
 										@if($log->learners)
@@ -590,7 +598,8 @@
 				<h4 class="modal-title">{{ trans('site.send-email') }}</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="{{route('admin.workshop.send_email', $workshop->id)}}" onsubmit="formSubmitted()">
+				<form method="POST" action="{{route('admin.workshop.send_email', $workshop->id)}}" onsubmit="formSubmitted()"
+				enctype="multipart/form-data">
 					{{csrf_field()}}
 
 					<div class="form-group">
@@ -609,6 +618,15 @@
 							   name="from_name">
 						<input type="email" class="form-control" placeholder="Email" style="width: 49%; display: inline;"
 							   name="from_email">
+					</div>
+
+					<div class="form-group">
+						<label>Attachment</label>
+						<input type="file" class="form-control" name="attachment"
+							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                   application/msword,
+                               application/pdf,
+                               application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
 					</div>
 
 					<div class="form-group">

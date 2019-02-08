@@ -208,7 +208,26 @@ class WorkshopController extends Controller
             $from_email = $request->from_email ?: 'post@forfatterskolen.no';
             $from_name  = $request->from_name ?: 'Forfatterskolen';
 
+            // check for attachment
+            // save the file first before attaching it on email
             $attachment = NULL;
+            if ($request->hasFile('attachment')) :
+                $destinationPath = 'storage/email_attachments'; // upload path
+
+                if (!\File::exists($destinationPath)) {
+                    \File::makeDirectory($destinationPath);
+                }
+
+                $extension = $request->attachment->extension(); // getting image extension
+                $uploadedFile = $request->attachment->getClientOriginalName();
+                $actual_name = pathinfo($uploadedFile, PATHINFO_FILENAME);
+                //remove spaces to avoid error on attachment
+                $fileName = str_replace(' ','_', AdminHelpers::checkFileName($destinationPath, $actual_name, $extension));// rename document
+                $request->attachment->move($destinationPath, $fileName);
+
+                $attachment = '/'.$fileName;
+            endif;
+
             foreach ($attendees as $attendee) {
                 //AdminHelpers::send_email($subject, $from_email, $email, $message, $from_name);
 
@@ -232,7 +251,8 @@ class WorkshopController extends Controller
                 'message' => $message,
                 'learners' => $selected_attendees,
                 'from_name' => $from_name,
-                'from_email' => $from_email
+                'from_email' => $from_email,
+                'attachment' => $attachment
             ];
             WorkshopEmailLog::create($emailLog);
         }
