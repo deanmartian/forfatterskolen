@@ -340,6 +340,26 @@ class CourseController extends Controller
             $from_email = $request->from_email ?: 'post@forfatterskolen.no';
             $from_name  = $request->from_name ?: 'Forfatterskolen';
 
+            // check for attachment
+            // save the file first before attaching it on email
+            $attachment = NULL;
+            if ($request->hasFile('attachment')) :
+                $destinationPath = 'storage/email_attachments'; // upload path
+
+                if (!\File::exists($destinationPath)) {
+                    \File::makeDirectory($destinationPath);
+                }
+
+                $extension = $request->attachment->extension(); // getting image extension
+                $uploadedFile = $request->attachment->getClientOriginalName();
+                $actual_name = pathinfo($uploadedFile, PATHINFO_FILENAME);
+                //remove spaces to avoid error on attachment
+                $fileName = str_replace(' ','_', AdminHelpers::checkFileName($destinationPath, $actual_name, $extension));// rename document
+                $request->attachment->move($destinationPath, $fileName);
+
+                $attachment = '/'.$fileName;
+            endif;
+
             foreach($learners as $learner) {
                 /*$email = $learner->user->email;
                 AdminHelpers::send_email($subject,
@@ -349,7 +369,7 @@ class CourseController extends Controller
                 $emailData['email_message'] = $message;
                 $emailData['from_name'] = $from_name;
                 $emailData['from_email'] = $from_email;
-                $emailData['attach_file'] = NULL;
+                $emailData['attach_file'] = $attachment;
                 \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
             }
 
@@ -364,7 +384,8 @@ class CourseController extends Controller
                 'message' => $message,
                 'learners' => $selected_learners,
                 'from_name' => $from_name,
-                'from_email' => $from_email
+                'from_email' => $from_email,
+                'attachment' => $attachment
             ];
             EmailOutLog::create($emailOutLog);
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Mail sent successfully.'),
