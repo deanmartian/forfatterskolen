@@ -18,7 +18,7 @@ class EmailOut extends Model
      *
      * @var array
      */
-    protected $fillable = ['course_id', 'subject', 'message', 'delay', 'from_name', 'from_email'];
+    protected $fillable = ['course_id', 'subject', 'message', 'delay', 'from_name', 'from_email', 'attachment'];
 
     public function course()
     {

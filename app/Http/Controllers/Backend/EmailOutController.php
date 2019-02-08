@@ -32,6 +32,24 @@ class EmailOutController extends Controller {
         $data = $request->except('_token');
         $data['course_id'] = $course_id;
 
+        if ($request->hasFile('attachment')) :
+            $destinationPath = 'storage/course-email-out-attachments'; // upload path
+
+            if (!\File::exists($destinationPath)) {
+                \File::makeDirectory($destinationPath);
+            }
+
+            $extension = $request->attachment->extension(); // getting image extension
+            $uploadedFile = $request->attachment->getClientOriginalName();
+            $actual_name = pathinfo($uploadedFile, PATHINFO_FILENAME);
+            //remove spaces to avoid error on attachment
+            $fileName = str_replace(' ','_', AdminHelpers::checkFileName($destinationPath, $actual_name, $extension));// rename document
+            $request->attachment->move($destinationPath, $fileName);
+
+            $data['attachment'] = '/'.$fileName;
+        endif;
+
+
         EmailOut::create($data);
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Email out created successfully.'),
@@ -62,6 +80,24 @@ class EmailOutController extends Controller {
         ]);
 
         $data = $request->except('_token');
+
+        if ($request->hasFile('attachment')) :
+            $destinationPath = 'storage/course-email-out-attachments'; // upload path
+
+            if (!\File::exists($destinationPath)) {
+                \File::makeDirectory($destinationPath);
+            }
+
+            $extension = $request->attachment->extension(); // getting image extension
+            $uploadedFile = $request->attachment->getClientOriginalName();
+            $actual_name = pathinfo($uploadedFile, PATHINFO_FILENAME);
+            //remove spaces to avoid error on attachment
+            $fileName = str_replace(' ','_', AdminHelpers::checkFileName($destinationPath, $actual_name, $extension));// rename document
+            $request->attachment->move($destinationPath, $fileName);
+
+            $data['attachment'] = '/'.$fileName;
+        endif;
+
         $email_out->update($data);
         $email_out->save();
 

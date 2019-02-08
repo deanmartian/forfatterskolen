@@ -45,7 +45,9 @@
                                     <td>
                                         <button class="btn btn-info btn-xs editEmailBtn" data-toggle="modal"
                                         data-target="#emailModal" data-fields="{{ json_encode($email) }}"
-                                        data-action="{{ route('admin.email-out.update', ['course_id' => $course->id, 'id' => $email->id]) }}">
+                                        data-action="{{ route('admin.email-out.update', ['course_id' => $course->id, 'id' => $email->id]) }}"
+                                        data-filename="{{ \App\Http\AdminHelpers::extractFileName($email->attachment) }}"
+                                        data-fileloc="{{ asset($email->attachment) }}">
                                             <i class="fa fa-pencil"></i>
                                         </button>
                                         <button class="btn btn-danger btn-xs deleteEmailBtn" data-toggle="modal" data-target="#deleteEmailModal"
@@ -75,7 +77,7 @@
                     <h4 class="modal-title"></h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
                         {{csrf_field()}}
 
                         <div class="form-group">
@@ -94,6 +96,17 @@
                                 name="from_name">
                             <input type="email" class="form-control" placeholder="Email" style="width: 49%; display: inline;"
                                 name="from_email">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Attachment</label>
+                            <input type="file" class="form-control" name="attachment"
+                                   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                   application/msword,
+                               application/pdf,
+                               application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                            <p class="file-display hide text-muted text-center">
+                            </p>
                         </div>
 
                         <div class="form-group">
@@ -197,6 +210,7 @@
             let action = $(this).data('action');
             emailModal.find('.modal-title').text(translations.add_email);
             emailModalForm.attr('action', action);
+            emailModalForm.find('.file-display').addClass('hide').empty();
             let fields = emailModalForm.find('.form-control');
             $("[name=_method]").remove();
             $.each(fields, function (k, v) {
@@ -213,11 +227,17 @@
         $(".editEmailBtn").click(function(){
             let fields = $(this).data('fields');
             let action = $(this).data('action');
+            let filename = $(this).data('filename');
+            let fileloc = $(this).data('fileloc');
             emailModal.find('.modal-title').text(translations.edit_email);
             emailModalForm.attr('action', action);
             emailModalForm.prepend('<input type="hidden" name="_method" value="PUT">');
+            emailModalForm.find('.file-display').removeClass('hide').empty().append('<a href="'+fileloc+'" download>'+filename+'</a>');
             $.each(fields, function(field, value) {
-               emailModalForm.find('[name='+field+']').val(value);
+                if (field !== 'attachment') {
+                    emailModalForm.find('[name='+field+']').val(value);
+                }
+
                if (field === 'delay') {
                    let input_group = emailModalForm.find(".input-group");
                    if (value.indexOf('-') >= 0) {
