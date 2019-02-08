@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\AdminHelpers;
+use App\Mail\SubjectBodyEmail;
 use App\WorkshopEmailLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -207,10 +208,17 @@ class WorkshopController extends Controller
             $from_email = $request->from_email ?: 'post@forfatterskolen.no';
             $from_name  = $request->from_name ?: 'Forfatterskolen';
 
+            $attachment = NULL;
             foreach ($attendees as $attendee) {
+                //AdminHelpers::send_email($subject, $from_email, $email, $message, $from_name);
+
                 $email = $attendee->user->email;
-                //AdminHelpers::send_mail($email, $subject, $message, $from);
-                AdminHelpers::send_email($subject, $from_email, $email, $message, $from_name);
+                $emailData['email_subject'] = $subject;
+                $emailData['email_message'] = $message;
+                $emailData['from_name'] = $from_name;
+                $emailData['from_email'] = $from_email;
+                $emailData['attach_file'] = $attachment;
+                \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
             }
 
             $selected_attendees = NULL;
