@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\CoursesTaken;
 use App\EmailOutLog;
+use App\Mail\SubjectBodyEmail;
 use App\Package;
 use App\PackageCourse;
 use App\User;
@@ -340,10 +341,16 @@ class CourseController extends Controller
             $from_name  = $request->from_name ?: 'Forfatterskolen';
 
             foreach($learners as $learner) {
-                $email = $learner->user->email;
-                //AdminHelpers::send_mail($email, $subject, $message, $from);
+                /*$email = $learner->user->email;
                 AdminHelpers::send_email($subject,
-                    $from_email, $email, $message, $from_name);
+                    $from_email, $email, $message, $from_name);*/
+                $email = $learner->user->email;
+                $emailData['email_subject'] = $subject;
+                $emailData['email_message'] = $message;
+                $emailData['from_name'] = $from_name;
+                $emailData['from_email'] = $from_email;
+                $emailData['attach_file'] = NULL;
+                \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
             }
 
             $selected_learners = NULL;
