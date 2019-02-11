@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\CoursesTaken;
+use App\EmailAttachment;
 use App\EmailOutLog;
 use App\Mail\SubjectBodyEmail;
 use App\Package;
@@ -343,6 +344,7 @@ class CourseController extends Controller
             // check for attachment
             // save the file first before attaching it on email
             $attachment = NULL;
+            $attachmentText = '';
             if ($request->hasFile('attachment')) :
                 $destinationPath = 'storage/email_attachments'; // upload path
 
@@ -354,10 +356,16 @@ class CourseController extends Controller
                 $uploadedFile = $request->attachment->getClientOriginalName();
                 $actual_name = pathinfo($uploadedFile, PATHINFO_FILENAME);
                 //remove spaces to avoid error on attachment
-                $fileName = str_replace(' ','_', AdminHelpers::checkFileName($destinationPath, $actual_name, $extension));// rename document
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
                 $request->attachment->move($destinationPath, $fileName);
 
                 $attachment = '/'.$fileName;
+                $emailAttach['filename'] =  $attachment;
+                $emailAttach['hash'] = substr(md5(microtime()), 0, 6);
+                $emailAttachment = EmailAttachment::create($emailAttach);
+                $attachmentText = "<p style='margin-top: 10px'><b>Vedlegg:</b> 
+<a href='".route('front.email-attachment', $emailAttachment->hash)."'>"
+                    .AdminHelpers::extractFileName($attachment)."</a></p>";
             endif;
 
             foreach($learners as $learner) {
@@ -366,10 +374,10 @@ class CourseController extends Controller
                     $from_email, $email, $message, $from_name);*/
                 $email = $learner->user->email;
                 $emailData['email_subject'] = $subject;
-                $emailData['email_message'] = $message;
+                $emailData['email_message'] = $message.$attachmentText;
                 $emailData['from_name'] = $from_name;
                 $emailData['from_email'] = $from_email;
-                $emailData['attach_file'] = $attachment;
+                $emailData['attach_file'] = NULL;
                 \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
             }
 
