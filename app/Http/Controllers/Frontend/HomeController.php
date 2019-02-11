@@ -7,6 +7,7 @@ use App\CoachingTimerManuscript;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\CoursesTaken;
+use App\EmailAttachment;
 use App\EmailConfirmation;
 use App\FreeWebinar;
 use App\Helpers\Citrix;
@@ -16,6 +17,7 @@ use App\Http\FrontendHelpers;
 use App\Invoice;
 use App\Mail\DiscussionEmail;
 use App\Mail\DiscussionRepliesEmail;
+use App\Mail\SubjectBodyEmail;
 use App\OptIn;
 use App\PaymentMode;
 use App\PaymentPlan;
@@ -1218,6 +1220,21 @@ Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 
     {
         $poems = Poem::orderBy('created_at', 'desc')->get();
         return view('frontend.poems', compact('poems'));
+    }
+
+    /**
+     * Download an email attachment based on token
+     * @param $token
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function emailAttachment($token)
+    {
+        $emailAttachment = EmailAttachment::where('hash', '=', $token)->first();
+        if ($emailAttachment) {
+            return response()->download(public_path($emailAttachment->filename));
+        }
+
+        return abort(404);
     }
 
     public function testCampaign()

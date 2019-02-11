@@ -93,6 +93,7 @@ Route::group([
         Route::post('/upgrade-manuscript/{id}/place_upgrade', 'ShopManuscriptController@upgradeManuscript')->name('front.shop-manuscript.upgrade-manuscript'); // Checkout Shop Manuscript
 
         Route::get('/email/confirmation/{token}', 'HomeController@emailConfirmation')->name('front.email-confirmation');
+        Route::get('/email/attachment/{token}', 'HomeController@emailAttachment')->name('front.email-attachment');
 
         Route::get('/henrik-langeland', 'HomeController@henrikPage')->name('front.henrik'); // Upviral ref page
         Route::get('/poems', 'HomeController@poems')->name('front.poems'); // Poems page
