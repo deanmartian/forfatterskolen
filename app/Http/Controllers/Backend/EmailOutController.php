@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Course;
+use App\EmailAttachment;
 use App\EmailOut;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
@@ -43,10 +44,15 @@ class EmailOutController extends Controller {
             $uploadedFile = $request->attachment->getClientOriginalName();
             $actual_name = pathinfo($uploadedFile, PATHINFO_FILENAME);
             //remove spaces to avoid error on attachment
-            $fileName = str_replace(' ','_', AdminHelpers::checkFileName($destinationPath, $actual_name, $extension));// rename document
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
             $request->attachment->move($destinationPath, $fileName);
 
             $data['attachment'] = '/'.$fileName;
+
+            $emailAttach['filename'] =  $data['attachment'];
+            $emailAttach['hash'] = substr(md5(microtime()), 0, 6);
+            $emailAttachment = EmailAttachment::create($emailAttach);
+            $data['attachment_hash'] = $emailAttachment->hash;
         endif;
 
 

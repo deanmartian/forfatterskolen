@@ -4,7 +4,9 @@ namespace App\Console\Commands;
 
 use App\CoursesTaken;
 use App\CronLog;
+use App\EmailAttachment;
 use App\EmailOut;
+use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
 use App\Invoice;
 use App\Mail\SubjectBodyEmail;
@@ -52,14 +54,22 @@ class CourseEmailOut extends Command
             $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
                 ->get();
 
+            $emailAttachment = EmailAttachment::where('hash', $emailOut->attachment_hash)->first();
+            $attachmentText = '';
+            if ($emailAttachment) {
+                $attachmentText = "<p style='margin-top: 10px'><b>Vedlegg:</b> 
+<a href='".route('front.email-attachment', $emailAttachment->hash)."'>"
+                    .AdminHelpers::extractFileName($emailAttachment->filename)."</a></p>";
+            }
+
             // loop the result and send email
             foreach ($coursesTaken as $courseTaken) {
                 $toMail = $courseTaken->user->email;
                 $emailData['email_subject'] = $emailOut->subject;
-                $emailData['email_message'] = $emailOut->message;
+                $emailData['email_message'] = $emailOut->message.$attachmentText;
                 $emailData['from_name'] = $emailOut->from_name;
                 $emailData['from_email'] = $emailOut->from_email;
-                $emailData['attach_file'] = $emailOut->attachment;
+                $emailData['attach_file'] = NULL;
 
                 CronLog::create(['activity' => 'CourseEmailOut adding to email queue '.$toMail]);
                 // add email to queue
@@ -79,14 +89,22 @@ class CourseEmailOut extends Command
                 })
                 ->get();
 
+            $emailAttachment = EmailAttachment::where('hash', $emailOut->attachment_hash)->first();
+            $attachmentText = '';
+            if ($emailAttachment) {
+                $attachmentText = "<p style='margin-top: 10px'><b>Vedlegg:</b> 
+<a href='".route('front.email-attachment', $emailAttachment->hash)."'>"
+                    .AdminHelpers::extractFileName($emailAttachment->filename)."</a></p>";
+            }
+
             // loop the result and send email
             foreach ($coursesTaken as $courseTaken) {
                 $toMail = $courseTaken->user->email;
                 $emailData['email_subject'] = $emailOut->subject;
-                $emailData['email_message'] = $emailOut->message;
+                $emailData['email_message'] = $emailOut->message.$attachmentText;
                 $emailData['from_name'] = $emailOut->from_name;
                 $emailData['from_email'] = $emailOut->from_email;
-                $emailData['attach_file'] = $emailOut->attachment;
+                $emailData['attach_file'] = NULL;
 
                 CronLog::create(['activity' => 'CourseEmailOut adding to email queue '.$toMail]);
                 // add email to queue
