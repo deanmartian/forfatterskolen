@@ -37,6 +37,12 @@
                     <input type="file" name="author_image" accept="image/*" class="form-control">
                     <p class="text-center">
                         <small class="text-muted">270*308</small>
+                        <br>
+                        <small class="text-muted">
+                            <a href="{{ asset($poem['author_image']) }}" target="_blank">
+                                {{ \App\Http\AdminHelpers::extractFileName($poem['author_image']) }}
+                            </a>
+                        </small>
                     </p>
                 </div>
 
