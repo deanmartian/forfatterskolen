@@ -37,7 +37,9 @@
                         <td>
                             <button type="button" class="btn btn-primary btn-xs pull-right editPageMetaBtn"
                                     data-toggle="modal" data-target="#editPageMetaModal" data-fields="{{ json_encode($pageMeta) }}"
-                                    data-action="{{ route('admin.page_meta.update', $pageMeta->id) }}">
+                                    data-action="{{ route('admin.page_meta.update', $pageMeta->id) }}"
+                            data-filename="{{ \App\Http\AdminHelpers::extractFileName($pageMeta->meta_image) }}"
+                            data-fileloc="{{ asset($pageMeta->meta_image) }}">
                                 <i class="fa fa-pencil"></i>
                             </button>
                             <div class="clearfix"></div>
@@ -114,6 +116,8 @@
                         <div class="form-group">
                             <label>Meta Image</label>
                             <input type="file" name="meta_image" accept="image/jpg, image/jpeg, image/png">
+                            <p class="image-display text-center">
+                            </p>
                         </div>
                         <div class="form-group">
                             <label>Meta Description</label>
@@ -158,10 +162,13 @@
             let fields = $(this).data('fields');
             let modal = $('#editPageMetaModal');
             let action = $(this).data('action');
+            let filename = $(this).data('filename');
+            let fileloc = $(this).data('fileloc');
             modal.find('form').attr('action', action);
             modal.find('input[name=url]').val(fields.url);
             modal.find('input[name=meta_title]').val(fields.meta_title);
             modal.find('textarea[name=meta_description]').text(fields.meta_description);
+            modal.find('.image-display').empty().append("<a href='"+fileloc+"'>"+filename+"</a>");
         });
 
         $(".deletePageMetaBtn").click(function(){
