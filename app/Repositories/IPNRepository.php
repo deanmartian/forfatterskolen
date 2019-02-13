@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Http\AdminHelpers;
 use App\Invoice;
 use App\Mail\SubjectBodyEmail;
 use App\PayPalIPN;
@@ -43,7 +44,7 @@ class IPNRepository
                 'request_headers' => json_encode($this->request->header()),
                 'payload' => json_encode($this->request->all()),
             ]);
-            echo $paypal->isVerified();
+
             if ($paypal->isVerified() && $paypal->isCompleted()) {
                 if ($invoice && $invoice->unpaid()) {
                     $invoice->update([
@@ -52,7 +53,8 @@ class IPNRepository
 
                     $email = 'elybutabara@gmail.com';
                     $subject = 'Paypal Payment';
-                    $message = 'Payment from paypal has been paid for invoice #'.$invoice->invoice_number;
+                    $message = $invoice->user->full_name.' has paid the amount of '.AdminHelpers::currencyFormat($invoice->gross/100).
+                        ' for invoice #'.$invoice->invoice_number;
                     $from_email = '';
                     $from_name = '';
 
