@@ -489,19 +489,20 @@
                                      style="background-image: url({{ asset($latestPoem->author_image) }})"></div>
                             </div>
                             <div class="card-body">
-                                <div class="poem-text-container">
+                                <div class="poem-text-container text-center">
                                     <?php
-                                        $html   = $latestPoem->poem;
+                                        //$html   = $latestPoem->poem;
                                         // remove first empty array value using array_filter
-                                        $content = array_filter(explode("<p>", $html));
+                                        //$content = array_filter(explode("<p>", $html));
                                         // divided the array in 2
-                                        $pieces = array_chunk($content, ceil(count($content) / 2));
+                                        /*$pieces = array_chunk($content, ceil(count($content) / 2));
                                         foreach($pieces as $piece) {
                                             echo '<div class="col-sm-6 px-0">';
                                                 echo '<p>'.implode('</p><p>', $piece).'</p>';
                                             echo '</div>';
-                                        }
+                                        }*/
                                     ?>
+                                    {!! $latestPoem->poem !!}
                                 </div>
 
                                 <a class="btn site-btn-global mt-5 pull-right" href="{{ route('front.poems') }}">
