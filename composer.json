@@ -15,8 +15,12 @@
         "laravel/socialite": "^3.0",
         "laravel/tinker": "~1.0",
         "league/fractal": "^0.17.0",
+        "league/omnipay": "^3.0",
         "maatwebsite/excel": "~2.1.0",
+        "omnipay/paypal": "^3.0",
         "phpoffice/phpword": "^0.14.0",
+        "sudiptpa/paypal-ipn": "^2.0",
+        "symfony/event-dispatcher": "2.8",
         "symfony/polyfill-iconv": "^1.8",
         "teodortalov/citrix": "^1.2",
         "unisharp/laravel-filemanager": "~1.8"

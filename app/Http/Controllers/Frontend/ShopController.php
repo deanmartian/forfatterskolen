@@ -3,6 +3,8 @@ namespace App\Http\Controllers\Frontend;
 
 use App\CourseDiscount;
 use App\Http\AdminHelpers;
+use App\Mail\SubjectBodyEmail;
+use App\PayPal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -513,6 +515,23 @@ class ShopController extends Controller
             view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')));
 
         if( $paymentMode->mode == "Paypal" ) :
+            /*$paypal = new PayPal;
+
+            $response = $paypal->purchase([
+                'amount' => ($price/100),
+                'transactionId' => $invoice->invoiceID,
+                'currency' => 'NOK',
+                'cancelUrl' => $paypal->getCancelUrl($invoice->invoiceID),
+                'returnUrl' => $paypal->getReturnUrl($invoice->invoiceID),
+            ]);
+
+            if ($response->isRedirect()) {
+                $response->redirect();
+            }
+
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag($response->getMessage()),
+            ]);*/
             echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
                 <input type="hidden" name="cmd" value="_xclick">
                 <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
