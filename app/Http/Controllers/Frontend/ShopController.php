@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Frontend;
 use App\CourseDiscount;
 use App\Http\AdminHelpers;
 use App\Mail\SubjectBodyEmail;
-use App\PayPal;
+use App\Paypal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;

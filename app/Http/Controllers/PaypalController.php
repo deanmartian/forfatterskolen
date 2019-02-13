@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\AdminHelpers;
 use App\Invoice;
 use App\Mail\SubjectBodyEmail;
-use App\PayPal;
+use App\Paypal;
 use App\PayPalIPN;
 use App\Repositories\IPNRepository;
 use Illuminate\Http\Request;
@@ -18,7 +18,7 @@ use PayPal\IPN\Listener\Http\ArrayListener;
  * Class PayPalController
  * @package App\Http\Controllers
  */
-class PayPalController extends Controller
+class PaypalController extends Controller
 {
 
     /**
@@ -49,7 +49,7 @@ class PayPalController extends Controller
     {
         $invoice = Invoice::findOrFail(decrypt($invoice_id));
 
-        $paypal = new PayPal;
+        $paypal = new Paypal;
 
         $response = $paypal->purchase([
             'amount' => ($invoice->gross/100),
@@ -77,7 +77,7 @@ class PayPalController extends Controller
     {
         $invoice = Invoice::findOrFail($invoice_id);
 
-        $paypal = new PayPal;
+        $paypal = new Paypal;
 
         $response = $paypal->complete([
             'amount' => ($invoice->gross/100),

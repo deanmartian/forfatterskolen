@@ -8,7 +8,7 @@ use Omnipay\Omnipay;
  * Class PayPal
  * @package App
  */
-class PayPal
+class Paypal
 {
     /**
      * @return mixed
