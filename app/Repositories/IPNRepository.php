@@ -51,7 +51,7 @@ class IPNRepository
                         'fiken_is_paid' => $invoice::COMPLETED,
                     ]);
 
-                    $email = 'elybutabara@gmail.com';
+                    $email = 'support@forfatterskolen.no';
                     $subject = 'Paypal Payment';
                     $message = $invoice->user->full_name.' has paid the amount of '.AdminHelpers::currencyFormat($invoice->gross/100).
                         ' for invoice #'.$invoice->invoice_number;
