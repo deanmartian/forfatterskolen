@@ -66,15 +66,15 @@
 										<td> {{ $invoice->kid_number }} </td>
 										<td> 9015 18 00393 </td>
 										<td>
-											<a href="{{$invoice->pdf_url}}">Last ned</a>
+											<a href="{{$invoice->pdf_url}}">Last ned faktura</a>
 
-											@if(!$invoice->fiken_is_paid && Auth::user()->id === 1073)
+											@if(!$invoice->fiken_is_paid)
 												<div class="gateway--paypal">
 													<form method="POST" action="{{ route('checkout.payment.paypal', encrypt($invoice->id)) }}">
 														{{ csrf_field() }}
 														{{--<input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">--}}
 														<button class="btn btn-primary">
-															<i class="fa fa-paypal" aria-hidden="true"></i> Pay with PayPal
+															<i class="fa fa-paypal" aria-hidden="true"></i> Betal med paypal eller kredittkort
 														</button>
 													</form>
 												</div>

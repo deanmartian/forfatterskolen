@@ -515,7 +515,7 @@ class ShopController extends Controller
             view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')));
 
         if( $paymentMode->mode == "Paypal" ) :
-            /*$paypal = new PayPal;
+            $paypal = new PayPal;
 
             $response = $paypal->purchase([
                 'amount' => ($price/100),
@@ -531,8 +531,8 @@ class ShopController extends Controller
 
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag($response->getMessage()),
-            ]);*/
-            echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            ]);
+            /*echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
                 <input type="hidden" name="cmd" value="_xclick">
                 <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
                 <input type="hidden" name="currency_code" value="NOK">
@@ -543,7 +543,7 @@ class ShopController extends Controller
                 <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
             </form>';
             echo '<script>document.getElementById("paypal_form").submit();</script>';
-            return;
+            return;*/
         endif;
 
 
