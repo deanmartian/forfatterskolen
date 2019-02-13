@@ -89,22 +89,6 @@ class PaypalController extends Controller
         ]);
 
         if ($response->isSuccessful()) {
-            //$invoice->update(['fiken_is_paid' => 1]);
-
-            //add sending of email here
-            /*$email = 'elybutabara@gmail.com';
-            $subject = 'Paypal Payment';
-            $message = 'Payment from paypal has been paid for invoice #'.$invoice->invoice_number;
-            $from_email = '';
-            $from_name = '';
-
-            $emailData['email_subject'] = $subject;
-            $emailData['email_message'] = $message;
-            $emailData['from_name'] = $from_name;
-            $emailData['from_email'] = $from_email;
-            $emailData['attach_file'] = NULL;
-            \Mail::to($email)->queue(new SubjectBodyEmail($emailData));*/
-
             return redirect()->route('front.shop.thankyou',['gateway' => 'Paypal']);
         }
 

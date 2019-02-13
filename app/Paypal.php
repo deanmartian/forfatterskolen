@@ -20,7 +20,7 @@ class Paypal
         $gateway->setUsername(config('paypal.credentials.username'));
         $gateway->setPassword(config('paypal.credentials.password'));
         $gateway->setSignature(config('paypal.credentials.signature'));
-        $gateway->setTestMode(config('paypal.credentials.sandbox'));
+        //$gateway->setTestMode(config('paypal.credentials.sandbox'));
 
         return $gateway;
     }
@@ -79,7 +79,7 @@ class Paypal
      */
     public function getNotifyUrl($invoice_id)
     {
-        $env = config('paypal.credentials.sandbox') ? "sandbox" : "live";
+        $env = /*config('paypal.credentials.sandbox') ? "sandbox" :*/ "live";
 
         return route('webhook.paypal.ipn', [$invoice_id, $env]);
     }
