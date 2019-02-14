@@ -126,64 +126,6 @@
 				</div>
 			</div>
 			<!-- end of Email  -->
-
-			<!-- Email Log -->
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4>Email Log</h4>
-				</div>
-				<div class="panel-body">
-					<div class="table-responsive">
-						<table class="table table-side-bordered table-white">
-							<thead>
-								<tr>
-									<th>Subject</th>
-									<th>Message</th>
-									<th width="150">Date Sent</th>
-									<th>From</th>
-									<th>Attachment</th>
-									<th>Recipient</th>
-								</tr>
-							</thead>
-							<tbody>
-							@foreach($emailLog as $log)
-								<tr>
-									<td>{{ $log->subject }}</td>
-									<td>{!! nl2br($log->message) !!}</td>
-									<td>{{ $log->date_sent }}</td>
-									<td>
-										{{ $log->from_name ?: 'Forfatterskolen' }} <br>
-										{{ $log->from_email ?: 'post@forfatterskolen.no' }}
-									</td>
-									<td>
-										<a href="{{ asset($log->attachment) }}" download>
-											{{ $log->attachment
-                                                ? \App\Http\AdminHelpers::extractFileName($log->attachment)
-                                                : '' }}
-										</a>
-									</td>
-									<td>
-										@if($log->learners)
-											<a href="#viewAttendeesModal" data-toggle="modal" class="viewAttendeeBtn"
-											data-action="{{ route('admin.workshop.send_email_log', $log->id) }}">
-												View Attendees
-											</a>
-										@else
-											All
-										@endif
-									</td>
-								</tr>
-							@endforeach
-							</tbody>
-						</table>
-					</div>
-
-					<div class="pull-right">
-						{{ $emailLog->render() }}
-					</div>
-				</div>
-			</div>
-			<!-- end Email Log -->
 		</div>
 
 		<div class="col-sm-4">
@@ -234,6 +176,68 @@
 					</div>
 				</div>
 			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12">
+			<!-- Email Log -->
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4>Email Log</h4>
+				</div>
+				<div class="panel-body">
+					<div class="table-responsive">
+						<table class="table table-side-bordered table-white">
+							<thead>
+							<tr>
+								<th>Subject</th>
+								<th>Message</th>
+								<th width="150">Date Sent</th>
+								<th>From</th>
+								<th>Attachment</th>
+								<th>Recipient</th>
+							</tr>
+							</thead>
+							<tbody>
+							@foreach($emailLog as $log)
+								<tr>
+									<td>{{ $log->subject }}</td>
+									<td>{!! nl2br($log->message) !!}</td>
+									<td>{{ $log->date_sent }}</td>
+									<td>
+										{{ $log->from_name ?: 'Forfatterskolen' }} <br>
+										{{ $log->from_email ?: 'post@forfatterskolen.no' }}
+									</td>
+									<td>
+										<a href="{{ asset($log->attachment) }}" download>
+											{{ $log->attachment
+                                                ? \App\Http\AdminHelpers::extractFileName($log->attachment)
+                                                : '' }}
+										</a>
+									</td>
+									<td>
+										@if($log->learners)
+											<a href="#viewAttendeesModal" data-toggle="modal" class="viewAttendeeBtn"
+											   data-action="{{ route('admin.workshop.send_email_log', $log->id) }}">
+												View Attendees
+											</a>
+										@else
+											All
+										@endif
+									</td>
+								</tr>
+							@endforeach
+							</tbody>
+						</table>
+					</div>
+
+					<div class="pull-right">
+						{{ $emailLog->render() }}
+					</div>
+				</div>
+			</div>
+			<!-- end Email Log -->
 		</div>
 	</div>
 </div>
