@@ -12,7 +12,7 @@
 				<img src="{{ asset('images-new/thumb-icon.png') }}" alt="" class="thumb">
 				<h1>Takk for bestillingen!</h1>
 				<p>
-					@if( Request::input('gateway') )
+					@if( Request::input('page') == 'paypal' )
 						Din betaling ble gjennomført <span class="thankyou-green">suksessfullt</span>.
 					@else
 						Vi gleder oss til å samarbeide med deg! Vi vil behandle din bestilling så snart som mulig og du

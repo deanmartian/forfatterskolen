@@ -93,4 +93,15 @@
 			</div> <!-- end row -->
 		</div> <!-- end container-->
 	</div>
+
+	@if ( $errors->any() )
+		<div class="alert alert-danger" role="alert" id="fixed_to_bottom_alert">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+			<ul>
+				@foreach($errors->all() as $error)
+					<li>{{$error}}</li>
+				@endforeach
+			</ul>
+		</div>
+	@endif
 @stop

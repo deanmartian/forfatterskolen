@@ -90,6 +90,7 @@ Route::group([
 
 
         Route::post('/shop-manuscript/{id}/place_order', 'ShopManuscriptController@place_order')->name('front.shop-manuscript.place_order'); // Checkout Shop Manuscript
+        Route::get('/shop-manuscript/payment/paypal/{invoice_id}', 'ShopManuscriptController@paypalPayment')->name('front.shop-manuscript.paypal-payment'); // Paypal Payment
         Route::post('/upgrade-manuscript/{id}/place_upgrade', 'ShopManuscriptController@upgradeManuscript')->name('front.shop-manuscript.upgrade-manuscript'); // Checkout Shop Manuscript
 
         Route::get('/email/confirmation/{token}', 'HomeController@emailConfirmation')->name('front.email-confirmation');
@@ -385,7 +386,7 @@ Route::group([
         'uses' => 'PaypalController@checkout',
     ]);
 
-    Route::get('/paypal/checkout/{order}/completed', [
+    Route::get('/paypal/checkout/{order}/{page?}/completed', [
         'name' => 'PayPal Express Checkout',
         'as' => 'paypal.checkout.completed',
         'uses' => 'PaypalController@completed',

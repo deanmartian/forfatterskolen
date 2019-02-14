@@ -70,10 +70,11 @@ class PaypalController extends Controller
 
     /**
      * @param $invoice_id
+     * $param $page
      * @param Request $request
      * @return mixed
      */
-    public function completed($invoice_id, Request $request)
+    public function completed($invoice_id, $page='paypal', Request $request)
     {
         $invoice = Invoice::findOrFail($invoice_id);
 
@@ -89,7 +90,7 @@ class PaypalController extends Controller
         ]);
 
         if ($response->isSuccessful()) {
-            return redirect()->route('front.shop.thankyou',['gateway' => 'Paypal']);
+            return redirect()->route('front.shop.thankyou', ['page' => $page]);
         }
 
         return redirect()->back()->with([

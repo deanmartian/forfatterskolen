@@ -69,9 +69,9 @@ class Paypal
     /**
      * @param $invoice_id
      */
-    public function getReturnUrl($invoice_id)
+    public function getReturnUrl($invoice_id, $page = 'paypal')
     {
-        return route('paypal.checkout.completed', $invoice_id);
+        return route('paypal.checkout.completed', [$invoice_id, $page]);
     }
 
     /**

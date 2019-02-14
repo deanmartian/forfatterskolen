@@ -3,6 +3,8 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Editor;
 use App\Http\AdminHelpers;
+use App\Invoice;
+use App\Paypal;
 use App\ShopManuscriptUpgrade;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -218,7 +220,10 @@ class ShopManuscriptController extends Controller
 
         
         if( $paymentMode->mode == "Paypal" ) :
-            echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            // redirect to another page to process paypal payment
+            // it have an error when the function is placed here because of the file upload
+            return redirect()->route('front.shop-manuscript.paypal-payment', encrypt($invoice->invoiceID));
+            /*echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
                 <input type="hidden" name="cmd" value="_xclick">
                 <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
                 <input type="hidden" name="currency_code" value="NOK">
@@ -229,12 +234,42 @@ class ShopManuscriptController extends Controller
                 <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
             </form>';
             echo '<script>document.getElementById("paypal_form").submit();</script>';
-            return;
+            return;*/
         endif;
 
 
 
         return redirect(route('front.shop.thankyou'));
+    }
+
+    /**
+     * Paypal payment
+     * @param $invoice_id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function paypalPayment($invoice_id)
+    {
+        $invoice = Invoice::find(decrypt($invoice_id));
+
+        if (!$invoice) {
+            return redirect()->route('front.shop-manuscript.index');
+        }
+
+        $paypal = new Paypal;
+
+        $response = $paypal->purchase([
+            'amount' => ($invoice->gross/100),
+            'transactionId' => $invoice->id,
+            'currency' => 'NOK',
+            'cancelUrl' => $paypal->getCancelUrl($invoice->id),
+            'returnUrl' => $paypal->getReturnUrl($invoice->id, 'manuscript'),
+        ]);
+
+        if ($response->isRedirect()) {
+            $response->redirect();
+        }
+
+        return redirect()->route('front.shop-manuscript.index');
     }
 
 

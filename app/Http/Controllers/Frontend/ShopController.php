@@ -522,7 +522,7 @@ class ShopController extends Controller
                 'transactionId' => $invoice->invoiceID,
                 'currency' => 'NOK',
                 'cancelUrl' => $paypal->getCancelUrl($invoice->invoiceID),
-                'returnUrl' => $paypal->getReturnUrl($invoice->invoiceID),
+                'returnUrl' => $paypal->getReturnUrl($invoice->invoiceID, 'course'),
             ]);
 
             if ($response->isRedirect()) {
