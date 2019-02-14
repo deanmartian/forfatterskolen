@@ -186,7 +186,7 @@ class WorkshopController extends Controller
 
 
 
-        return redirect(route('front.shop.thankyou'));
+        return redirect(route('front.shop.thankyou', ['page' => 'workshop']));
     }
 
 
