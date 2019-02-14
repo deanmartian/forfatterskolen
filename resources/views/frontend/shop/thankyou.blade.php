@@ -32,7 +32,7 @@ kvittering.';
 Du kan også finne faktura inne på min side. Dersom du har betalt via paypal gjelder fakturaen kun som en
 kvittering.';
                         $button = '<a class="btn buy-btn" href="'.route('learner.workshop').'">
-<i class="fa fa-briefcase"></i>&nbsp;&nbsp;&nbsp;Se på mine skriveverksted</a>';
+<i class="fa fa-briefcase"></i>&nbsp;&nbsp;&nbsp;Se skriveverksted</a>';
                         break;
 					default:
 					    $header = 'Takk for bestillingen!';
