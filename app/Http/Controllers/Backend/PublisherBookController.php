@@ -37,6 +37,8 @@ class PublisherBookController extends Controller {
             'title'             => '',
             'description'       => '',
             'quote_description' => '',
+            'author_image'      => '',
+            'book_image'        => '',
             'book_image_link'   => '',
             'display_order'     => ''
         ];
