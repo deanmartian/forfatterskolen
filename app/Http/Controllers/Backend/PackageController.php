@@ -86,7 +86,7 @@ class PackageController extends Controller
 
             $package->issue_date = $request->issue_date;
             $package->is_reward = isset($request->is_reward) ? $request->is_reward : 0;
-            $package->validity_period = $request->validity_period;
+            $package->validity_period = $request->validity_period ?: 0 ;
 
             $package->save();
             return redirect()->back();
