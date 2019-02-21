@@ -630,7 +630,9 @@
 							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
                                    application/msword,
                                application/pdf,
-                               application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                               application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+                               application/vnd.ms-powerpoint,
+                               application/vnd.openxmlformats-officedocument.presentationml.presentation">
 					</div>
 
 					<div class="form-group">
