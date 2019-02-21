@@ -500,7 +500,7 @@ class LearnerController extends Controller
             $time = time();
             $destinationPath = 'storage/assignment-manuscripts/'; // upload path
 
-            $extensions = ['pdf', 'doc', 'docx', 'odt'];
+            $extensions = ['doc', 'docx', 'odt'];
             if ($assignment->for_editor) {
                 $extensions = ['docx', 'doc'];
             }
@@ -515,7 +515,7 @@ class LearnerController extends Controller
 
             if( !in_array($extension, $extensions) ) :
                 return redirect()->back()->withInput()->with(
-                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                    'manuscript_test_error', 'Invalid file format. Allowed formats are DOC, DOCX, ODT'
                 );
             endif;
 

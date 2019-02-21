@@ -365,7 +365,7 @@
 						* Godkjente fil formater er DOC, DOCX, PDF og ODT.
 					</label>
 					<input type="file" class="form-control margin-top" required name="filename" accept="application/msword,
-					application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+					application/vnd.openxmlformats-officedocument.wordprocessingml.document,
 					application/vnd.oasis.opendocument.text">
 				</div>
 
