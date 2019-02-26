@@ -160,7 +160,7 @@
 									<button type="button" class="btn btn-primary btn-xs pull-right btnEditShopAdvisory"
 											data-toggle="modal" data-target="#editShopManuscriptAdvisoryModal"
 									data-pages="{{ json_encode(unserialize(\App\Advisory::find(2)->page_included)) }}"><i class="fa fa-pencil"></i></button>
-									<h4>Shop Manuscript Advisory</h4>
+									<h4>Message webpage</h4>
 								</div>
 								<div class="panel-body">
 									{!! nl2br(\App\Advisory::find(2)->advisory) !!}
