@@ -977,6 +977,10 @@ start today section
     margin-bottom: 30px;
 }
 
+.publishing-page .quote-row {
+    margin-bottom: 20px;
+}
+
 .publishing-page .col-sm-6 {
     padding-left: 20px;
     padding-right: 20px;
@@ -1023,6 +1027,10 @@ start today section
     width: 79%;
 }
 
+.publishing-page .card .about-author .right-container {
+    color: #aeaeae;
+}
+
 .publishing-page .card .right-container .book-title {
     font-size: 30px;
     margin-bottom: 20px;
@@ -1035,7 +1043,7 @@ start today section
 }
 
 .publishing-page .card .right-container .book-quote {
-    color: #aeaeae;
+    color: #000;/*aeaeae*/
 }
 
 .publishing-page .card .right-container .book-quote  em {
