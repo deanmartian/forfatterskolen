@@ -966,7 +966,7 @@ start today section
 .publishing-page {
     background-color: #eff0f7;
     background-image: url(../images-new/publishing-bg.jpg);
-    background-size: auto 50%;
+    background-size: auto 700px;
     background-repeat: no-repeat;
     background-position-x: right;
     background-position-y: -20px;
@@ -992,10 +992,10 @@ start today section
     margin-top: 20px;
 }
 
-.publishing-page .book-authors-container {
+/*.publishing-page .book-authors-container {
     height: 1000px;
     overflow: hidden;
-}
+}*/
 
 .publishing-page .card {
     border: none;
@@ -6291,7 +6291,7 @@ textarea.form-control {
     }
 
     .publishing-page {
-        background-size: auto 40%;
+        background-size: auto 500px;
     }
 
     .publishing-page .page-title {
@@ -6889,7 +6889,7 @@ textarea.form-control {
     }
 
     .publishing-page {
-        background-size: auto 27%;
+        background-size: auto 400px;
         padding: 30px 0;
     }
 

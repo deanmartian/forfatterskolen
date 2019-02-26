@@ -81,10 +81,10 @@
     <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
     <script>
-        $(".book-authors-container").mCustomScrollbar({
+        /*$(".book-authors-container").mCustomScrollbar({
             theme: "minimal-dark",
             scrollInertia: 500
-        });
+        });*/
 
         // get all books that have quote
         $.each($(".book-quote"),function(k,v) {
