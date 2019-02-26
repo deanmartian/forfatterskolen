@@ -34,16 +34,7 @@
                             <div class="col-sm-6 grid-item">
                                 <div class="card">
                                 <div class="card-body">
-                                    <div class="row quote-row">
-                                        <div class="left-container"></div>
-                                        <div class="right-container">
-                                            <div class="book-quote">
-                                                {!! $book['quote_description'] !!}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row about-author">
+                                    <div class="row">
                                         <div class="left-container">
                                             <?php
                                             $author_image = \App\Http\FrontendHelpers::checkJpegImg($book['author_image']);
@@ -62,11 +53,24 @@
                                         </div>
                                         <div class="right-container">
                                             <h1 class="book-title">{{ $book['title'] }}</h1>
+                                            <div>
+                                                {!! $book['quote_description'] !!}
+                                            </div>
+
                                             <div class="book-description">
                                                 {!! $book['description'] !!}
                                             </div>
                                         </div>
                                     </div>
+
+                                    {{--<div class="row quote-row">
+                                        <div class="left-container"></div>
+                                        <div class="right-container">
+                                            <div class="book-quote">
+                                            {!! $book['quote_description'] !!}
+                                            </div>
+                                        </div>
+                                    </div>--}}
                                 </div>
                             </div>
                             </div>
