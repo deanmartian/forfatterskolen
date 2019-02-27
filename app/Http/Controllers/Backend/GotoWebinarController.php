@@ -95,7 +95,7 @@ class GotoWebinarController extends Controller
 
             $this->validate($request, [
                 'title' => 'required',
-                'gt_webinar_key' => 'required|unique:go_to_webinars,id,'.$id
+                'gt_webinar_key' => 'required|unique:go_to_webinars,gt_webinar_key,'.$id
             ], [
                 'gt_webinar_key.required' => 'The webinar key field is required.',
                 'gt_webinar_key.unique' => 'The webinar key field has already been taken.'
