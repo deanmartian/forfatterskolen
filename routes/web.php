@@ -31,6 +31,7 @@ Route::group([
         Route::post('/agree-gdpr', 'HomeController@agreeGdpr')->name('front.agree-gdpr');
         Route::get('/testemail', 'HomeController@testEmail');
         Route::get('/test-fiken', 'HomeController@testFiken');
+        Route::post('/gotowebinar', 'HomeController@gtWebinarSendEmail');
         Route::get('/contact-us', 'HomeController@contact_us')->name('front.contact-us'); // Contact Us
         Route::post('/contact-us', 'HomeController@contact_us'); // Contact Us
         Route::get('/faq', 'HomeController@faq')->name('front.faq'); // FAQ
@@ -1064,6 +1065,19 @@ Route::group([
         Route::get('cron-log', function(){
             return view('backend.support.cron-log');
         })->name('admin.cron-log.index');
+
+        // Editors route
+        Route::resource('/goto-webinar', 'GotoWebinarController', [
+            'except' => 'show',
+            'names' => [
+                'index' => 'admin.goto-webinar.index',
+                'create' => 'admin.goto-webinar.create',
+                'store' => 'admin.goto-webinar.store',
+                'edit' => 'admin.goto-webinar.edit',
+                'update' => 'admin.goto-webinar.update',
+                'destroy' => 'admin.goto-webinar.destroy',
+            ],
+        ]);
 
         //Calendar Notes
         Route::resource('/calendar-note', 'CalendarNoteController', [

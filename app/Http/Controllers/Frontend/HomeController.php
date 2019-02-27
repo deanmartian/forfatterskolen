@@ -1237,6 +1237,22 @@ Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 
         return abort(404);
     }
 
+    public function gtWebinarSendEmail(Request $request)
+    {
+        if ($request->get('status') == 'APPROVED') {
+
+            $extended = $request->get('extended');
+            $webinar_details = $request->get('webinar_details');
+
+            $subject = $webinar_details['subject'];
+            $from = $extended['organizerEmail'];
+            $to = $extended['email'];
+            $content = json_encode($request->all());
+
+            AdminHelpers::send_email($subject, $from, $to, $content);
+        }
+    }
+
     public function testCampaign()
     {
         return view('frontend.upviral-campaign.test');
