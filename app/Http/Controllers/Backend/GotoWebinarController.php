@@ -45,7 +45,7 @@ class GotoWebinarController extends Controller
                     <p>
                         <b>1. Click the link to join the webinar at the specified time and date:</b>
                     </p>
-                    <p style='text-align: center'>[join_button]</p>
+                    <p style='margin-left: 170px'>[join_button]</p>
                     <p>
                         <i style='color: #666666'>Note: This link should not be shared with others; it is unique to you.</i>
                         <br>

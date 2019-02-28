@@ -980,6 +980,15 @@ class AdminHelpers
         return $timestamp->format('Y-m-d H:i A');
     }
 
+    public static function convertTZNoFormat($date, $timezone)
+    {
+        // use the the appropriate timezone for your stamp
+        $timestamp = \DateTime::createFromFormat('Y-m-d\TH:i:s\Z', $date, new \DateTimeZone('UTC'));
+
+        // set it to whatever you want to convert it
+        return $timestamp->setTimeZone(new \DateTimeZone($timezone));
+    }
+
     public static function createMessageBag($message = '')
     {
         $messageBag = new MessageBag();

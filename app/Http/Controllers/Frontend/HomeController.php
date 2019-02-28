@@ -15,6 +15,7 @@ use App\Helpers\Citrix;
 use App\Helpers\FileToText;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
+use App\Http\Middleware\Admin;
 use App\Invoice;
 use App\Mail\DiscussionEmail;
 use App\Mail\DiscussionRepliesEmail;
@@ -1249,7 +1250,38 @@ Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 
                 $subject    = $webinar_details['subject'];
                 $from       = $webinar_details['organizerEmail'];
                 $to         = $extended['email'];
-                $content    = $gtWebinar->confirmation_email;
+
+                $replaceTime = str_replace("'","\"",str_replace("u'","'",$webinar_details['times']));
+                $decode_time = json_decode($replaceTime);
+                $startTime = $decode_time[0]->startTime;
+                $endTime = $decode_time[0]->endTime;
+
+                $formattedDate = AdminHelpers::convertTZNoFormat($startTime, 'Asia/Singapore')->format('D, M d, g:i A').' - '
+                    .AdminHelpers::convertTZNoFormat($endTime, 'Asia/Singapore')->format('g:i A');
+
+                $joinURL = $request->get('joinUrl');
+                $explodeJoinURL = explode('/', $joinURL);
+                $user_id = end($explodeJoinURL);
+
+                $calendar_link = 'https://global.gotowebinar.com/icsCalendar.tmpl?webinar='
+                    .$webinar_details['webinarKey'].'&user='.$user_id;
+                $outlook_calendar = "<a href='".$calendar_link."&cal=outlook' style='text-decoration: none'>Outlook<sup>®</sup> Calendar</a>";
+                $google_calendar = "<a href='".$calendar_link."&cal=google' style='text-decoration: none'>Google Calendar™</a>";
+                $i_calendar = "<a href='".$calendar_link."&cal=ical' style='text-decoration: none'>iCal<sup>®</sup></a>";
+
+                $admin_email = "<a href='mailto:".$webinar_details['organizerEmail']."' style='text-decoration: none'>"
+                    .$webinar_details['organizerEmail']."</a>";
+
+                $search_string = [
+                    '[first_name]', '[webinar_title]', '[admin_email]', '[webinar_date]', '[outlook_calendar]',
+                    '[google_calendar]', '[i_cal]'
+                ];
+                $replace_string = [
+                    $request->get('firstName'), $subject, $admin_email, $formattedDate, $outlook_calendar,
+                    $google_calendar, $i_calendar
+                ];
+
+                $content = str_replace($search_string, $replace_string, $gtWebinar->confirmation_email);
 
                 AdminHelpers::send_email($subject, $from, $to, $content);
             }
