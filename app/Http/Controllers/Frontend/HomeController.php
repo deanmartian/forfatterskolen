@@ -1272,13 +1272,23 @@ Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 
                 $admin_email = "<a href='mailto:".$webinar_details['organizerEmail']."' style='text-decoration: none'>"
                     .$webinar_details['organizerEmail']."</a>";
 
+                $join_button = "<a href='".$joinURL."' style='font-size:16px;font-family:Helvetica,Arial,sans-serif;color:#ffffff;
+text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7f;display:inline-block;background-color:#114c7f'>Join Webinar</a>";
+                $system_req = "<a href='https://link.gotowebinar.com/email-welcome?role=attendee&source=registrationConfirmationEmail
+&language=english&experienceType=CLASSIC' style='text-decoration: none'>check system requirement</a>";
+                // add dash after every 3rd character
+                $webinarID = implode("-", str_split($webinar_details['webinarID'], 3));
+                $cancel_reg = "<a href='https://attendee.gotowebinar.com/cancel/".$webinar_details['webinarKey']."/"
+                    .$request->get('registrantKey')."' style='text-decoration: none'>cancel registration</a>";
+
                 $search_string = [
                     '[first_name]', '[webinar_title]', '[admin_email]', '[webinar_date]', '[outlook_calendar]',
-                    '[google_calendar]', '[i_cal]'
+                    '[google_calendar]', '[i_cal]', '[join_button]', '[check_system_requirements]', '[webinar_id]',
+                    '[cancel_registration]'
                 ];
                 $replace_string = [
                     $request->get('firstName'), $subject, $admin_email, $formattedDate, $outlook_calendar,
-                    $google_calendar, $i_calendar
+                    $google_calendar, $i_calendar, $join_button, $system_req, $webinarID, $cancel_reg
                 ];
 
                 $content = str_replace($search_string, $replace_string, $gtWebinar->confirmation_email);
