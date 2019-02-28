@@ -10,6 +10,7 @@ use App\CoursesTaken;
 use App\EmailAttachment;
 use App\EmailConfirmation;
 use App\FreeWebinar;
+use App\GTWebinar;
 use App\Helpers\Citrix;
 use App\Helpers\FileToText;
 use App\Http\AdminHelpers;
@@ -1240,16 +1241,18 @@ Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 
     public function gtWebinarSendEmail(Request $request)
     {
         if ($request->get('status') == 'APPROVED') {
-
             $extended = $request->get('extended');
             $webinar_details = $request->get('webinar_details');
 
-            $subject = $webinar_details['subject'];
-            $from = $extended['organizerEmail'];
-            $to = $extended['email'];
-            $content = json_encode($request->all());
+            $gtWebinar = GTWebinar::where('gt_webinar_key', '=', $webinar_details['webinarKey'])->first();
+            if ($gtWebinar) {
+                $subject    = $webinar_details['subject'];
+                $from       = $webinar_details['organizerEmail'];
+                $to         = $extended['email'];
+                $content    = $gtWebinar->confirmation_email;
 
-            AdminHelpers::send_email($subject, $from, $to, $content);
+                AdminHelpers::send_email($subject, $from, $to, $content);
+            }
         }
     }
 
