@@ -32,10 +32,34 @@ class GotoWebinarController extends Controller
      */
     public function create()
     {
+
+        $confirmation_email_template = "
+                    <p>Hei [first_name],</p>
+                    <p>Thank you for registering for \"[webinar_title]\".</p>
+                    <p>Please send your questions, comments and feedback to: [admin_email]</p>
+                    <p>
+                        <h2 style='color:#114c7f'>How To Join The Webinar</h2>
+                    </p>
+                    <p>[webinar_date]</p>
+                    <p>Add to calendar: [outlook_calendar] | [google_calendar] | [i_cal]</p>
+                    <p>
+                        <b>1. Click the link to join the webinar at the specified time and date:</b>
+                    </p>
+                    <p style='text-align: center'>[join_button]</p>
+                    <p>
+                        <i style='color: #666666'>Note: This link should not be shared with others; it is unique to you.</i>
+                        <br>
+                        Before joining, be sure to [check_system_requirements] to avoid any connection issues.
+                    </p>
+                    <p>Webinar ID: [webinar_id]</p>
+                    <p><h2 style='color:#114c7f'>To Cancel this Registration</h2></p>
+                    <p>If you can't attend this webinar, you may [cancel_registration] at any time</p>
+                    ";
+
         $webinar = [
             'title' => '',
             'gt_webinar_key' => '',
-            'confirmation_email' => ''
+            'confirmation_email' => $confirmation_email_template
         ];
         return view('backend.goto-webinar.create', compact('webinar'));
     }
