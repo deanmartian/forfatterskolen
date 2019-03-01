@@ -656,6 +656,15 @@ class FrontendHelpers
         return true;
     }
 
+    public static function getWebinarJoinURL($webinar_id, $user_id)
+    {
+        $registrant = WebinarRegistrant::where(['webinar_id' => $webinar_id, 'user_id' => $user_id])->first();
+        if ($registrant) {
+            return $registrant->join_url;
+        }
+        return false;
+    }
+
     public static function checkJpegImg($image)
     {
         $getExtension = explode('.', $image);

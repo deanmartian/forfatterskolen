@@ -315,6 +315,7 @@ class LearnerController extends Controller
                 $registrant['user_id'] = $user->id;
                 $registrant['webinar_id'] = $webinar_id;
                 $webRegister = WebinarRegistrant::firstOrNew($registrant);
+                $webRegister->join_url = $decoded_response->joinUrl;
                 $webRegister->save();
                 return redirect()->back()->with('success', true);
             }

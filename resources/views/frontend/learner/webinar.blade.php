@@ -147,7 +147,7 @@
                                                     </a>--}}
                                                     @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id))
                                                         <a class="btn site-btn-global w-100 rounded-0"
-                                                           href="javascript:void(0)" disabled="">
+                                                           href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id) }}">
                                                             Påmeldt
                                                         </a>
                                                     @else
@@ -231,7 +231,7 @@
                                                 @else
                                                     @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id))
                                                         <a class="btn site-btn-global w-100 rounded-0"
-                                                           href="javascript:void(0)" disabled="">
+                                                           href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id) }}">
                                                             Påmeldt
                                                         </a>
                                                     @else
@@ -311,7 +311,7 @@
                                                     </a>--}}
                                                     @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($result->id, Auth::user()->id))
                                                         <a class="btn site-btn-global w-100 rounded-0"
-                                                           href="javascript:void(0)" disabled="">
+                                                           href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL($result->id, Auth::user()->id) }}">
                                                             Påmeldt
                                                         </a>
                                                     @else
