@@ -281,7 +281,7 @@ class LearnerController extends Controller
     {
         $webinar_link = 'https://attendee.gotowebinar.com/register/'.$webinar_key;
         $user = Auth::user();
-        $user_email = 'elybutabara@mailinator.com';//$user->email;
+        $user_email = $user->email;
         $first_name = $user->first_name;
         $last_name = $user->last_name;
 
