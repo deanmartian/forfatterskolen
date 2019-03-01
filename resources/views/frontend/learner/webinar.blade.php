@@ -140,11 +140,25 @@
                                                         <i class="img-icon icon-right-arrow"></i>
                                                     </a>
                                                 @else
-                                                    <a class="btn site-btn-global w-100 rounded-0" href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                    {{--<a class="btn site-btn-global w-100 rounded-0" href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
                                                         ? 'javascript:void(0)' :$webinar->link }}" target="_blank">
                                                         Registrer Deg
                                                         <i class="img-icon icon-right-arrow"></i>
-                                                    </a>
+                                                    </a>--}}
+                                                    @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id))
+                                                        <a class="btn site-btn-global w-100 rounded-0"
+                                                           href="javascript:void(0)" disabled="">
+                                                            Påmeldt
+                                                        </a>
+                                                    @else
+                                                        <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
+                                                           href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                    ? 'javascript:void(0)' :route('learner.webinar.register',
+                                                    [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]) }}">
+                                                            Registrer Deg
+                                                            <i class="img-icon icon-right-arrow"></i>
+                                                        </a>
+                                                    @endif
                                                 @endif
                                             @endif
                                         @endif
@@ -215,11 +229,20 @@
                                                         <i class="img-icon icon-right-arrow"></i>
                                                     </a>
                                                 @else
-                                                    <a class="btn site-btn-global w-100 rounded-0" href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
-                                                    ? 'javascript:void(0)' :$webinar->link }}" target="_blank">
-                                                        Registrer Deg
-                                                        <i class="img-icon icon-right-arrow"></i>
-                                                    </a>
+                                                    @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id))
+                                                        <a class="btn site-btn-global w-100 rounded-0"
+                                                           href="javascript:void(0)" disabled="">
+                                                            Påmeldt
+                                                        </a>
+                                                    @else
+                                                        <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
+                                                           href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                    ? 'javascript:void(0)' :route('learner.webinar.register',
+                                                    [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]) }}">
+                                                            Registrer Deg
+                                                            <i class="img-icon icon-right-arrow"></i>
+                                                        </a>
+                                                    @endif
                                                 @endif
                                             @endif
                                         @endif
@@ -281,11 +304,25 @@
                                                         <i class="img-icon icon-right-arrow"></i>
                                                     </a>
                                                 @else
-                                                    <a class="btn site-btn-global w-100 rounded-0" href="{{ \Carbon\Carbon::parse($result->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                    {{--<a class="btn site-btn-global w-100 rounded-0" href="{{ \Carbon\Carbon::parse($result->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
                                                             ? 'javascript:void(0)' :$result->link }}" target="_blank">
                                                         Registrer Deg
                                                         <i class="img-icon icon-right-arrow"></i>
-                                                    </a>
+                                                    </a>--}}
+                                                    @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($result->id, Auth::user()->id))
+                                                        <a class="btn site-btn-global w-100 rounded-0"
+                                                           href="javascript:void(0)" disabled="">
+                                                            Påmeldt
+                                                        </a>
+                                                    @else
+                                                        <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
+                                                           href="{{ \Carbon\Carbon::parse($result->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                    ? 'javascript:void(0)' :route('learner.webinar.register',
+                                                    [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($result->link), $result->id]) }}">
+                                                            Registrer Deg
+                                                            <i class="img-icon icon-right-arrow"></i>
+                                                        </a>
+                                                    @endif
                                                 @endif
                                             @endif
                                         </div> <!-- end card-footer -->
@@ -310,5 +347,33 @@
             </div> <!-- end row -->
         </div>
     </div>
+
+    <div id="submitSuccessModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <div style="color: green; font-size: 24px"><i class="fa fa-check"></i></div>
+                    <p>
+                        Du har suksessfullt registrert deg til webinar
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
+@section('scripts')
+    <script>
+        $(".webinarRegister").click(function(){
+            let register_btn = $(this);
+            register_btn.text('');
+            register_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+            register_btn.attr('disabled', 'disabled');
+        });
+
+        @if (Session::has('success'))
+            $('#submitSuccessModal').modal('show');
+        @endif
+    </script>
+@stop

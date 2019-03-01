@@ -6,6 +6,7 @@ use App\PilotReaderBook;
 use App\PilotReaderBookChapter;
 use App\PilotReaderBookReading;
 use App\PrivateGroupMember;
+use App\WebinarRegistrant;
 use Carbon\Carbon;
 
 class FrontendHelpers
@@ -633,6 +634,27 @@ class FrontendHelpers
 
         return $marks;
 	}
+
+    /**
+     * Get the webinar key from the link
+     * @param $link
+     * @return mixed
+     */
+    public static function extractWebinarKeyFromLink($link)
+    {
+        $expURL = explode('/', $link);
+        $extractKey = explode('?', end($expURL));
+        return $extractKey[0];
+    }
+
+    public static function checkIfWebinarRegistrant($webinar_id, $user_id)
+    {
+        $registrant = WebinarRegistrant::where(['webinar_id' => $webinar_id, 'user_id' => $user_id])->first();
+        if (!$registrant) {
+            return false;
+        }
+        return true;
+    }
 
     public static function checkJpegImg($image)
     {

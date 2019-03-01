@@ -36,6 +36,7 @@ use App\SurveyAnswer;
 use App\User;
 use App\UserEmail;
 use App\UserSocial;
+use App\WebinarRegistrant;
 use App\WordWritten;
 use App\WordWrittenGoal;
 use App\WritingGroup;
@@ -268,6 +269,60 @@ class LearnerController extends Controller
         }
 
         return view('frontend.learner.webinar', compact('searchResult', 'isPost', 'isReplay'));
+    }
+
+    /**
+     * Add the user as registrant on the webinar
+     * @param $webinar_key
+     * @param $webinar_id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function webinarRegister($webinar_key, $webinar_id)
+    {
+        $webinar_link = 'https://attendee.gotowebinar.com/register/'.$webinar_key;
+        $user = Auth::user();
+        $user_email = 'elybutabara@mailinator.com';//$user->email;
+        $first_name = $user->first_name;
+        $last_name = $user->last_name;
+
+        $base_url = 'https://api.getgo.com/G2W/rest';
+        $access_token = 'LFuxWWDUgAuqIAAB87xQJOdeAsiG'; // from here http://app.gotowp.com/
+        $org_key = '5169031040578858252';
+
+        $vals['body'] = (object) array(
+            'firstName' => $first_name,
+            'lastName' => $last_name,
+            'email' => $user_email
+        );
+
+        $long_url = $base_url.'/organizers/'.$org_key.'/webinars/'.$webinar_key.'/registrants';
+        $header = array();
+        $header[] = 'Accept: application/json';
+        $header[] = 'Content-type: application/json';
+        $header[] = 'Accept: application/vnd.citrix.g2wapi-v1.1+json';
+        $header[] = 'Authorization: OAuth oauth_token='.$access_token;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $long_url);
+        curl_setopt( $ch, CURLOPT_POST, 1);
+        curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode($vals['body']));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $response = curl_exec($ch);
+        $decoded_response = json_decode($response);
+
+        if (isset($decoded_response->status)) {
+            if ($decoded_response->status == 'APPROVED') {
+                $registrant['user_id'] = $user->id;
+                $registrant['webinar_id'] = $webinar_id;
+                $webRegister = WebinarRegistrant::firstOrNew($registrant);
+                $webRegister->save();
+                return redirect()->back()->with('success', true);
+            }
+        } else {
+            return redirect()->to($webinar_link);
+        }
+
+        return redirect()->back();
     }
 
     public function courseWebinar(Request $request)

@@ -198,6 +198,7 @@ Route::group([
         Route::post('/course-taken/coaching-timer/add', 'LearnerController@addCoachingSession')->name('learner.course-taken.coaching-timer.add');
         Route::get('/webinar', 'LearnerController@webinar')->name('learner.webinar'); // Webinars Page
         Route::post('/webinar', 'LearnerController@webinar')->name('learner.webinar'); // Webinars Page
+        Route::get('/webinar/register/{webinar_key}/{webinar_id}', 'LearnerController@webinarRegister')->name('learner.webinar.register'); // Webinars Page
         Route::get('/course-webinar', 'LearnerController@courseWebinar')->name('learner.course-webinar'); // Course Webinars Page
         Route::post('/course-webinar', 'LearnerController@courseWebinar')->name('learner.course-webinar'); // Course Webinars Page
         Route::get('/assignment', 'LearnerController@assignment')->name('learner.assignment'); // Assignments Page
