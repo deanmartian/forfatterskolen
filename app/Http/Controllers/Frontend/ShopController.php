@@ -131,7 +131,7 @@ class ShopController extends Controller
                 $automation_id = 73;
                 $user_name = Auth::user()->first_name;
 
-                //AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+                AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
             }
 
             // check if the course has activecampaign list then add the user
@@ -143,7 +143,7 @@ class ShopController extends Controller
                     'last_name' => Auth::user()->last_name
                 ];
 
-                //AdminHelpers::addToActiveCampaignList($list_id, $listData);
+                AdminHelpers::addToActiveCampaignList($list_id, $listData);
             }
 
             return redirect(route('front.shop.thankyou'));
