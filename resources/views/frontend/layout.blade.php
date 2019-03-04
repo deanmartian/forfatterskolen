@@ -76,7 +76,7 @@
         @endif
 
         <?php
-        $newDesignPages = ['front.shop-manuscript.index', 'front.publishing', 'front.blog', 'front.shop.thankyou',
+/*        $newDesignPages = ['front.shop-manuscript.index', 'front.publishing', 'front.blog', 'front.shop.thankyou',
             'front.thank-you', 'front.course.index', 'front.course.show', 'front.opt-in.thanks', 'front.opt-in.referral',
             'front.contact-us', 'front.faq', 'front.read-blog', 'front.coaching-timer', 'front.support',
             'front.support-articles', 'front.support-article', 'front.course.checkout', 'front.home',
@@ -84,7 +84,7 @@
             'front.shop-manuscript.checkout', 'front.workshop.checkout', 'front.copy-editing', 'front.correction',
             'front.other-service-checkout', 'front.opt-in', 'front.coaching-timer-checkout', 'front.webinar-thanks',
             'front.free-manuscript.index', 'front.course.claim-reward', 'auth.login.show', 'front.henrik',
-            'front.free-webinar', 'front.free-webinar-thanks', 'front.terms', 'front.opt-in-terms', 'front.poems'];
+            'front.free-webinar', 'front.free-webinar-thanks', 'front.terms', 'front.opt-in-terms', 'front.poems'];*/
 
         $loggedInPages = ['learner.dashboard', 'learner.account.search', 'learner.course', 'learner.course.show',
             'learner.course.lesson', 'learner.shop-manuscript', 'learner.shop-manuscript.show', 'learner.workshop',
@@ -92,7 +92,7 @@
             'learner.calendar', 'learner.invoice', 'learner.upgrade', 'learner.get-upgrade-manuscript',
             'learner.get-upgrade-assignment', 'learner.get-upgrade-course', 'learner.competition', 'learner.profile'];
         ?>
-        @if(!in_array(Route::currentRouteName(), $newDesignPages) && !in_array(Route::currentRouteName(), $loggedInPages))
+        {{--@if(!in_array(Route::currentRouteName(), $newDesignPages) && !in_array(Route::currentRouteName(), $loggedInPages))
             @include('frontend.partials.navbar')
         @else
             @if (in_array(Route::currentRouteName(),$loggedInPages))
@@ -104,15 +104,27 @@
             @else
                 @include('frontend.partials.navbar-new')
             @endif
+        @endif--}}
+
+        @if (in_array(Route::currentRouteName(),$loggedInPages))
+            @if (Auth::user())
+                @include('frontend.partials.learner-nav')
+            @else
+                @include('frontend.partials.navbar-new')
+            @endif
+        @else
+            @include('frontend.partials.navbar-new')
         @endif
 
         @yield('content')
 
-        @if(!in_array(Route::currentRouteName(), $newDesignPages) && !in_array(Route::currentRouteName(), $loggedInPages))
+        {{--@if(!in_array(Route::currentRouteName(), $newDesignPages) && !in_array(Route::currentRouteName(), $loggedInPages))
             @include('frontend.partials.footer')
         @else
             @include('frontend.partials.footer-new')
-        @endif
+        @endif--}}
+
+        @include('frontend.partials.footer-new')
 
         @include('frontend.partials.scripts')
         <script>

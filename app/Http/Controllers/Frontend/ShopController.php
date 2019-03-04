@@ -2,6 +2,8 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\CourseDiscount;
+use App\CourseShared;
+use App\CourseSharedUser;
 use App\Http\AdminHelpers;
 use App\Mail\SubjectBodyEmail;
 use App\Paypal;
@@ -57,6 +59,96 @@ class ShopController extends Controller
         endif;
 
         return view('frontend.shop.checkout-test', compact('course'));
+    }
+
+    public function shareCourseCheckout($share_hash, Request $request)
+    {
+        $courseShare = CourseShared::where('hash', '=', $share_hash)->first();
+        if (!$courseShare) {
+            return redirect()->route('front.course.index');
+        }
+        $course = $courseShare->course;
+        $package = $courseShare->package;
+
+        if ($request->isMethod('post')) {
+            if( Auth::guest() ) :
+                $user = User::where('email', $request->email)->first();
+                if( $user ) :
+                    return redirect()->back()->withInput()->withErrors(['The email you provided is already registered. <a href="#" data-toggle="collapse" data-target="#checkoutLogin">Login Here</a>']);
+                else :
+                    // register new user
+                    $new_user = new User();
+                    $new_user->email = $request->email;
+                    $new_user->first_name = $request->first_name;
+                    $new_user->last_name = $request->last_name;
+                    $new_user->password = bcrypt($request->password);
+                    $new_user->save();
+                    Auth::login($new_user);
+                endif;
+            endif;
+
+            $alreadyAvailCourse = CourseSharedUser::where(['user_id' => Auth::user()->id, 'course_shared_id' => $courseShare->id])->first();
+            if ($alreadyAvailCourse) {
+                return redirect(route('learner.course'));
+            }
+
+            $courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
+            $courseTaken->is_active = 0;
+            $courseTaken->save();
+
+            $courseSharedUser['user_id'] = Auth::user()->id;
+            $courseSharedUser['course_shared_id'] = $courseShare->id;
+            CourseSharedUser::create($courseSharedUser);
+
+            // Check for shop manuscripts
+            if( $package->shop_manuscripts->count() > 0 ) :
+                foreach( $package->shop_manuscripts as $shop_manuscript ) :
+                    //$shopManuscriptTaken = ShopManuscriptsTaken::firstOrNew(['user_id' => Auth::user()->id, 'shop_manuscript_id' => $shop_manuscript->shop_manuscript_id]);
+                    $shopManuscriptTaken = new ShopManuscriptsTaken();
+                    $shopManuscriptTaken->user_id = Auth::user()->id;
+                    $shopManuscriptTaken->shop_manuscript_id = $shop_manuscript->shop_manuscript_id;
+                    $shopManuscriptTaken->is_active = false;
+                    $shopManuscriptTaken->package_shop_manuscripts_id = $package->shop_manuscripts[0]->id;
+                    $shopManuscriptTaken->save();
+                endforeach;
+            endif;
+
+            $add_to_automation = 0;
+            if ($package->included_courses->count() > 0) {
+                foreach ($package->included_courses as $included_course) {
+                    if ($included_course->included_package_id == 29) { // check if webinar-pakke is included
+                        $add_to_automation++;
+                    }
+                }
+            }
+
+            if ($package->course->id == 17) { //check if webinar-pakke
+                $add_to_automation++;
+            }
+
+            if ($add_to_automation > 0) {
+                $user_email = Auth::user()->email;
+                $automation_id = 73;
+                $user_name = Auth::user()->first_name;
+
+                //AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+            }
+
+            // check if the course has activecampaign list then add the user
+            if ($package->course->auto_list_id > 0) {
+                $list_id = $package->course->auto_list_id;
+                $listData = [
+                    'email' => Auth::user()->email,
+                    'name' => Auth::user()->first_name,
+                    'last_name' => Auth::user()->last_name
+                ];
+
+                //AdminHelpers::addToActiveCampaignList($list_id, $listData);
+            }
+
+            return redirect(route('front.shop.thankyou'));
+        }
+        return view('frontend.shop.checkout-share', compact('course', 'package'));
     }
 
     /**

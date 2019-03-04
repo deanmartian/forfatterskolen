@@ -134,6 +134,8 @@ Route::group([
             Route::post('/{id}/get-free/', 'CourseController@getFreeCourse')->name('front.course.getFreeCourse'); // Check Discount
             Route::get('/{id}/claim-reward', 'ShopController@claimReward')->name('front.course.claim-reward'); // Claim Reward
             Route::post('/{id}/claim-reward', 'ShopController@claimReward')->name('front.course.claim-reward'); // Claim Reward
+            Route::get('/share/{share_hash}/checkout', 'ShopController@shareCourseCheckout')->name('front.course.share.checkout');
+            Route::post('/share/{share_hash}/checkout', 'ShopController@shareCourseCheckout')->name('front.course.share.checkout');
         });
 
 
@@ -542,6 +544,16 @@ Route::group([
         Route::get('/course/{id}/learner-list-excel', 'CourseController@learnerListExcel')->name('learner.course.learner-list-excel'); // Add Learner To Course
         Route::get('/course/{id}/learner-active-list-excel', 'CourseController@learnerActiveListExcel')->name('learner.course.learner-active-list-excel'); // Add Learner To Course
 
+        Route::get('/shareable-course/get-package/{course_id}', 'ShareableCourseController@getCoursePackage');
+        Route::resource('shareable-course', 'ShareableCourseController', [
+            'except' => ['crete', 'show', 'edit'],
+            'names' => [
+                'index' => 'admin.shareable-course.index',
+                'store' => 'admin.shareable-course.store',
+                'update' => 'admin.shareable-course.update',
+                'destroy' => 'admin.shareable-course.destroy',
+            ],
+        ]);
 
         // Email Out Route
         Route::resource('/course/{id}/email-out', 'EmailOutController', [
