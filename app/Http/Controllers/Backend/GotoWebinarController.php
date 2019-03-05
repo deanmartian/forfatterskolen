@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 use App\GTWebinar;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
+use App\Settings;
 use Illuminate\Http\Request;
 
 class GotoWebinarController extends Controller
@@ -33,7 +34,7 @@ class GotoWebinarController extends Controller
     public function create()
     {
 
-        $confirmation_email_template = "
+        /*$confirmation_email_template = "
                     <p>Hei [first_name],</p>
                     <p>Thank you for registering for \"[webinar_title]\".</p>
                     <p>Please send your questions, comments and feedback to: [admin_email]</p>
@@ -54,8 +55,9 @@ class GotoWebinarController extends Controller
                     <p>Webinar ID: [webinar_id]</p>
                     <p><h2 style='color:#114c7f'>To Cancel this Registration</h2></p>
                     <p>If you can't attend this webinar, you may [cancel_registration] at any time</p>
-                    ";
+                    ";*/
 
+        $confirmation_email_template = Settings::gtWebinarEmailNotification();
         $webinar = [
             'title' => '',
             'gt_webinar_key' => '',

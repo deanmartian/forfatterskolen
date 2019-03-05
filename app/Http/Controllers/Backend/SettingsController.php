@@ -56,5 +56,12 @@ class SettingsController extends Controller
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Description for Rektor Tips updated successfully.'),
             'alert_type' => 'success']);
     }
+
+    public function gtConfirmationEmail( Request $request )
+    {
+        Settings::updateOrCreate(['setting_name' => 'gt_confirmation_email'], ['setting_value' => $request->gt_confirmation_email]);
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Confirmation email template updated successfully.'),
+            'alert_type' => 'success']);
+    }
     
 }
