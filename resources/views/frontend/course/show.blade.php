@@ -93,7 +93,7 @@
 								</div>
 
 								<div class="form-group col-md-3">
-									<button type="submit" class="btn btn-theme">Get Free Course</button>
+									<button type="submit" class="btn btn-theme">Få gratis kurset</button>
 								</div>
 							@else
 								<?php
@@ -101,7 +101,7 @@
 								$courseTaken = App\CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
 								?>
 								@if (!$courseTaken)
-									<button class="btn btn-theme" type="submit">Get Free Course</button>
+									<button class="btn btn-theme" type="submit">Få gratis kurset</button>
 								@endif
 							@endif
 					</form>

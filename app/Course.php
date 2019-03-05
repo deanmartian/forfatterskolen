@@ -184,4 +184,20 @@ class Course extends Model
         return false;
     }
 
+    public function getIsAvailableAttribute()
+    {
+        $start_date = $this->attributes['start_date'];
+        $end_date = $this->attributes['end_date'];
+        if( $start_date || $end_date ) :
+            $now = time();
+            if( $start_date ) :
+                if( $now < strtotime($start_date)) return false;
+            endif;
+            if( $end_date ) :
+                if( $now > strtotime($end_date)) return false;
+            endif;
+        endif;
+        return true;
+    }
+
 }

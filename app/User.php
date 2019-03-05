@@ -111,6 +111,11 @@ class User extends Authenticatable
         return $this->hasMany('App\ShopManuscriptsTaken')->orderBy('created_at', 'desc');
     }
 
+    public function freeCourses()
+    {
+        return $this->hasMany('App\CoursesTaken')->where('is_free', '=', 1)
+            ->orderBy('created_at', 'desc');
+    }
 
     public function workshopsTaken()
     {

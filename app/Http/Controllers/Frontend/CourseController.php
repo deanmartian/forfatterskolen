@@ -25,7 +25,10 @@ class CourseController extends Controller
         ->whereHas('packages', function($query){
             return count($query) > 0;
         })
-        ->get();
+        ->get()
+        ->filter(function($item) {
+            return $item->is_available || $item->is_free;
+        }); // the original don't have this filter
     	return view('frontend.course.index', compact('courses'));
     }
 
@@ -84,7 +87,8 @@ class CourseController extends Controller
 
             // create new course taken
             $courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
-            $courseTaken->is_active = 0;
+            $courseTaken->is_active = 1;
+            $courseTaken->is_free = 1;
             $courseTaken->save();
             return redirect()->route('front.thank-you');
         }

@@ -38,40 +38,40 @@
 			@foreach($courses->chunk(3) as $courses_chunk)
 				<div class="row">
 					@foreach($courses_chunk as $course)
-							@if( \App\Http\FrontendHelpers::isCourseAvailable($course) || $course->is_free)
-								<div class="col-sm-4">
-									<div class="course">
-										<div class="course-header" style="background-image: url({{$course->course_image}})">
-											<div class="header-content">
-												@if ($course->instructor)
-													<div class="left-container">
-														<small>Kursholder</small>
-														<h2><i class="img-icon"></i>{{ $course->instructor }}</h2>
-													</div>
-												@endif
+						{{--@if( \App\Http\FrontendHelpers::isCourseAvailable($course) || $course->is_free) original have this--}}
+							<div class="col-sm-4">
+								<div class="course">
+									<div class="course-header" style="background-image: url({{$course->course_image}})">
+										<div class="header-content">
+											@if ($course->instructor)
+												<div class="left-container">
+													<small>Kursholder</small>
+													<h2><i class="img-icon"></i>{{ $course->instructor }}</h2>
+												</div>
+											@endif
 
-												@if ($course->start_date)
-													<div class="right-container">
-														<small>Date</small>
-														<h2><i class="img-icon"></i>{{ \App\Http\FrontendHelpers::formatDate($course->start_date) }}</h2>
-													</div>
-												@endif
-											</div>
-
-											<a href="{{ route('front.course.show', $course->id) }}" class="btn btn-details">Detaljer</a>
+											@if ($course->start_date)
+												<div class="right-container">
+													<small>Date</small>
+													<h2><i class="img-icon"></i>{{ \App\Http\FrontendHelpers::formatDate($course->start_date) }}</h2>
+												</div>
+											@endif
 										</div>
-										<div class="course-body">
-											<h2>
-												{{ $course->title }}
-											</h2>
 
-											<p class="color-b4">{{ str_limit(strip_tags($course->description), 180)}}</p>
+										<a href="{{ route('front.course.show', $course->id) }}" class="btn btn-details">Detaljer</a>
+									</div>
+									<div class="course-body">
+										<h2>
+											{{ $course->title }}
+										</h2>
 
-											<a href="{{ route('front.course.show', $course->id) }}" class="btn buy-btn">Les mer</a>
-										</div>
+										<p class="color-b4">{{ str_limit(strip_tags($course->description), 180)}}</p>
+
+										<a href="{{ route('front.course.show', $course->id) }}" class="btn buy-btn">Les mer</a>
 									</div>
 								</div>
-							@endif
+							</div>
+						{{--@endif--}}
 					@endforeach
 				</div>
 			@endforeach

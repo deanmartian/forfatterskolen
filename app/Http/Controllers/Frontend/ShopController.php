@@ -61,6 +61,12 @@ class ShopController extends Controller
         return view('frontend.shop.checkout-test', compact('course'));
     }
 
+    /**
+     * Checkout for the shared course
+     * @param $share_hash
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
+     */
     public function shareCourseCheckout($share_hash, Request $request)
     {
         $courseShare = CourseShared::where('hash', '=', $share_hash)->first();
@@ -92,8 +98,12 @@ class ShopController extends Controller
                 return redirect(route('learner.course'));
             }
 
-            $courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
-            $courseTaken->is_active = 0;
+            //$courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
+            $courseTaken = new CoursesTaken();
+            $courseTaken->user_id = Auth::user()->id;
+            $courseTaken->package_id = $package->id;
+            $courseTaken->is_active = 1;
+            $courseTaken->is_free = 1;
             $courseTaken->save();
 
             $courseSharedUser['user_id'] = Auth::user()->id;

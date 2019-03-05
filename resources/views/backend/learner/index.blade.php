@@ -31,6 +31,7 @@
 			        <th>{{ trans('site.first-name') }}</th>
 			        <th>{{ trans('site.last-name') }}</th>
 			        <th>{{ trans_choice('site.emails', 1) }}</th>
+					<th>Free Courses</th>
 					<th>{{ trans_choice('site.workshops',1) }}</th>
 					<th>{{ trans_choice('site.shop-manuscripts', 1) }}</th>
 			        <th>{{ trans_choice('site.courses', 2) }}</th>
@@ -48,6 +49,7 @@
 					<td>{{$learner->first_name}}</td>
 					<td>{{$learner->last_name}}</td>
 					<td>{{$learner->email}}</td>
+					<td>{{ $learner->freeCourses->count() }}</td>
 					<td>{{($learner->workshopsTaken->count())}}</td>
 					<td>{{($learner->shopManuscriptsTaken->count())}}</td>
 					<td>{{count($learner->coursesTaken)}}</td>

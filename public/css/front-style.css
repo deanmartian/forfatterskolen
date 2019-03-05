@@ -1547,6 +1547,7 @@ margin-right: 5px;
 .course-page .courses-list-container .course-header, .course-single-page .similar-courses .course-header {
     height: 270px;
     width: 100%;
+    min-width: 350px;
     position: relative;
     background-position: center center;
     background-repeat: no-repeat;
@@ -1641,6 +1642,7 @@ margin-right: 5px;
     border-bottom-right-radius: 15px;
     /*height: 210px;*/
     margin-bottom: 20px;
+    min-width: 350px;
     padding: 20px;
     word-break: break-word;
 }
@@ -6390,11 +6392,13 @@ textarea.form-control {
     .course-page .courses-list-container .course-header,
     .course-single-page .similar-courses .course-header {
         height: 220px;
+        min-width: 290px;
     }
 
     .course-page .courses-list-container .course-body,
     .course-single-page .similar-courses .course-body {
         /*height: 230px;*/
+        min-width: 290px;
         padding: 20px 10px;
     }
 
@@ -7068,6 +7072,7 @@ textarea.form-control {
     .course-page .courses-list-container .course-header,
     .course-single-page .similar-courses .course-header {
         height: 160px;
+        min-width: 210px;
     }
 
     .course-page .courses-list-container .course-body h2,
@@ -7078,6 +7083,7 @@ textarea.form-control {
     .course-page .courses-list-container .course-body,
     .course-single-page .similar-courses .course-body {
         /*height: 280px;*/
+        min-width: 210px;
     }
 
     .course-page .courses-list-container .course-header .btn-details,
@@ -8212,11 +8218,13 @@ textarea.form-control {
     .course-page .courses-list-container .course-header,
     .course-single-page .similar-courses .course-header {
         height: 130px;
+        min-width: 170px;
     }
 
     .course-page .courses-list-container .course-body,
     .course-single-page .similar-courses .course-body {
         /*height: 300px;*/
+        min-width: 170px;
         padding: 10px;
     }
 
@@ -9460,11 +9468,13 @@ textarea.form-control {
     .course-page .courses-list-container .course-header,
     .course-single-page .similar-courses .course-header {
         height: 210px;
+        min-width: 345px;
     }
 
     .course-page .courses-list-container .course-body,
     .course-single-page .similar-courses .course-body {
         /*height: 220px;*/
+        min-width: 384px;
     }
 
     .course-page .courses-list-container .course-body h2,
@@ -10528,6 +10538,11 @@ textarea.form-control {
         width: 4%;
     }
 
+    .course-page .courses-list-container .course-body, .course-single-page .similar-courses .course-body {
+        /* height: 220px; */
+        min-width: 345px;
+    }
+
     .webinar-search-container .input-group-btn {
         width: 24%;
     }
@@ -10619,6 +10634,7 @@ textarea.form-control {
     .course-page .courses-list-container .course-header,
     .course-single-page .similar-courses .course-header {
         height: 190px;
+        min-width: 290px;
     }
 
     .course-page .courses-list-container .course-header .header-content,
@@ -10666,6 +10682,11 @@ textarea.form-control {
 
     .course-single-page .testimonial-card video {
         height: 158px;
+    }
+
+    .course-page .courses-list-container .course-body, .course-single-page .similar-courses .course-body {
+        /* height: 220px; */
+        min-width: 330px;
     }
 
     .theme-tabs li a > span {
@@ -10877,6 +10898,7 @@ textarea.form-control {
     .course-page .courses-list-container .course-body,
     .course-single-page .similar-courses .course-body {
         /*height: 240px;*/
+        min-width: 290px;
     }
 
     .course-page .courses-list-container .course-header .header-content h2,
