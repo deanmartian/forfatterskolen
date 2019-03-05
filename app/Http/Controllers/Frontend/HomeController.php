@@ -1272,8 +1272,8 @@ Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 
                 $admin_email = "<a href='mailto:".$webinar_details['organizerEmail']."' style='text-decoration: none'>"
                     .$webinar_details['organizerEmail']."</a>";
 
-                $join_button = "<a href='".$joinURL."' style='font-size:16px;font-family:Helvetica,Arial,sans-serif;color:#ffffff;
-text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7f;display:inline-block;background-color:#114c7f'>Join Webinar</a>";
+                $join_button = "<p style='margin-left: 170px'><a href='".$joinURL."' style='font-size:16px;font-family:Helvetica,Arial,sans-serif;color:#ffffff;
+text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7f;display:inline-block;background-color:#114c7f'>Join Webinar</a></p>";
                 $system_req = "<a href='https://link.gotowebinar.com/email-welcome?role=attendee&source=registrationConfirmationEmail
 &language=english&experienceType=CLASSIC' style='text-decoration: none'>check system requirement</a>";
                 // add dash after every 3rd character
