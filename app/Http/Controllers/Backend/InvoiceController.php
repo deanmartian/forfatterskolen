@@ -72,6 +72,7 @@ class InvoiceController extends Controller
     {
         $fikenValid = false;
         $fikenURL = NULL;
+        $fikenInvoiceNumber = NULL;
 
         $ch = curl_init($this->fikenInvoices); 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -85,6 +86,7 @@ class InvoiceController extends Controller
         foreach( $invoicesData as $invoiceData ) :
             if( $request->fiken_url == $invoiceData->_links->alternate->href ) :
                 $fikenValid = true;
+                $fikenInvoiceNumber = $invoiceData->invoiceNumber;
                 break;
             endif;
         endforeach;
@@ -109,6 +111,7 @@ class InvoiceController extends Controller
             $invoice->user_id = $learner->id;
             $invoice->fiken_url = $request->fiken_url;
             $invoice->pdf_url = $request->pdf_url;
+            $invoice->invoice_number = $fikenInvoiceNumber;
             $invoice->save();
         else :
             return redirect()->back()->withErrors(['Error with Fiken URL.']);
