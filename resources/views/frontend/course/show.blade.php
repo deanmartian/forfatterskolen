@@ -116,7 +116,7 @@
 									</div>
 									<div class="modal-body">
 										<p class="font-weight-bold">
-											Your email is already registred please log in:
+											Din e-post adresse er allerede registrert i vårt system, vennligst logg inn:
 										</p>
 
 										<form id="checkoutLogin" action="{{route('frontend.login.checkout.store')}}" method="POST">
@@ -127,7 +127,7 @@
 													<span class="input-group-text"><i class="fa at-icon"></i></span>
 												</div>
 												<input type="email" name="email" class="form-control no-border-left w-auto"
-													   placeholder="Epost" required value="{{old('email')}}">
+													   placeholder="E-post" required value="{{old('email')}}">
 											</div>
 											<div class="input-group mb-4">
 												<div class="input-group-prepend">
@@ -137,7 +137,7 @@
 													   class="form-control no-border-left w-auto" required>
 											</div>
 
-											<button type="submit" class="btn site-btn-global pull-right">Login</button>
+											<button type="submit" class="btn site-btn-global pull-right">Innlogging</button>
 										</form>
 									</div>
 								</div>

@@ -12,7 +12,9 @@
                     <img src="{{ asset('images-new/thumb-icon.png') }}" alt="" class="thumb">
                     <h1>Takk for at du meldte deg på!</h1>
                     <p>
-                        Du vil nå få tilsendt en epost!
+                        Du vil nå få tilsendt en epost! <br>
+                        <small class="redirect" style="display: inline-block; margin-bottom: 150px"><em>(Du blir sendt til forsiden om
+                                <span>5</span> sekunder)</em></small>
                     </p>
                 </div>
 
@@ -22,4 +24,21 @@
             </div>
         </div>
     </div>
+@stop
+
+@section('scripts')
+    <script>
+        let time = 5;
+        window.setInterval(
+            function()
+            {
+                time--;
+                console.log(time);
+                if(time === 0){
+                    window.location.href = '{{ url('/account/dashboard') }}';
+                }
+                jQuery('.redirect span').text(time);
+            },
+            1000);
+    </script>
 @stop
