@@ -26,7 +26,7 @@ class LoginController extends Controller
         endif;
 
 
-        return redirect()->back()->withInput()->withErrors('Wrong password');
+        return redirect()->back()->withInput()->withErrors('Feil passord');
     }
 
 
@@ -59,7 +59,7 @@ class LoginController extends Controller
             return redirect(route('learner.dashboard'));
         endif;
 
-        return redirect()->back()->withInput()->withErrors('Wrong password');
+        return redirect()->back()->withInput()->withErrors('Feil passord');
     }
 
 
@@ -76,7 +76,7 @@ class LoginController extends Controller
             return redirect()->back();
         endif;
 
-        return redirect()->back()->withInput()->withErrors(['login_error' => 'Wrong password']);
+        return redirect()->back()->withInput()->withErrors(['login_error' => 'Feil passord']);
     }
 
     public function logout()
