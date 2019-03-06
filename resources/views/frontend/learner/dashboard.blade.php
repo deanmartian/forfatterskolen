@@ -561,7 +561,7 @@
                                 </div>
                             @endif
 
-                            <button type="submit" class="btn site-btn-global pull-right">Update</button>
+                            <button type="submit" class="btn site-btn-global pull-right">Oppdater</button>
                         </form>
                     </div>
                 </div>
