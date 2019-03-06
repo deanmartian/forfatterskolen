@@ -531,10 +531,71 @@
             </div>
         </div>
     </div>
+
+    @if (Auth::user()->need_pass_update)
+        <div class="modal fade" role="dialog" id="passUpdateModal" data-backdrop="static">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Nytt passord</h3>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="font-weight-bold">
+                            Legg inn ditt nye passord
+                        </p>
+
+                        <form action="{{route('learner.password.update')}}" method="POST" onsubmit="disableSubmitOrigText(this)">
+                            {{csrf_field()}}
+
+                            <div class="input-group mb-4">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa lock-icon"></i></span>
+                                </div>
+                                <input type="password" name="password" placeholder="Passord"
+                                       class="form-control no-border-left w-auto" required>
+                            </div>
+                            @if ($errors->has('password'))
+                                <div class="alert alert-danger no-bottom-margin">
+                                    {{ $errors->first('password') }}
+                                </div>
+                            @endif
+
+                            <button type="submit" class="btn site-btn-global pull-right">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if (Session::has('passUpdated'))
+        <div id="passUpdatedModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <div style="color: green; font-size: 24px"><i class="fa fa-check"></i></div>
+                        <p>
+                            Ditt passord er oppdatert.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 @stop
 
 @section('scripts')
     <script>
+
+        @if (Auth::user()->need_pass_update)
+            $("#passUpdateModal").modal('show');
+        @endif
+
+        @if (Session::has('passUpdated'))
+            $('#passUpdatedModal').modal('show');
+        @endif
 
         @if (Session::has('success'))
             $('#submitSuccessModal').modal('show');

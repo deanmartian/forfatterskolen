@@ -958,6 +958,18 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
+    public function passwordUpdate(Request $request)
+    {
+        $this->validate($request, [
+            'password' => 'required'
+        ]);
+
+        Auth::user()->password = bcrypt($request->password);
+        Auth::user()->need_pass_update = 0;
+        Auth::user()->save();
+        return redirect()->back()->with(['passUpdated' => 1]);
+    }
+
     public function terms()
     {
         return view('frontend.learner.terms');

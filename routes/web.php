@@ -238,6 +238,7 @@ Route::group([
 
         Route::post('/profile', 'LearnerController@profileUpdate')->name('learner.profile.update'); // Profile Update
         Route::post('/profile/photo', 'LearnerController@profileUpdatePhoto')->name('learner.profile.update-photo'); // Profile Update
+        Route::post('/password/update', 'LearnerController@passwordUpdate')->name('learner.password.update'); // Profile Update
         Route::post('/course/take', 'LearnerController@takeCourse')->name('learner.course.take'); // Take Course
         Route::post('/course/{id}/uploadManuscript', 'LearnerController@uploadManuscript')->name('learner.course.uploadManuscript'); // Upload manuscript to course
         Route::post('/shop-manuscript/{id}/comment', 'LearnerController@shopManuscriptPostComment')->name('learner.shop-manuscript.post-comment'); // Shop Manuscript Show Page
@@ -1121,6 +1122,7 @@ Route::group([
         Route::post('/settings/update/opt-in-description', 'SettingsController@updateOptInDescription')->name('admin.settings.update.opt-in-description'); // Store Terms
         Route::post('/settings/update/opt-in-rektor-description', 'SettingsController@updateOptInRektorDescription')->name('admin.settings.update.opt-in-rektor-description'); // Store Terms
         Route::post('/settings/update/gt_confirmation_email', 'SettingsController@gtConfirmationEmail')->name('admin.settings.update.gt_confirmation_email'); // Store Feedback
+        Route::post('/settings/update/webinar_email_template', 'SettingsController@webinarEmailTemplate')->name('admin.settings.update.webinar_email_template');
 
         // Advisories
         Route::put('/advisory/{id}', 'AdvisoryController@update')->name('admin.advisory.update');

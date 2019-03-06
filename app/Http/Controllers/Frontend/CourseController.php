@@ -78,6 +78,7 @@ class CourseController extends Controller
                 $new_user->first_name   = $request->first_name;
                 $new_user->last_name    = $request->last_name;
                 $new_user->password     = bcrypt('Z5C5E5M2jv');
+                $new_user->need_pass_update = 1;
                 $new_user->save();
                 Auth::login($new_user);
 
