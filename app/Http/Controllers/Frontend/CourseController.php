@@ -37,8 +37,10 @@ class CourseController extends Controller
     {
     	$course = Course::findOrFail($id);
 
-        if( !FrontendHelpers::isCourseAvailable($course) || count($course->packages) == 0 ) : // Display 404 if Course has no Packages
-            return abort(404);
+    	if (!$course->is_free): // added this condition to display page if it's free
+            if( !FrontendHelpers::isCourseAvailable($course) || count($course->packages) == 0 ) : // Display 404 if Course has no Packages
+                return abort(404);
+            endif;
         endif;
 
     	return view('frontend.course.show', compact('course', 'in_cart', 'cartIndex'));
@@ -59,10 +61,16 @@ class CourseController extends Controller
             if (Auth::guest()) {
                 $this->validate($request,
                     [
-                        'email'         => 'required|email|unique:users',
+                        'email'         => 'required|email',
                         'first_name'    => 'required|alpha_spaces',
                         'last_name'     => 'required|alpha_spaces'
                     ]);
+
+                // manually check if email already exists to display the login modal on the page
+                $checkEmail = User::where('email', $request->get('email'))->first();
+                if ($checkEmail) {
+                    return redirect()->back()->with(['email_exist' => 1]);
+                }
 
                 // register new user
                 $new_user               = new User();

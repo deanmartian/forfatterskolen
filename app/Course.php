@@ -121,6 +121,11 @@ class Course extends Model
         return $this->hasMany('App\CourseRewardCoupon');
     }
 
+    public static function free()
+    {
+        return self::where('is_free', '=', 1)->get();
+    }
+
     //for deleting the children
     /*public static function boot()
     {

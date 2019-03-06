@@ -106,6 +106,45 @@
 							@endif
 					</form>
 
+					@if (Session::has('email_exist'))
+						<div class="modal fade" role="dialog" id="emailExistModal">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h3 class="modal-title">Login</h3>
+										<button type="button" class="close" data-dismiss="modal">&times;</button>
+									</div>
+									<div class="modal-body">
+										<p class="font-weight-bold">
+											Your email is already registred please log in:
+										</p>
+
+										<form id="checkoutLogin" action="{{route('frontend.login.checkout.store')}}" method="POST">
+											{{csrf_field()}}
+
+											<div class="input-group mb-4">
+												<div class="input-group-prepend">
+													<span class="input-group-text"><i class="fa at-icon"></i></span>
+												</div>
+												<input type="email" name="email" class="form-control no-border-left w-auto"
+													   placeholder="Epost" required value="{{old('email')}}">
+											</div>
+											<div class="input-group mb-4">
+												<div class="input-group-prepend">
+													<span class="input-group-text"><i class="fa lock-icon"></i></span>
+												</div>
+												<input type="password" name="password" placeholder="Passord"
+													   class="form-control no-border-left w-auto" required>
+											</div>
+
+											<button type="submit" class="btn site-btn-global pull-right">Login</button>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					@endif
+
 					@if ( $errors->any() )
 						<div class="alert alert-danger margin-top">
 							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -445,6 +484,10 @@
                 scrollInertia: 500
             });
 		});
+
+		@if (Session::has('email_exist'))
+			$("#emailExistModal").modal('show');
+		@endif
 
         let showKursplan = parseInt('{{ $showKursplan }}');
         if (showKursplan === 1) {

@@ -121,6 +121,42 @@
                             @endforeach
                         </div>
                     </div> <!-- end global-card -->
+
+                    @if(\App\Course::free()->count())
+                        <div class="card global-card mt-3">
+                            <div class="card-header">
+                                <h1>
+                                    Gratis kurs tiljgengelig
+                                </h1>
+                            </div>
+                            <div class="card-body">
+                                @foreach(\App\Course::free() as $free)
+                                    <div class="col-md-12 mb-3">
+                                        <div class="col-md-7">
+                                            <b>
+                                                {{ $free->title }}
+                                            </b>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <?php
+                                                $course_packages = $free->packages->pluck('id')->toArray();
+                                                $courseTaken = App\CoursesTaken::where('user_id', Auth::user()->id)
+                                            ->whereIn('package_id', $course_packages)->first();
+                                            ?>
+                                            @if (!$courseTaken)
+                                                <form action="{{ route('front.course.getFreeCourse', $free->id) }}" method="POST"
+                                                      onsubmit="disableSubmit(this)" class="form-inline">
+                                                    {{ csrf_field() }}
+                                                    <button class="btn btn-theme" type="submit">Få gratis kurset</button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                        </div> <!-- end global-card -->
+                    @endif <!-- end if has free course -->
                 </div> <!-- end dashboard-calendar -->
             </div> <!-- end row -->
 
