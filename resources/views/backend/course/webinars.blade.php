@@ -42,7 +42,7 @@
 					<button class="btn btn-primary margin-bottom" data-toggle="modal" data-target="#addWebinarModal"
 							data-backdrop="static">{{ trans('site.add-webinar') }}</button>
 
-					@if ($course->id === 17) {{-- check if webinar-pakke --}}
+					@if (in_array($course->id, [17, 23])) {{-- check if webinar-pakke --}}
 						<button class="btn btn-success margin-bottom" data-toggle="modal" data-target="#webinarEmailTempModal"
 							data-backdrop="static">Email Template</button>
 					@endif
@@ -97,7 +97,7 @@
 											{{ trans('site.make-as-replay') }}
 										</button>
 
-										@if ($course->id === 17) {{-- check if webinar-pakke --}}
+										@if (in_array($course->id, [17, 23])) {{-- check if webinar-pakke --}}
 											<?php
 												$webinarEmailOut = \App\Http\AdminHelpers::getWebinarEmailOut($webinar->id, $course->id);
 											?>
