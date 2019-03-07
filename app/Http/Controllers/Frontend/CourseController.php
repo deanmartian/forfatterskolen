@@ -84,6 +84,7 @@ class CourseController extends Controller
 
                 // send email
                 $email_data['email_message'] = $course->email;
+                $email_data['email_subject'] = $course->title;
                 $toEmail = $request->email;
                 \Mail::to($toEmail)->queue(new FreeCourseNewUserEmail($email_data));
             }
