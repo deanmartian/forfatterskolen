@@ -73,10 +73,11 @@ class WebinarEmailOutCommand extends Command
                     $presenterList = AdminHelpers::getGotoWebinarPanelist($web_key);
                     $times          = $webinarDetails->times[0];
                     $timezone       = $webinarDetails->timeZone;
-                    $startTime      = AdminHelpers::convertTZNoFormat($times->startTime, $timezone)->format('M d, Y h:i A');
-                    $endTime        = AdminHelpers::convertTZNoFormat($times->endTime, $timezone)->format('h:i A');
+                    $startDate      = AdminHelpers::convertTZNoFormat($times->startTime, $timezone)->format('d, M Y');
+                    $startTime      = AdminHelpers::convertTZNoFormat($times->startTime, $timezone)->format('H:i');
+                    $endTime        = AdminHelpers::convertTZNoFormat($times->endTime, $timezone)->format('H:i');
                     $formattedTZ    = AdminHelpers::convertTZNoFormat($times->startTime, $timezone)->format('T');
-                    $webinarDate    = $startTime.' - '.$endTime.' '.$formattedTZ;
+                    $webinarDate    = $startDate.' klokken '.$startTime.' - '.$endTime.' '.$formattedTZ;
 
                     $subject = "Webinar (".$webinarDate.") med (".$presenterList.")";
 
