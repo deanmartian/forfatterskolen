@@ -63,5 +63,12 @@ class SettingsController extends Controller
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Confirmation email template updated successfully.'),
             'alert_type' => 'success']);
     }
+
+    public function webinarEmailTemplate( Request $request )
+    {
+        Settings::updateOrCreate(['setting_name' => 'webinar_email_template'], ['setting_value' => $request->webinar_email_template]);
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Webinar email template updated successfully.'),
+            'alert_type' => 'success']);
+    }
     
 }

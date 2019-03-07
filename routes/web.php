@@ -119,6 +119,9 @@ Route::group([
         Route::get('/webinar-pakke-campaign', 'HomeController@webinarPakkeRef'); // Webinar-pakke campaign page
         Route::get('/test-campaign', 'HomeController@testCampaign'); // Upviral ref page
 
+        Route::get('/goto-webinar/register/{webinar_key}/{email}', 'HomeController@gotoWebinarEmailRegistration')
+            ->name('front.goto-webinar.registration.email'); // GotoWebinar Registration through email
+
         // Course
         Route::group([
             'prefix' => 'course'
@@ -756,6 +759,7 @@ Route::group([
             ],
         ]);
         Route::put('webinar/{id}/make-replay', 'WebinarController@makeReplay')->name('admin.webinar.make-replay');
+        Route::post('webinar/{id}/course/{course_id}/email-out', 'WebinarController@webinarEmailOut')->name('admin.webinar.email-out');
 
         // Webinar Presenter Route
         Route::resource('webinar/{webinar_id}/presenter', 'WebinarPresenterController', [

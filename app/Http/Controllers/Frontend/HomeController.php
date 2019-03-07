@@ -1298,6 +1298,60 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         }
     }
 
+    /**
+     * Register the user to gotowebinar using the email and the webinar key sent
+     * @param $webinar_key
+     * @param $email
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function gotoWebinarEmailRegistration($webinar_key, $email)
+    {
+        $webinar_key    = decrypt($webinar_key);
+        $email          = decrypt($email);
+        $user           = User::where('email', '=', $email)->first();
+
+        if (!$user) {
+            return redirect()->to('/');
+        }
+
+        $base_url = 'https://api.getgo.com/G2W/rest';
+        $access_token = 'LFuxWWDUgAuqIAAB87xQJOdeAsiG'; // from here http://app.gotowp.com/
+        $org_key = '5169031040578858252';
+        $web_key = $webinar_key; // id of the webinar from gotowebinar
+
+        $firstName = $user->first_name;//implode(" ", $sliced);
+        $lastName = $user->last_name;//end($explodeName);
+        $user_email = $user->email;
+
+        $vals['body'] = (object) array(
+            'firstName' => $firstName,
+            'lastName' => $lastName,
+            'email' => $user_email
+        );
+        $long_url = $base_url.'/organizers/'.$org_key.'/webinars/'.$web_key.'/registrants';
+        $header = array();
+        $header[] = 'Accept: application/json';
+        $header[] = 'Content-type: application/json';
+        $header[] = 'Accept: application/vnd.citrix.g2wapi-v1.1+json';
+        $header[] = 'Authorization: OAuth oauth_token='.$access_token;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $long_url);
+        curl_setopt( $ch, CURLOPT_POST, 1);
+        curl_setopt( $ch, CURLOPT_POSTFIELDS, json_encode($vals['body']));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $response = curl_exec($ch);
+        $decoded_response = json_decode($response);
+
+        if (isset($decoded_response->status)) {
+            if ($decoded_response->status == 'APPROVED') {
+                return redirect()->route('front.thank-you');
+            }
+        }
+
+        return redirect()->to('/');
+    }
+
     public function testCampaign()
     {
         return view('frontend.upviral-campaign.test');

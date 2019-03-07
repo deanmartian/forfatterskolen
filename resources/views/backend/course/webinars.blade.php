@@ -41,6 +41,11 @@
 				<div class="col-sm-12">
 					<button class="btn btn-primary margin-bottom" data-toggle="modal" data-target="#addWebinarModal"
 							data-backdrop="static">{{ trans('site.add-webinar') }}</button>
+
+					@if ($course->id === 17) {{-- check if webinar-pakke --}}
+						<button class="btn btn-success margin-bottom" data-toggle="modal" data-target="#webinarEmailTempModal"
+							data-backdrop="static">Email Template</button>
+					@endif
 				</div>
 
 				@foreach($course->webinars->chunk(3) as $webinar_chunk)
@@ -91,6 +96,22 @@
 										data-replay="{{ $webinar->set_as_replay }}">
 											{{ trans('site.make-as-replay') }}
 										</button>
+
+										@if ($course->id === 17) {{-- check if webinar-pakke --}}
+											<?php
+												$webinarEmailOut = \App\Http\AdminHelpers::getWebinarEmailOut($webinar->id, $course->id);
+											?>
+											<button class="btn btn-success btn-xs emailOutBtn" data-toggle="modal"
+													data-target="#webinarEmailOutModal" data-backdrop="static"
+											data-action="{{ route('admin.webinar.email-out', [$webinar->id, $course->id]) }}"
+											data-send-date="{{ $webinarEmailOut
+												? strftime('%Y-%m-%d', strtotime($webinarEmailOut->send_date))
+												: '' }}"
+											data-message="{{ $webinarEmailOut ? $webinarEmailOut->message
+											 	: App\Settings::webinarEmailTemplate()}}">
+												Set Email Out
+											</button>
+										@endif
 
 										<hr />
 										<div >
@@ -418,10 +439,59 @@
 
   </div>
 </div>
+
+<div id="webinarEmailTempModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="no-margin">Email Template</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.settings.update.webinar_email_template') }}">
+					{{ csrf_field() }}
+					<textarea class="form-control editor" name="webinar_email_template">{{ App\Settings::webinarEmailTemplate() }}</textarea>
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">Save</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="webinarEmailOutModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="no-margin">Webinar Email</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="">
+					{{ csrf_field() }}
+
+					<div class="form-group">
+						<label>Send Date</label>
+						<input type="date" class="form-control" name="send_date" required>
+					</div>
+					<div class="form-group">
+						<label>Message</label>
+						<textarea class="form-control editor" name="message"></textarea>
+					</div>
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">Save</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.0.0/cropper.js"></script>
+	<script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 <script>
 
     function readURL(input) {
@@ -599,6 +669,55 @@
 			$('#deleteWebinarModal em').text(title);
 			form.attr('action', action);
 		});
+
+		$(".emailOutBtn").click(function(){
+		    let modal 		= $("#webinarEmailOutModal");
+		    let action 		= $(this).data('action');
+		    let form 		= modal.find('form');
+		    let send_date 	= $(this).data('send-date');
+		    let message 	= $(this).data('message');
+
+		    form.attr('action', action);
+		    form.find('[name=send_date]').val(send_date);
+
+            tinymce.activeEditor.setContent(message);
+		});
+
+        // tinymce
+        let editor_config = {
+            path_absolute: "{{ URL::to('/') }}",
+            height: '20em',
+            selector: '.editor',
+            plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                'searchreplace wordcount visualblocks visualchars code fullscreen',
+                'insertdatetime media nonbreaking save table contextmenu directionality',
+                'emoticons template paste textcolor colorpicker textpattern'],
+            toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript superscript | forecolor backcolor | link | alignleft aligncenter alignright ' +
+            'alignjustify  | removeformat',
+            toolbar2: 'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code | print fullscreen',
+            relative_urls: false,
+            file_browser_callback : function(field_name, url, type, win) {
+                let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
+                let y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
+
+                let cmsURL = editor_config.path_absolute + '/laravel-filemanager?field_name=' + field_name;
+                if (type === 'image') {
+                    cmsURL = cmsURL + '&type=Images';
+                } else {
+                    cmsURL = cmsURL + '&type=Files';
+                }
+
+                tinyMCE.activeEditor.windowManager.open({
+                    file : cmsURL,
+                    title : 'Filemanager',
+                    width : x * 0.8,
+                    height : y * 0.8,
+                    resizable : 'yes',
+                    close_previous : 'no'
+                });
+            }
+        };
+        tinymce.init(editor_config);
 	});
 </script>
 @stop

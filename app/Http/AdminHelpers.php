@@ -6,6 +6,7 @@ use App\CoursesTaken;
 use App\CronLog;
 use App\Notification;
 use App\User;
+use App\WebinarEmailOut;
 use Carbon\Carbon;
 use Illuminate\Support\MessageBag;
 use Swift_Mailer;
@@ -999,6 +1000,85 @@ class AdminHelpers
     public static function getCronLogs()
     {
         return CronLog::orderBy('id', 'desc')->paginate(15);
+    }
+
+    /**
+     * Get the email out of webinar
+     * @param $webinar_id
+     * @param $course_id
+     * @return \Illuminate\Database\Eloquent\Model|null|static
+     */
+    public static function getWebinarEmailOut($webinar_id, $course_id)
+    {
+        return WebinarEmailOut::where('webinar_id', $webinar_id)->where('course_id', $course_id)
+            ->first();
+    }
+
+    public static function getGotoWebinarDetails($webinar_key)
+    {
+        $base_url = 'https://api.getgo.com/G2W/rest';
+        $access_token = 'LFuxWWDUgAuqIAAB87xQJOdeAsiG'; // from here http://app.gotowp.com/
+        $org_key = '5169031040578858252';
+
+        $long_url = $base_url.'/organizers/'.$org_key.'/webinars/'.$webinar_key;
+
+        // get the panelists of the webinar
+        $header = array();
+        $header[] = 'Accept: application/json';
+        $header[] = 'Content-type: application/json';
+        $header[] = 'Accept: application/vnd.citrix.g2wapi-v1.1+json';
+        $header[] = 'Authorization: OAuth oauth_token='.$access_token;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $long_url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $response = curl_exec($ch);
+        $decoded_response = json_decode($response);
+
+        return $decoded_response;
+    }
+
+    /**
+     * Get the panelist of gotowebinar webinar
+     * @param $webinar_key
+     * @return mixed|string
+     */
+    public static function getGotoWebinarPanelist($webinar_key)
+    {
+        $base_url = 'https://api.getgo.com/G2W/rest';
+        $access_token = 'LFuxWWDUgAuqIAAB87xQJOdeAsiG'; // from here http://app.gotowp.com/
+        $org_key = '5169031040578858252';
+
+        $long_url = $base_url.'/organizers/'.$org_key.'/webinars/'.$webinar_key.'/panelists';
+
+        // get the panelists of the webinar
+        $header = array();
+        $header[] = 'Accept: application/json';
+        $header[] = 'Content-type: application/json';
+        $header[] = 'Accept: application/vnd.citrix.g2wapi-v1.1+json';
+        $header[] = 'Authorization: OAuth oauth_token='.$access_token;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $long_url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $response = curl_exec($ch);
+        $decoded_response = json_decode($response);
+
+        // extract the panelist name
+        $panelist = [];
+        if (count($decoded_response) && is_array($decoded_response)) {
+            foreach($decoded_response as $panel) {
+                $panelist[] = $panel->name;
+            }
+        }
+
+        // add comma or and if on the panelist name if necessary
+        $last_element = $panelist ? array_pop($panelist) : '';
+        $presenterList = $panelist
+            ? implode(', ', $panelist).' and '.$last_element
+            : $last_element;
+
+        return $presenterList;
     }
 
     /**

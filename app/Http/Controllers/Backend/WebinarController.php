@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\Http\AdminHelpers;
+use App\WebinarEmailOut;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests;
@@ -259,6 +261,37 @@ class WebinarController extends Controller
             return redirect()->back();
         }
         return redirect()->route('admin.course.index');
+    }
+
+    /**
+     * Save email out for webinar
+     * @param $course_id
+     * @param $webinar_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function webinarEmailOut($webinar_id, $course_id, Request $request)
+    {
+        $webinar = Webinar::where('course_id', $course_id)->where('id', $webinar_id)->first();
+
+        if (!$webinar) {
+            return redirect()->back();
+        }
+
+        $this->validate($request, [
+            'send_date' => 'required|date',
+            'message' => 'required'
+        ]);
+
+        $emailOut = WebinarEmailOut::firstOrNew(['course_id' => $course_id, 'webinar_id' => $webinar_id]);
+        $emailOut->send_date = $request->get('send_date');
+        $emailOut->message = $request->get('message');
+        $emailOut->save();
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Webinar email save successfully.'),
+            'alert_type' => 'success'
+        ]);
     }
     
 }
