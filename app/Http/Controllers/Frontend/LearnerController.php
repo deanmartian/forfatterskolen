@@ -1343,10 +1343,10 @@ class LearnerController extends Controller
             ->get();
 
         // webinar-pakke is expired
+        $user_name      = Auth::user()->first_name;
         if ($coursesTaken) {
             $user_email     = Auth::user()->email;
             $automation_id  = 73;
-            $user_name      = Auth::user()->first_name;
 
             AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
         }
