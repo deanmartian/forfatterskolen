@@ -1325,12 +1325,6 @@ class LearnerController extends Controller
         $user->auto_renew_courses   = $request->auto_renew;
         $user->save();
 
-        $user_email     = Auth::user()->email;
-        $automation_id  = 73;
-        $user_name      = Auth::user()->first_name;
-
-        AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
-
         // check if webinar-pakke is already expired and renew it
 
         $monthDate = \Carbon\Carbon::now()->format('Y-m-d');
@@ -1347,6 +1341,15 @@ class LearnerController extends Controller
             ->whereNull('end_date')
             ->whereDate('started_at',$monthDate)
             ->get();
+
+        // webinar-pakke is expired
+        if ($coursesTaken) {
+            $user_email     = Auth::user()->email;
+            $automation_id  = 73;
+            $user_name      = Auth::user()->first_name;
+
+            AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+        }
 
         $coursesTaken = $coursesTaken->merge($coursesTakenByStartDate)->all();
         foreach ($coursesTaken as $courseTaken) {
