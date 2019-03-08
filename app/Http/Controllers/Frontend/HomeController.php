@@ -1258,8 +1258,8 @@ Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 
                 $startTime = $decode_time[0]->startTime;
                 $endTime = $decode_time[0]->endTime;
 
-                $formattedDate = AdminHelpers::convertTZNoFormat($startTime, 'Asia/Singapore')->format('D, M d, g:i A').' - '
-                    .AdminHelpers::convertTZNoFormat($endTime, 'Asia/Singapore')->format('g:i A');
+                $formattedDate = AdminHelpers::convertTZNoFormat($startTime, 'Asia/Singapore')->format('D, M d, H:i').' - '
+                    .AdminHelpers::convertTZNoFormat($endTime, 'Asia/Singapore')->format('H:i');
 
                 $joinURL = $request->get('joinUrl');
                 $explodeJoinURL = explode('/', $joinURL);
@@ -1275,13 +1275,13 @@ Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 
                     .$webinar_details['organizerEmail']."</a>";
 
                 $join_button = "<p style='margin-left: 170px'><a href='".$joinURL."' style='font-size:16px;font-family:Helvetica,Arial,sans-serif;color:#ffffff;
-text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7f;display:inline-block;background-color:#114c7f'>Join Webinar</a></p>";
+text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7f;display:inline-block;background-color:#114c7f'>Bli med på webinar</a></p>";
                 $system_req = "<a href='https://link.gotowebinar.com/email-welcome?role=attendee&source=registrationConfirmationEmail
-&language=english&experienceType=CLASSIC' style='text-decoration: none'>check system requirement</a>";
+&language=english&experienceType=CLASSIC' style='text-decoration: none'>Test ditt system før webinaret</a>";
                 // add dash after every 3rd character
                 $webinarID = implode("-", str_split($webinar_details['webinarID'], 3));
                 $cancel_reg = "<a href='https://attendee.gotowebinar.com/cancel/".$webinar_details['webinarKey']."/"
-                    .$request->get('registrantKey')."' style='text-decoration: none'>cancel registration</a>";
+                    .$request->get('registrantKey')."' style='text-decoration: none'>Kanseler registreringen</a>";
 
                 $search_string = [
                     '[first_name]', '[webinar_title]', '[admin_email]', '[webinar_date]', '[outlook_calendar]',
