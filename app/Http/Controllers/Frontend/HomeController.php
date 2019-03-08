@@ -33,6 +33,8 @@ use App\Solution;
 use App\SolutionArticle;
 use App\SosChildren;
 use App\UserEmail;
+use App\Webinar;
+use App\WebinarRegistrant;
 use App\Workshop;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -1308,6 +1310,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
     {
         $webinar_key    = decrypt($webinar_key);
         $email          = decrypt($email);
+        $webinar        = Webinar::where('link', 'LIKE', '%'.$webinar_key.'%')->first();
         $user           = User::where('email', '=', $email)->first();
 
         if (!$user) {
@@ -1345,6 +1348,15 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
 
         if (isset($decoded_response->status)) {
             if ($decoded_response->status == 'APPROVED') {
+                // add to webinar registrant to mark as Pameldt
+                if ($webinar) {
+                    $registrant['user_id'] = $user->id;
+                    $registrant['webinar_id'] = $webinar->id;
+                    $webRegister = WebinarRegistrant::firstOrNew($registrant);
+                    $webRegister->join_url = $decoded_response->joinUrl;
+                    $webRegister->save();
+                }
+                Auth::loginUsingId($user->id);
                 return redirect()->route('front.thank-you');
             }
         }
