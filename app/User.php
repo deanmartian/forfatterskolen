@@ -102,7 +102,7 @@ class User extends Authenticatable
     public function coursesTakenNotExpired()
     {
         return $this->hasMany('App\CoursesTaken')
-            ->where('end_date','<=', Carbon::now()->subDays(1))
+            ->where('end_date','>=', Carbon::now()->subDays(1))
             ->orderBy('created_at', 'desc');
     }
 

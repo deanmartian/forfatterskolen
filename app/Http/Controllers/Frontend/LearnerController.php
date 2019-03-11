@@ -1344,7 +1344,7 @@ class LearnerController extends Controller
 
         // webinar-pakke is expired
         $user_name      = Auth::user()->first_name;
-        if ($coursesTaken) {
+        if (count($coursesTaken)) {
             $user_email     = Auth::user()->email;
             $automation_id  = 73;
 
@@ -1397,6 +1397,14 @@ class LearnerController extends Controller
                     // check if course taken have set end date and add one year to it
                     if ($coursesTaken->end_date) {
                         $addYear = date("Y-m-d", strtotime(date("Y-m-d", strtotime($coursesTaken->end_date)) . " + 1 year"));
+                        $dateToday = Carbon::today();
+
+                        // check if the end date after adding a year is still less than today
+                        // add another year on date today
+                        if (Carbon::parse($addYear)->lt($dateToday)) {
+                            $addYear = date("Y-m-d", strtotime(date("Y-m-d", strtotime($dateToday)) . " + 1 year"));
+                        }
+
                         $coursesTaken->end_date = $addYear;
                     }
 
