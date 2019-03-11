@@ -6156,6 +6156,75 @@ textarea.form-control {
 .sprite-menu.user-red { background-position: 0 -475px; }
 /* end sprites*/
 
+/* gdpr */
+.gdpr {
+    background: #f4eded;
+    bottom: 0;
+    box-shadow: 0 0 8px 3px rgba(0, 0, 0, 0.2);
+    color: #252423;
+    font-family: 'Source Sans Pro', sans-serif;
+    position: fixed;
+    z-index: 999;
+}
+
+.gdpr > .container {
+    padding: 25px;
+}
+
+.display-flex {
+    display: flex;
+}
+
+.gdpr-body {
+    flex: 3;
+    font-size: 13px;
+    line-height: 1.32;
+}
+
+.gdpr-body p{
+    font-size: 16px;
+    line-height: 1.5em;
+    margin: 0;
+}
+
+.gdpr-title {
+    font-size: 28px !important;
+    margin: 0 0 .5em;
+}
+
+.gdpr-actions {
+    flex: 1;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    flex-direction: column-reverse;
+}
+
+.gdpr-actions > .btn-agree {
+    background: #E83945;
+    border-radius: 3px !important;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    height: initial;
+    line-height: inherit;
+    padding: 10px 14px;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.gdpr-actions > a {
+    background: transparent;
+    border: none;
+    color: #E83945;
+    cursor: pointer;
+    padding: 10px 0;
+    text-align: center;
+}
+/* end gdpr */
+
 /**
  media query
  */
