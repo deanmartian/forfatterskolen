@@ -1258,8 +1258,8 @@ Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 
                 $startTime = $decode_time[0]->startTime;
                 $endTime = $decode_time[0]->endTime;
 
-                $formattedDate = AdminHelpers::convertTZNoFormat($startTime, 'Asia/Singapore')->format('D, M d, H:i').' - '
-                    .AdminHelpers::convertTZNoFormat($endTime, 'Asia/Singapore')->format('H:i');
+                $formattedDate = AdminHelpers::convertTZNoFormat($startTime, $webinar_details['timeZone'])->format('D, M d, H:i').' - '
+                    .AdminHelpers::convertTZNoFormat($endTime, $webinar_details['timeZone'])->format('H:i');
 
                 $joinURL = $request->get('joinUrl');
                 $explodeJoinURL = explode('/', $joinURL);
