@@ -217,6 +217,21 @@
                                     {{ $webinar->title }}
                                 </h3>
                             </div>
+                            <div>
+                                @if ($webinar->id == 24 || $webinar->id == 25 || $webinar->id == 31)
+                                    <a class="btn site-btn-global w-100 rounded-0" href="{{ $coursesTaken && $coursesTaken->hasEnded
+                                                    ? 'javascript:void(0)' : $webinar->link }}" target="_blank">Repriser
+                                        <i class="img-icon icon-right-arrow"></i>
+                                    </a>
+                                @else
+                                    @if($webinar->set_as_replay)
+                                        <a class="btn site-btn-global w-100 rounded-0" href="{{ $webinar->link }}" target="_blank">
+                                            Repriser
+                                            <i class="img-icon icon-right-arrow"></i>
+                                        </a>
+                                    @endif
+                                @endif
+                            </div>
                         </div>
                     @endif
                 @endforeach
@@ -243,6 +258,44 @@
                                 <h3>
                                     {{ $webinar->title }}
                                 </h3>
+                            </div>
+                            <div>
+                                @if( \App\Http\FrontendHelpers::isWebinarAvailable($webinar) )
+                                    <a class="btn site-btn-global w-100 rounded-0" href="{{ $webinar->link }}" target="_blank">
+                                        Bli med på webinar
+                                        <i class="img-icon icon-right-arrow"></i>
+                                    </a>
+                                @else
+
+                                    @if ($webinar->id == 24 || $webinar->id == 25 || $webinar->id == 31)
+                                        <a class="btn site-btn-global w-100 rounded-0" href="{{ $coursesTaken && $coursesTaken->hasEnded
+                                                    ? 'javascript:void(0)' : $webinar->link }}" target="_blank">Repriser
+                                            <i class="img-icon icon-right-arrow"></i>
+                                        </a>
+                                    @else
+                                        @if($webinar->set_as_replay)
+                                            <a class="btn site-btn-global w-100 rounded-0" href="{{ $webinar->link }}" target="_blank">
+                                                Repriser
+                                                <i class="img-icon icon-right-arrow"></i>
+                                            </a>
+                                        @else
+                                            @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id))
+                                                <a class="btn site-btn-global w-100 rounded-0"
+                                                   href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id) }}">
+                                                    Påmeldt
+                                                </a>
+                                            @else
+                                                <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
+                                                   href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                    ? 'javascript:void(0)' :route('learner.webinar.register',
+                                                    [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]) }}">
+                                                    Registrer Deg
+                                                    <i class="img-icon icon-right-arrow"></i>
+                                                </a>
+                                            @endif
+                                        @endif
+                                    @endif
+                                @endif
                             </div>
                         </div>
                     @endif
