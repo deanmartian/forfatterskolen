@@ -51,6 +51,11 @@ class Settings extends Model
         return self::getByName('webinar_email_template');
     }
 
+    public static function gtReminderEmailTemplate()
+    {
+        return self::getByName('gt_reminder_email_template');
+    }
+
     public static function getByName($settingName)
     {
         return self::where('setting_name', $settingName)->pluck('setting_value')->first();

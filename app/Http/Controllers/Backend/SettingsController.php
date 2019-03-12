@@ -70,5 +70,12 @@ class SettingsController extends Controller
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Webinar email template updated successfully.'),
             'alert_type' => 'success']);
     }
+
+    public function gtReminderEmail( Request $request )
+    {
+        Settings::updateOrCreate(['setting_name' => 'gt_reminder_email_template'], ['setting_value' => $request->gt_reminder_email_template]);
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Reminder email template updated successfully.'),
+            'alert_type' => 'success']);
+    }
     
 }

@@ -58,10 +58,14 @@ class GotoWebinarController extends Controller
                     ";*/
 
         $confirmation_email_template = Settings::gtWebinarEmailNotification();
+        $reminder_email_template = Settings::gtReminderEmailTemplate();
         $webinar = [
             'title' => '',
             'gt_webinar_key' => '',
-            'confirmation_email' => $confirmation_email_template
+            'webinar_date' => '',
+            'confirmation_email' => $confirmation_email_template,
+            'send_reminder' => '',
+            'reminder_email' => $reminder_email_template
         ];
         return view('backend.goto-webinar.create', compact('webinar'));
     }
@@ -75,7 +79,8 @@ class GotoWebinarController extends Controller
     {
         $this->validate($request, [
             'title' => 'required',
-            'gt_webinar_key' => 'required|unique:go_to_webinars'
+            'gt_webinar_key' => 'required|unique:go_to_webinars',
+            'webinar_date' => 'required'
         ], [
             'gt_webinar_key.required' => 'The webinar key field is required.',
             'gt_webinar_key.unique' => 'The webinar key field has already been taken.'
@@ -121,7 +126,8 @@ class GotoWebinarController extends Controller
 
             $this->validate($request, [
                 'title' => 'required',
-                'gt_webinar_key' => 'required|unique:go_to_webinars,gt_webinar_key,'.$id
+                'gt_webinar_key' => 'required|unique:go_to_webinars,gt_webinar_key,'.$id,
+                'webinar_date' => 'required'
             ], [
                 'gt_webinar_key.required' => 'The webinar key field is required.',
                 'gt_webinar_key.unique' => 'The webinar key field has already been taken.'

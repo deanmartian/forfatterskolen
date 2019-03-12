@@ -1033,7 +1033,8 @@ class AdminHelpers
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $response = curl_exec($ch);
-        $decoded_response = json_decode($response);
+        // surround all integer values with quotes
+        $decoded_response = json_decode(preg_replace('/("\w+"):(\d+)/', '\\1:"\\2"', $response));
 
         return $decoded_response;
     }

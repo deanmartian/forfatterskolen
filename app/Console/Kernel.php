@@ -27,7 +27,8 @@ class Kernel extends ConsoleKernel
         Commands\CourseEmailOut::class,
         Commands\LockFinishedManuscript::class,
         Commands\UpdateGross::class,
-        Commands\WebinarEmailOutCommand::class
+        Commands\WebinarEmailOutCommand::class,
+        Commands\GoToWebinarReminder::class
     ];
 
     /**
@@ -61,6 +62,10 @@ class Kernel extends ConsoleKernel
             ->everyThirtyMinutes();
         $schedule->command('webinaremailout:command')
             ->dailyAt('09:00');
+        $schedule->command('gotowebinarreminderday:command')
+            ->twiceDaily(19, 20);
+        $schedule->command('gotowebinarreminderday:command')
+            ->dailyAt('21:00');
         /*$schedule->command('updategross:command')
             ->dailyAt('06:00');*/
         $schedule->command('queue:work --daemon')->everyMinute()->withoutOverlapping();

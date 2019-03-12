@@ -1127,6 +1127,7 @@ Route::group([
         Route::post('/settings/update/opt-in-rektor-description', 'SettingsController@updateOptInRektorDescription')->name('admin.settings.update.opt-in-rektor-description'); // Store Terms
         Route::post('/settings/update/gt_confirmation_email', 'SettingsController@gtConfirmationEmail')->name('admin.settings.update.gt_confirmation_email'); // Store Feedback
         Route::post('/settings/update/webinar_email_template', 'SettingsController@webinarEmailTemplate')->name('admin.settings.update.webinar_email_template');
+        Route::post('/settings/update/gt_reminder_email_template', 'SettingsController@gtReminderEmail')->name('admin.settings.update.gt_reminder_email_template');
 
         // Advisories
         Route::put('/advisory/{id}', 'AdvisoryController@update')->name('admin.advisory.update');

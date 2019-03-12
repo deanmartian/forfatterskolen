@@ -18,5 +18,5 @@ class GTWebinar extends Model
      *
      * @var array
      */
-    protected $fillable = ['title', 'gt_webinar_key', 'confirmation_email'];
+    protected $fillable = ['title', 'gt_webinar_key', 'webinar_date', 'send_reminder', 'reminder_email', 'confirmation_email'];
 }

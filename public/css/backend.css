@@ -973,3 +973,19 @@ textarea{
 .padding-left-15 {
 	padding-left: 15px;
 }
+
+.d-block {
+	display: block;
+}
+
+.btn-group-toggle .btn {
+	background-color: #f1f2f4;
+	color: #8B8D99;
+	font-weight: bold;
+}
+
+.btn-group-toggle .btn.active {
+	background-color: #0c9ae7;
+	box-shadow: none;
+	color: #fff;
+}
