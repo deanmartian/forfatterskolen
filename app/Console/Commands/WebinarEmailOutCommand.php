@@ -58,7 +58,7 @@ class WebinarEmailOutCommand extends Command
                 $query->whereIn('package_id', Course::find($course_id)->packages()->pluck('id'));
                 })
                 ->where(function($query) {
-                    $query->where('end_date','>=', Carbon::now()->subDays(60))
+                    $query->where('end_date','>=', Carbon::now())
                         ->orWhereNull('end_date');
                 })
                 ->get();
