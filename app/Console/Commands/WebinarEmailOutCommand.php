@@ -48,7 +48,7 @@ class WebinarEmailOutCommand extends Command
         $today = Carbon::today();
         $emailOutList = WebinarEmailOut::whereDate('send_date', $today)->get();
 
-        //CronLog::create(['activity' => 'WebinarEmailOutCommand CRON running.']);
+        CronLog::create(['activity' => 'WebinarEmailOutCommand CRON running.']);
         foreach($emailOutList as $emailOut) {
             $course_id = $emailOut->course_id;
             $webinar = $emailOut->webinar;
@@ -77,16 +77,16 @@ class WebinarEmailOutCommand extends Command
                     $startTime      = AdminHelpers::convertTZNoFormat($times->startTime, $timezone)->format('H:i');
                     $endTime        = AdminHelpers::convertTZNoFormat($times->endTime, $timezone)->format('H:i');
                     $formattedTZ    = AdminHelpers::convertTZNoFormat($times->startTime, $timezone)->format('T');
-                    $webinarDate    = $startDate.' klokken '.$startTime.' - '.$endTime.' '.$formattedTZ;
+                    $webinarDate    = $startDate.' klokken '.$startTime/*.' - '.$endTime.' '.$formattedTZ*/;
 
-                    $subject = "Webinar (".$webinarDate.") med (".$presenterList.")";
+                    $subject = "Webinar ".$webinarDate." med ".$presenterList;
 
                     // loop courses taken to get the users that avail the course
                     // this pass the checking that the course is not expired
                     foreach ($coursesTaken as $courseTaken) {
                         $user_email = $courseTaken->user->email;
                         $register_link = "<a href='".route('front.goto-webinar.registration.email',
-                                [encrypt($web_key), encrypt($user_email)])."'>Register</a>";
+                                [encrypt($web_key), encrypt($user_email)])."'>Registrer meg</a>";
 
                         $emailData['email_subject'] = $subject;
                         $emailData['email_message'] = str_replace('[register_link]', $register_link, $emailOut->message);
