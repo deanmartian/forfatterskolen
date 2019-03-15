@@ -342,7 +342,7 @@
 						</div>
 					</div>
 
-					<button type="submit" class="btn btn-primary pull-right">Upload</button>
+					<button type="submit" class="btn btn-primary pull-right">Last opp</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
