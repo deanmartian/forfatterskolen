@@ -117,9 +117,9 @@ class AdminHelpers
         return false;
 	}
 
-    public static function send_mail( $to, $subject, $content, $from)
+    public static function send_mail( $subject, $from, $to, $content, $from_name='Forfatterskolen')
     {
-        $headers = "From: Forfatterskolen<".$from.">\r\n";
+        $headers = "From: ".$from_name."<".$from.">\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
         /*if ($from) {
