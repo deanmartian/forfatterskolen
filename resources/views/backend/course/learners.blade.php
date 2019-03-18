@@ -87,7 +87,9 @@
 			<ul class="nav nav-tabs margin-top">
 				<li class="active"><a href="#learners" data-toggle="tab">Learners</a></li>
 				<li><a href="#logs" data-toggle="tab">Email Out Log</a></li>
-				<li><a href="#templateTab" data-toggle="tab">Email Reminder Template</a></li>
+				@if ($course->is_free)
+					<li><a href="#templateTab" data-toggle="tab">Email Reminder Template</a></li>
+				@endif
 			</ul>
 
 			<div class="tab-content">
