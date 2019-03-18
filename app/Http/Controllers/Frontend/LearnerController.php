@@ -1015,7 +1015,8 @@ class LearnerController extends Controller
         setcookie($cookie_name, $cookie_value, time() + 60, "/"); // 86400 = 1 day
 
         if(  $courseTaken || FrontendHelpers::hasLessonAccess($courseTaken, $lesson) ) :
-            $content = $lesson->content;
+            // replace the laravel-filemanager with the actual file path location
+            $content = str_replace('/laravel-filemanager',public_path(), $lesson->content);
             $title = $lesson->title;
             $pdf = PDF::loadView('frontend.pdf.lesson', compact('content', 'title'));
 
