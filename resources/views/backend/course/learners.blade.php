@@ -87,6 +87,7 @@
 			<ul class="nav nav-tabs margin-top">
 				<li class="active"><a href="#learners" data-toggle="tab">Learners</a></li>
 				<li><a href="#logs" data-toggle="tab">Email Out Log</a></li>
+				<li><a href="#templateTab" data-toggle="tab">Email Reminder Template</a></li>
 			</ul>
 
 			<div class="tab-content">
@@ -186,6 +187,24 @@
 						<div class="pull-right">{!! $emailOutLog->appends(Request::all())->render() !!}</div>
 						<div class="clearfix"></div>
 					@endif
+				</div> <!-- end send email out log -->
+
+				<div class="tab-pane fade margin-top" id="templateTab" role="tabpanel">
+					<div class="table-responsive">
+						<!-- Reminder Email -->
+						<div class="col-sm-12">
+							<div class="panel panel-default ">
+								<div class="panel-heading">
+									<button type="button" class="btn btn-primary btn-xs pull-right" data-toggle="modal"
+											data-target="#reminderEmailTemplateModal"><i class="fa fa-pencil"></i></button>
+									<h4>Reminder Email</h4>
+								</div>
+								<div class="panel-body">
+									{!! nl2br(App\Settings::courseNotStartedReminder()) !!}
+								</div>
+							</div>
+						</div>
+					</div>
 				</div> <!-- end send email out log -->
 			</div>
 		</div>
@@ -343,7 +362,7 @@
 
 					<div class="form-group">
 						<label>{{ trans('site.message') }}</label>
-						<textarea name="message" id="" cols="30" rows="10" class="form-control editor">[login_link]</textarea>
+						<textarea name="message" id="" cols="30" rows="10" class="form-control editor">{{ App\Settings::courseNotStartedReminder() }}</textarea>
 					</div>
 
 					<div class="text-right">
@@ -355,6 +374,27 @@
 	</div>
 </div>
 <!-- end reminder email modal -->
+
+<div id="reminderEmailTemplateModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Reminder Email</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.settings.create', 'course_not_started_reminder') }}">
+					{{ csrf_field() }}
+					<textarea class="form-control editor" name="setting_value" rows="6">{{ App\Settings::courseNotStartedReminder() }}</textarea>
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">Save</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
 
 @stop
 

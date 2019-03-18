@@ -56,6 +56,11 @@ class Settings extends Model
         return self::getByName('gt_reminder_email_template');
     }
 
+    public static function courseNotStartedReminder()
+    {
+        return self::getByName('course_not_started_reminder');
+    }
+
     public static function getByName($settingName)
     {
         return self::where('setting_name', $settingName)->pluck('setting_value')->first();
