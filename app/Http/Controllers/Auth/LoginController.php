@@ -79,6 +79,21 @@ class LoginController extends Controller
         return redirect()->back()->withInput()->withErrors(['login_error' => 'Feil passord']);
     }
 
+    /** login using encrypted email
+     * @param $email
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function emailLogin($email)
+    {
+        $email = decrypt($email);
+
+        $user = User::where('email', $email)->where('role', 2)->first();
+        if(!$user) return redirect()->route('front.home');
+
+        Auth::loginUsingId($user->id);
+        return redirect()->route('learner.dashboard');
+    }
+
     public function logout()
     {
         Auth::logout();

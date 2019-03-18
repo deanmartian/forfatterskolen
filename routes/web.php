@@ -373,6 +373,8 @@ Route::group([
         Route::get('passwordreset/{token}', 'ResetPasswordController@resetForm')->name('frontend.passwordreset.form');
         Route::post('passwordreset/{token}/update', 'ResetPasswordController@updatePassword')->name('frontend.passwordreset.update');
 
+        Route::get('login/email/{email_hash}', 'LoginController@emailLogin')->name('auth.login.email');
+
         // socialite route
         Route::get('login/facebook','LoginController@redirectToFacebook')->name('auth.login.facebook');
         Route::get('login/facebook/callback','LoginController@handleFacebookCallback');
@@ -545,6 +547,7 @@ Route::group([
         Route::post('/course-for-sale', 'CourseController@updateForSaleStatus')->name('learner.course.for-sale-status'); // Courses For Sale Status
         Route::post('/course-is-free', 'CourseController@updateIsFreeStatus')->name('learner.course.is-free-status'); // Courses For Sale Status
         Route::post('/course/{id}/send-email-to-learners', 'CourseController@sendEmailToLearners')->name('learner.course.send-email-to-learners'); // Add Learner To Course
+        Route::post('/course/{id}/not-started-reminder', 'CourseController@notStartedCourseReminder')->name('learner.course.not-started-reminder');
         Route::get('/course/{id}/learner-list-excel', 'CourseController@learnerListExcel')->name('learner.course.learner-list-excel'); // Add Learner To Course
         Route::get('/course/{id}/learner-active-list-excel', 'CourseController@learnerActiveListExcel')->name('learner.course.learner-active-list-excel'); // Add Learner To Course
 

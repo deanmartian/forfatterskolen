@@ -1097,30 +1097,7 @@ class HomeController extends Controller
 
     public function testemail()
     {
-        $from       = 'post@forfatterskolen.no';//$request->from_email;
-        $subject    = 'Due Invoice';
-        $dueTomorrow = Carbon::today()->addDay(1)->format('Y-m-d');
-
-        $invoices = Invoice::whereDate('fiken_dueDate',  $dueTomorrow)
-            ->where('fiken_is_paid', '=',0)
-            ->get();
-
-        foreach ($invoices as $invoice) {
-            $balance            = $invoice->fiken_balance;
-            $transactions_sum   = $invoice->transactions->sum('amount');
-            $remaining          = $balance - $transactions_sum;
-
-            $to = 'ely@mailinator.com';//$invoice->user->email;
-
-            $message =  'Du har en faktura som har forfall i morgen <br/>
-Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 00393 <br/> Kid nummer: '.$invoice->kid_number.' <br/> 
-<a href="'.route('learner.invoice.show', $invoice->id).'">View Invoice</a> <br><br> <small>*Note: You must be logged in to view the invoice.</small>';
-
-            AdminHelpers::send_email($subject,
-            $from, $to, $message);
-        }
-
-        echo "email sent";
+        phpinfo();
 
     }
 

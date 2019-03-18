@@ -404,6 +404,62 @@ class CourseController extends Controller
     }
 
     /**
+     * Send email to the learners that haven't started the free course yet
+     * @param $course_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function notStartedCourseReminder($course_id, Request $request)
+    {
+        $course = Course::find($course_id);
+        if ($course) {
+
+            $this->validate($request,
+                [
+                    'subject' => 'required',
+                    'message' => 'required'
+                ]
+            );
+
+            // check courses taken that's not yet started with the specified course id
+            $coursesTaken = CoursesTaken::whereHas('package', function($query) use ($course_id) {
+                $query->where('course_id', $course_id);
+            })
+            ->whereNull('started_at')
+            ->get();
+
+            $learners = [];
+            foreach($coursesTaken as $courseTaken) {
+                $encode_email = encrypt($courseTaken->user->email);
+                $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Click here to login</a>";
+                $convert_message = str_replace('[login_link]', $request->message, $loginLink);
+
+                $email = $courseTaken->user->email;
+                $emailData['email_subject'] = $request->subject;
+                $emailData['email_message'] = $convert_message;
+                $emailData['from_name'] = NULL;
+                $emailData['from_email'] = NULL;
+                $emailData['attach_file'] = NULL;
+                \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
+
+                array_push($learners, $courseTaken->user->id);
+            }
+
+            $emailOutLog = [
+                'course_id' => $course_id,
+                'subject' => $request->subject,
+                'message' => $request->message,
+                'learners' => json_encode($learners)
+            ];
+            EmailOutLog::create($emailOutLog);
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Mail sent successfully.'),
+                'alert_type' => 'success']);
+        }
+
+        return redirect()->back();
+    }
+
+    /**
      * Export the learners to excel
      * @param $course_id
      * @return \Illuminate\Http\RedirectResponse

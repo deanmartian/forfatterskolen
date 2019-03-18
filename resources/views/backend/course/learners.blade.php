@@ -73,6 +73,10 @@
 			@if(count($learners) > 0)
 				<button type="button" class="btn btn-success margin-bottom" data-toggle="modal" data-target="#sendEmailModal">{{ trans('site.send-email') }}</button>
 				<a href="{{ route('learner.course.learner-list-excel', $course->id) }}" class="btn btn-default margin-bottom">{{ trans('site.export-learners') }}</a>
+				@if ($course->is_free)
+					<button type="button" class="btn btn-info margin-bottom" data-toggle="modal"
+							data-target="#reminderEmailModal">Send Reminder</button>
+				@endif
 			@endif
 
 			{{-- for webinar pakke only --}}
@@ -318,6 +322,39 @@
 	</div>
 </div>
 <!--end email modal-->
+
+<!-- reminder email modal -->
+<div id="reminderEmailModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Reminder Email</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{route('learner.course.not-started-reminder', $course->id)}}"
+					  onsubmit="formSubmitted()" enctype="multipart/form-data">
+					{{csrf_field()}}
+
+					<div class="form-group">
+						<label>{{ trans('site.subject') }}</label>
+						<input type="text" class="form-control" name="subject" required>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.message') }}</label>
+						<textarea name="message" id="" cols="30" rows="10" class="form-control editor">[login_link]</textarea>
+					</div>
+
+					<div class="text-right">
+						<input type="submit" class="btn btn-primary" value="{{ trans('site.send') }}">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- end reminder email modal -->
 
 @stop
 
