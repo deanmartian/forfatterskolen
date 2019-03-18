@@ -431,7 +431,7 @@ class CourseController extends Controller
             $learners = [];
             foreach($coursesTaken as $courseTaken) {
                 $encode_email = encrypt($courseTaken->user->email);
-                $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Click here to login</a>";
+                $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
                 $convert_message = str_replace('[login_link]', $loginLink, $request->message);
 
                 $email = $courseTaken->user->email;

@@ -359,7 +359,7 @@
 
 					<div class="form-group">
 						<label>{{ trans('site.subject') }}</label>
-						<input type="text" class="form-control" name="subject" required>
+						<input type="text" class="form-control" name="subject" required value="{{ App\Settings::courseNotStartedReminderSubject() }}">
 					</div>
 
 					<div class="form-group">
@@ -385,9 +385,16 @@
 				<h4 class="modal-title">Reminder Email</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="{{ route('admin.settings.create', 'course_not_started_reminder') }}">
+				<form method="POST" action="{{ route('admin.settings.update.course_not_started_reminder') }}">
 					{{ csrf_field() }}
-					<textarea class="form-control editor" name="setting_value" rows="6">{{ App\Settings::courseNotStartedReminder() }}</textarea>
+					<div class="form-group">
+						<label>Subject</label>
+						<input type="text" name="subject" class="form-control" value="{{ App\Settings::courseNotStartedReminderSubject() }}">
+					</div>
+					<div class="form-group">
+						<label>Message</label>
+						<textarea class="form-control editor" name="email_content" rows="6">{{ App\Settings::courseNotStartedReminder() }}</textarea>
+					</div>
 					<div class="text-right margin-top">
 						<button type="submit" class="btn btn-primary">Save</button>
 					</div>

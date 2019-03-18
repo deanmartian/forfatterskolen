@@ -78,6 +78,14 @@ class SettingsController extends Controller
             'alert_type' => 'success']);
     }
 
+    public function courseNotStartedReminder(Request $request)
+    {
+        Settings::updateOrCreate(['setting_name' => 'course_not_started_reminder_subject'], ['setting_value' => $request->subject]);
+        Settings::updateOrCreate(['setting_name' => 'course_not_started_reminder'], ['setting_value' => $request->email_content]);
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Reminder email template updated successfully.'),
+            'alert_type' => 'success']);
+    }
+
     public function create( $name, Request $request )
     {
         Settings::updateOrCreate(['setting_name' => $name], ['setting_value' => $request->setting_value]);
