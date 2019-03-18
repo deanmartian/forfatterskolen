@@ -429,29 +429,45 @@ class CourseController extends Controller
             ->get();
 
             $learners = [];
-            foreach($coursesTaken as $courseTaken) {
-                $encode_email = encrypt($courseTaken->user->email);
+
+            // check if send to has value or if it's for testing purpose
+            if ($request->send_to) {
+                $email = $request->send_to;
+                $encode_email = encrypt($email);
                 $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
                 $convert_message = str_replace('[login_link]', $loginLink, $request->message);
 
-                $email = $courseTaken->user->email;
                 $emailData['email_subject'] = $request->subject;
                 $emailData['email_message'] = $convert_message;
                 $emailData['from_name'] = NULL;
                 $emailData['from_email'] = NULL;
                 $emailData['attach_file'] = NULL;
                 \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
+            } else {
+                foreach($coursesTaken as $courseTaken) {
+                    $encode_email = encrypt($courseTaken->user->email);
+                    $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
+                    $convert_message = str_replace('[login_link]', $loginLink, $request->message);
 
-                array_push($learners, $courseTaken->user->id);
+                    $email = $courseTaken->user->email;
+                    $emailData['email_subject'] = $request->subject;
+                    $emailData['email_message'] = $convert_message;
+                    $emailData['from_name'] = NULL;
+                    $emailData['from_email'] = NULL;
+                    $emailData['attach_file'] = NULL;
+                    \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
+
+                    array_push($learners, $courseTaken->user->id);
+                }
+
+                $emailOutLog = [
+                    'course_id' => $course_id,
+                    'subject' => $request->subject,
+                    'message' => $request->message,
+                    'learners' => json_encode($learners)
+                ];
+                EmailOutLog::create($emailOutLog);
             }
-
-            $emailOutLog = [
-                'course_id' => $course_id,
-                'subject' => $request->subject,
-                'message' => $request->message,
-                'learners' => json_encode($learners)
-            ];
-            EmailOutLog::create($emailOutLog);
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Mail sent successfully.'),
                 'alert_type' => 'success']);
         }

@@ -367,6 +367,11 @@
 						<textarea name="message" id="" cols="30" rows="10" class="form-control editor">{{ App\Settings::courseNotStartedReminder() }}</textarea>
 					</div>
 
+					<div class="form-group">
+						<label>Send To (Testing)</label>
+						<input type="email" class="form-control" name="send_to" value="">
+					</div>
+
 					<div class="text-right">
 						<input type="submit" class="btn btn-primary" value="{{ trans('site.send') }}">
 					</div>
