@@ -433,16 +433,28 @@ class CourseController extends Controller
             // check if send to has value or if it's for testing purpose
             if ($request->send_to) {
                 $email = $request->send_to;
-                $encode_email = encrypt($email);
-                $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
-                $convert_message = str_replace('[login_link]', $loginLink, $request->message);
+                $user = User::where('email', $email)->first();
 
-                $emailData['email_subject'] = $request->subject;
-                $emailData['email_message'] = $convert_message;
-                $emailData['from_name'] = NULL;
-                $emailData['from_email'] = NULL;
-                $emailData['attach_file'] = NULL;
-                \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
+                if ($user) {
+                    $encode_email = encrypt($email);
+                    $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
+                    $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
+
+                    $search_string = [
+                        '[login_link]', '[username]', '[password]'
+                    ];
+                    $replace_string = [
+                        $loginLink, $email, $password
+                    ];
+                    $convert_message = str_replace($search_string, $replace_string, $request->message);
+
+                    $emailData['email_subject'] = $request->subject;
+                    $emailData['email_message'] = $convert_message;
+                    $emailData['from_name'] = NULL;
+                    $emailData['from_email'] = NULL;
+                    $emailData['attach_file'] = NULL;
+                    \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
+                }
             } else {
                 foreach($coursesTaken as $courseTaken) {
                     $encode_email = encrypt($courseTaken->user->email);
