@@ -65,8 +65,22 @@ class CourseEmailOut extends Command
             // loop the result and send email
             foreach ($coursesTaken as $courseTaken) {
                 $toMail = $courseTaken->user->email;
+
+                $encode_email = encrypt($courseTaken->user->email);
+                $user = $courseTaken->user;
+                $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
+                $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
+
+                $search_string = [
+                    '[login_link]', '[username]', '[password]'
+                ];
+                $replace_string = [
+                    $loginLink, $courseTaken->user->email, $password
+                ];
+                $message = str_replace($search_string, $replace_string, $emailOut->message);
+
                 $emailData['email_subject'] = $emailOut->subject;
-                $emailData['email_message'] = $emailOut->message.$attachmentText;
+                $emailData['email_message'] = $message.$attachmentText;
                 $emailData['from_name'] = $emailOut->from_name;
                 $emailData['from_email'] = $emailOut->from_email;
                 $emailData['attach_file'] = NULL;
@@ -100,8 +114,22 @@ class CourseEmailOut extends Command
             // loop the result and send email
             foreach ($coursesTaken as $courseTaken) {
                 $toMail = $courseTaken->user->email;
+
+                $encode_email = encrypt($courseTaken->user->email);
+                $user = $courseTaken->user;
+                $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
+                $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
+
+                $search_string = [
+                    '[login_link]', '[username]', '[password]'
+                ];
+                $replace_string = [
+                    $loginLink, $courseTaken->user->email, $password
+                ];
+                $message = str_replace($search_string, $replace_string, $emailOut->message);
+
                 $emailData['email_subject'] = $emailOut->subject;
-                $emailData['email_message'] = $emailOut->message.$attachmentText;
+                $emailData['email_message'] = $message.$attachmentText;
                 $emailData['from_name'] = $emailOut->from_name;
                 $emailData['from_email'] = $emailOut->from_email;
                 $emailData['attach_file'] = NULL;

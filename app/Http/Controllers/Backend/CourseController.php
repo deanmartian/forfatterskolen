@@ -337,7 +337,6 @@ class CourseController extends Controller
                 $course->learners->whereIn('user_id', $request->learners)->get()
                 : $course->learners->get();
             $subject    = $request->subject;
-            $message    = $request->message;
             $from_email = $request->from_email ?: 'post@forfatterskolen.no';
             $from_name  = $request->from_name ?: 'Forfatterskolen';
 
@@ -372,6 +371,20 @@ class CourseController extends Controller
                 /*$email = $learner->user->email;
                 AdminHelpers::send_email($subject,
                     $from_email, $email, $message, $from_name);*/
+
+                $encode_email = encrypt($learner->user->email);
+                $user = $learner->user;
+                $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
+                $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
+
+                $search_string = [
+                    '[login_link]', '[username]', '[password]'
+                ];
+                $replace_string = [
+                    $loginLink, $learner->user->email, $password
+                ];
+                $message = str_replace($search_string, $replace_string, $request->message);
+
                 $email = $learner->user->email;
                 $emailData['email_subject'] = $subject;
                 $emailData['email_message'] = $message.$attachmentText;
