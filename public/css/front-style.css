@@ -221,7 +221,7 @@ a {
 }
 
 .navbar-brand img {
-    height: 70px;
+    height: 110px;
 }
 
 #learnerNav .navbar-brand img {
@@ -1500,7 +1500,7 @@ margin-right: 5px;
 }
 
 .course-page .header .container {
-    padding: 0 75px;
+    padding: 0 78px;
 }
 
 .course-page .sub-header {
@@ -1511,7 +1511,7 @@ margin-right: 5px;
     -moz-text-align-last: center;
     text-align-last: center;
     line-height: 27px;
-    padding: 40px 80px 20px 80px;
+    padding: 40px 64px 20px;
     position: absolute;
     width: 1115px;
     right: 50%;
@@ -2430,7 +2430,7 @@ margin-right: 5px;
 }
 
 .contact-page .secondary-container {
-    margin-top: 250px;
+    margin-top: 17%; /*250px*/
     margin-bottom: 80px;
 }
 
@@ -6234,7 +6234,7 @@ textarea.form-control {
         position: absolute;
         left: 50%;
         transform: translateX(-50%);
-        top: 20%;
+        top: 0;
     }
 
     #learnerNav .navbar-collapse.collapse, .mobile-learner-menu .navbar-collapse.collapse,
@@ -6445,7 +6445,7 @@ textarea.form-control {
     }
 
     .course-page .sub-header {
-        bottom: 3%;
+        bottom: -10px;/*3%*/
         max-width: 960px;
         padding: 40px 60px 20px 60px;
     }
@@ -6455,7 +6455,7 @@ textarea.form-control {
     }
 
     .course-page .courses-list-container {
-        margin-top: 140px;
+        margin-top: 180px;
     }
 
     .course-page .courses-list-container .course-header,
@@ -6610,7 +6610,7 @@ textarea.form-control {
     }
 
     .contact-page .secondary-container {
-        margin-top: 280px;
+        margin-top: 20%; /*280px*/
     }
 
     .contact-page .secondary-container img {
@@ -7400,7 +7400,7 @@ textarea.form-control {
     }
 
     .contact-page .secondary-container {
-        margin-top: 400px;
+        margin-top: 45%; /*400px*/
     }
 
     .contact-page .secondary-container h1 {
@@ -7904,6 +7904,19 @@ textarea.form-control {
 }
 
 @media only screen and (max-width: 640px) {
+    .navbar-brand {
+        height: 60px;
+        padding: 0;
+    }
+
+    .nav-item .login-link {
+        padding-top: 6px;
+    }
+
+    .navbar-brand img {
+        height: 80px;
+    }
+
     .navbar-default {
         border-color:#fff;
         display: none;
@@ -8274,9 +8287,9 @@ textarea.form-control {
         transform: translate(-47%, 50%);
     }
 
-    .course-page .courses-list-container {
+    /*.course-page .courses-list-container {
         margin-top: 130px;
-    }
+    }*/
 
     .course-page .courses-list-container [class*="col-"],
     .course-single-page .similar-courses [class*="col-"] {
@@ -8586,7 +8599,7 @@ textarea.form-control {
     }
 
     .contact-page .secondary-container {
-        margin-top: 700px;
+        margin-top: 112%;/*700px*/
     }
 
     .contact-page .secondary-container img {
@@ -9202,7 +9215,7 @@ textarea.form-control {
 
 @media only screen and (max-width: 415px) {
     .navbar-brand img {
-        height: 50px;
+        height: 70px;
     }
 
     .navbar-light {
@@ -9515,7 +9528,7 @@ textarea.form-control {
    }
 
     .course-page .sub-header {
-        bottom: 10%;
+        bottom: -4%;/*10%*/
         transform: translate(-46%, 50%);
         width: 93%;
     }
@@ -9524,9 +9537,9 @@ textarea.form-control {
         margin-bottom: 5px;
     }
 
-    .course-page .courses-list-container {
+    /*.course-page .courses-list-container {
         margin-top: 90px;
-    }
+    }*/
 
     .course-page .courses-list-container [class*="col-"],
     .course-single-page .similar-courses [class*="col-"] {
@@ -9739,7 +9752,7 @@ textarea.form-control {
 
     .contact-page .secondary-container {
         margin-bottom: 50px;
-        margin-top: 1030px;
+        margin-top: 195%;/*1030px*/
     }
 
     .contact-page .secondary-container img {
@@ -10428,11 +10441,11 @@ textarea.form-control {
     }
 
     .course-page .sub-header {
-        bottom: 5%;
+        bottom: -10%;/*5%*/
     }
 
     .course-page .courses-list-container {
-        margin-top: 120px;
+        margin-top: 220px;/*120px*/
     }
 
     .course-single-page .header h1 {
@@ -10487,7 +10500,7 @@ textarea.form-control {
     }
 
     .contact-page .secondary-container {
-        margin-top: 1110px;
+        margin-top: 235%; /*1110px*/
     }
 
     .contact-page .secondary-container .save-data-container {
@@ -10784,7 +10797,7 @@ textarea.form-control {
     }
 
     .contact-page .secondary-container {
-        margin-top: 1115px;
+        margin-top: 250%; /*1115px*/
     }
 
     .contact-page .secondary-container .contact-row {
@@ -10888,7 +10901,7 @@ textarea.form-control {
 
 @media only screen and (max-width: 320px) {
     .navbar-brand img {
-        height: 40px;
+        height: 55px;
     }
 
     .navbar-light {
@@ -10960,8 +10973,12 @@ textarea.form-control {
         padding: 20px 15px;
     }
 
-    .course-page .sub-header {
+    /*.course-page .sub-header {
         bottom: 3%;
+    }*/
+
+    .course-page .courses-list-container {
+        margin-top: 250px;
     }
 
     .course-page .courses-list-container .course-body,
@@ -11087,7 +11104,7 @@ textarea.form-control {
     }
 
     .contact-page .secondary-container {
-        margin-top: 1305px;
+        margin-top: 330%; /*1305px*/
     }
 
     .faq-page .page-title {

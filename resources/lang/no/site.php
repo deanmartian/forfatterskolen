@@ -4,7 +4,7 @@ return array (
   'admin-menu' => 
   array (
     'manuscript' => 'Manusutvikling',
-    'dashboard' => 'Dashboard no',
+    'dashboard' => 'Dashboard',
     'courses' => 'Courses',
     'free-courses' => 'Free Courses',
     'learners' => 'Learners',
@@ -554,4 +554,84 @@ Warning: This cannot be undone.',
   'edit-faq' => 'Edit FAQ',
   'delete-faq' => 'Delete FAQ',
   'delete-faq-question' => 'Are you sure to delete this FAQ?',
+  'front' => 
+  array (
+    'main-form' => 
+    array (
+      'heading' => 'Kurs, veiledning og heiagjeng',
+      'sub-heading' => 'Vil du ha vår motiverende skriveplan?',
+      'heading-description' => 'for deg som vil gjøre alvor av skrivedrømmen',
+    ),
+    'student-testimonial' => 
+    array (
+      'heading' => 'Hva våre antatte elever sier',
+    ),
+    'course' => 
+    array (
+      'main' => 
+      array (
+        'description' => 'Å skrive et manus kan være en utfordring. Det mangler sjelden på ideer og lyst, men hvordan komme i gang? Og hvordan lykkes med å skrive et godt manus – uten å gi opp på veien? Fortvil ikke, vi har skreddersydde kurs til å hjelpe deg. I tillegg får du profesjonell veiledning og en uunnværlig heiagjeng. Et godt bevis på at metoden vår funker: Vi har hjulpet mange elever med å bli utgitt – og flere er på vei (se "utgitte elever"). Er du den neste?',
+      ),
+      'second-description' => 'Forfatterskolens nettbaserte skrivekurs tar deg 10 steg fra idé til ferdig manus – i ditt eget tempo. Du får verktøyet, veiledningen og vennegjengen du trenger for å skrive og fullføre ditt manus – og inspirerende møter med landets mest kjente forfattere og redaktører. Et godt bevis på at metoden vår funker: Kursene våre har allerede avlet flere utgitte elever på de store forlagene. Er du den neste? Velg din favorittsjanger under, og sikre deg en plass på et av våre kommende kurs. Husk: Det viktigste steget er å bestemme seg. Resten hjelper vi deg med.',
+    ),
+    'nav' => 
+    array (
+      'blog' => 'Blogg',
+      'course' => 'Våre Kurs',
+      'contact-us' => 'Hvem er vi?',
+      'faq' => 'FAQ',
+      'manuscript' => 'Manusutvikling',
+      'publishing' => 'Utgitte Elever',
+      'workshop' => 'Workshop',
+    ),
+    'contact-us' => 
+    array (
+      'main-description' => '<p>Grunnlegger og rektor for skolen er Kristine Storli Henningsen, som er en suksessfull skjønnlitterær – og sakprosaforfatter. Hun har gitt ut flere titalls bøker innenfor sjangrene roman, krim og spenning, serieroman, dokumentar og selvhjelp på henholdsvis Gyldendal , Cappelen Damm, Vigmostad & Bjørke, Juritzen og Flux. Debutromanen, "I skyggen av store trær", ble solgt til flere land.</p>
+
+<p>Kristine har også jobbet som journalist i 15 år, og som redaktør i fem av dem. Hun er ikke alene om å administrere skolen, som har flere hundre elever (mange av dem er antatte på de store forlagene – se siden "utgitte elever"). Med seg på laget har hun dyktige ansatte, og erfarne redaktører til å vurdere og utvikle elevenes tekster. </p>
+
+<p>Vi hos Forfatterskolen har fulgt mange elever tett frem mot utgivelse, og ønsker å hjelpe frem flere. Er du den neste? </p>
+
+<p>Send oss en mail, da vel: <a href="mailto:post@forfatterskolen.no" class="text-theme">post@forfatterskolen.no</a>. Vi ser frem til å høre fra deg! </p>
+
+<p>Skriveglad hilsen fra Team Forfatterskolen</p>',
+    ),
+    'shop-manuscript' => 
+    array (
+      'form' => 
+      array (
+        'title' => 'Lurer du på hvilken manusutvikling du trenger? Last opp manuset ditt her, så finner ordtelleren riktig pakke.',
+      ),
+      'title' => 'For deg som ønsker manuset vurdert av profesjonell redaktør',
+    ),
+    'gt-webinar' => 
+    array (
+      'description' => 'Her finner du hendige videoer som viser deg hvordan det gjøres',
+      'title' => 'Trenger du webinarhjelp?',
+    ),
+    'get-started' => 
+    array (
+      'title' => 'Kom i gang',
+      'description' => 'Vi har laget noen nyttige hjelpevideoer for deg som er ny hos oss',
+    ),
+    'replays' => 
+    array (
+      'title' => 'Reprisekrisehjelp',
+      'description' => 'Her får du enkel forklaring på hvordan du ser reprisene',
+    ),
+    'workshop' => 
+    array (
+      'title' => 'Skriveverksted',
+      'description' => 'Vil du være med oss på skriveverksted, der vi møtes ansikt til ansikt og jobber med din personlige tekst? Det gir gass til skrivemotoren og setter deg deg i kontakt med andre skriveivrige. Vi tilbyr skriveverksted over hele landet, alltid med dyktige og engasjerte kursholdere.',
+    ),
+    'blog' => 
+    array (
+      'title' => 'La deg motivere av vår skriveblogg! Her deler vi, og utgitte elever, skrivetips og historier – til støtte og inspirasjon for deg.',
+    ),
+    'publishing' => 
+    array (
+      'main-description' => 'Forfatterskolens utgitte elever Mange av Forfatterskolens elever har etter hvert fått gitt ut bøkene sine, og flere kommer etter. Vi har fulgt elevene underveis, mange helt fra starten. Det gjør oss superstolte, og understreker slagordet til rektor: "Kan jeg, kan du". På disse sidene kan du bli litt bedre kjent med noen av forfatterne, og kikke på bøkene deres. Er du den neste som blir utgitt?',
+      'second-description' => 'PS! Klikk på bøkene for å komme til forlagssiden med bokkjøp.',
+    ),
+  ),
 );

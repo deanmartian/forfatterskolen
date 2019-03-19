@@ -29,10 +29,10 @@
                             <div class="panel-body">
                                 <img src="{{ asset('images-new/go-to-webinar.png') }}" alt="">
                                 <h2>
-                                    Webinarer
+                                    {{ trans('site.front.gt-webinar.title') }}
                                 </h2>
                                 <p>
-                                    Her er det hjelpevideoer  på webinarer
+                                    {{ trans('site.front.gt-webinar.description') }}
                                 </p>
                             </div>
                         </div>
@@ -45,10 +45,10 @@
                             <div class="panel-body">
                                 <img src="{{ asset('images-new/pen-paper.png') }}" alt="">
                                 <h2>
-                                    Kom i gang
+                                    {{ trans('site.front.get-started.title') }}
                                 </h2>
                                 <p>
-                                    For nye elever så har vi laget noen hjelpevideoer hvordan en kommer igang.
+                                    {{ trans('site.front.get-started.description') }}
                                 </p>
                             </div>
                         </div>
@@ -60,10 +60,10 @@
                         <div class="panel-body">
                             <img src="{{ asset('images-new/document.png') }}" alt="">
                             <h2>
-                                Repriser
+                                {{ trans('site.front.replays.title') }}
                             </h2>
                             <p>
-                                Her finnes artikler på hvordan du ser reprisene
+                                {{ trans('site.front.replays.description') }}
                             </p>
                         </div>
                     </div>

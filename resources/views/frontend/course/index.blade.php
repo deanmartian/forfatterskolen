@@ -13,19 +13,13 @@
 				</h1>
 
 				<p>
-					Å skrive et manus kan være en utfordring. Det mangler sjelden på ideer og lyst,
-					men hvordan komme i gang? Og hvordan lykkes med å skrive et godt manus – uten å gi opp på veien?
-					Fortvil ikke, vi har skreddersydde kurs til å hjelpe deg. I tillegg får du profesjonell veiledning
-					og en uunnværlig heiagjeng.
+					{!! trans('site.front.course.main.description') !!}
 				</p>
 			</div>
 
 			<div class="row sub-header">
 				<p>
-					Forfatterskolens nettbaserte skrivekurs tar deg fem steg til ferdig manus – i ditt tempo. Gjennom
-					praktiske maler, nyttige tips og inspirerende øvelser, får du kunnskapen og selvtilliten du trenger
-					for å skrive ditt manus – med profesjonelle veiledere og en heiagjeng som følger deg gjennom hele
-					kursperioden.
+					{{ trans('site.front.course.second-description') }}
 				</p>
 
 				<p class="highlight">

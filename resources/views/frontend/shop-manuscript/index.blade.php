@@ -17,6 +17,11 @@
     <div class="manuscript-page">
         <div class="container main-container">
             <div class="row">
+                <div class="col-sm-12">
+                    <h1 class="text-center mb-5">
+                        {{ trans('site.front.shop-manuscript.title') }}
+                    </h1>
+                </div>
                 <div class="col-sm-12 top-page-container">
                     {{--<img src="{{ asset('images-new/adult-reading-book.jpg') }}" alt="">--}}
                     <iframe src="https://fast.wistia.com/embed/medias/scuv6yv5qy" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
@@ -52,8 +57,7 @@
                     {{--<div class="col-sm-6"></div>--}}
                     <div class="col-sm-6 col-xs-offset-6 details" id="testManuscript">
                         <h2 class="title mb-4">
-                            Lurer du på hvilken manusutvikling du trenger? Last opp manuset ditt her, så finner
-                            ordtelleren riktig manusutvikling (dette er bare en ordteller, og gir ingen form for kjøp):
+                            {{ trans('site.front.shop-manuscript.form.title') }}
                         </h2>
 
                         <form method="POST" enctype="multipart/form-data" action="{{ route('front.shop-manuscript.test_manuscript') }}">

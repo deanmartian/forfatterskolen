@@ -9,6 +9,11 @@
     <div class="blog-page">
         <div class="container main-container">
             <div class="row">
+                <div class="col-sm-12">
+                    <h1 class="text-center mb-5 mt-0">
+                        {{ trans('site.front.blog.title') }}
+                    </h1>
+                </div>
                 <div class="col-sm-12 top-page-container">
                     <div class="main-blog" style="background-image: url({{ asset($mainBlog->image) }})">
                         <div class="details text-center">

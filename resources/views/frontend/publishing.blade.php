@@ -16,13 +16,10 @@
                 <div class="col-md-6 col-sm-12">
                     <h1 class="page-title">Forfatterskolen's Utgitte Elever</h1>
                     <p class="page-description mb-4">
-                        Mange av Forfatterskolens elever har etter hvert fått gitt ut bøkene sine, og flere kommer
-                        etter. Vi har fulgt elevene underveis, mange helt fra starten. Det gjør at vi kanskje er litt
-                        ekstra stolte, og gjerne vil gi dem litt ekstra ballast på veien. På disse sidene kan du derfor
-                        bli litt bedre kjent med noen av dem, og ikke minst: bøkene deres. Kanskje du blir den neste?
+                        {{ trans('site.front.publishing.main-description') }}
                     </p>
                     <p>
-                        Klikk på bøkene for å komme til forlagssiden / skaffe deg et eksemplar.
+                        {{ trans('site.front.publishing.second-description') }}
                     </p>
                 </div>
             </div>

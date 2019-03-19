@@ -17,11 +17,11 @@
                         <div class="form-container">
                             <div class="panel panel-default">
                                 <div class="panel-body">
-                                    <h1 class="title">Vi tilbyr kurs og veiledning</h1>
-                                    <p class="mt-4">For deg som vil gjøre alvor av skrivedrømmen</p>
+                                    <h1 class="title">{{ trans('site.front.main-form.heading') }}</h1>
+                                    <p class="mt-4">{{ trans('site.front.main-form.heading-description') }}</p>
 
                                     <div class="form-details">
-                                        <h2>Vil du ha vår inspirerende skriveplan? Få den gratis her!</h2>
+                                        <h2>{{ trans('site.front.main-form.sub-heading') }}</h2>
                                         <hr>
 
                                         <form method="POST" action="{{ route('front.home') }}">
@@ -199,7 +199,7 @@
 
                 <div class="row testimonial-row">
                     <div class="col-md-12">
-                        <h1 class="text-center">Hva våre elever sier</h1>
+                        <h1 class="text-center">{{ trans('site.front.student-testimonial.heading') }}</h1>
                         <div id="testimonials-carousel" class="carousel slide global-carousel"
                              data-ride="carousel" data-interval="15000">
 

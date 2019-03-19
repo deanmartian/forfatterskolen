@@ -14,7 +14,7 @@
     <div class="contact-page">
         <div class="header text-center">
             <h1>
-                Kontakt Oss
+                {{ trans('site.front.nav.contact-us') }}
             </h1>
         </div>
 
@@ -37,35 +37,7 @@
                 </div>
 
                 <div class="col-md-12 description-container">
-                    <p>
-                        Grunnlegger og rektor for skolen er Kristine Storli Henningsen, som er en suksessfull
-                        skjønnlitterær-, seriebok-, sakprosa-, spennings- og selvhjelpsbokforfatter på henholdsvis
-                        Gyldendal Forlag, Cappelen Damm, Schibsted, Juritzen og Flux. Til sammen har hun utgitt 26 bøker,
-                        og debutromanen, I skyggen av store trær, er solgt til flere land.
-                    </p>
-                    <p>
-                        Kristine har også jobbet som journalist i 15 år, og som redaktør i fem av dem. Hun var redaktør
-                        for småbarnsmagasinet PlussTid i fem år. Skolens rektor står bak den populære bloggen
-                        <a href="http://www.antisupermamma.no" class="text-theme">Antisupermamma</a>, som har over 20 000
-                        følgere hver uke og har vært i en rekke medier de siste årene. Hun er også fast familieblogger
-                        for VG.
-                    </p>
-                    <p>
-                        Ved siden av skrivingen er Kristine utdannet gestaltpsykoterapeut ved NGI.
-                    </p>
-                    <p>
-                        <span>Kristine</span> er ikke alene om å administrere skolen, som stadig vokser i omfang og har
-                        flere hundre elever. Med seg på laget har hun flere dyktige manuskonsulenter og to faste ansatte.
-                        Forfatterskolen har fulgt flere elever tett frem mot utgivelse, og ønsker å hjelpe frem mange
-                        flere. De utgir også en elev i året, som ekslusivt blir plukket blant elevene og får
-                        hedersbetegnelsen Årets Drømmeforfatter. Utgivelsen fullfinansieres av Forfatterskolen, og boken
-                        vil bli utgitt av forlaget Forfatterdrøm, som er under paraplyen Forfatterskolen. Les mer om
-                        forlaget her: <a href="http://www.forfatterdrom.no" class="text-theme">Forfatterdrøm</a>
-                    </p>
-                    <p>
-                        Interessert i kurs eller noe annet skriverelatert? Send oss en mail:
-                        <a href="mailto:post@forfatterskolen.no" class="theme-text">post@forfatterskolen.no</a>.
-                    </p>
+                    {!! trans('site.front.contact-us.main-description') !!}
                 </div> <!-- end description-container -->
 
             </div> <!-- end main-container -->
@@ -111,11 +83,11 @@
                                             Elin S Rotevatn
                                         </h2>
                                         <p>
-                                            Elin S Rotevatn er vår faste redaktør. Hun har en Cand.mag-grad i allmenn
+                                            Elin S Rotevatn er fag– og kursansvarlig. Hun har en Cand.mag-grad i allmenn
                                             litteraturvitenskap, og har i tillegg studert skriveteori gjennom en årrekke.
                                             Elin har jobbet som konsulent, blant annet for Riksantikvaren, og elsker å
-                                            gå inn i andres tekst og finne forbedringspotensial - både på det
-                                            strukturelle og det språklige plan.
+                                            gå inn i andres tekst og finne forbedringspotensial – både på det strukturelle
+                                            og det språklige plan.
                                         </p>
                                         <i class="fa fa-envelope"></i> <a href="mailto:Elin@forfatterskolen.no">Elin@forfatterskolen.no</a>
                                     </div>

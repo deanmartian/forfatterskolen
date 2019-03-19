@@ -4,7 +4,7 @@
     </button>
 
     <a class="navbar-brand mx-auto" href="{{url('')}}">
-        <img src="{{asset('images-new/logo.png')}}">
+        <img src="{{asset('images-new/logo-tagline.png')}}">
     </a>
 
     <div class="navbar-collapse collapse pr-0">
@@ -64,25 +64,25 @@
     <div class="navbar-collapse collapse" id="mainNav">
         <ul class="navbar-nav nav-fill">
             <li class="nav-item @if(Route::currentRouteName() == 'front.course.index') active @endif">
-                <a href="{{route('front.course.index')}}" class="nav-link">Våre Kurs</a>
+                <a href="{{route('front.course.index')}}" class="nav-link">{{ trans('site.front.nav.course') }}</a>
             </li>
             <li class="nav-item @if(Route::currentRouteName() == 'front.shop-manuscript.index') active @endif">
-                <a href="{{route('front.shop-manuscript.index')}}" class="nav-link">Manusutvikling</a>
+                <a href="{{route('front.shop-manuscript.index')}}" class="nav-link">{{ trans('site.front.nav.manuscript') }}</a>
             </li>
             <li class="nav-item @if(Route::currentRouteName() == 'front.publishing') active @endif">
-                <a href="{{ route('front.publishing') }}" class="nav-link">Utgitte Elever</a>
+                <a href="{{ route('front.publishing') }}" class="nav-link">{{ trans('site.front.nav.publishing') }}</a>
             </li>
             <li class="nav-item @if(Route::currentRouteName() == 'front.blog') active @endif">
-                <a href="{{ route('front.blog') }}" class="nav-link">Blogg</a>
+                <a href="{{ route('front.blog') }}" class="nav-link">{{ trans('site.front.nav.blog') }}</a>
             </li>
             <li class="nav-item @if(Route::currentRouteName() == 'front.workshop.index') active @endif">
-                <a href="{{route('front.workshop.index')}}" class="nav-link">Workshop</a>
+                <a href="{{route('front.workshop.index')}}" class="nav-link">{{ trans('site.front.nav.workshop') }}</a>
             </li>
             <li class="nav-item @if(Route::currentRouteName() == 'front.faq') active @endif">
-                <a href="{{route('front.faq')}}" class="nav-link">FAQ</a>
+                <a href="{{route('front.faq')}}" class="nav-link">{{ trans('site.front.nav.faq') }}</a>
             </li>
             <li class="nav-item @if(Route::currentRouteName() == 'front.contact-us') active @endif">
-                <a href="{{route('front.contact-us')}}" class="nav-link">Kontakt Oss</a>
+                <a href="{{route('front.contact-us')}}" class="nav-link">{{ trans('site.front.nav.contact-us') }}</a>
             </li>
 
             @if (Auth::user())

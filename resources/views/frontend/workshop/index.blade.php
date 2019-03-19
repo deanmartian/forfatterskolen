@@ -11,12 +11,10 @@
             <div class="row header">
                 <div class="col-md-6">
                     <h1>
-                        Workshop
+                        {{ trans('site.front.workshop.title') }}
                     </h1>
                     <p class="mt-5">
-                        Vil du være med oss på workshop, der vi møtes ansikt til ansikt og jobber med din personlige tekst?
-                        Det gir gass til skrivemotoren og setter deg deg i kontakt med andre skriveivrige. Vi tilbyr
-                        workshops over hele landet, alltid med dyktige kursholdere.
+                        {{ trans('site.front.workshop.description') }}
                     </p>
                 </div>
             </div>
