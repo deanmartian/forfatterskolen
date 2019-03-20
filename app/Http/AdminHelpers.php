@@ -92,10 +92,10 @@ class AdminHelpers
     public static function send_email($subject, $from, $to, $content, $from_name='Forfatterskolen')
     {
 
-        $host = env('MAIL_HOST');
-        $port = env('MAIL_PORT');
-        $email_sender = env('MAIL_USERNAME');
-        $email_pass = env('MAIL_PASSWORD');
+        $host = config('mail.host');//env('MAIL_HOST');
+        $port = config('mail.port');//env('MAIL_PORT');
+        $email_sender = config('mail.username');//env('MAIL_USERNAME');
+        $email_pass = config('mail.password');//env('MAIL_PASSWORD');
 
         // set mailer
         $transport = \Swift_SmtpTransport::newInstance($host, $port, 'tls');
