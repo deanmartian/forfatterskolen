@@ -603,6 +603,15 @@ Warning: This cannot be undone.',
         'title' => 'Lurer du på hvilken manusutvikling du trenger? Last opp manuset ditt her, så finner ordtelleren riktig pakke.',
       ),
       'title' => 'For deg som ønsker manuset vurdert av profesjonell redaktør',
+      'first-section' => 
+      array (
+        'title' => 'TRENGER DU PROFESJONELL TILBAKEMELDING PÅ DITT MANUS?',
+        'description' => '<p class="mb-5">Er du usikker på om ideen og utkastet ditt kan bli en god fortelling? Står du fast med manuset, og er usikker på hva som funker og ikke funker? Eller trenger du en tilbakemelding, og kvalitetssikring, før du sender inn til forlag? </p>
+
+<p class="mb-5">Forfatterskolen tilbyr profesjonell tilbakemelding på ditt manus. En erfaren redaktør vil gi deg en grundig og detaljert tilbakemelding - med kommentarer i margen - på tekstens svake og sterke sider. Du får vite hva som er bra, og hvorfor det er bra, hva som kan utvikles videre og hvordan det kan gjøres. </p>
+
+<p class="mb-0">Vi har hjulpet mange elever på vei mot utgivelse, og hjelper gjerne flere. Er du den neste? Ikke nøl med å sende oss manuset ditt, det er slik du kommer videre!</p>',
+      ),
     ),
     'gt-webinar' => 
     array (
