@@ -1474,10 +1474,10 @@ margin-right: 5px;
 }
 
 .course-page .header {
-    background-image: url(../images-new/course-bg.png);
+    background: linear-gradient(rgba(43,43,43,.6),rgba(43,43,43,.6)),url(../images-new/course-header.png);/*url(../images-new/course-bg.png)*/
     background-size: 100%;
     background-repeat: no-repeat;
-    background-position-y: -117px;
+    /*background-position-y: -117px;*/
     color: #fff;
     padding-top: 130px;
     padding-bottom: 134px;
