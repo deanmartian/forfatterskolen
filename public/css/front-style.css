@@ -447,10 +447,10 @@ start today section
  */
 
 .start-today {
-    background-image: url(../images/girl-reading.png);
-    background-size: auto 100%;
+    background-image: url(../images-new/cta.png);/*../images/girl-reading.png*/
+    background-size: auto 70%;/*auto 100%*/
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: bottom center;/*center*/
     background-color: #e5dedb;
     height: 510px;
     padding: 92px 10px;
@@ -6326,6 +6326,7 @@ textarea.form-control {
     }
 
     .start-today {
+        background-size: auto 65%; /*added when the image is changed*/
         padding: 80px 10px;
     }
 
@@ -10362,6 +10363,7 @@ textarea.form-control {
 
 @media only screen and (max-width: 375px) {
     .start-today {
+        background-size: auto 60%;
         height: 340px;
         padding: 15px 5px;
     }
