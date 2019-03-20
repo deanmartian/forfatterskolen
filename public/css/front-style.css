@@ -3012,10 +3012,10 @@ margin-right: 5px;
 
 /* front page */
 .front-page .header {
-    background-image: url(../images-new/front-bg.jpg);
+    background-image: url(../images-new/home-header.png);
     background-size: cover;
     background-repeat: no-repeat;
-    background-position-y: -60px;
+    /*background-position-y: -60px;*/
     height: 970px;
     padding-top: 50px;
     /*padding-bottom: 110px;*/
