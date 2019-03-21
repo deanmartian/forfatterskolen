@@ -24,7 +24,7 @@
                     <div class="row">
                         <div class="col-md-2 text-center">
                             <div class="editor-circle">
-                                <img src="{{ asset('images/kristine.png') }}" alt="" class="rounded-circle">
+                                <img src="{{ asset('images-new/kristine1.png') }}" alt="" class="rounded-circle">
                             </div>
                             <i>Foto: Vibeke Montero</i>
                         </div>
@@ -142,7 +142,7 @@
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-sm-2 contact-image">
-                                    <img src="{{ asset('images/kristine2.png')  }}" class="rounded-circle">
+                                    <img src="{{ asset('images-new/kristine1.png')  }}" class="rounded-circle">
                                 </div>
                                 <div class="col-sm-10">
                                     <h2 class="author">
