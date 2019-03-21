@@ -62,17 +62,38 @@ class LearnerController extends Controller
     }
 
 
-    public function index(Request $request)
+    public function index(Request $request, User $user)
     {
-        if( $request->search && !empty($request->search) ) :
-            $learners = User::where('first_name', 'LIKE', '%' . $request->search  . '%')
-                ->orWhere('email', 'LIKE', '%' . $request->search  . '%')
-                ->orderBy('first_name', 'asc')
-                ->orderBy('email', 'asc')
-                ->orderBy('created_at', 'desc')->paginate(25);
-        else :
-            $learners = User::orderBy('created_at', 'desc')->paginate(25);
+        $learners = $user->newQuery();
+
+        if( $request->search) :
+            $learners->where(function($query) use ($request) {
+                $query->where('first_name', 'LIKE', '%' . $request->search  . '%')
+                    ->orWhere('email', 'LIKE', '%' . $request->search  . '%');
+            })
+            ->orderBy('first_name', 'asc')
+            ->orderBy('email', 'asc');
         endif;
+
+        if ($request->has('free-course')) {
+            $learners->has('freeCourses');
+        }
+
+        if ($request->has('workshop')) {
+            $learners->has('workshopsTaken');
+        }
+
+        if ($request->has('shop-manuscript')) {
+            $learners->has('shopManuscriptsTaken');
+        }
+
+        if ($request->has('course')) {
+            $learners->has('coursesTaken');
+        }
+
+        $learners->orderBy('created_at', 'desc');
+        $learners = $learners->paginate(25);
+
     	return view('backend.learner.index', compact('learners'));
     }
 

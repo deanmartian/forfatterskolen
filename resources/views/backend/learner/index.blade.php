@@ -4,9 +4,50 @@
 <title>Learners &rsaquo; Forfatterskolen Admin</title>
 @stop
 
+@section('styles')
+	<style>
+		.form-inline {
+			display: inline;
+			margin-left: 10px;
+		}
+
+		.center-area {
+			position: absolute;
+			left: 30%;
+		}
+	</style>
+@stop
+
 @section('content')
-<div class="page-toolbar">
+<div class="page-toolbar" style="position: relative;">
 	<h3><i class="fa fa-users"></i> {{ trans('site.all-learners') }}</h3>
+	<form method="GET" class="center-area centered">
+		<div class="form-check form-inline">
+			<input class="form-check-input" type="checkbox" name="free-course" value="1"
+				   @if (Request::has('free-course')) checked @endif>
+			<label class="form-check-label" for="free-course">Free Course</label>
+		</div>
+
+		<div class="form-check form-inline">
+			<input class="form-check-input" type="checkbox" name="workshop" value="1"
+				   @if (Request::has('workshop')) checked @endif>
+			<label class="form-check-label" for="workshop">Workshop</label>
+		</div>
+
+		<div class="form-check form-inline">
+			<input class="form-check-input" type="checkbox" name="shop-manuscript" value="1"
+				   @if (Request::has('shop-manuscript')) checked @endif>
+			<label class="form-check-label" for="workshop">Shop-manuscript</label>
+		</div>
+
+		<div class="form-check form-inline">
+			<input class="form-check-input" type="checkbox" name="course" value="1"
+				   @if (Request::has('course')) checked @endif>
+			<label class="form-check-label" for="workshop">Courses</label>
+		</div>
+
+		<button class="btn btn-default form-inline" type="submit">Filter</button>
+	</form>
 	<div class="navbar-form navbar-right">
 	  	<div class="form-group">
 		  	<form role="search" method="GET">
