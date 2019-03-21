@@ -605,15 +605,26 @@ class ShopController extends Controller
 
         // Send course email
         $actionText = 'Mine Kurs';
-        $actionUrl = 'http://www.forfatterskolen.no/account/course';
+        $actionUrl = route('learner.course');//'http://www.forfatterskolen.no/account/course';
         $headers = "From: Forfatterskolen<post@forfatterskolen.no>\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
         $user = Auth::user();
-        $email_content = $package->course->email;
+
+        $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
+
+        $search_string = [
+            '[username]', '[password]'
+        ];
+        $replace_string = [
+            $courseTaken->user->email, $password
+        ];
+        $email_content = str_replace($search_string, $replace_string, $package->course->email);
+
+        $user_email = $user->email;
         //mail($user->email, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
         AdminHelpers::send_email($package->course->title,
-            'post@forfatterskolen.no', $user->email,
+            'post@forfatterskolen.no', $user_email,
             view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')));
 
         if( $paymentMode->mode == "Paypal" ) :
