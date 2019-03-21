@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\AdminHelpers;
+use App\Mail\SubjectBodyEmail;
 use App\Paypal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -151,6 +152,28 @@ class WorkshopController extends Controller
             $address->save();
         endif;
 
+        //send email to learner
+        $user = Auth::user();
+
+        $emailData['email_subject'] = $workshop->email_title;
+        $emailData['email_message'] = nl2br($workshop->email_body);
+        $emailData['from_name'] = NULL;
+        $emailData['from_email'] = 'post@forfatterskolen.no';
+        $emailData['attach_file'] = NULL;
+        $user_email = $user->email;
+
+        // add email to queue
+        \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
+
+        //send email to admin
+        $adminEmailData['email_subject'] = 'New Workshop Order';
+        $adminEmailData['email_message'] = Auth::user()->first_name . ' has ordered the workshop ';
+        $adminEmailData['from_name'] = NULL;
+        $adminEmailData['from_email'] = NULL;
+        $adminEmailData['attach_file'] = NULL;
+
+        // add email to queue
+        \Mail::to($user_email)->queue(new SubjectBodyEmail($adminEmailData));
         
         if( $paymentMode->mode == "Paypal" ) :
             $paypal = new Paypal;
