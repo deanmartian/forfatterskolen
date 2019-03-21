@@ -149,7 +149,7 @@
 					@foreach( $workshop->taken as $taken )
 					<div style="margin: 7px 0 10px 0">
 						<button type="button" class="btn btn-xs btn-danger pull-right removeAttendeeBtn" data-attendee="{{ $taken->user->full_name }}" data-action="{{ route('admin.workshop.remove_attendee', ['workshop_taken_id' => $taken->id, 'attendee_id' => $taken->user->id]) }}" data-toggle="modal" data-target="#removeAttendeeModal"><i class="fa fa-trash"></i></button>
-						<a href="">{{ $taken->user->full_name }}</a> <br />
+						<a href="{{ route('admin.learner.show', $taken->user->id) }}">{{ $taken->user->full_name }}</a> <br />
 						{{ trans('site.menu') }}: <strong>{{ $taken->menu->title }}</strong> <br />
 						{{ trans_choice('site.notes', 2) }}: <strong>{{ $taken->notes }}</strong>
 					</div>
