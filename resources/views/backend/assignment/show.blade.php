@@ -344,7 +344,7 @@
 		      	</div>
 		      	<div class="form-group">
 			      	<label>{{ trans_choice('site.manuscripts', 1) }}</label>
-	      			<input type="file" class="form-control" required name="filename" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+	      			<input type="file" class="form-control" required name="filename" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text, application/msword">
 	      			* Godkjente fil formater er DOCX, PDF og ODT.
       			</div>
 

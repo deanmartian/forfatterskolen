@@ -167,7 +167,7 @@ class AssignmentController extends Controller
             $request->file('filename')->isValid() ) :
             $time = time();
             $destinationPath = 'storage/assignment-manuscripts/'; // upload path
-            $extensions = ['pdf', 'docx', 'odt'];
+            $extensions = ['pdf', 'docx', 'odt', 'doc'];
             $extension = pathinfo($_FILES['filename']['name'],PATHINFO_EXTENSION); // getting document extension
             $actual_name = $learner->id;
             $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
@@ -188,6 +188,9 @@ class AssignmentController extends Controller
             elseif($extension == "docx") :
                 $docObj = new \Docx2Text($destinationPath.end($expFileName));
                 $docText= $docObj->convertToText();
+                $word_count = FrontendHelpers::get_num_of_words($docText);
+            elseif($extension == "doc") :
+                $docText = FrontendHelpers::readWord($destinationPath.end($expFileName));
                 $word_count = FrontendHelpers::get_num_of_words($docText);
             elseif($extension == "odt") :
                 $doc = odt2text($destinationPath.end($expFileName));
