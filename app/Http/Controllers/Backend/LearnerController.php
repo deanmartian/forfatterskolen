@@ -65,7 +65,11 @@ class LearnerController extends Controller
     public function index(Request $request)
     {
         if( $request->search && !empty($request->search) ) :
-            $learners = User::where('first_name', 'LIKE', '%' . $request->search  . '%')->orWhere('email', 'LIKE', '%' . $request->search  . '%')->orderBy('created_at', 'desc')->paginate(25);
+            $learners = User::where('first_name', 'LIKE', '%' . $request->search  . '%')
+                ->orWhere('email', 'LIKE', '%' . $request->search  . '%')
+                ->orderBy('first_name', 'asc')
+                ->orderBy('email', 'asc')
+                ->orderBy('created_at', 'desc')->paginate(25);
         else :
             $learners = User::orderBy('created_at', 'desc')->paginate(25);
         endif;
