@@ -1,0 +1,23 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class FreeCourseDelayedEmail extends Model {
+
+    protected $table = 'free_course_delayed_email';
+    protected $fillable = ['user_id', 'course_id', 'send_at'];
+    public $timestamps = false;
+
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
+    public function course()
+    {
+        return $this->belongsTo('App\Course');
+    }
+
+}

@@ -2,9 +2,11 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\CoursesTaken;
+use App\FreeCourseDelayedEmail;
 use App\Http\AdminHelpers;
 use App\Mail\FreeCourseNewUserEmail;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests;
@@ -83,10 +85,16 @@ class CourseController extends Controller
                 Auth::login($new_user);
 
                 // send email
-                $email_data['email_message'] = $course->email;
+                /*$email_data['email_message'] = $course->email;
                 $email_data['email_subject'] = $course->title;
                 $toEmail = $request->email;
-                \Mail::to($toEmail)->queue(new FreeCourseNewUserEmail($email_data));
+                \Mail::to($toEmail)->queue(new FreeCourseNewUserEmail($email_data));*/
+
+                // add to delayed email instead of sending email directly
+                $delayedEmail['user_id'] = $new_user->id;
+                $delayedEmail['course_id'] = $course->id;
+                $delayedEmail['send_at'] = Carbon::now()->addMinute(10);
+                FreeCourseDelayedEmail::create($delayedEmail);
             }
 
             // check if the course is taken and redirect the user to the course page before processing the free course

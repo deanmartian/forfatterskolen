@@ -28,7 +28,8 @@ class Kernel extends ConsoleKernel
         Commands\LockFinishedManuscript::class,
         Commands\UpdateGross::class,
         Commands\WebinarEmailOutCommand::class,
-        Commands\GoToWebinarReminder::class
+        Commands\GoToWebinarReminder::class,
+        Commands\FreeCourseDelayedEmailCommand::class
     ];
 
     /**
@@ -68,6 +69,8 @@ class Kernel extends ConsoleKernel
             ->dailyAt('21:00');
         /*$schedule->command('updategross:command')
             ->dailyAt('06:00');*/
+        $schedule->command('freecoursedelayedemail:command')
+            ->everyMinute();
         $schedule->command('queue:work --daemon')->everyMinute()->withoutOverlapping();
     }
 
