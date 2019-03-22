@@ -12,58 +12,6 @@
     <div class="front-page">
         <div class="header">
             <div class="container">
-                <div class="row">
-                    <div class="col-lg-6 col-md-offset-6 col-md-12">
-                        <div class="form-container">
-                            <div class="panel panel-default">
-                                <div class="panel-body">
-                                    <h1 class="title">{{ trans('site.front.main-form.heading') }}</h1>
-                                    <p class="mt-4">{{ trans('site.front.main-form.heading-description') }}</p>
-
-                                    <div class="form-details">
-                                        <h2>{{ trans('site.front.main-form.sub-heading') }}</h2>
-                                        <hr>
-
-                                        <form method="POST" action="{{ route('front.home') }}">
-                                            {{ csrf_field() }}
-
-                                            <div class="form-group">
-                                                <input type="text" name="name" class="form-control" placeholder="Fornavn" required>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <input type="email" name="email" class="form-control" placeholder="Epost" required>
-                                            </div>
-
-                                            <div class="form-group custom-checkbox">
-                                                <input type="checkbox" name="terms" id="terms" required>
-                                                <label for="terms">Jeg aksepterer <a href="{{ route('front.opt-in-terms') }}"
-                                                                                     class="font-weight-bold" target="_blank">vilkårene</a></label>
-                                            </div>
-
-                                            {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJS() !!}
-                                            {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display() !!}
-                                            <span>PS! Vi deler ikke e-postadressen din med noen</span>
-
-                                            <button type="submit" class="btn site-btn-global">Ja, jeg vil ha gratis tips!</button>
-
-                                            @if ( $errors->any() )
-                                                <div class="alert alert-danger no-bottom-margin mt-3">
-                                                    <ul>
-                                                        @foreach($errors->all() as $error)
-                                                            <li>{{$error}}</li>
-                                                        @endforeach
-                                                    </ul>
-                                                </div>
-                                            @endif
-                                        </form>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div> <!-- end form-container -->
-                    </div> <!-- end col-md-6 -->
-                </div> <!-- end row -->
             </div> <!-- end container -->
         </div> <!-- end header -->
 
@@ -296,12 +244,65 @@
 
         <div class="course-container">
             <div class="container">
-                <div class="row">
+                {{--<div class="row">
                     <div class="col-sm-12 video-container">
-                        {{--<iframe src="https://fast.wistia.com/embed/medias/scuv6yv5qy" frameborder="0" allowfullscreen="allowfullscreen"></iframe>--}}
+                        --}}{{--<iframe src="https://fast.wistia.com/embed/medias/scuv6yv5qy" frameborder="0" allowfullscreen="allowfullscreen"></iframe>--}}{{--
                         <img src="{{ asset('images-new/adult-reading-book.jpg') }}" alt="">
                     </div>
-                </div>
+                </div>--}}
+
+                <div class="row optin-row">
+                    <div class="col-lg-6 col-md-offset-3 col-md-12">
+                        <div class="form-container">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <h1 class="title">{{ trans('site.front.main-form.heading') }}</h1>
+                                    <p class="mt-4">{{ trans('site.front.main-form.heading-description') }}</p>
+
+                                    <div class="form-details">
+                                        <h2>{{ trans('site.front.main-form.sub-heading') }}</h2>
+                                        <hr>
+
+                                        <form method="POST" action="{{ route('front.home') }}">
+                                            {{ csrf_field() }}
+
+                                            <div class="form-group">
+                                                <input type="text" name="name" class="form-control" placeholder="Fornavn" required>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <input type="email" name="email" class="form-control" placeholder="Epost" required>
+                                            </div>
+
+                                            <div class="form-group custom-checkbox">
+                                                <input type="checkbox" name="terms" id="terms" required>
+                                                <label for="terms">Jeg aksepterer <a href="{{ route('front.opt-in-terms') }}"
+                                                                                     class="font-weight-bold" target="_blank">vilkårene</a></label>
+                                            </div>
+
+                                            {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJS() !!}
+                                            {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display() !!}
+                                            <span>PS! Vi deler ikke e-postadressen din med noen</span>
+
+                                            <button type="submit" class="btn site-btn-global">Ja, jeg vil ha gratis tips!</button>
+
+                                            @if ( $errors->any() )
+                                                <div class="alert alert-danger no-bottom-margin mt-3">
+                                                    <ul>
+                                                        @foreach($errors->all() as $error)
+                                                            <li>{{$error}}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            @endif
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div> <!-- end form-container -->
+                    </div> <!-- end col-md-6 -->
+                </div> <!-- end row -->
 
                 <div class="row all-course theme-tabs">
                     <div class="tabs-container">
