@@ -746,6 +746,25 @@ class AssignmentController extends Controller
     }
 
     /**
+     * Update the join group field
+     * @param $manuscript_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateJoinGroup($manuscript_id, Request $request)
+    {
+        $assignment = AssignmentManuscript::find($manuscript_id);
+        if ($assignment) {
+
+            $assignment->update($request->except('_token'));
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Join Group updated successfully.'),
+                'alert_type' => 'success']);
+        }
+
+        return redirect()->back();
+    }
+
+    /**
      * Read document file and return the content
      * @param $filename
      * @return bool|string

@@ -100,7 +100,12 @@
 								</a>
 							</td>
 							<td>
-								{{ $manuscript->join_group ? 'Yes' : 'No' }}
+								<a href="#" data-toggle="modal" data-target="#updateJoinGroupModal"
+								data-action="{{ route('assignment.update-join-group', $manuscript->id) }}"
+								   class="upateJoinGroupBtn"
+								   data-answer="{{ $manuscript->join_group }}">
+									{{ $manuscript->join_group ? 'Yes' : 'No' }}
+								</a>
 							</td>
 							<td>
 
@@ -741,6 +746,37 @@
 	</div>
 </div>
 <!--end email modal-->
+
+<!-- update join group modal -->
+<div id="updateJoinGroupModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Update Join Group Answer</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="">
+					{{csrf_field()}}
+
+					<div class="form-group">
+						<label>Join Group</label>
+						<select name="join_group" class="form-control" required>
+							<option value="0">No</option>
+							<option value="1">Yes</option>
+						</select>
+					</div>
+
+
+					<div class="text-right">
+						<input type="submit" class="btn btn-primary" value="{{ trans('site.save') }}">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- end update join group modal -->
 @stop
 
 @section('scripts')
@@ -831,6 +867,15 @@
 		} else {
             modal.find('form').find('input[type=file]').attr('required', 'required');
 		}
+    });
+
+    $(".upateJoinGroupBtn").click(function () {
+		let modal = $("#updateJoinGroupModal");
+		let answer = $(this).data('answer');
+		let action = $(this).data('action');
+
+		modal.find('form').attr('action', action);
+		modal.find('select').val(answer);
     });
 
     function formSubmitted(t) {
