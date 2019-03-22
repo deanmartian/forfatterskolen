@@ -202,6 +202,7 @@ class AssignmentController extends Controller
                 'user_id' => $learner->id,
                 'words' => $word_count,
                 'filename' => '/'.$fileName,
+                'join_group' => $request->join_group
             ]);
             return redirect()->back();
         endif;

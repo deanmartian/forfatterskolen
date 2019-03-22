@@ -353,6 +353,14 @@
 	      			* Godkjente fil formater er DOCX, PDF og ODT.
       			</div>
 
+                <div class="form-group">
+                    <label>Join Group</label>
+                    <select name="join_group" class="form-control" required>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+
 		      	<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
 		      	<div class="clearfix"></div>
 		    </form>
