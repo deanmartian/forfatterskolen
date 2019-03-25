@@ -268,7 +268,8 @@
 											<div class="payment-option custom-radio col-sm-6 px-0">
 												<input type="radio" @if($paymentPlan->plan == 'Full Payment') checked @endif
 												name="payment_plan_id" value="{{$paymentPlan->id}}" data-plan="{{trim($paymentPlan->plan)}}"
-													   id="{{$paymentPlan->plan}}" required onchange="payment_plan_change(this)">
+													   id="{{$paymentPlan->plan}}" required onchange="payment_plan_change(this)"
+												data-plan-id="{{ $paymentPlan->id }}">
 												<label for="{{$paymentPlan->plan}}">{{$paymentPlan->plan}} </label>
 											</div>
 									  @endforeach
@@ -361,6 +362,10 @@
 										</span>
 									@endif
 								</h3>
+
+									<h3 class="mt-0" id="monthly-price">
+										Per måned: <span class="theme-text font-barlow-regular"></span>
+									</h3>
 
 									<button type="submit" class="btn site-btn-global-w-arrow" id="submitOrder">Bestill</button>
 							</div>
@@ -607,6 +612,7 @@
 
                 // check for sale price
                 checkSalePrice(checked_package_id, 'full_payment_price_number', 'full_payment_sale_price_number', 'full_payment_price');
+                $("#monthly-price").addClass('hide');
 
             } else if( plan === '3 måneder' ) {
                 new_total = checked_package_id.attr('data-months_3_sale_price_number')
@@ -622,6 +628,7 @@
                 }
 
                 checkSalePrice(checked_package_id, 'months_3_price_number', 'months_3_sale_price_number', 'months_3_price');
+                checkMonthlyPrice(new_total, 3);
             } else if( plan === '6 måneder' ) {
                 new_total = checked_package_id.attr('data-months_6_sale_price_number')
                     ? checked_package_id.data('months_6_sale_price_number')
@@ -635,6 +642,7 @@
                     new_total = price_value - discount_value;
                 }
                checkSalePrice(checked_package_id, 'months_6_price_number', 'months_6_sale_price_number', 'months_6_price');
+                checkMonthlyPrice(new_total,6);
             } else if( plan === '12 måneder' ) {
                 new_total = checked_package_id.attr('data-months_12_sale_price_number')
                     ? checked_package_id.data('months_12_sale_price_number')
@@ -648,6 +656,7 @@
                     new_total = price_value - discount_value;
                 }
                checkSalePrice(checked_package_id, 'months_12_price_number', 'months_12_sale_price_number', 'months_12_price');
+                checkMonthlyPrice(new_total, 12);
             }
             $.get('/format_money/'+new_total, {}, function(){}, 'json').done(function(data){
                 let checkout_total = $('.checkout-total');
@@ -672,6 +681,16 @@
                 $("#discount-wrapper").addClass('hide');
                 $("#price-wrapper").addClass('hide');
             }
+		}
+
+		function checkMonthlyPrice(total_price, divisor) {
+            total_price  = parseFloat(total_price);
+            let monthly_price = total_price/divisor;
+            let rounded = Math.floor(monthly_price);
+            $("#monthly-price").removeClass('hide');
+            $.get('/format_money/'+rounded, {}, function(){}, 'json').done(function(data){
+                $("#monthly-price").find('span').text(data);
+            });
 		}
 
         function openWindow(url) {
