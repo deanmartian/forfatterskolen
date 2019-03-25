@@ -1097,8 +1097,18 @@ class HomeController extends Controller
 
     public function testemail()
     {
-        phpinfo();
+        $subject = 'testing email';
+        $from = 'post@forfatterskolen.no';
+        $from_name = 'Forfatterskolen';
+        $to = 'elybutabara@mailinator.com';
+        $content = 'this is a test only';
 
+        $emailData['email_subject'] = $subject;
+        $emailData['email_message'] = $content;
+        $emailData['from_name'] = NULL;
+        $emailData['from_email'] = NULL;
+        $emailData['attach_file'] = NULL;
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
     }
 
     public function testEmail2()
