@@ -14,7 +14,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6 col-sm-12">
-                    <h1 class="page-title">Forfatterskolen's Utgitte Elever</h1>
+                    <h1 class="page-title">Forfatterskolens utgitte elever</h1>
                     <p class="page-description mb-4">
                         {{ trans('site.front.publishing.main-description') }}
                     </p>
