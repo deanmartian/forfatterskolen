@@ -35,152 +35,124 @@
 
 @section('content')
     <div class="page-toolbar">
-        <h3><i class="fa fa-users"></i> All Admins</h3>
-        <div class="navbar-form navbar-right">
-            <div class="form-group">
-                <form role="search" method="get" action="{{ route('admin.admin.index') }}">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search assignment..">
-                        <span class="input-group-btn">
-				    	<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
-				    </span>
-                    </div>
-                </form>
-            </div>
-        </div>
+        <h3><i class="fa fa-language"></i> Translations</h3>
         <div class="clearfix"></div>
     </div>
 
     <div class="col-md-12">
-        <button class="btn btn-primary margin-top" data-toggle="modal" data-target="#addAdminModal">Create admin</button>
-        <a class="btn btn-primary margin-top" href="{{ route('admin.admin.export_nearly_expired_courses') }}">Export Nearly Expired Courses</a>
-        <a class="btn btn-success margin-top" href="{{ route('admin.editor.index') }}">Editors</a>
+        <div class="row margin-top">
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h1 style="margin-top: 0">Translation Manager</h1>
+                        <p class="text-muted d-block" style="margin-bottom: 0"><i class="fa fa-exclamation-triangle"></i> Warning, translations are not visible until they are exported back using the publish button.</p>
+                        <p class="text-muted d-block">
+                            <i class="fa fa-exclamation-circle"></i>
+                            Note, Please be guided that those words which start with <strong>colon(:)</strong> like <strong>:attribute</strong> and words which surrounded with <strong>underscore(_)</strong> like <strong>_MAX_, _PAGE_, _MIN_, etc</strong> must not be translated to avoid conflicts on the system functionality.
+                        </p>
+                        <div class="alert alert-success success-import" style="display:none;">
+                            <p>Done importing, processed <strong class="counter">N</strong> items! Reload this page to refresh the groups!</p>
+                        </div>
+                        <div class="alert alert-success success-find" style="display:none;">
+                            <p>Done searching for translations, found <strong class="counter">N</strong> items!</p>
+                        </div>
+                        <div class="alert alert-success success-publish" style="display:none;">
+                            <p>Done publishing the translations!</p>
+                        </div>
 
-        <ul class="nav nav-tabs margin-top">
-            <li><a href="{{ route('admin.admin.index') }}?tab=admin">Admin</a></li>
-            <li><a href="{{ route('admin.admin.index') }}?tab=options">Options</a></li>
-            <li><a href="{{ route('admin.admin.index') }}?tab=terms">Terms</a></li>
-            <li class="active"><a href="{{ action('\Barryvdh\TranslationManager\Controller@getView') }}/site">Translations</a></li>
-            <li><a href="{{ route('admin.admin.index') }}?tab=advisory">Advisory</a></li>
-        </ul>
+                        @if(Session::has('successPublish'))
+                            <div class="alert alert-info">
+                                {{ Session::get('successPublish') }}
+                            </div>
+                        @endif
+                        <p>
+                        @if(!isset($group))
+                            <form class="form-inline form-import" method="POST" action="{{ action('\Barryvdh\TranslationManager\Controller@postImport') }}" data-remote="true" role="form">
+                                {{ csrf_field() }}
+                                <select name="replace" class="form-control">
+                                    <option value="0">Append new translations</option>
+                                    <option value="1">Replace existing translations</option>
+                                </select>
+                                <button type="submit" class="btn btn-success"  data-disable-with="Loading..">Import groups</button>
+                            </form>
+                            <form class="form-inline form-find" method="POST" action="{{ action('\Barryvdh\TranslationManager\Controller@postFind') }}" data-remote="true" role="form" data-confirm="Are you sure you want to scan you app folder? All found translation keys will be added to the database.">
+                                {{ csrf_field() }}
+                                <p></p>
+                                <button type="submit" class="btn btn-info" data-disable-with="Searching.." >Find translations in files</button>
+                            </form>
+                        @endif
 
-        <div class="tab-content">
-            <div class="tab-pane fade in active">
-                <div class="row margin-top">
-                    <div class="col-sm-12">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <h1 style="margin-top: 0">Translation Manager</h1>
-                                <p class="text-muted d-block" style="margin-bottom: 0"><i class="fa fa-exclamation-triangle"></i> Warning, translations are not visible until they are exported back using the publish button.</p>
-                                <p class="text-muted d-block">
-                                    <i class="fa fa-exclamation-circle"></i>
-                                    Note, Please be guided that those words which start with <strong>colon(:)</strong> like <strong>:attribute</strong> and words which surrounded with <strong>underscore(_)</strong> like <strong>_MAX_, _PAGE_, _MIN_, etc</strong> must not be translated to avoid conflicts on the system functionality.
-                                </p>
-                                <div class="alert alert-success success-import" style="display:none;">
-                                    <p>Done importing, processed <strong class="counter">N</strong> items! Reload this page to refresh the groups!</p>
-                                </div>
-                                <div class="alert alert-success success-find" style="display:none;">
-                                    <p>Done searching for translations, found <strong class="counter">N</strong> items!</p>
-                                </div>
-                                <div class="alert alert-success success-publish" style="display:none;">
-                                    <p>Done publishing the translations!</p>
-                                </div>
-
-                                @if(Session::has('successPublish'))
-                                <div class="alert alert-info">
-                                    {{ Session::get('successPublish') }}
-                                </div>
-                                @endif
-                                <p>
-                                    @if(!isset($group))
-                                        <form class="form-inline form-import" method="POST" action="{{ action('\Barryvdh\TranslationManager\Controller@postImport') }}" data-remote="true" role="form">
-                                            {{ csrf_field() }}
-                                            <select name="replace" class="form-control">
-                                                <option value="0">Append new translations</option>
-                                                <option value="1">Replace existing translations</option>
-                                            </select>
-                                            <button type="submit" class="btn btn-success"  data-disable-with="Loading..">Import groups</button>
-                                        </form>
-                                        <form class="form-inline form-find" method="POST" action="{{ action('\Barryvdh\TranslationManager\Controller@postFind') }}" data-remote="true" role="form" data-confirm="Are you sure you want to scan you app folder? All found translation keys will be added to the database.">
-                                            {{ csrf_field() }}
-                                            <p></p>
-                                            <button type="submit" class="btn btn-info" data-disable-with="Searching.." >Find translations in files</button>
-                                        </form>
-                                    @endif
-
-                                    @if(isset($group))
-                                        {{--<form class="form-inline form-publish" method="POST" action="{{ action('\Barryvdh\TranslationManager\Controller@postPublish', $group) }}" data-remote="true" role="form" data-confirm="Are you sure you want to publish the translations? This will overwrite existing language files.">
-                                            {{ csrf_field() }}--}}
-                                            <button type="button" class="btn btn-info" data-disable-with="Publishing.."
-                                            onclick="publishTranslations(this)">Publish translations</button>
-                                        {{--</form>--}}
-                                    @endif
-                                </p>
-                                <form role="form">
-                                    {{ csrf_field() }}
-                                    <div class="form-group">
-                                        <select name="group" id="group" class="form-control group-select">
-                                            @foreach($groups as $key => $value)
-                                                @if ($key)
+                        @if(isset($group))
+                            {{--<form class="form-inline form-publish" method="POST" action="{{ action('\Barryvdh\TranslationManager\Controller@postPublish', $group) }}" data-remote="true" role="form" data-confirm="Are you sure you want to publish the translations? This will overwrite existing language files.">
+                                {{ csrf_field() }}--}}
+                            <button type="button" class="btn btn-info" data-disable-with="Publishing.."
+                                    onclick="publishTranslations(this)">Publish translations</button>
+                            {{--</form>--}}
+                            @endif
+                            </p>
+                            <form role="form">
+                                {{ csrf_field() }}
+                                <div class="form-group">
+                                    <select name="group" id="group" class="form-control group-select">
+                                        @foreach($groups as $key => $value)
+                                            @if ($key)
                                                 <option value="{{ $key }}"{{ $key == $group ? ' selected':'' }}>{{ ucfirst($value) }}</option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </form>
+                            @if($group)
+                                <form action="{{ action('\Barryvdh\TranslationManager\Controller@postAdd', array($group)) }}" method="POST"  role="form">
+                                    {{ csrf_field() }}
+                                    <textarea class="form-control" rows="3" name="keys" placeholder="Add 1 key per line"></textarea>
+                                    <p></p>
+                                    <input type="submit" value="Add keys" class="btn btn-primary">
                                 </form>
-                                @if($group)
-                                    <form action="{{ action('\Barryvdh\TranslationManager\Controller@postAdd', array($group)) }}" method="POST"  role="form">
-                                        {{ csrf_field() }}
-                                        <textarea class="form-control" rows="3" name="keys" placeholder="Add 1 key per line"></textarea>
-                                        <p></p>
-                                        <input type="submit" value="Add keys" class="btn btn-primary">
-                                    </form>
-                                    <hr style="margin: 20px 0;">
-                                    <h4 style="margin-bottom: 20px">Total: {{ $numTranslations }}, changed: <span id="numChanged">{{ $numChanged }}</span></h4>
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th width="15%">Key</th>
+                                <hr style="margin: 20px 0;">
+                                <h4 style="margin-bottom: 20px">Total: {{ $numTranslations }}, changed: <span id="numChanged">{{ $numChanged }}</span></h4>
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th width="15%">Key</th>
+                                        @foreach($locales as $locale)
+                                            <th>{{ $locale }}</th>
+                                        @endforeach
+
+                                        @if($deleteEnabled)
+                                            <th>&nbsp;</th>
+                                        @endif
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    @foreach($translations as $key => $translation)
+                                        <tr id="{{ $key }}">
+                                            <td>{{ $key }}</td>
                                             @foreach($locales as $locale)
-                                                <th>{{ $locale }}</th>
+                                                <?php $t = isset($translation[$locale]) ? $translation[$locale] : null?>
+
+                                                <td>
+                                                    <a href="#edit" class="editable status-{{ $t ? $t->status : 0 }} locale-{{ $locale }}" data-locale="{{ $locale }}" data-name="{{ $locale . "|" . $key }}" id="username" data-type="textarea" data-pk="{{ $t ? $t->id : 0 }}" data-url="{{ $editUrl }}" data-title="Enter translation">{{ $t ? htmlentities($t->value, ENT_QUOTES, 'UTF-8', false) : '' }}</a>
+                                                </td>
                                             @endforeach
 
                                             @if($deleteEnabled)
-                                                <th>&nbsp;</th>
+                                                <td>
+                                                    <a href="{{ action('\Barryvdh\TranslationManager\Controller@postDelete', [$group, $key]) }}" class="delete-key" rel="nofollow" data-confirm="Are you sure you want to delete the translations for '{{ $key }}'?"><span class="glyphicon glyphicon-trash"></span></a>
+                                                </td>
                                             @endif
                                         </tr>
-                                        </thead>
-                                        <tbody>
+                                    @endforeach
 
-                                        @foreach($translations as $key => $translation)
-                                            <tr id="{{ $key }}">
-                                                <td>{{ $key }}</td>
-                                                @foreach($locales as $locale)
-                                                    <?php $t = isset($translation[$locale]) ? $translation[$locale] : null?>
-
-                                                    <td>
-                                                        <a href="#edit" class="editable status-{{ $t ? $t->status : 0 }} locale-{{ $locale }}" data-locale="{{ $locale }}" data-name="{{ $locale . "|" . $key }}" id="username" data-type="textarea" data-pk="{{ $t ? $t->id : 0 }}" data-url="{{ $editUrl }}" data-title="Enter translation">{{ $t ? htmlentities($t->value, ENT_QUOTES, 'UTF-8', false) : '' }}</a>
-                                                    </td>
-                                                @endforeach
-
-                                                @if($deleteEnabled)
-                                                    <td>
-                                                        <a href="{{ action('\Barryvdh\TranslationManager\Controller@postDelete', [$group, $key]) }}" class="delete-key" rel="nofollow" data-confirm="Are you sure you want to delete the translations for '{{ $key }}'?"><span class="glyphicon glyphicon-trash"></span></a>
-                                                    </td>
-                                                @endif
-                                            </tr>
-                                        @endforeach
-
-                                        </tbody>
-                                    </table>
-                                @else
-                                    <p>Choose a group to display the group translations. If no groups are visible, make sure you have run the migrations and imported the translations.</p>
-                                @endif
-                            </div> <!-- end panel-body -->
-                        </div> <!--end panel -->
-                    </div> <!-- end col-sm-12 -->
-                </div>
-            </div>
+                                    </tbody>
+                                </table>
+                            @else
+                                <p>Choose a group to display the group translations. If no groups are visible, make sure you have run the migrations and imported the translations.</p>
+                            @endif
+                    </div> <!-- end panel-body -->
+                </div> <!--end panel -->
+            </div> <!-- end col-sm-12 -->
         </div>
     </div>
 @stop

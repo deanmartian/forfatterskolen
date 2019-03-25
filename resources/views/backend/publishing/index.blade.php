@@ -35,6 +35,7 @@
 	<a class="btn btn-success margin-top" href="{{ route('admin.editor.index') }}">Editors</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.cron-log.index') }}">CRON Logs</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.goto-webinar.index') }}">GoTo Webinar Email Notifications</a>
+	<a class="btn btn-success margin-top" href="{{ action('\Barryvdh\TranslationManager\Controller@getView') }}/site">Translations</a>
 
 	<div class="table-users table-responsive">
 		<table class="table">

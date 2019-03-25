@@ -30,7 +30,6 @@
 		<li @if( Request::input('tab') == 'admin' || Request::input('tab') == '') class="active" @endif><a href="?tab=admin">Admin</a></li>
 		<li @if( Request::input('tab') == 'options' ) class="active" @endif><a href="?tab=options">Options</a></li>
 		<li @if( Request::input('tab') == 'terms' ) class="active" @endif><a href="?tab=terms">Terms</a></li>
-		<li><a href="{{ action('\Barryvdh\TranslationManager\Controller@getView') }}/site">Translations</a></li>
 		<li @if( Request::input('tab') == 'advisory' ) class="active" @endif><a href="?tab=advisory">Advisory</a></li>
 	</ul>
 
