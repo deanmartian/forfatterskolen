@@ -95,7 +95,9 @@ class WebinarEmailOutCommand extends Command
                         $emailData['attach_file'] = NULL;
 
                         // add email to queue
-                        \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
+                        //\Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
+                        AdminHelpers::send_email($subject,'post@forfatterskolen.no', $user_email,
+                            str_replace('[register_link]', $register_link, $emailOut->message));
                         CronLog::create(['activity' => 'WebinarEmailOutCommand CRON send email to '.$user_email]);
                     }
                 }
