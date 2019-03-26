@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\CoursesTaken;
+use App\Events\AddToCampaignList;
 use App\FreeCourseDelayedEmail;
 use App\Http\AdminHelpers;
 use App\Mail\FreeCourseNewUserEmail;
@@ -116,7 +117,8 @@ class CourseController extends Controller
                     'name' => Auth::user()->first_name,
                     'last_name' => Auth::user()->last_name
                 ];
-                AdminHelpers::addToActiveCampaignList($list_id, $listData);
+                //AdminHelpers::addToActiveCampaignList($list_id, $listData);
+                event(new AddToCampaignList($list_id, $listData)); // fire the event
             }
 
             return redirect()->route('front.thank-you');
