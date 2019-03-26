@@ -380,6 +380,10 @@
 								@endif
 							</h3>
 
+								<h3 class="mt-0" id="monthly-price">
+									Per måned: <span class="theme-text font-barlow-regular"></span>
+								</h3>
+
 							<button type="submit" class="btn site-btn-global-w-arrow" id="submitOrder">Bestill</button>
 						</div>
 					</div> <!-- end panel-default -->
@@ -634,6 +638,7 @@
 
                 split_invoice.prop('disabled', true);
                 split_invoice.prop('checked', false);
+                $("#monthly-price").addClass('hide');
             } else if( plan === '3 måneder' ) {
                 new_total = checked_package_id.attr('data-dis_months_3_sale_price_number')
                     ? checked_package_id.data('dis_months_3_sale_price_number')
@@ -651,6 +656,8 @@
                 if (discount_value) {
                     new_total = price_value - discount_value;
                 }
+
+                checkMonthlyPrice(new_total, 3);
             } else if( plan === '6 måneder' ) {
                 new_total = checked_package_id.attr('data-dis_months_6_sale_price_number')
                     ? checked_package_id.data('dis_months_6_sale_price_number')
@@ -668,6 +675,8 @@
                 if (discount_value) {
                     new_total = price_value - discount_value;
                 }
+
+                checkMonthlyPrice(new_total,6);
             } else if( plan === '12 måneder' ) {
                 new_total = checked_package_id.attr('data-dis_months_12_sale_price_number')
                     ? checked_package_id.data('dis_months_12_sale_price_number')
@@ -685,10 +694,22 @@
                 if (discount_value) {
                     new_total = price_value - discount_value;
                 }
+
+                checkMonthlyPrice(new_total,12);
             }
             $.get('/format_money/'+new_total, {}, function(){}, 'json').done(function(data){
                 let checkout_total = $('.checkout-total');
                 checkout_total.find('span.total-display').text(data);
+            });
+        }
+
+        function checkMonthlyPrice(total_price, divisor) {
+            total_price  = parseFloat(total_price);
+            let monthly_price = total_price/divisor;
+            let rounded = Math.floor(monthly_price);
+            $("#monthly-price").removeClass('hide');
+            $.get('/format_money/'+rounded, {}, function(){}, 'json').done(function(data){
+                $("#monthly-price").find('span').text(data);
             });
         }
 
