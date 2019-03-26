@@ -54,15 +54,15 @@ class GoToWebinarReminder extends Command
         $now = Carbon::now()->format('Y-m-d H:00:00');
         $later = Carbon::parse($now)->format('Y-m-d H:59:00');
 
-        $tomorrowWebinars = GTWebinar::whereDate('webinar_date', '=', $tomorrow)
+        $tomorrowWebinars = GTWebinar::whereDate('reminder_date', '=', $tomorrow)
             ->where('send_reminder','=',1)
-            ->whereBetween('webinar_date', [$tomHour, $tomHourPlusOne])
+            ->whereBetween('reminder_date', [$tomHour, $tomHourPlusOne])
             ->get();
 
 
-        $todayWebinars = GTWebinar::whereDate('webinar_date', '=', $today)
+        $todayWebinars = GTWebinar::whereDate('reminder_date', '=', $today)
             ->where('send_reminder','=',1)
-            ->whereBetween('webinar_date', [$now, $later])
+            ->whereBetween('reminder_date', [$now, $later])
             ->get();
 
         // merge the collections

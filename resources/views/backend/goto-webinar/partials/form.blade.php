@@ -30,6 +30,11 @@
                     strftime('%Y-%m-%dT%H:%M:%S', strtotime($webinar['webinar_date'])) : '') }}" required>
                 </div>
                 <div class="form-group">
+                    <label>Reminder Date</label>
+                    <input type="datetime-local" class="form-control" name="reminder_date" value="{{ old('reminder_date', $webinar['reminder_date'] ?
+                    strftime('%Y-%m-%dT%H:%M:%S', strtotime($webinar['reminder_date'])) : '') }}" required>
+                </div>
+                <div class="form-group">
                     <label>Confirmation Email</label>
                     <textarea name="confirmation_email" cols="30" rows="10" class="form-control editor">{{ old('confirmation_email', $webinar['confirmation_email']) }}</textarea>
                 </div>

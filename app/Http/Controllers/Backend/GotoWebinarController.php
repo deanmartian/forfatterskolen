@@ -63,6 +63,7 @@ class GotoWebinarController extends Controller
             'title' => '',
             'gt_webinar_key' => '',
             'webinar_date' => '',
+            'reminder_date' => '',
             'confirmation_email' => $confirmation_email_template,
             'send_reminder' => '',
             'reminder_email' => $reminder_email_template
