@@ -108,6 +108,17 @@ class CourseController extends Controller
             $courseTaken->is_active = 1;
             $courseTaken->is_free = 1;
             $courseTaken->save();
+
+            if ($package->course->auto_list_id > 0) {
+                $list_id = $package->course->auto_list_id;
+                $listData = [
+                    'email' => Auth::user()->email,
+                    'name' => Auth::user()->first_name,
+                    'last_name' => Auth::user()->last_name
+                ];
+                AdminHelpers::addToActiveCampaignList($list_id, $listData);
+            }
+
             return redirect()->route('front.thank-you');
         }
         return redirect()->back();
