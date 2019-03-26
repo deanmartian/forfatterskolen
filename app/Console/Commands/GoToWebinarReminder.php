@@ -127,7 +127,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
                     // add dash after every 3rd character
                     $webinarID = implode("-", str_split($gtWebinar->webinarID, 3));
                     $cancel_reg = "<a href='https://attendee.gotowebinar.com/cancel/".$web_key."/"
-                        .$attendee->registrantKey."' style='text-decoration: none'>Kanseler registreringen</a>";
+                        .$attendee->registrantKey."' style='text-decoration: none'>kanselere registreringen</a>";
 
                     $search_string = [
                         '[first_name]', '[webinar_title]', '[admin_email]', '[webinar_date]', '[outlook_calendar]',
