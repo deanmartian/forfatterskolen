@@ -88,7 +88,11 @@ class LearnerController extends Controller
         }
 
         if ($request->has('course')) {
-            $learners->has('coursesTaken');
+            if ($request->has('free-course')) {
+                $learners->has('coursesTaken');
+            } else {
+                $learners->has('coursesTakenNoFree');
+            }
         }
 
         $learners->orderBy('created_at', 'desc');

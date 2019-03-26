@@ -69,6 +69,12 @@ class User extends Authenticatable
         return $this->hasMany('App\CoursesTaken')->orderBy('created_at', 'desc');
     }
 
+    public function coursesTakenNoFree()
+    {
+        return $this->hasMany('App\CoursesTaken')->where('is_free','=',0)
+            ->orderBy('created_at', 'desc');
+    }
+
     public function coursesTakenNotOld()
     {
         return $this->hasMany('App\CoursesTaken')
