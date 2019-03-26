@@ -64,9 +64,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('webinaremailout:command')
             ->dailyAt('09:00');
         $schedule->command('gotowebinarreminderday:command')
-            ->twiceDaily(19, 20);
-        $schedule->command('gotowebinarreminderday:command')
-            ->dailyAt('21:00');
+            ->dailyAt('19:00');
         /*$schedule->command('updategross:command')
             ->dailyAt('06:00');*/
         $schedule->command('freecoursedelayedemail:command')
