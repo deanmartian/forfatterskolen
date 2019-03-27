@@ -1097,7 +1097,7 @@ class HomeController extends Controller
 
     public function testemail()
     {
-        $subject = 'testing email';
+        /*$subject = 'testing email';
         $from = 'post@forfatterskolen.no';
         $from_name = 'Forfatterskolen';
         $to = 'elybutabara@mailinator.com';
@@ -1108,7 +1108,8 @@ class HomeController extends Controller
         $emailData['from_name'] = NULL;
         $emailData['from_email'] = NULL;
         $emailData['attach_file'] = NULL;
-        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));*/
+        echo env('MAIL_DRIVER');
     }
 
     public function testEmail2()
