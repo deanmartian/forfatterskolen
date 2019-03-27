@@ -13,7 +13,7 @@
 <a href="{{route('learner.webinar')}}"><i class="fa fa-play-circle-o"></i>&nbsp;&nbsp;Mandagswebinarer</a>
 </li>
 <li @if(Request::is('account/course-webinar*')) class="active" @endif>
-    <a href="{{route('learner.course-webinar')}}"><i class="fa fa-play-circle-o"></i>&nbsp;&nbsp;Kurs webinarer</a>
+    <a href="{{route('learner.course-webinar')}}"><i class="fa fa-play-circle-o"></i>&nbsp;&nbsp;Kurswebinarer</a>
 </li>
 <li @if(Request::is('account/assignment*')) class="active" @endif>
 <a href="{{route('learner.assignment')}}"><i class="fa fa-address-book-o"></i>&nbsp;&nbsp;Oppgaver</a>

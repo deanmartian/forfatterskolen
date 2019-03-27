@@ -27,7 +27,7 @@
         <li class="nav-item @if(Request::is('account/course-webinar*')) active @endif">
             <a class="nav-link" href="{{route('learner.course-webinar')}}">
                 <i class="sprite-menu play-button d-block"></i>
-                Kurs webinarer
+                Kurswebinarer
             </a>
         </li>
         <li class="nav-item @if(Request::is('account/assignment*')) active @endif">

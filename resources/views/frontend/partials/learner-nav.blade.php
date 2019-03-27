@@ -218,7 +218,7 @@
             <div>
                 <a href="{{route('learner.course-webinar')}}">
                     <i class="sprite-menu play-button d-block"></i>
-                    Kurs webinarer
+                    Kurswebinarer
                 </a>
             </div>
         </div>
