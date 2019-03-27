@@ -4,6 +4,7 @@
         @yield('title')
         @include('backend.partials.backend-css')
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=1.0, user-scalable=no">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" />
         @yield('styles')
         <meta name="csrf-token" content="{{ csrf_token() }}" />
     </head>
@@ -70,7 +71,14 @@
         @endif
 
         @include('backend.partials.scripts')
+        <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
         <script>
+            $(".dt-table").DataTable({
+                "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                pageLength: 5,
+            });
+
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

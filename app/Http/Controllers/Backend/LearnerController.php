@@ -10,6 +10,7 @@ use App\Helpers\FileToText;
 use App\Http\FikenInvoice;
 use App\Invoice;
 use App\LearnerLogin;
+use App\Mail\SubjectBodyEmail;
 use App\PaymentMode;
 use App\PaymentPlan;
 use App\Workshop;
@@ -720,6 +721,58 @@ class LearnerController extends Controller
             return redirect()->back();
         }
         return redirect('shop-manuscript');
+    }
+
+    /**
+     * Send Email to learner
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function sendLearnerEmail($id, Request $request)
+    {
+        $learner = User::find($id);
+        if (!$learner) {
+            return redirect()->back();
+        }
+
+        $this->validate($request,
+            [
+                'subject' => 'required',
+                'message' => 'required'
+            ]
+        );
+
+        $data = $request->except('_token');
+        $data['email'] = $data['message'];
+        $learner->emails()->create($data);
+
+        $from_email = $request->from_email ?: 'post@forfatterskolen.no';
+        $from_name  = $request->from_name ?: 'Forfatterskolen';
+
+        $email = 'elybutabara@mailinator.com';//$learner->email;
+        $encode_email = encrypt($email);
+        $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
+        $password = $learner->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
+
+        $search_string = [
+            '[login_link]', '[username]', '[password]'
+        ];
+        $replace_string = [
+            $loginLink, $email, $password
+        ];
+        $message = str_replace($search_string, $replace_string, $request->message);
+
+        $emailData['email_subject'] = $request->subject;
+        $emailData['email_message'] = $message;
+        $emailData['from_name'] = $from_name;
+        $emailData['from_email'] = $from_email;
+        $emailData['attach_file'] = NULL;
+
+        \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Email sent.'),
+            'alert_type' => 'success', 'not-former-courses' => true]);
     }
 
     public function sendEmail($id, Request $request)

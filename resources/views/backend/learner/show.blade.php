@@ -69,6 +69,7 @@
 			<button type="button" class="btn btn-info" data-toggle="modal" data-target="#editContactModal">{{ trans('site.edit-contact-info') }}</button>
 			<button type="button" class="margin-top btn btn-danger" data-toggle="modal" data-target="#deleteLearnerModal">{{ trans('site.delete-learner') }}</button>
 			<button type="button" class="margin-top btn btn-success" data-toggle="modal" data-target="#learnerNotesModal">{{ trans_choice('site.notes', 2) }}</button>
+			<button type="button" class="margin-top btn btn-primary" data-toggle="modal" data-target="#sendEmailModal">{{ trans('site.send-email') }}</button>
 
 			<div class="former-course-container">
 				<h4>{{ trans('site.former-courses') }}</h4>
@@ -893,13 +894,14 @@
 				<div class="panel-body">
 					<h4>{{ trans_choice('site.emails', 2) }}</h4>
 				</div>
-				<div class="table-responsive">
-					<table class="table">
+				<div class="table-responsive" style="padding: 10px">
+					<table class="table dt-table">
 						<thead>
 							<tr>
 								<th>{{ trans('site.subject') }}</th>
 								<th>{{ trans('site.date') }}</th>
 								<th>{{ trans_choice('site.attachments', 1) }}</th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -926,6 +928,11 @@
 													<a href="{{public_path()."/".$email->attachment}}" download>{{ basename($email->attachment) }}</a>
 												@endif
 										@endif
+									</td>
+									<td class="text-center">
+										<button class="btn btn-info btn-xs showEmailBtn" data-toggle="modal"
+										data-target="#showEmailModal"
+										data-message="{!! $email->email !!}">Show Message</button>
 									</td>
 								</tr>
 							@endforeach
@@ -1539,6 +1546,62 @@
 		</div>
 	</div>
 
+<!--send email modal-->
+
+<div id="sendEmailModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.send-email') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{route('admin.learner.send-email', $learner->id)}}"
+					  enctype="multipart/form-data">
+					{{csrf_field()}}
+
+					<div class="form-group">
+						<label>{{ trans('site.subject') }}</label>
+						<input type="text" class="form-control" name="subject" required>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.message') }}</label>
+						<textarea name="message" cols="30" rows="10" class="form-control editor"></textarea>
+					</div>
+
+					<div class="form-group">
+						<label style="display: block">From</label>
+						<input type="text" class="form-control" placeholder="Name" style="width: 49%; display: inline;"
+							   name="from_name">
+						<input type="email" class="form-control" placeholder="Email" style="width: 49%; display: inline;"
+							   name="from_email">
+					</div>
+
+					<div class="text-right">
+						<input type="submit" class="btn btn-primary" value="{{ trans('site.send') }}" id="send_email_btn">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!--end email modal-->
+
+<div id="showEmailModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Message Body</h4>
+			</div>
+			<div class="modal-body">
+
+			</div>
+		</div>
+	</div>
+</div>
+
 	<div id="statisticsModal" class="modal fade" role="dialog">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
@@ -2001,10 +2064,52 @@
 @section('scripts')
 	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 	<script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
-
+	<script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 <script>
 	jQuery(document).ready(function(){
 
+        // tinymce editor config and intitalization
+        let editor_config = {
+            path_absolute: "{{ URL::to('/') }}",
+            height: '15em',
+            selector: '.editor',
+            plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                'searchreplace wordcount visualblocks visualchars code fullscreen',
+                'insertdatetime media nonbreaking save table contextmenu directionality',
+                'emoticons template paste textcolor colorpicker textpattern'],
+            toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript superscript | forecolor backcolor | ',
+            toolbar2: 'link | alignleft aligncenter alignright ' +
+            'alignjustify  | removeformat',
+            toolbar3:'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code | print fullscreen',
+            relative_urls: false,
+            file_browser_callback : function(field_name, url, type, win) {
+                let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
+                let y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
+
+                let cmsURL = editor_config.path_absolute + '/laravel-filemanager?field_name=' + field_name;
+                if (type == 'image') {
+                    cmsURL = cmsURL + '&type=Images';
+                } else {
+                    cmsURL = cmsURL + '&type=Files';
+                }
+
+                tinyMCE.activeEditor.windowManager.open({
+                    file : cmsURL,
+                    title : 'Filemanager',
+                    width : x * 0.8,
+                    height : y * 0.8,
+                    resizable : 'yes',
+                    close_previous : 'no'
+                });
+            }
+        };
+        tinymce.init(editor_config);
+
+		$(".showEmailBtn").click(function(){
+		   let modal = $("#showEmailModal");
+		   let message = $(this).data('message');
+		   modal.find('.modal-body').html(message);
+		});
 
 		$('.defaultAllowAccessBtn').click(function(){
 			var action = $(this).data('action');

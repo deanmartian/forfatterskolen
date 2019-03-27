@@ -17,7 +17,7 @@ class LearnerEmail extends Model
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'subject', 'email', 'attachment'];
+    protected $fillable = ['user_id', 'subject', 'email', 'attachment', 'from_name', 'from_email'];
 
     public function user()
     {
