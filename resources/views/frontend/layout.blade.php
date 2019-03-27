@@ -10,6 +10,17 @@
 
             gtag('config', 'UA-44061222-1');
         </script>
+
+        <!-- Global site tag (gtag.js) - Google Ads: 754620576 -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-754620576"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'AW-754620576');
+        </script>
+
         <meta name="google-site-verification" content="PT1CQ7dxKhPpwvuFW6e2o_AVdp10XC-wUvvbHHuY0IE" />
         @yield('title')
         @include('frontend.partials.frontend-css')
