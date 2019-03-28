@@ -122,6 +122,10 @@ Route::group([
         Route::get('/goto-webinar/register/{webinar_key}/{email}', 'HomeController@gotoWebinarEmailRegistration')
             ->name('front.goto-webinar.registration.email'); // GotoWebinar Registration through email
 
+        Route::get('/vipps', 'VippsController@index');
+        Route::get('/vipps/payment/v2/payments/{orderId}', 'VippsController@paymentCallback');
+        Route::get('/vipps/fallback', 'VippsController@fallback');
+
         // Course
         Route::group([
             'prefix' => 'course'
