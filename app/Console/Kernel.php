@@ -58,7 +58,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('webinarpakkeexpiresinaweek:command')
             ->dailyAt('08:00');
         $schedule->command('courseemailout:command')
-            ->dailyAt('09:00');
+            ->dailyAt('08:00');
         $schedule->command('lockfinishedmanuscript:command')
             ->everyThirtyMinutes();
         $schedule->command('webinaremailout:command')
