@@ -750,7 +750,7 @@ class LearnerController extends Controller
         $from_email = $request->from_email ?: 'post@forfatterskolen.no';
         $from_name  = $request->from_name ?: 'Forfatterskolen';
 
-        $email = 'elybutabara@mailinator.com';//$learner->email;
+        $email = $learner->email;
         $encode_email = encrypt($email);
         $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
         $password = $learner->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
