@@ -708,11 +708,14 @@ class FrontendHelpers
                 // Total length of text in the document
                 $textLength = ($n1 + $n2 + $n3 + $n4);
 
-                $extracted_plaintext = fread($fh, $textLength);
+                if ($textLength > 0) {
+                    $extracted_plaintext = fread($fh, $textLength);
 
-                // if you want to see your paragraphs in a new line, do this
-                // return nl2br($extracted_plaintext);
-                return $extracted_plaintext;
+                    // if you want to see your paragraphs in a new line, do this
+                    // return nl2br($extracted_plaintext);
+                    return $extracted_plaintext;
+                }
+                return false;
             } else {
                 return false;
             }
