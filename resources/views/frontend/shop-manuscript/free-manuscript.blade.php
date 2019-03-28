@@ -59,8 +59,8 @@
                                         Din tekst (for å lime inn må du bruke lim inn funksjon fra tastaturet, ikke mus)
                                         CTRL + V
                                     </label>
-                                    <textarea class="form-control" name="content" rows="12" placeholder="Maks 500 ord"
-                                              id="editor">{{ old('content') }}</textarea>
+                                    <textarea class="form-control" name="manuscript_content" rows="12" placeholder="Maks 500 ord"
+                                              id="editor">{{ old('manuscript_content') }}</textarea>
                                     <span class="note-color">
                                         *Kun en innsending per person
                                     </span>

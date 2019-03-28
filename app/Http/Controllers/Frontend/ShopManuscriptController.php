@@ -802,7 +802,7 @@ class ShopManuscriptController extends Controller
             'name' => 'required',
             'email' => 'required|email',
             'genre' => 'required',
-            'content' => 'required',
+            'manuscript_content' => 'required',
         ]);
 
         $wordcount = Session::get('wordcount');
@@ -828,8 +828,8 @@ Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">po
 
         $name = $request->name;
         $email = $request->email;
-        $content = $request->content;
-        $word_count = FrontendHelpers::get_num_of_words($request->content);
+        $content = $request->manuscript_content;
+        $word_count = FrontendHelpers::get_num_of_words($request->manuscript_content);
 
         if( $word_count > 0 ) :
             // Send email
@@ -847,12 +847,12 @@ Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">po
                 'name' => $request->name,
                 'email' => $request->email,
                 'genre' => $request->genre,
-                'content' => $request->content
+                'content' => $request->manuscript_content
             ]);
 
             // forget the wordcount
             Session::forget('wordcount');
-            return redirect(route('front.free-manuscript.success'));
+            return redirect()->route('front.free-manuscript.success');
         endif;
     }
 
