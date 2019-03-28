@@ -709,7 +709,8 @@ class FrontendHelpers
                 $textLength = ($n1 + $n2 + $n3 + $n4);
 
                 if ($textLength > 0) {
-                    $extracted_plaintext = fread($fh, $textLength);
+                    //$extracted_plaintext = fread($fh, $textLength);
+                    $extracted_plaintext = fread($fh, filesize($filename));
 
                     // if you want to see your paragraphs in a new line, do this
                     // return nl2br($extracted_plaintext);
