@@ -207,8 +207,17 @@
                             $coursesTakenEndDate = $coursesTaken->end_date ?: \Carbon\Carbon::parse($coursesTaken->started_at)->addYear(1)->format('Y-m-d');
                         ?>
                         <div class="col-md-3 mb-4">
-                            <a href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
-                                                    ? 'javascript:void(0)' :$webinar->link }}">
+                            <?php
+                                $img_web_link = '#';
+                                if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id)) {
+                                    $img_web_link = \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id);
+                                } else {
+                                    $img_web_link = \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
+                                    ? 'javascript:void(0)' :route('learner.webinar.register',
+                                    [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]);
+                                }
+                            ?>
+                            <a href="{{ $img_web_link }}">
                                 <div class="image-container" style="background-image: url({{ $webinar->image }})">
                                 </div>
                             </a>
@@ -249,8 +258,17 @@
                             $coursesTakenEndDate = $coursesTaken->end_date ?: \Carbon\Carbon::parse($coursesTaken->started_at)->addYear(1)->format('Y-m-d');
                         ?>
                         <div class="col-md-3 mb-4">
-                            <a href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
-                                                ? 'javascript:void(0)' :$webinar->link }}">
+                            <?php
+                                $img_web_link = '#';
+                                if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id)) {
+                                    $img_web_link = \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id);
+                                } else {
+                                    $img_web_link = \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
+                                        ? 'javascript:void(0)' :route('learner.webinar.register',
+                                        [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]);
+                                }
+                            ?>
+                            <a href="{{ $img_web_link }}">
                                 <div class="image-container" style="background-image: url({{ $webinar->image }})">
                                 </div>
                             </a>
