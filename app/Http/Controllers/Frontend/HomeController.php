@@ -1097,13 +1097,15 @@ class HomeController extends Controller
 
     public function testemail()
     {
-        /*$subject = 'testing email';
+        $subject = 'Fresh email subject';
         $from = 'post@forfatterskolen.no';
         $from_name = 'Forfatterskolen';
-        $to = 'elybutabara@mailinator.com';
-        $content = 'this is a test only';
-
-        $emailData['email_subject'] = $subject;
+        $to = 'elybutabara@gmail.com';
+        $content = 'this is a test only from PORT '.env('MAIL_PORT');
+        echo $to."<br/>";
+        echo env('MAIL_PORT')."<br/>";
+        AdminHelpers::send_email($subject,'post@forfatterskolen.no', $to, $content);
+        /*$emailData['email_subject'] = $subject;
         $emailData['email_message'] = $content;
         $emailData['from_name'] = NULL;
         $emailData['from_email'] = NULL;

@@ -98,7 +98,7 @@ class AdminHelpers
         $email_pass = config('mail.password');//env('MAIL_PASSWORD');
 
         // set mailer
-        $transport = \Swift_SmtpTransport::newInstance($host, $port, 'tls');
+        $transport = \Swift_SmtpTransport::newInstance($host, $port, 'ssl');
         $transport->setUsername($email_sender);
         $transport->setPassword($email_pass);
 
@@ -1196,6 +1196,74 @@ class AdminHelpers
         $response = array(
                 'data' => $result,
                 'http_code' => $info['http_code']
+        );
+
+        return $response;
+
+    }
+
+    public static function generateHash($length)
+    {
+        return substr(md5(microtime()), 0, $length);
+    }
+
+    /**
+     * Curl for vipps
+     * @param $method
+     * @param $loc_url
+     * @param bool $data
+     * @param array $header
+     * @return array
+     */
+    public static function vippsAPI($method, $loc_url, $data = false, $header = [])
+    {
+        $curl = curl_init();
+        $url = env('VIPPS_URL_TEST').$loc_url;
+
+        $subscription_key = env('VIPPS_SUBSCRIPTION_TEST');
+
+        $header[] = 'Ocp-Apim-Subscription-Key: '.$subscription_key;
+        $header[] = 'Content-type: application/json';
+
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+
+        switch ($method)
+        {
+            case "POST":
+                curl_setopt($curl, CURLOPT_POST, 1);
+
+                if ($data)
+                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                break;
+            case "PUT":
+                curl_setopt($curl, CURLOPT_PUT, 1);
+
+                if ($data)
+                    $url = sprintf("%s?%s", $url, http_build_query($data));
+                break;
+            case "DELETE":
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+                if ($data)
+                    $url = sprintf("%s?%s", $url, http_build_query($data));
+                break;
+            default:
+                if ($data)
+                    $url = sprintf("%s?%s", $url, http_build_query($data));
+        }
+
+        curl_setopt($curl, CURLINFO_HEADER_OUT, true);
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+        $result = json_decode(curl_exec($curl));
+        $info = curl_getinfo($curl);
+
+        curl_close($curl);
+
+        $response = array(
+            'data' => $result,
+            'http_code' => $info['http_code']
         );
 
         return $response;
