@@ -53,15 +53,15 @@ class VippsRepository extends BaseRepository {
             ],
 
             'merchantInfo' => [
-                'callbackPrefix' => url('/vipps/payment'),//'http://forfatterskolen.no/vipps/payment',
-                'fallBack' => url('/thankyou'),//'http://forfatterskolen.no/thankyou',
+                'callbackPrefix' => 'http://forfatterskolen.no/vipps/payment',//url('/vipps/payment'),
+                'fallBack' => 'http://forfatterskolen.no/thankyou',//url('/thankyou'),
                 'paymentType' => 'eComm Regular Payment',
-                'merchantSerialNumber' => 211003//AdminHelpers::generateHash(6)
+                'merchantSerialNumber' => env('VIPPS_MSN_TEST')//AdminHelpers::generateHash(6)
             ],
 
             'transaction' => [
                 'amount' => 100,
-                'orderId' => 8,
+                'orderId' => 15,
                 'transactionText' => 'Your order'
             ]
         );

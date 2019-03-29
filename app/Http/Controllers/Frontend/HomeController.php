@@ -28,6 +28,7 @@ use App\PilotReaderBookReading;
 use App\PilotReaderBookSettings;
 use App\Poem;
 use App\PublisherBook;
+use App\Repositories\VippsRepository;
 use App\Settings;
 use App\Solution;
 use App\SolutionArticle;
@@ -1371,5 +1372,16 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
             echo "<br/><br/>";
             //echo "</pre>";
         }
+    }
+
+    /**
+     * Process the payment callback
+     * @param $orderId
+     * @param Request $request
+     * @param VippsRepository $vippsRepository
+     */
+    public function paymentCallback($orderId, Request $request, VippsRepository $vippsRepository)
+    {
+        $vippsRepository->paymentCallback($orderId, $request);
     }
 }

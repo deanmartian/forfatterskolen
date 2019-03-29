@@ -41,16 +41,4 @@ class VippsController extends Controller {
 
         return redirect()->to($result['data']->url);
     }
-
-    /**
-     * Process the payment callback
-     * @param $orderId
-     * @param Request $request
-     * @param VippsRepository $vippsRepository
-     */
-    public function paymentCallback($orderId, Request $request, VippsRepository $vippsRepository)
-    {
-        $vippsRepository->paymentCallback($orderId, $request);
-    }
-
 }
