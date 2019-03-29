@@ -2,6 +2,7 @@
 
 namespace App\Http;
 use App\Advisory;
+use App\PaymentMode;
 use App\PilotReaderBook;
 use App\PilotReaderBookChapter;
 use App\PilotReaderBookReading;
@@ -678,6 +679,20 @@ class FrontendHelpers
         }
 
         return $image;
+	}
+
+    /**
+     * Payment modes check if vipps option should be included
+     * @param bool $showVipps
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public static function paymentModes($showVipps = false)
+    {
+        $mode = PaymentMode::query();
+        if (!$showVipps) {
+            $mode->where('id', '!=', 5);
+        }
+        return $mode->get();
 	}
 
     /**

@@ -61,7 +61,7 @@ class VippsRepository extends BaseRepository {
 
             'transaction' => [
                 'amount' => 100,
-                'orderId' => 15,
+                'orderId' => 16,
                 'transactionText' => 'Your order'
             ]
         );
