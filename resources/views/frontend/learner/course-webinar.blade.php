@@ -95,7 +95,18 @@
                             <div class="col-sm-12 col-md-6 col-lg-4 mt-5">
                                 <div class="card card-global border-0">
                                     <div class="card-header webinar-thumb">
-                                        <a href="{{ $webinar->link }}">
+                                        <?php
+                                            $img_web_link = '#';
+                                            $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
+                                            if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id)) {
+                                                $img_web_link = \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id);
+                                            } else {
+                                                $img_web_link = \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                    ? 'javascript:void(0)' :route('learner.webinar.register',
+                                                        [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]);
+                                            }
+                                        ?>
+                                        <a href="{{ $img_web_link }}">
                                             <div style="background-image: url({{ $webinar->image }})">
                                                 <i class="play-button"></i>
                                             </div>
@@ -130,7 +141,7 @@
                                                     <i class="img-icon icon-right-arrow"></i>
                                                 </a>
                                             @else
-                                                @if($webinar->set_as_replay)
+                                                {{--@if($webinar->set_as_replay)
                                                     <a class="btn site-btn-global w-100 rounded-0" href="{{ $webinar->link }}" target="_blank">
                                                         Repriser
                                                         <i class="img-icon icon-right-arrow"></i>
@@ -138,6 +149,20 @@
                                                 @else
                                                     <a class="btn site-btn-global w-100 rounded-0" href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date_with_value))
                                                         ? 'javascript:void(0)' :$webinar->link }}" target="_blank">
+                                                        Registrer Deg
+                                                        <i class="img-icon icon-right-arrow"></i>
+                                                    </a>
+                                                @endif--}}
+                                                @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id))
+                                                    <a class="btn site-btn-global w-100 rounded-0"
+                                                       href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id) }}">
+                                                        Påmeldt
+                                                    </a>
+                                                @else
+                                                    <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
+                                                       href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                    ? 'javascript:void(0)' :route('learner.webinar.register',
+                                                    [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]) }}">
                                                         Registrer Deg
                                                         <i class="img-icon icon-right-arrow"></i>
                                                     </a>
@@ -161,7 +186,18 @@
                             <div class="col-sm-12 col-md-6 col-lg-4 mt-5">
                                 <div class="card card-global border-0">
                                     <div class="card-header webinar-thumb">
-                                        <a href="{{ $webinar->link }}">
+                                        <?php
+                                            $img_web_link = '#';
+                                            $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
+                                            if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id)) {
+                                                $img_web_link = \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id);
+                                            } else {
+                                                $img_web_link = \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                    ? 'javascript:void(0)' :route('learner.webinar.register',
+                                                        [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]);
+                                            }
+                                        ?>
+                                        <a href="{{ $img_web_link }}">
                                             <div style="background-image: url({{ $webinar->image }})">
                                                 <i class="play-button"></i>
                                             </div>
@@ -205,7 +241,7 @@
                                                     <i class="img-icon icon-right-arrow"></i>
                                                 </a>
                                             @else
-                                                @if($webinar->set_as_replay)
+                                                {{--@if($webinar->set_as_replay)
                                                     <a class="btn site-btn-global w-100 rounded-0" href="{{ $webinar->link }}" target="_blank">
                                                         Repriser
                                                         <i class="img-icon icon-right-arrow"></i>
@@ -213,6 +249,20 @@
                                                 @else
                                                     <a class="btn site-btn-global w-100 rounded-0" href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date_with_value))
                                                     ? 'javascript:void(0)' :$webinar->link }}" target="_blank">
+                                                        Registrer Deg
+                                                        <i class="img-icon icon-right-arrow"></i>
+                                                    </a>
+                                                @endif--}}
+                                                @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id))
+                                                    <a class="btn site-btn-global w-100 rounded-0"
+                                                       href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id) }}">
+                                                        Påmeldt
+                                                    </a>
+                                                @else
+                                                    <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
+                                                       href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                    ? 'javascript:void(0)' :route('learner.webinar.register',
+                                                    [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]) }}">
                                                         Registrer Deg
                                                         <i class="img-icon icon-right-arrow"></i>
                                                     </a>
