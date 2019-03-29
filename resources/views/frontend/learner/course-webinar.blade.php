@@ -357,5 +357,34 @@
 
         </div> <!-- end container -->
     </div>
+
+    <div id="submitSuccessModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <div style="color: green; font-size: 24px"><i class="fa fa-check"></i></div>
+                    <p>
+                        Du har suksessfullt registrert deg til webinar
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+@stop
+
+@section('scripts')
+    <script>
+        $(".webinarRegister").click(function(){
+            let register_btn = $(this);
+            register_btn.text('');
+            register_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+            register_btn.attr('disabled', 'disabled');
+        });
+
+        @if (Session::has('success'))
+        $('#submitSuccessModal').modal('show');
+        @endif
+    </script>
 @stop
 
