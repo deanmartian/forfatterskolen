@@ -94,7 +94,18 @@
                             <div class="col-sm-12 col-md-6 col-lg-4 mt-5">
                                 <div class="card card-global border-0">
                                     <div class="card-header webinar-thumb">
-                                        <a href="{{ $webinar->link }}">
+                                        <?php
+                                            $img_web_link = '#';
+                                            $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
+                                            if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id)) {
+                                                $img_web_link = \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id);
+                                            } else {
+                                                $img_web_link = \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                    ? 'javascript:void(0)' :route('learner.webinar.register',
+                                                        [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]);
+                                            }
+                                        ?>
+                                        <a href="{{ $img_web_link }}">
                                             <div style="background-image: url({{ $webinar->image }})">
                                                 <i class="play-button"></i>
                                             </div>
@@ -179,7 +190,18 @@
                             <div class="col-sm-12 col-md-6 col-lg-4 mt-5">
                                 <div class="card card-global border-0">
                                     <div class="card-header webinar-thumb">
-                                        <a href="{{ $webinar->link }}">
+                                        <?php
+                                            $img_web_link = '#';
+                                            $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
+                                            if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id)) {
+                                                $img_web_link = \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id);
+                                            } else {
+                                                $img_web_link = \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                    ? 'javascript:void(0)' :route('learner.webinar.register',
+                                                        [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]);
+                                            }
+                                        ?>
+                                        <a href="{{ $img_web_link }}">
                                             <div style="background-image: url({{ $webinar->image }})">
                                                 <i class="play-button"></i>
                                             </div>
@@ -258,7 +280,18 @@
                                 <div class="col-sm-12 col-md-6 col-lg-4 mt-5">
                                     <div class="card card-global border-0">
                                         <div class="card-header webinar-thumb">
-                                            <a href="{{ $result->link }}">
+                                            <?php
+                                                $img_web_link = '#';
+                                                $coursesTaken = \App\CoursesTaken::find($result->courses_taken_id);
+                                                if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($result->id, Auth::user()->id)) {
+                                                    $img_web_link = \App\Http\FrontendHelpers::getWebinarJoinURL($result->id, Auth::user()->id);
+                                                } else {
+                                                    $img_web_link = \Carbon\Carbon::parse($result->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                        ? 'javascript:void(0)' :route('learner.webinar.register',
+                                                            [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($result->link), $result->id]);
+                                                }
+                                            ?>
+                                            <a href="{{ $img_web_link }}">
                                                 <div style="background-image: url({{ $result->image }})">
                                                     <i class="play-button"></i>
                                                 </div>
