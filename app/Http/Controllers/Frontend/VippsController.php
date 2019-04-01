@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 class VippsController extends Controller {
 
     protected $access_token = '';
+    protected $repository;
 
     /**
      * VippsController constructor.
@@ -18,6 +19,7 @@ class VippsController extends Controller {
      */
     public function __construct(VippsRepository $repository)
     {
+        $this->repository = $repository;
         $result = $repository->getAccessToken();
 
         if ($result instanceof ApiException) {
@@ -32,9 +34,9 @@ class VippsController extends Controller {
      * @param VippsRepository $repository
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function index(VippsRepository $repository)
+    public function index()
     {
-        $result = $repository->initiatePayment($this->access_token);
+        $result = $this->repository->initiatePayment($this->access_token);
         if ($result instanceof ApiException) {
             return ApiResponse::error($result->getMessage(), $result->getData(), $result->getCode());
         }
