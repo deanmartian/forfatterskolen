@@ -322,6 +322,19 @@ class ShopController extends Controller
 
         $payment_plan = ( $paymentMode->mode == "Paypal" ) ?  "Hele beløpet" : $paymentPlan->plan;
 
+        // additional checking if the user selects correct payment mode for the selected plan
+        // not faktura and payment plan is not full payment or split invoice
+        if ($paymentMode->id !== 3 && ($paymentPlan->id != 8 || isset($request->split_invoice))) {
+            return redirect()->back()->with(['errors' =>
+                AdminHelpers::createMessageBag('Invalid payment mode for the selected plan')]);
+        } else {
+            // payment is faktura and wants to split invoice
+            if ($paymentPlan->id == 8 && (isset($request->split_invoice) && $request->split_invoice)) {
+                return redirect()->back()->with(['errors' =>
+                    AdminHelpers::createMessageBag('Invalid payment mode for the selected plan')]);
+            }
+        }
+
 
         /* check if there's an issue date set ir not then use today*/
         $dueDate = $package->issue_date ?: date("Y-m-d");
