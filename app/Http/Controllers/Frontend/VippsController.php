@@ -43,4 +43,19 @@ class VippsController extends Controller {
 
         return redirect()->to($result['data']->url);
     }
+
+    public function getPaymentDetails($orderId)
+    {
+        $result = $this->repository->getPaymentDetails($orderId, $this->access_token);
+        if ($result instanceof ApiException) {
+            return ApiResponse::error($result->getMessage(), $result->getData(), $result->getCode());
+        }
+
+        print_r($result);
+
+        // check for transactionSummary
+        if (property_exists($result['data'], 'transactionSummary')) {
+            echo "has transaction";
+        }
+    }
 }

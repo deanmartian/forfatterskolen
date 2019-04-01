@@ -61,7 +61,7 @@ class VippsRepository extends BaseRepository {
 
             'transaction' => [
                 'amount' => 100,
-                'orderId' => 16,
+                'orderId' => 26,
                 'transactionText' => 'Your order'
             ]
         );
@@ -85,6 +85,32 @@ class VippsRepository extends BaseRepository {
         $new_settings['setting_name'] = 'paymentCallback';
         $new_settings['setting_value'] = $request;
         Settings::create($new_settings);
+    }
+
+    /**
+     * Get the payment details of the order
+     * @param $orderId
+     * @param $token_access
+     * @return ApiException|array
+     */
+    public function getPaymentDetails($orderId, $token_access)
+    {
+        $url = '/ecomm/v2/payments/'.$orderId.'/details';
+        $method = "GET";
+        $header = array();
+        $header[] = 'Authorization: '.$token_access;
+
+        $response = AdminHelpers::vippsAPI($method, $url, [], $header);
+
+        if ($response['http_code'] != ApiResponse::HTTPCODE_SUCCESS) {
+            if (isset($response['data'][0])) {
+                return new ApiException($response['data'][0]->errorMessage, null, $response['http_code']);
+            }
+
+            return new ApiException($response['data']->message, null, $response['http_code']);
+        }
+
+        return $response;
     }
 
 }

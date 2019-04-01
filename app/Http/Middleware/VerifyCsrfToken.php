@@ -19,6 +19,10 @@ class VerifyCsrfToken extends BaseVerifier
     	'paypalipn*',
     	'paypalipn/*',
         '/webhook/paypal/*',
-        'gotowebinar'
+        'gotowebinar',
+        '/vipps/*',
+        '/vipps*',
+        '/vipps/payment/v2/payments/*',
+        '/vipps/payment/v2/payments*'
     ];
 }
