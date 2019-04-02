@@ -86,7 +86,9 @@ class CourseEmailOut extends Command
                 $emailData['attach_file'] = NULL;
 
                 // add email to queue
-                \Mail::to($toMail)->queue(new SubjectBodyEmail($emailData));
+                //\Mail::to($toMail)->queue(new SubjectBodyEmail($emailData));
+                AdminHelpers::send_email($emailData['email_subject'],
+                    $emailData['from_email'], $toMail, $emailData['email_message']);
                 CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$toMail]);
             }
         }
@@ -134,7 +136,9 @@ class CourseEmailOut extends Command
                 $emailData['attach_file'] = NULL;
 
                 // add email to queue
-                \Mail::to($toMail)->queue(new SubjectBodyEmail($emailData));
+                //\Mail::to($toMail)->queue(new SubjectBodyEmail($emailData));
+                AdminHelpers::send_email($emailData['email_subject'],
+                    $emailData['from_email'], $toMail, $emailData['email_message']);
                 CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$toMail]);
             }
         }

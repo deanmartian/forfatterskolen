@@ -148,7 +148,9 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
                     $emailData['from_email'] = NULL;
                     $emailData['attach_file'] = NULL;
 
-                    \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
+                    //\Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
+                    AdminHelpers::send_email($emailData['email_subject'],
+                        $emailData['from_email'], $user_email, $emailData['email_message']);
                     CronLog::create(['activity' => 'GoToWebinarReminder CRON send email to '.$user_email]);
                 }
             }

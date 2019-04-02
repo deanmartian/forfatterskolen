@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\CronLog;
 use App\FreeCourseDelayedEmail;
+use App\Http\AdminHelpers;
 use App\Mail\FreeCourseNewUserEmail;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -66,7 +67,9 @@ class FreeCourseDelayedEmailCommand extends Command
             $email_data['email_subject'] = $course->title;
             $toEmail = $user->email;
 
-            \Mail::to($toEmail)->queue(new FreeCourseNewUserEmail($email_data));
+            //\Mail::to($toEmail)->queue(new FreeCourseNewUserEmail($email_data));
+            AdminHelpers::send_email($email_data['email_subject'],
+                $email_data['from_email'], $toEmail, $email_data['email_message']);
             CronLog::create(['activity' => 'FreeCourseDelayedEmailCommand sent email to user '.$user->id]);
             $delayedEmail->delete(); //delete the record after adding it to queue
         }
