@@ -146,7 +146,8 @@
 
 .free-webinar-page .form-container .form-control {
     font-size: 18px;
-    padding: 22px 0;
+    padding: 0 21px;
+    height: 46px;
 }
 
 .free-webinar-page .form-container .form-control::placeholder {
