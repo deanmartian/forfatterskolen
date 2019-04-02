@@ -94,7 +94,7 @@ class FrontendHelpers
 
     public static function formatDateTimeNor($date)
     {
-        return \Carbon\Carbon::parse($date)->format('d.m.Y').' Klokken '.\Carbon\Carbon::parse($date)->format('H:i');
+        return \Carbon\Carbon::parse($date)->format('d.m.Y').' klokken '.\Carbon\Carbon::parse($date)->format('H:i');
     }
 
     public static function formatDateTimeNor2($date)
