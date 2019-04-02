@@ -73,6 +73,18 @@
 }
 
 @font-face{
+    font-family: 'Montserrat SemiBold';
+    src: url('../fonts/montserrat/Montserrat-SemiBold.otf');
+    font-display: block;
+}
+
+@font-face{
+    font-family: 'Montserrat Bold';
+    src: url('../fonts/montserrat/Montserrat-Bold.otf');
+    font-display: block;
+}
+
+@font-face{
     font-family: 'Century Gothic Bold';
     src: url('../fonts/century-gothic/GOTHICB0.TTF');
     font-display: block;
@@ -1709,7 +1721,8 @@ margin-right: 5px;
 }
 
 .course-single-page .free-course-form-row .form-control {
-    padding: 20px;
+    padding: 0 21px;
+    height: 45px;
 }
 
 .course-single-page .free-course-form-row .alert {
@@ -5267,6 +5280,106 @@ margin-right: 5px;
 
 /* end poems page */
 
+/*  free webinar thanks page */
+.free-webinar-thanks-page .header {
+    background: linear-gradient( rgba(36, 36, 36, .63), rgba(36, 36, 36, .63) ),
+    url(../images-new/free-webinar-thanks-image.jpg) no-repeat bottom / cover;
+    height: 500px;
+    position: relative;
+}
+
+.free-webinar-thanks-page .header:before {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    background: url(../images-new/free-webinar-thanks-divider.png) no-repeat bottom / cover;
+    height: 85px;
+    width: 100%;
+}
+
+.free-webinar-thanks-page .header .container {
+    padding: 120px 260px;
+}
+
+.free-webinar-thanks-page .header h1 {
+    color: #fff;
+    font-size: 80px;
+}
+
+.free-webinar-thanks-page .body {
+    background: linear-gradient(rgba(254, 254, 254, .84), rgba(254, 254, 254, .84)),
+    url(../images-new/free-webinar-thanks-bg.png) no-repeat right / auto 100%;
+}
+
+.free-webinar-thanks-page .body .first-row {
+    margin-top: 30px;
+    padding: 0 100px;
+}
+
+.free-webinar-thanks-page .body .first-container {
+    border-bottom: 1px solid #ccc;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    padding: 0 180px 10px;
+}
+
+.free-webinar-thanks-page .body .second-row {
+    margin-top: 20px;
+}
+
+.free-webinar-thanks-page .body .second-row .left-container .first-img {
+    height: 70%;
+    width: 80%;
+}
+
+.free-webinar-thanks-page .body .second-row .left-container .presenter {
+    margin: 20px auto 0;
+    text-align: left;
+    position: relative;
+    width: 80%;
+}
+
+.free-webinar-thanks-page .body .second-row .left-container .presenter .image {
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: top;
+    display: inline-block;
+}
+
+.free-webinar-thanks-page .body .second-row .left-container .presenter .name {
+    display: inline-block;
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+
+.free-webinar-thanks-page .body .second-row .details-container {
+    padding-right: 100px;
+}
+
+.free-webinar-thanks-page .body .second-row .details-container h1 {
+    font-size: 45px;
+}
+
+.free-webinar-thanks-page .body .second-row .details-container p {
+    font-family: "Montserrat Regular", sans serif;
+    font-size: 19px;
+    margin-top: 20px;
+}
+
+.free-webinar-thanks-page .body .second-row .details-container a {
+    font-family: "Montserrat Regular", sans serif;
+    margin-top: 20px;
+    display: inline-block;
+}
+
+
+/* end free webinar thanks page */
+
 /* theme tabs */
 
 .theme-tabs {
@@ -5455,6 +5568,18 @@ blockquote {
 
 .font-montserrat-medium {
     font-family: "Montserrat Medium", sans serif;
+}
+
+.font-montserrat-regular {
+    font-family: "Montserrat Regular", sans serif;
+}
+
+.font-montserrat-semibold {
+    font-family: "Montserrat SemiBold", sans serif;
+}
+
+.font-montserrat-bold {
+    font-family: "Montserrat Bold", sans serif;
 }
 
 .font-quicksand-light {
@@ -6050,7 +6175,8 @@ textarea.form-control {
 }
 
 .large-input {
-    padding: 21px;
+    padding: 0 21px;
+    height: 45px;
 }
 /* end override form-control*/
 
@@ -6804,6 +6930,48 @@ textarea.form-control {
 
     .free-manuscript-page .header {
         padding: 90px 200px;
+    }
+
+    .free-webinar-thanks-page .header {
+        height: 400px;
+    }
+
+    .free-webinar-thanks-page .header:before {
+        bottom: -2px;
+        height: 60px;
+    }
+
+    .free-webinar-thanks-page .header h1 {
+        font-size: 60px;
+    }
+
+    .free-webinar-thanks-page .header .container {
+        padding: 100px 230px;
+    }
+
+    .free-webinar-thanks-page .body {
+        padding-bottom: 20px;
+    }
+
+    .free-webinar-thanks-page .body .first-container {
+        padding: 0 95px 10px;
+    }
+
+    .free-webinar-thanks-page .body .second-row .details-container h1 {
+        font-size: 40px;
+    }
+
+    .free-webinar-thanks-page .body .second-row .left-container .first-img {
+        height: 75%;
+        width: 90%;
+    }
+
+    .free-webinar-thanks-page .body .second-row .left-container .presenter {
+        width: 90%;
+    }
+
+    .free-webinar-thanks-page .body .second-row .left-container .presenter .name {
+        right: 0;
     }
 }
 
@@ -7915,6 +8083,49 @@ textarea.form-control {
 
     .free-manuscript-page .body .form-container .card {
         padding: 40px 30px;
+    }
+
+    .free-webinar-thanks-page .header {
+        height: 300px;
+    }
+
+    .free-webinar-thanks-page .header h1 {
+        font-size: 40px;
+    }
+
+    .free-webinar-thanks-page .header .container {
+        padding: 100px 200px;
+    }
+
+    .free-webinar-thanks-page .body .first-row {
+        margin-top: 30px;
+        padding: 0 55px;
+    }
+
+    .free-webinar-thanks-page .body .first-container {
+        padding: 0 0 10px;
+    }
+
+    .free-webinar-thanks-page .body .second-row .left-container .first-img {
+        height: 65%;
+        width: 90%;
+    }
+
+    .free-webinar-thanks-page .body .second-row .details-container h1 {
+        font-size: 28px;
+    }
+
+    .free-webinar-thanks-page .body .second-row .left-container .presenter .image {
+        display: block;
+        margin: 0 auto;
+    }
+
+    .free-webinar-thanks-page .body .second-row .left-container .presenter .name {
+        display: block;
+        margin-top: 10px;
+        position: relative;
+        text-align: center;
+        transform: unset;
     }
 
     /* theme tab */
@@ -9236,6 +9447,51 @@ textarea.form-control {
     .free-manuscript-page .body .form-container .card {
         padding: 35px 20px;
     }
+
+    .free-webinar-thanks-page .header {
+        height: 265px;
+    }
+
+    .free-webinar-thanks-page .header:before {
+        height: 38px;
+    }
+
+    .free-webinar-thanks-page .header .container {
+        padding: 80px 135px;
+    }
+
+    .free-webinar-thanks-page .header h1 {
+        font-size: 35px;
+    }
+
+    .free-webinar-thanks-page .body .first-row {
+        padding: 0;
+    }
+
+    .free-webinar-thanks-page .body .second-row .left-container .presenter {
+        width: 100%;
+    }
+
+    .free-webinar-thanks-page .body .second-row .details-container {
+        padding-right: 15px;
+    }
+
+    .free-webinar-thanks-page .body .second-row .details-container h1 {
+        font-size: 27px;
+    }
+
+    .free-webinar-thanks-page .body .second-row .left-container .first-img {
+        height: 50%;
+        width: 100%;
+    }
+
+    .free-webinar-thanks-page .body .second-row .left-container .presenter .name h1 {
+        font-size: 2rem;
+    }
+
+    .free-webinar-thanks-page .body .second-row .left-container .presenter .name h2 {
+        font-size: 1.7rem;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -10395,6 +10651,34 @@ textarea.form-control {
         width: 30% !important;
     }
 
+    .free-webinar-thanks-page .header {
+        height: 170px;
+    }
+
+    .free-webinar-thanks-page .header:before {
+        height: 25px;
+    }
+
+    .free-webinar-thanks-page .header h1 {
+        font-size: 27px;
+    }
+
+    .free-webinar-thanks-page .header .container {
+        padding: 46px 102px;
+    }
+
+    .free-webinar-thanks-page .body .second-row .left-container .first-img {
+        height: 65%;
+        width: 90%;
+    }
+
+    .free-webinar-thanks-page .body .second-row .details-container {
+        margin-top: 30px;
+    }
+
+    .free-webinar-thanks-page .body .second-row .details-container h1 {
+        font-size: 32px;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -10715,6 +10999,14 @@ textarea.form-control {
 
     .front-page .poem-container .card .card-header .title-container {
         width: 64%;
+    }
+
+    .free-webinar-thanks-page .header h1 {
+        font-size: 25px;
+    }
+
+    .free-webinar-thanks-page .header .container {
+        padding: 46px 90px;
     }
 }
 
@@ -11341,5 +11633,21 @@ textarea.form-control {
 
     .free-manuscript-page .body .form-container .mce-menubtn.mce-fixed-width span {
         width: 50px;
+    }
+
+    .free-webinar-thanks-page .header {
+        height: 130px;
+    }
+
+    .free-webinar-thanks-page .header .container {
+        padding: 35px 64px;
+    }
+
+    .free-webinar-thanks-page .body .second-row .details-container {
+        margin-top: 50px;
+    }
+
+    .free-webinar-thanks-page .body .second-row .details-container h1 {
+        font-size: 25px;
     }
 }

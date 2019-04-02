@@ -639,8 +639,31 @@ Warning: This cannot be undone.',
     ),
     'publishing' => 
     array (
-      'main-description' => 'Forfatterskolens utgitte elever Mange av Forfatterskolens elever har etter hvert fått gitt ut bøkene sine, og flere kommer etter. Vi har fulgt elevene underveis, mange helt fra starten. Det gjør oss superstolte, og understreker slagordet til rektor: "Kan jeg, kan du". På disse sidene kan du bli litt bedre kjent med noen av forfatterne, og kikke på bøkene deres. Er du den neste som blir utgitt?',
+      'main-description' => 'Mange av Forfatterskolens elever har etter hvert fått gitt ut bøkene sine, og flere kommer etter. Vi har fulgt elevene underveis, mange helt fra starten. Det gjør oss superstolte, og understreker slagordet til rektor: "Kan jeg, kan du". På disse sidene kan du bli litt bedre kjent med noen av forfatterne, og kikke på bøkene deres. Er du den neste som blir utgitt?',
       'second-description' => 'PS! Klikk på bøkene for å komme til forlagssiden med bokkjøp.',
+    ),
+  ),
+  'free-webinars' => 
+  array (
+    'thanks' => 
+    array (
+      'description' => 
+      array (
+        'button-text' => 'Trykk her for å teste!',
+        'text' => '<p>
+Du skal nå ha fått en mail av meg, med en lenke du skal bruke når webinaret starter. Har du ikke fått lenken i løpet av en halvtime, sjekk spamfilteret ditt.</p>
+
+<p>
+Gleder meg til å treffe deg på webinaret!
+</p>
+
+<p>
+Om du ikke har vært på webinar før, kan du sjekke tilkoblingen din her:
+</p>',
+        'title' => 'Check your email for the link',
+      ),
+      'main-description' => 'Vi bekrefter at vi har mottatt din påmeldelse til vårt webinar den [webinar_datetime]',
+      'main-title' => 'Gøy at du meldte deg på!',
     ),
   ),
 );

@@ -572,7 +572,8 @@ Warning: This cannot be undone.',
       array (
         'description' => 'Å skrive et manus kan være en utfordring. Det mangler sjelden på ideer og lyst, men hvordan komme i gang? Og hvordan lykkes med å skrive et godt manus – uten å gi opp på veien? Fortvil ikke, vi har skreddersydde kurs til å hjelpe deg. I tillegg får du profesjonell veiledning og en uunnværlig heiagjeng. Et godt bevis på at metoden vår funker: Vi har hjulpet mange elever med å bli utgitt – og flere er på vei (se "utgitte elever"). Er du den neste?',
       ),
-      'second-description' => 'Forfatterskolens nettbaserte skrivekurs tar deg 10 steg fra idé til ferdig manus – i ditt eget tempo. Du får verktøyet, veiledningen og vennegjengen du trenger for å skrive og fullføre ditt manus – og inspirerende møter med landets mest kjente forfattere og redaktører. Et godt bevis på at metoden vår funker: Kursene våre har allerede avlet flere utgitte elever på de store forlagene. Er du den neste? Velg din favorittsjanger under, og sikre deg en plass på et av våre kommende kurs. Husk: Det viktigste steget er å bestemme seg. Resten hjelper vi deg med.',
+      'second-description' => 'Å skrive et manus kan være en utfordring. Det mangler sjelden på ideer og lyst, men hvordan komme i gang? Og hvordan lykkes med å skrive et godt manus – uten å gi opp på veien? Fortvil ikke, vi har skreddersydde kurs til å hjelpe deg. I tillegg får du profesjonell veiledning og en uunnværlig heiagjeng. Et godt bevis på at metoden vår funker: Vi har hjulpet mange elever med å bli utgitt – og flere er på vei (se "utgitte elever"). Er du den neste?
+Forfatterskolens nettbaserte skrivekurs tar deg 10 steg fra idé til ferdig manus – i ditt eget tempo. Du får verktøyet, veiledningen og vennegjengen du trenger for å skrive og fullføre ditt manus – og inspirerende møter med landets mest kjente forfattere og redaktører. Et godt bevis på at metoden vår funker: Kursene våre har allerede avlet flere utgitte elever på de store forlagene. Er du den neste? Velg din favorittsjanger under, og sikre deg en plass på et av våre kommende kurs. Husk: Det viktigste steget er å bestemme seg. Resten hjelper vi deg med.',
     ),
     'nav' => 
     array (
@@ -639,8 +640,31 @@ Warning: This cannot be undone.',
     ),
     'publishing' => 
     array (
-      'main-description' => 'Forfatterskolens utgitte elever Mange av Forfatterskolens elever har etter hvert fått gitt ut bøkene sine, og flere kommer etter. Vi har fulgt elevene underveis, mange helt fra starten. Det gjør oss superstolte, og understreker slagordet til rektor: "Kan jeg, kan du". På disse sidene kan du bli litt bedre kjent med noen av forfatterne, og kikke på bøkene deres. Er du den neste som blir utgitt?',
+      'main-description' => 'Mange av Forfatterskolens elever har etter hvert fått gitt ut bøkene sine, og flere kommer etter. Vi har fulgt elevene underveis, mange helt fra starten. Det gjør oss superstolte, og understreker slagordet til rektor: "Kan jeg, kan du". På disse sidene kan du bli litt bedre kjent med noen av forfatterne, og kikke på bøkene deres. Er du den neste som blir utgitt?',
       'second-description' => 'PS! Klikk på bøkene for å komme til forlagssiden med bokkjøp.',
+    ),
+  ),
+  'free-webinars' => 
+  array (
+    'thanks' => 
+    array (
+      'main-title' => 'Gøy at du meldte deg på!',
+      'main-description' => 'Vi bekrefter at vi har mottatt din påmeldelse til vårt webinar den [webinar_datetime]',
+      'description' => 
+      array (
+        'title' => 'Check your email for the link',
+        'text' => '<p>
+Du skal nå ha fått en mail av meg, med en lenke du skal bruke når webinaret starter. Har du ikke fått lenken i løpet av en halvtime, sjekk spamfilteret ditt.</p>
+
+<p>
+Gleder meg til å treffe deg på webinaret!
+</p>
+
+<p>
+Om du ikke har vært på webinar før, kan du sjekke tilkoblingen din her:
+</p>',
+        'button-text' => 'Trykk her for å teste!',
+      ),
     ),
   ),
 );
