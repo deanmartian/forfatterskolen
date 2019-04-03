@@ -5,11 +5,15 @@ namespace App\Repositories;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Http\AdminHelpers;
+use App\Mail\SubjectBodyEmail;
 use App\Settings;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class VippsRepository extends BaseRepository {
 
+    const PAYMENT_RESERVED = 'RESERVED';
+    const PAYMENT_CANCELLED = 'CANCELLED';
     /**
      * Get the access token
      * @return ApiException|array
@@ -53,15 +57,15 @@ class VippsRepository extends BaseRepository {
             ],
 
             'merchantInfo' => [
-                'callbackPrefix' => 'http://forfatterskolen.no/vipps/payment',//url('/vipps/payment'),
-                'fallBack' => 'http://forfatterskolen.no/thankyou',//url('/thankyou'),
+                'callbackPrefix' => 'https://www.forfatterskolen.no/vipps/payment',//url('/vipps/payment'),
+                'fallBack' => 'https://www.forfatterskolen.no/thankyou',//url('/thankyou'),
                 'paymentType' => 'eComm Regular Payment',
                 'merchantSerialNumber' => env('VIPPS_MSN_TEST')//AdminHelpers::generateHash(6)
             ],
 
             'transaction' => [
                 'amount' => 100,
-                'orderId' => 26,
+                'orderId' => 'a4',
                 'transactionText' => 'Your order'
             ]
         );
@@ -80,11 +84,18 @@ class VippsRepository extends BaseRepository {
         return $response;
     }
 
+    /**
+     * @param $orderId
+     * @param $request Request
+     */
     public function paymentCallback($orderId, $request)
     {
-        $new_settings['setting_name'] = 'paymentCallback';
-        $new_settings['setting_value'] = $request;
-        Settings::create($new_settings);
+        $transactionInfo = $request['transactionInfo'];
+
+        // check if the payment is done
+        if ($transactionInfo['status'] == self::PAYMENT_RESERVED) {
+            $this->capturePayment($orderId);
+        }
     }
 
     /**
@@ -108,6 +119,70 @@ class VippsRepository extends BaseRepository {
             }
 
             return new ApiException($response['data']->message, null, $response['http_code']);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Capture payment by order od
+     * @param $orderId
+     * @return ApiException|array|\Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+     */
+    public function capturePayment($orderId)
+    {
+        $get_token = $this->getAccessToken();
+
+        if ($get_token instanceof ApiException) {
+            return ApiResponse::error($get_token->getMessage(), $get_token->getData(), $get_token->getCode());
+        }
+
+        $access_token = $get_token['data']->access_token;
+
+        $url = '/ecomm/v2/payments/'.$orderId.'/capture';
+        $method = "POST";
+        $header = array();
+        $header[] = 'Authorization: '.$access_token;
+
+        $body = array(
+            'merchantInfo' => [
+                'merchantSerialNumber' => env('VIPPS_MSN_TEST')
+            ],
+
+            'transaction' => [
+                'transactionText' => 'Captured Payment for order #'.$orderId
+            ]
+        );
+
+        $body = json_encode($body);
+        $response = AdminHelpers::vippsAPI($method, $url, $body, $header);
+
+        if ($response['http_code'] != ApiResponse::HTTPCODE_SUCCESS) {
+            if (isset($response['data'][0])) {
+                return new ApiException($response['data'][0]->errorMessage, null, $response['http_code']);
+            }
+
+            return new ApiException($response['data']->message, null, $response['http_code']);
+        }
+
+        $data = $response['data'];
+        $transactionInfo = $response['data']->transactionInfo;
+
+        $message = "<p>Payment Captured <br/><br> Invoice id: ".$data->orderId." <br/> Amount:".$transactionInfo->amount." 
+<br/> Transaction id: ".$transactionInfo->transactionId."</p>";
+
+        $subject = 'Payment Captured for Invoice #'.$orderId;
+        $from = 'post@forfatterskolen.no';
+        $to = 'elybutabara@mailinator.com';
+        $emailData['email_subject'] = $subject;
+        $emailData['email_message'] = $message;
+        $emailData['from_name'] = NULL;
+        $emailData['from_email'] = NULL;
+        $emailData['attach_file'] = NULL;
+
+        // notify admin once the payment is captured
+        if ($transactionInfo->status == 'Captured') {
+            AdminHelpers::send_email($subject,$from, $to, $message);
         }
 
         return $response;
