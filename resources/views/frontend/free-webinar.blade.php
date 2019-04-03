@@ -68,7 +68,7 @@
 
                 <div class="schedule-container w-100 text-center">
                     <h1>
-                        Søndag
+                        {{ ucfirst(\App\Http\FrontendHelpers::convertDayLanguage($date->format('N'))) }}
                     </h1>
 
                     <div class="date-container">
