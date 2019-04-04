@@ -621,7 +621,7 @@ class LearnerController extends Controller
 
             $email_data['email_message'] = $message;
             // use queue to send email on background
-            Mail::to($toMail)->queue(new AssignmentSubmittedEmail($email_data));
+            //Mail::to($toMail)->queue(new AssignmentSubmittedEmail($email_data));
 
             // notify user
             $user_email = Auth::user()->email;
