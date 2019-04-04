@@ -73,7 +73,7 @@ class HomeController extends Controller
         $webinar_pakke = Course::find(17);
         $next_webinar = $webinar_pakke->webinars()->where('start_date', '>=' ,Carbon::today())
             ->where('set_as_replay', 0)->first();
-        $next_free_webinar = FreeWebinar::where('start_date', '>=' ,Carbon::today())->first();
+        $next_free_webinar = FreeWebinar::where('start_date', '>=' ,Carbon::today())->orderBy('start_date', 'ASC')->first();
         // check for workshop that has menu and is for sale and date is greater than equal to today
         $next_workshop = Workshop::has('menus')->where('date', '>=', Carbon::today())
             ->where('is_free', '=', 0)
