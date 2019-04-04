@@ -747,6 +747,25 @@ class AssignmentController extends Controller
     }
 
     /**
+     * Update availability of feedback with no group
+     * @param $feedback_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function manuscriptFeedbackNoGroupUpdateAvailability($feedback_id, Request $request)
+    {
+        $feedback = AssignmentFeedbackNoGroup::find($feedback_id);
+
+        if ($feedback) {
+            $feedback->availability = $request->availability;
+            $feedback->save();
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback sent successfully.'),
+                'alert_type' => 'success']);
+        }
+        return redirect()->route('admin.course.index');
+    }
+
+    /**
      * Update the join group field
      * @param $manuscript_id
      * @param Request $request

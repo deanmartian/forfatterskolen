@@ -284,7 +284,12 @@
 											{{ $feedback->learner->full_name }}
 										</td>
 										<td>
-											{{ \App\Http\FrontendHelpers::formatDate($feedback->availability) }}
+											<a href="#" data-toggle="modal" class="updateAvailabilityBtn"
+											   data-availability="{{ $feedback->availability }}"
+											   data-target="#updateAvailabilityModal"
+											data-action="{{ route('assignment.group.manuscript-feedback-no-group-update-availability', $feedback->id) }}">
+												{{ \App\Http\FrontendHelpers::formatDate($feedback->availability) }}
+											</a>
 										</td>
 									</tr>
 								@endforeach
@@ -785,6 +790,30 @@
 	</div>
 </div>
 <!-- end update join group modal -->
+
+<div id="updateAvailabilityModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Edit Availability</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" enctype="multipart/form-data">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans('site.availability') }}</label>
+						<input type="date" class="form-control" name="availability">
+					</div>
+
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -884,6 +913,15 @@
 
 		modal.find('form').attr('action', action);
 		modal.find('select').val(answer);
+    });
+
+    $('.updateAvailabilityBtn').click(function(){
+        console.log("adsfadsf");
+        let modal = $('#updateAvailabilityModal');
+        let availability = $(this).data('availability');
+        let action = $(this).data('action');
+        modal.find('input[name=availability]').val(availability);
+        modal.find('form').attr('action', action);
     });
 
     function formSubmitted(t) {

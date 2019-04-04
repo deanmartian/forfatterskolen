@@ -73,7 +73,7 @@
 						<div class="card-footer p-0">
 							@if( $learner->user->id == Auth::user()->id )
 								@if( $manuscript->filename )
-									<button type="button" class="btn site-btn-global w-100 rounded-0 disabled">Manuscript uploaded</button>
+									<button type="button" class="btn site-btn-global w-100 rounded-0 disabled">Manuset er lastet opp</button>
 								@endif
 							@else
                                 <?php $feedback = App\AssignmentFeedback::where('assignment_group_learner_id',
