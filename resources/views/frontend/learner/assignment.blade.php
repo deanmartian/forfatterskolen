@@ -118,8 +118,13 @@
 											</h2>
 										</div>
 										<div class="card-body p-4">
+											<span class="d-block">Kurs: {{ $group->group->assignment->course->title }}</span>
 											<span class="d-block">Oppgave: {{ $group->group->assignment->title }}</span>
-											<span>Innleverings dato: {{ $group->group->submission_date }}</span>
+											<?php
+												$submission_date = \Carbon\Carbon::parse($group->group->submission_date)->format('d M Y')
+													.' klokken '. \Carbon\Carbon::parse($group->group->submission_date)->format('H:i')
+											?>
+											<span>Innleverings dato: {{ $submission_date }}</span>
 										</div>
 									</div>
 								@endforeach
