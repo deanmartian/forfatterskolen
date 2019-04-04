@@ -390,7 +390,7 @@ Route::group([
 
 
     //PAYPAL ROUTES
-    Route::get('/{order?}', [
+    Route::get('/paypal/{order?}', [
         'name' => 'PayPal Express Checkout',
         'as' => 'app.home',
         'uses' => 'PaypalController@form',

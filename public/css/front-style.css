@@ -73,6 +73,12 @@
 }
 
 @font-face{
+    font-family: 'Montserrat LightItalic';
+    src: url('../fonts/montserrat/Montserrat-LightItalic.otf');
+    font-display: block;
+}
+
+@font-face{
     font-family: 'Montserrat SemiBold';
     src: url('../fonts/montserrat/Montserrat-SemiBold.otf');
     font-display: block;
@@ -1380,6 +1386,10 @@ margin-right: 5px;
     transform: translate(0,3px);
     width: 16px;
     margin-right: 5px;
+}
+
+.icon-calendar-calendar:before {
+    background-image: url(../images-new/icon/calendar-red.png);
 }
 
 .icon-calendar-red:before {
@@ -5564,6 +5574,10 @@ blockquote {
 
 .font-montserrat-light {
     font-family: "Montserrat Light", sans serif;
+}
+
+.font-montserrat-light-italic {
+    font-family: "Montserrat LightItalic", sans serif;
 }
 
 .font-montserrat-medium {
