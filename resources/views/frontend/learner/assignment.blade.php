@@ -153,8 +153,7 @@
 												<div class="mb-4">
 													<?php
 													$files = explode(',',$feedback->filename);
-													$filesDisplay = '';
-
+													$filesDisplay = 'Kurs: '.$feedback->manuscript->assignment->course->title.'<br/> ';
 													foreach ($files as $file) {
 														$extension = explode('.', basename($file));
 
