@@ -112,7 +112,7 @@ class CompetitionService {
         if ($competition) {
             $filePath = str_replace('public ','public', public_path().$competition->image);
             if (file_exists($filePath)) {
-                unlink($filePath); // delete the physical file
+                //unlink($filePath); // delete the physical file
             }
             $competition->forceDelete();
         }
