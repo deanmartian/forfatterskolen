@@ -71,6 +71,16 @@
 
                             {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJS() !!}
                             {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display() !!}
+
+                            @if ( $errors->any() )
+                                <div class="alert alert-danger no-bottom-margin mt-3">
+                                    <ul>
+                                        @foreach($errors->all() as $error)
+                                            <li>{{$error}}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                         </form>
                     </div> <!-- end form-container -->
                 </div> <!-- end main-form -->
@@ -204,10 +214,10 @@
                     </div> <!-- end item -->
                 </div>
                 <a href="#latest-seminar-carousel" class="left carousel-control" role="button" data-slide="prev">
-                    {{--<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>--}}
+                    <span class="glyphicon glyphicon-chevron-left hide" aria-hidden="true"></span>
                 </a>
                 <a href="#latest-seminar-carousel" class="right carousel-control" role="button" data-slide="next">
-                    {{--<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>--}}
+                    <span class="glyphicon glyphicon-chevron-right hide" aria-hidden="true"></span>
                 </a>
             </div>
         </div> <!-- end latest-seminar wrapper -->
@@ -370,13 +380,16 @@
                                                 <?php $counter++?>
                                             @else
                                                 <div class="col-md-6 mt-5 course-item">
-                                                    <div class="card rounded-0">
+                                                    <div class="card rounded-0 border-0">
                                                         <div class="card-header p-0 rounded-0"
                                                              style="background-image: url({{$popular_course->course_image}})">
                                                             <span>Kurs</span>
                                                         </div>
                                                         <div class="card-body">
-                                                            adsfadsf
+                                                            <h3 class="font-montserrat-semibold">{{ str_limit(strip_tags($popular_course->title), 40)}}</h3>
+                                                            <p class="font-montserrat-light mt-4">{{ str_limit(strip_tags($popular_course->description), 130)}}</p>
+                                                            <a href="{{ route('front.course.show', $popular_course->id) }}"
+                                                               class="site-btn-global rounded-0 mt-3 d-inline-block">Les mer</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -390,6 +403,35 @@
                 </div> <!-- end all-course -->
             </div> <!-- end container -->
         </div> <!-- end popular-course-wrapper -->
+
+        <div id="poem-wrapper">
+            <div class="container">
+                <div class="heading">
+                    <h1 class="d-inline-block font-montserrat-semibold">Ukens dikt</h1>
+                    <a href="{{ route('front.poems') }}" class="btn d-inline-block">Les flere dikt</a>
+                </div> <!-- end heading -->
+
+                <?php
+                    $latestPoem = $poems->first();
+                ?>
+
+                <div class="row poem-details">
+                    <div class="col-sm-6 poem-author-container">
+                            <img src="{{ asset($latestPoem->author_image) }}" class="author-image">
+                        <div class="author-info">
+                            <span class="indicator">Poem of the week</span>
+                            <h3 class="font-weight-normal font-montserrat-regular">{{ $latestPoem->title }}</h3>
+                            <h4 class="font-montserrat-light">{{ $latestPoem->author }}</h4>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 poem-container">
+                        <div class="poem-text-container">
+                            {!! $latestPoem->poem !!}
+                        </div>
+                    </div>
+                </div> <!-- end row -->
+            </div> <!-- end container -->
+        </div> <!-- end poem-wrapper -->
     </div>
 
     @if(!isset($_COOKIE['_gdpr']))
@@ -430,19 +472,25 @@
         }
 
         $(".poem-text-container").mCustomScrollbar({
-            theme: "minimal-dark",
+            theme: "light-thick",
             scrollInertia: 500,
 
         });
 
-        $('.multi-item-carousel .item').each(function(){
-            var next = $(this).next();
-            if (!next.length) next = $(this).siblings(':first');
-            next.children(':first-child').clone().appendTo($(this));
-        }).each(function(){
-            var prev = $(this).prev();
-            if (!prev.length) prev = $(this).siblings(':last');
-            prev.children(':nth-last-child(2)').clone().prependTo($(this));
+        if ($(window).width() > 640) {
+            carouselMultiple();
+        } else {
+            $(".glyphicon").removeClass('hide');
+        }
+
+        $(window).on('resize', function(){
+            if ($(window).width() > 640) {
+                carouselMultiple();
+                $(".glyphicon").addClass('hide');
+            } else {
+                $(".glyphicon").removeClass('hide');
+                console.log("adsfadsf");
+            }
         });
 
         // for multiple item carousel action
@@ -465,5 +513,17 @@
             },1000);*/
            //$(".carousel-inner").find('.item.active').removeClass('active').next().addClass("active");
         });
+
+        function carouselMultiple() {
+            $('.multi-item-carousel .item').each(function(){
+                var next = $(this).next();
+                if (!next.length) next = $(this).siblings(':first');
+                next.children(':first-child').clone().appendTo($(this));
+            }).each(function(){
+                var prev = $(this).prev();
+                if (!prev.length) prev = $(this).siblings(':last');
+                prev.children(':nth-last-child(2)').clone().prependTo($(this));
+            });
+        }
     </script>
 @stop

@@ -5672,6 +5672,7 @@ blockquote {
 .site-btn-global-w-arrow:hover, .site-btn-global:hover {
     color: #eadadc;
     background-color: #611c27;
+    text-decoration: none;
 }
 
 .site-btn-global-w-arrow::after {

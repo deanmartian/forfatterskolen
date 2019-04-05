@@ -135,7 +135,11 @@
             @include('frontend.partials.footer-new')
         @endif--}}
 
-        @include('frontend.partials.footer-new')
+        @if (Route::currentRouteName() == 'front.home')
+            @include('frontend.partials.home-footer')
+        @else
+            @include('frontend.partials.footer-new')
+        @endif
 
         @include('frontend.partials.scripts')
         <script>
