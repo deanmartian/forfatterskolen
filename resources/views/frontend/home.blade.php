@@ -357,17 +357,20 @@
                                 <?php $featured = 0 ?>
                                 @foreach( $popular_courses as $popular_course )
                                     @if( \App\Http\FrontendHelpers::isCourseAvailable($popular_course) && $featured == 0)
-                                        <div class="row featured-item" style="background-image: url({{$popular_course->course_image}})">
-                                            <div class="details">
-                                                <div class="indicator">
-                                                    Kurs
+                                        <a href="{{ route('front.course.show', $popular_course->id) }}"
+                                        class="featured-link">
+                                            <div class="row featured-item" style="background-image: url({{$popular_course->course_image}})">
+                                                <div class="details">
+                                                    <div class="indicator">
+                                                        Kurs
+                                                    </div>
+                                                    <h2 class="font-montserrat-semibold mb-4">{{ $popular_course->title}}</h2>
+                                                    <p class="font-montserrat-regular">
+                                                        {{ str_limit(strip_tags($popular_course->description), 300)}}
+                                                    </p>
                                                 </div>
-                                                <h2 class="font-montserrat-semibold mb-4">{{ $popular_course->title}}</h2>
-                                                <p class="font-montserrat-regular">
-                                                    {{ str_limit(strip_tags($popular_course->description), 300)}}
-                                                </p>
                                             </div>
-                                        </div>
+                                        </a>
                                         <?php $featured++?>
                                     @endif
                                 @endforeach

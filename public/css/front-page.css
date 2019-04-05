@@ -403,6 +403,10 @@
     transform: translate(-50%, 0);
 }
 
+.front-page-new .popular-course-wrapper .featured-link {
+    color: #212529;
+}
+
 .front-page-new .popular-course-wrapper .featured-item {
     background-size: cover;
     height: 500px;
