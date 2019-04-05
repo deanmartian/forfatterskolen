@@ -54,17 +54,24 @@
                                 <div class="col-md-6">
                                     <div class="custom-checkbox">
                                         <input type="checkbox" name="terms" id="terms" required>
-                                        <label for="terms">Jeg aksepterer
-                                            <a href="{{ route('front.opt-in-terms') }}"
-                                               target="_blank">vilkårene</a></label>
+                                        <?php
+                                            $search_string = [
+                                                '[start_link]', '[end_link]'
+                                            ];
+                                            $replace_string = [
+                                                '<a href="'.route('front.opt-in-terms').'">','</a>'
+                                            ];
+                                            $terms_link = str_replace($search_string, $replace_string, trans('site.front.accept-terms'))
+                                        ?>
+                                        <label for="terms">{!! $terms_link !!}</label>
                                     </div>
 
-                                    <small class="font-montserrat-light">PS! Vi deler ikke e-postadressen din med noen</small>
+                                    <small class="font-montserrat-light">{{ trans('site.front.main-form.note') }}</small>
                                 </div>
 
                                 <div class="col-md-6 btn-container">
                                     <button type="submit" class="btn font-montserrat-light">
-                                        Ja, jeg vil ha gratis tips!
+                                        {{ trans('site.front.main-form.submit-text') }}
                                     </button>
                                 </div>
                             </div>
@@ -91,7 +98,7 @@
             <div class="container">
                 <div class="row">
                     <div class="indicator">
-                        <h1>Latest Seminars</h1>
+                        <h1>{{ trans('site.front.latest-seminars') }}</h1>
                     </div>
                 </div>
             </div>
@@ -103,7 +110,8 @@
                                 <div class="card-header" style="">
                                     <img src="{{ asset('/images-new/home/hand-pen.png') }}" alt="">
                                     <span class="title">
-                                        {{ !$next_free_webinar && $next_workshop ? 'Neste Workshop' : 'Neste gratis webinar' }}
+                                        {{ !$next_free_webinar && $next_workshop ? trans('site.front.next-workshop')
+                                        : trans('site.front.next-free-webinar') }}
                                     </span>
                                 </div>
                                 <div class="card-body">
@@ -122,7 +130,7 @@
                                         <p class="mt-4 text-justify">{{ str_limit(strip_tags($next_free_webinar->description), 200)}}</p>
 
                                         <a class="btn" href="{{ route('front.free-webinar', $next_free_webinar->id) }}">
-                                            Registrer deg
+                                            {{ trans('site.front.register') }}
                                         </a>
                                     @else
                                         @if($next_workshop)
@@ -140,7 +148,7 @@
                                             <p class="mt-4 text-justify">{{ str_limit(strip_tags($next_workshop->description), 200)}}</p>
 
                                             <a class="btn" href="{{ route('front.workshop.show', $next_workshop->id) }}">
-                                                Registrer deg
+                                                {{ trans('site.front.register') }}
                                             </a>
                                         @endif
                                     @endif
@@ -155,7 +163,7 @@
                                 <div class="card-header" style="">
                                     <img src="{{ asset('/images-new/home/girl-coffee.jpg') }}" alt="">
                                     <span class="title">
-                                        Siste blogginnlegg
+                                        {{ trans('site.front.latest-blog-post') }}
                                     </span>
                                 </div>
                                 <div class="card-body">
@@ -172,7 +180,7 @@
                                         <p class="mt-4 text-justify">{{ str_limit(strip_tags($latest_blog->description), 200)}}</p>
 
                                         <a class="btn" href="{{ route('front.read-blog', $latest_blog->id) }}">
-                                            Les mer
+                                            {{ trans('site.front.view') }}
                                         </a>
                                     @endif
                                 </div>
@@ -186,7 +194,7 @@
                                 <div class="card-header" style="">
                                     <img src="{{ asset('/images-new/home/coffee-paper.jpeg') }}" alt="">
                                     <span class="title">
-                                        Neste webinar
+                                        {{ trans('site.front.next-webinar') }}
                                     </span>
                                 </div>
                                 <div class="card-body">
@@ -205,7 +213,7 @@
                                         <p class="mt-4 text-justify">{{ str_limit(strip_tags($next_webinar->description), 200)}}</p>
 
                                         <a class="btn" href="{{ url('/course/17?show_kursplan=1') }}">
-                                            Se komplett liste her
+                                            {{ trans('site.front.see-complete-list') }}
                                         </a>
                                     @endif
                                 </div>
@@ -331,13 +339,9 @@
 
         <div class="our-course-wrapper">
             <div class="container">
-                <h1 class="font-montserrat-semibold">Våre Kurs</h1>
+                <h1 class="font-montserrat-semibold">{{ trans('site.front.our-course.title') }}</h1>
                 <p class="font-montserrat-regular">
-                    Å skrive et manus kan være en utfordring. Det mangler sjelden på ideer og lyst, men hvordan
-                    komme i gang? Og hvordan lykkes med å skrive et godt manus – uten å gi opp på veien? Fortvil
-                    ikke, vi har skreddersydde kurs til å hjelpe deg. I tillegg får du profesjonell veiledning og en
-                    uunnværlig heiagjeng. Et godt bevis på at metoden vår funker: Vi har hjulpet mange elever med å
-                    bli utgitt – og flere er på vei (se "utgitte elever").
+                    {{ trans('site.front.our-course.details') }}
                 </p>
             </div> <!-- end container -->
         </div> <!-- end our-course-wrapper -->
@@ -347,7 +351,7 @@
                 <div class="all-course theme-tabs">
                     <div class="tabs-container">
                         <ul class="nav nav-tabs">
-                            <li><a data-toggle="tab" href="#home" class="active"><span>Populære kurs</span></a></li>
+                            <li><a data-toggle="tab" href="#home" class="active"><span>{{ trans('site.front.popular-course') }}</span></a></li>
                         </ul>
                     </div> <!-- end tabs-container -->
 
@@ -362,7 +366,7 @@
                                             <div class="row featured-item" style="background-image: url({{$popular_course->course_image}})">
                                                 <div class="details">
                                                     <div class="indicator">
-                                                        Kurs
+                                                        {{ trans('site.front.course-text') }}
                                                     </div>
                                                     <h2 class="font-montserrat-semibold mb-4">{{ $popular_course->title}}</h2>
                                                     <p class="font-montserrat-regular">
@@ -386,13 +390,15 @@
                                                     <div class="card rounded-0 border-0">
                                                         <div class="card-header p-0 rounded-0"
                                                              style="background-image: url({{$popular_course->course_image}})">
-                                                            <span>Kurs</span>
+                                                            <span>{{ trans('site.front.course-text') }}</span>
                                                         </div>
                                                         <div class="card-body">
                                                             <h3 class="font-montserrat-semibold">{{ str_limit(strip_tags($popular_course->title), 40)}}</h3>
                                                             <p class="font-montserrat-light mt-4">{{ str_limit(strip_tags($popular_course->description), 130)}}</p>
                                                             <a href="{{ route('front.course.show', $popular_course->id) }}"
-                                                               class="site-btn-global rounded-0 mt-3 d-inline-block">Les mer</a>
+                                                               class="site-btn-global rounded-0 mt-3 d-inline-block">
+                                                                {{ trans('site.front.view') }}
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -410,8 +416,8 @@
         <div id="poem-wrapper">
             <div class="container">
                 <div class="heading">
-                    <h1 class="d-inline-block font-montserrat-semibold">Ukens dikt</h1>
-                    <a href="{{ route('front.poems') }}" class="btn d-inline-block">Les flere dikt</a>
+                    <h1 class="d-inline-block font-montserrat-semibold">{{ trans('site.front.week-poem') }}</h1>
+                    <a href="{{ route('front.poems') }}" class="btn d-inline-block">{{ trans('site.front.view-poem') }}</a>
                 </div> <!-- end heading -->
 
                 <?php
@@ -422,7 +428,7 @@
                     <div class="col-sm-6 poem-author-container">
                             <img src="{{ asset($latestPoem->author_image) }}" class="author-image">
                         <div class="author-info">
-                            <span class="indicator">Poem of the week</span>
+                            <span class="indicator">{{ trans('site.front.poem-of-the-week') }}</span>
                             <h3 class="font-weight-normal font-montserrat-regular">{{ $latestPoem->title }}</h3>
                             <h4 class="font-montserrat-light">{{ $latestPoem->author }}</h4>
                         </div>

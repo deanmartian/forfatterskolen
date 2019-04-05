@@ -7,7 +7,7 @@
                     å trykke på knappen under.
                 </h1>
 
-                <a class="btn" href="/gratis-tekstvurdering">Ja, dette vil jeg ha!</a>
+                <a class="btn" href="/gratis-tekstvurdering">{{ trans('site.front.i-want-this') }}</a>
             </div>
         </div>
     </div>
