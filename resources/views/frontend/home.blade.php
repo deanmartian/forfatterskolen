@@ -488,11 +488,13 @@
 
         $(window).on('resize', function(){
             if ($(window).width() > 640) {
-                carouselMultiple();
+                if ($(".item__third").length <= 3) {
+                    carouselMultiple();
+                }
                 $(".glyphicon").addClass('hide');
             } else {
                 $(".glyphicon").removeClass('hide');
-                console.log("adsfadsf");
+                removeMultiple();
             }
         });
 
@@ -527,6 +529,24 @@
                 if (!prev.length) prev = $(this).siblings(':last');
                 prev.children(':nth-last-child(2)').clone().prependTo($(this));
             });
+        }
+
+        function removeMultiple(){
+            let item_first = $('.multi-item-carousel .item:first-child');
+            if (item_first.find('.item__third').length > 1) {
+                item_first.find('.item__third').not(':eq(1)').remove();
+            }
+
+            let item_sec = $('.multi-item-carousel .item:nth-child(2)');
+            if (item_sec.find('.item__third').length > 1) {
+                item_sec.find('.item__third').not(':eq(1)').remove();
+            }
+
+            let item_third = $('.multi-item-carousel .item:nth-child(3)');
+            if (item_third.find('.item__third').length > 1) {
+                item_third.find('.item__third').not(':eq(1)').remove();
+            }
+
         }
     </script>
 @stop
