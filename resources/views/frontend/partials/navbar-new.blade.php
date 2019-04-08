@@ -10,7 +10,7 @@
     <div class="navbar-collapse collapse pr-0">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="#" style="color: #777">Velkommen til Forfatterskolen</a>
+                <a class="nav-link" href="#" style="color: #000">Velkommen til Forfatterskolen</a>
             </li>
         </ul>
 

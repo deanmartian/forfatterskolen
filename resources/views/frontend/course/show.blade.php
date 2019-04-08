@@ -478,12 +478,12 @@
 	<script>
 
 		let containers = ['overview', 'packages', 'kursplan', 'testimonials'];
-		$.each(containers, function(k, v){
+		/*$.each(containers, function(k, v){
             $("#"+v).mCustomScrollbar({
                 theme: "minimal-dark",
                 scrollInertia: 500
             });
-		});
+		});*/
 
 		@if (Session::has('email_exist'))
 			$("#emailExistModal").modal('show');

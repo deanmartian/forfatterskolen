@@ -115,7 +115,7 @@
 }
 
 *, .modal a {
-    font-family: 'Barlow Light', sans serif;
+    font-family: 'Barlow Regular', sans serif;
 }
 
 a, div, p, input, .form-control, button, .btn {
@@ -130,6 +130,10 @@ a {
 .dropdown-item:active, .nav-link:active {
     background-color: #954451 !important;
     color: #fff !important;
+}
+
+.navbar-default .navbar-nav>li>a, .navbar-default .navbar-text {
+    color: #000;
 }
 
 .red-underline-hover:hover {
@@ -1405,7 +1409,7 @@ margin-right: 5px;
 }
 
 .color-b4 {
-    color: #b4b4b4;
+    /*color: #b4b4b4;*/
 }
 
 .blog-page .main-blog .details .calendar:before, .blog-page .blog-column .details .calendar:before, .icon-calendar:before {
@@ -1900,7 +1904,7 @@ margin-right: 5px;
 
 .course-single-page .course-tabs #overview, .course-single-page .course-tabs #packages,
 .course-single-page .course-tabs #kursplan, .course-single-page .course-tabs #testimonials {
-    max-height: 1620px;
+    /*max-height: 1620px;*/
 }
 
 .course-single-page .course-tabs #kursplan {
