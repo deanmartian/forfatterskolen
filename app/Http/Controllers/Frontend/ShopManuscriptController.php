@@ -83,6 +83,23 @@ class ShopManuscriptController extends Controller
             endif;
         endforeach;
 
+        $paymentMode = PaymentMode::findOrFail($request->payment_mode_id);
+        $paymentPlan = PaymentPlan::findOrFail($request->payment_plan_id);
+        $payment_plan = ( $paymentMode->mode == "Paypal" ) ?  "Hele beløpet" : $paymentPlan->plan;
+
+        // additional checking if the user selects correct payment mode for the selected plan
+        // not faktura and payment plan is not full payment or split invoice
+        if ($paymentMode->id !== 3 && ($paymentPlan->id != 8 || isset($request->split_invoice))) {
+            return redirect()->back()->with(['errors' =>
+                AdminHelpers::createMessageBag('Invalid payment mode for the selected plan')]);
+        } else {
+            // payment is faktura and wants to split invoice
+            if ($paymentPlan->id == 8 && (isset($request->split_invoice) && $request->split_invoice)) {
+                return redirect()->back()->with(['errors' =>
+                    AdminHelpers::createMessageBag('Invalid payment mode for the selected plan')]);
+            }
+        }
+
         $shopManuscriptTaken = new ShopManuscriptsTaken();
         $shopManuscriptTaken->user_id               = Auth::user()->id;
         $shopManuscriptTaken->genre                 = $request->genre;
@@ -156,10 +173,6 @@ class ShopManuscriptController extends Controller
                 .' ord, du må bestille <a href="'.route('front.shop-manuscript.checkout', $nextPlan->id).'">'
                 .$nextPlan->title.'</a>.']);
         }
-
-        $paymentMode = PaymentMode::findOrFail($request->payment_mode_id);
-        $paymentPlan = PaymentPlan::findOrFail($request->payment_plan_id);
-        $payment_plan = ( $paymentMode->mode == "Paypal" ) ?  "Hele beløpet" : $paymentPlan->plan;
 
         $comment = '(Manuskript: ' . $shopManuscript->title . ', ';
         $comment .= 'Betalingsmodus: ' . $paymentMode->mode . ', ';
@@ -237,6 +250,16 @@ class ShopManuscriptController extends Controller
             return;*/
         endif;
 
+        if( $paymentMode->mode == "Vipps" ) :
+            $orderId = $invoice->invoiceID;
+            $transactionText = $shopManuscript->title;
+            $vippsData = [
+                'amount' => $price,
+                'orderId' => $orderId,
+                'transactionText' => $transactionText
+            ];
+            return $this->vippsInitiatePayment($vippsData);
+        endif;
 
 
         return redirect(route('front.shop.thankyou', ['page' => 'manuscript']));
