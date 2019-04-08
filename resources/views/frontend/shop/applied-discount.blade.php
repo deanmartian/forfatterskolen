@@ -470,7 +470,7 @@
             $('select[name=payment_mode_id]').on('change', function(){
                 let mode = $('option:selected', this).data('mode');
                 let payment_plan_id = $('input:radio[name=payment_plan_id]');
-                if( mode === "Paypal" ) {
+                if( mode === "Paypal" || mode === "Vipps" ) {
                     payment_plan_id.parent().addClass('disabled');
                     payment_plan_id.prop('disabled', true);
                     payment_plan_id.prop('checked', false);
