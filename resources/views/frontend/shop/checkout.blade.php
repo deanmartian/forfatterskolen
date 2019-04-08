@@ -248,12 +248,9 @@
 							<div class="panel-heading-underlined">Betalingsmetode</div>
 							<div class="panel-body px-0 pb-0">
 								<select class="form-control" name="payment_mode_id" required data-size="15">
-									@foreach(\App\Http\FrontendHelpers::paymentModes() as $paymentMode)
+									@foreach(\App\Http\FrontendHelpers::paymentModes(true) as $paymentMode)
 										<option value="{{$paymentMode->id}}" data-mode="{{ $paymentMode->mode }}">{{$paymentMode->mode}}</option>
 									@endforeach
-									@if(Auth::user() && Auth::user()->id === 4)
-										<option value="5" data-mode="Vipps">Vipps</option>
-									@endif
 								</select>
 								{{--<em><small>Merk: Vi godtar kun full betaling på PAYPAL</small></em>--}}
 							</div>
