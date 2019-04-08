@@ -688,4 +688,33 @@ Om du ikke har vært på webinar før, kan du sjekke tilkoblingen din her:
       'main-title' => 'Gøy at du meldte deg på!',
     ),
   ),
+  'thankyou-page' => 
+  array (
+    'course' => 
+    array (
+      'description' => 'Vi gleder oss til å samarbeide med deg! Vi vil behandle din bestilling så snart som mulig og du vil få tilsendt faktura(er) til din registrerte e-postadresse. Dersom du har betalt via paypal gjelder fakturaen kun som en kvittering.',
+      'title' => 'Takk for bestillingen!',
+    ),
+    'manuscript' => 
+    array (
+      'description' => 'Vi gleder oss å lese ditt manus. Vi vil finne en passende redaktør for ditt manus og gi deg en forventet tilbakemeldingsdato. Normalt innen 3 uker. Du har fått tilsendt faktura(er) til din registrerte e-postadresse. Du kan også finne faktura(ene) inne på min side. Dersom du har betalt via paypal gjelder fakturaen kun som en
+kvittering.',
+      'title' => 'Takk for din bestilling!',
+    ),
+    'paypal' => 
+    array (
+      'description' => 'Din betaling ble gjennomført suksessfullt.',
+      'title' => 'Takk for betalingen!',
+    ),
+    'vipps' => 
+    array (
+      'title' => 'Takk for betalingen!',
+      'description' => 'Din betaling ble gjennomført suksessfullt.',
+    ),
+    'workshop' => 
+    array (
+      'description' => 'Vi gleder oss til skriveverksted. Du har fått tilsendt faktura til din registrerte e-postadresse. Du kan også finne faktura inne på min side. Dersom du har betalt via paypal gjelder fakturaen kun som en kvittering.',
+      'title' => 'Takk for din bestilling!',
+    ),
+  ),
 );
