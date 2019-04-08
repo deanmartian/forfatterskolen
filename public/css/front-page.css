@@ -416,8 +416,11 @@
 .front-page-new .popular-course-wrapper .featured-item .details {
     background-color: #fff;
     bottom: 0;
-    left: 50%;
-    transform: translate(-50%, 0);
+    /*left: 50%;
+    transform: translate(-50%, 0);*/
+    left: 0;
+    right: 0;
+    margin: 0 auto;
     text-align: left;
     padding: 30px 40px 0;
     position: absolute;
