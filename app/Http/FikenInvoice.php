@@ -25,6 +25,7 @@ class FikenInvoice
 	protected $headers = [];
 
 	public $invoiceID;
+	public $invoice_number;
 
 	public function __construct()
 	{
@@ -107,6 +108,7 @@ class FikenInvoice
 		
 		$this->send_invoice($location);
 		$this->invoiceID = $invoice->id;
+		$this->invoice_number = $invoice->invoice_number;
 	}
 
 

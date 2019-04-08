@@ -251,7 +251,7 @@ class ShopManuscriptController extends Controller
         endif;
 
         if( $paymentMode->mode == "Vipps" ) :
-            $orderId = $invoice->invoiceID;
+            $orderId = $invoice->invoice_number;
             $transactionText = $shopManuscript->title;
             $vippsData = [
                 'amount' => $price,

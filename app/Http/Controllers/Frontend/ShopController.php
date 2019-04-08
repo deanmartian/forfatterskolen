@@ -676,8 +676,8 @@ class ShopController extends Controller
         endif;
 
         // check if vipps payment mode and the current user id is 4
-        if( $paymentMode->mode == "Vipps" && Auth::user()->id == 4) :
-            $orderId = 29;//$invoice->invoiceID;
+        if( $paymentMode->mode == "Vipps") :
+            $orderId = $invoice->invoice_number;
             $transactionText = $package->course->title;
             $vippsData = [
                 'amount' => $price,

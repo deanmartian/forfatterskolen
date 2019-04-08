@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Http\AdminHelpers;
+use App\Invoice;
 use App\Mail\SubjectBodyEmail;
 use App\Settings;
 use Carbon\Carbon;
@@ -20,8 +21,8 @@ class VippsRepository extends BaseRepository {
      */
     public function getAccessToken()
     {
-        $client_id = env('VIPPS_CLIENT_ID_TEST');
-        $client_secret = env('VIPPS_CLIENT_SECRET_TEST');
+        $client_id = env('VIPPS_CLIENT_ID');
+        $client_secret = env('VIPPS_CLIENT_SECRET');
 
         $url = '/accesstoken/get';
         $method = "POST";
@@ -60,7 +61,7 @@ class VippsRepository extends BaseRepository {
                 'callbackPrefix' => 'https://www.forfatterskolen.no/vipps/payment',//url('/vipps/payment'),
                 'fallBack' => 'https://www.forfatterskolen.no/thankyou',//url('/thankyou'),
                 'paymentType' => 'eComm Regular Payment',
-                'merchantSerialNumber' => env('VIPPS_MSN_TEST')//AdminHelpers::generateHash(6)
+                'merchantSerialNumber' => env('VIPPS_MSN')//AdminHelpers::generateHash(6)
             ],
 
             'transaction' => [
@@ -146,7 +147,7 @@ class VippsRepository extends BaseRepository {
 
         $body = array(
             'merchantInfo' => [
-                'merchantSerialNumber' => env('VIPPS_MSN_TEST')
+                'merchantSerialNumber' => env('VIPPS_MSN')
             ],
 
             'transaction' => [
@@ -166,14 +167,14 @@ class VippsRepository extends BaseRepository {
         }
 
         $data = $response['data'];
+        $invoice = Invoice::where('invoice_number',$orderId)->first();
         $transactionInfo = $response['data']->transactionInfo;
-
-        $message = "<p>Payment Captured <br/><br> Invoice id: ".$data->orderId." <br/> Amount:".$transactionInfo->amount." 
+        $message = "<p>Payment Captured <br/><br> Invoice Number: ".$invoice->invoice_number." <br/> Amount:".$transactionInfo->amount." 
 <br/> Transaction id: ".$transactionInfo->transactionId."</p>";
 
-        $subject = 'Payment Captured for Invoice #'.$orderId;
+        $subject = 'Payment Captured for Invoice #'.$invoice->invoice_number;
         $from = 'post@forfatterskolen.no';
-        $to = 'elybutabara@mailinator.com';
+        $to = 'support@forfatterskolen.no';
         $emailData['email_subject'] = $subject;
         $emailData['email_message'] = $message;
         $emailData['from_name'] = NULL;
@@ -182,6 +183,10 @@ class VippsRepository extends BaseRepository {
 
         // notify admin once the payment is captured
         if ($transactionInfo->status == 'Captured') {
+            // mark the invoice as paid
+            $invoice->fiken_is_paid = 1;
+            $invoice->save();
+
             AdminHelpers::send_email($subject,$from, $to, $message);
         }
 

@@ -208,7 +208,7 @@ class WorkshopController extends Controller
         endif;
 
         if( $paymentMode->mode == "Vipps") :
-            $orderId = $invoice->invoiceID;
+            $orderId = $invoice->invoice_number;
             $transactionText = $workshop->title;
             $vippsData = [
                 'amount' => $price,
