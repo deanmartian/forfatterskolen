@@ -1566,7 +1566,7 @@ margin-right: 5px;
 }
 
 .course-page .courses-list-container [class*='col-'], .course-page .courses-list-container .course {
-    display: flex;
+    /*display: flex;*/
     flex-wrap: wrap;
 }
 
