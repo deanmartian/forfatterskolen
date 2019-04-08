@@ -44,7 +44,7 @@ class VippsRepository extends BaseRepository {
      * @param $token_access
      * @return ApiException|array
      */
-    public function initiatePayment($token_access)
+    public function initiatePayment($token_access, $data)
     {
         $url = '/ecomm/v2/payments';
         $method = "POST";
@@ -64,9 +64,9 @@ class VippsRepository extends BaseRepository {
             ],
 
             'transaction' => [
-                'amount' => 100,
-                'orderId' => 'a4',
-                'transactionText' => 'Your order'
+                'amount' => $data['amount'],
+                'orderId' => $data['orderId'],
+                'transactionText' => $data['transactionText']
             ]
         );
 

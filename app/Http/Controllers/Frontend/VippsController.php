@@ -36,7 +36,8 @@ class VippsController extends Controller {
      */
     public function index()
     {
-        $result = $this->repository->initiatePayment($this->access_token);
+        $data = ['amount' => 100, 'orderId' => 27, 'transactionText' => 'this is a test order'];
+        $result = $this->repository->initiatePayment($this->access_token, $data);
         if ($result instanceof ApiException) {
             return ApiResponse::error($result->getMessage(), $result->getData(), $result->getCode());
         }

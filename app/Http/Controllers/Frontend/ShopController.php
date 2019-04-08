@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Frontend;
 use App\CourseDiscount;
 use App\CourseShared;
 use App\CourseSharedUser;
+use App\Helpers\ApiException;
+use App\Helpers\ApiResponse;
 use App\Http\AdminHelpers;
 use App\Mail\SubjectBodyEmail;
 use App\Paypal;
+use App\Repositories\VippsRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -672,6 +675,17 @@ class ShopController extends Controller
             return;*/
         endif;
 
+        // check if vipps payment mode and the current user id is 4
+        if( $paymentMode->mode == "Vipps" && Auth::user()->id == 4) :
+            $orderId = 29;//$invoice->invoiceID;
+            $transactionText = $package->course->title;
+            $vippsData = [
+                'amount' => $price,
+                'orderId' => $orderId,
+                'transactionText' => $transactionText
+            ];
+            return $this->vippsInitiatePayment($vippsData);
+        endif;
 
         return redirect(route('front.shop.thankyou'));
 

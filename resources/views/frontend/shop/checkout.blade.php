@@ -248,9 +248,12 @@
 							<div class="panel-heading-underlined">Betalingsmetode</div>
 							<div class="panel-body px-0 pb-0">
 								<select class="form-control" name="payment_mode_id" required data-size="15">
-									@foreach(\App\Http\FrontendHelpers::paymentModes(true) as $paymentMode)
+									@foreach(\App\Http\FrontendHelpers::paymentModes() as $paymentMode)
 										<option value="{{$paymentMode->id}}" data-mode="{{ $paymentMode->mode }}">{{$paymentMode->mode}}</option>
 									@endforeach
+									@if(Auth::user() && Auth::user()->id === 4)
+										<option value="5" data-mode="Vipps">Vipps</option>
+									@endif
 								</select>
 								{{--<em><small>Merk: Vi godtar kun full betaling på PAYPAL</small></em>--}}
 							</div>
@@ -448,7 +451,7 @@
             $('select[name=payment_mode_id]').on('change', function(){
                 let mode = $('option:selected', this).data('mode');
                 let payment_plan_id = $('input:radio[name=payment_plan_id]');
-                if( mode === "Paypal" ) {
+                if( mode === "Paypal" || mode === "Vipps") {
                     payment_plan_id.parent().addClass('disabled');
                     payment_plan_id.prop('disabled', true);
                     payment_plan_id.prop('checked', false);
@@ -456,7 +459,7 @@
                     payment_plan_id.filter('[id="Hele beløpet"]').parent().removeClass('disabled');
                     payment_plan_id.filter('[id="Hele beløpet"]').prop('disabled', false);
 
-                    let price = $('input:radio[name=package_id]:checked').data('full_payment_price');
+                    let price = $('input:radio[name=package_id]:checked').data('full_payment_price_number');
                     $.get('/format_money/'+price, {}, function(){}, 'json').done(function(data){
                         let checkout_total = $('.checkout-total');
                         checkout_total.find('span.total-display').text(data);
