@@ -733,6 +733,31 @@ class LearnerController extends Controller
     }
 
     /**
+     *
+     * @param $invoice_number
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function invoiceVippsPayment($invoice_number)
+    {
+        $invoice = Invoice::where('invoice_number', $invoice_number)->first();
+
+        if ($invoice) {
+            $orderId = $invoice->invoice_number;
+            $price = $invoice->fiken_balance * 100;
+            $transactionText = 'Betaling for fakturanummer'.$orderId;
+            $vippsData = [
+                'amount' => $price,
+                'orderId' => $orderId,
+                'transactionText' => $transactionText
+            ];
+
+            return $this->vippsInitiatePayment($vippsData);
+        }
+
+        return redirect()->back();
+    }
+
+    /**
      * Publishing Page
      * @param Request $request
      * @param PublishingService $publishingService
