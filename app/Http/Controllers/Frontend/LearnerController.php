@@ -748,7 +748,8 @@ class LearnerController extends Controller
             $vippsData = [
                 'amount' => $price,
                 'orderId' => $orderId,
-                'transactionText' => $transactionText
+                'transactionText' => $transactionText,
+                'fallbackUrl' => 'https://www.forfatterskolen.no/thankyou?page=vipps'
             ];
 
             return $this->vippsInitiatePayment($vippsData);

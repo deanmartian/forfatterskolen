@@ -51,6 +51,7 @@ class VippsRepository extends BaseRepository {
         $method = "POST";
         $header = array();
         $header[] = 'Authorization: '.$token_access;
+        $fallbackUrl = isset($data['fallbackUrl']) ? $data['fallbackUrl'] : 'https://www.forfatterskolen.no/thankyou';
 
         $body = array(
             'customerInfo' => [
@@ -59,7 +60,7 @@ class VippsRepository extends BaseRepository {
 
             'merchantInfo' => [
                 'callbackPrefix' => 'https://www.forfatterskolen.no/vipps/payment',//url('/vipps/payment'),
-                'fallBack' => 'https://www.forfatterskolen.no/thankyou',//url('/thankyou'),
+                'fallBack' => $fallbackUrl,//url('/thankyou'),
                 'paymentType' => 'eComm Regular Payment',
                 'merchantSerialNumber' => env('VIPPS_MSN')//AdminHelpers::generateHash(6)
             ],
