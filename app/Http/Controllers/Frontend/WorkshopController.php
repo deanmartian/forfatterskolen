@@ -207,7 +207,16 @@ class WorkshopController extends Controller
             return;*/
         endif;
 
-
+        if( $paymentMode->mode == "Vipps") :
+            $orderId = $invoice->invoiceID;
+            $transactionText = $workshop->title;
+            $vippsData = [
+                'amount' => $price,
+                'orderId' => $orderId,
+                'transactionText' => $transactionText
+            ];
+            return $this->vippsInitiatePayment($vippsData);
+        endif;
 
         return redirect(route('front.shop.thankyou', ['page' => 'workshop']));
     }
