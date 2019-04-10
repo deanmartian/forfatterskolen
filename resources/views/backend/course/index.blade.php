@@ -58,7 +58,7 @@
 					<td>{{$course->type}}</td>
 					<td>{{count($course->learners->get())}}</td>
 					<td>{{count($course->lessons)}}</td>
-					<td>{{count($course->manuscripts)}}</td>
+					<td>{{$course->manuscripts->count()}}</td>
 					<td>{{$course->display_order}}</td>
 					<td>
 						<input type="checkbox" data-toggle="toggle" data-on="Yes"
