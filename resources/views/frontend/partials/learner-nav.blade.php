@@ -230,17 +230,17 @@
                 </a>
             </div>
         </div>
-        <div class="col-sm-4 col-xs-6 @if(Request::is('account/invoice*')) active @endif">
+        <div class="col-sm-4 col-xs-6 @if(Request::is('account/calendar*')) active @endif">
             <div>
-                <a href="{{route('learner.invoice')}}">
+                <a href="{{route('learner.calendar')}}">
                     <i class="sprite-menu calendar d-block"></i>
                     Kalender
                 </a>
             </div>
         </div>
-        <div class="col-sm-4 col-xs-6 @if(Request::is('account/workshop*')) active @endif">
+        <div class="col-sm-4 col-xs-6 @if(Request::is('account/invoice*')) active @endif">
             <div>
-                <a href="{{route('learner.workshop')}}">
+                <a href="{{route('learner.invoice')}}">
                     <i class="sprite-menu list-on-window d-block"></i>
                     Fakturaer
                 </a>
