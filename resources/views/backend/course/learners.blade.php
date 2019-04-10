@@ -130,7 +130,7 @@
 						</table>
 					</div>
 
-					@if(count($course->learners) > 0)
+					@if($course->learners->count() > 0)
 						<div class="pull-right">{!! $learners->appends(Request::all())->render() !!}</div>
 						<div class="clearfix"></div>
 					@endif
@@ -253,7 +253,7 @@
       		<div class="form-group">
       			<select class="form-control select2" name="learner_id" required>
       				<option value="" selected disabled>- Search Learner -</option>
-					@if(count($course->learners) > 0)
+					@if($course->learners->count() > 0)
 	      				@foreach(AdminHelpers::courseAddLearners($course->learners->pluck('user_id')->toArray()) as $learner)
 	      				<option value="{{$learner->id}}">{{$learner->full_name}} ({{ $learner->email }})</option>
 	      				@endforeach

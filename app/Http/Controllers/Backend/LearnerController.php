@@ -198,6 +198,11 @@ class LearnerController extends Controller
 
         $courseTaken->started_at = NULL;
 		$courseTaken->is_active = 1;
+
+		if ($course->is_free) {
+            $courseTaken->is_free = 1;
+        }
+
 		$courseTaken->save();
 
 
