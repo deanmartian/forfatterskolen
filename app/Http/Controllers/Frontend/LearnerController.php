@@ -698,9 +698,15 @@ class LearnerController extends Controller
     }
 
 
-    public function invoice()
+    public function invoice(Request $request)
     {
         $invoices = Auth::user()->invoices()->paginate(15);
+
+        if ($request->has('filter') && $request->get('filter')) {
+            $invoices = Auth::user()->invoices()->where('id', $request->get('filter'))
+            ->paginate(15);
+        }
+
         /*$ch = curl_init($this->fikenInvoices);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");

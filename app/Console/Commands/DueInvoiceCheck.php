@@ -57,10 +57,13 @@ class DueInvoiceCheck extends Command
             $remaining          = $balance - $transactions_sum;
 
             $to = $invoice->user->email;
+            $encode_email = encrypt($to);
+            $redirectLink = encrypt(route('learner.invoice', ['filter' => $invoice->id]));
+            $link = route('auth.login.emailRedirect',[$encode_email, $redirectLink]);
 
             $message =  'Du har en faktura som har forfall i morgen <br/>
 Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 00393 <br/> Kid nummer: '.$invoice->kid_number.' <br/> 
-<a href="'.route('learner.invoice.show', $invoice->id).'">Se faktura</a> <br><br> <small>*Merknad: Du må være innlogget for å se fakturaen.</small>';
+<a href="'.$link.'">Se faktura</a> <br><br> <small>*Merknad: Du må være innlogget for å se fakturaen.</small>';
 
             AdminHelpers::send_email($subject,
                 $from, $to, $message);

@@ -382,6 +382,9 @@ Route::group([
 
         Route::get('login/email/{email_hash}', 'LoginController@emailLogin')->name('auth.login.email');
 
+        Route::get('login/email-redirect/{email}/{redirect_link}', 'LoginController@emailLoginRedirect')
+            ->name('auth.login.emailRedirect');
+
         // socialite route
         Route::get('login/facebook','LoginController@redirectToFacebook')->name('auth.login.facebook');
         Route::get('login/facebook/callback','LoginController@handleFacebookCallback');

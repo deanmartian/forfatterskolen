@@ -94,6 +94,24 @@ class LoginController extends Controller
         return redirect()->route('learner.dashboard');
     }
 
+    /**
+     * Email login with redirect link
+     * @param $email
+     * @param $redirect_link
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function emailLoginRedirect($email, $redirect_link)
+    {
+        $email = decrypt($email);
+        $redirect_link = decrypt($redirect_link);
+
+        $user = User::where('email', $email)->where('role', 2)->first();
+        if(!$user) return redirect()->route('front.home');
+
+        Auth::loginUsingId($user->id);
+        return redirect()->to($redirect_link);
+    }
+
     public function logout()
     {
         Auth::logout();
