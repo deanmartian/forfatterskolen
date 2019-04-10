@@ -1104,14 +1104,14 @@ class HomeController extends Controller
         $to = 'elybutabara@gmail.com';
         $content = 'this is a test only from PORT '.env('MAIL_PORT');
         echo $to."<br/>";
-        echo env('MAIL_PORT')."<br/>";
+        echo env('MAIL_PORT')." ".env('MAIL_PORT_SITE')."<br/>";
         AdminHelpers::send_email($subject,'post@forfatterskolen.no', $to, $content);
-        /*$emailData['email_subject'] = $subject;
-        $emailData['email_message'] = $content;
+        $emailData['email_subject'] = $subject;
+        $emailData['email_message'] = $content." using queue";
         $emailData['from_name'] = NULL;
         $emailData['from_email'] = NULL;
         $emailData['attach_file'] = NULL;
-        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));*/
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
         echo env('MAIL_DRIVER');
     }
 

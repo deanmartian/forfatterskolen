@@ -92,8 +92,8 @@ class AdminHelpers
     public static function send_email($subject, $from, $to, $content, $from_name='Forfatterskolen')
     {
 
-        $host = config('mail.host');//env('MAIL_HOST');
-        $port = config('mail.port');//env('MAIL_PORT');
+        $host = env('MAIL_HOST_SITE');
+        $port = env('MAIL_PORT_SITE');
         $email_sender = config('mail.username');//env('MAIL_USERNAME');
         $email_pass = config('mail.password');//env('MAIL_PASSWORD');
 
