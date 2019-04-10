@@ -302,7 +302,10 @@ class ShopController extends Controller
         // check if course bought is not expired yet
         foreach( Auth::user()->coursesTakenNotOld as $courseTaken ) :
             if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
-                $hasPaidCourse = true;
+                // check if course taken is not free
+                if ($courseTaken->package->course->is_free != 1) {
+                    $hasPaidCourse = true;
+                }
                 break;
             endif;
         endforeach;
