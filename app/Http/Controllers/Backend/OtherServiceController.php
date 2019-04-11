@@ -109,18 +109,42 @@ class OtherServiceController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function setReplay($id, Request $request)
+    public function setReplay(CoachingTimerManuscript $id, Request $request)
     {
-        if ($coachingTimer = CoachingTimerManuscript::find($id)) {
-            $data = $request->except('_token');
+        $data = $request->except('_token');
 
-            $coachingTimer->update($data);
-            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Replay saved successfully.'),
-                'alert_type' => 'success',
+        if (!$request->replay_link && !$request->document && ! $request->comment) {
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Please fill up at least one field.'),
                 'not-former-courses' => true]);
         }
 
-        return redirect()->back();
+        if ($request->hasFile('document') && $request->file('document')->isValid()) {
+
+            $destinationPath = 'storage/coaching-timer-manuscripts'; // upload path
+            $extensions = ['doc', 'docx', 'pdf'];
+
+            $extension = pathinfo($_FILES['document']['name'],PATHINFO_EXTENSION); // getting document extension
+
+            if (!in_array($extension, $extensions)) {
+                return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Invalid file type.'),
+                    'not-former-courses' => true]);
+            }
+
+            $actual_name = pathinfo($request->document->getClientOriginalName(), PATHINFO_FILENAME);
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+
+            $expFileName = explode('/', $fileName);
+
+            $request->document->move($destinationPath, end($expFileName));
+            $data['document'] = $fileName;
+        }
+
+        $data['status'] = 1;
+        $id->update($data);
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Replay saved successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true]);
     }
 
     /**
