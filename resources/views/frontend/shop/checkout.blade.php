@@ -444,6 +444,7 @@
                 $.get('/format_money/'+new_total, {}, function(){}, 'json').done(function(data){
                     let checkout_total = $('.checkout-total');
                     checkout_total.find('span.total-display').text(data);
+                    $("#monthly-price").addClass('hide');
                 });
             });
 
