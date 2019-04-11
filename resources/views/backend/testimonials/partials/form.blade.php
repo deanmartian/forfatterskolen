@@ -41,7 +41,7 @@ enctype="multipart/form-data">
                     <label>Author Image</label>
                     <input type="file" name="author_image" accept="image/*" class="form-control">
                     <p class="text-center">
-                        <small class="text-muted">270*308</small>
+                        <small class="text-muted">90*90</small>
                         <br>
                         <small class="text-muted">
                             <a href="{{ asset($testimonial['author_image']) }}" target="_blank">
@@ -55,7 +55,7 @@ enctype="multipart/form-data">
                     <label>Book Image</label>
                     <input type="file" name="book_image" accept="image/*" class="form-control">
                     <p class="text-center">
-                        <small class="text-muted">270*308</small>
+                        <small class="text-muted">85*60</small>
                         <br>
                         <small class="text-muted">
                             <a href="{{ asset($testimonial['book_image']) }}" target="_blank">
