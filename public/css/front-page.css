@@ -323,6 +323,8 @@
 
 .front-page-new .testimonial-row .carousel .testimonial-details-row .book-image {
     height: 85px;
+    width: 60px;
+    object-fit: cover;
 }
 
 .front-page-new .testimonial-row .carousel .carousel-indicators {

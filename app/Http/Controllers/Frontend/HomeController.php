@@ -33,6 +33,7 @@ use App\Settings;
 use App\Solution;
 use App\SolutionArticle;
 use App\SosChildren;
+use App\Testimonial;
 use App\UserEmail;
 use App\Webinar;
 use App\WebinarRegistrant;
@@ -81,9 +82,10 @@ class HomeController extends Controller
 
         $latest_blog = Blog::orderBy('created_at', 'desc')->first();
         $poems = Poem::orderBy('created_at', 'desc')->get();
+        $testimonials = Testimonial::active()->get();
 
         return view('frontend.home', compact('popular_courses', 'free_courses', 'free_webinars',
-            'next_webinar', 'next_free_webinar', 'next_workshop','latest_blog', 'poems'));
+            'next_webinar', 'next_free_webinar', 'next_workshop','latest_blog', 'poems', 'testimonials'));
     }
 
     // set cookie for gdpr

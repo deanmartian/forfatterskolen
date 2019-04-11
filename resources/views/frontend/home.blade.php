@@ -239,89 +239,36 @@
                     <div id="testimonials-carousel" class="carousel slide global-carousel"
                          data-ride="carousel" data-interval="15000">
 
-                        <ul class="carousel-indicators">
+                        {{--<ul class="carousel-indicators">
                             <li data-target="#testimonials-carousel" data-slide-to="0" class="active"></li>
                             <li data-target="#testimonials-carousel" data-slide-to="1"></li>
                             <li data-target="#testimonials-carousel" data-slide-to="2"></li>
-                        </ul>
+                        </ul>--}}
 
                         <!-- The slideshow -->
                         <div class="container carousel-inner no-padding">
-                            <div class="carousel-item active">
-                                <div class="col-md-12">
-                                    <div class="row testimonial-details-row">
-                                        <p class="font-montserrat-medium">
-                                            "Boken min, ”Uten vesentlige feil eller mangler” kom ut på Gyldendal
-                                            våren 2017. Og med hånden på hjertet: Jeg vet ikke om jeg hadde
-                                            klart det uten Forfatterskolen, og den støtten det ligger i å være
-                                            en del av et skrivefellesskap. Jeg vil fortsette å la meg inspirere
-                                            av Rektor Kristine og hennes medarbeidere på Forfatterskolen. Og
-                                            ikke minst: Elevene".
-                                        </p>
-                                        <div class="user-details">
-                                            <div class="images-container">
-                                                <img src="{{ asset('images/feedback1.jpg') }}" class="user-image">
-                                                <img src="{{ asset('images/book-covers/linda.jpg') }}" class="book-image">
-                                            </div>
-                                            <div class="user-info">
-                                                <span class="font-montserrat-semibold theme-text">Linda Skomakerstuen</span>
-                                                <span class="font-montserrat-regular">debutant på Gyldendal i 2017</span>
-                                            </div>
-                                        </div>
-                                    </div> <!-- end testimonial-details-row -->
-                                </div> <!-- end col-md-12 -->
-                            </div> <!-- end carousel-item -->
 
-                            <div class="carousel-item">
-                                <div class="col-md-12">
-                                    <div class="row testimonial-details-row">
-                                        <p class="font-montserrat-medium">
-                                            "Det har vært en utrolig stor glede å bli kjent med rektor Kristine
-                                            Henningsen og resten av forfatterskolen. Jeg har lært å skrive med
-                                            hjertet uten å miste hodet, og lært å se forskjellen. Samarbeidet
-                                            har resultert i at min debutroman, Armageddon-algoritmen, kom ut i
-                                            2017. Kristine har enestående evner til å inspirere og oppmuntre, og
-                                            kan trekke på et imponerende nettverk av ressurspersoner. Hjertelig
-                                            anbefalt.".
-                                        </p>
-                                        <div class="user-details">
-                                            <div class="images-container">
-                                                <img src="{{ asset('images/feedback2.jpg') }}" class="user-image">
-                                                <img src="{{ asset('images/book-covers/petter.jpg') }}" class="book-image">
+                            @foreach($testimonials as $k => $testimonial)
+                                <div class="carousel-item {{ $k == 0 ? 'active' : '' }}">
+                                    <div class="col-md-12">
+                                        <div class="row testimonial-details-row">
+                                            <p class="font-montserrat-medium w-100">
+                                                {!! nl2br($testimonial->testimony) !!}
+                                            </p>
+                                            <div class="user-details">
+                                                <div class="images-container">
+                                                    <img src="{{ asset($testimonial->author_image) }}" class="user-image">
+                                                    <img src="{{ asset($testimonial->book_image) }}" class="book-image">
+                                                </div>
+                                                <div class="user-info">
+                                                    <span class="font-montserrat-semibold theme-text">{{ $testimonial->name }}</span>
+                                                    <span class="font-montserrat-regular">{{ $testimonial->description }}</span>
+                                                </div>
                                             </div>
-                                            <div class="user-info">
-                                                <span class="font-montserrat-semibold theme-text">Petter Fergestad</span>
-                                                <span class="font-montserrat-regular">Forfatterdrøm i 2017</span>
-                                            </div>
-                                        </div>
-                                    </div> <!-- end testimonial-details-row -->
-                                </div> <!-- end col-md-12 -->
-                            </div> <!-- end carousel-item -->
-
-                            <div class="carousel-item">
-                                <div class="col-md-12">
-                                    <div class="row testimonial-details-row">
-                                        <p class="font-montserrat-medium">
-                                            "Å samtidig være medlem i Forfatterskolen og denne fantastiske
-                                            gruppen har vært avgjørende for å greie å stå løpet ut. Har
-                                            diskutert prosjektet med Kristine tidligere og hun er velvilligheten
-                                            selv. Bøyer meg i støvet og har stor respekt for henne og jobben hun
-                                            gjør. Jeg vil være elev for alltid Wenche, utgitt fagbokforfatter
-                                            med: Å miste et barn"
-                                        </p>
-                                        <div class="user-details">
-                                            <div class="images-container">
-                                                <img src="{{ asset('images/feedback3.jpg') }}" class="user-image">
-                                                <img src="{{ asset('images/book-covers/wenche.jpg') }}" class="book-image">
-                                            </div>
-                                            <div class="user-info">
-                                                <span class="font-montserrat-semibold theme-text">Wenche Fuglseth Spjelkavik</span>
-                                                <span class="font-montserrat-regular">debutant på Pax Forlag i 2017</span>
-                                            </div>
-                                        </div>
-                                    </div> <!-- end testimonial-details-row -->
-                                </div> <!-- end col-md-12 -->
-                            </div> <!-- end carousel-item -->
+                                        </div> <!-- end testimonial-details-row -->
+                                    </div> <!-- end col-md-12 -->
+                                </div> <!-- end carousel-item -->
+                            @endforeach
                         </div> <!-- end carousel-inner -->
 
                         <!-- Left and right controls -->

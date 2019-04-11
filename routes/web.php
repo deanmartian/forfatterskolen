@@ -1100,7 +1100,7 @@ Route::group([
             return view('backend.support.cron-log');
         })->name('admin.cron-log.index');
 
-        // Editors route
+        // Goto-webinar route
         Route::resource('/goto-webinar', 'GotoWebinarController', [
             'except' => 'show',
             'names' => [
@@ -1110,6 +1110,19 @@ Route::group([
                 'edit' => 'admin.goto-webinar.edit',
                 'update' => 'admin.goto-webinar.update',
                 'destroy' => 'admin.goto-webinar.destroy',
+            ],
+        ]);
+
+        //testimonial routes
+        Route::resource('/testimonial', 'TestimonialController', [
+            'except' => 'show',
+            'names' => [
+                'index' => 'admin.testimonial.index',
+                'create' => 'admin.testimonial.create',
+                'store' => 'admin.testimonial.store',
+                'edit' => 'admin.testimonial.edit',
+                'update' => 'admin.testimonial.update',
+                'destroy' => 'admin.testimonial.destroy',
             ],
         ]);
 
