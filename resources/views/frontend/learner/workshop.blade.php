@@ -98,6 +98,7 @@
 									<th>Forfatterskolens foreslåtte datoer</th>
 									<th>Avtalt dato og tid</th>
 									<th>Reprise</th>
+									<th></th>
 								</tr>
 								</thead>
 								<tbody>
@@ -174,6 +175,28 @@
 												<a href="{{ $coachingTimer->replay_link }}" target="_blank">
 													View Replay
 												</a>
+											@endif
+
+											@if ($coachingTimer->comment)
+												<p>
+													{{ $coachingTimer->comment }}
+												</p>
+											@endif
+
+											@if ($coachingTimer->document)
+												<?php $extension = explode('.', basename($coachingTimer->document)); ?>
+												@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+													<a href="/js/ViewerJS/#../../{{ $coachingTimer->document }}">{{ basename($coachingTimer->document) }}</a>
+												@elseif( end($extension) == 'docx')
+													<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$coachingTimer->document}}">{{ basename($coachingTimer->document) }}</a>
+												@elseif( end($extension) == 'doc')
+													<a href="{{ asset($coachingTimer->document) }}">{{ basename($coachingTimer->document) }}</a>
+												@endif
+											@endif
+										</td>
+										<td>
+											@if ($coachingTimer->status === 1)
+												<span class="label label-success">Finished</span>
 											@endif
 										</td>
 									</tr>
