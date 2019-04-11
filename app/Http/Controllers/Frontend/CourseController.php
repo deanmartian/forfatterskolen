@@ -25,9 +25,10 @@ class CourseController extends Controller
             // display the 0 last
          ->select(['*', \DB::raw('IF(display_order > 0, display_order, 1000000) display_order')])
         ->orderBy('display_order', 'asc')
-        ->whereHas('packages', function($query){
+        ->whereHas('packages')
+        /*->whereHas('packages', function($query){
             return count($query) > 0;
-        })
+        })*/
         ->get()
         ->filter(function($item) {
             return $item->is_available || $item->is_free;
