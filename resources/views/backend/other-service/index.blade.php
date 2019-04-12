@@ -216,6 +216,7 @@
                                         <th>{{ trans('site.approved-date') }}</th>
                                         <th>{{ trans('site.assigned-to') }}</th>
                                         <th>{{ trans('site.replay') }}</th>
+                                        <th>{{ trans('site.status') }}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -292,8 +293,31 @@
                                                         {{ trans('site.view-replay') }}
                                                     </a> <br>
                                                 @endif
+
+                                                @if ($coachingTimer->comment)
+                                                    <p>
+                                                        {{ $coachingTimer->comment }}
+                                                    </p>
+                                                @endif
+
+                                                @if ($coachingTimer->document)
+                                                    <?php $extension = explode('.', basename($coachingTimer->document)); ?>
+                                                    @if( end($extension) == 'pdf' || end($extension) == 'odt' )
+                                                        <a href="/js/ViewerJS/#../../{{ $coachingTimer->document }}">{{ basename($coachingTimer->document) }}</a>
+                                                    @elseif( end($extension) == 'docx')
+                                                        <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$coachingTimer->document}}">{{ basename($coachingTimer->document) }}</a>
+                                                    @elseif( end($extension) == 'doc')
+                                                        <a href="{{ asset($coachingTimer->document) }}">{{ basename($coachingTimer->document) }}</a>
+                                                    @endif
+                                                @endif
                                                 <button class="btn btn-xs btn-primary setReplayBtn" data-toggle="modal"
+                                                        style="display: block"
                                                         data-target="#setReplayModal" data-action="{{ route('admin.other-service.coaching-timer.set_replay', $coachingTimer->id) }}">{{ trans('site.set-replay') }}</button>
+                                            </td>
+                                            <td>
+                                                @if ($coachingTimer->status === 1)
+                                                    <span class="label label-success">Finished</span>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -401,14 +425,31 @@
     </div>
 
     <div id="setReplayModal" class="modal fade" role="dialog">
-        <div class="modal-dialog modal-sm">
+        <div class="modal-dialog">
             <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
                 <div class="modal-body">
-                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         <div class="form-group">
                             <label>{{ trans('site.set-replay') }}</label>
-                            <input type="url" name="replay_link" class="form-control" required>
+                            <input type="url" name="replay_link" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Comment</label>
+                            <textarea name="comment" cols="30" rows="10" class="form-control"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Document</label>
+                            <input type="file" name="document" class="form-control"
+                                   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                   application/msword,
+                               application/pdf,">
+                        </div>
+                        <div class="form-group">
+                            <small>*Note: If any of the fields are inputted it would mark as Finished</small>
                         </div>
                         <div class="text-right">
                             <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
