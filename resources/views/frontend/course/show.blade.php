@@ -247,6 +247,7 @@
 
 											@if ($package->has_coaching)
 												{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($package->has_coaching) }} coaching session
+                                                <br>
 											@endif
 										@endif
 										<a class="btn site-btn-global mt-2" href="{{ route('front.course.checkout',
