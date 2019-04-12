@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\CourseExpiryReminder;
 use App\CoursesTaken;
 use App\EmailAttachment;
 use App\EmailOutLog;
@@ -588,6 +589,30 @@ class CourseController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * Save expiration email reminder
+     * @param $course_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function expirationReminder($course_id, Request $request)
+    {
+        $this->validate($request,[
+           'subject' => 'required',
+           'message' => 'required'
+        ]);
+
+        $expiryReminderEmail = CourseExpiryReminder::firstOrNew(['course_id' => $course_id]);
+        $expiryReminderEmail->subject = $request->subject;
+        $expiryReminderEmail->message = $request->message;
+        $expiryReminderEmail->save();
+
+        return redirect()->back()->with([
+           'errors' => AdminHelpers::createMessageBag('Expiration email reminder saved.'),
+           'alert_type' => 'success'
+        ]);
     }
 
 }

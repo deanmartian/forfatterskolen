@@ -35,6 +35,7 @@ use App\Survey;
 use App\SurveyAnswer;
 use App\User;
 use App\UserEmail;
+use App\UserRenewedCourse;
 use App\UserSocial;
 use App\WebinarRegistrant;
 use App\WordWritten;
@@ -1540,7 +1541,15 @@ class LearnerController extends Controller
                     $automation_id  = 73;
                     $user_name      = Auth::user()->first_name;
 
-                    AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+                    // disable the adding to automation, instead save to db
+                    //AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+
+                    // add user that renew the course
+                    UserRenewedCourse::firstOrCreate([
+                        'user_id' => Auth::user()->id,
+                        'course_id' => $package->course_id
+                    ]);
+
 
                     // Email to support
                     //mail('support@forfatterskolen.no', 'All Courses Renewed', Auth::user()->first_name . ' has renewed all the courses');

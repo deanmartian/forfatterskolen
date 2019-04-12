@@ -53,6 +53,7 @@
 	}
 
     $emailOutLog = $course->emailOutLog()->paginate(20);
+    $expiryReminder = $course->expiryReminders;
     ?>
 
 	<div class="col-sm-12 col-md-10 sub-right-content">
@@ -82,6 +83,9 @@
 			{{-- for webinar pakke only --}}
 			@if (/*$hasActiveUsers*/ $course->id == 17)
 				<a href="{{ route('learner.course.learner-active-list-excel', $course->id) }}" class="btn btn-info margin-bottom">{{ trans('site.export-active-learners') }}</a>
+				<button class="btn btn-primary margin-bottom" data-toggle="modal" data-target="#expirationEmailReminder">
+					Expiration Email Reminder
+				</button>
 			@endif
 
 			<ul class="nav nav-tabs margin-top">
@@ -407,6 +411,36 @@
 			</div>
 		</div>
 
+	</div>
+</div>
+
+<div id="expirationEmailReminder" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Expiration Email Reminder</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.course.expiration-reminder', $course->id) }}" onsubmit="disableSubmit(this)">
+					{{csrf_field()}}
+
+					<div class="form-group">
+						<label>Subject</label>
+						<input type="text" class="form-control" name="subject" required value="{{ $expiryReminder->subject }}">
+					</div>
+
+					<div class="form-group">
+						<label>Message</label>
+						<textarea name="message" cols="30" rows="10" class="form-control editor">{{ $expiryReminder->message }}</textarea>
+					</div>
+
+					<div class="text-right">
+						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
 </div>
 

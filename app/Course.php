@@ -126,6 +126,11 @@ class Course extends Model
         return self::where('is_free', '=', 1)->get();
     }
 
+    public function expiryReminders()
+    {
+        return $this->hasOne('App\CourseExpiryReminder');
+    }
+
     //for deleting the children
     /*public static function boot()
     {

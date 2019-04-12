@@ -5,6 +5,7 @@ namespace App\Console;
 use App\Console\Commands\CourseExpiresInAMonth;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Psy\Command\Command;
 
 class Kernel extends ConsoleKernel
 {
@@ -29,7 +30,8 @@ class Kernel extends ConsoleKernel
         Commands\UpdateGross::class,
         Commands\WebinarEmailOutCommand::class,
         Commands\GoToWebinarReminder::class,
-        Commands\FreeCourseDelayedEmailCommand::class
+        Commands\FreeCourseDelayedEmailCommand::class,
+        Commands\CourseExpirationReminder::class
     ];
 
     /**
@@ -65,6 +67,8 @@ class Kernel extends ConsoleKernel
             ->dailyAt('09:00');
         $schedule->command('gotowebinarreminderday:command')
             ->dailyAt('19:00');
+        $schedule->command('courseexpirationreminder:command')
+            ->dailyAt('08:30');
         /*$schedule->command('updategross:command')
             ->dailyAt('06:00');*/
         $schedule->command('freecoursedelayedemail:command')
