@@ -411,14 +411,24 @@
 
             let course_id = '<?php echo $course->id?>';
             let count_package_change = 0; // used to determine the onload
+            let onload_package_id = parseInt('{{ Request::has('package') ? Request::get('package') : 0 }}');
 
             setTimeout(function(){
-                if ($(".package-option").find('input[name=package_id]').length > 1) {
-                    $(".package-option:nth-child(2)").find('input[name=package_id]').attr('checked', true).trigger('change');
-                } else {
-                    $(".package-option:nth-child(1)").find('input[name=package_id]').attr('checked', true).trigger('change');
-                }
+
+                // check if package parameter is set and radio with the value exists
+				let radio_value = $(":radio[value="+onload_package_id+"]");
+                if (onload_package_id > 0 && radio_value.length > 0) {
+                    radio_value.attr('checked', true).trigger('change');
+				} else {
+                    if ($(".package-option").find('input[name=package_id]').length > 1) {
+                        $(".package-option:nth-child(2)").find('input[name=package_id]').attr('checked', true).trigger('change');
+                    } else {
+                        $(".package-option:nth-child(1)").find('input[name=package_id]').attr('checked', true).trigger('change');
+                    }
+				}
+
                 $('input:radio[name=payment_plan_id]:first').attr('checked', true).trigger('change');
+
             }, 100);
 
             $('input[name=package_id]').on('change', function(){

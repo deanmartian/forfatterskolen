@@ -249,6 +249,10 @@
 												{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($package->has_coaching) }} coaching session
 											@endif
 										@endif
+										<a class="btn site-btn-global mt-2" href="{{ route('front.course.checkout',
+										[$course->id,'package' => $package->id]) }}">
+											Bestill
+										</a>
 									</div>
 								@endforeach
 							</div> <!-- end packages -->
