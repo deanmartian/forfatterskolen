@@ -427,12 +427,12 @@
 
 					<div class="form-group">
 						<label>Subject</label>
-						<input type="text" class="form-control" name="subject" required value="{{ $expiryReminder->subject }}">
+						<input type="text" class="form-control" name="subject" required value="{{ $expiryReminder ? $expiryReminder->subject : ''}}">
 					</div>
 
 					<div class="form-group">
 						<label>Message</label>
-						<textarea name="message" cols="30" rows="10" class="form-control editor">{{ $expiryReminder->message }}</textarea>
+						<textarea name="message" cols="30" rows="10" class="form-control editor">{{ $expiryReminder ? $expiryReminder->message : ''}}</textarea>
 					</div>
 
 					<div class="text-right">

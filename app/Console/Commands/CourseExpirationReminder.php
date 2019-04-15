@@ -84,7 +84,7 @@ class CourseExpirationReminder extends Command {
 
             if ($userRenewedCourse) {
 
-                $user_email = 'elybutabara@mailinator.com';//$courseTaken->user->email;
+                $user_email = $courseTaken->user->email;
                 $user_name  = $courseTaken->user->first_name;
 
                 $expires_in = Carbon::parse($courseTaken->started_at)->diffInDays(Carbon::now());
