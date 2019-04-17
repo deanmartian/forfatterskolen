@@ -65,7 +65,7 @@ class PageController extends Controller
         $assignedAssignments = AssignmentManuscript::where('editor_id', Auth::user()->id)
             ->where('has_feedback',0)
             ->get();
-        $coachingTimers = Auth::user()->assignedCoachingTimers;
+        $coachingTimers = Auth::user()->assignedCoachingTimers()->where('status',0)->get();
         $corrections = Auth::user()->assignedCorrections;
         $copyEditings = Auth::user()->assignedCopyEditing;
 
