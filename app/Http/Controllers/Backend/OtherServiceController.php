@@ -30,7 +30,7 @@ class OtherServiceController extends Controller
     {
         $copyEditing = CopyEditingManuscript::paginate(10);
         $corrections = CorrectionManuscript::paginate(10);
-        $coachingTimers = CoachingTimerManuscript::where('status',0)->paginate(10);
+        $coachingTimers = CoachingTimerManuscript::paginate(10);
         return view('backend.other-service.index', compact('copyEditing', 'corrections', 'coachingTimers'));
     }
 

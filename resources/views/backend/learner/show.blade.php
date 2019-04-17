@@ -793,7 +793,7 @@
 
 						@endforeach
 
-						@foreach($learner->coachingTimers()->where('status',0)->get() as $coachingTimer)
+						@foreach($learner->coachingTimers as $coachingTimer)
                             <?php $extension = explode('.', basename($coachingTimer->file)); ?>
 							<tr>
 								<td>
