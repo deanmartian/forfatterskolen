@@ -18,7 +18,8 @@ class CourseExpiryReminder extends Model {
      *
      * @var array
      */
-    protected $fillable = ['course_id', 'subject', 'message'];
+    protected $fillable = ['course_id', 'subject_28_days', 'message_28_days', 'subject_1_week', 'message_1_week',
+        'subject_1_day', 'message_1_day'];
 
     public function course()
     {

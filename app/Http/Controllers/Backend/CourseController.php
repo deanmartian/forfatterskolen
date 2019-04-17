@@ -600,13 +600,21 @@ class CourseController extends Controller
     public function expirationReminder($course_id, Request $request)
     {
         $this->validate($request,[
-           'subject' => 'required',
-           'message' => 'required'
+           'subject_28_days' => 'required',
+           'message_28_days' => 'required',
+            'subject_1_week' => 'required',
+            'message_1_week' => 'required',
+            'subject_1_day' => 'required',
+            'message_1_day' => 'required'
         ]);
 
         $expiryReminderEmail = CourseExpiryReminder::firstOrNew(['course_id' => $course_id]);
-        $expiryReminderEmail->subject = $request->subject;
-        $expiryReminderEmail->message = $request->message;
+        $expiryReminderEmail->subject_28_days = $request->subject_28_days;
+        $expiryReminderEmail->message_28_days = $request->message_28_days;
+        $expiryReminderEmail->subject_1_week = $request->subject_1_week;
+        $expiryReminderEmail->message_1_week = $request->message_1_week;
+        $expiryReminderEmail->subject_1_day = $request->subject_1_day;
+        $expiryReminderEmail->message_1_day = $request->message_1_day;
         $expiryReminderEmail->save();
 
         return redirect()->back()->with([

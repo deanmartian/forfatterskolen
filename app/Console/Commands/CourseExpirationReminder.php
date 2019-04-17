@@ -94,13 +94,30 @@ class CourseExpirationReminder extends Command {
                 }
 
                 $expires_in = $expires_in+1;
-                $day_text = $expires_in > 1 ? 'days':'day';
+
+                $subject = '';
+                $content = '';
+
                 $course = $courseTaken->package->course;
                 $expiryReminder = CourseExpiryReminder::where('course_id', $course->id)->first();
 
-                $subject = 'Course '.$course->title.' expires in '.$expires_in.' '.$day_text;
+                switch ($expires_in) {
+                    case 28:
+                        $subject = $expiryReminder->subject_28_days;
+                        $content = $expiryReminder->message_28_days;
+                    break;
+
+                    case 7:
+                        $subject = $expiryReminder->subject_1_week;
+                        $content = $expiryReminder->message_1_week;
+                    break;
+
+                    case 1:
+                        $subject = $expiryReminder->subject_1_day;
+                        $content = $expiryReminder->message_1_day;
+                }
+
                 $from = 'post@forfatterskolen.no';
-                $content = $expiryReminder->message;
 
                 AdminHelpers::send_email($subject, $from, $user_email, $content);
                 CronLog::create(['activity' => 'CourseExpirationReminder CRON sent email to '.$user_name.'.']);

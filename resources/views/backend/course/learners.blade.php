@@ -426,13 +426,36 @@
 					{{csrf_field()}}
 
 					<div class="form-group">
-						<label>Subject</label>
-						<input type="text" class="form-control" name="subject" required value="{{ $expiryReminder ? $expiryReminder->subject : ''}}">
+						<label>Subject 28 days</label>
+						<input type="text" class="form-control" name="subject_28_days" required
+							   value="{{ $expiryReminder ? $expiryReminder->subject_28_days : ''}}">
 					</div>
 
 					<div class="form-group">
-						<label>Message</label>
-						<textarea name="message" cols="30" rows="10" class="form-control editor">{{ $expiryReminder ? $expiryReminder->message : ''}}</textarea>
+						<label>Message for 28 days</label>
+						<textarea name="message_28_days" cols="30" rows="10" class="form-control editor">{{ $expiryReminder ? $expiryReminder->message_28_days : ''}}</textarea>
+					</div>
+
+					<div class="form-group">
+						<label>Subject 1 week</label>
+						<input type="text" class="form-control" name="subject_1_week" required
+							   value="{{ $expiryReminder ? $expiryReminder->subject_1_week : ''}}">
+					</div>
+
+					<div class="form-group">
+						<label>Message 1 week</label>
+						<textarea name="message_1_week" cols="30" rows="10" class="form-control editor">{{ $expiryReminder ? $expiryReminder->message_1_week : ''}}</textarea>
+					</div>
+
+					<div class="form-group">
+						<label>Subject 1 day</label>
+						<input type="text" class="form-control" name="subject_1_day" required
+							   value="{{ $expiryReminder ? $expiryReminder->subject1_day : ''}}">
+					</div>
+
+					<div class="form-group">
+						<label>Message 1 day</label>
+						<textarea name="message_1_day" cols="30" rows="10" class="form-control editor">{{ $expiryReminder ? $expiryReminder->message_1_day : ''}}</textarea>
 					</div>
 
 					<div class="text-right">
