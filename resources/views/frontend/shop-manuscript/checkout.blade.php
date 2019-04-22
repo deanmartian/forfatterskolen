@@ -21,21 +21,29 @@
 								{{csrf_field()}}
 								<div class="row">
 									<div class="col-sm-12">
-											<span>
-												Er du allerede registrert hos oss må du logge inn her
-											</span>
+										<span>
+											{{ trans('site.front.form.already-registered-text') }}
+										</span>
 									</div>
 								</div>
 								<div class="row">
 									<div class="form-group col-sm-4">
-										<input type="email" name="email" placeholder="Epost-adresse" class="form-control" value="{{old('email')}}" required>
-										<p style="margin-top: 7px;"><a href="{{ route('auth.login.show') }}?t=passwordreset" tabindex="-1">Glemt Passord?</a></p>
+										<input type="email" name="email" placeholder="{{ trans('site.front.form.email-address') }}"
+											   class="form-control" value="{{old('email')}}" required>
+										<p style="margin-top: 7px;">
+											<a href="{{ route('auth.login.show') }}?t=passwordreset"
+																	   tabindex="-1">
+												{{ trans('site.front.form.reset-password') }}?
+											</a>
+										</p>
 									</div>
 									<div class="form-group col-sm-4">
 										<input type="password" name="password" placeholder="Passord" class="form-control" required>
 									</div>
 									<div class="form-group col-sm-4">
-										<button type="submit" class="btn site-btn-global">Login</button>
+										<button type="submit" class="btn site-btn-global">
+											{{ trans('site.front.form.login')}}
+										</button>
 									</div>
 								</div>
 							</form>
@@ -57,8 +65,12 @@
 							  id="place_order_form">
 							{{csrf_field()}}
 
-							<h2>Bestillingsskjema for {{$shopManuscript->title}}</h2>
-							<div class="panel-heading">Brukerinformasjon</div>
+							<h2>
+								{{ str_replace('_title_', $shopManuscript->title, trans('site.front.form.book-form-for')) }}
+							</h2>
+							<div class="panel-heading">
+								{{ trans('site.front.form.user-information') }}
+							</div>
 							<div class="panel-body px-0">
 
 								<div class="form-group">
@@ -71,19 +83,27 @@
 									@endif
 
 									<div id="manuscript-file">
-										<label for="manuscript" class="control-label">Last opp manuskriptet</label>
+										<label for="manuscript" class="control-label">
+											{{ trans('site.front.form.upload-manuscript') }}
+										</label>
 										<input type="file" id="manuscript" class="form-control" name="manuscript" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text" required>
 									</div>
 									<div class="custom-checkbox mt-2">
 										<input type="checkbox" name="send_to_email" id="send_to_email">
-										<label for="send_to_email" class="control-label">Send til E-post</label>
+										<label for="send_to_email" class="control-label">
+											{{ trans('site.front.form.send-to-email') }}
+										</label>
 									</div>
 								</div>
 
 								<div class="form-group">
-									<label for="">Sjanger</label>
+									<label for="">
+										{{ trans('site.front.genre') }}
+									</label>
 									<select class="form-control" name="genre" required>
-										<option value="" disabled="disabled" selected>Velg sjanger</option>
+										<option value="" disabled="disabled" selected>
+											{{ trans('site.front.select-genre') }}
+										</option>
 										@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
 											<option value="{{ $type['id'] }}" @if (old('genre') == $type['id']) selected @endif> {{ $type['option'] }} </option>
 										@endforeach
@@ -93,64 +113,88 @@
 								<!-- check if the manuscript is not the start -->
 								@if($shopManuscript->id != 9)
 									<div class="form-group">
-										<label for="">Synopsis (valgfritt)</label>
+										<label for="">
+											{{ trans('site.front.form.synopsis-optional') }}
+										</label>
 										<input type="file" class="form-control" name="synopsis" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 									</div>
 								@endif
 
 								<div class="form-group">
-									<label for="">Noen ord om manuset (valgfritt)</label>
+									<label for="">
+										{{ trans('site.front.form.manuscript-description') }}
+									</label>
 									<textarea name="description" id="" cols="30" rows="7" class="form-control">{{ old('description') }}</textarea>
 								</div>
 
 								<div class="form-group">
-									<label for="email" class="control-label">E-postadresse</label>
+									<label for="email" class="control-label">
+										{{ trans('site.front.form.email-address') }}
+									</label>
 									<input type="email" id="email" class="form-control large-input" name="email" required
 										   @if(Auth::guest()) value="{{old('email')}}" @else value="{{Auth::user()->email}}"
-										   readonly @endif placeholder="E-postadresse">
+										   readonly @endif placeholder="{{ trans('site.front.form.email-address') }}">
 								</div>
 								<div class="form-group row">
 									<div class="col-md-6">
-										<label for="first_name" class="control-label">Fornavn</label>
+										<label for="first_name" class="control-label">
+											{{ trans('site.front.form.first-name') }}
+										</label>
 										<input type="text" id="first_name" class="form-control large-input" name="first_name" required
 											   @if(Auth::guest()) value="{{old('first_name')}}" @else
-											   value="{{Auth::user()->first_name}}" readonly @endif placeholder="Fornavn">
+											   value="{{Auth::user()->first_name}}" readonly @endif
+											   placeholder="{{ trans('site.front.form.first-name') }}">
 									</div>
 									<div class="col-md-6">
-										<label for="last_name" class="control-label">Etternavn</label>
+										<label for="last_name" class="control-label">
+											{{ trans('site.front.form.last-name') }}
+										</label>
 										<input type="text" id="last_name" class="form-control large-input" name="last_name" required
 											   @if(Auth::guest()) value="{{old('last_name')}}" @else
-											   value="{{Auth::user()->last_name}}" readonly @endif placeholder="Etternavn">
+											   value="{{Auth::user()->last_name}}" readonly @endif
+											   placeholder="{{ trans('site.front.form.last-name') }}">
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="street" class="control-label">Gate</label>
+									<label for="street" class="control-label">
+										{{ trans('site.front.form.street') }}
+									</label>
 									<input type="text" id="street" class="form-control large-input" name="street" required
 										   @if(Auth::guest()) value="{{old('last_name')}}"
 										   @else value="{{Auth::user()->address['street']}}" @endif>
 								</div>
 								<div class="form-group row">
 									<div class="col-md-6">
-										<label for="zip" class="control-label">Postnummer</label>
+										<label for="zip" class="control-label">
+											{{ trans('site.front.form.zip') }}
+										</label>
 										<input type="text" id="zip" class="form-control large-input" name="zip" required
 											   @if(Auth::guest()) value="{{old('zip')}}"
 											   @else value="{{Auth::user()->address['zip']}}" @endif>
 									</div>
 									<div class="col-md-6">
-										<label for="city" class="control-label">Poststed</label>
-										<input type="text" id="city" class="form-control" name="city" required @if(Auth::guest()) value="{{old('city')}}" @else value="{{Auth::user()->address['city']}}" @endif>
+										<label for="city" class="control-label">
+											{{ trans('site.front.form.city') }}
+										</label>
+										<input type="text" id="city" class="form-control" name="city" required
+											   @if(Auth::guest()) value="{{old('city')}}"
+											   @else value="{{Auth::user()->address['city']}}" @endif>
 									</div>
 								</div>
 								<div class="form-group row">
 									<div class="col-md-6">
-										<label for="phone" class="control-label">Telefonnummer</label>
+										<label for="phone" class="control-label">
+											{{ trans('site.front.form.phone-number') }}
+										</label>
 										<input type="text" id="phone" class="form-control large-input" name="phone" required
 											   @if(Auth::guest()) value="{{old('phone')}}"
 											   @else value="{{Auth::user()->address['phone']}}" @endif>
 									</div>
 									@if(Auth::guest())
 										<div class="col-md-6">
-											<label for="password" class="control-label">Lag et passord</label>
+											<label for="password" class="control-label">
+												{{ trans('site.front.form.create-password') }}
+											</label>
 											<input type="password" id="password" class="form-control large-input"
 												   name="password" required>
 										</div>
@@ -160,7 +204,9 @@
 									@if(!Auth::guest())
 										<div class="col-md-6 custom-checkbox">
 											<input type="checkbox" name="update_address" id="update_address" checked>
-											<label for="update_address" class="control-label">Update Address</label>
+											<label for="update_address" class="control-label">
+												{{ trans('site.front.form.update-address') }}
+											</label>
 										</div>
 									@endif
 								</div>
@@ -171,7 +217,9 @@
 
 				<div class="col-lg-4">
 					<div class="panel panel-default mb-0">
-						<div class="panel-heading-underlined">Betalingsmetode</div>
+						<div class="panel-heading-underlined">
+							{{ trans('site.front.form.payment-method') }}
+						</div>
 						<div class="panel-body px-0 pb-0">
 							<select class="form-control" name="payment_mode_id" required data-size="15">
 								@foreach(\App\Http\FrontendHelpers::paymentModes(true) as $paymentMode)
@@ -193,7 +241,9 @@
                             ?>
 						@endif
 
-						<div class="panel-heading-underlined">Betalingsplan</div>
+						<div class="panel-heading-underlined">
+							{{ trans('site.front.form.payment-plan') }}
+						</div>
 						<div class="panel-body px-0 pb-0">
 							<div class="row">
 								<div class="col-sm-12" id="paymentPlanContainer">
@@ -211,9 +261,11 @@
 							<div class="row">
 								<div class="col-sm-12 margin-top custom-checkbox">
 									<input type="checkbox" name="agree_terms" id="agree_terms" required>
-									<label for="agree_terms">Jeg aksepterer</label>
-									<a href="{{ route('front.terms', 'course-terms') }}"
-									   target="_new">kjøpsvilkårene</a>
+									{!! str_replace(['_start_label_', '_end_label_', '_start_link_','_end_link_'],
+										['<label for="agree_terms">',
+										'</label>',
+										'<a href="'.route('front.terms', 'course-terms').'" target="_new">','</a>'],
+										trans('site.front.form.accept-terms')) !!}
 								</div>
 							</div>
 						</div> <!-- end panel-body -->
@@ -223,7 +275,7 @@
 								<strong>Du har en elevrabatt på 5%</strong>
 							@endif
 
-							<h3>Totalt:
+							<h3>{{ trans('site.front.total') }}:
 								<span class="theme-text font-barlow-regular">{{ \App\Http\FrontendHelpers::currencyFormat($hasPaidCourse ?
 								$shopManuscript->full_payment_price - ($shopManuscript->full_payment_price * 0.05) :
 								$shopManuscript->full_payment_price) }}</span>
@@ -231,7 +283,7 @@
 
 							<button type="submit" class="btn site-btn-global-w-arrow" id="proceed_checkout">
 								<i class="fa fa-spinner fa-pulse d-none"></i>
-								Bestill</button>
+								{{ trans('site.front.buy') }}</button>
 						</div> <!-- end checkout-total -->
 					</div> <!-- end panel -->
 				</div> <!-- end col-lg-4 -->
