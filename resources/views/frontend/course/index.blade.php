@@ -9,21 +9,21 @@
 		<div class="header">
 			<div class="container text-center">
 				<h1>
-					Våre Kurs
+					{{ trans('site.front.our-course.title') }}
 				</h1>
 
 				<p>
-					{!! trans('site.front.course.main.description') !!}
+					{!! trans('site.front.our-course.details') !!}
 				</p>
 			</div>
 
 			<div class="row sub-header">
 				<p>
-					{{ trans('site.front.course.second-description') }}
+					{{ trans('site.front.our-course.second-description') }}
 				</p>
 
 				<p class="highlight">
-					Vi er der for deg – hele veien!
+					{{ trans('site.front.our-course.highlight') }}
 				</p>
 			</div> <!-- end sub-header -->
 		</div> <!-- end header -->
@@ -39,20 +39,22 @@
 										<div class="header-content">
 											@if ($course->instructor)
 												<div class="left-container">
-													<small>Kursholder</small>
+													<small>{{ trans('site.front.our-course.course-holder') }}</small>
 													<h2><i class="img-icon"></i>{{ $course->instructor }}</h2>
 												</div>
 											@endif
 
 											@if ($course->start_date)
 												<div class="right-container">
-													<small>Date</small>
+													<small>{{ trans('site.front.our-course.date') }}</small>
 													<h2><i class="img-icon"></i>{{ \App\Http\FrontendHelpers::formatDate($course->start_date) }}</h2>
 												</div>
 											@endif
 										</div>
 
-										<a href="{{ route('front.course.show', $course->id) }}" class="btn btn-details">Detaljer</a>
+										<a href="{{ route('front.course.show', $course->id) }}" class="btn btn-details">
+											{{ trans('site.front.our-course.view-details') }}
+										</a>
 									</div>
 									<div class="course-body">
 										<h2>
@@ -61,7 +63,9 @@
 
 										<p class="color-b4">{{ str_limit(strip_tags($course->description), 180)}}</p>
 
-										<a href="{{ route('front.course.show', $course->id) }}" class="btn buy-btn">Les mer</a>
+										<a href="{{ route('front.course.show', $course->id) }}" class="btn buy-btn">
+											{{ trans('site.front.view') }}
+										</a>
 									</div>
 								</div>
 							</div>

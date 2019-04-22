@@ -1,9 +1,13 @@
 @if( Route::currentRouteName() != 'front.free-manuscript.index')
     @if (Auth::guest())
         <div class="start-today text-center">
-            <h5 class="font-regular">Vil du ha profesjonell tilbakemelding på en smakebit av din personlige tekst, helt gratis? Send den inn ved å trykke på knappen under.</h5>
+            <h5 class="font-regular">
+                {{ trans('site.front.start-today.details') }}
+            </h5>
             <div></div>
-            <a class="btn" href="/gratis-tekstvurdering">Ja, dette vil jeg ha!</a>
+            <a class="btn" href="/gratis-tekstvurdering">
+                {{ trans('site.front.start-today.button-text') }}
+            </a>
             {{--<div>
                 <small>Du får svar innen fem virkedager</small>
             </div>--}}
