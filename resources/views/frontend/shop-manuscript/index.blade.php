@@ -55,18 +55,22 @@
                             {{ csrf_field() }}
                             <input type="file" class="hidden" name="manuscript" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
                             <label class="mb-4">
-                                <span class="instruction">Dette er bare en ordteller, og gir ingen form for kjøp</span>
+                                <span class="instruction">{{ trans('site.front.shop-manuscript.form.instruction') }}</span>
                                 <br>
-                                <span class="note"><i class="info-icon"></i> merk: godkjente filformat er DOC, DOCX, PDF og ODT.</span>
+                                <span class="note"><i class="info-icon"></i> {{ trans('site.front.shop-manuscript.form.note') }}</span>
                             </label>
                             <div class="input-group mb-4">
                                 <input type="text" readonly class="form-control disabled" required>
                                 <div class="input-group-append">
-                                    <button class="btn bg-site-red select-manuscript" type="button">Velg dokument</button>
+                                    <button class="btn bg-site-red select-manuscript" type="button">
+                                        {{ trans('site.front.shop-manuscript.form.select-document') }}
+                                    </button>
                                 </div>
                             </div>
                             <div class="margin-top">
-                                <button class="btn site-btn-global-w-arrow" type="submit">Last opp</button>
+                                <button class="btn site-btn-global-w-arrow" type="submit">
+                                    {{ trans('site.front.upload') }}
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -109,7 +113,9 @@
                                                     <h1>{{ $shopManuscript->title }}</h1>
                                                     <p>{{ $shopManuscript->description }}</p>
                                                     <h1 class="price">{{ \App\Http\FrontendHelpers::formatCurrency($shopManuscript->full_payment_price) }} KR</h1>
-                                                    <a class="btn buy-btn" href="{{ route('front.shop-manuscript.checkout', $shopManuscript->id) }}">Bestill</a>
+                                                    <a class="btn buy-btn" href="{{ route('front.shop-manuscript.checkout', $shopManuscript->id) }}">
+                                                        {{ trans('site.front.buy') }}
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
@@ -140,8 +146,12 @@
                             </div>
 
                             <div class="col-sm-9">
-                                <h1>Coaching Timer</h1>
-                                <a href="{{ route('front.coaching-timer') }}" class="link-with-arrow">Les Mer</a>
+                                <h1>
+                                    {{ trans('site.front.coaching-timer') }}
+                                </h1>
+                                <a href="{{ route('front.coaching-timer') }}" class="link-with-arrow">
+                                    {{ ucwords(trans('site.front.view')) }}
+                                </a>
                             </div>
                         </div>
                     </a>
@@ -153,8 +163,12 @@
                             </div>
 
                             <div class="col-sm-9">
-                                <h1>Korrektur</h1>
-                                <a href="{{ route('front.correction') }}" class="link-with-arrow">Les Mer</a>
+                                <h1>
+                                    {{ trans('site.front.correction') }}
+                                </h1>
+                                <a href="{{ route('front.correction') }}" class="link-with-arrow">
+                                    {{ ucwords(trans('site.front.view')) }}
+                                </a>
                             </div>
                         </div>
                     </a>
@@ -166,8 +180,10 @@
                             </div>
 
                             <div class="col-sm-9">
-                                <h1>Språkvåsk</h1>
-                                <a href="{{ route('front.copy-editing') }}" class="link-with-arrow">Les Mer</a>
+                                <h1>{{ trans('site.front.copy-editing') }}</h1>
+                                <a href="{{ route('front.copy-editing') }}" class="link-with-arrow">
+                                    {{ ucwords(trans('site.front.view')) }}
+                                </a>
                             </div>
                         </div>
                     </a>
