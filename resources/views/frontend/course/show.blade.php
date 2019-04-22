@@ -6,6 +6,11 @@
 
 @section('styles')
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+	<style>
+		.course-single-page .course-tabs ul li:before {
+			content: '';
+		}
+	</style>
 @stop
 
 @section('content')
@@ -24,16 +29,21 @@
 				<h1>{{$course->title}}</h1>
 				@if (!$course->is_free && !$course->hide_price)
 					<span class="course-price">
-						Fra {{\App\Http\FrontendHelpers::currencyFormat($isBetween && $course->packages[0]->full_payment_sale_price
-						? $course->packages[0]->full_payment_sale_price
-						: $course->packages[0]->full_payment_price)}} kroner
+						<?php
+							$price = \App\Http\FrontendHelpers::currencyFormat($isBetween && $course->packages[0]->full_payment_sale_price
+                                ? $course->packages[0]->full_payment_sale_price
+                                : $course->packages[0]->full_payment_price);
+						?>
+						{{ str_replace('_price_', $price, trans('site.front.our-course.show.price')) }}
 					</span>
 				@endif
 
 				<div class="sub-header">
 					@if(Auth::guest())
 						@if ($course->for_sale && !$course->is_free && !$course->hide_price)
-							<a href="{{route('front.course.checkout', ['id' => $course->id])}}" class="btn buy-course">Bestill Kurset</a>
+							<a href="{{route('front.course.checkout', ['id' => $course->id])}}" class="btn buy-course">
+								{{ trans('site.front.our-course.show.buy-course') }}
+							</a>
 						@endif
 					@else
                         <?php
@@ -41,14 +51,18 @@
                         $courseTaken = App\CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
                         ?>
 						@if($courseTaken)
-							<a href="{{route('learner.course.show', ['id' => $courseTaken->id])}}" class="btn buy-course">Fortsett Kurset</a>
+							<a href="{{route('learner.course.show', ['id' => $courseTaken->id])}}" class="btn buy-course">
+								{{ trans('site.front.our-course.show.continue-course') }}
+							</a>
 						@else
 							@if ($course->for_sale && !$course->is_free && !$course->hide_price)
-									<a href="{{route('front.course.checkout', ['id' => $course->id])}}" class="btn buy-course">Bestill Kurset</a>
+									<a href="{{route('front.course.checkout', ['id' => $course->id])}}" class="btn buy-course">
+										{{ trans('site.front.our-course.show.buy-course') }}
+									</a>
 							@endif
 						@endif
 					@endif
-					Velkommen til Forfatterskolen. Vi gleder oss til å hjelpe deg med å nå forfatterdrømmen din!
+					{{ trans('site.front.our-course.show.description') }}
 				</div>
 			</div>
 		</div> <!-- end header -->
@@ -68,7 +82,7 @@
 
 				@if($course->photographer)
 					<div class="photographer-container">
-						<h1>Foto: {{ $course->photographer }}</h1>
+						<h1>{{ trans('site.front.our-course.show.photo') }}: {{ $course->photographer }}</h1>
 					</div>
 				@endif
 			</div> <!-- end course-image-row -->
@@ -80,28 +94,38 @@
 						{{ csrf_field() }}
 							@if (Auth::guest())
 								<div class="form-group col-md-3">
-									<input type="text" class="form-control" placeholder="Fornavn" name="first_name"
+									<input type="text" class="form-control" placeholder="{{ trans('site.front.form.first-name') }}"
+										   name="first_name"
 										   value="{{ old('first_name') }}" required>
 								</div>
 								<div class="form-group col-md-3">
-									<input type="text" class="form-control" placeholder="Etternavn" name="last_name"
+									<input type="text" class="form-control"
+										   placeholder="{{ trans('site.front.form.last-name') }}"
+										   name="last_name"
 										   value="{{ old('last_name') }}" required>
 								</div>
 								<div class="form-group col-md-3">
-									<input type="email" class="form-control" placeholder="Epost" name="email"
+									<input type="email" class="form-control"
+										   placeholder="{{ trans('site.front.form.email') }}"
+										   name="email"
 										   value="{{ old('email') }}" required>
 								</div>
 
 								<div class="form-group col-md-3">
-									<button type="submit" class="btn btn-theme">Få gratis kurset</button>
+									<button type="submit" class="btn btn-theme">
+										{{ trans('site.front.form.get-free-course') }}
+									</button>
 								</div>
 							@else
 								<?php
 								$course_packages = $course->packages->pluck('id')->toArray();
-								$courseTaken = App\CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
+								$courseTaken = App\CoursesTaken::where('user_id', Auth::user()->id)
+									->whereIn('package_id', $course_packages)->first();
 								?>
 								@if (!$courseTaken)
-									<button class="btn btn-theme" type="submit">Få gratis kurset</button>
+									<button class="btn btn-theme" type="submit">
+										{{ trans('site.front.form.get-free-course') }}
+									</button>
 								@endif
 							@endif
 					</form>
@@ -111,12 +135,14 @@
 							<div class="modal-dialog" role="document">
 								<div class="modal-content">
 									<div class="modal-header">
-										<h3 class="modal-title">Login</h3>
+										<h3 class="modal-title">
+											{{ trans('site.front.our-course.email-exist.login') }}
+										</h3>
 										<button type="button" class="close" data-dismiss="modal">&times;</button>
 									</div>
 									<div class="modal-body">
 										<p class="font-weight-bold">
-											Din e-post adresse er allerede registrert i vårt system, vennligst logg inn:
+											{{ trans('site.front.our-course.email-exist.message') }}
 										</p>
 
 										<form id="checkoutLogin" action="{{route('frontend.login.checkout.store')}}" method="POST">
@@ -127,17 +153,21 @@
 													<span class="input-group-text"><i class="fa at-icon"></i></span>
 												</div>
 												<input type="email" name="email" class="form-control no-border-left w-auto"
-													   placeholder="E-post" required value="{{old('email')}}">
+													   placeholder="{{ trans('site.front.form.email') }}" required
+													   value="{{old('email')}}">
 											</div>
 											<div class="input-group mb-4">
 												<div class="input-group-prepend">
 													<span class="input-group-text"><i class="fa lock-icon"></i></span>
 												</div>
-												<input type="password" name="password" placeholder="Passord"
+												<input type="password" name="password"
+													   placeholder="{{ trans('site.front.form.password') }}"
 													   class="form-control no-border-left w-auto" required>
 											</div>
 
-											<button type="submit" class="btn site-btn-global pull-right">Innlogging</button>
+											<button type="submit" class="btn site-btn-global pull-right">
+												{{ trans('site.front.our-course.email-exist.login-button-text') }}
+											</button>
 										</form>
 									</div>
 								</div>
@@ -165,23 +195,28 @@
 					<ul class="nav nav-tabs" role="tablist">
 						<li class="nav-item">
 							<a data-toggle="tab" href="#overview" class="nav-link active" role="tab">
-								<span>Oversikt</span> <!-- check if webinar-pakke -->
+								<span>
+									{{ trans('site.front.our-course.show.course-plan') }}
+								</span> <!-- check if webinar-pakke -->
 							</a>
 						</li>
 						@if (!$course->is_free && !$course->hide_price)
 							<li class="nav-item">
-								<a data-toggle="tab" href="#packages" class="nav-link" role="tab"><span>Skrivepakke detaljer</span></a>
+								<a data-toggle="tab" href="#packages" class="nav-link" role="tab">
+									<span>{{ trans('site.front.our-course.show.package-details-text') }}</span>
+								</a>
 							</li>
 						@endif
 						<li class="nav-item">
 							<a data-toggle="tab" href="#kursplan" class="nav-link" role="tab">
-								<span>{{ $course->id == 17 ? 'Planlagte webinarer' : 'Kursplan' }}</span> <!-- check if webinar-pakke -->
+								<span>{{ $course->id == 17 ? trans('site.front.our-course.show.scheduled-webinars') :
+								trans('site.front.our-course.show.course-plan') }}</span> <!-- check if webinar-pakke -->
 							</a>
 						</li>
 						@if($course->testimonials->count())
 							<li class="nav-item">
 								<a data-toggle="tab" href="#testimonials" class="nav-link" role="tab">
-									<span>Tilbakemelding fra elever</span>
+									<span>{{ trans('site.front.our-course.show.testimonials') }}</span>
 								</a>
 							</li>
 						@endif
@@ -192,10 +227,13 @@
 						<div id="overview" class="tab-pane fade in active" role="tabpanel">
 							{!! nl2br($course->description) !!}
 							@if (!$course->is_free && !$course->hide_price)
+                                <?php
+                                $price = \App\Http\FrontendHelpers::currencyFormat($isBetween && $course->packages[0]->full_payment_sale_price
+                                    ? $course->packages[0]->full_payment_sale_price
+                                    : $course->packages[0]->full_payment_price);
+                                ?>
 								<p class="course-price">
-									Fra {{\App\Http\FrontendHelpers::currencyFormat($isBetween && $course->packages[0]->full_payment_sale_price
-									? $course->packages[0]->full_payment_sale_price
-									: $course->packages[0]->full_payment_price)}} kroner
+									{{ str_replace('_price_', $price, trans('site.front.our-course.show.price')) }}
 								</p>
 							@endif
 						</div> <!-- end overview -->
@@ -228,7 +266,7 @@
                                             $package->included_courses->count() > 0 ||
                                             $package->workshops > 0 || $package->has_coaching
                                             )
-											<strong>Inkluderer</strong><br />
+											<strong>{{ trans('site.front.our-course.show.includes') }}</strong><br />
 											@if( $package->shop_manuscripts->count() > 0 )
 												@foreach( $package->shop_manuscripts as $shop_manuscripts )
 													{{ $shop_manuscripts->shop_manuscript->title }} <br />
@@ -236,7 +274,8 @@
 											@endif
 
 											@if( $package->workshops )
-												{{ $package->workshops }} workshops <br />
+												{{ $package->workshops }}
+												{{ trans('site.front.our-course.show.workshops') }} <br />
 											@endif
 
 											@if( $package->included_courses->count() > 0 )
@@ -246,13 +285,15 @@
 											@endif
 
 											@if ($package->has_coaching)
-												{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($package->has_coaching) }} coaching session
+												{{ str_replace('_time_',
+												\App\Http\FrontendHelpers::getCoachingTimerPlanType($package->has_coaching),
+												trans('site.front.our-course.show.coaching-session')) }}
                                                 <br>
 											@endif
 										@endif
 										<a class="btn site-btn-global mt-2" href="{{ route('front.course.checkout',
 										[$course->id,'package' => $package->id]) }}">
-											Bestill
+											{{ trans('site.front.buy') }}
 										</a>
 									</div>
 								@endforeach
@@ -297,10 +338,10 @@
 																		<div class="webinar-header">
 																			<h4>
 																				<i class="calendar"></i>
-																				Starter
-																				{{ \Carbon\Carbon::parse($webinar->start_date)->format('d.m.Y') }}
-																				Klokken
-																				{{ \Carbon\Carbon::parse($webinar->start_date)->format('H:i') }}
+																				{{ str_replace(['_date_', '_time_'],
+																				[\Carbon\Carbon::parse($webinar->start_date)->format('d.m.Y'),
+																				\Carbon\Carbon::parse($webinar->start_date)->format('d.m.Y')],
+																				trans('site.front.our-course.show.start-date')) }}
 																			</h4>
 																		</div>
 
@@ -317,7 +358,9 @@
 																		@if(Auth::guest())
 																			@if ($course->for_sale && !$course->is_free && !$course->hide_price)
 																				<a href="{{route('front.course.checkout', ['id' => $course->id])}}"
-																				   class="btn site-btn-global w-100 rounded-0">Bestill Kurset</a>
+																				   class="btn site-btn-global w-100 rounded-0">
+																					{{ trans('site.front.our-course.show.buy-course') }}
+																				</a>
 																			@endif
 																		@else
                                                                             <?php
@@ -326,11 +369,15 @@
                                                                             ?>
 																			@if($courseTaken)
 																				<a href="{{route('learner.course.show', ['id' => $courseTaken->id])}}"
-																				   class="btn site-btn-global w-100 rounded-0">Fortsett Kurset</a>
+																				   class="btn site-btn-global w-100 rounded-0">
+																					{{ trans('site.front.our-course.show.continue-course') }}
+																				</a>
 																			@else
 																				@if ($course->for_sale && !$course->is_free && !$course->hide_price)
 																					<a href="{{route('front.course.checkout', ['id' => $course->id])}}"
-																					   class="btn site-btn-global w-100 rounded-0">Bestill Kurset</a>
+																					   class="btn site-btn-global w-100 rounded-0">
+																						{{ trans('site.front.our-course.show.buy-course') }}
+																					</a>
 																				@endif
 																			@endif
 																		@endif
@@ -412,7 +459,9 @@
 
 		<div class="similar-courses">
 			<div class="container">
-				<h1 class="text-center">Se Tilsvarende Kurs</h1>
+				<h1 class="text-center">
+					{{ trans('site.front.our-course.show.similar-course') }}
+				</h1>
 
 				<div class="row similar-courses-row">
 					@foreach( $course->similar_courses as $similar_course )
@@ -422,20 +471,25 @@
 									<div class="header-content">
 										@if ($similar_course->similar_course->instructor)
 											<div class="left-container">
-												<small>Kursholder</small>
+												<small>
+													{{ trans('site.front.our-course.course-holder') }}
+												</small>
 												<h2><i class="img-icon"></i>{{ $similar_course->similar_course->instructor }}</h2>
 											</div>
 										@endif
 
 										@if ($similar_course->similar_course->start_date)
 											<div class="right-container">
-												<small>Date</small>
+												<small>{{ trans('site.front.date') }}</small>
 												<h2><i class="img-icon"></i>{{ \App\Http\FrontendHelpers::formatDate($similar_course->similar_course->start_date) }}</h2>
 											</div>
 										@endif
 									</div>
 
-									<a href="{{ route('front.course.show', $similar_course->similar_course->id) }}" class="btn btn-details">Detaljer</a>
+									<a href="{{ route('front.course.show', $similar_course->similar_course->id) }}"
+									   class="btn btn-details">
+										{{ trans('site.front.our-course.view-details') }}
+									</a>
 								</div>
 								<div class="course-body">
 									<h2>
@@ -444,7 +498,8 @@
 
 									<p class="color-b4">{{ str_limit(strip_tags($similar_course->similar_course->description), 180)}}</p>
 
-									<a href="{{ route('front.course.show', $similar_course->similar_course->id) }}" class="btn buy-btn">Les mer</a>
+									<a href="{{ route('front.course.show', $similar_course->similar_course->id) }}"
+									   class="btn buy-btn">{{ trans('site.front.view') }}</a>
 								</div>
 							</div>
 						</div>
