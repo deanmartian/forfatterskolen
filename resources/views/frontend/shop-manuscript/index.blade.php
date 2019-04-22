@@ -147,7 +147,7 @@
 
                             <div class="col-sm-9">
                                 <h1>
-                                    {{ trans('site.front.coaching-timer') }}
+                                    {{ trans('site.front.coaching-timer.title') }}
                                 </h1>
                                 <a href="{{ route('front.coaching-timer') }}" class="link-with-arrow">
                                     {{ ucwords(trans('site.front.view')) }}

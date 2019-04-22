@@ -745,11 +745,18 @@ Warning: This cannot be undone.',
     'total' => 'Totalt',
     'per-month' => 'Per måned',
     'upload' => 'Last opp',
-    'coaching-timer' => 'Coaching Timer',
     'copy-editing' => 'Språkvåsk',
     'correction' => 'Korrektur',
     'genre' => 'Sjanger',
     'select-genre' => 'Velg sjanger',
+    'coaching-timer' => 
+    array (
+      'title' => 'Coaching Timer',
+      'one-on-one-coaching' => 'En til en-coaching',
+      'one-on-one-coaching-description' => 'Ønsker du personlig veiledning på manuset ditt? Her kan du bestille time hos en av våre profesjonelle redaktører.',
+    ),
+    '30-mins' => '30 mins',
+    '60-mins' => '60 mins',
   ),
   'free-webinars' => 
   array (

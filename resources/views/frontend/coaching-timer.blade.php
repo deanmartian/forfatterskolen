@@ -9,7 +9,7 @@
     <div class="coaching-timer-page">
         <div class="container">
             <h1 class="title text-center">
-                Coaching Timer
+                {{ trans('site.front.coaching-timer.title') }}
             </h1>
 
             <div class="row details-container text-center">
@@ -18,16 +18,21 @@
                         <div class="circle">
                             <div class="smaller-circle">
                                 <h1>1190 KR</h1>
-                                <h2 class="theme-text">30 mins</h2>
+                                <h2 class="theme-text">
+                                    {{ trans('site.front.30-mins') }}
+                                </h2>
                             </div>
                         </div>
 
-                        <h1>En til en-coaching</h1>
+                        <h1>
+                            {{ trans('site.front.coaching-timer.one-on-one-coaching') }}
+                        </h1>
                         <p>
-                            Ønsker du personlig veiledning på manuset ditt? Her kan du bestille time hos en av våre
-                            profesjonelle redaktører.
+                            {{ trans('site.front.coaching-timer.one-on-one-coaching-description') }}
                         </p>
-                        <a href="{{ route('front.coaching-timer-checkout', 2) }}" class="btn buy-btn">Bestill</a>
+                        <a href="{{ route('front.coaching-timer-checkout', 2) }}" class="btn buy-btn">
+                            {{ trans('site.front.buy') }}
+                        </a>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -35,16 +40,21 @@
                         <div class="circle">
                             <div class="smaller-circle">
                                 <h1>1690 KR</h1>
-                                <h2 class="theme-text">60 mins</h2>
+                                <h2 class="theme-text">
+                                    {{ trans('site.front.60-mins') }}
+                                </h2>
                             </div>
                         </div>
 
-                        <h1>En til en-coaching</h1>
+                        <h1>
+                            {{ trans('site.front.coaching-timer.one-on-one-coaching') }}
+                        </h1>
                         <p>
-                            Ønsker du personlig veiledning på manuset ditt? Her kan du bestille time hos en av våre
-                            profesjonelle redaktører.
+                            {{ trans('site.front.coaching-timer.one-on-one-coaching-description') }}
                         </p>
-                        <a href="{{ route('front.coaching-timer-checkout', 1) }}" class="btn buy-btn">Bestill</a>
+                        <a href="{{ route('front.coaching-timer-checkout', 1) }}" class="btn buy-btn">
+                            {{ trans('site.front.buy') }}
+                        </a>
                     </div>
                 </div>
             </div>
