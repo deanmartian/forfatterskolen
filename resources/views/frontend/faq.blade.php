@@ -11,14 +11,8 @@
             <div class="row">
                 <div class="col-md-6 col-sm-12">
                     <h1 class="page-title">
-                        Svar på dine spørsmål om kurset
+                        {{ trans('site.front.faq.title') }}
                     </h1>
-                    {{--<p class="page-description">
-                        Mange av Forfatterskolens elever har etter hvert fått gitt ut bøkene sine, og flere kommer
-                        etter. Vi har fulgt elevene underveis, mange helt fra starten. Det gjør at vi kanskje er litt
-                        ekstra stolte, og gjerne vil gi dem litt ekstra ballast på veien. På disse sidene kan du derfor
-                        bli litt bedre kjent med noen av dem, og ikke minst: bøkene deres. Kanskje du blir den neste?
-                    </p>--}}
                 </div>
             </div> <!-- end row -->
 
@@ -104,13 +98,12 @@
                     </div>
                     <div class="pull-left">
                         <h2>
-                            Alt godt,<br />
-                            Rektor Kristine
+                            {!! str_replace('_break_',"<br/>",trans('site.front.faq.person')) !!}
                         </h2>
                         <p>
-                            PS! Lurer du på noe mer, eller noe helt annet? <br>
-                            Ikke nøl med å sende meg en mail:
-                            <a href="mailto:post@forfatterskolen.no" class="theme-text">post@forfatterskolen.no</a>
+                            {!! str_replace(['_break_', '_start_link_', '_end_link_'],
+                            ['<br/>', '<a href="mailto:post@forfatterskolen.no" class="theme-text">', '</a>'],
+                            trans('site.front.faq.person-details')) !!}
                         </p>
                     </div>
                 </div>

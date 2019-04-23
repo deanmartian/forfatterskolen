@@ -800,6 +800,12 @@ Warning: This cannot be undone.',
       'sub-note' => 'Merk: Godkjente filformater er docx.',
       'sub-title' => 'Profesjonell språkvask',
     ),
+    'faq' => 
+    array (
+      'title' => 'Svar på dine spørsmål om kurset',
+      'person' => 'Alt godt, _break_ Rektor Kristine',
+      'person-details' => 'PS! Lurer du på noe mer, eller noe helt annet? _break_ Ikke nøl med å sende meg en mail: _start_link_ post@forfatterskolen.no _end_link_',
+    ),
   ),
   'free-webinars' => 
   array (
