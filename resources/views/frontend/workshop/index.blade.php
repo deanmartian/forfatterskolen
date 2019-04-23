@@ -33,7 +33,9 @@
                                             <h2>{{ $workshop->title }}</h2>
                                             <p>{{ str_limit(strip_tags($workshop->description), 180)}}</p>
 
-                                            <a href="{{ route('front.workshop.show', $workshop->id) }}" class="btn buy-btn">Les mer</a>
+                                            <a href="{{ route('front.workshop.show', $workshop->id) }}" class="btn buy-btn">
+                                                {{ trans('site.front.view') }}
+                                            </a>
                                         </div>
                                         <div class="card-footer text-center">
                                             <div class="col-xs-6 border-right">

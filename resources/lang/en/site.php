@@ -637,6 +637,11 @@ Warning: This cannot be undone.',
     array (
       'title' => 'Skriveverksted',
       'description' => 'Vil du være med oss på skriveverksted, der vi møtes ansikt til ansikt og jobber med din personlige tekst? Det gir gass til skrivemotoren og setter deg deg i kontakt med andre skriveivrige. Vi tilbyr skriveverksted over hele landet, alltid med dyktige og engasjerte kursholdere.',
+      'start-date' => 'Starter _date_ klokken _time_',
+      'learner-workshop' => 'Påmeldt',
+      'presenters' => 'Foredragsholdere',
+      'duration' => 'Varighet _duration_ timer',
+      'practical-information' => 'Praktisk Informasjon',
     ),
     'blog' => 
     array (

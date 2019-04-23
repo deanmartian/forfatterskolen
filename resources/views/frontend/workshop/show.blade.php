@@ -12,7 +12,10 @@
 					{{ $workshop->title }}
 				</h1>
 				<span class="workshop-start">
-					Starter {{ \App\Http\FrontendHelpers::formatDateTimeNor($workshop->date) }}
+					{{--{{ \App\Http\FrontendHelpers::formatDateTimeNor($workshop->date) }}--}}
+					{{ str_replace(['_date_', '_time_'],
+					[ \Carbon\Carbon::parse($workshop->date)->format('d.m.Y'),
+					\Carbon\Carbon::parse($workshop->date)->format('H:i')], trans('site.front.workshop.start-date')) }}
 				</span>
 
 				<div class="sub-header text-left">
@@ -25,9 +28,13 @@
                     ?>
 
 					@if($availedWorkshop)
-						<a class="btn buy-course" href="{{ route('learner.workshop') }}">Påmeldt</a>
+						<a class="btn buy-course" href="{{ route('learner.workshop') }}">
+							{{ trans('site.front.workshop.learner-workshop') }}
+						</a>
 					@else
-						<a href="{{ route('front.workshop.checkout', $workshop->id) }}" class="btn buy-course">Bestill</a>
+						<a href="{{ route('front.workshop.checkout', $workshop->id) }}" class="btn buy-course">
+							{{ trans('site.front.buy') }}
+						</a>
 					@endif
 
 					<div class="col-xs-4 pl-0 presenter-container">
@@ -35,7 +42,9 @@
 							<div class="workshop-presenter">
 								<div class="presenter-image pull-left" @if( $presenter->image ) style="background-image: url('{{ $presenter->image }}')" @endif></div>
 								<div class="presenter-details">
-									<span class="title">Foredragsholdere</span> <br>
+									<span class="title">
+										{{ trans('site.front.workshop.presenters') }}
+									</span> <br>
 									<span class="name">{{ $presenter->first_name }} {{ $presenter->last_name }}</span>
 									{{ $presenter->email }}
 								</div>
@@ -50,7 +59,9 @@
 							</div>
 							<div>
 								<i class="img-icon16 icon-clock3"></i>
-								<span>Varighet {{ $workshop->duration }} timer</span>
+								<span>
+									{{ str_replace('_duration_', $workshop->duration, trans('site.front.workshop.duration')) }}
+								</span>
 							</div>
 						</div>
 
@@ -90,7 +101,9 @@
 				</div>
 
 				<div class="information-container">
-					<h1>Praktisk Informasjon</h1>
+					<h1>
+						{{ trans('site.front.workshop.practical-information') }}
+					</h1>
 
 					@foreach( $workshop->menus as $menu )
 						<div class="row">
