@@ -102,7 +102,7 @@
 
 				<div class="information-container">
 					<h1>
-						{{ trans('site.front.workshop.practical-information') }}
+						{{ ucwords(trans('site.front.workshop.practical-information')) }}
 					</h1>
 
 					@foreach( $workshop->menus as $menu )

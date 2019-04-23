@@ -641,7 +641,9 @@ Warning: This cannot be undone.',
       'learner-workshop' => 'Påmeldt',
       'presenters' => 'Foredragsholdere',
       'duration' => 'Varighet _duration_ timer',
-      'practical-information' => 'Praktisk Informasjon',
+      'practical-information' => 'Praktisk informasjon',
+      'checkout-allergier' => 'Allergier',
+      'checkout-notes' => 'skriv her om du har noen allergier eller andre hensyn vi trenger å vite om før skriveverkstedet',
     ),
     'blog' => 
     array (
