@@ -180,7 +180,7 @@
                             </div>
 
                             <div class="col-sm-9">
-                                <h1>{{ trans('site.front.copy-editing') }}</h1>
+                                <h1>{{ trans('site.front.copy-editing.title') }}</h1>
                                 <a href="{{ route('front.copy-editing') }}" class="link-with-arrow">
                                     {{ ucwords(trans('site.front.view')) }}
                                 </a>

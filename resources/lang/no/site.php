@@ -746,7 +746,6 @@ Warning: This cannot be undone.',
     'total' => 'Totalt',
     'per-month' => 'Per måned',
     'upload' => 'Last opp',
-    'copy-editing' => 'Språkvåsk',
     'genre' => 'Sjanger',
     'select-genre' => 'Velg sjanger',
     'coaching-timer' => 
@@ -778,6 +777,17 @@ Warning: This cannot be undone.',
     ),
     'calculate-price' => 'Beregn pris',
     'submit' => 'Submit',
+    'copy-editing' => 
+    array (
+      'title' => 'Språkvåsk',
+      'word-count' => '1000 tegn',
+      'buy' => 'Bestill språkvask',
+      'description' => 'Vi tilbyr profesjonell språkvask av alle typer manus. Vi beregner 3 ukers behandlingstid, før du får ditt språkvaskede manus tilbake. Beregn pris ved å laste opp manuset i boksen til venstre (dette er kun en utregning, og innebærer ikke kjøp).',
+      'note' => 'Dette er bare en ordteller, og innebærer ikke kjøp.',
+      'price' => '30 kroner',
+      'sub-note' => 'Merk: Godkjente filformater er docx.',
+      'sub-title' => 'Profesjonell språkvask',
+    ),
   ),
   'free-webinars' => 
   array (
