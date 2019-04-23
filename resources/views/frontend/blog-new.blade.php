@@ -39,7 +39,7 @@
                             </div>
 
                             <a href="{{ route('front.read-blog', $mainBlog->id) }}" class="btn buy-btn">
-                                Les Mer
+                                {{ ucwords(trans('site.front.view')) }}
                             </a>
                         </div>
                     </div>
@@ -56,8 +56,12 @@
                     <div class="row course-container">
                         <img src="{{ asset('images-new/girl-with-computer.png') }}" alt="">
                         <div class="card">
-                            <span>Se våre kurs</span>
-                            <a href="{{ route('front.course.index') }}" class="btn float-right site-btn-global-w-arrow">Les Mer</a>
+                            <span>
+                                {{ trans('site.front.blog.view-our-course') }}
+                            </span>
+                            <a href="{{ route('front.course.index') }}" class="btn float-right site-btn-global-w-arrow">
+                                {{ ucwords(trans('site.front.view')) }}
+                            </a>
                         </div>
                     </div> <!-- end course-container -->
 
@@ -119,11 +123,14 @@
                     <div class="row workshop-container">
                         <div class="card">
                             <div class="header">
-                                <a href="" class="btn buy-btn">Neste skriveverksted</a>
+                                <a href="" class="btn buy-btn">
+                                    {{ trans('site.front.blog.next-writing-workshop') }}
+                                </a>
                             </div>
                             <div class="card-body text-center">
                                 <?php
-                                    $latestWorkshops = \App\Workshop::where('is_free','=',0)->orderBy('faktura_date', 'asc')->limit(3)->get();
+                                    $latestWorkshops = \App\Workshop::where('is_free','=',0)
+                                        ->orderBy('faktura_date', 'asc')->limit(3)->get();
                                 ?>
                                 <ul>
                                     @foreach($latestWorkshops as $workshop)

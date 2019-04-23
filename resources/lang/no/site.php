@@ -641,6 +641,10 @@ Warning: This cannot be undone.',
     'blog' => 
     array (
       'title' => 'La deg motivere av vår skriveblogg! Her deler vi, og utgitte elever, skrivetips og historier – til støtte og inspirasjon for deg.',
+      'view-our-course' => 'Se våre kurs',
+      'newer-blog-post' => 'Nyeste blogginnlegg',
+      'older-blog-post' => 'Eldre blogginnlegg',
+      'next-writing-workshop' => 'Neste skriveverksted',
     ),
     'publishing' => 
     array (

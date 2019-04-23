@@ -29,7 +29,7 @@
 
                         <div class="button-container">
                             <a href="{{ route('front.read-blog', $blog->id) }}" class="btn buy-btn">
-                                Les Mer
+                                {{ ucwords(trans('site.front.view')) }}
                             </a>
                             <span class="social-container">
                                 <a href="http://www.facebook.com/sharer.php?u={{ route('front.read-blog', $blog->id) }}"
@@ -55,16 +55,16 @@
         <ul class="pagination">
             {{-- Previous Page Link --}}
             @if ($blogs->onFirstPage())
-                <li class="disabled"><span>Nyeste blogginnlegg</span></li>
+                <li class="disabled"><span>{{ trans('site.front.blog.newer-blog-post') }}</span></li>
             @else
-                <li><a href="{{ $blogs->previousPageUrl() }}" rel="prev">Nyeste blogginnlegg</a></li>
+                <li><a href="{{ $blogs->previousPageUrl() }}" rel="prev">{{ trans('site.front.blog.newer-blog-post') }}</a></li>
             @endif
 
             {{-- Next Page Link --}}
             @if ($blogs->hasMorePages())
-                <li><a href="{{ $blogs->nextPageUrl() }}" rel="next">Eldre blogginnlegg</a></li>
+                <li><a href="{{ $blogs->nextPageUrl() }}" rel="next">{{ trans('site.front.blog.older-blog-post') }}</a></li>
             @else
-                <li class="disabled"><span>Eldre blogginnlegg</span></li>
+                <li class="disabled"><span>{{ trans('site.front.blog.older-blog-post') }}</span></li>
             @endif
         </ul>
     @endif
