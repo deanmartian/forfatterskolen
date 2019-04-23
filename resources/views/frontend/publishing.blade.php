@@ -14,7 +14,9 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6 col-sm-12">
-                    <h1 class="page-title">Forfatterskolens utgitte elever</h1>
+                    <h1 class="page-title">
+                        {{ trans('site.front.publishing.title') }}
+                    </h1>
                     <p class="page-description mb-4">
                         {{ trans('site.front.publishing.main-description') }}
                     </p>
@@ -41,7 +43,8 @@
                                             @if($book['book_image_link'])
                                                 <a href="{{$book['book_image_link']}}" target="_blank">
                                                     @endif
-                                                    <img src="{{ $book_image }}" alt="{{ $book['title'] }}" class="img-responsive pull-right right-image">
+                                                    <img src="{{ $book_image }}" alt="{{ $book['title'] }}"
+                                                         class="img-responsive pull-right right-image">
                                                     @if($book['book_image_link'])
                                                 </a>
                                             @endif

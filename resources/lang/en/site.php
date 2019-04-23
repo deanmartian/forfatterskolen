@@ -610,12 +610,12 @@ Warning: This cannot be undone.',
       'title' => 'For deg som ønsker manuset vurdert av profesjonell redaktør',
       'first-section' => 
       array (
+        'title' => 'TRENGER DU PROFESJONELL TILBAKEMELDING PÅ DITT MANUS?',
         'description' => '<p class="mb-5">Er du usikker på om ideen og utkastet ditt kan bli en god fortelling? Står du fast med manuset, og er usikker på hva som funker og ikke funker? Eller trenger du en tilbakemelding, og kvalitetssikring, før du sender inn til forlag? </p>
 
 <p class="mb-5">Forfatterskolen tilbyr profesjonell tilbakemelding på ditt manus. En erfaren redaktør vil gi deg en grundig og detaljert tilbakemelding - med kommentarer i margen - på tekstens svake og sterke sider. Du får vite hva som er bra, og hvorfor det er bra, hva som kan utvikles videre og hvordan det kan gjøres. </p>
 
 <p class="mb-0">Vi har hjulpet mange elever på vei mot utgivelse, og hjelper gjerne flere. Er du den neste? Ikke nøl med å sende oss manuset ditt, det er slik du kommer videre!</p>',
-        'title' => 'TRENGER DU PROFESJONELL TILBAKEMELDING PÅ DITT MANUS?',
       ),
     ),
     'gt-webinar' => 
@@ -646,6 +646,7 @@ Warning: This cannot be undone.',
     array (
       'main-description' => 'Mange av Forfatterskolens elever har etter hvert fått gitt ut bøkene sine, og flere kommer etter. Vi har fulgt elevene underveis, mange helt fra starten. Det gjør oss superstolte, og understreker slagordet til rektor: "Kan jeg, kan du". På disse sidene kan du bli litt bedre kjent med noen av forfatterne, og kikke på bøkene deres. Er du den neste som blir utgitt?',
       'second-description' => 'PS! Klikk på bøkene for å komme til forlagssiden med bokkjøp.',
+      'title' => 'Forfatterskolens utgitte elever',
     ),
     'accept-terms' => 'Jeg aksepterer [start_link]vilkårene[end_link]',
     'latest-seminars' => 'Siste nyheter',
@@ -746,6 +747,8 @@ Warning: This cannot be undone.',
     'total' => 'Totalt',
     'per-month' => 'Per måned',
     'upload' => 'Last opp',
+    'genre' => 'Sjanger',
+    'select-genre' => 'Velg sjanger',
     'coaching-timer' => 
     array (
       'title' => 'Coaching Timer',
@@ -756,6 +759,10 @@ Warning: This cannot be undone.',
       'help-with-text' => 'Skriv litt her om hva du vil ha hjelp til',
       'payment-note' => 'Merk: Vi godtar kun full betaling på PAYPAL',
     ),
+    '30-mins' => '30 mins',
+    '60-mins' => '60 mins',
+    'additional' => 'Tillegg',
+    'cancel' => 'Cancel',
     'correction' => 
     array (
       'title' => 'Korrektur',
@@ -769,6 +776,8 @@ Warning: This cannot be undone.',
       'fjem' => 'Fjem',
       'no-price-message' => 'Vennligst last opp et dokument for å beregne pris',
     ),
+    'calculate-price' => 'Beregn pris',
+    'submit' => 'Submit',
     'copy-editing' => 
     array (
       'title' => 'Språkvåsk',
@@ -780,14 +789,6 @@ Warning: This cannot be undone.',
       'note' => 'Dette er bare en ordteller, og innebærer ikke kjøp.',
       'sub-note' => 'Merk: Godkjente filformater er docx.',
     ),
-    'genre' => 'Sjanger',
-    'select-genre' => 'Velg sjanger',
-    '30-mins' => '30 mins',
-    '60-mins' => '60 mins',
-    'additional' => 'Tillegg',
-    'cancel' => 'Cancel',
-    'calculate-price' => 'Beregn pris',
-    'submit' => 'Submit',
   ),
   'free-webinars' => 
   array (
@@ -816,29 +817,29 @@ Om du ikke har vært på webinar før, kan du sjekke tilkoblingen din her:
   array (
     'course' => 
     array (
-      'description' => 'Vi gleder oss til å samarbeide med deg! Vi vil behandle din bestilling så snart som mulig og du vil få tilsendt faktura(er) til din registrerte e-postadresse. Dersom du har betalt via paypal gjelder fakturaen kun som en kvittering.',
       'title' => 'Takk for bestillingen!',
-    ),
-    'manuscript' => 
-    array (
-      'description' => 'Vi gleder oss å lese ditt manus. Vi vil finne en passende redaktør for ditt manus og gi deg en forventet tilbakemeldingsdato. Normalt innen 3 uker. Du har fått tilsendt faktura(er) til din registrerte e-postadresse. Du kan også finne faktura(ene) inne på min side. Dersom du har betalt via paypal gjelder fakturaen kun som en
-kvittering.',
-      'title' => 'Takk for din bestilling!',
-    ),
-    'paypal' => 
-    array (
-      'description' => 'Din betaling ble gjennomført suksessfullt.',
-      'title' => 'Takk for betalingen!',
-    ),
-    'vipps' => 
-    array (
-      'description' => 'Din betaling ble gjennomført suksessfullt.',
-      'title' => 'Takk for betalingen!',
+      'description' => 'Vi gleder oss til å samarbeide med deg! Vi vil behandle din bestilling så snart som mulig og du vil få tilsendt faktura(er) til din registrerte e-postadresse. Dersom du har betalt via paypal gjelder fakturaen kun som en kvittering.',
     ),
     'workshop' => 
     array (
-      'description' => 'Vi gleder oss til skriveverksted. Du har fått tilsendt faktura til din registrerte e-postadresse. Du kan også finne faktura inne på min side. Dersom du har betalt via paypal gjelder fakturaen kun som en kvittering.',
       'title' => 'Takk for din bestilling!',
+      'description' => 'Vi gleder oss til skriveverksted. Du har fått tilsendt faktura til din registrerte e-postadresse. Du kan også finne faktura inne på min side. Dersom du har betalt via paypal gjelder fakturaen kun som en kvittering.',
+    ),
+    'manuscript' => 
+    array (
+      'title' => 'Takk for din bestilling!',
+      'description' => 'Vi gleder oss å lese ditt manus. Vi vil finne en passende redaktør for ditt manus og gi deg en forventet tilbakemeldingsdato. Normalt innen 3 uker. Du har fått tilsendt faktura(er) til din registrerte e-postadresse. Du kan også finne faktura(ene) inne på min side. Dersom du har betalt via paypal gjelder fakturaen kun som en
+kvittering.',
+    ),
+    'vipps' => 
+    array (
+      'title' => 'Takk for betalingen!',
+      'description' => 'Din betaling ble gjennomført suksessfullt.',
+    ),
+    'paypal' => 
+    array (
+      'title' => 'Takk for betalingen!',
+      'description' => 'Din betaling ble gjennomført suksessfullt.',
     ),
   ),
 );
