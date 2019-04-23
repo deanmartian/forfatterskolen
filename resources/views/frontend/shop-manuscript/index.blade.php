@@ -164,7 +164,7 @@
 
                             <div class="col-sm-9">
                                 <h1>
-                                    {{ trans('site.front.correction') }}
+                                    {{ trans('site.front.correction.title') }}
                                 </h1>
                                 <a href="{{ route('front.correction') }}" class="link-with-arrow">
                                     {{ ucwords(trans('site.front.view')) }}

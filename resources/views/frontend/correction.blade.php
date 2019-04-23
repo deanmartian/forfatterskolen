@@ -8,28 +8,35 @@
 
     <div class="other-service-page correction-page">
         <div class="container">
-            <h1 class="text-center">Korrektur</h1>
+            <h1 class="text-center">
+                {{ trans('site.front.correction.title') }}
+            </h1>
             <div class="col-sm-12 form-container">
                 <div class="row align-items-center">
                     <div class="col-md-3 price-container">
                         <div class="circle">
                             <div class="circle-white">
-                                <h2 class="word-count">1000 tegn</h2>
-                                <h3>25 kroner</h3>
+                                <h2 class="word-count">
+                                    {{ trans('site.front.correction.word-count') }}
+                                </h2>
+                                <h3>
+                                    {{ trans('site.front.correction.price') }}
+                                </h3>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-md-9 details-container">
-                        <h1>Profesjonell korrektur
+                        <h1>
+                            {{ trans('site.front.correction.sub-title') }}
                             <a href="{{ route('front.other-service-checkout', ['plan' => 2, 'has_data' => 0]) }}"
-                               class="btn buy-btn">Bestill korrektur</a>
+                               class="btn buy-btn">
+                                {{ trans('site.front.correction.buy-correction') }}
+                            </a>
                         </h1>
 
                         <p>
-                            Vi tilbyr profesjonell korrektur på alle typer manus. Beregnet behandlingstid fra bestilling er 3 uker.
-                            Du kan beregne pris på korrektur ved å laste opp manuset i boksen til venstre (dette er kun en utregning,
-                            og innebærer ikke kjøp).
+                            {{ trans('site.front.correction.description') }}
                         </p>
 
                         <form method="POST" enctype="multipart/form-data" action="{{ route('front.correction') }}"
@@ -38,15 +45,21 @@
                             <div class="input-group mb-3">
                                 <input type="file" class="hidden" name="manuscript" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
                                 <input type="text" readonly="" class="form-control disabled"
-                                       placeholder="Velg et dokument å laste opp" required>
+                                       placeholder="{{ trans('site.front.form.select-document-to-upload') }}" required>
                                 <div class="input-group-append">
-                                    <button class="btn bg-site-red select-manuscript" type="submit">Beregn pris</button>
+                                    <button class="btn bg-site-red select-manuscript" type="submit">
+                                        {{ trans('site.front.calculate-price') }}
+                                    </button>
                                 </div>
                             </div>
                         </form>
 
-                        <span>Dette er kun en ordteller - opplasting av manus innebærer ikke kjøp. </span> <br>
-                        <span>Merk: Godkjente filformater er docx.</span>
+                        <span>
+                            {{ trans('site.front.correction.note') }}
+                        </span> <br>
+                        <span>
+                            {{ trans('site.front.correction.sub-note') }}
+                        </span>
                     </div>
                 </div>
             </div>

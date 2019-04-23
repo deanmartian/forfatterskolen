@@ -38,7 +38,8 @@
 										</p>
 									</div>
 									<div class="form-group col-sm-4">
-										<input type="password" name="password" placeholder="Passord" class="form-control" required>
+										<input type="password" name="password" placeholder="{{ trans('site.front.form.password') }}"
+											   class="form-control" required>
 									</div>
 									<div class="form-group col-sm-4">
 										<button type="submit" class="btn site-btn-global">
@@ -283,7 +284,8 @@
 
 							<button type="submit" class="btn site-btn-global-w-arrow" id="proceed_checkout">
 								<i class="fa fa-spinner fa-pulse d-none"></i>
-								{{ trans('site.front.buy') }}</button>
+								{{ trans('site.front.buy') }}
+							</button>
 						</div> <!-- end checkout-total -->
 					</div> <!-- end panel -->
 				</div> <!-- end col-lg-4 -->
