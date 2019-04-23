@@ -26,11 +26,11 @@
                             <div class="editor-circle">
                                 <img src="{{ asset('images-new/kristine1.png') }}" alt="" class="rounded-circle">
                             </div>
-                            <i>Foto: Vibeke Montero</i>
+                            <i>{{ trans('site.front.contact-us.main-container-photo-text') }}</i>
                         </div>
                         <div class="col-md-10 first-description">
                             <h2>
-                                Forfatterskolen er en nettbasert skriveskole, med kurs innenfor flere sjangre.
+                                {{ trans('site.front.contact-us.first-description') }}
                             </h2>
                         </div>
                     </div>
@@ -52,7 +52,7 @@
 
             <div class="row secondary-container">
                 <div class="col-md-6">
-                    <h1>Vår eminente stab</h1>
+                    <h1>{{ trans('site.front.contact-us.our-staff') }}</h1>
                     <div class="row stab-row">
                         <ul>
                             <li>
@@ -137,7 +137,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <h1>Kontakt oss i dag</h1>
+                    <h1>{{ trans('site.front.contact-us.contact-us-today') }}</h1>
                     <div class="row contact-row">
                         <div class="col-md-12">
                             <div class="row">
@@ -189,28 +189,38 @@
                                 <form method="POST" action="" onsubmit="disableSubmit(this)">
                                     {{ csrf_field() }}
                                     <div class="form-group">
-                                        <input type="text" class="form-control" name="fullname" placeholder="Navn" required
+                                        <input type="text" class="form-control" name="fullname"
+                                               placeholder="{{ trans('site.front.form.full-name') }}" required
                                                value="{{ old('fullname') }}">
                                     </div>
                                     <div class="form-group">
-                                        <input type="email" class="form-control" name="email" placeholder="E-postadresse" required
+                                        <input type="email" class="form-control" name="email"
+                                               placeholder="{{ trans('site.front.form.email-address') }}" required
                                                value="{{ old('email') }}">
                                     </div>
                                     <div class="form-group">
-                                        <textarea class="form-control" rows="1" name="message" placeholder="Skriv inn meldingen din" required>{{ old('message') }}</textarea>
+                                        <textarea class="form-control" rows="1" name="message"
+                                                  placeholder="{{ trans('site.front.contact-us.message-placeholder') }}"
+                                                  required>{{ old('message') }}</textarea>
                                     </div>
                                     <div class="form-group mb-0 custom-checkbox">
                                         <input type="checkbox" name="terms" required="" id="terms">
-                                        <label class="accept-terms" for="terms">Jeg aksepterer <a href="http://forfatterskolen.local/opt-in-terms" target="_blank">vilkårene</a></label>
+                                        {!! str_replace(['_start_label_', '_end_label_', '_start_link_','_end_link_'],
+										['<label class="accept-terms" for="terms">',
+										'</label>',
+										'<a href="'.url('/opt-in-terms').'" target="_blank">','</a>'],
+										trans('site.front.contact-us.accept-terms')) !!}
                                     </div>
                                     <p class="note">
-                                        PS! Vi respekterer personvernretten og deler ikke e-posten din med noen.
+                                        {{ trans('site.front.contact-us.note') }}
                                     </p>
 
                                     {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display() !!}
 
                                     <div class="mt-4">
-                                        <button type="submit" class="btn site-btn-global">Send</button>
+                                        <button type="submit" class="btn site-btn-global">
+                                            {{ trans('site.front.contact-us.send') }}
+                                        </button>
                                     </div>
                                 </form>
 
@@ -236,11 +246,10 @@
 
                     <div class="row save-data-container">
                         <h1>
-                            Dine data, dine valg
+                            {{ trans('site.front.contact-us.save-data-title') }}
                         </h1>
                         <p>
-                            Forfatterskolen er den som behandler dine data. Dine data er trygge hos oss. Vi bruker dem
-                            til å tilpasse tjenestene og tilbudene for deg.
+                            {{ trans('site.front.contact-us.save-data-description') }}
                         </p>
                     </div> <!-- end save-data-container -->
                 </div> <!-- end col-md-6 -->
