@@ -8,7 +8,8 @@
     <div class="container">
         <div class="col-sm-12 margin-bottom articles">
             <div class="breadcrumb">
-                <a href="{{ route('front.support') }}">Support</a> > <span>{{ $solution->title }}</span>
+                <a href="{{ route('front.support') }}">{{ trans('site.front.support.support-text') }}</a> >
+                &nbsp;<span>{{ $solution->title }}</span>
             </div>
             <h2 class="heading">{{ $solution->title }}</h2>
             <p class="info-text">

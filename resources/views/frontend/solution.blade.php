@@ -8,7 +8,9 @@
     <div class="container">
 
         <div class="col-sm-12 margin-bottom support-tabs">
-            <h1 class="margin-bottom">Instructions</h1>
+            <h1 class="margin-bottom">
+                {{ trans('site.front.support.instructions') }}
+            </h1>
             <br />
 
             @foreach($instructions->chunk(3) as $instructions_chunk)
@@ -32,7 +34,9 @@
         </div>
 
         <div class="col-sm-12 margin-bottom support-tabs">
-            <h1 class="margin-bottom">Support</h1>
+            <h1 class="margin-bottom">
+                {{ trans('site.front.support.support-text') }}
+            </h1>
             <br />
 
             @foreach($solutions->chunk(4) as $solution_chunk)
