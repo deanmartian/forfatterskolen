@@ -190,7 +190,7 @@
                                     {{ csrf_field() }}
                                     <div class="form-group">
                                         <input type="text" class="form-control" name="fullname"
-                                               placeholder="{{ trans('site.front.form.full-name') }}" required
+                                               placeholder="{{ trans('site.front.form.name') }}" required
                                                value="{{ old('fullname') }}">
                                     </div>
                                     <div class="form-group">

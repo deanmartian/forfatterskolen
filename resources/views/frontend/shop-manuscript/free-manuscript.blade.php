@@ -8,10 +8,9 @@
 <div class="free-manuscript-page">
     <div class="header">
         <div class="container text-center">
-            <h1>Prøv en gratis tekstvurdering</h1>
+            <h1>{{ trans('site.front.free-manuscript.header-title') }}</h1>
             <p>
-                Har du lyst til å få en profesjonell tilbakemelding på din tekst? Skriv inn valgfri tekst i skjemaet
-                under maks 500 ord.
+                {{ trans('site.front.free-manuscript.description') }}
             </p>
         </div>
     </div> <!-- end header-->
@@ -23,7 +22,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h2 class="title">
-                                Gratis manusutvikling
+                                {{ trans('site.front.free-manuscript.title') }}
                             </h2>
 
                             <form class="margin-bottom" method="POST" action="{{ route('front.free-manuscript.send') }}">
@@ -34,7 +33,7 @@
                                         <span class="input-group-text"><i class="fa at-icon"></i></span>
                                     </div>
                                     <input type="email" name="email" class="form-control no-border-left"
-                                           placeholder="Epost" required value="{{old('email')}}">
+                                           placeholder="{{ trans('site.front.form.email') }}" required value="{{old('email')}}">
                                 </div>
 
                                 <div class="input-group mt-5">
@@ -42,12 +41,12 @@
                                         <span class="input-group-text"><i class="fa user-icon"></i></span>
                                     </div>
                                     <input type="text" name="name" class="form-control no-border-left"
-                                           placeholder="Ditt navn" required value="{{old('name')}}">
+                                           placeholder="{{ trans('site.front.form.full-name') }}" required value="{{old('name')}}">
                                 </div>
 
                                 <div class="form-group mt-5">
                                     <select class="form-control" name="genre" required>
-                                        <option value="" disabled="disabled" selected>Velg Sjanger</option>
+                                        <option value="" disabled="disabled" selected>{{ ucwords(trans('site.front.select-genre')) }}</option>
                                         @foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
                                             <option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
                                         @endforeach
@@ -56,17 +55,19 @@
 
                                 <div class="form-group">
                                     <label class="font-quicksand-regular mb-4" style="font-size: 14px">
-                                        Din tekst (for å lime inn må du bruke lim inn funksjon fra tastaturet, ikke mus)
-                                        CTRL + V
+                                        {{ trans('site.front.free-manuscript.instruction') }}
                                     </label>
-                                    <textarea class="form-control" name="manuscript_content" rows="12" placeholder="Maks 500 ord"
+                                    <textarea class="form-control" name="manuscript_content" rows="12"
+                                              placeholder="{{ trans('site.front.free-manuscript.max-word-text') }}"
                                               id="editor">{{ old('manuscript_content') }}</textarea>
                                     <span class="note-color">
-                                        *Kun en innsending per person
+                                        *{{ trans('site.front.free-manuscript.note') }}
                                     </span>
                                 </div>
 
-                                <button type="submit" class="btn site-btn-global w-25">Send inn</button>
+                                <button type="submit" class="btn site-btn-global w-25">
+                                    {{ trans('site.front.free-manuscript.send') }}
+                                </button>
                             </form>
 
                             @if($errors->any())
