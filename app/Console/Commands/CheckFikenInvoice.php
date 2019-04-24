@@ -69,6 +69,8 @@ class CheckFikenInvoice extends Command
             $status = 0;
             $fikeDueDate = NULL;
             $kid = NULL;
+            $gross = NULL;
+            $fikenIssueDate = NULL;
             foreach( $fikenInvoices as $fikenInvoice ) :
                 if( $invoice->fiken_url == $fikenInvoice->_links->alternate->href ) :
                     $sale = FrontendHelpers::FikenConnect($fikenInvoice->sale);
@@ -76,11 +78,13 @@ class CheckFikenInvoice extends Command
                     $fiken_balance = (double)$fikenInvoice->gross/100;
                     $fikeDueDate = $fikenInvoice->dueDate;
                     $kid = $fikenInvoice->kid;
+                    $gross = $fikenInvoice->gross;
+                    $fikenIssueDate = $fikenInvoice->issueDate;
                     break;
                 endif;
             endforeach;
             $invoice->update(['fiken_is_paid' => $status, 'fiken_balance' => $fiken_balance, 'fiken_dueDate' => $fikeDueDate,
-                'kid_number' => $kid]);
+                'kid_number' => $kid, 'fiken_issueDate' => $fikenIssueDate, 'gross' => $gross]);
             CronLog::create(['activity' => 'CheckFikenInvoice CRON updated an invoice with kid_number '.$kid]);
         }
 
