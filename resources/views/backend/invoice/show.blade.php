@@ -11,7 +11,15 @@
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-sm-12 col-md-6">
-						<embed src="{{$invoice->pdf_url}}" style="width: 100%; height: 600px"></embed>
+						<?php
+							$exp_pdf = count(explode('.pdf',$invoice->pdf_url));
+							$pdf_url = $invoice->pdf_url;
+							if ($exp_pdf == 1) {
+                                $pdf_url = $pdf_url.'.pdf';
+							}
+						?>
+						<a href="{{$invoice->pdf_url}}" class="btn btn-primary margin-bottom" download>Download</a>
+						<embed src="{{$invoice->pdf_url}}" style="width: 100%; height: 600px" onerror="myFunction()"></embed>
 					</div>
 					<div class="col-sm-12 col-md-6">
             <div class="pull-right">
@@ -269,5 +277,9 @@
       package_select.append('<option value="' + packages[0]['id'] + '">' + packages[0]['variation'] + ' (' + packages[0]['price'] + ')</option>');
     }
   });
+
+  function myFunction(){
+      console.log("Asdfadsf");
+  }
 </script>
 @stop
