@@ -108,6 +108,37 @@
                         <div class="item__third">
                             <div class="card">
                                 <div class="card-header" style="">
+                                    <img src="{{ asset('/images-new/home/girl-coffee.jpg') }}" alt="">
+                                    <span class="title">
+                                        {{ trans('site.front.latest-blog-post') }}
+                                    </span>
+                                </div>
+                                <div class="card-body">
+                                    @if ($latest_blog)
+                                        <h1 class="font-montserrat-semibold">
+                                            {{ $latest_blog->title }}
+                                        </h1>
+
+                                        <div class="date-time-cont">
+                                            <i class="img-icon16 icon-calendar"></i>
+                                            <span>{{ \App\Http\FrontendHelpers::formatDate($latest_blog->created_at) }}</span>
+                                        </div>
+
+                                        <p class="mt-4 text-justify">{{ str_limit(strip_tags($latest_blog->description), 200)}}</p>
+
+                                        <a class="btn" href="{{ route('front.read-blog', $latest_blog->id) }}">
+                                            {{ trans('site.front.view') }}
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>
+                        </div> <!-- end item__third -->
+                    </div> <!-- end item -->
+
+                    <div class="item">
+                        <div class="item__third">
+                            <div class="card">
+                                <div class="card-header" style="">
                                     <img src="{{ asset('/images-new/home/hand-pen.png') }}" alt="">
                                     <span class="title">
                                         {{ !$next_free_webinar && $next_workshop ? trans('site.front.next-workshop')
@@ -151,37 +182,6 @@
                                                 {{ trans('site.front.register') }}
                                             </a>
                                         @endif
-                                    @endif
-                                </div>
-                            </div>
-                        </div> <!-- end item__third -->
-                    </div> <!-- end item -->
-
-                    <div class="item">
-                        <div class="item__third">
-                            <div class="card">
-                                <div class="card-header" style="">
-                                    <img src="{{ asset('/images-new/home/girl-coffee.jpg') }}" alt="">
-                                    <span class="title">
-                                        {{ trans('site.front.latest-blog-post') }}
-                                    </span>
-                                </div>
-                                <div class="card-body">
-                                    @if ($latest_blog)
-                                        <h1 class="font-montserrat-semibold">
-                                            {{ $latest_blog->title }}
-                                        </h1>
-
-                                        <div class="date-time-cont">
-                                            <i class="img-icon16 icon-calendar"></i>
-                                            <span>{{ \App\Http\FrontendHelpers::formatDate($latest_blog->created_at) }}</span>
-                                        </div>
-
-                                        <p class="mt-4 text-justify">{{ str_limit(strip_tags($latest_blog->description), 200)}}</p>
-
-                                        <a class="btn" href="{{ route('front.read-blog', $latest_blog->id) }}">
-                                            {{ trans('site.front.view') }}
-                                        </a>
                                     @endif
                                 </div>
                             </div>
