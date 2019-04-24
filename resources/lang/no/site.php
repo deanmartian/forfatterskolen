@@ -834,6 +834,12 @@ Warning: This cannot be undone.',
       'description' => 'Du vil nå få tilsendt en epost!',
       'note' => '_start_redirect_ Du blir sendt til forsiden om _start_span_ 5 _end_span_ sekunder _end_redirect_',
     ),
+    'login' => 
+    array (
+      'register' => 'Registrer',
+      'password-reset' => 'Tilbakestill passordet ditt',
+      'password-reset-title' => 'Tilbakestill passordet',
+    ),
   ),
   'free-webinars' => 
   array (
