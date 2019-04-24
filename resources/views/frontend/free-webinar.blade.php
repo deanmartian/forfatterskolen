@@ -46,7 +46,9 @@
         <div class="container small-container">
             <div class="row">
                 <div class="countdown-container w-100 text-center">
-                    <h3 class="text-uppercase font-weight-normal">Webinaret Starter Om</h3>
+                    <h3 class="text-uppercase font-weight-normal">
+                        {{ trans('site.front.free-webinar.webinar-start-on') }}
+                    </h3>
                     <ul id="countdown" class="role-element leadstyle-countdown">
                         <li>
                             <span class="countdown" id="days">00</span>
@@ -80,7 +82,8 @@
 
                         <h2>
                             <i class="clock"></i>
-                            Klokken {{ \Carbon\Carbon::parse($freeWebinar->start_date)->format('H:i') }}
+                            {{ str_replace('_time_', \Carbon\Carbon::parse($freeWebinar->start_date)->format('H:i'),
+                            trans('site.front.free-webinar.start-time')) }}
                         </h2>
                     </div> <!-- end date-container -->
                 </div> <!-- end schedule-container -->
@@ -115,7 +118,8 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fa at-icon"></i></span>
                             </div>
-                            <input type="email" name="email" class="form-control no-border-left" placeholder="E-post"
+                            <input type="email" name="email" class="form-control no-border-left"
+                                   placeholder="{{ trans('site.front.form.email') }}"
                                    required value="{{ old('email') }}">
                         </div>
 
@@ -123,7 +127,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fa user-icon"></i></span>
                             </div>
-                            <input type="text" placeholder="Fornavn" name="first_name"
+                            <input type="text" placeholder="{{ trans('site.front.form.first-name') }}" name="first_name"
                                    class="form-control no-border-left" required value="{{old('first_name')}}">
                         </div>
 
@@ -131,11 +135,13 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fa user-icon"></i></span>
                             </div>
-                            <input type="text" placeholder="Etternavn" name="last_name"
+                            <input type="text" placeholder="{{ trans('site.front.form.last-name') }}" name="last_name"
                                    class="form-control no-border-left" required value="{{old('last_name')}}">
                         </div>
 
-                        <button type="submit" class="btn site-btn-global w-100">Meld meg på</button>
+                        <button type="submit" class="btn site-btn-global w-100">
+                            {{ trans('site.front.free-webinar.sign-me-in') }}
+                        </button>
                     </form>
 
                     <div class="col-sm-12 mt-5">

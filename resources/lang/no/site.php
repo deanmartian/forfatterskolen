@@ -822,6 +822,12 @@ Warning: This cannot be undone.',
       'instructions' => 'Instructions',
       'support-text' => 'Support',
     ),
+    'free-webinar' => 
+    array (
+      'webinar-start-on' => 'Webinaret Starter Om',
+      'start-time' => 'Klokken _time_',
+      'sign-me-in' => 'Meld meg på',
+    ),
   ),
   'free-webinars' => 
   array (
