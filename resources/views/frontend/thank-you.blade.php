@@ -10,11 +10,14 @@
             <div class="row">
                 <div class="col-sm-6 left-container">
                     <img src="{{ asset('images-new/thumb-icon.png') }}" alt="" class="thumb">
-                    <h1>Takk for at du meldte deg på!</h1>
+                    <h1>{{ trans('site.front.thank-you.title') }}</h1>
                     <p>
-                        Du vil nå få tilsendt en epost! <br>
-                        <small class="redirect" style="display: inline-block; margin-bottom: 150px"><em>(Du blir sendt til forsiden om
-                                <span>5</span> sekunder)</em></small>
+                        {{ trans('site.front.thank-you.description') }} <br>
+
+                        {!! str_replace(['_start_redirect_', '_end_redirect_', '_start_span_', '_end_span_'],
+                        ['<small class="redirect" style="display: inline-block; margin-bottom: 150px"><em>',
+                        '</em></small>', '<span>', '</span>'],
+                        trans('site.front.thank-you.note')) !!}
                     </p>
                 </div>
 

@@ -828,6 +828,12 @@ Warning: This cannot be undone.',
       'start-time' => 'Klokken _time_',
       'sign-me-in' => 'Meld meg på',
     ),
+    'thank-you' => 
+    array (
+      'title' => 'Takk for at du meldte deg på!',
+      'description' => 'Du vil nå få tilsendt en epost!',
+      'note' => '_start_redirect_ Du blir sendt til forsiden om _start_span_ 5 _end_span_ sekunder _end_redirect_',
+    ),
   ),
   'free-webinars' => 
   array (
