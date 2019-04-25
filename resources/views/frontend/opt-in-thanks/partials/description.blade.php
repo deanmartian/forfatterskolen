@@ -6,28 +6,26 @@
     @if (in_array($optIn->id, $slugIdList) || in_array($slug, $slugList))
         <i class="img-icon gift-icon"></i>
     @endif
-    <h2>Vet du hva?</h2>
+    <h2>{{ trans('site.front.opt-in-thanks.description.title') }}</h2>
     <p>
-        Hvis du deler referanselenken med dine venner og bekjente, ønsker vi å belønne deg med en unik bonus:
+        {{ trans('site.front.opt-in-thanks.description.details') }}:
     </p>
 
     <div class="point-details-container">
         <div class="col-md-2 col-sm-12 left-container">
-            5
+            {{ trans('site.front.opt-in-thanks.description.left-container-first-number') }}
         </div>
         <div class="col-md-10 col-sm-12 text-left right-container">
-            Hvis du deler lenken, og får 5 av dine venner til å skrive seg på, får du en måneds gratis tilgang til
-            webinarpakken (se kommende gjester lenger ned på siden)
+            {{ trans('site.front.opt-in-thanks.description.right-container-first-text') }}
         </div>
     </div> <!-- end point-details-container -->
 
     <div class="point-details-container">
         <div class="col-md-2 col-sm-12  left-container">
-            10
+            {{ trans('site.front.opt-in-thanks.description.left-container-second-number') }}
         </div>
         <div class="col-md-10 col-sm-12 text-left right-container">
-            Hvis du deler lenken, og får 10 av dine venner til å skrive seg på, får du hele 1000 kroner i rabatt på vårt
-            kommende
+            {{ trans('site.front.opt-in-thanks.description.right-container-second-text') }}
             <?php
                 $displayText = '';
                 switch($optIn->id) {

@@ -16,10 +16,10 @@
                         <div class="thank-you-card">
                             <div class="cloud-container"></div>
                             <h1>
-                                Takk for at du skrev deg på! Nå kan du laste ned din gratis PDF.
+                                {{ trans('site.front.opt-in-thanks.thank-you-for-signing') }}
                             </h1>
                             <a href="{{ route('front.opt-in.download', 'aldersgrupper') }}" class="btn bg-site-red btn-block">
-                                <i class="img-icon pdf-icon"></i> Last ned din gratis PDF
+                                <i class="img-icon pdf-icon"></i> {{ trans('site.front.opt-in-thanks.download-pdf') }}
                             </a>
                         </div>
                     </div>

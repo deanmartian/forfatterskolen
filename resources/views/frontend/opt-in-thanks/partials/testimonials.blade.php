@@ -1,7 +1,7 @@
 <div class="col-sm-12">
     <div class="testimonial-container text-center">
         <h1 class="title">
-            Neste Webinar
+            {{ ucwords(trans('site.front.next-webinar')) }}
         </h1>
 
         <div id="testimonial-carousel" class="carousel slide global-carousel"

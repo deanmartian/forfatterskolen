@@ -14,10 +14,10 @@
                             <img src="{{ asset('images-new/opt-in-thanks/crime-video-image.jpg') }}" alt="">
                             <div class="thank-you-card">
                                 <h1>
-                                    Takk for at du skrev deg på! Nå kan du laste ned din gratis PDF.
+                                    {{ trans('site.front.opt-in-thanks.thank-you-for-signing') }}
                                 </h1>
                                 <a href="{{ route('front.opt-in.download', 'gratis-krimkurs') }}" class="btn bg-site-red">
-                                    <i class="img-icon pdf-icon"></i> Last ned din gratis PDF
+                                    <i class="img-icon pdf-icon"></i> {{ trans('site.front.opt-in-thanks.download-pdf') }}
                                 </a>
                             </div>
                         </div>

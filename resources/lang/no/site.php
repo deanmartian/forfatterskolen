@@ -863,6 +863,25 @@ Warning: This cannot be undone.',
       'success-message' => 'Takk for at du skrev deg på, du vil snart få en epost i innboksen din.',
       'jumbotron' => 'Forfatterskolen har jobbet med kjente forfattere og redaktører i mange år, og hatt flere eminente webinar-gjester. Tipsene du får er hentet fra oss selv, og forfattere som _start_span_ Tove Nilsen, Ingvar Ambjørnsen, Tom Egeland, Maja Lunde, Gro Dahle og Herbjørg Wassmo. _end_span_',
     ),
+    'opt-in-thanks' => 
+    array (
+      'thank-you-for-signing' => 'Takk for at du skrev deg på! Nå kan du laste ned din gratis PDF.',
+      'download-pdf' => 'Last ned din gratis PDF',
+      'description' => 
+      array (
+        'details' => 'Hvis du deler referanselenken med dine venner og bekjente, ønsker vi å belønne deg med en unik bonus',
+        'left-container-first-number' => '5',
+        'left-container-second-number' => '10',
+        'right-container-first-text' => 'Hvis du deler lenken, og får 5 av dine venner til å skrive seg på, får du en måneds gratis tilgang til webinarpakken (se kommende gjester lenger ned på siden)',
+        'right-container-second-text' => 'Hvis du deler lenken, og får 10 av dine venner til å skrive seg på, får du hele 1000 kroner i rabatt på vårt kommende krimkurs.',
+        'title' => 'Vet du hva?',
+      ),
+      'form' => 
+      array (
+        'title' => 'Skriv deg på for å få _start_bold_ referansekoden _end_bold_',
+        'button-text' => 'Gi meg _span_ koden',
+      ),
+    ),
   ),
   'free-webinars' => 
   array (
