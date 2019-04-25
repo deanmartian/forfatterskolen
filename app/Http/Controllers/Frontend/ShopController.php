@@ -229,8 +229,6 @@ class ShopController extends Controller
                 $formattedDiscount = number_format($applyDiscount, 2,',','.');
                 return response()->json(['discount' => $applyDiscount, 'discount_text' => 'Kr '.$formattedDiscount]);
             }
-
-            return redirect()->route('front.course.checkout', $course_id);
         }
 
         $hasPaidCourse = false;
