@@ -13,11 +13,9 @@
         <div class="header">
             <div class="container">
                 <div class="col-md-6">
-                    <h1 class="font-barlow-regular">Diktforum</h1>
+                    <h1 class="font-barlow-regular">{{ trans('site.front.poems.page-title') }}</h1>
                     <p class="mt-5">
-                        Vi har så mange elever som skriver de vakreste dikt, så vi syns de fortjener litt oppmerksomhet.
-                        Hver uke presenterer vi derfor et nytt dikt fra en av våre elever som vi publiserer her, for å
-                        få vist frem litt av mangfoldet blant elevene våre.
+                        {{ trans('site.front.poems.description') }}
                     </p>
                 </div>
             </div> <!-- end container -->

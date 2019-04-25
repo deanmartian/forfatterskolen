@@ -882,6 +882,11 @@ Warning: This cannot be undone.',
         'button-text' => 'Gi meg _span_ koden',
       ),
     ),
+    'poems' => 
+    array (
+      'page-title' => 'Diktforum',
+      'description' => 'Vi har så mange elever som skriver de vakreste dikt, så vi syns de fortjener litt oppmerksomhet. Hver uke presenterer vi derfor et nytt dikt fra en av våre elever som vi publiserer her, for å få vist frem litt av mangfoldet blant elevene våre.',
+    ),
   ),
   'free-webinars' => 
   array (
