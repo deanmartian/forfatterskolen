@@ -856,6 +856,13 @@ Warning: This cannot be undone.',
       'title' => 'Takk for innsendt tekst. Du vil få svar innen fem virkedager.',
       'note' => '_start_redirect_ (Du blir sendt til forsiden om _start_span_ 5 _end_span_ sekunder) _end_redirect_',
     ),
+    'opt-in' => 
+    array (
+      'note' => 'PS! Vi respekterer personvernretten og deler ikke e-posten din med noen.',
+      'send' => 'Send inn',
+      'success-message' => 'Takk for at du skrev deg på, du vil snart få en epost i innboksen din.',
+      'jumbotron' => 'Forfatterskolen har jobbet med kjente forfattere og redaktører i mange år, og hatt flere eminente webinar-gjester. Tipsene du får er hentet fra oss selv, og forfattere som _start_span_ Tove Nilsen, Ingvar Ambjørnsen, Tom Egeland, Maja Lunde, Gro Dahle og Herbjørg Wassmo. _end_span_',
+    ),
   ),
   'free-webinars' => 
   array (

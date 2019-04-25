@@ -36,24 +36,32 @@
                             </div>
                             <div class="form-group mb-0">
                                 <input type="checkbox" name="terms" required>
-                                <label>Jeg aksepterer <a href="{{ route('front.opt-in-terms') }}" target="_blank">vilkårene</a></label>
+                                <label>
+                                    {!! strtr(trans('site.front.accept-terms'),
+                                        [
+                                            '[start_link]' => '<a href="'.route('front.opt-in-terms').'">',
+                                            '[end_link]' => '</a>'
+                                        ]) !!}
+                                </label>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-8">
                                     <p class="note">
-                                        PS! Vi respekterer personvernretten og deler ikke e-posten din med noen.
+                                        {{ trans('site.front.opt-in.note') }}
                                     </p>
                                 </div>
                                 <div class="col-md-4">
-                                    <button type="submit" class="btn site-btn-global">Send inn</button>
+                                    <button type="submit" class="btn site-btn-global">
+                                        {{ trans('site.front.opt-in.send') }}
+                                    </button>
                                 </div>
                             </div>
                         </form>
 
                         @if(Session::has('opt-in-message'))
                             <div class="alert alert-success" role="alert">
-                                Takk for at du skrev deg på, du vil snart få en epost i innboksen din.
+                                {{ trans('site.front.opt-in.success-message') }}
                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -79,10 +87,8 @@
 
         <div class="col-sm-12 no-left-right-margin static-details-container">
             <div class="container jumbotron">
-                Forfatterskolen har jobbet med kjente forfattere og redaktører i mange år, og hatt flere eminente
-                webinar-gjester. Tipsene du får er hentet fra oss selv, og forfattere som
-                <span class="red">Tove Nilsen, Ingvar Ambjørnsen,
-                Tom Egeland, Maja Lunde, Gro Dahle og Herbjørg Wassmo. </span>
+                {!! strtr(trans('site.front.opt-in.jumbotron'),
+                    ['_start_span_' => '<span class="red">', '_end_span_' => '</span>']) !!}
             </div>
         </div>
 <div class="clearfix"></div>
