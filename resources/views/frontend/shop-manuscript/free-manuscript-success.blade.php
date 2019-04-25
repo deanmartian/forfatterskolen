@@ -8,9 +8,13 @@
 <div class="container text-center">
 	<div class="row">
 		<div class="col-sm-12">
-			<h1 style="margin-top: 120px;" class="font-weight-bold">Takk for innsendt tekst. Du vil få svar innen fem virkedager.</h1>
-			<small class="redirect" style="display: inline-block; margin-bottom: 150px"><em>(Du blir sendt til forsiden om
-					<span>5</span> sekunder)</em></small>
+			<h1 style="margin-top: 120px;" class="font-weight-bold">
+				{{ trans('site.front.free-manuscript-success.title') }}
+			</h1>
+			{!! str_replace(['_start_redirect_', '_end_redirect_', '_start_span_', '_end_span_'],
+                        ['<small class="redirect" style="display: inline-block; margin-bottom: 150px"><em>',
+                        '</em></small>', '<span>', '</span>'],
+                        trans('site.front.free-manuscript-success.note')) !!}
 		</div>
 	</div>
 </div>
