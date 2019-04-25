@@ -887,6 +887,12 @@ Warning: This cannot be undone.',
       'page-title' => 'Diktforum',
       'description' => 'Vi har så mange elever som skriver de vakreste dikt, så vi syns de fortjener litt oppmerksomhet. Hver uke presenterer vi derfor et nytt dikt fra en av våre elever som vi publiserer her, for å få vist frem litt av mangfoldet blant elevene våre.',
     ),
+    'your-discount' => 'Din rabatt',
+    'process-order' => 
+    array (
+      'process-order-text' => 'Din ordre blir behandlet',
+      'loading-text' => 'Vennligst vent',
+    ),
   ),
   'free-webinars' => 
   array (

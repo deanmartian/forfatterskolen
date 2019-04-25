@@ -22,20 +22,27 @@
 								<div class="row">
 									<div class="col-sm-12">
 											<span>
-												Er du allerede registrert hos oss må du logge inn her
+												{{ trans('site.front.form.already-registered-text') }}
 											</span>
 									</div>
 								</div>
 								<div class="row">
 									<div class="form-group col-sm-4">
-										<input type="email" name="email" placeholder="Epost-adresse" class="form-control" value="{{old('email')}}" required>
-										<p style="margin-top: 7px;"><a href="{{ route('auth.login.show') }}?t=passwordreset" tabindex="-1">Glemt Passord?</a></p>
+										<input type="email" name="email" placeholder="{{ trans('site.front.form.email-address') }}"
+											   class="form-control" value="{{old('email')}}" required>
+										<p style="margin-top: 7px;">
+											<a href="{{ route('auth.login.show') }}?t=passwordreset"
+																	   tabindex="-1">
+												{{ trans('site.front.form.reset-password') }}?
+											</a>
+										</p>
 									</div>
 									<div class="form-group col-sm-4">
-										<input type="password" name="password" placeholder="Passord" class="form-control" required>
+										<input type="password" name="password" placeholder="{{ trans('site.front.form.password') }}"
+											   class="form-control" required>
 									</div>
 									<div class="form-group col-sm-4">
-										<button type="submit" class="btn site-btn-global">Login</button>
+										<button type="submit" class="btn site-btn-global">{{ trans('site.front.form.login') }}</button>
 									</div>
 								</div>
 							</form>
@@ -55,57 +62,60 @@
 						<form class="form-theme" method="POST" action="{{route('front.course.place_order', ['id' => $course->id])}}"
 							  id="place_order_form">
 							{{csrf_field()}}
-							<h2>Bestillingsskjema for {{$course->title}}</h2>
-							<div class="panel-heading">Brukerinformasjon</div>
+							<h2>{{ str_replace('_title_', $course->title, trans('site.front.form.book-form-for')) }}</h2>
+							<div class="panel-heading">{{ trans('site.front.form.user-information') }}</div>
 							<div class="panel-body px-0">
 								<div class="form-group">
-									<label for="email" class="control-label">E-postadresse</label>
+									<label for="email" class="control-label">{{ trans('site.front.form.email-address') }}</label>
 									<input type="email" id="email" class="form-control large-input" name="email" required
 										   @if(Auth::guest()) value="{{old('email')}}" @else value="{{Auth::user()->email}}"
-										   readonly @endif placeholder="E-postadresse">
+										   readonly @endif placeholder="{{ trans('site.front.form.email-address') }}">
 								</div>
 								<div class="form-group row">
 									<div class="col-md-6">
-										<label for="first_name" class="control-label">Fornavn</label>
+										<label for="first_name" class="control-label">{{ trans('site.front.form.first-name') }}</label>
 										<input type="text" id="first_name" class="form-control large-input" name="first_name" required
 											   @if(Auth::guest()) value="{{old('first_name')}}" @else
-											   value="{{Auth::user()->first_name}}" readonly @endif placeholder="Fornavn">
+											   value="{{Auth::user()->first_name}}" readonly @endif
+											   placeholder="{{trans('site.front.form.first-name') }}">
 									</div>
 									<div class="col-md-6">
-										<label for="last_name" class="control-label">Etternavn</label>
+										<label for="last_name" class="control-label">{{ trans('site.front.form.last-name') }}</label>
 										<input type="text" id="last_name" class="form-control large-input" name="last_name" required
 											   @if(Auth::guest()) value="{{old('last_name')}}" @else
-											   value="{{Auth::user()->last_name}}" readonly @endif placeholder="Etternavn">
+											   value="{{Auth::user()->last_name}}" readonly @endif
+											   placeholder="{{trans('site.front.form.last-name') }}">
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="street" class="control-label">Gate</label>
+									<label for="street" class="control-label">{{ trans('site.front.form.street') }}</label>
 									<input type="text" id="street" class="form-control large-input" name="street" required
 										   @if(Auth::guest()) value="{{old('last_name')}}"
 										   @else value="{{Auth::user()->address['street']}}" @endif>
 								</div>
 								<div class="form-group row">
 									<div class="col-md-6">
-										<label for="zip" class="control-label">Postnummer</label>
+										<label for="zip" class="control-label">{{ trans('site.front.form.zip') }}</label>
 										<input type="text" id="zip" class="form-control large-input" name="zip" required
 											   @if(Auth::guest()) value="{{old('zip')}}"
 											   @else value="{{Auth::user()->address['zip']}}" @endif>
 									</div>
 									<div class="col-md-6">
-										<label for="city" class="control-label">Poststed</label>
-										<input type="text" id="city" class="form-control" name="city" required @if(Auth::guest()) value="{{old('city')}}" @else value="{{Auth::user()->address['city']}}" @endif>
+										<label for="city" class="control-label">{{ trans('site.front.form.city') }}</label>
+										<input type="text" id="city" class="form-control" name="city" required @if(Auth::guest())
+										value="{{old('city')}}" @else value="{{Auth::user()->address['city']}}" @endif>
 									</div>
 								</div>
 								<div class="form-group row">
 									<div class="col-md-6">
-										<label for="phone" class="control-label">Telefonnummer</label>
+										<label for="phone" class="control-label">{{ trans('site.front.form.phone-number') }}</label>
 										<input type="text" id="phone" class="form-control large-input" name="phone" required
 											   @if(Auth::guest()) value="{{old('phone')}}"
 											   @else value="{{Auth::user()->address['phone']}}" @endif>
 									</div>
 									@if(Auth::guest())
 										<div class="col-md-6">
-											<label for="password" class="control-label">Lag et passord</label>
+											<label for="password" class="control-label">{{ trans('site.front.form.create-password') }}</label>
 											<input type="password" id="password" class="form-control large-input"
 												   name="password" required>
 										</div>
@@ -115,16 +125,18 @@
 									@if(!Auth::guest())
 										<div class="col-md-6 custom-checkbox">
 											<input type="checkbox" name="update_address" id="update_address" checked>
-											<label for="update_address" class="control-label">Update Address</label>
+											<label for="update_address" class="control-label">
+												{{ trans('site.front.form.update-address') }}
+											</label>
 										</div>
 									@else
 										<div class="col-md-6">
 											<a href="{{ route('auth.login.google') }}" class="loginBtn loginBtn--google btn">
-												Logg inn med Google
+												{{ trans('site.front.form.login-with-google') }}
 											</a>
 
 											<a href="{{ route('auth.login.facebook') }}" class="loginBtn loginBtn--facebook btn">
-												Logg inn med Facebook
+												{{ trans('site.front.form.login-with-facebook') }}
 											</a>
 										</div>
 									@endif
@@ -148,7 +160,7 @@
 				<div class="col-lg-4">
 					<!-- Payment Details -->
 					<div class="panel panel-default mb-0">
-						<div class="panel-heading-underlined pt-0">Kurspakke</div>
+						<div class="panel-heading-underlined pt-0">{{ trans('site.front.form.course-package') }}</div>
 						<div class="panel-body px-0 pb-0">
 							@foreach($course->packages as $k => $package)
                                 <?php
@@ -260,23 +272,23 @@
 
 						</div>
 
-						<div class="panel-heading-underlined">Betalingsmetode</div>
+						<div class="panel-heading-underlined">{{ trans('site.front.form.payment-method') }}</div>
 						<div class="panel-body px-0 pb-0">
 							<select class="form-control" name="payment_mode_id" required data-size="15">
 								@foreach(\App\Http\FrontendHelpers::paymentModes(true) as $paymentMode)
 									<option value="{{$paymentMode->id}}" data-mode="{{ $paymentMode->mode }}">{{$paymentMode->mode}}</option>
 								@endforeach
 							</select>
-							<em><small>Merk: Vi godtar kun full betaling på PAYPAL</small></em>
+							<em><small>{{ trans('site.front.coaching-timer.payment-note') }}</small></em>
 						</div>
 
-						<div class="panel-heading-underlined">Rabattkupong</div>
+						<div class="panel-heading-underlined">{{ trans('site.front.form.discount-coupon') }}</div>
 						<div class="panel-body px-0 pb-0">
 							<input type="text" name="coupon" class="form-control" value="{{ $coupon }}" disabled>
 							<input type="hidden" name="coupon" class="form-control" value="{{ $coupon }}">
 						</div>
 
-						<div class="panel-heading-underlined">Betalingsplan</div>
+						<div class="panel-heading-underlined">{{ trans('site.front.form.payment-plan') }}</div>
 						<div class="panel-body px-0 pb-0">
 							<div class="row">
 								<div class="col-sm-12" id="paymentPlanContainer">
@@ -292,17 +304,17 @@
 								<div class="col-sm-12" style="margin-top: 8px" id="splitInvoiceContainer">
 									<div class="row">
 										<div class="col-sm-12">
-											<span class="split-faktura">Månedlig faktura?*</span>
+											<span class="split-faktura">{{ trans('site.front.form.monthly-payment') }}?*</span>
 										</div>
 										<div class="payment-option custom-radio col-sm-6">
 											<input type="radio" name="split_invoice" value="1" disabled required
 												   id="yes_option">
-											<label for="yes_option">Ja</label>
+											<label for="yes_option">{{ trans('site.front.yes') }}</label>
 										</div>
 										<div class="payment-option custom-radio col-sm-6">
 											<input type="radio" name="split_invoice" value="0" disabled required
 												   id="no_option">
-											<label for="no_option">Nei</label>
+											<label for="no_option">{{ trans('site.front.no') }}</label>
 										</div>
 									</div>
 								</div>
@@ -310,15 +322,16 @@
 
 							<div class="row">
 								<span class="col-sm-12 note">
-									*Du kan velge om du vil ha faktura en gang i måneden, eller
-									èn faktura der du kan betale inn ønsket beløp innen forfallsdatoen
+									*{{ trans('site.front.form.invoice-note') }}
 								</span>
 
 								<div class="col-sm-12 margin-top custom-checkbox">
 									<input type="checkbox" name="agree_terms" id="agree_terms" required>
-									<label for="agree_terms">Jeg aksepterer</label>
-									<a href="{{ route('front.terms', 'course-terms') }}"
-									   target="_new">kjøpsvilkårene</a>
+									{!! str_replace(['_start_label_', '_end_label_', '_start_link_','_end_link_'],
+										['<label for="agree_terms">',
+										'</label>',
+										'<a href="'.route('front.terms', 'course-terms').'" target="_new">','</a>'],
+										trans('site.front.form.accept-terms')) !!}
 								</div>
 							</div>
 						</div> <!-- end panel-body -->
@@ -327,25 +340,25 @@
 						<div class="margin-bottom checkout-total mt-3">
 							@if( $hasPaidCourse && $package->has_student_discount)
 								@if($course->type == "Single")
-									<strong>Du har en rabatt som elev på Kr 500,00</strong> <br />
+									<strong>{{ trans('site.ont.form.student-discount-500') }}</strong> <br />
 								@endif
 
 								@if($course->type == "Group")
-									<strong>Du har en rabatt som elev på Kr 1000,00</strong> <br /> <br>
+									<strong>{{ trans('site.front.form.student-discount-1000') }}</strong> <br /> <br>
 								@endif
 							@endif
 
 							<div id="price-wrapper">
-								<h3 class="mb-0">Pris: <span id="price-display" class="theme-text font-barlow-regular"></span></h3>
+								<h3 class="mb-0">{{ trans('site.front.price') }}: <span id="price-display" class="theme-text font-barlow-regular"></span></h3>
 							</div>
 
 							<div id="discount-wrapper">
-								<h3 class="mb-0">Din rabatt: <span id="discount-display" class="theme-text font-barlow-regular">
+								<h3 class="mb-0">{{ trans('site.front.your-discount') }}: <span id="discount-display" class="theme-text font-barlow-regular">
 										{{ \App\Http\FrontendHelpers::currencyFormat($couponDiscount) }}
 									</span></h3>
 							</div>
 
-							<h3>Totalt:
+							<h3>{{ trans('site.front.total') }}:
 
                                 <?php $standard_price = $course->packages->where('variation', 'Standard Kurs')->first(); ?>
 								@if( $standard_price )
@@ -381,10 +394,10 @@
 							</h3>
 
 								<h3 class="mt-0" id="monthly-price">
-									Per måned: <span class="theme-text font-barlow-regular"></span>
+									{{ trans('site.front.per-month') }}: <span class="theme-text font-barlow-regular"></span>
 								</h3>
 
-							<button type="submit" class="btn site-btn-global-w-arrow" id="submitOrder">Bestill</button>
+							<button type="submit" class="btn site-btn-global-w-arrow" id="submitOrder">{{ trans('site.front.buy') }}</button>
 						</div>
 					</div> <!-- end panel-default -->
 
@@ -399,10 +412,12 @@
 			<div class="modal-content">
 				<div class="modal-body">
 					<p class="text-center">
-						Din ordre blir behandlet
+						{{ trans('site.front.process-order.process-order-text') }}
 					</p>
 
-					<div class="loading" style="margin-left: 60px;">Vennligst vent</div>
+					<div class="loading" style="margin-left: 60px;">
+						{{ trans('site.front.process-order.loading-text') }}
+					</div>
 				</div>
 			</div>
 		</div>
