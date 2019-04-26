@@ -4,7 +4,7 @@
 <title>Shop Manuscripts &rsaquo; Forfatterskolen</title>
 @stop
 
-@section('heading') Manusutviklinger @stop
+@section('heading') {{ trans('site.learner.manuscript.title') }} @stop
 
 
 @section('content')
@@ -21,21 +21,28 @@
 								<h3 class="mb-1">{{ $shopManuscriptTaken->shop_manuscript->title }}</h3>
 								@if($shopManuscriptTaken->expected_finish)
 									<p>
-										<span class="label label-danger">Forventet ferdig:</span> {{ $shopManuscriptTaken->expected_finish }}
+										<span class="label label-danger">
+											{{ trans('site.learner.expected-finish') }}:</span> {{ $shopManuscriptTaken->expected_finish }}
 									</p>
 								@endif
 
 									@if( $shopManuscriptTaken->status == 'Finished' )
-										<span class="label label-success">Finished</span>
+										<span class="label label-success">
+											{{ trans('site.learner.finished') }}
+										</span>
 									@elseif( $shopManuscriptTaken->status == 'Started' )
-										<span class="label label-primary">Started</span>
+										<span class="label label-primary">
+											{{ trans('site.learner.started') }}
+										</span>
 									@elseif( $shopManuscriptTaken->status == 'Not started' )
-										<span class="label label-warning">Ikke startet</span>
+										<span class="label label-warning">
+											{{ trans('site.learner.not-started') }}
+										</span>
 								@endif
 
 								<div class="note-color mt-4">
 									@if( $shopManuscriptTaken->status != 'Not started' )
-										Ord: {{ $shopManuscriptTaken->words }} <br>
+										{{ trans('site.learner.word') }}: {{ $shopManuscriptTaken->words }} <br>
 									@endif
 									{{ $shopManuscriptTaken->shop_manuscript->description }}
 								</div>
@@ -43,9 +50,16 @@
 							<div class="card-footer">
 								@if( $shopManuscriptTaken->is_active )
 									@if( $shopManuscriptTaken->status == 'Not started' )
-										<button type="button" class="btn btn-primary uploadManuscriptBtn" data-toggle="modal" data-target="#uploadManuscriptModal" data-action="{{ route('learner.shop-manuscript.upload', $shopManuscriptTaken->id) }}">Last opp manus</button>
+										<button type="button" class="btn btn-primary uploadManuscriptBtn"
+												data-toggle="modal" data-target="#uploadManuscriptModal"
+												data-action="{{ route('learner.shop-manuscript.upload', $shopManuscriptTaken->id) }}">
+											{{ trans('site.learner.upload-script') }}
+										</button>
 									@else
-										<a class="btn btn-primary" href="{{ route('learner.shop-manuscript.show', $shopManuscriptTaken->id) }}">Se Manuskript</a>
+										<a class="btn btn-primary" href="{{ route('learner.shop-manuscript.show',
+										$shopManuscriptTaken->id) }}">
+											{{ trans('site.learner.see-manuscript') }}
+										</a>
 										@if (!$shopManuscriptTaken->is_manuscript_locked)
 											<button class="btn btn-success updateManuscriptBtn" type="button" data-toggle="modal"
 													data-target="#updateUploadedManuscriptModal" data-fields="{{ json_encode($shopManuscriptTaken) }}"
@@ -56,7 +70,9 @@
 										@endif
 									@endif
 								@else
-									<a class="btn btn-warning disabled" style="color: #fff">Pending</a>
+									<a class="btn btn-warning disabled" style="color: #fff">
+										{{ trans('site.learner.pending') }}
+									</a>
 								@endif
 							</div>
 						</div> <!-- end panel -->
@@ -70,17 +86,25 @@
 				<div class="card global-card">
 					<div class="card-header">
 						<h1>
-							Språkvask
+							{{ trans('site.learner.copy-editing') }}
 						</h1>
 					</div>
 					<div class="card-body py-0">
 						<table class="table table-global">
 							<thead>
 								<tr>
-									<th>Manus</th>
-									<th>Dato bestilt</th>
-									<th>Status</th>
-									<th>Forventet ferdig</th>
+									<th>
+										{{ trans('site.learner.script') }}
+									</th>
+									<th>
+										{{ trans('site.learner.date-ordered') }}
+									</th>
+									<th>
+										{{ trans('site.learner.status') }}
+									</th>
+									<th>
+										{{ trans('site.learner.expected-finish') }}
+									</th>
 									<th></th>
 								</tr>
 							</thead>
@@ -100,11 +124,11 @@
 									</td>
 									<td>
 										@if( $editing->status == 2 )
-											<span class="label label-success">Finished</span>
+											<span class="label label-success">{{ trans('site.learner.finished') }}</span>
 										@elseif( $editing->status == 1 )
-											<span class="label label-primary">Started</span>
+											<span class="label label-primary">{{ trans('site.learner.started') }}</span>
 										@elseif( $editing->status == 0 )
-											<span class="label label-warning">Not started</span>
+											<span class="label label-warning">{{ trans('site.learner.not-started') }}</span>
 										@endif
 									</td>
 									<td>
@@ -115,13 +139,13 @@
 									</td>
 									<td>
 										<a href="{{ route('learner.other-service.download-doc',
-										   ['id' => $editing->id, 'type' => 1]) }}">Last ned orginal manus</a>
+										   ['id' => $editing->id, 'type' => 1]) }}">{{ trans('site.learner.download-original-script') }}</a>
 
 										@if ($editing->feedback)
 											<br>
 											<a href="{{ route('learner.other-service.download-feedback', $editing->feedback->id) }}"
 											   style="color:#eea236">
-												Last ned tilbakemelding
+												{{ trans('site.learner.download-feedback') }}
 											</a>
 										@endif
 									</td>
@@ -139,17 +163,17 @@
 				<div class="card global-card">
 					<div class="card-header">
 						<h1>
-							Korrektur
+							{{ trans('site.front.correction.title') }}
 						</h1>
 					</div>
 					<div class="card-body py-0">
 						<table class="table table-global">
 							<thead>
 							<tr>
-								<th>Manus</th>
-								<th>Dato bestilt</th>
-								<th>Status</th>
-								<th>Forventet ferdig</th>
+								<th>{{ trans('site.learner.script') }}</th>
+								<th>{{ trans('site.learner.date-ordered') }}</th>
+								<th>{{ trans('site.learner.status') }}</th>
+								<th>{{ trans('site.learner.expected-finish') }}</th>
 								<th></th>
 							</tr>
 							</thead>
@@ -169,11 +193,11 @@
 									</td>
 									<td>
 										@if( $correction->status == 2 )
-											<span class="label label-success">Finished</span>
+											<span class="label label-success">{{ trans('site.learner.finished') }}</span>
 										@elseif( $correction->status == 1 )
-											<span class="label label-primary">Started</span>
+											<span class="label label-primary">{{ trans('site.learner.started') }}</span>
 										@elseif( $correction->status == 0 )
-											<span class="label label-warning">Not started</span>
+											<span class="label label-warning">{{ trans('site.learner.not-started') }}</span>
 										@endif
 									</td>
 									<td>
@@ -184,13 +208,13 @@
 									</td>
 									<td>
 										<a href="{{ route('learner.other-service.download-doc',
-										   ['id' => $correction->id, 'type' => 2]) }}">Last ned orginal manus</a>
+										   ['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.learner.download-original-script') }}</a>
 
 										@if ($correction->feedback)
 											<br>
 											<a href="{{ route('learner.other-service.download-feedback', $correction->feedback->id) }}"
 											   style="color:#eea236">
-												Last ned tilbakemelding
+												{{ trans('site.learner.download-feedback') }}
 											</a>
 										@endif
 									</td>
@@ -210,7 +234,7 @@
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 class="modal-title">Last opp manus</h3>
+        <h3 class="modal-title">{{ trans('site.learner.upload-script') }}</h3>
 		  <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
@@ -218,28 +242,28 @@
       		{{ csrf_field() }}
       		<div class="form-group">
 				<label>
-					* Godkjente fil formater er DOC, DOCX, PDF og ODT.
+					* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
 				</label>
       			<input type="file" class="form-control" required name="manuscript" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
       		</div>
 			<div class="form-group">
-				<label for="">Sjanger</label>
+				<label for="">{{ trans('site.front.genre') }}</label>
 				<select class="form-control" name="genre" required>
-					<option value="" disabled="disabled" selected>Velg sjanger</option>
+					<option value="" disabled="disabled" selected>{{ trans('site.front.select-genre') }}</option>
 					@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
 						<option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
 					@endforeach
 				</select>
 			</div>
 			<div class="form-group">
-				<label for="">Synopsis (valgfritt)</label>
+				<label for="">{{ trans('site.front.form.synopsis-optional') }}</label>
 				<input type="file" class="form-control" name="synopsis" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 			</div>
 			<div class="form-group">
-				<label for="">Noen ord om manuset (valgfritt)</label>
+				<label for="">{{ trans('site.front.form.manuscript-description') }}</label>
 				<textarea name="description" id="" cols="30" rows="10" class="form-control"></textarea>
 			</div>
-      		<button type="submit" class="btn btn-primary pull-right">Last opp manus</button>
+      		<button type="submit" class="btn btn-primary pull-right">{{ trans('site.learner.upload-script') }}</button>
       		<div class="clearfix"></div>
       	</form>
       </div>
@@ -252,34 +276,34 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title">Last opp manus</h3>
+				<h3 class="modal-title">{{ trans('site.learner.upload-script') }}</h3>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form method="POST" enctype="multipart/form-data" action="">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<label>* Godkjente fil formater er DOC, DOCX, PDF og ODT.</label>
+						<label>* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}</label>
 						<input type="file" class="form-control" required name="manuscript" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 					</div>
 					<div class="form-group">
-						<label for="">Sjanger</label>
+						<label for="">{{ trans('site.front.genre') }}</label>
 						<select class="form-control" name="genre" required>
-							<option value="" disabled="disabled" selected>Velg sjanger</option>
+							<option value="" disabled="disabled" selected>{{ trans('site.front.select-genre') }}</option>
 							@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
 								<option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
 							@endforeach
 						</select>
 					</div>
 					<div class="form-group">
-						<label for="">Synopsis (valgfritt)</label>
+						<label for="">{{ trans('site.front.form.synopsis-optional') }}</label>
 						<input type="file" class="form-control" name="synopsis" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 					</div>
 					<div class="form-group">
-						<label for="">Noen ord om manuset (valgfritt)</label>
+						<label for="">{{ trans('site.front.form.manuscript-description') }}</label>
 						<textarea name="description" id="" cols="30" rows="10" class="form-control"></textarea>
 					</div>
-					<button type="submit" class="btn btn-primary pull-right">Last opp manus</button>
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.learner.upload-script') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -292,15 +316,15 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title">Last opp manus</h3>
+				<h3 class="modal-title">{{ trans('site.learner.upload-script') }}</h3>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form method="POST" enctype="multipart/form-data" action="">
 					{{ csrf_field() }}
-					Are you sure you want to delete the manuscript?
+					{{ trans('site.learner.delete-manuscript-question') }}
 					<div class="clearfix"></div>
-					<button type="submit" class="btn btn-danger pull-right">Delete</button>
+					<button type="submit" class="btn btn-danger pull-right">{{ trans('site.learner.delete') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -313,19 +337,20 @@
 	<div class="modal-dialog modal-md">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title">Oppgrader</h3>
+				<h3 class="modal-title">{{ trans('site.learner.upgrade') }}</h3>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 
 				<div id="exceed_message">
 					<p>
-						Manuset ditt har overskrevet antall tillatte ord <br>
-						Oppgraderingen vil koste kroner {{ session('exceed') }},- <br>
-						{{ session('max_words') }} ord
+						{!! str_replace(['_break_', '_exceed_', '_max_words_'],
+						['<br/>', session('exceed'), session('max_words')] ,
+						trans('site.learner.upgrade-exceed-message')) !!}
 					</p>
-					<button class="btn btn-default" data-dismiss="modal">Lukk</button>
-					<a href="{{ url('upgrade-manuscript/'.session('plan').'/checkout') }}" class="btn btn-primary pull-right">Oppgrader manus</a>
+					<button class="btn btn-default" data-dismiss="modal">{{ trans('site.learner.close') }}</button>
+					<a href="{{ url('upgrade-manuscript/'.session('plan').'/checkout') }}" class="btn btn-primary pull-right">{{
+					trans('site.learner.upgrade-script') }}</a>
 				</div>
 				<div class="clearfix"></div>
 
