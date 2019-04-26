@@ -14,8 +14,10 @@
                     <div class="card global-card">
                         <div class="card-header">
                             <h1>
-                                Mine Kurs
-                                <a href="{{ route('learner.course') }}" class="float-right view-all">Se alle</a>
+                                {{ trans('site.learner.my-course') }}
+                                <a href="{{ route('learner.course') }}" class="float-right view-all">
+                                    {{ trans('site.learner.see-all') }}
+                                </a>
                             </h1>
                         </div>
                         <div class="card-body">
@@ -37,19 +39,29 @@
                                             @if( $courseTaken->is_active )
                                                 @if($courseTaken->hasStarted)
                                                     @if($courseTaken->hasEnded)
-                                                        <button class="btn site-btn-global" data-toggle="modal" data-target="#renewAllModal">Forny abonnement</button>
+                                                        <button class="btn site-btn-global" data-toggle="modal"
+                                                                data-target="#renewAllModal">
+                                                            {{ trans('site.learner.renew-subscription') }}
+                                                        </button>
                                                     @else
-                                                        <a class="btn site-btn-global" href="{{route('learner.course.show', ['id' => $courseTaken->id])}}">Fortsett med dette kurset</a>
+                                                        <a class="btn site-btn-global"
+                                                           href="{{route('learner.course.show', ['id' => $courseTaken->id])}}">
+                                                            {{ trans('site.learner.continue-this-course') }}
+                                                        </a>
                                                     @endif
                                                 @else
                                                     <form method="POST" action="{{route('learner.course.take')}}">
                                                         {{csrf_field()}}
                                                         <input type="hidden" name="courseTakenId" value="{{$courseTaken->id}}">
-                                                        <button type="submit" class="btn site-btn-global">Start dette kurset</button>
+                                                        <button type="submit" class="btn site-btn-global">
+                                                            {{ trans('site.learner.start-course') }}
+                                                        </button>
                                                     </form>
                                                 @endif
                                             @else
-                                                <a class="btn btn-warning disabled">Kurs på vent</a>
+                                                <a class="btn btn-warning disabled">
+                                                    {{ trans('site.learner.course-on-hold') }}
+                                                </a>
                                             @endif
                                         </div>
                                     </div> <!-- row -->
@@ -63,8 +75,10 @@
                     <div class="card global-card">
                         <div class="card-header">
                             <h1>
-                                Kalender
-                                <a href="{{ route('learner.calendar') }}" class="float-right view-all">Ser mer</a>
+                                {{ trans('site.learner.calendar') }}
+                                <a href="{{ route('learner.calendar') }}" class="float-right view-all">
+                                    {{ trans('site.learner.see-more') }}
+                                </a>
                             </h1>
                         </div>
                         <div class="card-body">
@@ -126,7 +140,7 @@
                         <div class="card global-card mt-3">
                             <div class="card-header">
                                 <h1>
-                                    Gratis kurs tilgjengelig
+                                    {{ trans('site.learner.free-course-available') }}
                                 </h1>
                             </div>
                             <div class="card-body">
@@ -147,7 +161,9 @@
                                                 <form action="{{ route('front.course.getFreeCourse', $free->id) }}" method="POST"
                                                       onsubmit="disableSubmit(this)" class="form-inline">
                                                     {{ csrf_field() }}
-                                                    <button class="btn btn-theme" type="submit">Få gratis kurset</button>
+                                                    <button class="btn btn-theme" type="submit">
+                                                        {{ trans('site.learner.get-free-course') }}
+                                                    </button>
                                                 </form>
                                             @endif
                                         </div>
@@ -192,7 +208,9 @@
                     ->orderBy('webinars.start_date', 'ASC')
                     ->get();
                 ?>
-                <div class="divider-center-text">MINE WEBINAR</div>
+                <div class="divider-center-text">
+                    {{ strtoupper(trans('site.learner.my-webinar')) }}
+                </div>
 
                 @foreach($webinarsRepriser as $webinar)
                     <?php
@@ -229,13 +247,14 @@
                             <div>
                                 @if ($webinar->id == 24 || $webinar->id == 25 || $webinar->id == 31)
                                     <a class="btn site-btn-global w-100 rounded-0" href="{{ $coursesTaken && $coursesTaken->hasEnded
-                                                    ? 'javascript:void(0)' : $webinar->link }}" target="_blank">Repriser
+                                                    ? 'javascript:void(0)' : $webinar->link }}" target="_blank">
+                                        {{ trans('site.learner.replay') }}
                                         <i class="img-icon icon-right-arrow"></i>
                                     </a>
                                 @else
                                     @if($webinar->set_as_replay)
                                         <a class="btn site-btn-global w-100 rounded-0" href="{{ $webinar->link }}" target="_blank">
-                                            Repriser
+                                            {{ trans('site.learner.replay') }}
                                             <i class="img-icon icon-right-arrow"></i>
                                         </a>
                                     @endif
@@ -280,34 +299,35 @@
                             <div>
                                 @if( \App\Http\FrontendHelpers::isWebinarAvailable($webinar) )
                                     <a class="btn site-btn-global w-100 rounded-0" href="{{ $webinar->link }}" target="_blank">
-                                        Bli med på webinar
+                                        {{ trans('site.learner.join-webinar') }}
                                         <i class="img-icon icon-right-arrow"></i>
                                     </a>
                                 @else
 
                                     @if ($webinar->id == 24 || $webinar->id == 25 || $webinar->id == 31)
                                         <a class="btn site-btn-global w-100 rounded-0" href="{{ $coursesTaken && $coursesTaken->hasEnded
-                                                    ? 'javascript:void(0)' : $webinar->link }}" target="_blank">Repriser
+                                                    ? 'javascript:void(0)' : $webinar->link }}" target="_blank">
+                                            {{ trans('site.learner.replay') }}
                                             <i class="img-icon icon-right-arrow"></i>
                                         </a>
                                     @else
                                         @if($webinar->set_as_replay)
                                             <a class="btn site-btn-global w-100 rounded-0" href="{{ $webinar->link }}" target="_blank">
-                                                Repriser
+                                                {{ trans('site.learner.replay') }}
                                                 <i class="img-icon icon-right-arrow"></i>
                                             </a>
                                         @else
                                             @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id))
                                                 <a class="btn site-btn-global w-100 rounded-0"
                                                    href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id) }}">
-                                                    Påmeldt
+                                                    {{ trans('site.learner.signed') }}
                                                 </a>
                                             @else
                                                 <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
                                                    href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
                                                     ? 'javascript:void(0)' :route('learner.webinar.register',
                                                     [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]) }}">
-                                                    Registrer Deg
+                                                    {{ trans('site.learner.register') }}
                                                     <i class="img-icon icon-right-arrow"></i>
                                                 </a>
                                             @endif
@@ -326,8 +346,10 @@
                     <div class="card global-card">
                         <div class="card-header">
                             <h1>
-                                Oppgaver
-                                <a href="{{ route('learner.assignment') }}" class="float-right view-all">Se alle</a>
+                                {{ trans('site.learner.assignment') }}
+                                <a href="{{ route('learner.assignment') }}" class="float-right view-all">
+                                    {{ trans('site.learner.see-all') }}
+                                </a>
                             </h1>
                         </div>
                         <div class="card-body py-0">
@@ -343,8 +365,18 @@
                                                 @if( $manuscript )
                                                     @if (!$manuscript->locked)
                                                         <div>
-                                                            <button type="button" class="btn btn-info editManuscriptBtn" data-toggle="modal" data-target="#editManuscriptModal" data-action="{{ route('learner.assignment.replace_manuscript', $manuscript->id) }}"><i class="fa fa-pencil"></i></button>
-                                                            <button type="button" class="btn btn-danger deleteManuscriptBtn" data-toggle="modal" data-target="#deleteManuscriptModal" data-action="{{ route('learner.assignment.delete_manuscript', $manuscript->id) }}"><i class="fa fa-trash"></i></button>
+                                                            <button type="button" class="btn btn-info editManuscriptBtn"
+                                                                    data-toggle="modal" data-target="#editManuscriptModal"
+                                                                    data-action="{{ route('learner.assignment.replace_manuscript',
+                                                                    $manuscript->id) }}">
+                                                                <i class="fa fa-pencil"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-danger deleteManuscriptBtn"
+                                                                    data-toggle="modal" data-target="#deleteManuscriptModal"
+                                                                    data-action="{{ route('learner.assignment.delete_manuscript',
+                                                                    $manuscript->id) }}">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>
                                                         </div>
                                                     @endif
                                                 @else
@@ -353,14 +385,14 @@
                                                                 data-target="#submitEditorManuscriptModal"
                                                                 data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
                                                                 {{--@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif--}}>
-                                                            Last opp manus
+                                                            {{ trans('site.learner.upload-script') }}
                                                         </button>
                                                     @else
                                                         <button class="btn site-btn-global submitManuscriptBtn" data-toggle="modal"
                                                                 data-target="#submitManuscriptModal"
                                                                 data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
                                                                 {{--@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif--}}>
-                                                            Last opp manus
+                                                            {{ trans('site.learner.upload-script') }}
                                                         </button>
                                                     @endif
                                                 @endif
@@ -377,18 +409,28 @@
                     <div class="card global-card">
                         <div class="card-header">
                             <h1>
-                                Mine Fakturaer
-                                <a href="{{ route('learner.invoice') }}" class="float-right view-all">Se alle</a>
+                                {{ trans('site.learner.my-invoice') }}
+                                <a href="{{ route('learner.invoice') }}" class="float-right view-all">
+                                    {{ trans('site.learner.see-all') }}
+                                </a>
                             </h1>
                         </div>
                         <div class="card-body py-0">
                             <table class="table table-global">
                                 <thead>
                                     <tr>
-                                        <th>Fakturanummer</th>
-                                        <th>Frist</th>
-                                        <th>Restbeløp</th>
-                                        <th>Status</th>
+                                        <th>
+                                            {{ trans('site.learner.invoice-number') }}
+                                        </th>
+                                        <th>
+                                            {{ trans('site.learner.deadline') }}
+                                        </th>
+                                        <th>
+                                            {{ trans('site.learner.remainders') }}
+                                        </th>
+                                        <th>
+                                            {{ trans('site.learner.status') }}
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -397,7 +439,8 @@
                                             $transactions_sum = $invoice->transactions->sum('amount');
                                             // remove if the above code is uncomment
                                             $balance = $invoice->fiken_balance;
-                                            $status = $invoice->fiken_is_paid ? "BETALT" : "UBETALT";
+                                            $status = $invoice->fiken_is_paid ? strtoupper(trans('site.learner.paid'))
+                                                    : strtoupper(trans('site.learner.unpaid'));
                                         ?>
                                         <tr>
                                             <td>
@@ -435,16 +478,24 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Forny alle kursene for ett år</h4>
+                    <h4 class="modal-title">
+                        {{ trans('site.learner.renew-all.title') }}
+                    </h4>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="{{ route('learner.renew-all-courses') }}" onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
 
-                        <p>Vil du fornye alle kursene dine for ett år ekstra for kroner 1490,?</p>
+                        <p>
+                            {{ trans('site.learner.renew-all.description') }}
+                        </p>
                         <div class="text-right margin-top">
-                            <button type="submit" class="btn btn-primary">ja</button>
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Nei</button>
+                            <button type="submit" class="btn btn-primary">
+                                {{ trans('site.front.yes') }}
+                            </button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">
+                                {{ trans('site.front.no') }}
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -456,7 +507,9 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Last opp manus</h3>
+                    <h3 class="modal-title">
+                        {{ trans('site.learner.upload-script') }}
+                    </h3>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
@@ -464,16 +517,19 @@
                           onsubmit="disableSubmit(this);">
                         {{ csrf_field() }}
                         <div class="form-group mb-2">
-                            <label class="mb-0">* Godkjente fil formater er DOC, DOCX.</label>
-                            <input type="file" class="form-control margin-top" required name="filename" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                            <label class="mb-0">* {{ trans('site.learner.manuscript.doc-format-text') }}</label>
+                            <input type="file" class="form-control margin-top" required name="filename"
+                                   accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document">
                         </div>
 
                         <div class="form-group mb-2">
                             <label class="mb-0">
-                                Sjanger
+                                {{ trans('site.front.genre') }}
                             </label>
                             <select class="form-control" name="type" required>
-                                <option value="" disabled="disabled" selected>Select Type</option>
+                                <option value="" disabled="disabled" selected>
+                                    {{ trans('site.front.select-genre') }}
+                                </option>
                                 @foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
                                     <option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
                                 @endforeach
@@ -481,12 +537,15 @@
                         </div>
 
                         <div class="form-group">
-                            Hvor i manuset <br>
+                            {{ trans('site.learner.manuscript.where-in-manuscript') }} <br>
                             @foreach(\App\Http\FrontendHelpers::manuscriptType() as $manu)
-                                <input type="radio" name="manu_type" value="{{ $manu['id'] }}" required> <label class="mb-0">{{ $manu['option'] }}</label> <br>
+                                <input type="radio" name="manu_type" value="{{ $manu['id'] }}" required>
+                                <label class="mb-0">{{ $manu['option'] }}</label> <br>
                             @endforeach
                         </div>
-                        <button type="submit" class="btn btn-primary pull-right margin-top">Upload</button>
+                        <button type="submit" class="btn btn-primary pull-right margin-top">
+                            {{ trans('site.learner.upload') }}
+                        </button>
                         <div class="clearfix"></div>
                     </form>
                 </div>
@@ -498,23 +557,28 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Last opp manus</h3>
+                    <h3 class="modal-title">
+                        {{ trans('site.learner.upload-script') }}
+                    </h3>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this);">
                         {{ csrf_field() }}
                         <div class="form-group mb-2">
-                            <label class="mb-0">* Godkjente fil formater er DOC, DOCX, PDF og ODT.</label>
+                            <label class="mb-0">*
+                            {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}</label>
                             <input type="file" class="form-control margin-top" required name="filename" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
                         </div>
 
                         <div class="form-group mb-2">
                             <label class="mb-0">
-                                Sjanger
+                                {{ trans('site.front.genre') }}
                             </label>
                             <select class="form-control" name="type" required>
-                                <option value="" disabled="disabled" selected>Select Type</option>
+                                <option value="" disabled="disabled" selected>
+                                    {{ trans('site.front.select-genre') }}
+                                </option>
                                 @foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
                                     <option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
                                 @endforeach
@@ -522,12 +586,15 @@
                         </div>
 
                         <div class="form-group">
-                            Hvor i manuset <br>
+                            {{ trans('site.learner.manuscript.where-in-manuscript') }} <br>
                             @foreach(\App\Http\FrontendHelpers::manuscriptType() as $manu)
-                                <input type="radio" name="manu_type" value="{{ $manu['id'] }}" required> <label class="mb-0">{{ $manu['option'] }}</label> <br>
+                                <input type="radio" name="manu_type" value="{{ $manu['id'] }}" required>
+                                <label class="mb-0">{{ $manu['option'] }}</label> <br>
                             @endforeach
                         </div>
-                        <button type="submit" class="btn btn-primary pull-right margin-top">Upload</button>
+                        <button type="submit" class="btn btn-primary pull-right margin-top">
+                            {{ trans('site.learner.upload') }}
+                        </button>
                         <div class="clearfix"></div>
                     </form>
                 </div>
@@ -539,19 +606,25 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Replace manuscript</h3>
+                    <h3 class="modal-title">
+                        {{ trans('site.learner.manuscript.replace-manuscript') }}
+                    </h3>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
                         <div class="form-group">
-                            <label>Manuscript</label>
+                            <label>
+                                {{ trans('site.learner.manuscript-text') }}
+                            </label>
                             <input type="file" class="form-control" required name="filename" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
-                            * Godkjente fil formater er DOC, DOCX, PDF og ODT.
+                            * {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
                         </div>
 
-                        <button type="submit" class="btn btn-primary pull-right margin-top">Submit</button>
+                        <button type="submit" class="btn btn-primary pull-right margin-top">
+                            {{ trans('site.front.submit') }}
+                        </button>
                         <div class="clearfix"></div>
                     </form>
                 </div>
@@ -563,15 +636,18 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Delete manuscript</h3>
+                    <h3 class="modal-title">
+                        {{ trans('site.learner.delete-manuscript.title') }}
+                    </h3>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    Are you sure to delete this manuscript?
-                    Warning: This cannot be undone.
+                    {{ trans('site.learner.delete-manuscript.question') }}
                     <form method="POST" action="" onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
-                        <button type="submit" class="btn btn-danger pull-right margin-top">Delete</button>
+                        <button type="submit" class="btn btn-danger pull-right margin-top">
+                            {{ trans('site.learner.delete') }}
+                        </button>
                         <div class="clearfix"></div>
                     </form>
                 </div>
@@ -585,7 +661,8 @@
                 <div class="modal-body text-center">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
-                    Antall ord er for mange, maks {{ Session::get('editorMaxWord') }} ord. Rediger teksten og send inn på nytt.
+                    {{ strtr(trans('site.learner.error-max-word-text'),
+                    ['_word_count_' => Session::get('editorMaxWord')]) }}
                 </div>
             </div>
         </div>
@@ -597,7 +674,7 @@
                 <div class="modal-body text-center">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <div style="color: green; font-size: 24px"><i class="fa fa-check"></i></div>
-                    Din oppgave har blitt levert!
+                    {{ trans('site.learner.submit-success-text') }}
                 </div>
             </div>
         </div>
@@ -608,12 +685,14 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h3 class="modal-title">Nytt passord</h3>
+                        <h3 class="modal-title">
+                            {{ trans('site.learner.update-password.title') }}
+                        </h3>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
                         <p class="font-weight-bold">
-                            Legg inn ditt nye passord
+                            {{ trans('site.learner.update-password.enter-new-password') }}
                         </p>
 
                         <form action="{{route('learner.password.update')}}" method="POST" onsubmit="disableSubmitOrigText(this)">
@@ -623,7 +702,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fa lock-icon"></i></span>
                                 </div>
-                                <input type="password" name="password" placeholder="Passord"
+                                <input type="password" name="password" placeholder="{{ trans('site.front.form.password') }}"
                                        class="form-control no-border-left w-auto" required>
                             </div>
                             @if ($errors->has('password'))
@@ -632,7 +711,9 @@
                                 </div>
                             @endif
 
-                            <button type="submit" class="btn site-btn-global pull-right">Oppdater</button>
+                            <button type="submit" class="btn site-btn-global pull-right">
+                                {{ trans('site.learner.update-password.update') }}
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -648,7 +729,7 @@
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <div style="color: green; font-size: 24px"><i class="fa fa-check"></i></div>
                         <p>
-                            Ditt passord er oppdatert.
+                            {{ trans('site.learner.update-password.success-text') }}
                         </p>
                     </div>
                 </div>
