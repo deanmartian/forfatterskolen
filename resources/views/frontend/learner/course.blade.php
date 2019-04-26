@@ -4,7 +4,7 @@
 <title>Mine Kurs &rsaquo; Forfatterskolen</title>
 @stop
 
-@section('heading') Mine Kurs @stop
+@section('heading') {{ trans('site.learner.my-course') }} @stop
 
 @section('content')
 
@@ -29,10 +29,14 @@
 									@if( $courseTaken->is_active )
 										@if($courseTaken->hasStarted)
 											@if($courseTaken->hasEnded)
-												<button class="btn btn-info w-100 rounded-0" data-toggle="modal" data-target="#renewAllModal">Forny abonnement</button>
+												<button class="btn btn-info w-100 rounded-0" data-toggle="modal"
+														data-target="#renewAllModal">
+													{{ trans('site.learner.renew-subscription') }}
+												</button>
 											@else
-												<a class="btn site-btn-global-w-arrow w-100 rounded-0" href="{{route('learner.course.show', ['id' => $courseTaken->id])}}">
-													Fortsett med dette kurset
+												<a class="btn site-btn-global-w-arrow w-100 rounded-0"
+												   href="{{route('learner.course.show', ['id' => $courseTaken->id])}}">
+													{{ trans('site.learner.continue-this-course') }}
 												</a>
 												{{-- check if course is webinar-pakke --}}
                                                 <?php
@@ -61,11 +65,15 @@
 											<form method="POST" action="{{route('learner.course.take')}}">
 												{{csrf_field()}}
 												<input type="hidden" name="courseTakenId" value="{{$courseTaken->id}}">
-												<button type="submit" class="btn site-btn-global-w-arrow w-100 rounded-0 btn-success">Start dette kurset</button>
+												<button type="submit" class="btn site-btn-global-w-arrow w-100 rounded-0 btn-success">
+													{{ trans('site.learner.start-course') }}
+												</button>
 											</form>
 										@endif
 									@else
-										<a class="btn site-btn-global disabled w-100 rounded-0">Kurs på vent</a>
+										<a class="btn site-btn-global disabled w-100 rounded-0">
+											{{ trans('site.learner.course-on-hold') }}
+										</a>
 									@endif
 								</div>
 							</div>
@@ -80,25 +88,33 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title">Renew Course</h3>
+				<h3 class="modal-title">
+					{{ trans('site.learner.renew-course-text') }}
+				</h3>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="{{ route('learner.course.renew') }}" enctype="multipart/form-data">
 					{{ csrf_field() }}
 
-					<label for="">Betalings Metode</label>
+					<label for="">
+						{{ trans('site.front.form.payment-method') }}
+					</label>
 							<select class="form-control" name="payment_mode_id" required>
 								@foreach(App\PaymentMode::get() as $paymentMode)
 									<option value="{{$paymentMode->id}}" data-mode="{{ $paymentMode->mode }}">{{$paymentMode->mode}}</option>
 								@endforeach
 							</select>
-							<em><small>Merk: Vi godtar kun full betaling på PAYPAL</small></em>
+							<em><small>
+									{{ trans('site.learner.renew-course.payment-note') }}
+								</small></em>
 						
 
 					<input type="hidden" name="course_id">
 					<div class="text-right margin-top">
-						<button type="submit" class="btn btn-primary">Renew</button>
+						<button type="submit" class="btn btn-primary">
+							{{ trans('site.learner.renew-text') }}
+						</button>
 					</div>
 				</form>
 			</div>
@@ -110,16 +126,16 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title">Forny alle kursene for ett år</h3>
+				<h3 class="modal-title">{{ trans('site.learner.renew-all.title') }}</h3>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="{{ route('learner.renew-all-courses') }}" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 
-					<p>Vil du fornye alle kursene dine for ett år ekstra for kroner 1490,?</p>
+					<p>{{ trans('site.learner.renew-all.description') }},?</p>
 					<div class="text-right margin-top">
-						<button type="submit" class="btn btn-primary">ja</button>
-						<button type="button" class="btn btn-danger" data-dismiss="modal">Nei</button>
+						<button type="submit" class="btn btn-primary">{{ trans('site.front.yes') }}</button>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">{{ trans('site.front.no') }}</button>
 					</div>
 				</form>
 			</div>

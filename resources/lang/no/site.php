@@ -1002,5 +1002,11 @@ kvittering.',
       'update' => 'Oppdater',
       'success-text' => 'Ditt passord er oppdatert.',
     ),
+    'renew-course-text' => 'Renew Course',
+    'renew-course' => 
+    array (
+      'payment-note' => 'Merk: Vi godtar kun full betaling på PAYPAL',
+    ),
+    'renew-text' => 'Renew',
   ),
 );
