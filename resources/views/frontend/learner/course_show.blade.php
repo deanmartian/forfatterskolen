@@ -11,23 +11,31 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<h1>
-					Leksjoner <a href="{{route('learner.course')}}" class="color-black font-barlow-regular ml-3">Se på alle kurs</a>
+					{{ trans('site.learner.lesson') }}
+					<a href="{{route('learner.course')}}" class="color-black font-barlow-regular ml-3">
+						{{ trans('site.learner.view-all-course') }}
+					</a>
 				</h1>
 
 				<div class="theme-tabs">
 					<ul class="nav nav-tabs" role="tablist">
 						<li class="nav-item">
 							<a data-toggle="tab" href="#lessons" class="nav-link active" role="tab">
-								<span>Leksjoner</span> <!-- check if webinar-pakke -->
+								<span>{{ trans('site.learner.lesson') }}</span> <!-- check if webinar-pakke -->
 							</a>
 						</li>
 						<li class="nav-item">
 							<a data-toggle="tab" href="#course-details" class="nav-link" role="tab">
-								<span>Kurs plan</span></a>
+								<span>
+									{{ trans('site.learner.course-plan') }}
+								</span>
+							</a>
 						</li>
 						<li class="nav-item">
 							<a data-toggle="tab" href="#webinars" class="nav-link" role="tab">
-								<span>Kurs webinarer</span> <!-- check if webinar-pakke -->
+								<span>
+									{{ trans('site.learner.course-webinar') }}
+								</span> <!-- check if webinar-pakke -->
 							</a>
 						</li>
 					</ul>
@@ -43,7 +51,9 @@
 												<a href="{{route('learner.course.lesson', ['course_id' => $courseTaken->package->course->id, 'id' => $lesson->id])}}">
 													<div class="panel panel-default global-panel">
 														<div class="panel-body">
-															<span class="label label-red font-weight-normal mb-3 d-inline-block">Tilgjengelig</span>
+															<span class="label label-red font-weight-normal mb-3 d-inline-block">
+																{{ trans('site.learner.available') }}
+															</span>
 															<h3 class="color-black font-weight-normal font-barlow-regular">{{$lesson->title}}</h3>
 														</div>
 														<div class="bottom-line"></div>
@@ -53,7 +63,10 @@
 												<div class="panel panel-default global-panel inactive">
 													<div class="panel-body">
 														<h3 class="font-weight-normal font-barlow-regular">{{$lesson->title}}</h3>
-														<small>Tilgjengelig på {{\App\Http\FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)}}</small>
+														<small>
+															{{ trans('site.learner.available-at') }}
+															{{\App\Http\FrontendHelpers::lessonAvailability($courseTaken->started_at, $lesson->delay, $lesson->period)}}
+														</small>
 													</div>
 													<div class="bottom-line"></div>
 												</div>
@@ -72,9 +85,11 @@
 											</div>
 											<div class="col-sm-12 col-lg-9 course-list-details">
 												<p class="pull-right">
-													<i class="fa fa-calendar"></i>&nbsp; Startet - {{date_format(date_create($courseTaken->started_at), 'M d, Y H.i') }}<br />
+													<i class="fa fa-calendar"></i>&nbsp;
+													{{ trans('site.learner.started') }} - {{date_format(date_create($courseTaken->started_at), 'M d, Y H.i') }}<br />
 
-													<i class="fa fa-calendar-times-o"></i>&nbsp; Expires on -
+													<i class="fa fa-calendar-times-o"></i>&nbsp;
+													{{ trans('site.learner.expires-on') }} -
 													@if ($courseTaken->end_date)
 														{{ $courseTaken->end_date }} {{Carbon\Carbon::parse($courseTaken->started_at)->format('H.i') }}
 													@else
@@ -86,13 +101,17 @@
 													{!! $courseTaken->package->course->description !!}
 												</p>
 												<ul class="course-list-meta margin-bottom">
-													<li><i class="fa fa-folder-o"></i>&nbsp;{{count($courseTaken->package->course->lessons)}} Lessons</li>
+													<li><i class="fa fa-folder-o"></i>&nbsp;{{count($courseTaken->package->course->lessons)}}
+														{{ trans('site.learner.lesson') }}
+													</li>
 												</ul>
 												@if( $courseTaken->package->shop_manuscripts->count() > 0 ||
                                                     $courseTaken->package->included_courses->count() > 0 ||
                                                     $courseTaken->package->workshops > 0
                                                     )
-													<strong>Inkluderer</strong><br />
+													<strong>
+														{{ trans('site.front.our-course.show.includes') }}
+													</strong><br />
 													@if( $courseTaken->package->shop_manuscripts->count() > 0 )
 														@foreach( $courseTaken->package->shop_manuscripts as $shop_manuscripts )
 															{{ $shop_manuscripts->shop_manuscript->title }} <br />
@@ -100,7 +119,7 @@
 													@endif
 
 													@if( $courseTaken->package->workshops )
-														{{ $courseTaken->package->workshops }} workshops <br />
+														{{ $courseTaken->package->workshops }} {{ trans('site.learner.workshops') }} <br />
 													@endif
 
 													@if( $courseTaken->package->included_courses->count() > 0 )
@@ -118,15 +137,21 @@
 							<div id="webinars" class="tab-pane fade" role="tabpanel">
 								<div class="panel panel-default">
 									<div class="panel-heading">
-										<a class="btn btn-primary pull-right btn-xs no-after" href="{{ route('learner.course-webinar') }}">Se Alt</a>
-										<i class="fa fa-play-circle-o"></i>&nbsp;&nbsp;Webinars
+										<a class="btn btn-primary pull-right btn-xs no-after" href="{{ route('learner.course-webinar') }}">
+											{{ trans('site.learner.see-everything') }}
+										</a>
+										<i class="fa fa-play-circle-o"></i>&nbsp;&nbsp;{{ trans('site.learner.webinars') }}
 									</div>
 									<div class="table-responsive">
 										<table class="table table-global">
 											<thead>
 											<tr>
-												<th>Webinar</th>
-												<th>Dato start</th>
+												<th>
+													{{ trans('site.learner.webinar') }}
+												</th>
+												<th>
+													{{ trans('site.learner.date-start') }}
+												</th>
 											</tr>
 											</thead>
 											<tbody>
@@ -149,20 +174,32 @@
 									<div class="panel panel-default">
 										<div class="panel-heading">
 											@if( $courseTaken->manuscripts->count() < $courseTaken->package->manuscripts_count  )
-												<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addManuscriptModal">+ Last opp manuskript</button>
+												<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addManuscriptModal">
+													+ {{ trans('site.learner.course-show.upload-manuscript') }}
+												</button>
 											@else
-												<button class="btn btn-primary disabled pull-right btn-xs">+ Last opp manuskript</button>
+												<button class="btn btn-primary disabled pull-right btn-xs">
+													+ {{ trans('site.learner.course-show.upload-manuscript') }}
+												</button>
 											@endif
-											<i class="fa fa-file-word-o"></i>&nbsp;&nbsp;Manuskripter opplastet
+											<i class="fa fa-file-word-o"></i>&nbsp;&nbsp;{{ trans('site.learner.manuscripts-uploaded') }}
 										</div>
 										<div class="table-responsive">
 											<table class="table">
 												<thead>
 												<tr>
-													<th>Manus</th>
-													<th>Ord</th>
-													<th>Dato opplastet</th>
-													<th>Status</th>
+													<th>
+														{{ trans('site.learner.script') }}
+													</th>
+													<th>
+														{{ trans('site.learner.word') }}
+													</th>
+													<th>
+														{{ trans('site.learner.date-uploaded') }}
+													</th>
+													<th>
+														{{ trans('site.earner.status') }}
+													</th>
 													<th></th>
 												</tr>
 												</thead>
@@ -174,14 +211,25 @@
 														<td>{{ date_format(date_create($manuscript->created_at), 'M d, Y H.i') }}</td>
 														<td>
 															@if( $manuscript->status == 'Finished' )
-																<span class="label label-success">Finished</span>
+																<span class="label label-success">
+																	{{ trans('site.learner.finished') }}
+																</span>
 															@elseif( $manuscript->status == 'Started' )
-																<span class="label label-primary">Started</span>
+																<span class="label label-primary">
+																	{{ trans('site.learner.started') }}
+																</span>
 															@elseif( $manuscript->status == 'Not started' )
-																<span class="label label-warning">Not started</span>
+																<span class="label label-warning">
+																	{{ trans('site.learner.not-started') }}
+																</span>
 															@endif
 														</td>
-														<td><a class="btn btn-primary btn-xs pull-right" href="{{ route('learner.manuscript.show', $manuscript->id) }}">Se på manuskript</a></td>
+														<td>
+															<a class="btn btn-primary btn-xs pull-right"
+															   href="{{ route('learner.manuscript.show', $manuscript->id) }}">
+																{{ trans('site.learner.look-at-the-manuscript') }}
+															</a>
+														</td>
 													</tr>
 												@endforeach
 												</tbody>
@@ -206,20 +254,25 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Upload Manuscript</h4>
+        <h3 class="modal-title">
+			{{ trans('site.learner.course-show.upload-manuscript') }}
+		</h3>
+		  <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
       	<form method="POST" enctype="multipart/form-data" action="{{ route('learner.course.uploadManuscript', $courseTaken->id) }}">
       		{{ csrf_field() }}
       		<div class="form-group">
-      		* Godkjente fil formater er DOCX, PDF og ODT.</div>
+      		* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}</div>
       		<div class="form-group row">
       			<div class="col-sm-6">
-      				<input type="file" class="form-control" required name="file" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+      				<input type="file" class="form-control" required name="file"
+						   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
       			</div>
       		</div>
-      		<button type="submit" class="btn btn-primary pull-right">Upload manuscript</button>
+      		<button type="submit" class="btn btn-primary pull-right">
+				{{ trans('site.learner.course-show.upload-manuscript') }}
+			</button>
       		<div class="clearfix"></div>
       	</form>
       </div>
@@ -235,7 +288,7 @@
 		  <div class="modal-body text-center">
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
 		    <div style="color: green; font-size: 24px"><i class="fa fa-check"></i></div>
-		  	Manuset ditt har blitt levert!
+		  	{{ trans('site.learner.upload-manuscript-success') }}
 		  </div>
 		</div>
 	</div>
