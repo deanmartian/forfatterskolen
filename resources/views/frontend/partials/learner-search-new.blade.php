@@ -5,7 +5,8 @@
         </div>
         <div class="col-md-5 col-sm-12 float-right">
             <div class="input-group">
-                <input type="text" class="form-control" name="search" value="{{ Request::input('search') }}" placeholder="Søk kurs, oppgaver, workshops, webinars.." required>
+                <input type="text" class="form-control" name="search" value="{{ Request::input('search') }}"
+                       placeholder="{{ trans('site.learner.search-placeholder') }}" required>
                 <span class="input-group-btn">
                     <button class="btn" type="submit"><i class="fa fa-search"></i></button>
                 </span>

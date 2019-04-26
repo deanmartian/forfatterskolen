@@ -1033,5 +1033,6 @@ kvittering.',
     'not-started' => 'Not started',
     'look-at-the-manuscript' => 'Se på manuskript',
     'upload-manuscript-success' => 'Manuset ditt har blitt levert!',
+    'search-placeholder' => 'Søk kurs, oppgaver, workshops, webinars..',
   ),
 );
