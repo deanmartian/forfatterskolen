@@ -9,11 +9,11 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-12">
-				<h1 class="font-barlow-regular mb-0 w-100">Påmeldte skriveverksted(er)
+				<h1 class="font-barlow-regular mb-0 w-100">{{ trans('site.learner.registered-workshop') }}
 
 					@if(!count(Auth::user()->workshopsTaken))
 						<a href="{{ route('front.workshop.index') }}" class="btn site-btn-global font-15">
-							Klikk her for fremtidige workshoper eller for bestilling
+							{{ trans('site.learner.workshop-order-text') }}
 						</a>
 					@endif
 
@@ -30,33 +30,34 @@
 						<div class="card-body">
 							<h2 class="font-weight-normal font-barlow-semi-bold">{{ $workshop->workshop->title }}</h2>
 							<div>
-								Når: <span class="font-barlow-semi-bold">
+								{{ trans('site.learner.when-text') }}: <span class="font-barlow-semi-bold">
 									{{ date_format(date_create($workshop->workshop->date), 'M d, Y H.i') }}
 								</span>
 							</div>
 							<div>
-								Hvor: <span class="font-barlow-semi-bold">{{ $workshop->workshop->location }}</span>
+								{{ trans('site.learner.where-text') }}: <span class="font-barlow-semi-bold">{{ $workshop->workshop->location }}</span>
 							</div>
 							<div>
-								Varighet:
+								{{ trans('site.learner.duration-text') }}:
 								<span class="font-barlow-semi-bold">
 									{{ $workshop->workshop->duration }} hours
 								</span>
 							</div>
 							<div>
-								Meny: <span class="font-barlow-semi-bold">{{ $workshop->menu->title }}</span>
+								{{ trans('site.learner.menu-text') }}: <span class="font-barlow-semi-bold">{{ $workshop->menu->title }}</span>
 							</div>
 							<div>
-								Notater: <span class="font-barlow-semi-bold">{{ $workshop->notes }}</span>
+								{{ trans('site.learner.notes-text') }}: <span class="font-barlow-semi-bold">{{ $workshop->notes }}</span>
 							</div>
 							<div>
 								@if( !$workshop->is_active )
-									<a class="btn btn-warning disabled mt-4 color-white">Pending</a>
+									<a class="btn btn-warning disabled mt-4 color-white">{{ trans('site.learner.pending') }}</a>
 								@endif
 							</div>
 						</div>
 						<div class="card-footer  no-border p-0">
-							<a class="btn site-btn-global w-100 rounded-0" href="{{ route('front.workshop.show', $workshop->workshop_id) }}">Klikk her for fremtidige workshoper eller for bestilling</a>
+							<a class="btn site-btn-global w-100 rounded-0" href="{{ route('front.workshop.show', $workshop->workshop_id) }}">
+								{{ trans('site.learner.workshop-order-text') }}</a>
 						</div>
 					</div>
 				</div>
@@ -68,7 +69,7 @@
 				<div class="card global-card">
 					<div class="card-header">
 						<h1>
-							Coaching Timer
+							{{ trans('site.front.coaching-timer.title') }}
 						</h1>
 					</div>
 					<div class="card-body py-0">
@@ -83,7 +84,7 @@
 									data-target="#addCoachingSessionModal"
 									data-action="{{ route('learner.course-taken.coaching-timer.add') }}"
 									id="addCoachingSessionBtn">
-								Add Coaching Lesson
+								{{ trans('site.learner.add-coaching-lesson') }}
 							</button>
 						@endif
 
@@ -91,13 +92,13 @@
 							<table class="table table-global">
 								<thead>
 								<tr>
-									<th>Manus</th>
-									<th>Coaching Time</th>
-									<th>Mine foreslåtte datoer</th>
-									<th>Skriv litt her om hva du vil ha hjelp til</th>
-									<th>Forfatterskolens foreslåtte datoer</th>
-									<th>Avtalt dato og tid</th>
-									<th>Reprise</th>
+									<th>{{ trans('site.learner.script') }}</th>
+									<th>{{ trans('site.learner.coaching-timer') }}</th>
+									<th>{{ trans('site.learner.my-suggested-dates') }}</th>
+									<th>{{ trans('site.front.coaching-timer.help-with-text') }}</th>
+									<th>{{ trans('site.learner.admin-proposed-dates') }}</th>
+									<th>{{ trans('site.learner.agreed-date-time') }}</th>
+									<th>{{ trans('site.learner.reprise-text') }}</th>
 									<th></th>
 								</tr>
 								</thead>
@@ -134,14 +135,15 @@
 											@if (!$coachingTimer->approved_date)
 												<a href="#suggestDateModal" data-toggle="modal"
 												   class="suggestDateBtn"
-												   data-action="{{ route('learner.coaching-timer.suggest_date', $coachingTimer->id) }}">Foreslå andre datoer</a>
+												   data-action="{{ route('learner.coaching-timer.suggest_date', $coachingTimer->id) }}">
+													{{ trans('site.learner.suggest-other-dates') }}</a>
 											@endif
 										</td>
 										<td>
 											<a href="#viewHelpWithModal" class="viewHelpWithBtn"
 											   data-toggle="modal" data-details="{{ $coachingTimer->help_with }}"
 											   data-action="{{ route('learner.coaching-timer.help_with', $coachingTimer->id) }}">
-												Trykk her for å skrive hva du trenger hjelp til
+												{{ trans('site.learner.need-help-with-text') }}
 											</a>
 										</td>
 										<td>
@@ -173,7 +175,7 @@
 										<td>
 											@if ($coachingTimer->replay_link)
 												<a href="{{ $coachingTimer->replay_link }}" target="_blank">
-													View Replay
+													{{ trans('site.learner.view-replay') }}
 												</a>
 											@endif
 
@@ -196,7 +198,7 @@
 										</td>
 										<td>
 											@if ($coachingTimer->status === 1)
-												<span class="label label-success">Finished</span>
+												<span class="label label-success">{{ trans('site.learner.finished') }}</span>
 											@endif
 										</td>
 									</tr>
@@ -237,17 +239,17 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title">Godkjenne dato</h3>
+				<h3 class="modal-title">{{ trans('site.learner.approve-date') }}</h3>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="">
 					{{csrf_field()}}
-					Er du sikker på at du vil godkjenne denne avtalen?
+					{{ trans('site.learner.approve-date-question') }}
 					<input type="hidden" name="approved_date">
 					<div class="text-right mt-4">
-						<button type="submit" class="btn btn-success">Aksepter</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Avslå</button>
+						<button type="submit" class="btn btn-success">{{ trans('site.learner.approve-date-accept') }}</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.learner.approve-date-decline') }}</button>
 					</div>
 				</form>
 			</div>
@@ -261,7 +263,7 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title">Add Coaching Session</h3>
+				<h3 class="modal-title">{{ trans('site.learner.add-coaching-session') }}</h3>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
@@ -270,24 +272,24 @@
 					{{csrf_field()}}
 
 					<div class="form-group">
-						<label>Manuscript</label>
+						<label>{{ trans('site.learner.manuscript-text') }}</label>
 						<input type="file" class="form-control" name="manuscript"
 							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
 					</div>
 
 					@for($i = 1; $i <= 3; $i++)
 						<div class="form-group">
-							<label>min foreslåtte dato</label>
+							<label>{{ trans('site.learner.my-proposed-date') }}</label>
 							<input type="datetime-local" class="form-control" name="suggested_date[]" required>
 						</div>
 					@endfor
 
 					@if ($checkCourseTakenWithCoaching->count())
 						<div class="form-group">
-							<label>Use Included Session from Course</label>
+							<label>{{ trans('site.learner.use-course-included-session') }}</label>
 							<select name="course_taken_id" class="form-control" required
 							id="course_taken_id">
-								<option value="" disabled selected> -- Select --</option>
+								<option value="" disabled selected> -- <{{ trans('site.learner.select-text') }} --</option>
 								@foreach($checkCourseTakenWithCoaching as $courseTaken)
 									<option value="{{ $courseTaken->id }}"
 									data-plan="{{ $courseTaken->package->has_coaching }}">
@@ -300,8 +302,8 @@
 					@endif
 
 					<div class="text-right mt-4">
-						<button type="submit" class="btn btn-success">Submit</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-success">{{ trans('site.front.submit') }}</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.front.cancel') }}</button>
 					</div>
 				</form>
 			</div>
@@ -316,7 +318,7 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title">Foreslå en dato for coaching time</h3>
+				<h3 class="modal-title">{{ trans('site.learner-suggest-date-coaching-time') }}</h3>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
@@ -325,23 +327,23 @@
 					{{csrf_field()}}
 
 					<div class="form-group">
-						<label>Dato og tid</label>
+						<label>{{ trans('site.learner.date-time') }}</label>
 						<input type="datetime-local" class="form-control" name="suggested_date[]" required>
 					</div>
 
 					<div class="form-group">
-						<label>Dato og tid</label>
+						<label>{{ trans('site.learner.date-time') }}</label>
 						<input type="datetime-local" class="form-control" name="suggested_date[]" required>
 					</div>
 
 					<div class="form-group">
-						<label>Dato og tid</label>
+						<label>{{ trans('site.learner.date-time') }}</label>
 						<input type="datetime-local" class="form-control" name="suggested_date[]" required>
 					</div>
 
 					<div class="text-right mt-4">
-						<button type="submit" class="btn btn-success">Foreslå</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">Avbryt</button>
+						<button type="submit" class="btn btn-success">{{ trans('site.learner.suggest-text') }}</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.learner.cancel-text') }}</button>
 					</div>
 				</form>
 			</div>
@@ -355,7 +357,7 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title">Help With</h3>
+				<h3 class="modal-title">{{ trans('site.learner.help-with-text') }}</h3>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
@@ -364,7 +366,7 @@
 					<textarea name="help_with" id="" cols="30" rows="10" class="form-control"></textarea>
 
 					<div class="text-right mt-4">
-						<button type="submit" class="btn btn-success">Submit</button>
+						<button type="submit" class="btn btn-success">{{ trans('site.front.submit') }}</button>
 					</div>
 				</form>
 			</div>
