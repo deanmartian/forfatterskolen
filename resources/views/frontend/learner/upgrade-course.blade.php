@@ -5,7 +5,7 @@
 @stop
 
 @section('heading')
-    Oppgraderinger {{$courseTaken->package->course->title}}
+    {{ trans('site.learner.upgrades-text') }} {{$courseTaken->package->course->title}}
 @stop
 
 @section('content')
@@ -26,13 +26,13 @@
                             <div class="panel-body p-5">
                                 <div class="row">
                                     <div class="col-md-5">
-                                        <h3 class="font-barlow-medium">Kurs</h3>
+                                        <h3 class="font-barlow-medium">{{ trans('site.front.course-text') }}</h3>
                                         <p>
                                             <b>{{$courseTaken->package->course->title}}</b>
                                         </p>
                                     </div> <!-- end col-md-5 -->
                                     <div class="col-md-7">
-                                        <h3 class="font-barlow-medium">Nåværende pakke</h3>
+                                        <h3 class="font-barlow-medium">{{ trans('site.learner.current-package-text') }}</h3>
                                         <p>
                                             <b>{{$courseTaken->package->variation}}</b>
                                         </p>
@@ -46,7 +46,7 @@
 
                         <div class="panel panel-default">
                             <div class="panel-body p-5">
-                                <h3 class="font-barlow-medium">Oppgrader til:</h3>
+                                <h3 class="font-barlow-medium">{{ trans('site.learner.upgrade-to-text') }}:</h3>
                                 <p>
                                     <b>{{$currentPackage->variation}}</b>
                                 </p>
@@ -59,7 +59,7 @@
 
                     <div class="col-md-4">
                         <div class="panel panel-default p-5">
-                            <div class="panel-heading-underlined">Kurspakke</div>
+                            <div class="panel-heading-underlined">{{ trans('site.front.form.course-package') }}</div>
                             <div class="panel-body px-0 pb-0">
                                 <?php
                                 $hasPaidCourse = false;
@@ -136,7 +136,7 @@
                                 @endforeach
                             </div>
 
-                            <div class="panel-heading-underlined">Betalingsmetode</div>
+                            <div class="panel-heading-underlined">{{ trans('site.front.form.payment-method') }}</div>
                             <div class="panel-body px-0 pb-0">
                                 <select class="form-control" name="payment_mode_id" required data-size="15">
                                     @foreach(\App\Http\FrontendHelpers::paymentModes() as $paymentMode)
@@ -145,12 +145,12 @@
                                 </select>
                                 <em>
                                     <small class="font-barlow-regular">
-                                        Merk: Vi godtar kun full betaling på PAYPAL
+                                        {{ trans('site.learner.renew-course.payment-note') }}
                                     </small>
                                 </em>
                             </div>
 
-                            <div class="panel-heading-underlined">Betalingsplan</div>
+                            <div class="panel-heading-underlined">{{ trans('site.front.form.payment-plan') }}</div>
                             <div class="panel-body px-0 pb-0">
                                 <div class="row">
                                     <div class="col-sm-12" id="paymentPlanContainer">
@@ -159,17 +159,17 @@
                                     <div class="col-sm-12" style="margin-top: 8px" id="splitInvoiceContainer">
                                         <div class="row">
                                             <div class="col-sm-12">
-                                                <span class="split-faktura">Månedlig faktura?*</span>
+                                                <span class="split-faktura">{{ trans('site.front.form.monthly-payment') }}?*</span>
                                             </div>
                                             <div class="payment-option custom-radio col-sm-6">
                                                 <input type="radio" name="split_invoice" value="1" disabled required
                                                        id="yes_option">
-                                                <label for="yes_option">Ja</label>
+                                                <label for="yes_option">{{ trans('site.front.yes') }}</label>
                                             </div>
                                             <div class="payment-option custom-radio col-sm-6">
                                                 <input type="radio" name="split_invoice" value="0" disabled required
                                                        id="no_option">
-                                                <label for="no_option">Nei</label>
+                                                <label for="no_option">{{ trans('site.front.no') }}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -178,12 +178,11 @@
 
                                 <div class="row">
                                     <span class="col-sm-12 small-note">
-										*Du kan velge om du vil ha faktura en gang i måneden, eller
-										èn faktura der du kan betale inn ønsket beløp innen forfallsdatoen
+										*{{ trans('site.front.form.invoice-note') }}
 									</span>
                                 </div>
 
-                                <h3 class="font-barlow-regular font-weight-normal my-4">Totalt:
+                                <h3 class="font-barlow-regular font-weight-normal my-4">{{ trans('site.front.total') }}:
 
                                     <?php $standard_price = $courseTaken->package->course->packages->where('variation', 'Standard Kurs')->first(); ?>
 
@@ -219,7 +218,7 @@
                                     @endif
                                 </h3>
 
-                                <button type="submit" class="btn site-btn-global-w-arrow mt-2 d-block">Bestill</button>
+                                <button type="submit" class="btn site-btn-global-w-arrow mt-2 d-block">{{ trans('site.front.buy') }}</button>
                             </div>
                         </div> <!-- end panel-default -->
                     </div> <!-- end col-md-4 -->
@@ -239,6 +238,10 @@
             let current_package_id = '<?php echo $currentPackage->id?>';
             let count_package_change = 0; // used to determine the onload
 
+            let translations = {
+                upgrade_to : "{{ trans('site.learner.upgrade-to-text') }}";
+            };
+
             setTimeout(function(){
                 $("#package-option-"+current_package_id+"").find('input[name=package_id]').attr('checked', true).trigger('change');
                 $('input:radio[name=payment_plan_id]:first').attr('checked', true).trigger('change');
@@ -250,7 +253,7 @@
                newSelectedContent = '';
                 selected_package_content.empty();
 
-                newSelectedContent += '<h4>Oppgrader til:</h4>';
+                newSelectedContent += '<h4>'+translations.upgrade_to+':</h4>';
                 newSelectedContent += '<p class="margin-top"> <b>'+changePackage.data('variation')+'</b> </p>';
                 newSelectedContent += '<div>'+changePackage.data('description')+'</div>';
 
