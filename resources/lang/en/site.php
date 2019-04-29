@@ -1117,6 +1117,7 @@ kvittering.',
     'course-package-content-text' => 'Kurspakke innhold',
     'upgrade-to-text' => 'Oppgrader til',
     'current-script-details-text' => 'Nåværende manus detaljer',
+    'competitions-text' => 'Konkurranser',
   ),
   'learner-suggest-date-coaching-time' => 'Foreslå en dato for coaching time',
 );
