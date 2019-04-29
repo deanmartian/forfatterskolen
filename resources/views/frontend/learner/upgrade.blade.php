@@ -15,7 +15,7 @@
                 <div class="col-sm-6">
                     <div class="row">
                         <h1 class="font-barlow-regular">
-                            Oppgraderinger
+                            {{ trans('site.learner.upgrades-text') }}
                         </h1>
                     </div>
                 </div>
@@ -43,12 +43,12 @@
                         ?>
                         @if($withinAMonth)
                             <button class="btn site-btn-global mr-3" data-toggle="modal" data-target="#renewAllModal">
-                                Forny abonnementet
+                                {{ trans('site.learner.renew-subscription-text') }}
                             </button>
                         @endif
 
                         <button class="btn site-btn-global" data-toggle="modal" data-target="#autoRenewModal">
-                            Forny automatisk
+                            {{ trans('site.learner.renew-automatically-text') }}
                         </button>
                     </div> <!-- end row justify-content-end -->
                 </div> <!-- end col-md-6 -->
@@ -58,7 +58,7 @@
                 <div class="card global-card w-100">
                     <div class="card-header p-5">
                         <h4 class="font-weight-normal border d-inline-block p-3 mr-4">
-                            <span class="theme-text font-barlow-regular">Abonnementet utløper:</span>
+                            <span class="theme-text font-barlow-regular">{{ trans('site.learner.subscription-expires-text') }}:</span>
                             {{ $expiredDate }}
                         </h4>
 
@@ -67,7 +67,7 @@
                         </h4>
 
                         <h4 class="font-weight-normal border d-inline-block p-3">
-                            <span class="theme-text font-barlow-regular">Forny automatisk:</span>
+                            <span class="theme-text font-barlow-regular">{{ trans('site.learner.renew-automatically-text') }}:</span>
                             {{ Auth::user()->auto_renew_courses ? 'Ja' : 'Nei'  }} ({{ \App\Http\FrontendHelpers::formatDate($expiredDate) }})
                         </h4>
                     </div>
@@ -75,10 +75,10 @@
                         <table class="table table-global">
                             <thead>
                             <tr>
-                                <th>Kurs</th>
-                                <th>Nåværende pakke</th>
+                                <th>{{ trans('site.front.course-text') }}</th>
+                                <th>{{ trans('site.learner.current-package-text') }}</th>
                                 <th></th>
-                                <th>Pris</th>
+                                <th>{{ trans('site.front.price') }}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -165,7 +165,7 @@
                                                         <a href="{{ route('learner.get-upgrade-course',
                                                             ['course_taken_id' => $courseTaken->id, 'package_id' => $package->id]) }}"
                                                            class="btn site-btn-global site-btn-global-sm">
-                                                            Oppgrader {{ $package->variation }}
+                                                            {{ trans('site.learner.upgrade') }} {{ $package->variation }}
                                                         </a> <div class="clearfix mt-1"></div>
                                                     @endif
                                                 @endforeach
@@ -270,16 +270,16 @@
                 <div class="card global-card w-100 mt-5">
                     <div class="card-header px-5">
                         <h1>
-                            Manus
+                            {{ trans('site.learner.script') }}
                         </h1>
                     </div>
                     <div class="card-body py-0">
                         <table class="table table-global">
                             <thead>
                             <tr>
-                                <th>Manus</th>
-                                <th width="550">Beskrivelse</th>
-                                <th>Maks antall ord</th>
+                                <th>{{ trans('site.learner.script') }}</th>
+                                <th width="550">{{ trans('site.learner.description-text') }}</th>
+                                <th>{{ trans('site.learner.max-number-of-words-text') }}</th>
                                 <th></th>
                             </tr>
                             </thead>
@@ -298,7 +298,7 @@
                                     <td>
                                         <a class="btn site-btn-global site-btn-global-sm"
                                            href="{{ route('learner.get-upgrade-manuscript', $shopManuscriptTaken->id) }}">
-                                            Oppgrader Manusutvikling
+                                            {{ trans('site.learner.upgrade-script-development-text') }}
                                         </a>
                                     </td>
                                 </tr>
@@ -311,16 +311,16 @@
                 <div class="card global-card w-100 mt-5">
                     <div class="card-header px-5">
                         <h1>
-                            Ekstra skriveoppgave
+                            {{ trans('site.learner.extra-writing-task-text') }}
                         </h1>
                     </div>
                     <div class="card-body py-0">
                         <table class="table table-global">
                             <thead>
                             <tr>
-                                <th>Oppgave</th>
-                                <th>Pris</th>
-                                <th>Frist</th>
+                                <th>{{ trans('site.learner.assignment-single') }}</th>
+                                <th>{{ trans('site.front.price') }}</th>
+                                <th>{{ trans('site.learner.deadline') }}</th>
                                 <th></th>
                             </tr>
                             </thead>
@@ -350,16 +350,16 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Forny alle kursene for ett år</h3>
+                    <h3 class="modal-title">{{ trans('site.learner.renew-all.title') }}</h3>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="{{ route('learner.renew-all-courses') }}" onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
 
-                        <p>Vil du fornye alle kursene dine for ett år ekstra for kroner 1490,?</p>
+                        <p>{{ trans('site.learner.renew-all.description') }}</p>
                         <div class="text-right margin-top">
-                            <button type="submit" class="btn btn-primary">ja</button>
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Nei</button>
+                            <button type="submit" class="btn btn-primary">{{ trans('site.front.yes') }}</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">{{ trans('site.front.no') }}</button>
                         </div>
                     </form>
                 </div>
@@ -371,7 +371,7 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Courses Expires</h3>
+                    <h3 class="modal-title">{{ trans('site.learner.courses-expires-text') }}</h3>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
@@ -386,7 +386,7 @@
                     }
                     ?>
                     <p>
-                        Webinar pakke expires on {{ $expiredDate }}
+                        {{ trans('site.learner.webinar-package-expires-on-text') }} {{ $expiredDate }}
                     </p>
                 </div>
             </div>
@@ -397,7 +397,7 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Upgrade Package</h3>
+                    <h3 class="modal-title">{{ trans('site.learner.upgrade-package-text') }}</h3>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
@@ -405,8 +405,8 @@
                         {{ csrf_field() }}
 
                         <div class="text-right margin-top">
-                            <button type="submit" class="btn btn-primary btn-sm">Oppgrader pakke</button>
-                            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary btn-sm">{{ trans('site.learner.upgrade-package-text') }}</button>
+                            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{{ trans('site.front.cancel') }}</button>
                         </div>
                     </form>
                 </div>
@@ -418,20 +418,20 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Forny automatisk</h3>
+                    <h3 class="modal-title">{{ trans('site.learner.renew-automatically-text') }}</h3>
                 </div>
                 <div class="modal-body">
                     <form action="{{ route('learner.upgrade-auto-renew') }}" method="POST">
                         {{ csrf_field() }}
 
                         <p>
-                            Er du sikker på at du vil fornye abonnementet ditt automatisk?
+                           {{ trans('site.learner.renew-subscription-automatically-question') }}?
                         </p>
 
                         <input type="hidden" name="auto_renew">
                         <div class="text-right margin-top">
-                            <button type="submit" class="btn btn-primary btn-sm" id="yesRenew">JA</button>
-                            <button type="submit" class="btn btn-danger btn-sm" id="noRenew">NEI</button>
+                            <button type="submit" class="btn btn-primary btn-sm" id="yesRenew">{{ strtoupper(trans('site.front.yes')) }}</button>
+                            <button type="submit" class="btn btn-danger btn-sm" id="noRenew">{{ strtoupper(trans('site.front.no')) }}</button>
                         </div>
                     </form>
                 </div>
@@ -443,7 +443,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Kurspakke innhold</h3>
+                    <h3 class="modal-title">{{ trans('site.learner.course-package-content-text') }}</h3>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
