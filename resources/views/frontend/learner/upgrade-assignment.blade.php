@@ -5,7 +5,7 @@
 @stop
 
 @section('heading')
-    Buy {{$assignment->title}}
+    {{ trans('site.front.buy') }} {{$assignment->title}}
 @stop
 
 @section('content')
@@ -26,16 +26,17 @@
                         <div class="panel panel-default">
                             <div class="panel-body p-5">
                                 <h3>{{ $assignment->title }}</h3>
-                                <b>Beskrivelse:</b>
+                                <b>{{ trans('site.learner.description-text') }}:</b>
                                 {{ $assignment->description }} <br>
-                                <b>Frist:</b>
-                                {{ \Carbon\Carbon::parse($assignment->submission_date)->format('d.m.Y') }}
-                                Klokken
-                                {{ \Carbon\Carbon::parse($assignment->submission_date)->format('H:i') }}
+                                <b>{{ trans('site.learner.deadline') }}:</b>
+                                {{ ucwords(strtr(trans('site.learner.submission-date-value'), [
+                                       '_date_' => \Carbon\Carbon::parse($assignment->submission_date)->format('d M Y'),
+                                        '_time_' => \Carbon\Carbon::parse($assignment->submission_date)->format('H:i')
+                                    ])) }}
                                 <br>
-                                <b>Pris:</b>
+                                <b>{{ trans('site.front.price') }}:</b>
                                 {{ \App\Http\FrontendHelpers::currencyFormat($assignment->add_on_price) }} <br>
-                                <b>Maks antall ord:</b>
+                                <b>{{ trans('site.learner.max-number-of-words-text') }}:</b>
                                 {{ $assignment->max_words }} ord
                             </div> <!-- end panel-body -->
                         </div> <!-- end panel -->
@@ -43,7 +44,7 @@
 
                     <div class="col-md-4">
                         <div class="panel panel-default p-5">
-                            <div class="panel-heading-underlined">Betalingsmetode</div>
+                            <div class="panel-heading-underlined">{{ trans('site.front.form.payment-method') }}</div>
                             <div class="panel-body px-0 pb-0">
                                 <select class="form-control" name="payment_mode_id" required data-size="15">
                                     @foreach(\App\Http\FrontendHelpers::paymentModes() as $paymentMode)
@@ -52,17 +53,17 @@
                                 </select>
                                 <em>
                                     <small class="font-barlow-regular">
-                                        Merk: Vi godtar kun full betaling på PAYPAL
+                                        {{ trans('site.learner.renew-course.payment-note') }}
                                     </small>
                                 </em>
 
-                                <h3 class="font-barlow-regular font-weight-normal my-4">Totalt:
+                                <h3 class="font-barlow-regular font-weight-normal my-4">{{ trans('site.front.total') }}:
                                     <span class="theme-text font-barlow-regular">
                                         {{ App\Http\FrontendHelpers::currencyFormat($assignment->add_on_price) }}
                                     </span>
                                 </h3>
 
-                                <button type="submit" class="btn site-btn-global-w-arrow mt-2 d-block">Bestill</button>
+                                <button type="submit" class="btn site-btn-global-w-arrow mt-2 d-block">{{ trans('site.front.buy') }}</button>
                             </div>
                         </div> <!-- end panel-default -->
                     </div> <!-- end col-md-4 -->
