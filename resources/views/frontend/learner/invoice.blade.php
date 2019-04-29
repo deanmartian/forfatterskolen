@@ -4,7 +4,7 @@
 <title>Invoices &rsaquo; Forfatterskolen</title>
 @stop
 
-@section('heading') Mine Fakturaer @stop
+@section('heading') {{ trans('site.learner.my-invoice') }} @stop
 
 @section('content')
 	<div class="learner-container">
@@ -20,13 +20,13 @@
 							<table class="table table-global">
 								<thead>
 								<tr>
-									<th>Fakturanummer</th>
-									<th>Frist</th>
-									<th>Restbeløp</th>
-									<th>Status</th>
-									<th>Opprettet</th>
-									<th>Kid Nummer</th>
-									<th>Konto Nummer</th>
+									<th>{{ trans('site.learner.invoice-number') }}</th>
+									<th>{{ trans('site.learner.deadline') }}</th>
+									<th>{{ trans('site.learner.remainders') }}</th>
+									<th>{{ trans('site.learner.status') }}</th>
+									<th>{{ trans('site.learner.created') }}</th>
+									<th>{{ trans('site.learner.kid-number') }}</th>
+									<th>{{ trans('site.learner.account-number') }}</th>
 									<th></th>
 								</tr>
 								</thead>
@@ -66,7 +66,7 @@
 										<td> {{ $invoice->kid_number }} </td>
 										<td> 9015 18 00393 </td>
 										<td>
-											<a href="{{$invoice->pdf_url}}">Last ned faktura</a>
+											<a href="{{$invoice->pdf_url}}">{{ trans('site.learner.download-invoice') }}</a>
 
 											@if(!$invoice->fiken_is_paid)
 												<div class="gateway--paypal">
@@ -74,7 +74,7 @@
 														{{ csrf_field() }}
 														{{--<input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">--}}
 														<button class="btn btn-primary">
-															<i class="fa fa-paypal" aria-hidden="true"></i> Betal med paypal eller kredittkort
+															<i class="fa fa-paypal" aria-hidden="true"></i> {{ trans('site.learner.pay-with-paypal-or-credit-card') }}
 														</button>
 													</form>
 												</div>
