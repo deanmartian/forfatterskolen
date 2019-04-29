@@ -340,7 +340,7 @@
 																				<i class="calendar"></i>
 																				{{ str_replace(['_date_', '_time_'],
 																				[\Carbon\Carbon::parse($webinar->start_date)->format('d.m.Y'),
-																				\Carbon\Carbon::parse($webinar->start_date)->format('d.m.Y')],
+																				\Carbon\Carbon::parse($webinar->start_date)->format('H:i')],
 																				trans('site.front.our-course.show.start-date')) }}
 																			</h4>
 																		</div>
