@@ -15,7 +15,7 @@
 			<div class="row">
 				<div class="col-md-12">
 					<h1 class="font-barlow-regular">
-						Oppgaver
+						{{ trans('site.learner.assignment') }}
 					</h1>
 				</div>
 
@@ -39,7 +39,7 @@
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 														data-show-group-question="{{ $assignment->show_join_group_question }}"
 														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif>
-													Last opp manus
+													{{ trans('site.learner.upload-script') }}
 												</button>
 											@else
 												<button class="btn site-btn-global site-btn-global-sm w-100 submitManuscriptBtn" data-toggle="modal"
@@ -47,7 +47,7 @@
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 														data-show-group-question="{{ $assignment->show_join_group_question }}"
 														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif>
-													Last opp manus
+													{{ trans('site.learner.upload-script') }}
 												</button>
 											@endif
 										@endif
@@ -59,7 +59,7 @@
 									{{ $assignment->description }}
 								</p>
 
-								<span class="font-barlow-regular">Frist:</span>
+								<span class="font-barlow-regular">{{ trans('site.learner.deadline') }}:</span>
 								<span>{{ \App\Http\FrontendHelpers::formatDateTimeNor2($assignment->submission_date) }}</span>
 								@if( $manuscript )
 									<div class="mt-3">
@@ -91,7 +91,7 @@
 								@endif
 							</div> <!-- end card-body -->
 							<div class="card-footer p-4">
-								<span class="font-barlow-regular">Kurs:</span>
+								<span class="font-barlow-regular">{{ trans('site.front.course-text') }}:</span>
 								<span>{{ $assignment->course->title }}</span>
 							</div> <!-- end card-body-->
 						</div> <!-- end card -->
@@ -103,7 +103,9 @@
 				<div class="col-md-12 mt-5">
 					<div class="row">
 						<div class="col-md-6">
-							<h1 class="font-barlow-regular">Grupper</h1>
+							<h1 class="font-barlow-regular">
+								{{ trans('site.learner.groups') }}
+							</h1>
                             <?php $assignmentGroups = App\AssignmentGroupLearner::where('user_id', Auth::user()->id)->get(); ?>
 							@if( $assignmentGroups->count() > 0 )
 								@foreach( $assignmentGroups as $group )
@@ -118,13 +120,21 @@
 											</h2>
 										</div>
 										<div class="card-body p-4">
-											<span class="d-block">Kurs: {{ $group->group->assignment->course->title }}</span>
-											<span class="d-block">Oppgave: {{ $group->group->assignment->title }}</span>
+											<span class="d-block">{{ trans('site.front.course-text') }}:
+												{{ $group->group->assignment->course->title }}
+											</span>
+											<span class="d-block">{{ trans('site.learner.assignment-single') }}:
+												{{ $group->group->assignment->title }}
+											</span>
 											<?php
-												$submission_date = \Carbon\Carbon::parse($group->group->submission_date)->format('d M Y')
-													.' klokken '. \Carbon\Carbon::parse($group->group->submission_date)->format('H:i')
+                                            	$submission_date = strtr(trans('site.learner.submission-date-value'), [
+													   '_date_' => \Carbon\Carbon::parse($group->group->submission_date)->format('d M Y'),
+														'_time_' => \Carbon\Carbon::parse($group->group->submission_date)->format('H:i')
+													]);
 											?>
-											<span>Innleverings dato: {{ $submission_date }}</span>
+											<span>{{ trans('site.learner.submission-date') }}:
+												{{ $submission_date }}
+											</span>
 										</div>
 									</div>
 								@endforeach
@@ -132,13 +142,15 @@
 						</div> <!-- end group section -->
 
 						<div class="col-md-6 feedback-section">
-							<h1 class="font-barlow-regular">Tilbakemelding fra redaktør</h1>
+							<h1 class="font-barlow-regular">
+								{{ trans('site.learner.feedback-from-editor') }}
+							</h1>
 
 							<div class="card mt-5">
 								<div class="card-header p-4">
 									<h2>
 										<i class="contract-sign"></i>
-										Redaktor
+										{{ trans('site.learner.editor-text') }}
 									</h2>
 								</div>
 								<div class="card-body p-4">
@@ -153,7 +165,8 @@
 												<div class="mb-4">
 													<?php
 													$files = explode(',',$feedback->filename);
-													$filesDisplay = 'Kurs: '.$feedback->manuscript->assignment->course->title.'<br/> ';
+													$filesDisplay = trans('site.front.course-text').
+														': '.$feedback->manuscript->assignment->course->title.'<br/> ';
 													foreach ($files as $file) {
 														$extension = explode('.', basename($file));
 
@@ -167,11 +180,11 @@
 													echo trim($filesDisplay, ', ');
 													?>
 
-													@if( $feedback->is_admin ) - Admin @endif
+													@if( $feedback->is_admin ) - {{ trans('site.learner.admin-text') }} @endif
 
 													<a href="{{route('learner.assignment.no-group-feedback.download', $feedback->id)}}"
 													   class="pull-right btn site-btn-global site-btn-global-sm" style="width: 20%">
-														Last ned
+														{{ trans('site.learner.download-text') }}
 													</a>
 												</div>
 											@endif
@@ -186,7 +199,7 @@
 			</div> <!-- end group and feedback section-->
 
 			<div class="divider-center-text">
-				PAST ASSIGNMENTS
+				{{ strtoupper(trans('site.learner.past-assignments')) }}
 			</div>
 
 			<div class="row past-assignment grid">
@@ -208,7 +221,7 @@
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 														data-show-group-question="{{ $assignment->show_join_group_question }}"
 														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif>
-													Last opp manus
+													{{ trans('site.learner.upload-script') }}
 												</button>
 											@else
 												<button class="btn site-btn-global site-btn-global-sm w-100 submitManuscriptBtn" data-toggle="modal"
@@ -216,7 +229,7 @@
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 														data-show-group-question="{{ $assignment->show_join_group_question }}"
 														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif>
-													Last opp manus
+													{{ trans('site.learner.upload-script') }}
 												</button>
 											@endif
 										@endif
@@ -260,7 +273,7 @@
 								@endif
 							</div> <!-- end card-body -->
 							<div class="card-footer p-4">
-								<span class="font-barlow-regular">Kurs:</span>
+								<span class="font-barlow-regular">{{ trans('site.front.course-text') }}:</span>
 								<span>{{ $assignment->course->title }}</span>
 							</div> <!-- end card-body-->
 						</div> <!-- end card -->
@@ -278,7 +291,7 @@
 		    <button type="button" class="close" data-dismiss="modal">&times;</button>
 		    <div style="color: green; font-size: 24px"><i class="fa fa-check"></i></div>
 			  <p>
-				  Din oppgave har blitt levert!
+				  {{ trans('site.learner.submit-success-text') }}
 			  </p>
 		  </div>
 		</div>
@@ -292,7 +305,8 @@
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<div style="color: red; font-size: 24px"><i class="fa fa-close"></i></div>
 				<p>
-					Antall ord er for mange, maks {{ Session::get('editorMaxWord') }} ord. Rediger teksten og send inn på nytt.
+					{{ strtr(trans('site.learner.error-max-word-text'),
+                    ['_word_count_' => Session::get('editorMaxWord')]) }}
 				</p>
 			</div>
 		</div>
@@ -303,7 +317,9 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title">Last opp manus</h3>
+				<h3 class="modal-title">
+					{{ trans('site.learner.upload-script') }}
+				</h3>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
@@ -312,7 +328,7 @@
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>
-							* Godkjente fil formater er DOC, DOCX.
+							* {{ trans('site.learner.manuscript.doc-format-text') }}
 						</label>
 						<input type="file" class="form-control" required name="filename" accept="application/msword,
 						application/vnd.openxmlformats-officedocument.wordprocessingml.document">
@@ -320,10 +336,12 @@
 
 					<div class="form-group">
 						<label>
-							Sjanger
+							{{ trans('site.front.genre') }}
 						</label>
 						<select class="form-control" name="type" required>
-							<option value="" disabled="disabled" selected>Select Type</option>
+							<option value="" disabled="disabled" selected>
+								{{ trans('site.front.select-genre') }}
+							</option>
 							@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
 								<option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
 							@endforeach
@@ -332,7 +350,7 @@
 
 					<div class="form-group">
 						<label class="d-block">
-							Hvor i manuset
+							{{ trans('site.learner.manuscript.where-in-manuscript') }}
 						</label>
 						@foreach(\App\Http\FrontendHelpers::manuscriptType() as $manu)
 							<input type="radio" name="manu_type" value="{{ $manu['id'] }}" required> <label>{{ $manu['option'] }}</label> <br>
@@ -341,12 +359,14 @@
 
 					<div class="join-question-container hide">
 						<div class="form-group">
-							<label>Ønsker du å gi og få tilbakemeldinger fra andre elever?</label> <br>
+							<label>{{ trans('site.learner.join-group-question') }}?</label> <br>
 							<input type="checkbox" data-toggle="toggle" data-on="Ja" data-off="Nei" data-size="small" name="join_group">
 						</div>
 					</div>
 
-					<button type="submit" class="btn btn-primary pull-right">Last opp</button>
+					<button type="submit" class="btn btn-primary pull-right">
+						{{ trans('site.front.upload') }}
+					</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -358,7 +378,9 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 		  <div class="modal-header">
-		    <h3 class="modal-title">Last opp manus</h3>
+		    <h3 class="modal-title">
+				{{ trans('site.learner.upload-script') }}
+			</h3>
 			  <button type="button" class="close" data-dismiss="modal">&times;</button>
 		  </div>
 		  <div class="modal-body">
@@ -366,7 +388,7 @@
 		      	{{ csrf_field() }}
 				<div class="form-group">
 					<label>
-						* Godkjente fil formater er DOC, DOCX, PDF og ODT.
+						* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
 					</label>
 					<input type="file" class="form-control margin-top" required name="filename" accept="application/msword,
 					application/vnd.openxmlformats-officedocument.wordprocessingml.document,
@@ -375,10 +397,12 @@
 
 				<div class="form-group">
 					<label>
-						Sjanger
+						{{ trans('site.front.genre') }}
 					</label>
 					<select class="form-control" name="type" required>
-						<option value="" disabled="disabled" selected>Select Type</option>
+						<option value="" disabled="disabled" selected>
+							{{ trans('site.front.select-genre') }}
+						</option>
 						@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
 							<option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
 						@endforeach
@@ -386,7 +410,9 @@
 				</div>
 
 				<div class="form-group">
-					<label class="d-block">Hvor i manuset</label>
+					<label class="d-block">
+						{{ trans('site.learner.manuscript.where-in-manuscript') }}
+					</label>
 					@foreach(\App\Http\FrontendHelpers::manuscriptType() as $manu)
 						<input type="radio" name="manu_type" value="{{ $manu['id'] }}" required> <label>{{ $manu['option'] }}</label> <br>
 					@endforeach
@@ -394,12 +420,14 @@
 
 				<div class="join-question-container hide">
 					<div class="form-group">
-						<label>Ønsker du å gi og få tilbakemeldinger fra andre elever?</label> <br>
+						<label>{{ trans('site.learner.join-group-question') }}?</label> <br>
 						<input type="checkbox" data-toggle="toggle" data-on="Ja" data-off="Nei" data-size="small" name="join_group">
 					</div>
 				</div>
 
-		      	<button type="submit" class="btn btn-primary pull-right">Upload</button>
+		      	<button type="submit" class="btn btn-primary pull-right">
+					{{ trans('site.front.upload') }}
+				</button>
 		      	<div class="clearfix"></div>
 		    </form>
 		  </div>
@@ -411,19 +439,25 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title">Replace manuscript</h3>
+				<h3 class="modal-title">
+					{{ trans('site.learner.manuscript.replace-manuscript') }}
+				</h3>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<label>Manuscript</label>
+						<label>
+							{{ trans('site.learner.manuscript-text') }}
+						</label>
 						<input type="file" class="form-control" required name="filename" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
-						* Godkjente fil formater er DOC, DOCX, PDF og ODT.
+						* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
 					</div>
 
-					<button type="submit" class="btn btn-primary pull-right">Submit</button>
+					<button type="submit" class="btn btn-primary pull-right">
+						{{ trans('site.front.submit') }}
+					</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -435,17 +469,20 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title">Delete manuscript</h3>
+				<h3 class="modal-title">
+					{{ trans('site.learner.delete-manuscript.title') }}
+				</h3>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<p>
-					Are you sure to delete this manuscript?
-					Warning: This cannot be undone.
+					{{ trans('site.learner.delete-manuscript.question') }}
 				</p>
 				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
-					<button type="submit" class="btn btn-danger pull-right margin-top">Delete</button>
+					<button type="submit" class="btn btn-danger pull-right margin-top">
+						{{ trans('site.learner.delete') }}
+					</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
