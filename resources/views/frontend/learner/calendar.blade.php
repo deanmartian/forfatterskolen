@@ -15,13 +15,13 @@
 			<div class="row">
 				<div class="card w-100 rounded-0 py-4">
 					<ul class="calendar-guide">
-						<li class="guide-blue">Manus</li>
-						<li class="guide-green">Oppgaver</li>
-						<li class="guide-purple">Webinarer</li>
-						<li class="guide-pink">Moduler</li>
-						<li class="guide-orange">Webinars</li>
-						<li class="guide-inverse">Notater</li>
-						<li class="guide-red">Coaching time</li>
+						<li class="guide-blue">{{ trans('site.learner.script') }}</li>
+						<li class="guide-green">{{ trans('site.learner.assignment') }}</li>
+						<li class="guide-purple">{{ trans('site.learner.webinars') }}</li>
+						<li class="guide-pink">{{ trans('site.learner.modules') }}</li>
+						<li class="guide-orange">{{ trans('site.learner.webinars') }}</li> <!-- course-webinars -->
+						<li class="guide-inverse">{{ trans('site.learner.notes-text') }}</li>
+						<li class="guide-red">{{ trans('site.learner.coaching-time') }}</li>
 					</ul>
 				</div>
 			</div>
@@ -42,17 +42,26 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.js"></script>
 <script type="text/javascript">
 
+    let translations = {
+        today : "{{ trans('site.learner.today-text') }}",
+		month : "{{ trans('site.learner.month-text') }}",
+		week : "{{ trans('site.learner.week-text') }}",
+        day : "{{ trans('site.learner.day-text') }}",
+        prev : "{{ trans('site.learner.prev-text') }}",
+        next : "{{ trans('site.learner.next-text') }}",
+	};
+
 $('#full-calendar').fullCalendar({
 		locale: 'nb',
         header: { right: 'prev,today,next, month,agendaWeek,agendaDay',
 			/*center: 'title'*/}, // display the month title
 		buttonText: {
-            today:	'Idag',
-            month:	'Måned',
-            week:	'Uke',
-            day:	'Dag',
-			prev:	'Forrige',
-			next:	'Neste'
+            today:	translations.today,
+            month:	translations.month,
+            week:	translations.week,
+            day:	translations.day,
+			prev:	translations.prev,
+			next:	translations.next
         },
 		titleFormat: 'MMMM YYYY', // format the month title
         columnFormat: 'dddd',
