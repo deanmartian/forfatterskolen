@@ -1116,6 +1116,7 @@ kvittering.',
     'renew-subscription-automatically-question' => 'Er du sikker på at du vil fornye abonnementet ditt automatisk',
     'course-package-content-text' => 'Kurspakke innhold',
     'upgrade-to-text' => 'Oppgrader til',
+    'current-script-details-text' => 'Nåværende manus detaljer',
   ),
   'learner-suggest-date-coaching-time' => 'Foreslå en dato for coaching time',
 );
