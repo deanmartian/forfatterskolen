@@ -14,8 +14,10 @@
 				<h3 class="w-100 font-weight-normal font-barlow-regular mb-0">Oppgave: {{ $group->assignment->title }}</h3>
 				@if ($group->submission_date)
 					<h3 class="w-100 font-weight-normal font-barlow-regular mb-0">
-						Frist {{ \Carbon\Carbon::parse($group->submission_date)->format('d.m.Y') }}
-						klokken {{ \Carbon\Carbon::parse($group->submission_date)->format('H:i') }}
+						{{ trans('site.learner.deadline') }} {{ ucwords(strtr(trans('site.learner.submission-date-value'), [
+						   '_date_' => \Carbon\Carbon::parse($group->submission_date)->format('d.m.Y'),
+							'_time_' => \Carbon\Carbon::parse($group->submission_date)->format('H:i')
+						])) }}
 					</h3>
 				@endif
 			</div> <!-- end col-sm-12 -->
@@ -29,9 +31,9 @@
 						<div class="card-header">
 							<h2 class="font-barlow-regular">
 								@if( $learner->user->id == Auth::user()->id )
-									Deg
+									{{ trans('site.learner.you-text') }}
 								@else
-									Elev {{ $learner->user->id }} {{--old value is $i--}}
+									{{ trans('site.learner.learner-text') }} {{ $learner->user->id }} {{--old value is $i--}}
 								@endif
 							</h2>
 						</div>
@@ -49,7 +51,7 @@
 									@if( $learner->user->id !== Auth::user()->id )
 										<a href="{{route('learner.assignment.manuscript.download', $manuscript->id)}}"
 										   class="pull-right btn site-btn-global site-btn-global-sm w-25">
-											Last ned
+											{{ trans('site.learner.download-text') }}
 										</a>
 									@endif
 									<br>
@@ -66,14 +68,16 @@
 									@endif
 
 								@else
-									<em>No manuscript uploaded</em>
+									<em>{{ trans('site.learner.no-manuscript-uploaded-text') }}</em>
 								@endif
 							</p>
 						</div>
 						<div class="card-footer p-0">
 							@if( $learner->user->id == Auth::user()->id )
 								@if( $manuscript->filename )
-									<button type="button" class="btn site-btn-global w-100 rounded-0 disabled">Manuset er lastet opp</button>
+									<button type="button" class="btn site-btn-global w-100 rounded-0 disabled">
+										{{ trans('site.learner.script-is-uploaded-text') }}
+									</button>
 								@endif
 							@else
                                 <?php $feedback = App\AssignmentFeedback::where('assignment_group_learner_id',
@@ -81,9 +85,9 @@
 								@if( $feedback )
 									<button type="button" class="btn site-btn-global w-100 rounded-0 disabled">
 										@if( $feedback->is_active )
-											Tilbakemelding levert
+											{{ trans('site.learner.feeback-provided') }}
 										@else
-											levert
+											{{ trans('site.learner.delivered-text') }}
 										@endif
 									</button>
 									@if( !$feedback->is_active && !$feedback->locked)
@@ -105,7 +109,7 @@
 											data-name="Learner {{ $i }}"
 											data-action="{{ route('learner.assignment.group.submit_feedback',
 											['group_id' => $group->id, 'id' => $learner->id]) }}">
-										Gi tilbakemelding
+										{{ trans('site.learner.give-feedback') }}
 									</button>
 								@endif
 							@endif
@@ -129,13 +133,15 @@
 							<div class="row">
 								<div class="col-lg-9 col-md-8">
 									<h2 class="font-barlow-regular">
-										Tilbakemelding
+										{{ trans('site.learner.feedback-text') }}
 									</h2>
 								</div>
 								<div class="col-lg-3 col-md-4">
 									@if ($group->allow_feedback_download)
 										<a href="{{ route('learner.assignment.group.feedback.download-all', $group->id) }}"
-										   class="btn site-btn-global site-btn-global-sm w-100">Last ned alle</a>
+										   class="btn site-btn-global site-btn-global-sm w-100">
+											{{ trans('site.learner.download-all') }}
+										</a>
 									@endif
 								</div>
 							</div>
@@ -160,11 +166,11 @@
 											echo trim($filesDisplay, ', ');
 										?>
 
-										@if( $feedback->is_admin ) - Admin @endif
+										@if( $feedback->is_admin ) - {{ trans('site.learner.admin-text') }} @endif
 
 										<a href="{{route('learner.assignment.feedback.download', $feedback->id)}}"
 										   class="pull-right btn site-btn-global site-btn-global-sm w-25">
-											Last ned
+											{{ trans('site.learner.download-text') }}
 										</a>
 									</p>
 								@endif
@@ -183,20 +189,20 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 		  <div class="modal-header">
-			  <h3 class="modal-title">Submit feedback to <em></em></h3>
+			  <h3 class="modal-title">{{ trans('site.learner.submit-feedback-to') }} <em></em></h3>
 			  <button type="button" class="close" data-dismiss="modal">&times;</button>
 		  </div>
 		  <div class="modal-body">
 			  <form method="POST" action=""  enctype="multipart/form-data">
 		      	{{ csrf_field() }}
 				  <div class="form-group">
-					  <label>* Godkjente fil formater er DOCX, PDF og ODT.</label>
+					  <label>* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}</label>
 					  <input type="file" class="form-control margin-top" required multiple name="filename[]"
 							 accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
 							 application/pdf, application/vnd.oasis.opendocument.text">
 				  </div>
 
-		      	<button type="submit" class="btn btn-primary pull-right">Submit</button>
+		      	<button type="submit" class="btn btn-primary pull-right">{{ trans('site.front.submit') }}</button>
 		      	<div class="clearfix"></div>
 		    </form>
 		  </div>
@@ -208,20 +214,20 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title">Replace feedback</h3>
+				<h3 class="modal-title">{{ trans('site.learner.replace-feedback') }}</h3>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="" enctype="multipart/form-data">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<label>* Godkjente fil formater er DOCX, PDF og ODT.</label>
+						<label>* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}</label>
 						<input type="file" class="form-control margin-top" required name="filename"
 							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
 							   application/pdf, application/vnd.oasis.opendocument.text">
 					</div>
 
-					<button type="submit" class="btn btn-primary pull-right">Submit</button>
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.front.submit') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -233,17 +239,16 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title">Delete feedback</h3>
+				<h3 class="modal-title">{{ trans('site.learner.delete-feedback') }}</h3>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
 				<p>
-					Are you sure to delete this feedback?
-					Warning: This cannot be undone.
+					{{ trans('site.learner.delete-feedback-question') }}
 				</p>
 				<form method="POST" action="">
 					{{ csrf_field() }}
-					<button type="submit" class="btn btn-danger pull-right">Delete</button>
+					<button type="submit" class="btn btn-danger pull-right">{{ trans('site.learner.delete') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
