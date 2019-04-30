@@ -15,7 +15,7 @@
 			<h3 class="no-margin-top no-margin-bottom">{{ $assignment->title }}</h3>
 			{{ $assignment->description }}
 			<br /><br />
-			Kurs: <a href="">{{ $assignment->course->title }}</a>
+			{{ trans('site.front.course-text') }}: <a href="">{{ $assignment->course->title }}</a>
 			<div class="row"> 
 				<?php $i = 1; ?>
 				@foreach( $assignment->learners as $learner )
@@ -24,22 +24,26 @@
 						<div class="panel-body">
 							<h4>
 								@if( $learner->user->id == Auth::user()->id )
-								You
+								{{ trans('site.learner.you-text') }}
 								@else
-								Learner {{ $i }}
+								{{ trans('site.learner.learner-text') }} {{ $i }}
 								@endif
 							</h4>
 							<p class="margin-top no-margin-bottom">
 								@if( $learner->filename )
 								@else
-									<em>No document uploaded</em>
+									<em>{{ trans('site.learner.no-uploaded-document') }}</em>
 								@endif
 
 								<br />
 								@if( $learner->user->id == Auth::user()->id )
-								<button type="button" class="btn btn-primary btn-sm margin-top">Upload document</button>
+								<button type="button" class="btn btn-primary btn-sm margin-top">
+									{{ trans('site.learner.upload-document') }}
+								</button>
 								@else
-								<button type="button" class="btn btn-warning btn-sm margin-top">Upload feedback</button>
+								<button type="button" class="btn btn-warning btn-sm margin-top">
+									{{ trans('site.learner.upload-feedback') }}
+								</button>
 								@endif
 							</p>
 						</div>
