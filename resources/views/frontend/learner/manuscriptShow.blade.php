@@ -29,30 +29,38 @@
 								</div>
 								<div class="col-sm-12 col-md-5">
 									@if( $manuscript->status == 'Finished' )
-									<span class="label label-success">Finished</span>
+									<span class="label label-success">
+										{{ trans('site.learner.finished') }}
+									</span>
 									@elseif( $manuscript->status == 'Started' )
-									<span class="label label-primary">Started</span>
+									<span class="label label-primary">
+										{{ trans('site.learner.started') }}
+									</span>
 									@elseif( $manuscript->status == 'Not started' )
-									<span class="label label-warning">Not started</span>
+									<span class="label label-warning">
+										{{ trans('site.learner.not-started') }}
+									</span>
 									@endif
 									<br />
-									Filename: {{ basename($manuscript->filename) }}<br />
-									Date uploaded: {{ $manuscript->created_at }}<br />
-									Course: <a href="{{route('learner.course.show', ['id' => $manuscript->courseTaken->id])}}">{{ $manuscript->courseTaken->package->course->title }}</a><br />
+									{{ trans('site.learner.filename-text') }}: {{ basename($manuscript->filename) }}<br />
+									{{ trans('site.learner.date-uploaded') }}: {{ $manuscript->created_at }}<br />
+									{{ trans('site.front.course-text') }}: <a href="{{route('learner.course.show',
+									['id' => $manuscript->courseTaken->id])}}">{{ $manuscript->courseTaken->package->course->title }}
+										</a><br />
 									<br />
-									<h4>Feedbacks</h4>
+									<h4>{{ trans('site.learner.feedbacks-text') }}</h4>
 									<div class="row margin-top">
 										@foreach($manuscript->feedbacks as $feedback)
 										<div class="col-sm-12">
 											<div class="panel panel-default">
 												<div class="panel-body">
-													<strong>Files:</strong> 
+													<strong>{{ trans('site.learner.files-text') }}:</strong>
 													@foreach( $feedback->filename as $filename )<br />
 													<a href="{{ $filename }}" target="_blank">{{ basename($filename) }}</a>
 													@endforeach
 													<br />
-													<strong>Notes:</strong> {{ $feedback->notes }} <br />
-													<strong>Submitted on:</strong> {{ $feedback->created_at }} <br />
+													<strong>{{ trans('site.learner.notes-text') }}:</strong> {{ $feedback->notes }} <br />
+													<strong>{{ trans('site.learner.submitted-on') }}:</strong> {{ $feedback->created_at }} <br />
 												</div>
 											</div>
 										</div>
