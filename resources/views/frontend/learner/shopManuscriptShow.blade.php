@@ -21,39 +21,50 @@
 
 					<div class="col-sm-12 col-md-5">
 						@if( $shopManuscriptTaken->status == 'Finished' )
-							<span class="label label-success">Finished</span>
+							<span class="label label-success">
+								{{ trans('site.learner.finished') }}
+							</span>
 						@elseif( $shopManuscriptTaken->status == 'Started' )
-							<span class="label label-primary">Started</span>
+							<span class="label label-primary">
+								{{ trans('site.learner.started') }}
+							</span>
 						@elseif( $shopManuscriptTaken->status == 'Not started' )
-							<span class="label label-warning">Not started</span>
+							<span class="label label-warning">
+								{{ trans('site.learner.not-started') }}
+							</span>
 						@endif
 						<h2 class="font-barlow-bold">{{ $shopManuscriptTaken->shop_manuscript->title }}</h2>
-						<span class="font-barlow-regular">Filename</span>: {{ basename($shopManuscriptTaken->file) }}<br />
+						<span class="font-barlow-regular">{{ trans('site.learner.filename-text') }}</span>:
+							{{ basename($shopManuscriptTaken->file) }}<br />
 						@if($shopManuscriptTaken->words)
-							<span class="font-barlow-regular">Words</span>: {{ basename($shopManuscriptTaken->words) }}<br />
+							<span class="font-barlow-regular">{{ trans('site.learner.words-text') }}</span>: {{ basename($shopManuscriptTaken->words) }}<br />
 						@endif
-							<span class="font-barlow-regular">Date uploaded</span>: {{ $shopManuscriptTaken->created_at }}<br />
+							<span class="font-barlow-regular">{{ trans('site.learner.date-uploaded') }}</span>: {{ $shopManuscriptTaken->created_at }}<br />
 						<br />
-						<h3 class="font-barlow-semi-bold font-weight-normal">Feedbacks</h3>
+						<h3 class="font-barlow-semi-bold font-weight-normal">
+							{{ trans('site.learner.feedbacks-text') }}
+						</h3>
 						<div class="row margin-top">
 							@foreach($shopManuscriptTaken->feedbacks as $feedback)
 								<div class="col-sm-12">
 									<div class="panel panel-default">
 										<div class="panel-body">
-											<strong>Files:</strong>
+											<strong>{{ trans('site.learner.files-text') }}:</strong>
 											@foreach( $feedback->filename as $filename )<br />
 											<a href="{{ $filename }}" target="_blank">{{ basename($filename) }}</a>
 											@endforeach
 											<br />
-											<strong>Notes:</strong> {{ $feedback->notes }} <br />
-											<strong>Submitted on:</strong> {{ $feedback->created_at }} <br />
+											<strong>{{ trans('site.learner.notes-text') }}:</strong> {{ $feedback->notes }} <br />
+											<strong>{{ trans('site.learner.submitted-on') }}:</strong> {{ $feedback->created_at }} <br />
 										</div>
 									</div>
 								</div>
 							@endforeach
 						</div>
 						<hr />
-						<h3 class="font-barlow-semi-bold font-weight-normal">Comments</h3>
+						<h3 class="font-barlow-semi-bold font-weight-normal">
+							{{ trans('site.learner.comments') }}
+						</h3>
 						@if( $shopManuscriptTaken->feedbacks->count() > 0 )
                             <?php
                             $feedbackFirst = $shopManuscriptTaken->feedbacks[0];
@@ -63,25 +74,34 @@
 							@if( $diff <= 7 )
 								<form method="POST" class="mt-4" action="{{ route('learner.shop-manuscript.post-comment', $shopManuscriptTaken->id) }}">
 									{{ csrf_field() }}
-									<input type="text" placeholder="Comment" name="comment" class="form-control" required>
+									<input type="text" placeholder="{{ trans('site.learner.comment') }}" name="comment"
+										   class="form-control" required>
 									<div class="text-right mt-4">
-										<button class="btn btn-info btn-sm" type="submit">Add Comment</button>
+										<button class="btn btn-info btn-sm" type="submit">
+											{{ trans('site.learner.add-comment') }}
+										</button>
 									</div>
 								</form>
 							@else
 								<div class="mt-4">
-									<input type="text" placeholder="Comment" name="comment" class="form-control" required disabled>
+									<input type="text" placeholder="{{ trans('site.learner.comment') }}" name="comment"
+										   class="form-control" required disabled>
 									<div class="text-right mt-4">
-										<button class="btn btn-info btn-sm" type="button" disabled>Add Comment</button>
+										<button class="btn btn-info btn-sm" type="button" disabled>
+											{{ trans('site.learner.add-comment') }}
+										</button>
 									</div>
 								</div>
 							@endif
 						@else
 							<form method="POST" class="mt-4" action="{{ route('learner.shop-manuscript.post-comment', $shopManuscriptTaken->id) }}">
 								{{ csrf_field() }}
-								<input type="text" placeholder="Comment" name="comment" class="form-control" required>
+								<input type="text" placeholder="{{ trans('site.learner.comment') }}" name="comment"
+									   class="form-control" required>
 								<div class="text-right mt-4">
-									<button class="btn btn-info btn-sm" type="submit">Add Comment</button>
+									<button class="btn btn-info btn-sm" type="submit">
+										{{ trans('site.learner.add-comment') }}
+									</button>
 								</div>
 							</form>
 						@endif
@@ -92,7 +112,7 @@
 									<div class="text-right">
 										<div class="comment owner">
 											<div>{{ $comment->comment }}</div>
-											<div><small><em>You</em></small></div>
+											<div><small><em>{{ trans('site.learner.you-text') }}</em></small></div>
 											<small>{{ $comment->created_at }}</small>
 										</div>
 									</div>
@@ -113,7 +133,7 @@
 		</div> <!-- end global-panel -->
 
 			<div class="text-right">
-				<button class="btn site-btn-global mt-4">Upgrade</button>
+				<button class="btn site-btn-global mt-4">{{ trans('site.learner.upgrade') }}</button>
 			</div>
 
 	</div> <!-- end container -->
