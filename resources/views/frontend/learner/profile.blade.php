@@ -39,28 +39,28 @@
 
 							<h3 class="font-weight-normal font-barlow-regular mt-4">
 								<span class="note-color d-block font-15">
-									Adresse
+									{{ trans('site.learner.address') }}
 								</span>
 								{{ Auth::user()->address->street.', '.Auth::user()->address->zip.' '.Auth::user()->address->city }}
 							</h3>
 
 							<h3 class="font-weight-normal font-barlow-regular mt-3">
 								<span class="note-color d-block font-15">
-									Telefon
+									{{ trans('site.learner.telephone') }}
 								</span>
 								{{ Auth::user()->address->phone }}
 							</h3>
 
 							<h3 class="font-weight-normal font-barlow-regular mt-3">
 								<span class="note-color d-block font-15">
-									Facebook
+									{{ trans('site.learner.facebook') }}
 								</span>
 								{{ Auth::user()->social->facebook ?: 'None' }}
 							</h3>
 
 							<h3 class="font-weight-normal font-barlow-regular mt-3">
 								<span class="note-color d-block font-15">
-									Instagram
+									{{ trans('site.learner.instagram') }}
 								</span>
 								{{ Auth::user()->social->instagram ?: 'None' }}
 							</h3>
@@ -69,9 +69,9 @@
 
 					<div class="card my-5 site-link-container">
 						<div class="card-body p-5">
-							<a href="{{ route('learner.invoice') }}" class="invoice-link">Mine Fakturaer</a>
-							<a href="{{ route('learner.assignment') }}" class="assignment-link">Oppgaver</a>
-							<a href="{{ route('learner.upgrade') }}" class="upgrade-link">Oppgradering</a>
+							<a href="{{ route('learner.invoice') }}" class="invoice-link">{{ trans('site.learner.my-invoice') }}</a>
+							<a href="{{ route('learner.assignment') }}" class="assignment-link">{{ trans('site.learner.assignment') }}</a>
+							<a href="{{ route('learner.upgrade') }}" class="upgrade-link">{{ trans('site.learner.upgrading-text') }}</a>
 						</div>
 					</div>
 				</div> <!-- end col-md-4 -->
@@ -83,17 +83,17 @@
 								<ul class="nav nav-tabs pl-5" role="tablist">
 									<li class="nav-item">
 										<a data-toggle="tab" href="#profile-panel" class="nav-link active" role="tab">
-											<span>Profil</span>
+											<span>{{ trans('site.learner.profile-text') }}</span>
 										</a>
 									</li>
 									<li class="nav-item">
 										<a data-toggle="tab" href="#email-panel" class="nav-link" role="tab">
-											<span>Epost Adresser</span>
+											<span>{{ trans('site.learner.email-addresses-text') }}</span>
 										</a>
 									</li>
 									<li class="nav-item">
 										<a data-toggle="tab" href="#diploma-panel" class="nav-link" role="tab">
-											<span>Kursbevis</span>
+											<span>{{ trans('site.learner.diploma-text') }}</span>
 										</a>
 									</li>
 								</ul> <!-- end nav-tabs-->
@@ -109,12 +109,12 @@
 													<div class="form-group row">
 														<label class="col-sm-3 col-form-label"></label>
 														<div class="col-sm-9">
-															<h1 class="text-left font-barlow-regular">Profil</h1>
+															<h1 class="text-left font-barlow-regular">{{ trans('site.learner.profile-text') }}</h1>
 														</div>
 													</div>
 
 													<div class="form-group row">
-														<label class="col-sm-3 col-form-label">Epost</label>
+														<label class="col-sm-3 col-form-label">{{ trans('site.front.form.email') }}</label>
 														<div class="col-sm-9">
 															<input type="email" class="form-control" disabled readonly
 																   value="{{Auth::user()->email}}" id="profile_email">
@@ -122,7 +122,7 @@
 													</div>
 
 													<div class="form-group row">
-														<label class="col-sm-3 col-form-label">Fornavn</label>
+														<label class="col-sm-3 col-form-label">{{ trans('site.front.form.first-name') }}</label>
 														<div class="col-sm-9">
 															<input type="text" class="form-control" autocomplete='off'
 																   name="first_name" value="{{Auth::user()->first_name}}" required>
@@ -130,7 +130,7 @@
 													</div>
 
 													<div class="form-group row">
-														<label class="col-sm-3 col-form-label">Etternavn</label>
+														<label class="col-sm-3 col-form-label">{{ trans('site.front.form.last-name') }}</label>
 														<div class="col-sm-9">
 															<input type="text" class="form-control" autocomplete='off'
 																   name="last_name" value="{{Auth::user()->last_name}}" required>
@@ -144,12 +144,12 @@
 													<div class="form-group row">
 														<label class="col-sm-3 col-form-label"></label>
 														<div class="col-sm-9">
-															<h1 class="text-left font-barlow-regular">Adresse</h1>
+															<h1 class="text-left font-barlow-regular">{{ trans('site.learner.address') }}</h1>
 														</div>
 													</div>
 
 													<div class="form-group row">
-														<label class="col-sm-3 col-form-label">Gate</label>
+														<label class="col-sm-3 col-form-label">{{ trans('site.front.form.street') }}</label>
 														<div class="col-sm-9">
 															<input type="text" class="form-control" autocomplete='off'
 																   name="street" value="{{Auth::user()->address->street}}">
@@ -157,7 +157,7 @@
 													</div>
 
 													<div class="form-group row">
-														<label class="col-sm-3 col-form-label">Postnummer</label>
+														<label class="col-sm-3 col-form-label">{{ trans('site.front.form.zip') }}</label>
 														<div class="col-sm-9">
 															<input type="text" class="form-control" autocomplete='off'
 																   name="zip" value="{{Auth::user()->address->zip}}">
@@ -165,7 +165,7 @@
 													</div>
 
 													<div class="form-group row">
-														<label class="col-sm-3 col-form-label">Sted</label>
+														<label class="col-sm-3 col-form-label">{{ trans('site.learner.place-text') }}</label>
 														<div class="col-sm-9">
 															<input type="text" class="form-control" autocomplete='off'
 																   name="city" value="{{Auth::user()->address->city}}">
@@ -173,7 +173,7 @@
 													</div>
 
 													<div class="form-group row">
-														<label class="col-sm-3 col-form-label">Telefon</label>
+														<label class="col-sm-3 col-form-label">{{ trans('site.learner.telephone') }}</label>
 														<div class="col-sm-9">
 															<input type="tel" class="form-control" autocomplete='off'
 																   name="phone" value="{{Auth::user()->address->phone}}">
@@ -187,12 +187,12 @@
 													<div class="form-group row">
 														<label class="col-sm-3 col-form-label"></label>
 														<div class="col-sm-9">
-															<h1 class="text-left font-barlow-regular">Social</h1>
+															<h1 class="text-left font-barlow-regular">{{ trans('site.learner.social-text') }}</h1>
 														</div>
 													</div>
 
 													<div class="form-group row">
-														<label class="col-sm-3 col-form-label">Facebook</label>
+														<label class="col-sm-3 col-form-label">{{ trans('site.learner.facebook') }}</label>
 														<div class="col-sm-9">
 															<input type="text" class="form-control" autocomplete='off'
 																   name="facebook" value="{{Auth::user()->social->facebook}}">
@@ -200,7 +200,7 @@
 													</div>
 
 													<div class="form-group row">
-														<label class="col-sm-3 col-form-label">Instagram</label>
+														<label class="col-sm-3 col-form-label">{{ trans('site.learner.instagram') }}</label>
 														<div class="col-sm-9">
 															<input type="text" class="form-control" autocomplete='off'
 																   name="instagram" value="{{Auth::user()->social->instagram}}">
@@ -214,12 +214,12 @@
 													<div class="form-group row">
 														<label class="col-sm-3 col-form-label"></label>
 														<div class="col-sm-9">
-															<h1 class="text-left font-barlow-regular">Sikkerhet</h1>
+															<h1 class="text-left font-barlow-regular">{{ trans('site.learner.safety-text') }}</h1>
 														</div>
 													</div>
 
 													<div class="form-group row">
-														<label class="col-sm-3 col-form-label">Nytt passord</label>
+														<label class="col-sm-3 col-form-label">{{ trans('site.learner.update-password.title') }}</label>
 														<div class="col-sm-9">
 															<input type="password" class="form-control" autocomplete='off'
 																   name="new_password">
@@ -227,7 +227,7 @@
 													</div>
 
 													<div class="form-group row">
-														<label class="col-sm-3 col-form-label">Gammelt passord</label>
+														<label class="col-sm-3 col-form-label">{{ trans('site.learner.old-password-text') }}</label>
 														<div class="col-sm-9">
 															<input type="password" class="form-control" autocomplete='off'
 																   name="old_password">
@@ -241,10 +241,10 @@
 													<div class="form-group row mb-0">
 														<div class="col-sm-9 text-left col-md-offset-3">
 															<button type="submit" class="btn site-btn-global">
-																Oppdater profilen
+																{{ trans('site.learner.update-profile-text') }}
 															</button>
 															<a href="{{ route('learner.profile') }}" class="btn light-button">
-																Cancel
+																{{ trans('site.front.cancel') }}
 															</a>
 														</div>
 													</div>
@@ -274,19 +274,18 @@
 									<div id="email-panel" class="tab-pane fade" role="tabpanel">
 										<section class="d-block email-container">
 											<h1 class="font-barlow-regular">
-												Epost Adresser
+												{{ trans('site.learner.email-addresses-text') }}
 											</h1>
 
 											<p class="note-color mt-4">
-												Om du skal bruke flere epost adresser i systemet, eller skal endre epost adresse,
-												så er det «Hoved» epost adressen som skal brukes med å logge inn med og epost vil bli kun sendt til «hoved» adressen din.
+												{{ trans('site.learner.email-addresses-note') }}
 											</p>
 
 											<ul class="list-group mt-5" id="email-list">
 											</ul>
 
 											<h2 class="font-barlow-regular mt-5">
-												Legg til ny epost adresse
+												{{ trans('site.learner.add-new-email-address') }}
 											</h2>
 
 											<div class="form-group mb-0">
@@ -304,9 +303,7 @@
 											</div>
 
 											<p class="note-color mt-5">
-												Du vil motta en epost når du har lagt til ny epost adresse. Denne må du
-												godkjenne før du kan bruke denne nye adressen. Kun godkjente epost
-												adresser kan være «hoved» adresse
+												{{ trans('site.learner.add-new-email-address-note') }}
 											</p>
 
 										</section>
@@ -315,7 +312,7 @@
 									<div id="diploma-panel" class="tab-pane fade" role="tabpanel">
 										<section class="d-block">
 											<h1 class="font-barlow-regular">
-												Kursbevis
+												{{ trans('site.learner.diploma-text') }}
 											</h1>
 
 											<div class="row">
@@ -329,7 +326,7 @@
 																</h3>
 
 																<a href="{{ route('learner.download-diploma', $diploma->id) }}"
-																class="btn site-btn-global">Last ned</a>
+																class="btn site-btn-global">{{ trans('site.learner.download-text') }}</a>
 															</div>
 														</div>
 													</div>
@@ -350,8 +347,8 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
+					<h3 class="modal-title">{{ trans('site.learner.preview-text') }}</h3>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h4 class="modal-title">Preview</h4>
 				</div>
 				<div class="modal-body">
 					<iframe src="" frameborder="0" width="100%" height="550">
