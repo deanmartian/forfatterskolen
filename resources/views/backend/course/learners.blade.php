@@ -450,7 +450,7 @@
 					<div class="form-group">
 						<label>Subject 1 day</label>
 						<input type="text" class="form-control" name="subject_1_day" required
-							   value="{{ $expiryReminder ? $expiryReminder->subject1_day : ''}}">
+							   value="{{ $expiryReminder ? $expiryReminder->subject_1_day : ''}}">
 					</div>
 
 					<div class="form-group">
