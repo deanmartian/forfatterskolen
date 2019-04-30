@@ -83,14 +83,19 @@ class LoginController extends Controller
      * @param $email
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function emailLogin($email)
+    public function emailLogin($email, Request $request)
     {
         $email = decrypt($email);
 
         $user = User::where('email', $email)->where('role', 2)->first();
         if(!$user) return redirect()->route('front.home');
 
-        Auth::loginUsingId($user->id);
+        Auth::login($user);
+        if ($request->has('redirect')) {
+            if ($request->get('redirect') === 'upgrade') {
+                return redirect()->route('learner.upgrade');
+            }
+        }
         return redirect()->route('learner.dashboard');
     }
 
