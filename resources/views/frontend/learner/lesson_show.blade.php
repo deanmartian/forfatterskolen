@@ -35,7 +35,7 @@
 				<div class="row">
 					<div class="col-sm-12">
 						<a class="btn btn-info download-btn" href="{{ route('learner.course.download-lesson', ['course_id' => $course->id, 'id' => $lesson->id]) }}"
-						   onclick="disableButton(this)">Last ned utskriftsvennlig pdf av leksjonen</a>
+						   onclick="disableButton(this)">{{ trans('site.learner.download-pdf-of-lesson') }}</a>
 					</div>
 				</div>
 			@endif
@@ -57,12 +57,12 @@
 									<div class="form-group">
 										<form class="" method="get" action="">
 											<div class="input-group-global">
-												<input type="text" name="search_replay" class="form-control" placeholder="Søk etter webinar (reprise)" aria-label="Enter here..." aria-describedby="basic-addon2"
+												<input type="text" name="search_replay" class="form-control" placeholder="{{ trans('site.learner.search-webinar-replay') }}" aria-label="Enter here..." aria-describedby="basic-addon2"
 													   value="{{ Request::get('search_replay') }}">
 												<div class="input-group-append">
-													<button class="btn btn-outline-success border-color-grey" type="submit"><i class="fa fa-search"></i> Søk</button>
+													<button class="btn btn-outline-success border-color-grey" type="submit"><i class="fa fa-search"></i> {{ trans('site.learner.search-text') }}</button>
 													<a class="btn btn-outline-info border-color-grey" type="reset"
-													   href="{{ route('learner.course.lesson', ['course_id' => $lesson->course_id, 'id' => $lesson->id]) }}"><i class="fa fa-redo"></i> Nullstill</a>
+													   href="{{ route('learner.course.lesson', ['course_id' => $lesson->course_id, 'id' => $lesson->id]) }}"><i class="fa fa-redo"></i> {{ trans('site.learner.reset-text') }}</a>
 												</div>
 											</div>
 										</form> <!-- end searchBoxForm -->
@@ -91,7 +91,7 @@
 				<div class="col-md-2">
 					<div class="margin-top lesson-body">
 						@if ($lesson->documents->count())
-							<b>Dokumenter og skjemaer</b>
+							<b>{{ trans('site.learner.documents-and-forms-text') }}</b>
 							<ul style="padding-left: 15px">
 								@foreach($lesson->documents as $document)
 									<li style="word-break: break-all;"><a href="{{ route('learner.lesson.download-lesson-document', $document->id) }}">{{ $document->name }}</a></li>
