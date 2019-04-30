@@ -13,7 +13,7 @@
 			@include('frontend.partials.learner-search-new')
 
 			<p>
-				Results for '<strong>{{ Request::input('search') }}</strong>'
+				{{ trans('site.learner.results-for') }} '<strong>{{ Request::input('search') }}</strong>'
 			</p>
 
 			@foreach($courses as $course)

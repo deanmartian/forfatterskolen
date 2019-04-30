@@ -1159,6 +1159,7 @@ kvittering.',
     'search-text' => 'Søk',
     'reset-text' => 'Nullstill',
     'documents-and-forms-text' => 'Dokumenter og skjemaer',
+    'results-for' => 'Results for',
   ),
   'learner-suggest-date-coaching-time' => 'Foreslå en dato for coaching time',
 );
