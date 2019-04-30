@@ -298,7 +298,7 @@ class AssignmentController extends Controller
         $assignment             = Assignment::find($id);
         $assignmentManuscripts  = AssignmentManuscript::where('assignment_id', $id)->get();
 
-        $zipFileName    = $assignment->title.' Manuscripts.zip';
+        $zipFileName    = str_replace('/','-',$assignment->title).' Manuscripts.zip';
         $public_dir     = public_path('storage');
         $zip            = new \ZipArchive();
 
@@ -565,8 +565,7 @@ class AssignmentController extends Controller
         $assignmentManuscriptsCount = $assignmentManuscripts->count();
         if ($assignmentManuscriptsCount) {
             if ($assignmentManuscriptsCount > 1) {
-
-                $zipFileName    = $assignment->title.' Manuscripts.zip';
+                $zipFileName    = str_replace('/','-',$assignment->title).' Manuscripts.zip';
                 $public_dir     = public_path('storage');
 
                 $zip            = new \ZipArchive();
