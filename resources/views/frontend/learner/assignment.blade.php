@@ -24,7 +24,24 @@
 					<div class="col-md-6 mt-5">
 						<div class="card card-global">
                             <?php $manuscript = $assignment->manuscripts->where('user_id', Auth::user()->id)->first(); ?>
-                            <?php $extension = $manuscript ? explode('.', basename($manuscript->filename)) : ''; ?>
+                            <?php
+								$extension = $manuscript ? explode('.', basename($manuscript->filename)) : '';
+								$submission_date_formatted = $assignment->submission_date;
+								if (!\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
+									$coursesTaken = Auth::user()->coursesTaken()->get()->toArray();
+									$allowed_packages = json_decode($assignment->allowed_package);
+
+									$courseStarted = '';
+									foreach ($coursesTaken as $course) {
+										if (in_array($course['package_id'], $allowed_packages)) {
+											$courseStarted =  $course['started_at'];
+										}
+									}
+
+									$submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
+										->addDays($assignment->submission_date);
+								}
+                            ?>
 
 							<div class="card-header p-4">
 								<div class="row">
@@ -38,7 +55,7 @@
 														data-target="#submitEditorManuscriptModal"
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 														data-show-group-question="{{ $assignment->show_join_group_question }}"
-														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif>
+														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
 													{{ trans('site.learner.upload-script') }}
 												</button>
 											@else
@@ -46,7 +63,7 @@
 														data-target="#submitManuscriptModal"
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 														data-show-group-question="{{ $assignment->show_join_group_question }}"
-														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif>
+														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
 													{{ trans('site.learner.upload-script') }}
 												</button>
 											@endif
@@ -60,7 +77,7 @@
 								</p>
 
 								<span class="font-barlow-regular">{{ trans('site.learner.deadline') }}:</span>
-								<span>{{ \App\Http\FrontendHelpers::formatDateTimeNor2($assignment->submission_date) }}</span>
+								<span>{{ \App\Http\FrontendHelpers::formatDateTimeNor2($submission_date_formatted) }}</span>
 								@if( $manuscript )
 									<div class="mt-3">
 										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
@@ -214,13 +231,30 @@
 										<h2><i class="contract-sign"></i> {{ $assignment->title }}</h2>
 									</div>
 									<div class="col-md-3">
+										<?php
+										$submission_date_formatted = $assignment->submission_date;
+										if (!\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
+										    $coursesTaken = Auth::user()->coursesTaken()->get()->toArray();
+										    $allowed_packages = json_decode($assignment->allowed_package);
+
+                                            $courseStarted = '';
+										    foreach ($coursesTaken as $course) {
+                                                if (in_array($course['package_id'], $allowed_packages)) {
+                                                    $courseStarted =  $course['started_at'];
+                                                }
+											}
+
+                                            $submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
+												->addDays($assignment->submission_date);
+										}
+										?>
 										@if (!$manuscript)
 											@if($assignment->for_editor)
 												<button class="btn site-btn-global site-btn-global-sm w-100 submitEditorManuscriptBtn" data-toggle="modal"
 														data-target="#submitEditorManuscriptModal"
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 														data-show-group-question="{{ $assignment->show_join_group_question }}"
-														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif>
+														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
 													{{ trans('site.learner.upload-script') }}
 												</button>
 											@else
@@ -228,7 +262,7 @@
 														data-target="#submitManuscriptModal"
 														data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 														data-show-group-question="{{ $assignment->show_join_group_question }}"
-														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($assignment->submission_date))) disabled @endif>
+														@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
 													{{ trans('site.learner.upload-script') }}
 												</button>
 											@endif
@@ -242,7 +276,7 @@
 								</p>
 
 								<span class="font-barlow-regular">Frist:</span>
-								<span>{{ \App\Http\FrontendHelpers::formatDateTimeNor2($assignment->submission_date) }}</span>
+								<span>{{--{{ \App\Http\FrontendHelpers::formatDateTimeNor2($assignment->submission_date) }}--}}</span>
 								@if( $manuscript )
 									<div class="mt-3">
 										@if( end($extension) == 'pdf' || end($extension) == 'odt' )

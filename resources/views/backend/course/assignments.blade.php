@@ -62,8 +62,22 @@
 		      	<textarea class="form-control" name="description" placeholder="{{ trans('site.description') }}" rows="6"></textarea>
 		      </div>
 				<div class="form-group">
+					<label>{{ trans('site.delay-type') }}</label>
+					<select class="form-control" id="assignment-delay-toggle">
+						<option value="days">Days</option>
+						<option value="date">Date</option>
+					</select>
+				</div>
+				<div class="form-group">
 					<label>{{ trans('site.submission-date') }}</label>
-					<input type="datetime-local" class="form-control" name="submission_date" required>
+					{{--<input type="datetime-local" class="form-control" name="submission_date" required>--}}
+					<div class="input-group">
+						<input type="number" class="form-control" name="submission_date" id="assignment-delay" min="0"
+							   required>
+						<span class="input-group-addon assignment-delay-text" id="basic-addon2">
+								days
+						</span>
+					</div>
 				</div>
 
 				<div class="form-group">
@@ -115,4 +129,16 @@
 
 @section('scripts')
 	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+	<script>
+        $('#assignment-delay-toggle').change(function(){
+            let delay = $(this).val();
+            if(delay === 'days'){
+                $('#assignment-delay').attr('type', 'number');
+            } else if(delay === 'date')
+            {
+                $('#assignment-delay').attr('type', 'datetime-local');
+            }
+            $('.assignment-delay-text').text(delay);
+        });
+	</script>
 @stop

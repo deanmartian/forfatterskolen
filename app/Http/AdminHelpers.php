@@ -64,6 +64,12 @@ class AdminHelpers
     	return $d && $d->format('Y-m-d') === $string;
 	}
 
+    public static function isDateWithFormat($format, $string)
+    {
+        $d = \DateTime::createFromFormat($format, $string);
+        return $d && $d->format($format) === $string;
+    }
+
 
 	public static function get_num_of_words($string) {
 	    $string = preg_replace('/\s+/', ' ', trim($string));

@@ -498,10 +498,37 @@
 		      	<textarea class="form-control" name="description" placeholder="{{ trans('site.description') }}" rows="6">{{ $assignment->description }}</textarea>
 		      </div>
 				<div class="form-group">
+					<label>{{ trans('site.delay-type') }}</label>
+					<select class="form-control" id="assignment-delay-toggle">
+						<option value="days">Days</option>
+						<option value="date" @if(\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A',
+						$assignment->submission_date)) selected @endif>Date</option>
+					</select>
+				</div>
+				<div class="form-group">
 					<label>{{ trans('site.submission-date') }}</label>
-					<input type="datetime-local" class="form-control" name="submission_date"
+					{{--<input type="datetime-local" class="form-control" name="submission_date"
 						   @if( $assignment->submission_date ) value="{{ strftime('%Y-%m-%dT%H:%M:%S', strtotime($assignment->submission_date)) }}" @endif
-					required>
+					required>--}}
+					<div class="input-group">
+						@if(\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date))
+							<input type="datetime-local" class="form-control" name="submission_date"
+								   id="assignment-delay" min="0" required
+								   @if( $assignment->submission_date )
+								   value="{{ strftime('%Y-%m-%dT%H:%M:%S', strtotime($assignment->submission_date)) }}"
+								@endif>
+						@else
+							<input type="number" class="form-control" name="submission_date" id="assignment-delay"
+								   min="0" required value="{{$assignment->submission_date}}">
+						@endif
+						<span class="input-group-addon assignment-delay-text" id="basic-addon2">
+						  	@if(\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date))
+								date
+							@else
+								days
+							@endif
+						  	</span>
+					</div>
 				</div>
 
 				<div class="form-group">
@@ -922,6 +949,17 @@
         let action = $(this).data('action');
         modal.find('input[name=availability]').val(availability);
         modal.find('form').attr('action', action);
+    });
+
+    $('#assignment-delay-toggle').change(function(){
+        let delay = $(this).val();
+        if(delay === 'days'){
+            $('#assignment-delay').attr('type', 'number');
+        } else if(delay === 'date')
+        {
+            $('#assignment-delay').attr('type', 'datetime-local');
+        }
+        $('.assignment-delay-text').text(delay);
     });
 
     function formSubmitted(t) {

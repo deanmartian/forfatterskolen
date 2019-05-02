@@ -32,7 +32,15 @@ class Assignment extends Model
 
     public function getSubmissionDateAttribute($value)
     {
-        return $value ? date_format(date_create($value), 'M d, Y h:i A') : NULL;
+        $submission_date = NULL;
+        if ($value) {
+            if (!is_numeric($value)) {
+                $submission_date = date_format(date_create($value), 'M d, Y h:i A');
+            } else {
+                $submission_date = $value;
+            }
+        }
+        return $submission_date;
     }
 
     public function getAvailableDateAttribute($value)
