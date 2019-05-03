@@ -28,6 +28,7 @@ mix.webpackConfig({
                 //and have full support for offline first (example below)
                 '/': ['resources/views/frontend/home.blade.php'],
                 '/course': ['resources/views/frontend/course/index.blade.php'],
+                '/shop-manuscript': ['resources/views/frontend/shop-manuscript/index.blade.php'],
                 // '/posts': ['resources/views/posts.blade.php']
             },
             staticFileGlobsIgnorePatterns: [/\.map$/, /mix-manifest\.json$/, /manifest\.json$/, /service-worker\.js$/],
