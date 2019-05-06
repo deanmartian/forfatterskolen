@@ -36,8 +36,8 @@
                                         <i class="calendar"></i>
                                         {{ trans('site.learner.deadline') }}
                                         {{ ucwords(strtr(trans('site.learner.submission-date-value'), [
-                                       '_date_' => \Carbon\Carbon::parse($competition->submission_date)->format('d.m.Y'),
-                                        '_time_' => \Carbon\Carbon::parse($competition->submission_date)->format('H:i')
+                                       '_date_' => \Carbon\Carbon::parse($competition->start_date)->format('d.m.Y'),
+                                        '_time_' => \Carbon\Carbon::parse($competition->start_date)->format('H:i')
                                     ])) }}
                                     </h4>
                                 </div> <!-- end competition-header -->
