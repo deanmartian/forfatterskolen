@@ -544,12 +544,11 @@ class ShopController extends Controller
             $address->save();
         endif;
 
-        
+        $course_status = $paymentMode->mode == "Vipps" || $paymentMode->mode == "Paypal" ? 1 : 0;
         $courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
-        $courseTaken->is_active = 0;
+        $courseTaken->is_active = $course_status;
         $courseTaken->save();
 
-    
 
         // Check for shop manuscripts
         if( $package->shop_manuscripts->count() > 0 ) :
@@ -1197,5 +1196,96 @@ class ShopController extends Controller
         endif;
 
         return header("HTTP/1.1 200 OK");
+    }
+
+    public function proceedCheckout($course_id, Course $course, Request $request)
+    {
+        $apiKey = app('Bambora')->credentials;
+        $data['api_key'] = $apiKey;
+        $data['course'] = $course->find($course_id);
+        $data['request'] = $request->all();
+
+        $curlRequest = [];
+        $curlRequest["order"] = array();
+        $curlRequest["order"]["id"] = AdminHelpers::generateHash(6);
+        $curlRequest["order"]["amount"] = "1240000";
+        $curlRequest["order"]["currency"] = "NOK";
+
+        $curlRequest["url"] = array();
+        $curlRequest["url"]["accept"] = "https://www.forfatterskolen.no/thank-you";
+        $curlRequest["url"]["cancel"] = "https://www.forfatterskolen.no/thankyou";
+        /*$curlRequest["url"]["callbacks"] = array();
+        $curlRequest["url"]["callbacks"][] = array("url" => "https://example.org/callback");*/
+
+        $curlRequest["paymentwindow"] = array();
+        $curlRequest["paymentwindow"] = ["id" => 1];
+        //$curlRequest["paymentwindow"]["paymentmethod"] = array();
+        $curlRequest["paymentwindow"]["paymentmethods"] = [
+            ["id" => "paymentcard", "action" => "include"],
+            ["id" => "invoice", "action" => "include"],
+            ["id" => "vipps", "action" => "include"],
+            ["id" => "ekspresbank", "action" => "include"]
+        ];
+
+        /*$curlRequest["paymentwindow"]["paymentgroup"] = array();
+        $curlRequest["paymentwindow"]["paymentgroup"] = [
+            ["id" => 1, "action" => "include"],
+            ["id" => 11, "action" => "include"],
+            ["id" => 4, "action" => "include"],
+            ["id" => 16, "action" => "include"],
+        ];
+
+        $curlRequest["paymentwindow"]["paymenttype"] = array();
+        $curlRequest["paymentwindow"]["paymenttype"] = [
+            ["id" => 1, "action" => "include"],
+            ["id" => 11, "action" => "include"],
+            ["id" => 14, "action" => "include"]
+        ];*/
+
+        $checkoutUrl = "https://api.v1.checkout.bambora.com/sessions";
+
+        $requestJson = json_encode($curlRequest);
+        $contentLength = isset($requestJson) ? strlen($requestJson) : 0;
+
+        $headers = array(
+            'Content-Type: application/json',
+            'Content-Length: ' . $contentLength,
+            'Accept: application/json',
+            'Authorization: Basic ' . $apiKey
+        );
+
+        $curl = curl_init();
+
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $requestJson);
+        curl_setopt($curl, CURLOPT_URL, $checkoutUrl);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_FAILONERROR, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+
+        $rawResponse = curl_exec($curl);
+        $response = json_decode($rawResponse);
+
+        /*$headers = array(
+            'Content-Type: application/json',
+            'Content-Length: ' . 0,
+            'Accept: application/json',
+            'Authorization: Basic ' . $apiKey
+        );
+
+        $endpointUrl = 'https://data-v1.api-eu.bambora.com/paymenttypes';
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_setopt($curl, CURLOPT_URL, $endpointUrl);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_FAILONERROR, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+
+        $rawResponse = curl_exec($curl);
+
+        $response = json_decode($rawResponse);*/
+        return response()->json($response);
     }
 }
