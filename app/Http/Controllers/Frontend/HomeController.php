@@ -614,7 +614,7 @@ class HomeController extends Controller
 
             return view('frontend.coaching-timer-checkout', compact('data'));
         }
-        return view('front.coaching-timer');
+        return view('frontend.coaching-timer');
     }
 
     /**
