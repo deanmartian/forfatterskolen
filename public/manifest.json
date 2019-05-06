@@ -3,14 +3,9 @@
   "name": "Forfatterskolen",
   "icons": [
     {
-      "src": "/images-new/home-screen.png",
+      "src": "/images-new/home-screen-192.png",
       "type": "image/png",
       "sizes": "192x192"
-    },
-    {
-      "src": "/images-new/home-screen.png",
-      "type": "image/png",
-      "sizes": "512x512"
     }
   ],
   "start_url": "/",
