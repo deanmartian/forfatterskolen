@@ -571,13 +571,13 @@
 				</div>
 
 				<div class="form-group @if (!$assignment->for_editor) hide @endif" id="editor_manu_gen_count">
-					<label>Manuscript Generate Count</label>
+					<label>{{ trans('site.manuscript-generate-count') }}</label>
 					<input type="number" name="editor_manu_generate_count" class="form-control" step="1"
 					value="{{$assignment->editor_manu_generate_count}}">
 				</div>
 
 				<div class="form-group">
-					<label>Show Join Group Question</label> <br>
+					<label>{{ trans('site.show-join-group-question') }}</label> <br>
 					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small" name="show_join_group_question"
 					   @if ($assignment->show_join_group_question) checked @endif>
 				</div>
