@@ -145,16 +145,6 @@
 										</div>
 									@endif
 								</div>
-								<div class="form-group row">
-									@if(!Auth::guest())
-										<div class="col-md-6 custom-checkbox">
-											<input type="checkbox" name="update_address" id="update_address" checked>
-											<label for="update_address" class="control-label">
-												{{ trans('site.front.form.update-address') }}
-											</label>
-										</div>
-									@endif
-								</div>
 							</div> <!-- end panel-body -->
 					</div> <!-- end panel panel-default -->
 				</div> <!-- end col-lg-8 -->
