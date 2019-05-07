@@ -313,7 +313,13 @@
 						</div>
 						<div class="form-group">
 							<label>{{ trans('site.message') }}</label>
-							<textarea name="message" class="form-control" required rows="8" id="email_content">{{ $emailTemplate ? $emailTemplate->email_content."\nForventet ferdig: ".$shopManuscriptTaken->expected_finish : '' }}</textarea>
+							<?php
+								if ($emailTemplate) {
+                                    $replace_string = "<br/><br/> Forventet ferdig: ".\Carbon\Carbon::parse($emailTemplate->expected_finish)->format('d.m.Y');
+                                    $replace_content = str_replace('_date_',$replace_string, $emailTemplate->email_content);
+								}
+							?>
+							<textarea name="message" class="form-control" required rows="8" id="email_content">{{ $emailTemplate ? $replace_content : '' }}</textarea>
 						</div>
 						<input type="hidden" name="from_email" value="{{ $emailTemplate ? $emailTemplate->from_email : 'post@forfatterskolen.no' }}">
 						<div class="text-right margin-top">

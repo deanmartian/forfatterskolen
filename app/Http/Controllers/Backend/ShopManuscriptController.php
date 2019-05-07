@@ -68,7 +68,7 @@ class ShopManuscriptController extends Controller
         $emailTemplate = EmailTemplate::where('page_name', 'Manuscript')->first();
         $emailTemplateRoute = 'admin.manuscript.add_email_template';
         $isUpdate = 0;
-        if (count($emailTemplate)) {
+        if ($emailTemplate->count()) {
             $emailTemplateRoute = 'admin.manuscript.edit_email_template';
             $isUpdate = 1;
         }
@@ -221,8 +221,9 @@ class ShopManuscriptController extends Controller
 
             $to = $user->email;
 
-            $email_body = $emailTemplate->email_content."<br/> Forventet ferdig: ".
-                Carbon::parse($request->expected_finish)->format('d.m.Y');
+            $replace_string = "<br/><br/> Forventet ferdig: ".Carbon::parse($request->expected_finish)->format('d.m.Y');
+            $replace_content = str_replace('_date_',$replace_string, $emailTemplate->email_content);
+            $email_body = $replace_content;
 
             //mail($to, 'Forventet dato for tilbakemelding', $email_body, $headers);
             AdminHelpers::send_email('Forventet dato for tilbakemelding', 'post@forfatterskolen.no', $to, $email_body);
