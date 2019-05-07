@@ -783,14 +783,14 @@ class ShopManuscriptController extends Controller
         $invoice = new FikenInvoice();
         $invoice->create_invoice($invoice_fields);
 
-        if( $request->update_address ) :
+        //if( $request->update_address ) :
             $address = Address::firstOrNew(['user_id' => Auth::user()->id]);
             $address->street = $request->street;
             $address->city = $request->city;
             $address->zip = $request->zip;
             $address->phone = $request->phone;
             $address->save();
-        endif;
+        //endif;
 
 
         if( $paymentMode->mode == "Paypal" ) :

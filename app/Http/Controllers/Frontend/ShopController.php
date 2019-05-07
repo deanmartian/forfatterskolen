@@ -1093,14 +1093,14 @@ class ShopController extends Controller
                 $reward->is_used = 1;
                 $reward->save();
 
-                if( $request->update_address ) :
+                //if( $request->update_address ) :
                     $address = Address::firstOrNew(['user_id' => Auth::user()->id]);
                     $address->street = $request->street;
                     $address->city = $request->city;
                     $address->zip = $request->zip;
                     $address->phone = $request->phone;
                     $address->save();
-                endif;
+                //endif;
 
                 $course_packages = $course->packages->pluck('id')->toArray();
                 $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
