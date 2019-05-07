@@ -2865,7 +2865,18 @@ class LearnerController extends Controller
                 $package_id = $course->package->id;
                 // check if the assignment is allowed on the learners package or there's no set package allowed
                 if ((!is_null($allowed_package) && in_array($package_id,$allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)) {
-                    $assignments[] = $assignment;
+                    //$assignments[] = $assignment;
+
+                    if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
+                        if(\Carbon\Carbon::parse($course->started_at)->addDays($assignment->submission_date)
+                            ->gt(Carbon::now())) {
+                            $assignments[] = $assignment;
+                        }
+                    } else {
+                        if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
+                            $assignments[] = $assignment;
+                        }
+                    }
                 }
             endforeach;
         endforeach;
