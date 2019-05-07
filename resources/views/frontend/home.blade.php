@@ -1,7 +1,7 @@
 @extends('frontend.layout')
 
 @section('title')
-<title>Forfatterskolen</title>
+<title>Forfatterskolen – Din litterære familie. Skrivekurs for deg</title>
 @stop
 
 @section('styles')
@@ -98,7 +98,7 @@
             <div class="container">
                 <div class="row">
                     <div class="indicator">
-                        <h1>{{ trans('site.front.latest-seminars') }}</h1>
+                        <div class="h1 mt-0 text-white">{{ trans('site.front.latest-seminars') }}</div>
                     </div>
                 </div>
             </div>
@@ -115,9 +115,9 @@
                                 </div>
                                 <div class="card-body">
                                     @if ($latest_blog)
-                                        <h1 class="font-montserrat-semibold">
+                                        <div class="h1 mt-0 font-montserrat-semibold">
                                             {{ $latest_blog->title }}
-                                        </h1>
+                                        </div>
 
                                         <div class="date-time-cont">
                                             <i class="img-icon16 icon-calendar"></i>
@@ -147,9 +147,9 @@
                                 </div>
                                 <div class="card-body">
                                     @if($next_free_webinar)
-                                        <h1 class="font-montserrat-semibold">
+                                        <div class="h1 mt-0 font-montserrat-semibold">
                                             {{ $next_free_webinar->title }}
-                                        </h1>
+                                        </div>
 
                                         <div class="date-time-cont">
                                             <i class="img-icon16 icon-calendar"></i>
@@ -165,9 +165,9 @@
                                         </a>
                                     @else
                                         @if($next_workshop)
-                                            <h1 class="font-montserrat-semibold">
+                                            <div class="h1 mt-0 font-montserrat-semibold">
                                                 {{ $next_workshop->title }}
-                                            </h1>
+                                            </div>
 
                                             <div class="date-time-cont">
                                                 <i class="img-icon16 icon-calendar"></i>
@@ -199,9 +199,9 @@
                                 </div>
                                 <div class="card-body">
                                     @if ($next_webinar)
-                                        <h1 class="font-montserrat-semibold">
+                                        <div class="h1 mt-0 font-montserrat-semibold">
                                             {{ $next_webinar->title }}
-                                        </h1>
+                                        </div>
 
                                         <div class="date-time-cont">
                                             <i class="img-icon16 icon-calendar"></i>
@@ -233,9 +233,9 @@
         <div class="container">
             <div class="testimonial-row row">
                 <div class="col-md-12">
-                    <h1 class="text-center font-montserrat-semibold">
+                    <div class="h1 mt-0 text-center font-montserrat-semibold">
                         {{ trans('site.front.student-testimonial.heading') }}
-                    </h1>
+                    </div>
                     <div id="testimonials-carousel" class="carousel slide global-carousel"
                          data-ride="carousel" data-interval="15000">
 
@@ -286,7 +286,7 @@
 
         <div class="our-course-wrapper">
             <div class="container">
-                <h1 class="font-montserrat-semibold">{{ trans('site.front.our-course.title') }}</h1>
+                <div class="h1 mt-0 font-montserrat-semibold">{{ trans('site.front.our-course.title') }}</div>
                 <p class="font-montserrat-regular">
                     {{ trans('site.front.our-course.details') }}
                 </p>
@@ -363,7 +363,7 @@
         <div id="poem-wrapper">
             <div class="container">
                 <div class="heading">
-                    <h1 class="d-inline-block font-montserrat-semibold">{{ trans('site.front.week-poem') }}</h1>
+                    <div class="h1 mt-0 d-inline-block font-montserrat-semibold">{{ trans('site.front.week-poem') }}</div>
                     <a href="{{ route('front.poems') }}" class="btn d-inline-block">{{ trans('site.front.view-poem') }}</a>
                 </div> <!-- end heading -->
 
@@ -394,7 +394,7 @@
         <div class="col-sm-12 no-left-padding no-right-padding gdpr">
             <div class="container display-flex">
                 <div class="gdpr-body">
-                    <h1 class="gdpr-title">Dine data, dine valg</h1>
+                    <div class="h1 mt-0 gdpr-title">Dine data, dine valg</div>
                     <div>
                         <p>
                             Forfatterskolen er den som behandler dine data.

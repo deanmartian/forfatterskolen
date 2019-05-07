@@ -2,10 +2,10 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-7">
-                <h1 class="font-montserrat-light">
+                <div class="h1 font-montserrat-light">
                     Vil du ha profesjonell tilbakemelding på en smakebit av din personlige tekst, helt gratis? Send den inn ved
                     å trykke på knappen under.
-                </h1>
+                </div>
 
                 <a class="btn" href="/gratis-tekstvurdering">{{ trans('site.front.i-want-this') }}</a>
             </div>

@@ -563,7 +563,7 @@
     z-index: -1;
 }
 
-.cta h1 {
+.cta h1, .cta .h1 {
     margin-top: 40px;
 }
 
