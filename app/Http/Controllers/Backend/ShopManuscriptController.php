@@ -6,6 +6,7 @@ use App\Http\AdminHelpers;
 use App\Manuscript;
 use App\ShopManuscriptUpgrade;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Mail\Mailer;
 use Illuminate\Mail\Message;
@@ -220,7 +221,8 @@ class ShopManuscriptController extends Controller
 
             $to = $user->email;
 
-            $email_body = $emailTemplate->email_content."<br/> Expected Finish: ".$request->expected_finish;
+            $email_body = $emailTemplate->email_content."<br/> Forventet ferdig: ".
+                Carbon::parse($request->expected_finish)->format('d.m.Y');
 
             //mail($to, 'Forventet dato for tilbakemelding', $email_body, $headers);
             AdminHelpers::send_email('Forventet dato for tilbakemelding', 'post@forfatterskolen.no', $to, $email_body);
