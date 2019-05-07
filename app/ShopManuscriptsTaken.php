@@ -53,6 +53,10 @@ class ShopManuscriptsTaken extends Model
         endif;
     }
 
+    public function getExpectedFinishAttribute($value) {
+        return date_format(date_create($value), 'd.m.Y');
+    }
+
     
     public function admin(){
         return $this->belongsTo('App\User', 'feedback_user_id');
