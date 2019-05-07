@@ -88,6 +88,7 @@ class AssignmentController extends Controller
                 'add_on_price' => $request->add_on_price,
                 'max_words' => (int) $request->max_words,
                 'for_editor' => isset($request->for_editor) ? 1 : 0,
+                'editor_manu_generate_count' => $request->editor_manu_generate_count,
                 'show_join_group_question' => isset($request->show_join_group_question) ? 1 : 0
     		]);
 
@@ -111,6 +112,7 @@ class AssignmentController extends Controller
             $assignment->add_on_price = $request->add_on_price;
             $assignment->max_words = (int) $request->max_words;
             $assignment->for_editor = isset($request->for_editor) ? 1 : 0;
+            $assignment->editor_manu_generate_count = isset($request->for_editor) ? $request->editor_manu_generate_count : NULL;
             $assignment->show_join_group_question = isset($request->show_join_group_question) ? 1 : 0;
     		$assignment->save();
     	endif;
@@ -407,9 +409,11 @@ class AssignmentController extends Controller
         $assignment = Assignment::find($assignmentId);
 
         if ($assignment) {
+            // take manuscript based on assignment assigned value if not the default is 10
+            $takeCount = $assignment->editor_manu_generate_count ?: 10;
             $assignmentManuscripts  = AssignmentManuscript::where('assignment_id', $assignmentId)
                 //->where('filename', 'like', '%docx%')
-                ->orderByRaw('RAND()')->take(10)->get();
+                ->orderByRaw('RAND()')->take($takeCount)->get();
 
             $newDoc                 = new PhpWord();
             $count                  = 1;

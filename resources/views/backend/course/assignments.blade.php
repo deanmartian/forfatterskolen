@@ -112,6 +112,11 @@
 					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small" name="for_editor">
 				</div>
 
+				<div class="form-group hide" id="editor_manu_gen_count">
+					<label>Manuscript Generate Count</label>
+					<input type="number" name="editor_manu_generate_count" class="form-control" step="1">
+				</div>
+
 				<div class="form-group">
 					<label>Show Join Group Question</label> <br>
 					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small" name="show_join_group_question"
@@ -140,5 +145,9 @@
             }
             $('.assignment-delay-text').text(delay);
         });
+
+        $("[name=for_editor]").change(function(){
+            $("#editor_manu_gen_count").toggleClass('hide');
+		});
 	</script>
 @stop

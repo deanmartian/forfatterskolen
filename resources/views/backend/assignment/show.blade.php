@@ -570,6 +570,12 @@
 					@if ($assignment->for_editor) checked @endif>
 				</div>
 
+				<div class="form-group @if (!$assignment->for_editor) hide @endif" id="editor_manu_gen_count">
+					<label>Manuscript Generate Count</label>
+					<input type="number" name="editor_manu_generate_count" class="form-control" step="1"
+					value="{{$assignment->editor_manu_generate_count}}">
+				</div>
+
 				<div class="form-group">
 					<label>Show Join Group Question</label> <br>
 					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small" name="show_join_group_question"
@@ -960,6 +966,10 @@
             $('#assignment-delay').attr('type', 'datetime-local');
         }
         $('.assignment-delay-text').text(delay);
+    });
+
+    $("[name=for_editor]").change(function(){
+        $("#editor_manu_gen_count").toggleClass('hide');
     });
 
     function formSubmitted(t) {
