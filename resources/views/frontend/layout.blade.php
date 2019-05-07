@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        {{--<link rel="manifest" href="{{ asset('manifest.json') }}">--}}
+        <link rel="manifest" href="{{ asset('manifest.json') }}">
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-44061222-1"></script>
         <script>
@@ -150,7 +150,7 @@
                 }
             });
 
-            /*if ('serviceWorker' in navigator ) {
+            if ('serviceWorker' in navigator ) {
                 window.addEventListener('load', function() {
                     navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
                         // Registration was successful
@@ -160,7 +160,7 @@
                         console.log('ServiceWorker registration failed: ', err);
                     });
                 });
-            }*/
+            }
 
             $(function(){
                $(".notification-list > li").hover(function(){
