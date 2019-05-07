@@ -121,7 +121,7 @@ class CourseExpirationReminder extends Command {
 
                 $encode_email = encrypt($user_email);
                 $loginLink = "<a href='".route('auth.login.email', $encode_email)
-                    ."?redirect=upgrade'>Klikk her for å logge inn</a>";
+                    ."?redirect=upgrade'>Ja, jeg vil være med ett år til?</a>";
                 $message = str_replace('[login_link]', $loginLink, $content);
                 AdminHelpers::send_email($subject, $from, $user_email, $message);
                 CronLog::create(['activity' => 'CourseExpirationReminder CRON sent email to '.$user_name.'.']);
