@@ -145,14 +145,7 @@
                                     @endif
                                 </div>
                                 <div class="form-group row">
-                                    @if(!Auth::guest())
-                                        <div class="col-md-6 custom-checkbox">
-                                            <input type="checkbox" name="update_address" id="update_address" checked>
-                                            <label for="update_address" class="control-label">
-                                                {{ trans('site.front.form.update-address') }}
-                                            </label>
-                                        </div>
-                                    @else
+                                    @if(Auth::guest())
                                         <div class="col-md-6">
                                             <a href="{{ route('auth.login.google') }}" class="loginBtn loginBtn--google btn">
                                                 {{ trans('site.front.form.login-with-google') }}
