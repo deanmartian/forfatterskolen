@@ -221,7 +221,7 @@ class ShopManuscriptController extends Controller
 
             $to = $user->email;
 
-            $replace_string = "<br/><br/> Forventet ferdig: ".Carbon::parse($request->expected_finish)->format('d.m.Y');
+            $replace_string = "Forventet ferdig: ".Carbon::parse($request->expected_finish)->format('d.m.Y');
             $replace_content = str_replace('_date_',$replace_string, $emailTemplate->email_content);
             $email_body = $replace_content;
 

@@ -315,7 +315,7 @@
 							<label>{{ trans('site.message') }}</label>
 							<?php
 								if ($emailTemplate) {
-                                    $replace_string = "<br/><br/> Forventet ferdig: ".\Carbon\Carbon::parse($emailTemplate->expected_finish)->format('d.m.Y');
+                                    $replace_string = "Forventet ferdig: ".\Carbon\Carbon::parse($emailTemplate->expected_finish)->format('d.m.Y');
                                     $replace_content = str_replace('_date_',$replace_string, $emailTemplate->email_content);
 								}
 							?>
