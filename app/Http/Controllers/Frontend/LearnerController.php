@@ -900,7 +900,8 @@ class LearnerController extends Controller
         $courseTaken = CoursesTaken::findOrFail($request->courseTakenId);
         if( Auth::user()->can('participateCourse', $courseTaken) && 
             FrontendHelpers::isCourseTakenAvailable($courseTaken) &&
-            FrontendHelpers::isCourseAvailable($courseTaken->package->course) ) :
+            FrontendHelpers::isCourseActive($courseTaken->package->course) ) :
+            $course = $courseTaken->package->course;
             $courseTaken->started_at = date('Y-m-d h:i:s');
 
             /*
@@ -909,6 +910,8 @@ class LearnerController extends Controller
              */
             if ($courseTaken->package->validity_period > 0) {
                 $courseTaken->end_date = Carbon::today()->addMonth($courseTaken->package->validity_period);
+            } else {
+                $courseTaken->end_date = Carbon::parse($course->start_date)->addYear(1);
             }
 
             $courseTaken->save();

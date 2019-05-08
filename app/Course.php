@@ -212,4 +212,13 @@ class Course extends Model
         return true;
     }
 
+    public function getIsActiveAttribute()
+    {
+        $status = $this->attributes['status'];
+        if ($status) {
+            return true;
+        }
+        return false;
+    }
+
 }

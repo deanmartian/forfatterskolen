@@ -2,6 +2,7 @@
 
 namespace App\Http;
 use App\Advisory;
+use App\Course;
 use App\PaymentMode;
 use App\PilotReaderBook;
 use App\PilotReaderBookChapter;
@@ -141,6 +142,20 @@ class FrontendHelpers
 			endif;
 		endif;
 		return true;
+	}
+
+    /**
+     * Check if course is active
+     * @param $course
+     * @return bool
+     */
+    public static function isCourseActive($course)
+    {
+
+        if (!$course->status) {
+            return false;
+        }
+        return true;
 	}
 
 

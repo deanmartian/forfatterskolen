@@ -31,7 +31,7 @@ class CourseController extends Controller
         })*/
         ->get()
         ->filter(function($item) {
-            return $item->is_available || $item->is_free;
+            return $item->is_active || $item->is_free;
         }); // the original don't have this filter
     	return view('frontend.course.index', compact('courses'));
     }
@@ -42,7 +42,7 @@ class CourseController extends Controller
     	$course = Course::findOrFail($id);
 
     	if (!$course->is_free): // added this condition to display page if it's free
-            if( !FrontendHelpers::isCourseAvailable($course) || count($course->packages) == 0 ) : // Display 404 if Course has no Packages
+            if( !FrontendHelpers::isCourseActive($course) || count($course->packages) == 0 ) : // Display 404 if Course has no Packages
                 return abort(404);
             endif;
         endif;
