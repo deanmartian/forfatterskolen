@@ -4,6 +4,10 @@
     <title>Course Discounts &rsaquo; Forfatterskolen Admin</title>
 @stop
 
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('js/toastr/toastr.min.css') }}">
+@stop
+
 @section('content')
     <div class="page-toolbar">
         <h3><i class="fa fa-file-text-o"></i> {{ $course->title }} {{ trans_choice('site.discounts', 2) }}</h3>
@@ -22,7 +26,7 @@
                     <th>{{ trans_choice('site.discounts', 1) }}</th>
                     <th>Valid From</th>
                     <th>Valid To</th>
-                    <th></th>
+                    <th width="200"></th>
                 </tr>
                 </thead>
 
@@ -35,6 +39,15 @@
                         <td> {{ $discount->valid_from ? \App\Http\FrontendHelpers::formatDate($discount->valid_from) : ''}} </td>
                         <td> {{ $discount->valid_to ? \App\Http\FrontendHelpers::formatDate($discount->valid_to) : ''}} </td>
                         <td>
+                            <?php
+                                $discountUrl = "https://forfatterskolen.no/course/".$discount->course_id
+                                    ."/discount/".$discount->coupon;
+                            ?>
+                            <input type="text" value="{{ $discountUrl }}"
+                                   style="position: absolute; left: -10000px;">
+                            <button type="button" class="btn btn-success btn-xs copyToClipboard">
+                                <i class="fa fa-clipboard"></i>
+                            </button>
                             <button type="button" class="btn btn-primary btn-xs editDiscountBtn" data-toggle="modal" data-target="#discountModal" data-action="{{ route('admin.course-discount.update', [$discount->course_id, $discount->id]) }}" data-fields="{{ json_encode($discount) }}"><i class="fa fa-pencil"></i></button>
                             <button type="button" class="btn btn-danger btn-xs deleteDiscountBtn" data-toggle="modal" data-target="#deleteDiscountModal" data-action="{{ route('admin.course-discount.destroy', [$discount->course_id, $discount->id]) }}"><i class="fa fa-trash"></i></button>
                         </td>
@@ -107,6 +120,7 @@
 @stop
 
 @section('scripts')
+    <script src="{{ asset('js/toastr/toastr.min.js') }}"></script>
     <script>
         var generated = [],
             possible  = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -177,6 +191,26 @@
 
                 $(".modal-title").text(edit_discount);
             });
+        });
+
+        // not working on hidden fields
+        $(".copyToClipboard").click(function(){
+            let copyText = $(this).closest('td').find('[type=text]');
+            /* Select the text field */
+            copyText.select();
+            /* Copy the text inside the text field */
+            document.execCommand("copy");
+
+            toastr.success('Copied to clipboard.', "Success");
+            if (window.getSelection) {
+                if (window.getSelection().empty) {  // Chrome
+                    window.getSelection().empty();
+                } else if (window.getSelection().removeAllRanges) {  // Firefox
+                    window.getSelection().removeAllRanges();
+                }
+            } else if (document.selection) {  // IE?
+                document.selection.empty();
+            }
         });
     </script>
 @stop
