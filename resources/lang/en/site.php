@@ -329,7 +329,7 @@ Warning: This cannot be undone.',
   'set-approved-date' => 'Set Approved Date',
   'suggest-different-dates' => 'Suggest Different Dates',
   'view-replay' => 'View Replay',
-  'attachments' => '[0, 1] Attachment |[2, *] Attacments',
+  'attachments' => '[0, 1] Attachment |[2, *] Attachments',
   'add-diploma' => 'Add Diploma',
   'diplomas' => '[0, 1] Diploma |[2, *] Diplomas',
   'words-written' => 'Words Written',
@@ -620,12 +620,12 @@ Warning: This cannot be undone.',
       'title' => 'For deg som ønsker manuset vurdert av profesjonell redaktør',
       'first-section' => 
       array (
-        'title' => 'TRENGER DU PROFESJONELL TILBAKEMELDING PÅ DITT MANUS?',
         'description' => '<p class="mb-5">Er du usikker på om ideen og utkastet ditt kan bli en god fortelling? Står du fast med manuset, og er usikker på hva som funker og ikke funker? Eller trenger du en tilbakemelding, og kvalitetssikring, før du sender inn til forlag? </p>
 
 <p class="mb-5">Forfatterskolen tilbyr profesjonell tilbakemelding på ditt manus. En erfaren redaktør vil gi deg en grundig og detaljert tilbakemelding - med kommentarer i margen - på tekstens svake og sterke sider. Du får vite hva som er bra, og hvorfor det er bra, hva som kan utvikles videre og hvordan det kan gjøres. </p>
 
 <p class="mb-0">Vi har hjulpet mange elever på vei mot utgivelse, og hjelper gjerne flere. Er du den neste? Ikke nøl med å sende oss manuset ditt, det er slik du kommer videre!</p>',
+        'title' => 'TRENGER DU PROFESJONELL TILBAKEMELDING PÅ DITT MANUS?',
       ),
     ),
     'gt-webinar' => 
@@ -771,8 +771,6 @@ Warning: This cannot be undone.',
     'total' => 'Totalt',
     'per-month' => 'Per måned',
     'upload' => 'Last opp',
-    'genre' => 'Sjanger',
-    'select-genre' => 'Velg sjanger',
     'coaching-timer' => 
     array (
       'title' => 'Coaching Timer',
@@ -783,10 +781,6 @@ Warning: This cannot be undone.',
       'help-with-text' => 'Skriv litt her om hva du vil ha hjelp til',
       'payment-note' => 'Merk: Vi godtar kun full betaling på PAYPAL',
     ),
-    '30-mins' => '30 mins',
-    '60-mins' => '60 mins',
-    'additional' => 'Tillegg',
-    'cancel' => 'Cancel',
     'correction' => 
     array (
       'title' => 'Korrektur',
@@ -800,8 +794,6 @@ Warning: This cannot be undone.',
       'fjem' => 'Fjem',
       'no-price-message' => 'Vennligst last opp et dokument for å beregne pris',
     ),
-    'calculate-price' => 'Beregn pris',
-    'submit' => 'Submit',
     'copy-editing' => 
     array (
       'title' => 'Språkvåsk',
@@ -813,6 +805,14 @@ Warning: This cannot be undone.',
       'note' => 'Dette er bare en ordteller, og innebærer ikke kjøp.',
       'sub-note' => 'Merk: Godkjente filformater er docx.',
     ),
+    'genre' => 'Sjanger',
+    'select-genre' => 'Velg sjanger',
+    '30-mins' => '30 mins',
+    '60-mins' => '60 mins',
+    'additional' => 'Tillegg',
+    'cancel' => 'Cancel',
+    'calculate-price' => 'Beregn pris',
+    'submit' => 'Submit',
     'faq' => 
     array (
       'title' => 'Svar på dine spørsmål om kurset',
@@ -922,29 +922,29 @@ Om du ikke har vært på webinar før, kan du sjekke tilkoblingen din her:
   array (
     'course' => 
     array (
-      'title' => 'Takk for bestillingen!',
       'description' => 'Vi gleder oss til å samarbeide med deg! Vi vil behandle din bestilling så snart som mulig og du vil få tilsendt faktura(er) til din registrerte e-postadresse. Dersom du har betalt via paypal gjelder fakturaen kun som en kvittering.',
-    ),
-    'workshop' => 
-    array (
-      'title' => 'Takk for din bestilling!',
-      'description' => 'Vi gleder oss til skriveverksted. Du har fått tilsendt faktura til din registrerte e-postadresse. Du kan også finne faktura inne på min side. Dersom du har betalt via paypal gjelder fakturaen kun som en kvittering.',
+      'title' => 'Takk for bestillingen!',
     ),
     'manuscript' => 
     array (
-      'title' => 'Takk for din bestilling!',
       'description' => 'Vi gleder oss å lese ditt manus. Vi vil finne en passende redaktør for ditt manus og gi deg en forventet tilbakemeldingsdato. Normalt innen 3 uker. Du har fått tilsendt faktura(er) til din registrerte e-postadresse. Du kan også finne faktura(ene) inne på min side. Dersom du har betalt via paypal gjelder fakturaen kun som en
 kvittering.',
-    ),
-    'vipps' => 
-    array (
-      'title' => 'Takk for betalingen!',
-      'description' => 'Din betaling ble gjennomført suksessfullt.',
+      'title' => 'Takk for din bestilling!',
     ),
     'paypal' => 
     array (
-      'title' => 'Takk for betalingen!',
       'description' => 'Din betaling ble gjennomført suksessfullt.',
+      'title' => 'Takk for betalingen!',
+    ),
+    'vipps' => 
+    array (
+      'description' => 'Din betaling ble gjennomført suksessfullt.',
+      'title' => 'Takk for betalingen!',
+    ),
+    'workshop' => 
+    array (
+      'description' => 'Vi gleder oss til skriveverksted. Du har fått tilsendt faktura til din registrerte e-postadresse. Du kan også finne faktura inne på min side. Dersom du har betalt via paypal gjelder fakturaen kun som en kvittering.',
+      'title' => 'Takk for din bestilling!',
     ),
   ),
   'learner' => 
@@ -1047,6 +1047,7 @@ kvittering.',
     'upgrade-exceed-message' => 'Manuset ditt har overskrevet antall tillatte ord _break_ Oppgraderingen vil koste kroner _exceed_ ,- _break_ _max_words_ ord',
     'close' => 'Lukk',
     'upgrade-script' => 'Oppgrader manus',
+    'approve-date-decline' => 'Avslå',
     'registered-workshop' => 'Påmeldte skriveverksted(er)',
     'workshop-order-text' => 'Klikk her for fremtidige workshoper eller for bestilling',
     'when-text' => 'Når',
@@ -1066,7 +1067,6 @@ kvittering.',
     'approve-date' => 'Godkjenne dato',
     'approve-date-question' => 'Er du sikker på at du vil godkjenne denne avtalen?',
     'approve-date-accept' => 'Aksepter',
-    'approve-date-decline' => 'Avslå',
     'add-coaching-session' => 'Add Coaching Session',
     'my-proposed-date' => 'min foreslåtte dato',
     'use-course-included-session' => 'Use Included Session from Course',
@@ -1160,10 +1160,11 @@ kvittering.',
     'reset-text' => 'Nullstill',
     'documents-and-forms-text' => 'Dokumenter og skjemaer',
     'results-for' => 'Results for',
-    'words-text' => 'Words',
-    'comments' => 'Comments',
-    'comment' => 'Comment',
-    'add-comment' => 'Add Comment',
   ),
   'learner-suggest-date-coaching-time' => 'Foreslå en dato for coaching time',
+  'manuscript-generate-count' => 'Manuscript Generate Count',
+  'show-join-group-question' => 'Show Join Group Question',
+  'days-delay' => 'days delay',
+  'days' => 'Days',
+  'send-test-to' => 'Send test to',
 );
