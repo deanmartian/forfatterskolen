@@ -785,7 +785,7 @@ class LearnerController extends Controller
         $learner    = User::findOrFail($id);
         $to         = $learner->email;
         $from       = 'elin@forfatterskolen.no';//$request->from_email;
-        $message    = nl2br($request->message);
+        $message    = $request->message;
         $subject    = $request->subject;
         //AdminHelpers::send_mail( $to, $subject, $message, $from);
         AdminHelpers::send_email($subject,
