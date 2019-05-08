@@ -54,7 +54,7 @@ class ShopManuscriptsTaken extends Model
     }
 
     public function getExpectedFinishAttribute($value) {
-        return date_format(date_create($value), 'd.m.Y');
+        return $value ? date_format(date_create($value), 'd.m.Y') : NULL;
     }
 
     

@@ -525,6 +525,7 @@ class ShopManuscriptController extends Controller
         $shopManuscriptTaken->description           = NULL;
         $shopManuscriptTaken->is_manuscript_locked  = 0;
         $shopManuscriptTaken->synopsis              = NULL;
+        $shopManuscriptTaken->expected_finish       = NULL;
         $shopManuscriptTaken->save();
         return redirect()->back();
     }
