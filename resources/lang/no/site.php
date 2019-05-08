@@ -972,7 +972,7 @@ kvittering.',
     'remainders' => 'Restbeløp',
     'status' => 'Status',
     'paid' => 'Betalt',
-    'unpaid' => 'UBETALTUbetalt',
+    'unpaid' => 'Ubetalt',
     'renew-all' => 
     array (
       'title' => 'Forny alle kursene for ett år',
