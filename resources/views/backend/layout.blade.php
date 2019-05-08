@@ -64,7 +64,7 @@
                 <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
                 <ul>
                     @foreach($errors->all() as $error)
-                        <li>{{$error}}</li>
+                        <li>{!! $error !!}</li>
                     @endforeach
                 </ul>
             </div>

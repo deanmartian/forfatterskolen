@@ -39,7 +39,7 @@
                                         @if(\App\Http\AdminHelpers::isDate($email->delay))
                                             {{date_format(date_create($email->delay), 'M d, Y')}}
                                         @else
-                                            {{$email->delay}} days delay
+                                            {{$email->delay}} {{ trans('site.days-delay') }}
                                         @endif
                                     </td>
                                     <td>
@@ -81,25 +81,25 @@
                         {{csrf_field()}}
 
                         <div class="form-group">
-                            <label>Subject</label>
+                            <label>{{ trans('site.subject') }}</label>
                             <input type="text" class="form-control" name="subject" required>
                         </div>
 
                         <div class="form-group">
-                            <label>Message</label>
+                            <label>{{ trans('site.message') }}</label>
                             <textarea name="message" cols="30" rows="10" class="form-control editor"></textarea>
                         </div>
 
                         <div class="form-group">
-                            <label style="display: block">From</label>
-                            <input type="text" class="form-control" placeholder="Name" style="width: 49%; display: inline;"
+                            <label style="display: block">{{ trans('site.from') }}</label>
+                            <input type="text" class="form-control" placeholder="{{ trans('site.name') }}" style="width: 49%; display: inline;"
                                 name="from_name">
-                            <input type="email" class="form-control" placeholder="Email" style="width: 49%; display: inline;"
+                            <input type="email" class="form-control" placeholder="{{ trans('site.front.form.email') }}" style="width: 49%; display: inline;"
                                 name="from_email">
                         </div>
 
                         <div class="form-group">
-                            <label>Attachment</label>
+                            <label>{{ trans_choice('site.attachments', 1) }}</label>
                             <input type="file" class="form-control" name="attachment"
                                    accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
                                    application/msword,
@@ -112,8 +112,8 @@
                         <div class="form-group">
                             <label>{{ trans('site.delay-type') }}</label>
                             <select class="form-control" id="lesson-delay-toggle" name="delay_selector">
-                                <option value="days" selected>Days</option>
-                                <option value="date">Date</option>
+                                <option value="days" selected>{{ trans('site.days') }}</option>
+                                <option value="date">{{ trans('site.date') }}</option>
                             </select>
                         </div>
 
@@ -122,9 +122,14 @@
                             <div class="input-group">
                                 <input type="number" class="form-control" name="delay" id="lesson-delay" min="0" required>
                                 <span class="input-group-addon lesson-delay-text" id="basic-addon2">
-                                    days
+                                    {{ strtolower(trans('site.days')) }}
 						  	    </span>
                             </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ trans('site.send-test-to') }}</label>
+                            <input type="email" class="form-control" name="send_to">
                         </div>
 
                         <div class="text-right">

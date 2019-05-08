@@ -7,6 +7,7 @@ use App\EmailOut;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use \Illuminate\Http\Request;
+use Illuminate\Support\MessageBag;
 
 class EmailOutController extends Controller {
 
@@ -57,8 +58,22 @@ class EmailOutController extends Controller {
 
 
         EmailOut::create($data);
+
+        $notif = AdminHelpers::createMessageBag('Email out updated successfully.');
+        if ($request->send_to) {
+            $subject = $request->subject;
+            $from = 'post@forfatterskolen.no';
+            $to = $request->send_to;
+            $content = $request->message;
+            $messageBag = new MessageBag();
+            $messageBag->add('errors', 'Email out updated successfully.');
+            $messageBag->add('errors', "Email sent to ".$to);
+            $notif = $messageBag;
+            AdminHelpers::send_email($subject, $from, $to, $content);
+        }
+
         return redirect()->back()->with([
-            'errors' => AdminHelpers::createMessageBag('Email out created successfully.'),
+            'errors' => $notif,
             'alert_type' => 'success'
         ]);
     }
@@ -107,8 +122,21 @@ class EmailOutController extends Controller {
         $email_out->update($data);
         $email_out->save();
 
+        $notif = AdminHelpers::createMessageBag('Email out updated successfully.');
+        if ($request->send_to) {
+            $subject = $email_out->subject;
+            $from = 'post@forfatterskolen.no';
+            $to = $request->send_to;
+            $content = $email_out->message;
+            $messageBag = new MessageBag();
+            $messageBag->add('errors', 'Email out updated successfully.');
+            $messageBag->add('errors', "Email sent to ".$to);
+            $notif = $messageBag;
+            AdminHelpers::send_email($subject, $from, $to, $content);
+        }
+
         return redirect()->back()->with([
-            'errors' => AdminHelpers::createMessageBag('Email out updated successfully.'),
+            'errors' => $notif,
             'alert_type' => 'success'
         ]);
     }
