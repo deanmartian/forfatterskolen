@@ -39,6 +39,15 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
         }
 
+        $this->app->singleton('Bambora', function() {
+            return (object) [
+                'username' => config('services.bambora.access_key').'@'.config('services.bambora.merchant_number'),
+                'password' => config('services.bambora.secret_key'),
+                'credentials' => base64_encode(config('services.bambora.access_key').
+                    '@'.config('services.bambora.merchant_number').':'.config('services.bambora.secret_key'))
+            ];
+        });
+
         /*
          * uncomment this for the server that uses public_thml
          * $this->app->bind('path.public', function() {

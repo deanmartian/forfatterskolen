@@ -9,103 +9,127 @@
 	<div class="checkout-page">
 		<div class="container">
 			<div class="row">
-					<div class="col-lg-8">
-						<div class="panel panel-default">
-							@if(Auth::guest())
+				<div class="col-lg-8">
+					<div class="panel panel-default">
+						@if(Auth::guest())
 							{{--<div>
 								Allerede elev? Klikk <a href="#" data-toggle="collapse" data-target="#checkoutLogin"
 								class="font-barlow-regular">her</a> for å logge inn.
 							</div>
 							<form id="checkoutLogin" class="collapse @if($errors->first('login_error')) fade in @endif" action="{{route('frontend.login.checkout.store')}}" method="POST">--}}
-								<form id="checkoutLogin" action="{{route('frontend.login.checkout.store')}}" method="POST">
+							<form id="checkoutLogin" action="{{route('frontend.login.checkout.store')}}" method="POST">
 								{{csrf_field()}}
-									<div class="row">
-										<div class="col-sm-12">
+								<div class="row">
+									<div class="col-sm-12">
 											<span>
-												Er du allerede registrert hos oss må du logge inn her
+												{{ trans('site.front.form.already-registered-text') }}
 											</span>
-										</div>
 									</div>
+								</div>
 								<div class="row">
 									<div class="form-group col-sm-4">
-										<input type="email" name="email" placeholder="Epost-adresse" class="form-control" value="{{old('email')}}" required>
-										<p style="margin-top: 7px;"><a href="{{ route('auth.login.show') }}?t=passwordreset" tabindex="-1">Glemt Passord?</a></p>
+										<input type="email" name="email" placeholder="{{ trans('site.front.form.email-address') }}"
+											   class="form-control" value="{{old('email')}}" required>
+										<p style="margin-top: 7px;"><a href="{{ route('auth.login.show') }}?t=passwordreset"
+																	   tabindex="-1">
+												{{ trans('site.front.form.reset-password') }}?</a></p>
 									</div>
 									<div class="form-group col-sm-4">
-										<input type="password" name="password" placeholder="Passord" class="form-control" required>
+										<input type="password" name="password" placeholder="{{ trans('site.front.form.password')}}"
+											   class="form-control" required>
 									</div>
 									<div class="form-group col-sm-4">
-										<button type="submit" class="btn site-btn-global">Login</button>
+										<button type="submit" class="btn site-btn-global">
+											{{ trans('site.front.form.login')}}
+										</button>
 									</div>
 								</div>
 							</form>
-							@endif
-							@if ( $errors->any() )
-								<div class="col-sm-12">
-									<div class="alert alert-danger mb-0">
-										<ul>
-											@foreach($errors->all() as $error)
-												<li>{!! $error !!}</li>
-											@endforeach
-										</ul>
-									</div>
-									<br />
+						@endif
+						@if ( $errors->any() )
+							<div class="col-sm-12">
+								<div class="alert alert-danger mb-0">
+									<ul>
+										@foreach($errors->all() as $error)
+											<li>{!! $error !!}</li>
+										@endforeach
+									</ul>
 								</div>
-							@endif
-							<form class="form-theme" method="POST" action="{{route('front.course.place_order_test', ['id' => $course->id])}}"
-								  id="place_order_form">
-								{{csrf_field()}}
-							<h2>Bestillingsskjema for {{$course->title}}</h2>
-							<div class="panel-heading">Brukerinformasjon</div>
+								<br />
+							</div>
+						@endif
+						<form class="form-theme" method="POST" action="{{--{{route('front.course.place_order', ['id' => $course->id])}}--}}"
+							  id="place_order_form">
+							{{csrf_field()}}
+							<h2>
+								{{ str_replace('_title_', $course->title, trans('site.front.form.book-form-for')) }}
+							</h2>
+							<div class="panel-heading">{{ trans('site.front.form.user-information') }}</div>
 							<div class="panel-body px-0">
 								<div class="form-group">
-									<label for="email" class="control-label">E-postadresse</label>
+									<label for="email" class="control-label">
+										{{ trans('site.front.form.email-address') }}
+									</label>
 									<input type="email" id="email" class="form-control large-input" name="email" required
 										   @if(Auth::guest()) value="{{old('email')}}" @else value="{{Auth::user()->email}}"
-										   readonly @endif placeholder="E-postadresse">
+										   readonly @endif placeholder="{{ trans('site.front.form.email-address') }}">
 								</div>
 								<div class="form-group row">
 									<div class="col-md-6">
-										<label for="first_name" class="control-label">Fornavn</label>
+										<label for="first_name" class="control-label">
+											{{ trans('site.front.form.first-name') }}
+										</label>
 										<input type="text" id="first_name" class="form-control large-input" name="first_name" required
 											   @if(Auth::guest()) value="{{old('first_name')}}" @else
-											   value="{{Auth::user()->first_name}}" readonly @endif placeholder="Fornavn">
+											   value="{{Auth::user()->first_name}}" readonly @endif
+											   placeholder="{{ trans('site.front.form.first-name') }}">
 									</div>
 									<div class="col-md-6">
-										<label for="last_name" class="control-label">Etternavn</label>
+										<label for="last_name" class="control-label">
+											{{ trans('site.front.form.last-name') }}
+										</label>
 										<input type="text" id="last_name" class="form-control large-input" name="last_name" required
 											   @if(Auth::guest()) value="{{old('last_name')}}" @else
-											   value="{{Auth::user()->last_name}}" readonly @endif placeholder="Etternavn">
+											   value="{{Auth::user()->last_name}}" readonly @endif
+											   placeholder="{{ trans('site.front.form.last-name') }}">
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="street" class="control-label">Gate</label>
+									<label for="street" class="control-label">
+										{{ trans('site.front.form.street') }}
+									</label>
 									<input type="text" id="street" class="form-control large-input" name="street" required
 										   @if(Auth::guest()) value="{{old('last_name')}}"
 										   @else value="{{Auth::user()->address['street']}}" @endif>
 								</div>
 								<div class="form-group row">
 									<div class="col-md-6">
-										<label for="zip" class="control-label">Postnummer</label>
+										<label for="zip" class="control-label">{{ trans('site.front.form.zip') }}</label>
 										<input type="text" id="zip" class="form-control large-input" name="zip" required
 											   @if(Auth::guest()) value="{{old('zip')}}"
 											   @else value="{{Auth::user()->address['zip']}}" @endif>
 									</div>
 									<div class="col-md-6">
-										<label for="city" class="control-label">Poststed</label>
+										<label for="city" class="control-label">
+											{{ trans('site.front.form.city') }}
+										</label>
 										<input type="text" id="city" class="form-control" name="city" required @if(Auth::guest()) value="{{old('city')}}" @else value="{{Auth::user()->address['city']}}" @endif>
 									</div>
 								</div>
 								<div class="form-group row">
 									<div class="col-md-6">
-										<label for="phone" class="control-label">Telefonnummer</label>
+										<label for="phone" class="control-label">
+											{{ trans('site.front.form.phone-number') }}
+										</label>
 										<input type="text" id="phone" class="form-control large-input" name="phone" required
 											   @if(Auth::guest()) value="{{old('phone')}}"
 											   @else value="{{Auth::user()->address['phone']}}" @endif>
 									</div>
 									@if(Auth::guest())
 										<div class="col-md-6">
-											<label for="password" class="control-label">Lag et passord</label>
+											<label for="password" class="control-label">
+												{{ trans('site.front.form.create-password') }}
+											</label>
 											<input type="password" id="password" class="form-control large-input"
 												   name="password" required>
 										</div>
@@ -115,253 +139,290 @@
 									@if(!Auth::guest())
 										<div class="col-md-6 custom-checkbox">
 											<input type="checkbox" name="update_address" id="update_address" checked>
-											<label for="update_address" class="control-label">Update Address</label>
+											<label for="update_address" class="control-label">
+												{{ trans('site.front.form.update-address') }}
+											</label>
 										</div>
 									@else
 										<div class="col-md-6">
 											<a href="{{ route('auth.login.google') }}" class="loginBtn loginBtn--google btn">
-												Logg inn med Google
+												{{ trans('site.front.form.login-with-google') }}
 											</a>
 
 											<a href="{{ route('auth.login.facebook') }}" class="loginBtn loginBtn--facebook btn">
-												Logg inn med Facebook
+												{{ trans('site.front.form.login-with-facebook') }}
 											</a>
 										</div>
 									@endif
 								</div>
 							</div> <!-- end panel-body -->
-						</div> <!-- end panel -->
-					</div>
+					</div> <!-- end panel -->
+				</div>
 
-					<?php $hasPaidCourse = false; ?>
-					@if( !Auth::guest() )
-						<?php
-						// check if course bought is not expired yet
-						foreach( Auth::user()->coursesTakenNotOld as $courseTaken ) :
-							if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
-								$hasPaidCourse = true;
-								break;
-							endif;
-						endforeach;
-						?>
-					@endif
-					<div class="col-lg-4">
-						<!-- Payment Details -->
-						<div class="panel panel-default mb-0">
-							<div class="panel-heading-underlined pt-0">Kurspakke</div>
-							<div class="panel-body px-0 pb-0">
-								@foreach($course->packages as $k => $package)
-									<?php
-									$full_payment_price = $package->full_payment_price;
-									$months_3_price = $package->months_3_price;
-									$months_6_price = $package->months_6_price;
-									$months_12_price = $package->months_12_price;
+                <?php $hasPaidCourse = false; ?>
+				@if( !Auth::guest() )
+                    <?php
+                    // check if course bought is not expired yet
+                    foreach( Auth::user()->coursesTakenNotOld as $courseTaken ) :
+                        if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
+                            if ($courseTaken->package->course->is_free != 1) {
+                                $hasPaidCourse = true;
+                            }
+                            break;
+                        endif;
+                    endforeach;
+                    ?>
+				@endif
+				<div class="col-lg-4">
+					<!-- Payment Details -->
+					<div class="panel panel-default mb-0">
+						<div class="panel-heading-underlined pt-0">
+							{{ trans('site.front.form.course-package') }}
+						</div>
+						<div class="panel-body px-0 pb-0">
+							@foreach($course->packages as $k => $package)
+                                <?php
+                                $full_payment_price = $package->full_payment_price;
+                                $months_3_price = $package->months_3_price;
+                                $months_6_price = $package->months_6_price;
+                                $months_12_price = $package->months_12_price;
 
-									$full_payment_sale_price = $package->full_payment_sale_price;
-									$months_3_sale_price = $package->months_3_sale_price;
-									$months_6_sale_price = $package->months_6_sale_price;
-									$months_12_sale_price = $package->months_12_sale_price;
+                                $full_payment_sale_price = $package->full_payment_sale_price;
+                                $months_3_sale_price = $package->months_3_sale_price;
+                                $months_6_sale_price = $package->months_6_sale_price;
+                                $months_12_sale_price = $package->months_12_sale_price;
 
-									$today 			= \Carbon\Carbon::today()->format('Y-m-d');
-									$fromFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
-									$toFull 			= \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
-									$isBetweenFull 	= (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
+                                $today 			= \Carbon\Carbon::today()->format('Y-m-d');
+                                $fromFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
+                                $toFull 			= \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
+                                $isBetweenFull 	= (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
 
-									$fromMonths3 			= \Carbon\Carbon::parse($package->months_3_sale_price_from)->format('Y-m-d');
-									$toMonths3 			= \Carbon\Carbon::parse($package->months_3_sale_price_to)->format('Y-m-d');
-									$isBetweenMonths3 	= (($today >= $fromMonths3) && ($today <= $toMonths3)) ? 1 : 0;
+                                $fromMonths3 			= \Carbon\Carbon::parse($package->months_3_sale_price_from)->format('Y-m-d');
+                                $toMonths3 			= \Carbon\Carbon::parse($package->months_3_sale_price_to)->format('Y-m-d');
+                                $isBetweenMonths3 	= (($today >= $fromMonths3) && ($today <= $toMonths3)) ? 1 : 0;
 
-									$fromMonths6 			= \Carbon\Carbon::parse($package->months_6_sale_price_from)->format('Y-m-d');
-									$toMonths6 			= \Carbon\Carbon::parse($package->months_6_sale_price_to)->format('Y-m-d');
-									$isBetweenMonths6 	= (($today >= $fromMonths6) && ($today <= $toMonths6)) ? 1 : 0;
+                                $fromMonths6 			= \Carbon\Carbon::parse($package->months_6_sale_price_from)->format('Y-m-d');
+                                $toMonths6 			= \Carbon\Carbon::parse($package->months_6_sale_price_to)->format('Y-m-d');
+                                $isBetweenMonths6 	= (($today >= $fromMonths6) && ($today <= $toMonths6)) ? 1 : 0;
 
-									$fromMonths12 		= \Carbon\Carbon::parse($package->months_12_sale_price_from)->format('Y-m-d');
-									$toMonths12 			= \Carbon\Carbon::parse($package->months_12_sale_price_to)->format('Y-m-d');
-									$isBetweenMonths12 	= (($today >= $fromMonths12) && ($today <= $toMonths12)) ? 1 : 0;
+                                $fromMonths12 		= \Carbon\Carbon::parse($package->months_12_sale_price_from)->format('Y-m-d');
+                                $toMonths12 			= \Carbon\Carbon::parse($package->months_12_sale_price_to)->format('Y-m-d');
+                                $isBetweenMonths12 	= (($today >= $fromMonths12) && ($today <= $toMonths12)) ? 1 : 0;
 
-									if( $hasPaidCourse && $package->has_student_discount) {
-										if($course->type == "Single") {
-											$full_payment_price = $package->full_payment_price - 500;
-											$months_3_price = $package->months_3_price - 500;
-											$months_6_price = $package->months_6_price - 500;
-											$months_12_price = $package->months_12_price - 500;
+                                if( $hasPaidCourse && $package->has_student_discount) {
+                                    if($course->type == "Single") {
+                                        $full_payment_price = $package->full_payment_price - 500;
+                                        $months_3_price = $package->months_3_price - 500;
+                                        $months_6_price = $package->months_6_price - 500;
+                                        $months_12_price = $package->months_12_price - 500;
 
-											$full_payment_sale_price = $package->full_payment_sale_price - 500;
-											$months_3_sale_price = $package->months_3_sale_price - 500;
-											$months_6_sale_price = $package->months_6_sale_price - 500;
-											$months_12_sale_price = $package->months_12_sale_price - 500;
-										}
+                                        $full_payment_sale_price = $package->full_payment_sale_price - 500;
+                                        $months_3_sale_price = $package->months_3_sale_price - 500;
+                                        $months_6_sale_price = $package->months_6_sale_price - 500;
+                                        $months_12_sale_price = $package->months_12_sale_price - 500;
+                                    }
 
-										if($course->type == "Group") {
-											$full_payment_price = $package->full_payment_price - 1000;
-											$months_3_price = $package->months_3_price - 1000;
-											$months_6_price = $package->months_6_price - 1000;
-											$months_12_price = $package->months_12_price - 1000;
+                                    if($course->type == "Group") {
+                                        $full_payment_price = $package->full_payment_price - 1000;
+                                        $months_3_price = $package->months_3_price - 1000;
+                                        $months_6_price = $package->months_6_price - 1000;
+                                        $months_12_price = $package->months_12_price - 1000;
 
-											$full_payment_sale_price = $package->full_payment_sale_price - 1000;
-											$months_3_sale_price = $package->months_3_sale_price - 1000;
-											$months_6_sale_price = $package->months_6_sale_price - 1000;
-											$months_12_sale_price = $package->months_12_sale_price - 1000;
-										}
+                                        $full_payment_sale_price = $package->full_payment_sale_price - 1000;
+                                        $months_3_sale_price = $package->months_3_sale_price - 1000;
+                                        $months_6_sale_price = $package->months_6_sale_price - 1000;
+                                        $months_12_sale_price = $package->months_12_sale_price - 1000;
+                                    }
 
-									}
-									?>
-									<div class="package-option custom-radio">
-										<input type="radio" name="package_id"
-											   id="{{ $package->variation }}"
-											   value="{{$package->id}}"
-											   data-full_payment_price="{{ FrontendHelpers::currencyFormat($full_payment_price) }}"
-											   data-months_3_price="{{ FrontendHelpers::currencyFormat($months_3_price) }}"
-											   data-months_6_price="{{ FrontendHelpers::currencyFormat($months_6_price) }}"
-											   data-full_payment_price_number="{{ $full_payment_price }}"
-											   data-months_3_price_number="{{ $months_3_price }}"
-											   data-months_6_price_number="{{ $months_6_price }}"
-											   data-months_12_price_number="{{ $months_12_price }}"
+                                }
+                                ?>
+								<div class="package-option custom-radio">
+									<input type="radio" name="package_id"
+										   id="{{ $package->variation }}"
+										   value="{{$package->id}}"
+										   data-full_payment_price="{{ FrontendHelpers::currencyFormat($full_payment_price) }}"
+										   data-months_3_price="{{ FrontendHelpers::currencyFormat($months_3_price) }}"
+										   data-months_6_price="{{ FrontendHelpers::currencyFormat($months_6_price) }}"
+										   data-full_payment_price_number="{{ $full_payment_price }}"
+										   data-months_3_price_number="{{ $months_3_price }}"
+										   data-months_6_price_number="{{ $months_6_price }}"
+										   data-months_12_price_number="{{ $months_12_price }}"
 
-											   @if ($isBetweenFull && $package->full_payment_sale_price)
-											   data-full_payment_sale_price = "{{ FrontendHelpers::currencyFormat($full_payment_sale_price) }}"
-											   data-full_payment_sale_price_number = "{{ $full_payment_sale_price }}"
-											   @endif
+										   @if ($isBetweenFull && $package->full_payment_sale_price)
+										   data-full_payment_sale_price = "{{ FrontendHelpers::currencyFormat($full_payment_sale_price) }}"
+										   data-full_payment_sale_price_number = "{{ $full_payment_sale_price }}"
+										   @endif
 
-											   @if ($isBetweenMonths3 && $package->months_3_sale_price)
-											   data-months_3_sale_price = "{{ FrontendHelpers::currencyFormat($months_3_sale_price) }}"
-											   data-months_3_sale_price_number = "{{ $months_3_sale_price }}"
-											   @endif
+										   @if ($isBetweenMonths3 && $package->months_3_sale_price)
+										   data-months_3_sale_price = "{{ FrontendHelpers::currencyFormat($months_3_sale_price) }}"
+										   data-months_3_sale_price_number = "{{ $months_3_sale_price }}"
+										   @endif
 
-											   @if ($isBetweenMonths6 && $package->months_6_sale_price)
-											   data-months_6_sale_price = "{{ FrontendHelpers::currencyFormat($months_6_sale_price) }}"
-											   data-months_6_sale_price_number = "{{ $months_6_sale_price }}"
-											   @endif
+										   @if ($isBetweenMonths6 && $package->months_6_sale_price)
+										   data-months_6_sale_price = "{{ FrontendHelpers::currencyFormat($months_6_sale_price) }}"
+										   data-months_6_sale_price_number = "{{ $months_6_sale_price }}"
+										   @endif
 
-											   @if ($isBetweenMonths12 && $package->months_12_sale_price)
-											   data-months_12_sale_price = "{{ FrontendHelpers::currencyFormat($months_12_sale_price) }}"
-											   data-months_12_sale_price_number = "{{ $months_12_sale_price }}"
-											   @endif
+										   @if ($isBetweenMonths12 && $package->months_12_sale_price)
+										   data-months_12_sale_price = "{{ FrontendHelpers::currencyFormat($months_12_sale_price) }}"
+										   data-months_12_sale_price_number = "{{ $months_12_sale_price }}"
+										   @endif
 
-											   required>
-										<label for="{{$package->variation}}">{{$package->variation}} </label>
-									</div>
+										   required>
+									<label for="{{$package->variation}}">{{$package->variation}} </label>
+								</div>
+							@endforeach
+
+						</div>
+
+						<div class="panel-heading-underlined">
+							{{ trans('site.front.form.payment-method') }}
+						</div>
+						<div class="panel-body px-0 pb-0">
+							<select class="form-control" name="payment_mode_id" required data-size="15">
+								@foreach(\App\Http\FrontendHelpers::paymentModes(true) as $paymentMode)
+									<option value="{{$paymentMode->id}}" data-mode="{{ $paymentMode->mode }}">{{$paymentMode->mode}}</option>
 								@endforeach
+							</select>
+							{{--<em><small>Merk: Vi godtar kun full betaling på PAYPAL</small></em>--}}
+						</div>
 
-							</div>
+						<div class="panel-heading-underlined">
+							{{ trans('site.front.form.discount-coupon') }}
+						</div>
+						<div class="panel-body px-0 pb-0">
+							<input type="text" name="coupon" class="form-control">
+						</div>
 
-							<div class="panel-heading-underlined">Betalingsmetode</div>
-							<div class="panel-body px-0 pb-0">
-								<select class="form-control" name="payment_mode_id" required data-size="15">
-									@foreach(App\PaymentMode::get() as $paymentMode)
-										<option value="{{$paymentMode->id}}" data-mode="{{ $paymentMode->mode }}">{{$paymentMode->mode}}</option>
+						<div class="panel-heading-underlined">
+							{{ trans('site.front.form.payment-plan') }}
+						</div>
+						<div class="panel-body px-0 pb-0">
+							<div class="row">
+								<div class="col-sm-12" id="paymentPlanContainer">
+									@foreach(App\PaymentPlan::orderBy('division', 'asc')->get() as $paymentPlan)
+										<div class="payment-option custom-radio col-sm-6 px-0">
+											<input type="radio" @if($paymentPlan->plan == 'Full Payment') checked @endif
+											name="payment_plan_id" value="{{$paymentPlan->id}}" data-plan="{{trim($paymentPlan->plan)}}"
+												   id="{{$paymentPlan->plan}}" required onchange="payment_plan_change(this)"
+												   data-plan-id="{{ $paymentPlan->id }}">
+											<label for="{{$paymentPlan->plan}}">{{$paymentPlan->plan}} </label>
+										</div>
 									@endforeach
-								</select>
-								{{--<em><small>Merk: Vi godtar kun full betaling på PAYPAL</small></em>--}}
-							</div>
-
-							<div class="panel-heading-underlined">Rabattkupong</div>
-							<div class="panel-body px-0 pb-0">
-								<input type="text" name="coupon" class="form-control">
-							</div>
-
-							<div class="panel-heading-underlined">Betalingsplan</div>
-							<div class="panel-body px-0 pb-0">
-								<div class="row">
-									<div class="col-sm-12" id="paymentPlanContainer">
-										@foreach(App\PaymentPlan::orderBy('division', 'asc')->get() as $paymentPlan)
-											<div class="payment-option custom-radio col-sm-6 px-0">
-												<input type="radio" @if($paymentPlan->plan == 'Full Payment') checked @endif
-												name="payment_plan_id" value="{{$paymentPlan->id}}" data-plan="{{trim($paymentPlan->plan)}}"
-													   id="{{$paymentPlan->plan}}" required onchange="payment_plan_change(this)">
-												<label for="{{$paymentPlan->plan}}">{{$paymentPlan->plan}} </label>
-											</div>
-									  @endforeach
-									</div>
-									<div class="col-sm-12" style="margin-top: 8px" id="splitInvoiceContainer">
-										<div class="row">
-											<div class="col-sm-12">
-												<span class="split-faktura">Månedlig faktura?*</span>
-											</div>
-											<div class="payment-option custom-radio col-sm-6">
-												<input type="radio" name="split_invoice" value="1" disabled required
-												id="yes_option">
-												<label for="yes_option">Ja</label>
-											</div>
-											<div class="payment-option custom-radio col-sm-6">
-												<input type="radio" name="split_invoice" value="0" disabled required
-												id="no_option">
-												<label for="no_option">Nei</label>
-											</div>
+								</div>
+								<div class="col-sm-12" style="margin-top: 8px" id="splitInvoiceContainer">
+									<div class="row">
+										<div class="col-sm-12">
+												<span class="split-faktura">
+													{{ trans('site.front.form.monthly-payment') }}?*</span>
+										</div>
+										<div class="payment-option custom-radio col-sm-6">
+											<input type="radio" name="split_invoice" value="1" disabled required
+												   id="yes_option">
+											<label for="yes_option">
+												{{ trans('site.front.yes') }}
+											</label>
+										</div>
+										<div class="payment-option custom-radio col-sm-6">
+											<input type="radio" name="split_invoice" value="0" disabled required
+												   id="no_option">
+											<label for="no_option">
+												{{ trans('site.front.no') }}
+											</label>
 										</div>
 									</div>
 								</div>
+							</div>
 
-								<div class="row">
+							<div class="row">
 									<span class="col-sm-12 note">
-										*Du kan velge om du vil ha faktura en gang i måneden, eller
-										èn faktura der du kan betale inn ønsket beløp innen forfallsdatoen
+										*{{ trans('site.front.form.invoice-note') }}
 									</span>
 
-									<div class="col-sm-12 margin-top custom-checkbox">
-										<input type="checkbox" name="agree_terms" id="agree_terms" required>
-										<label for="agree_terms">Jeg aksepterer</label>
-										<a href="{{ route('front.terms', 'course-terms') }}"
-										   target="_new">kjøpsvilkårene</a>
-									</div>
+								<div class="col-sm-12 margin-top custom-checkbox">
+									<input type="checkbox" name="agree_terms" id="agree_terms" required>
+									{!! str_replace(['_start_label_', '_end_label_', '_start_link_','_end_link_'],
+                                    ['<label for="agree_terms">',
+                                    '</label>',
+                                    '<a href="'.route('front.terms', 'course-terms').'" target="_new">','</a>'],
+                                    trans('site.front.form.accept-terms')) !!}
 								</div>
-							</div> <!-- end panel-body -->
+							</div>
+						</div> <!-- end panel-body -->
 
 
-							<div class="margin-bottom checkout-total mt-3">
-								@if( $hasPaidCourse && $package->has_student_discount)
-									@if($course->type == "Single")
-										<strong>Du har en rabatt som elev på Kr 500,00</strong> <br />
-									@endif
-
-									@if($course->type == "Group")
-										<strong>Du har en rabatt som elev på Kr 1000,00</strong> <br /> <br>
-									@endif
+						<div class="margin-bottom checkout-total mt-3">
+							@if( $hasPaidCourse && $package->has_student_discount)
+								@if($course->type == "Single")
+									<strong>{{ trans('site.front.form.student-discount-500') }}</strong> <br />
 								@endif
 
-								<h3>Totalt:
+								@if($course->type == "Group")
+									<strong>{{ trans('site.front.form.student-discount-1000') }}</strong> <br /> <br>
+								@endif
+							@endif
 
-									<?php $standard_price = $course->packages->where('variation', 'Standard Kurs')->first(); ?>
-									@if( $standard_price )
-										<span class="theme-text font-barlow-regular total-display">
-											@if( $hasPaidCourse && $package->has_student_discount)
-												{{--check if course is Webinar-pakke and apply 500 only--}}
-												@if($course->type == "Single")
-													{{ FrontendHelpers::currencyFormat($standard_price->full_payment_price - 500) }}
-												@endif
-
-												@if($course->type == "Group")
-													{{ FrontendHelpers::currencyFormat($standard_price->full_payment_price - 1000) }}
-												@endif
-											@else
-												{{ FrontendHelpers::currencyFormat($standard_price->full_payment_price) }}
-											@endif
-										</span>
-									@else
-										<span class="theme-text font-barlow-regular total-display">
-											@if( $hasPaidCourse && $package->has_student_discount)
-												@if($course->type == "Single")
-													{{ FrontendHelpers::currencyFormat($course->packages[0]->full_payment_price - 500) }}
-												@endif
-
-												@if($course->type == "Group")
-													{{ FrontendHelpers::currencyFormat($course->packages[0]->full_payment_price - 1000) }}
-												@endif
-											@else
-												{{ FrontendHelpers::currencyFormat($course->packages[0]->full_payment_price) }}
-											@endif
-										</span>
-									@endif
+							<div id="price-wrapper" class="hide">
+								<h3>{{ trans('site.front.price') }}:
+									<span id="price-display" class="theme-text font-barlow-regular"></span>
 								</h3>
-									<div id="discount-wrapper" class="hide" style="margin-top: -10px">
-										<h3>Rabatt: <span id="discount-display" class="theme-text font-barlow-regular"></span></h3>
-									</div>
-
-									<button type="submit" class="btn site-btn-global-w-arrow" id="submitOrder">Bestill</button>
 							</div>
-						</div> <!-- end panel-default -->
 
-					</div> <!-- end col-md-4 -->
+							<div id="discount-wrapper" class="hide">
+								<h3>{{ trans('site.front.discount') }}:
+									<span id="discount-display" class="theme-text font-barlow-regular"></span></h3>
+							</div>
+
+							<h3>{{ trans('site.front.total') }}:
+
+                                <?php $standard_price = $course->packages->where('variation', 'Standard Kurs')->first(); ?>
+								@if( $standard_price )
+									<span class="theme-text font-barlow-regular total-display">
+											@if( $hasPaidCourse && $package->has_student_discount)
+											{{--check if course is Webinar-pakke and apply 500 only--}}
+											@if($course->type == "Single")
+												{{ FrontendHelpers::currencyFormat($standard_price->full_payment_price - 500) }}
+											@endif
+
+											@if($course->type == "Group")
+												{{ FrontendHelpers::currencyFormat($standard_price->full_payment_price - 1000) }}
+											@endif
+										@else
+											{{ FrontendHelpers::currencyFormat($standard_price->full_payment_price) }}
+										@endif
+										</span>
+								@else
+									<span class="theme-text font-barlow-regular total-display">
+											@if( $hasPaidCourse && $package->has_student_discount)
+											@if($course->type == "Single")
+												{{ FrontendHelpers::currencyFormat($course->packages[0]->full_payment_price - 500) }}
+											@endif
+
+											@if($course->type == "Group")
+												{{ FrontendHelpers::currencyFormat($course->packages[0]->full_payment_price - 1000) }}
+											@endif
+										@else
+											{{ FrontendHelpers::currencyFormat($course->packages[0]->full_payment_price) }}
+										@endif
+										</span>
+								@endif
+							</h3>
+
+							<h3 class="mt-0" id="monthly-price">
+								{{ trans('site.front.per-month') }}: <span class="theme-text font-barlow-regular"></span>
+							</h3>
+
+							<button type="submit" class="btn site-btn-global-w-arrow" id="submitOrder">
+								{{ trans('site.front.buy') }}
+							</button>
+
+								<button type="button" class="btn site-btn-global-w-arrow mt-3" id="proceedCheckout">
+									Proceed Checkout
+								</button>
+						</div>
+					</div> <!-- end panel-default -->
+
+				</div> <!-- end col-md-4 -->
 				</form>
 			</div>
 		</div>
@@ -386,7 +447,32 @@
 @stop
 
 @section('scripts')
+	<script src="https://static.bambora.com/checkout-sdk-web/latest/checkout-sdk-web.min.js"></script>
 	<script>
+		let proceed_checkout_link = '{{ route('front.course.proceed-checkout', $course->id) }}';
+		$("#proceedCheckout").click(function(){
+            let form_arr = $("#place_order_form").serialize();
+
+            $.post(proceed_checkout_link, form_arr).done(function(response){
+                if (response.meta.result) {
+                    console.log(response);
+                    console.log("success");
+                    var checkout = new Bambora.ModalCheckout(response.token);
+                    checkout.on(
+                        Bambora.Event.Authorize,
+                        function(payload) {
+                            console.log(payload.data.txnid);
+                            // The transaction ID is logged to the console upon authorize.
+                        }
+                    );
+
+                    checkout.show();
+				} else {
+                    console.log(response.meta.message.enduser);
+				}
+			})
+		});
+
         $(document).ready(function(){
             $("#place_order_form").on('submit',function(){
                 $("#processOrderModal").modal('show');
@@ -399,14 +485,24 @@
 
             let course_id = '<?php echo $course->id?>';
             let count_package_change = 0; // used to determine the onload
+            let onload_package_id = parseInt('{{ Request::has('package') ? Request::get('package') : 0 }}');
 
             setTimeout(function(){
-                if ($(".package-option").find('input[name=package_id]').length > 1) {
-                    $(".package-option:nth-child(2)").find('input[name=package_id]').attr('checked', true).trigger('change');
+
+                // check if package parameter is set and radio with the value exists
+                let radio_value = $(":radio[value="+onload_package_id+"]");
+                if (onload_package_id > 0 && radio_value.length > 0) {
+                    radio_value.attr('checked', true).trigger('change');
                 } else {
-                    $(".package-option:nth-child(1)").find('input[name=package_id]').attr('checked', true).trigger('change');
+                    if ($(".package-option").find('input[name=package_id]').length > 1) {
+                        $(".package-option:nth-child(2)").find('input[name=package_id]').attr('checked', true).trigger('change');
+                    } else {
+                        $(".package-option:nth-child(1)").find('input[name=package_id]').attr('checked', true).trigger('change');
+                    }
                 }
+
                 $('input:radio[name=payment_plan_id]:first').attr('checked', true).trigger('change');
+
             }, 100);
 
             $('input[name=package_id]').on('change', function(){
@@ -427,16 +523,19 @@
                     new_total = price_value - discount_value;
                 }
 
+                checkSalePrice($(this), 'full_payment_price_number', 'full_payment_sale_price_number', 'full_payment_price');
+
                 $.get('/format_money/'+new_total, {}, function(){}, 'json').done(function(data){
                     let checkout_total = $('.checkout-total');
                     checkout_total.find('span.total-display').text(data);
+                    $("#monthly-price").addClass('hide');
                 });
             });
 
             $('select[name=payment_mode_id]').on('change', function(){
                 let mode = $('option:selected', this).data('mode');
                 let payment_plan_id = $('input:radio[name=payment_plan_id]');
-                if( mode === "Paypal" ) {
+                if( mode === "Paypal" || mode === "Vipps") {
                     payment_plan_id.parent().addClass('disabled');
                     payment_plan_id.prop('disabled', true);
                     payment_plan_id.prop('checked', false);
@@ -444,7 +543,7 @@
                     payment_plan_id.filter('[id="Hele beløpet"]').parent().removeClass('disabled');
                     payment_plan_id.filter('[id="Hele beløpet"]').prop('disabled', false);
 
-                    let price = $('input:radio[name=package_id]:checked').data('full_payment_price');
+                    let price = $('input:radio[name=package_id]:checked').data('full_payment_price_number');
                     $.get('/format_money/'+price, {}, function(){}, 'json').done(function(data){
                         let checkout_total = $('.checkout-total');
                         checkout_total.find('span.total-display').text(data);
@@ -461,13 +560,13 @@
             let doneTypingInterval = 1000;  //time in ms, 5 second for example
             let coupon = $('input[name=coupon]');
 
-			//on keyup, start the countdown
+            //on keyup, start the countdown
             coupon.on('keyup', function () {
                 clearTimeout(typingTimer);
                 typingTimer = setTimeout(checkDiscount, doneTypingInterval);
             });
 
-			//on keydown, clear the countdown
+            //on keydown, clear the countdown
             coupon.on('keydown', function () {
                 clearTimeout(typingTimer);
             });
@@ -476,80 +575,80 @@
             function checkDiscount () {
                 let data = {coupon: coupon.val(), package_id: $('input[name=package_id]:checked').val()};
                 $.get('/course/'+course_id+'/check_discount', data, function(){}, 'json')
-					.fail(function(){
-						$("#discount-wrapper").addClass('hide');
-						alert("Invalid Coupon Code.");
+                    .fail(function(){
+                        $("#discount-wrapper").addClass('hide');
+                        alert("Invalid Coupon Code.");
 
-						let new_total = 0;
-						let checked_payment_plan = $('input[name=payment_plan_id]:checked');
+                        let new_total = 0;
+                        let checked_payment_plan = $('input[name=payment_plan_id]:checked');
 
-						if (checked_payment_plan.length > 0) {
+                        if (checked_payment_plan.length > 0) {
 
-							let plan = checked_payment_plan.data('plan');
-							let price = 0;
+                            let plan = checked_payment_plan.data('plan');
+                            let price = 0;
 
-							if( plan === 'Hele beløpet' ) {
-								//var price = $('#package_select option:selected').data('full_payment_price_number');
-								price = $('input[name=package_id]:checked').data('full_payment_price_number');
-							} else if( plan === '3 måneder' ) {
-								//var price = $('#package_select option:selected').data('months_3_price_number');
-								price = $('input[name=package_id]:checked').data('months_3_price_number');
-							} else if( plan === '6 måneder' ) {
-								//var price = $('#package_select option:selected').data('months_6_price_number');
-								price = $('input[name=package_id]:checked').data('months_6_price_number');
-							}
+                            if( plan === 'Hele beløpet' ) {
+                                //var price = $('#package_select option:selected').data('full_payment_price_number');
+                                price = $('input[name=package_id]:checked').data('full_payment_price_number');
+                            } else if( plan === '3 måneder' ) {
+                                //var price = $('#package_select option:selected').data('months_3_price_number');
+                                price = $('input[name=package_id]:checked').data('months_3_price_number');
+                            } else if( plan === '6 måneder' ) {
+                                //var price = $('#package_select option:selected').data('months_6_price_number');
+                                price = $('input[name=package_id]:checked').data('months_6_price_number');
+                            }
 
-							new_total = price + $("input[name=discount_value]").val();
-						} else {
-							let price = $('#package_select').find('option:selected').data('full_payment_price_number');
+                            new_total = price + $("input[name=discount_value]").val();
+                        } else {
+                            let price = $('#package_select').find('option:selected').data('full_payment_price_number');
 
-							new_total = price + $("input[name=discount_value]").val();
-						}
+                            new_total = price + $("input[name=discount_value]").val();
+                        }
 
-						$.get('/format_money/'+new_total, {}, function(){}, 'json').done(function(data){
-							let checkout_total = $('.checkout-total');
-							checkout_total.find('span.total-display').text(data);
-						});
+                        $.get('/format_money/'+new_total, {}, function(){}, 'json').done(function(data){
+                            let checkout_total = $('.checkout-total');
+                            checkout_total.find('span.total-display').text(data);
+                        });
 
-						$("input[name=discount_value]").val('');
+                        $("input[name=discount_value]").val('');
 
-					})
-					.done(function(data){
-						$("#discount-wrapper").removeClass('hide');
-						$("#discount-display").text(data.discount_text);
-						$("input[name=discount_value]").val(data.discount);
+                    })
+                    .done(function(data){
+                        $("#discount-wrapper").removeClass('hide');
+                        $("#discount-display").text(data.discount_text);
+                        $("input[name=discount_value]").val(data.discount);
 
-						let new_total = 0;
-						let checked_payment_plan = $('input[name=payment_plan_id]:checked');
+                        let new_total = 0;
+                        let checked_payment_plan = $('input[name=payment_plan_id]:checked');
 
-						if (checked_payment_plan.length > 0) {
+                        if (checked_payment_plan.length > 0) {
 
-							let plan = checked_payment_plan.data('plan');
-							let price = 0;
+                            let plan = checked_payment_plan.data('plan');
+                            let price = 0;
 
-							if( plan === 'Hele beløpet' ) {
-								//var price = $('#package_select option:selected').data('full_payment_price_number');
-								price = $('input[name=package_id]:checked').data('full_payment_price_number');
-							} else if( plan === '3 måneder' ) {
-								//var price = $('#package_select option:selected').data('months_3_price_number');
-								price = $('input[name=package_id]:checked').data('months_3_price_number');
-							} else if( plan === '6 måneder' ) {
-								//var price = $('#package_select option:selected').data('months_6_price_number');
-								price = $('input[name=package_id]:checked').data('months_6_price_number');
-							}
+                            if( plan === 'Hele beløpet' ) {
+                                //var price = $('#package_select option:selected').data('full_payment_price_number');
+                                price = $('input[name=package_id]:checked').data('full_payment_price_number');
+                            } else if( plan === '3 måneder' ) {
+                                //var price = $('#package_select option:selected').data('months_3_price_number');
+                                price = $('input[name=package_id]:checked').data('months_3_price_number');
+                            } else if( plan === '6 måneder' ) {
+                                //var price = $('#package_select option:selected').data('months_6_price_number');
+                                price = $('input[name=package_id]:checked').data('months_6_price_number');
+                            }
 
-							new_total = price - data.discount;
-						} else {
-							let price = $('#package_select').find('option:selected').data('full_payment_price_number');
+                            new_total = price - data.discount;
+                        } else {
+                            let price = $('#package_select').find('option:selected').data('full_payment_price_number');
 
-							new_total = price - data.discount;
-						}
+                            new_total = price - data.discount;
+                        }
 
-						$.get('/format_money/'+new_total, {}, function(){}, 'json').done(function(data){
-							let checkout_total = $('.checkout-total');
-							checkout_total.find('span.total-display').text(data);
-						});
-					});
+                        $.get('/format_money/'+new_total, {}, function(){}, 'json').done(function(data){
+                            let checkout_total = $('.checkout-total');
+                            checkout_total.find('span.total-display').text(data);
+                        });
+                    });
             }
 
         });
@@ -565,7 +664,7 @@
                         checked = 'checked';
                     }
                     paymentPlanContainer.find('[type=radio][value='+v.id+']').attr('disabled', false)
-						.closest('.payment-option').show();
+                        .closest('.payment-option').show();
                 });
 
                 paymentPlanContainer.find('.payment-option:first-of-type').find('[type=radio]').prop('checked', true);
@@ -578,9 +677,9 @@
             let plan = $(t).data('plan');
             let new_total = 0;
             let split_invoice = $('input:radio[name=split_invoice]');
-            	split_invoice.prop('disabled', false);
-			let checked_package_id = $('input[name=package_id]:checked');
-			let discount_value = $("input[name=discount_value]").val();
+            split_invoice.prop('disabled', false);
+            let checked_package_id = $('input[name=package_id]:checked');
+            let discount_value = $("input[name=discount_value]").val();
 
             if( plan === 'Hele beløpet' ) {
                 new_total = checked_package_id.attr('data-full_payment_sale_price_number')
@@ -597,6 +696,11 @@
 
                 split_invoice.prop('disabled', true);
                 split_invoice.prop('checked', false);
+
+                // check for sale price
+                checkSalePrice(checked_package_id, 'full_payment_price_number', 'full_payment_sale_price_number', 'full_payment_price');
+                $("#monthly-price").addClass('hide');
+
             } else if( plan === '3 måneder' ) {
                 new_total = checked_package_id.attr('data-months_3_sale_price_number')
                     ? checked_package_id.data('months_3_sale_price_number')
@@ -609,6 +713,9 @@
                 if (discount_value) {
                     new_total = price_value - discount_value;
                 }
+
+                checkSalePrice(checked_package_id, 'months_3_price_number', 'months_3_sale_price_number', 'months_3_price');
+                checkMonthlyPrice(new_total, 3);
             } else if( plan === '6 måneder' ) {
                 new_total = checked_package_id.attr('data-months_6_sale_price_number')
                     ? checked_package_id.data('months_6_sale_price_number')
@@ -621,6 +728,8 @@
                 if (discount_value) {
                     new_total = price_value - discount_value;
                 }
+                checkSalePrice(checked_package_id, 'months_6_price_number', 'months_6_sale_price_number', 'months_6_price');
+                checkMonthlyPrice(new_total,6);
             } else if( plan === '12 måneder' ) {
                 new_total = checked_package_id.attr('data-months_12_sale_price_number')
                     ? checked_package_id.data('months_12_sale_price_number')
@@ -633,10 +742,41 @@
                 if (discount_value) {
                     new_total = price_value - discount_value;
                 }
+                checkSalePrice(checked_package_id, 'months_12_price_number', 'months_12_sale_price_number', 'months_12_price');
+                checkMonthlyPrice(new_total, 12);
             }
             $.get('/format_money/'+new_total, {}, function(){}, 'json').done(function(data){
                 let checkout_total = $('.checkout-total');
                 checkout_total.find('span.total-display').text(data);
+            });
+        }
+
+        function checkSalePrice(checked_package_id, orig, sale, pris) {
+            if (checked_package_id.attr('data-'+sale)) {
+                let orig_price = checked_package_id.data(orig);
+                let sale_price = checked_package_id.data(sale);
+                let discount_price = orig_price - sale_price;
+
+                $("#discount-wrapper").removeClass('hide');
+                $("#price-wrapper").removeClass('hide');
+                $("#price-display").text(checked_package_id.data(pris));
+
+                $.get('/format_money/'+discount_price, {}, function(){}, 'json').done(function(data){
+                    $("#discount-display").text(data);
+                });
+            } else {
+                $("#discount-wrapper").addClass('hide');
+                $("#price-wrapper").addClass('hide');
+            }
+        }
+
+        function checkMonthlyPrice(total_price, divisor) {
+            total_price  = parseFloat(total_price);
+            let monthly_price = total_price/divisor;
+            let rounded = Math.floor(monthly_price);
+            $("#monthly-price").removeClass('hide');
+            $.get('/format_money/'+rounded, {}, function(){}, 'json').done(function(data){
+                $("#monthly-price").find('span').text(data);
             });
         }
 

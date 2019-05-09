@@ -47,4 +47,12 @@ return [
         'redirect' => 'https://www.forfatterskolen.no/auth/login/google/callback',
     ],
 
+    'bambora' => [
+        'secret_key' => 'U4Kj2Ku07AovKcfKnpI9EyiVvvrqri9R1wiX0AxC',
+        'access_key' => '3lKQyd8TYvaBBJ0lWmRR',
+        'merchant_number' => 'T526080101',
+        'encoded_api_key' => 'M2xLUXlkOFRZdmFCQkowbFdtUlI=',
+        'md5_key' => 'SMimSoiCqI'
+    ]
+
 ];
