@@ -1054,7 +1054,8 @@ class LearnerController extends Controller
         if(  $courseTaken || FrontendHelpers::hasLessonAccess($courseTaken, $lesson) ) :
             return view('frontend.learner.lesson_show', compact('lesson', 'course', 'courseTaken', 'lesson_content'));
         endif;
-        return abort('503');
+        return redirect()->route('learner.dashboard');
+        //return abort('503');
     }
 
     /**
