@@ -6,6 +6,9 @@
 
 @section('heading') {{ trans('site.learner.manuscript.title') }} @stop
 
+@section('styles')
+	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+@stop
 
 @section('content')
 <div class="learner-container">
@@ -295,10 +298,18 @@
 							@endforeach
 						</select>
 					</div>
-					<div class="form-group">
+					<div class="form-group synopsis">
 						<label for="">{{ trans('site.front.form.synopsis-optional') }}</label>
 						<input type="file" class="form-control" name="synopsis" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 					</div>
+
+					<div class="form-group synopsis">
+						<label>{{ trans('site.front.form.coaching-time-later-in-manus') }}</label>
+						<input type="checkbox" data-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
+							   class="is-free-toggle" data-off="{{ trans('site.front.no') }}"
+							   name="coaching_time_later">
+					</div>
+
 					<div class="form-group">
 						<label for="">{{ trans('site.front.form.manuscript-description') }}</label>
 						<textarea name="description" id="" cols="30" rows="10" class="form-control"></textarea>
@@ -381,6 +392,7 @@
 @stop
 
 @section('scripts')
+	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
 	var has_exceed = $("input[name=exceed]").length;
 
@@ -408,6 +420,17 @@
 		}
         form.attr('action', action);
 		modal.find('textarea[name=description]').text(fields.description);
+		if (fields.shop_manuscript_id === 9) {
+            modal.find('.synopsis').addClass('hide');
+		} else {
+            modal.find('.synopsis').removeClass('hide');
+
+            if (fields.coaching_time_later) {
+                $("input[name=coaching_time_later]").bootstrapToggle('on');
+			} else {
+                $("input[name=coaching_time_later]").bootstrapToggle('off');
+			}
+        }
 	});
 
     $('.deleteManuscriptBtn').click(function(){

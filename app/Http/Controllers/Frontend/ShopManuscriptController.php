@@ -502,6 +502,7 @@ class ShopManuscriptController extends Controller
         } else {
             $shopManuscriptTaken->genre         = $request->genre;
             $shopManuscriptTaken->description   = $request->description;
+            $shopManuscriptTaken->coaching_time_later = $request->has('coaching_time_later') ? 1 : 0;
             $shopManuscriptTaken->save();
 
             Log::create([
