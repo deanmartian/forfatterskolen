@@ -133,7 +133,9 @@
 		</div> <!-- end global-panel -->
 
 			<div class="text-right">
-				<button class="btn site-btn-global mt-4">{{ trans('site.learner.upgrade') }}</button>
+				<a class="btn site-btn-global mt-4" href="{{ route('learner.upgrade') }}">
+					{{ trans('site.learner.upgrade') }}
+				</a>
 			</div>
 
 	</div> <!-- end container -->

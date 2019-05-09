@@ -4,6 +4,10 @@
 <title>Checkout &rsaquo; Forfatterskolen</title>
 @stop
 
+@section('styles')
+	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+@stop
+
 @section('content')
 
 	<div class="checkout-page">
@@ -118,6 +122,13 @@
 											{{ trans('site.front.form.synopsis-optional') }}
 										</label>
 										<input type="file" class="form-control" name="synopsis" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+									</div>
+
+									<div class="form-group">
+										<label>{{ trans('site.front.form.coaching-time-later-in-manus') }}</label>
+										<input type="checkbox" data-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
+											   class="is-free-toggle" data-off="{{ trans('site.front.no') }}"
+										name="coaching_time_later">
 									</div>
 								@endif
 
@@ -288,6 +299,7 @@
 
 
 @section('scripts')
+	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 	<script>
         $(document).ready(function(){
 

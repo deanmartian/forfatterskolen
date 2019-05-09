@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class ShopManuscriptsTaken extends Model
 {
     protected $table = 'shop_manuscripts_taken';
-    protected $fillable = ['user_id', 'shop_manuscript_id', 'file', 'is_active', 'words', 'feedback_user_id', 'expected_finish','manuscript_uploaded_date',
-        'genre', 'description', 'is_manuscript_locked','synopsis'];
+    protected $fillable = ['user_id', 'shop_manuscript_id', 'file', 'is_active', 'words', 'feedback_user_id',
+        'expected_finish', 'manuscript_uploaded_date', 'genre', 'description', 'is_manuscript_locked','synopsis',
+        'coaching_time_later'];
 
     
     public function user()

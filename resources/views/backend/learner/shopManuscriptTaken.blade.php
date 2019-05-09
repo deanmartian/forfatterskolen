@@ -91,6 +91,9 @@
 							{{ trans('site.genre') }}: @if ($shopManuscriptTaken->genre) {{ \App\Http\FrontendHelpers::assignmentType($shopManuscriptTaken->genre) }} @endif
 							<a href="#" data-target="#editGenreModal" data-toggle="modal">{{ trans('site.edit-genre') }}</a>
 							<br>
+							{{ trans('site.front.form.coaching-time-later-in-manus') }}?
+							<b>{{ $shopManuscriptTaken->coaching_time_later ? 'Yes' : 'No' }}</b>
+							<br>
 							{{ trans('site.description') }}: {{ $shopManuscriptTaken->description }}
 							<br>
 							@if ($shopManuscriptTaken->synopsis)

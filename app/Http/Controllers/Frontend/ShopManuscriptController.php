@@ -220,6 +220,7 @@ class ShopManuscriptController extends Controller
 
         // wait for the invoice to be saved first before saving the shop manuscript taken
         $shopManuscriptTaken->is_active = false;
+        $shopManuscriptTaken->coaching_time_later = $request->has('coaching_time_later') ? 1 : 0;
         $shopManuscriptTaken->save();
 
         //if( $request->update_address ) :
