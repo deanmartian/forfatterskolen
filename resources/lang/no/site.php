@@ -1172,4 +1172,8 @@ kvittering.',
   'days-delay' => 'days delay',
   'days' => 'Days',
   'send-test-to' => 'Send test to',
+  'add-file' => 'Add File',
+  'edit-file' => 'Edit File',
+  'delete-file' => 'Delete File',
+  'delete-file-question' => 'Are you sure to delete this file?',
 );

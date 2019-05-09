@@ -37,6 +37,7 @@
 	<a class="btn btn-success margin-top" href="{{ route('admin.goto-webinar.index') }}">GoTo Webinar Email Notifications</a>
 	<a class="btn btn-success margin-top" href="{{ action('\Barryvdh\TranslationManager\Controller@getView') }}/site">Translations</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.testimonial.index') }}">Testimonials</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.file.index') }}">Files</a>
 
 	<div class="table-users table-responsive">
 		<table class="table">

@@ -128,6 +128,8 @@ Route::group([
         Route::get('/vipps/fallback', 'VippsController@fallback');
         Route::get('/vipps/payment/{orderId}/details', 'VippsController@getPaymentDetails');
 
+        Route::get('/file/{hash}', 'HomeController@checkFileFromDB');
+
         // Course
         Route::group([
             'prefix' => 'course'
@@ -1124,6 +1126,17 @@ Route::group([
                 'edit' => 'admin.testimonial.edit',
                 'update' => 'admin.testimonial.update',
                 'destroy' => 'admin.testimonial.destroy',
+            ],
+        ]);
+
+        //testimonial routes
+        Route::resource('/file', 'FilesController', [
+            'except' => ['show', 'edit', 'create'],
+            'names' => [
+                'index' => 'admin.file.index',
+                'store' => 'admin.file.store',
+                'update' => 'admin.file.update',
+                'destroy' => 'admin.file.destroy',
             ],
         ]);
 

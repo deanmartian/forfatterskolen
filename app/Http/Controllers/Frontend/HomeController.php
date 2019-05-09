@@ -9,6 +9,7 @@ use App\CorrectionManuscript;
 use App\CoursesTaken;
 use App\EmailAttachment;
 use App\EmailConfirmation;
+use App\FileUploaded;
 use App\FreeWebinar;
 use App\GTWebinar;
 use App\Helpers\Citrix;
@@ -1385,5 +1386,27 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
     public function paymentCallback($orderId, Request $request, VippsRepository $vippsRepository)
     {
         $vippsRepository->paymentCallback($orderId, $request);
+    }
+
+    /**
+     * Check if the file is saved
+     * @param $hash
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function checkFileFromDB($hash)
+    {
+        $file = FileUploaded::where('hash', $hash)->first();
+
+        if (!$file) {
+            abort(404);
+        }
+
+        $extension = explode('.', basename($file->file_location));
+        if (end($extension) == 'pdf' || end($extension) == 'odt') {
+            return redirect()->to("/js/ViewerJS/#../../".trim($file->file_location)."");
+        } else {
+            return redirect()->to("https://view.officeapps.live.com/op/embed.aspx?src=".url('')
+                .trim("/".$file->file_location)."");
+        }
     }
 }
