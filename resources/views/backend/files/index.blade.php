@@ -87,8 +87,8 @@
                             <label>{{ trans_choice('site.files', 1) }}</label>
                             <input type="file" class="form-control" required name="file"
                                    accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-                                   application/pdf, application/vnd.oasis.opendocument.text, application/msword">
-                            * {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
+                                   application/pdf, application/vnd.oasis.opendocument.text">
+                            * {{ trans('site.docx-pdf-odt-text') }}
                         </div>
 
                         <button type="submit" class="btn btn-primary pull-right margin-top">
