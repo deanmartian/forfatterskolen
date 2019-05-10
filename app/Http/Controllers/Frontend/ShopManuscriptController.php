@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Editor;
 use App\Http\AdminHelpers;
 use App\Invoice;
+use App\Order;
 use App\Paypal;
 use App\ShopManuscriptUpgrade;
 use Illuminate\Support\Facades\Auth;
@@ -226,6 +227,13 @@ class ShopManuscriptController extends Controller
         $shopManuscriptTaken->is_active = false;
         $shopManuscriptTaken->coaching_time_later = $request->has('coaching_time_later') ? 1 : 0;
         $shopManuscriptTaken->save();
+
+        $newOrder['user_id']    = Auth::user()->id;
+        $newOrder['item_id']    = $id;
+        $newOrder['type']       = Order::MANUSCRIPT_TYPE;
+        $newOrder['plan_id']    = $paymentPlan->id;
+
+        Order::create($newOrder);
 
         //if( $request->update_address ) :
             $address = Address::firstOrNew(['user_id' => Auth::user()->id]);

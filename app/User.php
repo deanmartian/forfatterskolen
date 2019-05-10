@@ -143,6 +143,11 @@ class User extends Authenticatable
         return $this->hasMany('App\Invoice')->orderBy('created_at', 'desc');
     }
 
+    public function orders()
+    {
+        return $this->hasMany('App\Order')->orderBy('created_at', 'desc');
+    }
+
     public function books()
     {
         return $this->hasMany('App\PilotReaderBook');

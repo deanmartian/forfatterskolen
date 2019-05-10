@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\AdminHelpers;
 use App\Mail\SubjectBodyEmail;
+use App\Order;
 use App\Paypal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -100,7 +101,11 @@ class WorkshopController extends Controller
         $workshopTaken->is_active = false;
         $workshopTaken->save();
 
+        $newOrder['user_id']    = Auth::user()->id;
+        $newOrder['item_id']    = $id;
+        $newOrder['type']       = Order::WORKSHOP_TYPE;
 
+        Order::create($newOrder);
 
         $paymentMode = PaymentMode::findOrFail($request->payment_mode_id);
 

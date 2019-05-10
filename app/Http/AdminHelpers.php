@@ -5,8 +5,13 @@ namespace App\Http;
 use App\CoursesTaken;
 use App\CronLog;
 use App\Notification;
+use App\Order;
+use App\Package;
+use App\PaymentPlan;
+use App\ShopManuscript;
 use App\User;
 use App\WebinarEmailOut;
+use App\Workshop;
 use Carbon\Carbon;
 use Illuminate\Support\MessageBag;
 use Swift_Mailer;
@@ -266,6 +271,36 @@ class AdminHelpers
             return User::find($id);
         }
         return User::all();
+    }
+
+    /**
+     * Get order details
+     * @param $order Order
+     * @return string
+     */
+    public static function getOrderDetails($order)
+    {
+        $orderDetails = '';
+        switch ($order->type) {
+            case 1:
+                $package = Package::find($order->package_id);
+                $paymentPlan = PaymentPlan::find($order->plan_id);
+                $orderDetails = "<a href='".route('admin.course.show', $order->item_id)."?section=packages'>"
+                    .$package->variation."</a>"." - ".$paymentPlan->plan;
+                break;
+            case 2:
+                $shopManuscript = ShopManuscript::find($order->item_id);
+                $orderDetails = "<a href='".route('admin.shop-manuscript.index')."'>"
+                    .$shopManuscript->title."</a>";
+                break;
+            case 3:
+                $workshop = Workshop::find($order->item_id);
+                $orderDetails = "<a href='".route('admin.workshop.show', $workshop->id)."'>"
+                    .$workshop->title."</a>";
+                break;
+        }
+
+        return $orderDetails;
     }
 
     public static function addToAutomation($email, $automation_id, $name)

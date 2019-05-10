@@ -8,6 +8,7 @@ use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Http\AdminHelpers;
 use App\Mail\SubjectBodyEmail;
+use App\Order;
 use App\Paypal;
 use App\Repositories\VippsRepository;
 use Illuminate\Http\Request;
@@ -549,6 +550,13 @@ class ShopController extends Controller
         $courseTaken->is_active = $course_status;
         $courseTaken->save();
 
+        $newOrder['user_id']    = Auth::user()->id;
+        $newOrder['item_id']    = $course_id;
+        $newOrder['type']       = Order::COURSE_TYPE;
+        $newOrder['package_id'] = $package->id;
+        $newOrder['plan_id']    = $paymentPlan->id;
+
+        Order::create($newOrder);
 
         // Check for shop manuscripts
         if( $package->shop_manuscripts->count() > 0 ) :

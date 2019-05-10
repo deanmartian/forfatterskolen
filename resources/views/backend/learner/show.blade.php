@@ -437,6 +437,31 @@
 				</div>
 			</div>
 
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<h4>{{ trans('site.order-history') }}</h4>
+				</div>
+				<div class="table-responsive" style="padding: 10px">
+					<table class="table" id="orders-table">
+						<thead>
+						<tr>
+							<th>{{ trans('site.details') }}</th>
+							<th>{{ trans('site.date-ordered') }}</th>
+						</tr>
+						</thead>
+						<tbody>
+						@foreach($learner->orders as $order)
+							<tr>
+								<td>
+									{!! \App\Http\AdminHelpers::getOrderDetails($order) !!}
+								</td>
+								<td>{{ \App\Http\FrontendHelpers::formatDate($order->created_at) }}</td>
+							</tr>
+						@endforeach
+						</tbody>
+					</table>
+				</div>
+			</div> <!-- end order panel -->
 
 			<div class="panel panel-default">
 				<div class="panel-body">
@@ -2391,6 +2416,10 @@
         let modal = $('#deleteDiplomaModal');
         modal.find('form').attr('action', action);
 	});
+
+    $('#orders-table').dataTable( {
+        "ordering": false
+    } );
 
 	function updateOtherServiceFields(type) {
 	    let modal = $("#addOtherServiceModal");

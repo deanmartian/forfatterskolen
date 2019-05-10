@@ -1177,4 +1177,5 @@ kvittering.',
   'delete-file' => 'Delete File',
   'delete-file-question' => 'Are you sure to delete this file?',
   'docx-pdf-odt-text' => 'Godkjente fil formater er  DOCX, PDF og ODT.',
+  'order-history' => 'Order History',
 );
