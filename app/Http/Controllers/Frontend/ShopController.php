@@ -1201,14 +1201,33 @@ class ShopController extends Controller
     public function proceedCheckout($course_id, Course $course, Request $request)
     {
         $apiKey = app('Bambora')->credentials;
-        $data['api_key'] = $apiKey;
-        $data['course'] = $course->find($course_id);
+        $course = $course->find($course_id);
+        $package = $course->packages()->where('id', $request->package_id)->first();
+        $data['course'] = $course;
         $data['request'] = $request->all();
+        $data['package'] = $package;
+
+        $hasPaidCourse = false;
+        // check if course bought is not expired yet
+        if (Auth::user()) {
+            foreach( Auth::user()->coursesTakenNotOld as $courseTaken ) :
+                if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
+                    // check if course taken is not free
+                    if ($courseTaken->package->course->is_free != 1) {
+                        $hasPaidCourse = true;
+                    }
+                    break;
+                endif;
+            endforeach;
+        }
+
+        $price = $package->full_payment_price*100;
+        $data['price'] = $price;
 
         $curlRequest = [];
         $curlRequest["order"] = array();
         $curlRequest["order"]["id"] = AdminHelpers::generateHash(6);
-        $curlRequest["order"]["amount"] = "1240000";
+        $curlRequest["order"]["amount"] = $price;
         $curlRequest["order"]["currency"] = "NOK";
 
         $curlRequest["url"] = array();
@@ -1221,12 +1240,12 @@ class ShopController extends Controller
         $curlRequest["paymentwindow"] = array();
         $curlRequest["paymentwindow"] = ["id" => 1];
         //$curlRequest["paymentwindow"]["paymentmethod"] = array();
-        $curlRequest["paymentwindow"]["paymentmethods"] = [
+        /*$curlRequest["paymentwindow"]["paymentmethods"] = [
             ["id" => "paymentcard", "action" => "include"],
             ["id" => "invoice", "action" => "include"],
             ["id" => "vipps", "action" => "include"],
             ["id" => "ekspresbank", "action" => "include"]
-        ];
+        ];*/
 
         /*$curlRequest["paymentwindow"]["paymentgroup"] = array();
         $curlRequest["paymentwindow"]["paymentgroup"] = [
@@ -1267,26 +1286,6 @@ class ShopController extends Controller
 
         $rawResponse = curl_exec($curl);
         $response = json_decode($rawResponse);
-
-        /*$headers = array(
-            'Content-Type: application/json',
-            'Content-Length: ' . 0,
-            'Accept: application/json',
-            'Authorization: Basic ' . $apiKey
-        );
-
-        $endpointUrl = 'https://data-v1.api-eu.bambora.com/paymenttypes';
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
-        curl_setopt($curl, CURLOPT_URL, $endpointUrl);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($curl, CURLOPT_FAILONERROR, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-
-        $rawResponse = curl_exec($curl);
-
-        $response = json_decode($rawResponse);*/
         return response()->json($response);
     }
 }
