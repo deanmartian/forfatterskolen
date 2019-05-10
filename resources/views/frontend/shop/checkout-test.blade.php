@@ -412,12 +412,12 @@
 								{{ trans('site.front.per-month') }}: <span class="theme-text font-barlow-regular"></span>
 							</h3>
 
-							<button type="submit" class="btn site-btn-global-w-arrow" id="submitOrder">
+							{{--<button type="submit" class="btn site-btn-global-w-arrow" id="submitOrder">
 								{{ trans('site.front.buy') }}
-							</button>
+							</button>--}}
 
 								<button type="button" class="btn site-btn-global-w-arrow mt-3" id="proceedCheckout">
-									Proceed Checkout
+									{{ trans('site.front.buy') }}
 								</button>
 						</div>
 					</div> <!-- end panel-default -->
@@ -450,10 +450,17 @@
 	<script src="https://static.bambora.com/checkout-sdk-web/latest/checkout-sdk-web.min.js"></script>
 	<script>
 		let proceed_checkout_link = '{{ route('front.course.proceed-checkout', $course->id) }}';
+		let buy_text = "{{ trans('site.front.buy') }}";
 		$("#proceedCheckout").click(function(){
+		    let btn = $(this);
+            btn.text('');
+            btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+            btn.attr('disabled', 'disabled');
             let form_arr = $("#place_order_form").serialize();
+            $.post(proceed_checkout_link, form_arr).done(function(response) {
+                btn.text(buy_text);
+                btn.attr("disabled", false);
 
-            $.post(proceed_checkout_link, form_arr).done(function(response){
                 if (response.meta.result) {
                     let checkout = new Bambora.ModalCheckout(response.token);
                     checkout.on(
@@ -467,7 +474,7 @@
 				} else {
                     console.log(response.meta.message.enduser);
 				}
-			})
+			});
 		});
 
         $(document).ready(function(){
