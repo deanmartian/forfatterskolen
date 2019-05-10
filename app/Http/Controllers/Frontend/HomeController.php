@@ -1409,4 +1409,9 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
                 .trim("/".$file->file_location)."");
         }
     }
+
+    public function bamboraAccept(Request $request)
+    {
+        return redirect()->to('/thank-you');
+    }
 }

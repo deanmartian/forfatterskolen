@@ -1212,8 +1212,9 @@ class ShopController extends Controller
         $curlRequest["order"]["currency"] = "NOK";
 
         $curlRequest["url"] = array();
-        $curlRequest["url"]["accept"] = "https://www.forfatterskolen.no/thank-you";
+        $curlRequest["url"]["accept"] = "https://www.forfatterskolen.no/bambora/accept";
         $curlRequest["url"]["cancel"] = "https://www.forfatterskolen.no/thankyou";
+        $curlRequest["url"]["immediateredirecttoaccept"] = 1;
         /*$curlRequest["url"]["callbacks"] = array();
         $curlRequest["url"]["callbacks"][] = array("url" => "https://example.org/callback");*/
 

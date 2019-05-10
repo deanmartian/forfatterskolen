@@ -455,14 +455,11 @@
 
             $.post(proceed_checkout_link, form_arr).done(function(response){
                 if (response.meta.result) {
-                    console.log(response);
-                    console.log("success");
-                    var checkout = new Bambora.ModalCheckout(response.token);
+                    let checkout = new Bambora.ModalCheckout(response.token);
                     checkout.on(
                         Bambora.Event.Authorize,
                         function(payload) {
-                            console.log(payload.data.txnid);
-                            // The transaction ID is logged to the console upon authorize.
+                            window.location.href = payload.acceptUrl;
                         }
                     );
 

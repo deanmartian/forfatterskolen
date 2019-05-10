@@ -130,6 +130,7 @@ Route::group([
 
         Route::get('/file/{hash}', 'HomeController@checkFileFromDB');
 
+        Route::get('/bambora/accept', 'HomeController@bamboraAccept');
         // Course
         Route::group([
             'prefix' => 'course'
