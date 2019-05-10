@@ -199,6 +199,10 @@ class ShopManuscriptController extends Controller
             $comment .= ' - Discount: '.FrontendHelpers::currencyFormat($discount/100);
         endif;
 
+        if ((int)$request->genre === 10) {
+            $price = $price + ( $price * .25);
+        }
+
         $invoice_fields = [
             'user_id' => Auth::user()->id,
             'first_name' => $request->first_name,

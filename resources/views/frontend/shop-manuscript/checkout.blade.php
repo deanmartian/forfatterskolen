@@ -278,9 +278,17 @@
 							@endif
 
 							<h3>{{ trans('site.front.total') }}:
-								<span class="theme-text font-barlow-regular">{{ \App\Http\FrontendHelpers::currencyFormat($hasPaidCourse ?
-								$shopManuscript->full_payment_price - ($shopManuscript->full_payment_price * 0.05) :
-								$shopManuscript->full_payment_price) }}</span>
+								<?php
+									$totalPrice = $hasPaidCourse ?
+										$shopManuscript->full_payment_price - ($shopManuscript->full_payment_price * 0.05)
+										: $shopManuscript->full_payment_price;
+
+									$increasedPrice = \App\Http\FrontendHelpers::currencyFormat($totalPrice + ($totalPrice * .25));
+								?>
+								<span class="theme-text font-barlow-regular"
+								data-increased="{{ $increasedPrice }}" data-orig="{{ \App\Http\FrontendHelpers::currencyFormat($totalPrice) }}">
+									{{ \App\Http\FrontendHelpers::currencyFormat($totalPrice) }}
+								</span>
 							</h3>
 
 							<button type="submit" class="btn site-btn-global-w-arrow" id="proceed_checkout">
@@ -353,6 +361,18 @@
                 }
                 checkout_total.find('span').text(price);
             });
+
+            $("[name=genre]").change(function(){
+                let selected_genre = parseInt($(this).val());
+                let span 	= $(".checkout-total").find("span"),
+				increased 	= span.data('increased'),
+					orig 	= span.data('orig');
+                if (selected_genre === 10) {
+                    span.text(increased);
+				} else {
+                    span.text(orig);
+				}
+			})
         });
 
         function processCheckout(t) {
