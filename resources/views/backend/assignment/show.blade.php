@@ -276,6 +276,8 @@
                                             echo trim($filesDisplay, ', ');
 
                                             ?>
+												<a href="{{ $feedback->filename }}" download=""
+												   class="btn btn-primary btn-xs pull-right">Download</a>
 										</td>
 										<td>
 											@if( $feedback->is_admin ) [Admin] @endif {{ basename($feedback->feedbackUser->full_name) }}
