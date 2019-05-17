@@ -70,7 +70,7 @@ class GoToWebinarReminder extends Command
 
         foreach($webinars as $webinar) {
             $base_url = 'https://api.getgo.com/G2W/rest';
-            $access_token = 'LFuxWWDUgAuqIAAB87xQJOdeAsiG'; // from here http://app.gotowp.com/
+            $access_token = 'qGtxQ1NfP4tws1cSRGRWJInmN1iU'; // from here http://app.gotowp.com/
             $org_key = '5169031040578858252';
             $web_key = $webinar->gt_webinar_key; // id of the webinar from gotowebinar
 

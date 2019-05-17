@@ -1058,7 +1058,7 @@ class AdminHelpers
     public static function getGotoWebinarDetails($webinar_key)
     {
         $base_url = 'https://api.getgo.com/G2W/rest';
-        $access_token = 'LFuxWWDUgAuqIAAB87xQJOdeAsiG'; // from here http://app.gotowp.com/
+        $access_token = 'qGtxQ1NfP4tws1cSRGRWJInmN1iU'; // from here http://app.gotowp.com/
         $org_key = '5169031040578858252';
 
         $long_url = $base_url.'/organizers/'.$org_key.'/webinars/'.$webinar_key;
@@ -1088,7 +1088,7 @@ class AdminHelpers
     public static function getGotoWebinarPanelist($webinar_key)
     {
         $base_url = 'https://api.getgo.com/G2W/rest';
-        $access_token = 'LFuxWWDUgAuqIAAB87xQJOdeAsiG'; // from here http://app.gotowp.com/
+        $access_token = 'qGtxQ1NfP4tws1cSRGRWJInmN1iU'; // from here http://app.gotowp.com/
         $org_key = '5169031040578858252';
 
         $long_url = $base_url.'/organizers/'.$org_key.'/webinars/'.$webinar_key.'/panelists';
@@ -1108,7 +1108,7 @@ class AdminHelpers
 
         // extract the panelist name
         $panelist = [];
-        if (count($decoded_response) && is_array($decoded_response)) {
+        if (!empty($decoded_response) && is_array($decoded_response)) {
             foreach($decoded_response as $panel) {
                 $panelist[] = $panel->name;
             }

@@ -287,7 +287,7 @@ class LearnerController extends Controller
         $last_name = $user->last_name;
 
         $base_url = 'https://api.getgo.com/G2W/rest';
-        $access_token = 'LFuxWWDUgAuqIAAB87xQJOdeAsiG'; // from here http://app.gotowp.com/
+        $access_token = 'qGtxQ1NfP4tws1cSRGRWJInmN1iU'; // from here http://app.gotowp.com/
         $org_key = '5169031040578858252';
 
         $vals['body'] = (object) array(
