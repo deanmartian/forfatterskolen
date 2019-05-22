@@ -40,7 +40,7 @@ class CheckExpiredCourses extends Command {
      */
     public function handle()
     {
-        //CronLog::create(['activity' => 'CheckExpiredCourse CRON running.']);
+        CronLog::create(['activity' => 'CheckExpiredCourse CRON running.']);
         $date2monthsAgo = Carbon::today()->subMonth(2)->format('Y-m-d');
         $expiredCoursesTaken = CoursesTaken::whereDate('end_date', '<=', $date2monthsAgo)
             ->orWhereNull('end_date')->get();
@@ -62,8 +62,8 @@ class CheckExpiredCourses extends Command {
                 $formerCourse['updated_at']         = $courseTaken->updated_at;
 
                 FormerCourse::create($formerCourse);
-                /*CronLog::create(['activity' => 'CheckExpiredCourse CRON added course taken #'
-                    .$courseTaken->id.' as former course.']);*/
+                CronLog::create(['activity' => 'CheckExpiredCourse CRON added course taken #'
+                    .$courseTaken->id.' as former course.']);
 
                 $courseTaken->delete(); // delete course taken after inserted on the former course
             } else {
@@ -84,14 +84,14 @@ class CheckExpiredCourses extends Command {
                     $formerCourse['updated_at']         = $courseTaken->updated_at;
 
                     FormerCourse::create($formerCourse);
-                    /*CronLog::create(['activity' => 'CheckExpiredCourse CRON added course taken #'
-                        .$courseTaken->id.' as former course.']);*/
+                    CronLog::create(['activity' => 'CheckExpiredCourse CRON added course taken #'
+                        .$courseTaken->id.' as former course.']);
 
                     $courseTaken->delete(); // delete course taken after inserted on the former course
                 }
             }
         }
-        //CronLog::create(['activity' => 'CheckExpiredCourse CRON done running.']);
+        CronLog::create(['activity' => 'CheckExpiredCourse CRON done running.']);
     }
 
 }
