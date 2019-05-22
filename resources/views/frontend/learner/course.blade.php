@@ -6,6 +6,78 @@
 
 @section('heading') {{ trans('site.learner.my-course') }} @stop
 
+@section('styles')
+	<style>
+		.divider-center-text {
+			margin: 25px 0 0;
+		}
+		.divider-center-text:before {
+			left: 15px;
+			width: 40%;
+		}
+
+		@media only screen and (max-width: 1024px) {
+			.divider-center-text:before {
+				left: 30px;
+				width: 39%;
+			}
+		}
+
+		@media only screen and (max-width: 768px) {
+			.divider-center-text:before {
+				left: 15px;
+				width: 36%;
+			}
+
+			.divider-center-text:after {
+				width: 38%;
+			}
+		}
+
+		@media only screen and (max-width: 640px) {
+			.divider-center-text:before {
+				width: 33%;
+			}
+
+			.divider-center-text:after {
+				right: 0;
+				width: 36%;
+			}
+		}
+
+		@media only screen and (max-width: 415px) {
+			.divider-center-text:before {
+				width: 27%;
+			}
+
+			.divider-center-text:after {
+				right: 0;
+				width: 31%;
+			}
+		}
+
+		@media only screen and (max-width: 360px) {
+			.divider-center-text:before {
+				width: 25%;
+			}
+
+			.divider-center-text:after {
+				width: 29%;
+			}
+		}
+
+		@media only screen and (max-width: 320px) {
+			.divider-center-text:before {
+				width: 23%;
+			}
+
+			.divider-center-text:after {
+				width: 27%;
+			}
+		}
+	</style>
+@stop
+
 @section('content')
 
 	<div class="learner-container">
@@ -75,6 +147,27 @@
 											{{ trans('site.learner.course-on-hold') }}
 										</a>
 									@endif
+								</div>
+							</div>
+						</div>
+					@endforeach
+				</div>
+
+				<div class="row w-100 learner-courses-container adjust-left">
+					<div class="divider-center-text  no-right-padding adjust-right-padding">
+						{{ trans('site.front.former-courses') }}
+					</div>
+					@foreach( Auth::user()->formerCourses as $courseTaken )
+						<div class="col-md-12 col-lg-3 no-right-padding adjust-right-padding">
+							<div class="learner-course card border-0">
+								<div class="course-thumb" style="background-image: url({{$courseTaken->package->course->course_image}})"></div>
+								<div class="course-details card-body">
+									<h3 class="font-weight-normal font-barlow-regular">
+										{{$courseTaken->package->course->title}}
+									</h3>
+									<p class="note-color">
+										{{str_limit(strip_tags($courseTaken->package->course->description), 200)}}
+									</p>
 								</div>
 							</div>
 						</div>

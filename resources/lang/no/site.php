@@ -895,6 +895,7 @@ Warning: This cannot be undone.',
       'process-order-text' => 'Din ordre blir behandlet',
       'loading-text' => 'Vennligst vent',
     ),
+    'former-courses' => 'Tidligere kurs',
   ),
   'free-webinars' => 
   array (
