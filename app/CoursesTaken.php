@@ -36,6 +36,11 @@ class CoursesTaken extends Model
         return date_format(date_create($value), 'M d, Y h:i a');
     }
 
+    public function getCreatedAtValueAttribute()
+    {
+        return $this->attributes['created_at'];
+    }
+
 
     
     public function getStartDateAttribute($value)

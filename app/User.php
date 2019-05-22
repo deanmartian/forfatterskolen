@@ -105,6 +105,11 @@ class User extends Authenticatable
             ->orderBy('created_at', 'desc');
     }
 
+    public function formerCourses()
+    {
+        return $this->hasMany('App\FormerCourse')->orderBy('course_created_at', 'desc');
+    }
+
     public function coursesTakenNotExpired()
     {
         return $this->hasMany('App\CoursesTaken')

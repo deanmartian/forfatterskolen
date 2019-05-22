@@ -74,16 +74,19 @@
 			<div class="former-course-container">
 				<h4>{{ trans('site.former-courses') }}</h4>
 				<ul>
-					<?php $expiredCoursePackageManuscripts = array(); ?>
-				@foreach ($learner->coursesTakenOld as $oldCourse)
-					<li>{{ $oldCourse->package->course->title }} ({{ $oldCourse->package->variation }})</li>
-						<ul>
-						@foreach( $oldCourse->package->shop_manuscripts as $shop_manuscripts )
-							<?php array_push($expiredCoursePackageManuscripts, $shop_manuscripts->id);?>
-							<li>{{ $shop_manuscripts->shop_manuscript->title }}</li>
-						@endforeach
-						</ul>
-				@endforeach
+					<?php $expiredCoursePackageManuscripts = array(); /*$learner->coursesTakenOld = formerCourses*/ ?>
+
+					@foreach($learner->formerCourses as $formerCourse)
+						<li>
+							{{ $formerCourse->package->course->title }} ({{ $formerCourse->package->variation }})
+						</li>
+							<ul>
+								@foreach( $formerCourse->package->shop_manuscripts as $shop_manuscripts )
+                                    <?php array_push($expiredCoursePackageManuscripts, $shop_manuscripts->id);?>
+									<li>{{ $shop_manuscripts->shop_manuscript->title }}</li>
+								@endforeach
+							</ul>
+					@endforeach
 				</ul>
 			</div>
 
