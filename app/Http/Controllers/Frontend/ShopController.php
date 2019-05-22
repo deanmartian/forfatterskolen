@@ -506,7 +506,8 @@ class ShopController extends Controller
                     'address' => $request->street,
                     'postalPlace' => $request->city,
                     'postalCode' => $request->zip,
-                    'comment' => $comment
+                    'comment' => $comment,
+                    'payment_mode'  => $paymentMode->mode,
                 ];
 
                 $invoice = new FikenInvoice();
@@ -529,6 +530,7 @@ class ShopController extends Controller
                 'postalPlace' => $request->city,
                 'postalCode' => $request->zip,
                 'comment' => $comment,
+                'payment_mode'  => $paymentMode->mode,
                 /*'issueDate' => $package->issue_date*/
             ];
 
@@ -919,7 +921,7 @@ class ShopController extends Controller
                     'address' => $request->street,
                     'postalPlace' => $request->city,
                     'postalCode' => $request->zip,
-                    'comment' => $comment
+                    'comment' => $comment, 'payment_mode'  => $paymentMode->mode,
                 ];
 
                 $invoice = new FikenInvoice();
@@ -941,7 +943,7 @@ class ShopController extends Controller
                 'address' => $request->street,
                 'postalPlace' => $request->city,
                 'postalCode' => $request->zip,
-                'comment' => $comment,
+                'comment' => $comment,'payment_mode'  => $paymentMode->mode,
                 /*'issueDate' => $package->issue_date*/
             ];
 

@@ -105,8 +105,11 @@ class FikenInvoice
             $invoice->fiken_balance = $fikenInvoice->gross/100;
 			$invoice->save();
 		endif;
-		
-		$this->send_invoice($location);
+
+        if (isset($post_fields['payment_mode']) && $post_fields['payment_mode'] === 'Faktura') {
+            $this->send_invoice($location);
+        }
+
 		$this->invoiceID = $invoice->id;
 		$this->invoice_number = $invoice->invoice_number;
 	}

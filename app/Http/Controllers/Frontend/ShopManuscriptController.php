@@ -218,6 +218,7 @@ class ShopManuscriptController extends Controller
             'postalPlace' => $request->city,
             'postalCode' => $request->zip,
             'comment' => $comment,
+            'payment_mode'  => $paymentMode->mode,
         ];
 
         $invoice = new FikenInvoice();
@@ -793,6 +794,7 @@ class ShopManuscriptController extends Controller
             'postalPlace' => $request->city,
             'postalCode' => $request->zip,
             'comment' => $comment,
+            'payment_mode'  => $paymentMode->mode,
         ];
 
         $invoice = new FikenInvoice();

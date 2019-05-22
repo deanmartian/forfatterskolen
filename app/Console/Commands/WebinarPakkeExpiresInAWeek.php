@@ -93,9 +93,9 @@ class WebinarPakkeExpiresInAWeek extends Command {
                     'address'       => $user->address->street,
                     'postalPlace'   => $user->address->city,
                     'postalCode'    => $user->address->zip,
-                    'comment'       => $comment
+                    'comment'       => $comment,
+                    'payment_mode'  => "Faktura",
                 ];
-
 
                 $invoice = new FikenInvoice();
                 $invoice->create_invoice($invoice_fields);

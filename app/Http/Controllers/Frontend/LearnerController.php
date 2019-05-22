@@ -1259,7 +1259,7 @@ class LearnerController extends Controller
                 'address'       => $user->address->street,
                 'postalPlace'   => $user->address->city,
                 'postalCode'    => $user->address->zip,
-                'comment'       => $comment
+                'comment'       => $comment,
             ];
 
 
@@ -1338,7 +1338,7 @@ class LearnerController extends Controller
                 'address'       => $user->address->street,
                 'postalPlace'   => $user->address->city,
                 'postalCode'    => $user->address->zip,
-                'comment'       => $comment
+                'comment'       => $comment, 'payment_mode'  => $paymentMode->mode,
             ];
 
 
@@ -1443,7 +1443,8 @@ class LearnerController extends Controller
                 'address'       => $user->address->street,
                 'postalPlace'   => $user->address->city,
                 'postalCode'    => $user->address->zip,
-                'comment'       => $comment
+                'comment'       => $comment,
+                'payment_mode'  => "Faktura",
             ];
 
 
@@ -1542,7 +1543,8 @@ class LearnerController extends Controller
                         'address'       => $user->address->street,
                         'postalPlace'   => $user->address->city,
                         'postalCode'    => $user->address->zip,
-                        'comment'       => $comment
+                        'comment'       => $comment,
+                        'payment_mode'  => "Faktura",
                     ];
 
 
@@ -1801,7 +1803,8 @@ class LearnerController extends Controller
                     'address' => Auth::user()->address->street,
                     'postalPlace' => Auth::user()->address->city,
                     'postalCode' => Auth::user()->address->zip,
-                    'comment' => $comment
+                    'comment' => $comment,
+                    'payment_mode'  => $paymentMode->mode,
                 ];
 
                 $invoice = new FikenInvoice();
@@ -1823,7 +1826,8 @@ class LearnerController extends Controller
                 'address' => Auth::user()->address->street,
                 'postalPlace' => Auth::user()->address->city,
                 'postalCode' => Auth::user()->address->zip,
-                'comment' => $comment
+                'comment' => $comment,
+                'payment_mode'  => $paymentMode->mode,
             ];
 
             $invoice = new FikenInvoice();
@@ -1966,6 +1970,7 @@ class LearnerController extends Controller
                 'postalPlace' => Auth::user()->address->city,
                 'postalCode' => Auth::user()->address->zip,
                 'comment' => $comment,
+                'payment_mode'  => $paymentMode->mode,
             ];
 
             $invoice = new FikenInvoice();
@@ -2053,6 +2058,7 @@ class LearnerController extends Controller
                 'postalPlace'   => Auth::user()->address->city,
                 'postalCode'    => Auth::user()->address->zip,
                 'comment'       => $comment,
+                'payment_mode'  => $paymentMode->mode,
             ];
 
             $invoice = new FikenInvoice();

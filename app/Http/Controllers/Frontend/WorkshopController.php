@@ -141,6 +141,7 @@ class WorkshopController extends Controller
             'postalPlace' => $request->city,
             'postalCode' => $request->zip,
             'comment' => $comment,
+            'payment_mode'  => $paymentMode->mode,
         ];
 
         if ($isFree < 1) {

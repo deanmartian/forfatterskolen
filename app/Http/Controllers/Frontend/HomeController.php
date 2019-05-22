@@ -406,6 +406,7 @@ class HomeController extends Controller
             'postalPlace'   => $user->city,
             'postalCode'    => $user->zip,
             'comment'       => $comment,
+            'payment_mode'  => $paymentMode->mode,
         ];
 
         $invoice = new FikenInvoice();
@@ -688,6 +689,7 @@ class HomeController extends Controller
             'postalPlace'   => $user->city,
             'postalCode'    => $user->zip,
             'comment'       => $comment,
+            'payment_mode'  => $paymentMode->mode,
         ];
 
         $invoice = new FikenInvoice();
@@ -1170,7 +1172,8 @@ class HomeController extends Controller
                         'address'       => $user->address->street,
                         'postalPlace'   => $user->address->city,
                         'postalCode'    => $user->address->zip,
-                        'comment'       => $comment
+                        'comment'       => $comment,
+                        'payment_mode'  => "Faktura",
                     ];
 
 
