@@ -30,6 +30,10 @@ class CoursesTaken extends Model
         return date_format(date_create($this->attributes['started_at']), 'M d, Y h:i a');
     }
 
+    public function getStartedAtValueAttribute()
+    {
+        return $this->attributes['started_at'];
+    }
 
     public function getCreatedAtAttribute($value)
     {
@@ -51,6 +55,11 @@ class CoursesTaken extends Model
         return false;
     }
 
+    public function getStartDateValueAttribute()
+    {
+        return $this->attributes['start_date'] ?: NULL;
+    }
+
 
 
     public function getEndDateAttribute($value)
@@ -59,6 +68,11 @@ class CoursesTaken extends Model
             return date_format(date_create($value), 'M d, Y');
         endif;
         return false;
+    }
+
+    public function getEndDateValueAttribute()
+    {
+        return $this->attributes['end_date'] ?: NULL;
     }
 
     public function getEndDateWithValueAttribute()

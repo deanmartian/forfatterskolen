@@ -17,7 +17,8 @@ class FormerCourse extends Model {
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'package_id', 'date_ended', 'course_created_at'];
+    protected $fillable = ['user_id', 'package_id', 'is_active', 'started_at', 'start_date', 'end_date', 'access_lessons',
+        'years', 'is_free', 'created_at', 'updated_at'];
 
     public function user()
     {
