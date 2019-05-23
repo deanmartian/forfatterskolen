@@ -48,6 +48,10 @@ class WebinarEmailOutCommand extends Command
         $today = Carbon::today();
         $emailOutList = WebinarEmailOut::whereDate('send_date', $today)->get();
 
+        $access_token = '';
+        if ($emailOutList->count()) {
+            $access_token = AdminHelpers::generateWebinarGTAccessToken();
+        }
         CronLog::create(['activity' => 'WebinarEmailOutCommand CRON running.']);
         foreach($emailOutList as $emailOut) {
             $course_id = $emailOut->course_id;
@@ -66,18 +70,18 @@ class WebinarEmailOutCommand extends Command
             // check if the link is gotowebinar
             if (strpos($webinar->link,'attendee.gotowebinar.com')) {
                 $web_key = FrontendHelpers::extractWebinarKeyFromLink($webinar->link); // id of the webinar from gotowebinar
-                $webinarDetails = AdminHelpers::getGotoWebinarDetails($web_key);
+                $webinarDetails = AdminHelpers::getGotoWebinarDetails($web_key, $access_token);
 
                 // check if webinar don't have error or is valid webinar
                 if (isset($webinarDetails->webinarKey)) {
-                    $presenterList = AdminHelpers::getGotoWebinarPanelist($web_key);
+                    $presenterList = AdminHelpers::getGotoWebinarPanelist($web_key, $access_token);
                     $times          = $webinarDetails->times[0];
                     $timezone       = $webinarDetails->timeZone;
                     $startDate      = AdminHelpers::convertTZNoFormat($times->startTime, $timezone)->format('d, M Y');
                     $startTime      = AdminHelpers::convertTZNoFormat($times->startTime, $timezone)->format('H:i');
                     $endTime        = AdminHelpers::convertTZNoFormat($times->endTime, $timezone)->format('H:i');
                     $formattedTZ    = AdminHelpers::convertTZNoFormat($times->startTime, $timezone)->format('T');
-                    $webinarDate    = $startDate.' klokken '.$startTime/*.' - '.$endTime.' '.$formattedTZ*/;
+                    $webinarDate    = $startDate.' klokken '.$startTime;
 
                     $subject = "Webinar ".$webinarDate." med ".$presenterList;
 

@@ -1083,10 +1083,10 @@ class AdminHelpers
         return $decoded_response->access_token;
     }
 
-    public static function getGotoWebinarDetails($webinar_key)
+    public static function getGotoWebinarDetails($webinar_key, $access_token)
     {
         $base_url = 'https://api.getgo.com/G2W/rest';
-        $access_token = 'qGtxQ1NfP4tws1cSRGRWJInmN1iU'; // from here http://app.gotowp.com/
+        //$access_token = 'qGtxQ1NfP4tws1cSRGRWJInmN1iU'; // from here http://app.gotowp.com/
         $org_key = '5169031040578858252';
 
         $long_url = $base_url.'/organizers/'.$org_key.'/webinars/'.$webinar_key;
@@ -1113,10 +1113,10 @@ class AdminHelpers
      * @param $webinar_key
      * @return mixed|string
      */
-    public static function getGotoWebinarPanelist($webinar_key)
+    public static function getGotoWebinarPanelist($webinar_key, $access_token)
     {
         $base_url = 'https://api.getgo.com/G2W/rest';
-        $access_token = 'qGtxQ1NfP4tws1cSRGRWJInmN1iU'; // from here http://app.gotowp.com/
+        //$access_token = 'qGtxQ1NfP4tws1cSRGRWJInmN1iU'; // from here http://app.gotowp.com/
         $org_key = '5169031040578858252';
 
         $long_url = $base_url.'/organizers/'.$org_key.'/webinars/'.$webinar_key.'/panelists';

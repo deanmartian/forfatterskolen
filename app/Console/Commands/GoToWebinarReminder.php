@@ -68,9 +68,13 @@ class GoToWebinarReminder extends Command
         // merge the collections
         $webinars = $tomorrowWebinars->merge($todayWebinars);
 
+        $access_token = '';
+        if ($webinars->count()) {
+            $access_token = AdminHelpers::generateWebinarGTAccessToken();
+        }
+
         foreach($webinars as $webinar) {
             $base_url = 'https://api.getgo.com/G2W/rest';
-            $access_token = 'qGtxQ1NfP4tws1cSRGRWJInmN1iU'; // from here http://app.gotowp.com/
             $org_key = '5169031040578858252';
             $web_key = $webinar->gt_webinar_key; // id of the webinar from gotowebinar
 
@@ -88,7 +92,8 @@ class GoToWebinarReminder extends Command
             // surround all integer values with quotes
             $attendants = json_decode(preg_replace('/("\w+"):(\d+)/', '\\1:"\\2"', $response));
 
-            $gtWebinar  = AdminHelpers::getGotoWebinarDetails($web_key); // get webinar details
+            $gtWebinar  = AdminHelpers::getGotoWebinarDetails($web_key, $access_token); // get webinar details
+
             $subject    = $gtWebinar->subject;
             $organizerEmail = 'post@forfatterskolen.no';
             $times      = $gtWebinar->times[0];
