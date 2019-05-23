@@ -1055,6 +1055,34 @@ class AdminHelpers
             ->first();
     }
 
+    /**
+     * Generate access token, used for every gt webinar request
+     * @return mixed
+     */
+    public static function generateWebinarGTAccessToken()
+    {
+        $base_url = 'https://api.getgo.com/oauth/access_token';
+        $body = 'grant_type=password&user_id='.config('services.gotowebinar.user_id')
+            .'&password='.config('services.gotowebinar.password')
+            .'&client_id='.config('services.gotowebinar.consumer_key');
+        $encodedKey = base64_encode(config('services.gotowebinar.consumer_key').':'
+            .config('services.gotowebinar.consumer_secret'));
+
+        $header = array();
+        $header[] = 'Content-type: application/x-www-form-urlencoded';
+        $header[] = 'Accept: application/json';
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $base_url);
+        curl_setopt( $ch, CURLOPT_POST, 1);
+        curl_setopt( $ch, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $response = curl_exec($ch);
+        $decoded_response = json_decode($response);
+        return $decoded_response->access_token;
+    }
+
     public static function getGotoWebinarDetails($webinar_key)
     {
         $base_url = 'https://api.getgo.com/G2W/rest';

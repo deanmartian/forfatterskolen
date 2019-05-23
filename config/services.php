@@ -47,6 +47,13 @@ return [
         'redirect' => 'https://www.forfatterskolen.no/auth/login/google/callback',
     ],
 
+    'gotowebinar' => [
+        'consumer_key'      => '4jVbfF2qGPp6cw7TAJHD24jJmwGK3hlH',
+        'consumer_secret'   => 'C0AByMZssixkcVK0',
+        'user_id'           => env('GT_WEBINAR_USER'),
+        'password'          => env('GT_WEBINAR_PASS')
+    ],
+
     'bambora' => [
         'secret_key' => 'U4Kj2Ku07AovKcfKnpI9EyiVvvrqri9R1wiX0AxC',
         'access_key' => '3lKQyd8TYvaBBJ0lWmRR',
