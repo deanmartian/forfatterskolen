@@ -549,7 +549,9 @@
 								<?php $extension = explode('.', basename($manuscript->filename)); ?>
 								<tr>
 									<td>
-										{{ $assignment->title }}
+										<a href="{{ route('admin.assignment.show',[$assignmentCourse->id, $assignment->id]) }}">
+											{{ $assignment->title }}
+										</a>
 										<?php
 										$learnerExist 	= \App\AssignmentGroupLearner::where('user_id', $learner->id)->get();
 
