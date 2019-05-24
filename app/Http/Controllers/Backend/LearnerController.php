@@ -409,11 +409,15 @@ class LearnerController extends Controller
             $automation_id  = 82;
             $user_name      = $courseTaken->user->first_name;
 
-            AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+            // check if webinar-pakke and add to automation
+            if ($courseTaken->package->course->id == 17) {
+                AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+            }
             $courseTaken->forceDelete();
             return redirect()->back()->with([
                 'alert_type' => 'success',
-                'errors' => AdminHelpers::createMessageBag('Learner removed from Webinar-pakke successfully.'),
+                'errors' => AdminHelpers::createMessageBag('Learner removed from '
+            .$courseTaken->package->course->title.' successfully.'),
                 'not-former-courses' => true
             ]);
         }

@@ -190,13 +190,14 @@
 											</div>
 
 											<!-- check if webinar-pakke -->
-											@if ($courseTaken->package->course->id == 17)
-												<div class="margin-top">
-													<button class="btn btn-xs btn-danger deleteFromCourseBtn" data-target="#deleteFromCourseModal"
-															data-toggle="modal"
-															data-action="{{ route('admin.learner.delete-from-course', $courseTaken->id) }}">{{ trans('site.delete-from-course') }}</button>
-												</div>
+											<div class="margin-top">
+												<button class="btn btn-xs btn-danger deleteFromCourseBtn" data-target="#deleteFromCourseModal"
+														data-toggle="modal"
+														data-action="{{ route('admin.learner.delete-from-course', $courseTaken->id) }}"
+												data-course-title="{{$courseTaken->package->course->title}}">{{ trans('site.delete-from-course') }}</button>
+											</div>
 
+											@if ($courseTaken->package->course->id == 17)
 												<div class="margin-top">
 													<button class="btn btn-xs btn-info renewCourseBtn" data-toggle="modal"
 													data-target="#renewCourseModal"
@@ -1704,7 +1705,7 @@
 					{{ csrf_field() }}
 					{{ method_field('delete') }}
 					<p>
-						{!! trans('site.delete-from-webinar-pakke-question') !!}
+						{{--{!! trans('site.delete-from-webinar-pakke-question') !!}--}}
 					</p>
 					<button class="btn btn-danger pull-right" id="submitDeleteFromCourse">{{ trans('site.delete') }}</button>
 					<div class="clearfix"></div>
@@ -2136,6 +2137,10 @@
 	<script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
 	<script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 <script>
+    let translations = {
+        delete_course : "{!! trans('site.delete-from-webinar-pakke-question') !!}"
+    };
+
 	jQuery(document).ready(function(){
 
         // tinymce editor config and intitalization
@@ -2269,7 +2274,10 @@
 
         $(".deleteFromCourseBtn").click(function(){
             let action = $(this).data('action');
+            let title = $(this).data('course-title');
+            title = translations.delete_course.replace("_course_title_", title);
             $("#deleteFromCourseModal").find('form').attr('action', action);
+            $("#deleteFromCourseModal").find('p').html(title);
 		});
 
         $(".renewCourseBtn").click(function(){
