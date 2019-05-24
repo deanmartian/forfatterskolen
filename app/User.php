@@ -267,4 +267,9 @@ class User extends Authenticatable
             ->where('status', '!=', 2)
             ->orderBy('created_at', 'desc');
     }
+
+    public function isSuperUser()
+    {
+        return $this->attributes['id'] === 1376 ? true : false;
+    }
 }

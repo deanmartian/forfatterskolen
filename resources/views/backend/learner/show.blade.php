@@ -430,9 +430,13 @@
 								</td>
 								<td>{{$invoice->created_at}}</td>
 								<td>
-									<button class="btn btn-danger btn-xs deleteInvoiceBtn" data-toggle="modal"
-									data-target="#deleteInvoiceModal"
-									data-action="{{ route('admin.learner.invoice.delete', $invoice->id) }}"><i class="fa fa-trash"></i></button>
+									@if (Auth::user()->isSuperUser())
+										<button class="btn btn-danger btn-xs deleteInvoiceBtn" data-toggle="modal"
+										data-target="#deleteInvoiceModal"
+										data-action="{{ route('admin.learner.invoice.delete', $invoice->id) }}">
+											<i class="fa fa-trash"></i>
+										</button>
+									@endif
 								</td>
 							</tr>
 							@endforeach
