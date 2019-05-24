@@ -307,7 +307,8 @@
                             <div class="container">
                                 <?php $featured = 0 ?>
                                 @foreach( $popular_courses as $popular_course )
-                                    @if( \App\Http\FrontendHelpers::isCourseAvailable($popular_course) && $featured == 0)
+                                    {{--\App\Http\FrontendHelpers::isCourseAvailable($popular_course) &&--}}
+                                    @if( $featured == 0)
                                         <a href="{{ route('front.course.show', $popular_course->id) }}"
                                         class="featured-link">
                                             <div class="row featured-item" style="background-image: url({{$popular_course->course_image}})">
@@ -329,7 +330,7 @@
                                 <?php $counter = 0 ?>
                                 <div class="row courses-container">
                                     @foreach( $popular_courses as $popular_course )
-                                        @if( \App\Http\FrontendHelpers::isCourseAvailable($popular_course) )
+                                        {{--@if( \App\Http\FrontendHelpers::isCourseAvailable($popular_course) )--}}
                                             @if ($counter == 0)
                                                 <?php $counter++?>
                                             @else
@@ -350,7 +351,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                        @endif
+                                        {{--@endif--}}
                                     @endforeach
                                 </div> <!-- end courses-container -->
                             </div> <!-- end container -->
