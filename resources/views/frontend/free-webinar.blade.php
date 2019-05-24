@@ -106,7 +106,7 @@
 
                 <div class="details">
                     <p class="text-center">
-                        {{ $freeWebinar->description }}
+                        {!! nl2br($freeWebinar->description) !!}
                     </p>
                 </div>
 
