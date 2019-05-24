@@ -902,8 +902,10 @@ class LearnerController extends Controller
     {
         $courseTaken = CoursesTaken::findOrFail($request->courseTakenId);
         if( Auth::user()->can('participateCourse', $courseTaken) && 
-            FrontendHelpers::isCourseTakenAvailable($courseTaken) &&
-            FrontendHelpers::isCourseActive($courseTaken->package->course) ) :
+            FrontendHelpers::isCourseTakenAvailable($courseTaken) ) :
+            //removed because the course is not always active
+            // &&FrontendHelpers::isCourseActive($courseTaken->package->course)
+
             $course = $courseTaken->package->course;
             $courseTaken->started_at = date('Y-m-d h:i:s');
 
