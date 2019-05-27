@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\Http\AdminHelpers;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests;
@@ -213,5 +215,82 @@ class InvoiceController extends Controller
 
         return redirect()->back();
     }
-    
+
+    /**
+     * Create invoice
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function addInvoice(Request $request)
+    {
+        $learner = User::find($request->learner_id);
+        $paymentMode = PaymentMode::findOrFail(3);
+        $paymentPlan = PaymentPlan::findOrFail($request->payment_plan_id);
+        $payment_mode = 'Bankoverføring';
+        $payment_plan = "Hele beløpet";
+
+        $comment = '(Ny faktura, ';
+        $comment .= 'Betalingsmodus: ' . $payment_mode . ', ';
+        $comment .= 'Betalingsplan: ' . $payment_plan . ')';
+
+        $product_ID = $request->product_id;
+
+        $price = $request->price * 100;
+        if (isset($request->split_invoice) && $request->split_invoice) {
+            $division   = $paymentPlan->division * 100; // multiply the split count to get the correct value
+            $price      = round($price/$division, 2); // round the value to the nearest tenths
+            $price      = (int)$price*100;
+
+            for ($i=1; $i <= $paymentPlan->division; $i++ ) { // loop based on the split count
+                $dueDate =  date("Y-m-d");
+                $dueDate =  Carbon::parse($dueDate)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
+                $invoice_fields = [
+                    'user_id'       => $learner->id,
+                    'first_name'    => $learner->first_name,
+                    'last_name'     => $learner->last_name,
+                    'netAmount'     => $price,
+                    'dueDate'       => $dueDate,
+                    'description'   => 'Kursordrefaktura',
+                    'productID'     => $product_ID,
+                    'email'         => $learner->email,
+                    'telephone'     => $learner->address->telephone,
+                    'address'       => $learner->address->street,
+                    'postalPlace'   => $learner->address->city,
+                    'postalCode'    => $learner->address->zip,
+                    'comment'       => $comment,
+                    'payment_mode'  => $paymentMode->mode,
+                ];
+
+                $invoice = new FikenInvoice();
+                $invoice->create_invoice($invoice_fields);
+            }
+        } else {
+            $dueDate = date_format(date_create(Carbon::today()->addDays(24)), 'Y-m-d');
+            $invoice_fields = [
+                'user_id'       => $learner->id,
+                'first_name'    => $learner->first_name,
+                'last_name'     => $learner->last_name,
+                'netAmount'     => $price,
+                'dueDate'       => $dueDate,
+                'description'   => 'Kursordrefaktura',
+                'productID'     => $product_ID,
+                'email'         => $learner->email,
+                'telephone'     => $learner->address->telephone,
+                'address'       => $learner->address->street,
+                'postalPlace'   => $learner->address->city,
+                'postalCode'    => $learner->address->zip,
+                'comment'       => $comment,
+                'payment_mode'  => $paymentMode->mode,
+            ];
+
+            $invoice = new FikenInvoice();
+            $invoice->create_invoice($invoice_fields);
+        }
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Invoice created successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
 }

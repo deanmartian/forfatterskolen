@@ -380,6 +380,9 @@
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addInvoiceModal">+ {{ trans('site.add-invoice') }}</button>
+					<button class="btn btn-success pull-right btn-xs" data-toggle="modal"
+							style="margin-right: 10px"
+							data-target="#createInvoiceModal">+ {{ trans('site.create-invoice') }}</button>
 					<h4>{{ trans_choice('site.invoices', 2) }}</h4>
 				</div>
 				<div class="table-responsive">
@@ -1332,7 +1335,70 @@
   </div>
 </div>
 
+<div id="createInvoiceModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.create-invoice') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.invoice.new') }}" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<input type="hidden" name="learner_id" value="{{ $learner->id }}">
 
+					<div class="form-group">
+						<label>{{ trans('site.front.form.payment-plan') }}</label> <br>
+						@foreach(App\PaymentPlan::orderBy('division', 'asc')->get() as $paymentPlan)
+							<div class="col-sm-6">
+								<input type="radio" @if($paymentPlan->plan == 'Full Payment') checked @endif
+								name="payment_plan_id" value="{{$paymentPlan->id}}" data-plan="{{trim($paymentPlan->plan)}}"
+									   id="{{$paymentPlan->plan}}" required onchange="payment_plan_change(this)"
+									   data-plan-id="{{ $paymentPlan->id }}">
+								<label>{{$paymentPlan->plan}} </label>
+							</div>
+						@endforeach
+					</div>
+
+					<div class="form-group">
+						<div>
+							<label class="split-faktura">
+								{{ trans('site.front.form.monthly-payment') }}?*</label>
+						</div>
+						<div class="payment-option custom-radio col-sm-6">
+							<input type="radio" name="split_invoice" value="1" disabled required
+								   id="yes_option">
+							<label for="yes_option">
+								{{ trans('site.front.yes') }}
+							</label>
+						</div>
+						<div class="payment-option custom-radio col-sm-6">
+							<input type="radio" name="split_invoice" value="0" disabled required
+								   id="no_option">
+							<label for="no_option">
+								{{ trans('site.front.no') }}
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label>Product ID</label>
+						<input type="text" class="form-control" required name="product_id">
+					</div>
+
+					<div class="form-group">
+						<label for="">Price</label>
+						<input type="text" class="form-control" required name="price">
+					</div>
+
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.create-invoice') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
 
 <div id="addManuscriptModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
@@ -2457,5 +2523,16 @@
         submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
         submit_btn.attr('disabled', 'disabled');
 	}
+
+    function payment_plan_change(t) {
+        let plan = $(t).data('plan');
+        let split_invoice = $('input:radio[name=split_invoice]');
+        split_invoice.prop('disabled', false);
+
+        if( plan === 'Hele beløpet' ) {
+            split_invoice.prop('disabled', true);
+            split_invoice.prop('checked', false);
+        }
+    }
 </script>
 @stop

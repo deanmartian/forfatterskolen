@@ -1057,6 +1057,7 @@ Route::group([
         Route::get('/test', 'ShopManuscriptController@testEmail');
 
         // Invoices Route
+        Route::post('/invoice/create-new', 'InvoiceController@addInvoice')->name('admin.invoice.new');
         Route::resource('/invoice', 'InvoiceController', [
             'except' => ['create', 'edit'],
             'names' => [
