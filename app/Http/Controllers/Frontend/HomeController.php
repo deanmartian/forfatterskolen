@@ -1361,6 +1361,65 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         return redirect()->to('/');
     }
 
+    /**
+     * Webinar Registrant convert to learner
+     * @param $course_id
+     * @param Request $request
+     */
+    public function gtWebinarCourseRegister($course_id, Request $request)
+    {
+        if ($request->get('status') == 'APPROVED') {
+            $extended   = $request->get('extended');
+            $user_email = $extended['email'];
+            $firstName  = $extended['firstName'];
+            $lastName   = $extended['lastName'];
+
+            $course     = Course::find($course_id);
+            $package    = $course->packages()->first();
+            $user       = User::where('email', $user_email)->first();
+
+            if (!$user) {
+                $user = User::create([
+                    'email'             => $user_email,
+                    'first_name'        => $firstName,
+                    'last_name'         => $lastName,
+                    'password'          => bcrypt('Z5C5E5M2jv'),
+                    'need_pass_update'  => 1
+                ]);
+            }
+
+            CoursesTaken::create([
+                'package_id'    => $package->id,
+                'user_id'       => $user->id
+            ]);
+
+            $emailOut   = $course->emailOut()->where('for_free_course', 1)->first();
+            $subject    = $emailOut->subject;
+
+            $emailAttachment = EmailAttachment::where('hash', $emailOut->attachment_hash)->first();
+            $attachmentText = '';
+            if ($emailAttachment) {
+                $attachmentText = "<p style='margin-top: 10px'><b>Vedlegg:</b> 
+<a href='".route('front.email-attachment', $emailAttachment->hash)."'>"
+                    .AdminHelpers::extractFileName($emailAttachment->filename)."</a></p>";
+            }
+
+            $search_string = [
+                '[login_link]', '[username]', '[password]'
+            ];
+
+            $encode_email = encrypt($user_email);
+            $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
+            $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
+            $replace_string = [
+                $loginLink, $user_email, $password
+            ];
+            $message = str_replace($search_string, $replace_string, $emailOut->message).$attachmentText;
+
+            AdminHelpers::send_email($subject,'post@forfatterskolen.no', $user_email, $message);
+        }
+    }
+
     public function testCampaign()
     {
         return view('frontend.upviral-campaign.test');
