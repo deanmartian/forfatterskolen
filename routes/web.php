@@ -32,6 +32,7 @@ Route::group([
         Route::get('/testemail', 'HomeController@testEmail');
         Route::get('/test-fiken', 'HomeController@testFiken');
         Route::post('/gotowebinar', 'HomeController@gtWebinarSendEmail');
+        Route::post('/gotowebinar/course/{id}/register', 'HomeController@gtWebinarCourseRegister');
         Route::get('/contact-us', 'HomeController@contact_us')->name('front.contact-us'); // Contact Us
         Route::post('/contact-us', 'HomeController@contact_us'); // Contact Us
         Route::get('/faq', 'HomeController@faq')->name('front.faq'); // FAQ

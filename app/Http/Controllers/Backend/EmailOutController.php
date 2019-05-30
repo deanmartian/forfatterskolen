@@ -31,8 +31,16 @@ class EmailOutController extends Controller {
            'delay' => 'required'
         ]);
 
+        if ($request->has('for_free_course') &&
+            $course->emailOut()->where('for_free_course', 1)->count() > 0) {
+            return redirect()->back()->with([
+               'errors' => AdminHelpers::createMessageBag('Only one email out for free course allowed.')
+            ]);
+        }
+
         $data = $request->except('_token');
         $data['course_id'] = $course_id;
+        $data['for_free_course'] = $request->has('for_free_course') ? 1 : 0;
 
         if ($request->hasFile('attachment')) :
             $destinationPath = 'storage/course-email-out-attachments'; // upload path
@@ -100,7 +108,17 @@ class EmailOutController extends Controller {
             'delay' => 'required'
         ]);
 
+        $checkEmailOut = $course->emailOut()->where('for_free_course', 1)->first();
+
+        if ($request->has('for_free_course') && $checkEmailOut && $checkEmailOut->id !== (int) $id) {
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Only one email out for free course allowed.')
+            ]);
+        }
+
         $data = $request->except('_token');
+        $data['course_id'] = $course_id;
+        $data['for_free_course'] = $request->has('for_free_course') ? 1 : 0;
 
         if ($request->hasFile('attachment')) :
             $destinationPath = 'storage/course-email-out-attachments'; // upload path
@@ -113,10 +131,15 @@ class EmailOutController extends Controller {
             $uploadedFile = $request->attachment->getClientOriginalName();
             $actual_name = pathinfo($uploadedFile, PATHINFO_FILENAME);
             //remove spaces to avoid error on attachment
-            $fileName = str_replace(' ','_', AdminHelpers::checkFileName($destinationPath, $actual_name, $extension));// rename document
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
             $request->attachment->move($destinationPath, $fileName);
 
             $data['attachment'] = '/'.$fileName;
+
+            $emailAttach['filename'] =  $data['attachment'];
+            $emailAttach['hash'] = substr(md5(microtime()), 0, 6);
+            $emailAttachment = EmailAttachment::create($emailAttach);
+            $data['attachment_hash'] = $emailAttachment->hash;
         endif;
 
         $email_out->update($data);

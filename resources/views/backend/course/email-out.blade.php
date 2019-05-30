@@ -128,6 +128,11 @@
                         </div>
 
                         <div class="form-group">
+                            <label>For Free Course</label>
+                            <input type="checkbox" name="for_free_course" style="top: 4px; position: relative">
+                        </div>
+
+                        <div class="form-group">
                             <label>{{ trans('site.send-test-to') }}</label>
                             <input type="email" class="form-control" name="send_to">
                         </div>
@@ -227,6 +232,8 @@
                    $(tinymce.get('message').getBody()).html('');
                }
             });
+
+            $("[name=for_free_course]").attr('checked', false);
         });
 
         $(".editEmailBtn").click(function(){
@@ -254,6 +261,13 @@
 
                if (field === 'message') {
                    $(tinymce.get('message').getBody()).html(value);
+               }
+
+               if (field === 'for_free_course') {
+                   emailModalForm.find('[name='+field+']').attr('checked', false);
+                    if (value === 1) {
+                        emailModalForm.find('[name='+field+']').attr('checked', true);
+                    }
                }
             });
         });

@@ -19,7 +19,7 @@ class EmailOut extends Model
      * @var array
      */
     protected $fillable = ['course_id', 'subject', 'message', 'delay', 'from_name', 'from_email', 'attachment',
-        'attachment_hash'];
+        'attachment_hash', 'for_free_course'];
 
     public function course()
     {
