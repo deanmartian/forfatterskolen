@@ -32,7 +32,8 @@ class Kernel extends ConsoleKernel
         Commands\GoToWebinarReminder::class,
         Commands\FreeCourseDelayedEmailCommand::class,
         Commands\CourseExpirationReminder::class,
-        Commands\CheckExpiredCourses::class
+        Commands\CheckExpiredCourses::class,
+        Commands\WebinarRegistrantToLearner::class
     ];
 
     /**
@@ -76,6 +77,8 @@ class Kernel extends ConsoleKernel
             ->dailyAt('06:00');*/
         $schedule->command('freecoursedelayedemail:command')
             ->everyMinute();
+        $schedule->command('webinarregistranttolearner:command')
+            ->yearly();
         $schedule->command('queue:work --daemon')->everyMinute()->withoutOverlapping();
     }
 
