@@ -62,6 +62,10 @@
         <script src='//connectio.s3.amazonaws.com/connect-retarget.js?v=1.1'></script>
         <noscript><img height='1' width='1' style='display:none' src='https://www.facebook.com/tr?id=216415385555961&ev=PageView&noscript=1' /></noscript>
         <!-- End ConnectRetarget PowerPixel -->
+
+        <script>
+            window.Laravel = '{{ json_encode(['csrfToken' => csrf_token()]) }}';
+        </script>
     </head>
     <body>
 
@@ -102,7 +106,8 @@
             'learner.course.lesson', 'learner.shop-manuscript', 'learner.shop-manuscript.show', 'learner.workshop',
             'learner.webinar', 'learner.course-webinar', 'learner.assignment', 'learner.assignment.group.show',
             'learner.calendar', 'learner.invoice', 'learner.upgrade', 'learner.get-upgrade-manuscript',
-            'learner.get-upgrade-assignment', 'learner.get-upgrade-course', 'learner.competition', 'learner.profile'];
+            'learner.get-upgrade-assignment', 'learner.get-upgrade-course', 'learner.competition', 'learner.profile',
+            'learner.survey'];
         ?>
         {{--@if(!in_array(Route::currentRouteName(), $newDesignPages) && !in_array(Route::currentRouteName(), $loggedInPages))
             @include('frontend.partials.navbar')
@@ -143,6 +148,7 @@
         @endif
 
         @include('frontend.partials.scripts')
+        <script src="/js/lang.js"></script>
         <script>
             $.ajaxSetup({
                 headers: {

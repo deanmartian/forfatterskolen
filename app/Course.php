@@ -133,6 +133,11 @@ class Course extends Model
         return $this->hasOne('App\CourseExpiryReminder');
     }
 
+    public function surveys()
+    {
+        return $this->hasMany(Survey::class);
+    }
+
     //for deleting the children
     /*public static function boot()
     {

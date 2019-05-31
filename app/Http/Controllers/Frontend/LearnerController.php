@@ -113,7 +113,7 @@ class LearnerController extends Controller
      */
     public function survey($id)
     {
-        $survey = Survey::find($id);
+        $survey = Survey::with('questions')->where('id', $id)->first();
         if (!$survey) {
             return redirect()->route('learner.course');
         }
@@ -121,26 +121,32 @@ class LearnerController extends Controller
         return view('frontend.learner.survey', compact('survey'));
     }
 
-
+    /**
+     * Survey Submit
+     * @param $id
+     * @param Request $request
+     * @return array
+     */
     public function takeSurvey($id, Request $request)
     {
-        $data = $request->except('_token');
-        foreach ($data as $key => $value) {
-            $answer = new SurveyAnswer();
-            if (! is_array( $value )) {
-                $newValue = $value['answer'];
-            } else {
-                $newValue = json_encode($value['answer']);
+        $data = $request->all();
+        $filtered_data = array_filter($data);
+        foreach ($filtered_data as $key => $value) {
+            if ($value) {
+                $answer = new SurveyAnswer();
+                if( strpos($value, ", ") !== false ) {
+                    $value = json_encode(explode(", ", $value));
+                }
+
+                $answer->answer             = $value;
+                $answer->survey_question_id = $key;
+                $answer->user_id            = Auth::id();
+                $answer->survey_id          = $id;
+
+                $answer->save();
             }
-            $answer->answer = $newValue;
-            $answer->survey_question_id = $key;
-            $answer->user_id = Auth::id();
-            $answer->survey_id = $id;
-
-            $answer->save();
         }
-
-        return redirect()->route('learner.course');
+        return $filtered_data;
     }
 
 

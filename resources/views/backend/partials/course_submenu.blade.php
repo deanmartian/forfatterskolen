@@ -23,5 +23,10 @@
     <li @if($section == 'reward-coupons') class="active" @endif><a href="{{route('admin.course.show', $course->id)}}?section=reward-coupons"><i class="fa fa-star"></i>&nbsp;&nbsp;Reward Coupons</a></li>
 @endif
 
+    <li @if($section == 'surveys') class="active" @endif>
+        <a href="{{route('admin.course.show', $course->id)}}?section=surveys">
+            <i class="fa fa-question"></i>&nbsp;&nbsp;{{ trans('site.surveys') }}
+        </a>
+    </li>
 </ul>
 </div>

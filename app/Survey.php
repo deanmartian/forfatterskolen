@@ -48,6 +48,11 @@ class Survey extends Model {
         return false;
     }
 
+    public function answers()
+    {
+        return $this->hasMany(SurveyAnswer::class);
+    }
+
     protected static function boot() {
         parent::boot();
 

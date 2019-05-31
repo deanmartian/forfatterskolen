@@ -60,7 +60,7 @@
                     $alert_type = 'danger';
                 }
             ?>
-            <div class="alert alert-{{ $alert_type }} global-alert-box">
+            <div class="alert alert-{{ $alert_type }} global-alert-box" style="z-index: 9">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
                 <ul>
                     @foreach($errors->all() as $error)
@@ -77,6 +77,7 @@
             $(".dt-table").DataTable({
                 "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
                 pageLength: 5,
+                "aaSorting": []
             });
 
             $.ajaxSetup({

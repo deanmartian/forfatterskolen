@@ -6,6 +6,14 @@
 
 @section('styles')
     <style>
+        .modal-backdrop.in {
+            opacity: .5;
+        }
+
+        .modal.fade .modal-dialog {
+            transform: translate(0,0);
+        }
+
         .card {
             position: relative;
             margin: 8px 0 16px 0;
@@ -107,13 +115,7 @@
         }
 
         .card-content .btn, .btn-large {
-            text-decoration: none;
-            color: #fff;
-            background-color: #26a69a;
-            text-align: center;
-            letter-spacing: .5px;
-            transition: .2s ease-out;
-            cursor: pointer;
+            flex: 1;
         }
 
         .card-content .waves-effect {
@@ -144,11 +146,6 @@
             vertical-align: middle;
             -webkit-tap-highlight-color: transparent;
             box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
-        }
-
-        .card-content .btn:hover{
-            background-color: #2bbbad;
-            color:#fff;
         }
 
         .card-content .btn:hover{
@@ -235,79 +232,12 @@
 @stop
 
 @section('content')
-    <div class="account-container">
-        @include('frontend.partials.learner-menu')
+    <div class="learner-container" id="app-container">
 
-        <div class="col-sm-12 col-md-10 sub-right-content">
-            <div class="col-md-6 col-md-offset-3">
+        <div class="col-sm-12">
+            <div class="col-md-8 col-md-offset-2">
 
-                <div class="card">
-                    <div class="card-content">
-                        <span class="card-title"> Start taking Survey</span>
-                        <p>
-                        </p>
-                        <p>
-                            <span class="flow-text margin-top">{{ $survey->title }}</span> <br/>
-                            {{ $survey->description }}
-                        </p>
-
-                        <div class="divider" style="margin:25px 0px;"></div>
-
-                        <form action="{{ route('learner.take-survey', $survey->id) }}" method="POST">
-                            {{ csrf_field() }}
-
-                            @forelse($survey->questions as $question)
-                                <p>
-                                    <b>
-                                        {{ $question->title }}
-                                    </b>
-
-                                </p>
-                                @if($question->question_type === 'text')
-                                    <div class="input-field col s12">
-                                        <input id="answer" type="text" name="{{ $question->id }}[answer]">
-                                        <label for="answer">Answer</label>
-                                    </div>
-                                @elseif($question->question_type === 'textarea')
-                                    <div class="form-group">
-                                        <span>Provide Answer</span>
-                                        <textarea name="{{ $question->id }}[answer]" id="" cols="20" rows="10"
-                                                  class="form-control"></textarea>
-                                    </div>
-                                @elseif($question->question_type === 'radio')
-                                    <?php $radio_options = json_decode($question->option_name);?>
-                                    @foreach($radio_options as $key=>$value)
-                                        <p style="margin:0px; padding:0px;">
-                                            <input name="{{ $question->id }}[answer][]" type="radio" id="{{ $key }}"
-                                            value="{{ $value }}"/>
-                                            <label for="{{ $key }}">{{ $value }}</label>
-                                        </p>
-                                    @endforeach
-                                @elseif($question->question_type === 'checkbox')
-                                    <?php $checkbox_options = json_decode($question->option_name);?>
-                                    @foreach($checkbox_options as $key=>$value)
-                                        <p style="margin:0px; padding:0px;">
-                                            <input type="checkbox" id="{{ $question->id.'-'.$key }}" name="{{ $question->id }}[answer][]"
-                                            value="{{ $value }}"/>
-                                            <label for="{{$question->id.'-'.$key}}">{{ $value }}</label>
-                                        </p>
-                                    @endforeach
-                                @endif
-                                <div class="divider" style="margin:25px 0px;"></div>
-
-                            @empty
-                                <p class="text-center">
-                                    <b >Nothing to show</b>
-                                </p>
-                            @endforelse
-
-                            @if($survey->questions->count())
-                            <button class="btn waves-effect waves-light">Submit Survey</button>
-                            @endif
-
-                        </form>
-                    </div>
-                </div>
+                <take-survey :survey="{{ $survey }}"></take-survey>
 
             </div>
         </div>
@@ -318,4 +248,5 @@
 
 @section('scripts')
     <script src="{{ asset('js/custom-materialize.js') }}"></script>
+    <script src="{{ asset('js/app.js?v='.time()) }}"></script>
 @stop

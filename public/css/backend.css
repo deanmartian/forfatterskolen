@@ -989,3 +989,15 @@ textarea{
 	box-shadow: none;
 	color: #fff;
 }
+
+.panel-group .panel>.panel-heading>.panel-title .img-icon:before {
+	content: "";
+	display: inline-block;
+	background-size: cover;
+	background-repeat: no-repeat;
+	transform: translateY(3px);
+	background-image: url(../images-new/question-mark.png);
+	height: 18px;
+	margin-right: 7px;
+	width: 18px;
+}

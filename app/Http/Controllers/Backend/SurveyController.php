@@ -1,11 +1,14 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SurveyRequest;
 use App\Repositories\Services\SurveyService;
+use App\Survey;
 use App\SurveyAnswer;
 use App\SurveyQuestion;
+use App\User;
 
 class SurveyController extends Controller {
 
@@ -42,7 +45,10 @@ class SurveyController extends Controller {
     public function store(SurveyRequest $request)
     {
         if ($this->surveyService->store($request)) {
-            return redirect()->route('admin.survey.index');
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Survey created successfully.'),
+                'alert_type' => 'success'
+            ]);
         }
 
         return redirect()->back();
@@ -76,7 +82,10 @@ class SurveyController extends Controller {
             $this->surveyService->update($id, $request);
         }
 
-        return redirect()->back();
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Survey updated successfully.'),
+            'alert_type' => 'success'
+        ]);
     }
 
     /**
@@ -93,7 +102,17 @@ class SurveyController extends Controller {
         return redirect()->back();
     }
 
+    public function answers($id)
+    {
+        if ($survey = Survey::find($id)) {
+            $answers = $survey->answers;
+            $questions = $survey->questions()->with('answers')->get();
+            return view('backend.survey.answers', compact('survey', 'questions', 'answers'));
+        }
 
+        return redirect()->route('admin.survey.index');
+    }
+    
     public function downloadAnswers($id)
     {
         $survey = $this->surveyService->getRecord($id);
@@ -101,53 +120,58 @@ class SurveyController extends Controller {
             abort(404);
         }
 
-        $excel          = \App::make('excel');
-        $downloadList     = [];
+        $excel     = \App::make('excel');
+        $questions = $survey->questions;
+        $downloadList = [];
+        $questionList = ['Learner ID'];
+        $answerList   = [];
 
-        $header = [];
-
-        $questionList = [];
-        $answerList = [];
-        foreach($survey->questions as $k=>$question) {
-            $questionList[][$question->id] = $question->title;
-            $header[] = $question->title;
-            foreach($question->answers as $answer) {
-                $answerList[$question->id][] = $answer->answer;
-            }
-        }
-        $downloadList[] = $header;
-        $row = array();
-        $key = 0;
-
-        header('Pragma: private');
-        header('Cache-control: private, must-revalidate');
-        header('Content-type: text/csv');
-        $csvFileName = preg_replace("/[^A-Za-z0-9_-]/", '', str_replace(' ', '_', $survey->title));
-        header('Content-Disposition: attachment; filename=' . $csvFileName . '.csv');
-
-
-        $fp = fopen('php://output', 'w');
-        $headers = array();
-
-        foreach ($survey->questions as $question)
-            $headers[] = iconv('UTF-8', 'WINDOWS-1252', $question->title);
-        fputcsv($fp, $headers);
-
-        foreach ($survey->getResponse() as $response)
-        {
-            $row = array();
-            foreach ($survey->questions as $question)
-            {
-                $field = 'question_' . $question->id;
-                $formatField = implode("\n",explode(',', $response->$field));
-                $row[] = $formatField;
-                //$row[] = explode(', ',$response->$field);
-            }
-            fputcsv($fp, $row);
+        // add questions on the first row
+        foreach ($questions as $qk => $question) {
+            array_push($questionList, $question->title);
         }
 
+        // get the answers grouped by user
+        $surveyAnswers = SurveyAnswer::where('survey_id', $id)->groupBy('user_id')->get();
+        foreach ($surveyAnswers as $answer) {
+            $storeAnswerWithUser = [$answer->user->id];
+            $searchByGroupedUser = SurveyAnswer::where(['survey_id' => $id, 'user_id' => $answer->user_id])
+                ->get()->toArray();
+            foreach($searchByGroupedUser as $search) {
+                $result = json_decode($search['answer']);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $result = implode(", ", (array)$result);
+                } else {
+                    $result = $search['answer'];
+                }
+                array_push($storeAnswerWithUser, $result);
+            }
 
-        fclose($fp);
-        exit;
+            /*
+             * if user/learner is not required/displayed on first
+             * $searchByGroupedUser = SurveyAnswer::where(['survey_id' => $id, 'user_id' => $answer->user_id])
+                ->get()->map(function($data) {
+                $result = json_decode($data['answer']);
+                $user = User::find($data['user_id']);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    return implode(", ", (array)$result);
+                }
+                    return $data['answer'];
+
+            })->toArray();
+            $answerList[] = $searchByGroupedUser;*/
+            $answerList[] = $storeAnswerWithUser;
+        }
+        $downloadList[] = $questionList;
+        $downloadList = array_merge($downloadList, $answerList);
+
+        $excel->create($survey->title.' Answers', function($excel) use ($downloadList) {
+
+            // Build the spreadsheet, passing in the payments array
+            $excel->sheet('sheet1', function($sheet) use ($downloadList) {
+                // prevent inserting an empty first row
+                $sheet->fromArray($downloadList, null, 'A1', false, false);
+            });
+        })->download('xlsx');
     }
 }

@@ -23,4 +23,9 @@ class SurveyAnswer extends Model {
     {
         return $this->belongsTo('App\SurveyQuestion');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
