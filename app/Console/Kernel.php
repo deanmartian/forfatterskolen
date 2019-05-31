@@ -77,8 +77,8 @@ class Kernel extends ConsoleKernel
             ->dailyAt('06:00');*/
         $schedule->command('freecoursedelayedemail:command')
             ->everyMinute();
-        $schedule->command('webinarregistranttolearner:command')
-            ->yearly();
+        /*$schedule->command('webinarregistranttolearner:command')
+            ->yearly();*/
         $schedule->command('queue:work --daemon')->everyMinute()->withoutOverlapping();
     }
 

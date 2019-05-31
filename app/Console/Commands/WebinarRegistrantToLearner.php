@@ -46,7 +46,7 @@ class WebinarRegistrantToLearner extends Command
         $access_token = AdminHelpers::generateWebinarGTAccessToken();
         $base_url       = 'https://api.getgo.com/G2W/rest';
         $org_key        = '5169031040578858252';
-        $webinar_key    = '6674233891825116684';
+        $webinar_key    = '3548686272214906891';
         $long_url = $base_url.'/organizers/'.$org_key.'/webinars/'.$webinar_key.'/registrants';
 
         // get the registrants of the webinar
@@ -69,7 +69,7 @@ class WebinarRegistrantToLearner extends Command
                 $lastName   = $registrant->lastName;
                 $user_email = $registrant->email;
 
-                $course_id  = 34;
+                $course_id  = 40;
                 $course     = Course::find($course_id);
                 $package    = $course->packages()->first();
                 $user       = User::where('email', $user_email)->first();
@@ -84,7 +84,12 @@ class WebinarRegistrantToLearner extends Command
                     ]);
                 }
 
-                CoursesTaken::create([
+                $alreadyAdded = CoursesTaken::where([
+                    'package_id'    => $package->id,
+                    'user_id'       => $user->id
+                ])->first();
+
+                CoursesTaken::firstOrCreate([
                     'package_id'    => $package->id,
                     'user_id'       => $user->id
                 ]);
@@ -109,9 +114,12 @@ class WebinarRegistrantToLearner extends Command
                     $loginLink, $user_email, $password
                 ];
                 $message = str_replace($search_string, $replace_string, $emailOut->message).$attachmentText;
-                echo $user_email."\n";
-                AdminHelpers::send_email($subject,'post@forfatterskolen.no', $user_email, $message);
-                CronLog::create(['activity' => 'WebinarRegistrantToLearner CRON send email to '.$user_email]);
+                // check if already added
+                if (!$alreadyAdded) {
+                    AdminHelpers::send_email($subject,'post@forfatterskolen.no', $user_email, $message);
+                    CronLog::create(['activity' => 'WebinarRegistrantToLearner CRON send email to '.$user_email]);
+                    echo $user_email."\n";
+                }
             }
         }
 
