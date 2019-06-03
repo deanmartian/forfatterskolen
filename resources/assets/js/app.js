@@ -12,6 +12,14 @@ window.Vue = require('vue');
 // for localization
 Vue.prototype.trans = string => _.get(window.i18n, string);
 
+Vue.prototype.trans = (string, args) => {
+    let value = _.get(window.i18n, string);
+    _.eachRight(args, (paramVal, paramKey) => {
+        value = _.replace(value, paramKey, paramVal);
+    });
+    return value;
+};
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

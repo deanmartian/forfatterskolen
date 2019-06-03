@@ -1179,4 +1179,8 @@ kvittering.',
   'docx-pdf-odt-text' => 'Godkjente fil formater er  DOCX, PDF og ODT.',
   'order-history' => 'Order History',
   'answer-text' => 'Answer',
+  'start-taking-survey' => 'Start taking Survey',
+  'start-survey' => 'Start Survey',
+  'next-question' => 'Next Question',
+  'nothing-to-show' => 'Nothing to show',
 );

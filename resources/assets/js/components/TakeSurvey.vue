@@ -3,14 +3,14 @@
         <div class="card" v-if="!isDone">
             <div class="card-content">
                 <div v-if="!isStarted">
-                    <h3 class="card-title text-center">Start taking Survey</h3>
+                    <h3 class="card-title text-center">{{ trans("site.start-taking-survey") }}</h3>
                     <p class="mt-3">
                         <span class="flow-text margin-top">{{ survey.title }}</span> <br/>
                         {{ survey.description }}
                     </p>
 
                     <button class="btn btn-success w-100 mt-3" v-if="hasQuestion"
-                            @click="isStarted = true">Start Survey</button>
+                            @click="isStarted = true">{{ trans("site.start-survey") }}</button>
                 </div>
 
                 <form v-if="isStarted" @submit.stop.prevent="handleSubmit">
@@ -46,17 +46,17 @@
                             <label :for="key">{{ value }}</label>
                         </div>
 
-                        <div class="btn-group d-flex" role="group" aria-label="Basic example">
+                        <div class="btn-group d-flex" role="group">
                             <button class="btn btn-secondary w-100" @click="prevQuestion()" type="button"
                                     :disabled="!answers.length || index === 0">
-                                Back
+                                {{ trans("site.back") }}
                             </button>
 
                             <button class="btn btn-success w-100"
                                     @click="nextQuestion(question.id, answers[question.id], question.question_type)"
                                     type="button" :disabled="!answers[question.id] && !hasAnswered"
                                     v-show="index != (lastQuestion - 1)">
-                                Next Question
+                                {{ trans("site.next-question") }}
                             </button>
 
                             <button class="btn btn-success w-100"
@@ -64,13 +64,13 @@
                                     type="button" :disabled="(!answers[question.id] && !hasAnswered) || isLoading"
                                     v-show="index == (lastQuestion - 1)">
                                 <i class="fa fa-pulse fa-spinner" v-show="isLoading"></i>
-                                Finish
+                                {{ trans("site.finish") }}
                             </button>
                         </div>
                     </div>
 
                     <p class="text-center" v-if="!hasQuestion">
-                        <b>Nothing to show</b>
+                        <b>{{ trans("site.nothing-to-show") }}</b>
                     </p>
                 </form>
             </div>
@@ -110,6 +110,10 @@
                 isLoading: false,
                 isDone: false
             }
+        },
+
+        mounted() {
+          console.log(i18n.site);
         },
 
         methods: {

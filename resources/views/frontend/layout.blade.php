@@ -148,7 +148,7 @@
         @endif
 
         @include('frontend.partials.scripts')
-        <script src="/js/lang.js"></script>
+        <script src="/js/lang.js?v="{{ time() }}></script>
         <script>
             $.ajaxSetup({
                 headers: {
