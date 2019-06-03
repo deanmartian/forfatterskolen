@@ -1183,4 +1183,8 @@ kvittering.',
   'start-survey' => 'Start Survey',
   'next-question' => 'Next Question',
   'nothing-to-show' => 'Nothing to show',
+  'error-405' => 'Error 405',
+  'error-500' => 'Error 500',
+  'error-405-description' => 'Whoops, looks like something went wrong.',
+  'error-500-description' => 'Whoops, looks like something went wrong.',
 );
