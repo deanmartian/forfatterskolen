@@ -91,10 +91,15 @@ class LearnerController extends Controller
         'Content-Type: application/hal+json'
    ];
 
-   
     public function dashboard()
     {
-        return view('frontend.learner.dashboard');
+        $packageArr     = Auth::user()->coursesTaken()->pluck('package_id')->toArray();
+        $courses        = Package::whereIn('id', $packageArr)->pluck('course_id')->toArray();
+        $surveyTaken    = Auth::user()->surveyTaken()->pluck("survey_id")->toArray();
+        $surveys        = Survey::whereIn("course_id",$courses)
+            ->whereNotIn("id", $surveyTaken)->get();
+
+        return view('frontend.learner.dashboard', compact('surveys'));
     }
 
 
@@ -113,9 +118,11 @@ class LearnerController extends Controller
      */
     public function survey($id)
     {
-        $survey = Survey::with('questions')->where('id', $id)->first();
+        $surveyTaken    = Auth::user()->surveyTaken()->pluck("survey_id")->toArray();
+        $survey = Survey::with('questions')->where('id', $id)
+            ->whereNotIn("id", $surveyTaken)->first();
         if (!$survey) {
-            return redirect()->route('learner.course');
+            return redirect()->route('learner.dashboard');
         }
 
         return view('frontend.learner.survey', compact('survey'));

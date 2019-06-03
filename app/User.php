@@ -272,4 +272,9 @@ class User extends Authenticatable
     {
         return $this->attributes['id'] === 1376 ? true : false;
     }
+
+    public function surveyTaken()
+    {
+        return $this->hasMany(SurveyAnswer::class)->groupBy("survey_id");
+    }
 }

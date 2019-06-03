@@ -173,6 +173,28 @@
 
                         </div> <!-- end global-card -->
                     @endif <!-- end if has free course -->
+
+                    @if($surveys->count())
+                        <div class="card global-card mt-3">
+                            <div class="card-header">
+                                <h1>
+                                    {{ trans('site.surveys') }}
+                                </h1>
+                            </div>
+                            <div class="card-body">
+                                <ul>
+                                    @foreach($surveys as $survey)
+                                        <li>
+                                            <a href="{{ route('learner.survey', $survey->id) }}">
+                                                {{ $survey->title }}
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div> <!-- end global-card -->
+                    @endif
+
                 </div> <!-- end dashboard-calendar -->
             </div> <!-- end row -->
 
