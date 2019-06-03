@@ -91,7 +91,8 @@ class WebinarRegistrantToLearner extends Command
 
                 CoursesTaken::firstOrCreate([
                     'package_id'    => $package->id,
-                    'user_id'       => $user->id
+                    'user_id'       => $user->id,
+                    'is_free'       => 1
                 ]);
 
                 $emailOut   = $course->emailOut()->where('for_free_course', 1)->first();
