@@ -34,8 +34,8 @@
 
     <body>
              <div>
-                 <h2>Error 404</h2>
-                 <span>We are sorry, but the page you are looking for does not exist.</span>
+                 <h2>{{ trans('site.error-404') }}</h2>
+                 <span>{{ trans('site.error-404-description') }}</span>
             </div>  
 
     </body>	
