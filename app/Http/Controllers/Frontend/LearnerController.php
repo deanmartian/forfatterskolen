@@ -96,8 +96,14 @@ class LearnerController extends Controller
         $packageArr     = Auth::user()->coursesTaken()->pluck('package_id')->toArray();
         $courses        = Package::whereIn('id', $packageArr)->pluck('course_id')->toArray();
         $surveyTaken    = Auth::user()->surveyTaken()->pluck("survey_id")->toArray();
-        $surveys        = Survey::whereIn("course_id",$courses)
-            ->whereNotIn("id", $surveyTaken)->get();
+        $today          = date('Y-m-d');
+        $surveys        = DB::table('survey')->whereIn("course_id",$courses)
+            ->whereNotIn("id", $surveyTaken)
+            ->where(function($query) use($today) {
+                $query->whereDate('start_date', '<=', $today);
+                $query->whereDate('end_date', '>=', $today);
+            })
+            ->get();
 
         return view('frontend.learner.dashboard', compact('surveys'));
     }

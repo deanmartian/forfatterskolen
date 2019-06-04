@@ -19,6 +19,8 @@
                         <tr>
                             <th>{{ trans('site.title') }}</th>
                             <th>{{ trans('site.description') }}</th>
+                            <th>{{ trans('site.start-date') }}</th>
+                            <th>{{ trans('site.end-date') }}</th>
                             <th width="100"></th>
                         </tr>
                         </thead>
@@ -27,6 +29,8 @@
                                 <tr>
                                     <td>{{ $survey->title }}</td>
                                     <td>{{ $survey->description }}</td>
+                                    <td>{{ $survey->start_date }}</td>
+                                    <td>{{ $survey->end_date }}</td>
                                     <td>
                                         <a href="{{ route('admin.survey.show', $survey->id) }}"
                                            class="btn btn-primary btn-xs"
@@ -74,6 +78,16 @@
                             <label>{{ trans('site.description') }}</label>
                             <textarea name="description" id="" cols="30" rows="10"
                                       class="form-control" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ trans('site.start-date') }}</label>
+                            <input type="date" name="start_date" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ trans('site.end-date') }}</label>
+                            <input type="date" name="end_date" class="form-control" required>
                         </div>
                         <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.add') }}</button>
                         <div class="clearfix"></div>

@@ -9,6 +9,7 @@ use App\Survey;
 use App\SurveyAnswer;
 use App\SurveyQuestion;
 use App\User;
+use Illuminate\Http\Request;
 
 class SurveyController extends Controller {
 
@@ -77,6 +78,18 @@ class SurveyController extends Controller {
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update($id, SurveyRequest $request)
+    {
+        if ($this->surveyService->getRecord($id)) {
+            $this->surveyService->update($id, $request);
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Survey updated successfully.'),
+            'alert_type' => 'success'
+        ]);
+    }
+
+    public function updateDate($id, Request $request)
     {
         if ($this->surveyService->getRecord($id)) {
             $this->surveyService->update($id, $request);

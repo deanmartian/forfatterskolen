@@ -1209,6 +1209,7 @@ Route::group([
         Route::post('/board/{id}/update-pulse-status', 'BoardController@setStatus')->name('admin.board.update-pulse-status'); // Update pulse status
         Route::post('/board/{id}/update-timeline', 'BoardController@setTimeline')->name('admin.board.update-timeline'); // Update timeline
 
+        Route::put('/survey/{id}/update-date', 'SurveyController@updateDate')->name('admin.survey.update-date');
         Route::resource('/survey', 'SurveyController', [
             'except' => ['create'],
             'names' => [

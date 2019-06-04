@@ -21,6 +21,8 @@
                     <th>{{ trans_choice('site.courses', 1) }}</th>
                     <th>{{ trans('site.title') }}</th>
                     <th>{{ trans('site.description') }}</th>
+                    <th>{{ trans('site.start-date') }}</th>
+                    <th>{{ trans('site.end-date') }}</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -36,6 +38,8 @@
                             </td>
                             <td>{{ $survey->title }}</td>
                             <td>{{ $survey->description }}</td>
+                            <td>{{ $survey->start_date }}</td>
+                            <td>{{ $survey->end_date }}</td>
                             <td>
                                 <a href="{{ route('admin.survey.show', $survey->id) }}" class="fa fa-edit"
                                 title="Edit Survey"></a>
@@ -76,6 +80,16 @@
                                     <option value="{{ $course->id }}"> {{ $course->title }}</option>
                                 @endforeach
                             </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ trans('site.start-date') }}</label>
+                            <input type="date" name="start_date" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ trans('site.end-date') }}</label>
+                            <input type="date" name="end_date" class="form-control" required>
                         </div>
                         <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.add') }}</button>
                         <div class="clearfix"></div>

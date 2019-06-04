@@ -17,7 +17,7 @@ class Survey extends Model {
      *
      * @var array
      */
-    protected $fillable = ['title', 'description', 'course_id'];
+    protected $fillable = ['title', 'description', 'course_id', 'start_date', 'end_date'];
 
     public function course()
     {

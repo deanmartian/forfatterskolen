@@ -48,7 +48,7 @@ class SurveyService {
     /**
      * Update a survey
      * @param $id
-     * @param SurveyRequest $request
+     * @param $request
      * @return bool
      */
     public function update($id, $request)
