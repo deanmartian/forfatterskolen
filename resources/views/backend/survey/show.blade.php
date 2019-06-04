@@ -247,7 +247,12 @@
                         {{ $survey->description }}
                     </p>
 
+                    <b>{{ trans('site.start-date') }}:</b> {{ \App\Http\FrontendHelpers::isDate($survey->start_date) ?
+                    \Carbon\Carbon::parse($survey->start_date)->format('Y.m.d') : NULL }}
                     <br>
+                    <b>{{ trans('site.end-date') }}:</b> {{ \App\Http\FrontendHelpers::isDate($survey->end_date) ?
+                    \Carbon\Carbon::parse($survey->end_date)->format('Y.m.d') : NULL }}
+                    <br> <br>
 
 
                     <a href="#editSurveyModal" data-toggle="modal" id="editSurveyBtn"
