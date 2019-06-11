@@ -344,7 +344,10 @@ class ShopController extends Controller
 
 
         /* check if there's an issue date set ir not then use today*/
-        $dueDate = $package->issue_date ?: date("Y-m-d");
+        $dueDate = date("Y-m-d");
+        if ($package->issue_date && Carbon::parse($package->issue_date)->gt(Carbon::today())) {
+            $dueDate = $package->issue_date;
+        }
         $dueDate = Carbon::parse($dueDate);
         $payment_plan = trim($payment_plan);
 
