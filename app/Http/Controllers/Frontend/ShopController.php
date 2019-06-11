@@ -635,8 +635,6 @@ class ShopController extends Controller
 
 
         // Send course email
-        $actionText = 'Mine Kurs';
-        $actionUrl = route('learner.course');//'http://www.forfatterskolen.no/account/course';
         $headers = "From: Forfatterskolen<post@forfatterskolen.no>\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
@@ -653,6 +651,12 @@ class ShopController extends Controller
         $email_content = str_replace($search_string, $replace_string, $package->course->email);
 
         $user_email = $user->email;
+
+        $encode_email = encrypt($user_email);
+        $redirectLink = encrypt(route('learner.course'));
+        $actionUrl = route('auth.login.emailRedirect',[$encode_email, $redirectLink]);
+        $actionText = 'Mine Kurs';
+
         //mail($user->email, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
         AdminHelpers::send_email($package->course->title,
             'post@forfatterskolen.no', $user_email,
