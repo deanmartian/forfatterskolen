@@ -309,28 +309,6 @@
 											</div>
 									  @endforeach
 									</div>
-									<div class="col-sm-12" style="margin-top: 8px" id="splitInvoiceContainer">
-										<div class="row">
-											<div class="col-sm-12">
-												<span class="split-faktura">
-													{{ trans('site.front.form.monthly-payment') }}?*</span>
-											</div>
-											<div class="payment-option custom-radio col-sm-6">
-												<input type="radio" name="split_invoice" value="1" disabled required
-												id="yes_option">
-												<label for="yes_option">
-													{{ trans('site.front.yes') }}
-												</label>
-											</div>
-											<div class="payment-option custom-radio col-sm-6">
-												<input type="radio" name="split_invoice" value="0" disabled required
-												id="no_option">
-												<label for="no_option">
-													{{ trans('site.front.no') }}
-												</label>
-											</div>
-										</div>
-									</div>
 								</div>
 
 								<div class="row">
@@ -476,7 +454,7 @@
             }, 100);
 
             $('input[name=package_id]').on('change', function(){
-                $('input:radio[name=split_invoice]').prop('disabled', true).prop('checked', false);
+                //$('input:radio[name=split_invoice]').prop('disabled', true).prop('checked', false);
                 generatePackagePaymentOption($(this).val());
                 count_package_change++;
 
@@ -518,7 +496,7 @@
                         let checkout_total = $('.checkout-total');
                         checkout_total.find('span.total-display').text(data);
                     });
-                    $('input:radio[name=split_invoice]').prop('disabled', true);
+                    //$('input:radio[name=split_invoice]').prop('disabled', true);
                 } else {
                     payment_plan_id.parent().removeClass('disabled');
                     payment_plan_id.prop('disabled', false);
@@ -646,8 +624,8 @@
             let checkout_total = $('.checkout-total');
             let plan = $(t).data('plan');
             let new_total = 0;
-            let split_invoice = $('input:radio[name=split_invoice]');
-            	split_invoice.prop('disabled', false);
+            /*let split_invoice = $('input:radio[name=split_invoice]');
+            	split_invoice.prop('disabled', false);*/
 			let checked_package_id = $('input[name=package_id]:checked');
 			let discount_value = $("input[name=discount_value]").val();
 
@@ -664,8 +642,8 @@
                     new_total = price_value - discount_value;
                 }
 
-                split_invoice.prop('disabled', true);
-                split_invoice.prop('checked', false);
+                /*split_invoice.prop('disabled', true);
+                split_invoice.prop('checked', false);*/
 
                 // check for sale price
                 checkSalePrice(checked_package_id, 'full_payment_price_number', 'full_payment_sale_price_number', 'full_payment_price');

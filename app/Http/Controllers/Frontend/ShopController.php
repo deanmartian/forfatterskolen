@@ -485,7 +485,7 @@ class ShopController extends Controller
         }
 
         // check if the customer wants to split the invoice
-        if (isset($request->split_invoice) && $request->split_invoice) {
+        if ($paymentPlan->division > 1) { //isset($request->split_invoice) && $request->split_invoice
             $division   = $paymentPlan->division * 100; // multiply the split count to get the correct value
             $price      = round($price/$division, 2); // round the value to the nearest tenths
             $price      = (int)$price*100;
