@@ -227,7 +227,7 @@ class InvoiceController extends Controller
         $paymentMode = PaymentMode::findOrFail(3);
         $paymentPlan = PaymentPlan::findOrFail($request->payment_plan_id);
         $payment_mode = 'Bankoverføring';
-        $payment_plan = "Hele beløpet";
+        $payment_plan = $paymentPlan->plan;
 
         $comment = '(Ny faktura, ';
         $comment .= 'Betalingsmodus: ' . $payment_mode . ', ';
