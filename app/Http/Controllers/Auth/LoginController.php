@@ -150,8 +150,8 @@ class LoginController extends Controller
      */
     public function handleFacebookCallback()
     {
-
-        $redirectPage = route('learner.dashboard');//\Session::get('redirect_page')[0];
+        $redirectPage = \Session::has('redirect_page') ? \Session::get('redirect_page')[0]
+            : route('learner.dashboard');
 
         // add fields function to get specific fields *optional
         $userFacebook = Socialite::driver('facebook')
