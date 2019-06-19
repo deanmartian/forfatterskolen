@@ -1390,7 +1390,8 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
 
             CoursesTaken::create([
                 'package_id'    => $package->id,
-                'user_id'       => $user->id
+                'user_id'       => $user->id,
+                'is_free'       => 1
             ]);
 
             $emailOut   = $course->emailOut()->where('for_free_course', 1)->first();
