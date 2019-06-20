@@ -242,6 +242,7 @@
 											   data-full_payment_price="{{ FrontendHelpers::currencyFormat($full_payment_price) }}"
 											   data-months_3_price="{{ FrontendHelpers::currencyFormat($months_3_price) }}"
 											   data-months_6_price="{{ FrontendHelpers::currencyFormat($months_6_price) }}"
+											   data-months_12_price="{{ FrontendHelpers::currencyFormat($months_12_price) }}"
 											   data-full_payment_price_number="{{ $full_payment_price }}"
 											   data-months_3_price_number="{{ $months_3_price }}"
 											   data-months_6_price_number="{{ $months_6_price }}"
@@ -517,7 +518,8 @@
 
             //user is "finished typing," do something
             function checkDiscount () {
-                let data = {coupon: coupon.val(), package_id: $('input[name=package_id]:checked').val()};
+                let data = {coupon: coupon.val(), package_id: $('input[name=package_id]:checked').val(),
+					payment_plan_id: $('input[name=payment_plan_id]:checked').val()};
                 $.get('/course/'+course_id+'/check_discount', data, function(){}, 'json')
 					.fail(function(){
 						$("#discount-wrapper").addClass('hide');
@@ -540,7 +542,10 @@
 							} else if( plan === '6 måneder' ) {
 								//var price = $('#package_select option:selected').data('months_6_price_number');
 								price = $('input[name=package_id]:checked').data('months_6_price_number');
-							}
+							} else if( plan === '12 måneder' ) {
+                                //var price = $('#package_select option:selected').data('months_6_price_number');
+                                price = $('input[name=package_id]:checked').data('months_12_price_number');
+                            }
 
 							new_total = price + $("input[name=discount_value]").val();
 						} else {
@@ -579,7 +584,10 @@
 							} else if( plan === '6 måneder' ) {
 								//var price = $('#package_select option:selected').data('months_6_price_number');
 								price = $('input[name=package_id]:checked').data('months_6_price_number');
-							}
+							} else if( plan === '12 måneder' ) {
+                                //var price = $('#package_select option:selected').data('months_6_price_number');
+                                price = $('input[name=package_id]:checked').data('months_12_price_number');
+                            }
 
 							new_total = price - data.discount;
 						} else {
