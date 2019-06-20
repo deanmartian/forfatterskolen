@@ -312,10 +312,6 @@
 								</div>
 
 								<div class="row">
-									<span class="col-sm-12 note">
-										*{{ trans('site.front.form.invoice-note') }}
-									</span>
-
 									<div class="col-sm-12 margin-top custom-checkbox">
 										<input type="checkbox" name="agree_terms" id="agree_terms" required>
 										{!! str_replace(['_start_label_', '_end_label_', '_start_link_','_end_link_'],

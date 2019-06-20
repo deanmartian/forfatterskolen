@@ -294,7 +294,7 @@
 										</div>
 									@endforeach
 								</div>
-								<div class="col-sm-12" style="margin-top: 8px" id="splitInvoiceContainer">
+								{{--<div class="col-sm-12" style="margin-top: 8px" id="splitInvoiceContainer">
 									<div class="row">
 										<div class="col-sm-12">
 											<span class="split-faktura">{{ trans('site.front.form.monthly-payment') }}?*</span>
@@ -310,13 +310,13 @@
 											<label for="no_option">{{ trans('site.front.no') }}</label>
 										</div>
 									</div>
-								</div>
+								</div>--}}
 							</div>
 
 							<div class="row">
-								<span class="col-sm-12 note">
+								{{--<span class="col-sm-12 note">
 									*{{ trans('site.front.form.invoice-note') }}
-								</span>
+								</span>--}}
 
 								<div class="col-sm-12 margin-top custom-checkbox">
 									<input type="checkbox" name="agree_terms" id="agree_terms" required>
