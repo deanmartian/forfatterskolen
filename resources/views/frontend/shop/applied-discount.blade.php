@@ -211,7 +211,6 @@
                                 }
 
                                 $couponDiscount = $discountData && !$errors->any() ? $discountData->discount : 0;
-
                                 ?>
 								<div class="package-option custom-radio">
 									<input type="radio" name="package_id"
@@ -257,9 +256,13 @@
 										   data-dis_months_12_sale_price = "{{ FrontendHelpers::currencyFormat($months_12_sale_price - $couponDiscount) }}"
 										   data-dis_months_12_sale_price_number = "{{ $months_12_sale_price - $couponDiscount }}"
 										   @endif
-
 										   required>
 									<label for="{{$package->variation}}">{{$package->variation}} </label>
+
+                                    <?php
+/*                                    if ($isBetweenFull && $package->full_payment_sale_price) {
+                                        $couponDiscount = ($full_payment_price - $full_payment_sale_price) + $couponDiscount;
+									}*/?>
 								</div>
 							@endforeach
 
@@ -347,7 +350,7 @@
 
 							<div id="discount-wrapper">
 								<h3 class="mb-0">{{ trans('site.front.your-discount') }}: <span id="discount-display" class="theme-text font-barlow-regular">
-										{{ \App\Http\FrontendHelpers::currencyFormat($couponDiscount) }}
+										{{--{{ \App\Http\FrontendHelpers::currencyFormat($couponDiscount) }}--}}
 									</span></h3>
 							</div>
 
@@ -447,6 +450,7 @@
 
             $('input[name=package_id]').on('change', function(){
                 let price_display = $("#price-display");
+                $("#monthly-price").addClass('hide');
                 $('input:radio[name=split_invoice]').prop('disabled', true).prop('checked', false);
                 generatePackagePaymentOption($(this).val());
                 count_package_change++;
@@ -456,16 +460,12 @@
                     ? $(this).data('dis_full_payment_sale_price_number')
                     : $(this).data('dis_full_payment_price_number');
 
-                let price = $(this).attr('data-full_payment_sale_price')
-                    ? $(this).data('full_payment_sale_price')
-                    : $(this).data('full_payment_price');
+                let price = $(this).data('full_payment_price');
                 price_display.text(price);
 
                 let discount_value = $("input[name=discount_value]").val();
                 if (discount_value) {
-                    let price_value = $(this).attr('data-full_payment_sale_price_number')
-                        ? $(this).data('full_payment_sale_price_number')
-                        : $(this).data('full_payment_price_number');
+                    let price_value = $(this).data('full_payment_price_number');
                     new_total = price_value - discount_value;
                 }
 
@@ -513,88 +513,97 @@
             coupon.on('keydown', function () {
                 clearTimeout(typingTimer);
             });
-
-            //user is "finished typing," do something
-            function checkDiscount () {
-                let data = {coupon: coupon.val(), package_id: $('input[name=package_id]:checked').val()};
-                $.get('/course/'+course_id+'/check_discount', data, function(){}, 'json')
-                    .fail(function(){
-                        $("#discount-wrapper").addClass('hide');
-                        alert("Invalid Coupon Code.");
-
-                        let new_total = 0;
-                        let checked_payment_plan = $('input[name=payment_plan_id]:checked');
-
-                        if (checked_payment_plan.length > 0) {
-
-                            let plan = checked_payment_plan.data('plan');
-                            let price = 0;
-
-                            if( plan === 'Hele beløpet' ) {
-                                //var price = $('#package_select option:selected').data('full_payment_price_number');
-                                price = $('input[name=package_id]:checked').data('full_payment_price_number');
-                            } else if( plan === '3 måneder' ) {
-                                //var price = $('#package_select option:selected').data('months_3_price_number');
-                                price = $('input[name=package_id]:checked').data('months_3_price_number');
-                            } else if( plan === '6 måneder' ) {
-                                //var price = $('#package_select option:selected').data('months_6_price_number');
-                                price = $('input[name=package_id]:checked').data('months_6_price_number');
-                            }
-
-                            new_total = price + $("input[name=discount_value]").val();
-                        } else {
-                            let price = $('#package_select').find('option:selected').data('full_payment_price_number');
-
-                            new_total = price + $("input[name=discount_value]").val();
-                        }
-
-                        $.get('/format_money/'+new_total, {}, function(){}, 'json').done(function(data){
-                            let checkout_total = $('.checkout-total');
-                            checkout_total.find('span.total-display').text(data);
-                        });
-
-                        $("input[name=discount_value]").val('');
-
-                    })
-                    .done(function(data){
-                        $("#discount-wrapper").removeClass('hide');
-                        $("#discount-display").text(data.discount_text);
-                        $("input[name=discount_value]").val(data.discount);
-
-                        let new_total = 0;
-                        let checked_payment_plan = $('input[name=payment_plan_id]:checked');
-
-                        if (checked_payment_plan.length > 0) {
-
-                            let plan = checked_payment_plan.data('plan');
-                            let price = 0;
-
-                            if( plan === 'Hele beløpet' ) {
-                                //var price = $('#package_select option:selected').data('full_payment_price_number');
-                                price = $('input[name=package_id]:checked').data('full_payment_price_number');
-                            } else if( plan === '3 måneder' ) {
-                                //var price = $('#package_select option:selected').data('months_3_price_number');
-                                price = $('input[name=package_id]:checked').data('months_3_price_number');
-                            } else if( plan === '6 måneder' ) {
-                                //var price = $('#package_select option:selected').data('months_6_price_number');
-                                price = $('input[name=package_id]:checked').data('months_6_price_number');
-                            }
-
-                            new_total = price - data.discount;
-                        } else {
-                            let price = $('#package_select').find('option:selected').data('full_payment_price_number');
-
-                            new_total = price - data.discount;
-                        }
-
-                        $.get('/format_money/'+new_total, {}, function(){}, 'json').done(function(data){
-                            let checkout_total = $('.checkout-total');
-                            checkout_total.find('span.total-display').text(data);
-                        });
-                    });
-            }
-
         });
+
+        //user is "finished typing," do something
+        function checkDiscount () {
+            let coupon = $('input[name=coupon]');
+            let course_id = '<?php echo $course->id?>';
+            let data = {coupon: coupon.val(), package_id: $('input[name=package_id]:checked').val(),
+                payment_plan_id: $('input[name=payment_plan_id]:checked').val()};
+
+            $.get('/course/'+course_id+'/check_discount', data, function(){}, 'json')
+                .fail(function(){
+                    $("#discount-wrapper").addClass('hide');
+                    alert("Invalid Coupon Code.");
+
+                    let new_total = 0;
+                    let checked_payment_plan = $('input[name=payment_plan_id]:checked');
+
+                    if (checked_payment_plan.length > 0) {
+
+                        let plan = checked_payment_plan.data('plan');
+                        let price = 0;
+
+                        if( plan === 'Hele beløpet' ) {
+                            //var price = $('#package_select option:selected').data('full_payment_price_number');
+                            price = $('input[name=package_id]:checked').data('full_payment_price_number');
+                        } else if( plan === '3 måneder' ) {
+                            //var price = $('#package_select option:selected').data('months_3_price_number');
+                            price = $('input[name=package_id]:checked').data('months_3_price_number');
+                        } else if( plan === '6 måneder' ) {
+                            //var price = $('#package_select option:selected').data('months_6_price_number');
+                            price = $('input[name=package_id]:checked').data('months_6_price_number');
+                        } else if( plan === '12 måneder' ) {
+                            //var price = $('#package_select option:selected').data('months_6_price_number');
+                            price = $('input[name=package_id]:checked').data('months_12_price_number');
+                        }
+
+                        new_total = price + $("input[name=discount_value]").val();
+                    } else {
+                        let price = $('#package_select').find('option:selected').data('full_payment_price_number');
+
+                        new_total = price + $("input[name=discount_value]").val();
+                    }
+
+                    $.get('/format_money/'+new_total, {}, function(){}, 'json').done(function(data){
+                        let checkout_total = $('.checkout-total');
+                        checkout_total.find('span.total-display').text(data);
+                    });
+
+                    $("input[name=discount_value]").val('');
+
+                })
+                .done(function(data){
+                    $("#discount-wrapper").removeClass('hide');
+                    $("#discount-display").text(data.discount_text);
+                    $("input[name=discount_value]").val(data.discount);
+
+                    let new_total = 0;
+                    let checked_payment_plan = $('input[name=payment_plan_id]:checked');
+
+                    if (checked_payment_plan.length > 0) {
+
+                        let plan = checked_payment_plan.data('plan');
+                        let price = 0;
+
+                        if( plan === 'Hele beløpet' ) {
+                            //var price = $('#package_select option:selected').data('full_payment_price_number');
+                            price = $('input[name=package_id]:checked').data('full_payment_price_number');
+                        } else if( plan === '3 måneder' ) {
+                            //var price = $('#package_select option:selected').data('months_3_price_number');
+                            price = $('input[name=package_id]:checked').data('months_3_price_number');
+                        } else if( plan === '6 måneder' ) {
+                            //var price = $('#package_select option:selected').data('months_6_price_number');
+                            price = $('input[name=package_id]:checked').data('months_6_price_number');
+                        } else if( plan === '12 måneder' ) {
+                            //var price = $('#package_select option:selected').data('months_6_price_number');
+                            price = $('input[name=package_id]:checked').data('months_12_price_number');
+                        }
+
+                        new_total = price - data.discount;
+                    } else {
+                        let price = $('#package_select').find('option:selected').data('full_payment_price_number');
+
+                        new_total = price - data.discount;
+                    }
+
+                    $.get('/format_money/'+new_total, {}, function(){}, 'json').done(function(data){
+                        let checkout_total = $('.checkout-total');
+                        checkout_total.find('span.total-display').text(data);
+                    });
+                });
+        }
 
         function generatePackagePaymentOption(package_id){
             let paymentPlanContainer = $("#paymentPlanContainer");
@@ -615,7 +624,7 @@
         }
 
         function payment_plan_change(t) {
-
+			checkDiscount();
             let checkout_total = $('.checkout-total');
             let price_display = $("#price-display");
             let plan = $(t).data('plan');
@@ -623,22 +632,28 @@
             let split_invoice = $('input:radio[name=split_invoice]');
             split_invoice.prop('disabled', false);
             let checked_package_id = $('input[name=package_id]:checked');
-            let discount_value = $("input[name=discount_value]").val();
+            let discount_value = 0;
+
+            setTimeout(function() {
+                discount_value = $("input[name=discount_value]").val();
+			}, 100);
 
             if( plan === 'Hele beløpet' ) {
                 new_total = checked_package_id.attr('data-dis_full_payment_sale_price_number')
                     ? checked_package_id.data('dis_full_payment_sale_price_number')
                     : checked_package_id.data('dis_full_payment_price_number');
 
-                let price = checked_package_id.attr('data-full_payment_sale_price')
+                /*let price = checked_package_id.attr('data-full_payment_sale_price')
                     ? checked_package_id.data('full_payment_sale_price')
-                    : checked_package_id.data('full_payment_price');
+                    : checked_package_id.data('full_payment_price');*/
+                let price = checked_package_id.data('full_payment_price');
 
                 price_display.text(price);
 
-                let price_value = checked_package_id.attr('data-full_payment_sale_price_number')
+                /*let price_value = checked_package_id.attr('data-full_payment_sale_price_number')
                     ? checked_package_id.data('full_payment_sale_price_number')
-                    : checked_package_id.data('full_payment_price_number');
+                    : checked_package_id.data('full_payment_price_number');*/
+                let price_value = checked_package_id.data('full_payment_price_number');
 
                 if (discount_value) {
                     new_total = price_value - discount_value;
@@ -652,14 +667,10 @@
                     ? checked_package_id.data('dis_months_3_sale_price_number')
                     : checked_package_id.data('dis_months_3_price_number');
 
-                let price = checked_package_id.attr('data-months_3_sale_price')
-                    ? checked_package_id.data('months_3_sale_price')
-                    : checked_package_id.data('months_3_price');
+                let price = checked_package_id.data('months_3_price');
                 price_display.text(price);
 
-                let price_value = checked_package_id.attr('data-months_3_sale_price_number')
-                    ? checked_package_id.data('months_3_sale_price_number')
-                    : checked_package_id.data('months_3_price_number');
+                let price_value = checked_package_id.data('months_3_price_number');
 
                 if (discount_value) {
                     new_total = price_value - discount_value;
@@ -671,14 +682,10 @@
                     ? checked_package_id.data('dis_months_6_sale_price_number')
                     : checked_package_id.data('dis_months_6_price_number');
 
-                let price = checked_package_id.attr('data-months_6_sale_price')
-                    ? checked_package_id.data('months_6_sale_price')
-                    : checked_package_id.data('months_6_price');
+                let price =  checked_package_id.data('months_6_price');
                 price_display.text(price);
 
-                let price_value = checked_package_id.attr('data-months_6_sale_price_number')
-                    ? checked_package_id.data('months_6_sale_price_number')
-                    : checked_package_id.data('months_6_price_number');
+                let price_value =  checked_package_id.data('months_6_price_number');
 
                 if (discount_value) {
                     new_total = price_value - discount_value;
@@ -690,14 +697,10 @@
                     ? checked_package_id.data('dis_months_12_sale_price_number')
                     : checked_package_id.data('dis_months_12_price_number');
 
-                let price = checked_package_id.attr('data-months_12_sale_price')
-                    ? checked_package_id.data('months_12_sale_price')
-                    : checked_package_id.data('months_12_price');
+                let price =  checked_package_id.data('months_12_price');
                 price_display.text(price);
 
-                let price_value = checked_package_id.attr('data-months_12_sale_price_number')
-                    ? checked_package_id.data('months_12_sale_price_number')
-                    : checked_package_id.data('months_12_price_number');
+                let price_value =  checked_package_id.data('months_12_price_number');
 
                 if (discount_value) {
                     new_total = price_value - discount_value;

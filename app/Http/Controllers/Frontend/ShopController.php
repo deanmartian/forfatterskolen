@@ -299,6 +299,8 @@ class ShopController extends Controller
 
         if ($request->coupon) {
             $discountCoupon = CourseDiscount::where('course_id', $course_id)->where('coupon', $request->coupon)->first();
+            $package = Package::find($request->package_id);
+            $payment_plan = PaymentPlan::find($request->payment_plan_id);
 
             if ($discountCoupon) {
                 $convertDiscount = ( (int)$discountCoupon->discount);
@@ -307,6 +309,52 @@ class ShopController extends Controller
                 if ($price > $convertDiscount) {
                     $applyDiscount = $price;
                 }
+
+                $full_payment_price = $package->full_payment_price;
+                $months_3_price = $package->months_3_price;
+                $months_6_price = $package->months_6_price;
+                $months_12_price = $package->months_12_price;
+
+                $full_payment_sale_price = $package->full_payment_sale_price;
+                $months_3_sale_price = $package->months_3_sale_price;
+                $months_6_sale_price = $package->months_6_sale_price;
+                $months_12_sale_price = $package->months_12_sale_price;
+
+                $today 			= \Carbon\Carbon::today()->format('Y-m-d');
+                $fromFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
+                $toFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
+                $isBetweenFull 	= (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
+
+                $fromMonths3 		= \Carbon\Carbon::parse($package->months_3_sale_price_from)->format('Y-m-d');
+                $toMonths3 			= \Carbon\Carbon::parse($package->months_3_sale_price_to)->format('Y-m-d');
+                $isBetweenMonths3 	= (($today >= $fromMonths3) && ($today <= $toMonths3)) ? 1 : 0;
+
+                $fromMonths6 		= \Carbon\Carbon::parse($package->months_6_sale_price_from)->format('Y-m-d');
+                $toMonths6 			= \Carbon\Carbon::parse($package->months_6_sale_price_to)->format('Y-m-d');
+                $isBetweenMonths6 	= (($today >= $fromMonths6) && ($today <= $toMonths6)) ? 1 : 0;
+
+                $fromMonths12 		= \Carbon\Carbon::parse($package->months_12_sale_price_from)->format('Y-m-d');
+                $toMonths12 		= \Carbon\Carbon::parse($package->months_12_sale_price_to)->format('Y-m-d');
+                $isBetweenMonths12 	= (($today >= $fromMonths12) && ($today <= $toMonths12)) ? 1 : 0;
+
+                $discountPrice = 0;
+                if ($isBetweenFull && $package->full_payment_sale_price && $payment_plan->division === 1) {
+                    $discountPrice = $full_payment_price - $full_payment_sale_price;
+                }
+
+                if ($isBetweenMonths3 && $package->months_3_sale_price && $payment_plan->division === 3) {
+                    $discountPrice = $months_3_price - $months_3_sale_price;
+                }
+
+                if ($isBetweenMonths6 && $package->months_6_sale_price && $payment_plan->division === 6) {
+                    $discountPrice = $months_6_price - $months_6_sale_price;
+                }
+
+                if ($isBetweenMonths12 && $package->months_12_sale_price && $payment_plan->division === 12) {
+                    $discountPrice = $months_12_price - $months_12_sale_price;
+                }
+
+                $applyDiscount = $discountPrice + $applyDiscount;
 
                 $formattedDiscount = number_format($applyDiscount, 2,',','.');
                 return response()->json(['discount' => $applyDiscount, 'discount_text' => 'Kr '.$formattedDiscount]);
