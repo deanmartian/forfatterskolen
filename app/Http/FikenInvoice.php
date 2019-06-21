@@ -81,6 +81,13 @@ class FikenInvoice
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
 		curl_setopt($ch, CURLOPT_HEADER, 1);
 		$data = curl_exec($ch);
+
+		// get the http code response
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if (!in_array($http_code, [200, 201])) { // 200 - get success, 201 - post success
+            abort($http_code); // display error page instead of the Whoops page
+        }
+
 		curl_close($ch);
 
 		//print_r($data);

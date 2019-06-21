@@ -1189,4 +1189,6 @@ kvittering.',
   'error-500-description' => 'Whoops, looks like something went wrong.',
   'error-404' => 'Error 404',
   'error-404-description' => 'We are sorry, but the page you are looking for does not exist.',
+  'error-400' => 'Error 400',
+  'error-400-description' => 'Bad Request Error',
 );
