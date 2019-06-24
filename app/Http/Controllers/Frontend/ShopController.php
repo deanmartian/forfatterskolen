@@ -372,7 +372,9 @@ class ShopController extends Controller
         if( Auth::guest() ) :
             $user = User::where('email', $request->email)->first();
             if( $user ) :
-                return redirect()->back()->withInput()->withErrors(['The email you provided is already registered. <a href="#" data-toggle="collapse" data-target="#checkoutLogin">Login Here</a>']);
+                Auth::login($user);
+                //return redirect()->back()->withInput()->withErrors(['The email you provided is already registered.
+                // <a href="#" data-toggle="collapse" data-target="#checkoutLogin">Login Here</a>']);
             else :
                 // register new user
                 $new_user = new User();
