@@ -720,6 +720,54 @@
 				</div>
 			</div>
 
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4>Pending Assignment</h4>
+						</div>
+						<table class="table">
+							<thead>
+								<tr>
+									<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+									<th>{{ trans_choice('site.learners', 1) }}</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach($pendingAssignments as $pendingAssignment)
+                                    <?php $extension = explode('.', basename($pendingAssignment->filename)); ?>
+									<tr>
+										<td>
+											@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+												<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">
+													{{ basename($pendingAssignment->filename) }}
+												</a>
+											@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
+												<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$pendingAssignment->filename}}">
+													{{ basename($pendingAssignment->filename) }}
+												</a>
+											@endif
+										</td>
+										<td>
+											<a href="{{ route('admin.learner.show',$pendingAssignment->user->id) }}">
+												{{ $pendingAssignment->user->fullname }}
+											</a>
+										</td>
+										<td>
+											<button class="btn btn-xs btn-warning pendingAssignmentEditorBtn" data-toggle="modal"
+													data-target="#pendingAssignmentEditorModal"
+													data-action="{{ route('assignment.group.assign_manu_editor', $pendingAssignment->id) }}">
+												{{ trans('site.assign-editor') }}
+											</button>
+										</td>
+									</tr>
+								@endforeach
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
 
 
 			<!-- Pending Assignment Feedbacks -->
@@ -1101,6 +1149,32 @@
 	</div>
 </div>
 
+<div id="pendingAssignmentEditorModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans('site.assign-editor') }}</label>
+						<select name="editor_id" class="form-control select2" required>
+							<option value="" disabled="" selected>-- Select Editor --</option>
+							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
+								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
+							@endforeach
+						</select>
+					</div>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
 <div id="updateOtherServiceStatusModal" class="modal fade" role="dialog" data-backdrop="static">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -1256,6 +1330,14 @@
         modal.find('select').val(editor);
         modal.find('form').attr('action', action);
     });
+
+    $(".pendingAssignmentEditorBtn").click(function(){
+        let action = $(this).data('action');
+        let editor = $(this).data('editor');
+        let modal = $('#pendingAssignmentEditorModal');
+        modal.find('select').val(editor);
+        modal.find('form').attr('action', action);
+	});
 
     $(".updateOtherServiceStatusBtn").click(function(){
         let action = $(this).data('action');

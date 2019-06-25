@@ -553,7 +553,10 @@ class AssignmentController extends Controller
             $assignmentManuscript->save();
         }
 
-        return redirect()->back();
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Editor assigned successfully.'),
+            'alert_type' => 'success'
+        ]);
     }
 
     /**

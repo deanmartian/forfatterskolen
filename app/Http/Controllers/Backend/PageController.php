@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\Assignment;
 use App\AssignmentManuscript;
 use App\CoachingTimerManuscript;
 use App\CopyEditingManuscript;
@@ -74,11 +75,15 @@ class PageController extends Controller
         $pendingCorrections = CorrectionManuscript::whereNull('editor_id')->orderBy('created_at','desc')->get();
         $pendingCopyEditings = CopyEditingManuscript::whereNull('editor_id')->orderBy('created_at','desc')->get();
 
+        $assignmentForCourse = Assignment::whereIn('course_id', [36, 37])->get()->pluck('id')->toArray();
+        $pendingAssignments = AssignmentManuscript::where('editor_id', 0)
+            ->whereIn('assignment_id', $assignmentForCourse)->get();
+
         return view('backend.dashboard', compact('pending_courses', 'pending_shop_manuscripts',
             'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts', 'assigned_free_manuscripts',
             'pending_assignment_feedbacks', 'logs', 'manuscripts','shopManuscripts', 'customActions',
             'nearlyExpiredCoursesCount', 'pageMetas', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
-            'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings'));
+            'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments'));
     }
 
     /**
