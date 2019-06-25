@@ -163,6 +163,7 @@ class InvoiceController extends Controller
             $learner = User::findOrFail($request->learner_id);
             $invoice->fiken_url = $request->fiken_url;
             $invoice->pdf_url = $request->pdf_url;
+            $invoice->fiken_is_paid = $request->status;
             $invoice->save();
         else :
             return redirect()->back()->withErrors(['Error with Fiken URL.']);

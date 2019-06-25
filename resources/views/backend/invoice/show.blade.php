@@ -233,6 +233,13 @@
             <label>{{ trans('site.balance') }}</label>
             <input type="number" step="0.01" name="balance" class="form-control" value="{{ $invoice->balance }}">
           </div>
+			<div class="form-group">
+				<label>{{ trans('site.status') }}</label>
+				<select name="status" id="status" class="form-control">
+					<option value="0" {{ $invoice->fiken_is_paid ?: 'selected' }}>{{ trans('site.learner.unpaid') }}</option>
+					<option value="1" {{ $invoice->fiken_is_paid ? 'selected': '' }}>{{ trans('site.learner.paid') }}</option>
+				</select>
+			</div>
           <button type="submit" class="btn btn-primary pull-right">{{ trans('site.update-invoice') }}</button>
           <div class="clearfix"></div>
         </form>
