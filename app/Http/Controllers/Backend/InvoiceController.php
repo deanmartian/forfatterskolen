@@ -237,13 +237,15 @@ class InvoiceController extends Controller
         $product_ID = $request->product_id;
 
         $price = $request->price * 100;
+        $dueDate = $request->issue_date ?: date("Y-m-d");
+
         if (isset($request->split_invoice) && $request->split_invoice) {
             $division   = $paymentPlan->division * 100; // multiply the split count to get the correct value
             $price      = round($price/$division, 2); // round the value to the nearest tenths
             $price      = (int)$price*100;
 
             for ($i=1; $i <= $paymentPlan->division; $i++ ) { // loop based on the split count
-                $dueDate =  date("Y-m-d");
+                $dueDate =  $request->issue_date ?: date("Y-m-d");
                 $dueDate =  Carbon::parse($dueDate)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
                 $invoice_fields = [
                     'user_id'       => $learner->id,
@@ -266,7 +268,7 @@ class InvoiceController extends Controller
                 $invoice->create_invoice($invoice_fields);
             }
         } else {
-            $dueDate = date_format(date_create(Carbon::today()->addDays(24)), 'Y-m-d');
+            $dueDate = date_format(date_create(Carbon::parse($dueDate)->addDays(14)), 'Y-m-d');
             $invoice_fields = [
                 'user_id'       => $learner->id,
                 'first_name'    => $learner->first_name,

@@ -1391,6 +1391,11 @@
 						<input type="text" class="form-control" required name="price">
 					</div>
 
+					<div class="form-group">
+						<label>{{ trans('site.payment-from') }}</label>
+						<input type="date" name="issue_date" placeholder="{{ trans('site.payment-from') }}" class="form-control">
+					</div>
+
 					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.create-invoice') }}</button>
 					<div class="clearfix"></div>
 				</form>
