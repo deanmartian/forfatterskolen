@@ -4,6 +4,24 @@
 <title> {{$lesson->title}} &rsaquo; {{$lesson->course->title}} &rsaquo; Forfatterskolen</title>
 @stop
 
+@section('styles')
+	<style>
+		.scroll-top {
+			width: 50px;
+			height: 50px;
+			position: fixed;
+			bottom: 50px;
+			right: 70px;
+			display: none;
+			z-index: 9999;
+		}
+		.scroll-top i {
+			display: inline-block;
+			color: #fff;
+		}
+	</style>
+@stop
+
 
 @section('content')
 	<div class="learner-container">
@@ -120,12 +138,34 @@
 				@endif
 				<div class="clearfix"></div>
 			@endif
+
+				<button class="btn btn-primary scroll-top" data-scroll="up" type="button">
+					<i class="fa fa-chevron-up"></i>
+				</button>
 		</div>
 	</div>
 @stop
 
 @section('scripts')
 	<script>
+        $(document).ready(function () {
+            $(window).scroll(function () {
+                if ($(this).scrollTop() > 250) {
+                    $('.scroll-top').fadeIn();
+                } else {
+                    $('.scroll-top').fadeOut();
+                }
+            });
+
+            $('.scroll-top').click(function () {
+                $("html, body").animate({
+                    scrollTop: 0
+                }, 300);
+                return false;
+            });
+
+        });
+
         function disableButton(t) {
             let btn = $(t);
             btn.text('');
