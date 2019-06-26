@@ -478,6 +478,9 @@
             $('select[name=payment_mode_id]').on('change', function(){
                 let mode = $('option:selected', this).data('mode');
                 let payment_plan_id = $('input:radio[name=payment_plan_id]');
+                let discount_value = $("[name=discount_value]").val();
+                $("#monthly-price").addClass('hide');
+
                 if( mode === "Paypal" || mode === "Vipps" ) {
                     payment_plan_id.parent().addClass('disabled');
                     payment_plan_id.prop('disabled', true);
@@ -486,8 +489,10 @@
                     payment_plan_id.filter('[id="Hele beløpet"]').parent().removeClass('disabled');
                     payment_plan_id.filter('[id="Hele beløpet"]').prop('disabled', false);
 
-                    let price = $('input:radio[name=package_id]:checked').data('dis_full_payment_price_number');
-                    $.get('/format_money/'+price, {}, function(){}, 'json').done(function(data){
+                    let price = $('input:radio[name=package_id]:checked').data('full_payment_price_number');
+                    let total = parseInt(price) - parseInt(discount_value);
+
+                    $.get('/format_money/'+total, {}, function(){}, 'json').done(function(data){
                         let checkout_total = $('.checkout-total');
                         checkout_total.find('span.total-display').text(data);
                     });

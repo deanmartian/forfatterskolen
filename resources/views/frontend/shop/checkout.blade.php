@@ -480,6 +480,9 @@
             $('select[name=payment_mode_id]').on('change', function(){
                 let mode = $('option:selected', this).data('mode');
                 let payment_plan_id = $('input:radio[name=payment_plan_id]');
+                let discount_value = $("[name=discount_value]").val();
+                $("#monthly-price").addClass('hide');
+
                 if( mode === "Paypal" || mode === "Vipps") {
                     payment_plan_id.parent().addClass('disabled');
                     payment_plan_id.prop('disabled', true);
@@ -489,7 +492,9 @@
                     payment_plan_id.filter('[id="Hele beløpet"]').prop('disabled', false);
 
                     let price = $('input:radio[name=package_id]:checked').data('full_payment_price_number');
-                    $.get('/format_money/'+price, {}, function(){}, 'json').done(function(data){
+                    let total = parseInt(price) - parseInt(discount_value);
+
+                    $.get('/format_money/'+total, {}, function(){}, 'json').done(function(data){
                         let checkout_total = $('.checkout-total');
                         checkout_total.find('span.total-display').text(data);
                     });
@@ -634,13 +639,15 @@
 			let discount_value = $("input[name=discount_value]").val();
 
             if( plan === 'Hele beløpet' ) {
-                new_total = checked_package_id.attr('data-full_payment_sale_price_number')
+                /*new_total = checked_package_id.attr('data-full_payment_sale_price_number')
                     ? checked_package_id.data('full_payment_sale_price_number')
-                    : checked_package_id.data('full_payment_price_number');
+                    : checked_package_id.data('full_payment_price_number');*/
+                new_total = checked_package_id.data('full_payment_price_number');
 
-                let price_value = checked_package_id.attr('data-full_payment_sale_price_number')
+                /*let price_value = checked_package_id.attr('data-full_payment_sale_price_number')
                     ? checked_package_id.data('full_payment_sale_price_number')
-                    : checked_package_id.data('full_payment_price_number');
+                    : checked_package_id.data('full_payment_price_number');*/
+                let price_value = checked_package_id.data('full_payment_price_number');
 
                 if (discount_value) {
                     new_total = price_value - discount_value;
@@ -654,13 +661,15 @@
                 $("#monthly-price").addClass('hide');
 
             } else if( plan === '3 måneder' ) {
-                new_total = checked_package_id.attr('data-months_3_sale_price_number')
+                /*new_total = checked_package_id.attr('data-months_3_sale_price_number')
                     ? checked_package_id.data('months_3_sale_price_number')
-                    : checked_package_id.data('months_3_price_number');
+                    : checked_package_id.data('months_3_price_number');*/
+                new_total = checked_package_id.data('months_3_price_number');
 
-                let price_value = checked_package_id.attr('data-months_3_sale_price_number')
+                /*let price_value = checked_package_id.attr('data-months_3_sale_price_number')
                     ? checked_package_id.data('months_3_sale_price_number')
-                    : checked_package_id.data('months_3_price_number');
+                    : checked_package_id.data('months_3_price_number');*/
+                let price_value = checked_package_id.data('months_3_price_number');
 
                 if (discount_value) {
                     new_total = price_value - discount_value;
@@ -669,13 +678,15 @@
                 checkSalePrice(checked_package_id, 'months_3_price_number', 'months_3_sale_price_number', 'months_3_price');
                 checkMonthlyPrice(new_total, 3);
             } else if( plan === '6 måneder' ) {
-                new_total = checked_package_id.attr('data-months_6_sale_price_number')
+                /*new_total = checked_package_id.attr('data-months_6_sale_price_number')
                     ? checked_package_id.data('months_6_sale_price_number')
-                    : checked_package_id.data('months_6_price_number');
+                    : checked_package_id.data('months_6_price_number');*/
+                new_total = checked_package_id.data('months_6_price_number');
 
-                let price_value = checked_package_id.attr('data-months_6_sale_price_number')
+                /*let price_value = checked_package_id.attr('data-months_6_sale_price_number')
                     ? checked_package_id.data('months_6_sale_price_number')
-                    : checked_package_id.data('months_6_price_number');
+                    : checked_package_id.data('months_6_price_number');*/
+                let price_value = checked_package_id.data('months_6_price_number');
 
                 if (discount_value) {
                     new_total = price_value - discount_value;
@@ -683,13 +694,15 @@
                checkSalePrice(checked_package_id, 'months_6_price_number', 'months_6_sale_price_number', 'months_6_price');
                 checkMonthlyPrice(new_total,6);
             } else if( plan === '12 måneder' ) {
-                new_total = checked_package_id.attr('data-months_12_sale_price_number')
+                /*new_total = checked_package_id.attr('data-months_12_sale_price_number')
                     ? checked_package_id.data('months_12_sale_price_number')
-                    : checked_package_id.data('months_12_price_number');
+                    : checked_package_id.data('months_12_price_number');*/
+                new_total = checked_package_id.data('months_12_price_number');
 
-                let price_value = checked_package_id.attr('data-months_12_sale_price_number')
+                /*let price_value = checked_package_id.attr('data-months_12_sale_price_number')
                     ? checked_package_id.data('months_12_sale_price_number')
-                    : checked_package_id.data('months_12_price_number');
+                    : checked_package_id.data('months_12_price_number');*/
+                let price_value = checked_package_id.data('months_12_price_number');
 
                 if (discount_value) {
                     new_total = price_value - discount_value;
@@ -712,6 +725,7 @@
                 $("#discount-wrapper").removeClass('hide');
                 $("#price-wrapper").removeClass('hide');
                 $("#price-display").text(checked_package_id.data(pris));
+                $("[name=discount_value]").val(discount_price);
 
                 $.get('/format_money/'+discount_price, {}, function(){}, 'json').done(function(data){
                     $("#discount-display").text(data);
