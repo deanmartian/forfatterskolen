@@ -230,7 +230,8 @@ class InvoiceController extends Controller
         $payment_mode = 'Bankoverføring';
         $payment_plan = $paymentPlan->plan;
 
-        $comment = '(Ny faktura, ';
+        $inputtedComment = $request->comment;
+        $comment = '('.$inputtedComment.' ';
         $comment .= 'Betalingsmodus: ' . $payment_mode . ', ';
         $comment .= 'Betalingsplan: ' . $payment_plan . ')';
 

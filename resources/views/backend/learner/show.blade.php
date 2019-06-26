@@ -1396,6 +1396,12 @@
 						<input type="date" name="issue_date" placeholder="{{ trans('site.payment-from') }}" class="form-control">
 					</div>
 
+					<div class="form-group">
+						<label>Comment</label>
+						<textarea class="form-control" name="comment" rows="10" cols="10" onkeyup="countChar(this)"></textarea>
+						<div class="charNum">136 characters left</div>
+					</div>
+
 					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.create-invoice') }}</button>
 					<div class="clearfix"></div>
 				</form>
@@ -2537,6 +2543,20 @@
         if( plan === 'Hele beløpet' ) {
             split_invoice.prop('disabled', true);
             split_invoice.prop('checked', false);
+        }
+    }
+
+    function countChar(val) {
+        let len = val.value.length;
+        if (len >= 136) {
+            val.value = val.value.substring(0, 136);
+            $('.charNum').text(0 + " character left");
+        } else {
+            let charText = "characters left";
+            if (136 - len === 1) {
+                charText = "character left";
+            }
+            $('.charNum').text(136 - len + " "+charText);
         }
     }
 </script>
