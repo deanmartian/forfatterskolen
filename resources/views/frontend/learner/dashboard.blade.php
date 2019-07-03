@@ -466,7 +466,7 @@
                                         ?>
                                         <tr>
                                             <td>
-                                                <a href="{{route('learner.invoice.show', $invoice->id)}}">{{$invoice->invoice_number}}</a>
+                                                {{$invoice->invoice_number}}
                                             </td>
                                             <td>
                                                 {{ \Carbon\Carbon::parse($invoice->fiken_dueDate)->format('d.m.Y') }}
