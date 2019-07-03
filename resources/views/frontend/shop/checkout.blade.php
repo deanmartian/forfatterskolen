@@ -456,15 +456,17 @@
                 count_package_change++;
 
                 let new_total = 0;
-                new_total = $(this).attr('data-full_payment_sale_price_number')
+                /*new_total = $(this).attr('data-full_payment_sale_price_number')
                     ? $(this).data('full_payment_sale_price_number')
-                    : $(this).data('full_payment_price_number');
+                    : $(this).data('full_payment_price_number');*/
+                new_total = $(this).data('full_payment_price_number');
 
                 let discount_value = $("input[name=discount_value]").val();
                 if (discount_value) {
-                    let price_value = $(this).attr('data-full_payment_sale_price_number')
+                    /*let price_value = $(this).attr('data-full_payment_sale_price_number')
                         ? $(this).data('full_payment_sale_price_number')
-                        : $(this).data('full_payment_price_number');
+                        : $(this).data('full_payment_price_number');*/
+                    let price_value = $(this).data('full_payment_price_number');
                     new_total = price_value - discount_value;
                 }
 

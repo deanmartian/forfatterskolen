@@ -456,9 +456,10 @@
                 count_package_change++;
 
                 let new_total = 0;
-                new_total = $(this).attr('data-dis_full_payment_sale_price_number')
+                /*new_total = $(this).attr('data-dis_full_payment_sale_price_number')
                     ? $(this).data('dis_full_payment_sale_price_number')
-                    : $(this).data('dis_full_payment_price_number');
+                    : $(this).data('dis_full_payment_price_number');*/
+                new_total = $(this).data('dis_full_payment_price_number');
 
                 let price = $(this).data('full_payment_price');
                 price_display.text(price);
