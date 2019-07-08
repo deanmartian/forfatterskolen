@@ -113,7 +113,7 @@
                                         {{ trans('site.front.latest-blog-post') }}
                                     </span>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body" itemscope itemtype="http://schema.org/CreativeWork">
                                     @if ($latest_blog)
                                         <div class="h1 mt-0 font-montserrat-semibold">
                                             {{ $latest_blog->title }}
@@ -146,7 +146,7 @@
                                         : trans('site.front.next-free-webinar') }}
                                     </span>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body" itemscope itemtype="http://schema.org/CreativeWork">
                                     @if($next_free_webinar)
                                         <div class="h1 mt-0 font-montserrat-semibold">
                                             {{ $next_free_webinar->title }}
@@ -200,7 +200,7 @@
                                         {{ trans('site.front.next-webinar') }}
                                     </span>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body" itemscope itemtype="http://schema.org/CreativeWork">
                                     @if ($next_webinar)
                                         <div class="h1 mt-0 font-montserrat-semibold">
                                             {{ $next_webinar->title }}
