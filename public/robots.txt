@@ -1,2 +1,3 @@
+Sitemap: http://www.forfatterskolen.no/sitemap.xml
 User-agent: *
 Disallow:
