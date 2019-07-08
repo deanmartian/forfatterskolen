@@ -7,7 +7,9 @@
                     å trykke på knappen under.
                 </div>
 
-                <a class="btn" href="/gratis-tekstvurdering">{{ trans('site.front.i-want-this') }}</a>
+                <a class="btn" href="/gratis-tekstvurdering" title="Free text assessment">
+                    {{ trans('site.front.i-want-this') }}
+                </a>
             </div>
         </div>
     </div>
@@ -34,24 +36,28 @@
                 </p>
 
                 <p>
-                    <a href="https://twitter.com/Forfatterrektor" target="_blank" class="ml-0 mr-3">
+                    <a href="https://twitter.com/Forfatterrektor" target="_blank" class="ml-0 mr-3"
+                       title="View twitter page">
                         <i class="sprite-social twitter"></i>
                     </a>
-                    <a href="https://no.pinterest.com/forfatterskolen_norge/" target="_blank" class="mr-3">
+                    <a href="https://no.pinterest.com/forfatterskolen_norge/" target="_blank" class="mr-3"
+                       title="View pinterest page">
                         <i class="sprite-social pinterest"></i>
                     </a>
-                    <a href="https://www.instagram.com/forfatterskolen_norge/" target="_blank" class="mr-3">
+                    <a href="https://www.instagram.com/forfatterskolen_norge/" target="_blank" class="mr-3"
+                       title="View instagram page">
                         <i class="sprite-social instagram"></i>
                     </a>
-                    <a href="https://www.pinterest.ph/forfatterskolenofficial/" target="_blank" class="mr-3">
+                    <a href="https://www.facebook.com/bliforfatter//" target="_blank" class="mr-3"
+                       title="View facebook page">
                         <i class="sprite-social facebook"></i>
                     </a>
-                    <a href="{{ url('/auth/login') }}" class="login-link">Login</a>
+                    <a href="{{ url('/auth/login') }}" class="login-link" title="View login page">Login</a>
                 </p>
 
                 <p class="copyright">
                     Copyright © 2016 Forfatterskolen, All Rights Reserved |
-                    <a href="{{ route('front.terms', 'all') }}" class="color-white">Vilkår</a>
+                    <a href="{{ route('front.terms', 'all') }}" class="color-white" title="View terms">Vilkår</a>
                 </p>
             </div>
             {{--<div class="col-sm-6 right-container">

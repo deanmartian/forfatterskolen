@@ -59,7 +59,7 @@
                                                 '[start_link]', '[end_link]'
                                             ];
                                             $replace_string = [
-                                                '<a href="'.route('front.opt-in-terms').'">','</a>'
+                                                '<a href="'.route('front.opt-in-terms').'" title="View front page terms">','</a>'
                                             ];
                                             $terms_link = str_replace($search_string, $replace_string, trans('site.front.accept-terms'))
                                         ?>
@@ -126,7 +126,8 @@
 
                                         <p class="mt-4 text-justify">{{ str_limit(strip_tags($latest_blog->description), 200)}}</p>
 
-                                        <a class="btn" href="{{ route('front.read-blog', $latest_blog->id) }}">
+                                        <a class="btn" href="{{ route('front.read-blog', $latest_blog->id) }}"
+                                        title="View blog link">
                                             {{ trans('site.front.view') }}
                                         </a>
                                     @endif
@@ -160,7 +161,8 @@
 
                                         <p class="mt-4 text-justify">{{ str_limit(strip_tags($next_free_webinar->description), 200)}}</p>
 
-                                        <a class="btn" href="{{ route('front.free-webinar', $next_free_webinar->id) }}">
+                                        <a class="btn" href="{{ route('front.free-webinar', $next_free_webinar->id) }}"
+                                        title="View free webinar">
                                             {{ trans('site.front.register') }}
                                         </a>
                                     @else
@@ -178,7 +180,8 @@
 
                                             <p class="mt-4 text-justify">{{ str_limit(strip_tags($next_workshop->description), 200)}}</p>
 
-                                            <a class="btn" href="{{ route('front.workshop.show', $next_workshop->id) }}">
+                                            <a class="btn" href="{{ route('front.workshop.show', $next_workshop->id) }}"
+                                            title="View workshop details">
                                                 {{ trans('site.front.register') }}
                                             </a>
                                         @endif
@@ -212,7 +215,8 @@
 
                                         <p class="mt-4 text-justify">{{ str_limit(strip_tags($next_webinar->description), 200)}}</p>
 
-                                        <a class="btn" href="{{ url('/course/17?show_kursplan=1') }}">
+                                        <a class="btn" href="{{ url('/course/17?show_kursplan=1') }}"
+                                           title="View course plan tab on course">
                                             {{ trans('site.front.see-complete-list') }}
                                         </a>
                                     @endif
@@ -221,10 +225,12 @@
                         </div> <!-- end item__third -->
                     </div> <!-- end item -->
                 </div>
-                <a href="#latest-seminar-carousel" class="left carousel-control" role="button" data-slide="prev">
+                <a href="#latest-seminar-carousel" class="left carousel-control" role="button" data-slide="prev"
+                title="View previouse item">
                     <span class="glyphicon glyphicon-chevron-left hide" aria-hidden="true"></span>
                 </a>
-                <a href="#latest-seminar-carousel" class="right carousel-control" role="button" data-slide="next">
+                <a href="#latest-seminar-carousel" class="right carousel-control" role="button" data-slide="next"
+                title="View next item">
                     <span class="glyphicon glyphicon-chevron-right hide" aria-hidden="true"></span>
                 </a>
             </div>
@@ -274,10 +280,12 @@
                         </div> <!-- end carousel-inner -->
 
                         <!-- Left and right controls -->
-                        <a class="carousel-control-prev" href="#testimonials-carousel" data-slide="prev">
+                        <a class="carousel-control-prev" href="#testimonials-carousel" data-slide="prev"
+                           title="View previous item">
                             <span class="carousel-control-prev-icon"></span>
                         </a>
-                        <a class="carousel-control-next" href="#testimonials-carousel" data-slide="next">
+                        <a class="carousel-control-next" href="#testimonials-carousel" data-slide="next"
+                            title="View next item">
                             <span class="carousel-control-next-icon"></span>
                         </a>
 
@@ -300,7 +308,11 @@
                 <div class="all-course theme-tabs">
                     <div class="tabs-container">
                         <ul class="nav nav-tabs">
-                            <li><a data-toggle="tab" href="#home" class="active"><span>{{ trans('site.front.popular-course') }}</span></a></li>
+                            <li>
+                                <a data-toggle="tab" href="#home" class="active" title="Toggle popular course">
+                                    <span>{{ trans('site.front.popular-course') }}</span>
+                                </a>
+                            </li>
                         </ul>
                     </div> <!-- end tabs-container -->
 
@@ -312,7 +324,7 @@
                                     {{--\App\Http\FrontendHelpers::isCourseAvailable($popular_course) &&--}}
                                     @if( $featured == 0)
                                         <a href="{{ route('front.course.show', $popular_course->id) }}"
-                                        class="featured-link">
+                                        class="featured-link" title="View course details">
                                             <div class="row featured-item" style="background-image: url({{$popular_course->course_image}})">
                                                 <div class="details">
                                                     <div class="indicator">
@@ -346,7 +358,8 @@
                                                             <h3 class="font-montserrat-semibold">{{ str_limit(strip_tags($popular_course->title), 40)}}</h3>
                                                             <p class="font-montserrat-light mt-4">{{ str_limit(strip_tags($popular_course->description), 130)}}</p>
                                                             <a href="{{ route('front.course.show', $popular_course->id) }}"
-                                                               class="site-btn-global rounded-0 mt-3 d-inline-block">
+                                                               class="site-btn-global rounded-0 mt-3 d-inline-block"
+                                                            title="View course details">
                                                                 {{ trans('site.front.view') }}
                                                             </a>
                                                         </div>
@@ -367,7 +380,9 @@
             <div class="container">
                 <div class="heading">
                     <div class="h1 mt-0 d-inline-block font-montserrat-semibold">{{ trans('site.front.week-poem') }}</div>
-                    <a href="{{ route('front.poems') }}" class="btn d-inline-block">{{ trans('site.front.view-poem') }}</a>
+                    <a href="{{ route('front.poems') }}" class="btn d-inline-block" title="View poems">
+                        {{ trans('site.front.view-poem') }}
+                    </a>
                 </div> <!-- end heading -->
 
                 <?php
@@ -412,7 +427,7 @@
                     <button class="btn btn-agree" onclick="agreeGdpr()">
                         JEG FORSTÅR
                     </button>
-                    <a href="{{ route('front.terms') }}">Vis meg mer</a>
+                    <a href="{{ route('front.terms') }}" title="View terms">Vis meg mer</a>
                 </div>
             </div>
         </div>

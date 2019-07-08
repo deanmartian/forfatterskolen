@@ -3,38 +3,42 @@
         <img src="{{asset('images-new/menu.png')}}" alt="mobile menu toggle">
     </button>
 
-    <a class="navbar-brand mx-auto" href="{{url('')}}">
+    <a class="navbar-brand mx-auto" href="{{url('')}}" title="View front page">
         <img src="{{asset('images-new/logo-tagline.png')}}" alt="logo with tagline">
     </a>
 
     <div class="navbar-collapse collapse pr-0">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="#" style="color: #000">Velkommen til Forfatterskolen</a>
+                <a class="nav-link" href="#" style="color: #000" title="View front page">Velkommen til Forfatterskolen</a>
             </li>
         </ul>
 
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="https://twitter.com/Forfatterrektor" target="_blank">
+                <a class="nav-link" href="https://twitter.com/Forfatterrektor" target="_blank"
+                   title="View twitter page">
                     <i class="sprite-social twitter"></i>
                     {{--<img src="{{asset('images-new/social-icons/twitter.png')}}" class="social-image">--}}
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="https://no.pinterest.com/forfatterskolen_norge/" target="_blank">
+                <a class="nav-link" href="https://no.pinterest.com/forfatterskolen_norge/" target="_blank"
+                   title="View pinterest page">
                     <i class="sprite-social pinterest"></i>
                     {{--<img src="{{asset('images-new/social-icons/pinterest.png')}}" class="social-image">--}}
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="https://www.instagram.com/forfatterskolen_norge/" target="_blank">
+                <a class="nav-link" href="https://www.instagram.com/forfatterskolen_norge/" target="_blank"
+                    title="View instagram page">
                     <i class="sprite-social instagram"></i>
                     {{--<img src="{{asset('images-new/social-icons/instagram.png')}}" class="social-image">--}}
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="https://www.facebook.com/bliforfatter/" target="_blank">
+                <a class="nav-link" href="https://www.facebook.com/bliforfatter/" target="_blank"
+                    title="View facebook page">
                     <i class="sprite-social facebook"></i>
                     {{--<img src="{{asset('images-new/social-icons/facebook.png')}}" class="social-image">--}}
                 </a>
@@ -52,7 +56,7 @@
     @if (Auth::guest())
         <ul class="navbar-nav login-nav">
             <li class="nav-item">
-                <a class="nav-link login-link" href="{{route('auth.login.show')}}">
+                <a class="nav-link login-link" href="{{route('auth.login.show')}}" title="View login page">
                     <span>Min Side</span>
                 </a>
             </li>
@@ -64,30 +68,37 @@
     <div class="navbar-collapse collapse" id="mainNav">
         <ul class="navbar-nav nav-fill">
             <li class="nav-item @if(Route::currentRouteName() == 'front.course.index') active @endif">
-                <a href="{{route('front.course.index')}}" class="nav-link">{{ trans('site.front.nav.course') }}</a>
+                <a href="{{route('front.course.index')}}" class="nav-link"
+                   title="View courses">{{ trans('site.front.nav.course') }}</a>
             </li>
             <li class="nav-item @if(Route::currentRouteName() == 'front.shop-manuscript.index') active @endif">
-                <a href="{{route('front.shop-manuscript.index')}}" class="nav-link">{{ trans('site.front.nav.manuscript') }}</a>
+                <a href="{{route('front.shop-manuscript.index')}}" class="nav-link"
+                   title="View manuscripts">{{ trans('site.front.nav.manuscript') }}</a>
             </li>
             <li class="nav-item @if(Route::currentRouteName() == 'front.publishing') active @endif">
-                <a href="{{ route('front.publishing') }}" class="nav-link">{{ trans('site.front.nav.publishing') }}</a>
+                <a href="{{ route('front.publishing') }}" class="nav-link"
+                   title="View publishing">{{ trans('site.front.nav.publishing') }}</a>
             </li>
             <li class="nav-item @if(Route::currentRouteName() == 'front.blog') active @endif">
-                <a href="{{ route('front.blog') }}" class="nav-link">{{ trans('site.front.nav.blog') }}</a>
+                <a href="{{ route('front.blog') }}" class="nav-link"
+                   title="View blog">{{ trans('site.front.nav.blog') }}</a>
             </li>
             <li class="nav-item @if(Route::currentRouteName() == 'front.workshop.index') active @endif">
-                <a href="{{route('front.workshop.index')}}" class="nav-link">{{ trans('site.front.nav.workshop') }}</a>
+                <a href="{{route('front.workshop.index')}}" class="nav-link"
+                   title="View workshops">{{ trans('site.front.nav.workshop') }}</a>
             </li>
             <li class="nav-item @if(Route::currentRouteName() == 'front.faq') active @endif">
-                <a href="{{route('front.faq')}}" class="nav-link">{{ trans('site.front.nav.faq') }}</a>
+                <a href="{{route('front.faq')}}" class="nav-link"
+                   title="View faqs">{{ trans('site.front.nav.faq') }}</a>
             </li>
             <li class="nav-item @if(Route::currentRouteName() == 'front.contact-us') active @endif">
-                <a href="{{route('front.contact-us')}}" class="nav-link">{{ trans('site.front.nav.contact-us') }}</a>
+                <a href="{{route('front.contact-us')}}" class="nav-link"
+                   title="View contact page">{{ trans('site.front.nav.contact-us') }}</a>
             </li>
 
             @if (Auth::user())
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" title="Toggle user drop-down">
                         <span class="nav-user-thumb mr-2" style="background-image: url('{{Auth::user()->profile_image}}')"></span>
                         Hei {{Auth::user()->first_name}}
                     </a>
@@ -104,16 +115,24 @@
                             </div>
                         </div>
                         <div class="link-container">
-                            <a href="{{route('learner.course')}}" class="dropdown-item">Mine Kurs</a>
-                            <a href="{{route('learner.shop-manuscript')}}" class="dropdown-item">Manuskripter</a>
-                            <a href="{{route('learner.workshop')}}" class="dropdown-item">Workshops</a>
-                            <a href="{{route('learner.webinar')}}" class="dropdown-item">Webinars</a>
-                            <a href="{{route('learner.assignment')}}" class="dropdown-item">Oppgaver</a>
-                            <a href="{{route('learner.calendar')}}" class="dropdown-item">Kalender</a>
-                            <a href="{{route('learner.profile')}}" class="dropdown-item">Profil</a>
-                            <a href="{{route('learner.invoice')}}" class="dropdown-item">Fakturaer</a>
+                            <a href="{{route('learner.course')}}" class="dropdown-item"
+                               title="View learner course">Mine Kurs</a>
+                            <a href="{{route('learner.shop-manuscript')}}" class="dropdown-item"
+                               title="View learner manuscripts">Manuskripter</a>
+                            <a href="{{route('learner.workshop')}}" class="dropdown-item"
+                               title="View learner workshops">Workshops</a>
+                            <a href="{{route('learner.webinar')}}" class="dropdown-item"
+                               title="View learner webinars">Webinars</a>
+                            <a href="{{route('learner.assignment')}}" class="dropdown-item"
+                               title="View learner assignments">Oppgaver</a>
+                            <a href="{{route('learner.calendar')}}" class="dropdown-item"
+                               title="View learner calendar">Kalender</a>
+                            <a href="{{route('learner.profile')}}" class="dropdown-item"
+                               title="View learner profile">Profil</a>
+                            <a href="{{route('learner.invoice')}}" class="dropdown-item"
+                               title="View learner invoices">Fakturaer</a>
 
-                            <a href="" class="dropdown-item d-inline-block w-auto mb-2">
+                            <a href="" class="dropdown-item d-inline-block w-auto mb-2" title="Logout">
                                 <form method="POST" action="{{route('auth.logout')}}" class="form-logout">
                                     {{csrf_field()}}
                                     <button type="submit" class="btn btn-circle">Logg av</button>

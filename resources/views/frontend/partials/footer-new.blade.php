@@ -5,7 +5,7 @@
                 {{ trans('site.front.start-today.details') }}
             </h5>
             <div></div>
-            <a class="btn" href="/gratis-tekstvurdering">
+            <a class="btn" href="/gratis-tekstvurdering" title="Free text assessment">
                 {{ trans('site.front.start-today.button-text') }}
             </a>
             {{--<div>
