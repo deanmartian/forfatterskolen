@@ -15,7 +15,7 @@
             <div class="container h-100 position-relative">
                 <div class="main-form">
                     <div class="envelope-container">
-                        <img src="{{ asset('images-new/home/envelope.png') }}" alt="">
+                        <img src="{{ asset('images-new/home/envelope.png') }}" alt="envelope icon">
                     </div>
 
                     <div class="form-container">
@@ -108,7 +108,7 @@
                         <div class="item__third">
                             <div class="card">
                                 <div class="card-header" style="">
-                                    <img src="{{ asset('/images-new/home/girl-coffee.jpg') }}" alt="">
+                                    <img src="{{ asset('/images-new/home/girl-coffee.jpg') }}" alt="girl with coffee">
                                     <span class="title">
                                         {{ trans('site.front.latest-blog-post') }}
                                     </span>
@@ -139,7 +139,7 @@
                         <div class="item__third">
                             <div class="card">
                                 <div class="card-header" style="">
-                                    <img src="{{ asset('/images-new/home/hand-pen.png') }}" alt="">
+                                    <img src="{{ asset('/images-new/home/hand-pen.png') }}" alt="hand with pen">
                                     <span class="title">
                                         {{ !$next_free_webinar && $next_workshop ? trans('site.front.next-workshop')
                                         : trans('site.front.next-free-webinar') }}
@@ -192,7 +192,7 @@
                         <div class="item__third">
                             <div class="card">
                                 <div class="card-header" style="">
-                                    <img src="{{ asset('/images-new/home/coffee-paper.jpeg') }}" alt="">
+                                    <img src="{{ asset('/images-new/home/coffee-paper.jpeg') }}" alt="coffee and paper">
                                     <span class="title">
                                         {{ trans('site.front.next-webinar') }}
                                     </span>
@@ -257,8 +257,10 @@
                                             </p>
                                             <div class="user-details">
                                                 <div class="images-container">
-                                                    <img src="{{ asset($testimonial->author_image) }}" class="user-image">
-                                                    <img src="{{ asset($testimonial->book_image) }}" class="book-image">
+                                                    <img src="{{ asset($testimonial->author_image) }}" class="user-image"
+                                                    alt="user icon">
+                                                    <img src="{{ asset($testimonial->book_image) }}" class="book-image"
+                                                    alt="book icon">
                                                 </div>
                                                 <div class="user-info">
                                                     <span class="font-montserrat-semibold theme-text">{{ $testimonial->name }}</span>
@@ -374,7 +376,7 @@
 
                 <div class="row poem-details">
                     <div class="col-sm-6 poem-author-container">
-                            <img src="{{ asset($latestPoem->author_image) }}" class="author-image">
+                            <img src="{{ asset($latestPoem->author_image) }}" class="author-image" alt="author image">
                         <div class="author-info">
                             <span class="indicator">{{ trans('site.front.poem-of-the-week') }}</span>
                             <h3 class="font-weight-normal font-montserrat-regular">{{ $latestPoem->title }}</h3>

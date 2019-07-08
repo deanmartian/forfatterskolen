@@ -21,7 +21,7 @@
         </a>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#footer-body">
-            <img src="{{asset('images-new/menu.png')}}" alt="">
+            <img src="{{asset('images-new/menu.png')}}" alt="mobile menu toggle">
         </button>
 
         <div class="navbar-collapse collapse" id="footer-body">
@@ -95,7 +95,7 @@
                     </p>
                 </div>
                 <div class="col-xl-3 col-lg-4 col-md-4">
-                    <img src="{{asset('images-new/email-envelope.png')}}" alt="">
+                    <img src="{{asset('images-new/email-envelope.png')}}" alt="envelope icon">
                     <h2 class="mt-4">E-post</h2>
                     <p class="mt-4">
                         post@forfatterskolen.no

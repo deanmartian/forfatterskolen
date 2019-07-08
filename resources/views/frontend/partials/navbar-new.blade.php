@@ -1,10 +1,10 @@
 <nav id="topNav" class="navbar navbar-expand-md navbar-light">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav">
-        <img src="{{asset('images-new/menu.png')}}" alt="">
+        <img src="{{asset('images-new/menu.png')}}" alt="mobile menu toggle">
     </button>
 
     <a class="navbar-brand mx-auto" href="{{url('')}}">
-        <img src="{{asset('images-new/logo-tagline.png')}}">
+        <img src="{{asset('images-new/logo-tagline.png')}}" alt="logo with tagline">
     </a>
 
     <div class="navbar-collapse collapse pr-0">
