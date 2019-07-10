@@ -5,8 +5,12 @@
 @stop
 
 @section('styles')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
-    <link rel="stylesheet" href="{{ asset('css/front-page.min.css?v='.time()) }}">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css"
+    as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+    </noscript>
+    {{--<link rel="stylesheet" href="{{ asset('css/front-page.min.css?v='.time()) }}">--}}
 @stop
 
 @section('content')
