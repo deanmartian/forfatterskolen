@@ -12266,7 +12266,7 @@ footer {
     position: relative;
 }
 
-footer:before {
+#home-footer:before {
     content: "";
     background: url(../images-new/home/cta.png) no-repeat center / cover;
     position: absolute;
