@@ -324,7 +324,7 @@
 	      			<div class="col-sm-5">
 			      		<div class="form-group">
 			      			<label>{{ trans('site.title') }}</label>
-			      			<input type="text" class="form-control" name="{{ trans('site.title') }}" required>
+			      			<input type="text" class="form-control" name="title" required>
 			      		</div>
 			      		<div class="form-group">
 			      			<label>{{ trans('site.description') }}</label>
