@@ -392,6 +392,7 @@
 								<th>{{ trans_choice('site.invoices', 1) }} #</th>
 								<th>{{ trans('site.status') }}</th>
 								<th>{{ trans('site.created-at') }}</th>
+								<th>{{ trans('site.due-date') }}</th>
 								<th></th>
 							</tr>
 						</thead>
@@ -432,6 +433,7 @@
 									@endif--}}
 								</td>
 								<td>{{$invoice->created_at}}</td>
+								<td>{{ $invoice->fiken_dueDate ? \Carbon\Carbon::parse($invoice->fiken_dueDate)->format('d.m.Y') : '' }}</td>
 								<td>
 									@if (Auth::user()->isSuperUser())
 										<button class="btn btn-danger btn-xs deleteInvoiceBtn" data-toggle="modal"
