@@ -98,7 +98,7 @@ class AdminController extends Controller
      public function destroy($id, Request $request)
     {
         $admin = User::where('id', $id)->where('role', 1)->firstOrFail();
-        $admin->forceDelete();
+        $admin->delete();
 
         return redirect()->back();
     }
