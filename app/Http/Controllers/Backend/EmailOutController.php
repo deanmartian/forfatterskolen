@@ -6,6 +6,7 @@ use App\EmailAttachment;
 use App\EmailOut;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
+use App\Http\FrontendHelpers;
 use \Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
 
@@ -77,6 +78,23 @@ class EmailOutController extends Controller {
             $messageBag->add('errors', 'Email out updated successfully.');
             $messageBag->add('errors', "Email sent to ".$to);
             $notif = $messageBag;
+
+            $encode_email = encrypt($to);
+
+            if (strpos($request->message, "[redirect]")) {
+                $extractLink        = FrontendHelpers::getTextBetween($request->message, "[redirect]", "[/redirect]");
+                $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
+                $redirectLabel      =  FrontendHelpers::getTextBetween($request->message, "[redirect_label]", "[/redirect_label]");
+                $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
+                $search_string = [
+                    '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]'
+                ];
+                $replace_string = [
+                    $redirectLink, ''
+                ];
+                $content = str_replace($search_string, $replace_string, $request->message);
+            }
+
             AdminHelpers::send_email($subject, $from, $to, $content);
         }
 
@@ -155,6 +173,22 @@ class EmailOutController extends Controller {
             $messageBag->add('errors', 'Email out updated successfully.');
             $messageBag->add('errors', "Email sent to ".$to);
             $notif = $messageBag;
+
+            $encode_email = encrypt($to);
+            if (strpos($request->message, "[redirect]")) {
+                $extractLink        = FrontendHelpers::getTextBetween($request->message, "[redirect]", "[/redirect]");
+                $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
+                $redirectLabel      =  FrontendHelpers::getTextBetween($request->message, "[redirect_label]", "[/redirect_label]");
+                $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
+                $search_string = [
+                    '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]'
+                ];
+                $replace_string = [
+                    $redirectLink, ''
+                ];
+                $content = str_replace($search_string, $replace_string, $request->message);
+            }
+
             AdminHelpers::send_email($subject, $from, $to, $content);
         }
 
