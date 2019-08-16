@@ -679,6 +679,14 @@ class ShopController extends Controller
                 if ($included_course->included_package_id == 29) { // check if webinar-pakke is included
                     $add_to_automation++;
                 }
+
+                // add user to the included course
+                $courseIncluded = CoursesTaken::firstOrNew([
+                    'user_id' => Auth::user()->id,
+                    'package_id' => $included_course->included_package_id
+                ]);
+                $courseIncluded->is_active = $course_status;
+                $courseIncluded->save();
             }
         }
 
