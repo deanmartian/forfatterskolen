@@ -801,4 +801,20 @@ class FrontendHelpers
             }
         }
     }
+
+    /**
+     * Get the text between specified text
+     * @param $content
+     * @param $start
+     * @param $end
+     * @return string
+     */
+    public static function getTextBetween($content,$start,$end){
+        $r = explode($start, $content);
+        if (isset($r[1])){
+            $r = explode($end, $r[1]);
+            return $r[0];
+        }
+        return '';
+    }
 }

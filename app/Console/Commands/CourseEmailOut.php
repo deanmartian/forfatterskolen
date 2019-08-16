@@ -70,14 +70,27 @@ class CourseEmailOut extends Command
                 $user = $courseTaken->user;
                 $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
                 $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
-
-                $search_string = [
-                    '[login_link]', '[username]', '[password]'
-                ];
-                $replace_string = [
-                    $loginLink, $courseTaken->user->email, $password
-                ];
-                $message = str_replace($search_string, $replace_string, $emailOut->message);
+                if (strpos($emailOut->message, "[redirect]")) {
+                    $extractLink        = FrontendHelpers::getTextBetween($emailOut->message, "[redirect]", "[/redirect]");
+                    $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
+                    $redirectLabel      =  FrontendHelpers::getTextBetween($emailOut->message, "[redirect_label]", "[/redirect_label]");
+                    $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
+                    $search_string = [
+                        '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]'
+                    ];
+                    $replace_string = [
+                        $redirectLink, ''
+                    ];
+                    $message = str_replace($search_string, $replace_string, $emailOut->message);
+                } else {
+                    $search_string = [
+                        '[login_link]', '[username]', '[password]'
+                    ];
+                    $replace_string = [
+                        $loginLink, $courseTaken->user->email, $password
+                    ];
+                    $message = str_replace($search_string, $replace_string, $emailOut->message);
+                }
 
                 $emailData['email_subject'] = $emailOut->subject;
                 $emailData['email_message'] = $message.$attachmentText;
@@ -120,14 +133,27 @@ class CourseEmailOut extends Command
                 $user = $courseTaken->user;
                 $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
                 $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
-
-                $search_string = [
-                    '[login_link]', '[username]', '[password]'
-                ];
-                $replace_string = [
-                    $loginLink, $courseTaken->user->email, $password
-                ];
-                $message = str_replace($search_string, $replace_string, $emailOut->message);
+                if (strpos($emailOut->message, "[redirect]")) {
+                    $extractLink        = FrontendHelpers::getTextBetween($emailOut->message, "[redirect]", "[/redirect]");
+                    $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
+                    $redirectLabel      =  FrontendHelpers::getTextBetween($emailOut->message, "[redirect_label]", "[/redirect_label]");
+                    $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
+                    $search_string = [
+                        '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]'
+                    ];
+                    $replace_string = [
+                        $redirectLink, ''
+                    ];
+                    $message = str_replace($search_string, $replace_string, $emailOut->message);
+                } else {
+                    $search_string = [
+                        '[login_link]', '[username]', '[password]'
+                    ];
+                    $replace_string = [
+                        $loginLink, $courseTaken->user->email, $password
+                    ];
+                    $message = str_replace($search_string, $replace_string, $emailOut->message);
+                }
 
                 $emailData['email_subject'] = $emailOut->subject;
                 $emailData['email_message'] = $message.$attachmentText;
