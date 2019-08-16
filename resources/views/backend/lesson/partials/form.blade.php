@@ -72,6 +72,12 @@
 						@if(Request::is('course/*/lesson/create'))
 						<button type="submit" class="btn btn-info">{{ trans('site.create-lesson') }}</button>
 						@else
+                            <input type="text" name="copyClip"
+                                   value="{{ env('APP_LIVE_URL')."/account/course/".$course->id."/lesson/".$lesson['id'] }}"
+                                   style="position: absolute; left: -10000px;">
+                            <button type="button" class="btn btn-success copyToClipboard">
+                                Copy Link
+                            </button>
 						<button type="submit" class="btn btn-info">{{ trans('site.update-lesson') }}</button>
 						<button type="button" data-toggle="modal" data-target="#deleteLessonModal" class="btn btn-danger">{{ trans('site.delete-lesson') }}</button>
 						@endif
@@ -163,6 +169,26 @@ jQuery(document).ready(function(){
 	if ($("[name=webinar_pakke]").length) {
 	    methods.getLessonContents(get_content_url);
     }
+
+    // not working on hidden fields
+    $(".copyToClipboard").click(function(){
+        let copyText = $('[name=copyClip]');
+        /* Select the text field */
+        copyText.select();
+        /* Copy the text inside the text field */
+        document.execCommand("copy");
+
+        toastr.success('Copied to clipboard.', "Success");
+        if (window.getSelection) {
+            if (window.getSelection().empty) {  // Chrome
+                window.getSelection().empty();
+            } else if (window.getSelection().removeAllRanges) {  // Firefox
+                window.getSelection().removeAllRanges();
+            }
+        } else if (document.selection) {  // IE?
+            document.selection.empty();
+        }
+    });
 });
 
 const methods = {
