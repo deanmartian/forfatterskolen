@@ -764,13 +764,27 @@ class LearnerController extends Controller
         $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
         $password = $learner->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
 
-        $search_string = [
-            '[login_link]', '[username]', '[password]'
-        ];
-        $replace_string = [
-            $loginLink, $email, $password
-        ];
-        $message = str_replace($search_string, $replace_string, $request->message);
+        if (strpos($request->message, "[redirect]")) {
+            $extractLink        = FrontendHelpers::getTextBetween($request->message, "[redirect]", "[/redirect]");
+            $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
+            $redirectLabel      =  FrontendHelpers::getTextBetween($request->message, "[redirect_label]", "[/redirect_label]");
+            $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
+            $search_string = [
+                '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]'
+            ];
+            $replace_string = [
+                $redirectLink, ''
+            ];
+            $message = str_replace($search_string, $replace_string, $request->message);
+        } else {
+            $search_string = [
+                '[login_link]', '[username]', '[password]'
+            ];
+            $replace_string = [
+                $loginLink, $email, $password
+            ];
+            $message = str_replace($search_string, $replace_string, $request->message);
+        }
 
         $emailData['email_subject'] = $request->subject;
         $emailData['email_message'] = $message;
