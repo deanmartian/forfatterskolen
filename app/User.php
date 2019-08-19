@@ -219,6 +219,11 @@ class User extends Authenticatable
         return $this->hasMany('App\LearnerEmail')->orderBy('created_at', 'desc');
     }
 
+    public function secondaryEmails()
+    {
+        return $this->hasMany('App\UserEmail');
+    }
+
     public function getIsAdminAttribute()
     {
         return $this->attributes['role'] == 1 ? 1 : 0;

@@ -6,6 +6,9 @@
 		.former-course-container {
 			margin-top: 30px;
 		}
+		.secondary-emails li:not(:last-child) {
+			padding-bottom: 10px
+		}
 	</style>
 @stop
 
@@ -42,7 +45,36 @@
 					<div class="text-center">
 						<div class="learner-profile-image" style="background-image: url({{$learner->profile_image}})"></div>
 						<h2>{{$learner->fullName}}</h2>
-						{{$learner->email}}
+						<span>{{$learner->email}}</span>
+					</div>
+
+
+					<div class="margin-top">
+						<b class="d-block">Secondary Emails</b>
+						@if ($learner->secondaryEmails->count())
+							<ul class="secondary-emails">
+								@foreach($learner->secondaryEmails as $secondary)
+									<li>
+										{{ $secondary->email }}
+										<button class="btn btn-danger btn-xs pull-right removeSecondaryEmailBtn"
+										data-toggle="modal" data-target="#removeSecondaryEmailModal"
+										data-action="{{ route('admin.learner.remove-secondary-email', $secondary->id) }}">
+											<i class="fa fa-close"></i>
+										</button>
+
+										<button class="btn btn-success btn-xs pull-right setPrimaryEmailBtn"
+												style="margin-right: 2px"
+												data-toggle="modal" data-target="#setPrimaryEmailModal"
+										data-action="{{ route('admin.learner.set-primary-email', $secondary->id) }}">
+											<i class="fa fa-check"></i>
+										</button>
+									</li>
+								@endforeach
+							</ul>
+						@endif
+						<button class="btn btn-xs btn-primary" data-toggle="modal" data-target="#addSecondaryEmail">
+							Add Email Address
+						</button>
 					</div>
 				</div>
 				<div class="panel-footer">
@@ -1002,7 +1034,7 @@
 									<td class="text-center">
 										<button class="btn btn-info btn-xs showEmailBtn" data-toggle="modal"
 										data-target="#showEmailModal"
-										data-message="{!! $email->email !!}">Show Message</button>
+										data-message="{{ $email->email }}">Show Message</button>
 									</td>
 								</tr>
 							@endforeach
@@ -2243,6 +2275,70 @@
 		</div>
 	</div>
 </div>
+
+<div id="addSecondaryEmail" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Add Secondary Email</h4>
+			</div>
+			<div class="modal-body">
+				<form action="{{ route('admin.learner.add-email', $learner->id) }}" method="POST">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans('site.learner.email-addresses-text') }}</label>
+						<input type="email" name="email" class="form-control" required>
+					</div>
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="setPrimaryEmailModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Set Primary Email</h4>
+			</div>
+			<div class="modal-body">
+				<form action="" method="POST" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<p>Are you sure to set this as a primary email?</p>
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="removeSecondaryEmailModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Remove Secondary Email</h4>
+			</div>
+			<div class="modal-body">
+				<form action="" method="POST" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					{{ method_field('delete') }}
+					<p>Are you sure to remove this email?</p>
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-danger">{{ trans('site.delete') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -2544,6 +2640,18 @@
     $(".deleteDiplomaBtn").click(function(){
         let action = $(this).data('action');
         let modal = $('#deleteDiplomaModal');
+        modal.find('form').attr('action', action);
+	});
+
+    $(".setPrimaryEmailBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#setPrimaryEmailModal');
+        modal.find('form').attr('action', action);
+	});
+
+    $(".removeSecondaryEmailBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#removeSecondaryEmailModal');
         modal.find('form').attr('action', action);
 	});
 

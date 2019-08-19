@@ -13,6 +13,7 @@ use App\LearnerLogin;
 use App\Mail\SubjectBodyEmail;
 use App\PaymentMode;
 use App\PaymentPlan;
+use App\UserEmail;
 use App\Workshop;
 use App\WorkshopMenu;
 use App\WorkshopsTaken;
@@ -1333,5 +1334,96 @@ class LearnerController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * Add secondary email to user
+     * @param $learner_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function addSecondaryEmail($learner_id, Request $request)
+    {
+        $validator = Validator::make(($request->all()), [
+            'email' => 'required|email|unique:users|unique:user_emails',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->with([
+                    'alert_type'            => 'danger',
+                    'not-former-courses'    => true
+                ]);
+        }
+
+        UserEmail::create([
+            'user_id' => $learner_id,
+            'email' => $request->email
+        ]);
+
+        return redirect()->back()->with([
+                'errors'                => AdminHelpers::createMessageBag('Email added successfully.'),
+                'alert_type'            => 'success',
+                'not-former-courses'    => true
+            ]);
+    }
+
+    /**
+     * Set a new primary email
+     * @param $email_id
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     */
+    public function setPrimaryEmail($email_id)
+    {
+        $userEmail  = UserEmail::find($email_id);
+        $user       = $userEmail->users->first();
+        $primary    = $userEmail->email;
+        $secondary  = $user->email;
+        if( !$user->update(['email' => $primary]))
+        {
+            \DB::rollback();
+            return response()->json(['error' => 'Opss. Something went wrong'], 500);
+        }
+
+        if(! $userEmail->update(['email' => $secondary]))
+        {
+            \DB::rollback();
+            return response()->json(['error' => 'Opss. Something went wrong'], 500);
+        }
+        \DB::commit();
+
+        $searchEmail = $secondary;
+        $result = AdminHelpers::getActiveCampaignDataByEmail($searchEmail);
+        // check if exists in any list
+        if (isset($result['lists'])) {
+            // check if subscriber in list 40
+            if (isset($result['lists'][40])) {
+                $list_data = $result['lists'][40];
+                $user_id = $list_data['subscriberid'];
+
+                $newEmail = $primary;
+                AdminHelpers::updateActiveCampaignContactEmailForList($user_id, $newEmail, 40);
+            }
+        }
+
+        return redirect()->back()->with([
+                'errors'                => AdminHelpers::createMessageBag('Secondary email set as primary.'),
+                'alert_type'            => 'success',
+                'not-former-courses'    => true
+            ]);
+
+    }
+
+    public function removeSecondaryEmail($email_id)
+    {
+        $userEmail = UserEmail::findOrFail($email_id);
+        $userEmail->delete();
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Secondary email removed successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
     }
 }
