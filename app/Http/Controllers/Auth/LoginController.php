@@ -6,6 +6,7 @@ use App\Helpers\BrowserDetection;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\LearnerLogin;
+use App\UserEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
@@ -36,9 +37,14 @@ class LoginController extends Controller
     public function login(LoginRequest $request)
     {
         $user = User::where('email', $request->email)->where('role', 2)->first();
-        if(!$user) return redirect()->back()->withErrors('Unknown email');
+        $secondaryEmail = UserEmail::where('email', $request->email)->first();
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 2])) :
+        if(!$user && !$secondaryEmail) return redirect()->back()->withErrors('Unknown email');
+        if ($secondaryEmail) {
+            $user = $secondaryEmail->users->first();
+        }
+
+        if (Auth::attempt(['email' => $user->email, 'password' => $request->password, 'role' => 2])) :
             // Authentication passed...
 
             $browser = new BrowserDetection();
