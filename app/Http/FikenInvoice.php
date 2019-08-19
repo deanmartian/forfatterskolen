@@ -311,6 +311,14 @@ class FikenInvoice
 		    endif;
 		}
 		if( $item ) :
+            $updateData['name'] = $item->name;
+            $updateData['email'] = $item->email;
+            $updateData['address'] = [
+                'address1' => $fields['address']['address1'],
+                'postalPlace' => $fields['address']['postalPlace'],
+                'postalCode' => $fields['address']['postalCode'],
+            ];
+            $this->update_customer($item->_links->self->href, $updateData);
 			return [
 				'href' => $item->_links->self->href,
 				'name' => $item->name,
@@ -341,6 +349,28 @@ class FikenInvoice
 		curl_close($ch);
 		$data = json_decode($data);
 		return $this->get_customer($fields);
+	}
+
+    /**
+     * Update the customer info
+     * url is the url of the contact in fiken
+     * @param $url
+     * @param $fields
+     * @return mixed
+     */
+    public function update_customer($url, $fields)
+    {
+        $ch = curl_init($url);
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+        curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data;
 	}
 }
 
