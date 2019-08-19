@@ -704,6 +704,10 @@ class HomeController extends Controller
             'help_with'     => $data['help_with']
         ]);
 
+        AdminHelpers::send_email('New Coaching Session',
+            'post@forfatterskolen.no', 'camilla@forfatterskolen.no', Auth::user()->first_name
+            . ' has ordered the Coaching Time '.$title);
+
         if( $paymentMode->mode == "Paypal" ) :
             echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
                 <input type="hidden" name="cmd" value="_xclick">
