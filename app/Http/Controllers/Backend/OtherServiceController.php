@@ -147,6 +147,14 @@ class OtherServiceController extends Controller
             'not-former-courses' => true]);
     }
 
+    public function deleteCoaching(CoachingTimerManuscript $id)
+    {
+        $id->delete();
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Coaching session deleted successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true]);
+    }
+
     /**
      * Update the status of particular service
      * @param $service_id int Id of the service

@@ -944,6 +944,11 @@
 									@if ($coachingTimer->status === 1)
 										<span class="label label-success">Finished</span>
 									@endif
+
+									<button class="btn btn-xs btn-danger deleteCoachingBtn margin-top" data-toggle="modal"
+											data-target="#deleteCoachingModal" data-action="{{ route('admin.other-service.coaching-timer.delete', $coachingTimer->id) }}">
+										{{ trans('site.remove-coaching-session') }}
+									</button>
 								</td>
 							</tr>
 						@endforeach
@@ -1905,6 +1910,29 @@
 	</div>
 </div>
 
+<div id="deleteCoachingModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4>{{ trans('site.remove-coaching-session') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+					{{ csrf_field() }}
+					{{ method_field('delete') }}
+					<div class="form-group">
+						<b>Are you sure to remove this coaching session?</b>
+					</div>
+					<div class="text-right">
+						<button class="btn btn-danger btn-sm" type="submit">{{ trans('site.delete') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="updateOtherServiceStatusModal" class="modal fade" role="dialog" data-backdrop="static">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -2465,6 +2493,12 @@
     $(".setReplayBtn").click(function(){
         let action = $(this).data('action');
         let modal = $('#setReplayModal');
+        modal.find('form').attr('action', action);
+	});
+
+    $(".deleteCoachingBtn").click(function() {
+        let action = $(this).data('action');
+        let modal = $('#deleteCoachingModal');
         modal.find('form').attr('action', action);
 	});
 
