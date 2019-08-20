@@ -13,6 +13,7 @@
         <div class="container">
             <form action="{{ route('learner.upgrade-course', $courseTaken->id) }}" class="form-theme"
                   method="POST" onsubmit="disableSubmitOrigText(this)">
+                {{ csrf_field() }}
 
                 <div class="row">
                     <div class="col-sm-12">
@@ -139,7 +140,7 @@
                             <div class="panel-heading-underlined">{{ trans('site.front.form.payment-method') }}</div>
                             <div class="panel-body px-0 pb-0">
                                 <select class="form-control" name="payment_mode_id" required data-size="15">
-                                    @foreach(\App\Http\FrontendHelpers::paymentModes() as $paymentMode)
+                                    @foreach(\App\Http\FrontendHelpers::paymentModes(true) as $paymentMode)
                                         <option value="{{$paymentMode->id}}" data-mode="{{ $paymentMode->mode }}">{{$paymentMode->mode}}</option>
                                     @endforeach
                                 </select>
@@ -239,7 +240,7 @@
             let count_package_change = 0; // used to determine the onload
 
             let translations = {
-                upgrade_to : "{{ trans('site.learner.upgrade-to-text') }}";
+                upgrade_to : "{{ trans('site.learner.upgrade-to-text') }}"
             };
 
             setTimeout(function(){
@@ -324,7 +325,7 @@
 
             $('select[name=payment_mode_id]').on('change', function(){
                 let mode = $('option:selected', this).data('mode');
-                if( mode == "Paypal" ) {
+                if( mode === "Paypal" || mode === "Vipps") {
                     $('input:radio[name=payment_plan_id]').parent().addClass('disabled');
                     $('input:radio[name=payment_plan_id]').prop('disabled', true);
                     $('input:radio[name=payment_plan_id]').prop('checked', false);
