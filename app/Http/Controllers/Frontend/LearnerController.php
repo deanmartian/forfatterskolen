@@ -2027,7 +2027,23 @@ class LearnerController extends Controller
             $invoice->create_invoice($invoice_fields);
 
             if( $paymentMode->mode == "Paypal" ) :
-                echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                $paypal = new Paypal();
+                $response = $paypal->purchase([
+                    'amount' => ($price/100),
+                    'transactionId' => $invoice->invoiceID,
+                    'currency' => 'NOK',
+                    'cancelUrl' => $paypal->getCancelUrl($invoice->invoiceID),
+                    'returnUrl' => $paypal->getReturnUrl($invoice->invoiceID, 'course'),
+                ]);
+
+                if ($response->isRedirect()) {
+                    $response->redirect();
+                }
+
+                return redirect()->back()->with([
+                    'errors' => AdminHelpers::createMessageBag($response->getMessage()),
+                ]);
+                /*echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
                 <input type="hidden" name="cmd" value="_xclick">
                 <input type="hidden" name="business" value="post.forfatterskolen@gmail.com">
                 <input type="hidden" name="currency_code" value="NOK">
@@ -2038,12 +2054,24 @@ class LearnerController extends Controller
                 <input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">
             </form>';
                 echo '<script>document.getElementById("paypal_form").submit();</script>';
-                return;
+                return;*/
             endif;
 
 
+            if( $paymentMode->mode == "Vipps") :
+                $orderId = $invoice->invoice_number;
+                $transactionText = $shopManuscript->title;
+                $vippsData = [
+                    'amount' => $price,
+                    'orderId' => $orderId,
+                    'transactionText' => $transactionText,
+                    'fallbackUrl' => 'https://www.forfatterskolen.no/thankyou?page=vipps'
+                ];
+                return $this->vippsInitiatePayment($vippsData);
+            endif;
 
-            return redirect(route('front.shop.thankyou'));
+
+            //return redirect(route('front.shop.thankyou'));
         }
         return redirect()->route('learner.upgrade');
     }
