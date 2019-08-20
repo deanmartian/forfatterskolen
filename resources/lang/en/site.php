@@ -1007,7 +1007,7 @@ kvittering.',
     'renew-course-text' => 'Renew Course',
     'renew-course' => 
     array (
-      'payment-note' => 'Merk: Vi godtar kun full betaling på PAYPAL',
+      'payment-note' => '&nbsp;',
     ),
     'renew-text' => 'Renew',
     'lesson' => 'Leksjoner',

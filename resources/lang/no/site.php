@@ -166,7 +166,7 @@ return array (
   'update-lesson' => 'Update Lesson',
   'add-on-price' => 'Add On Price',
   'allowed-package' => 'Allowed Package',
-  'for-editor' => 'For Editor',
+  'for-editor' => 'For redigeringswebinar',
   'max-words' => 'Max words',
   'submission-date' => 'Submission Date',
   'all-assignments' => 'All assignments',

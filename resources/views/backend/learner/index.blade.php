@@ -13,7 +13,7 @@
 
 		.center-area {
 			position: absolute;
-			left: 30%;
+			left: 18%;/*30%*/
 		}
 	</style>
 @stop
@@ -51,8 +51,10 @@
 	<div class="navbar-form navbar-right">
 	  	<div class="form-group">
 		  	<form role="search" method="GET">
+				<input type="text" class="form-control" name="sfname" value="{{Request::input('sfname')}}" placeholder="Search First Name..">
+				<input type="text" class="form-control" name="slname" value="{{Request::input('slname')}}" placeholder="Search Last Name..">
 				<div class="input-group">
-				  	<input type="text" class="form-control" name="search" value="{{Request::input('search')}}" placeholder="{{ trans('site.search-learner') }}..">
+					<input type="text" class="form-control" name="semail" value="{{Request::input('semail')}}" placeholder="Search Email..">
 				    <span class="input-group-btn">
 				    	<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
 				    </span>

@@ -67,14 +67,27 @@ class LearnerController extends Controller
     public function index(Request $request, User $user)
     {
         $learners = $user->newQuery();
+        if( $request->sfname || $request->slname || $request->semail) :
+            if ($request->sfname) {
+                $learners->where('first_name', 'LIKE', '%' . $request->sfname  . '%');
+            }
 
-        if( $request->search) :
-            $learners->where(function($query) use ($request) {
+            if ($request->slname) {
+                $learners->where('last_name', 'LIKE', '%' . $request->slname  . '%');
+            }
+
+            if ($request->semail) {
+                $learners->where('email', 'LIKE', '%' . $request->semail  . '%');
+            }
+
+            $learners->orderBy('first_name', 'asc')
+                ->orderBy('email', 'asc');
+            /*$learners->where(function($query) use ($request) {
                 $query->where('first_name', 'LIKE', '%' . $request->search  . '%')
                     ->orWhere('email', 'LIKE', '%' . $request->search  . '%');
             })
             ->orderBy('first_name', 'asc')
-            ->orderBy('email', 'asc');
+            ->orderBy('email', 'asc');*/
         endif;
 
         if ($request->has('free-course')) {
