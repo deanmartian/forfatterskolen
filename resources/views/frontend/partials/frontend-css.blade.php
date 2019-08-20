@@ -1,9 +1,9 @@
-{{--<link rel="stylesheet" href="{{asset('css/font-awesome/css/font-awesome.min.css')}}">--}}
-<link rel="preload" href="{{asset('css/font-awesome/css/font-awesome.min.css')}}"
+<link rel="stylesheet" href="{{asset('css/font-awesome/css/font-awesome.min.css')}}">
+{{--<link rel="preload" href="{{asset('css/font-awesome/css/font-awesome.min.css')}}"
       as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript>
     <link rel="stylesheet" href="{{asset('css/font-awesome/css/font-awesome.min.css')}}">
-</noscript>
+</noscript>--}}
 {{--<link rel="stylesheet" href="{{asset('css/vendor.min.css')}}">--}}
 {{--<link rel="stylesheet" href="{{asset('css/ie-vendor.min.css')}}">--}}
 <?php
@@ -32,10 +32,10 @@
 
 {{--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
       integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">--}}
-{{--<link rel="stylesheet" href="{{asset('css/vendor-bootstrap.min.css')}}">--}}
-<link rel="preload" href="{{asset('css/vendor-bootstrap.min.css')}}"
+<link rel="stylesheet" href="{{asset('css/vendor-bootstrap.min.css')}}">
+{{--<link rel="preload" href="{{asset('css/vendor-bootstrap.min.css')}}"
       as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript>
     <link rel="stylesheet" href="{{asset('css/vendor-bootstrap.min.css')}}">
-</noscript>
+</noscript>--}}
 <link rel="stylesheet" href="{{asset('css/front-style.min.css?v='.time())}}">
