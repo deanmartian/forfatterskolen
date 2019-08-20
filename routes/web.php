@@ -469,6 +469,7 @@ Route::group([
         ]);
 
         // Learners Route
+        Route::get('learner/list-notes', 'LearnerController@listNotes')->name('admin.learner.list_notes');
         Route::resource('learner', 'LearnerController', [
             'names' => [
                 'index' => 'admin.learner.index',

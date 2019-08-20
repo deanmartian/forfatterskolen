@@ -838,6 +838,19 @@ class LearnerController extends Controller
     }
 
     /**
+     * List learners that have notes
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function listNotes()
+    {
+        $userNotes = User::whereNotNull('notes')->where('notes', '<>', '')
+            ->orderBy('id', 'DESC')
+            ->paginate(25);
+
+        return view('backend.learner.list_notes', compact('userNotes'));
+    }
+
+    /**
      * Update manuscript locked status
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse

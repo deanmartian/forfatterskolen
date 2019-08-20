@@ -67,6 +67,9 @@
 
 <div class="col-md-12">
 	<div class="table-users table-responsive">
+        <a href=" {{ route('admin.learner.list_notes') }}" class="btn btn-success margin-top">
+            {{ trans_choice('site.notes', 2) }}
+        </a>
 		<table class="table">
 			<thead>
 		    	<tr>
