@@ -284,4 +284,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(SurveyAnswer::class)->groupBy("survey_id");
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(UserTask::class)->where('status',0);
+    }
 }

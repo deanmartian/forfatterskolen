@@ -13,6 +13,7 @@ use App\Helpers\DapulseRepository;
 use App\Http\AdminHelpers;
 use App\PageMeta;
 use App\User;
+use App\UserTask;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -78,12 +79,15 @@ class PageController extends Controller
         $assignmentForCourse = Assignment::whereIn('course_id', [36, 37])->get()->pluck('id')->toArray();
         $pendingAssignments = AssignmentManuscript::where('editor_id', 0)
             ->whereIn('assignment_id', $assignmentForCourse)->get();
+        $pendingTasks = UserTask::where('assigned_to', Auth::user()->id)
+            ->where('status', 0)->get();
 
         return view('backend.dashboard', compact('pending_courses', 'pending_shop_manuscripts',
             'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts', 'assigned_free_manuscripts',
             'pending_assignment_feedbacks', 'logs', 'manuscripts','shopManuscripts', 'customActions',
             'nearlyExpiredCoursesCount', 'pageMetas', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
-            'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments'));
+            'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments',
+            'pendingTasks'));
     }
 
     /**

@@ -333,7 +333,51 @@
 				</div>
 			</div>
 
-
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addTaskModal">
+						+ Add Task
+					</button>
+					<h4>Tasks</h4>
+				</div>
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Task</th>
+								<th>{{ trans('site.assigned-to') }}</th>
+								<th width="150"></th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach($learner->tasks as $task)
+								<tr>
+									<td>{!! nl2br($task->task) !!}</td>
+									<td>{{ \App\User::find($task->assigned_to)->full_name }}</td>
+									<td>
+										<button class="btn btn-success btn-xs finishTaskBtn" data-toggle="modal"
+												data-target="#finishTaskModal"
+												data-action="{{ route('admin.task.finish', $task->id)}}">
+											<i class="fa fa-check"></i>
+										</button>
+										<button class="btn btn-primary btn-xs editTaskBtn" data-toggle="modal"
+												data-target="#editTaskModal"
+												data-fields="{{ json_encode($task) }}"
+												data-action="{{ route('admin.task.update', $task->id) }}">
+											<i class="fa fa-edit"></i>
+										</button>
+										<button class="btn btn-danger btn-xs deleteTaskBtn" data-toggle="modal"
+												data-target="#deleteTaskModal"
+												data-action="{{ route('admin.task.destroy', $task->id) }}">
+											<i class="fa fa-trash"></i>
+										</button>
+									</td>
+								</tr>
+							@endforeach
+						</tbody>
+					</table>
+				</div>
+			</div>
 
 			<div class="panel panel-default">
 				<div class="panel-body">
@@ -1343,8 +1387,134 @@
 </div>
 
 
+<div id="addTaskModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Add Task</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" enctype="multipart/form-data" action="{{ route('admin.task.store') }}"
+				onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<input type="hidden" name="user_id" value="{{ $learner->id }}">
 
+					<div class="form-group">
+						<label>
+							Task
+						</label>
+						<textarea name="task" cols="30" rows="10" class="form-control" required></textarea>
+					</div>
 
+					<div class="form-group">
+						<label>
+							{{ trans('site.assign-to') }}
+						</label>
+						<select name="assigned_to" class="form-control select2" required>
+							<option value="" disabled="" selected>-- Select Assignee --</option>
+							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
+								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
+							@endforeach
+						</select>
+					</div>
+
+					<button type="submit" class="btn btn-primary pull-right">Add Task</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<div id="finishTaskModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Finish Task</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" enctype="multipart/form-data" action=""
+					  onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+
+					<p>Are you sure to finish this task?</p>
+
+					<button type="submit" class="btn btn-success pull-right">Finish</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<div id="editTaskModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Edit Task</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" enctype="multipart/form-data" action=""
+					  onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					{{ method_field('PUT') }}
+					<input type="hidden" name="user_id" value="{{ $learner->id }}">
+
+					<div class="form-group">
+						<label>
+							Task
+						</label>
+						<textarea name="task" cols="30" rows="10" class="form-control" required></textarea>
+					</div>
+
+					<div class="form-group">
+						<label>
+							{{ trans('site.assign-to') }}
+						</label>
+						<select name="assigned_to" class="form-control select2" required>
+							<option value="" disabled="" selected>-- Select Assignee --</option>
+							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
+								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
+							@endforeach
+						</select>
+					</div>
+
+					<button type="submit" class="btn btn-primary pull-right">Update Task</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="deleteTaskModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Delete Task</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" enctype="multipart/form-data" action=""
+					  onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					{{ method_field('DELETE') }}
+
+					<p>Are you sure to delete this task?</p>
+
+					<button type="submit" class="btn btn-danger pull-right">Delete</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
 
 <div id="addInvoiceModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
@@ -2652,6 +2822,30 @@
     $(".removeSecondaryEmailBtn").click(function(){
         let action = $(this).data('action');
         let modal = $('#removeSecondaryEmailModal');
+        modal.find('form').attr('action', action);
+	});
+
+    $(".finishTaskBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#finishTaskModal');
+        modal.find('form').attr('action', action);
+	});
+
+    $(".editTaskBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#editTaskModal');
+        let fields = $(this).data('fields');
+        modal.find('form').attr('action', action);
+        modal.find('[name=task]').text(fields.task);
+        modal.find('[name=user_id]').val(fields.user_id);
+        modal.find('form').find('[name=assigned_to]').val(fields.assigned_to).trigger('change');
+        console.log(fields.assigned_to);
+        console.log(modal.find('form').find('[name=assigned_to]'));
+	});
+
+    $(".deleteTaskBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#deleteTaskModal');
         modal.find('form').attr('action', action);
 	});
 

@@ -969,6 +969,35 @@
 				</div>
 			</div>
 			<!-- end Pending Copy Editing -->
+
+			<!-- Pending tasks -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>Pending Tasks</h4></div>
+						<table class="table">
+							<thead>
+							<tr>
+								<th>{{ trans_choice('site.learners', 1) }}</th>
+								<th>Task</th>
+							</tr>
+							</thead>
+							<tbody>
+								@foreach($pendingTasks as $task)
+									<tr>
+										<td>
+											<a href="{{ route('admin.learner.show', $task->user->id) }}">
+												{{ $task->user->full_name }}
+											</a>
+										</td>
+										<td>{!! nl2br($task->task) !!}</td>
+									</tr>
+								@endforeach
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
 		</div>
 		@endif
 	</div>

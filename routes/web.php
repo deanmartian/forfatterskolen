@@ -518,7 +518,19 @@ Route::group([
         Route::post('learner/{learner_id}/add-email', 'LearnerController@addSecondaryEmail')->name('admin.learner.add-email');
         Route::post('learner/{email_id}/set-primary-email', 'LearnerController@setPrimaryEmail')->name('admin.learner.set-primary-email');
         Route::delete('learner/{email_id}/delete-secondary-email', 'LearnerController@removeSecondaryEmail')->name('admin.learner.remove-secondary-email');
-        
+
+        Route::post('task/{id}/finish', 'TaskController@finishTask')->name('admin.task.finish');
+        Route::resource('task', 'TaskController', [
+            'names' => [
+                'index' => 'admin.task.index',
+                'show' => 'admin.task.show',
+                'create' => 'admin.task.create',
+                'store' => 'admin.task.store',
+                'edit' => 'admin.task.edit',
+                'update' => 'admin.task.update',
+                'destroy' => 'admin.task.destroy',
+            ],
+        ]);
 
         // Course Testimonials Route
         Route::resource('course/testimonial', 'CourseTestimonialController', [
