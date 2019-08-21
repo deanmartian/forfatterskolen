@@ -49,7 +49,7 @@ class FreeManuscriptController extends Controller
         $emailTemplate = EmailTemplate::where('page_name', 'Free Manuscript')->first();
         $emailTemplateRoute = 'admin.manuscript.add_email_template';
         $isUpdate = 0;
-        if (count($emailTemplate)) {
+        if ($emailTemplate->count()) {
             $emailTemplateRoute = 'admin.manuscript.edit_email_template';
             $isUpdate = 1;
         }
