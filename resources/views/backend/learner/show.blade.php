@@ -2839,8 +2839,6 @@
         modal.find('[name=task]').text(fields.task);
         modal.find('[name=user_id]').val(fields.user_id);
         modal.find('form').find('[name=assigned_to]').val(fields.assigned_to).trigger('change');
-        console.log(fields.assigned_to);
-        console.log(modal.find('form').find('[name=assigned_to]'));
 	});
 
     $(".deleteTaskBtn").click(function(){
