@@ -1477,6 +1477,29 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         }
     }
 
+    public function testExcel()
+    {
+        $from = date('2019-06-26');
+        $to = date('2019-06-27');
+        $coursesTaken = CoursesTaken::whereBetween('created_at', ["2019-06-26 00:00:00.000000", "2019-06-27 23:59:59.999999"])->get();
+        $excel          = \App::make('excel');
+        $learnerList    = [];
+        $learnerList[]  = ['course_taken_id', 'learner_id','learner', 'email', 'course']; // first row in excel
+        foreach ($coursesTaken as $courseTaken) {
+            $learnerList[] = [$courseTaken->id, $courseTaken->user->id, $courseTaken->user->full_name,
+                $courseTaken->user->email, $courseTaken->package->course->title];
+        }
+
+        $excel->create("Orders", function($excel) use ($learnerList) {
+
+            // Build the spreadsheet, passing in the payments array
+            $excel->sheet('sheet1', function($sheet) use ($learnerList) {
+                // prevent inserting an empty first row
+                $sheet->fromArray($learnerList, null, 'A1', false, false);
+            });
+        })->download('xlsx');
+    }
+
     public function bamboraAccept(Request $request)
     {
         return redirect()->to('/thank-you');

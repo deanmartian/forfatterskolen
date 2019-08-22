@@ -31,6 +31,7 @@ Route::group([
         Route::post('/agree-gdpr', 'HomeController@agreeGdpr')->name('front.agree-gdpr');
         Route::get('/testemail', 'HomeController@testEmail');
         Route::get('/test-fiken', 'HomeController@testFiken');
+        Route::get('/test-excel', 'HomeController@testExcel');
         Route::post('/gotowebinar', 'HomeController@gtWebinarSendEmail');
         Route::post('/gotowebinar/course/{id}/register', 'HomeController@gtWebinarCourseRegister');
         Route::get('/contact-us', 'HomeController@contact_us')->name('front.contact-us'); // Contact Us
