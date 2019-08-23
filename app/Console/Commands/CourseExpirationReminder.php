@@ -82,7 +82,7 @@ class CourseExpirationReminder extends Command {
                 'course_id' => $courseTaken->package->course->id])
                 ->first();
 
-            if ($userRenewedCourse) {
+            //if ($userRenewedCourse) {
 
                 $user_email = $courseTaken->user->email;
                 $user_name  = $courseTaken->user->first_name;
@@ -125,7 +125,7 @@ class CourseExpirationReminder extends Command {
                 $message = str_replace('[login_link]', $loginLink, $content);
                 AdminHelpers::send_email($subject, $from, $user_email, $message);
                 CronLog::create(['activity' => 'CourseExpirationReminder CRON sent email to '.$user_name.'.']);
-            }
+            //}
         }
 
         CronLog::create(['activity' => 'CourseExpirationReminder CRON done running.']);
