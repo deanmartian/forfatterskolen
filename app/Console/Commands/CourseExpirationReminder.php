@@ -6,6 +6,7 @@ use App\CourseExpiryReminder;
 use App\CoursesTaken;
 use App\CronLog;
 use App\Http\AdminHelpers;
+use App\Http\FrontendHelpers;
 use App\UserRenewedCourse;
 use Carbon\Carbon;
 use DB;
@@ -117,7 +118,19 @@ class CourseExpirationReminder extends Command {
                         $content = $expiryReminder->message_1_day;
                 }
 
-                $from = 'post@forfatterskolen.no';
+                $from               = 'post@forfatterskolen.no';
+                $encode_email       = encrypt($user_email);
+                $extractLink        = FrontendHelpers::getTextBetween($content, "[redirect]", "[/redirect]");
+                $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
+                $redirectLabel      =  FrontendHelpers::getTextBetween($content, "[redirect_label]", "[/redirect_label]");
+                $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
+                $search_string = [
+                    '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]'
+                ];
+                $replace_string = [
+                    $redirectLink, ''
+                ];
+                $content = str_replace($search_string, $replace_string, $content);
 
                 $encode_email = encrypt($user_email);
                 $loginLink = "<a href='".route('auth.login.email', $encode_email)
