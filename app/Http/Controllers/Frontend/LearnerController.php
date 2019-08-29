@@ -934,9 +934,13 @@ class LearnerController extends Controller
              * set an end date (this is for courses that is for sale for a month)
              */
             if ($courseTaken->package->validity_period > 0) {
-                $courseTaken->end_date = Carbon::today()->addMonth($courseTaken->package->validity_period);
+                if (!$courseTaken->end_date) {
+                    $courseTaken->end_date = Carbon::today()->addMonth($courseTaken->package->validity_period);
+                }
             } else {
-                $courseTaken->end_date = Carbon::parse($course->start_date)->addYear(1);
+                if (!$courseTaken->end_date) {
+                    $courseTaken->end_date = Carbon::parse($course->start_date)->addYear(1);
+                }
             }
 
             $courseTaken->save();
