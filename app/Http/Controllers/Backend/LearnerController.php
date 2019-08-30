@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\AssignmentGroupLearner;
 use App\CoachingTimerManuscript;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
@@ -599,9 +600,23 @@ class LearnerController extends Controller
                 ]);
             endif;
 
-
             if( in_array('invoices', $request->moveItems) ) :
                 $learner->invoices()->update([
+                    'user_id' => $moveLearner->id
+                ]);
+            endif;
+
+            if( in_array('assignments', $request->moveItems) ) :
+                AssignmentGroupLearner::where('user_id', $id)->update([
+                    'user_id' => $moveLearner->id
+                ]);
+                $learner->assignmentManuscripts()->update([
+                    'user_id' => $moveLearner->id
+                ]);
+            endif;
+
+            if( in_array('diplomas', $request->moveItems) ) :
+                $learner->diplomas()->update([
                     'user_id' => $moveLearner->id
                 ]);
             endif;

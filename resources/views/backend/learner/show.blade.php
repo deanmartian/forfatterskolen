@@ -1775,6 +1775,12 @@
 	      		<div class="checkbox">
 					<label><input type="checkbox" name="moveItems[]" value="invoices">{{ trans_choice('site.invoices', 2) }}</label>
 				</div>
+				<div class="checkbox">
+					<label><input type="checkbox" name="moveItems[]" value="assignments">{{ trans_choice('site.assignments', 2) }}</label>
+				</div>
+				<div class="checkbox">
+					<label><input type="checkbox" name="moveItems[]" value="diplomas">{{ trans_choice('site.diplomas', 2) }}</label>
+				</div>
       		</div>
 
       		<button type="submit" class="btn btn-danger pull-right">{{ trans('site.delete') }}</button>

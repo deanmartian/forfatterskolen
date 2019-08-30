@@ -289,4 +289,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserTask::class)->where('status',0);
     }
+
+    public function assignmentManuscripts()
+    {
+        return $this->hasMany('App\AssignmentManuscript');
+    }
 }
