@@ -235,10 +235,10 @@
 						@if( !Auth::guest() )
                             <?php
                             foreach( Auth::user()->coursesTaken as $courseTaken ) :
-                                if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
-                                    $hasPaidCourse = true;
-                                    break;
-                                endif;
+								if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active && !$courseTaken->is_free ) :
+									$hasPaidCourse = true;
+									break;
+								endif;
                             endforeach;
                             ?>
 						@endif

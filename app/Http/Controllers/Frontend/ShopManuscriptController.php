@@ -80,7 +80,7 @@ class ShopManuscriptController extends Controller
 
         $hasPaidCourse = false;
         foreach( Auth::user()->coursesTaken as $courseTaken ) :
-            if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
+            if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active && !$courseTaken->is_free ) :
                 $hasPaidCourse = true;
                 break;
             endif;
