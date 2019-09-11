@@ -132,7 +132,10 @@ Password Reset
 											   class="form-control no-border-left" required>
 									</div>
 
-									<button type="submit" class="btn site-btn-global">{{ trans('site.front.register') }}</button>
+									{!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJS() !!}
+									{!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display() !!}
+
+									<button type="submit" class="btn site-btn-global mt-3">{{ trans('site.front.register') }}</button>
 									<div class="clearfix"></div>
 
 									<div class="social-btn-container">

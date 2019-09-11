@@ -21,6 +21,7 @@ class RegisterController extends Controller
             'register_last_name' => 'required|string|max:255',
             'register_email' => 'required|string|email|max:255|unique:users,email',
             'register_password' => 'required|string',
+            'g-recaptcha-response' => 'required|captcha'
         ]);
     }
 
