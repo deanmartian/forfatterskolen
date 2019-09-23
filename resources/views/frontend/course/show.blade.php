@@ -122,7 +122,7 @@
 								$courseTaken = App\CoursesTaken::where('user_id', Auth::user()->id)
 									->whereIn('package_id', $course_packages)->first();
 								?>
-								@if (!$courseTaken)
+								@if (!$courseTaken && $course->status == 1)
 									<button class="btn btn-theme" type="submit">
 										{{ trans('site.front.form.get-free-course') }}
 									</button>

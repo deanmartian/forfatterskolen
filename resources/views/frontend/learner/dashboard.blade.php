@@ -136,7 +136,7 @@
                         </div>
                     </div> <!-- end global-card -->
 
-                    @if(\App\Course::free()->count())
+                    @if(\App\Course::free()->where('status', 1)->count())
                         <div class="card global-card mt-3">
                             <div class="card-header">
                                 <h1>
@@ -144,7 +144,7 @@
                                 </h1>
                             </div>
                             <div class="card-body">
-                                @foreach(\App\Course::free() as $free)
+                                @foreach(\App\Course::free()->where('status', 1) as $free)
                                     <div class="col-md-12 mb-3">
                                         <div class="col-md-7">
                                             <b>
