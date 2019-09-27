@@ -1113,7 +1113,7 @@ class AdminHelpers
 
     public static function getGotoWebinarDetails($webinar_key, $access_token)
     {
-        $base_url = 'https://api.getgo.com/G2W/rest';
+        $base_url = 'https://api.getgo.com/G2W/rest/v2';
         //$access_token = 'qGtxQ1NfP4tws1cSRGRWJInmN1iU'; // from here http://app.gotowp.com/
         $org_key = '5169031040578858252';
 
@@ -1143,7 +1143,7 @@ class AdminHelpers
      */
     public static function getGotoWebinarPanelist($webinar_key, $access_token)
     {
-        $base_url = 'https://api.getgo.com/G2W/rest';
+        $base_url = 'https://api.getgo.com/G2W/rest/v2';
         //$access_token = 'qGtxQ1NfP4tws1cSRGRWJInmN1iU'; // from here http://app.gotowp.com/
         $org_key = '5169031040578858252';
 

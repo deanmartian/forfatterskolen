@@ -778,7 +778,7 @@ class HomeController extends Controller
             $explodeName = explode(' ',$request->name);
             $sliced = array_slice($explodeName, 0, -1); // get all except the last
 
-            $base_url = 'https://api.getgo.com/G2W/rest';
+            $base_url = 'https://api.getgo.com/G2W/rest/v2';
             $access_token = AdminHelpers::generateWebinarGTAccessToken(); // from here http://app.gotowp.com/
             $org_key = '5169031040578858252';
             $web_key = $freeWebinar->gtwebinar_id; // id of the webinar from gotowebinar
@@ -1318,7 +1318,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
             return redirect()->to('/');
         }
 
-        $base_url = 'https://api.getgo.com/G2W/rest';
+        $base_url = 'https://api.getgo.com/G2W/rest/v2';
         $access_token = AdminHelpers::generateWebinarGTAccessToken(); // from here http://app.gotowp.com/
         $org_key = '5169031040578858252';
         $web_key = $webinar_key; // id of the webinar from gotowebinar

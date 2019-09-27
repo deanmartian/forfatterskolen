@@ -306,7 +306,7 @@ class LearnerController extends Controller
         $first_name = $user->first_name;
         $last_name = $user->last_name;
 
-        $base_url = 'https://api.getgo.com/G2W/rest';
+        $base_url = 'https://api.getgo.com/G2W/rest/v2';
         $access_token = AdminHelpers::generateWebinarGTAccessToken(); // from here http://app.gotowp.com/
         $org_key = '5169031040578858252';
 

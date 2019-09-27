@@ -44,7 +44,7 @@ class WebinarRegistrantToLearner extends Command
     public function handle()
     {
         $access_token = AdminHelpers::generateWebinarGTAccessToken();
-        $base_url       = 'https://api.getgo.com/G2W/rest';
+        $base_url       = 'https://api.getgo.com/G2W/rest/v2';
         $org_key        = '5169031040578858252';
         $webinar_key    = '3548686272214906891';
         $long_url = $base_url.'/organizers/'.$org_key.'/webinars/'.$webinar_key.'/registrants';
