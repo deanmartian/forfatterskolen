@@ -1968,7 +1968,7 @@ class LearnerController extends Controller
     public function getUpgradeManuscript($shopManuscriptTakenId)
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::find($shopManuscriptTakenId);
-        if ($shopManuscriptTaken) {
+        if ($shopManuscriptTaken && $shopManuscriptTaken->status == 'Not started') {
             $shopManuscriptId = $shopManuscriptTaken->shop_manuscript->id;
             $shopManuscriptUpgrades = ShopManuscriptUpgrade::where('shop_manuscript_id', $shopManuscriptId)->get();
             return view('frontend.learner.upgrade-manuscript', compact('shopManuscriptTaken', 'shopManuscriptUpgrades'));

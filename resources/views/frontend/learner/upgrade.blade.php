@@ -285,23 +285,25 @@
                             </thead>
                             <tbody>
                             @foreach( Auth::user()->shopManuscriptsTaken as $shopManuscriptTaken )
-                                <tr>
-                                    <td>
-                                        {{ $shopManuscriptTaken->shop_manuscript->title }}
-                                    </td>
-                                    <td>
-                                        {{ $shopManuscriptTaken->shop_manuscript->description }}
-                                    </td>
-                                    <td>
-                                        {{ $shopManuscriptTaken->shop_manuscript->max_words }}
-                                    </td>
-                                    <td>
-                                        <a class="btn site-btn-global site-btn-global-sm"
-                                           href="{{ route('learner.get-upgrade-manuscript', $shopManuscriptTaken->id) }}">
-                                            {{ trans('site.learner.upgrade-script-development-text') }}
-                                        </a>
-                                    </td>
-                                </tr>
+                                @if( $shopManuscriptTaken->status == 'Not started' )
+                                    <tr>
+                                        <td>
+                                            {{ $shopManuscriptTaken->shop_manuscript->title }}
+                                        </td>
+                                        <td>
+                                            {{ $shopManuscriptTaken->shop_manuscript->description }}
+                                        </td>
+                                        <td>
+                                            {{ $shopManuscriptTaken->shop_manuscript->max_words }}
+                                        </td>
+                                        <td>
+                                            <a class="btn site-btn-global site-btn-global-sm"
+                                               href="{{ route('learner.get-upgrade-manuscript', $shopManuscriptTaken->id) }}">
+                                                {{ trans('site.learner.upgrade-script-development-text') }}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endif
                             @endforeach
                             </tbody>
                         </table>
