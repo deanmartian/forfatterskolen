@@ -30,7 +30,7 @@ class AdminController extends Controller
    
     public function index()
     {
-        $admins = User::where('role', 1)->orderBy('created_at', 'desc')->paginate(20);
+        $admins = User::where('role', 1)->withTrashed()->orderBy('created_at', 'desc')->paginate(20);
         $customActions = CustomAction::where('is_active',1)->get();
         $pageMetas = PageMeta::all();
 
@@ -151,5 +151,25 @@ class AdminController extends Controller
     {
         $pageAccessService->createAccessPage($admin_id, $request);
         return redirect()->back();
+    }
+
+    /**
+     * Activate/De-activate user
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function adminStatus(Request $request)
+    {
+        $user = User::where('id', $request->id)->withTrashed()->first();
+        if ($request->status) {
+            $user->restore();
+        } else {
+            $user->delete();
+        }
+        return response()->json([
+            'data' => [
+                'success' => TRUE,
+            ]
+        ]);
     }
 }

@@ -4,6 +4,10 @@
 <title>Admins &rsaquo; Forfatterskolen Admin</title>
 @stop
 
+@section('styles')
+	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+@stop
+
 @section('content')
 <div class="page-toolbar">
 	<h3><i class="fa fa-users"></i> All Admins</h3>
@@ -185,6 +189,9 @@
 								<td>{{ $admin->email }}</td>
 								<td>
 									<div class="pull-right">
+										<input type="checkbox" data-toggle="toggle" data-on="Active"
+											   class="status-toggle" data-off="Inactive"
+											   data-id="{{$admin->id}}" data-size="mini" @if(!$admin->deleted_at) {{ 'checked' }} @endif>
 										<button class="btn btn-info btn-xs editAdminAccessPageBtn" data-action="{{ route('admin.admin.page-access', $admin->id) }}" data-toggle="modal" data-target="#editAdminAccessPageModal" data-fields="{{ json_encode($admin) }}"
 												data-pages="{{ json_encode($admin->pageAccess) }}"><i class="fa fa-clipboard"></i></button>
 										<button class="btn btn-primary btn-xs editAdminBtn" data-action="{{ route('admin.admin.update', $admin->id) }}" data-toggle="modal" data-target="#editAdminModal" data-fields="{{ json_encode($admin) }}"><i class="fa fa-pencil"></i></button>
@@ -474,6 +481,7 @@
 
 @section('scripts')
 	<script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
+	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
 
 	let other_terms_tab = '{{ Session::has('terms_tab') ? Session::get('terms_tab'): 'course' }}';
@@ -598,6 +606,21 @@
            $("#editShopManuscriptAdvisoryModal").find("input[value='" + v + "']").prop('checked', true);
        })
 	});
+
+    $(".status-toggle").change(function(){
+        let id = $(this).attr('data-id');
+        let is_checked = $(this).prop('checked');
+        let check_val = is_checked ? 1 : 0;
+        $.ajax({
+            type:'POST',
+            url:'/admin-status',
+            headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            data: { "id" : id, 'status' : check_val },
+            success: function(data){
+
+            }
+        });
+    });
 
     if (other_terms_tab) {
         $("#other-terms-tab").find('[href="#nav-'+ other_terms_tab + '"]').trigger('click');
