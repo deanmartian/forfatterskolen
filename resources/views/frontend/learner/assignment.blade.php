@@ -77,7 +77,7 @@
 								</p>
 
 								<span class="font-barlow-regular">{{ trans('site.learner.deadline') }}:</span>
-								<span>{{ \App\Http\FrontendHelpers::formatDateTimeNor2($submission_date_formatted) }}</span>
+								<span>{{ \App\Http\FrontendHelpers::formatDateTimeNor($submission_date_formatted) }}</span>
 								@if( $manuscript )
 									<div class="mt-3">
 										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
@@ -144,10 +144,11 @@
 												{{ $group->group->assignment->title }}
 											</span>
 											<?php
-                                            	$submission_date = strtr(trans('site.learner.submission-date-value'), [
+                                            	/*$submission_date = strtr(trans('site.learner.submission-date-value'), [
 													   '_date_' => \Carbon\Carbon::parse($group->group->submission_date)->format('d M Y'),
 														'_time_' => \Carbon\Carbon::parse($group->group->submission_date)->format('H:i')
-													]);
+													]);*/
+                                            	$submission_date = \App\Http\FrontendHelpers::formatDateTimeNor($group->group->submission_date);
 											?>
 											<span>{{ trans('site.learner.submission-date') }}:
 												{{ $submission_date }}
