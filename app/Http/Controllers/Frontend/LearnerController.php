@@ -181,6 +181,16 @@ class LearnerController extends Controller
         return abort('503');
     }
 
+    public function downloadManuscriptSynopsis($id)
+    {
+        $shopManuscriptTaken = ShopManuscriptsTaken::find($id);
+        if ($shopManuscriptTaken) {
+            $filename = $shopManuscriptTaken->synopsis;
+            return response()->download(public_path($filename));
+        }
+
+        return redirect('shop-manuscript');
+    }
 
 
     public function workshop()

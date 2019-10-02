@@ -209,6 +209,7 @@ Route::group([
         Route::get('/manuscript/{id}', 'LearnerController@manuscriptShow')->name('learner.manuscript.show'); // Manuscript Single Page
         Route::get('/shop-manuscript', 'LearnerController@shopManuscript')->name('learner.shop-manuscript'); // Shop Manuscripts Page
         Route::get('/shop-manuscript/{id}', 'LearnerController@shopManuscriptShow')->name('learner.shop-manuscript.show'); // Shop Manuscript Show Page
+        Route::get('shop-manuscript/{id}/download_synopsis', 'LearnerController@downloadManuscriptSynopsis')->name('learner.shop-manuscript.download_synopsis');
         Route::get('/workshop', 'LearnerController@workshop')->name('learner.workshop'); // Workshops Page
         Route::post('/coaching-timer/{id}/approve_date', 'LearnerController@approveCoachingDate')->name('learner.coaching-timer.approve_date');
         Route::post('/coaching-timer/{id}/suggest_date', 'LearnerController@suggestCoachingDate')->name('learner.coaching-timer.suggest_date');

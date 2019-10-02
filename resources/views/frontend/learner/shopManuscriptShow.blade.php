@@ -39,7 +39,12 @@
 						@if($shopManuscriptTaken->words)
 							<span class="font-barlow-regular">{{ trans('site.learner.words-text') }}</span>: {{ basename($shopManuscriptTaken->words) }}<br />
 						@endif
-							<span class="font-barlow-regular">{{ trans('site.learner.date-uploaded') }}</span>: {{ $shopManuscriptTaken->created_at }}<br />
+							<span class="font-barlow-regular">{{ trans('site.learner.date-uploaded') }}</span>:
+							{{ \App\Http\FrontendHelpers::formatDate($shopManuscriptTaken->created_at) }}<br />
+							@if ($shopManuscriptTaken->synopsis)
+								<a href="{{ route('learner.shop-manuscript.download_synopsis', $shopManuscriptTaken->id) }}">{{ trans('site.download-synopsis') }}</a>
+								<br>
+							@endif
 						<br />
 						<h3 class="font-barlow-semi-bold font-weight-normal">
 							{{ trans('site.learner.feedbacks-text') }}
@@ -132,11 +137,13 @@
 			</div> <!-- end panel-body -->
 		</div> <!-- end global-panel -->
 
-			<div class="text-right">
-				<a class="btn site-btn-global mt-4" href="{{ route('learner.upgrade') }}">
-					{{ trans('site.learner.upgrade') }}
-				</a>
-			</div>
+			@if( $shopManuscriptTaken->status == 'Not started' )
+				<div class="text-right">
+					<a class="btn site-btn-global mt-4" href="{{ route('learner.upgrade') }}">
+						{{ trans('site.learner.upgrade') }}
+					</a>
+				</div>
+			@endif
 
 	</div> <!-- end container -->
 </div>
