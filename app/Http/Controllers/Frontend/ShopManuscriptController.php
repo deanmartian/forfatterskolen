@@ -369,7 +369,9 @@ class ShopManuscriptController extends Controller
             $shopManuscriptTaken->synopsis = '/'.$destinationPath.$fileName;
         endif;
 
-        if ($word_count > 17500) {
+        $currentPlanWords = $shopManuscriptTaken->shop_manuscript->max_words;
+
+        if ($word_count > $currentPlanWords) { // $word_count > 17500
             $price = 0;
 
             /*
