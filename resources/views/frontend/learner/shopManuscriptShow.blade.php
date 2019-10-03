@@ -71,10 +71,13 @@
 								<div class="col-sm-12">
 									<div class="panel panel-default">
 										<div class="panel-body">
-											<strong>{{ trans('site.learner.files-text') }}:</strong>
+											{{--<strong>{{ trans('site.learner.files-text') }}:</strong>
 											@foreach( $feedback->filename as $filename )<br />
 											<a href="{{ $filename }}" target="_blank">{{ basename($filename) }}</a>
-											@endforeach
+											@endforeach--}}
+											<a href="{{ route('learner.shop-manuscript.download-feedback', [$shopManuscriptTaken->id, $feedback->id]) }}">
+												{{ trans('site.learner.download-feedback') }}
+											</a>
 											<br />
 											<strong>{{ trans('site.learner.notes-text') }}:</strong> {{ $feedback->notes }} <br />
 											<strong>{{ trans('site.learner.submitted-on') }}:</strong> {{ $feedback->created_at }} <br />
