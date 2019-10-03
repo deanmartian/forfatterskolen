@@ -420,8 +420,46 @@ class ShopManuscriptController extends Controller
         //mail($toMail, 'New manuscript submitted for shop manuscript', $message);
             AdminHelpers::send_email('New manuscript submitted for shop manuscript',
                 'post@forfatterskolen.no', $toMail, $message);
-        return redirect()->back();
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag(trans('site.learner.upload-manuscript-success')),
+                'alert_type' => 'success'
+            ]);
         }
+    }
+
+    /**
+     * Upload synopsis
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function upload_synopsis($id, Request $request)
+    {
+        $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)
+            ->where('user_id', Auth::user()->id)->firstOrFail();
+        $extensions = ['pdf', 'doc', 'docx', 'odt'];
+        if ($request->hasFile('synopsis') && $request->file('synopsis')->isValid()) :
+            $extension = pathinfo($_FILES['synopsis']['name'],PATHINFO_EXTENSION);
+
+            if( !in_array($extension, $extensions) ) :
+                return redirect()->back()->with(
+                    'manuscript_test_error', 'Invalid file format. Allowed formats are PDF, DOC, DOCX, ODT'
+                );
+            endif;
+
+            $time = time();
+            $destinationPath = 'storage/shop-manuscripts-synopsis/';
+            $fileName = $time.'.'.$extension; // rename document
+            $request->synopsis->move($destinationPath, $fileName);
+            $shopManuscriptTaken->synopsis = '/'.$destinationPath.$fileName;
+        endif;
+
+        $shopManuscriptTaken->save();
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag(trans('site.learner.upload-manuscript-success')),
+            'alert_type' => 'success'
+        ]);
     }
 
     /**
@@ -486,7 +524,9 @@ class ShopManuscriptController extends Controller
             $shopManuscriptTaken->synopsis = '/'.$destinationPath.$fileName;
         endif;
 
-        if ($word_count > 17500) {
+        $currentPlanWords = $shopManuscriptTaken->shop_manuscript->max_words;
+
+        if ($word_count > $currentPlanWords) { // $word_count > 17500
             $price = 0;
 
             /*switch ($word_count) {

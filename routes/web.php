@@ -209,7 +209,7 @@ Route::group([
         Route::get('/manuscript/{id}', 'LearnerController@manuscriptShow')->name('learner.manuscript.show'); // Manuscript Single Page
         Route::get('/shop-manuscript', 'LearnerController@shopManuscript')->name('learner.shop-manuscript'); // Shop Manuscripts Page
         Route::get('/shop-manuscript/{id}', 'LearnerController@shopManuscriptShow')->name('learner.shop-manuscript.show'); // Shop Manuscript Show Page
-        Route::get('shop-manuscript/{id}/download_synopsis', 'LearnerController@downloadManuscriptSynopsis')->name('learner.shop-manuscript.download_synopsis');
+        Route::get('shop-manuscript/{id}/download-script/{type}', 'LearnerController@downloadManuscript')->name('learner.shop-manuscript.download');
         Route::get('/workshop', 'LearnerController@workshop')->name('learner.workshop'); // Workshops Page
         Route::post('/coaching-timer/{id}/approve_date', 'LearnerController@approveCoachingDate')->name('learner.coaching-timer.approve_date');
         Route::post('/coaching-timer/{id}/suggest_date', 'LearnerController@suggestCoachingDate')->name('learner.coaching-timer.suggest_date');
@@ -264,6 +264,7 @@ Route::group([
         Route::post('/feedback/{id}/replace_feedback', 'LearnerController@replaceFeedback')->name('learner.assignment.group.replace_feedback'); // Submit feedback manuscript
         Route::post('/feedback/{id}/delete_feedback', 'LearnerController@deleteFeedback')->name('learner.assignment.group.delete_feedback'); // Submit feedback manuscript
         Route::post('/shop-manuscript/{id}/upload', 'ShopManuscriptController@upload_manuscript')->name('learner.shop-manuscript.upload'); // Upload shop manuscript
+        Route::post('/shop-manuscript/{id}/upload-synopsis', 'ShopManuscriptController@upload_synopsis')->name('learner.shop-manuscript.upload_synopsis'); // Upload shop manuscript
         Route::post('/shop-manuscript/{id}/update-uploaded-manuscript', 'ShopManuscriptController@updateUploadedManuscript')->name('learner.shop-manuscript.update-uploaded-manuscript'); // update Uploade shop manuscript
         Route::post('/shop-manuscript/{id}/delete-uploaded-manuscript', 'ShopManuscriptController@deleteUploadedManuscript')->name('learner.shop-manuscript.delete-uploaded-manuscript'); // update Uploade shop manuscript
 

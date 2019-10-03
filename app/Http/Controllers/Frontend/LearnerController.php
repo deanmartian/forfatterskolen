@@ -74,6 +74,7 @@ require app_path('/Http/PaypalIPN/PaypalIPN.php');
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use PaypalIPN;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
@@ -181,12 +182,30 @@ class LearnerController extends Controller
         return abort('503');
     }
 
-    public function downloadManuscriptSynopsis($id)
+    /**
+     * Download shop-manuscript file
+     * @param $id
+     * @param $type string
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function downloadManuscript($id, $type)
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::find($id);
         if ($shopManuscriptTaken) {
-            $filename = $shopManuscriptTaken->synopsis;
-            return response()->download(public_path($filename));
+            $file           = $shopManuscriptTaken->file;
+            if ($type == 'synopsis') {
+                $file = $shopManuscriptTaken->synopsis;
+            }
+            $fileInfo       = pathinfo(public_path($file));
+            $filename       = $fileInfo['filename'];
+            $fileExt        = $fileInfo['extension'];
+            $newName        = $filename.".".$fileExt;
+
+            if ($type == 'synopsis') {
+                $newName = $filename."-synopsis.".$fileExt;
+            }
+
+            return response()->download(public_path($file), $newName);
         }
 
         return redirect('shop-manuscript');
