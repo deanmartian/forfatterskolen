@@ -80,7 +80,7 @@
 											</a>
 											<br />
 											<strong>{{ trans('site.learner.notes-text') }}:</strong> {{ $feedback->notes }} <br />
-											<strong>{{ trans('site.learner.submitted-on') }}:</strong> {{ $feedback->created_at }} <br />
+											<strong>{{ trans('site.learner.submitted-on') }}:</strong> {{ \App\Http\FrontendHelpers::formatDateTimeNor($feedback->created_at) }} <br />
 										</div>
 									</div>
 								</div>
