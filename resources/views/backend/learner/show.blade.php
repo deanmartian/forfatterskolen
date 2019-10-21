@@ -495,8 +495,10 @@
 		    						<a href="{{route('admin.invoice.show', $invoice->id)}}">{{ $invoice->invoice_number }}</a>
 		    					</td>
 								<td>
-									@if($invoice->fiken_is_paid)
+									@if($invoice->fiken_is_paid === 1)
 										<span class="label label-success">BETALT</span>
+									@elseif($invoice->fiken_is_paid === 2)
+										<span class="label label-warning text-uppercase">sendt til inkasso</span>
 									@else
 										<span class="label label-danger">UBETALT</span>
 									@endif
