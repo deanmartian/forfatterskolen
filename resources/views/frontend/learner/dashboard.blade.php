@@ -461,8 +461,9 @@
                                             $transactions_sum = $invoice->transactions->sum('amount');
                                             // remove if the above code is uncomment
                                             $balance = $invoice->fiken_balance;
-                                            $status = $invoice->fiken_is_paid ? strtoupper(trans('site.learner.paid'))
-                                                    : strtoupper(trans('site.learner.unpaid'));
+                                            $status = $invoice->fiken_is_paid === 1 ? strtoupper(trans('site.learner.paid'))
+                                                    : ($invoice->fiken_is_paid === 2 ? strtoupper('sendt til inkasso')
+                                                    : strtoupper(trans('site.learner.unpaid')));
                                         ?>
                                         <tr>
                                             <td>
@@ -479,8 +480,10 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if($invoice->fiken_is_paid)
+                                                @if($invoice->fiken_is_paid === 1)
                                                     <span class="label label-success">{{$status}}</span>
+                                                @elseif($invoice->fiken_is_paid === 2)
+                                                    <span class="label label-warning">{{$status}}</span>
                                                 @else
                                                     <span class="label label-danger">{{$status}}</span>
                                                 @endif

@@ -30,10 +30,12 @@
 						<h3>{{ trans('site.invoice-nr') }}{{$invoice->invoice_number}}</h3><br />
 						{{ trans_choice('site.learners', 1) }}: <a href="{{route('admin.learner.show', $invoice->user->id)}}">{{$invoice->user->fullname}}</a> <br />
 						Status: 
-						@if($invoice->fiken_is_paid)
-						<span class="label label-success">BETALT</span>
+						@if($invoice->fiken_is_paid === 1)
+							<span class="label label-success">BETALT</span>
+						@elseif($invoice->fiken_is_paid === 2)
+							<span class="label label-warning text-uppercase">sendt til inkasso</span>
 						@else
-						<span class="label label-danger">UBETALT</span>
+							<span class="label label-danger">UBETALT</span>
 						@endif <br />
 						{{ trans('site.created-at') }}: {{$invoice->fiken_issueDate}} <br />
 						{{ trans('site.due-date') }}: {{$invoice->fiken_dueDate}}
@@ -236,8 +238,9 @@
 			<div class="form-group">
 				<label>{{ trans('site.status') }}</label>
 				<select name="status" id="status" class="form-control">
-					<option value="0" {{ $invoice->fiken_is_paid ?: 'selected' }}>{{ trans('site.learner.unpaid') }}</option>
-					<option value="1" {{ $invoice->fiken_is_paid ? 'selected': '' }}>{{ trans('site.learner.paid') }}</option>
+					<option value="0" {{ $invoice->fiken_is_paid === 0 ?: 'selected' }}>{{ trans('site.learner.unpaid') }}</option>
+					<option value="1" {{ $invoice->fiken_is_paid === 1 ? 'selected': '' }}>{{ trans('site.learner.paid') }}</option>
+					<option value="2" {{ $invoice->fiken_is_paid === 2? 'selected': '' }}>Sendt til inkasso</option>
 				</select>
 			</div>
           <button type="submit" class="btn btn-primary pull-right">{{ trans('site.update-invoice') }}</button>

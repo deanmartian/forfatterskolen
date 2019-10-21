@@ -35,7 +35,8 @@
                                     <?php
                                     $transactions_sum = $invoice->transactions->sum('amount');
                                     $balance = $invoice->fiken_balance;
-                                    $status = $invoice->fiken_is_paid ? "BETALT" : "UBETALT";
+                                    $status = $invoice->fiken_is_paid === 1 ? "BETALT"
+										: ($invoice->fiken_is_paid === 2 ? "SENDT TIL INKASSO" : "UBETALT");
                                     $Pbalance = (double)$invoice->gross/100;
                                     $total = 0;
 
@@ -56,8 +57,10 @@
 											@endif
 										</td>
 										<td>
-											@if($invoice->fiken_is_paid)
+											@if($invoice->fiken_is_paid === 1)
 												<span class="label label-success">{{$status}}</span>
+											@elseif($invoice->fiken_is_paid === 2)
+												<span class="label label-warning">{{$status}}</span>
 											@else
 												<span class="label label-danger">{{$status}}</span>
 											@endif
