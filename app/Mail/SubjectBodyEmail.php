@@ -20,7 +20,7 @@ class SubjectBodyEmail extends Mailable
         $this->email_message = $email_data['email_message'];
         $this->email_subject = $email_data['email_subject'];
         $this->from_name = $email_data['from_name'] ? $email_data['from_name'] : 'Forfatterskolen';
-        $this->from_email = $email_data['from_email'] ? $email_data['from_email'] : 'post@forfatterskolen.no';
+        $this->from_email = $email_data['from_email'] ? $email_data['from_email'] : 'postmail@forfatterskolen.no';
         $this->attach_file = $email_data['attach_file'] ?: NULL;
     }
 

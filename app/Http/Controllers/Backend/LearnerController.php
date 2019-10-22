@@ -785,7 +785,7 @@ class LearnerController extends Controller
         $data['email'] = $data['message'];
         $learner->emails()->create($data);
 
-        $from_email = $request->from_email ?: 'post@forfatterskolen.no';
+        $from_email = $request->from_email ?: 'postmail@forfatterskolen.no';
         $from_name  = $request->from_name ?: 'Forfatterskolen';
 
         $email = $learner->email;

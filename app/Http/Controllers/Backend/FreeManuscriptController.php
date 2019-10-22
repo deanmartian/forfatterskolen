@@ -138,11 +138,11 @@ class FreeManuscriptController extends Controller
             $message = ob_get_clean();
 
             $subject = 'Tilbakemelding på din tekst';
-            $from = "post@forfatterskolen.no";
+            $from = "postmail@forfatterskolen.no";
 
             /*AdminHelpers::send_mail($to, $subject, $message, $from );*/
             AdminHelpers::send_email($subject,
-                'post@forfatterskolen.no', $to, $message);
+                'postmail@forfatterskolen.no', $to, $message);
 
             $newFeedbackHistory = new FreeManuscriptFeedbackHistory();
             $newFeedbackHistory->free_manuscript_id = $id;
@@ -250,13 +250,13 @@ class FreeManuscriptController extends Controller
         include base_path().'/resources/views/emails/free-manuscript-feedback.blade.php';
         $message = ob_get_clean();
 
-        $headers = "From: Forfatterskolen<post@forfatterskolen.no>\r\n";
+        $headers = "From: Forfatterskolen<postmail@forfatterskolen.no>\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
         //$headers .= 'Reply-To: '. $from . "\r\n";
 
         $subject = 'Tilbakemelding på din tekst';
-        $from = "post@forfatterskolen.no";
+        $from = "postmail@forfatterskolen.no";
 
         //AdminHelpers::send_mail($to, $subject, $message, $from );
         AdminHelpers::send_email($subject,

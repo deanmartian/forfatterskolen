@@ -118,7 +118,7 @@ class CourseExpirationReminder extends Command {
                         $content = $expiryReminder->message_1_day;
                 }
 
-                $from               = 'post@forfatterskolen.no';
+                $from               = 'postmail@forfatterskolen.no';
                 $encode_email       = encrypt($user_email);
                 $extractLink        = FrontendHelpers::getTextBetween($content, "[redirect]", "[/redirect]");
                 $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);

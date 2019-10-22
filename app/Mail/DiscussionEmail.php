@@ -30,7 +30,7 @@ class DiscussionEmail extends Mailable
 
     public function build()
     {
-        return $this->from('post@forfatterskolen.no', 'Forfatterskolen')
+        return $this->from('postmail@forfatterskolen.no', 'Forfatterskolen')
             ->subject('Discussion')
             ->view('emails.discussion_new');
     }

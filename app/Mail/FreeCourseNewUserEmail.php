@@ -20,7 +20,7 @@ class FreeCourseNewUserEmail extends Mailable
 
     public function build()
     {
-        return $this->from('post@forfatterskolen.no', 'Forfatterskolen')
+        return $this->from('postmail@forfatterskolen.no', 'Forfatterskolen')
             ->subject($this->email_subject)
             ->view('emails.free_course_new_user');
     }

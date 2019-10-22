@@ -1114,7 +1114,7 @@ class HomeController extends Controller
         $content = 'this is a test only from PORT '.env('MAIL_PORT');
         echo $to."<br/>";
         echo env('MAIL_PORT')." ".env('MAIL_PORT_SITE')."<br/>";
-        AdminHelpers::send_email($subject,'post@forfatterskolen.no', $to, $content);
+        AdminHelpers::send_email($subject,'postmail@forfatterskolen.no', $to, $content);
         $emailData['email_subject'] = $subject;
         $emailData['email_message'] = $content." using queue";
         $emailData['from_name'] = NULL;
@@ -1421,7 +1421,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
             ];
             $message = str_replace($search_string, $replace_string, $emailOut->message).$attachmentText;
 
-            AdminHelpers::send_email($subject,'post@forfatterskolen.no', $user_email, $message);
+            AdminHelpers::send_email($subject,'postmail@forfatterskolen.no', $user_email, $message);
         }
     }
 

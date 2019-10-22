@@ -174,7 +174,7 @@ class VippsRepository extends BaseRepository {
 <br/> Transaction id: ".$transactionInfo->transactionId."</p>";
 
         $subject = 'Payment Captured for Invoice #'.$invoice->invoice_number;
-        $from = 'post@forfatterskolen.no';
+        $from = 'postmail@forfatterskolen.no';
         $to = 'support@forfatterskolen.no';
         $emailData['email_subject'] = $subject;
         $emailData['email_message'] = $message;

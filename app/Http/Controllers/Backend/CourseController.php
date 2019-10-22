@@ -340,7 +340,7 @@ class CourseController extends Controller
                 : $course->learners->get();
             $subject    = $request->subject;
             $message    = '';
-            $from_email = $request->from_email ?: 'post@forfatterskolen.no';
+            $from_email = $request->from_email ?: 'postmail@forfatterskolen.no';
             $from_name  = $request->from_name ?: 'Forfatterskolen';
 
             // check for attachment

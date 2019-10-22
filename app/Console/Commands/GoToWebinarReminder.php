@@ -95,7 +95,7 @@ class GoToWebinarReminder extends Command
             $gtWebinar  = AdminHelpers::getGotoWebinarDetails($web_key, $access_token); // get webinar details
 
             $subject    = $gtWebinar->subject;
-            $organizerEmail = 'post@forfatterskolen.no';
+            $organizerEmail = 'postmail@forfatterskolen.no';
             $times      = $gtWebinar->times[0];
             $startTime  = $times->startTime;
             $endTime    = $times->endTime;
@@ -155,7 +155,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
 
                     //\Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
                     AdminHelpers::send_email($emailData['email_subject'],
-                        'post@forfatterskolen.no', $user_email, $emailData['email_message']);
+                        'postmail@forfatterskolen.no', $user_email, $emailData['email_message']);
                     CronLog::create(['activity' => 'GoToWebinarReminder CRON send email to '.$user_email]);
                 }
             }
