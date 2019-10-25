@@ -479,7 +479,7 @@ class AssignmentController extends Controller
 
                 //AdminHelpers::send_mail( $userEmail, $subject, $message, $from);
                 AdminHelpers::send_email($subject,
-                    'post@forfatterskolen.no', $userEmail, $message);
+                    'postmail@forfatterskolen.no', $userEmail, $message);
                 $count++;
             }
 

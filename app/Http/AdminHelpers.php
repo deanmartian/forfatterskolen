@@ -102,7 +102,7 @@ class AdminHelpers
      */
     public static function send_email($subject, $from, $to, $content, $from_name='Forfatterskolen')
     {
-        $from = $from ?: 'post@forfatterskolen.no';
+        $from = $from ?: 'postmail@forfatterskolen.no';
         $host = env('MAIL_HOST_SITE');
         $port = env('MAIL_PORT_SITE');
         $email_sender = config('mail.username');//env('MAIL_USERNAME');

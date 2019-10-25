@@ -260,7 +260,7 @@ class FreeManuscriptController extends Controller
 
         //AdminHelpers::send_mail($to, $subject, $message, $from );
         AdminHelpers::send_email($subject,
-            'post@forfatterskolen.no', $to, $message);
+            'postmail@forfatterskolen.no', $to, $message);
         //mail($to, 'Subject', $message, $headers);
 
         $newFeedbackHistory = new FreeManuscriptFeedbackHistory();
