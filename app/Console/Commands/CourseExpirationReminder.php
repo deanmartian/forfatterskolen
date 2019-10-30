@@ -7,6 +7,7 @@ use App\CoursesTaken;
 use App\CronLog;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
+use App\Mail\SubjectBodyEmail;
 use App\UserRenewedCourse;
 use Carbon\Carbon;
 use DB;
@@ -136,7 +137,17 @@ class CourseExpirationReminder extends Command {
                 $loginLink = "<a href='".route('auth.login.email', $encode_email)
                     ."?redirect=upgrade'>Ja, jeg vil være med ett år til?</a>";
                 $message = str_replace('[login_link]', $loginLink, $content);
-                AdminHelpers::send_email($subject, $from, $user_email, $message);
+
+                $emailData = [
+                    'email_subject' => $subject,
+                    'email_message' => $message,
+                    'from_name'     => NULL,
+                    'from_email'    => $from,
+                    'attach_file'   => NULL
+                ];
+                \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
+
+                //AdminHelpers::send_email($subject, $from, $user_email, $message);
                 CronLog::create(['activity' => 'CourseExpirationReminder CRON sent email to '.$user_name.'.']);
             //}
         }

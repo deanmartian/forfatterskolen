@@ -835,8 +835,15 @@ class LearnerController extends Controller
         $message    = $request->message;
         $subject    = $request->subject;
         //AdminHelpers::send_mail( $to, $subject, $message, $from);
-        AdminHelpers::send_email($subject,
-            $from, $to, $message);
+        /*AdminHelpers::send_email($subject,
+            $from, $to, $message);*/
+        $emailData['email_subject'] = $subject;
+        $emailData['email_message'] = $message;
+        $emailData['from_name'] = NULL;
+        $emailData['from_email'] = $from;
+        $emailData['attach_file'] = NULL;
+
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
         return redirect()->back();
     }

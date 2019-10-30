@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\CronLog;
+use App\Mail\SubjectBodyEmail;
 use App\User;
 use Illuminate\Console\Command;
 
@@ -45,7 +46,7 @@ class DontAvailAnythingCommand extends Command
         foreach($users as $user) {
             // check if the user don't have workshop, manuscript and courses taken
             if ($user->workshopsTaken->count() == 0 && $user->shopManuscriptsTaken->count() == 0 && count($user->coursesTaken) == 0) {
-                $from     = 'post@forfatterskolen.no';
+                $from     = 'postmail@forfatterskolen.no';
                 $headers = "From: Forfatterskolen<".$from.">\r\n";
                 $headers .= "MIME-Version: 1.0\r\n";
                 $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
@@ -54,7 +55,17 @@ class DontAvailAnythingCommand extends Command
                 eller en annen tjeneste, og trenger vår hjelp? Gi i så fall en lyd, så vil vi gi deg den assistansen du trenger. <br/><br/>
                 Vi ønsker deg en god dag! <br/><br/> Hilsen oss i Forfatterskolen";
 
-                mail($user->email, $subject, $message, $headers);
+                $to = $user->email;
+                $emailData = [
+                    'email_subject' => $subject,
+                    'email_message' => $message,
+                    'from_name'     => NULL,
+                    'from_email'    => $from,
+                    'attach_file'   => NULL
+                ];
+                \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+
+                //mail($user->email, $subject, $message, $headers);
                 CronLog::create(['activity' => 'DontAvailAnything CRON sent email to '.$user->email]);
             }
         }

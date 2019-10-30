@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\EmailTemplate;
 use App\Http\AdminHelpers;
+use App\Mail\SubjectBodyEmail;
 use App\Manuscript;
 use App\ShopManuscriptUpgrade;
 use App\User;
@@ -225,8 +226,17 @@ class ShopManuscriptController extends Controller
             $replace_content = str_replace('_date_',$replace_string, $emailTemplate->email_content);
             $email_body = $replace_content;
 
+            $subject = 'Forventet dato for tilbakemelding';
+            $emailData['email_subject'] = $subject;
+            $emailData['email_message'] = $email_body;
+            $emailData['from_name'] = NULL;
+            $emailData['from_email'] = 'postmail@forfatterskolen.no';
+            $emailData['attach_file'] = NULL;
+
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+
             //mail($to, 'Forventet dato for tilbakemelding', $email_body, $headers);
-            AdminHelpers::send_email('Forventet dato for tilbakemelding', 'post@forfatterskolen.no', $to, $email_body);
+            //AdminHelpers::send_email('Forventet dato for tilbakemelding', 'post@forfatterskolen.no', $to, $email_body);
         }
 
         return redirect()->back();
@@ -381,10 +391,17 @@ class ShopManuscriptController extends Controller
         //$headers .= 'Reply-To: '. $from . "\r\n";
 
         $subject = 'Tilbakemelding på din tekst';
-        $from = "post@forfatterskolen.no";
+        $from = "postmail@forfatterskolen.no";
 
         //AdminHelpers::send_mail($to, $subject, $message, $from );
-        AdminHelpers::send_email($subject, $from, $to, $message);
+        //AdminHelpers::send_email($subject, $from, $to, $message);
+        $emailData['email_subject'] = $subject;
+        $emailData['email_message'] = $message;
+        $emailData['from_name'] = NULL;
+        $emailData['from_email'] = $from;
+        $emailData['attach_file'] = NULL;
+
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
         //mail($to, 'Subject', $message, $headers);
 
         return redirect()->back();

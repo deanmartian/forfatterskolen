@@ -6,6 +6,7 @@ use App\CronLog;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
 use App\Invoice;
+use App\Mail\SubjectBodyEmail;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -44,7 +45,7 @@ class DueInvoiceCheck extends Command
     {
         CronLog::create(['activity' => 'DueInvoiceCheck CRON running.']);
 
-        $from           = 'post@forfatterskolen.no';//$request->from_email;
+        $from           = 'postmail@forfatterskolen.no';//$request->from_email;
         $subject        = 'Faktura';
         $dueTomorrow    = Carbon::today()->addDay(1)->format('Y-m-d');
 
@@ -65,8 +66,17 @@ class DueInvoiceCheck extends Command
 Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 00393 <br/> Kid nummer: '.$invoice->kid_number.' <br/> 
 <a href="'.$link.'">Se faktura</a> <br><br> <small>*Merknad: Du må være innlogget for å se fakturaen.</small>';
 
-            AdminHelpers::send_email($subject,
-                $from, $to, $message);
+            $emailData = [
+                'email_subject' => $subject,
+                'email_message' => $message,
+                'from_name'     => NULL,
+                'from_email'    => $from,
+                'attach_file'   => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+
+            /*AdminHelpers::send_email($subject,
+                $from, $to, $message);*/
             CronLog::create(['activity' => 'DueInvoiceCheck CRON sent email to '.$to]);
         }
 

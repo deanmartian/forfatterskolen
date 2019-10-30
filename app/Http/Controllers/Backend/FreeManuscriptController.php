@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 use App\EmailTemplate;
 use App\FreeManuscriptFeedbackHistory;
 use App\Http\AdminHelpers;
+use App\Mail\SubjectBodyEmail;
 use App\Manuscript;
 use App\User;
 use Carbon\Carbon;
@@ -141,8 +142,15 @@ class FreeManuscriptController extends Controller
             $from = "postmail@forfatterskolen.no";
 
             /*AdminHelpers::send_mail($to, $subject, $message, $from );*/
-            AdminHelpers::send_email($subject,
-                'postmail@forfatterskolen.no', $to, $message);
+            /*AdminHelpers::send_email($subject,
+                'postmail@forfatterskolen.no', $to, $message);*/
+            $emailData['email_subject'] = $subject;
+            $emailData['email_message'] = $message;
+            $emailData['from_name'] = NULL;
+            $emailData['from_email'] = $from;
+            $emailData['attach_file'] = NULL;
+
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
             $newFeedbackHistory = new FreeManuscriptFeedbackHistory();
             $newFeedbackHistory->free_manuscript_id = $id;
@@ -259,8 +267,15 @@ class FreeManuscriptController extends Controller
         $from = "postmail@forfatterskolen.no";
 
         //AdminHelpers::send_mail($to, $subject, $message, $from );
-        AdminHelpers::send_email($subject,
-            'postmail@forfatterskolen.no', $to, $message);
+        /*AdminHelpers::send_email($subject,
+            'postmail@forfatterskolen.no', $to, $message);*/
+        $emailData['email_subject'] = $subject;
+        $emailData['email_message'] = $message;
+        $emailData['from_name'] = NULL;
+        $emailData['from_email'] = $from;
+        $emailData['attach_file'] = NULL;
+
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
         //mail($to, 'Subject', $message, $headers);
 
         $newFeedbackHistory = new FreeManuscriptFeedbackHistory();

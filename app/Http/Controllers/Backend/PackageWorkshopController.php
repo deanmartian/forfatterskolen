@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\Mail\SubjectBodyEmail;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -46,7 +47,14 @@ class PackageWorkshopController extends Controller
        if ($user && $workshop && $workshop->email_title && $workshop->email_body) {
            $to = $user->email;
            $headers = "From: Forfatterskolen<postmail@forfatterskolen.no>\r\n";
-           AdminHelpers::send_email($workshop->email_title, 'elin@forfatterskolen.no', $to, nl2br($workshop->email_body));
+           $emailData['email_subject'] = $workshop->email_title;
+           $emailData['email_message'] = nl2br($workshop->email_body);
+           $emailData['from_name'] = NULL;
+           $emailData['from_email'] = 'elin@forfatterskolen.no';
+           $emailData['attach_file'] = NULL;
+
+           \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+           //AdminHelpers::send_email($workshop->email_title, 'elin@forfatterskolen.no', $to, nl2br($workshop->email_body));
        }
 
        $workshopTaken->save();

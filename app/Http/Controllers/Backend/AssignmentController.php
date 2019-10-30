@@ -7,6 +7,7 @@ use App\Helpers\Html2Text;
 use App\Helpers\PdfParser;
 use App\Http\FrontendHelpers;
 use App\Mail\AssignmentManuscriptEmailToList;
+use App\Mail\SubjectBodyEmail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -471,15 +472,22 @@ class AssignmentController extends Controller
                 $userEmail  = $manuscript->user->email;
                 $subject    = 'Din tekst på dagens redigeringswebinar';
                 $message    = 'Du har fått tekst nr. "'.$count.'"';
-                $from       = 'post@forfatterskolen.no';
+                $from       = 'postmail@forfatterskolen.no';
 
                 $updateAssignment = AssignmentManuscript::find($manuscript->id);
                 $updateAssignment->text_number = $count;
                 $updateAssignment->save();
 
                 //AdminHelpers::send_mail( $userEmail, $subject, $message, $from);
-                AdminHelpers::send_email($subject,
-                    'postmail@forfatterskolen.no', $userEmail, $message);
+                /*AdminHelpers::send_email($subject,
+                    'postmail@forfatterskolen.no', $userEmail, $message);*/
+                $emailData['email_subject'] = $subject;
+                $emailData['email_message'] = $message;
+                $emailData['from_name'] = NULL;
+                $emailData['from_email'] = $from;
+                $emailData['attach_file'] = NULL;
+
+                \Mail::to($userEmail)->queue(new SubjectBodyEmail($emailData));
                 $count++;
             }
 

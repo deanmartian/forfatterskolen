@@ -137,7 +137,14 @@
           </div>
           <div class="form-group">
             <label>Message</label>
-            <textarea name="message" class="form-control" required rows="8">{{ $emailTemplate ? $emailTemplate->email_content."\nExpected Finish: ".$manuscript->expected_finish : '' }}</textarea>
+              <?php
+                  if ($emailTemplate) {
+                      $replace_string = \Carbon\Carbon::parse($emailTemplate->expected_finish)->format('d.m.Y');
+                      $replace_content = str_replace('_date_',$replace_string, $emailTemplate->email_content);
+                        $replace_content .= "\nExpected Finish: ".$manuscript->expected_finish;
+                  }
+              ?>
+            <textarea name="message" class="form-control editor" required rows="8">{{ $emailTemplate ? $replace_content : '' }}</textarea>
           </div>
             <input type="hidden" name="from_email" value="{{ $emailTemplate ? $emailTemplate->from_email : 'post@forfatterskolen.no' }}">
           <div class="text-right margin-top">
@@ -285,4 +292,16 @@
   </div>
 </div>
 @endif
+@stop
+
+@section('scripts')
+    <script src="https://cdn.tinymce.com/4/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+            selector:'.editor',
+            height : "300",
+            menubar: false,
+            toolbar: 'insert | undo redo |  formatselect | bold italic backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+        });
+    </script>
 @stop

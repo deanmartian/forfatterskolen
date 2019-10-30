@@ -67,10 +67,10 @@ class FreeCourseDelayedEmailCommand extends Command
             $email_data['email_subject'] = $course->title;
             $toEmail = $user->email;
 
-            //\Mail::to($toEmail)->queue(new FreeCourseNewUserEmail($email_data));
-            AdminHelpers::send_email($email_data['email_subject'],
+            \Mail::to($toEmail)->queue(new FreeCourseNewUserEmail($email_data));
+            /*AdminHelpers::send_email($email_data['email_subject'],
                 'post@forfatterskolen.no', $toEmail, view('emails.free_course_new_user')
-                    ->with(['email_message' => $email_data['email_message']]));
+                    ->with(['email_message' => $email_data['email_message']]));*/
             CronLog::create(['activity' => 'FreeCourseDelayedEmailCommand sent email to user '.$user->id]);
             $delayedEmail->delete(); //delete the record after adding it to queue
         }

@@ -188,7 +188,8 @@ class VippsRepository extends BaseRepository {
             $invoice->fiken_is_paid = 1;
             $invoice->save();
 
-            AdminHelpers::send_email($subject,$from, $to, $message);
+            //AdminHelpers::send_email($subject,$from, $to, $message);
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
         }
 
         return $response;

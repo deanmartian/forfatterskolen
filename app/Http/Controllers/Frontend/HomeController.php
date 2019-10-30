@@ -1296,7 +1296,14 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
 
                 $content = str_replace($search_string, $replace_string, $gtWebinar->confirmation_email);
 
-                AdminHelpers::send_email($subject, $from, $to, $content);
+                $emailData['email_subject'] = $subject;
+                $emailData['email_message'] = $content;
+                $emailData['from_name'] = NULL;
+                $emailData['from_email'] = $from;
+                $emailData['attach_file'] = NULL;
+
+                \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+                //AdminHelpers::send_email($subject, $from, $to, $content);
             }
         }
     }
@@ -1421,7 +1428,14 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
             ];
             $message = str_replace($search_string, $replace_string, $emailOut->message).$attachmentText;
 
-            AdminHelpers::send_email($subject,'postmail@forfatterskolen.no', $user_email, $message);
+            $emailData['email_subject'] = $subject;
+            $emailData['email_message'] = $message;
+            $emailData['from_name'] = NULL;
+            $emailData['from_email'] = 'postmail@forfatterskolen.no';
+            $emailData['attach_file'] = NULL;
+
+            \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
+            //AdminHelpers::send_email($subject,'postmail@forfatterskolen.no', $user_email, $message);
         }
     }
 

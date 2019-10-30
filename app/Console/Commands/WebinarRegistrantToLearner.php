@@ -7,6 +7,7 @@ use App\CoursesTaken;
 use App\CronLog;
 use App\EmailAttachment;
 use App\Http\AdminHelpers;
+use App\Mail\SubjectBodyEmail;
 use App\User;
 use Illuminate\Console\Command;
 
@@ -117,7 +118,14 @@ class WebinarRegistrantToLearner extends Command
                 $message = str_replace($search_string, $replace_string, $emailOut->message).$attachmentText;
                 // check if already added
                 if (!$alreadyAdded) {
-                    AdminHelpers::send_email($subject,'post@forfatterskolen.no', $user_email, $message);
+                    //AdminHelpers::send_email($subject,'post@forfatterskolen.no', $user_email, $message);
+                    $emailData['email_subject'] = $subject;
+                    $emailData['email_message'] = $message;
+                    $emailData['from_name'] = NULL;
+                    $emailData['from_email'] = 'postmail@forfatterskolen.no';
+                    $emailData['attach_file'] = NULL;
+
+                    \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
                     CronLog::create(['activity' => 'WebinarRegistrantToLearner CRON send email to '.$user_email]);
                     echo $user_email."\n";
                 }

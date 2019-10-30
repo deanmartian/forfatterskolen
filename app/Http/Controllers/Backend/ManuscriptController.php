@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\EmailTemplate;
+use App\Mail\SubjectBodyEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests;
@@ -152,7 +153,14 @@ class ManuscriptController extends Controller
         $subject    = $request->subject;
 
         //AdminHelpers::send_mail( $to, $subject, $message, $from);
-        AdminHelpers::send_email($subject, $from, $to, $message);
+        //AdminHelpers::send_email($subject, $from, $to, $message);
+        $emailData['email_subject'] = $subject;
+        $emailData['email_message'] = $message;
+        $emailData['from_name'] = NULL;
+        $emailData['from_email'] = $from;
+        $emailData['attach_file'] = NULL;
+
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
         return redirect()->back();
 
         // Send welcome email
