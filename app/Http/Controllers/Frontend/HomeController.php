@@ -1114,9 +1114,9 @@ class HomeController extends Controller
         $content = 'this is a test only from PORT '.env('MAIL_PORT');
         echo $to."<br/>";
         echo env('MAIL_PORT')." ".env('MAIL_PORT_SITE')."<br/>";
-        AdminHelpers::send_email($subject,'postmail@forfatterskolen.no', $to, $content);
+        //AdminHelpers::send_email($subject,'postmail@forfatterskolen.no', $to, $content);
         $emailData['email_subject'] = $subject;
-        $emailData['email_message'] = $content." using queue";
+        $emailData['email_message'] = $content." using queue with plain text <a href='#'>link here</a>";
         $emailData['from_name'] = NULL;
         $emailData['from_email'] = NULL;
         $emailData['attach_file'] = NULL;

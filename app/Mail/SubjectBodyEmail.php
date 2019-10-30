@@ -28,7 +28,8 @@ class SubjectBodyEmail extends Mailable
     {
         $email =  $this->from($this->from_email, $this->from_name)
             ->subject($this->email_subject)
-            ->view('emails.subject_body');
+            ->view('emails.subject_body')
+            ->text('emails.subject_body_plain');
 
         // check if there's an attachment to prevent error
         if ($this->attach_file) {
