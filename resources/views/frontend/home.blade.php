@@ -105,8 +105,62 @@
                         <div class="h1 mt-0 text-white">{{ trans('site.front.latest-seminars') }}</div>
                     </div>
                 </div>
+
+                <!-- orig is the one under which is the carousel -->
+                <div class="col-sm-12">
+                    <div class="card border-0 next-free-webinar">
+                        <div class="card-header border-0 position-relative">
+                            <img src="{{ asset('/images-new/home/hand-pen.png') }}" alt="hand with pen">
+                            <span class="title">
+                                {{ !$next_free_webinar && $next_workshop ? trans('site.front.next-workshop')
+                                : trans('site.front.next-free-webinar') }}
+                            </span>
+                        </div>
+                        <div class="card-body" itemscope itemtype="http://schema.org/CreativeWork">
+                            @if($next_free_webinar)
+                                <div class="h1 mt-0 font-montserrat-semibold">
+                                    {{ $next_free_webinar->title }}
+                                </div>
+
+                                <div class="date-time-cont">
+                                    <i class="img-icon16 icon-calendar"></i>
+                                    <span>{{ \App\Http\FrontendHelpers::formatDate($next_free_webinar->start_date) }}</span>
+                                    <i class="img-icon16 icon-clock ml-3"></i>
+                                    <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($next_free_webinar->start_date) }}</span>
+                                </div>
+
+                                <p class="mt-4 text-justify">{{ str_limit(strip_tags($next_free_webinar->description), 200)}}</p>
+
+                                <a class="btn" href="{{ route('front.free-webinar', $next_free_webinar->id) }}"
+                                   title="View free webinar">
+                                    {{ trans('site.front.register') }}
+                                </a>
+                            @else
+                                @if($next_workshop)
+                                    <div class="h1 mt-0 font-montserrat-semibold">
+                                        {{ $next_workshop->title }}
+                                    </div>
+
+                                    <div class="date-time-cont">
+                                        <i class="img-icon16 icon-calendar"></i>
+                                        <span>{{ \App\Http\FrontendHelpers::formatDate($next_workshop->date) }}</span>
+                                        <i class="img-icon16 icon-clock ml-3"></i>
+                                        <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($next_workshop->date) }}</span>
+                                    </div>
+
+                                    <p class="mt-4 text-justify">{{ str_limit(strip_tags($next_workshop->description), 200)}}</p>
+
+                                    <a class="btn" href="{{ route('front.workshop.show', $next_workshop->id) }}"
+                                       title="View workshop details">
+                                        {{ trans('site.front.register') }}
+                                    </a>
+                                @endif
+                            @endif
+                        </div> <!-- end card-body -->
+                    </div> <!-- end card -->
+                </div> <!-- end col-sm-12 -->
             </div>
-            <div id="latest-seminar-carousel" class="carousel slide multi-item-carousel" data-ride="carousel" data-interval="false">
+            {{--<div id="latest-seminar-carousel" class="carousel slide multi-item-carousel" data-ride="carousel" data-interval="false">
                 <div class="carousel-inner" role="listbox">
                     <div class="item active">
                         <div class="item__third">
@@ -237,7 +291,7 @@
                 title="View next item">
                     <span class="glyphicon glyphicon-chevron-right hide" aria-hidden="true"></span>
                 </a>
-            </div>
+            </div>--}}
         </div> <!-- end latest-seminar wrapper -->
 
         <div class="container">
