@@ -651,6 +651,26 @@ class FrontendHelpers
         return $marks;
 	}
 
+    public static function howReadyOptions($ready = NULL)
+    {
+        $options = array(
+            array( 'id' => 1, 'text' => 'Ikke så veldig. Men jeg skal gi det et forsøk (og så har jeg jo alltids angrefristen ...)'),
+            array( 'id' => 2, 'text' => 'Ganske motivert. Jeg vil gi dette et realt forsøk, men er usikker på om jeg vil klare å fullføre.'),
+            array( 'id' => 3, 'text' => 'Jeg vil veldig gjerne være med på dette. Det er nå jeg skal klare det.'),
+            array( 'id' => 4, 'text' => 'Gira? Jeg kan knapt vente til vi er i gang. Det er nå eller aldri. Jeg skal bli forfatter!'),
+        );
+
+        if ($ready) {
+            foreach ($options as $option) {
+                if ($option['id'] == $ready) {
+                    return $option;
+                }
+            }
+        }
+
+        return $options;
+    }
+
     /**
      * Get the webinar key from the link
      * @param $link

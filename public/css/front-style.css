@@ -6407,6 +6407,38 @@ textarea.form-control {
 
 /* end next free webinar */
 
+/* personal trainer */
+
+.personal-trainer-wrapper {
+    height: 700px;
+    margin-bottom: 50px;
+    position: relative;
+}
+
+.personal-trainer-wrapper:before {
+    content: "";
+    background: url(../images-new/home/our-course-image.jpg) no-repeat center/cover;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    transform: scaleX(-1);
+}
+
+.personal-trainer-wrapper .white-background {
+    background: rgba(255, 255, 255, .9);
+    float: right;
+    margin: 50px 40px;
+    padding: 40px 50px;
+    text-align: center;
+    width: 51%;
+}
+
+.text-red {
+    color: #e93746;
+}
+
+/* end personal trainer */
+
 /**
  media query
  */
@@ -7029,6 +7061,10 @@ textarea.form-control {
     .next-free-webinar .card-header > img {
         height: 430px;
         object-fit: cover;
+    }
+
+    .personal-trainer-wrapper .white-background {
+        margin: 50px 0;
     }
 }
 
@@ -8187,6 +8223,15 @@ textarea.form-control {
 
     .next-free-webinar .card-header > img {
         height: 350px;
+    }
+
+    .personal-trainer-wrapper {
+        height: 500px;
+    }
+
+    .personal-trainer-wrapper .white-background {
+        margin: 50px 0;
+        width: 100%;
     }
 
     /* theme tab */
@@ -9557,6 +9602,10 @@ textarea.form-control {
     .next-free-webinar .card-header > img {
         height: 280px;
     }
+
+    .personal-trainer-wrapper .white-background {
+        padding: 40px;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -10748,6 +10797,11 @@ textarea.form-control {
     .next-free-webinar .card-header > img {
         height: 200px;
     }
+
+    .personal-trainer-wrapper .white-background {
+        margin: 40px 0;
+        padding: 30px;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -11077,6 +11131,11 @@ textarea.form-control {
     .free-webinar-thanks-page .header .container {
         padding: 46px 90px;
     }
+
+    .personal-trainer-wrapper .white-background {
+        margin: 37px 0;
+        padding: 20px;
+    }
 }
 
 @media only screen and (max-width: 360px) {
@@ -11299,6 +11358,11 @@ textarea.form-control {
 
     .free-manuscript-page .body .form-container .site-btn-global {
         width: 40% !important;
+    }
+
+    .personal-trainer-wrapper .white-background {
+        margin: 30px 0;
+
     }
 }
 
@@ -11718,6 +11782,10 @@ textarea.form-control {
 
     .free-webinar-thanks-page .body .second-row .details-container h1 {
         font-size: 25px;
+    }
+
+    .personal-trainer-wrapper {
+        height: 535px;
     }
 }
 

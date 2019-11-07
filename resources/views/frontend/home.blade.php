@@ -98,7 +98,29 @@
             </div> <!-- end container -->
         </div> <!-- end header -->
 
-        <div class="latest-seminar-wrapper">
+        <div class="personal-trainer-wrapper">
+            <div class="container position-relative">
+                <div class="white-background">
+                    <header>
+                        <h1 class="font-montserrat-regular">
+                            {{ trans('site.personal-trainer.title') }}
+                        </h1>
+                        <h2 class="font-montserrat-regular text-red">
+                            {{ trans('site.personal-trainer.sub-title') }}
+                        </h2>
+                    </header>
+                    <div class="mt-5 font-montserrat-light">
+                        {{ trans('site.personal-trainer.description') }}
+                    </div>
+
+                    <a href="{{ route('front.personal-trainer.apply') }}" class="site-btn-global rounded-0 mt-5 d-inline-block">
+                        {{ trans('site.personal-trainer.button-text') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {{--<div class="latest-seminar-wrapper">
             <div class="container">
                 <div class="row">
                     <div class="indicator">
@@ -160,7 +182,7 @@
                     </div> <!-- end card -->
                 </div> <!-- end col-sm-12 -->
             </div>
-            {{--<div id="latest-seminar-carousel" class="carousel slide multi-item-carousel" data-ride="carousel" data-interval="false">
+            --}}{{--<div id="latest-seminar-carousel" class="carousel slide multi-item-carousel" data-ride="carousel" data-interval="false">
                 <div class="carousel-inner" role="listbox">
                     <div class="item active">
                         <div class="item__third">
@@ -291,8 +313,8 @@
                 title="View next item">
                     <span class="glyphicon glyphicon-chevron-right hide" aria-hidden="true"></span>
                 </a>
-            </div>--}}
-        </div> <!-- end latest-seminar wrapper -->
+            </div>--}}{{--
+        </div>--}} <!-- end latest-seminar wrapper -->
 
         <div class="container">
             <div class="testimonial-row row">

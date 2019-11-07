@@ -294,4 +294,9 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\AssignmentManuscript');
     }
+
+    public function personalTrainerApplication()
+    {
+        return $this->hasMany('App\PersonalTrainerApplicant');
+    }
 }

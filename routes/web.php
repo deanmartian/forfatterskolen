@@ -70,6 +70,9 @@ Route::group([
         Route::get('/gratis-tekstvurdering/success', 'ShopManuscriptController@freeManuscriptShowSuccess')->name('front.free-manuscript.success'); // Free Manuscript
         Route::post('/gratis-tekstvurdering/send', 'ShopManuscriptController@freeManuscriptSend')->name('front.free-manuscript.send'); // Free Manuscript Send
         Route::post('/free-manuscript/set-word-count', 'ShopManuscriptController@freeManuscriptWordCount')->name('front.free-manuscript.set-wordcount');
+        Route::get('/personal-trainer/apply', 'HomeController@personalTrainer')->name('front.personal-trainer.apply');
+        Route::post('/personal-trainer/send', 'HomeController@personalTrainerSend')->name('front.personal-trainer.send');
+        Route::get('/personal-trainer/thank-you', 'HomeController@personalTrainerThanks')->name('front.personal-trainer.thank-you');
 
         Route::post('/', 'HomeController@homeOptIn')->name('front.home'); // Homepage
 
@@ -1163,6 +1166,17 @@ Route::group([
                 'store' => 'admin.file.store',
                 'update' => 'admin.file.update',
                 'destroy' => 'admin.file.destroy',
+            ],
+        ]);
+
+        Route::resource('/personal-trainer', 'PersonalTrainerController', [
+            'except' => ['edit'],
+            'names' => [
+                'index' => 'admin.personal-trainer.index',
+                'show' => 'admin.personal-trainer.show',
+                'create' => 'admin.personal-trainer.create',
+                'store' => 'admin.personal-trainer.store',
+                'destroy' => 'admin.personal-trainer.destroy',
             ],
         ]);
 

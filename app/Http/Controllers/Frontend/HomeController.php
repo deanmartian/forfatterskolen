@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Frontend;
 
+use App\Address;
 use App\Advisory;
 use App\Blog;
 use App\CoachingTimerManuscript;
@@ -1517,5 +1518,68 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
     public function bamboraAccept(Request $request)
     {
         return redirect()->to('/thank-you');
+    }
+
+    public function personalTrainer()
+    {
+        return view('frontend.personal-trainer.checkout');
+    }
+
+    public function personalTrainerSend( Request $request )
+    {
+        $messages = array(
+            'reason_for_applying.required'  => 'Hva er årsaken til at du søker dette kurset (kort begrunnelse) field is required.',
+            'need_in_course.required'       => 'Hva skal til for at du fullfører dette kurset field is required.',
+            'expectations.required'         => 'Hvilke forventninger har du til deg selv – og oss field is required.',
+        );
+        $this->validate($request, [
+            'email'                 => 'required',
+            'first_name'            => 'required|alpha_spaces',
+            'last_name'             => 'required|alpha_spaces',
+            'phone'                 => 'required',
+            'reason_for_applying'   => 'required',
+            'need_in_course'        => 'required',
+            'expectations'          => 'required',
+            'how_ready'             => 'required',
+        ], $messages);
+
+        // check if have value
+        if ($request->optional_words) {
+            // check if it reached the maximum allowed words
+            if (count(explode(' ', $request->optional_words)) > 1000) {
+                return redirect()->back()->withInput()->with([
+                    'errors' => AdminHelpers::createMessageBag('You entered more than the allowed 1000 words')
+                ]);
+            }
+        }
+
+        if( Auth::guest() ) :
+            $user = User::where('email', $request->email)->first();
+            if( $user ) :
+                Auth::login($user);
+            else :
+                // register new user
+                $new_user = new User();
+                $new_user->email = $request->email;
+                $new_user->first_name = $request->first_name;
+                $new_user->last_name = $request->last_name;
+                $new_user->password = bcrypt($request->password);
+                $new_user->save();
+                Auth::login($new_user);
+            endif;
+        endif;
+
+        $address = Address::firstOrNew(['user_id' => Auth::user()->id]);
+        $address->phone = $request->phone;
+        $address->save();
+
+        Auth::user()->personalTrainerApplication()->create($request->all());
+
+        return redirect()->route('front.personal-trainer.thank-you');
+    }
+
+    public function personalTrainerThanks()
+    {
+        return view('frontend.personal-trainer.thank-you');
     }
 }
