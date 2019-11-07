@@ -1198,5 +1198,6 @@ kvittering.',
     'description' => 'Nå har du muligheten til å skrive boken du drømmer om, på ett år, sammen med rektor. Vårt splitter nye årskurs gir deg alt du trenger for å fullføre det beste manuset du kan klare. Du får din egen, profesjonelle redaktør som følger deg hele veien, din personlige skrivetrener og en gjeng som hjelper og heier deg frem. Kurset starter 14. januar 2020.',
     'sub-title' => 'Skriv boken din på ett år',
     'title' => 'Nyhet! Åskurs med rektor',
+    'about-course' => '&nbsp;',
   ),
 );

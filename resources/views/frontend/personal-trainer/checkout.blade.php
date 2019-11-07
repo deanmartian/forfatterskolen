@@ -11,7 +11,8 @@
 			<div class="row">
 					<div class="col-lg-12">
 						<div class="panel panel-default">
-							@if(Auth::guest())
+							{!! trans('site.personal-trainer.about-course')  !!}
+							{{--@if(Auth::guest())
 								<form id="checkoutLogin" action="{{route('frontend.login.checkout.store')}}" method="POST">
 								{{csrf_field()}}
 									<div class="row">
@@ -40,7 +41,7 @@
 									</div>
 								</div>
 							</form>
-							@endif
+							@endif--}}
 							@if ( $errors->any() )
 								<div class="col-sm-12">
 									<div class="alert alert-danger mb-0">
@@ -57,7 +58,7 @@
 								  id="place_order_form">
 								{{csrf_field()}}
 							<h2>
-								Skriv boken din på ett år
+								{{ trans('site.personal-trainer.sub-title') }}
 							</h2>
 							<div class="panel-heading">{{ trans('site.front.form.user-information') }}</div>
 							<div class="panel-body px-0">
