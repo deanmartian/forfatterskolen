@@ -23,7 +23,6 @@
         </script>
 
         <meta name="google-site-verification" content="PT1CQ7dxKhPpwvuFW6e2o_AVdp10XC-wUvvbHHuY0IE" />
-        @yield('title')
         @include('frontend.partials.frontend-css')
 
         <!--[if lt IE 9]>
@@ -40,7 +39,13 @@
             @if ($pageMeta->meta_image)
                 <meta property="og:image" content="{{ asset($pageMeta->meta_image) }}">
             @endif
+            <title>
+                {{ $pageMeta->meta_title }}
+            </title>
         @endif
+
+        <!-- use meta title first before the title on the actual page added-->
+        @yield('title')
         <meta name="keywords" content="forfatterskolen,forfatter,forfatter kurs,course,shop manuscript">
         <meta name="nosnippets">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=1.0, user-scalable=no">
