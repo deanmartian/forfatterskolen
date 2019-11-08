@@ -35,6 +35,7 @@
 		<li @if( Request::input('tab') == 'options' ) class="active" @endif><a href="?tab=options">Options</a></li>
 		<li @if( Request::input('tab') == 'terms' ) class="active" @endif><a href="?tab=terms">Terms</a></li>
 		<li @if( Request::input('tab') == 'advisory' ) class="active" @endif><a href="?tab=advisory">Advisory</a></li>
+		<li @if( Request::input('tab') == 'staff' ) class="active" @endif><a href="?tab=staff">Staff</a></li>
 	</ul>
 
 	<div class="tab-content">
@@ -171,6 +172,48 @@
 							</div>
 						</div>
 					</div>
+			@elseif( Request::input('tab') == 'staff')
+				<div class="table-users table-responsive">
+					<button class="btn btn-success margin-top btn-sm pull-right" style="margin-right: 10px;"
+					data-toggle="modal" data-target="#staffModal" id="createStaffBtn"
+							data-action="{{ route('admin.staff.save') }}">Add Staff</button>
+					<div class="clearfix"></div>
+					<table class="table margin-top">
+						<thead>
+						<tr>
+							<th>Name</th>
+							<th>Email</th>
+							<th width="500">Details</th>
+							<th>Teamviewer</th>
+							<th>Order</th>
+							<th></th>
+						</tr>
+						</thead>
+						<tbody>
+							@foreach($staffs as $staff)
+								<tr>
+									<td>{{ $staff->name }}</td>
+									<td>{{ $staff->email }}</td>
+									<td>
+										{!! $staff->details !!}
+									</td>
+									<td>
+										{{ $staff->teamviewer }}
+									</td>
+									<td>
+										{{ $staff->sequence }}
+									</td>
+									<td>
+										<button class="btn btn-primary btn-sm updateStaffBtn" data-toggle="modal"
+												data-target="#staffModal"
+												data-action="{{ route('admin.staff.save', $staff->id) }}"
+												data-fields="{{ json_encode($staff) }}">Edit</button>
+									</td>
+								</tr>
+							@endforeach
+						</tbody>
+					</table>
+				</div>
 			@else
 				<div class="table-users table-responsive">
 					<table class="table">
@@ -477,6 +520,48 @@
 
 	</div>
 </div>
+
+<div id="staffModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title"></h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" enctype="multipart/form-data">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>Name</label>
+						<input type="text" class="form-control" name="name" required>
+					</div>
+					<div class="form-group">
+						<label>Email</label>
+						<input type="email" class="form-control" name="email" required>
+					</div>
+					<div class="form-group">
+						<label>Details</label>
+						<textarea name="details" id="" cols="30" rows="10" class="form-control"></textarea>
+					</div>
+					<div class="form-group">
+						<label>Team Viewer</label>
+						<input type="text" class="form-control" name="teamviewer">
+					</div>
+					<div class="form-group">
+						<label>Image</label>
+						<input type="file" class="form-control" name="image">
+					</div>
+					<div class="form-group">
+						<label>Order</label>
+						<input type="number" class="form-control" name="sequence" step="1">
+					</div>
+					<button type="submit" class="btn btn-primary pull-right margin-top">Save</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -620,6 +705,27 @@
 
             }
         });
+    });
+
+    $("#createStaffBtn").click(function () {
+		let modal = $("#staffModal");
+		let action = $(this).data('action');
+		modal.find("form").attr('action', action);
+		modal.find(".modal-title").text('Create Staff');
+    });
+
+    $(".updateStaffBtn").click(function () {
+        let modal = $("#staffModal");
+        let action = $(this).data('action');
+        let form = modal.find("form");
+        let fields = $(this).data("fields");
+        form.attr('action', action);
+        modal.find(".modal-title").text('Update Staff');
+        modal.find("[name=name]").val(fields.name);
+        modal.find("[name=email]").val(fields.email);
+        modal.find("[name=details]").text(fields.details);
+        modal.find("[name=teamviewer]").val(fields.teamviewer);
+        modal.find("[name=sequence]").val(fields.sequence);
     });
 
     if (other_terms_tab) {

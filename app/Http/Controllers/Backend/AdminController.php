@@ -3,9 +3,11 @@ namespace App\Http\Controllers\Backend;
 
 use App\CoursesTaken;
 use App\CustomAction;
+use App\Http\AdminHelpers;
 use App\PageMeta;
 use App\Repositories\Services\PageAccessService;
 use App\Repositories\Services\PublishingService;
+use App\Staff;
 use Carbon\Carbon;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Contracts\Filesystem\Filesystem;
@@ -33,8 +35,9 @@ class AdminController extends Controller
         $admins = User::where('role', 1)->withTrashed()->orderBy('created_at', 'desc')->paginate(20);
         $customActions = CustomAction::where('is_active',1)->get();
         $pageMetas = PageMeta::all();
+        $staffs = Staff::all();
 
-        return view('backend.admin.index', compact('admins','customActions', 'pageMetas'));
+        return view('backend.admin.index', compact('admins','customActions', 'pageMetas', 'staffs'));
     }
 
 
@@ -170,6 +173,36 @@ class AdminController extends Controller
             'data' => [
                 'success' => TRUE,
             ]
+        ]);
+    }
+
+    public function saveStaff( $id = null, Request $request )
+    {
+        $data = $request->except('_token');
+        if ($request->hasFile('image')) {
+            $destinationPath = 'images/staffs'; // upload path
+
+            $extension = $request->image->getClientOriginalExtension(); // getting document extension
+
+            $actual_name = pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+
+            $expFileName = explode('/', $fileName);
+
+            $request->image->move($destinationPath, end($expFileName));
+            $data['image'] = $fileName;
+        }
+
+        if ($id) {
+            $staff = Staff::find($id);
+            $staff->update($data);
+        } else {
+            Staff::create($data);
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Record saved successfully'),
+            'alert_type' => 'success'
         ]);
     }
 }

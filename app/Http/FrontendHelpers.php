@@ -8,6 +8,7 @@ use App\PilotReaderBook;
 use App\PilotReaderBookChapter;
 use App\PilotReaderBookReading;
 use App\PrivateGroupMember;
+use App\Staff;
 use App\WebinarRegistrant;
 use Carbon\Carbon;
 
@@ -836,5 +837,16 @@ class FrontendHelpers
             return $r[0];
         }
         return '';
+    }
+
+    /**
+     * Get the staffs order by sequence 0 last
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public static function getStaffs()
+    {
+        // order by field zero comes last
+        $staffs = Staff::orderByRaw('sequence = 0, sequence')->get();
+        return $staffs;
     }
 }

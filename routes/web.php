@@ -762,6 +762,7 @@ Route::group([
         Route::get('/admin/export_nearly_expired_courses', 'AdminController@exportNearlyExpiredCourses')->name('admin.admin.export_nearly_expired_courses');
         Route::post('/admin/{id}/page-access', 'AdminController@pageAccess')->name('admin.admin.page-access');
         Route::post('/admin-status', 'AdminController@adminStatus')->name('admin.admin.status');
+        Route::post('/save-staff/{id?}', 'AdminController@saveStaff')->name('admin.staff.save');
 
         Route::resource('/email','EmailController',[
             'except' => ['create', 'edit'],

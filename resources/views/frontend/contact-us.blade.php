@@ -55,64 +55,32 @@
                     <h1>{{ trans('site.front.contact-us.our-staff') }}</h1>
                     <div class="row stab-row">
                         <ul>
-                            <li>
-                                <div class="row">
-                                    <div class="col-sm-2 stab-image">
-                                        <img src="{{ asset('images/hanne.png')  }}" class="rounded-circle">
+                            @foreach(\App\Http\FrontendHelpers::getStaffs() as $staff)
+                                <li>
+                                    <div class="row">
+                                        <div class="col-sm-2 stab-image">
+                                            <img src="{{ asset($staff->image ? $staff->image : 'images/user.png')  }}" class="rounded-circle">
+                                        </div>
+                                        <div class="col-sm-10">
+                                            <h2>
+                                                {{ $staff->name }}
+                                            </h2>
+
+                                            <p>
+                                                {!! $staff->details !!}
+                                            </p>
+
+                                            <i class="fa fa-envelope"></i>
+                                            <a href="mailto:{{ $staff->email }}">{{ $staff->email }}</a>
+                                            <br>
+                                            @if ($staff->teamviewer)
+                                                <i class="sprite team-viewer"></i>
+                                                <a href="{{ $staff->teamviewer }}">Fjernsupport</a>
+                                            @endif
+                                        </div>
                                     </div>
-                                    <div class="col-sm-10">
-                                        <h2>
-                                            Hanne Einang
-                                        </h2>
-                                        <p>
-                                            Hanne er vår grundige, dyktige og løsningsorienterte sekretær, assistent og mye
-                                            annet. Hanne brenner for at elevene skal ha det bra på skolen, og er inne på det
-                                            lukkede skriveforumet langt mer enn hun får betalt for.
-                                        </p>
-                                        <i class="fa fa-envelope"></i> <a href="mailto:Hanne@forfatterskolen.no">Hanne@forfatterskolen.no</a>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="row">
-                                    <div class="col-sm-2 stab-image">
-                                        <img src="{{ asset('images/elin.png')  }}" class="rounded-circle">
-                                    </div>
-                                    <div class="col-sm-10">
-                                        <h2>
-                                            Elin S Rotevatn
-                                        </h2>
-                                        <p>
-                                            Elin S Rotevatn er fag– og kursansvarlig. Hun har en Cand.mag-grad i allmenn
-                                            litteraturvitenskap, og har i tillegg studert skriveteori gjennom en årrekke.
-                                            Elin har jobbet som konsulent, blant annet for Riksantikvaren, og elsker å
-                                            gå inn i andres tekst og finne forbedringspotensial – både på det strukturelle
-                                            og det språklige plan.
-                                        </p>
-                                        <i class="fa fa-envelope"></i> <a href="mailto:Elin@forfatterskolen.no">Elin@forfatterskolen.no</a>
-                                    </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="row">
-                                    <div class="col-sm-2 stab-image">
-                                        <img src="{{ asset('images/sven.png')  }}" class="rounded-circle">
-                                    </div>
-                                    <div class="col-sm-10">
-                                        <h2>
-                                            Sven Inge Henningsen
-                                        </h2>
-                                        <p>
-                                            Hva skulle vi gjort uten supportavdelingen? Sven Inge tar seg av alt det
-                                            tekniske på skolen, ordner med betalinger og delbetalinger. tar seg av
-                                            logistikken og altfor mye annet.
-                                        </p>
-                                        <i class="fa fa-envelope"></i> <a href="mailto:support@forfatterskolen.no">support@forfatterskolen.no</a>
-                                        <br>
-                                        <i class="sprite team-viewer"></i> <a href="https://get.teamviewer.com/g2nvg34">Fjernsupport</a>
-                                    </div>
-                                </div>
-                            </li>
+                                </li>
+                            @endforeach
                         </ul>
                     </div>
                 </div>
