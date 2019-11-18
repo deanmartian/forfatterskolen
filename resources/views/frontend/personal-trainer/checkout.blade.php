@@ -11,7 +11,7 @@
 			<div class="row">
 					<div class="col-lg-12">
 						<div class="panel panel-default">
-							{!! trans('site.personal-trainer.about-course')  !!}
+							{!! nl2br(trans('site.personal-trainer.about-course'))  !!}
 							{{--@if(Auth::guest())
 								<form id="checkoutLogin" action="{{route('frontend.login.checkout.store')}}" method="POST">
 								{{csrf_field()}}
