@@ -541,7 +541,7 @@
 					</div>
 					<div class="form-group">
 						<label>Details</label>
-						<textarea name="details" id="" cols="30" rows="10" class="form-control"></textarea>
+						<textarea name="details" id="" cols="30" rows="10" class="form-control" required></textarea>
 					</div>
 					<div class="form-group">
 						<label>Team Viewer</label>

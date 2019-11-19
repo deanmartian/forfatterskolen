@@ -179,11 +179,15 @@ class AdminController extends Controller
     public function saveStaff( $id = null, Request $request )
     {
 
-        $this->validate($request, [
+        $validator = \Validator::make($request->all(), [
             'name' => 'required|alpha_spaces',
             'email' => 'required|email',
             'details' => 'required'
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->getMessageBag());
+        }
 
         $data = $request->except('_token');
         if ($request->hasFile('image')) {
