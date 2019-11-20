@@ -63,7 +63,7 @@ class CheckFikenInvoice extends Command
         $fikenInvoices = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};
 
         // get all unpaid invoices to reduce process time
-        $invoices = Invoice::where('fiken_is_paid','=',0)->get();
+        $invoices = Invoice::whereIn('fiken_is_paid',[0, 2])->get();
         foreach( $invoices as $invoice ) {
             $fiken_balance = 0;
             $status = 0;
@@ -83,6 +83,7 @@ class CheckFikenInvoice extends Command
                     break;
                 endif;
             endforeach;
+            $status = $status == 0 ? $invoice->fiken_is_paid : $status;
             $invoice->update(['fiken_is_paid' => $status, 'fiken_balance' => $fiken_balance, 'fiken_dueDate' => $fikeDueDate,
                 'kid_number' => $kid, 'fiken_issueDate' => $fikenIssueDate, 'gross' => $gross]);
             CronLog::create(['activity' => 'CheckFikenInvoice CRON updated an invoice with kid_number '.$kid]);
