@@ -148,7 +148,7 @@ class InvoiceController extends Controller
         endforeach;
 
 
-        $ch = curl_init($request->pdf_url); 
+        /*$ch = curl_init($request->pdf_url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
@@ -156,11 +156,12 @@ class InvoiceController extends Controller
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
         $data = curl_exec($ch);
         $pdfURL_httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        curl_close($ch);*/
 
 
         //validate Fiken URL and PDF URL
-        if( $fikenValid && $pdfURL_httpcode == 200  ) :
+        // && $pdfURL_httpcode == 200 - this causes error
+        if( $fikenValid) :
             $learner = User::findOrFail($request->learner_id);
             $invoice->fiken_url = $request->fiken_url;
             $invoice->pdf_url = $request->pdf_url;
