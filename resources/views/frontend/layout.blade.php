@@ -269,5 +269,6 @@
             'https://forfatterskolen.ladesk.com/scripts/track.js',
             function(e){ LiveAgent.createButton('bocb2pt7', e); });
     </script>
+    <script>!function(){window;var e,t=document;e=function(){var e=t.createElement("script");e.type="text/javascript",e.defer=!0,e.src="https://cdn.endorsal.io/widgets/widget.min.js";var n=t.getElementsByTagName("script")[0];n.parentNode.insertBefore(e,n),e.onload=function(){NDRSL.init("5de00781dd95d15fd33a275f")}},"interactive"===t.readyState||"complete"===t.readyState?e():t.addEventListener("DOMContentLoaded",e())}();</script>
     </body>
 </html>
