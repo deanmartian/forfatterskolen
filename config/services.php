@@ -60,6 +60,11 @@ return [
         'merchant_number' => 'T526080101',
         'encoded_api_key' => 'M2xLUXlkOFRZdmFCQkowbFdtUlI=',
         'md5_key' => 'SMimSoiCqI'
+    ],
+
+    'fiken' => [
+        'username' => 'elybutabara@yahoo.com',
+        'password' => 'aristotle12'
     ]
 
 ];

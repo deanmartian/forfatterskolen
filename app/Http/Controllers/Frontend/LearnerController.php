@@ -3065,4 +3065,48 @@ class LearnerController extends Controller
         endforeach;
         return $assignments;
     }
+
+    /**
+     * Get the invoice pdf from the url with login credentials
+     * @param $url
+     * @return mixed
+     */
+    public function downloadInvoice($url)
+    {
+        $check_url = $url;
+        $exp_url = explode("https://fiken.no/filer/",$check_url);
+
+        $host = $check_url;
+        // check if it contains https://fiken.no/filer/ then change the url
+        if (count($exp_url) > 1) {
+            $host = "https://fiken.no/api/v1/files/".end($exp_url);
+        }
+
+        $exp_link = explode('/', $host);
+        $get_pdf_name = end($exp_link);
+        $remove_ext = explode('.', $get_pdf_name);
+        $pdf_name = $remove_ext[0];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $host);
+        curl_setopt($ch, CURLOPT_VERBOSE, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_AUTOREFERER, false);
+        curl_setopt($ch, CURLOPT_REFERER, "http://www.xcontest.org");
+        curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_USERPWD,
+            config('services.fiken.username').":".config('services.fiken.password'));
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+
+        // to download the file on the browser
+        header('Cache-Control: public');
+        header("Content-type:application/pdf");
+        header('Content-Disposition: attachment; filename="'.$pdf_name.'.pdf"');
+        header('Content-Length: '.strlen($result));
+        //readfile($pdf_storage_link);
+        return $result;
+    }
 }

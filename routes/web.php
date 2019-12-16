@@ -271,6 +271,8 @@ Route::group([
         Route::post('/shop-manuscript/{id}/upload-synopsis', 'ShopManuscriptController@upload_synopsis')->name('learner.shop-manuscript.upload_synopsis'); // Upload shop manuscript
         Route::post('/shop-manuscript/{id}/update-uploaded-manuscript', 'ShopManuscriptController@updateUploadedManuscript')->name('learner.shop-manuscript.update-uploaded-manuscript'); // update Uploade shop manuscript
         Route::post('/shop-manuscript/{id}/delete-uploaded-manuscript', 'ShopManuscriptController@deleteUploadedManuscript')->name('learner.shop-manuscript.delete-uploaded-manuscript'); // update Uploade shop manuscript
+        Route::get('/download/invoice/{url}', 'LearnerController@downloadInvoice')->name('learner.download.invoice')
+            ->where('url', '.*'); // to accept url as parameter
 
         // Pilot Reader
         Route::get('/book-author', 'PilotReaderAuthorController@bookAuthor')->name('learner.book-author'); // Book Reader Author Page
