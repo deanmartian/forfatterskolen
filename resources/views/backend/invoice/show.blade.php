@@ -19,7 +19,7 @@
 							}
 						?>
 						<a href="{{$invoice->pdf_url}}" class="btn btn-primary margin-bottom" download>Download</a>
-						<embed src="{{$invoice->pdf_url}}" style="width: 100%; height: 600px" onerror="myFunction()"></embed>
+						{{--<embed src="{{$invoice->pdf_url}}" style="width: 100%; height: 600px" onerror="myFunction()"></embed>--}}
 					</div>
 					<div class="col-sm-12 col-md-6">
             <div class="pull-right">
