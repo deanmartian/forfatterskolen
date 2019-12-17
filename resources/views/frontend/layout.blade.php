@@ -154,6 +154,7 @@
         @endif
 
         @include('frontend.partials.scripts')
+        <script src="https://Forfatterskolen.cdn.vooplayer.com/assets/vooplayer.js"></script>
         <script src="/js/lang.js?v="{{ time() }}></script>
         <script>
             $.ajaxSetup({
