@@ -382,8 +382,8 @@
           	<input type="datetime-local" name="start_date" class="form-control" required>
           </div>
           <div class="form-group">
-          	<label>{{ strtoupper(trans('site.url')) }}</label>
-          	<input type="url" name="link" class="form-control" required>
+          	<label>{{ 'Webinar ID' }}</label>
+          	<input type="text" name="link" class="form-control" required>
           </div>
 
           <div class="form-group">

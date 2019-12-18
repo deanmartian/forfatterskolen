@@ -1366,6 +1366,36 @@ class AdminHelpers
         return $response;
 
     }
+
+    public static function getBigMarkerDetails($conference_id)
+    {
+        $url = config('services.big_marker.show_conference_link').$conference_id;
+        $ch = curl_init();
+        $header[] = 'API-KEY: '.config('services.big_marker.api_key');
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        $response = curl_exec($ch);
+        $decoded_response = json_decode($response);
+        return $decoded_response;
+    }
+
+    public static function getBigMarkerPanelist($panelists)
+    {
+        $panelList = [];
+        foreach($panelists as $panelist) {
+            $panelList[] = $panelist->first_name.' '.$panelist->last_name;
+        }
+
+        // add comma or and if on the panelist name if necessary
+        $last_element = $panelList ? array_pop($panelList) : '';
+        $presenterList = $panelList
+            ? implode(', ', $panelList).' and '.$last_element
+            : $last_element;
+
+        return $presenterList;
+    }
 }
 
 

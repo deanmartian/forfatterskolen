@@ -48,12 +48,51 @@ class WebinarEmailOutCommand extends Command
         $today = Carbon::today();
         $emailOutList = WebinarEmailOut::whereDate('send_date', $today)->get();
 
-        $access_token = '';
+        /*$access_token = '';
         if ($emailOutList->count()) {
             $access_token = AdminHelpers::generateWebinarGTAccessToken();
-        }
+        }*/
         CronLog::create(['activity' => 'WebinarEmailOutCommand CRON running.']);
-        foreach($emailOutList as $emailOut) {
+
+        foreach ($emailOutList as $emailOut) {
+            $course_id = $emailOut->course_id;
+            $webinar = $emailOut->webinar;
+
+            // get courses taken that is active
+            $coursesTaken = CoursesTaken::where(function ($query) use ($course_id) {
+                $query->whereIn('package_id', Course::find($course_id)->packages()->pluck('id'));
+            })
+            ->where(function($query) {
+                $query->where('end_date','>=', Carbon::now())
+                    ->orWhereNull('end_date');
+            })
+            ->get();
+
+            $webinarDetails = AdminHelpers::getBigMarkerDetails($webinar->link);
+            $presenterList = AdminHelpers::getBigMarkerPanelist($webinarDetails->conference->presenters);
+            $startDate      = AdminHelpers::convertTZNoFormat($webinarDetails->conference->start_time, 'Europe/Madrid')->format('d, M Y');
+            $startTime      = AdminHelpers::convertTZNoFormat($webinarDetails->conference->start_time, 'Europe/Madrid')->format('H:i');
+            $webinarDate    = $startDate.' klokken '.$startTime;
+            $subject = "Webinar ".$webinarDate." med ".$presenterList;
+            foreach ($coursesTaken as $courseTaken) {
+                $user_email = $courseTaken->user->email;
+                $register_link = "<a href='".route('front.goto-webinar.registration.email',
+                        [encrypt($webinar->link), encrypt($user_email)])."'>Registrer meg</a>";
+
+                $emailData['email_subject'] = $subject;
+                $emailData['email_message'] = str_replace('[register_link]', $register_link, $emailOut->message);
+                $emailData['from_name'] = NULL;
+                $emailData['from_email'] = NULL;
+                $emailData['attach_file'] = NULL;
+
+                // add email to queue
+                \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
+                CronLog::create(['activity' => 'WebinarEmailOutCommand CRON send email to '.$user_email]);
+            }
+        }
+        CronLog::create(['activity' => 'WebinarEmailOutCommand CRON done running.']);
+
+        /*foreach($emailOutList as $emailOut) {
             $course_id = $emailOut->course_id;
             $webinar = $emailOut->webinar;
 
@@ -100,13 +139,10 @@ class WebinarEmailOutCommand extends Command
 
                         // add email to queue
                         \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
-                        /*AdminHelpers::send_email($subject,'postmail@forfatterskolen.no', $user_email,
-                            str_replace('[register_link]', $register_link, $emailOut->message));*/
                         CronLog::create(['activity' => 'WebinarEmailOutCommand CRON send email to '.$user_email]);
                     }
                 }
             }
-        }
-        CronLog::create(['activity' => 'WebinarEmailOutCommand CRON done running.']);
+        }*/
     }
 }

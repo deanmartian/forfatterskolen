@@ -65,6 +65,12 @@ return [
     'fiken' => [
         'username' => 'elybutabara@yahoo.com',
         'password' => 'aristotle12'
+    ],
+
+    'big_marker' => [
+        'api_key' => '382d97b149ef81d34034',
+        'register_link' => 'https://www.bigmarker.com/api/v1/conferences/register',
+        'show_conference_link' => 'https://www.bigmarker.com/api/v1/conferences/'
     ]
 
 ];

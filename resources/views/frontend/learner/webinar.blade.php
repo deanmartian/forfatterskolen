@@ -110,7 +110,7 @@
                                             } else {
                                                 $img_web_link = \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
                                                     ? 'javascript:void(0)' :route('learner.webinar.register',
-                                                        [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]);
+                                                        [$webinar->link, $webinar->id]);
                                             }
                                         ?>
                                         <a href="{{ $img_web_link }}">
@@ -174,7 +174,7 @@
                                                         <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
                                                            href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
                                                     ? 'javascript:void(0)' :route('learner.webinar.register',
-                                                    [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]) }}">
+                                                    [$webinar->link, $webinar->id]) }}">
                                                             {{ trans('site.learner.register') }}
                                                             <i class="img-icon icon-right-arrow"></i>
                                                         </a>
@@ -207,7 +207,7 @@
                                             } else {
                                                 $img_web_link = \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
                                                     ? 'javascript:void(0)' :route('learner.webinar.register',
-                                                        [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]);
+                                                        [$webinar->link, $webinar->id]);
                                             }
                                         ?>
                                         <a href="{{ $img_web_link }}">
@@ -269,10 +269,17 @@
                                                         <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
                                                            href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
                                                     ? 'javascript:void(0)' :route('learner.webinar.register',
-                                                    [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]) }}">
+                                                    [$webinar->link, $webinar->id]) }}">
                                                             {{ trans('site.learner.register') }}
                                                             <i class="img-icon icon-right-arrow"></i>
                                                         </a>
+                                                        {{--<a class="btn site-btn-global w-100 rounded-0 webinarRegister"
+                                                           href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                    ? 'javascript:void(0)' :route('learner.webinar.register',
+                                                    [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]) }}">
+                                                            {{ trans('site.learner.register') }}
+                                                            <i class="img-icon icon-right-arrow"></i>
+                                                        </a>--}}
                                                     @endif
                                                 @endif
                                             @endif
@@ -297,7 +304,7 @@
                                                 } else {
                                                     $img_web_link = \Carbon\Carbon::parse($result->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
                                                         ? 'javascript:void(0)' :route('learner.webinar.register',
-                                                            [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($result->link), $result->id]);
+                                                            [$result->link, $result->id]);
                                                 }
                                             ?>
                                             <a href="{{ $img_web_link }}">
@@ -360,7 +367,7 @@
                                                         <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
                                                            href="{{ \Carbon\Carbon::parse($result->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
                                                     ? 'javascript:void(0)' :route('learner.webinar.register',
-                                                    [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($result->link), $result->id]) }}">
+                                                    [$result->link, $result->id]) }}">
                                                             {{ trans('site.learner.register') }}
                                                             <i class="img-icon icon-right-arrow"></i>
                                                         </a>

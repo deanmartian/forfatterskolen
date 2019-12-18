@@ -764,7 +764,7 @@ class HomeController extends Controller
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function freeWebinar($id, Request $request)
+    public function freeWebinarGTW($id, Request $request)
     {
         $freeWebinar = FreeWebinar::find($id);
 
@@ -826,6 +826,51 @@ class HomeController extends Controller
         }
         return view('frontend.free-webinar', compact('freeWebinar'));
         //return view('frontend.free-webinar', compact('freeWebinar'));
+    }
+
+    /**
+     * Display or register the user to the particular webinar
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function freeWebinar($id, Request $request)
+    {
+        $freeWebinar = FreeWebinar::find($id);
+
+        if (!$freeWebinar) {
+            return redirect()->route('front.home');
+        }
+
+        if ($request->isMethod('post')) {
+            $this->validate($request, ['email' => 'required|email', 'first_name' => 'required', 'last_name' => 'required']);
+
+            $url = config('services.big_marker.register_link');
+            $data = $request->except('_token');
+            $data['id'] = $freeWebinar->gtwebinar_id; // id of the big marker webinar
+
+            $ch = curl_init();
+            $header[] = 'API-KEY: '.config('services.big_marker.api_key');
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+            $response = curl_exec($ch);
+            $decoded_response = json_decode($response);
+
+            if (array_key_exists('conference_url', $decoded_response)) {
+                return view('frontend.free-webinar-success', compact('freeWebinar'));
+            } else {
+                $message = $decoded_response->error;
+                return redirect()->back()->withInput()->with([
+                    'errors' => AdminHelpers::createMessageBag($message)
+                ]);
+            }
+
+        }
+
+        return view('frontend.free-webinar', compact('freeWebinar'));
     }
 
     public function freeWebinarThanks($id)
@@ -1310,12 +1355,63 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
     }
 
     /**
+     * Register user to bigmarker when they click the link from their email
+     * @param $webinar_key
+     * @param $email
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function gotoWebinarEmailRegistration($webinar_key, $email) {
+        $webinar_key    = decrypt($webinar_key);
+        $email          = decrypt($email);
+        $webinar        = Webinar::where('link', '=', $webinar_key)->first();
+        $user           = User::where('email', '=', $email)->first();
+
+        if (!$user) {
+            return redirect()->to('/');
+        }
+
+        $data = [
+            'id'            => $webinar_key,
+            'email'         => $user->email,
+            'first_name'    => $user->first_name,
+            'last_name'     => $user->last_name,
+        ];
+
+        $url = config('services.big_marker.register_link');
+        $ch = curl_init();
+        $header[] = 'API-KEY: '.config('services.big_marker.api_key');
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        $response = curl_exec($ch);
+        $decoded_response = json_decode($response);
+
+        if (array_key_exists('conference_url', $decoded_response)) {
+            // add to webinar registrant to mark as Pameldt
+            if ($webinar) {
+                $registrant['user_id'] = $user->id;
+                $registrant['webinar_id'] = $webinar->id;
+                $webRegister = WebinarRegistrant::firstOrNew($registrant);
+                $webRegister->join_url = $decoded_response->conference_url;
+                $webRegister->save();
+            }
+
+            Auth::loginUsingId($user->id);
+            return redirect()->route('front.thank-you');
+        }
+
+        return redirect()->to('/');
+    }
+
+    /**
      * Register the user to gotowebinar using the email and the webinar key sent
      * @param $webinar_key
      * @param $email
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function gotoWebinarEmailRegistration($webinar_key, $email)
+    public function gotoWebinarEmailRegistrationOrig($webinar_key, $email)
     {
         $webinar_key    = decrypt($webinar_key);
         $email          = decrypt($email);

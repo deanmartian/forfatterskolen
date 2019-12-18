@@ -381,12 +381,55 @@ class LearnerController extends Controller
     }
 
     /**
-     * Add the user as registrant on the webinar
+     * Register the user to the webinar
      * @param $webinar_key
      * @param $webinar_id
      * @return \Illuminate\Http\RedirectResponse
      */
     public function webinarRegister($webinar_key, $webinar_id)
+    {
+        $user       = Auth::user();
+        $data = [
+            'id'            => $webinar_key,
+            'email'         => $user->email,
+            'first_name'    => $user->first_name,
+            'last_name'     => $user->last_name,
+        ];
+
+        $url = config('services.big_marker.register_link');
+        $ch = curl_init();
+        $header[] = 'API-KEY: '.config('services.big_marker.api_key');
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        $response = curl_exec($ch);
+        $decoded_response = json_decode($response);
+
+        if (array_key_exists('conference_url', $decoded_response)) {
+            $registrant['user_id'] = $user->id;
+            $registrant['webinar_id'] = $webinar_id;
+            $webRegister = WebinarRegistrant::firstOrNew($registrant);
+            $webRegister->join_url = $decoded_response->conference_url;
+            $webRegister->save();
+        } else {
+            $message = $decoded_response->error;
+            return redirect()->back()->withInput()->with([
+                'errors' => AdminHelpers::createMessageBag($message)
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Add the user as registrant on the webinar
+     * @param $webinar_key
+     * @param $webinar_id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function webinarRegisterOrig($webinar_key, $webinar_id)
     {
         $webinar_link = 'https://attendee.gotowebinar.com/register/'.$webinar_key;
         $user = Auth::user();
