@@ -210,7 +210,7 @@
             <div>
                 <a href="{{route('learner.webinar')}}">
                     <i class="sprite-menu play-button d-block"></i>
-                    Mandagswebinarer
+                    Felleswebinarer
                 </a>
             </div>
         </div>
