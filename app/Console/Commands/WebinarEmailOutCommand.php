@@ -73,7 +73,7 @@ class WebinarEmailOutCommand extends Command
             $startDate      = AdminHelpers::convertTZNoFormat($webinarDetails->conference->start_time, 'Europe/Madrid')->format('d, M Y');
             $startTime      = AdminHelpers::convertTZNoFormat($webinarDetails->conference->start_time, 'Europe/Madrid')->format('H:i');
             $webinarDate    = $startDate.' klokken '.$startTime;
-            $subject = "Webinar ".$webinarDate." med ".$presenterList;
+            $subject = $emailOut->subject;//"Webinar ".$webinarDate." med ".$presenterList;
             foreach ($coursesTaken as $courseTaken) {
                 $user_email = $courseTaken->user->email;
                 $register_link = "<a href='".route('front.goto-webinar.registration.email',

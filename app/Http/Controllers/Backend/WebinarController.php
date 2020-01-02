@@ -280,10 +280,12 @@ class WebinarController extends Controller
 
         $this->validate($request, [
             'send_date' => 'required|date',
-            'message' => 'required'
+            'message' => 'required',
+            'subject' => 'required'
         ]);
 
         $emailOut = WebinarEmailOut::firstOrNew(['course_id' => $course_id, 'webinar_id' => $webinar_id]);
+        $emailOut->subject = $request->get('subject');
         $emailOut->send_date = $request->get('send_date');
         $emailOut->message = $request->get('message');
         $emailOut->save();

@@ -108,7 +108,8 @@
 												? strftime('%Y-%m-%d', strtotime($webinarEmailOut->send_date))
 												: '' }}"
 											data-message="{{ $webinarEmailOut ? $webinarEmailOut->message
-											 	: App\Settings::webinarEmailTemplate()}}">
+											 	: App\Settings::webinarEmailTemplate()}}"
+											data-subject="{{ $webinarEmailOut ? $webinarEmailOut->subject : '' }}">
 												Set Email Out
 											</button>
 										@endif
@@ -472,6 +473,12 @@
 					{{ csrf_field() }}
 
 					<div class="form-group">
+						<label>
+							Subject
+						</label>
+						<input type="text" class="form-control" name="subject" required>
+					</div>
+					<div class="form-group">
 						<label>Send Date</label>
 						<input type="date" class="form-control" name="send_date" required>
 					</div>
@@ -674,11 +681,13 @@
 		    let modal 		= $("#webinarEmailOutModal");
 		    let action 		= $(this).data('action');
 		    let form 		= modal.find('form');
+            let subject 	= $(this).data('subject');
 		    let send_date 	= $(this).data('send-date');
 		    let message 	= $(this).data('message');
 
 		    form.attr('action', action);
 		    form.find('[name=send_date]').val(send_date);
+            form.find('[name=subject]').val(subject);
 
             tinymce.activeEditor.setContent(message);
 		});
