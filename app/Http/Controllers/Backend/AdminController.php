@@ -216,4 +216,18 @@ class AdminController extends Controller
             'alert_type' => 'success'
         ]);
     }
+
+    public function deleteStaff($staff_id)
+    {
+        $staff = Staff::find($staff_id);
+        if (!$staff) {
+            return redirect()->back();
+        }
+
+        $staff->delete();
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Record deleted successfully'),
+            'alert_type' => 'success'
+        ]);
+    }
 }

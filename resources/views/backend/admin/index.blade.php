@@ -208,6 +208,10 @@
 												data-target="#staffModal"
 												data-action="{{ route('admin.staff.save', $staff->id) }}"
 												data-fields="{{ json_encode($staff) }}">Edit</button>
+										<button class="btn btn-danger btn-sm deleteStaffBtn" data-toggle="modal"
+												data-target="#deleteStaffModal"
+												data-action="{{ route('admin.staff.delete', $staff->id) }}"
+												data-fields="{{ json_encode($staff) }}">{{ trans('site.delete') }}</button>
 									</td>
 								</tr>
 							@endforeach
@@ -562,6 +566,26 @@
 		</div>
 	</div>
 </div>
+
+<div id="deleteStaffModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Delete Staff</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" enctype="multipart/form-data">
+					{{ csrf_field() }}
+					{{ method_field('delete') }}
+					<p>Are you sure to delete this record?</p>
+					<button type="submit" class="btn btn-danger pull-right margin-top">{{ trans('site.delete') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -726,6 +750,13 @@
         modal.find("[name=details]").text(fields.details);
         modal.find("[name=teamviewer]").val(fields.teamviewer);
         modal.find("[name=sequence]").val(fields.sequence);
+    });
+
+    $(".deleteStaffBtn").click(function () {
+        let modal = $("#deleteStaffModal");
+        let action = $(this).data('action');
+        let form = modal.find("form");
+        form.attr('action', action);
     });
 
     if (other_terms_tab) {

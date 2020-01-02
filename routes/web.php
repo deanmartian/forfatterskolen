@@ -765,6 +765,7 @@ Route::group([
         Route::post('/admin/{id}/page-access', 'AdminController@pageAccess')->name('admin.admin.page-access');
         Route::post('/admin-status', 'AdminController@adminStatus')->name('admin.admin.status');
         Route::post('/save-staff/{id?}', 'AdminController@saveStaff')->name('admin.staff.save');
+        Route::delete('/delete-staff/{id?}', 'AdminController@deleteStaff')->name('admin.staff.delete');
 
         Route::resource('/email','EmailController',[
             'except' => ['create', 'edit'],
