@@ -289,7 +289,7 @@ class WebinarController extends Controller
         $emailOut->subject = $request->get('subject');
         $emailOut->send_date = $request->get('send_date');
         $emailOut->message = $request->get('message');
-        //$emailOut->save();
+        $emailOut->save();
 
         if ($request->test_email) {
             $user_email = $request->test_email;
