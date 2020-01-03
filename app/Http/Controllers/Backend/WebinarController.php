@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\AdminHelpers;
+use App\Mail\SubjectBodyEmail;
 use App\WebinarEmailOut;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -288,7 +289,26 @@ class WebinarController extends Controller
         $emailOut->subject = $request->get('subject');
         $emailOut->send_date = $request->get('send_date');
         $emailOut->message = $request->get('message');
-        $emailOut->save();
+        //$emailOut->save();
+
+        if ($request->test_email) {
+            $user_email = $request->test_email;
+            $register_link = "<a href='".route('front.goto-webinar.registration.email',
+                    [encrypt($webinar->link), encrypt($user_email)])."'>Registrer meg</a>";
+
+            $emailData['email_subject'] = $request->subject;
+            $emailData['email_message'] = str_replace('[register_link]', $register_link, $request->message);
+            $emailData['from_name'] = NULL;
+            $emailData['from_email'] = NULL;
+            $emailData['attach_file'] = NULL;
+
+            // add email to queue
+            \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Webinar email save and email sent successfully.'),
+                'alert_type' => 'success'
+            ]);
+        }
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Webinar email save successfully.'),

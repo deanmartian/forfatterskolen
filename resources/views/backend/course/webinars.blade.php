@@ -486,6 +486,12 @@
 						<label>Message</label>
 						<textarea class="form-control editor" name="message"></textarea>
 					</div>
+
+					<div class="form-group">
+						<label>Send test to</label>
+						<input type="email" name="test_email" class="form-control">
+					</div>
+
 					<div class="text-right margin-top">
 						<button type="submit" class="btn btn-primary">Save</button>
 					</div>
