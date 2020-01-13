@@ -98,7 +98,7 @@
             </div> <!-- end container -->
         </div> <!-- end header -->
 
-        <div class="personal-trainer-wrapper">
+        {{--<div class="personal-trainer-wrapper">
             <div class="container position-relative">
                 <div class="white-background">
                     <header>
@@ -118,7 +118,7 @@
                     </a>
                 </div>
             </div>
-        </div>
+        </div>--}}
 
         {{--<div class="latest-seminar-wrapper">
             <div class="container">
@@ -182,7 +182,8 @@
                     </div> <!-- end card -->
                 </div> <!-- end col-sm-12 -->
             </div>
-            --}}{{--<div id="latest-seminar-carousel" class="carousel slide multi-item-carousel" data-ride="carousel" data-interval="false">
+            --}}
+            <div id="latest-seminar-carousel" class="carousel slide multi-item-carousel" data-ride="carousel" data-interval="false">
                 <div class="carousel-inner" role="listbox">
                     <div class="item active">
                         <div class="item__third">
@@ -313,7 +314,7 @@
                 title="View next item">
                     <span class="glyphicon glyphicon-chevron-right hide" aria-hidden="true"></span>
                 </a>
-            </div>--}}{{--
+            </div> <!-- end latest-seminar-carousel -->{{--
         </div>--}} <!-- end latest-seminar wrapper -->
 
         <div class="container">
