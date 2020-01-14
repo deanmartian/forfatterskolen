@@ -4,6 +4,14 @@
 <title>Forfatterskolen &rsaquo; Free Manuscripts</title>
 @stop
 
+@section('styles')
+    <style>
+        .mce-branding {
+            display: none !important;
+        }
+    </style>
+@stop
+
 @section('content')
 <div class="free-manuscript-page">
     <div class="header">
@@ -142,10 +150,14 @@ let editor_config = {
     max_word: 500,
     plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
         'searchreplace wordcount visualblocks visualchars code fullscreen',
-        'insertdatetime media nonbreaking save table contextmenu directionality',
+        'insertdatetime media nonbreaking save table directionality',
         'emoticons template paste textcolor colorpicker textpattern'],
-    toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript superscript | forecolor backcolor | link | alignleft aligncenter alignright ' +
-    'alignjustify  | removeformat',
+    /*toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript superscript | forecolor backcolor | link | alignleft aligncenter alignright ' +
+    'alignjustify  | removeformat',*/
+    toolbar1: 'undo redo fontselect fontsizeselect bold italic underline strikethrough \
+                    alignleft aligncenter alignright alignjustify ',
+    toolbar2: 'copy cut bullist numlist outdent indent forecolor backcolor link image searchreplace removeformat fullscreen ' +
+    'leftChev rightChev enDash',
     relative_urls: false,
     file_browser_callback : function(field_name, url, type, win) {
         let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
@@ -201,6 +213,31 @@ let editor_config = {
                 });
             }, 320);
 
+        });
+
+        // add buttons to toolbar
+        ed.addButton('leftChev', {
+            text: '<<',
+            tooltip: '',
+            onclick: function (_) {
+                ed.insertContent("&#171;");
+            }
+        });
+
+        ed.addButton('rightChev', {
+            text: '>>',
+            tooltip: '',
+            onclick: function (_) {
+                ed.insertContent("&#187;");
+            }
+        });
+
+        ed.addButton('enDash', {
+            text: '-',
+            tooltip: '',
+            onclick: function (_) {
+                ed.insertContent("&#8211;");
+            }
         });
 
     },
