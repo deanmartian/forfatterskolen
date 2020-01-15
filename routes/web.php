@@ -1173,6 +1173,7 @@ Route::group([
             ],
         ]);
 
+        Route::get('/personal-trainer/export', 'PersonalTrainerController@export');
         Route::resource('/personal-trainer', 'PersonalTrainerController', [
             'except' => ['edit'],
             'names' => [

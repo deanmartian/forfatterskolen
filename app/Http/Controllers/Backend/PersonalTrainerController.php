@@ -86,5 +86,30 @@ class PersonalTrainerController extends Controller
             'alert_type' => 'success'
         ]);
     }
+
+    public function export()
+    {
+        $applicants = PersonalTrainerApplicant::all();
+        $applicantList = [];
+        $applicantList[] = ['ID', 'Learner ID', 'First Name', 'Last Name', 'Email', 'Date'];
+
+        foreach ($applicants as $applicant) {
+            $applicantList[] = [
+                $applicant->id,
+                $applicant->user_id,
+                $applicant->user->first_name,
+                $applicant->user->last_name,
+                $applicant->user->email,
+                $applicant->created_at
+            ];
+        }
+
+        $excel = \App::make('excel');
+        $excel->create('Personal Trainer Applicants', function($excel) use($applicantList) {
+            $excel->sheet('Sheetname', function($sheet) use($applicantList) {
+                $sheet->fromArray($applicantList);
+            });
+        })->export('xls');
+    }
     
 }
