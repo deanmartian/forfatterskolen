@@ -45,10 +45,16 @@
 
 						{!! trans('site.free-webinars.thanks.description.text') !!}
 
-						<a href="https://support.logmeininc.com/gotowebinar/joincheck?c_name=email&c_prod=g2w?
-							role=attendee&source=registrantReminderEmail&language=spanish" target="_blank"
-						   class="site-btn-global font-montserrat-regular rounded-0">
-							{{ trans('site.free-webinars.thanks.description.button-text') }}</a>
+						@if($freeWebinar->id == 16)
+							<a href="https://www.bigmarker.com/system_check" target="_blank"
+							   class="site-btn-global font-montserrat-regular rounded-0">
+								{{ trans('site.free-webinars.thanks.description.button-text') }}</a>
+						@else
+							<a href="https://support.logmeininc.com/gotowebinar/joincheck?c_name=email&c_prod=g2w?
+								role=attendee&source=registrantReminderEmail&language=spanish" target="_blank"
+							   class="site-btn-global font-montserrat-regular rounded-0">
+								{{ trans('site.free-webinars.thanks.description.button-text') }}</a>
+						@endif
 					</div>
 				</div>
 			</div>
