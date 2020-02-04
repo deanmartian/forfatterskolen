@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\AccessToken;
 use App\Helpers\BrowserDetection;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\LearnerLogin;
 use App\UserEmail;
+use Carbon\Carbon;
+use Firebase\JWT\JWT;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
@@ -92,6 +96,21 @@ class LoginController extends Controller
     public function emailLogin($email, Request $request)
     {
         $email = decrypt($email);
+
+        $user = User::where('email', $email)->where('role', 2)->first();
+        if(!$user) return redirect()->route('front.home');
+
+        Auth::login($user);
+        if ($request->has('redirect')) {
+            if ($request->get('redirect') === 'upgrade') {
+                return redirect()->route('learner.upgrade');
+            }
+        }
+        return redirect()->route('learner.dashboard');
+    }
+
+    public function emailLoginNormal($email, Request $request)
+    {
 
         $user = User::where('email', $email)->where('role', 2)->first();
         if(!$user) return redirect()->route('front.home');
@@ -229,5 +248,84 @@ class LoginController extends Controller
 
         Auth::login($user);
         return redirect($redirectPage);
+    }
+
+    /**
+     * Generate a token for checking before the actual login
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function crossDomainToken( Request $request )
+    {
+        $token = $request->bearerToken(); // get the bearer token on the header request
+        // decode the passed jwt token
+        $jwt = JWT::decode($token, config('services.jwt.secret'), array('HS256'));
+
+        try {
+
+            AccessToken::create([
+                'jti' => $jwt->jti,
+                'iat' => $jwt->iat,
+                'exp' => $jwt->exp,
+            ]);
+            // return the generated jwt response
+            return response()->json([
+                $jwt
+            ]);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                "message" => $e->getMessage()
+            ],422);
+
+        }
+
+    }
+
+    /**
+     * Login from other domain
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function crossDomainLogin( Request $request )
+    {
+        $checkToken = AccessToken::where("jti", $request->jti)->first();
+        $now = Carbon::now()->timestamp;
+
+        if (!$checkToken) {
+            return response()->json([
+                "message" => "Invalid token"
+            ],422);
+        }
+
+        if ($checkToken->iat >= $now && $checkToken->exp <= $now ) {
+            return response()->json([
+                "message" => "Token expired"
+            ],422);
+        }
+
+        $user = User::where("email", $request->email)->first();
+
+        if (!$user) {
+            $userEmail = UserEmail::where("email", $request->email)->first();
+            if (!$userEmail) {
+                $user = User::create([
+                    'first_name'    => $request->first_name,
+                    'last_name'     => $request->last_name,
+                    'email'         => $request->email,
+                    'password'      => $request->password,
+                ]);
+
+            } else {
+                $user = User::find($userEmail->user_id);
+            }
+        }
+
+        $encode_email = $user->email;
+
+        return response()->json([
+            "redirect_url" => route('auth.login.email-normal', $encode_email)
+        ]);
     }
 }

@@ -1,5 +1,5 @@
 <nav id="learnerNav" class="navbar navbar-light">
-    <a class="navbar-brand" href="{{url('')}}">
+    <a class="navbar-brand" href="javascript:void(0)" style="cursor: default">{{--{{url('')}}--}}
         <img src="{{asset('images-new/logo2.png')}}">
     </a>
 

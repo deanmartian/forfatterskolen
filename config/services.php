@@ -71,6 +71,10 @@ return [
         'api_key' => '382d97b149ef81d34034',
         'register_link' => 'https://www.bigmarker.com/api/v1/conferences/register',
         'show_conference_link' => 'https://www.bigmarker.com/api/v1/conferences/'
+    ],
+
+    'jwt' => [
+        'secret' => 'cdDmzJqoOjolwgsyrY4bl6Sl3ThPYlFw'
     ]
 
 ];
