@@ -62,7 +62,7 @@
         </li>--}}
         <li class="nav-item @if(Request::is('account/private-message')) active @endif">
             <a class="nav-link" href="{{route('learner.private-message')}}">
-                <i class="fa fa-comment fa-test fa-use-comment d-block" style="color: #000; height: 20px; width: 20px"></i>
+                <i class="fa fa-comment fa-use-comment d-block" style="color: #000; height: 20px; width: 20px"></i>
                 Beskjeder
             </a>
         </li>

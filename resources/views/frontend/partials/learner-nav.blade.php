@@ -265,7 +265,7 @@
         <div class="col-sm-4 col-xs-6 @if(Request::is('account/private-message*')) active @endif">
             <div>
                 <a href="{{route('learner.private-message')}}">
-                    <i class="fa fa-comment d-block"></i>
+                    <i class="fa fa-comment fa-use-comment d-block"></i>
                     Beskjeder
                 </a>
             </div>
