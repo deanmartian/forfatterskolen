@@ -1113,7 +1113,7 @@
 						@foreach($learner->messages as $message)
 							<tr>
 								<td>
-									{!! nl2br($message->message) !!}
+									{!! $message->message !!}
 								</td>
 								<td>
 									<button class="btn btn-warning btn-xs editPrivateMessageBtn"
@@ -2969,7 +2969,9 @@
         let modal = $('#privateMessageModal');
         modal.find('form').attr('action', action);
         modal.find('form').find("[name=_method]").remove();
-        modal.find('[name=message]').text("");
+        setTimeout(function(){
+            tinymce.activeEditor.setContent("");
+        }, 100);
 	});
 
     $(".editPrivateMessageBtn").click(function(){
@@ -2978,7 +2980,10 @@
         let fields = $(this).data('fields');
         modal.find('form').prepend("<input type='hidden' name='_method' value='PUT'>");
         modal.find('form').attr('action', action);
-        modal.find('[name=message]').text(fields.message);
+
+        setTimeout(function(){
+            tinymce.activeEditor.setContent(fields.message);
+		}, 200);
 	});
 
     $(".deletePrivateMessageBtn").click(function(){

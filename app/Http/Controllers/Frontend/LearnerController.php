@@ -989,6 +989,16 @@ class LearnerController extends Controller
     }
 
     /**
+     * Display all private messages
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function privateMessage()
+    {
+        $messages = Auth::user()->messages()->paginate(10);
+        return view('frontend.learner.private-message', compact('messages'));
+    }
+
+    /**
      * Display all writing groups
      * @param WritingGroupService $writingGroupService
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View

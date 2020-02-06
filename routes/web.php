@@ -205,6 +205,7 @@ Route::group([
         Route::get('/writing-group/{id}', 'LearnerController@writingGroup')->name('learner.writing-group'); // Writing Group Page
         Route::put('/writing-group/{id}', 'LearnerController@writingGroup')->name('learner.update.writing-group'); // Writing Group Page
         Route::get('/competition', 'LearnerController@competition')->name('learner.competition'); // Competitions Page
+        Route::get('/private-message', 'LearnerController@privateMessage')->name('learner.private-message'); // Private Message Page
         Route::get('/profile', 'LearnerController@profile')->name('learner.profile'); // Profile Page
         Route::get('/terms', 'LearnerController@terms')->name('learner.terms'); // Terms Page
         Route::get('/course/{course_id}/lesson/{id}', 'LearnerController@lesson')->name('learner.course.lesson'); // Lesson Page

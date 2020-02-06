@@ -254,11 +254,19 @@
                 </a>
             </div>
         </div>
-        <div class="col-sm-4 col-xs-6 @if(Request::is('account/competition*')) active @endif">
+        {{--<div class="col-sm-4 col-xs-6 @if(Request::is('account/competition*')) active @endif">
             <div>
                 <a href="{{route('learner.competition')}}">
                     <i class="sprite-menu star d-block"></i>
                     Konkurranser
+                </a>
+            </div>
+        </div>--}}
+        <div class="col-sm-4 col-xs-6 @if(Request::is('account/private-message*')) active @endif">
+            <div>
+                <a href="{{route('learner.private-message')}}">
+                    <i class="fa fa-comment d-block"></i>
+                    Beskjeder
                 </a>
             </div>
         </div>

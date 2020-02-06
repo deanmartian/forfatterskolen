@@ -54,12 +54,19 @@
                 Kurspakker - Oppgradering
             </a>
         </li>
-        <li class="nav-item @if(Request::is('account/competition')) active @endif">
+        {{--<li class="nav-item @if(Request::is('account/competition')) active @endif">
             <a class="nav-link" href="{{route('learner.competition')}}">
                 <i class="sprite-menu star d-block"></i>
                 Konkurranser
             </a>
+        </li>--}}
+        <li class="nav-item @if(Request::is('account/private-message')) active @endif">
+            <a class="nav-link" href="{{route('learner.private-message')}}">
+                <i class="fa fa-comment fa-test fa-use-comment d-block" style="color: #000; height: 20px; width: 20px"></i>
+                Beskjeder
+            </a>
         </li>
+
         <li class="nav-item @if(Request::is('account/profile')) active @endif">
             <a class="nav-link" href="{{route('learner.profile')}}">
                 <i class="sprite-menu user d-block"></i>
