@@ -14,6 +14,7 @@ use App\LearnerLogin;
 use App\Mail\SubjectBodyEmail;
 use App\PaymentMode;
 use App\PaymentPlan;
+use App\PrivateMessage;
 use App\UserEmail;
 use App\Workshop;
 use App\WorkshopMenu;
@@ -1470,6 +1471,87 @@ class LearnerController extends Controller
         $userEmail->delete();
         return redirect()->back()->with([
             'errors'                => AdminHelpers::createMessageBag('Secondary email removed successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    /**
+     * Create private message
+     * @param $learner_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function addPrivateMessage($learner_id, Request $request)
+    {
+        $learner = User::find($learner_id);
+        if (!$learner) {
+            return redirect()->to('/learner');
+        }
+
+        $this->validate($request, [
+            'message' => 'required'
+        ]);
+
+        PrivateMessage::create([
+            'user_id' => $learner_id,
+            'from_user' => Auth::user()->id,
+            'message' => $request->message
+        ]);
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Private message saved successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    /**
+     * Update private message
+     * @param $learner_id
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updatePrivateMessage($learner_id, $id, Request $request)
+    {
+        $learner = User::find($learner_id);
+        if (!$learner) {
+            return redirect()->to('/learner');
+        }
+
+        $this->validate($request, [
+            'message' => 'required'
+        ]);
+
+        $privateMessage = PrivateMessage::find($id);
+        $privateMessage->message = $request->message;
+        $privateMessage->save();
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Private message saved successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    /**
+     * Delete private message
+     * @param $learner_id
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function deletePrivateMessage($learner_id, $id)
+    {
+        $learner = User::find($learner_id);
+        if (!$learner) {
+            return redirect()->to('/learner');
+        }
+
+        $privateMessage = PrivateMessage::find($id);
+        $privateMessage->delete();
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Private message deleted successfully.'),
             'alert_type'            => 'success',
             'not-former-courses'    => true
         ]);

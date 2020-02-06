@@ -299,4 +299,8 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\PersonalTrainerApplicant');
     }
+
+    public function messages() {
+        return $this->hasMany('App\PrivateMessage','user_id','id');
+    }
 }

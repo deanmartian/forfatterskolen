@@ -529,6 +529,10 @@ Route::group([
         Route::post('learner/{email_id}/set-primary-email', 'LearnerController@setPrimaryEmail')->name('admin.learner.set-primary-email');
         Route::delete('learner/{email_id}/delete-secondary-email', 'LearnerController@removeSecondaryEmail')->name('admin.learner.remove-secondary-email');
 
+        Route::post('learner/{learner_id}/private-message', 'LearnerController@addPrivateMessage')->name('admin.learner.add-private-message');
+        Route::put('learner/{learner_id}/private-message/{id}', 'LearnerController@updatePrivateMessage')->name('admin.learner.update-private-message');
+        Route::delete('learner/{learner_id}/private-message/{id}/delete', 'LearnerController@deletePrivateMessage')->name('admin.learner.delete-private-message');
+
         Route::post('task/{id}/finish', 'TaskController@finishTask')->name('admin.task.finish');
         Route::resource('task', 'TaskController', [
             'names' => [

@@ -1087,7 +1087,56 @@
 						</tbody>
 					</table>
 				</div>
-			</div>
+			</div> <!-- end emails modal -->
+
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<button class="btn btn-primary pull-right btn-xs addPrivateMessageBtn" data-toggle="modal"
+							data-action="{{ route('admin.learner.add-private-message', $learner->id) }}"
+							data-target="#privateMessageModal">
+						+ Private beskjeder
+					</button>
+					<h4>
+						Private beskjeder
+					</h4>
+				</div>
+
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+						<tr>
+							<th>Beskjeder</th>
+							<th></th>
+						</tr>
+						</thead>
+						<tbody>
+						@foreach($learner->messages as $message)
+							<tr>
+								<td>
+									{!! nl2br($message->message) !!}
+								</td>
+								<td>
+									<button class="btn btn-warning btn-xs editPrivateMessageBtn"
+											data-toggle="modal" data-target="#privateMessageModal"
+											data-action="{{ route('admin.learner.update-private-message',
+											[$learner->id, $message->id]) }}"
+											data-fields="{{ json_encode($message) }}"
+											>
+										<i class="fa fa-pencil"></i>
+									</button>
+									<button class="btn btn-danger btn-xs deletePrivateMessageBtn" data-toggle="modal"
+											data-target="#deletePrivateMessageModal"
+											data-action="{{ route('admin.learner.delete-private-message' ,
+											[$learner->id, $message->id]) }}">
+										<i class="fa fa-trash"></i>
+									</button>
+								</td>
+							</tr>
+						@endforeach
+						</tbody>
+					</table>
+				</div>
+			</div> <!-- end private message -->
 
             <div class="panel panel-default">
                 <div class="panel-body">
@@ -2517,6 +2566,62 @@
 		</div>
 	</div>
 </div>
+
+<div id="privateMessageModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					Private beskjeder
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="">
+					{{csrf_field()}}
+
+					<div class="form-group">
+						<label>Message</label>
+						<textarea name="message" cols="30" rows="10" class="form-control editor"></textarea>
+					</div>
+
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-success">{{ trans('site.submit') }}</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.cancel') }}</button>
+					</div>
+				</form>
+			</div>
+
+		</div>
+
+	</div>
+</div>
+
+<div id="deletePrivateMessageModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.delete') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					{{ method_field('DELETE') }}
+
+					<p>{{ trans('site.delete-item-question') }}</p>
+
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-danger">{{ trans('site.delete') }}</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.cancel') }}</button>
+					</div>
+				</form>
+			</div>
+
+		</div>
+
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -2858,6 +2963,29 @@
     $('#orders-table').dataTable( {
         "ordering": false
     } );
+
+    $(".addPrivateMessageBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#privateMessageModal');
+        modal.find('form').attr('action', action);
+        modal.find('form').find("[name=_method]").remove();
+        modal.find('[name=message]').text("");
+	});
+
+    $(".editPrivateMessageBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#privateMessageModal');
+        let fields = $(this).data('fields');
+        modal.find('form').prepend("<input type='hidden' name='_method' value='PUT'>");
+        modal.find('form').attr('action', action);
+        modal.find('[name=message]').text(fields.message);
+	});
+
+    $(".deletePrivateMessageBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#deletePrivateMessageModal');
+        modal.find('form').attr('action', action);
+    });
 
 	function updateOtherServiceFields(type) {
 	    let modal = $("#addOtherServiceModal");
