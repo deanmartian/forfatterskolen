@@ -256,6 +256,7 @@ Route::group([
         Route::get('diploma/{id}/download', 'LearnerController@downloadDiploma')->name('learner.download-diploma');
         Route::get('/other-service/{id}/download/{type}', 'LearnerController@downloadOtherServiceDoc')->name('learner.other-service.download-doc'); // Download assignment feedback
         Route::get('/other-service/download-feedback/{id}', 'LearnerController@downloadOtherServiceFeedback')->name('learner.other-service.download-feedback');
+        Route::get('/forum', 'LearnerController@forum')->name('learner.forum');
 
 
         Route::post('/profile', 'LearnerController@profileUpdate')->name('learner.profile.update'); // Profile Update

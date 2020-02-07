@@ -3164,6 +3164,41 @@ class LearnerController extends Controller
         return $result;
     }
 
+    /**
+     * Redirect to forum page
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function forum()
+    {
+        $token = $this->createUserToken();
+        $redirect_url = "https://forum.forfatterskolen.no/auth/sso?ssoToken=".$token."&redirect=/";
+        return response()->json([
+            'redirect_url' => $redirect_url
+        ]);
+    }
+
+    /**
+     * Generate a user token
+     * @return string
+     */
+    public function createUserToken()
+    {
+        $user = Auth::user();
+        $privateKey = config("services.jwt.private_key");
+
+        $userData = [
+            'email' => $user->email,
+            'id'    => $user->id,
+            'name'  => $user->fullname
+        ];
+
+        return JWT::encode($userData, $privateKey, 'HS256');
+    }
+    
+    /**
+     * Login to pilotleser
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function pilotleserLogin()
     {
         $user = Auth::user();

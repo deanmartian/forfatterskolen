@@ -73,4 +73,14 @@ $(document).ready(function(){
         });
     });
 
+    $(".redirectForum").click(function(){
+        $.ajax({
+            url: '/account/forum',
+            type: 'GET',
+            success: function(response){
+                window.open(response.redirect_url, "_blank");
+            }
+        });
+    });
+
 });

@@ -78,7 +78,8 @@ return [
     ],
 
     'jwt' => [
-        'secret' => 'cdDmzJqoOjolwgsyrY4bl6Sl3ThPYlFw'
+        'secret' => 'cdDmzJqoOjolwgsyrY4bl6Sl3ThPYlFw', // secret used for cross domain login
+        'private_key' => "51d3e2c89cccc640c52987e2e70fe410c518900cc038211b"
     ]
 
 ];

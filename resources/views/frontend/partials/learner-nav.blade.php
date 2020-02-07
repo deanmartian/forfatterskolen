@@ -110,6 +110,7 @@
                             <a href="{{route('learner.invoice')}}" class="dropdown-item">Fakturaer</a>
 
                             @if(\Request::has('test') && \Request::get('test') == "true")
+                                <a href="#" class="dropdown-item redirectForum">Forum</a>
                                 <a href="#" class="dropdown-item pilotleser-link">Pilotleser</a>
                             @endif
 
