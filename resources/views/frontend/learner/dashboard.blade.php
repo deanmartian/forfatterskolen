@@ -75,6 +75,24 @@
                     <div class="card global-card">
                         <div class="card-header">
                             <h1>
+                                Logg inn til:
+                            </h1>
+                        </div>
+                        <div class="card-body">
+                            <div class="col-sm-12">
+                                <a href="#" class="dropdown-item pilotleser-link">
+                                    <b>Pilotleser</b>
+                                </a>
+                                <a href="#" class="dropdown-item redirectForum">
+                                    <b>Forum</b>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card global-card mt-4">
+                        <div class="card-header">
+                            <h1>
                                 {{ trans('site.learner.calendar') }}
                                 <a href="{{ route('learner.calendar') }}" class="float-right view-all">
                                     {{ trans('site.learner.see-more') }}
