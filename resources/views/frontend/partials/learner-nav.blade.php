@@ -100,6 +100,7 @@
                             </div>
                         </div>
                         <div class="link-container">
+                            <a href="{{route('learner.dashboard')}}" class="dropdown-item">{{ trans('site.admin-menu.dashboard') }}</a>
                             <a href="{{route('learner.course')}}" class="dropdown-item">Mine Kurs</a>
                             <a href="{{route('learner.shop-manuscript')}}" class="dropdown-item">Manuskripter</a>
                             <a href="{{route('learner.workshop')}}" class="dropdown-item">Workshops</a>
