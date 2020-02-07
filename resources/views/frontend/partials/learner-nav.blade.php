@@ -108,11 +108,8 @@
                             <a href="{{route('learner.calendar')}}" class="dropdown-item">Kalender</a>
                             <a href="{{route('learner.profile')}}" class="dropdown-item">Profil</a>
                             <a href="{{route('learner.invoice')}}" class="dropdown-item">Fakturaer</a>
-
-                            @if(\Request::has('test') && \Request::get('test') == "true")
-                                <a href="#" class="dropdown-item redirectForum">Forum</a>
-                                <a href="#" class="dropdown-item pilotleser-link">Pilotleser</a>
-                            @endif
+                            <a href="#" class="dropdown-item redirectForum">Forum</a>
+                            <a href="#" class="dropdown-item pilotleser-link">Pilotleser</a>
 
                             <a href="" class="dropdown-item d-inline-block w-auto mb-2">
                                 <form method="POST" action="{{route('auth.logout')}}" class="form-logout">

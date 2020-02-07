@@ -74,7 +74,7 @@ return [
     ],
 
     'cross-domain' => [
-        'url' => 'https://dev.pilotleser.no/api/cross-domain'
+        'url' => 'https://www.pilotleser.no/api/cross-domain'
     ],
 
     'jwt' => [

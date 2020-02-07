@@ -23,4 +23,4 @@ $newDesignPages = ['front.shop-manuscript.index', 'front.publishing', 'front.blo
 @else
     <script type="text/javascript" src="{{asset('js/vendor.js')}}"></script>
 @endif
-<script type="text/javascript" src="{{asset('js/frontend.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/frontend.min.js?v=1')}}"></script>
