@@ -45,6 +45,7 @@ use App\WordWrittenGoal;
 use App\WritingGroup;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade as PDF;
+use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -3161,5 +3162,77 @@ class LearnerController extends Controller
         header('Content-Length: '.strlen($result));
         //readfile($pdf_storage_link);
         return $result;
+    }
+
+    public function pilotleserLogin()
+    {
+        $user = Auth::user();
+        // create token
+        $token = JWT::encode([
+            'sub'   => $user->id,
+            'iat'   => Carbon::now()->timestamp,
+            'jti' => str_limit(md5(Carbon::now()->timestamp + $user->id), 16),
+            'exp' => Carbon::now()->timestamp * 60
+        ], config('services.jwt.secret'));
+
+
+        $base_url = config('services.cross-domain.url').'/get-token';
+        $header = array();
+        $header[] = 'Content-type: application/x-www-form-urlencoded';
+        $header[] = 'Accept: application/json';
+        $header[] = 'Authorization: Bearer '.$token;
+
+        $body = [];
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $base_url);
+        curl_setopt( $ch, CURLOPT_POST, 1);
+        curl_setopt( $ch, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $response = curl_exec($ch);
+        $decode = json_decode($response);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        // check if an access token is generated
+        if ($httpcode === 200) {
+            $request_url = config('services.cross-domain.url').'/login';
+            $login_header = array();
+            $login_header[] = 'Content-type: application/x-www-form-urlencoded';
+            $login_header[] = 'Accept: application/json';
+
+            $login_body = [
+                'jti'           => $decode[0]->jti,
+                'first_name'    => $user->first_name,
+                'last_name'     => $user->last_name,
+                'email'         => $user->email,
+                'password'      => $user->password ?: bcrypt(123)
+            ];
+
+            $login_ch = curl_init();
+            curl_setopt($login_ch, CURLOPT_URL, $request_url);
+            curl_setopt( $login_ch, CURLOPT_POST, 1);
+            curl_setopt( $login_ch, CURLOPT_POSTFIELDS, http_build_query($login_body));
+            curl_setopt($login_ch, CURLOPT_HTTPHEADER, $login_header);
+            curl_setopt($login_ch, CURLOPT_RETURNTRANSFER, 1);
+
+            $login_response = curl_exec($login_ch);
+            $login_decode = json_decode($login_response);
+            $login_httpcode = curl_getinfo($login_ch, CURLINFO_HTTP_CODE);
+
+            // check for error
+            if ($login_httpcode !== 200) {
+                return response()->json([
+                    'message' => $login_decode->message
+                ], $login_httpcode);
+            }
+
+            return response()->json([
+                "redirect_url" => $login_decode->redirect_url
+            ]);
+        }
+
+        return response()->json([
+            'message' => $decode->message
+        ], $httpcode);
     }
 }

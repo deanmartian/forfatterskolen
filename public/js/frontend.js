@@ -63,4 +63,14 @@ $(document).ready(function(){
         $(document).prop('title', 'Password Reset › Forfatterskolen'); 
     });
 
+    $(".pilotleser-link").click(function(){
+        $.ajax({
+            url: '/api/pilotleser/login',
+            type: 'GET',
+            success: function(response){
+                window.open(response.redirect_url, "_blank");
+            }
+        });
+    });
+
 });

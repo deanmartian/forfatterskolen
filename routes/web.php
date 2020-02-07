@@ -378,6 +378,7 @@ Route::group([
 
     });
 
+    Route::get('/api/pilotleser/login', 'Frontend\LearnerController@pilotleserLogin');
 
 
     // Authentication

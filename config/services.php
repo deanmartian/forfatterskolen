@@ -73,6 +73,10 @@ return [
         'show_conference_link' => 'https://www.bigmarker.com/api/v1/conferences/'
     ],
 
+    'cross-domain' => [
+        'url' => 'https://dev.pilotleser.no/api/cross-domain'
+    ],
+
     'jwt' => [
         'secret' => 'cdDmzJqoOjolwgsyrY4bl6Sl3ThPYlFw'
     ]
