@@ -1583,6 +1583,11 @@ margin-right: 5px;
     justify-content: center;
 }
 
+.course-page .courses-list-container .course-header {
+    background-position: center;
+    background-size: contain;
+}
+
 .course-page .courses-list-container .course-header:before,
 .course-single-page .similar-courses .course-header:before {
     content: '';
@@ -12248,7 +12253,9 @@ textarea.form-control {
 
 .front-page-new .popular-course-wrapper .courses-container .card-header {
     background-repeat: no-repeat;
-    background-size: cover;
+    /*background-size: cover;*/
+    background-size: contain;
+    background-position: center;
     height: 310px;
     position: relative;
 }
