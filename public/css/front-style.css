@@ -1807,6 +1807,12 @@ margin-right: 5px;
     position: relative;
 }
 
+.course-single-page .course-image-row {
+    background-position: 50%;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
 .course-single-page .course-image-row .date-container, .workshop-single-page .workshop-image-row .date-container {
     background-color: #e83a47;
     bottom: 0;
