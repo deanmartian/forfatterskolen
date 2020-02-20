@@ -3919,7 +3919,8 @@ margin-right: 5px;
 .dashboard-webinar-container .image-container {
     height: 180px;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: contain;
+    background-position: center;
 }
 
 .dashboard-webinar-container .details-container {
