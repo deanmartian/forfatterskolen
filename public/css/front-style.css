@@ -12217,9 +12217,14 @@ textarea.form-control {
 }
 
 .front-page-new .popular-course-wrapper .featured-item {
-    background-size: cover;
+    /*background-size: cover;
+    height: 500px;
+    position: relative;*/
+    background-size: contain;
     height: 500px;
     position: relative;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .front-page-new .popular-course-wrapper .featured-item .details {
