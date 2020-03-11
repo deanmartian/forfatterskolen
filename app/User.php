@@ -277,7 +277,8 @@ class User extends Authenticatable
 
     public function isSuperUser()
     {
-        return $this->attributes['id'] === 1376 ? true : false;
+        $ids = [1376, 4464];
+        return in_array($this->attributes['id'], $ids) ? true : false;
     }
 
     public function surveyTaken()
