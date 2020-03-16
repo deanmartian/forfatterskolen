@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 use App\Assignment;
 use App\AssignmentManuscript;
 use App\CoachingTimerManuscript;
+use App\CompetitionApplicant;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\CustomAction;
@@ -267,6 +268,18 @@ class PageController extends Controller
         $customAction->last_run = Carbon::now();
         $customAction->save();
         return redirect()->back();
+    }
+
+    public function singleCompetition()
+    {
+        $applicants = CompetitionApplicant::paginate(25);
+        return view('backend.competition.single',compact('applicants'));
+    }
+
+    public function singleCompetitionShow($id)
+    {
+        $applicant = CompetitionApplicant::find($id);
+        return view('backend.competition.single-show',compact('applicant'));
     }
 
     public function pilotReader()

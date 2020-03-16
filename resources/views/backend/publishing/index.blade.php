@@ -39,6 +39,7 @@
 	<a class="btn btn-success margin-top" href="{{ route('admin.testimonial.index') }}">Testimonials</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.file.index') }}">Files</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.personal-trainer.index') }}">Personal Trainer Applicants</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.single-competition.index') }}">Competition</a>
 
 	<div class="table-users table-responsive">
 		<table class="table">

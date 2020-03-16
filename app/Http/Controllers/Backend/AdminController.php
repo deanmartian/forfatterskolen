@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 use App\CoursesTaken;
 use App\CustomAction;
 use App\Http\AdminHelpers;
+use App\Http\FikenInvoice;
 use App\PageMeta;
 use App\Repositories\Services\PageAccessService;
 use App\Repositories\Services\PublishingService;
@@ -229,5 +230,34 @@ class AdminController extends Controller
             'errors' => AdminHelpers::createMessageBag('Record deleted successfully'),
             'alert_type' => 'success'
         ]);
+    }
+
+
+    public function fikenRedirect( Request $request )
+    {
+        $key = 'SQQ1hz9WTUC661rEmBbasA';
+        $secret = 'rvVLqPkEcYtrcdyBwO6YrEZWPcDYtwyP8xL8';
+        $token = array(
+            "iss" => $key,
+            // The benefit of JWT is expiry tokens, set this one to expire in 1 minute
+            "exp" => time() + 600
+        );
+
+        $fiken = new FikenInvoice();
+        $authorize = $fiken->authorize();
+        print_r($authorize);
+        return;
+
+        $fiken_accounts = config('services.fiken.base_url')."/companies";
+        $username = "cleidoscope@gmail.com";
+        $password = "moonfang";
+        $ch = curl_init($fiken_accounts);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+        $data = curl_exec($ch);
+        //$data = json_decode($data);
+        return $data;
     }
 }

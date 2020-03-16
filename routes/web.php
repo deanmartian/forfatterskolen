@@ -74,6 +74,10 @@ Route::group([
         Route::post('/personal-trainer/send', 'HomeController@personalTrainerSend')->name('front.personal-trainer.send');
         Route::get('/personal-trainer/thank-you', 'HomeController@personalTrainerThanks')->name('front.personal-trainer.thank-you');
 
+        Route::get('/innlevering', 'HomeController@innleveringCompetition')->name('front.innlevering.join');
+        Route::post('/innlevering/send', 'HomeController@innleveringCompetitionSend')->name('front.innlevering.send');
+        Route::get('/takk', 'HomeController@innleveringCompetitionThanks')->name('front.innlevering.thank-you');
+
         Route::post('/', 'HomeController@homeOptIn')->name('front.home'); // Homepage
 
         Route::get('/opt-in/{slug?}', 'HomeController@optIn')->name('front.opt-in'); // Opt-in page
@@ -774,6 +778,7 @@ Route::group([
         Route::post('/admin-status', 'AdminController@adminStatus')->name('admin.admin.status');
         Route::post('/save-staff/{id?}', 'AdminController@saveStaff')->name('admin.staff.save');
         Route::delete('/delete-staff/{id?}', 'AdminController@deleteStaff')->name('admin.staff.delete');
+        Route::get('/fiken-redirect', 'AdminController@fikenRedirect')->name('admin.fiken.redirect');
 
         Route::resource('/email','EmailController',[
             'except' => ['create', 'edit'],
@@ -1192,6 +1197,11 @@ Route::group([
                 'destroy' => 'admin.personal-trainer.destroy',
             ],
         ]);
+
+        Route::get('/single-competition', 'PageController@singleCompetition')
+            ->name('admin.single-competition.index');
+        Route::get('/single-competition/{id}', 'PageController@singleCompetitionShow')
+            ->name('admin.single-competition.show');
 
         //Calendar Notes
         Route::resource('/calendar-note', 'CalendarNoteController', [

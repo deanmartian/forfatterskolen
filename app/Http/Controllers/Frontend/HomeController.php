@@ -1684,4 +1684,72 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
     {
         return view('frontend.personal-trainer.thank-you');
     }
+
+    public function innleveringCompetition()
+    {
+        return view('frontend.competition.innlevering');
+    }
+
+    public function innleveringCompetitionSend( Request $request )
+    {
+        $validates = [
+            'email' => 'required|email',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'g-recaptcha-response' => 'required|captcha',
+            'manuscript' => 'required|mimes:pdf,doc,docx,odt'
+        ];
+
+        $this->validate($request, $validates);
+
+        if( Auth::guest() ) :
+            $user = User::where('email', $request->email)->first();
+            if( $user ) :
+                Auth::login($user);
+            else :
+                // register new user
+                $new_user = new User();
+                $new_user->email = $request->email;
+                $new_user->first_name = $request->first_name;
+                $new_user->last_name = $request->last_name;
+                $new_user->password = bcrypt($request->password);
+                $new_user->save();
+                Auth::login($new_user);
+            endif;
+        endif;
+
+        if( $request->hasFile('manuscript') &&  $request->file('manuscript')->isValid() ) :
+            $extension = pathinfo($_FILES['manuscript']['name'],PATHINFO_EXTENSION);
+            $original_filename = $request->manuscript->getClientOriginalName();
+            $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
+
+            $destinationPath = 'storage/competition-manuscripts/'; // upload path
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $request->manuscript->move($destinationPath, $fileName);
+
+            $file = '/'.$fileName;
+
+            $data = $request->except('_token');
+            $data['manuscript'] = $file;
+
+            Auth::user()->comeptitionApplication()->create($data);
+
+            $list_id = 110;
+            $activeCampaign['email'] = $request->email;
+            $activeCampaign['name'] = $request->first_name;
+            $activeCampaign['last_name'] = $request->last_name;
+            AdminHelpers::addToActiveCampaignList($list_id, $activeCampaign);
+
+            return redirect()->route('front.innlevering.thank-you');
+        endif;
+
+
+        return redirect()->back();
+    }
+
+    public function innleveringCompetitionThanks()
+    {
+        return view('frontend.competition.thank-you');
+    }
+
 }

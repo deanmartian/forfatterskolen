@@ -301,6 +301,11 @@ class User extends Authenticatable
         return $this->hasMany('App\PersonalTrainerApplicant');
     }
 
+    public function comeptitionApplication()
+    {
+        return $this->hasMany('App\CompetitionApplicant');
+    }
+
     public function messages() {
         return $this->hasMany('App\PrivateMessage','user_id','id');
     }
