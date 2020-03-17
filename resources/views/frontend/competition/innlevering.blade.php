@@ -11,7 +11,6 @@
                 <div class="col-lg-12">
 
                     <div class="panel panel-default">
-                        {!! nl2br(trans('site.personal-trainer.about-course'))  !!}
                         @if ( $errors->any() )
                             <div class="col-sm-12">
                                 <div class="alert alert-danger mb-0">
@@ -30,7 +29,7 @@
                             <input type="file" class="hidden" name="manuscript"
                                    accept=".doc, .docx, .pdf, .odt">
                             <h2>
-                                {{ trans('site.personal-trainer.sub-title') }}
+                                {{ trans('site.innlevering.title') }}
                             </h2>
                             <div class="panel-heading">{{ trans('site.front.form.user-information') }}</div>
 
@@ -94,7 +93,7 @@
 
                                 <div class="form-group">
                                     <button type="submit" class="btn site-btn-global-w-arrow pull-right" id="submitOrder">
-                                        Lever manuset ditt!
+                                        {{ trans('site.innlevering.button-text') }}
                                     </button>
                                 </div>
 
