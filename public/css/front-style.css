@@ -4657,6 +4657,12 @@ margin-right: 5px;
     height: 562px;
 }
 
+.skrive2020 .first-container .owner-image-container {
+    background: url(../images-new/skrive2020.png) no-repeat left / cover !important;
+    border-radius: 5px;
+    height: 562px;
+}
+
 .henrik-page .first-container .owner-details-container {
     padding: 50px;
 }

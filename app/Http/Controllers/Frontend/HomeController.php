@@ -1273,6 +1273,11 @@ class HomeController extends Controller
         return view('frontend.henrik-langeland');
     }
 
+    public function skrive2020()
+    {
+        return view('frontend.skrive2020');
+    }
+
     public function poems()
     {
         $poems = Poem::orderBy('created_at', 'desc')->get();

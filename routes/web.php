@@ -107,6 +107,7 @@ Route::group([
         Route::get('/email/attachment/{token}', 'HomeController@emailAttachment')->name('front.email-attachment');
 
         Route::get('/henrik-langeland', 'HomeController@henrikPage')->name('front.henrik'); // Upviral ref page
+        Route::get('/skrive2020', 'HomeController@skrive2020')->name('front.skrive2020');
         Route::get('/poems', 'HomeController@poems')->name('front.poems'); // Poems page
 
         // Test Manuscript (Shop Manuscript)
