@@ -73,7 +73,7 @@
                 <p>
                     Temaet er bredt, her er mange tolkninger, vinklinger og sjangre tilgjengelig for deg. Kun fantasien
                     kan sette grenser. Vi tar imot alle sjangre. Teksten kan være opptil 5 A4-sider. Alle tekster må
-                    leveres i Word/PDF, med skriftstørrelse 1
+                    leveres i Word/PDF, med skriftstørrelse 12
                 </p>
             </div> <!-- end container -->
         </div> <!-- end question-container -->
