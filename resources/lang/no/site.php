@@ -783,7 +783,7 @@ Warning: This cannot be undone.',
     ),
     'copy-editing' => 
     array (
-      'title' => 'Språkvåsk',
+      'title' => 'Språkvask',
       'word-count' => '1000 tegn',
       'buy' => 'Bestill språkvask',
       'description' => 'Vi tilbyr profesjonell språkvask av alle typer manus. Vi beregner 3 ukers behandlingstid, før du får ditt språkvaskede manus tilbake. Beregn pris ved å laste opp manuset i boksen til venstre (dette er kun en utregning, og innebærer ikke kjøp).',
@@ -847,7 +847,7 @@ Warning: This cannot be undone.',
       'description' => 'Har du lyst til å få en profesjonell tilbakemelding på din tekst? Skriv inn valgfri tekst i skjemaet under maks 500 ord.',
       'header-title' => 'Prøv en gratis tekstvurdering',
       'title' => 'Gratis manusutvikling',
-      'instruction' => 'Din tekst (for å lime inn må du bruke lim inn funksjon fra tastaturet, ikke mus) CTRL + V',
+      'instruction' => 'Din tekst',
       'max-word-text' => 'Maks 500 ord',
       'note' => 'Kun en innsending per person',
       'send' => 'Send inn',
@@ -1193,10 +1193,52 @@ kvittering.',
   'error-400-description' => 'Bad Request Error',
   'personal-trainer' => 
   array (
-    'title' => 'Nyhet! Åskurs med rektor',
+    'title' => 'Nyhet! Årskurs med rektor',
     'sub-title' => 'Skriv boken din på ett år',
     'description' => 'Nå har du muligheten til å skrive boken du drømmer om, på ett år, sammen med rektor. Vårt splitter nye årskurs gir deg alt du trenger for å fullføre det beste manuset du kan klare. Du får din egen, profesjonelle redaktør som følger deg hele veien, din personlige skrivetrener og en gjeng som hjelper og heier deg frem. Kurset starter 14. januar 2020.',
     'button-text' => 'Trykk her for å lese mer',
-    'about-course' => '&nbsp;',
+    'about-course' => 'Er du klar for å skrive boken din på ett år - sammen med meg? Det skal vi klare - og det er engasjerte elever jeg vil ha med meg. Alt jeg krever er at du er positiv og målrettet. Så skal vi hjelpe deg så godt jeg kan med det andre. 
+
+Personlig skrivetrener
+Med årskurset er jeg med deg hele veien - som din personlige skrivetrener, og du får meldinger underveis ("Har du husket å skrive?" "Hva skal til for at du skriver tre sider i dag?" "Klar for samskriving? Møt meg kl. 21!") Vi skal også være aktive i et forum, som kun er for oss. 
+
+Profesjonell redaktør
+Det står et knippe av profesjonelle redaktører parate til å hjelpe deg - og du vil få én som bare er din, hele året, frem til året er utløpt. Hensikten er at du skal ha skrevet ferdig et manusutkast i løpet av ett år.
+
+Begrensede plasser
+Dette kurset er ikke for deg som lurer på om "du skal orke å skrive en bok eller ikke", og som ikke engasjerer deg i kurset. Jo mer positiv du er, og jo mer du gir, jo større er sjansen for at du klarer dette. Er du en av dem? 
+
+Da er det bare å fylle i feltene under!
+
+Du som får en plass på kurset vil bli oppringt, eller få en mail, i god tid innen kursstart. Har du ikke mulighet til å ta plassen, vennligst gi beskjed. Det blir maks 50 personer på dette kurset og det kjøres kun én gang i året, så plassene er begrenset (og ventelisten lang).
+
+Det er fremdeles 2 ukers angrefrist, og dermed ingen risiko ved å melde seg på. 
+
+Dette er alt du får på det store årskurset:
+
+- 4 manusutviklinger fra profesjonell redaktør a 17 500 ord (den samme vil følge deg hele veien)
+
+- Ukentlige webinarer med meg (med enkelte unntak, for eksempel ferier), der du kan spørre om alt du vil, vi snakker om ulike skriveutfordringer etc.
+
+- Lukket gruppe som er eksklusiv for oss på årskurset, med samskrivningsøkter flere ganger i måneden.
+
+- Tilgang til Forfatterskolens store romankurs (med alt du trenger om skrivehåndverket).
+
+- Oppfølging av personlig skrivetrener som pusher deg hele veien till til mål
+
+- Tilgang til det unike Pilotleser-systemet vårt, der du kan laste opp antall ord du har skrevet (så vi kan dra med oss de bakerste i rekken), lagre flere versjoner etc.
+
+Unik introrabatt
+Kurset vil ha en fullpris på kroner 30 000 ,- (inkludert alt det ovennevnte). 
+Vi har også fikset en 2 års avbetalingsplan, så penger ikke skal være noen hindring for drømmen.
+
+Skrivegira hilsen,
+Rektor Kristine
++ 47 411 23 555',
+  ),
+  'innlevering' => 
+  array (
+    'title' => 'Send inn ditt manus i konkurransen!',
+    'button-text' => 'Lever manuset ditt!',
   ),
 );

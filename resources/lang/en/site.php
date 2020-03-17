@@ -1200,4 +1200,9 @@ kvittering.',
     'title' => 'Nyhet! Åskurs med rektor',
     'about-course' => '&nbsp;',
   ),
+  'innlevering' => 
+  array (
+    'button-text' => 'Lever manuset ditt!',
+    'title' => 'Send inn ditt manus i konkurransen!',
+  ),
 );
