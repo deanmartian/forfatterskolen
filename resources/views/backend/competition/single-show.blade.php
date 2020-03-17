@@ -32,7 +32,7 @@
                         </div>
 
                         <div class="form-group">
-                            <a href="/{{ $applicant->manuscript }}">
+                            <a href="{{ url($applicant->manuscript) }}">
                                 {{ \App\Http\AdminHelpers::extractFileName($applicant->manuscript) }}
                             </a>
                         </div>
