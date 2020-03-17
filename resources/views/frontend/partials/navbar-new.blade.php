@@ -83,9 +83,13 @@
                 <a href="{{ route('front.blog') }}" class="nav-link"
                    title="View blog">{{ trans('site.front.nav.blog') }}</a>
             </li>
-            <li class="nav-item @if(Route::currentRouteName() == 'front.workshop.index') active @endif">
+            {{--<li class="nav-item @if(Route::currentRouteName() == 'front.workshop.index') active @endif">
                 <a href="{{route('front.workshop.index')}}" class="nav-link"
                    title="View workshops">{{ trans('site.front.nav.workshop') }}</a>
+            </li>--}}
+            <li class="nav-item">
+                <a href="https://pilotleser.no" class="nav-link"
+                   title="Pilotleser" target="_blank">Pilotleser</a>
             </li>
             <li class="nav-item @if(Route::currentRouteName() == 'front.faq') active @endif">
                 <a href="{{route('front.faq')}}" class="nav-link"
