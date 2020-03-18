@@ -110,7 +110,7 @@
 @section('scripts')
     <script>
         $("#redirect-link").click(function(){
-            window.open('/innlevering', '_blank');
+            window.open('/skrive2020', '_blank');
         });
     </script>
 @stop

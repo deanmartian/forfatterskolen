@@ -183,7 +183,7 @@
                 </div> <!-- end col-sm-12 -->
             </div>
             --}}
-            <div id="latest-seminar-carousel" class="carousel slide multi-item-carousel" data-ride="carousel" data-interval="false">
+            {{--<div id="latest-seminar-carousel" class="carousel slide multi-item-carousel" data-ride="carousel" data-interval="false">
                 <div class="carousel-inner" role="listbox">
                     <div class="item active">
                         <div class="item__third">
@@ -314,8 +314,15 @@
                 title="View next item">
                     <span class="glyphicon glyphicon-chevron-right hide" aria-hidden="true"></span>
                 </a>
-            </div> <!-- end latest-seminar-carousel -->{{--
+            </div>--}} <!-- end latest-seminar-carousel -->{{--
         </div>--}} <!-- end latest-seminar wrapper -->
+
+        <div class="container py-4">
+            <a href="{{ route('front.skrive2020') }}">
+            <img src="{{ url('/images-new/skrive.jpeg') }}" class="w-100 img-responsive"
+                 style="max-height: 600px; object-fit: contain">
+            </a>
+        </div>
 
         <div class="container">
             <div class="testimonial-row row">

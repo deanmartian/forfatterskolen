@@ -10,7 +10,7 @@
             <div class="row">
                 <div class="col-sm-6 left-container">
                     <img src="{{ asset('images-new/thumb-icon.png') }}" alt="" class="thumb">
-                    <h1>Takk for din søknad, vi vil kontakte deg så fort som mulig!</h1>
+                    <h1>Takk for ditt bidrag, vi gleder oss til å lese!</h1>
                 </div>
 
                 <div class="col-sm-6 right-container">
