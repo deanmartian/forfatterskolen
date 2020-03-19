@@ -81,9 +81,10 @@
                         </div>
                         <div class="form-group">
                             <label>Meta Description</label>
-                            <textarea class="form-control" name="meta_description" rows="6" maxlength="350"
+                            <textarea class="form-control" name="meta_description" rows="6" maxlength="160"
+                                      minlength="70"
                                       onkeyup="countChar(this)" required></textarea>
-                            <div class="charNum">350 characters left</div>
+                            <div class="charNum">160 characters left</div>
                         </div>
                         <div class="text-right margin-top">
                             <button type="submit" class="btn btn-primary">Save</button>
@@ -121,9 +122,10 @@
                         </div>
                         <div class="form-group">
                             <label>Meta Description</label>
-                            <textarea class="form-control" name="meta_description" rows="6" maxlength="350"
+                            <textarea class="form-control" name="meta_description" rows="6" maxlength="160"
+                                      minlength="70"
                                       onkeyup="countChar(this)" required></textarea>
-                            <div class="charNum">350 characters left</div>
+                            <div class="charNum">160 characters left</div>
                         </div>
                         <div class="text-right margin-top">
                             <button type="submit" class="btn btn-primary">Save</button>
@@ -183,20 +185,20 @@
             if (350 - len === 1) {
                 charText = "character left";
             }
-            $(this).find('.charNum').text(350 - len + " "+charText);
+            $(this).find('.charNum').text(160 - len + " "+charText);
         });
 
         function countChar(val) {
             let len = val.value.length;
-            if (len >= 350) {
-                val.value = val.value.substring(0, 350);
+            if (len >= 160) {
+                val.value = val.value.substring(0, 160);
                 $('.charNum').text(0 + " character left");
             } else {
                 let charText = "characters left";
-                if (350 - len === 1) {
+                if (160 - len === 1) {
                     charText = "character left";
                 }
-                $('.charNum').text(350 - len + " "+charText);
+                $('.charNum').text(160 - len + " "+charText);
             }
         }
     </script>

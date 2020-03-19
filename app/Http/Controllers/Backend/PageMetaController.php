@@ -29,7 +29,7 @@ class PageMetaController extends Controller
     {
         $this->validate($request, [
             'url'               => 'required|url',
-            'meta_description'  => 'required|max:350'
+            'meta_description'  => 'required|max:160|min:70'
         ]);
 
         $meta = new PageMeta();
@@ -70,6 +70,12 @@ class PageMetaController extends Controller
     public function update($id, Request $request)
     {
         $pageMeta = PageMeta::find($id);
+
+        $this->validate($request, [
+            'url'               => 'required|url',
+            'meta_description'  => 'required|max:160|min:70'
+        ]);
+
         if ($pageMeta) {
 
             if ($request->hasFile('meta_image')) :
