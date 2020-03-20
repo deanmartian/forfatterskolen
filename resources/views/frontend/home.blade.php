@@ -10,7 +10,6 @@
     <noscript>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
     </noscript>
-    {{--<link rel="stylesheet" href="{{ asset('css/front-page.min.css?v='.time()) }}">--}}
 @stop
 
 @section('content')
@@ -98,225 +97,6 @@
             </div> <!-- end container -->
         </div> <!-- end header -->
 
-        {{--<div class="personal-trainer-wrapper">
-            <div class="container position-relative">
-                <div class="white-background">
-                    <header>
-                        <h1 class="font-montserrat-regular">
-                            {{ trans('site.personal-trainer.title') }}
-                        </h1>
-                        <h2 class="font-montserrat-regular text-red">
-                            {{ trans('site.personal-trainer.sub-title') }}
-                        </h2>
-                    </header>
-                    <div class="mt-5 font-montserrat-light">
-                        {{ trans('site.personal-trainer.description') }}
-                    </div>
-
-                    <a href="{{ route('front.personal-trainer.apply') }}" class="site-btn-global rounded-0 mt-5 d-inline-block">
-                        {{ trans('site.personal-trainer.button-text') }}
-                    </a>
-                </div>
-            </div>
-        </div>--}}
-
-        {{--<div class="latest-seminar-wrapper">
-            <div class="container">
-                <div class="row">
-                    <div class="indicator">
-                        <div class="h1 mt-0 text-white">{{ trans('site.front.latest-seminars') }}</div>
-                    </div>
-                </div>
-
-                <!-- orig is the one under which is the carousel -->
-                <div class="col-sm-12">
-                    <div class="card border-0 next-free-webinar">
-                        <div class="card-header border-0 position-relative">
-                            <img src="{{ asset('/images-new/home/hand-pen.png') }}" alt="hand with pen">
-                            <span class="title">
-                                {{ !$next_free_webinar && $next_workshop ? trans('site.front.next-workshop')
-                                : trans('site.front.next-free-webinar') }}
-                            </span>
-                        </div>
-                        <div class="card-body" itemscope itemtype="http://schema.org/CreativeWork">
-                            @if($next_free_webinar)
-                                <div class="h1 mt-0 font-montserrat-semibold">
-                                    {{ $next_free_webinar->title }}
-                                </div>
-
-                                <div class="date-time-cont">
-                                    <i class="img-icon16 icon-calendar"></i>
-                                    <span>{{ \App\Http\FrontendHelpers::formatDate($next_free_webinar->start_date) }}</span>
-                                    <i class="img-icon16 icon-clock ml-3"></i>
-                                    <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($next_free_webinar->start_date) }}</span>
-                                </div>
-
-                                <p class="mt-4 text-justify">{{ str_limit(strip_tags($next_free_webinar->description), 200)}}</p>
-
-                                <a class="btn" href="{{ route('front.free-webinar', $next_free_webinar->id) }}"
-                                   title="View free webinar">
-                                    {{ trans('site.front.register') }}
-                                </a>
-                            @else
-                                @if($next_workshop)
-                                    <div class="h1 mt-0 font-montserrat-semibold">
-                                        {{ $next_workshop->title }}
-                                    </div>
-
-                                    <div class="date-time-cont">
-                                        <i class="img-icon16 icon-calendar"></i>
-                                        <span>{{ \App\Http\FrontendHelpers::formatDate($next_workshop->date) }}</span>
-                                        <i class="img-icon16 icon-clock ml-3"></i>
-                                        <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($next_workshop->date) }}</span>
-                                    </div>
-
-                                    <p class="mt-4 text-justify">{{ str_limit(strip_tags($next_workshop->description), 200)}}</p>
-
-                                    <a class="btn" href="{{ route('front.workshop.show', $next_workshop->id) }}"
-                                       title="View workshop details">
-                                        {{ trans('site.front.register') }}
-                                    </a>
-                                @endif
-                            @endif
-                        </div> <!-- end card-body -->
-                    </div> <!-- end card -->
-                </div> <!-- end col-sm-12 -->
-            </div>
-            --}}
-            {{--<div id="latest-seminar-carousel" class="carousel slide multi-item-carousel" data-ride="carousel" data-interval="false">
-                <div class="carousel-inner" role="listbox">
-                    <div class="item active">
-                        <div class="item__third">
-                            <div class="card">
-                                <div class="card-header" style="">
-                                    <img src="{{ asset('/images-new/home/girl-coffee.jpg') }}" alt="girl with coffee">
-                                    <span class="title">
-                                        {{ trans('site.front.latest-blog-post') }}
-                                    </span>
-                                </div>
-                                <div class="card-body" itemscope itemtype="http://schema.org/CreativeWork">
-                                    @if ($latest_blog)
-                                        <div class="h1 mt-0 font-montserrat-semibold">
-                                            {{ $latest_blog->title }}
-                                        </div>
-
-                                        <div class="date-time-cont">
-                                            <i class="img-icon16 icon-calendar"></i>
-                                            <span>{{ \App\Http\FrontendHelpers::formatDate($latest_blog->created_at) }}</span>
-                                        </div>
-
-                                        <p class="mt-4 text-justify">{{ str_limit(strip_tags($latest_blog->description), 200)}}</p>
-
-                                        <a class="btn" href="{{ route('front.read-blog', $latest_blog->id) }}"
-                                        title="View blog link">
-                                            {{ trans('site.front.view') }}
-                                        </a>
-                                    @endif
-                                </div>
-                            </div>
-                        </div> <!-- end item__third -->
-                    </div> <!-- end item -->
-
-                    <div class="item">
-                        <div class="item__third">
-                            <div class="card">
-                                <div class="card-header" style="">
-                                    <img src="{{ asset('/images-new/home/hand-pen.png') }}" alt="hand with pen">
-                                    <span class="title">
-                                        {{ !$next_free_webinar && $next_workshop ? trans('site.front.next-workshop')
-                                        : trans('site.front.next-free-webinar') }}
-                                    </span>
-                                </div>
-                                <div class="card-body" itemscope itemtype="http://schema.org/CreativeWork">
-                                    @if($next_free_webinar)
-                                        <div class="h1 mt-0 font-montserrat-semibold">
-                                            {{ $next_free_webinar->title }}
-                                        </div>
-
-                                        <div class="date-time-cont">
-                                            <i class="img-icon16 icon-calendar"></i>
-                                            <span>{{ \App\Http\FrontendHelpers::formatDate($next_free_webinar->start_date) }}</span>
-                                            <i class="img-icon16 icon-clock ml-3"></i>
-                                            <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($next_free_webinar->start_date) }}</span>
-                                        </div>
-
-                                        <p class="mt-4 text-justify">{{ str_limit(strip_tags($next_free_webinar->description), 200)}}</p>
-
-                                        <a class="btn" href="{{ route('front.free-webinar', $next_free_webinar->id) }}"
-                                        title="View free webinar">
-                                            {{ trans('site.front.register') }}
-                                        </a>
-                                    @else
-                                        @if($next_workshop)
-                                            <div class="h1 mt-0 font-montserrat-semibold">
-                                                {{ $next_workshop->title }}
-                                            </div>
-
-                                            <div class="date-time-cont">
-                                                <i class="img-icon16 icon-calendar"></i>
-                                                <span>{{ \App\Http\FrontendHelpers::formatDate($next_workshop->date) }}</span>
-                                                <i class="img-icon16 icon-clock ml-3"></i>
-                                                <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($next_workshop->date) }}</span>
-                                            </div>
-
-                                            <p class="mt-4 text-justify">{{ str_limit(strip_tags($next_workshop->description), 200)}}</p>
-
-                                            <a class="btn" href="{{ route('front.workshop.show', $next_workshop->id) }}"
-                                            title="View workshop details">
-                                                {{ trans('site.front.register') }}
-                                            </a>
-                                        @endif
-                                    @endif
-                                </div>
-                            </div>
-                        </div> <!-- end item__third -->
-                    </div> <!-- end item -->
-
-                    <div class="item">
-                        <div class="item__third">
-                            <div class="card">
-                                <div class="card-header" style="">
-                                    <img src="{{ asset('/images-new/home/coffee-paper.jpeg') }}" alt="coffee and paper">
-                                    <span class="title">
-                                        {{ trans('site.front.next-webinar') }}
-                                    </span>
-                                </div>
-                                <div class="card-body" itemscope itemtype="http://schema.org/CreativeWork">
-                                    @if ($next_webinar)
-                                        <div class="h1 mt-0 font-montserrat-semibold">
-                                            {{ $next_webinar->title }}
-                                        </div>
-
-                                        <div class="date-time-cont">
-                                            <i class="img-icon16 icon-calendar"></i>
-                                            <span>{{ \App\Http\FrontendHelpers::formatDate($next_webinar->start_date) }}</span>
-                                            <i class="img-icon16 icon-clock ml-3"></i>
-                                            <span>{{ \App\Http\FrontendHelpers::getTimeFromDT($next_webinar->start_date) }}</span>
-                                        </div>
-
-                                        <p class="mt-4 text-justify">{{ str_limit(strip_tags($next_webinar->description), 200)}}</p>
-
-                                        <a class="btn" href="{{ url('/course/17?show_kursplan=1') }}"
-                                           title="View course plan tab on course">
-                                            {{ trans('site.front.see-complete-list') }}
-                                        </a>
-                                    @endif
-                                </div>
-                            </div>
-                        </div> <!-- end item__third -->
-                    </div> <!-- end item -->
-                </div>
-                <a href="#latest-seminar-carousel" class="left carousel-control" role="button" data-slide="prev"
-                title="View previouse item">
-                    <span class="glyphicon glyphicon-chevron-left hide" aria-hidden="true"></span>
-                </a>
-                <a href="#latest-seminar-carousel" class="right carousel-control" role="button" data-slide="next"
-                title="View next item">
-                    <span class="glyphicon glyphicon-chevron-right hide" aria-hidden="true"></span>
-                </a>
-            </div>--}} <!-- end latest-seminar-carousel -->{{--
-        </div>--}} <!-- end latest-seminar wrapper -->
-
         <div class="container py-4">
             <a href="{{ route('front.skrive2020') }}">
             <img src="{{ url('/images-new/skrive.jpeg') }}" class="w-100 img-responsive"
@@ -332,12 +112,6 @@
                     </div>
                     <div id="testimonials-carousel" class="carousel slide global-carousel"
                          data-ride="carousel" data-interval="15000">
-
-                        {{--<ul class="carousel-indicators">
-                            <li data-target="#testimonials-carousel" data-slide-to="0" class="active"></li>
-                            <li data-target="#testimonials-carousel" data-slide-to="1"></li>
-                            <li data-target="#testimonials-carousel" data-slide-to="2"></li>
-                        </ul>--}}
 
                         <!-- The slideshow -->
                         <div class="container carousel-inner no-padding">
@@ -409,7 +183,6 @@
                             <div class="container">
                                 <?php $featured = 0 ?>
                                 @foreach( $popular_courses as $popular_course )
-                                    {{--\App\Http\FrontendHelpers::isCourseAvailable($popular_course) &&--}}
                                     @if( $featured == 0)
                                         <a href="{{ route('front.course.show', $popular_course->id) }}"
                                         class="featured-link" title="View course details">
@@ -432,29 +205,31 @@
                                 <?php $counter = 0 ?>
                                 <div class="row courses-container">
                                     @foreach( $popular_courses as $popular_course )
-                                        {{--@if( \App\Http\FrontendHelpers::isCourseAvailable($popular_course) )--}}
                                             @if ($counter == 0)
                                                 <?php $counter++?>
                                             @else
-                                                <div class="col-md-6 mt-5 course-item">
+                                                <div class="col-md-6 mt-5 course-item" itemscope
+                                                     itemtype="http://schema.org/CreativeWork">
                                                     <div class="card rounded-0 border-0">
                                                         <div class="card-header p-0 rounded-0"
                                                              style="background-image: url({{$popular_course->course_image}})">
                                                             <span>{{ trans('site.front.course-text') }}</span>
                                                         </div>
                                                         <div class="card-body">
-                                                            <h3 class="font-montserrat-semibold">{{ str_limit(strip_tags($popular_course->title), 40)}}</h3>
-                                                            <p class="font-montserrat-light mt-4">{{ str_limit(strip_tags($popular_course->description), 130)}}</p>
+                                                            <h3 class="font-montserrat-semibold" itemprop="headline">
+                                                                {{ str_limit(strip_tags($popular_course->title), 40)}}
+                                                            </h3>
+                                                            <p class="font-montserrat-light mt-4"
+                                                               itemprop="about">{{ str_limit(strip_tags($popular_course->description), 130)}}</p>
                                                             <a href="{{ route('front.course.show', $popular_course->id) }}"
                                                                class="site-btn-global rounded-0 mt-3 d-inline-block"
-                                                            title="View course details">
+                                                            title="View course details" itemprop="url">
                                                                 {{ trans('site.front.view') }}
                                                             </a>
                                                         </div>
                                                     </div>
                                                 </div>
                                             @endif
-                                        {{--@endif--}}
                                     @endforeach
                                 </div> <!-- end courses-container -->
                             </div> <!-- end container -->
@@ -563,19 +338,11 @@
         $(".multi-item-carousel .left").click(function(){
             currentHighlight = (currentHighlight - 1) % items.length;
             items.removeClass('active').eq(currentHighlight).addClass('active');
-            /*setTimeout(function(){
-                $("#latest-seminar-carousel").find('.item').removeClass('slideLeft');
-            },1000);*/
-            //$(".carousel-inner").find('.item.active').removeClass('active').prev().addClass("active");
         });
 
         $(".multi-item-carousel .right").click(function(){
             currentHighlight = (currentHighlight + 1) % items.length;
             items.removeClass('active').eq(currentHighlight).addClass('active');
-            /*setTimeout(function(){
-                $("#latest-seminar-carousel").find('.item').removeClass('slideRight');
-            },1000);*/
-           //$(".carousel-inner").find('.item.active').removeClass('active').next().addClass("active");
         });
 
         function carouselMultiple() {
