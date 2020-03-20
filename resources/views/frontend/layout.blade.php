@@ -34,11 +34,21 @@
         ?>
 
         @if ($pageMeta)
-            <meta name="title" content="{{ $pageMeta->meta_title }}">
-            <meta name="description" content="{{ $pageMeta->meta_description }}">
+            <meta property="og:title" content="{{ $pageMeta->meta_title }}">
+            <meta property="og:description" content="{{ $pageMeta->meta_description }}">
+            <meta property="og:site_name" content="Forfatterskolen">
+            <meta property="og:url" content="{{ url('/') }}">
+            <meta property="og:type" content="website" />
             @if ($pageMeta->meta_image)
                 <meta property="og:image" content="{{ asset($pageMeta->meta_image) }}">
+                <meta property="twitter:image" content="{{ asset($pageMeta->meta_image) }}">
             @endif
+
+            <meta property="twitter:title" content="{{ $pageMeta->meta_title }}">
+            <meta property="twitter:description" content="{{ $pageMeta->meta_description }}">
+            <meta name="twitter:card" content="summary" />
+            <meta name="twitter:title" content="{{ $pageMeta->meta_title }}" />
+            <meta name="twitter:description" content="{{ $pageMeta->meta_description }}" />
             <title>
                 {{ $pageMeta->meta_title }}
             </title>
