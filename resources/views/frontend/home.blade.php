@@ -283,6 +283,7 @@
                         <p>
                             Dine data er trygge hos oss. Vi bruker dem til å tilpasse tjenestene og tilbudene for deg.
                         </p>
+                        <a href="{{ route('front.terms') }}" title="View terms">Vis meg mer</a>
                     </div>
                 </div>
 
@@ -290,7 +291,6 @@
                     <button class="btn btn-agree" onclick="agreeGdpr()">
                         JEG FORSTÅR
                     </button>
-                    <a href="{{ route('front.terms') }}" title="View terms">Vis meg mer</a>
                 </div>
             </div>
         </div>

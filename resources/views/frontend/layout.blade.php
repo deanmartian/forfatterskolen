@@ -4,7 +4,7 @@
         <link rel="manifest" href="{{ asset('manifest.json') }}">
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-44061222-1"></script>
-        <script>
+        <script async>
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
@@ -14,7 +14,7 @@
 
         <!-- Global site tag (gtag.js) - Google Ads: 754620576 -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=AW-754620576"></script>
-        <script>
+        <script async>
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
@@ -26,7 +26,7 @@
         @include('frontend.partials.frontend-css')
 
         <!--[if lt IE 9]>
-        <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js" defer></script>
         <![endif]-->
 
         <?php
@@ -36,6 +36,7 @@
         @if ($pageMeta)
             <meta property="og:title" content="{{ $pageMeta->meta_title }}">
             <meta property="og:description" content="{{ $pageMeta->meta_description }}">
+            <meta name="description" content="{{ $pageMeta->meta_description }}">
             <meta property="og:site_name" content="Forfatterskolen">
             <meta property="og:url" content="{{ url('/') }}">
             <meta property="og:type" content="website" />
@@ -79,7 +80,7 @@
         <noscript><img height='1' width='1' style='display:none' src='https://www.facebook.com/tr?id=216415385555961&ev=PageView&noscript=1' /></noscript>
         <!-- End ConnectRetarget PowerPixel -->
 
-        <script>
+        <script  async>
             window.Laravel = '{{ json_encode(['csrfToken' => csrf_token()]) }}';
         </script>
     </head>
@@ -164,9 +165,9 @@
         @endif
 
         @include('frontend.partials.scripts')
-        <script src="https://Forfatterskolen.cdn.vooplayer.com/assets/vooplayer.js"></script>
-        <script src="/js/lang.js?v="{{ time() }}></script>
-        <script>
+        <script src="https://Forfatterskolen.cdn.vooplayer.com/assets/vooplayer.js" defer></script>
+        <script src="/js/lang.js?v="{{ time() }} async></script>
+        <script async>
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -275,11 +276,11 @@
             }
         </script>
         @yield('scripts')
-    <script type="text/javascript">
+    <script type="text/javascript" defer>
         (function(d, src, c) { var t=d.scripts[d.scripts.length - 1],s=d.createElement('script');s.id='la_x2s6df8d';s.async=true;s.src=src;s.onload=s.onreadystatechange=function(){var rs=this.readyState;if(rs&&(rs!='complete')&&(rs!='loaded')){return;}c(this);};t.parentElement.insertBefore(s,t.nextSibling);})(document,
             'https://forfatterskolen.ladesk.com/scripts/track.js',
             function(e){ LiveAgent.createButton('bocb2pt7', e); });
     </script>
-    <script>!function(){window;var e,t=document;e=function(){var e=t.createElement("script");e.type="text/javascript",e.defer=!0,e.src="https://cdn.endorsal.io/widgets/widget.min.js";var n=t.getElementsByTagName("script")[0];n.parentNode.insertBefore(e,n),e.onload=function(){NDRSL.init("5de00781dd95d15fd33a275f")}},"interactive"===t.readyState||"complete"===t.readyState?e():t.addEventListener("DOMContentLoaded",e())}();</script>
+    <script defer>!function(){window;var e,t=document;e=function(){var e=t.createElement("script");e.type="text/javascript",e.defer=!0,e.src="https://cdn.endorsal.io/widgets/widget.min.js";var n=t.getElementsByTagName("script")[0];n.parentNode.insertBefore(e,n),e.onload=function(){NDRSL.init("5de00781dd95d15fd33a275f")}},"interactive"===t.readyState||"complete"===t.readyState?e():t.addEventListener("DOMContentLoaded",e())}();</script>
     </body>
 </html>

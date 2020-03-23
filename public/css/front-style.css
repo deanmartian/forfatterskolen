@@ -12734,6 +12734,15 @@ footer .copyright {
 }
 
 @media only screen and (max-width: 415px) {
+
+    #topNav .navbar-nav {
+        margin: 7.5px -10px;
+    }
+
+    .front-page-new .testimonial-row .carousel .carousel-control-next {
+        right: -10px;
+    }
+
     .front-page-new .header {
         height: 795px;
     }
@@ -12798,6 +12807,17 @@ footer .copyright {
 
     .cta:after {
         height: 62px;
+    }
+
+    .cta a {
+        padding: 12px 25px;
+    }
+
+    #home-footer:before {
+        height: 243px;
+        width: 204px;
+        top: -217px;
+        right: 0;
     }
 
     footer {
