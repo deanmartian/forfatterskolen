@@ -45,7 +45,8 @@ class DontAvailAnythingCommand extends Command
         $users = User::whereDate('created_at', $yesterday )->get(); // get users created yesterday
         foreach($users as $user) {
             // check if the user don't have workshop, manuscript and courses taken
-            if ($user->workshopsTaken->count() == 0 && $user->shopManuscriptsTaken->count() == 0 && count($user->coursesTaken) == 0) {
+            if ($user->workshopsTaken->count() == 0 && $user->shopManuscriptsTaken->count() == 0 && count($user->coursesTaken) == 0
+            && $user->comeptitionApplication->count() === 0) {
                 $from     = 'postmail@forfatterskolen.no';
                 $headers = "From: Forfatterskolen<".$from.">\r\n";
                 $headers .= "MIME-Version: 1.0\r\n";
