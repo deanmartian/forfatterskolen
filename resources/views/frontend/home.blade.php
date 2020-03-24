@@ -97,11 +97,102 @@
             </div> <!-- end container -->
         </div> <!-- end header -->
 
-        <div class="container py-4">
+        {{--<div class="container py-4">
             <a href="{{ route('front.skrive2020') }}">
             <img src="{{ url('/images-new/skrive.jpeg') }}" class="w-100 img-responsive"
                  style="max-height: 600px; object-fit: contain">
             </a>
+        </div>--}}
+
+        <div class="container">
+            <div class="row upcoming-row">
+                <div class="col-md-4">
+                    <div class="column blog">
+                        <div class="content-container">
+                            <div class="title">
+                                Skrive 2020
+                            </div>
+
+                            <div class="h2 mt-0 mb-4 font-montserrat-semibold">
+                                Skrive 2020
+                            </div>
+
+                            <div class="date-time-cont">
+                                <i class="img-icon16 icon-calendar"></i>
+                                <span>01.04.2020</span>
+                                <i class="img-icon16 icon-clock ml-3"></i>
+                                <span>20:30</span>
+                            </div>
+
+                            <a href="{{ route('front.skrive2020') }}" class="btn buy-btn mt-4" title="View competition">
+                                {{ trans('site.front.view') }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="column webinar" itemscope itemtype="http://schema.org/CreativeWork">
+                        <div class="content-container">
+                            <div class="title">
+                                {{ trans('site.front.next-webinar') }}
+                            </div>
+
+                            @if ($next_webinar)
+                                <div class="h2 mt-0 mb-4 font-montserrat-semibold">
+                                    {{ $next_webinar->title }}
+                                </div>
+
+                                <div class="date-time-cont">
+                                    <i class="img-icon16 icon-calendar"></i>
+                                    <span>{{ \App\Http\FrontendHelpers::formatDate($next_webinar->start_date) }}</span>
+                                    <i class="img-icon16 icon-clock ml-3"></i>
+                                    <span>
+                                        {{ \App\Http\FrontendHelpers::getTimeFromDT($next_webinar->start_date) }}
+                                    </span>
+                                </div>
+
+                                <a href="{{ url('/course/17?show_kursplan=1') }}" class="btn buy-btn mt-4"
+                                   title="View course plan tab on course">
+                                    {{ trans('site.front.see-complete-list') }}
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="column free-webinar" itemscope itemtype="http://schema.org/CreativeWork">
+                        <div class="content-container">
+
+                            <div class="title">
+                                {{ trans('site.front.next-free-webinar') }}
+                            </div>
+
+                            @if ($next_free_webinar)
+                                <div class="h2 mt-0 mb-4 font-montserrat-semibold">
+                                    {{ $next_free_webinar->title }}
+                                </div>
+
+                                <div class="date-time-cont">
+                                    <i class="img-icon16 icon-calendar"></i>
+                                    <span>
+                                        {{ \App\Http\FrontendHelpers::formatDate($next_free_webinar->start_date) }}
+                                    </span>
+                                    <i class="img-icon16 icon-clock ml-3"></i>
+                                    <span>
+                                        {{ \App\Http\FrontendHelpers::getTimeFromDT($next_free_webinar->start_date) }}
+                                    </span>
+                                </div>
+
+                                <a href="{{ route('front.free-webinar', $next_free_webinar->id) }}"
+                                   class="btn buy-btn mt-4"
+                                   title="View free webinar">
+                                    {{ trans('site.front.view') }}
+                                </a>
+                            @endif
+                        </div> <!-- end content container -->
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="container">
@@ -283,7 +374,6 @@
                         <p>
                             Dine data er trygge hos oss. Vi bruker dem til å tilpasse tjenestene og tilbudene for deg.
                         </p>
-                        <a href="{{ route('front.terms') }}" title="View terms">Vis meg mer</a>
                     </div>
                 </div>
 
@@ -291,6 +381,7 @@
                     <button class="btn btn-agree" onclick="agreeGdpr()">
                         JEG FORSTÅR
                     </button>
+                    <a href="{{ route('front.terms') }}" title="View terms">Vis meg mer</a>
                 </div>
             </div>
         </div>

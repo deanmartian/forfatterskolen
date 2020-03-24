@@ -50,6 +50,9 @@
             <meta name="twitter:card" content="summary" />
             <meta name="twitter:title" content="{{ $pageMeta->meta_title }}" />
             <meta name="twitter:description" content="{{ $pageMeta->meta_description }}" />
+            <meta property="fb:app_id" content="300010277156315" />
+            <meta name="fb:app_id" content="300010277156315" />
+
             <title>
                 {{ $pageMeta->meta_title }}
             </title>

@@ -9624,6 +9624,10 @@ textarea.form-control {
     .personal-trainer-wrapper .white-background {
         padding: 40px;
     }
+
+    .front-page-new .upcoming-row .column.webinar, .front-page-new .upcoming-row .column.free-webinar {
+        margin-top: 30px;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -10820,6 +10824,14 @@ textarea.form-control {
         margin: 40px 0;
         padding: 30px;
     }
+
+    .front-page-new .upcoming-row .column .content-container {
+        bottom: 20px !important;
+    }
+
+    .front-page-new .upcoming-row .column {
+        height: 400px !important;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -11153,6 +11165,10 @@ textarea.form-control {
     .personal-trainer-wrapper .white-background {
         margin: 37px 0;
         padding: 20px;
+    }
+
+    .front-page-new .upcoming-row .column {
+        height: 450px !important;
     }
 }
 
@@ -12098,6 +12114,62 @@ textarea.form-control {
 }
 /* end latest seminar carousel */
 
+/* upcoming row */
+.front-page-new .upcoming-row {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.front-page-new .upcoming-row .column {
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    height: 500px;
+}
+
+.front-page-new .upcoming-row .column.blog {
+    background-image: url("../images-new/skrive.jpeg");
+}
+
+.front-page-new .upcoming-row .column .content-container {
+    position: absolute;
+    background-color: #fff;
+    bottom: 30px;
+    width: 94%;
+    left: 3%;
+    padding: 30px 20px 20px 20px;
+}
+
+.front-page-new .upcoming-row .column .content-container .title {
+    position: absolute;
+    background-color: #e83a47;
+    padding: 5px 15px;
+    border-radius: 24px;
+    color: #fff;
+    top: -14px;
+}
+
+.front-page-new .upcoming-row .column .buy-btn {
+    border: none;
+    font-size: 14px;
+    padding-left: 0;
+    width: 100%;
+    padding-right: 0;
+    text-align: left;
+    text-decoration: underline;
+}
+
+.front-page-new .upcoming-row .column.webinar {
+    background-image: url("../images-new/front-page/two-women.jpg");
+    margin-top: 50px;
+}
+
+.front-page-new .upcoming-row .column.free-webinar {
+    background-image: url("../images-new/front-page/woman-writing.jpg");
+}
+/* end upcoming row */
+
+
 /* testimonial carousel */
 .front-page-new .testimonial-row {
     padding-bottom: 50px;
@@ -12828,6 +12900,10 @@ footer .copyright {
         height: 250px;
         right: 25px;
         width: 190px;
+    }
+
+    .gdpr-actions>.btn-agree {
+        padding: 15px 20px;
     }
 }
 
