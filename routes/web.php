@@ -1115,6 +1115,7 @@ Route::group([
         Route::post('/invoice/{id}', 'InvoiceController@addTransaction')->name('admin.transaction.store'); // Store Transaction
         Route::post('/invoice/{invoice_id}/transaction/{id}', 'InvoiceController@updateTransaction')->name('admin.transaction.update'); // Update Transaction
         Route::post('/invoice/{invoice_id}/transaction/{id}/delete', 'InvoiceController@destroyTransaction')->name('admin.transaction.destroy'); // Delete Transaction
+        Route::get('/invoice/{id}/download-fiken', 'InvoiceController@downloadFikenPdf')->name('admin.invoice.download-fiken-pdf'); // Store Transaction
 
 
 

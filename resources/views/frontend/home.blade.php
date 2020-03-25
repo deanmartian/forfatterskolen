@@ -110,18 +110,18 @@
                     <div class="column blog">
                         <div class="content-container">
                             <div class="title">
-                                Skrive 2020
+                                Skrivekonkurranse
                             </div>
 
                             <div class="h2 mt-0 mb-4 font-montserrat-semibold">
-                                Skrive 2020
+                                Forfatterskolens skrivekonkurranse:Isolasjon
                             </div>
 
                             <div class="date-time-cont">
                                 <i class="img-icon16 icon-calendar"></i>
-                                <span>01.04.2020</span>
-                                <i class="img-icon16 icon-clock ml-3"></i>
-                                <span>20:30</span>
+                                <span>Frist 01.04.2020</span>
+                                {{--<i class="img-icon16 icon-clock ml-3"></i>
+                                <span>20:30</span>--}}
                             </div>
 
                             <a href="{{ route('front.skrive2020') }}" class="btn buy-btn mt-4" title="View competition">

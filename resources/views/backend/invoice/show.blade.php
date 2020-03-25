@@ -15,10 +15,11 @@
 							$exp_pdf = count(explode('.pdf',$invoice->pdf_url));
 							$pdf_url = $invoice->pdf_url;
 							if ($exp_pdf == 1) {
+							    echo "here";
                                 $pdf_url = $pdf_url.'.pdf';
 							}
 						?>
-						<a href="{{$invoice->pdf_url}}" class="btn btn-primary margin-bottom" download>Download</a>
+						<a href="{{ route('admin.invoice.download-fiken-pdf', $invoice->id) }}" class="btn btn-primary margin-bottom">Download</a>
 						{{--<embed src="{{$invoice->pdf_url}}" style="width: 100%; height: 600px" onerror="myFunction()"></embed>--}}
 					</div>
 					<div class="col-sm-12 col-md-6">

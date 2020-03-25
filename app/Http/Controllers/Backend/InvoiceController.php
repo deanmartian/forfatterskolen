@@ -299,4 +299,33 @@ class InvoiceController extends Controller
             'not-former-courses'    => true
         ]);
     }
+
+    public function downloadFikenPdf($invoice_id)
+    {
+        $invoice = Invoice::find($invoice_id);
+        $exp_pdf = count(explode('.pdf',$invoice->pdf_url));
+        $pdf_url = str_replace("https://fiken.no/filer/", "https://fiken.no/api/v1/files/", $invoice->pdf_url);
+        if ($exp_pdf == 1) {
+            $pdf_url = $pdf_url.'.pdf';
+        }
+        $expFile = explode("/", $pdf_url);
+
+        $filename = 'fiken-invoice/'.end($expFile);
+
+        // write file on the server
+        $out = fopen($filename, 'wb');
+
+        // download the file from external link with login credentials
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_FILE, $out);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_URL, $pdf_url);
+        curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
+        curl_exec($ch);
+        curl_close($ch);
+        fclose($out);
+        return response()->download($filename);
+
+    }
 }

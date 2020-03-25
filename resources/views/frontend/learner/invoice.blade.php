@@ -69,7 +69,7 @@
 										<td> {{ $invoice->kid_number }} </td>
 										<td> 9015 18 00393 </td>
 										<td>
-											<a href="{{route('learner.download.invoice', $invoice->pdf_url)}}">{{ trans('site.learner.download-invoice') }}</a>
+											<a href="{{route('learner.download.invoice', $invoice->id)}}">{{ trans('site.learner.download-invoice') }}</a>
 
 											@if(!$invoice->fiken_is_paid)
 												<div class="gateway--paypal">
