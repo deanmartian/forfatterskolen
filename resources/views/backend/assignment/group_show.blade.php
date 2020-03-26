@@ -127,7 +127,7 @@
 
                                 ?>
 							</td>
-							<td>@if( $feedback->is_admin ) [Admin] @endif {{ basename($feedback->user->full_name) }}</td>
+							<td>@if( $feedback->is_admin ) [Admin] @endif {{ basename($feedback->user['full_name']) }}</td>
 							<td>{{ basename($feedback->assignment_group_learner->user->full_name) }}</td>
 							<td>{{ $feedback->availability }}</td>
 							<td>
