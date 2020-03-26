@@ -86,6 +86,16 @@
         <script  async>
             window.Laravel = '{{ json_encode(['csrfToken' => csrf_token()]) }}';
         </script>
+
+        <script type="text/javascript">
+            window.GUMLET_CONFIG = {
+                hosts: [{
+                    current: "https://www.forfatterskolen.no/",
+                    gumlet: "forfatterskolen.gumlet.com"
+                }]
+            };
+        </script>
+        <script async src="https://cdn.gumlet.com/gumlet.js/2.0/gumlet.min.js"></script>
     </head>
     <body>
     <img src="https://www.sociamonials.com/tracking.php?t=l&tid=6502" width="1" height="1">

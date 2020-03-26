@@ -14,11 +14,11 @@
 
 @section('content')
     <div class="front-page-new">
-        <div class="header">
+        <div class="header" data-bg="https://www.forfatterskolen.no/images-new/home/main-image.png">
             <div class="container h-100 position-relative">
                 <div class="main-form">
                     <div class="envelope-container">
-                        <img src="{{ asset('images-new/home/envelope.png') }}" alt="envelope icon">
+                        <img data-src="https://www.forfatterskolen.no/images-new/home/envelope.png" alt="envelope icon">
                     </div>
 
                     <div class="form-container">
@@ -107,7 +107,7 @@
         <div class="container">
             <div class="row upcoming-row">
                 <div class="col-md-4">
-                    <div class="column blog">
+                    <div class="column blog" data-bg="https://www.forfatterskolen.no/images-new/skrive.jpeg">
                         <div class="content-container">
                             <div class="title">
                                 Skrivekonkurranse
@@ -131,7 +131,8 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="column webinar" itemscope itemtype="http://schema.org/CreativeWork">
+                    <div class="column webinar" itemscope itemtype="http://schema.org/CreativeWork"
+                         data-bg="https://www.forfatterskolen.no/images-new/front-page/two-women.jpg">
                         <div class="content-container">
                             <div class="title">
                                 {{ trans('site.front.next-webinar') }}
@@ -160,7 +161,8 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="column free-webinar" itemscope itemtype="http://schema.org/CreativeWork">
+                    <div class="column free-webinar" itemscope itemtype="http://schema.org/CreativeWork"
+                         data-bg="https://www.forfatterskolen.no/images-new/front-page/woman-writing.jpg">
                         <div class="content-container">
 
                             <div class="title">
@@ -216,9 +218,9 @@
                                             </p>
                                             <div class="user-details">
                                                 <div class="images-container">
-                                                    <img src="{{ asset($testimonial->author_image) }}" class="user-image"
+                                                    <img data-src="https://www.forfatterskolen.no/{{ $testimonial->author_image }}" class="user-image"
                                                     alt="user icon">
-                                                    <img src="{{ asset($testimonial->book_image) }}" class="book-image"
+                                                    <img data-src="https://www.forfatterskolen.no/{{ $testimonial->book_image }}" class="book-image"
                                                     alt="book icon">
                                                 </div>
                                                 <div class="user-info">
@@ -303,7 +305,7 @@
                                                      itemtype="http://schema.org/CreativeWork">
                                                     <div class="card rounded-0 border-0">
                                                         <div class="card-header p-0 rounded-0"
-                                                             style="background-image: url({{$popular_course->course_image}})">
+                                                             data-bg="https://www.forfatterskolen.no/{{$popular_course->course_image}}">
                                                             <span>{{ trans('site.front.course-text') }}</span>
                                                         </div>
                                                         <div class="card-body">
@@ -345,7 +347,7 @@
 
                 <div class="row poem-details">
                     <div class="col-sm-6 poem-author-container">
-                            <img src="{{ asset($latestPoem->author_image) }}" class="author-image" alt="author image">
+                            <img data-src="https://www.forfatterskolen.no/{{ $latestPoem->author_image }}" class="author-image" alt="author image">
                         <div class="author-info">
                             <span class="indicator">{{ trans('site.front.poem-of-the-week') }}</span>
                             <h3 class="font-weight-normal font-montserrat-regular">{{ $latestPoem->title }}</h3>

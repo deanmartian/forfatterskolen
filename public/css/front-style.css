@@ -11828,7 +11828,7 @@ textarea.form-control {
 
 /* front-page.css */
 .front-page-new .header {
-    background-image: url(../images-new/home/main-image.png);
+    /*background-image: url(../images-new/home/main-image.png);*/
     background-size: cover;
     background-repeat: no-repeat;
     height: 1000px;
@@ -12128,7 +12128,7 @@ textarea.form-control {
 }
 
 .front-page-new .upcoming-row .column.blog {
-    background-image: url("../images-new/skrive.jpeg");
+    /*background-image: url("../images-new/skrive.jpeg");*/
 }
 
 .front-page-new .upcoming-row .column .content-container {
@@ -12160,12 +12160,12 @@ textarea.form-control {
 }
 
 .front-page-new .upcoming-row .column.webinar {
-    background-image: url("../images-new/front-page/two-women.jpg");
+    /*background-image: url("../images-new/front-page/two-women.jpg");*/
     margin-top: 50px;
 }
 
 .front-page-new .upcoming-row .column.free-webinar {
-    background-image: url("../images-new/front-page/woman-writing.jpg");
+    /*background-image: url("../images-new/front-page/woman-writing.jpg");*/
 }
 /* end upcoming row */
 
