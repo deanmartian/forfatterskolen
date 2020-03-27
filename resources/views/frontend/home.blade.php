@@ -198,7 +198,45 @@
         </div>
 
         <div class="container">
-            <div class="testimonial-row row">
+            <div class="carousel-onebyone">
+                <div class="h1 text-center font-montserrat-semibold title">
+                    {{ trans('site.front.student-testimonial.heading') }}
+                </div>
+
+                <div id="video-testimonial-carousel" class="carousel slide mt-4" data-ride="carousel"
+                     data-interval="10000">
+                    <div class="video-testimonial-row row carousel-inner row w-100 mx-auto" role="listbox">
+                        @foreach($testimonials as $k => $testimonial)
+                            <div class="carousel-item col-md-3 {{ $k == 0 ? 'active' : '' }}">
+                                <a href="javascript:void(0)" data-toggle="modal" data-target="#vooModal" class="vooBtn"
+                                data-link="{{ $testimonial->testimony }}">
+                                    <div class="img-container"
+                                         data-bg="https://www.forfatterskolen.no/{{ $testimonial->author_image }}">
+                                        <img data-src="https://www.forfatterskolen.no/{{ '/images-new/play-white.png' }}" class="play-image">
+                                    </div> <!-- end image container -->
+                                </a>
+
+                                <div class="details-container">
+                                    <span class="font-montserrat-semibold theme-text">{{ $testimonial->name }}</span>
+                                    <br>
+                                    <span class="font-montserrat-regular">{{ $testimonial->description }}</span>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div> <!-- end carousel-inner -->
+
+                    <a class="carousel-control-prev" href="#video-testimonial-carousel" role="button" data-slide="prev">
+                        <i class="fa fa-chevron-left fa-lg text-muted"></i>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next text-faded" href="#video-testimonial-carousel" role="button"
+                       data-slide="next">
+                        <i class="fa fa-chevron-right fa-lg text-muted"></i>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
+            {{--<div class="testimonial-row row">
                 <div class="col-md-12">
                     <div class="h1 mt-0 text-center font-montserrat-semibold">
                         {{ trans('site.front.student-testimonial.heading') }}
@@ -246,7 +284,7 @@
 
                     </div> <!-- end testimonials-carousel -->
                 </div> <!-- end col-md-12 -->
-            </div>
+            </div>--}}
         </div> <!-- end container-->
 
         <div class="our-course-wrapper">
@@ -390,10 +428,80 @@
     @endif
 @stop
 
+<div id="vooModal" class="modal fade no-header-modal" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                    <iframe allow="autoplay" allowtransparency="true" style="max-width:100%" allowfullscreen="true"
+                            src="" scrolling="no" width="100%" height="430" frameborder="0"></iframe>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 @section('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
     <script>
         let url_link = '{{ route('front.agree-gdpr') }}';
+        let $carousel = jQuery('.carousel-onebyone .carousel');
+        if($carousel.length){
+            jQuery('.carousel-onebyone').on('slide.bs.carousel', carousel_onebyone);
+            carousel_set($carousel);
+            let resizeId;
+            jQuery(window).resize(function() {
+                clearTimeout(resizeId);
+                resizeId = setTimeout(()=>carousel_set($carousel), 500);
+            });
+        }
+
+        function carousel_set($carousel){
+            if(!$carousel || !$carousel.length) return;
+
+            $carousel.each((i, el)=>{
+                let $el = jQuery(el);
+                let itemsPerSlide = carousel_itemsPerSlide($el);
+                let totalItems = $el.find('.carousel-item').length;
+
+                if(itemsPerSlide < totalItems){
+                    $el.find('.carousel-control').removeClass('hidden');
+                }else{
+                    $el.find('.carousel-control').addClass('hidden');
+                }
+            });
+        }
+
+        function carousel_onebyone(e){
+            let carouselID = '#'+jQuery(this).find('.carousel').attr('id');
+            let $carousel = jQuery(carouselID);
+            let $inner = $carousel.find('.carousel-inner');
+            let $items = $carousel.find('.carousel-item');
+
+            let idx = jQuery(e.relatedTarget).index();
+            let itemsPerSlide = carousel_itemsPerSlide($carousel);
+            let totalItems = $items.length;
+
+            if (idx >= totalItems-(itemsPerSlide-1)) {
+                let it = itemsPerSlide - (totalItems - idx);
+                for (let i=0; i<it; i++) {
+                    if (e.direction === 'left') {
+                        $items.eq(i).appendTo($inner);
+                    }else {
+                        $items.eq(0).appendTo($inner);
+                    }
+                }
+            }
+        }
+
+        function carousel_itemsPerSlide($carousel){
+            let itemW = $carousel.find('.carousel-item').width();
+            let innerW = $carousel.find('.carousel-inner').width();
+
+            return Math.floor(innerW/itemW);
+        }
 
         function agreeGdpr() {
             $.post(url_link).then(function(){
@@ -437,6 +545,16 @@
             currentHighlight = (currentHighlight + 1) % items.length;
             items.removeClass('active').eq(currentHighlight).addClass('active');
         });
+
+        $(".vooBtn").click(function(){
+            const iframe = $("#vooModal").find('iframe');
+            iframe.attr('src', $(this).data('link'));
+        });
+
+        $('#vooModal').on('hidden.bs.modal', function (e) {
+            const iframe = $("#vooModal").find('iframe');
+            iframe.attr('src', '');
+        })
 
         function carouselMultiple() {
             $('.multi-item-carousel .item').each(function(){
