@@ -132,7 +132,7 @@
                 </div>
                 <div class="col-md-4">
                     <div class="column webinar" itemscope itemtype="http://schema.org/CreativeWork"
-                         data-bg="https://www.forfatterskolen.no/images-new/front-page/two-women.jpg">
+                         data-bg="https://www.forfatterskolen.no/images-new/front-page/two-women.png">
                         <div class="content-container">
                             <div class="title">
                                 {{ trans('site.front.next-webinar') }}
@@ -162,7 +162,7 @@
                 </div>
                 <div class="col-md-4">
                     <div class="column free-webinar" itemscope itemtype="http://schema.org/CreativeWork"
-                         data-bg="https://www.forfatterskolen.no/images-new/front-page/woman-writing.jpg">
+                         data-bg="https://www.forfatterskolen.no/images-new/front-page/kristine.jpeg">
                         <div class="content-container">
 
                             <div class="title">
