@@ -1206,6 +1206,12 @@ Route::group([
             ->name('admin.single-competition.show');
         Route::post('/single-competition', 'PageController@singleCompetitionStore')
             ->name('admin.single-competition.store');
+        Route::put('/single-competition/{id}', 'PageController@singleCompetitionUpdate')
+            ->name('admin.single-competition.update');
+        Route::delete('/single-competition/{id}', 'PageController@singleCompetitionDelete')
+            ->name('admin.single-competition.delete');
+        Route::delete('/single-competition/{id}/manuscript', 'PageController@singleCompetitionDeleteManuscript')
+            ->name('admin.single-competition.delete-manuscript');
 
         //Calendar Notes
         Route::resource('/calendar-note', 'CalendarNoteController', [

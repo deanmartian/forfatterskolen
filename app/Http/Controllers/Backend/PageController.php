@@ -333,6 +333,83 @@ class PageController extends Controller
         return redirect()->back();
     }
 
+    public function singleCompetitionUpdate( $id, Request $request )
+    {
+        $record = CompetitionApplicant::find($id);
+
+        if (!$record) {
+            abort(404);
+        }
+
+        if( $request->hasFile('manuscript') &&  $request->file('manuscript')->isValid() ) :
+            $extension = pathinfo($_FILES['manuscript']['name'],PATHINFO_EXTENSION);
+            $original_filename = $request->manuscript->getClientOriginalName();
+            $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
+
+            $destinationPath = 'storage/competition-manuscripts/'; // upload path
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $request->manuscript->move($destinationPath, $fileName);
+
+            $file = '/'.$fileName;
+
+            $data = $request->except('_token');
+            $data['manuscript'] = $file;
+
+            // delete old manuscript
+            $file = substr($record->manuscript, 1);
+            if (\File::exists($file)) {
+                \File::delete($file);
+            }
+
+            $record->update($data);
+
+            return redirect()->back()->with([
+                'alert_type' => 'success',
+                'errors'    => AdminHelpers::createMessageBag('Record updated successfully.')
+            ]);
+        endif;
+
+        return redirect()->back();
+    }
+
+    public function singleCompetitionDeleteManuscript($id)
+    {
+        $record = CompetitionApplicant::find($id);
+
+        if (!$record) {
+            abort(404);
+        }
+
+        // delete old manuscript
+        $file = substr($record->manuscript, 1);
+        if (\File::exists($file)) {
+            \File::delete($file);
+        }
+
+        $record->manuscript = '';
+        $record->save();
+
+        return redirect()->back()->with([
+            'alert_type' => 'success',
+            'errors'    => AdminHelpers::createMessageBag('Manuscript deleted successfully.')
+        ]);
+    }
+
+    public function singleCompetitionDelete($id)
+    {
+        $record = CompetitionApplicant::find($id);
+
+        if (!$record) {
+            abort(404);
+        }
+
+        $record->delete();
+        return redirect()->route('admin.single-competition.index')->with([
+            'alert_type' => 'success',
+            'errors'    => AdminHelpers::createMessageBag('Record deleted successfully.')
+        ]);
+    }
+
     public function pilotReader()
     {
         return view('backend.pilot-reader');
