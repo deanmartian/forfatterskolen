@@ -7,6 +7,10 @@
 @section('content')
     <div class="page-toolbar">
         <h3><i class="fa fa-star"></i> Competition</h3>
+        <button class="btn btn-success btn-sm" style="margin-left: 10px" data-toggle="modal"
+                data-target="#addCompetitionModal">
+            Add Learner to Competition
+        </button>
         <div class="clearfix"></div>
     </div>
 
@@ -51,6 +55,38 @@
 
         <div class="pull-right">
             {{$applicants->appends(Request::all())->render()}}
+        </div>
+    </div>
+
+    <div id="addCompetitionModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add to Competition</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{route('admin.single-competition.store')}}"
+                          enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        <div class="form-group">
+                            <label>{{ trans_choice('site.learners', 1) }}</label>
+                            <select name="learner" class="form-control select2" required>
+                                <option value="" selected disabled>- Search Learner -</option>
+                                @foreach($learners as $learner)
+                                    <option value="{{$learner->id}}">{{ $learner->full_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Manuscript</label>
+                            <input type="file" name="manuscript">
+                        </div>
+                        <button type="submit" class="btn btn-primary pull-right margin-top">Add</button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 @stop

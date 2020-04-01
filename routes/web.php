@@ -1204,6 +1204,8 @@ Route::group([
             ->name('admin.single-competition.index');
         Route::get('/single-competition/{id}', 'PageController@singleCompetitionShow')
             ->name('admin.single-competition.show');
+        Route::post('/single-competition', 'PageController@singleCompetitionStore')
+            ->name('admin.single-competition.store');
 
         //Calendar Notes
         Route::resource('/calendar-note', 'CalendarNoteController', [

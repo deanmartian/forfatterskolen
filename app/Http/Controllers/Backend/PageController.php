@@ -273,13 +273,64 @@ class PageController extends Controller
     public function singleCompetition()
     {
         $applicants = CompetitionApplicant::paginate(25);
-        return view('backend.competition.single',compact('applicants'));
+        $applicantUsers = CompetitionApplicant::all()->pluck('user_id');
+        $learners = User::whereNotIn('id', $applicantUsers)
+            ->where('role', 2)
+            ->orderBy('first_name', 'asc')
+            ->get();
+
+        return view('backend.competition.single',compact('applicants', 'learners'));
     }
 
     public function singleCompetitionShow($id)
     {
         $applicant = CompetitionApplicant::find($id);
         return view('backend.competition.single-show',compact('applicant'));
+    }
+
+    /**
+     * Add learner to competition
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function singleCompetitionStore( Request $request )
+    {
+        $this->validate($request, [
+            'learner'       => 'required',
+            'manuscript'    => 'required'
+        ]);
+
+        $user = User::find($request->learner);
+
+        if( $request->hasFile('manuscript') &&  $request->file('manuscript')->isValid() ) :
+            $extension = pathinfo($_FILES['manuscript']['name'],PATHINFO_EXTENSION);
+            $original_filename = $request->manuscript->getClientOriginalName();
+            $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
+
+            $destinationPath = 'storage/competition-manuscripts/'; // upload path
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $request->manuscript->move($destinationPath, $fileName);
+
+            $file = '/'.$fileName;
+
+            $data = $request->except('_token');
+            $data['manuscript'] = $file;
+
+            $user->comeptitionApplication()->create($data);
+
+            $list_id = 110;
+            $activeCampaign['email'] = $user->email;
+            $activeCampaign['name'] = $user->first_name;
+            $activeCampaign['last_name'] = $user->last_name;
+            AdminHelpers::addToActiveCampaignList($list_id, $activeCampaign);
+
+            return redirect()->back()->with([
+                'alert_type' => 'success',
+                'errors'    => AdminHelpers::createMessageBag('Learner added to competition successfully.')
+            ]);
+        endif;
+
+        return redirect()->back();
     }
 
     public function pilotReader()
