@@ -1697,6 +1697,8 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
 
     public function innleveringCompetitionSend( Request $request )
     {
+
+        abort(404);
         $validates = [
             'email' => 'required|email',
             'first_name' => 'required',
