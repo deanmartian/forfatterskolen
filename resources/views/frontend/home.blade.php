@@ -107,26 +107,30 @@
         <div class="container">
             <div class="row upcoming-row">
                 <div class="col-md-4">
-                    <div class="column blog" data-bg="https://www.forfatterskolen.no/images-new/skrive.jpeg">
+                    <div class="column blog" data-bg="https://www.forfatterskolen.no/images-new/home/girl-coffee.jpg"
+                         itemscope itemtype="http://schema.org/CreativeWork">
                         <div class="content-container">
                             <div class="title">
-                                Skrivekonkurranse
+                                {{ trans('site.front.latest-blog-post') }}
                             </div>
 
-                            <div class="h2 mt-0 mb-4 font-montserrat-semibold">
-                                Forfatterskolens skrivekonkurranse:Isolasjon
-                            </div>
+                            @if ($latest_blog)
+                                <div class="h2 mt-0 mb-4 font-montserrat-semibold">
+                                    {{ $latest_blog->title }}
+                                </div>
 
-                            <div class="date-time-cont">
-                                <i class="img-icon16 icon-calendar"></i>
-                                <span>Frist 01.04.2020</span>
-                                {{--<i class="img-icon16 icon-clock ml-3"></i>
-                                <span>20:30</span>--}}
-                            </div>
+                                <div class="date-time-cont">
+                                    <i class="img-icon16 icon-calendar"></i>
+                                    <span>
+                                        {{ \App\Http\FrontendHelpers::formatDate($latest_blog->created_at) }}
+                                    </span>
+                                </div>
 
-                            <a href="{{ route('front.skrive2020') }}" class="btn buy-btn mt-4" title="View competition">
-                                {{ trans('site.front.view') }}
-                            </a>
+                                <a href="{{ route('front.read-blog', $latest_blog->id) }}" class="btn buy-btn mt-4"
+                                   title="View blog link">
+                                    {{ trans('site.front.view') }}
+                                </a>
+                            @endif
                         </div>
                     </div>
                 </div>
