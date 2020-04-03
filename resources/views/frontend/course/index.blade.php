@@ -6,8 +6,8 @@
 
 @section('content')
 	<div class="course-page">
-		<div class="header">
-			<div class="container text-center">
+		<div class="header" data-bg="https://www.forfatterskolen.no/images-new/course-header.png">
+			<div class="container text-center position-relative">
 				<h1>
 					{{ trans('site.front.our-course.title') }}
 				</h1>
@@ -35,7 +35,8 @@
 						{{--@if( \App\Http\FrontendHelpers::isCourseAvailable($course) || $course->is_free) original have this--}}
 							<div class="col-sm-4">
 								<div class="course">
-									<div class="course-header" style="background-image: url({{$course->course_image}})">
+									<div class="course-header"
+									data-bg="https://www.forfatterskolen.no/{{$course->course_image}}">
 										<div class="header-content">
 											@if ($course->instructor)
 												<div class="left-container">

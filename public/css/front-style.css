@@ -469,7 +469,7 @@ start today section
  */
 
 .start-today {
-    background-image: url(../images-new/cta.png);/*../images/girl-reading.png*/
+    /*background-image: url(../images-new/cta.png);../images/girl-reading.png*/
     background-size: auto 70%;/*auto 100%*/
     background-repeat: no-repeat;
     background-position: bottom center;/*center*/
@@ -1500,7 +1500,7 @@ margin-right: 5px;
 }
 
 .course-page .header {
-    background: linear-gradient(rgba(43,43,43,.6),rgba(43,43,43,.6)),url(../images-new/course-header.png);/*url(../images-new/course-bg.png)*/
+    /*background: linear-gradient(rgba(43,43,43,.6),rgba(43,43,43,.6)),url(../images-new/course-header.png);*/
     background-size: 100%;
     background-repeat: no-repeat;
     /*background-position-y: -117px;*/
@@ -1509,6 +1509,16 @@ margin-right: 5px;
     padding-bottom: 134px;
     position: relative;
     transform: translateX(0);
+}
+
+.course-page .header::after {
+    content: '';
+    position: absolute;
+    background: linear-gradient(rgba(43,43,43,.6),rgba(43,43,43,.6));
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 100%;
 }
 
 .course-page .header h1 {
@@ -1527,6 +1537,7 @@ margin-right: 5px;
 
 .course-page .header .container {
     padding: 0 78px;
+    z-index: 1;
 }
 
 .course-page .sub-header {
@@ -1544,6 +1555,7 @@ margin-right: 5px;
     left: 50%;
     bottom: -5%;
     transform: translate(-49%, 50%);
+    z-index: 1;
 }
 
 .course-page .sub-header p {

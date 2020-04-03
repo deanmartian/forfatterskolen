@@ -1,6 +1,6 @@
 @if( Route::currentRouteName() != 'front.free-manuscript.index')
     @if (Auth::guest())
-        <div class="start-today text-center">
+        <div class="start-today text-center" data-bg="https://www.forfatterskolen.no/images-new/cta.png">
             <h5 class="font-regular">
                 {{ trans('site.front.start-today.details') }}
             </h5>
@@ -88,21 +88,21 @@
         <div class="container">
             <div class="row justify-content-center text-center">
                 <div class="col-xl-3 col-lg-4 col-md-4">
-                    <img src="{{asset('images-new/marker.png')}}" alt="">
+                    <img data-src="https://www.forfatterskolen.no/images-new/marker.png" alt="">
                     <h2 class="mt-4">Adresse</h2>
                     <p class="mt-4">
                         Postboks 9233, 3028 Drammen
                     </p>
                 </div>
                 <div class="col-xl-3 col-lg-4 col-md-4">
-                    <img src="{{asset('images-new/email-envelope.png')}}" alt="envelope icon">
+                    <img data-src="https://www.forfatterskolen.no/images-new/email-envelope.png" alt="envelope icon">
                     <h2 class="mt-4">E-post</h2>
                     <p class="mt-4">
                         post@forfatterskolen.no
                     </p>
                 </div>
                 <div class="col-xl-3 col-lg-4 col-md-4">
-                    <img src="{{asset('images-new/telephone.png')}}" alt="">
+                    <img data-src="https://www.forfatterskolen.no/images-new/telephone.png" alt="">
                     <h2 class="mt-4">Kontakt Telefon</h2>
                     <p class="mt-4">
                         +47 411 23 555
