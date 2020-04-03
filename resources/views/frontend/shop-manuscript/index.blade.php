@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <div class="row second-section mx-0">
+        <div class="row second-section mx-0" data-bg="https://www.forfatterskolen.no/images-new/coffee-book.png">
             <div class="container">
                 <div class="col-sm-9 details">
                     <h1 class="title mb-5">
@@ -42,7 +42,7 @@
             </div>
         </div>
 
-        <div class="third-section">
+        <div class="third-section" data-bg="https://www.forfatterskolen.no/images-new/notebook-pen.png">
             <div class="container">
                 <div class="row">
                     {{--<div class="col-sm-6"></div>--}}
@@ -136,13 +136,13 @@
             </div>
         </div> <!-- end fourth section -->
 
-        <div class="last-section">
+        <div class="last-section" data-bg="https://www.forfatterskolen.no/images-new/manu-books.png">
             <div class="container">
                 <div class="col-sm-5 other-services-container">
                     <a href="{{ route('front.coaching-timer') }}">
                         <div class="row box-white">
                             <div class="col-sm-3">
-                                <img src="{{ asset('images-new/other-services/open-book.png') }}">
+                                <img data-src="https://www.forfatterskolen.no/images-new/other-services/open-book.png">
                             </div>
 
                             <div class="col-sm-9">
@@ -159,7 +159,7 @@
                     <a href="{{ route('front.correction') }}">
                         <div class="row box-white">
                             <div class="col-sm-3">
-                                <img src="{{ asset('images-new/other-services/book.png') }}">
+                                <img data-src="https://www.forfatterskolen.no/images-new/other-services/book.png">
                             </div>
 
                             <div class="col-sm-9">
@@ -176,7 +176,7 @@
                     <a href="{{ route('front.copy-editing') }}">
                         <div class="row box-white">
                             <div class="col-sm-3">
-                                <img src="{{ asset('images-new/other-services/list.png') }}">
+                                <img data-src="https://www.forfatterskolen.no/images-new/other-services/list.png">
                             </div>
 
                             <div class="col-sm-9">

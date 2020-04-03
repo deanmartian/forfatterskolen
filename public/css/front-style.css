@@ -554,7 +554,7 @@ start today section
 }
 
 .manuscript-page .second-section {
-    background-image: url(../images-new/coffee-book.png);
+    /*background-image: url(../images-new/coffee-book.png);*/
     background-size: auto 100%;
     background-repeat: no-repeat;
     background-position: right;
@@ -579,7 +579,7 @@ start today section
 }
 
 .manuscript-page .third-section {
-    background-image: url(../images-new/notebook-pen.png);
+    /*background-image: url(../images-new/notebook-pen.png);*/
     background-size: auto 75%;
     background-repeat: no-repeat;
     background-color: #eeeeeb;
@@ -826,7 +826,7 @@ start today section
 }
 
 .manuscript-page .last-section {
-    background-image: url(../images-new/manu-books.png);
+    /*background-image: url(../images-new/manu-books.png);*/
     background-size: cover;
     background-repeat: no-repeat;
     height: auto;
@@ -2753,15 +2753,32 @@ margin-right: 5px;
 /* coaching timer page */
 
 .coaching-timer-page {
-    background: linear-gradient( rgba(255, 255, 255, .75), rgba(255, 255, 255, .75) ),
-    url(../images-new/ctimer-bg.png) no-repeat 0 -205px / 100% 90%; /* shorthand color, image, repeat, position, size*/
+   /* background: linear-gradient( rgba(255, 255, 255, .75), rgba(255, 255, 255, .75) ),
+    url(../images-new/ctimer-bg.png) no-repeat 0 -205px / 100% 90%; !* shorthand color, image, repeat, position, size*!*/
+    background-repeat: no-repeat;
+    background-position: 0 -205px;
+    background-size: 100% 90%;
     margin-bottom: 100px;
-    padding-top: 75px
+    padding-top: 75px;
+    position:relative;
 }
+
+.coaching-timer-page::before {
+    content:'';
+    position: absolute;
+    background: linear-gradient( rgba(255, 255, 255, .75), rgba(255, 255, 255, .75) );
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+}
+
 
 .coaching-timer-page h1 {
     font-family: "Barlow Regular", sans serif;
     font-size: 35px;
+    position: relative;
 }
 
 .coaching-timer-page .details-container {
@@ -2793,12 +2810,21 @@ margin-right: 5px;
     width: 145px;
 }
 
-.coaching-timer-page .details-container .left-column {
-    background: linear-gradient( rgba(56, 56, 56, .63), rgba(56, 56, 56, .63) ), url(../images-new/ctimer-left.jpg);
+.coaching-timer-page .details-container .left-column::before,
+.coaching-timer-page .details-container .right-column::before {
+    /*background: linear-gradient( rgba(56, 56, 56, .63), rgba(56, 56, 56, .63) ), url(../images-new/ctimer-left.jpg);*/
+    content:'';
+    position: absolute;
+    background: linear-gradient( rgba(56, 56, 56, .63), rgba(56, 56, 56, .63) );
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
 }
 
 .coaching-timer-page .details-container .right-column {
-    background: linear-gradient( rgba(56, 56, 56, .63), rgba(56, 56, 56, .63) ), url(../images-new/ctimer-right.jpg);
+    /*background: linear-gradient( rgba(56, 56, 56, .63), rgba(56, 56, 56, .63) ), url(../images-new/ctimer-right.jpg);*/
 }
 
 .coaching-timer-page .details-container .left-column,
@@ -2806,6 +2832,7 @@ margin-right: 5px;
     background-repeat: no-repeat;
     background-size: cover;
     padding: 80px;
+    position: relative;
 }
 
 .coaching-timer-page .details-container .smaller-circle h1 {
@@ -2825,6 +2852,7 @@ margin-right: 5px;
     border: 1px solid #fff;
     color: #fff;
     margin-top: 30px;
+    position:relative;
 }
 
 .coaching-timer-page .details-container .buy-btn:after {

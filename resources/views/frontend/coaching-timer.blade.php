@@ -6,7 +6,7 @@
 
 @section('content')
 
-    <div class="coaching-timer-page">
+    <div class="coaching-timer-page" data-bg="https://www.forfatterskolen.no/images-new/ctimer-bg.png">
         <div class="container">
             <h1 class="title text-center">
                 {{ trans('site.front.coaching-timer.title') }}
@@ -14,7 +14,7 @@
 
             <div class="row details-container text-center">
                 <div class="col-md-6">
-                    <div class="left-column">
+                    <div class="left-column" data-bg="https://www.forfatterskolen.no/images-new/ctimer-left.jpg">
                         <div class="circle">
                             <div class="smaller-circle">
                                 <h1>1190 KR</h1>
@@ -27,7 +27,7 @@
                         <h1>
                             {{ trans('site.front.coaching-timer.one-on-one-coaching') }}
                         </h1>
-                        <p>
+                        <p class="position-relative">
                             {{ trans('site.front.coaching-timer.one-on-one-coaching-description') }}
                         </p>
                         <a href="{{ route('front.coaching-timer-checkout', 2) }}" class="btn buy-btn">
@@ -36,7 +36,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="right-column">
+                    <div class="right-column" data-bg="https://www.forfatterskolen.no/images-new/ctimer-right.jpg">
                         <div class="circle">
                             <div class="smaller-circle">
                                 <h1>1690 KR</h1>
@@ -49,7 +49,7 @@
                         <h1>
                             {{ trans('site.front.coaching-timer.one-on-one-coaching') }}
                         </h1>
-                        <p>
+                        <p class="position-relative">
                             {{ trans('site.front.coaching-timer.one-on-one-coaching-description') }}
                         </p>
                         <a href="{{ route('front.coaching-timer-checkout', 1) }}" class="btn buy-btn">
