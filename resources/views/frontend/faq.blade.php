@@ -6,7 +6,7 @@
 
 @section('content')
 
-    <div class="faq-page">
+    <div class="faq-page" data-bg="https://www.forfatterskolen.no/images-new/faq-bg.png">
         <div class="container">
             <div class="row">
                 <div class="col-md-6 col-sm-12">
@@ -21,7 +21,7 @@
                     <a href="{{ route('front.support-articles', 3) }}" class="red-underline-hover">
                         <div class="panel panel-default">
                             <div class="panel-body">
-                                <img src="{{ asset('images-new/go-to-webinar.png') }}" alt="">
+                                <img data-src="https://www.forfatterskolen.no/images-new/go-to-webinar.png" alt="">
                                 <h2>
                                     {{ trans('site.front.gt-webinar.title') }}
                                 </h2>
@@ -37,7 +37,7 @@
                     <a href="{{ route('front.support-articles', 4) }}" class="red-underline-hover">
                         <div class="panel panel-default">
                             <div class="panel-body">
-                                <img src="{{ asset('images-new/pen-paper.png') }}" alt="">
+                                <img data-src="https://www.forfatterskolen.no/images-new/pen-paper.png" alt="">
                                 <h2>
                                     {{ trans('site.front.get-started.title') }}
                                 </h2>
@@ -52,7 +52,7 @@
                 <div class="col-md-4">
                     <div class="panel panel-default">
                         <div class="panel-body">
-                            <img src="{{ asset('images-new/document.png') }}" alt="">
+                            <img data-src="https://www.forfatterskolen.no/images-new/document.png" alt="">
                             <h2>
                                 {{ trans('site.front.replays.title') }}
                             </h2>
@@ -94,7 +94,7 @@
             <div class="row">
                 <div class="col-sm-12 author-container">
                     <div class="pull-left mr-4">
-                        <img src="{{ asset('images/kristine.png') }}" alt="" class="rounded-circle">
+                        <img data-src="https://www.forfatterskolen.no/images/kristine.png" alt="" class="rounded-circle">
                     </div>
                     <div class="pull-left">
                         <h2>
