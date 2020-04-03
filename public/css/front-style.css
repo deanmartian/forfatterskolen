@@ -4414,9 +4414,23 @@ margin-right: 5px;
 /* login page */
 .login-container {
     /*background-color: #f9f9f9;*/
-    background: linear-gradient( rgba(249, 249, 249, .89), rgba(249, 249, 249, .89) ),
-    url(../images-new/login/login-bg.jpg) no-repeat top / cover;
+   /* background: linear-gradient( rgba(249, 249, 249, .89), rgba(249, 249, 249, .89) ),
+    url(../images-new/login/login-bg.jpg) no-repeat top / cover;*/
+    background-repeat: no-repeat;
+    background-position: top;
+    background-size: cover;
     padding: 100px 0;
+    position: relative;
+}
+.login-container::before {
+    content: "";
+    position: absolute;
+    background: linear-gradient( rgba(249, 249, 249, .89), rgba(249, 249, 249, .89) );
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
 }
 
 .login-container .container {
@@ -4429,13 +4443,27 @@ margin-right: 5px;
 }
 
 .login-container .left-container {
-    background: linear-gradient( rgba(0, 0, 0, .33), rgba(0, 0, 0, .33) ),url(../images-new/login/left-bg.jpg) no-repeat
-    -295px -230px / 1000px 900px;
+   /* background: linear-gradient( rgba(0, 0, 0, .33), rgba(0, 0, 0, .33) ),url(../images-new/login/left-bg.jpg) no-repeat
+    -295px -230px / 1000px 900px;*/
+    background-repeat: no-repeat;
+    background-position: -295px -230px;
+    background-size: 1000px 900px;
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
     min-height: 600px;
     padding-right: 0;
     position: relative;
+}
+
+.login-container .left-container::before {
+    content: "";
+    position: absolute;
+    background: linear-gradient( rgba(0, 0, 0, .33), rgba(0, 0, 0, .33) );
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
 }
 
 .login-container .left-container .signup-tab {
