@@ -6,7 +6,7 @@
 
 @section('content')
 
-    <div class="other-service-page correction-page">
+    <div class="other-service-page correction-page" data-bg="https://www.forfatterskolen.no/images-new/correction-bg.jpg">
         <div class="container">
             <h1 class="text-center">
                 {{ trans('site.front.correction.title') }}

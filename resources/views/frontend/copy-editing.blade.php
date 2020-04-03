@@ -6,7 +6,7 @@
 
 @section('content')
 
-    <div class="other-service-page copy-editing-page">
+    <div class="other-service-page copy-editing-page" data-bg="https://www.forfatterskolen.no/images-new/copy-editing-bg.jpg">
         <div class="container">
             <h1 class="text-center">
                 {{ trans('site.front.copy-editing.title') }}
