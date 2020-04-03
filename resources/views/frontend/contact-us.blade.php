@@ -11,8 +11,8 @@
 @stop
 
 @section('content')
-    <div class="contact-page">
-        <div class="header text-center">
+    <div class="contact-page" >
+        <div class="header text-center" data-bg="https://www.forfatterskolen.no/images-new/contact-main-bg.jpg">
             <h1>
                 {{ trans('site.front.nav.contact-us') }}
             </h1>
@@ -24,7 +24,7 @@
                     <div class="row">
                         <div class="col-md-2 text-center">
                             <div class="editor-circle">
-                                <img src="{{ asset('images-new/kristine1.png') }}" alt="" class="rounded-circle">
+                                <img data-src="https://www.forfatterskolen.no/images-new/kristine1.png" alt="" class="rounded-circle">
                             </div>
                             <i>{{ trans('site.front.contact-us.main-container-photo-text') }}</i>
                         </div>
@@ -59,7 +59,7 @@
                                 <li>
                                     <div class="row">
                                         <div class="col-sm-2 stab-image">
-                                            <img src="{{ asset($staff->image ? $staff->image : 'images/user.png')  }}" class="rounded-circle">
+                                            <img data-src="https://www.forfatterskolen.no/{{ ($staff->image ? $staff->image : 'images/user.png')  }}" class="rounded-circle">
                                         </div>
                                         <div class="col-sm-10">
                                             <h2>
@@ -86,11 +86,11 @@
                 </div>
                 <div class="col-md-6">
                     <h1>{{ trans('site.front.contact-us.contact-us-today') }}</h1>
-                    <div class="row contact-row">
+                    <div class="row contact-row"data-bg="https://www.forfatterskolen.no/images-new/contact-bg.png">
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-sm-2 contact-image">
-                                    <img src="{{ asset('images-new/kristine1.png')  }}" class="rounded-circle">
+                                    <img data-src="https://www.forfatterskolen.no/images-new/kristine1.png" class="rounded-circle">
                                 </div>
                                 <div class="col-sm-10">
                                     <h2 class="author">

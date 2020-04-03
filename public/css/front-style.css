@@ -2429,7 +2429,7 @@ margin-right: 5px;
 /* contact page */
 
 .contact-page .header {
-    background: linear-gradient( rgba(43, 43, 43, 0.6), rgba(43, 43, 43, 0.6) ), url(../images-new/contact-main-bg.jpg);
+    /*background: linear-gradient( rgba(43, 43, 43, 0.6), rgba(43, 43, 43, 0.6) ), url(../images-new/contact-main-bg.jpg);*/
     background-repeat: no-repeat;
     background-size: 100% 100%;
     background-color: #000;
@@ -2439,9 +2439,21 @@ margin-right: 5px;
     position: relative;
 }
 
+.contact-page .header::before {
+    content: "";
+    position: absolute;
+    background: linear-gradient( rgba(43, 43, 43, 0.6), rgba(43, 43, 43, 0.6) );
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+}
+
 .contact-page .header h1 {
     font-size: 40px;
     letter-spacing: 2px;
+    position: relative;
 }
 
 .contact-page .main-container {
@@ -2543,7 +2555,7 @@ margin-right: 5px;
 }
 
 .contact-page .secondary-container .contact-row {
-    background-image: url(../images-new/contact-bg.png);
+    /*background-image: url(../images-new/contact-bg.png);*/
     background-position-y: -10px;
     background-repeat: no-repeat;
     background-size: 100% 50%;
