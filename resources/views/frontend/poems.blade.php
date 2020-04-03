@@ -10,7 +10,7 @@
 
 @section('content')
     <div class="poems-page">
-        <div class="header">
+        <div class="header" data-bg="https://www.forfatterskolen.no/images-new/poems-page-header.png">
             <div class="container">
                 <div class="col-md-6">
                     <h1 class="font-barlow-regular">{{ trans('site.front.poems.page-title') }}</h1>
@@ -27,7 +27,9 @@
                     <div class="col-md-4 mt-5">
                         <div class="card">
                             <div class="card-header">
-                                <div class="img-container" style="background-image: url({{ asset($poem->author_image) }})"></div>
+                                {{-- style="background-image: url({{ asset($poem->author_image) }})"--}}
+                                <div class="img-container"
+                                data-bg="https://www.forfatterskolen.no/{{ $poem->author_image }}"></div>
                                 <div class="text-center author-container">
                                     <h2 class="theme-text font-barlow-medium">{{ $poem->title }}</h2>
                                     <h2>{{ $poem->author }}</h2>

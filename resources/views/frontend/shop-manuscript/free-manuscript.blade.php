@@ -14,8 +14,8 @@
 
 @section('content')
 <div class="free-manuscript-page">
-    <div class="header">
-        <div class="container text-center">
+    <div class="header" data-bg="https://www.forfatterskolen.no/images-new/free-manuscript-header.jpg">
+        <div class="container text-center position-relative">
             <h1>{{ trans('site.front.free-manuscript.header-title') }}</h1>
             <p>
                 {{ trans('site.front.free-manuscript.description') }}
@@ -23,7 +23,7 @@
         </div>
     </div> <!-- end header-->
 
-    <div class="body">
+    <div class="body" data-bg="https://www.forfatterskolen.no/images-new/free-manuscript-body.png">
         <div class="container">
             <div class="row form-container">
                 <div class="col-lg-8 col-md-12 col-md-offset-2">

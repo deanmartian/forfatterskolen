@@ -4205,12 +4205,25 @@ margin-right: 5px;
 }
 
 .free-manuscript-page .header {
-    background: linear-gradient(rgba(58, 58, 58, .52), rgba(58, 58, 58, .52)),
-    url(../images-new/free-manuscript-header.jpg) no-repeat bottom / cover;
+    /*background: linear-gradient(rgba(58, 58, 58, .52), rgba(58, 58, 58, .52)),
+    url(../images-new/free-manuscript-header.jpg) no-repeat bottom / cover;*/
+    background-repeat: no-repeat;
+    background-position: bottom;
+    background-size: cover;
     color: #fff;
     height: 460px;
     padding: 90px 400px;
     position: relative;
+}
+
+.free-manuscript-page .header:before {
+    content: "";
+    background: linear-gradient(rgba(58, 58, 58, .52), rgba(58, 58, 58, .52));
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 100%;
 }
 
 .free-manuscript-page .header h1 {
@@ -4225,7 +4238,11 @@ margin-right: 5px;
 }
 
 .free-manuscript-page .body {
-    background: url(../images-new/free-manuscript-body.png) no-repeat bottom / cover;
+    /*background: url(../images-new/free-manuscript-body.png) no-repeat bottom / cover;*/
+    background-repeat: no-repeat;
+    background-position: bottom;
+    background-size: cover;
+
 }
 
 .free-manuscript-page .body .form-container {
@@ -5264,7 +5281,10 @@ margin-right: 5px;
 }
 
 .poems-page .header {
-    background: url("../images-new/poems-page-header.png") no-repeat top right / 900px 400px;
+    /*background: url("../images-new/poems-page-header.png") no-repeat top right / 900px 400px;*/
+    background-repeat: no-repeat;
+    background-position: top right;
+    background-size: 900px 400px;
     height: 400px;
     padding-top: 100px;
 }
