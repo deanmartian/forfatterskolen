@@ -1761,7 +1761,7 @@ margin-right: 5px;
 }
 
 .course-single-page .header {
-    background: linear-gradient( rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4) ), url(../images-new/course-single-bg.png);
+    /*background: linear-gradient( rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4) ), url(../images-new/course-single-bg.png);*/
     background-repeat: no-repeat;
     background-size: 100% 100%;
     background-color: #000;
@@ -1770,6 +1770,16 @@ margin-right: 5px;
     position: relative;
 }
 
+.course-single-page .header::before {
+    content:"";
+    position:absolute;
+    background: linear-gradient( rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4) );
+    top: 0;
+    bottom: 0;
+    left:0;
+    right:0;
+    height:100%;
+}
 
 .course-single-page .header h1 {
     font-size: 40px;

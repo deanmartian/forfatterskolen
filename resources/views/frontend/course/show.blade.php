@@ -24,11 +24,11 @@
     ?>
 
 	<div class="course-single-page">
-		<div class="header">
+		<div class="header" data-bg="https://www.forfatterskolen.no/images-new/course-single-bg.png">
 			<div class="container text-center">
-				<h1>{{$course->title}}</h1>
+				<h1 class="position-relative" style="z-index:1;">{{$course->title}}</h1>
 				@if (!$course->is_free && !$course->hide_price)
-					<span class="course-price">
+					<span class="course-price position-relative">
 						<?php
 							$price = \App\Http\FrontendHelpers::currencyFormat($isBetween && $course->packages[0]->full_payment_sale_price
                                 ? $course->packages[0]->full_payment_sale_price
@@ -68,7 +68,7 @@
 		</div> <!-- end header -->
 
 		<div class="container single-content">
-			<div class="row course-image-row" style="background-image: url({{$course->course_image}})">
+			<div class="row course-image-row" data-bg="https://www.forfatterskolen.no/{{$course->course_image}}">
 				@if ($course->start_date)
 					<div class="date-container">
 						<h1>
