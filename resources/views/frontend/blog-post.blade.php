@@ -3,7 +3,7 @@
         @foreach($blog_chunk as $blog)
             <div class="col-sm-6 blog-column">
                 <div class="blog-row">
-                    <img src="{{ asset($blog->image) }}" alt="" width="auto">
+                    <img data-src="https://www.forfatterskolen.no/{{ $blog->image }}" alt="" width="auto">
 
                     <div class="details">
                         <div class="date-author-cont color-b4 mb-4">
@@ -34,11 +34,11 @@
                             <span class="social-container">
                                 <a href="http://www.facebook.com/sharer.php?u={{ route('front.read-blog', $blog->id) }}"
                                    target="_new">
-                                    <img src="{{asset('images-new/social-icons/facebook.png')}}" class="social-image mr-2">
+                                    <img data-src="https://www.forfatterskolen.no/images-new/social-icons/facebook.png" class="social-image mr-2">
                                 </a>
                                 <a href="https://twitter.com/share?url={{ route('front.read-blog', $blog->id) }};text={{ $blog->title }}"
                                    target="_new">
-                                    <img src="{{asset('images-new/social-icons/twitter.png')}}" class="social-image">
+                                    <img data-src="https://www.forfatterskolen.no/images-new/social-icons/twitter.png" class="social-image">
                                 </a>
                             </span>
                         </div>

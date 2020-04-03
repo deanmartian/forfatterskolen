@@ -1090,7 +1090,7 @@ start today section
 /* blog page */
 
 .blog-page {
-    background-image: url(../images-new/blog-bg.png);
+   /* background-image: url(../images-new/blog-bg.png);*/
     background-repeat: no-repeat;
     background-size: contain;
     background-position: bottom;
