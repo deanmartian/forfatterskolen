@@ -107,7 +107,7 @@
         <div class="container">
             <div class="row upcoming-row">
                 <div class="col-md-4">
-                    <div class="column blog" data-bg="https://www.forfatterskolen.no/images-new/home/girl-coffee.jpg"
+                    <div class="column blog" data-bg="https://www.forfatterskolen.no/images-new/front-page/blog.png"
                          itemscope itemtype="http://schema.org/CreativeWork">
                         <div class="content-container">
                             <div class="title">
@@ -135,8 +135,8 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="column webinar" itemscope itemtype="http://schema.org/CreativeWork"
-                         data-bg="https://www.forfatterskolen.no/images-new/front-page/two-women.png">
+                    <div class="column webinar" data-bg="https://www.forfatterskolen.no/images-new/front-page/webinar-image.png"
+                         itemscope itemtype="http://schema.org/CreativeWork">
                         <div class="content-container">
                             <div class="title">
                                 {{ trans('site.front.next-webinar') }}
