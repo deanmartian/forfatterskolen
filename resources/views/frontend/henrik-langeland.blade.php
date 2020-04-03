@@ -6,11 +6,11 @@
 
 @section('content')
 
-    <div class="henrik-page">
+    <div class="henrik-page"data-bg="https://www.forfatterskolen.no/images-new/langeland/bg-image.png">
         <div class="container">
             <div class="row header">
                 <div class="col-md-12 text-center">
-                    <img src="{{ asset('images-new/langeland/header-image.png') }}" alt="">
+                    <img data-src="https://www.forfatterskolen.no/images-new/langeland/header-image.png" alt="">
                     <h2 class="theme-text">
                         En perfekt gave til den skriveglade!
                     </h2>
@@ -23,7 +23,7 @@
 
             <div class="row first-container">
                 <div class="col-md-6">
-                    <div class="owner-image-container">
+                    <div class="owner-image-container"data-bg="https://www.forfatterskolen.no/images-new/langeland/henrik.jpg">
                     </div>
                 </div>
                 <div class="col-md-6 d-flex owner-details-container">
@@ -109,11 +109,11 @@
                             <!-- The slideshow -->
                             <div class="container carousel-inner no-padding">
                                 <div class="carousel-item active">
-                                    <img src="{{ asset('images-new/langeland/maja-text.jpg') }}" alt="">
+                                    <img data-src="https://www.forfatterskolen.no/images-new/langeland/maja-text.jpg" alt="">
                                 </div>
 
                                 <div class="carousel-item">
-                                    <img src="{{ asset('images-new/langeland/henrik-med-text.jpg') }}" alt="">
+                                    <img data-src="https://www.forfatterskolen.no/images-new/langeland/henrik-med-text.jpg" alt="">
                                 </div>
                             </div> <!-- end carouse-inner -->
 
@@ -163,7 +163,7 @@
             </div> <!-- end container -->
         </div> <!-- end third-container -->
 
-        <div class="fourth-container">
+        <div class="fourth-container" data-bg="https://www.forfatterskolen.no/images-new/langeland/testimonial-bg.png">
             <div class="container">
                 <div class="col-md-8 head">
                     <div class="row">
@@ -326,7 +326,7 @@
             </div> <!-- end container -->
         </div> <!-- end fourth-container -->
 
-        <div class="fifth-container">
+        <div class="fifth-container" data-bg="https://www.forfatterskolen.no/images-new/langeland/book-subtle-bg.png">
             <div class="container">
                 <div class="row">
                     <div class="col-md-6 d-flex left-container">

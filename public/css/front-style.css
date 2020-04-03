@@ -4738,9 +4738,24 @@ margin-right: 5px;
 
 /* henrik langeland page */
 .henrik-page {
-    background: linear-gradient( rgba(255, 255, 255, .85), rgba(255, 255, 255, .85)),
-    url(../images-new/langeland/bg-image.png) no-repeat 3px -15px / 100% 700px;
+   /* background: linear-gradient( rgba(255, 255, 255, .85), rgba(255, 255, 255, .85)),
+    url(../images-new/langeland/bg-image.png) no-repeat 3px -15px / 100% 700px;*/
+    background-repeat: no-repeat;
+    background-position: 3px -15px;
+    background-size: 100% 700px;
     padding-top: 130px;
+    position: relative;
+}
+
+.henrik-page::before {
+    content: "";
+    position: absolute;
+    background: linear-gradient( rgba(255, 255, 255, .85), rgba(255, 255, 255, .85));
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
 }
 
 .henrik-page .header img {
@@ -4764,7 +4779,10 @@ margin-right: 5px;
 }
 
 .henrik-page .first-container .owner-image-container {
-    background: url(../images-new/langeland/henrik.jpg) no-repeat left / cover;
+    /*background: url(../images-new/langeland/henrik.jpg) no-repeat left / cover;*/
+    background-repeat: no-repeat;
+    background-position: left;
+    background-size: cover;
     border-radius: 5px;
     height: 562px;
 }
@@ -4910,6 +4928,7 @@ margin-right: 5px;
 .henrik-page .third-container .contemporary-writer {
     margin-top: 60px;
     padding: 0 226px;
+    position: relative;
 }
 
 .henrik-page .third-container .contemporary-writer h1, .henrik-page .fourth-container h1 {
@@ -4917,11 +4936,26 @@ margin-right: 5px;
 }
 
 .henrik-page .fourth-container {
-    background: linear-gradient(rgba(0, 0, 0, .8), rgba(0, 0, 0, .8)),
-    url(../images-new/langeland/testimonial-bg.png) no-repeat center / cover;
+   /* background: linear-gradient(rgba(0, 0, 0, .8), rgba(0, 0, 0, .8)),
+    url(../images-new/langeland/testimonial-bg.png) no-repeat center / cover;*/
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
     color: #fff;
     min-height: 500px;
     padding: 60px 0;
+    position: relative;
+}
+
+.henrik-page .fourth-container::before {
+    content: "";
+    position: absolute;
+    background: linear-gradient(rgba(0, 0, 0, .8), rgba(0, 0, 0, .8));
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
 }
 
 .henrik-page .fourth-container .head p {
@@ -4948,9 +4982,13 @@ margin-right: 5px;
 }
 
 .henrik-page .fifth-container {
-    background: url(../images-new/langeland/book-subtle-bg.png) no-repeat center right / contain;
+    /*background: url(../images-new/langeland/book-subtle-bg.png) no-repeat center right / contain;*/
+    background-repeat: no-repeat;
+    background-position: center right;
+    background-size: contain;
     padding-bottom: 60px;
     padding-top: 60px;
+    position: relative;
 }
 
 .henrik-page .fifth-container h1 {
@@ -4982,6 +5020,7 @@ margin-right: 5px;
     background-color: #852736;
     color: #fff;
     padding: 30px;
+    position: relative;
 }
 
 .henrik-page .last-container h1 {
