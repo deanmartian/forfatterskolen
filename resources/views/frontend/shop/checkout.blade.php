@@ -6,7 +6,7 @@
 
 @section('content')
 
-	<div class="checkout-page">
+	<div class="checkout-page" data-bg="https://www.forfatterskolen.no/images-new/checkout-bg.png">
 		<div class="container">
 			<div class="row">
 					<div class="col-lg-8">
