@@ -10,7 +10,7 @@
 
 @section('content')
 
-    <div class="publishing-page">
+    <div class="publishing-page" data-bg="https://www.forfatterskolen.no/images-new/publishing-bg.jpg">
         <div class="container">
             <div class="row">
                 <div class="col-md-6 col-sm-12">
@@ -43,13 +43,13 @@
                                             @if($book['book_image_link'])
                                                 <a href="{{$book['book_image_link']}}" target="_blank">
                                                     @endif
-                                                    <img src="{{ $book_image }}" alt="{{ $book['title'] }}"
+                                                    <img data-src="https://www.forfatterskolen.no/{{ $book_image }}" alt="{{ $book['title'] }}"
                                                          class="img-responsive pull-right right-image">
                                                     @if($book['book_image_link'])
                                                 </a>
                                             @endif
 
-                                            <img src="{{ $author_image }}" alt="{{ $book['title'] }}" class="img-responsive">
+                                            <img data-src="https://www.forfatterskolen.no/{{ $author_image }}" alt="{{ $book['title'] }}" class="img-responsive">
                                         </div>
                                         <div class="right-container">
                                             <h1 class="book-title">{{ $book['title'] }}</h1>

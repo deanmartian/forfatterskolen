@@ -987,7 +987,7 @@ start today section
 
 .publishing-page {
     background-color: #eff0f7;
-    background-image: url(../images-new/publishing-bg.jpg);
+   /* background-image: url(../images-new/publishing-bg.jpg);*/
     background-size: auto 700px;
     background-repeat: no-repeat;
     background-position-x: right;
