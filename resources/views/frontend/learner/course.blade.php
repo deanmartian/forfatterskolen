@@ -88,7 +88,7 @@
 					@foreach( Auth::user()->coursesTaken as $courseTaken )
 						<div class="col-md-12 col-lg-3 no-right-padding adjust-right-padding">
 							<div class="learner-course card border-0">
-								<div class="course-thumb" style="background-image: url({{$courseTaken->package->course->course_image}})"></div>
+								<div class="course-thumb" data-bg="https://www.forfatterskolen.no/{{$courseTaken->package->course->course_image}}"></div>
 								<div class="course-details card-body">
 									<h3 class="font-weight-normal font-barlow-regular">
 										{{$courseTaken->package->course->title}}

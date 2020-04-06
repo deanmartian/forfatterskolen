@@ -104,7 +104,7 @@
                                 <div class="card card-global border-0">
                                     <div class="card-header webinar-thumb">
                                         <a href="{{ $webinar->link }}">
-                                            <div style="background-image: url({{ $webinar->image }})">
+                                            <div data-bg="https://www.forfatterskolen.no/{{ $webinar->image }}">
                                                 <i class="play-button"></i>
                                             </div>
                                         </a>

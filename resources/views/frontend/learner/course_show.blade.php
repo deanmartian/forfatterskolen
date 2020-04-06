@@ -81,7 +81,7 @@
 									<div class="panel-body">
 										<div class="row">
 											<div class="col-sm-12 col-lg-3">
-												<div class="course-list-thumb" style="background-image: url({{$courseTaken->package->course->course_image}})"></div>
+												<div class="course-list-thumb" data-bg="https://www.forfatterskolen.no/{{$courseTaken->package->course->course_image}}"></div>
 											</div>
 											<div class="col-sm-12 col-lg-9 course-list-details">
 												<p class="pull-right">

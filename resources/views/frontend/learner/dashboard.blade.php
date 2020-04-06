@@ -25,7 +25,7 @@
                                 <div class="col-md-12 course-item">
                                     <div class="row align-items-center">
                                         <div class="col-md-3 image-container">
-                                            <img src="{{$courseTaken->package->course->course_image}}" alt="">
+                                            <img data-src="https://www.forfatterskolen.no/{{$courseTaken->package->course->course_image}}" alt="">
                                         </div>
                                         <div class="col-md-6 course-details">
                                             <h3 class="font-weight-normal">
@@ -276,7 +276,7 @@
                                 }
                             ?>
                             <a href="{{ $img_web_link }}">
-                                <div class="image-container" style="background-image: url({{ $webinar->image }})">
+                                <div class="image-container" data-bg="https://www.forfatterskolen.no/{{ $webinar->image }}">
                                 </div>
                             </a>
                             <div class="details-container">
@@ -328,7 +328,7 @@
                                 }
                             ?>
                             <a href="{{ $img_web_link }}">
-                                <div class="image-container" style="background-image: url({{ $webinar->image }})">
+                                <div class="image-container" data-bg="https://www.forfatterskolen.no/{{ $webinar->image }}">
                                 </div>
                             </a>
                             <div class="details-container">
