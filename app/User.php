@@ -197,7 +197,7 @@ class User extends Authenticatable
         $image = substr($this->attributes['profile_image'], 1);
         if(File::exists($image)) return $value;
 
-        return asset('images/user.png');
+        return 'https://www.forfatterskolen.no/images/user.png';
         
     }
 

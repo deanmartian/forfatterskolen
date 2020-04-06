@@ -114,7 +114,7 @@
                                             }
                                         ?>
                                         <a href="{{ $img_web_link }}">
-                                            <div style="background-image: url({{ $webinar->image }})">
+                                            <div data-bg="https://www.forfatterskolen.no/{{ $webinar->image }}">
                                                 <i class="play-button"></i>
                                             </div>
                                         </a>
@@ -211,7 +211,7 @@
                                             }
                                         ?>
                                         <a href="{{ $img_web_link }}">
-                                            <div style="background-image: url({{ $webinar->image }})">
+                                            <div data-bg="https://www.forfatterskolen.no/{{ $webinar->image }}">
                                                 <i class="play-button"></i>
                                             </div>
                                         </a>
