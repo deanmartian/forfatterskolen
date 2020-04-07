@@ -109,6 +109,7 @@ Route::group([
         Route::get('/henrik-langeland', 'HomeController@henrikPage')->name('front.henrik'); // Upviral ref page
         Route::get('/skrive2020', 'HomeController@innleveringCompetition')->name('front.innlevering.join');
         Route::get('/poems', 'HomeController@poems')->name('front.poems'); // Poems page
+        Route::get('/gro-dahle', 'HomeController@grodahlePage')->name('front.gro-dahle');
 
         // Test Manuscript (Shop Manuscript)
         Route::post('/test_manuscript', 'ShopManuscriptController@test_manuscript')->name('front.shop-manuscript.test_manuscript'); // Test count shop manuscript

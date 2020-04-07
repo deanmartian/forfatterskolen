@@ -100,22 +100,24 @@
 					{!! nl2br($workshop->description) !!}
 				</div>
 
-				<div class="information-container">
-					<h1>
-						{{ ucwords(trans('site.front.workshop.practical-information')) }}
-					</h1>
+				@if ($workshop->id !== 12)
+					<div class="information-container">
+						<h1>
+							{{ ucwords(trans('site.front.workshop.practical-information')) }}
+						</h1>
 
-					@foreach( $workshop->menus as $menu )
-						<div class="row">
-							<div class="col-md-2 left-container">
-								<img src="{{ $menu->image  }}" alt="" class="rounded-circle">
+						@foreach( $workshop->menus as $menu )
+							<div class="row">
+								<div class="col-md-2 left-container">
+									<img src="{{ $menu->image  }}" alt="" class="rounded-circle">
+								</div>
+								<div class="col-md-10 right-container">
+									{!! nl2br($menu->description) !!}
+								</div>
 							</div>
-							<div class="col-md-10 right-container">
-								{!! nl2br($menu->description) !!}
-							</div>
-						</div>
-					@endforeach
-				</div>
+						@endforeach
+					</div>
+				@endif
 			</div> <!-- end details-container -->
 		</div> <!-- end single-content -->
 	</div>

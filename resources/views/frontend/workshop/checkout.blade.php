@@ -151,20 +151,23 @@
 
 				<div class="col-lg-4">
 					<div class="panel panel-default mb-0">
-						<div class="panel-heading-underlined pt-0">
-							{{ trans('site.front.workshop.checkout-allergier') }}
-						</div>
-						<div class="panel-body px-0 pb-0">
-							<select class="form-control" name="menu_id" required>
-								@foreach($workshop->menus as $menu)
-									<option value="{{$menu->id}}">{{$menu->title}}</option>
-								@endforeach
-							</select>
-                            <?php
-                            	$notes_placeholder = trans('site.front.workshop.checkout-notes');
-                            ?>
-							<textarea class="form-control mt-3" name="notes" placeholder="{{ $notes_placeholder }}" rows="4"></textarea>
-						</div>
+						@if ($workshop->id !== 12)
+							<div class="panel-heading-underlined pt-0">
+								{{ trans('site.front.workshop.checkout-allergier') }}
+							</div>
+							<div class="panel-body px-0 pb-0">
+								<select class="form-control" name="menu_id" required>
+									@foreach($workshop->menus as $menu)
+										<option value="{{$menu->id}}">{{$menu->title}}</option>
+									@endforeach
+								</select>
+								<?php
+									$notes_placeholder = trans('site.front.workshop.checkout-notes');
+								?>
+								<textarea class="form-control mt-3" name="notes" placeholder="{{ $notes_placeholder }}"
+										  rows="4"></textarea>
+							</div>
+						@endif
 
 						<div class="panel-heading-underlined">
 							{{ trans('site.front.form.payment-method') }}
@@ -197,16 +200,31 @@
                                     $courseWorkshops += $courseTaken->package->workshops;
                                 }
                             }
+								$workshopPrice = $workshop->price;
+
+                            	if (Auth::user() && Auth::user()->coursesTakenNotOld->count()) {
+                            	    $workshopPrice = $workshop->price - 500;
+								}
                             ?>
+
+							@if (Auth::user() && Auth::user()->coursesTakenNotOld->count())
+								<h3>
+									Studentrabatt:
+									<span class="theme-text font-barlow-regular">
+										{{ \App\Http\FrontendHelpers::currencyFormat(500) }}
+									</span>
+								</h3>
+							@endif
 							<h3>{{ trans('site.front.total') }}:
 								@if (Auth::user())
-									@if (Auth::user()->workshopsTaken->count() == 0 && $courseWorkshops > 0)
+									{{--@if (Auth::user()->workshopsTaken->count() == 0 && $courseWorkshops > 0)
 										<span class="theme-text font-barlow-regular">{{ \App\Http\FrontendHelpers::currencyFormat($workshop->price * 0) }}</span>
 									@else
 										<span class="theme-text font-barlow-regular">{{ \App\Http\FrontendHelpers::currencyFormat($workshop->price) }}</span>
-									@endif
+									@endif--}}
+									<span class="theme-text font-barlow-regular">{{ \App\Http\FrontendHelpers::currencyFormat($workshopPrice) }}</span>
 								@else
-									<span class="theme-text font-barlow-regular">{{ \App\Http\FrontendHelpers::currencyFormat($workshop->price) }}</span>
+									<span class="theme-text font-barlow-regular">{{ \App\Http\FrontendHelpers::currencyFormat($workshopPrice) }}</span>
 								@endif
 							</h3>
 

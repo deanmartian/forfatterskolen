@@ -1278,6 +1278,11 @@ class HomeController extends Controller
         return view('frontend.skrive2020');
     }
 
+    public function grodahlePage()
+    {
+        return view('frontend.gro-dahle');
+    }
+
     public function poems()
     {
         $poems = Poem::orderBy('created_at', 'desc')->get();

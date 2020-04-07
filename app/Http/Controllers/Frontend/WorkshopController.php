@@ -43,6 +43,12 @@ class WorkshopController extends Controller
     public function checkout($id)
     {
         $workshop = Workshop::findOrFail($id);
+        if( !Auth::guest() ) :
+            $userWorkshops = Auth::user()->workshopsTaken()->get()->pluck('workshop_id')->toArray();
+            if (in_array($id, $userWorkshops)) {
+                return redirect()->route('learner.workshop');
+            }
+        endif;
         return view('frontend.workshop.checkout', compact('workshop'));
     }
 
@@ -55,7 +61,8 @@ class WorkshopController extends Controller
       endif;
 
       $workshop = Workshop::findOrFail($id);
-      $menu = WorkshopMenu::findOrFail($request->menu_id);
+      $menu_id = $request->menu_id ?: $workshop->menus->first()->id;
+      $menu = WorkshopMenu::findOrFail($menu_id);
       if( $menu->workshop_id != $workshop->id ) return redirect()->back()->withInput()->withErrors(['Invalid menu']);
 
       if( Auth::guest() ) :
@@ -111,7 +118,12 @@ class WorkshopController extends Controller
 
         $paymentMode = PaymentMode::findOrFail($request->payment_mode_id);
 
-        $price = $workshop->price*100;
+        $price = $workshop->price;
+        if (Auth::user()->coursesTakenNotOld->count()) {
+            $price = $price - 500;
+        }
+
+        $price = $price*100;
 
 
         $payment_mode = $paymentMode->mode;
