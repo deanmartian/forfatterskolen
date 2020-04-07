@@ -430,23 +430,22 @@
             </div>
         </div>
     @endif
-@stop
 
-<div id="vooModal" class="modal fade no-header-modal" role="dialog">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
+    <div id="vooModal" class="modal fade no-header-modal" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
                     <iframe allow="autoplay" allowtransparency="true" style="max-width:100%" allowfullscreen="true"
                             src="" scrolling="no" width="100%" height="430" frameborder="0"></iframe>
+                </div>
             </div>
+
         </div>
-
     </div>
-</div>
-
+@stop
 @section('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
     <script>
