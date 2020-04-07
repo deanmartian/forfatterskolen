@@ -38,11 +38,11 @@
             <meta property="og:description" content="{{ $pageMeta->meta_description }}">
             <meta name="description" content="{{ $pageMeta->meta_description }}">
             <meta property="og:site_name" content="Forfatterskolen">
-            <meta property="og:url" content="{{ url('/') }}">
+            <meta property="og:url" content="{{ url()->current() }}">
             <meta property="og:type" content="website" />
             @if ($pageMeta->meta_image)
-                <meta property="og:image" content="{{ asset($pageMeta->meta_image) }}">
-                <meta property="twitter:image" content="{{ asset($pageMeta->meta_image) }}">
+                <meta property="og:image" content="{{ url($pageMeta->meta_image) }}">
+                <meta property="twitter:image" content="{{ url($pageMeta->meta_image) }}">
             @endif
 
             <meta property="twitter:title" content="{{ $pageMeta->meta_title }}">
@@ -51,7 +51,6 @@
             <meta name="twitter:title" content="{{ $pageMeta->meta_title }}" />
             <meta name="twitter:description" content="{{ $pageMeta->meta_description }}" />
             <meta property="fb:app_id" content="300010277156315" />
-            <meta name="fb:app_id" content="300010277156315" />
 
             <title>
                 {{ $pageMeta->meta_title }}
