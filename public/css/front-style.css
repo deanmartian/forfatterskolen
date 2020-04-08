@@ -4904,6 +4904,10 @@ margin-right: 5px;
     width: 100%;
 }
 
+.gro-dahle-page .third-container .presenter-container .carousel-item img {
+    height: 435px;
+}
+
 .henrik-page .third-container .presenter-container .carousel-control-prev .carousel-control-prev-icon,
 .henrik-page .third-container .presenter-container .carousel-control-next .carousel-control-next-icon {
     background: none;

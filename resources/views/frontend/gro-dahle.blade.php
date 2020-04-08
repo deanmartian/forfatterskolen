@@ -6,16 +6,15 @@
 
 @section('content')
 
-    <div class="henrik-page">
+    <div class="henrik-page gro-dahle-page">
         <div class="container">
             <div class="row header">
                 <div class="col-md-12 text-center">
                     <h2 class="theme-text">
-                        En perfekt gave til den skriveglade!
+                        Virtuell workshop med Gro Dahle
                     </h2>
                     <h1>
-                        Sett i gang! <br>
-                        Virtuell workshop med Gro Dahle
+                        Sett i gang!
                     </h1>
                 </div>
             </div>
@@ -45,8 +44,8 @@
                         </ul>
 
                         <p>
-                            Da kan det hjelpe med noen igangsettere og et par grunnteknikker som jeg sjøl bruker, og som
-                            de fleste av mine forfatterkollegaer også tyr til. Nemlig friskrift og projeksjoner.
+                            Da kan det hjelpe med noen igangsettere og et par grunnteknikker som Gro sjøl bruker, og som
+                            de fleste av hennes forfatterkollegaer også tyr til. Nemlig friskrift og projeksjoner.
                         </p>
                     </div> <!-- end owner-details-->
                 </div> <!-- end owner-details-container -->
@@ -56,21 +55,36 @@
         <div class="question-container">
             <div class="container text-center">
                 <h1 class="font-barlow-medium theme-text">
-                    Stimulerer det intuitive språksenteret
+                    To stimulerende kursdager
                 </h1>
 
                 <p>
-                    Friskriften handler om å ikke tenke, å holde armen sig hånda i gang med å skrive, men ikke tenke,
-                    bare dytte armen inn i skrivingen, dytte hånda inn i språket og skrive uten å tenke og styre, uten
-                    retning og mål, uten å være flink og gjøre riktig, bare skrive i vei, styrte av sted uten vurdering
-                    og refleksjon og prestasjonsangst og tanke, tillate seg å skrive dårlig, fyke av sted med tusjen
-                    eller kulepennen og selv henge etter med setningene foran deg, løpe av sted med ordene. Selvfølgelig
-                    tenker vi! Men vi har flere språksystemet - og det å trene opp språksystemet rundt følelsessenteret
-                    til å skrive i vei - og holde igjen på sjefen i kontrollsenteret i frontallappen, den logiske
-                    pannelappene som gjør det så tungt å komme i gang, for denne sjefen tiltaler deg ikke å skrive hva
-                    som helst, så kan vi heller la det andre og mer intuitive språksenteret løpe oss i vei. Jeg starter
-                    alltid med friskriften. Den er full av energi og skriver meg til steder jeg ikke hadde noen anelse
-                    om fantes.
+                    Det vil bli to virtuelle kurskvelder (alt skjer online), der Gro gir igangsettende og
+                    kreativt forløsende oppgaver – og går gjennom tekster (et tilfeldig utvalg tekster fra
+                    kursdeltakerne). Oppgavene kan du gjøre hjemme i din egen stue.
+                </p>
+
+                <p>
+                    Du får også mulighet til å stille Gro spørsmål i pausene og etter endt kursdag. Vi skal ta for oss
+                    de viktige temaene friskrift og projeksjon:
+                </p>
+                <p>
+                    <b>Friskrift:</b> Friskrift er en metode som er nyttig for faglitteratur så vel som skjønnlitteratur.
+                    Friskriften handler om å slippe løs og holde prestasjonsangsten unna. Prestasjonsangsten ligger i
+                    kontrollen og i den logiske styringen Og når vi er redde for å ikke skrive bra nok, gjøre godt nok,
+                    gjøre riktig og presist nok, Så strammer den logiske og styrende frontal lappen til så det blir
+                    nesten umulig å gjøre noe som helst. Det er da det kan være fint å ikke tenke, skrive uten å styre.
+                    Selvfølgelig tenker vi, men hvis vi prøver å holde det logiske språksenteret unna, kan vi fri oss
+                    fra styringen, Og vi har et språksenter rundt følelsessenteret også, i det limbiske systemet, rundt
+                    følelseskjernen Amygdala! Dette språksenteret trer i kraft, når vi klarer å holde språksenteret i
+                    pannen unna og avledet. Og da får vi en mer løs og fri styring over språket, for da skriver vi fra
+                    et annet sted.
+                </p>
+                <p>
+                    <b>Projeksjoner:</b> Projeksjoner betyr å kaste ut tanker mot et tilfeldig mønster eller
+                    tilfeldige utgangspunkt. Projeksjoner er fine å kombinere med forskriften. De fleste
+                    forfatterkollegene til Gro bruker en eller flere projeksjons-teknikker i starten av nye
+                    skriveprosjekter.
                 </p>
             </div> <!-- end container -->
         </div> <!-- end question-container -->
@@ -81,28 +95,28 @@
                     <div class="col-md-6 d-flex left-container">
                         <div class="align-self-center">
                             <h1 class="font-barlow-medium theme-text mb-0">
-                                To kursdager
+                                Stimulerer det intuitive språksenteret
                             </h1>
                             <p class="mt-5">
-                                Det vil bli to virtuelle kurskvelder (alt skjer online), der Gro gir igangsettende og
-                                kreativt forløsende oppgaver – og går gjennom tekster (et tilfeldig utvalg tekster fra
-                                kursdeltakerne). Oppgavene kan du gjøre hjemme i din egen stue. Du får også mulighet til
-                                å stille Gro spørsmål i pausene og etter endt kursdag. Vi skal ta for oss de viktige
-                                temaene friskrift og projeksjon: 1) Igangsetting og friskrift: Friskrift er en metode
-                                som er nyttig for faglitteratur så vel som skjønnlitteratur. Friskriften handler om å
-                                slippe løs og holde prestasjonsangsten unna. Prestasjonsangsten ligger i kontrollen og
-                                i den logiske styringen Og når vi er redde for å ikke skrive bra nok, gjøre godt nok,
-                                gjøre riktig og presist nok, Så strammer den logiske og styrende frontal lappen til så
-                                det blir nesten umulig å gjøre noe som helst. Det er da det kan være fint å ikke tenke,
-                                skrive uten å styre. Selvfølgelig tenker vi, men hvis vi prøver å holde det logiske
-                                språksenteret unna, kan vi fri oss fra styringen, Og vi har et språksenter rundt
-                                følelsessenteret også, i det limbiske systemet, rundt følelseskjernen Amygdala! Dette
-                                språksenteret trer i kraft, når vi klarer å holde språksenteret i pannen unna og
-                                avledet. Og da får vi en mer løs og fri styring over språket, for da skriver vi fra et
-                                annet sted. Projeksjoner betyr å kaste ut tanker mot et tilfeldig mønster eller
-                                tilfeldige utgangspunkt. Projeksjoner er fine å kombinere med forskriften. De fleste
-                                forfatterkollegene til Gro bruker en eller flere projeksjons-teknikker i starten av nye
-                                skriveprosjekter.
+                                Friskriften handler om å ikke tenke, å holde armen sig hånda i gang med å skrive, men
+                                ikke tenke, bare dytte armen inn i skrivingen, dytte hånda inn i språket og skrive uten
+                                å tenke og styre, uten retning og mål, uten å være flink og gjøre riktig, bare skrive i
+                                vei, styrte av sted uten vurdering og refleksjon og prestasjonsangst og tanke, tillate
+                                seg å skrive dårlig, fyke av sted med tusjen eller kulepennen og selv henge etter med
+                                setningene foran deg, løpe av sted med ordene.
+                            </p>
+
+                            <p class="mt-5">
+                                Selvfølgelig tenker vi! Men vi har flere språksystemet - og det å trene opp
+                                språksystemet rundt følelsessenteret til å skrive i vei - og holde igjen på sjefen i
+                                kontrollsenteret i frontallappen, den logiske pannelappene som gjør det så tungt å komme
+                                i gang, for denne sjefen tiltaler deg ikke å skrive hva som helst, så kan vi heller la
+                                det andre og mer intuitive språksenteret løpe oss i vei.
+                            </p>
+
+                            <p class="mt-5">
+                                Gro sier: «Jeg starter alltid med friskriften. Den er full av energi og skriver meg til
+                                steder jeg ikke hadde noen anelse om fantes».
                             </p>
                         </div> <!-- end left-container-->
                     </div> <!-- end left column -->
@@ -137,15 +151,15 @@
                                     Den magiske "famlefasen"
                                 </h1>
                                 <p class="font-montserrat-light mt-4">
-                                    Og så er det projeksjonene, tilfeldige utgangspunkt. Jeg har ti projeksjonsoppgaver
-                                    som jeg tror det kan være morsomt å prøve! Siden dette er workshop, skal vi også
+                                    Og så er det projeksjonene, tilfeldige utgangspunkt. Gro har ti projeksjonsoppgaver
+                                    som hun tror det kan være morsomt å prøve! Siden dette er workshop, skal vi også
                                     bygge litt råmateriale og gå gjennom tekster der og da, lese opp og få kommentarer.
                                     Dette er famlefase, så det er ja-fase, men alle ja-faser har potensial til å gå
                                     videre med, og det dukker opp biter og bilder og tekster og snutter som er verdt å
                                     hente fram og prøve ut og jobbe videre med. Igangsetting, famlefase og lek med
-                                    råmateriale er min beste opplevelse av skriving. Det er den følelsen av å være i det
-                                    kreative, å kjenne at det skjer ting, oppleve språket våkne og se fine tekster bli
-                                    født! Det er magi rett og slett!
+                                    råmateriale er Gros beste opplevelse av skriving. Hun sier: "Det er den følelsen av
+                                    å være i det kreative, å kjenne at det skjer ting, oppleve språket våkne og se fine
+                                    tekster bli født. Det er magi rett og slett!"
                                 </p>
                             </div> <!-- end story-details -->
                         </div> <!-- end col-md-12 -->
@@ -179,8 +193,8 @@
                         </h1>
 
                         <p class="mt-4 font-montserrat-regular">
-                            Kurset er åpent for alle, og opp gjennom årene har svært mange deltakere har hatt stort utbytte av å
-                            delta på Langelands fortellekunst-seminar. Her er noen tilbakemeldinger:
+                            Kurset er åpent for alle, og opp gjennom årene har svært mange deltakere har hatt stort
+                            utbytte av å delta på Gros skrivekurs. Her er et par tilbakemeldinger:
                         </p>
                     </div>
                 </div> <!-- end head-->
@@ -192,9 +206,6 @@
                         <!-- Indicators -->
                         <ul class="carousel-indicators">
                             <li data-target="#testimonials-carousel" data-slide-to="0" class="active"></li>
-                            <li data-target="#testimonials-carousel" data-slide-to="1"></li>
-                            <li data-target="#testimonials-carousel" data-slide-to="2"></li>
-                            <li data-target="#testimonials-carousel" data-slide-to="3"></li>
                         </ul>
 
                         <!-- The slideshow -->
@@ -204,12 +215,12 @@
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
-                                                «Kurset er håndfast og konkret, avmystifiserer litterær skriving og legger
-                                                vekt på håndverket, med mange gode tips til struktur og arbeidsprosess.»
+                                                "Jeg ante ikke at jeg kunne bli så gira av et skrivekurs. Jeg ser alt
+                                                klarere nå, og ikke minst vil jeg bare skrive, skrive, skrive"
                                             </p>
 
                                             <p class="font-montserrat-medium theme-text mb-0 mt-4">
-                                                — Maja Lunde, forfatter
+                                                — Marthe
                                             </p>
                                         </div> <!-- end testimonial-container-->
                                     </div>
@@ -218,115 +229,18 @@
                                     <div class="card card-global rounded-0">
                                         <div class="testimonial-container my-auto">
                                             <p class="font-montserrat-regular">
-                                                «En super kursleder, teoretisk sterk, flink til å trekke ut nyttige
-                                                prinsipper både fra litteraturen og ’kokebøkene’ om litteratur. Inspirerende
-                                                å se hvordan han jobber selv. Han gir gode, presise råd og er engasjert.»
+                                                "Gro har en tilstedeværelse som kommer gjennom skjermen, og kan
+                                                inspirere en gråstein til å skrive kreativt. Gjennomgangen hennes av
+                                                tekster er også utrolig konkret og lærerikt".
                                             </p>
 
                                             <p class="font-montserrat-medium theme-text mb-0 mt-4">
-                                                — Anders Danielsen Lie, forfatter og skuespiller
+                                                — Kristine
                                             </p>
                                         </div> <!-- end testimonial-container-->
                                     </div>
                                 </div> <!-- end column -->
                             </div>  <!-- end carousel-item -->
-
-                            <div class="carousel-item">
-                                <div class="col-sm-6 col-xs-12 h-100">
-                                    <div class="card card-global rounded-0">
-                                        <div class="testimonial-container my-auto">
-                                            <p class="font-montserrat-regular">
-                                                «Det finnes mange der ute som kan fiksjonsskrivingens håndverk, og som
-                                                kan akademisk litterær analyse, men ikke mange som kan begge deler. Det
-                                                kan Henrik. Kombinasjonen av solid akademisk bakgrunn og hands-on
-                                                håndverkskunnskap er nok det som gjør kurset hans så bra.»
-                                            </p>
-
-                                            <p class="font-montserrat-medium theme-text mb-0 mt-4">
-                                                — Espen Ytreberg, professor i medievitenskap
-                                            </p>
-                                        </div> <!-- end testimonial-container-->
-                                    </div>
-                                </div> <!-- end column -->
-                                <div class="col-sm-6 col-xs-12 h-100">
-                                    <div class="card card-global rounded-0">
-                                        <div class="testimonial-container my-auto">
-                                            <p class="font-montserrat-regular">
-                                                «Verktøyene og metodene Langeland sverger til er nyttige for alle, og
-                                                uansett hvordan man velger å forholde seg til tekst, bør man ha
-                                                grunnleggende kjennskap til tradisjonell dramaturgi.»
-                                            </p>
-
-                                            <p class="font-montserrat-medium theme-text mb-0 mt-4">
-                                                — Nicolai Houm, forfatter og redaktør
-                                            </p>
-                                        </div> <!-- end testimonial-container-->
-                                    </div>
-                                </div> <!-- end column -->
-                            </div> <!-- end carousel-item -->
-
-                            <div class="carousel-item">
-                                <div class="col-sm-6 col-xs-12 h-100">
-                                    <div class="card card-global rounded-0">
-                                        <div class="testimonial-container my-auto">
-                                            <p class="font-montserrat-regular">
-                                                «Det er fint å få en gjennomgang av det teoretiske ved skrivefaget
-                                                konsentrert over en helg.»
-                                            </p>
-
-                                            <p class="font-montserrat-medium theme-text mb-0 mt-4">
-                                                — Axel Hellstenius, manus- og barnebokforfatter
-                                            </p>
-                                        </div> <!-- end testimonial-container-->
-                                    </div>
-                                </div> <!-- end column -->
-                                <div class="col-sm-6 col-xs-12 h-100">
-                                    <div class="card card-global rounded-0">
-                                        <div class="testimonial-container my-auto">
-                                            <p class="font-montserrat-regular">
-                                                «Dette var et supert kurs. Akkurat det jeg trengte for å sette ting på
-                                                plass i eget hode, og i egen tekst.»
-                                            </p>
-
-                                            <p class="font-montserrat-medium theme-text mb-0 mt-4">
-                                                — Gro T. Fykse, forfatter
-                                            </p>
-                                        </div> <!-- end testimonial-container-->
-                                    </div>
-                                </div> <!-- end column -->
-                            </div> <!-- end carousel-item -->
-
-                            <div class="carousel-item">
-                                <div class="col-sm-6 col-xs-12 h-100">
-                                    <div class="card card-global rounded-0">
-                                        <div class="testimonial-container my-auto">
-                                            <p class="font-montserrat-regular">
-                                                «Kurset var helt avgjørende for meg. Jeg trodde at jeg hadde skrevet
-                                                ferdig halve debutboken min, men etter kurset dro jeg hjem og skrev om
-                                                hele romanen.»
-                                            </p>
-
-                                            <p class="font-montserrat-medium theme-text mb-0 mt-4">
-                                                — Kristine Tofte, forfatter
-                                            </p>
-                                        </div> <!-- end testimonial-container-->
-                                    </div>
-                                </div> <!-- end column -->
-                                <div class="col-sm-6 col-xs-12 h-100">
-                                    <div class="card card-global rounded-0">
-                                        <div class="testimonial-container my-auto">
-                                            <p class="font-montserrat-regular">
-                                                «Anbefalast! Henrik Langeland er ein framifrå kurshaldar og
-                                                skriveinspirator.»
-                                            </p>
-
-                                            <p class="font-montserrat-medium theme-text mb-0 mt-4">
-                                                — Per Roger Sandvik, biblioteksjef Nesodden
-                                            </p>
-                                        </div> <!-- end testimonial-container-->
-                                    </div>
-                                </div> <!-- end column -->
-                            </div> <!-- end carousel-item -->
                         </div> <!-- end carouse-inner -->
                     </div> <!-- end presenter-carousel -->
                 </div> <!-- end col-md-12 -->
@@ -348,23 +262,31 @@
 
                             <p class="mt-4 mb-0 border-bottom">
                                 <span class="font-montserrat-medium">Hvor:</span> Alt foregår online. Det eneste du
-                                trenger er en PC, pad eller mobil og enbrukbar internett-linje.
+                                trenger er en PC, pad eller mobil og en brukbar internett-linje.
                             </p>
 
                             <p class="mt-4 mb-0 border-bottom">
-                                <span class="font-montserrat-medium">Pris:</span> kr 1490,- (bindende påmelding)
+                                <span class="font-montserrat-medium">Pris:</span> kr 1490,- (bindende påmelding) <br>
+                                <span class="font-montserrat-medium">For elever med aktivt abonnement:</span>
+                                Kroner 990,-
+                            </p>
+
+                            <p class="mt-4 mb-0 border-bottom">
+                                <span class="font-montserrat-medium">Dato:</span> Søndag og mandag 26. og 27. april <br>
+                                Fra 17:00 begge kveldene
                             </p>
                         </div>
                     </div>
                     <div class="col-md-6 right-container">
                         <h1 class="font-barlow-medium mb-0 theme-text">
-                            Kursdatoer 2019
+                            Kursoppgaver
                         </h1>
 
                         <p class="mt-4 mb-5 border-bottom" style="padding-bottom: 30px">
                             Oppgavene fra Gro er ment for din egen del. Det blir likevel anledning til å sende inn
                             tekster, som Gro vil gjennomgå under workshopen. Hun plukker da ut et tilfeldig antall
-                            tekster som gjennomgåes i plenum.
+                            tekster som gjennomgåes i plenum. Informasjon om tekster og innsending vil bli gitt i egen
+                            mail etter påmelding.
                         </p>
                     </div>
                 </div>
