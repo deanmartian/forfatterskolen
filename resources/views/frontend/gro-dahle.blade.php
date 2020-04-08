@@ -113,21 +113,22 @@
                             <!-- The slideshow -->
                             <div class="container carousel-inner no-padding">
                                 <div class="carousel-item active">
-                                    <img data-src="https://www.forfatterskolen.no/images-new/langeland/maja-text.jpg" alt="">
+                                    <img data-src="https://www.forfatterskolen.no/images-new/langeland/gro-dahle.png"
+                                         alt="">
                                 </div>
 
-                                <div class="carousel-item">
+                                {{--<div class="carousel-item">
                                     <img data-src="https://www.forfatterskolen.no/images-new/langeland/henrik-med-text.jpg" alt="">
-                                </div>
+                                </div>--}}
                             </div> <!-- end carouse-inner -->
 
                             <!-- Left and right controls -->
-                            <a class="carousel-control-prev" href="#presenter-carousel" data-slide="prev">
+                            {{--<a class="carousel-control-prev" href="#presenter-carousel" data-slide="prev">
                                 <span class="carousel-control-prev-icon"></span>
                             </a>
                             <a class="carousel-control-next" href="#presenter-carousel" data-slide="next">
                                 <span class="carousel-control-next-icon"></span>
-                            </a>
+                            </a>--}}
                         </div> <!-- end presenter-carousel -->
 
                         <div class="col-md-12">

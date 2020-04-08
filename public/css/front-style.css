@@ -4899,8 +4899,8 @@ margin-right: 5px;
 .henrik-page .third-container .presenter-container .carousel-item img {
     font-size: 55px;
     height: 350px;
-    background-color: #f00;
-    object-fit: cover;
+    background-color: transparent;
+    object-fit: contain;
     width: 100%;
 }
 
