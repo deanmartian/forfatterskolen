@@ -68,7 +68,7 @@ return [
     ],
 
     'big_marker' => [
-        'api_key' => '382d97b149ef81d34034',
+        'api_key' => '64bd08aa02b7d6ad36b6', //382d97b149ef81d34034
         'register_link' => 'https://www.bigmarker.com/api/v1/conferences/register',
         'show_conference_link' => 'https://www.bigmarker.com/api/v1/conferences/'
     ],
