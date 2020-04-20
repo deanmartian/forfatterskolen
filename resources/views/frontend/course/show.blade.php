@@ -556,5 +556,13 @@
                 scrollTop: $(".course-tabs").offset().top
             }, 1000);
 		}
+
+		const url = window.location;
+        if (url.hash) {
+            $('[href="'+url.hash+'"]').trigger('click');
+            $('html, body').animate({
+                scrollTop: $(".course-tabs").offset().top
+            }, 1000);
+		}
 	</script>
 @stop
