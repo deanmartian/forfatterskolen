@@ -82,7 +82,7 @@ class HomeController extends Controller
             ->where('is_free', '=', 0)
             ->orderBy('date', 'ASC')->first();
 
-        $latest_blog = Blog::orderBy('created_at', 'desc')->first();
+        $latest_blog = Blog::activeOnly()->orderBy('created_at', 'desc')->first();
         $poems = Poem::orderBy('created_at', 'desc')->get();
         $testimonials = Testimonial::active()->get();
 

@@ -122,7 +122,7 @@
                                 <div class="date-time-cont">
                                     <i class="img-icon16 icon-calendar"></i>
                                     <span>
-                                        {{ \App\Http\FrontendHelpers::formatDate($latest_blog->created_at) }}
+                                        {{ \App\Http\FrontendHelpers::formatDate($latest_blog->schedule ?: $latest_blog->created_at) }}
                                     </span>
                                 </div>
 
