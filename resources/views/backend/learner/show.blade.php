@@ -513,13 +513,13 @@
 								<td>{{$invoice->created_at}}</td>
 								<td>{{ $invoice->fiken_dueDate ? \Carbon\Carbon::parse($invoice->fiken_dueDate)->format('d.m.Y') : '' }}</td>
 								<td>
-									@if (Auth::user()->isSuperUser())
+									{{--@if (Auth::user()->isSuperUser())--}}
 										<button class="btn btn-danger btn-xs deleteInvoiceBtn" data-toggle="modal"
 										data-target="#deleteInvoiceModal"
 										data-action="{{ route('admin.learner.invoice.delete', $invoice->id) }}">
 											<i class="fa fa-trash"></i>
 										</button>
-									@endif
+									{{--@endif--}}
 								</td>
 							</tr>
 							@endforeach
