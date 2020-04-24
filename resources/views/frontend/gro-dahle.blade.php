@@ -272,8 +272,9 @@
                             </p>
 
                             <p class="mt-4 mb-0 border-bottom">
-                                <span class="font-montserrat-medium">Dato:</span> Søndag og mandag 26. og 27. april <br>
-                                Fra 17:00 begge kveldene
+                                <span class="font-montserrat-medium">Dato:</span> Søndag og mandag 3. og 4. mai <br>
+                                Søndag 1900-2100 <br>
+                                Mandag 1800-2200
                             </p>
                         </div>
                     </div>
