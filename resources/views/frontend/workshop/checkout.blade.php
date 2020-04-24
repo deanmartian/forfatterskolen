@@ -202,12 +202,12 @@
                             }
 								$workshopPrice = $workshop->price;
 
-                            	if (Auth::user() && Auth::user()->coursesTakenNotOld->count()) {
+                            	if (Auth::user() && Auth::user()->coursesTakenNotOld2->count()) {
                             	    $workshopPrice = $workshop->price - 500;
 								}
                             ?>
 
-							@if (Auth::user() && Auth::user()->coursesTakenNotOld->count())
+							@if (Auth::user() && Auth::user()->coursesTakenNotOld2->count())
 								<h3>
 									Studentrabatt:
 									<span class="theme-text font-barlow-regular">

@@ -119,7 +119,7 @@ class WorkshopController extends Controller
         $paymentMode = PaymentMode::findOrFail($request->payment_mode_id);
 
         $price = $workshop->price;
-        if (Auth::user()->coursesTakenNotOld->count()) {
+        if (Auth::user()->coursesTakenNotOld2->count()) {
             $price = $price - 500;
         }
 
