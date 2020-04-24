@@ -166,14 +166,37 @@
                 </div>
                 <div class="col-md-4">
                     <div class="column free-webinar" itemscope itemtype="http://schema.org/CreativeWork"
-                         data-bg="https://www.forfatterskolen.no/images-new/front-page/kristine.jpeg">
+                         data-bg="https://www.forfatterskolen.no/{{ $workshop->image }}">
+                        {{--images-new/front-page/kristine.jpeg--}}
                         <div class="content-container">
 
                             <div class="title">
-                                {{ trans('site.front.next-free-webinar') }}
+                                Neste virtuelle workshop
+                                {{--{{ trans('site.front.next-free-webinar') }}--}}
                             </div>
 
-                            @if ($next_free_webinar)
+                            <div class="h2 mt-0 mb-4 font-montserrat-semibold">
+                                {{ $workshop->title }}
+                            </div>
+
+                            <div class="date-time-cont">
+                                <i class="img-icon16 icon-calendar"></i>
+                                    <span>
+                                        03.05 2020
+                                    </span>
+                                <i class="img-icon16 icon-clock ml-3"></i>
+                                    <span>
+                                        19:00
+                                    </span>
+                            </div>
+
+                            <a href="{{ url('/gro-dahle') }}"
+                               class="btn buy-btn mt-4"
+                               title="View workshop">
+                                {{ trans('site.front.view') }}
+                            </a>
+
+                            {{--@if ($next_free_webinar)
                                 <div class="h2 mt-0 mb-4 font-montserrat-semibold">
                                     {{ $next_free_webinar->title }}
                                 </div>
@@ -194,7 +217,7 @@
                                    title="View free webinar">
                                     {{ trans('site.front.view') }}
                                 </a>
-                            @endif
+                            @endif--}}
                         </div> <!-- end content container -->
                     </div>
                 </div>

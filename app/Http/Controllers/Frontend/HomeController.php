@@ -85,9 +85,10 @@ class HomeController extends Controller
         $latest_blog = Blog::activeOnly()->orderBy('created_at', 'desc')->first();
         $poems = Poem::orderBy('created_at', 'desc')->get();
         $testimonials = Testimonial::active()->get();
+        $workshop = Workshop::find(12); // gro-dahle
 
         return view('frontend.home', compact('popular_courses', 'free_courses', 'free_webinars',
-            'next_webinar', 'next_free_webinar', 'next_workshop','latest_blog', 'poems', 'testimonials'));
+            'next_webinar', 'next_free_webinar', 'next_workshop','latest_blog', 'poems', 'testimonials', 'workshop'));
     }
 
     // set cookie for gdpr
