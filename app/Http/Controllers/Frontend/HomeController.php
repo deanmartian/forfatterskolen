@@ -911,7 +911,7 @@ class HomeController extends Controller
             $list_id = $optIn->list_id;
             AdminHelpers::addToActiveCampaignList($list_id, $request->except('_token','terms'));
 
-            $slugIdList = [3,4,5, 7]; //dikt, Gratis krimkurs, 	aldersgrupper, skrive
+            $slugIdList = [3,4,5,7,8]; //dikt, Gratis krimkurs, aldersgrupper, skrive
             if (in_array($optIn->id, $slugIdList)) {
                 return redirect()->route('front.opt-in.thanks', $slug);
             }
@@ -970,6 +970,12 @@ class HomeController extends Controller
                 case 'fiction':
                     $data['camp_id'] = 61832;
                     return view('frontend.opt-in-thanks.fiction', compact('next_webinars', 'slug', 'data',
+                        'optIn'));
+                    break;
+
+                case 8 : //pdf
+                    $data['camp_id'] = 8;
+                    return view('frontend.opt-in-thanks.pdf', compact('next_webinars', 'slug', 'data',
                         'optIn'));
                     break;
 
