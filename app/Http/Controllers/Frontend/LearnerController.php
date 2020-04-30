@@ -790,13 +790,16 @@ class LearnerController extends Controller
             Log::create([
                 'activity' => '<strong>'.Auth::user()->full_name.'</strong> submitted a manuscript for assignment '.$assignment->title
             ]);
-            // Admin notification
-            $message = Auth::user()->full_name.' submitted a manuscript for assignment '.$assignment->title;
-            $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
 
-            $email_data['email_message'] = $message;
-            // use queue to send email on background
-            //Mail::to($toMail)->queue(new AssignmentSubmittedEmail($email_data));
+            // Admin notification
+            if ($assignment->course->type === "Single") {
+                $message = Auth::user()->full_name.' submitted a manuscript for assignment '.$assignment->title;
+                $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
+
+                $email_data['email_message'] = $message;
+                // use queue to send email on background
+                Mail::to($toMail)->queue(new AssignmentSubmittedEmail($email_data));
+            }
 
             // notify user
             $user_email = Auth::user()->email;
