@@ -11,11 +11,7 @@
             <div class="row header">
                 <div class="col-md-12 text-center">
                     <img data-src="https://www.forfatterskolen.no/images-new/langeland/header-image.png" alt="">
-                    <h2 class="theme-text">
-                        En perfekt gave til den skriveglade!
-                    </h2>
                     <h1>
-                        Fortellekunst: Skrivekurs med <br>
                         Henrik H. Langeland
                     </h1>
                 </div>
@@ -29,7 +25,7 @@
                 <div class="col-md-6 d-flex owner-details-container">
                     <div class="align-self-center owner-details">
                         <p>
-                            Henrik H. Langeland(f. 1972) fikk sitt gjennombrudd som forfatter med romanen Wonderboy i
+                            Henrik H. Langeland (f. 1972) fikk sitt gjennombrudd som forfatter med romanen Wonderboy i
                             2003. Han har skrevet flere romaner og sakprosabøker.
                         </p>
 
@@ -76,15 +72,17 @@
                     <div class="col-md-6 d-flex left-container">
                         <div class="align-self-center">
                             <h1 class="font-barlow-medium theme-text mb-0">
-                                To kursdager
+                                Tre virtuelle kursdager
                             </h1>
                             <p class="mt-5">
-                                Gjennom to intensive dager går Langeland gjennom de grunnleggende bestanddelene i
+                                Dette kurset er et opptak av livekurset som Henrik holdt i Cappelen Damms lokaler i 2019.
+                                Gjennom tre intensive økter går Langeland gjennom de grunnleggende bestanddelene i
                                 fortellekunsten. Temaer som forholdet mellom språk og handling, interessevekkere,
-                                tidsperspektiver, spenningsstrukturer, faktaformidling, verdivendinger, kapitteloppbygging,
-                                karakterutvikling og synsvinkelbruk blir presentert slik at deltakerne forstår hvordan disse
-                                elementene sammen virker i å skape en levende og interessant fortelling - en fortelling man
-                                kan bli fengslet av.
+                                tidsperspektiver, spenningsstrukturer, faktaformidling, verdivendinger,
+                                kapitteloppbygging, karakterutvikling og synsvinkelbruk blir presentert slik at
+                                deltakerne forstår hvordan disse elementene sammen virker i å skape en levende og
+                                interessant fortelling - en fortelling man kan bli fengslet av.
+
                             </p>
 
                             <p class="mt-5">
@@ -97,8 +95,8 @@
                             </p>
 
                             <p class="mt-5">
-                                Skrivekurset er foredragsbasert. Deltakerne skal ikke levere inn egne tekster, men det er
-                                anledning til å stille spørsmål og delta i diskusjoner.
+                                Kursdeltakerne skal ikke levere inn egne tekster, men Henrik vil gi en oppgave på
+                                tampen av hver kurskveld. Oppgaven er ment for din egen del.
                             </p>
                         </div> <!-- end left-container-->
                     </div> <!-- end left column -->
@@ -132,14 +130,12 @@
                                     Ut og stjæle hester og Fortellekunst
                                 </h1>
                                 <p class="font-montserrat-light mt-4">
-                                    Mange ev eksemplene vil bli hentet fra
-                                    <span class="font-montserrat-medium">Per Pettersons Ut og stjæle hester</span>, så
-                                    det er en fordel a ha lest den romanen i forkant. Seminaret er basert på Langelands
-                                    <span class="font-montserrat-medium">
-                                        Fortellekunst. En håndbok i litterære teknikker,
-                                    </span> men inneholder også et utvidet materiale. I tillegg pleier Langeland a
-                                    invitere en special guest, gjerne en forfatter eller forlagsredaktør, for å samtale
-                                    om det praktiske arbeidet i å skape gode fortellinger.
+                                    Mange ev eksemplene vil bli hentet fra Per Pettersons Ut og stjæle hester, så det er
+                                    en fordel a ha lest den romanen i forkant. Seminaret er basert på Langelands
+                                    Fortellekunst. En håndbok i litterære teknikker, men inneholder også et utvidet
+                                    materiale. I tillegg har Langeland invitert en special guest, Erlend Loe, for å
+                                    samtale om det praktiske arbeidet i å skape gode fortellinger.
+
                                 </p>
                             </div> <!-- end story-details -->
                         </div> <!-- end col-md-12 -->
@@ -336,21 +332,26 @@
                             </h1>
 
                             <p class="mt-4 mb-0">
-                                Seminaret arrangeres over to påfølgende dager, fem timer per dag inkludert pauser.
+                                <span class="font-montserrat-medium">Hvor:</span> Alt foregår online. Du trenger kun en
+                                PC, pad eller mobil + en brukbar internettlinje.
                             </p>
 
                             <p class="mt-4 mb-0 border-bottom">
-                                <span class="font-montserrat-medium">Hvor:</span> Det foregår i Cappelen Damm-huset i
-                                sentrum av Oslo. Adressen er Akersgata 47/49, 0180 OSLO
+                                <span class="font-montserrat-medium">Hvordan:</span> Kurset vil skje over tre påfølgende
+                                dager, der du hver kursdag vil få tilgang til én modul. Du kan se opptaket når som helst
+                                i løpet av dagen. Fra klokken 20-21 er det Q & A (live) med Henrik, der du kan stille
+                                spørsmål som er knyttet til kurset (eller skriverelatert, på en eller annen måte).
+                                Opptaket er tilgjengelig i to uker etter at kurset er avsluttet.
                             </p>
 
                             <p class="mt-4 mb-0 border-bottom">
-                                <span class="font-montserrat-medium">Pris:</span> kr 1950,- og kr 1750,- for studenter
+                                <span class="font-montserrat-medium">Pris:</span> Kroner 1490,- og kroner 990,- for
+                                elever ved Forfatterskolen (med aktivt webinarabonnement)
                             </p>
 
                             <p class="mt-4 mb-0">
-                                <span class="font-montserrat-medium">Alle spørsmål kan rettes til:</span> Randi Faye,
-                                telefon 924 18 373, <a href="mailto:randi.faye@cappelendamm.no">randi.faye@cappelendamm.no</a>
+                                <span class="font-montserrat-medium">Alle spørsmål kan rettes til:</span>
+                                <a href="mailto:post@forfatterskolen.no">post@forfatterskolen.no</a>
                             </p>
                         </div>
                     </div>
@@ -360,8 +361,9 @@
                         </h1>
 
                         <p class="mt-4 mb-5 border-bottom" style="padding-bottom: 30px">
-                            Det arrangeres tre kurs årlig, to helgekurs og ett kveldskurs. Det første kurset er: Lørdag
-                            2. og søndag 3.februar, begge dager 10.00-15.00
+                            Kurset går over tre påfølgende dager, 24. 25 og 26 mai. Det blir sluppet én kursmodul
+                            (videoopptak) hver dag – og fra 20-21 kan du snakket med Henrik direkte (via webinar).
+
                         </p>
 
                         <h1 class="font-barlow-medium mb-0 theme-text">
@@ -369,9 +371,8 @@
                         </h1>
 
                         <p class="mt-4 mb-0">
-                            Send bindende påmelding til: <a href="mailto:randi.faye@cappelendamm.no">randi.faye@cappelendamm.no</a>
-                            <span class="d-block font-16 font-montserrat-light">Navn, mobil og epost på deltaker</span>
-                            <span class="d-block font-16 font-montserrat-light">Faktura vil bli tilsendt.</span>
+                            Send bindende påmelding via lenken under (dersom du får problemer med bestillingen, ta
+                            kontakt med <a href="mailto: support@forfatterskolen.no"> support@forfatterskolen.no</a>)
                         </p>
                     </div>
                 </div>
@@ -380,7 +381,11 @@
 
         <div class="last-container">
             <div class="container text-center">
-                <h1 class="font-barlow-regular">Velkommen til skrivekurs!</h1>
+                <h1 class="font-barlow-regular">
+                    <a href="{{ route('front.workshop.checkout', 13) }}" style="color: #fff; font-size: inherit">
+                        Meld deg på skrivekurset her
+                    </a>
+                </h1>
             </div>
         </div>
 
