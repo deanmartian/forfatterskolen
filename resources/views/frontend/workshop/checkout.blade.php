@@ -151,7 +151,7 @@
 
 				<div class="col-lg-4">
 					<div class="panel panel-default mb-0">
-						@if ($workshop->id !== 12)
+						@if (!in_array($workshop->id, [12, 13]))
 							<div class="panel-heading-underlined pt-0">
 								{{ trans('site.front.workshop.checkout-allergier') }}
 							</div>
