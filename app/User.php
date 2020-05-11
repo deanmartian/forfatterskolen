@@ -92,8 +92,9 @@ class User extends Authenticatable
     {
         $webinarPakkePackages = Course::find(17)->packages()->pluck('id')->toArray();
         return $this->hasMany('App\CoursesTaken')
-            ->where(function($query) use($webinarPakkePackages) {
+            ->where(function($query) {
                 $query->where('started_at', '>=', Carbon::now()->subYear(1))
+                    ->orWhere('end_date', '>=', Carbon::now())
                     ->orWhereNull('end_date');
             })
             ->whereIn('package_id', $webinarPakkePackages)
