@@ -32,6 +32,7 @@ use App\WorkshopsTaken;
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
 use PaypalIPN;
 use Carbon\Carbon;
+use PhpOffice\PhpWord\SimpleType\DocProtect;
 
 class ShopController extends Controller
 {
@@ -761,11 +762,14 @@ class ShopController extends Controller
         $redirectLink = encrypt(route('learner.course'));
         $actionUrl = route('auth.login.emailRedirect',[$encode_email, $redirectLink]);
         $actionText = 'Mine Kurs';
+        $attachments = [$this->generateDocx($user->id, $package->id),
+            '/email-attachments/skjema-for-opplysninger-om-angrerett.docx'];
 
         //mail($user->email, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
         AdminHelpers::send_email($package->course->title,
             'postmail@forfatterskolen.no', $user_email,
-            view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')));
+            view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')),
+            'Forfatterskolen', $attachments);
 
         if( $paymentMode->mode == "Paypal" ) :
             $paypal = new PayPal;
@@ -1409,5 +1413,228 @@ class ShopController extends Controller
         $rawResponse = curl_exec($curl);
         $response = json_decode($rawResponse);
         return response()->json($response);
+    }
+
+    public function generateDocx($user_id, $package_id)
+    {
+        $user = User::find($user_id);
+        $address = $user->address;
+        $package = Package::find($package_id);
+        $course = $package->course;
+
+        $parseDate = Carbon::today()->addDays(13);
+        if ($course->type === "Group" && Carbon::today()->lt(Carbon::parse($course->start_date))) {
+            $parseDate = Carbon::parse($course->start_date)->addDays(13);
+        }
+
+        $expirationDate = $parseDate->format('d.m.Y');
+        $expirationDay = FrontendHelpers::convertDayLanguage($parseDate->format('N'));
+
+        $phpWord = new \PhpOffice\PhpWord\PhpWord();
+        $phpWord->setDefaultFontName('Times New Roman');
+        $phpWord->setDefaultFontSize(12);
+
+        // prevent user from editing/copying from the file
+        $documentProtection = $phpWord->getSettings()->getDocumentProtection();
+        $documentProtection->setEditing(DocProtect::FORMS);
+
+        $sectionStyle = array(
+            'marginTop' => 1150,
+            'marginBottom' => 1150,
+            'marginLeft' => 800,
+            'marginRight' => 800
+        );
+        $section = $phpWord->addSection(
+            $sectionStyle
+        );
+
+        $section->addText("Angreskjema",
+            [
+                'size' => 18
+            ],
+            [
+                'alignment' => 'center',
+                'marginBottom' => 0,
+                'space' => array('before' => 0, 'after' => 70),
+            ]);
+
+        $section->addText('ved kjøp av varer og tjenester som ikke er finansielle tjenester',
+            ['size' => 10], [
+                'alignment' => 'center',
+                'space' => array('after' => 250)
+            ]);
+
+        $section->addText('Fyll ut og returner dette skjemaet dersom du ønsker å gå fra avtalen', [],
+            [
+                'alignment' => 'center',
+                'space' => array('after' => 350)
+            ]);
+
+        $section->addText('Utfylt skjema sendes til:', [], [
+            'space' => array('after' => 0)
+        ]);
+        $section->addText('(den næringsdrivende skal sette inn sitt navn, geografiske adresse og ev.'.
+            'telefaksnummer og e-postadresse)', ['size' => 10], [
+            'space' => array('after' => 350)
+        ]);
+
+
+        $width = 100 * 100;
+
+        $table = $section->addTable([
+            'width' => $width,
+        ]);
+
+        $table->addRow(0);
+        $table->addCell($width, [
+            'borderBottomSize' => 6,
+            'height' => 1
+        ])->addText('Forfatterskolen, Postboks 9233, 3064 DRAMMEN', [
+            'bgColor' => 'CCCCCC',
+        ], [
+            'space' => array('before' => 150, 'after' => 0),
+            'indent' => 0.1
+        ]);
+
+        $table->addRow(0);
+        $table->addCell($width, [
+            'borderBottomSize' => 6,
+            'height' => 1
+        ])->addText('post@forfatterskolen.no', [
+            'bgColor' => 'CCCCCC'
+        ], [
+            'space' => array('before' => 250, 'after' => 0),
+            'indent' => 0.1
+        ]);
+
+        $section->addTable($table);
+
+        $listItemRun = $section->addTextRun([
+            'space' => array('before' => 550)
+        ]);
+        $listItemRun->addText('Jeg/vi underretter herved om at jeg/vi ønsker å gå fra min/vår avtale om kjøp av følgende:');
+        $listItemRun->addText(' (sett kryss)', array('size' => 10));
+
+        $checkBox = $section->addTextRun();
+        $checkBox->addFormField('checkbox')->setValue(true);
+        $checkBox->addText(' tjenester');
+        $checkBox->addText(' (spesifiser på linjene nedenfor)', array('size' => 10));
+
+        $table = $section->addTable([
+            'width' => $width,
+        ]);
+        $table->addRow(0);
+        $table->addCell($width, [
+            'borderBottomSize' => 6,
+            'height' => 1
+        ])->addText('Gjelder kjøp av '.$course->title, [
+            'bgColor' => 'CCCCCC',
+        ], [
+            'space' => array('before' => 150, 'after' => 0),
+            'indent' => 0.1
+        ]);
+
+        $table->addRow(0);
+        $table->addCell($width, [
+            'borderBottomSize' => 6,
+            'height' => 1
+        ])->addText('Frist for avbestilling for  å kunne benytte angreretten: Innen klokken 23.59 '
+            . $expirationDay .' '. $expirationDate, [
+            'bgColor' => 'CCCCCC',
+        ], [
+            'space' => array('before' => 150, 'after' => 0),
+            'indent' => 0.1
+        ]);
+
+        $section->addText('Sett kryss og dato:', ['size'=>10], [
+            'space' => array('before' => 400),
+        ]);
+
+        $textRun = $section->addTextRun();
+        $textRun->addFormField('checkbox')->setValue(true);
+        $textRun->addText(' Avtalen ble inngått den');
+        $textRun->addText(' (dato)', array('size' => 10));
+        $textRun->addText('     ');//spacing
+        $textRun->addText( Carbon::today()->format('d.m.Y'), [
+            'bgColor' => 'CCCCCC',
+            'underline' => 'single'
+        ]);
+        $textRun->addText(' (ved kjøp av tjenester)', array('size' => 10));
+
+        $table = $section->addTable([
+            'width' => $width
+        ]);
+        $table->addRow(0);
+        $table->addCell($width, [
+            'height' => 1
+        ])->addText('Forbrukerens/forbrukemesnavn:', ['size'=>10], [
+            'space' => array('before' => 500),
+        ]);
+
+        $table->addRow(0);
+        $table->addCell($width, [
+            'borderBottomSize' => 6,
+            'height' => 1
+        ])->addFormField('textinput', [
+            'bgColor' => 'CCCCCC'
+        ], [
+            'space' => array('before' => 0, 'after' => 0),
+            'indent' => 0.1
+        ])->setValue(" ");
+
+        $table->addRow(0);
+        $table->addCell($width, [
+            'height' => 1
+        ])->addText('Forbrukerens/forbrukemes adresse:', ['size'=>10], [
+            'space' => array('before' => 300, 'after' => 0)
+        ]);
+
+        $table->addRow(0);
+        $table->addCell($width, [
+            'borderBottomSize' => 6,
+            'height' => 1
+        ])->addFormField('textinput', [
+            'bgColor' => 'CCCCCC'
+        ], [
+            'space' => array('before' => 200, 'after' => 0),
+            'indent' => 0.1
+        ])->setValue(" ");
+
+
+        $table = $section->addTable();
+        $table->addRow();
+        $cell = $table->addCell($width)->addTextRun([
+            'space' => array('before' => 1800, 'after' => 0)
+        ]);
+
+        $cell->addText('Dato:', array('size' => 10));
+        $cell->addText('     ');//spacing
+        $cell->addFormField('textinput',[
+            'indent' => 2
+        ])->setValue("dd. dd. åååå");
+
+        $table = $section->addTable();
+        $table->addRow(0);
+        $table->addCell($width, [
+            'borderBottomSize' => 6,
+        ])->addText('', [], [
+            'space' => array('before' => 500, 'after' => 0),
+        ]);
+
+        $section->addText("Forbrukerens/forbrukemes underskrift (dersom papirskjema benyttes)",
+            [
+                'size' => 10
+            ],
+            [
+                'alignment' => 'center',
+            ]);
+
+        $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+        try {
+            $objWriter->save(public_path('email-attachments/angrerettskjema.docx'));
+            return 'email-attachments/angrerettskjema.docx';
+        } catch (\Exception $e) {
+            return "";
+        }
     }
 }

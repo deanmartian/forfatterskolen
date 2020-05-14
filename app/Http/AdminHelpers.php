@@ -100,7 +100,7 @@ class AdminHelpers
      * @param string $from_name Not required field with default value
      * @return bool
      */
-    public static function send_email($subject, $from, $to, $content, $from_name='Forfatterskolen')
+    public static function send_email($subject, $from, $to, $content, $from_name='Forfatterskolen', $attachment = null)
     {
         $from = $from ?: 'postmail@forfatterskolen.no';
         $host = env('MAIL_HOST_SITE');
@@ -119,6 +119,16 @@ class AdminHelpers
         $message->setFrom($from, $from_name);
         $message->setTo($to);
         $message->setBody($content, 'text/html');
+
+        if ($attachment) {
+            if (is_array($attachment)) {
+                foreach ($attachment as $attach) {
+                    $message->attach(\Swift_Attachment::fromPath(asset($attach)));
+                }
+            } else {
+                $message->attach(\Swift_Attachment::fromPath(asset($attachment)));
+            }
+        }
 
         //send message
         $mailer = new Swift_Mailer($transport);
