@@ -193,7 +193,7 @@ class WorkshopController extends Controller
         $adminEmailData['attach_file'] = NULL;
 
         // add email to queue
-        \Mail::to($user_email)->queue(new SubjectBodyEmail($adminEmailData));
+        \Mail::to("post@forfatterskolen.no")->queue(new SubjectBodyEmail($adminEmailData));
         
         if( $paymentMode->mode == "Paypal" ) :
             $paypal = new Paypal;
