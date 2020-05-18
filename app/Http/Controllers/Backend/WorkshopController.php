@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\CoursesTaken;
 use App\EmailAttachment;
 use App\Http\AdminHelpers;
 use App\Mail\SubjectBodyEmail;
@@ -41,7 +42,8 @@ class WorkshopController extends Controller
     {
         $workshop = Workshop::findOrFail($id);
         $emailLog = $workshop->emailLog()->paginate(5);
-        return view('backend.workshop.show', compact('workshop', 'emailLog'));
+        $courses = Course::with('packages')->get();
+        return view('backend.workshop.show', compact('workshop', 'emailLog', 'courses'));
     }
 
 
@@ -201,6 +203,41 @@ class WorkshopController extends Controller
                 $sheet->fromArray($learnerList, null, 'A1', false, false);
             });
         })->download('xlsx');
+    }
+
+    /**
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function addLearnersToCourse($id, Request $request)
+    {
+        $workshop = Workshop::findOrFail($id);
+
+        foreach( $workshop->taken as $taken ) :
+            $learner = $taken->user;
+            $course = Course::findOrFail($request->course_id);
+            $packageIds = $course->packages->pluck('id')->toArray();
+            $courseTaken = CoursesTaken::where('user_id', $learner->id)
+                ->whereIn('package_id', $packageIds)->first();
+
+            if( !$courseTaken ) :
+                $courseTaken = new CoursesTaken;
+                $courseTaken->user_id = $learner->id;
+                $courseTaken->package_id = $request->package_id;
+            endif;
+
+            $courseTaken->started_at = NULL;
+            $courseTaken->is_active = 1;
+
+            if ($course->is_free) {
+                $courseTaken->is_free = 1;
+            }
+
+            $courseTaken->save();
+        endforeach;
+
+        return redirect()->back();
     }
 
     /**

@@ -164,8 +164,12 @@
 						Export to Excel
 					</a>
 
+					<button type="button" class="btn btn-default btn-sm" data-toggle="modal"
+							data-target="#addLearnersToCourseModal">+ Add to Course</button>
+
 					@if($workshop->attendees->count() > 0)
-						<button type="button" class="btn btn-success btn-sm inline" data-toggle="modal" data-target="#sendEmailModal">{{ trans('site.send-email') }}</button>
+						<button type="button" class="btn btn-success btn-sm d-block" data-toggle="modal"
+								data-target="#sendEmailModal" style="margin-top: 5px">{{ trans('site.send-email') }}</button>
 					@endif
 				</div>
 			</div>
@@ -694,6 +698,46 @@
 </div>
 <!-- end edit workshop email modal -->
 
+<!-- Add Learner Modal -->
+<div id="addLearnersToCourseModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Add Learners to Course</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.workshop.add-learners-to-course', $workshop->id) }}"
+					  onsubmit="disableSubmit(this)">
+					{{csrf_field()}}
+					<div class="form-group">
+						<select class="form-control select2" name="course_id" id="course-selector" required
+								onchange="courseChanged()">
+							<option value="" selected disabled>- Search Course -</option>
+							@foreach( $courses as $course )
+								<option value="{{ $course->id }}" data-packages="{{ json_encode($course->packages) }}">
+									{{ $course->title }}
+								</option>
+							@endforeach
+						</select>
+					</div>
+					<div class="form-group">
+						<select class="form-control" name="package_id" required id="package-selected">
+							<option value="" selected disabled>- Select Package -</option>
+						</select>
+					</div>
+					<div class="text-right">
+						<button type="submit" class="btn btn-primary">
+							Submit
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -874,6 +918,23 @@
         }
     };
     tinymce.init(editor_config);
+
+    function courseChanged() {
+        let e = document.getElementById("course-selector"),
+            selected = e.options[e.selectedIndex],
+			packages = $(selected).data('packages');
+        console.log(packages);
+
+        let packageSelector = $("#package-selected");
+        packageSelector.empty();
+        let options = '<option value="" selected disabled>- Select Package -</option>';
+
+        $.each(packages, function(k, v){
+            options += '<option value="'+v.id+'">'+v.variation+'</option>'
+		});
+
+        packageSelector.append(options);
+    }
 
 </script>
 <script async defer
