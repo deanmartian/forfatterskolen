@@ -183,6 +183,26 @@ class WorkshopController extends Controller
         $pdf->Output($workshop->title.'-attendees.pdf', 'D');
     }
 
+    public function downloadAttendeesExcel($id)
+    {
+        $workshop = Workshop::findOrFail($id);
+        $learnerList[]  = ['First Name', 'Last Name', 'Email']; // first row in excel
+
+        foreach( $workshop->taken as $taken ) :
+            $learnerList[] = [$taken->user->first_name, $taken->user->last_name, $taken->user->email];
+        endforeach;
+
+        $excel          = \App::make('excel');
+        $excel->create($workshop->title.' Learners', function($excel) use ($learnerList) {
+
+            // Build the spreadsheet, passing in the payments array
+            $excel->sheet('sheet1', function($sheet) use ($learnerList) {
+                // prevent inserting an empty first row
+                $sheet->fromArray($learnerList, null, 'A1', false, false);
+            });
+        })->download('xlsx');
+    }
+
     /**
      * Send email to the attendees of the workshop
      * @param $id int workshop id

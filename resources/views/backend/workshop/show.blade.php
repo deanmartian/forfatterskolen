@@ -159,6 +159,11 @@
 						<button class="btn btn-sm btn-primary" type="submit">{{ trans('site.export-to-pdf') }}</button>
 					</form>
 
+					<a href="{{ route('admin.workshop.download_excel', $workshop->id) }}"
+					   class="btn btn-info btn-sm">
+						Export to Excel
+					</a>
+
 					@if($workshop->attendees->count() > 0)
 						<button type="button" class="btn btn-success btn-sm inline" data-toggle="modal" data-target="#sendEmailModal">{{ trans('site.send-email') }}</button>
 					@endif

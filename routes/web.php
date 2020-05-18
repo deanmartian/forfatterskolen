@@ -142,6 +142,7 @@ Route::group([
         Route::get('/file/{hash}', 'HomeController@checkFileFromDB');
 
         Route::get('/bambora/accept', 'HomeController@bamboraAccept');
+        Route::get('/bambora/paymentComplete', 'HomeController@bamboraPaymentComplete');
         // Course
         Route::group([
             'prefix' => 'course'
@@ -719,6 +720,7 @@ Route::group([
         ]);
         Route::post('workshop/{workshop_taken_id}/attendee/{attendee_id}', 'WorkshopController@removeAttendee')->name('admin.workshop.remove_attendee');
         Route::post('workshop/{id}/download_pdf', 'WorkshopController@downloadAttendees')->name('admin.workshop.download_pdf');
+        Route::get('workshop/{id}/download_excel', 'WorkshopController@downloadAttendeesExcel')->name('admin.workshop.download_excel');
         Route::post('workshop/{id}/send_email', 'WorkshopController@sendEmailToAttendees')->name('admin.workshop.send_email');
         Route::get('workshop/{id}/view_email_attendees', 'WorkshopController@viewEmailLogAttendees')->name('admin.workshop.send_email_log');
         Route::post('/workshop-status', 'WorkshopController@updateStatus')->name('admin.workshop.status'); // Courses Page
