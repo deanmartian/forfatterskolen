@@ -357,7 +357,7 @@
                     </div>
                     <div class="col-md-6 right-container">
                         <h1 class="font-barlow-medium mb-0 theme-text">
-                            Kursdatoer 2019
+                            Kursdatoer 2020
                         </h1>
 
                         <p class="mt-4 mb-5 border-bottom" style="padding-bottom: 30px">
