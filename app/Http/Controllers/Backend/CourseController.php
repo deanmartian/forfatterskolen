@@ -235,6 +235,12 @@ class CourseController extends Controller
             $clone_webinar->push();
         endforeach;
 
+        foreach( $course->emailOut as $emailOut ):
+            $clone_email_out = $emailOut->replicate();
+            $clone_email_out->course_id = $clone_course->id;
+            $clone_email_out->push();
+        endforeach;
+
         return redirect(route('admin.course.show', $clone_course->id));
     }
 
