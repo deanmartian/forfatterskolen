@@ -556,6 +556,38 @@
 
 			<div class="panel panel-default">
 				<div class="panel-body">
+					<h4>Course Attachments</h4>
+				</div>
+				<div class="table-responsive" style="padding: 10px">
+					<table class="table" id="course-order-attachments-table">
+						<thead>
+						<tr>
+							<th>{{ trans_choice('site.courses', 1) }}</th>
+							<th>File</th>
+						</tr>
+						</thead>
+						<tbody>
+						@foreach($learner->courseOrderAttachments as $attachment)
+							<tr>
+								<td>
+									<a href="{{ route('admin.course.show', $attachment->course_id) }}">
+										{{ $attachment->course->title }}
+									</a> - {{ $attachment->package->variation }}
+								</td>
+								<td>
+									<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$attachment->file_path}}">
+										{{ basename($attachment->file_path) }}
+									</a>
+								</td>
+							</tr>
+						@endforeach
+						</tbody>
+					</table>
+				</div>
+			</div> <!-- end order panel -->
+
+			<div class="panel panel-default">
+				<div class="panel-body">
 					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#addManuscriptModal">+ {{ trans('site.upload-manuscript') }}</button>
 					<h4>{{ trans_choice('site.manuscripts', 2) }}</h4>
 				</div>
@@ -2960,7 +2992,7 @@
         modal.find('form').attr('action', action);
 	});
 
-    $('#orders-table').dataTable( {
+    $('#orders-table, #course-order-attachments-table').dataTable( {
         "ordering": false
     } );
 

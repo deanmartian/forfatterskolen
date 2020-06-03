@@ -310,4 +310,9 @@ class User extends Authenticatable
     public function messages() {
         return $this->hasMany('App\PrivateMessage','user_id','id');
     }
+
+    public function courseOrderAttachments()
+    {
+        return $this->hasMany('App\CourseOrderAttachment', 'user_id', 'id');
+    }
 }

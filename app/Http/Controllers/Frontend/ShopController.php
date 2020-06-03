@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\CourseDiscount;
+use App\CourseOrderAttachment;
 use App\CourseShared;
 use App\CourseSharedUser;
 use App\Helpers\ApiException;
@@ -1632,6 +1633,17 @@ class ShopController extends Controller
         $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
         try {
             $objWriter->save(public_path('email-attachments/angrerettskjema.docx'));
+
+            $courseOrderAttachmentCopy = '/storage/course-order-attachments/' .$course->title.'-'.$user_id.'.docx';
+            $objWriter->save(public_path($courseOrderAttachmentCopy));
+
+            CourseOrderAttachment::create([
+                'user_id' => $user_id,
+                'course_id' => $course->id,
+                'package_id' => $package_id,
+                'file_path' => $courseOrderAttachmentCopy
+            ]);
+
             return 'email-attachments/angrerettskjema.docx';
         } catch (\Exception $e) {
             return "";
