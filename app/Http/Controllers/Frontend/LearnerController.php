@@ -878,7 +878,10 @@ class LearnerController extends Controller
 
     public function invoice(Request $request)
     {
-        $invoices = Auth::user()->invoices()->paginate(15);
+        $invoices = Invoice::where('user_id', Auth::user()->id)
+            ->orderBy('fiken_is_paid', 'ASC')
+            ->orderBy('fiken_dueDate', 'ASC')
+            ->paginate(15);//Auth::user()->invoices()->paginate(15);
 
         if ($request->has('filter') && $request->get('filter')) {
             $invoices = Auth::user()->invoices()->where('id', $request->get('filter'))
