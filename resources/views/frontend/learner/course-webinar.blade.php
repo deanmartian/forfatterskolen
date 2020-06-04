@@ -162,7 +162,7 @@
 
                     @foreach($webinars as $webinar)
                         <?php
-                        $start_date = Carbon\Carbon::parse($webinar->start_date);
+                        $start_date = Carbon\Carbon::parse($webinar->start_date)->addHour();
                         $now = Carbon\Carbon::now();
                         $diff = $now->diffIndays($start_date, false);
                         $diffWithHours = $now->diffInHours($start_date, false);

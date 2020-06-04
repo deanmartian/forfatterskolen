@@ -83,8 +83,8 @@
                         ->join('webinars', 'courses.id', '=', 'webinars.course_id')
                         ->select('webinars.*','courses_taken.id as courses_taken_id','courses.title as course_title')
                         ->where('user_id',Auth::user()->id)
-                        //->where('courses.id',17) // just added this line to show all webinar pakke webinars
-                        //->whereNotIn('webinars.id',[24, 25, 31])
+                        ->where('courses.id',17) // just added this line to show all webinar pakke webinars
+                        ->whereNotIn('webinars.id',[24, 25, 31])
                         ->where('set_as_replay',0)
                         ->orderBy('courses.type', 'ASC')
                         ->orderBy('webinars.start_date', 'ASC')
