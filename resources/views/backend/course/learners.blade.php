@@ -74,6 +74,10 @@
 			@if(count($learners) > 0)
 				<button type="button" class="btn btn-success margin-bottom" data-toggle="modal" data-target="#sendEmailModal">{{ trans('site.send-email') }}</button>
 				<a href="{{ route('learner.course.learner-list-excel', $course->id) }}" class="btn btn-default margin-bottom">{{ trans('site.export-learners') }}</a>
+				<button type="button" class="btn btn-primary margin-bottom" data-toggle="modal"
+						data-target="#addLearnersToWebinarsModal">
+					Add learners to webinars
+				</button>
 				@if ($course->is_free)
 					<button type="button" class="btn btn-info margin-bottom" data-toggle="modal"
 							data-target="#reminderEmailModal">Send Reminder</button>
@@ -467,6 +471,30 @@
 	</div>
 </div>
 
+<div id="addLearnersToWebinarsModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Add Learners to Webinars</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.course.add-learners-to-webinars', $course->id) }}"
+					  onsubmit="disableSubmit(this)">
+					{{csrf_field()}}
+
+					<p>
+						Are you sure to add all learners to the webinars?
+					</p>
+
+					<div class="text-right">
+						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')

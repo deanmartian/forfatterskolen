@@ -10,6 +10,7 @@ use App\Mail\SubjectBodyEmail;
 use App\Package;
 use App\PackageCourse;
 use App\User;
+use App\WebinarRegistrant;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -642,6 +643,59 @@ class CourseController extends Controller
            'errors' => AdminHelpers::createMessageBag('Expiration email reminder saved.'),
            'alert_type' => 'success'
         ]);
+    }
+
+    /**
+     * Add all learners to all webinars
+     * @param $course_id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function addLearnersToWebinars( $course_id )
+    {
+        $course = Course::find($course_id);
+        $webinars = $course->webinars;
+        $learners = $course->learners->get();
+
+        $header[] = 'API-KEY: '.config('services.big_marker.api_key');
+        foreach ( $learners as $learner ) {
+            $user = $learner->user;
+
+            foreach($webinars as $webinar) {
+
+                $data = [
+                    'id'            => $webinar->link,
+                    'email'         => $user->email,
+                    'first_name'    => $user->first_name,
+                    'last_name'     => $user->last_name,
+                ];
+                $ch = curl_init();
+                $url = config('services.big_marker.register_link');
+
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+                $response = curl_exec($ch);
+                $decoded_response = json_decode($response);
+
+                if (array_key_exists('conference_url', $decoded_response)) {
+
+                    $registrant['user_id'] = $user->id;
+                    $registrant['webinar_id'] = $webinar->id;
+                    $webRegister = WebinarRegistrant::firstOrNew($registrant);
+                    $webRegister->join_url = $decoded_response->conference_url;
+                    $webRegister->save();
+
+                }
+
+            }
+
+        }
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Learners added to webinars.'),
+            'alert_type' => 'success']);
+
     }
 
 }
