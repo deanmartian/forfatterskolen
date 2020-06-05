@@ -170,7 +170,14 @@ class FrontendHelpers
 		return true;
 	}
 
-
+    public static function isWebinarAvailablePlusHour($webinar)
+    {
+        $now = time();
+        if( $now < (strtotime($webinar->start_date) + 60*60) ) :
+            return false;
+        endif;
+        return true;
+    }
 
 	public static function isCourseTakenAvailable($courseTaken)
 	{

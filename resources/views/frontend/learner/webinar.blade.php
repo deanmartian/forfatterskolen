@@ -241,7 +241,7 @@
                                         </p>
                                     </div> <!-- end card-body -->
                                     <div class="card-footer border-0 p-0">
-                                        @if( \App\Http\FrontendHelpers::isWebinarAvailable($webinar) )
+                                        @if( \App\Http\FrontendHelpers::isWebinarAvailablePlusHour($webinar) )
                                             <a class="btn site-btn-global w-100 rounded-0" href="{{ $webinar->link }}" target="_blank">
                                                 {{ trans('site.learner.join-webinar') }}
                                                 <i class="img-icon icon-right-arrow"></i>
@@ -263,7 +263,11 @@
                                                     @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id))
                                                         <a class="btn site-btn-global w-100 rounded-0"
                                                            href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id) }}">
-                                                            {{ trans('site.learner.signed') }}
+                                                            @if ($now->diffInMinutes($start_date, false) <= 90)
+                                                                Se Webinar
+                                                            @else
+                                                                {{ trans('site.learner.signed') }}
+                                                            @endif
                                                         </a>
                                                     @else
                                                         <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
