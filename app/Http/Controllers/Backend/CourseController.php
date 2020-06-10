@@ -12,6 +12,7 @@ use App\PackageCourse;
 use App\User;
 use App\WebinarRegistrant;
 use Carbon\Carbon;
+use Illuminate\Contracts\Logging\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests;
@@ -222,6 +223,13 @@ class CourseController extends Controller
             $clone_lesson = $lesson->replicate();
             $clone_lesson->course_id = $clone_course->id;
             $clone_lesson->push();
+
+            // clone the documents of the lesson
+            foreach($lesson->documents as $document) {
+                $clone_document = $document->replicate();
+                $clone_document->lesson_id = $clone_lesson->id;
+                $clone_document->push();
+            }
         endforeach;
 
         foreach( $course->packages as $package ):
