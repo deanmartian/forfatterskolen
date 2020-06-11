@@ -79,8 +79,24 @@ class WebinarEmailOutCommand extends Command
                 $register_link = "<a href='".route('front.goto-webinar.registration.email',
                         [encrypt($webinar->link), encrypt($user_email)])."'>Registrer meg</a>";
 
+                $extractLink        = FrontendHelpers::getTextBetween($emailOut->message, "[redirect]",
+                    "[/redirect]");
+                $redirectLabel      =  FrontendHelpers::getTextBetween($emailOut->message, "[redirect_label]",
+                    "[/redirect_label]");
+                $encode_email = encrypt($user_email);
+                $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
+                $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
+                $search_string = [
+                    '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]',
+                    '[register_link]'
+                ];
+                $replace_string = [
+                    $redirectLink, '', $register_link
+                ];
+                $message = str_replace($search_string, $replace_string, $emailOut->message);
+
                 $emailData['email_subject'] = $subject;
-                $emailData['email_message'] = str_replace('[register_link]', $register_link, $emailOut->message);
+                $emailData['email_message'] = $message;
                 $emailData['from_name'] = NULL;
                 $emailData['from_email'] = NULL;
                 $emailData['attach_file'] = NULL;

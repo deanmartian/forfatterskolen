@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\AdminHelpers;
+use App\Http\FrontendHelpers;
 use App\Mail\SubjectBodyEmail;
 use App\WebinarEmailOut;
 use Illuminate\Http\Request;
@@ -296,8 +297,24 @@ class WebinarController extends Controller
             $register_link = "<a href='".route('front.goto-webinar.registration.email',
                     [encrypt($webinar->link), encrypt($user_email)])."'>Registrer meg</a>";
 
+            $extractLink        = FrontendHelpers::getTextBetween($request->message, "[redirect]",
+                "[/redirect]");
+            $redirectLabel      =  FrontendHelpers::getTextBetween($request->message, "[redirect_label]",
+                "[/redirect_label]");
+            $encode_email = encrypt($request->test_email);
+            $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
+            $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
+            $search_string = [
+                '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]',
+                '[register_link]'
+            ];
+            $replace_string = [
+                $redirectLink, '', $register_link
+            ];
+            $message = str_replace($search_string, $replace_string, $request->message);
+
             $emailData['email_subject'] = $request->subject;
-            $emailData['email_message'] = str_replace('[register_link]', $register_link, $request->message);
+            $emailData['email_message'] = $message;
             $emailData['from_name'] = NULL;
             $emailData['from_email'] = NULL;
             $emailData['attach_file'] = NULL;
