@@ -1634,7 +1634,8 @@ class ShopController extends Controller
         try {
             $objWriter->save(public_path('email-attachments/angrerettskjema.docx'));
 
-            $courseOrderAttachmentCopy = '/storage/course-order-attachments/' .$course->title.'-'.$user_id.'.docx';
+            $courseOrderAttachmentCopy = '/storage/course-order-attachments/' .
+                str_replace(':','-',$course->title).'-'.$user_id.'.docx';
             $objWriter->save(public_path($courseOrderAttachmentCopy));
 
             CourseOrderAttachment::create([
