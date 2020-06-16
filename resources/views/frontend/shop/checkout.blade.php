@@ -179,7 +179,7 @@
 								{{ trans('site.front.form.course-package') }}
 							</div>
 							<div class="panel-body px-0 pb-0">
-								@foreach($course->packages as $k => $package)
+								@foreach($course->packages()->isShow()->get() as $k => $package)
 									<?php
 									$full_payment_price = $package->full_payment_price;
 									$months_3_price = $package->months_3_price;

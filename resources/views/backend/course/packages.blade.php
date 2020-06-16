@@ -83,6 +83,7 @@
             data-id="{{ $package->id }}"
             data-due-date="{{ $package->full_price_due_date }}"
                         data-has_student_discount="{{ $package->has_student_discount }}"
+                                data-is_show="{{ $package->is_show }}"
                                 data-full_payment_upgrade_price="{{ $package->full_payment_upgrade_price }}"
                                 data-months_3_upgrade_price="{{ $package->months_3_upgrade_price }}"
                                 data-months_6_upgrade_price="{{ $package->months_6_upgrade_price }}"
@@ -373,6 +374,12 @@
                 <input type="checkbox" data-toggle="toggle" data-on="Enable"
                        class="for-sale-toggle" data-off="Disable"
                        name="has_student_discount" data-width="84" checked>
+              </div>
+              <div class="form-group">
+                <label>Show Package</label> <br>
+                <input type="checkbox" data-toggle="toggle" data-on="Yes"
+                       class="for-sale-toggle" data-off="No"
+                       name="is_show" data-width="84" checked>
               </div>
             </div>
 
@@ -680,6 +687,13 @@
                 <input type="checkbox" data-toggle="toggle" data-on="Enable"
                        class="for-sale-toggle" data-off="Disable"
                        name="has_student_discount" data-width="84">
+              </div>
+
+              <div class="form-group">
+                <label>Show Package</label> <br>
+                <input type="checkbox" data-toggle="toggle" data-on="Yes"
+                       class="for-sale-toggle" data-off="No"
+                       name="is_show" data-width="84">
               </div>
 
             </div>
@@ -1221,6 +1235,7 @@ $(document).ready(function(){
       var has_student_discount = $(this).data('has_student_discount');
       var selected_course = $(this).data('selected-course');
       var course_type = $(this).data('course-type');
+      let is_show = $(this).data('is_show');
 
       let issue_date = $(this).data('issue_date');
       let validity_period = $(this).data('validity_period');
@@ -1267,6 +1282,10 @@ $(document).ready(function(){
 
       if (has_student_discount) {
           $("#editPackageModal input[name=has_student_discount]").bootstrapToggle('on');
+      }
+
+      if (is_show) {
+          $("#editPackageModal input[name=is_show]").bootstrapToggle('on');
       }
 
       if (months_3_enable) {
