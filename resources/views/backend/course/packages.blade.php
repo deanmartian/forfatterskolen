@@ -2,6 +2,7 @@
 
 @section('styles')
   <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ asset('js/toastr/toastr.min.css') }}">
 @stop
 
 @section('title')
@@ -82,6 +83,8 @@
             data-months_12_enable="{{ $package->months_12_enable }}"
             data-id="{{ $package->id }}"
             data-due-date="{{ $package->full_price_due_date }}"
+                                data-sale_link = "{{ 'https://forfatterskolen.no/course/'.$package->course_id
+                                .'/checkout?sp='.encrypt($package->id) }}"
                         data-has_student_discount="{{ $package->has_student_discount }}"
                                 data-is_show="{{ $package->is_show }}"
                                 data-full_payment_upgrade_price="{{ $package->full_payment_upgrade_price }}"
@@ -696,6 +699,16 @@
                        name="is_show" data-width="84">
               </div>
 
+              <div class="form-group sale-link-container">
+                <label>Sale Link</label>
+                <input type="text" class="form-control" disabled style="width: 90%; display: inline;">
+                <input type="text" name="hidden_val" style="position: absolute; left: -10000px;">
+
+                <button type="button" class="btn btn-success btn-xs copyToClipboard">
+                  <i class="fa fa-clipboard"></i>
+                </button>
+              </div>
+
             </div>
 
             <div class="col-sm-7">
@@ -1035,6 +1048,7 @@
 
 @section('scripts')
   <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+  <script src="{{ asset('js/toastr/toastr.min.js') }}"></script>
 
 <script>
 $(document).ready(function(){
@@ -1284,8 +1298,11 @@ $(document).ready(function(){
           $("#editPackageModal input[name=has_student_discount]").bootstrapToggle('on');
       }
 
+      $(".sale-link-container").removeClass('hide');
+      $(".sale-link-container input").val($(this).data('sale_link'));
       if (is_show) {
           $("#editPackageModal input[name=is_show]").bootstrapToggle('on');
+          $(".sale-link-container").addClass('hide');
       }
 
       if (months_3_enable) {
@@ -1382,6 +1399,26 @@ $(document).ready(function(){
       reward_modal.find('[name=variation]').val(variation);
       reward_modal.find('[name=description]').text(description);
   });
+
+    // not working on hidden fields
+    $(".copyToClipboard").click(function() {
+        let copyText = $(this).closest('.sale-link-container').find('[name=hidden_val]');
+        /* Select the text field */
+        copyText.select();
+        /* Copy the text inside the text field */
+        document.execCommand("copy");
+
+        toastr.success('Copied to clipboard.', "Success");
+        if (window.getSelection) {
+            if (window.getSelection().empty) {  // Chrome
+                window.getSelection().empty();
+            } else if (window.getSelection().removeAllRanges) {  // Firefox
+                window.getSelection().removeAllRanges();
+            }
+        } else if (document.selection) {  // IE?
+            document.selection.empty();
+        }
+    });
 });
 </script>
 @stop

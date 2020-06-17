@@ -12,6 +12,7 @@ use App\Mail\SubjectBodyEmail;
 use App\Order;
 use App\Paypal;
 use App\Repositories\VippsRepository;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -52,7 +53,19 @@ class ShopController extends Controller
             return redirect()->route('front.course.show', $course->id);
         }
 
-    	return view('frontend.shop.checkout', compact('course'));
+        $packages = $course->packages()->isShow()->get();
+
+        if (\request()->has('sp')) {
+            // use try/catch to handle invalid payload
+            try {
+                $package_id = decrypt(\request('sp'));
+                $packages = $course->packages()->where('id', $package_id)->get();
+            } catch (DecryptException $e) {
+                //
+            }
+        }
+
+    	return view('frontend.shop.checkout', compact('course', 'packages'));
     }
 
     public function checkoutTest($course_id)
