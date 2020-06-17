@@ -658,17 +658,23 @@ class CourseController extends Controller
      * @param $course_id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function addLearnersToWebinars( $course_id )
+    public function addLearnersToWebinars( $course_id, Request $request )
     {
+        if (!$request->webinar_id) {
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Webinar id is required.'),
+                'alert_type' => 'danger']);
+        }
+
         $course = Course::find($course_id);
-        $webinars = $course->webinars;
+        $webinar = $course->webinars()->where('id', $request->webinar_id)->first();
         $learners = $course->learners->get();
 
         $header[] = 'API-KEY: '.config('services.big_marker.api_key');
+        $counter = 1;
         foreach ( $learners as $learner ) {
             $user = $learner->user;
 
-            foreach($webinars as $webinar) {
+            //foreach($webinars as $webinar) {
 
                 $data = [
                     'id'            => $webinar->link,
@@ -694,10 +700,14 @@ class CourseController extends Controller
                     $webRegister = WebinarRegistrant::firstOrNew($registrant);
                     $webRegister->join_url = $decoded_response->conference_url;
                     $webRegister->save();
-
+                    echo "success ".$user->email." ".$counter. "<br/>";
+                } else {
+                    echo $decoded_response->error." ".$user->email." ".$counter. "<br/>";
                 }
 
-            }
+                $counter++;
+
+            //}
 
         }
 

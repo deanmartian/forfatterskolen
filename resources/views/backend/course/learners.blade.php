@@ -76,7 +76,7 @@
 				<a href="{{ route('learner.course.learner-list-excel', $course->id) }}" class="btn btn-default margin-bottom">{{ trans('site.export-learners') }}</a>
 				<button type="button" class="btn btn-primary margin-bottom" data-toggle="modal"
 						data-target="#addLearnersToWebinarsModal">
-					Add learners to webinars
+					Add learners to webinar
 				</button>
 				@if ($course->is_free)
 					<button type="button" class="btn btn-info margin-bottom" data-toggle="modal"
@@ -476,16 +476,22 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Add Learners to Webinars</h4>
+				<h4 class="modal-title">Add Learners to Webinar</h4>
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="{{ route('admin.course.add-learners-to-webinars', $course->id) }}"
 					  onsubmit="disableSubmit(this)">
 					{{csrf_field()}}
 
-					<p>
-						Are you sure to add all learners to the webinars?
-					</p>
+					<div class="form-group">
+						<label>Webinar</label>
+						<select name="webinar_id" class="form-control select2">
+							<option value="" disabled selected> - Select Webinar -</option>
+							@foreach($course->webinars as $webinar)
+								<option value="{{ $webinar->id }}">{{ $webinar->title }}</option>
+							@endforeach
+						</select>
+					</div>
 
 					<div class="text-right">
 						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
