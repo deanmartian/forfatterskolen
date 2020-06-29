@@ -19,10 +19,12 @@ use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
 use App\Http\Middleware\Admin;
 use App\Invoice;
+use App\Log;
 use App\Mail\DiscussionEmail;
 use App\Mail\DiscussionRepliesEmail;
 use App\Mail\SubjectBodyEmail;
 use App\OptIn;
+use App\Order;
 use App\PaymentMode;
 use App\PaymentPlan;
 use App\PilotReaderBook;
@@ -1634,9 +1636,68 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         })->download('xlsx');
     }
 
+    /**
+     * Payment is complete
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function bamboraAccept(Request $request)
     {
+        \Illuminate\Support\Facades\Log::info(json_encode($request->all()));
         return redirect()->to('/thank-you');
+    }
+
+    /**
+     * Payment is complete and authorized
+     * @param Request $request parameters sent by bambora
+     */
+    public function bamboraPaymentComplete( Request $request )
+    {
+        \Illuminate\Support\Facades\Log::info("bambora callback");
+        \Illuminate\Support\Facades\Log::info(json_encode($request->all()));
+
+        /* TODO add course or manuscript to the user based on the details on order */
+
+        $order = Order::find($request->orderid);
+        \Illuminate\Support\Facades\Log::info("order details");
+        \Illuminate\Support\Facades\Log::info(json_encode($order));
+
+        // payment is success now capture the payment automatically
+        $apiKey = app('Bambora')->credentials;
+
+        $transactionId = $request->txnid;
+        $endpointUrl = "https://transaction-v1.api-eu.bambora.com/transactions/".$transactionId."/capture";
+
+        $postRequest = array();
+        $postRequest["amount"] = $request->amount;
+        $postRequest["currency"] = $request->currency;
+
+        $requestJson = json_encode($postRequest);
+
+        $contentLength = isset($requestJson) ? strlen($requestJson) : 0;
+        $headers = array(
+            'Content-Type: application/json',
+            'Content-Length: ' . $contentLength,
+            'Accept: application/json',
+            'Authorization: Basic ' . $apiKey
+        );
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $requestJson);
+        curl_setopt($curl, CURLOPT_URL, $endpointUrl);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_FAILONERROR, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+
+        $rawResponse = curl_exec($curl);
+
+        $response = json_decode($rawResponse);
+
+        \Illuminate\Support\Facades\Log::info("capture response");
+        \Illuminate\Support\Facades\Log::info(json_encode($response));
+
     }
 
     public function personalTrainer()
@@ -1769,6 +1830,15 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
     public function innleveringCompetitionThanks()
     {
         return view('frontend.competition.thank-you');
+    }
+
+    /**
+     * Replay page
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function replay()
+    {
+        return view('frontend.replay');
     }
 
 }

@@ -111,6 +111,9 @@ Route::group([
         Route::get('/poems', 'HomeController@poems')->name('front.poems'); // Poems page
         Route::get('/gro-dahle', 'HomeController@grodahlePage')->name('front.gro-dahle');
 
+        Route::get('/reprise', 'HomeController@replay')
+            ->name('front.reprise'); // Replay Page
+
         // Test Manuscript (Shop Manuscript)
         Route::post('/test_manuscript', 'ShopManuscriptController@test_manuscript')->name('front.shop-manuscript.test_manuscript'); // Test count shop manuscript
 
