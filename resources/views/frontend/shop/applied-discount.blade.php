@@ -155,7 +155,7 @@
 					<div class="panel panel-default mb-0">
 						<div class="panel-heading-underlined pt-0">{{ trans('site.front.form.course-package') }}</div>
 						<div class="panel-body px-0 pb-0">
-							@foreach($course->packages as $k => $package)
+							@foreach($packages as $k => $package)
                                 <?php
                                 $full_payment_price = $package->full_payment_price;
                                 $months_3_price = $package->months_3_price;
@@ -275,7 +275,7 @@
 									<option value="{{$paymentMode->id}}" data-mode="{{ $paymentMode->mode }}">{{$paymentMode->mode}}</option>
 								@endforeach
 							</select>
-							<em><small>{{ trans('site.front.coaching-timer.payment-note') }}</small></em>
+							{{--<em><small>{{ trans('site.front.coaching-timer.payment-note') }}</small></em>--}}
 						</div>
 
 						<div class="panel-heading-underlined">{{ trans('site.front.form.discount-coupon') }}</div>

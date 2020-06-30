@@ -224,7 +224,10 @@ class ShopController extends Controller
             if($courseTaken) return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
         endif;
 
-        return view('frontend.shop.applied-discount', compact('course', 'coupon', 'discountData'));
+        $packages = $course->packages()->isShow()->get();
+
+        return view('frontend.shop.applied-discount', compact('course', 'coupon', 'discountData',
+            'packages'));
     }
 
     /**
