@@ -29,20 +29,30 @@ class FikenInvoice
 
 	public function __construct()
 	{
-		$fiken_company = "https://fiken.no/api/v1/companies/forfatterskolen-as";
-		// Demo: fiken-demo-nordisk-og-tidlig-rytme-enk 
-		// Forfatterskolen: forfatterskolen-as
+        $fiken_company = "https://api.fiken.no/api/v2/companies/forfatterskolen-as";
+        // Demo: fiken-demo-nordisk-og-tidlig-rytme-enk
+        // Forfatterskolen: forfatterskolen-as
         // DemoAS: fiken-demo-glede-og-bil-as2
 
-		$this->fiken_contacts = $fiken_company."/contacts";
-		$this->fiken_document_sending_service = $fiken_company."/document-sending-service";
-		$this->fiken_create_invoice_service = $fiken_company."/create-invoice-service";
-		$this->fiken_bank_account = $fiken_company."/bank-accounts/55204077"; // Demo: 313581398  Forfatterskolen: 55204077 DemoAS: 279632077
-		$this->fiken_product = $fiken_company."/products/";
-		$this->fiken_sales = $fiken_company."/sales/";
+        $this->fiken_contacts = $fiken_company."/contacts";
+        $this->fiken_document_sending_service = $fiken_company."/document-sending-service";
+        $this->fiken_create_invoice_service = $fiken_company."/invoices";
+        // Demo: 313581398  Forfatterskolen: 55204077 DemoAS: 279632077
+        $this->fiken_bank_account = $fiken_company."/bank-accounts/55204077";
+        $this->fiken_product = $fiken_company."/products/";
+        $this->fiken_sales = $fiken_company."/sales/";
 
-		$this->headers[] = 'Accept: application/hal+json, application/vnd.error+json';
-		$this->headers[] = 'Content-Type: application/hal+json';
+        $this->headers[] = 'Accept: application/json';
+        $this->headers[] = 'Authorization: Bearer '.config('services.fiken.personal_api_key');
+        $this->headers[] = 'Content-Type: Application/json';
+        // Accept: application/hal+json, application/vnd.error+json
+        //$this->headers[] = 'Content-Type: application/hal+json';
+
+        // Forfatterskolen: DemoAS: 1920:10001
+        $this->fiken_bank_account_code = '1920:10001';
+
+        $this->username = config('services.fiken.username');
+        $this->password = config('services.fiken.password');
 	}
 
 
@@ -54,33 +64,33 @@ class FikenInvoice
 	{
 		$customer = $this->customer($post_fields);
 		// if an issue date is set and not empty then use it else use today
-		$fields = [
-			'issueDate' => isset($post_fields['issueDate']) && $post_fields['issueDate']
+        $fields = [
+            'issueDate' => isset($post_fields['issueDate']) && $post_fields['issueDate']
                 ? Carbon::parse($post_fields['issueDate'])->format('Y-m-d') :date('Y-m-d'),
-			'dueDate' => $post_fields['dueDate'],
-			'lines' => [[
-				'unitNetAmount' => $post_fields['netAmount'],
-				'description'=> $post_fields['description'],
-				'productUrl' => $this->fiken_product . $post_fields['productID'],
-				'comment' => $post_fields['comment'],
-				]],
-			'customer' => [
-				'url' => $customer['href'],
-				'name' => $customer['name'],
-				],
-			'bankAccountUrl' => $this->fiken_bank_account,
-		];
-		$field_string = json_encode($fields, true);
+            'dueDate' => $post_fields['dueDate'],
+            'lines' => [[
+                'net'           => $post_fields['netAmount'],
+                'description'   => $post_fields['description'],
+                'productId'     => $post_fields['productID'],
+                'comment'       => $post_fields['comment'],
+                'quantity'      => 1,
+                'vatType'       => 'NONE',
+                'unitPrice'     => $post_fields['netAmount']
+            ]],
+            'customerId'        => $customer->contactId,
+            'bankAccountCode'   => $this->fiken_bank_account_code,
+            'cash'              => false,
+            'currency'          => 'NOK',
+        ];
 
-		$ch = curl_init($this->fiken_create_invoice_service); 
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $field_string);
-		curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
-		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
-		curl_setopt($ch, CURLOPT_HEADER, 1);
-		$data = curl_exec($ch);
+        $field_string = json_encode($fields, true);
+        $ch = curl_init($this->fiken_create_invoice_service);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $field_string);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+        $data = curl_exec($ch);
 
 		// get the http code response
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -92,12 +102,10 @@ class FikenInvoice
 
 		//print_r($data);
 
-		$headers = $this->get_headers_from_curl_response($data);
-		$location = isset($headers['location']) ? $headers['location'] : $headers['Location'] ;
-		$fiken_url = $this->get_weblink_from_api($location);
-		$fiken_url = $fiken_url->_links->alternate->href;
-		$pdf_url = $this->get_pdf_url($location);
-		$fikenInvoice = $this->get_invoice_data($location);
+        $headers        = $this->get_headers_from_curl_response($data);
+        $fiken_url    = isset($headers['location']) ? $headers['location'] : $headers['Location'];
+        $fikenInvoice   = $this->get_invoice_data($fiken_url);
+        $pdf_url        = $fikenInvoice->invoicePdf->downloadUrl;
 
 		if(!empty($fiken_url)) :
 			$invoice = new Invoice;
@@ -109,16 +117,16 @@ class FikenInvoice
 			$invoice->invoice_number = isset($fikenInvoice->invoiceNumber) ? $fikenInvoice->invoiceNumber : NULL;
 			$invoice->fiken_issueDate = isset($fikenInvoice->issueDate) ? $fikenInvoice->issueDate : NULL;
             $invoice->fiken_dueDate = isset($fikenInvoice->dueDate) ? $fikenInvoice->dueDate : NULL;
-            $invoice->fiken_balance = $fikenInvoice->gross/100;
+            $invoice->fiken_balance = $fikenInvoice->sale->outstandingBalance/100;//$fikenInvoice->gross/100;
 			$invoice->save();
+            $this->invoiceID = $invoice->id;
+            $this->invoice_number = $invoice->invoice_number;
 		endif;
 
-        if (isset($post_fields['payment_mode']) && $post_fields['payment_mode'] === 'Faktura') {
-            $this->send_invoice($location);
+        if (isset($post_fields['payment_mode']) && $post_fields['payment_mode'] === 'Faktura'
+            && (!isset($post_fields['index']) || $post_fields['index'] === 1)) {
+            $this->send_invoice($fikenInvoice);
         }
-
-		$this->invoiceID = $invoice->id;
-		$this->invoice_number = $invoice->invoice_number;
 	}
 
 
@@ -246,22 +254,24 @@ class FikenInvoice
 
 
 
-	public function send_invoice($location)
+	public function send_invoice($invoice)
 	{
-		$fields = [
-			'resource' => $location, 
-			'method' => 'auto',
-		];
-		$field_string = json_encode($fields, true);
-
-		$ch = curl_init($this->fiken_document_sending_service); 
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $field_string);
-		curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
-		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
-		$data = curl_exec($ch);
+        $fields = [
+            'invoiceId'         => $invoice->invoiceId,
+            'method'            => ['email'],
+            'includeDocumentAttachments' => true,
+            'recipientName'     => $invoice->customer->name,
+            'recipientEmail'    => $invoice->customer->email
+        ];
+        $field_string = json_encode($fields, true);
+        $this->headers[] = 'Content-Type: Application/json';
+        $ch = curl_init($this->fiken_create_invoice_service . '/send');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $field_string);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+        $data = curl_exec($ch);
+        curl_close($ch);
 	}
 
 
@@ -271,18 +281,32 @@ class FikenInvoice
 
 	public function customer($data)
 	{
-		$fields = [
-			'name' => $data['first_name'] . ' ' . $data['last_name'], 
-			'email' => $data['email'],
-			'phoneNumber' => $data['telephone'],
-			'address' => [
-				'address1' => $data['address'],
-				'postalPlace' => $data['postalPlace'],
-				'postalCode' => $data['postalCode'],
-				],
-			'customer' => true,
-		];
-		return $this->get_customer($fields);
+        $fields = [
+            'name' => $data['first_name'] . ' ' . $data['last_name'],
+            'email' => $data['email'],
+            'phoneNumber' => $data['telephone'],
+            'address' => [
+                'streetAddress' => $data['address'],
+                'city' => $data['postalPlace'],
+                'postCode' => $data['postalCode'],
+                'country' => 'Norway'
+            ],
+            'contactPerson' => [
+                [
+                    'name' => $data['first_name'] . ' ' . $data['last_name'],
+                    'email' => $data['email'],
+                    'phoneNumber' => $data['telephone'],
+                    'address' => [
+                        'streetAddress' => $data['address'],
+                        'city' => $data['postalPlace'],
+                        'postCode' => $data['postalCode'],
+                        'country' => 'Norway'
+                    ],
+                ]
+            ],
+            'customer' => true,
+        ];
+        return $this->get_customer($fields);
 	}
 
 
@@ -294,38 +318,41 @@ class FikenInvoice
 
 	public function get_customer($fields)
 	{
-		$ch = curl_init($this->fiken_contacts); 
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
-		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
-		$data = curl_exec($ch);
-		curl_close($ch);
-		$data = json_decode($data);
-		$contacts = $data->_embedded->{'https://fiken.no/api/v1/rel/contacts'};
-		$item = null;
-		foreach($contacts as $struct) {
-		    if ( isset($struct->email) && $fields['email'] == $struct->email ) :
-		        $item = $struct;
-		        break;
-		    endif;
-		}
-		if( $item ) :
+        $ch = curl_init($this->fiken_contacts.'?pageSize=1&email='.$fields['email']);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        /*curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;*/
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        $data = json_decode($data);
+        //$contacts = $data->_embedded->{'https://fiken.no/api/v1/rel/contacts'}; - this is for v1 of fiken
+        $item = $data;
+        if( $item ) :
+            $item = $item[0];
+
             $updateData['name'] = $item->name;
             $updateData['email'] = $item->email;
             $updateData['address'] = [
-                'address1' => $fields['address']['address1'],
-                'postalPlace' => $fields['address']['postalPlace'],
-                'postalCode' => $fields['address']['postalCode'],
+                'streetAddress' => $fields['address']['streetAddress'],
+                'city' => $fields['address']['city'],
+                'postCode' => $fields['address']['postCode'],
+                'country' => $fields['address']['country'],
             ];
-            $this->update_customer($item->_links->self->href, $updateData);
-			return [
-				'href' => $item->_links->self->href,
-				'name' => $item->name,
-			];
-		else :
-			return $this->create_customer($fields);
-		endif;
+            $updateData['contactPerson'] = [
+                [
+                    'streetAddress' => $fields['address']['streetAddress'],
+                    'city' => $fields['address']['city'],
+                    'postCode' => $fields['address']['postCode'],
+                    'country' => $fields['address']['country'],
+                ]
+            ];
+
+            $this->update_customer($item->contactId, $updateData);
+            return $item;
+        else :
+            return $this->create_customer($fields);
+        endif;
 
 	}
 
@@ -337,18 +364,19 @@ class FikenInvoice
 
 	public function create_customer($fields)
 	{
-		$field_string = json_encode($fields, true);
-		$ch = curl_init($this->fiken_contacts); 
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $field_string);
-		curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
-		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
-		$data = curl_exec($ch);
-		curl_close($ch);
-		$data = json_decode($data);
-		return $this->get_customer($fields);
+        $field_string = json_encode($fields, true);
+        $this->headers[] = 'Content-Type: Application/json';
+        $ch = curl_init($this->fiken_contacts);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $field_string);
+        /*curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;*/
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        $data = json_decode($data);
+        return $this->get_customer($fields);
 	}
 
     /**
@@ -358,20 +386,20 @@ class FikenInvoice
      * @param $fields
      * @return mixed
      */
-    public function update_customer($url, $fields)
+    public function update_customer($contact_id, $fields)
     {
-        $ch = curl_init($url);
+        $ch = curl_init($this->fiken_contacts.'/'.$contact_id);
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
-        curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;
+        /*curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;*/
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
         $data = curl_exec($ch);
         curl_close($ch);
         return $data;
-	}
+    }
 }
 
 

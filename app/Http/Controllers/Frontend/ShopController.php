@@ -626,6 +626,7 @@ class ShopController extends Controller
                     'postalCode' => $request->zip,
                     'comment' => $comment,
                     'payment_mode'  => $paymentMode->mode,
+                    'index'         => $i
                 ];
 
                 $invoice = new FikenInvoice();

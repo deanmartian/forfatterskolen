@@ -30,6 +30,8 @@ class InvoiceController extends Controller
         'Content-Type: application/hal+json'
    ];
 
+    public $headersV2 = [];
+
 
     /**
      * CourseController constructor.
@@ -38,6 +40,9 @@ class InvoiceController extends Controller
     {
         // middleware to check if admin have access to this page
         $this->middleware('checkPageAccess:8');
+        $this->headersV2[] = 'Accept: application/json';
+        $this->headersV2[] = 'Authorization: Bearer '.config('services.fiken.personal_api_key');
+        $this->headersV2[] = 'Content-Type: Application/json';
     }
 
 
@@ -75,8 +80,13 @@ class InvoiceController extends Controller
         $fikenValid = false;
         $fikenURL = NULL;
         $fikenInvoiceNumber = NULL;
+        $expUrl = explode('/', $request->fiken_url);
+        $searchBy = $expUrl[count($expUrl) - 2];
+        $searchId = end($expUrl);
 
-        $ch = curl_init($this->fikenInvoices); 
+        /*
+         * this code is for version 1
+         * $ch = curl_init($this->fikenInvoices);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;
@@ -91,34 +101,47 @@ class InvoiceController extends Controller
                 $fikenInvoiceNumber = $invoiceData->invoiceNumber;
                 break;
             endif;
-        endforeach;
+        endforeach;*/
 
+        // check if sale which is used by version 1
+        if ($searchBy === "salg") {
+            $url = 'https://api.fiken.no/api/v2/companies/forfatterskolen-as/sales/'.$searchId;
+            $fieldName = 'saleNumber';
+        } else {
+            $url = 'https://api.fiken.no/api/v2/companies/forfatterskolen-as/invoices/'.$searchId;
+            $fieldName = 'invoiceNumber';
+        }
 
-        /*$ch = curl_init($request->pdf_url);
+        $headers = [
+            'Accept: application/json',
+            'Authorization: Bearer '.config('services.fiken.personal_api_key'),
+            'Content-Type: Application/json'
+        ];
+
+        $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
-        $data = curl_exec($ch);
-        $pdfURL_httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);*/
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        //curl_setopt($ch, CURLOPT_HEADER, 1);
+        $response = curl_exec($ch);
+        $response = json_decode($response);
 
+        // get the http code response
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if (!in_array($http_code, [200, 201])) { // 200 - get success, 201 - post success
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag($response->error_description),
+                'not-former-courses'    => true
+            ]);
+        }
 
-        //validate Fiken URL and PDF URL
-        // && $pdfURL_httpcode == 200 - this causes error
-        if( $fikenValid) :
-            $learner = User::findOrFail($request->learner_id);
+        $learner = User::findOrFail($request->learner_id);
 
-            $invoice = new Invoice;
-            $invoice->user_id = $learner->id;
-            $invoice->fiken_url = $request->fiken_url;
-            $invoice->pdf_url = $request->pdf_url;
-            $invoice->invoice_number = $fikenInvoiceNumber;
-            $invoice->save();
-        else :
-            return redirect()->back()->withErrors(['Error with Fiken URL.']);
-        endif;
+        $invoice = new Invoice;
+        $invoice->user_id = $learner->id;
+        $invoice->fiken_url = $request->fiken_url;
+        $invoice->pdf_url = $request->pdf_url;
+        $invoice->invoice_number = $response->$fieldName;
+        $invoice->save();
 
         return redirect()->back();
     }
@@ -131,8 +154,11 @@ class InvoiceController extends Controller
     {
         $invoice = Invoice::findOrFail($id);
         $fikenValid = false;
+        $expUrl = explode('/', $request->fiken_url);
+        $searchBy = $expUrl[count($expUrl) - 2];
+        $searchId = end($expUrl);
 
-        $ch = curl_init($this->fikenInvoices); 
+        /*$ch = curl_init($this->fikenInvoices);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;
@@ -145,31 +171,48 @@ class InvoiceController extends Controller
                 $fikenValid = true;
                 break;
             endif;
-        endforeach;
+        endforeach;*/
 
+        if ($searchBy === "salg") {
+            $url = 'https://api.fiken.no/api/v2/companies/forfatterskolen-as/sales/'.$searchId;
+            $fieldName = 'saleNumber';
+        } else {
+            $url = 'https://api.fiken.no/api/v2/companies/forfatterskolen-as/invoices/'.$searchId;
+            $fieldName = 'invoiceNumber';
+        }
 
-        /*$ch = curl_init($request->pdf_url);
+        $headers = [
+            'Accept: application/json',
+            'Authorization: Bearer '.config('services.fiken.personal_api_key'),
+            'Content-Type: Application/json'
+        ];
+
+        $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
-        $data = curl_exec($ch);
-        $pdfURL_httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);*/
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        //curl_setopt($ch, CURLOPT_HEADER, 1);
+        $response = curl_exec($ch);
+        $response = json_decode($response);
 
+        // get the http code response
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if (!in_array($http_code, [200, 201])) { // 200 - get success, 201 - post success
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag($response->error_description),
+                'not-former-courses'    => true
+            ]);
+        }
 
-        //validate Fiken URL and PDF URL
-        // && $pdfURL_httpcode == 200 - this causes error
-        if( $fikenValid) :
-            $learner = User::findOrFail($request->learner_id);
-            $invoice->fiken_url = $request->fiken_url;
-            $invoice->pdf_url = $request->pdf_url;
-            $invoice->fiken_is_paid = $request->status;
-            $invoice->save();
-        else :
-            return redirect()->back()->withErrors(['Error with Fiken URL.']);
-        endif;
+        $learner = User::findOrFail($request->learner_id);
+        $invoice->fiken_url = $request->fiken_url;
+        $invoice->pdf_url = $request->pdf_url;
+        $invoice->fiken_is_paid = $request->status;
+
+        if ($request->balance) {
+            $invoice->fiken_balance = $request->balance;
+        }
+
+        $invoice->save();
 
         return redirect()->back();
     }
@@ -265,6 +308,7 @@ class InvoiceController extends Controller
                     'postalCode'    => $learner->address->zip,
                     'comment'       => $comment,
                     'payment_mode'  => $paymentMode->mode,
+                    'index'         => $i
                 ];
 
                 $invoice = new FikenInvoice();
@@ -304,6 +348,32 @@ class InvoiceController extends Controller
     {
         $invoice = Invoice::find($invoice_id);
         $exp_pdf = count(explode('.pdf',$invoice->pdf_url));
+
+        // check if version 2
+        if (strpos($invoice->pdf_url, 'v2')) {
+
+            $pdf_url = $invoice->pdf_url;
+            if ($exp_pdf == 1) {
+                $pdf_url = $pdf_url.'.pdf';
+            }
+            $expFile = explode("/", $pdf_url);
+
+            $filename = 'fiken-invoice/'.end($expFile);
+
+            // write file on the server
+            $out = fopen($filename, 'wb');
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_FILE, $out);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headersV2);
+            curl_setopt($ch, CURLOPT_URL, $pdf_url);
+            curl_exec($ch);
+            curl_close($ch);
+            fclose($out);
+            return response()->download($filename);
+        }
+
         $pdf_url = str_replace("https://fiken.no/filer/", "https://fiken.no/api/v1/files/", $invoice->pdf_url);
         if ($exp_pdf == 1) {
             $pdf_url = $pdf_url.'.pdf';

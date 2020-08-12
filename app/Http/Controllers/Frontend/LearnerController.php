@@ -88,12 +88,21 @@ class LearnerController extends Controller
     // Demo: fiken-demo-nordisk-og-tidlig-rytme-enk 
     // Forfatterskolen: forfatterskolen-as
     public $fikenInvoices = "https://fiken.no/api/v1/companies/forfatterskolen-as/invoices";
-    public $username = "cleidoscope@gmail.com";
-    public $password = "moonfang";
-    public $headers = [
+    public $username = "elybutabara@yahoo.com";
+    public $password = "janiel12";
+    /* old
+     * public $headers = [
         'Accept: application/hal+json, application/vnd.error+json',
         'Content-Type: application/hal+json'
-   ];
+   ];*/
+    protected $headers = [];
+
+    public function __construct()
+    {
+        $this->headers[] = 'Accept: application/json';
+        $this->headers[] = 'Authorization: Bearer '.config('services.fiken.personal_api_key');
+        $this->headers[] = 'Content-Type: Application/json';
+    }
 
     public function dashboard()
     {
@@ -1979,6 +1988,7 @@ class LearnerController extends Controller
                     'postalCode' => Auth::user()->address->zip,
                     'comment' => $comment,
                     'payment_mode'  => $paymentMode->mode,
+                    'index'         => $i
                 ];
 
                 $invoice = new FikenInvoice();
@@ -3127,11 +3137,51 @@ class LearnerController extends Controller
     }
 
     /**
+     * @param $url
+     * @return mixed|\Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function downloadInvoice( $url )
+    {
+        $invoice = Invoice::find($url); // this is invoice id
+        $exp_pdf = count(explode('.pdf',$invoice->pdf_url));
+
+        // check if the pdf url is for version 2
+        if (strpos($invoice->pdf_url, 'v2')) {
+
+            $pdf_url = $invoice->pdf_url;
+
+            if ($exp_pdf == 1) {
+                $pdf_url = $pdf_url.'.pdf';
+            }
+            $expFile = explode("/", $pdf_url);
+
+            $filename = 'fiken-invoice/'.end($expFile);
+
+            // write file on the server
+            $out = fopen($filename, 'wb');
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_FILE, $out);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+            curl_setopt($ch, CURLOPT_URL, $pdf_url);
+            curl_exec($ch);
+            curl_close($ch);
+            fclose($out);
+            return response()->download($filename);
+
+        }
+
+
+        return $this->downloadInvoiceV1($url);
+    }
+
+    /**
      * Get the invoice pdf from the url with login credentials
      * @param $url
      * @return mixed
      */
-    public function downloadInvoice($url)
+    public function downloadInvoiceV1($url)
     {
         $invoice = Invoice::find($url); // this is invoice id
         $exp_pdf = count(explode('.pdf',$invoice->pdf_url));

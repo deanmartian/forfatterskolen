@@ -45,6 +45,82 @@ class CheckFikenInvoice extends Command
     public function handle()
     {
         CronLog::create(['activity' => 'CheckFikenInvoice CRON running.']);
+        $pageCount = 1;
+        // LIVE:forfatterskolen-as DEMO: fiken-demo-glede-og-bil-as2
+        $company = 'forfatterskolen-as';
+
+        for($page = 0; $page <= $pageCount; $page++) {
+            $fikenInvoiceUrl = "https://api.fiken.no/api/v2/companies/" . $company . "/invoices?page=" . $page
+                . "&pageSize=100";
+            $headers = [
+                'Accept: application/json',
+                'Authorization: Bearer '.config('services.fiken.personal_api_key'),
+                'Content-Type: Application/json'
+            ];
+
+            $ch = curl_init($fikenInvoiceUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_HEADER, 1);
+
+            // this function is called by curl for each header received
+            $curlHeaders = [];
+            curl_setopt($ch, CURLOPT_HEADERFUNCTION,
+                function($curl, $header) use (&$curlHeaders)
+                {
+                    $len = strlen($header);
+                    $header = explode(':', $header, 2);
+                    if (count($header) < 2) // ignore invalid headers
+                        return $len;
+
+                    $curlHeaders[strtolower(trim($header[0]))][] = trim($header[1]);
+
+                    return $len;
+                }
+            );
+
+            $response = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $body = substr($response, $header_size);
+            $fikenInvoices = json_decode($body);
+            $pageCount = $curlHeaders['fiken-api-page-count'][0];
+
+            foreach ( $fikenInvoices as $fikenInvoice) {
+                $fiken_balance  = isset($fikenInvoices->sale->outstandingBalance)
+                    ? $fikenInvoices->sale->outstandingBalance : $fikenInvoice->gross;
+                $fiken_balance = (double) $fiken_balance/100;
+                $status         = $fikenInvoice->sale->settled ? 1 : 0;
+                $fikenDueDate   = $fikenInvoice->dueDate;
+                $kid            = isset($fikenInvoice->kid) ? $fikenInvoice->kid : NULL;
+                $gross          = $fikenInvoice->gross;
+                $fikenIssueDate = $fikenInvoice->issueDate;
+
+                $invoice = Invoice::where('invoice_number', $fikenInvoice->invoiceNumber)
+                    ->whereIn('fiken_is_paid',[0, 2])->first();
+
+                if ($invoice) {
+                    $invoice->fiken_is_paid     = $status;
+                    $invoice->fiken_balance     = $fiken_balance;
+                    $invoice->fiken_dueDate     = $fikenDueDate;
+                    $invoice->kid_number        = $kid;
+                    $invoice->fiken_issueDate   = $fikenIssueDate;
+                    $invoice->gross             = $gross;
+                    $invoice->save();
+                    CronLog::create(['activity' => 'CheckFikenInvoice CRON updated an invoice with kid_number '.$kid]);
+                }
+            }
+
+        }
+
+        CronLog::create(['activity' => 'CheckFikenInvoice CRON done running.']);
+        echo "done checking fiken";
+        return;
+
+    }
+
+    public function handleOrig()
+    {
+        CronLog::create(['activity' => 'CheckFikenInvoice CRON running.']);
         $fikenInvoices = "https://fiken.no/api/v1/companies/forfatterskolen-as/invoices";
         $username = "cleidoscope@gmail.com";
         $password = "moonfang";
@@ -60,6 +136,7 @@ class CheckFikenInvoice extends Command
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $data = curl_exec($ch);
         $data = json_decode($data);
+        print_r($data);
         $fikenInvoices = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};
 
         // get all unpaid invoices to reduce process time
