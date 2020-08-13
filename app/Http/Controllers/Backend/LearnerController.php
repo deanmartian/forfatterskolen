@@ -391,6 +391,55 @@ class LearnerController extends Controller
     }
 
     /**
+     * @param $invoice_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateInvoiceDue( $invoice_id, Request $request )
+    {
+        $invoice = Invoice::find($invoice_id);
+        if ($invoice) {
+            $company = 'forfatterskolen-as';
+            $fikenInvoiceUrl = "https://api.fiken.no/api/v2/companies/" . $company . "/invoices/"
+                . $invoice->fiken_invoice_id;
+            $headers = [
+                'Accept: application/json',
+                'Authorization: Bearer '.config('services.fiken.personal_api_key'),
+                'Content-Type: Application/json'
+            ];
+
+            $fields = [
+                'newDueDate' => $request->due_date
+            ];
+            $field_string = json_encode($fields, true);
+
+            $ch = curl_init($fikenInvoiceUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_HEADER, 1);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $field_string);
+            $data = curl_exec($ch);
+
+            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            if (!in_array($http_code, [200, 201])) { // 200 - get success, 201 - post success
+                abort($http_code); // display error page instead of the Whoops page
+            }
+
+            curl_close($ch);
+
+            $invoice->fiken_dueDate = $request->due_date;
+            $invoice->save();
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Due date updated'),
+                'alert_type' => 'success',
+                'not-former-courses' => true
+            ]);
+        }
+        return redirect()->back();
+    }
+
+    /**
      * Delete learner invoice
      * @param $invoice_id
      * @return \Illuminate\Http\RedirectResponse

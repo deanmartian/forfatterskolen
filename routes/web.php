@@ -534,6 +534,7 @@ Route::group([
         Route::delete('diploma/{id}/delete', 'LearnerController@deleteDiploma')->name('admin.learner.delete-diploma');
         Route::get('diploma/{id}/download', 'LearnerController@downloadDiploma')->name('admin.learner.download-diploma');
 
+        Route::post('learner/invoice/{id}/update-due', 'LearnerController@updateInvoiceDue')->name('admin.learner.invoice.update-due');
         Route::delete('learner/invoice/{id}/delete', 'LearnerController@deleteInvoice')->name('admin.learner.invoice.delete');
         Route::delete('learner/course/{course_taken_id}/delete', 'LearnerController@deleteFromCourse')->name('admin.learner.delete-from-course');
         Route::post('learner/{learner_id}/course/{course_taken_id}/renew', 'LearnerController@renewCourse')->name('admin.learner.renew-course');

@@ -115,6 +115,7 @@ class FikenInvoice
 			$invoice->gross = $fikenInvoice->gross;
 			$invoice->kid_number = isset($fikenInvoice->kid) ? $fikenInvoice->kid : NULL;
 			$invoice->invoice_number = isset($fikenInvoice->invoiceNumber) ? $fikenInvoice->invoiceNumber : NULL;
+            $invoice->fiken_invoice_id = $fikenInvoice->invoiceId;
 			$invoice->fiken_issueDate = isset($fikenInvoice->issueDate) ? $fikenInvoice->issueDate : NULL;
             $invoice->fiken_dueDate = isset($fikenInvoice->dueDate) ? $fikenInvoice->dueDate : NULL;
             $invoice->fiken_balance = $fikenInvoice->sale->outstandingBalance/100;//$fikenInvoice->gross/100;

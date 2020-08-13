@@ -511,7 +511,16 @@
 									@endif--}}
 								</td>
 								<td>{{$invoice->created_at}}</td>
-								<td>{{ $invoice->fiken_dueDate ? \Carbon\Carbon::parse($invoice->fiken_dueDate)->format('d.m.Y') : '' }}</td>
+								<td>
+									<a href="#" data-toggle='modal' data-target='#updateInvoiceDueModal'
+									   class="updateDueBtn"
+									data-action="{{ route('admin.learner.invoice.update-due', $invoice->id) }}"
+									data-date="{{ $invoice->fiken_dueDate }}">
+										{{ $invoice->fiken_dueDate
+											? \Carbon\Carbon::parse($invoice->fiken_dueDate)->format('d.m.Y')
+											: 'Add Due Date' }}
+									</a>
+								</td>
 								<td>
 									{{--@if (Auth::user()->isSuperUser())--}}
 										<button class="btn btn-danger btn-xs deleteInvoiceBtn" data-toggle="modal"
@@ -2074,6 +2083,35 @@
 	</div>
 </div>
 
+<div id="updateInvoiceDueModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Update Due Date</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					
+					<div class="form-group">
+						<label>
+							Due Date
+						</label>
+						<input type="date" class="form-control" name="due_date" required>
+					</div>
+					
+					<button class="btn btn-primary pull-right" type="submit">
+						{{ trans('site.submit') }}
+					</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
 <div id="deleteFromCourseModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -2795,6 +2833,15 @@
             $(this).attr('disabled','disabled');
             $("#deleteInvoiceModal").find('form').submit();
 		});
+
+        $(".updateDueBtn").click(function(){
+            let action = $(this).data('action');
+            let form = $("#updateInvoiceDueModal").find('form');
+            form.attr('action', action);
+            let due = $(this).data('date');
+            form.find("[type=date]").val(due);
+
+        });
 
         $(".deleteFromCourseBtn").click(function(){
             let action = $(this).data('action');
