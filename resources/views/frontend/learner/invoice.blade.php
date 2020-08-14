@@ -61,6 +61,8 @@
 												<span class="label label-success">{{$status}}</span>
 											@elseif($invoice->fiken_is_paid === 2)
 												<span class="label label-warning">{{$status}}</span>
+											@elseif($invoice->fiken_is_paid === 3)
+												<span class="label label-primary text-uppercase">Kreditert</span>
 											@else
 												<span class="label label-danger">{{$status}}</span>
 											@endif

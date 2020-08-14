@@ -9,6 +9,8 @@ class Invoice extends Model
 
     const COMPLETED = 1;
     const PENDING = 0;
+    const FOR_COLLECTION = 2;
+    const CREDITED = 3;
 
     /**
      * The database table used by the model.

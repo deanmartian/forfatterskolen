@@ -459,6 +459,90 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
+    public function addFikenCreditNote( $invoice_id, Request $request )
+    {
+        $invoice = Invoice::find($invoice_id);
+        if ($invoice) {
+            $this->validate($request, [
+                'issue_date' => 'required'
+            ]);
+
+            $fields = [
+                "invoiceId" => $invoice->fiken_invoice_id,
+                "issueDate" => $request->issue_date,
+                "creditNoteText" => $request->credit_note
+            ];
+
+            $company = 'forfatterskolen-as';
+            $fikenUrl = "https://api.fiken.no/api/v2/companies/" . $company . "/creditNotes/full";
+            $headers = [
+                'Accept: application/json',
+                'Authorization: Bearer '.config('services.fiken.personal_api_key'),
+                'Content-Type: Application/json'
+            ];
+
+            $field_string = json_encode($fields, true);
+            $ch = curl_init($fikenUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $field_string);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_HEADER, 1);
+
+            // this function is called by curl for each header received
+            $curlHeaders = [];
+            curl_setopt($ch, CURLOPT_HEADERFUNCTION,
+                function($curl, $header) use (&$curlHeaders)
+                {
+                    $len = strlen($header);
+                    $header = explode(':', $header, 2);
+                    if (count($header) < 2) // ignore invalid headers
+                        return $len;
+
+                    $curlHeaders[strtolower(trim($header[0]))][] = trim($header[1]);
+
+                    return $len;
+                }
+            );
+
+            $response = curl_exec($ch);
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $data = substr($response, $header_size);
+
+            // get the http code response
+            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            if (!in_array($http_code, [200, 201])) { // 200 - get success, 201 - post success
+                $data = json_decode($data);
+
+                if (isset($data->error_description)) {
+                    $error_message = $data->error_description;
+                } else {
+                    $error_message = $data[0]->message;
+                }
+
+                return redirect()->back()->with([
+                    'alert_type' => 'danger',
+                    'errors' => AdminHelpers::createMessageBag($error_message),
+                    'not-former-courses' => true
+                ]);
+            }
+
+            curl_close($ch);
+
+
+            $invoice->fiken_is_paid = 3;
+            $invoice->save();
+
+            return redirect()->back()->with([
+                'alert_type' => 'success',
+                'errors' => AdminHelpers::createMessageBag('Credit note saved.'),
+                'not-former-courses' => true
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
     /**
      * Remove learner from webinar-pakke
      * @param $course_taken_id
@@ -1605,4 +1689,6 @@ class LearnerController extends Controller
             'not-former-courses'    => true
         ]);
     }
+
+
 }

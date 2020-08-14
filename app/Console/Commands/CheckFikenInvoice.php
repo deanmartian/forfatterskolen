@@ -99,7 +99,7 @@ class CheckFikenInvoice extends Command
                     ->whereIn('fiken_is_paid',[0, 2])->first();
 
                 if ($invoice) {
-                    $invoice->fiken_is_paid     = $status;
+                    $invoice->fiken_is_paid     = $fikenInvoice->associatedCreditNotes ? 3 : $status;
                     $invoice->fiken_balance     = $fiken_balance;
                     $invoice->fiken_dueDate     = $fikenDueDate;
                     $invoice->kid_number        = $kid;

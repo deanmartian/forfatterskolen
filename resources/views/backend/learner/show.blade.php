@@ -469,7 +469,7 @@
 								<th>{{ trans('site.status') }}</th>
 								<th>{{ trans('site.created-at') }}</th>
 								<th>{{ trans('site.due-date') }}</th>
-								<th></th>
+								<th width="200"></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -499,6 +499,8 @@
 										<span class="label label-success">BETALT</span>
 									@elseif($invoice->fiken_is_paid === 2)
 										<span class="label label-warning text-uppercase">sendt til inkasso</span>
+									@elseif($invoice->fiken_is_paid === 3)
+										<span class="label label-primary text-uppercase">Kreditert</span>
 									@else
 										<span class="label label-danger">UBETALT</span>
 									@endif
@@ -529,6 +531,14 @@
 											<i class="fa fa-trash"></i>
 										</button>
 									{{--@endif--}}
+									@if($invoice->fiken_is_paid === 0)
+										<button class="btn btn-primary btn-xs fikenCreditNoteBtn" data-toggle="modal"
+												data-target="#fikenCreditNoteModal"
+												data-action="{{ route("admin.learner.invoice.create-fiken-credit-note",
+												$invoice->id) }}">
+											Add Credit Note
+										</button>
+									@endif
 								</td>
 							</tr>
 							@endforeach
@@ -2060,6 +2070,37 @@
 		</div>
 	</div>
 
+<div id="fikenCreditNoteModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Credit Note</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>Issue Date</label>
+						<input type="date" class="form-control" name="issue_date" required>
+					</div>
+					<div class="form-group">
+						<label>
+							{{ trans('site.learner.notes-text') }}
+						</label>
+						<textarea name="credit_note" cols="30" rows="10" class="form-control"></textarea>
+					</div>
+					<button class="btn btn-primary pull-right" type="submit">
+						{{ trans('site.add-note') }}
+					</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
 <div id="deleteInvoiceModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -2827,6 +2868,11 @@
            let action = $(this).data('action');
            $("#deleteInvoiceModal").find('form').attr('action', action);
 		});
+
+        $(".fikenCreditNoteBtn").click(function(){
+            let action = $(this).data('action');
+            $("#fikenCreditNoteModal").find('form').attr('action', action);
+        });
 
         $("#submitDeleteInvoice").click(function(e) {
            e.preventDefault();
