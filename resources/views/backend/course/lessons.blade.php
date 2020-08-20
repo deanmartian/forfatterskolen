@@ -19,6 +19,7 @@
 				{{ csrf_field() }}
 				<button type="submit" class="btn btn-success" id="save_order" disabled>{{ trans('site.save-order') }}</button>
 				<input type="hidden" name="lesson_order" id="lesson_order">
+				<input type="hidden" name="page" value="{{ isset($_REQUEST['page']) ? $_REQUEST['page'] : 1 }}">
 			</form>
 			<a class="btn btn-primary margin-bottom" href="{{route('admin.lesson.create', $course->id)}}">+ {{ trans('site.add-lesson') }}</a>
 			<div class="table-responsive">

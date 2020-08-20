@@ -184,8 +184,11 @@ class LessonController extends Controller
 
     public function save_order(Request $request)
     {
+        $counter = $request->page - 1;
+        $multiplier = 25;
         $lessons = explode(',', $request->lesson_order);
-        $i = 0;
+        $i = $counter * $multiplier;
+
 
         foreach( $lessons as $lesson ) :
             $lesson = Lesson::find($lesson);
