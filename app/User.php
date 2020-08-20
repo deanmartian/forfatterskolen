@@ -143,7 +143,7 @@ class User extends Authenticatable
 
     public function logins()
     {
-        return $this->hasMany('App\LearnerLogin')->orderBy('created_at', 'desc')->take(5);
+        return $this->hasMany('App\LearnerLogin')->orderBy('created_at', 'desc')->take(15);
     }
 
     public function invoices()
