@@ -6821,6 +6821,10 @@ textarea.form-control {
         transform: translateY(-30px);
     }
 
+    .front-page-new .video-testimonial-row {
+        margin-bottom: 0 !important;
+    }
+
     .learner-container {
         padding-top: 80px;
     }
@@ -7381,6 +7385,14 @@ textarea.form-control {
         height: 470px;
     }
 
+    .front-page-new .our-course-wrapper {
+        height: 435px !important;
+    }
+
+    .front-page-new .upcoming-row .column {
+        height: 435px !important;
+    }
+
     .manuscript-page .main-container {
         padding: 60px 15px 100px 15px;
     }
@@ -7466,7 +7478,7 @@ textarea.form-control {
     }
 
     .manuscript-page .fourth-section {
-        height: 420px;
+        height: auto;
     }
 
     .manuscript-page .box-white img {
@@ -8546,6 +8558,10 @@ textarea.form-control {
         height: 450px;
     }
 
+    .front-page-new .upcoming-row .column {
+        height: 380px !important;
+    }
+
     .start-today {
         height: 400px;
         padding: 40px 5px;
@@ -8662,7 +8678,7 @@ textarea.form-control {
     }
 
     .manuscript-page .fourth-section {
-        height: 450px;
+        height: auto;
     }
 
     .manuscript-page .box-white {
@@ -9925,6 +9941,7 @@ textarea.form-control {
 
     .manuscript-page .second-section {
         background-image: none;
+        height: 570px;
     }
 
     .manuscript-page .third-section {
@@ -11086,7 +11103,7 @@ textarea.form-control {
     }
 
     .front-page-new .upcoming-row .column {
-        height: 400px !important;
+        height: 365px !important;
     }
 }
 
@@ -11124,6 +11141,10 @@ textarea.form-control {
 
     .manuscript-page .third-section {
         height: 390px;
+    }
+
+    .manuscript-page .third-section .details {
+        padding: 65px 15px;
     }
 
     #editorsModal .modal-body {
@@ -11424,7 +11445,7 @@ textarea.form-control {
     }
 
     .front-page-new .upcoming-row .column {
-        height: 450px !important;
+        height: 360px !important;
     }
 }
 
@@ -11435,6 +11456,10 @@ textarea.form-control {
 
     .manuscript-page .top-page-container iframe {
         height: 201px;
+    }
+
+    .manuscript-page .second-section {
+        height: 665px;
     }
 
     .manuscript-page .third-section .details {
@@ -11674,7 +11699,7 @@ textarea.form-control {
     }
 
     .manuscript-page .second-section {
-        height: 630px;
+        height: 735px;
     }
 
     .manuscript-page .third-section {
@@ -13014,6 +13039,15 @@ footer .copyright {
     footer:before {
         right: 130px;
     }
+
+    .front-page-new #poem-wrapper {
+        padding: 90px 130px;
+    }
+
+    #home-footer:before {
+
+        right: 120px;
+    }
 }
 
 @media only screen and (max-width: 768px) {
@@ -13048,6 +13082,10 @@ footer .copyright {
     .front-page-new .our-course-wrapper p,
     .front-page-new .popular-course-wrapper .all-course {
         padding: 0;
+    }
+
+    .front-page-new .popular-course-wrapper .theme-tabs .tab-content {
+        padding-top: 20px;
     }
 
     .front-page-new .popular-course-wrapper .featured-item {
@@ -13097,6 +13135,12 @@ footer .copyright {
     .front-page-new .video-testimonial-row .carousel-item .details-container {
         top: 45%;
     }
+
+    #home-footer:before {
+        height: 370px;
+        width: 300px;
+        right: 70px;
+    }
 }
 
 @media only screen and (max-width: 640px) {
@@ -13128,6 +13172,22 @@ footer .copyright {
 
     .front-page-new .testimonial-row .carousel .testimonial-details-row {
         padding: 20px;
+    }
+
+    .front-page-new .our-course-wrapper {
+        height: 420px !important;
+    }
+
+    .front-page-new .popular-course-wrapper .all-course {
+        margin-top: 60px;
+    }
+
+    .front-page-new .popular-course-wrapper .theme-tabs .tab-content {
+        padding-top: 0;
+    }
+
+    .front-page-new .popular-course-wrapper .theme-tabs .tabs-container {
+        margin-bottom: -30px;
     }
 
     .front-page-new .popular-course-wrapper .featured-item {
@@ -13187,6 +13247,47 @@ footer .copyright {
         height: 45px;
         width: 35px;
     }
+
+    .front-page-new #poem-wrapper {
+        height: auto;
+        padding: 50px 0;
+    }
+
+    #home-footer:before {
+        height: 270px;
+        width: 215px;
+        right: 40px;
+        top: -160px;
+    }
+}
+
+@media only screen and (max-width: 450px) {
+    .front-page-new .our-course-wrapper {
+        height: 480px!important;
+    }
+
+    .front-page-new .popular-course-wrapper .all-course {
+        margin-top: 40px;
+    }
+
+    .front-page-new .popular-course-wrapper .theme-tabs .tab-content {
+        margin-top: -20px;
+    }
+
+    .cta {
+        height: 430px;
+    }
+
+    footer {
+        padding-top: 60px;
+    }
+
+    #home-footer:before {
+        height: 220px;
+        width: 190px;
+        right: 6px;
+        top: -170px;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -13237,6 +13338,7 @@ footer .copyright {
     }
 
     .front-page-new .popular-course-wrapper .featured-item {
+        margin-top: -20px;
         margin-bottom: 60px;
     }
 
@@ -13244,8 +13346,12 @@ footer .copyright {
         bottom: -43px;
     }
 
+    .front-page-new .popular-course-wrapper .all-course {
+        margin-top: 25px;
+    }
+
     .front-page-new .our-course-wrapper {
-        height: 545px;
+        height: 500px !important;
     }
 
     .front-page-new #poem-wrapper {
@@ -13325,11 +13431,15 @@ footer .copyright {
     }
 
     .front-page-new .our-course-wrapper {
-        height: 570px;
+        height: 510px !important;
     }
 
     .front-page-new .popular-course-wrapper .theme-tabs .tab-content {
         padding-top: 50px;
+    }
+
+    .front-page-new .popular-course-wrapper .featured-item {
+        margin-top: -95px;
     }
 
     .cta:after {
@@ -13347,6 +13457,10 @@ footer .copyright {
 @media only screen and (max-width: 360px) {
     .front-page-new .main-form {
         right: 7px;
+    }
+
+    .front-page-new .popular-course-wrapper .all-course {
+        margin-top: 35px;
     }
 
     .front-page-new .popular-course-wrapper .featured-item .details {
@@ -13369,6 +13483,14 @@ footer .copyright {
 @media only screen and (max-width: 320px) {
     .front-page-new .main-form {
         padding: 45px 20px 0;
+    }
+
+    .front-page-new .our-course-wrapper {
+        height: 550px !important;
+    }
+
+    .front-page-new .popular-course-wrapper .theme-tabs .tab-content {
+        padding-top: 25px;
     }
 
     .multi-item-carousel .carousel-inner .item__third {
@@ -13396,5 +13518,16 @@ footer .copyright {
 
     .next-free-webinar .card-header > img {
         height: 170px;
+    }
+
+    .cta {
+        height: 485px;
+    }
+
+    #home-footer:before {
+        height: 200px;
+        width: 165px;
+        top: -170px;
+        right: 5px;
     }
 }

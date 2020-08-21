@@ -390,7 +390,7 @@
                 ?>
 
                 <div class="row poem-details">
-                    <div class="col-sm-6 poem-author-container">
+                    <div class="col-md-6 col-sm-12 poem-author-container">
                             <img data-src="https://www.forfatterskolen.no/{{ $latestPoem->author_image }}" class="author-image" alt="author image">
                         <div class="author-info">
                             <span class="indicator">{{ trans('site.front.poem-of-the-week') }}</span>
@@ -398,7 +398,7 @@
                             <h4 class="font-montserrat-light">{{ $latestPoem->author }}</h4>
                         </div>
                     </div>
-                    <div class="col-sm-6 poem-container">
+                    <div class="col-md-6 col-sm-12 poem-container">
                         <div class="poem-text-container">
                             {!! $latestPoem->poem !!}
                         </div>
