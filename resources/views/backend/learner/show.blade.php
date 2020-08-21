@@ -1314,7 +1314,7 @@
 
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<h4>{{ str_replace('_COUNT_', 5 , trans('site.last-login-count')) }}</h4>
+					<h4>{{ str_replace('_COUNT_', 15 , trans('site.last-login-count')) }}</h4>
 				</div>
 				<div class="table-responsive">
 					<table class="table">
