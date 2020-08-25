@@ -2745,6 +2745,7 @@ margin-right: 5px;
 
 .blog-read-container h1, .blog-read-container h2, .blog-read-container h3, .blog-read-container h4,
 .blog-read-container h5, .blog-read-container h6 {
+    font-weight: bold;
     margin-top: 20px;
     margin-bottom: 10px;
 }
