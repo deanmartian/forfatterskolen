@@ -423,7 +423,7 @@
                     <h3 class="modal-title">{{ trans('site.learner.renew-automatically-text') }}</h3>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('learner.upgrade-auto-renew') }}" method="POST">
+                    <form action="{{ route('learner.upgrade-auto-renew') }}" method="POST" onsubmit="disableSubmitOrigText(this)">
                         {{ csrf_field() }}
 
                         <p>

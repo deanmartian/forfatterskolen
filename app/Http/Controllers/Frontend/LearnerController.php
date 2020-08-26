@@ -1571,6 +1571,10 @@ class LearnerController extends Controller
         $user->auto_renew_courses   = $request->auto_renew;
         $user->save();
 
+        if (!$request->auto_renew) {
+            return redirect()->back();
+        }
+
         // check if webinar-pakke is already expired and renew it
 
         $monthDate = \Carbon\Carbon::now()->format('Y-m-d');
