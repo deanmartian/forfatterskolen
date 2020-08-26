@@ -6,6 +6,7 @@
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/cropper.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('js/toastr/toastr.min.css') }}">
     <style>
         .image_container, .image_container_edit {
             display: none;
@@ -89,7 +90,15 @@
                                         <div class="webinar-img">
                                             <img src="{{ $webinar->image ? $webinar->image : asset('images/no_image.png') }}">
                                         </div>
-                                        <div class="pull-right">
+                                        <div class="pull-right button-container">
+                                            <?php
+                                            $webinarUrl = "https://forfatterskolen.no/free-webinar/".$webinar->id;
+                                            ?>
+                                            <input type="text" value="{{ $webinarUrl }}"
+                                                   style="position: absolute; left: -10000px;">
+                                            <button class="btn btn-xs btn-success copyToClipboard">
+                                                <i class="fa fa-clipboard"></i>
+                                            </button>
                                             <a class="btn btn-xs btn-info editWebinarBtn"
                                                data-toggle="modal"
                                                data-target="#editWebinarModal"
@@ -529,6 +538,7 @@
 
 @section('scripts')
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.0.0/cropper.js"></script>
+    <script src="{{ asset('js/toastr/toastr.min.js') }}"></script>
 <script>
 
     function readURL(input) {
@@ -690,6 +700,25 @@
         if (e.which !== 8 && e.which !== 0 && (e.which < 48 || e.which > 57)) {
             //display error message
             return false;
+        }
+    });
+
+    $(".copyToClipboard").click(function(){
+        let copyText = $(this).closest('.button-container').find('[type=text]');
+        /* Select the text field */
+        copyText.select();
+        /* Copy the text inside the text field */
+        document.execCommand("copy");
+
+        toastr.success('Copied to clipboard.', "Success");
+        if (window.getSelection) {
+            if (window.getSelection().empty) {  // Chrome
+                window.getSelection().empty();
+            } else if (window.getSelection().removeAllRanges) {  // Firefox
+                window.getSelection().removeAllRanges();
+            }
+        } else if (document.selection) {  // IE?
+            document.selection.empty();
         }
     });
 </script>
