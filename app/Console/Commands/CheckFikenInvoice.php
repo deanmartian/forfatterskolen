@@ -96,7 +96,7 @@ class CheckFikenInvoice extends Command
                 $fikenIssueDate = $fikenInvoice->issueDate;
 
                 $invoice = Invoice::where('invoice_number', $fikenInvoice->invoiceNumber)
-                    ->whereIn('fiken_is_paid',[0, 2])->first();
+                    ->whereIn('fiken_is_paid',[0])->first();
 
                 if ($invoice) {
                     $invoice->fiken_is_paid     = $fikenInvoice->associatedCreditNotes ? 3 : $status;
