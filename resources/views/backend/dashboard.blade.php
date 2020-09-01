@@ -614,7 +614,11 @@
 							    	@foreach( $pending_courses as $pending_course )
 							      	<tr>
 								        <td>{{ $pending_course->package->course->title }}</td>
-								        <td>{{ $pending_course->user->full_name }}</td>
+								        <td>
+											<a href="{{ route('admin.learner.show', $pending_course->user->id) }}">
+												{{ $pending_course->user->full_name }}
+											</a>
+										</td>
 								        <td>{{ $pending_course->created_at }}</td>
 								        <td>
 								        	<form method="POST" action="{{ route('activate_course_taken') }}" class="inline-block">
