@@ -35,6 +35,8 @@
 							<span class="label label-success">BETALT</span>
 						@elseif($invoice->fiken_is_paid === 2)
 							<span class="label label-warning text-uppercase">sendt til inkasso</span>
+						@elseif($invoice->fiken_is_paid === 3)
+							<span class="label label-primary text-uppercase">Kreditert</span>
 						@else
 							<span class="label label-danger">UBETALT</span>
 						@endif <br />
@@ -242,6 +244,7 @@
 					<option value="0" {{ $invoice->fiken_is_paid === 0 ?: 'selected' }}>{{ trans('site.learner.unpaid') }}</option>
 					<option value="1" {{ $invoice->fiken_is_paid === 1 ? 'selected': '' }}>{{ trans('site.learner.paid') }}</option>
 					<option value="2" {{ $invoice->fiken_is_paid === 2? 'selected': '' }}>Sendt til inkasso</option>
+					<option value="3" {{ $invoice->fiken_is_paid === 3? 'selected': '' }}>Kreditert</option>
 				</select>
 			</div>
           <button type="submit" class="btn btn-primary pull-right">{{ trans('site.update-invoice') }}</button>
