@@ -890,6 +890,10 @@
 												data-service="1"
 												data-action="{{ route('admin.other-service.update-status', ['id' => $copy_editing->id, 'type' => 1]) }}"><i class="fa fa-check"></i></button>
 									@endif
+
+										<button class="btn btn-danger btn-xs deleteOtherServiceBtn" type="button"
+												data-toggle="modal" data-target="#deleteOtherServiceModal"
+												data-action="{{ route('admin.other-service.delete', ['id' => $copy_editing->id, 'type' => 1]) }}"><i class="fa fa-check"></i></button>
 								</td>
 							</tr>
 						@endforeach
@@ -2220,6 +2224,32 @@
 	</div>
 </div>
 
+<div id="deleteOtherServiceModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					{{ trans('site.delete') }}
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action=""
+					  onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<p>
+						{{ trans('site.delete-item-question') }}
+					</p>
+					<button class="btn btn-danger pull-right" type="submit">
+						{{ trans('site.delete') }}
+					</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="assignEditorModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -3017,6 +3047,12 @@
 		}
         modal.find('form').attr('action', action);
         modal.find('.modal-title').find('span').text(title);
+	});
+
+	$(".deleteOtherServiceBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#deleteOtherServiceModal');
+        modal.find('form').attr('action', action);
 	});
 
     $(".setOtherServiceFinishDateBtn").click(function(){

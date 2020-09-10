@@ -1202,6 +1202,29 @@ class LearnerController extends Controller
     }
 
     /**
+     * @param $service_id
+     * @param $service_type
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function deleteOtherService( $service_id, $service_type )
+    {
+        if ($service_type == 1 || $service_type == 2 || $service_type == 3) {
+            if ($service_type == 1) {
+                $copyEditing = CopyEditingManuscript::find($service_id);
+                $copyEditing->delete();
+            }
+
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Record deleted successfully.'),
+                'alert_type' => 'success',
+                'not-former-courses' => true
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
+    /**
      * Add coaching session for a user
      * @param $user_id
      * @param Request $request
