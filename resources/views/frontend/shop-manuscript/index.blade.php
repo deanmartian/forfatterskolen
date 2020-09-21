@@ -22,10 +22,10 @@
                         {{ trans('site.front.shop-manuscript.title') }}
                     </h1>
                 </div>
-                <div class="col-sm-12 top-page-container">
-                    {{--<img src="{{ asset('images-new/adult-reading-book.jpg') }}" alt="">--}}
+                {{--<div class="col-sm-12 top-page-container">
+                    --}}{{--<img src="{{ asset('images-new/adult-reading-book.jpg') }}" alt="">--}}{{--
                     <iframe src="https://fast.wistia.com/embed/medias/scuv6yv5qy" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
-                </div>
+                </div>--}}
             </div>
         </div>
 
