@@ -156,7 +156,7 @@
                         </div>
                     </a>
 
-                    <a href="{{ route('front.correction') }}">
+                    {{--<a href="{{ route('front.correction') }}">
                         <div class="row box-white">
                             <div class="col-sm-3">
                                 <img data-src="https://www.forfatterskolen.no/images-new/other-services/book.png">
@@ -186,7 +186,7 @@
                                 </a>
                             </div>
                         </div>
-                    </a>
+                    </a>--}}
                 </div>
             </div>
         </div>
