@@ -20,6 +20,14 @@ class Course extends Model
             ->orderBy('full_payment_price', 'asc');
     }
 
+    public function packagesIsShow()
+    {
+        return $this->hasMany('App\Package')
+            ->where('is_reward', 0)
+            ->where('is_show', 1)
+            ->orderBy('full_payment_price', 'asc');
+    }
+
     public function allPackages()
     {
         return $this->hasMany('App\Package')
