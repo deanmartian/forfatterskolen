@@ -117,8 +117,9 @@ class LearnerController extends Controller
                 $query->whereDate('end_date', '>=', $today);
             })
             ->get();
+        $assignments = $this->dashboardAssignment();
 
-        return view('frontend.learner.dashboard', compact('surveys'));
+        return view('frontend.learner.dashboard', compact('surveys', 'assignments'));
     }
 
 
@@ -752,12 +753,12 @@ class LearnerController extends Controller
 
         if ( $request->hasFile('filename') && 
             $request->file('filename')->isValid() && 
-            in_array($assignment->course_id, $courseIds) &&
+            (in_array($assignment->course_id, $courseIds) || $assignment->parent === 'users') &&
             !$assignmentManuscript) :
             $time = time();
             $destinationPath = 'storage/assignment-manuscripts/'; // upload path
 
-            $extensions = ['doc', 'docx', 'odt'];
+            $extensions = ['doc', 'docx', 'odt', 'pdf'];
             if ($assignment->for_editor) {
                 $extensions = ['docx', 'doc'];
             }
@@ -772,7 +773,7 @@ class LearnerController extends Controller
 
             if( !in_array($extension, $extensions) ) :
                 return redirect()->back()->withInput()->with(
-                    'manuscript_test_error', 'Invalid file format. Allowed formats are DOC, DOCX, ODT'
+                    'manuscript_test_error', 'Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF'
                 );
             endif;
 
@@ -3127,7 +3128,7 @@ class LearnerController extends Controller
         return $events;
     }
 
-    public static function dashboardAssignment()
+    public function dashboardAssignment()
     {
         $assignments = [];
         $coursesTaken = Auth::user()->coursesTaken;
@@ -3154,6 +3155,16 @@ class LearnerController extends Controller
                 }
             endforeach;
         endforeach;
+
+        $userAssignments = Auth::user()->activeAssignments;
+        foreach ($userAssignments as $assignment) {
+
+            if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
+                $assignments[] = $assignment;
+            }
+
+        }
+
         return $assignments;
     }
 

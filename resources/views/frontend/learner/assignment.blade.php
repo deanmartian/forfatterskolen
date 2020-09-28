@@ -430,7 +430,7 @@
 					</label>
 					<input type="file" class="form-control margin-top" required name="filename" accept="application/msword,
 					application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-					application/vnd.oasis.opendocument.text">
+					application/vnd.oasis.opendocument.text,application/pdf">
 				</div>
 
 				<div class="form-group">

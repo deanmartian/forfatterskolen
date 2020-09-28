@@ -78,8 +78,10 @@ class PageController extends Controller
         $pendingCopyEditings = CopyEditingManuscript::whereNull('editor_id')->orderBy('created_at','desc')->get();
 
         $assignmentForCourse = Assignment::whereIn('course_id', [36, 37])->get()->pluck('id')->toArray();
+        $assignmentForLearners = Assignment::where('parent', 'users')->get()->pluck('id')->toArray();
+        $allAssignmentQuery = array_merge($assignmentForCourse, $assignmentForLearners);
         $pendingAssignments = AssignmentManuscript::where('editor_id', 0)
-            ->whereIn('assignment_id', $assignmentForCourse)->get();
+            ->whereIn('assignment_id', $allAssignmentQuery)->get();
         $pendingTasks = UserTask::where('assigned_to', Auth::user()->id)
             ->where('status', 0)->get();
 

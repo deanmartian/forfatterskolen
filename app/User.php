@@ -292,6 +292,13 @@ class User extends Authenticatable
         return $this->hasMany(UserTask::class)->where('status',0);
     }
 
+    public function assignments()
+    {
+        return $this->hasMany('App\Assignment', 'parent_id', 'id')
+            ->where('parent', 'users')
+            ->orderBy('created_at', 'desc');
+    }
+
     // active assignment assigned
     public function activeAssignments()
     {

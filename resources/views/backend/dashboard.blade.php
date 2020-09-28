@@ -316,7 +316,16 @@
 							@foreach ($assignedAssignments as $assignedAssignment)
 								<tr>
 									<td>
-										<a href="{{ route('admin.course.show', $assignedAssignment->assignment->course->id) }}">{{ $assignedAssignment->assignment->course->title }}</a>
+										@if($assignedAssignment->assignment->course)
+											<a href="{{ route('admin.course.show', $assignedAssignment->assignment->course->id) }}">
+												{{ $assignedAssignment->assignment->course->title }}
+											</a>
+										@else
+											<a href="{{ route('admin.learner.assignment',
+												[$assignedAssignment->assignment->parent_id, $assignedAssignment->assignment->id]) }}">
+												{{ $assignedAssignment->assignment->title }}
+											</a>
+										@endif
 									</td>
 									<td>{{ $assignedAssignment->user_id }}</td>
 									<td>

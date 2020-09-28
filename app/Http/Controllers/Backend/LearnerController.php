@@ -125,7 +125,8 @@ class LearnerController extends Controller
     public function show($id)
     {
         $learner = User::findOrFail($id);
-        return view('backend.learner.show', compact('learner'));
+        $learnerAssignments = $learner->assignments;
+        return view('backend.learner.show', compact('learner', 'learnerAssignments'));
     }
 
 

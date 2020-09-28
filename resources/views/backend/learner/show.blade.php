@@ -722,7 +722,46 @@
 						</tbody>
 					</table>
 				</div>
-			</div>
+			</div> <!-- end assignments -->
+
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<h4>
+						Personal Assignments
+					</h4>
+				</div>
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+						<tr>
+							<th>{{ trans_choice('site.assignments', 1) }}</th>
+							<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+						</tr>
+						</thead>
+						<tbody>
+							@foreach($learnerAssignments as $assignment)
+                                <?php $manuscript = $assignment->manuscripts->where('user_id', $learner->id)->first();
+                                $assignmentCourse = $assignment->course;
+                                ?>
+								@if( $manuscript )
+                                    <?php $extension = explode('.', basename($manuscript->filename)); ?>
+									<tr>
+										<td>
+											<a href="{{ route('admin.learner.assignment',
+												[$assignment->parent_id, $assignment->id]) }}">
+												{{ $assignment->title }}
+											</a>
+										</td>
+										<td>
+											{!! $manuscript->file_link !!}
+										</td>
+									</tr>
+								@endif
+							@endforeach
+						</tbody>
+					</table>
+				</div>
+			</div> <!-- end personal assignments -->
 
 			<!-- correction -->
 			<div class="panel panel-default">
