@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\AssignmentFeedbackNoGroup;
+use App\AssignmentTemplate;
 use App\Helpers\DocumentParser;
 use App\Helpers\Html2Text;
 use App\Helpers\PdfParser;
@@ -41,8 +42,13 @@ class AssignmentController extends Controller
 
     public function index()
     {
-        $assignments = Assignment::orderBy('created_at', 'desc')->paginate(15);
-    	return view('backend.assignment.index', compact('assignments'));
+        $assignments = Assignment::forCourseOnly()->orderBy('created_at', 'desc')->paginate(15);
+        $assignmentTemplate = new AssignmentTemplate();
+        $templatePaginated = $assignmentTemplate->paginate(15);
+        $assignmentTemplates = $assignmentTemplate->get();
+        $learnerAssignments = Assignment::forLearnerOnly()->orderBy('created_at', 'desc')->paginate(15);
+    	return view('backend.assignment.index', compact('assignments', 'templatePaginated',
+            'assignmentTemplates', 'learnerAssignments'));
     }
 
 
@@ -798,6 +804,82 @@ class AssignmentController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * @param null $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function saveAssignmentTemplate( $id = NULL, Request $request )
+    {
+        $data = [
+            'title'                     => $request->title,
+            'description'               => $request->description,
+            'submission_date'           => $request->submission_date,
+            'available_date'            => $request->available_date,
+            'max_words'                 => (int) $request->max_words,
+        ];
+
+        if ($id) {
+            AssignmentTemplate::find($id)->update($data);
+        } else {
+            AssignmentTemplate::create($data);
+        }
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record saved successfully.'),
+            'alert_type' => 'success']);
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function deleteAssignmentTemplate( $id )
+    {
+        AssignmentTemplate::find($id)->delete();
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record deleted successfully.'),
+            'alert_type' => 'success']);
+    }
+
+    /**
+     * @param null $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function learnerAssignment( $id = NULL, Request $request )
+    {
+        $data = [
+            'title' => $request->title,
+            'description' => $request->description,
+            'submission_date' => $request->submission_date,
+            'available_date' => $request->available_date,
+            'max_words' => (int) $request->max_words,
+            'show_join_group_question' => 0,
+            'parent_id' => $request->learner_id,
+            'parent' => 'users'
+        ];
+
+        if ($id) {
+            Assignment::find($id)->update($data);
+        } else {
+            Assignment::create($data);
+        }
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record saved successfully.'),
+            'alert_type' => 'success']);
+    }
+
+    /**
+     * @param $assignment_id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function deleteLearnerAssignment( $assignment_id )
+    {
+        Assignment::find($assignment_id)->delete();
+        return redirect()->to('/assignment?tab=learner')
+            ->with(['errors' => AdminHelpers::createMessageBag('Record deleted successfully.'),
+            'alert_type' => 'success']);
     }
 
     /**

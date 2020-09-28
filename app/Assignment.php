@@ -9,9 +9,21 @@ class Assignment extends Model
     
     protected $table = 'assignments';
     protected $fillable = ['course_id', 'title', 'description', 'submission_date', 'available_date','allowed_package', 'add_on_price',
-        'max_words', 'for_editor', 'editor_manu_generate_count', 'generated_filepath', 'show_join_group_question'];
+        'max_words', 'for_editor', 'editor_manu_generate_count', 'generated_filepath', 'show_join_group_question',
+        'parent_id', 'parent'];
 
 
+    // filter for course assignments
+    public function scopeForCourseOnly($query)
+    {
+        return $query->whereNotNull('course_id');
+    }
+
+    // filter for learner assignments
+    public function scopeForLearnerOnly($query)
+    {
+        return $query->where('parent', 'users');
+    }
 
     public function course()
     {
@@ -46,5 +58,10 @@ class Assignment extends Model
     public function getAvailableDateAttribute($value)
     {
         return $value ? date_format(date_create($value), 'M d, Y') : NULL;
+    }
+
+    public function learner()
+    {
+        return $this->belongsTo('App\User', 'parent_id', 'id');
     }
 }

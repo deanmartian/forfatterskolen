@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\Assignment;
 use App\AssignmentGroupLearner;
 use App\CoachingTimerManuscript;
 use App\CopyEditingManuscript;
@@ -1713,5 +1714,21 @@ class LearnerController extends Controller
         ]);
     }
 
+    /**
+     * @param $learner_id
+     * @param $assignment_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function assignment( $learner_id, $assignment_id )
+    {
+        $learner = User::find($learner_id);
+        $assignment = Assignment::find($assignment_id);
+        if (!$learner || !$assignment) {
+            return redirect()->to('/assignment?tab=learner');
+        }
+        $editors = \App\User::where('role', 1)->get();
+
+        return view('backend.learner.assignment', compact('assignment', 'learner', 'editors'));
+    }
 
 }

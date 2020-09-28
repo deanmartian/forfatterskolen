@@ -280,7 +280,7 @@ class AdminHelpers
         if ($id) {
             return User::find($id);
         }
-        return User::all();
+        return User::where('role', 2)->get();
     }
 
     /**

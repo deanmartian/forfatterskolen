@@ -32,4 +32,23 @@ class AssignmentFeedbackNoGroup extends Model
         return $this->belongsTo('App\User','learner_id','id');
     }
 
+    /**
+     * Accessor field
+     * @return string
+     */
+    public function getFileLinkAttribute()
+    {
+        $fileLink = '';
+        $filename = $this->attributes['filename'];
+
+        $extension = explode('.', basename($filename));
+        if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
+            $fileLink = '<a href="/js/ViewerJS/#../..'.$filename.'">'.basename($filename).'</a>';
+        } elseif( end($extension) == 'docx' || end($extension) == 'doc' ) {
+            $fileLink = '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').$filename.'">'
+                .basename($filename).'</a>';
+        }
+
+        return $fileLink;
+    }
 }

@@ -673,6 +673,8 @@ class LearnerController extends Controller
         $expiredAssignments = [];
         $coursesTaken = Auth::user()->coursesTaken;
         $addOns = AssignmentAddon::where('user_id', \Auth::user()->id)->pluck('assignment_id')->toArray();
+        $userAssignments = Auth::user()->activeAssignments;
+        $userExpiredAssignments = Auth::user()->expiredAssignments;
 
         foreach( $coursesTaken as $course ) :
             foreach( $course->package->course->activeAssignments as $assignment ) :
@@ -717,6 +719,21 @@ class LearnerController extends Controller
                 }
             endforeach;
         endforeach;
+
+        foreach ($userAssignments as $assignment) {
+
+            if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
+                $assignments[] = $assignment;
+            }
+
+        }
+
+        foreach ($userExpiredAssignments as $assignment) {
+            if (\Carbon\Carbon::parse($assignment->submission_date)->lt(Carbon::now())) {
+                $expiredAssignments[] = $assignment;
+            }
+        }
+
         return view('frontend.learner.assignment', compact('assignments', 'expiredAssignments'));
     }
 
@@ -801,7 +818,7 @@ class LearnerController extends Controller
             ]);
 
             // Admin notification
-            if ($assignment->course->type === "Single") {
+            if (($assignment->course && $assignment->course->type === "Single") || $assignment->parent === 'users') {
                 $message = Auth::user()->full_name.' submitted a manuscript for assignment '.$assignment->title;
                 $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
 

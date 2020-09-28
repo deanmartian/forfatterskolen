@@ -292,6 +292,26 @@ class User extends Authenticatable
         return $this->hasMany(UserTask::class)->where('status',0);
     }
 
+    // active assignment assigned
+    public function activeAssignments()
+    {
+        return $this->hasMany('App\Assignment','parent_id', 'id')
+            ->where('parent', 'users')
+            ->where(function($query) {
+                // check if available date is less than or equal to date or if it's null
+                $query->where('available_date','<=', Carbon::now());
+                $query->orWhereNull('available_date');
+            });
+    }
+
+    // expired assignment assigned
+    public function expiredAssignments()
+    {
+        return $this->hasMany('App\Assignment','parent_id', 'id')
+            ->where('parent', 'users')
+            ->orderBy('created_at', 'desc');
+    }
+
     public function assignmentManuscripts()
     {
         return $this->hasMany('App\AssignmentManuscript');

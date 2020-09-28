@@ -29,7 +29,8 @@
 								$submission_date_formatted = $assignment->submission_date;
 								if (!\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
 									$coursesTaken = Auth::user()->coursesTaken()->get()->toArray();
-									$allowed_packages = json_decode($assignment->allowed_package);
+                                    $allowed_packages = $assignment->allowed_package ?
+                                        json_decode($assignment->allowed_package) : [];
 
 									$courseStarted = '';
 									foreach ($coursesTaken as $course) {
@@ -107,10 +108,12 @@
 									</div>
 								@endif
 							</div> <!-- end card-body -->
-							<div class="card-footer p-4">
-								<span class="font-barlow-regular">{{ trans('site.front.course-text') }}:</span>
-								<span>{{ $assignment->course->title }}</span>
-							</div> <!-- end card-body-->
+							@if($assignment->course)
+								<div class="card-footer p-4">
+									<span class="font-barlow-regular">{{ trans('site.front.course-text') }}:</span>
+									<span>{{ $assignment->course->title }}</span>
+								</div> <!-- end card-footer -->
+							@endif
 						</div> <!-- end card -->
 					</div> <!-- end col-md-6 -->
 				@endforeach
@@ -183,20 +186,17 @@
 												<div class="mb-4">
 													<?php
 													$files = explode(',',$feedback->filename);
-													$filesDisplay = trans('site.front.course-text').
-														': '.$feedback->manuscript->assignment->course->title.'<br/> ';
-													foreach ($files as $file) {
-														$extension = explode('.', basename($file));
+													$title = $feedback->manuscript->assignment->course
+                                                        ? $feedback->manuscript->assignment->course->title
+														: $feedback->manuscript->assignment->title;
+													$titleLabel = $feedback->manuscript->assignment->course
+														? trans('site.front.course-text')
+														: trans('site.learner.assignment');
 
-														if (end($extension) == 'pdf' || end($extension) == 'odt') {
-															$filesDisplay .= '<a href="/js/ViewerJS/#../..'.trim($file).'">'.basename($file).'</a>, ';
-														} else {
-															$filesDisplay .= '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').trim($file).'">'.basename($file).'</a>, ';
-														}
-													}
-
-													echo trim($filesDisplay, ', ');
+													$filesDisplay = $titleLabel . ': '. $title . '<br/> ';
+													echo $filesDisplay
 													?>
+													{!! $feedback->file_link !!}
 
 													@if( $feedback->is_admin ) - {{ trans('site.learner.admin-text') }} @endif
 
@@ -236,7 +236,8 @@
 										$submission_date_formatted = $assignment->submission_date;
 										if (!\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
 										    $coursesTaken = Auth::user()->coursesTaken()->get()->toArray();
-										    $allowed_packages = json_decode($assignment->allowed_package);
+										    $allowed_packages = $assignment->allowed_package ?
+												json_decode($assignment->allowed_package) : [];
 
                                             $courseStarted = '';
 										    foreach ($coursesTaken as $course) {
@@ -307,10 +308,12 @@
 									</div>
 								@endif
 							</div> <!-- end card-body -->
-							<div class="card-footer p-4">
-								<span class="font-barlow-regular">{{ trans('site.front.course-text') }}:</span>
-								<span>{{ $assignment->course->title }}</span>
-							</div> <!-- end card-body-->
+							@if($assignment->course)
+								<div class="card-footer p-4">
+									<span class="font-barlow-regular">{{ trans('site.front.course-text') }}:</span>
+									<span>{{ $assignment->course->title }}</span>
+								</div> <!-- end card-footer -->
+							@endif
 						</div> <!-- end card -->
 					</div> <!-- end grid-item -->
 				@endforeach
