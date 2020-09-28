@@ -240,7 +240,7 @@
 
 						@if (!$course->is_free)
 							<div id="packages" class="tab-pane fade" role="tabpanel">
-								@foreach($course->packages as $package)
+								@foreach($course->packages()->where('is_show', 1)->get() as $package)
                                     <?php
                                     $from 		= \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
                                     $to 			= \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
