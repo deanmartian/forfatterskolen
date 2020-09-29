@@ -139,6 +139,15 @@ class FreeManuscriptController extends Controller
             $message = ob_get_clean();
 
             $emailTemplate = $this->emailTemplate('Free Manuscript');
+            $search_string = [
+                ':firstname'
+            ];
+            $replace_string = [
+                $freeManuscripts->name,
+            ];
+
+            $message = str_replace($search_string, $replace_string, $message);
+
             $subject = $emailTemplate->subject;//'Tilbakemelding på din tekst';
             $from = "postmail@forfatterskolen.no";
 
@@ -264,6 +273,14 @@ class FreeManuscriptController extends Controller
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
         //$headers .= 'Reply-To: '. $from . "\r\n";
         $emailTemplate = $this->emailTemplate('Free Manuscript');
+        $search_string = [
+            ':firstname'
+        ];
+        $replace_string = [
+            $freeManuscripts->name,
+        ];
+
+        $message = str_replace($search_string, $replace_string, $message);
 
         $subject = $emailTemplate->subject;
         $from = "postmail@forfatterskolen.no";
