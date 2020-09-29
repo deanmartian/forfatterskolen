@@ -190,8 +190,21 @@ class ShopManuscriptController extends Controller
 
             $to = $shopManuscriptTaken->user->email;
             $emailTemplate = $this->emailTemplate('Shop Manuscript Feedback');
+            $email_content = $emailTemplate->email_content;
+            $encode_email = encrypt($to);
+            $redirectLink = encrypt(route('learner.shop-manuscript.show', $shopManuscriptTaken->id));
+            $search_string = [
+                ':redirect_link', ':end_redirect_link'
+            ];
+            $replace_string = [
+              "<a href='" . route('auth.login.emailRedirect',[$encode_email, $redirectLink]) . "'>" ,
+                "</a>"
+            ];
+
+            $format_content = str_replace($search_string, $replace_string, $email_content);
+
             $emailData['email_subject'] = $emailTemplate->subject;
-            $emailData['email_message'] = $emailTemplate->email_content;
+            $emailData['email_message'] = $format_content;
             $emailData['from_name'] = NULL;
             $emailData['from_email'] = $emailTemplate->from_email;
             $emailData['attach_file'] = NULL;
