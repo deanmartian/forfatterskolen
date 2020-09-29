@@ -194,10 +194,13 @@ class ShopManuscriptController extends Controller
             $encode_email = encrypt($to);
             $redirectLink = encrypt(route('learner.shop-manuscript.show', $shopManuscriptTaken->id));
             $search_string = [
-                ':redirect_link', ':end_redirect_link'
+                ':firstname',
+                ':redirect_link',
+                ':end_redirect_link'
             ];
             $replace_string = [
-              "<a href='" . route('auth.login.emailRedirect',[$encode_email, $redirectLink]) . "'>" ,
+                $shopManuscriptTaken->user->first_name,
+                "<a href='" . route('auth.login.emailRedirect',[$encode_email, $redirectLink]) . "'>" ,
                 "</a>"
             ];
 
