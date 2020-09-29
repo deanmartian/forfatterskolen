@@ -187,6 +187,17 @@ class ShopManuscriptController extends Controller
                 'filename' => json_encode($files),
                 'notes' => $request->notes
             ]);
+
+            $to = $shopManuscriptTaken->user->email;
+            $emailTemplate = $this->emailTemplate('Shop Manuscript Feedback');
+            $emailData['email_subject'] = $emailTemplate->subject;
+            $emailData['email_message'] = $emailTemplate->email_content;
+            $emailData['from_name'] = NULL;
+            $emailData['from_email'] = $emailTemplate->from_email;
+            $emailData['attach_file'] = NULL;
+
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+
         endif;
 
         return redirect()->back();
@@ -226,7 +237,7 @@ class ShopManuscriptController extends Controller
             $replace_content = str_replace('_date_',$replace_string, $emailTemplate->email_content);
             $email_body = $replace_content;
 
-            $subject = 'Forventet dato for tilbakemelding';
+            $subject = $emailTemplate->subject;
             $emailData['email_subject'] = $subject;
             $emailData['email_message'] = $email_body;
             $emailData['from_name'] = NULL;

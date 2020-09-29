@@ -17,5 +17,5 @@ class EmailTemplate extends Model
      *
      * @var array
      */
-    protected $fillable = ['page_name', 'from_email', 'email_content'];
+    protected $fillable = ['page_name', 'subject', 'from_email', 'email_content'];
 }

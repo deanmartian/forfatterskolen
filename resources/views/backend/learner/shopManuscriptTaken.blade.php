@@ -308,20 +308,22 @@
 					<h4 class="modal-title">{{ trans('site.send-email') }}</h4>
 				</div>
 				<div class="modal-body">
+                    <?php
+						$subject = 'Forventet dato for tilbakemelding';
+                    if ($emailTemplate) {
+                        $replace_string = \Carbon\Carbon::parse($emailTemplate->expected_finish)->format('d.m.Y');
+                        $replace_content = str_replace('_date_',$replace_string, $emailTemplate->email_content);
+                        $subject = $emailTemplate->subject;
+                    }
+                    ?>
 					<form method="POST" action="{{ route('admin.shop_manuscript_taken.email', $shopManuscriptTaken->user_id) }}" enctype="multipart/form-data">
 						{{ csrf_field() }}
 						<div class="form-group">
 							<label>{{ trans('site.subject') }}</label>
-							<input type="text" name="subject" class="form-control" required value="Forventet dato for tilbakemelding">
+							<input type="text" name="subject" class="form-control" required value="{{ $subject }}">
 						</div>
 						<div class="form-group">
 							<label>{{ trans('site.message') }}</label>
-							<?php
-								if ($emailTemplate) {
-                                    $replace_string = \Carbon\Carbon::parse($emailTemplate->expected_finish)->format('d.m.Y');
-                                    $replace_content = str_replace('_date_',$replace_string, $emailTemplate->email_content);
-								}
-							?>
 							<textarea name="message" class="form-control" required rows="8" id="email_content">{{ $emailTemplate ? $replace_content : '' }}</textarea>
 						</div>
 						<input type="hidden" name="from_email" value="{{ $emailTemplate ? $emailTemplate->from_email : 'post@forfatterskolen.no' }}">

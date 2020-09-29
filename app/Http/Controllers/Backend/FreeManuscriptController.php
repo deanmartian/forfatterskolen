@@ -138,7 +138,8 @@ class FreeManuscriptController extends Controller
             include base_path().'/resources/views/emails/free-manuscript-feedback.blade.php';
             $message = ob_get_clean();
 
-            $subject = 'Tilbakemelding på din tekst';
+            $emailTemplate = $this->emailTemplate('Free Manuscript');
+            $subject = $emailTemplate->subject;//'Tilbakemelding på din tekst';
             $from = "postmail@forfatterskolen.no";
 
             /*AdminHelpers::send_mail($to, $subject, $message, $from );*/
@@ -262,8 +263,9 @@ class FreeManuscriptController extends Controller
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
         //$headers .= 'Reply-To: '. $from . "\r\n";
+        $emailTemplate = $this->emailTemplate('Free Manuscript');
 
-        $subject = 'Tilbakemelding på din tekst';
+        $subject = $emailTemplate->subject;
         $from = "postmail@forfatterskolen.no";
 
         //AdminHelpers::send_mail($to, $subject, $message, $from );

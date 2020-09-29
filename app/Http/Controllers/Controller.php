@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\EmailTemplate;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Repositories\VippsRepository;
@@ -37,5 +38,10 @@ class Controller extends BaseController
         }
 
         return redirect()->to($initiatePaymentResult['data']->url);
+    }
+
+    public function emailTemplate($page_name)
+    {
+        return EmailTemplate::where('page_name', $page_name)->first();
     }
 }
