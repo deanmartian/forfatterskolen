@@ -973,6 +973,16 @@ class LearnerController extends Controller
         //AdminHelpers::send_mail( $to, $subject, $message, $from);
         /*AdminHelpers::send_email($subject,
             $from, $to, $message);*/
+
+        $search_string = [
+            ':firstname'
+        ];
+        $replace_string = [
+            $learner->first_name,
+        ];
+
+        $message = str_replace($search_string, $replace_string, $message);
+
         $emailData['email_subject'] = $subject;
         $emailData['email_message'] = $message;
         $emailData['from_name'] = NULL;
