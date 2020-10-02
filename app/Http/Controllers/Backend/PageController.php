@@ -7,6 +7,7 @@ use App\CoachingTimerManuscript;
 use App\CompetitionApplicant;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
+use App\Course;
 use App\CustomAction;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
@@ -77,7 +78,9 @@ class PageController extends Controller
         $pendingCorrections = CorrectionManuscript::whereNull('editor_id')->orderBy('created_at','desc')->get();
         $pendingCopyEditings = CopyEditingManuscript::whereNull('editor_id')->orderBy('created_at','desc')->get();
 
-        $assignmentForCourse = Assignment::whereIn('course_id', [36, 37])->get()->pluck('id')->toArray();
+        //$singleCourses = Course::where('type', 'Single')->get()->pluck('id');
+        $singleCourses = [36, 37, 57, 48, 56, 50, 44, 49];
+        $assignmentForCourse = Assignment::whereIn('course_id', $singleCourses)->get()->pluck('id')->toArray();
         $assignmentForLearners = Assignment::where('parent', 'users')->get()->pluck('id')->toArray();
         $allAssignmentQuery = array_merge($assignmentForCourse, $assignmentForLearners);
         $pendingAssignments = AssignmentManuscript::where('editor_id', 0)
