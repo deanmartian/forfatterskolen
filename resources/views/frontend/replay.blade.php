@@ -19,7 +19,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <h1 class="text-center mb-5">
-                        Reprise: Slik forløser du ditt kreative potensial
+                        Reprise: "Dritten" i midten 04.10.2020
                     </h1>
                 </div>
                 <div class="col-sm-12 top-page-container">
