@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\CoursesTaken;
 use App\CronLog;
+use App\EmailTemplate;
 use App\Notification;
 use App\Order;
 use App\Package;
@@ -311,6 +312,11 @@ class AdminHelpers
         }
 
         return $orderDetails;
+    }
+
+    public static function emailTemplate($page_name)
+    {
+        return EmailTemplate::where('page_name', $page_name)->first();
     }
 
     public static function addToAutomation($email, $automation_id, $name)

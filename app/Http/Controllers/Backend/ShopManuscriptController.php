@@ -190,7 +190,7 @@ class ShopManuscriptController extends Controller
 
             $to = $shopManuscriptTaken->user->email;
             $emailTemplate = $this->emailTemplate('Shop Manuscript Feedback');
-            $email_content = $emailTemplate->email_content;
+            $email_content = $request->message;
             $encode_email = encrypt($to);
             $redirectLink = encrypt(route('learner.shop-manuscript.show', $shopManuscriptTaken->id));
             $search_string = [
@@ -206,10 +206,10 @@ class ShopManuscriptController extends Controller
 
             $format_content = str_replace($search_string, $replace_string, $email_content);
 
-            $emailData['email_subject'] = $emailTemplate->subject;
+            $emailData['email_subject'] = $request->subject;
             $emailData['email_message'] = $format_content;
             $emailData['from_name'] = NULL;
-            $emailData['from_email'] = $emailTemplate->from_email;
+            $emailData['from_email'] = $request->from_email;
             $emailData['attach_file'] = NULL;
 
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
