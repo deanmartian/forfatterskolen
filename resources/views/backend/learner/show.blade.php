@@ -743,20 +743,20 @@
                                 <?php $manuscript = $assignment->manuscripts->where('user_id', $learner->id)->first();
                                 $assignmentCourse = $assignment->course;
                                 ?>
-								@if( $manuscript )
-                                    <?php $extension = explode('.', basename($manuscript->filename)); ?>
-									<tr>
-										<td>
-											<a href="{{ route('admin.learner.assignment',
-												[$assignment->parent_id, $assignment->id]) }}">
-												{{ $assignment->title }}
-											</a>
-										</td>
-										<td>
+								<?php /*$extension = explode('.', basename($manuscript->filename)); */?>
+								<tr>
+									<td>
+										<a href="{{ route('admin.learner.assignment',
+											[$assignment->parent_id, $assignment->id]) }}">
+											{{ $assignment->title }}
+										</a>
+									</td>
+									<td>
+										@if ($manuscript)
 											{!! $manuscript->file_link !!}
-										</td>
-									</tr>
-								@endif
+										@endif
+									</td>
+								</tr>
 							@endforeach
 						</tbody>
 					</table>
