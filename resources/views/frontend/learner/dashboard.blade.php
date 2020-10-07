@@ -83,7 +83,8 @@
                                 <a href="#" class="dropdown-item pilotleser-link">
                                     <b>Pilotleser</b>
                                 </a>
-                                <a href="#" class="dropdown-item redirectForum">
+
+                                <a href="https://www.facebook.com/groups/272814062884940" class="dropdown-item {{--redirectForum--}}">
                                     <b>Forum</b>
                                 </a>
                             </div>
