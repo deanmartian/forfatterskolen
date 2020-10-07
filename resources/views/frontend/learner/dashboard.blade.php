@@ -80,9 +80,9 @@
                         </div>
                         <div class="card-body">
                             <div class="col-sm-12">
-                                {{--<a href="#" class="dropdown-item pilotleser-link">
+                                <a href="#" class="dropdown-item pilotleser-link">
                                     <b>Pilotleser</b>
-                                </a>--}}
+                                </a>
 
                                 <a href="https://www.facebook.com/groups/272814062884940" class="dropdown-item {{--redirectForum--}}">
                                     <b>Forum</b>
