@@ -209,16 +209,37 @@
         <h4 class="modal-title">{{ trans('site.add-feedback') }}</h4>
       </div>
       <div class="modal-body">
-      	<form method="POST" action="{{ route('admin.shop-manuscript-taken-feedback.store', $shopManuscriptTaken->id) }}" enctype="multipart/form-data">
+      	<form method="POST" action="{{ route('admin.shop-manuscript-taken-feedback.store', $shopManuscriptTaken->id) }}"
+			  enctype="multipart/form-data">
       		{{csrf_field()}}
+            <?php
+            $emailTemplate = \App\Http\AdminHelpers::emailTemplate('Shop Manuscript Feedback');
+            ?>
       		<div class="form-group">
       			<label>{{ trans_choice('site.files', 2) }}</label>
-				<input type="file" class="form-control" name="files[]" multiple accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text" required>
+				<input type="file" class="form-control" name="files[]" multiple
+					   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+					    application/vnd.oasis.opendocument.text" required>
       		</div>
       		<div class="form-group">
       			<label>{{ trans_choice('site.notes', 2) }}</label>
 				<textarea class="form-control" name="notes" rows="6"></textarea>
       		</div>
+			<div class="form-group">
+				<label>{{ trans('site.subject') }}</label>
+				<input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}"
+					   required>
+			</div>
+			<div class="form-group">
+				<label>{{ trans('site.from') }}</label>
+				<input type="text" class="form-control" name="from_email"
+					   value="{{ $emailTemplate->from_email }}" required>
+			</div>
+			<div class="form-group">
+				<label>{{ trans_choice('site.notes', 2) }}</label>
+				<textarea class="form-control tinymce" name="message" rows="6"
+						  required>{!! $emailTemplate->email_content !!}</textarea>
+			</div>
 			{{ trans('site.add-feedback-note') }}
   			<button type="submit" class="btn btn-primary pull-right">{{ trans('site.add-feedback') }}</button>
   			<div class="clearfix"></div>
@@ -324,7 +345,7 @@
 						</div>
 						<div class="form-group">
 							<label>{{ trans('site.message') }}</label>
-							<textarea name="message" class="form-control" required rows="8" id="email_content">{{ $emailTemplate ? $replace_content : '' }}</textarea>
+							<textarea name="message" class="form-control tinymce" required rows="8">{{ $emailTemplate ? $replace_content : '' }}</textarea>
 						</div>
 						<input type="hidden" name="from_email" value="{{ $emailTemplate ? $emailTemplate->from_email : 'post@forfatterskolen.no' }}">
 						<div class="text-right margin-top">
@@ -378,7 +399,7 @@ $(document).ready(function(){
     });
 
     tinymce.init({
-        selector:'#email_content',
+        selector:'.tinymce',
         height : "300",
         menubar: false,
         toolbar: 'insert | undo redo |  formatselect | bold italic backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
