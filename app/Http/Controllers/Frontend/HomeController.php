@@ -627,7 +627,7 @@ class HomeController extends Controller
      * Process the order for coaching timer
      * @param $plan
      * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|void
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|mixed
      */
     public function coachingTimerPlaceOrder($plan, Request $request)
     {
@@ -727,7 +727,7 @@ class HomeController extends Controller
             return;
         endif;
 
-        return redirect(route('front.simple.thankyou'));
+        return redirect()->to('/thank-you'); //route('front.simple.thankyou') not working if route name is used
     }
 
     /**

@@ -51,6 +51,7 @@
 	<div class="navbar-form navbar-right">
 	  	<div class="form-group">
 		  	<form role="search" method="GET">
+				<input type="text" class="form-control" name="sid" value="{{Request::input('sid')}}" placeholder="Search ID..">
 				<input type="text" class="form-control" name="sfname" value="{{Request::input('sfname')}}" placeholder="Search First Name..">
 				<input type="text" class="form-control" name="slname" value="{{Request::input('slname')}}" placeholder="Search Last Name..">
 				<div class="input-group">

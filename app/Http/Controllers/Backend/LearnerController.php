@@ -70,7 +70,11 @@ class LearnerController extends Controller
     public function index(Request $request, User $user)
     {
         $learners = $user->newQuery();
-        if( $request->sfname || $request->slname || $request->semail) :
+        if( $request->sid || $request->sfname || $request->slname || $request->semail) :
+            if ($request->sid) {
+                $learners->where('id', $request->sid);
+            }
+
             if ($request->sfname) {
                 $learners->where('first_name', 'LIKE', '%' . $request->sfname  . '%');
             }
