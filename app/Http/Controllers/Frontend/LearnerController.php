@@ -1730,7 +1730,14 @@ class LearnerController extends Controller
                     $send_to        = $user->email;
                     $end_date       = $courseTaken->end_date ? $courseTaken->end_date : date("Y-m-d");
                     //$dueDate        = date("Y-m-d", strtotime(date("Y-m-d", strtotime($end_date)) . " + 1 year"));
-                    $dueDate        = date("Y-m-d", strtotime($end_date));
+                    //$dueDate        = date("Y-m-d", strtotime($end_date));
+                    $today = Carbon::today();
+                    $parseEndDate = Carbon::parse($end_date);
+                    $dueDate = $parseEndDate->addDays(14)->format('Y-m-d');
+
+                    if ($parseEndDate->format('Y-m-d') < $today->format('Y-m-d')) {
+                        $dueDate = $today->addDays(14)->format('Y-m-d');
+                    }
 
                     $comment = '(Kurs: ' . $package->course->title . ' ['.$package->variation.'], ';
                     $comment .= 'Betalingsmodus: ' . $payment_mode . ')';
