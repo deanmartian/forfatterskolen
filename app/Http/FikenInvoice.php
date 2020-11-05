@@ -26,6 +26,8 @@ class FikenInvoice
 
 	public $invoiceID;
 	public $invoice_number;
+	protected $mobile_number;
+	protected $fiken_invoice_id;
 
 	public function __construct()
 	{
@@ -400,6 +402,59 @@ class FikenInvoice
         $data = curl_exec($ch);
         curl_close($ch);
         return $data;
+    }
+
+    /**
+     * @param $mobile_number
+     */
+    public function setMobileNumber( $mobile_number )
+    {
+        $this->mobile_number = $mobile_number;
+    }
+
+    /**
+     * @param $fiken_invoice_id
+     */
+    public function setFikenInvoiceId( $fiken_invoice_id )
+    {
+        $this->fiken_invoice_id = $fiken_invoice_id;
+    }
+
+    public function vippsEFaktura()
+    {
+
+        $fields = [
+            'method' => ['vipps'],
+            "includeDocumentAttachments" => false,
+            "mobileNumber" => $this->mobile_number,
+            "invoiceId" => $this->fiken_invoice_id
+        ];
+
+        $field_string = json_encode($fields, true);
+        $ch = curl_init($this->fiken_create_invoice_service . '/send');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $field_string);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+        $data = curl_exec($ch);
+        $decoded_response = json_decode($data);
+
+        $response = [
+            'code' => 200,
+        ];
+
+        // get the http code response
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if (!in_array($http_code, [200, 201])) { // 200 - get success, 201 - post success
+            $response = [
+                'code' => $http_code,
+                'message' => $decoded_response->error_description
+            ];
+        }
+
+        curl_close($ch);
+
+        return $response;
     }
 }
 

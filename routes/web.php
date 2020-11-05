@@ -508,7 +508,7 @@ Route::group([
         Route::get('shop-manuscript/{id}/download_synopsis', 'LearnerController@downloadManuscriptSynopsis')->name('admin.learner.download_synopsis');
         Route::post('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}/comment', 'LearnerController@shopManuscriptTakenShowComment')->name('shop_manuscript_taken_comment');
         Route::get('learner/{user_id}/assignment/{id}', 'LearnerController@assignment')->name('admin.learner.assignment');
-        Route::post('learner/{user_id}/auto-renew', 'LearnerController@setAutoRenewCourses')->name('admin.upgrade-auto-renew');
+        Route::post('learner/{user_id}/auto-renew', 'LearnerController@setAutoRenewCourses')->name('admin.learner.update-auto-renew');
 
         Route::post('shop-manuscript/{id}/update_document', 'LearnerController@updateDocumentShopManuscriptTaken')->name('shop_manuscript_taken.update_document');
         Route::post('shop-manuscript/{id}/synopsis', 'LearnerController@saveSynopsis')->name('shop_manuscript_taken.save_synopsis');
@@ -543,6 +543,7 @@ Route::group([
         Route::delete('learner/invoice/{id}/delete', 'LearnerController@deleteInvoice')->name('admin.learner.invoice.delete');
         Route::post('learner/invoice/{id}/create-fiken-credit-note', 'LearnerController@addFikenCreditNote')
             ->name('admin.learner.invoice.create-fiken-credit-note');
+        Route::post('learner/invoice/{id}/e-faktura', 'LearnerController@vippsEFaktura')->name('admin.learner.invoice.vipps-e-faktura');
         Route::delete('learner/course/{course_taken_id}/delete', 'LearnerController@deleteFromCourse')->name('admin.learner.delete-from-course');
         Route::post('learner/{learner_id}/course/{course_taken_id}/renew', 'LearnerController@renewCourse')->name('admin.learner.renew-course');
         Route::post('learner/{learner_id}/send-email', 'LearnerController@sendLearnerEmail')->name('admin.learner.send-email');

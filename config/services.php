@@ -67,7 +67,10 @@ return [
         'password' => 'janiel12',
         'client_id' => 'xNmlQovYLSHDgAGi46623755940317270',
         'client_secret' => 'a3b5bf4c-6949-4e96-9627-046b586c9be1',
-        'personal_api_key' => '1480241174.4djcOoTcjawknSORCxQWr8rF5KToetss' // PERSONAL API KEY
+        'personal_api_key' => '1480241174.4djcOoTcjawknSORCxQWr8rF5KToetss', // PERSONAL API KEY
+        'api_url' => 'https://api.fiken.no/api/v2',
+        'company_slug' => 'forfatterskolen-as',
+        'company_slug_test' => 'fiken-demo-glede-og-bil-as2'
     ],
 
     'big_marker' => [

@@ -1763,4 +1763,27 @@ class LearnerController extends Controller
         ]);
     }
 
+    public function vippsEFaktura( $invoice_id, Request $request)
+    {
+        $invoice = Invoice::find($invoice_id);
+        $fikenInvoice = new FikenInvoice();
+        $fikenInvoice->setMobileNumber($request->mobile_number);
+        $fikenInvoice->setFikenInvoiceId($invoice->fiken_invoice_id);
+
+        $response = $fikenInvoice->vippsEFaktura();
+        $alert_type = 'success';
+        $message = 'Invoice sent.';
+
+        if ($response['code']!= 200 ) {
+            $alert_type = 'danger';
+            $message = $response['message'];
+        }
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag($message),
+            'alert_type'            => $alert_type,
+            'not-former-courses'    => true
+        ]);
+    }
+
 }

@@ -530,15 +530,27 @@
 									{{--@if (Auth::user()->isSuperUser())--}}
 										<button class="btn btn-danger btn-xs deleteInvoiceBtn" data-toggle="modal"
 										data-target="#deleteInvoiceModal"
-										data-action="{{ route('admin.learner.invoice.delete', $invoice->id) }}">
+										data-action="{{ route('admin.learner.invoice.delete', $invoice->id) }}"
+										 style="margin-top: 5px">
 											<i class="fa fa-trash"></i>
 										</button>
 									{{--@endif--}}
+
+									@if ($invoice->fiken_invoice_id)
+										<button class="btn btn-success btn-xs vippsFakturaBtn" style="margin-top: 5px"
+												data-toggle="modal"
+											data-target="#vippsFakturaModal"
+												data-action="{{ route('admin.learner.invoice.vipps-e-faktura', $invoice->id) }}">
+											VIPPS eFaktura
+										</button>
+									@endif
+
 									@if($invoice->fiken_is_paid === 0)
 										<button class="btn btn-primary btn-xs fikenCreditNoteBtn" data-toggle="modal"
 												data-target="#fikenCreditNoteModal"
 												data-action="{{ route("admin.learner.invoice.create-fiken-credit-note",
-												$invoice->id) }}">
+												$invoice->id) }}"
+												style="margin-top: 5px">
 											Add Credit Note
 										</button>
 									@endif
@@ -1814,7 +1826,8 @@
 				</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="{{ route('admin.upgrade-auto-renew', $learner->id) }}">
+				<form method="POST" action="{{ route('admin.learner.update-auto-renew', $learner->id) }}"
+					  onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 
 					<div class="form-group">
@@ -1831,6 +1844,32 @@
 			</div>
 		</div>
 
+	</div>
+</div>
+
+<div id="vippsFakturaModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					VIPPS eFaktura
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+
+					<div class="form-group">
+						<label>Mobile Number</label>
+						<input type="text" class="form-control" name="mobile_number" required>
+					</div>
+
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.send') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -2967,6 +3006,11 @@
         $(".deleteInvoiceBtn").click(function(){
            let action = $(this).data('action');
            $("#deleteInvoiceModal").find('form').attr('action', action);
+		});
+
+        $(".vippsFakturaBtn").click(function() {
+            let action = $(this).data('action');
+            $("#vippsFakturaModal").find('form').attr('action', action);
 		});
 
         $(".fikenCreditNoteBtn").click(function(){
