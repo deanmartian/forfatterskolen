@@ -91,8 +91,8 @@ class PageController extends Controller
 
         return view('backend.dashboard', compact('pending_courses', 'pending_shop_manuscripts',
             'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts', 'assigned_free_manuscripts',
-            'pending_assignment_feedbacks', 'logs', 'manuscripts','shopManuscripts', 'customActions',
-            'nearlyExpiredCoursesCount', 'pageMetas', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
+            'pending_assignment_feedbacks', 'logs', 'manuscripts','shopManuscripts',
+            'nearlyExpiredCoursesCount', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
             'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments',
             'pendingTasks'));
     }
