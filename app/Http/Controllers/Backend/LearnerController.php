@@ -1746,4 +1746,21 @@ class LearnerController extends Controller
         return view('backend.learner.assignment', compact('assignment', 'learner', 'editors'));
     }
 
+    /**
+     * @param $user_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function setAutoRenewCourses( $user_id, Request $request)
+    {
+        $user = User::find($user_id);
+        $user->auto_renew_courses = $request->auto_renew;
+        $user->save();
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Auto renew updated successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
 }

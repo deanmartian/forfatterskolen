@@ -94,7 +94,10 @@
 					{{$learner->address->phone}}
 					@endif
 					<br> <br>
-					<b>{{ trans('site.auto-renew-course') }}:</b> {{ $learner->auto_renew_courses ? 'Yes' : 'No' }}
+					<b>{{ trans('site.auto-renew-course') }}:</b>
+					<a href="#" data-toggle="modal" data-target="#autoRenewModal">
+					{{ $learner->auto_renew_courses ? 'Yes' : 'No' }}
+					</a>
 				</div>
 			</div>
 			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editPasswordModal">{{ trans('site.edit-password') }}</button>
@@ -1801,7 +1804,35 @@
   </div>
 </div>
 
+<div id="autoRenewModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					Auto Renew Course
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.upgrade-auto-renew', $learner->id) }}">
+					{{ csrf_field() }}
 
+					<div class="form-group">
+						<label>Auto Renew Course</label>
+						<select name="auto_renew" class="form-control">
+							<option value="1" {{ $learner->auto_renew_courses ? 'selected' : '' }}>Yes</option>
+							<option value="0" {{ !$learner->auto_renew_courses ? 'selected' : '' }}>No</option>
+						</select>
+					</div>
+
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
 
 <div id="editPasswordModal" class="modal fade" role="dialog">
   <div class="modal-dialog modal-sm">
