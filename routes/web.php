@@ -1371,10 +1371,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/laravel-filemanager/upload', '\Unisharp\Laravelfilemanager\controllers\UploadController@upload');
     // list all lfm routes here...
 
-    /*$middleware = array_merge(\Config::get('lfm.middlewares'), [
+    // uncommented the $middleware to fix error on php7.3
+    $middleware = array_merge(\Config::get('lfm.middlewares'), [
         '\Unisharp\Laravelfilemanager\middlewares\MultiUser',
         '\Unisharp\Laravelfilemanager\middlewares\CreateDefaultFolder',
-    ]);*/
+    ]);
     $prefix = \Config::get('lfm.url_prefix', \Config::get('lfm.prefix', 'laravel-filemanager'));
     $as = 'unisharp.lfm.';
     $namespace = '\Unisharp\Laravelfilemanager\controllers';
