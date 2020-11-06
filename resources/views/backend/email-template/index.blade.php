@@ -20,7 +20,7 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Page Name</th>
+                        <th>Identifier</th>
                         <th>{{ trans('site.subject') }}</th>
                         <th></th>
                     </tr>
@@ -64,7 +64,7 @@
 
                         <div class="form-group">
                             <label>
-                                Page Name
+                                Identifier
                             </label>
                             <input type="text" name="page_name" class="form-control">
                         </div>

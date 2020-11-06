@@ -448,7 +448,8 @@ class FikenInvoice
         if (!in_array($http_code, [200, 201])) { // 200 - get success, 201 - post success
             $response = [
                 'code' => $http_code,
-                'message' => $decoded_response->error_description
+                'message' => is_array($decoded_response) ? $decoded_response[0]->message
+                    : $decoded_response->error_description
             ];
         }
 

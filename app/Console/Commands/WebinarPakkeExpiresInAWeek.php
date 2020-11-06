@@ -43,7 +43,9 @@ class WebinarPakkeExpiresInAWeek extends Command {
     public function handle()
     {
         CronLog::create(['activity' => 'WebinarPakkeExpiresInAWeek CRON running.']);
-        $monthDate = Carbon::now()->addDays(7)->format('Y-m-d');
+        $dateAddDays = Carbon::now()->addDays(7);
+        $monthDate = $dateAddDays->format('Y-m-d');
+        $yearDate = $dateAddDays->subYear(1)->format('Y-m-d'); // subYear to get the correct started_at
 
         // get courses taken by end date
         $coursesTaken = CoursesTaken::whereHas('package', function($query){
@@ -56,7 +58,7 @@ class WebinarPakkeExpiresInAWeek extends Command {
         })
             ->whereNotNull('started_at')
             ->whereNull('end_date')
-            ->whereDate('started_at',$monthDate)
+            ->whereDate('started_at',$yearDate)
             ->get();
 
         // merge the collections

@@ -77,6 +77,7 @@ require app_path('/Http/PaypalIPN/PaypalIPN.php');
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rules\In;
 use PaypalIPN;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
@@ -970,6 +971,31 @@ class LearnerController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function vippsEFaktura( $invoice_id, Request $request)
+    {
+        $invoice = new Invoice();
+        $invoice = $invoice->find($invoice_id);
+
+        $fikenInvoice = new FikenInvoice();
+        $fikenInvoice->setMobileNumber($request->mobile_number);
+        $fikenInvoice->setFikenInvoiceId($invoice->fiken_invoice_id);
+
+        $response = $fikenInvoice->vippsEFaktura();
+        $alert_type = 'success';
+        $message = 'Invoice sent.';
+
+        if ($response['code']!= 200 ) {
+            $alert_type = 'danger';
+            $message = $response['message'];
+        }
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag($message),
+            'alert_type'            => $alert_type,
+            'not-former-courses'    => true
+        ]);
     }
 
     /**
@@ -3317,7 +3343,7 @@ class LearnerController extends Controller
 
         return JWT::encode($userData, $privateKey, 'HS256');
     }
-    
+
     /**
      * Login to pilotleser
      * @return \Illuminate\Http\JsonResponse

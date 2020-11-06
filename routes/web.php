@@ -212,6 +212,7 @@ Route::group([
         Route::get('/invoice', 'LearnerController@invoice')->name('learner.invoice'); // Invoice Listing Page
         Route::get('/invoice/{id}', 'LearnerController@invoiceShow')->name('learner.invoice.show'); // Invoice Single Page
         Route::get('/invoice/{invoice_number}/vipps-payment', 'LearnerController@invoiceVippsPayment')->name('learner.invoice.vipps-payment'); // Invoice Single Page
+        Route::post('learner/invoice/{id}/e-faktura', 'LearnerController@vippsEFaktura')->name('learner.invoice.vipps-e-faktura');
         Route::get('/publishing', 'LearnerController@publishing')->name('learner.publishing'); // Publishers House Page
         Route::get('/writing-groups', 'LearnerController@writingGroups')->name('learner.writing-groups'); // Writing Groups Page
         Route::get('/writing-group/{id}', 'LearnerController@writingGroup')->name('learner.writing-group'); // Writing Group Page

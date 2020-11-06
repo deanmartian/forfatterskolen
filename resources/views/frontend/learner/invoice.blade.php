@@ -73,6 +73,15 @@
 										<td>
 											<a href="{{route('learner.download.invoice', $invoice->id)}}">{{ trans('site.learner.download-invoice') }}</a>
 
+											@if ($invoice->fiken_invoice_id)
+												<button class="btn btn-success btn-xs vippsFakturaBtn" style="margin-top: 5px"
+														data-toggle="modal"
+														data-target="#vippsFakturaModal"
+														data-action="{{ route('learner.invoice.vipps-e-faktura', $invoice->id) }}">
+													VIPPS eFaktura
+												</button>
+											@endif
+
 											@if(!$invoice->fiken_is_paid)
 												<div class="gateway--paypal">
 													<form method="POST" action="{{ route('checkout.payment.paypal', encrypt($invoice->id)) }}">
@@ -103,14 +112,39 @@
 		</div> <!-- end container-->
 	</div>
 
-	@if ( $errors->any() )
-		<div class="alert alert-danger" role="alert" id="fixed_to_bottom_alert">
-			<a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
-			<ul>
-				@foreach($errors->all() as $error)
-					<li>{{$error}}</li>
-				@endforeach
-			</ul>
+	<div id="vippsFakturaModal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">
+						VIPPS eFaktura
+					</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<form method="POST" action="" onsubmit="disableSubmit(this)">
+						{{ csrf_field() }}
+
+						<div class="form-group">
+							<label>Mobile Number</label>
+							<input type="text" class="form-control" name="mobile_number" required>
+						</div>
+
+						<button type="submit" class="btn btn-primary pull-right">{{ trans('site.send') }}</button>
+						<div class="clearfix"></div>
+					</form>
+				</div>
+			</div>
 		</div>
-	@endif
+	</div>
+
+@stop
+
+@section('scripts')
+	<script>
+        $(".vippsFakturaBtn").click(function() {
+            let action = $(this).data('action');
+            $("#vippsFakturaModal").find('form').attr('action', action);
+        });
+	</script>
 @stop
