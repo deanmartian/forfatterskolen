@@ -47,7 +47,7 @@ class CourseController extends Controller
             endif;
         endif;
 
-    	return view('frontend.course.show', compact('course', 'in_cart', 'cartIndex'));
+    	return view('frontend.course.show', compact('course'));
     }
 
     /**
