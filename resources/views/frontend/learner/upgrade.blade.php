@@ -100,6 +100,7 @@
                                             <?php
                                             $packages = \App\Package::where('course_id', $courseTaken->package->course->id)
                                                 ->where('id', '>', $courseTaken->package->id)
+                                                ->where('is_show', 1)
                                                 ->get();
                                             $currentCourseType = $courseTaken->package->course_type;
                                             ?>
