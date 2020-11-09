@@ -136,7 +136,7 @@
                             <a href="{{route('learner.invoice')}}" class="dropdown-item"
                                title="View learner invoices">Fakturaer</a>
 
-                            <a href="" class="dropdown-item d-inline-block w-auto mb-2" title="Logout">
+                            <a href="{{ route('auth.logout-get') }}" class="dropdown-item d-inline-block w-auto mb-2" title="Logout">
                                 <form method="POST" action="{{route('auth.logout')}}" class="form-logout">
                                     {{csrf_field()}}
                                     <button type="submit" class="btn btn-circle">Logg av</button>

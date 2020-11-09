@@ -1493,6 +1493,7 @@ Route::group([
     'namespace' => 'Auth',
 ], function () {
     Route::group(['prefix' => 'auth'], function () {
+        Route::get('logout', 'LoginController@logout')->name('auth.logout-get');
         Route::post('logout', 'LoginController@logout')->name('auth.logout');
         Route::post('password', 'PasswordController@updatePassword');
     });

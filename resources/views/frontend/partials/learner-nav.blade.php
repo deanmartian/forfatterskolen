@@ -114,7 +114,7 @@
                             <a href="#" class="dropdown-item redirectForum">Forum</a>
                             <a href="#" class="dropdown-item pilotleser-link">Pilotleser</a>
 
-                            <a href="" class="dropdown-item d-inline-block w-auto mb-2">
+                            <a href="{{ route('auth.logout-get') }}" class="dropdown-item d-inline-block w-auto mb-2">
                                 <form method="POST" action="{{route('auth.logout')}}" class="form-logout">
                                     {{csrf_field()}}
                                     <button type="submit" class="btn btn-circle">Logg av</button>
