@@ -500,11 +500,19 @@
                                             </td>
                                             <td>
                                                 @if($invoice->fiken_is_paid === 1)
-                                                    <span class="label label-success">{{$status}}</span>
+                                                    <span class="label label-success">
+                                                        {{ strtoupper(trans('site.learner.paid')) }}
+                                                    </span>
                                                 @elseif($invoice->fiken_is_paid === 2)
-                                                    <span class="label label-warning">{{$status}}</span>
+                                                    <span class="label label-warning text-uppercase">
+                                                        {{ strtoupper('sendt til inkasso')  }}
+                                                    </span>
+                                                @elseif($invoice->fiken_is_paid === 3)
+                                                    <span class="label label-primary text-uppercase">
+                                                        {{ strtoupper('Kreditert')  }}
+                                                    </span>
                                                 @else
-                                                    <span class="label label-danger">{{$status}}</span>
+                                                    <span class="label label-danger">UBETALT</span>
                                                 @endif
                                             </td>
                                         </tr>

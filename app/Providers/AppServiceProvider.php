@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Validator;
 
@@ -26,6 +29,18 @@ class AppServiceProvider extends ServiceProvider
             // If you want to accept hyphens use: /^[\pL\s-]+$/u.
             return preg_match('/^[\pL\s-]+$/u', $value);
         });
+
+        // Enable pagination on collection
+        if (!Collection::hasMacro('paginate')) {
+
+            Collection::macro('paginate',
+                function ($perPage = 15, $page = null, $options = []) {
+                    $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+                    return (new LengthAwarePaginator(
+                        $this->forPage($page, $perPage)->values()->all(), $this->count(), $perPage, $page, $options))
+                        ->withPath('');
+                });
+        }
     }
 
     /**
