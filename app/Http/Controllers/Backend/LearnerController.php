@@ -815,6 +815,19 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function setCourseTakenExpiryReminder( $id, Request $request )
+    {
+        $courseTaken = CoursesTaken::findOrFail($id);
+        $courseTaken->send_expiry_reminder = $request->send_expiry_reminder;
+        $courseTaken->save();
+        return response()->json();
+    }
+
     public function addToWorkshop(Request $request)
     {
         $workshop = Workshop::find($request->workshop_id);

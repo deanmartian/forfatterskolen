@@ -50,7 +50,8 @@ class WebinarPakkeExpiresInAWeek extends Command {
         // get courses taken by end date
         $coursesTaken = CoursesTaken::whereHas('package', function($query){
             $query->where('course_id', 17);
-        })->whereNotNull('end_date')->where('end_date',$monthDate)->get();
+        })->whereNotNull('end_date')->where('end_date',$monthDate)
+            ->where('send_expiry_reminder', 1)->get();
 
         // get courses taken by started at field
         $coursesTakenByStartDate = CoursesTaken::whereHas('package', function($query){
@@ -59,6 +60,7 @@ class WebinarPakkeExpiresInAWeek extends Command {
             ->whereNotNull('started_at')
             ->whereNull('end_date')
             ->whereDate('started_at',$yearDate)
+            ->where('send_expiry_reminder', 1)
             ->get();
 
         // merge the collections

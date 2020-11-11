@@ -197,6 +197,17 @@
 												{{ ucfirst(strtolower(trans('site.end-date'))) }}: {{ $courseTaken->end_date ? $courseTaken->end_date
 								: ($courseTaken->started_at ? \Carbon\Carbon::parse($courseTaken->started_at)->addYear(1)->format('M d, Y') : '') }}
 												{{--@endif--}}
+
+												@if ($courseTaken->package->course->id == 17)
+													<br>
+													<label>Send Expiry Reminder:</label>
+													<input type="checkbox" data-toggle="toggle" data-on="Yes"
+														   class="expiry-reminder-toggle" data-off="No"
+														   data-id="{{$courseTaken->id}}" data-size="mini"
+													@if($courseTaken->send_expiry_reminder) {{ 'checked' }} @endif>
+
+												@endif
+
 											</p>
 											<button type="button" class="btn btn-xs btn-primary setAvailabilityBtn" style="margin-top: 7px"
 													data-title="{{ $courseTaken->package->course->title }}"
@@ -3265,6 +3276,21 @@
         let action = $(this).data('action');
         let modal = $('#deletePrivateMessageModal');
         modal.find('form').attr('action', action);
+    });
+
+    $(".expiry-reminder-toggle").change(function(){
+        let course_taken_id = $(this).attr('data-id');
+        let is_checked = $(this).prop('checked');
+        let check_val = is_checked ? 1 : 0;
+        $.ajax({
+            type:'POST',
+            url:'/course_taken/' + course_taken_id + '/set-expiry-reminder',
+            headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            data: { 'send_expiry_reminder' : check_val },
+            success: function(data){
+            }
+        });
+
     });
 
 	function updateOtherServiceFields(type) {
