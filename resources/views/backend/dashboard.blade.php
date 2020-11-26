@@ -31,92 +31,7 @@
 
 
 			<!-- My assigned manuscripts -->
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="panel panel-default">
-						<div class="panel-heading"><h4>{{ trans('site.my-assigned-manuscripts') }}</h4></div>
-						<table class="table">
-						    <thead>
-						      <tr>
-						        <th>{{ trans_choice('site.manuscripts', 1) }}</th>
-						        <th>{{ trans_choice('site.learners',1) }}</th>
-						        <th>{{ trans('site.type') }}</th>
-						        <th>{{ trans('site.status') }}</th>
-								  <th></th>
-						      </tr>
-						    </thead>
-						    <tbody>
-						    	@foreach( $assigned_course_manuscripts as $assigned )
-								<?php $extension = explode('.', basename($assigned->filename)); ?>
-							  	@if( $assigned->status == 'Started' )
-						    	<tr>
-						    		<td><a href="{{ route('admin.manuscript.show', $assigned->id) }}">
-						    			@if( $assigned->filename )
-							    			@if( end($extension) == 'pdf' || end($extension) == 'odt' )
-											<a href="/js/ViewerJS/#../..{{ $assigned->filename }}">{{ basename($assigned->filename) }}</a>
-											@elseif( end($extension) == 'docx' )
-											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$assigned->filename}}">{{ basename($assigned->filename) }}</a>
-											@endif
-						    			@else
-						    			<em>No document</em>
-						    			@endif
-						    		</a></td>
-						    		<td>
-										@if (!Auth::user()->is_editor)
-											<a href="{{route('admin.learner.show', $assigned->courseTaken->user->id)}}">{{ $assigned->courseTaken->user->full_name }}</a>
-										@else
-											{{ $assigned->courseTaken->user->full_name }}
-										@endif
-									</td>
-						    		<td>Course</td>
-						    		<td>
-										<span class="label label-primary">Started</span>
-						    		</td>
-									<td><a href="{{ route('backend.download_manuscript', $assigned->id) }}" class="btn btn-primary btn-xs">{{ trans('site.download') }}</a></td>
-						    	</tr>
-						    	@endif
-							    @endforeach
 
-						    	@foreach( $assigned_shop_manuscripts as $assigned )
-								<?php $extension = explode('.', basename($assigned->file)); ?>
-						    	@if( $assigned->status == 'Started' )
-						    	<tr>
-						    		<td><a href="{{ route('shop_manuscript_taken', ['id' => $assigned->user->id, 'shop_manuscript_taken_id' => $assigned->id]) }}">
-						    			@if( $assigned->file )
-						    				@if( end($extension) == 'pdf' || end($extension) == 'odt' )
-											<a href="/js/ViewerJS/#../..{{ $assigned->file }}">{{ basename($assigned->file) }}</a>
-											@elseif( end($extension) == 'docx' )
-											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$assigned->file}}">{{ basename($assigned->file) }}</a>
-											@endif
-						    			@else
-						    			<em>No document</em>
-						    			@endif
-						    		</a></td>
-						    		<td>
-										@if (!Auth::user()->is_editor)
-											<a href="{{route('admin.learner.show', $assigned->user->id)}}">{{ $assigned->user->full_name }}</a>
-										@else
-											{{ $assigned->user->full_name }}
-										@endif
-									</td>
-						    		<td>Shop manuscript</td>
-						    		<td>
-										@if( $assigned->status == 'Started' )
-										<span class="label label-primary">Started</span>
-										@elseif( $assigned->status == 'Not started' )
-										<span class="label label-warning">Not started</span>
-										@endif
-						    		</td>
-									<td><a href="{{ route('backend.download_shop_manuscript', $assigned->id) }}" class="btn btn-primary btn-xs">{{ trans('site.download') }}</a></td>
-						    	</tr>
-						    	@endif
-							    @endforeach
-
-						    </tbody>
-						</table>
-					</div>
-				</div>
-			</div>
 
 		@if (!Auth::user()->is_editor)
 
@@ -153,48 +68,6 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>{{ trans('site.all-manuscripts') }}</h4></div>
-						<div class="panel-heading"><h4>{{ trans_choice('site.manuscripts', 2) }}</h4></div>
-						<table class="table">
-							<thead>
-								<tr>
-									<th>{{ trans_choice('site.manuscripts', 1) }}</th>
-									<th>{{ trans('site.uploaded-by') }}</th>
-									<th>{{ trans('site.assigned-to') }}</th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
-							@foreach($manuscripts as $manuscript)
-								@if( $manuscript->status == 'Started' )
-									<tr>
-										<td><a href="{{ route('admin.manuscript.show', $manuscript->id) }}">
-												@if( $manuscript->filename )
-                                                    <?php $extension = explode('.', basename($manuscript->filename)); ?>
-													@if( end($extension) == 'pdf' || end($extension) == 'odt' )
-														<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">{{ basename($manuscript->filename) }}</a>
-													@elseif( end($extension) == 'docx' )
-														<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">{{ basename($manuscript->filename) }}</a>
-													@endif
-												@else
-													<em>No document</em>
-												@endif
-											</a></td>
-										<td><a href="{{route('admin.learner.show', $manuscript->user->id)}}">{{ $manuscript->user->full_name }}</a></td>
-										<td>
-											@if( $manuscript->admin )
-												{{ $manuscript->admin->full_name }}
-											@else
-												<em>Not set</em>
-											@endif
-										</td>
-										<td><a href="{{ route('backend.download_manuscript', $manuscript->id) }}" class="btn btn-primary btn-xs">{{ trans('site.download') }}</a></td>
-									</tr>
-								@endif
-							@endforeach
-							</tbody>
-						</table>
-
 						<div class="panel-heading"><h4>{{ trans_choice('site.shop-manuscripts', 2) }}</h4></div>
 						<table class="table">
 							<thead>
