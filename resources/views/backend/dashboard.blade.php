@@ -36,7 +36,7 @@
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<h4>
-								Assigned Manuscripts
+								Assignments/Personal assignments
 							</h4>
 						</div>
 						<table class="table">
@@ -80,6 +80,12 @@
 										   download>
 											{{ trans('site.download') }}
 										</a>
+										<div style="margin-top: 5px">
+											<input type="checkbox" data-toggle="toggle" data-on="{{ trans('site.locked') }}"
+												   class="lock-toggle" data-off="{{ trans('site.unlocked') }}"
+												   data-id="{{$assignedManuscript->id}}" data-size="mini"
+											@if($assignedManuscript->locked) {{ 'checked' }} @endif>
+										</div>
 									</td>
 								</tr>
 							@endforeach
@@ -1566,6 +1572,20 @@
         modal.find('[name=task]').text(fields.task);
         modal.find('[name=user_id]').val(fields.user_id);
         modal.find('form').find('[name=assigned_to]').val(fields.assigned_to).trigger('change');
+    });
+
+    $(".lock-toggle").change(function(){
+        let course_id = $(this).attr('data-id');
+        let is_checked = $(this).prop('checked');
+        let check_val = is_checked ? 1 : 0;
+        $.ajax({
+            type:'POST',
+            url:'/assignment_manuscript/lock-status',
+            headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            data: { "manuscript_id" : course_id, 'locked' : check_val },
+            success: function(data){
+            }
+        });
     });
 
     $(".deleteTaskBtn").click(function(){
