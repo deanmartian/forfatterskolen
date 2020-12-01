@@ -86,6 +86,16 @@ class PageController extends Controller
         $allAssignmentQuery = array_merge($assignmentForCourse, $assignmentForLearners);
         $pendingAssignments = AssignmentManuscript::where('editor_id', 0)
             ->whereIn('assignment_id', $allAssignmentQuery)->get();
+
+        $assignedAssignmentManuscripts = AssignmentManuscript::whereHas('editor')
+            ->whereHas('assignment', function($query) use ($singleCourses) {
+                $query->where('parent', 'users');
+                $query->orWhereIn('course_id', $singleCourses);
+
+            })
+            ->where('editor_id', '!=',0)
+            ->where('has_feedback', '=', 0)
+            ->get();
         $pendingTasks = UserTask::where('assigned_to', Auth::user()->id)
             ->where('status', 0)->get();
 
@@ -94,7 +104,7 @@ class PageController extends Controller
             'pending_assignment_feedbacks', 'logs', 'manuscripts','shopManuscripts',
             'nearlyExpiredCoursesCount', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
             'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments',
-            'pendingTasks'));
+            'pendingTasks', 'assignedAssignmentManuscripts'));
     }
 
     /**

@@ -564,6 +564,11 @@ class AssignmentController extends Controller
 
         if ($assignmentManuscript) {
             $assignmentManuscript->editor_id = $request->editor_id;
+
+            if ($request->has('expected_finish')) {
+                $assignmentManuscript->expected_finish = $request->expected_finish;
+            }
+
             $assignmentManuscript->save();
         }
 
@@ -856,6 +861,7 @@ class AssignmentController extends Controller
             'available_date' => $request->available_date,
             'max_words' => (int) $request->max_words,
             'show_join_group_question' => 0,
+            'course_id' => $request->course_id,
             'parent_id' => $request->learner_id,
             'parent' => 'users'
         ];

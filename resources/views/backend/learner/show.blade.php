@@ -294,6 +294,7 @@
 							<tr>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 								<th>{{ trans('site.date-ordered') }}</th>
+								<th>Assigned Admin</th>
 								<th>{{ trans('site.status') }}</th>
 								<th></th>
 							</tr>
@@ -310,6 +311,11 @@
 											@endif
 										</td>
 										<td>{{$shopManuscriptTaken->created_at}}</td>
+										<td>
+											@if($shopManuscriptTaken->admin)
+												{{ $shopManuscriptTaken->admin->full_name }}
+											@endif
+										</td>
 										<td>
 											@if( $shopManuscriptTaken->status == 'Finished' )
 												<span class="label label-success">Finished</span>
@@ -693,6 +699,8 @@
 						<thead>
 							<tr>
 								<th>{{ trans_choice('site.assignments', 1) }}</th>
+								<th>{{ trans_choice('site.courses', 1) }}</th>
+								<th>Editor</th>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 							</tr>
 						</thead>
@@ -736,6 +744,16 @@
 										?>
 									</td>
 									<td>
+										<a href="{{ route('admin.course.show', $assignment->course->id) }}">
+											{{ $assignment->course->title }}
+										</a>
+									</td>
+									<td>
+										@if ($manuscript->editor)
+											{{ $manuscript->editor->full_name }}
+										@endif
+									</td>
+									<td>
 										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
 										<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">{{ basename($manuscript->filename) }}</a>
 										@elseif( end($extension) == 'docx' )
@@ -761,6 +779,8 @@
 						<thead>
 						<tr>
 							<th>{{ trans_choice('site.assignments', 1) }}</th>
+							<th>{{ trans_choice('site.courses', 1) }}</th>
+							<th>Editor</th>
 							<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 						</tr>
 						</thead>
@@ -769,13 +789,24 @@
                                 <?php $manuscript = $assignment->manuscripts->where('user_id', $learner->id)->first();
                                 $assignmentCourse = $assignment->course;
                                 ?>
-								<?php /*$extension = explode('.', basename($manuscript->filename)); */?>
 								<tr>
 									<td>
 										<a href="{{ route('admin.learner.assignment',
 											[$assignment->parent_id, $assignment->id]) }}">
 											{{ $assignment->title }}
 										</a>
+									</td>
+									<td>
+										@if($assignment->course)
+											<a href="{{ route('admin.course.show', $assignment->course->id) }}">
+												{{ $assignment->course->title }}
+											</a>
+										@endif
+									</td>
+									<td>
+										@if ($manuscript && $manuscript->editor)
+											{{ $manuscript->editor->full_name }}
+										@endif
 									</td>
 									<td>
 										@if ($manuscript)

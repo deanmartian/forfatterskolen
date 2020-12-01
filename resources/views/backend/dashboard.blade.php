@@ -31,6 +31,63 @@
 
 
 			<!-- My assigned manuscripts -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4>
+								Assigned Manuscripts
+							</h4>
+						</div>
+						<table class="table">
+							<thead>
+							<tr>
+								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+								<th>{{ trans_choice('site.learners', 1) }}</th>
+								<th>{{ trans('site.assigned-to') }}</th>
+								<th>Expected Finish</th>
+								<th></th>
+							</tr>
+							</thead>
+							<tbody>
+							@foreach($assignedAssignmentManuscripts as $assignedManuscript)
+                                <?php $extension = explode('.', basename($assignedManuscript->filename)); ?>
+								<tr>
+									<td>
+										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+											<a href="/js/ViewerJS/#../..{{ $assignedManuscript->filename }}">
+												{{ basename($assignedManuscript->filename) }}
+											</a>
+										@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
+											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$assignedManuscript->filename}}">
+												{{ basename($assignedManuscript->filename) }}
+											</a>
+										@endif
+									</td>
+									<td>
+										<a href="{{ route('admin.learner.show',$assignedManuscript->user->id) }}">
+											{{ $assignedManuscript->user->fullname }}
+										</a>
+									</td>
+									<td>
+										{{ $assignedManuscript->editor->full_name }}
+									</td>
+									<td>
+										{{ $assignedManuscript->expected_finish }}
+									</td>
+									<td>
+										<a href="{{ $assignedManuscript->filename }}" class="btn btn-primary btn-xs"
+										   download>
+											{{ trans('site.download') }}
+										</a>
+									</td>
+								</tr>
+							@endforeach
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
 
 
 		@if (!Auth::user()->is_editor)
@@ -617,6 +674,7 @@
 								<tr>
 									<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 									<th>{{ trans_choice('site.learners', 1) }}</th>
+									<th>{{ trans_choice('site.courses', 1) }}</th>
 									<th></th>
 								</tr>
 							</thead>
@@ -626,7 +684,7 @@
 									<tr>
 										<td>
 											@if( end($extension) == 'pdf' || end($extension) == 'odt' )
-												<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">
+												<a href="/js/ViewerJS/#../..{{ $pendingAssignment->filename }}">
 													{{ basename($pendingAssignment->filename) }}
 												</a>
 											@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
@@ -639,6 +697,13 @@
 											<a href="{{ route('admin.learner.show',$pendingAssignment->user->id) }}">
 												{{ $pendingAssignment->user->fullname }}
 											</a>
+										</td>
+										<td>
+											@if($pendingAssignment->assignment->course)
+												<a href="{{ route('admin.course.show', $pendingAssignment->assignment->course->id) }}">
+													{{ $pendingAssignment->assignment->course->title }}
+												</a>
+											@endif
 										</td>
 										<td>
 											<button class="btn btn-xs btn-warning pendingAssignmentEditorBtn" data-toggle="modal"
@@ -1117,6 +1182,10 @@
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 							@endforeach
 						</select>
+					</div>
+					<div class="form-group">
+						<label>Expected Finish</label>
+						<input type="date" class="form-control" name="expected_finish">
 					</div>
 					<div class="text-right">
 						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>

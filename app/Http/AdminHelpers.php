@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Course;
 use App\CoursesTaken;
 use App\CronLog;
 use App\EmailTemplate;
@@ -56,6 +57,17 @@ class AdminHelpers
 		$users = \App\User::where('role', 2)->whereNotIn('id', $courseLearners)->get();
 		return $users;
 	}
+
+    public static function courseList($id = NULL)
+    {
+        $course = new Course();
+        if ($id) {
+            return $id;
+            return $course->find($id);
+        }
+
+        return $course->all();
+    }
 
 	
 	public static function currencyFormat($value)

@@ -16,7 +16,7 @@ class Assignment extends Model
     // filter for course assignments
     public function scopeForCourseOnly($query)
     {
-        return $query->whereNotNull('course_id');
+        return $query->whereNull('parent')->orWhere('parent', 'course');
     }
 
     // filter for learner assignments

@@ -56,7 +56,7 @@ class Course extends Model
 
     public function assignments()
     {
-        return $this->hasMany('App\Assignment')->orderBy('created_at', 'desc');
+        return $this->hasMany('App\Assignment')->whereNull('parent')->orderBy('created_at', 'desc');
     }
 
     public function activeAssignments()

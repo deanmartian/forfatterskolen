@@ -310,6 +310,19 @@
                                    value="{{ $assignment->max_words }}">
                         </div>
 
+                        <div class="form-group">
+                            <label>{{ trans_choice('site.courses', 1) }}</label>
+                            <select class="form-control select2" name="course_id">
+                                <option value="" selected>- Search Course -</option>
+                                @foreach(\App\Http\AdminHelpers::courseList() as $course)
+                                    <option value="{{$course->id}}"
+                                            {{ $course->id === $assignment->course_id ? 'selected' : '' }}>
+                                        {{$course->title}}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         <button type="submit" class="btn btn-primary pull-right margin-top">
                             {{ trans('site.save') }}
                         </button>

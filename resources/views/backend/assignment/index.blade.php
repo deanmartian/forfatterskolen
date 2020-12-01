@@ -355,6 +355,18 @@
 							</div>
 
 							<div class="form-group">
+								<label>{{ trans_choice('site.courses', 1) }}</label>
+								<select class="form-control select2" name="course_id">
+									<option value="" selected disabled>- Search Course -</option>
+									@foreach(\App\Http\AdminHelpers::courseList() as $course)
+										<option value="{{$course->id}}">
+											{{$course->title}}
+										</option>
+									@endforeach
+								</select>
+							</div>
+
+							<div class="form-group">
 								<label>
 									{{ trans_choice('site.learners', 1) }}
 								</label>
