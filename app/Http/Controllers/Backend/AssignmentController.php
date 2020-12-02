@@ -715,6 +715,14 @@ class AssignmentController extends Controller
                 'is_active' => true,
                 'availability' => $request->availability,
             ]);
+
+            // send email
+            $email_content  = $request->message;
+            $to             = $assignmentManuscript->user->email;
+            $first_name     = $assignmentManuscript->user->first_name;
+
+            $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject, $request->from_email);
+
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback sent successfully.'),
                 'alert_type' => 'success']);
         endif;
@@ -766,6 +774,14 @@ class AssignmentController extends Controller
             $feedback->feedback_user_id = Auth::user()->id;
             $feedback->availability = $request->availability;
             $feedback->save();
+
+            // send email
+            $email_content  = $request->message;
+            $to             = $assignmentManuscript->user->email;
+            $first_name     = $assignmentManuscript->user->first_name;
+
+            $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject, $request->from_email);
+
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback sent successfully.'),
                 'alert_type' => 'success']);
         }
@@ -886,6 +902,21 @@ class AssignmentController extends Controller
         return redirect()->to('/assignment?tab=learner')
             ->with(['errors' => AdminHelpers::createMessageBag('Record deleted successfully.'),
             'alert_type' => 'success']);
+    }
+
+    /**
+     * @param $email_content
+     * @param $to
+     * @param $first_name
+     * @param $subject
+     * @param $from_email
+     */
+    public function sendAssignmentFeedbackMail($email_content, $to, $first_name, $subject, $from_email)
+    {
+        $redirect_link          = route('learner.assignment');
+        $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
+
+        AdminHelpers::queue_mail($to, $subject, $formattedMailContent, $from_email);
     }
 
     /**

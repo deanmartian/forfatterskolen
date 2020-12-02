@@ -17,6 +17,7 @@ class EmailTemplateController extends Controller
     public function addEmailTemplate(Request $request)
     {
         $this->validate($request, [
+            'page_name' => 'required|unique:email_template,page_name',
             'email_content' => 'required'
         ]);
 

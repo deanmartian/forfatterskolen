@@ -85,6 +85,17 @@
 												   class="lock-toggle" data-off="{{ trans('site.unlocked') }}"
 												   data-id="{{$assignedManuscript->id}}" data-size="mini"
 											@if($assignedManuscript->locked) {{ 'checked' }} @endif>
+
+                                            <button class="btn btn-warning btn-xs d-block
+                                            submitPersonalAssignmentFeedbackBtn" style="margin-top: 5px"
+                                                    data-target="#submitPersonalAssignmentFeedbackModal"
+                                                    data-toggle="modal"
+													data-name="{{ $assignedManuscript->user->full_name }}"
+                                                    data-action="{{ route('assignment.group.manuscript-feedback-no-group',
+																['id' => $assignedManuscript->id,
+																'learner_id' => $assignedManuscript->user->id]) }}">
+                                                + {{ trans('site.add-feedback') }}
+                                            </button>
 										</div>
 									</td>
 								</tr>
@@ -1115,7 +1126,7 @@
 								   value="{{ $emailTemplate->from_email }}" required>
 						</div>
 					<div class="form-group">
-						<label>{{ trans_choice('site.notes', 2) }}</label>
+						<label>{{ trans('site.message') }}</label>
 						<textarea class="form-control tinymce" name="message" rows="6"
 								  required>{!! $emailTemplate->email_content !!}</textarea>
 					</div>
@@ -1395,6 +1406,58 @@
 
 	</div>
 </div>
+
+<div id="submitPersonalAssignmentFeedbackModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">{{ trans('site.submit-feedback-to') }} <em></em></h4>
+            </div>
+            <div class="modal-body">
+
+                <form method="POST" action=""  enctype="multipart/form-data">
+                    <?php
+                    	$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Assignment Manuscript Feedback');
+                    ?>
+                    {{ csrf_field() }}
+                    <div class="form-group">
+                        <label>{{ trans_choice('site.manuscripts', 1) }}</label>
+                        <input type="file" class="form-control" required multiple name="filename[]"
+                               accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                   application/pdf, application/vnd.oasis.opendocument.text">
+                        * Accepted file formats are DOCX, PDF, ODT.
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('site.available-date') }}</label>
+                        <input type="date" class="form-control" name="availability">
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans('site.grade') }}</label>
+                        <input type="number" class="form-control" step="0.01" name="grade">
+                    </div>
+					<div class="form-group">
+						<label>{{ trans('site.subject') }}</label>
+						<input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}"
+							   required>
+					</div>
+					<div class="form-group">
+						<label>{{ trans('site.from') }}</label>
+						<input type="text" class="form-control" name="from_email"
+							   value="{{ $emailTemplate->from_email }}" required>
+					</div>
+					<div class="form-group">
+						<label>{{ trans('site.message') }}</label>
+						<textarea class="form-control tinymce" name="message" rows="6"
+								  required>{!! $emailTemplate->email_content !!}</textarea>
+					</div>
+                    <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
+                    <div class="clearfix"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 @stop
 
 @section('scripts')
@@ -1592,6 +1655,21 @@
         let action = $(this).data('action');
         let modal = $('#deleteTaskModal');
         modal.find('form').attr('action', action);
+    });
+
+    $('.submitPersonalAssignmentFeedbackBtn').click(function(){
+        let modal = $('#submitPersonalAssignmentFeedbackModal');
+        let name = $(this).data('name');
+        let action = $(this).data('action');
+        let is_edit = $(this).data('edit');
+
+        modal.find('em').text(name);
+        modal.find('form').attr('action', action);
+        if (is_edit) {
+            modal.find('form').find('input[type=file]').removeAttr('required');
+        } else {
+            modal.find('form').find('input[type=file]').attr('required', 'required');
+        }
     });
 
     function disableSubmit(t) {

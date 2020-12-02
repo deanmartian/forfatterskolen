@@ -6,6 +6,7 @@ use App\Course;
 use App\CoursesTaken;
 use App\CronLog;
 use App\EmailTemplate;
+use App\Mail\SubjectBodyEmail;
 use App\Notification;
 use App\Order;
 use App\Package;
@@ -161,6 +162,50 @@ class AdminHelpers
         }*/
 
         mail($to, $subject, $content, $headers);
+	}
+
+    /**
+     * @param $to
+     * @param $subject
+     * @param $email_message
+     * @param $from_email
+     * @param null $from_name
+     * @param null $attachment
+     */
+    public static function queue_mail($to, $subject, $email_message, $from_email, $from_name = NULL, $attachment = NULL)
+    {
+        $emailData['email_subject'] = $subject;
+        $emailData['email_message'] = $email_message;
+        $emailData['from_name'] = $from_name;
+        $emailData['from_email'] = $from_email;
+        $emailData['attach_file'] = $attachment;
+
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+	}
+
+    /**
+     * @param $email_content
+     * @param $to
+     * @param $first_name
+     * @param $redirect_link
+     * @return mixed
+     */
+    public static function formatEmailContent($email_content, $to, $first_name, $redirect_link)
+    {
+        $encode_email = encrypt($to);
+        $redirectLink = encrypt($redirect_link);
+        $search_string = [
+            ':firstname',
+            ':redirect_link',
+            ':end_redirect_link'
+        ];
+        $replace_string = [
+            $first_name,
+            "<a href='" . route('auth.login.emailRedirect',[$encode_email, $redirectLink]) . "'>" ,
+            "</a>"
+        ];
+
+        return str_replace($search_string, $replace_string, $email_content);
 	}
 
     public static function checkNearlyExpiredCourses()

@@ -742,6 +742,9 @@
 			</div>
 			<div class="modal-body">
 				<form method="POST" action=""  enctype="multipart/form-data">
+                    <?php
+                    	$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Assignment Manuscript Feedback');
+                    ?>
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>{{ trans_choice('site.manuscripts', 1) }}</label>
@@ -755,6 +758,21 @@
 					<div class="form-group">
 						<label>{{ trans('site.grade') }}</label>
 						<input type="number" class="form-control" step="0.01" name="grade">
+					</div>
+					<div class="form-group">
+						<label>{{ trans('site.subject') }}</label>
+						<input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}"
+							   required>
+					</div>
+					<div class="form-group">
+						<label>{{ trans('site.from') }}</label>
+						<input type="text" class="form-control" name="from_email"
+							   value="{{ $emailTemplate->from_email }}" required>
+					</div>
+					<div class="form-group">
+						<label>{{ trans('site.message') }}</label>
+						<textarea class="form-control tinymce" name="message" rows="6"
+								  required>{!! $emailTemplate->email_content !!}</textarea>
 					</div>
 					<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
 					<div class="clearfix"></div>
@@ -853,8 +871,49 @@
 @stop
 
 @section('scripts')
+	<script src="https://cdn.tinymce.com/4/tinymce.min.js"></script>
 	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
+    // tinymce
+    let editor_config = {
+        path_absolute: "{{ URL::to('/') }}",
+        height: '20em',
+        selector: '.tinymce',
+        plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
+            'searchreplace wordcount visualblocks visualchars code fullscreen',
+            'insertdatetime media nonbreaking save table contextmenu directionality',
+            'emoticons template paste textcolor colorpicker textpattern'],
+        toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript ' +
+        'superscript | forecolor backcolor | link | alignleft aligncenter alignright ' +
+        'alignjustify  | removeformat',
+        toolbar2: 'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code ' +
+        '| print fullscreen',
+        relative_urls: false,
+        file_browser_callback : function(field_name, url, type, win) {
+            let x = window.innerWidth || document.documentElement.clientWidth ||
+                document.getElementsByTagName('body')[0].clientWidth;
+            let y = window.innerHeight || document.documentElement.clientHeight ||
+                document.getElementsByTagName('body')[0].clientHeight;
+
+            let cmsURL = editor_config.path_absolute + '/laravel-filemanager?field_name=' + field_name;
+            if (type == 'image') {
+                cmsURL = cmsURL + '&type=Images';
+            } else {
+                cmsURL = cmsURL + '&type=Files';
+            }
+
+            tinyMCE.activeEditor.windowManager.open({
+                file : cmsURL,
+                title : 'Filemanager',
+                width : x * 0.8,
+                height : y * 0.8,
+                resizable : 'yes',
+                close_previous : 'no'
+            });
+        }
+    };
+    tinymce.init(editor_config);
+
 	$('.setGradeBtn').click(function(){
 		var form = $('#setGradeModal form');
 		var action = $(this).data('action');
