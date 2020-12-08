@@ -41,6 +41,7 @@
 	<a class="btn btn-success margin-top" href="{{ route('admin.personal-trainer.index') }}">Personal Trainer Applicants</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.single-competition.index') }}">Competition</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.email-template.index') }}">{{ trans('site.email-template') }}</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.sales.index') }}">Sales</a>
 
 	<div class="table-users table-responsive">
 		<table class="table">

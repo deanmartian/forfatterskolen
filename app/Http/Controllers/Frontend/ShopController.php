@@ -669,6 +669,7 @@ class ShopController extends Controller
         $course_status = $paymentMode->mode == "Vipps" || $paymentMode->mode == "Paypal" ? 1 : 0;
         $courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
         $courseTaken->is_active = $course_status;
+        $courseTaken->is_welcome_email_sent = 0;
         $courseTaken->save();
 
         $newOrder['user_id']    = Auth::user()->id;

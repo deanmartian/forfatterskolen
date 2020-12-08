@@ -8,7 +8,9 @@ class CoursesTaken extends Model
 {
     protected $table = 'courses_taken';
     protected $fillable = ['user_id', 'package_id', 'is_active', 'started_at', 'start_date', 'end_date', 'access_lessons',
-        'years', 'is_free', 'send_expiry_reminder'];
+        'years', 'is_free', 'send_expiry_reminder', 'is_welcome_email_sent'];
+
+    protected $appends = ['order'];
 
     public function user()
     {
@@ -127,6 +129,21 @@ class CoursesTaken extends Model
     public function getAccessLessonsAttribute($value)
     {
         return json_decode($value);
+    }
+
+    public function receivedWelcomeEmail()
+    {
+        return $this->hasOne('App\EmailHistory', 'parent_id', 'id')
+            ->where('parent', 'courses-taken-welcome')->latest();
+    }
+
+    // get the order record
+    public function getOrderAttribute()
+    {
+        return Order::where([
+            'user_id' => $this->attributes['user_id'],
+            'package_id' => $this->attributes['package_id']
+        ])->with('paymentPlan')->latest()->first();
     }
 
 }

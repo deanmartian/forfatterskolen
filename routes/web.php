@@ -941,6 +941,17 @@ Route::group([
         Route::post('/email_template/add_email_template', 'EmailTemplateController@addEmailTemplate')->name('admin.manuscript.add_email_template'); // Store Email Template
         Route::put('/email_template/edit_email_template/{id}', 'EmailTemplateController@editEmailTemplate')->name('admin.manuscript.edit_email_template'); // Update Email Template
 
+
+        Route::group([
+            'prefix' => 'sale'
+        ], function(){
+
+            Route::get('/', 'SaleController@index')->name('admin.sales.index');
+            Route::post('/send-email/{id}/{parent}', 'SaleController@sendEmail')
+                ->name('admin.sales.send-email');
+
+        });
+
         Route::resource('/publishing', 'PublishingController', [
             'except' => ['show'],
             'names' => [

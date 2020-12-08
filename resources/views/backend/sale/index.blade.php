@@ -1,0 +1,491 @@
+@extends('backend.layout')
+
+@section('title')
+    <title>Sales &rsaquo; Forfatterskolen Admin</title>
+@stop
+
+@section('content')
+    <div class="page-toolbar">
+        <h3><i class="fa fa-file-text-o"></i> Sales</h3>
+    </div>
+
+    <div class="col-md-12">
+        <ul class="nav nav-tabs margin-top">
+            <li @if( Request::input('p') != 'shop-manuscript' ) class="active" @endif>
+                <a href="?p=course">Course</a>
+            </li>
+            <li @if( Request::input('p') == 'shop-manuscript' ) class="active" @endif>
+                <a href="?p=shop-manuscript">Shop Manuscript</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane fade in active">
+
+                <ul class="nav nav-tabs margin-top">
+                    <li @if( Request::input('tab') != 'archive' ) class="active" @endif>
+                        <a href="?p={{ Request::input('p') }}&tab=new">{{ trans('site.new') }}</a>
+                    </li>
+                    <li @if( Request::input('tab') == 'archive' ) class="active" @endif>
+                        <a href="?p={{ Request::input('p') }}&tab=archive">{{ trans('site.archive') }}</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade in active">
+
+                        @if( Request::input('p') != 'shop-manuscript' )
+
+                            @if( Request::input('tab') != 'archive' )
+                                <div class="table-users table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>{{ trans_choice('site.packages', 1) }}</th>
+                                            <th>{{ trans_choice('site.learners', 1) }}</th>
+                                            <th>{{ trans('site.date-sold') }}</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($newCourses as $newCourseTaken)
+                                            <tr>
+                                                <td>
+                                                    <a href="{{ route('admin.course.show',
+                                                    $newCourseTaken->package->course_id) }}?section=packages">
+                                                        {{ $newCourseTaken->package->course->title . ' - ' .
+                                                        $newCourseTaken->package->variation }}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('admin.learner.show', $newCourseTaken->user->id) }}">
+                                                        {{ $newCourseTaken->user->full_name }}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    {{ $newCourseTaken->created_at }}
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                        $emailTemplate = $singleCourseEmail;
+
+                                                        if ($newCourseTaken->package->course->type === 'Group') {
+                                                            $emailTemplate = $groupCourseEmail;
+
+                                                            if ($newCourseTaken->order->paymentPlan->division > 1) {
+                                                                $emailTemplate = $groupCourseMultiInvoiceEmail;
+                                                            }
+                                                        }
+
+                                                    ?>
+                                                    <button class="btn btn-success btn-xs sendEmailBtn"
+                                                        data-toggle="modal"
+                                                        data-target="#sendEmailModal"
+                                                        data-email-template="{{ json_encode($emailTemplate) }}"
+                                                        data-action="{{ route('admin.sales.send-email',
+                                                        [$newCourseTaken->id, 'courses-taken-welcome']) }}">
+                                                        {{ trans('site.send-email') }}
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </div> <!-- end new course -->
+                                <div class="pull-right">{{$newCourses->appends(request()->except('page'))}}</div>
+
+                            @else<!-- archive -->
+                                <div class="table-users table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>{{ trans_choice('site.packages', 1) }}</th>
+                                            <th>{{ trans_choice('site.learners', 1) }}</th>
+                                            <th>{{ trans('site.date-sold') }}</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($archiveCourses as $archiveCourse)
+                                            <tr>
+                                                <td>
+                                                    <a href="{{ route('admin.course.show',
+                                                    $archiveCourse->package->course_id) }}?section=packages">
+                                                        {{ $archiveCourse->package->course->title . ' - ' .
+                                                        $archiveCourse->package->variation }}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('admin.learner.show', $archiveCourse->user->id) }}">
+                                                        {{ $archiveCourse->user->full_name }}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    {{ $archiveCourse->created_at }}
+                                                </td>
+                                                <td>
+                                                    @if(!is_null($archiveCourse->receivedWelcomeEmail))
+                                                        <button class="btn btn-primary btn-xs viewEmailBtn"
+                                                            data-toggle="modal"
+                                                            data-target="#viewEmailModal"
+                                                            data-record="{{ json_encode($archiveCourse) }}">
+                                                            View Email
+                                                        </button>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </div> <!-- end new course -->
+                            <div class="pull-right">{{$archiveCourses->appends(request()->except('page'))}}</div>
+                            @endif
+
+                        @else <!-- shop manuscript -->
+                            @if( Request::input('tab') != 'archive' )
+                                <div class="table-users table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>{{ trans_choice('site.manuscripts', 1) }}</th>
+                                            <th>{{ trans_choice('site.learners', 1) }}</th>
+                                            <th>{{ trans('site.date-sold') }}</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($newManuscriptsTaken as $newManuscriptTaken)
+                                            <tr>
+                                                <td>
+                                                    {{ $newManuscriptTaken->shop_manuscript->title }}
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('admin.learner.show', $newManuscriptTaken->user->id) }}">
+                                                        {{ $newManuscriptTaken->user->full_name }}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    {{ $newManuscriptTaken->created_at }}
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-success btn-xs sendEmailBtn"
+                                                        data-toggle="modal"
+                                                        data-target="#sendEmailModal"
+                                                        data-email-template="{{ json_encode($shopManuscriptEmail) }}"
+                                                        data-action="{{ route('admin.sales.send-email',
+                                                        [$newManuscriptTaken->id, 'shop-manuscripts-taken-welcome']) }}">
+                                                        {{ trans('site.send-email') }}
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </div> <!-- end new shop-manuscript -->
+                            <div class="pull-right">{{$newManuscriptsTaken->appends(request()->except('page'))}}</div>
+
+                            @else <!-- archive -->
+                                <div class="table-users table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>{{ trans_choice('site.manuscripts', 1) }}</th>
+                                            <th>{{ trans_choice('site.learners', 1) }}</th>
+                                            <th>{{ trans('site.date-sold') }}</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($archiveManuscriptsTaken as $archiveManuscriptTaken)
+                                            <tr>
+                                                <td>
+                                                    @if($archiveManuscriptTaken->is_active)
+                                                        <a href="{{ route('shop_manuscript_taken',
+                                                        ['id' => $archiveManuscriptTaken->user_id,
+                                                        'shop_manuscript_taken_id' => $archiveManuscriptTaken->id]) }}">
+                                                            {{$archiveManuscriptTaken->shop_manuscript->title}}
+                                                        </a>
+                                                    @else
+                                                        {{$archiveManuscriptTaken->shop_manuscript->title}}
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('admin.learner.show', $archiveManuscriptTaken->user->id) }}">
+                                                        {{ $archiveManuscriptTaken->user->full_name }}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    {{ $archiveManuscriptTaken->created_at }}
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-primary btn-xs viewShopManuscriptEmailBtn"
+                                                            data-toggle="modal"
+                                                            data-target="#viewShopManuscriptEmailModal"
+                                                            data-record="{{ json_encode($archiveManuscriptTaken) }}">
+                                                        View Email
+                                                    </button>
+
+                                                    <button class="btn btn-success btn-xs sendEmailBtn"
+                                                            data-toggle="modal"
+                                                            data-target="#sendEmailModal"
+                                                            data-email-template="{{ json_encode($followUpEmail) }}"
+                                                            data-action="{{ route('admin.sales.send-email',
+                                                        [$archiveManuscriptTaken->id, 'shop-manuscripts-taken-follow-up']) }}">
+                                                        Send following up email
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </div> <!-- end new shop-manuscript -->
+                                <div class="pull-right">{{$archiveManuscriptsTaken->appends(request()->except('page'))}}</div>
+                            @endif
+                        @endif
+
+                    </div><!-- end new/archive tab-pane-->
+                </div> <!-- end new/archive tab-content-->
+
+            </div> <!-- end tab-pane-->
+        </div> <!-- end tab-content -->
+    </div>
+
+    <div id="sendEmailModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">{{ trans('site.send-email') }}</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" id="sendEmailForm">
+                        {{ csrf_field() }}
+                        <div class="form-group">
+                            <label>{{ trans('site.subject') }}</label>
+                            <input type="text" class="form-control" name="subject" required>
+                        </div>
+                        <div class="form-group">
+                            <label>{{ trans('site.from') }}</label>
+                            <input type="text" class="form-control" name="from_email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>{{ trans('site.message') }}</label>
+                            <textarea name="message" cols="30" rows="10" class="form-control content"
+                                      id="send_email_editor"></textarea>
+                        </div>
+                        <div class="clearfix"></div>
+                        <button type="submit" class="btn btn-success pull-right margin-top">{{ trans('site.send') }}</button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div> <!-- sendEmailModal -->
+
+    <div id="viewEmailModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">View Email</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>{{ trans('site.subject') }}</label> <br>
+                        <span class="subject-container"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>{{ trans('site.from') }}</label> <br>
+                        <span class="from-container"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>{{ trans('site.message') }}</label> <br>
+                        <span class="message-container"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- end viewEmailModal -->
+
+    <div id="viewShopManuscriptEmailModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">View Email</h4>
+                </div>
+                <div class="modal-body">
+
+                    <?php
+                        $dataList = [
+                            [
+                                'container' => 'welcome-email',
+                                'title' => 'Welcome Email'
+                            ],
+
+                            [
+                                'container' => 'expected-finish',
+                                'title' => 'Expected Finish'
+                            ],
+
+                            [
+                                'container' => 'admin-feedback',
+                                'title' => 'Mail with feedback'
+                            ],
+
+                            [
+                                'container' => 'follow-up',
+                                'title' => 'Follow up Email'
+                            ]
+                        ];
+                    ?>
+
+                    @foreach($dataList as $data)
+                            <div class="{{ $data['container'] }}-container">
+                                <div class="panel-group" id="{{ $data['container'] }}-accordion">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">
+                                                <a data-toggle="collapse" data-parent="#{{ $data['container'] }}-accordion"
+                                                   href="#collapse-{{ $data['container'] }}" class="all-caps collapsed">
+                                                    {{ $data['title'] }}
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapse-{{ $data['container'] }}" class="panel-collapse collapse">
+                                            <div class="panel-body">
+                                                <div class="form-group">
+                                                    <label>{{ trans('site.date-sent') }}</label> <br>
+                                                    <span class="date-sent-container"></span>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>{{ trans('site.subject') }}</label> <br>
+                                                    <span class="subject-container"></span>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>{{ trans('site.from') }}</label> <br>
+                                                    <span class="from-container"></span>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>{{ trans('site.message') }}</label> <br>
+                                                    <span class="message-container"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div> <!-- end viewShopManuscriptEmailModal-->
+
+@stop
+
+@section('styles')
+    <style>
+        .panel-heading a:after {
+            font-family: FontAwesome;
+            content: "\f068";
+            color: #828282;
+            float: right;
+        }
+
+        .panel-heading a.collapsed:after {
+            content: "\f067";
+        }
+    </style>
+@stop
+
+@section('scripts')
+    <script src="https://cdn.tinymce.com/4/tinymce.min.js"></script>
+    <script type="text/javascript">
+        // tinymce
+        let editor_config = {
+            path_absolute: "{{ URL::to('/') }}",
+            height: '30em',
+            selector: 'textarea',
+            plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                'searchreplace wordcount visualblocks visualchars code fullscreen',
+                'insertdatetime media nonbreaking save table contextmenu directionality',
+                'emoticons template paste textcolor colorpicker textpattern'],
+            toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript superscript' +
+            ' | forecolor backcolor | link | alignleft aligncenter alignright ' +
+            'alignjustify  | removeformat',
+            toolbar2: 'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code ' +
+            '| print fullscreen',
+            relative_urls: false,
+            file_browser_callback : function(field_name, url, type, win) {
+                let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
+                let y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
+
+                let cmsURL = editor_config.path_absolute + '/laravel-filemanager?field_name=' + field_name;
+                if (type == 'image') {
+                    cmsURL = cmsURL + '&type=Images';
+                } else {
+                    cmsURL = cmsURL + '&type=Files';
+                }
+
+                tinyMCE.activeEditor.windowManager.open({
+                    file : cmsURL,
+                    title : 'Filemanager',
+                    width : x * 0.8,
+                    height : y * 0.8,
+                    resizable : 'yes',
+                    close_previous : 'no'
+                });
+            }
+        };
+        tinymce.init(editor_config);
+
+        $(".sendEmailBtn").click(function(){
+            let action = $(this).data('action');
+            let modal = $('#sendEmailModal');
+            let form = modal.find('form');
+            let emailTemplate = $(this).data('email-template');
+
+            form.attr('action', action);
+            form.find('[name=subject]').val(emailTemplate.subject);
+            form.find('[name=from_email]').val(emailTemplate.from_email);
+            tinymce.get('send_email_editor').setContent(emailTemplate.email_content);
+        });
+
+        $(".viewEmailBtn").click(function(){
+            let record = $(this).data('record');
+            let email_history = record.received_welcome_email;
+            let modal = $('#viewEmailModal');
+
+            modal.find('.subject-container').empty().append(email_history.subject);
+            modal.find('.from-container').empty().append(email_history.from_email);
+            modal.find('.message-container').empty().append(email_history.message);
+        });
+
+        $(".viewShopManuscriptEmailBtn").click(function(){
+            let record = $(this).data('record');
+            let modal = $('#viewShopManuscriptEmailModal');
+
+            let data = [
+                ['received_welcome_email', 'welcome-email-container'],
+                ['received_expected_finish_email', 'expected-finish-container'],
+                ['received_admin_feedback_email', 'admin-feedback-container'],
+                ['received_follow_up_email', 'follow-up-container'],
+            ];
+
+            $.each(data, function(k, v) {
+                let email_data = record[v[0]];
+                let email_container = modal.find('.'+v[1]);
+
+                email_container.find('.date-sent-container').empty().append(email_data ? email_data.created_at : '');
+                email_container.find('.subject-container').empty().append(email_data ? email_data.subject : '');
+                email_container.find('.from-container').empty().append(email_data ? email_data.from_email : '');
+                email_container.find('.message-container').empty().append(email_data ? email_data.message : '');
+            })
+        });
+    </script>
+@stop

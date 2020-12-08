@@ -9,7 +9,10 @@ class ShopManuscriptsTaken extends Model
     protected $table = 'shop_manuscripts_taken';
     protected $fillable = ['user_id', 'shop_manuscript_id', 'file', 'is_active', 'words', 'feedback_user_id',
         'expected_finish', 'manuscript_uploaded_date', 'genre', 'description', 'is_manuscript_locked','synopsis',
-        'coaching_time_later'];
+        'coaching_time_later', 'is_welcome_email_sent'];
+
+    protected $with = ['shop_manuscript', 'user', 'receivedWelcomeEmail', 'receivedExpectedFinishEmail',
+        'receivedAdminFeedbackEmail', 'receivedFollowUpEmail'];
 
     
     public function user()
@@ -61,5 +64,29 @@ class ShopManuscriptsTaken extends Model
     
     public function admin(){
         return $this->belongsTo('App\User', 'feedback_user_id');
+    }
+
+    public function receivedWelcomeEmail()
+    {
+        return $this->hasOne('App\EmailHistory', 'parent_id', 'id')
+            ->where('parent', 'shop-manuscripts-taken-welcome')->latest();
+    }
+
+    public function receivedExpectedFinishEmail()
+    {
+        return $this->hasOne('App\EmailHistory', 'parent_id', 'id')
+            ->where('parent', 'shop-manuscripts-taken-expected-finish')->latest();
+    }
+
+    public function receivedAdminFeedbackEmail()
+    {
+        return $this->hasOne('App\EmailHistory', 'parent_id', 'id')
+            ->where('parent', 'shop-manuscripts-taken-admin-feedback')->latest();
+    }
+
+    public function receivedFollowUpEmail()
+    {
+        return $this->hasOne('App\EmailHistory', 'parent_id', 'id')
+            ->where('parent', 'shop-manuscripts-taken-follow-up')->latest();
     }
 }

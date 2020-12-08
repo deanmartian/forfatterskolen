@@ -12,4 +12,9 @@ class Order extends Model {
 
     protected $fillable = ['user_id', 'item_id', 'type', 'package_id', 'plan_id'];
 
+    public function paymentPlan()
+    {
+        return $this->belongsTo('App\PaymentPlan', 'plan_id', 'id');
+    }
+
 }

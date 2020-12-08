@@ -5,6 +5,7 @@ use App\EmailTemplate;
 use App\Http\AdminHelpers;
 use App\Mail\SubjectBodyEmail;
 use App\Manuscript;
+use App\Repositories\Services\SaleService;
 use App\ShopManuscriptUpgrade;
 use App\User;
 use Carbon\Carbon;
@@ -27,13 +28,17 @@ use Swift_Transport;
 
 class ShopManuscriptController extends Controller
 {
+
+    protected $saleService;
+
     /**
      * ShopManuscriptController constructor.
      */
-    public function __construct()
+    public function __construct( SaleService $saleService )
     {
         // middleware to check if admin have access to this page
         $this->middleware('checkPageAccess:9');
+        $this->saleService = $saleService;
     }
 
 
@@ -214,6 +219,9 @@ class ShopManuscriptController extends Controller
 
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
+            $this->saleService->createEmailHistory($request->subject, $request->from_email, $format_content,
+                'shop-manuscripts-taken-admin-feedback', $shopManuscriptTakenID);
+
         endif;
 
         return redirect()->back();
@@ -261,6 +269,9 @@ class ShopManuscriptController extends Controller
             $emailData['attach_file'] = NULL;
 
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+
+            $this->saleService->createEmailHistory($subject, 'postmail@forfatterskolen.no', $email_body,
+                'shop-manuscripts-taken-expected-finish', $shopManuscriptTakenID);
 
             //mail($to, 'Forventet dato for tilbakemelding', $email_body, $headers);
             //AdminHelpers::send_email('Forventet dato for tilbakemelding', 'post@forfatterskolen.no', $to, $email_body);
