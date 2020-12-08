@@ -79,10 +79,10 @@ class Kernel extends ConsoleKernel
         /*$schedule->command('updategross:command')
             ->dailyAt('06:00');*/
         $schedule->command('freecoursedelayedemail:command')
-            ->everyMinute();
+            ->everyMinute()->withoutOverlapping();
         /*$schedule->command('webinarregistranttolearner:command')
             ->yearly();*/
-        $schedule->command('queue:work --daemon')->everyMinute()->withoutOverlapping();
+        $schedule->command('queue:work --tries=5')->everyMinute()->withoutOverlapping();
     }
 
     /**

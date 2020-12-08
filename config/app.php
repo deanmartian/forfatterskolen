@@ -124,6 +124,9 @@ return [
 
     'log_level' => env('APP_LOG_LEVEL', 'debug'),
 
+    // number of retained files when using the daily log mode
+    'log_max_files' => env('APP_LOG_MAX_FILES', 2),
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
