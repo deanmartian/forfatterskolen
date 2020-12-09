@@ -82,7 +82,7 @@ class Kernel extends ConsoleKernel
             ->everyMinute()->withoutOverlapping();
         /*$schedule->command('webinarregistranttolearner:command')
             ->yearly();*/
-        $schedule->command('queue:work --tries=5')->everyMinute()->withoutOverlapping();
+        //$schedule->command('queue:work --tries=5')->everyMinute()->withoutOverlapping();
     }
 
     /**
