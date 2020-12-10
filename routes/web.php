@@ -105,6 +105,7 @@ Route::group([
 
         Route::get('/email/confirmation/{token}', 'HomeController@emailConfirmation')->name('front.email-confirmation');
         Route::get('/email/attachment/{token}', 'HomeController@emailAttachment')->name('front.email-attachment');
+        Route::get('/email/track/{token}', 'HomeController@emailTracking')->name('front.email-track');
 
         Route::get('/henrik-langeland', 'HomeController@henrikPage')->name('front.henrik'); // Upviral ref page
         Route::get('/skrive2020', 'HomeController@innleveringCompetition')->name('front.innlevering.join');
