@@ -1326,11 +1326,11 @@ class HomeController extends Controller
     public function emailTracking( $code )
     {
         $email = EmailHistory::where('track_code', '=', $code)
-            ->whereNull('open_date')
+            ->whereNull('date_open')
             ->first();
 
         if ($email) {
-            $email->open_date = Carbon::now();
+            $email->date_open = Carbon::now();
             $email->save();
         }
     }
