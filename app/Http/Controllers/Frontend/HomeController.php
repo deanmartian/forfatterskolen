@@ -10,6 +10,7 @@ use App\CorrectionManuscript;
 use App\CoursesTaken;
 use App\EmailAttachment;
 use App\EmailConfirmation;
+use App\EmailHistory;
 use App\FileUploaded;
 use App\FreeWebinar;
 use App\GTWebinar;
@@ -19,6 +20,7 @@ use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
 use App\Http\Middleware\Admin;
 use App\Invoice;
+use App\Jobs\AddMailToQueueJob;
 use App\Log;
 use App\Mail\DiscussionEmail;
 use App\Mail\DiscussionRepliesEmail;
@@ -32,6 +34,7 @@ use App\PilotReaderBookReading;
 use App\PilotReaderBookSettings;
 use App\Poem;
 use App\PublisherBook;
+use App\Repositories\Services\SaleService;
 use App\Repositories\VippsRepository;
 use App\Settings;
 use App\Solution;
@@ -1181,7 +1184,11 @@ class HomeController extends Controller
         $emailData['from_name'] = NULL;
         $emailData['from_email'] = NULL;
         $emailData['attach_file'] = NULL;
-        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        //\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        $parent = 'test';
+        $parent_id = 1;
+        dispatch(new AddMailToQueueJob($to, $subject, 'testing', 'post@forfatterskolen.no', null, null,
+            $parent, $parent_id));
         echo env('MAIL_DRIVER');
     }
 
@@ -1311,6 +1318,21 @@ class HomeController extends Controller
         }
 
         return abort(404);
+    }
+
+    /**
+     * @param $code
+     */
+    public function emailTracking( $code )
+    {
+        $email = EmailHistory::where('track_code', '=', $code)
+            ->whereNull('open_date')
+            ->first();
+
+        if ($email) {
+            $email->open_date = Carbon::now();
+            $email->save();
+        }
     }
 
     public function gtWebinarSendEmail(Request $request)

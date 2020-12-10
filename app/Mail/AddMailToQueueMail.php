@@ -1,0 +1,47 @@
+<?php
+namespace App\Mail;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
+
+class AddMailToQueueMail extends Mailable
+{
+    use Queueable, SerializesModels;
+
+    public $recipient;
+    public $email_message;
+    public $email_subject;
+    public $from_name;
+    public $from_email;
+    public $attach_file;
+    public $track_code;
+
+    public function __construct($to, $subject, $message, $from_email, $from_name, $attachment = null, $track_code)
+    {
+        $this->recipient = $to;
+        $this->email_subject = $subject;
+        $this->email_message = $message;
+        $this->from_email = $from_email;
+        $this->from_name = $from_name;
+        $this->attach_file = $attachment;
+        $this->track_code = $track_code;
+    }
+
+    public function build()
+    {
+        $email =  $this->to($this->recipient)
+            ->from($this->from_email, $this->from_name)
+            ->subject($this->email_subject)
+            ->view('emails.mail_to_queue')
+            ->text('emails.subject_body_plain');
+
+        // check if there's an attachment to prevent error
+        if ($this->attach_file) {
+            $email->attach(asset($this->attach_file));
+        }
+
+        return $email;
+    }
+
+}

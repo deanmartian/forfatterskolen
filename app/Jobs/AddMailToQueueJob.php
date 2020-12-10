@@ -1,0 +1,62 @@
+<?php
+
+namespace App\Jobs;
+
+use App\EmailHistory;
+use App\Http\AdminHelpers;
+use App\Mail\AddMailToQueueMail;
+use App\Mail\SubjectBodyEmail;
+use App\Repositories\Services\SaleService;
+use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+
+class AddMailToQueueJob implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    private $recipient;
+    private $email_message;
+    private $email_subject;
+    private $from_name;
+    private $from_email;
+    private $attach_file;
+    private $parent;
+    private $parent_id;
+
+    /**
+     * Create a new job instance.
+     *
+     * @return void
+     */
+    public function __construct($recipient, $subject, $message, $from_email = null, $from_name = null,
+        $attachment = null, $parent, $parent_id)
+    {
+        $this->recipient = $recipient;
+        $this->email_subject = $subject;
+        $this->email_message = $message;
+        $this->from_email = $from_email ?: 'postmail@forfatterskolen.no';
+        $this->from_name = $from_name ?: 'Forfatterskolen';
+        $this->attach_file = $attachment;
+        $this->parent = $parent;
+        $this->parent_id = $parent_id;
+    }
+
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
+    public function handle(SaleService $saleService) {
+
+        $track_code = md5(rand());
+        \Mail::send(new AddMailToQueueMail($this->recipient, $this->email_subject, $this->email_message, $this->from_email,
+            $this->from_name, $this->attach_file, $track_code));
+
+        $saleService->createEmailHistory($this->email_subject, $this->from_email, $this->email_message, $this->parent,
+            $this->parent_id, $track_code);
+
+    }
+}
