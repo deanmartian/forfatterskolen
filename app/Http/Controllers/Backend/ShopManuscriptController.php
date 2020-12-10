@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\EmailTemplate;
 use App\Http\AdminHelpers;
+use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
 use App\Manuscript;
 use App\Repositories\Services\SaleService;
@@ -268,10 +269,13 @@ class ShopManuscriptController extends Controller
             $emailData['from_email'] = 'postmail@forfatterskolen.no';
             $emailData['attach_file'] = NULL;
 
-            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+            /*\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
             $this->saleService->createEmailHistory($subject, 'postmail@forfatterskolen.no', $email_body,
-                'shop-manuscripts-taken-expected-finish', $shopManuscriptTakenID);
+                'shop-manuscripts-taken-expected-finish', $shopManuscriptTakenID);*/
+
+            dispatch(new AddMailToQueueJob($to, $subject, $email_body, 'postmail@forfatterskolen.no', null, null,
+                'shop-manuscripts-taken-expected-finish', $shopManuscriptTakenID));
 
             //mail($to, 'Forventet dato for tilbakemelding', $email_body, $headers);
             //AdminHelpers::send_email('Forventet dato for tilbakemelding', 'post@forfatterskolen.no', $to, $email_body);
