@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
+use App\Jobs\AddMailToQueueJob;
 use App\Repositories\Services\SaleService;
 use Illuminate\Http\Request;
 
@@ -83,8 +84,11 @@ class SaleController extends Controller {
         $message = $request->message;
         $from_email = $request->from_email;
 
-        $this->service->createEmailHistory($subject, $from_email, $message, $parent, $id);
-        AdminHelpers::queue_mail($to, $subject, $message, $from_email);
+        /*$this->service->createEmailHistory($subject, $from_email, $message, $parent, $id);
+        AdminHelpers::queue_mail($to, $subject, $message, $from_email);*/
+
+        dispatch(new AddMailToQueueJob($to, $subject, $message, $from_email, null, null,
+            $parent, $id));
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Email Sent.'),

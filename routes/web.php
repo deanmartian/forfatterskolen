@@ -953,6 +953,8 @@ Route::group([
 
         });
 
+        Route::get('/email-history', 'EmailHistoryController@index')->name('admin.email-history.index');
+
         Route::resource('/publishing', 'PublishingController', [
             'except' => ['show'],
             'names' => [
