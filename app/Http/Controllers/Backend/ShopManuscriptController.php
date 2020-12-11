@@ -218,10 +218,13 @@ class ShopManuscriptController extends Controller
             $emailData['from_email'] = $request->from_email;
             $emailData['attach_file'] = NULL;
 
-            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+            /*\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
             $this->saleService->createEmailHistory($request->subject, $request->from_email, $format_content,
-                'shop-manuscripts-taken-admin-feedback', $shopManuscriptTakenID);
+                'shop-manuscripts-taken-admin-feedback', $shopManuscriptTakenID);*/
+            dispatch(new AddMailToQueueJob($to, $request->subject, $format_content, $request->from_email,
+                null, null,
+                'shop-manuscripts-taken-admin-feedback', $shopManuscriptTakenID));
 
         endif;
 
