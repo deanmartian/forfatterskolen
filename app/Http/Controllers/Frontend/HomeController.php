@@ -1325,6 +1325,7 @@ class HomeController extends Controller
      */
     public function emailTracking( $code )
     {
+        $code = str_replace('.png', '', $code);
         $email = EmailHistory::where('track_code', '=', $code)
             ->whereNull('date_open')
             ->first();
@@ -1333,6 +1334,8 @@ class HomeController extends Controller
             $email->date_open = Carbon::now();
             $email->save();
         }
+
+        return redirect()->to('/');
     }
 
     public function gtWebinarSendEmail(Request $request)
