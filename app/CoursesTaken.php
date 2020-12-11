@@ -137,6 +137,12 @@ class CoursesTaken extends Model
             ->where('parent', 'courses-taken-welcome')->latest();
     }
 
+    public function receivedFollowUpEmail()
+    {
+        return $this->hasOne('App\EmailHistory', 'parent_id', 'id')
+            ->where('parent', 'courses-taken-follow-up')->latest();
+    }
+
     // get the order record
     public function getOrderAttribute()
     {

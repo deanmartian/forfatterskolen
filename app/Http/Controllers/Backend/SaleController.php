@@ -35,7 +35,8 @@ class SaleController extends Controller {
         $groupCourseEmail = AdminHelpers::emailTemplate('Group Course Welcome Email');
         $groupCourseMultiInvoiceEmail = AdminHelpers::emailTemplate('Group Course Multi-invoice Welcome Email');
         $shopManuscriptEmail = AdminHelpers::emailTemplate('Shop Manuscript Welcome Email');
-        $followUpEmail = AdminHelpers::emailTemplate('Shop Manuscript Follow-up Email');
+        $followUpEmailShopManuscript = AdminHelpers::emailTemplate('Shop Manuscript Follow-up Email');
+        $followUpEmailCourseTaken = AdminHelpers::emailTemplate('Course Taken Follow-up Email');
 
         $archiveManuscriptsTaken = $this->service->queryShopManuscriptsTaken(1);
         $newManuscriptsTaken = $this->service->queryShopManuscriptsTaken();
@@ -50,7 +51,8 @@ class SaleController extends Controller {
                 'shopManuscriptEmail',
                 'archiveManuscriptsTaken',
                 'newManuscriptsTaken',
-                'followUpEmail'
+                'followUpEmailShopManuscript',
+                'followUpEmailCourseTaken'
             )
         );
     }
@@ -64,7 +66,7 @@ class SaleController extends Controller {
     public function sendEmail( $id, $parent, Request $request )
     {
         $record = [];
-        if ($parent === 'courses-taken-welcome') {
+        if (in_array($parent, ['courses-taken-welcome', 'courses-taken-follow-up'])) {
             $record = $this->service->courseTaken($id);
         }
 

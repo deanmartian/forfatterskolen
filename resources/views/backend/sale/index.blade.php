@@ -124,14 +124,22 @@
                                                     {{ $archiveCourse->created_at }}
                                                 </td>
                                                 <td>
-                                                    @if(!is_null($archiveCourse->receivedWelcomeEmail))
-                                                        <button class="btn btn-primary btn-xs viewEmailBtn"
+                                                    <button class="btn btn-primary btn-xs viewEmailBtn"
                                                             data-toggle="modal"
                                                             data-target="#viewEmailModal"
-                                                            data-record="{{ json_encode($archiveCourse) }}">
-                                                            View Email
-                                                        </button>
-                                                    @endif
+                                                            data-record="{{ json_encode($archiveCourse) }}"
+                                                            data-type="courses-taken">
+                                                        View Email
+                                                    </button>
+
+                                                    <button class="btn btn-success btn-xs sendEmailBtn"
+                                                            data-toggle="modal"
+                                                            data-target="#sendEmailModal"
+                                                            data-email-template="{{ json_encode($followUpEmailCourseTaken) }}"
+                                                            data-action="{{ route('admin.sales.send-email',
+                                                    [$archiveCourse->id, 'courses-taken-follow-up']) }}">
+                                                        Send following up email
+                                                    </button>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -218,17 +226,18 @@
                                                     {{ $archiveManuscriptTaken->created_at }}
                                                 </td>
                                                 <td>
-                                                    <button class="btn btn-primary btn-xs viewShopManuscriptEmailBtn"
+                                                    <button class="btn btn-primary btn-xs viewEmailBtn"
                                                             data-toggle="modal"
-                                                            data-target="#viewShopManuscriptEmailModal"
-                                                            data-record="{{ json_encode($archiveManuscriptTaken) }}">
+                                                            data-target="#viewEmailModal"
+                                                            data-record="{{ json_encode($archiveManuscriptTaken) }}"
+                                                            data-type="shop-manuscripts-taken">
                                                         View Email
                                                     </button>
 
                                                     <button class="btn btn-success btn-xs sendEmailBtn"
                                                             data-toggle="modal"
                                                             data-target="#sendEmailModal"
-                                                            data-email-template="{{ json_encode($followUpEmail) }}"
+                                                            data-email-template="{{ json_encode($followUpEmailShopManuscript) }}"
                                                             data-action="{{ route('admin.sales.send-email',
                                                         [$archiveManuscriptTaken->id, 'shop-manuscripts-taken-follow-up']) }}">
                                                         Send following up email
@@ -282,7 +291,7 @@
         </div>
     </div> <!-- sendEmailModal -->
 
-    <div id="viewEmailModal" class="modal fade" role="dialog">
+    <div id="viewEmailModalOrig" class="modal fade" role="dialog">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -309,7 +318,7 @@
         </div>
     </div> <!-- end viewEmailModal -->
 
-    <div id="viewShopManuscriptEmailModal" class="modal fade" role="dialog">
+    <div id="viewEmailModal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -458,17 +467,8 @@
 
         $(".viewEmailBtn").click(function(){
             let record = $(this).data('record');
-            let email_history = record.received_welcome_email;
+            let type = $(this).data('type');
             let modal = $('#viewEmailModal');
-
-            modal.find('.subject-container').empty().append(email_history.subject);
-            modal.find('.from-container').empty().append(email_history.from_email);
-            modal.find('.message-container').empty().append(email_history.message);
-        });
-
-        $(".viewShopManuscriptEmailBtn").click(function(){
-            let record = $(this).data('record');
-            let modal = $('#viewShopManuscriptEmailModal');
 
             let data = [
                 ['received_welcome_email', 'welcome-email-container'],
@@ -480,6 +480,12 @@
             $.each(data, function(k, v) {
                 let email_data = record[v[0]];
                 let email_container = modal.find('.'+v[1]);
+
+                if (type === 'courses-taken') {
+                    if(v[1] === 'expected-finish-container' || v[1] === 'admin-feedback-container') {
+                        email_container = email_container.hide();
+                    }
+                }
 
                 email_container.find('.date-sent-container').empty().append(email_data ? email_data.created_at : '');
                 email_container.find('.subject-container').empty().append(email_data ? email_data.subject : '');
