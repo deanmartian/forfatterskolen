@@ -69,10 +69,18 @@ class SaleService {
      */
     public function queryShopManuscriptsTaken( $is_archive = 0 )
     {
-        return $this->shopManuscriptsTaken
+
+        $query = ShopManuscriptsTaken::leftJoin('shop_manuscript_taken_feedbacks', 'shop_manuscripts_taken.id',
+            '=', 'shop_manuscript_taken_feedbacks.shop_manuscript_taken_id')
+            ->orderBy('shop_manuscript_taken_feedbacks.updated_at', 'DESC')
+            ->where('is_welcome_email_sent', '=', $is_archive)
+            ->select('shop_manuscripts_taken.*')
+            ->paginate(25);
+        return $query;
+        /*return $this->shopManuscriptsTaken
             ->where('is_welcome_email_sent', '=', $is_archive)
             ->orderBy('created_at', 'desc')
-            ->paginate(25);
+            ->paginate(25);*/
     }
 
     /**
