@@ -8,6 +8,7 @@ use App\CourseSharedUser;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Http\AdminHelpers;
+use App\Jobs\CourseOrderJob;
 use App\Mail\SubjectBodyEmail;
 use App\Order;
 use App\Paypal;
@@ -781,14 +782,17 @@ class ShopController extends Controller
         $redirectLink = encrypt(route('learner.course'));
         $actionUrl = route('auth.login.emailRedirect',[$encode_email, $redirectLink]);
         $actionText = 'Mine Kurs';
-        $attachments = [$this->generateDocx($user->id, $package->id),
-            '/email-attachments/skjema-for-opplysninger-om-angrerett.docx'];
+        $attachments = [asset($this->generateDocx($user->id, $package->id)),
+            asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
 
         //mail($user->email, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
-        AdminHelpers::send_email($package->course->title,
+        /*AdminHelpers::send_email($package->course->title,
             'postmail@forfatterskolen.no', $user_email,
             view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')),
-            'Forfatterskolen', $attachments);
+            'Forfatterskolen', $attachments);*/
+        dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
+            'postmail@forfatterskolen.no', 'Forfatterskolen', $attachments, 'courses-taken-order',
+            $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
 
         if( $paymentMode->mode == "Paypal" ) :
             $paypal = new PayPal;

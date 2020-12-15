@@ -15,6 +15,7 @@ use App\Genre;
 use App\Http\AdminHelpers;
 use App\Http\Middleware\Admin;
 use App\Http\Requests\AddWritingGroupRequest;
+use App\Jobs\CourseOrderJob;
 use App\LessonContent;
 use App\LessonDocuments;
 use App\Mail\SendEmailMessageOnly;
@@ -2127,11 +2128,15 @@ class LearnerController extends Controller
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
         $user = Auth::user();
+        $user_email = $user->email;
         $email_content = $package->course->email;
         //mail($user->email, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
-        AdminHelpers::send_email($package->course->title,
+        /*AdminHelpers::send_email($package->course->title,
             'post@forfatterskolen.no', $user->email,
-            view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')));
+            view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')));*/
+        dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
+            'postmail@forfatterskolen.no', 'Forfatterskolen', null, 'courses-taken-order',
+            $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
 
         if( $paymentMode->mode == "Paypal" ) :
             $paypal = new Paypal();
