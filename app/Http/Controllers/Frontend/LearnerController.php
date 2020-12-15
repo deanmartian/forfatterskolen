@@ -2135,7 +2135,7 @@ class LearnerController extends Controller
             'post@forfatterskolen.no', $user->email,
             view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')));*/
         dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
-            'postmail@forfatterskolen.no', 'Forfatterskolen', null, 'courses-taken-order',
+            'postmail@forfatterskolen.no', 'Forfatterskolen', null, 'courses-taken-upgrade',
             $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
 
         if( $paymentMode->mode == "Paypal" ) :
