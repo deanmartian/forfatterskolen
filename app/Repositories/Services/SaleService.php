@@ -51,7 +51,7 @@ class SaleService {
      * @param $parent_id
      * @return $this|\Illuminate\Database\Eloquent\Model
      */
-    public function createEmailHistory( $subject, $from_email, $message, $parent, $parent_id, $track_code = null )
+    public function createEmailHistory( $subject, $from_email, $message, $parent, $parent_id, $recipient = null, $track_code = null )
     {
         return EmailHistory::create([
             'subject'       => $subject,
@@ -59,6 +59,7 @@ class SaleService {
             'message'       => $message,
             'parent'        => $parent,
             'parent_id'     => $parent_id,
+            'recipient'     => $recipient,
             'track_code'    => $track_code
         ]);
     }

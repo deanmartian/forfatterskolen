@@ -56,7 +56,7 @@ class AddMailToQueueJob implements ShouldQueue
             $this->from_name, $this->attach_file, $track_code));
 
         $saleService->createEmailHistory($this->email_subject, $this->from_email, $this->email_message, $this->parent,
-            $this->parent_id, $track_code);
+            $this->parent_id, $this->recipient, $track_code);
 
     }
 }

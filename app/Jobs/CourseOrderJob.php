@@ -63,7 +63,7 @@ class CourseOrderJob implements ShouldQueue
             $this->package_id));
 
         $saleService->createEmailHistory($this->email_subject, $this->from_email, $this->email_content, $this->parent,
-            $this->parent_id, $track_code);
+            $this->parent_id, $this->recipient, $track_code);
 
     }
 }

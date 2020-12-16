@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class EmailHistory extends Model
 {
-    protected $fillable = [ 'subject', 'from_email', 'token', 'message', 'parent', 'parent_id', 'track_code', 'date_open' ];
+    protected $fillable = [ 'subject', 'from_email', 'token', 'message', 'parent', 'parent_id', 'recipient',
+        'track_code', 'date_open' ];
     protected $table = 'email_history';
     protected $appends = ['recipient', 'recipient_id'];
 
