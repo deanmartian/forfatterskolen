@@ -27,7 +27,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						@if(count($course->manuscripts) > 0)
+						@if($course->manuscripts->count() > 0)
 						@foreach( $course->manuscripts->paginate(25) as $manuscript )
 						<tr>
 				    		<td><a href="{{ route('admin.manuscript.show', $manuscript->id) }}">{{ basename($manuscript->filename) }}</a></td>
@@ -48,7 +48,7 @@
 				</table>
 			</div>
 
-			@if(count($course->manuscripts) > 0)
+			@if($course->manuscripts->count() > 0)
 			<div class="pull-right">{!! $course->manuscripts->paginate(25)->appends(Request::all())->render() !!}</div>
 			<div class="clearfix"></div>
 			@endif
