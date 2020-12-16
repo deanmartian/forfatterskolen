@@ -37,17 +37,21 @@ class EmailHistory extends Model
 
         $learner_id = '';
         $fullname = $this->attributes['parent_id'];
-
+        
         if (strpos($parent, 'shop-manuscripts-taken') !== false ) {
             $shopManuscript = ShopManuscriptsTaken::with('user')->where('id', $parent_id)->first();
-            $learner_id = $shopManuscript->user_id;
-            $fullname = $shopManuscript->user->full_name;
+            if($shopManuscript) {
+                $learner_id = $shopManuscript->user_id;
+                $fullname = $shopManuscript->user->full_name;
+            }
         }
 
         if (strpos($parent, 'courses-taken') !== false ) {
             $courseTaken = CoursesTaken::with('user')->where('id', $parent_id)->first();
-            $learner_id = $courseTaken->user_id;
-            $fullname = $courseTaken->user->full_name;
+            if($courseTaken) {
+                $learner_id = $courseTaken->user_id;
+                $fullname = $courseTaken->user->full_name;   
+            }
         }
 
         return [
