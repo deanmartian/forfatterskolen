@@ -7,6 +7,7 @@ use App\Helpers\DocumentParser;
 use App\Helpers\Html2Text;
 use App\Helpers\PdfParser;
 use App\Http\FrontendHelpers;
+use App\Jobs\AddMailToQueueJob;
 use App\Mail\AssignmentManuscriptEmailToList;
 use App\Mail\SubjectBodyEmail;
 use Carbon\Carbon;
@@ -730,7 +731,8 @@ class AssignmentController extends Controller
             $to             = $assignmentManuscript->user->email;
             $first_name     = $assignmentManuscript->user->first_name;
 
-            $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject, $request->from_email);
+            $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject,
+                $request->from_email, $assignmentManuscript->id);
 
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback sent successfully.'),
                 'alert_type' => 'success']);
@@ -789,7 +791,8 @@ class AssignmentController extends Controller
             $to             = $assignmentManuscript->user->email;
             $first_name     = $assignmentManuscript->user->first_name;
 
-            $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject, $request->from_email);
+            $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject, $request->from_email,
+                $manuscript_id);
 
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback sent successfully.'),
                 'alert_type' => 'success']);
@@ -920,12 +923,13 @@ class AssignmentController extends Controller
      * @param $subject
      * @param $from_email
      */
-    public function sendAssignmentFeedbackMail($email_content, $to, $first_name, $subject, $from_email)
+    public function sendAssignmentFeedbackMail($email_content, $to, $first_name, $subject, $from_email, $manuscript_id)
     {
         $redirect_link          = route('learner.assignment');
         $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
-
-        AdminHelpers::queue_mail($to, $subject, $formattedMailContent, $from_email);
+        dispatch(new AddMailToQueueJob($to, $subject, $formattedMailContent, $from_email, null, null,
+            'assignment-manuscripts', $manuscript_id));
+        //AdminHelpers::queue_mail($to, $subject, $formattedMailContent, $from_email);
     }
 
     /**

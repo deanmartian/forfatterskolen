@@ -58,6 +58,14 @@ class EmailHistory extends Model
             }
         }
 
+        if (strpos($parent, 'assignment-manuscripts') !== false ) {
+            $assignmentManuscript = AssignmentManuscript::with('user')->where('id', $parent_id)->first();
+            if($assignmentManuscript) {
+                $learner_id = $assignmentManuscript->user_id;
+                $fullname = $assignmentManuscript->user->full_name;
+            }
+        }
+
         return [
             'learner_id' => $learner_id,
             'full_name' => $fullname
