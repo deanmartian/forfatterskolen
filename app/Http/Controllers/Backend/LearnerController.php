@@ -7,6 +7,7 @@ use App\CoachingTimerManuscript;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\Diploma;
+use App\EmailHistory;
 use App\EmailTemplate;
 use App\Helpers\FileToText;
 use App\Http\FikenInvoice;
@@ -195,7 +196,10 @@ class LearnerController extends Controller
                     $learnerCourseTaken->save();
                 endforeach;
             endif;
-            $courseTaken->forceDelete();
+            // delete related email history
+            EmailHistory::where('parent', 'LIKE', '%courses-taken%')
+                ->where('parent_id', $courseTaken->id)->delete();
+            $courseTaken->delete();
     	endif;
     	return redirect()->back();
     }
@@ -311,7 +315,10 @@ class LearnerController extends Controller
     public function delete_course_taken(Request $request)
     {
         $courseTaken = CoursesTaken::findOrFail($request->coursetaken_id);
-        $courseTaken->forceDelete();
+        // delete related email history
+        EmailHistory::where('parent', 'LIKE', '%courses-taken%')
+            ->where('parent_id', $courseTaken->id)->delete();
+        $courseTaken->delete();
         return redirect()->back();
     }
 
@@ -568,7 +575,12 @@ class LearnerController extends Controller
             if ($courseTaken->package->course->id == 17) {
                 AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
             }
-            $courseTaken->forceDelete();
+
+            // delete related email history
+            EmailHistory::where('parent', 'LIKE', '%courses-taken%')
+            ->where('parent_id', $courseTaken->id)->delete();
+            $courseTaken->delete();
+
             return redirect()->back()->with([
                 'alert_type' => 'success',
                 'errors' => AdminHelpers::createMessageBag('Learner removed from '

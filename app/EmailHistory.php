@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class EmailHistory extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [ 'subject', 'from_email', 'token', 'message', 'parent', 'parent_id', 'recipient',
         'track_code', 'date_open' ];
     protected $table = 'email_history';
