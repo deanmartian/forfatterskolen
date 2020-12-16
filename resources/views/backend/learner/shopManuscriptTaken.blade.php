@@ -339,6 +339,7 @@
                     ?>
 					<form method="POST" action="{{ route('admin.shop_manuscript_taken.email', $shopManuscriptTaken->user_id) }}" enctype="multipart/form-data">
 						{{ csrf_field() }}
+						<input type="hidden" name="shop_manuscripts_taken_id" value="{{ $shopManuscriptTaken->id }}">
 						<div class="form-group">
 							<label>{{ trans('site.subject') }}</label>
 							<input type="text" name="subject" class="form-control" required value="{{ $subject }}">

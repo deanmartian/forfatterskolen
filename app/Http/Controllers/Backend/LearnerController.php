@@ -12,6 +12,7 @@ use App\EmailTemplate;
 use App\Helpers\FileToText;
 use App\Http\FikenInvoice;
 use App\Invoice;
+use App\Jobs\AddMailToQueueJob;
 use App\LearnerLogin;
 use App\Mail\SubjectBodyEmail;
 use App\PaymentMode;
@@ -1018,7 +1019,9 @@ class LearnerController extends Controller
         $emailData['from_email'] = $from;
         $emailData['attach_file'] = NULL;
 
-        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        //\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        dispatch(new AddMailToQueueJob($to, $subject, $message, $from, null, null,
+            'shop-manuscripts-taken', $request->shop_manuscripts_taken_id));
 
         return redirect()->back();
     }
