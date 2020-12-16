@@ -397,7 +397,10 @@ class AssignmentController extends Controller
                 $userEmail = $manuscript->user->email;
                 $emailData['data'] = $request->except('_token');
                 // queue sending of email for fast loading
-                \Mail::to($userEmail)->queue(new AssignmentManuscriptEmailToList($emailData));
+                //\Mail::to($userEmail)->queue(new AssignmentManuscriptEmailToList($emailData));
+                dispatch(new AddMailToQueueJob($userEmail, $request->subject, $request->message,
+                    'post@forfatterskolen.no', null, null,
+                    'assignment-manuscripts', $manuscript->id));
             }
 
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Email sent successfully.'),
