@@ -497,7 +497,9 @@ class AssignmentController extends Controller
                 $emailData['from_email'] = $from;
                 $emailData['attach_file'] = NULL;
 
-                \Mail::to($userEmail)->queue(new SubjectBodyEmail($emailData));
+                //\Mail::to($userEmail)->queue(new SubjectBodyEmail($emailData));
+                dispatch(new AddMailToQueueJob($userEmail, $subject, $message, $from, null, null,
+                    'assignment-manuscripts', $manuscript->id));
                 $count++;
             }
 
