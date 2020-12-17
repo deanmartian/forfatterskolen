@@ -725,7 +725,12 @@
 										<td>
 											<button class="btn btn-xs btn-warning pendingAssignmentEditorBtn" data-toggle="modal"
 													data-target="#pendingAssignmentEditorModal"
-													data-action="{{ route('assignment.group.assign_manu_editor', $pendingAssignment->id) }}">
+													data-action="{{ route('assignment.group.assign_manu_editor', $pendingAssignment->id) }}"
+													data-preferred-editor="{{ $pendingAssignment->user->preferredEditor
+								? $pendingAssignment->user->preferredEditor->editor_id : "" }}"
+													data-preferred-editor-name="{{ $pendingAssignment->user->preferredEditor
+								? $pendingAssignment->user->preferredEditor->editor->full_name : "" }}"
+											>
 												{{ trans('site.assign-editor') }}
 											</button>
 										</td>
@@ -1199,6 +1204,12 @@
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 							@endforeach
 						</select>
+
+						<div class="hidden-container">
+							<label>
+							</label>
+							<a href="javascript:void(0)" onclick="enableSelect('pendingAssignmentEditorModal')">Edit</a>
+						</div>
 					</div>
 					<div class="form-group">
 						<label>Expected Finish</label>
@@ -1555,9 +1566,20 @@
     $(".pendingAssignmentEditorBtn").click(function(){
         let action = $(this).data('action');
         let editor = $(this).data('editor');
+        let preferred_editor = $(this).data('preferred-editor');
+        let preferred_editor_name = $(this).data('preferred-editor-name');
         let modal = $('#pendingAssignmentEditorModal');
-        modal.find('select').val(editor);
+        modal.find('select').val(preferred_editor).trigger('change');
         modal.find('form').attr('action', action);
+
+        if (preferred_editor) {
+            modal.find('.select2').hide();
+            modal.find('.hidden-container').show();
+            modal.find('.hidden-container').find('label').empty().text(preferred_editor_name);
+        } else {
+            modal.find('.select2').show();
+            modal.find('.hidden-container').hide();
+        }
 	});
 
     $(".updateOtherServiceStatusBtn").click(function(){
