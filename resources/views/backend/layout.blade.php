@@ -93,6 +93,12 @@
                 submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
                 submit_btn.attr('disabled', 'disabled');
             }
+
+            function enableSelect(parent) {
+                let parentContainer = $("#" + parent);
+                parentContainer.find('.select2').show();
+                parentContainer.find('.hidden-container').hide();
+            }
         </script>
         @yield('scripts')
     </body>

@@ -177,10 +177,31 @@
       		<div class="form-group">
       			<label>{{ trans_choice('site.editors', 1) }}</label>
       			<select class="form-control select2" name="feedback_user_id" required>
+					<option value="" selected disabled>
+						-- Select Editor --
+					</option>
       				@foreach( App\User::where('role', 1)->orderBy('id', 'desc')->get()  as $admin)
-      				<option value="{{ $admin->id }}">{{ $admin->full_name }}</option>
+						<?php
+							$selected = '';
+
+                        if ($shopManuscriptTaken->user->preferredEditor
+                            && $shopManuscriptTaken->user->preferredEditor->editor_id === $admin->id) {
+                            $selected = 'selected';
+                        }
+						?>
+      				<option value="{{ $admin->id }}" {{ $selected}}>
+						{{ $admin->full_name }}
+					</option>
       				@endforeach
       			</select>
+				@if($shopManuscriptTaken->user->preferredEditor)
+					<div class="hidden-container">
+						<label>
+							{{ $shopManuscriptTaken->user->preferredEditor->editor->full_name }}
+						</label>
+						<a href="javascript:void(0)" onclick="enableSelect('editManuscriptModal')">Edit</a>
+					</div>
+				@endif
       		</div>
 			<div class="form-group">
 				<label>{{ trans('site.grade') }}</label>
@@ -405,6 +426,10 @@ $(document).ready(function(){
         menubar: false,
         toolbar: 'insert | undo redo |  formatselect | bold italic backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
     });
+
+	@if($shopManuscriptTaken->user->preferredEditor )
+    	$("#editManuscriptModal").find(".select2").hide();
+    @endif
 });
 </script>
 @stop

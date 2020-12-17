@@ -105,6 +105,7 @@
 			<button type="button" class="margin-top btn btn-danger" data-toggle="modal" data-target="#deleteLearnerModal">{{ trans('site.delete-learner') }}</button>
 			<button type="button" class="margin-top btn btn-success" data-toggle="modal" data-target="#learnerNotesModal">{{ trans_choice('site.notes', 2) }}</button>
 			<button type="button" class="margin-top btn btn-primary" data-toggle="modal" data-target="#sendEmailModal">{{ trans('site.send-email') }}</button>
+			<button type="button" class="margin-top btn btn-warning" data-toggle="modal" data-target="#preferredEditorModal">Preferred Editor</button>
 
 			<div class="former-course-container">
 				<h4>{{ trans('site.former-courses') }}</h4>
@@ -2910,6 +2911,42 @@
 				</form>
 			</div>
 
+		</div>
+
+	</div>
+</div>
+
+<div id="preferredEditorModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					Preferred Editor
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.learner.set-preferred-editor', $learner->id) }}">
+					{{csrf_field()}}
+					<div class="form-group">
+						<label>{{ trans_choice('site.editors', 1) }}</label>
+						<select class="form-control select2" name="editor_id" required>
+							<option value="" selected disabled>
+								-- Select Editor --
+							</option>
+							@foreach( App\User::where('role', 1)->orderBy('id', 'desc')->get()  as $admin)
+								<option value="{{ $admin->id }}"
+										{{ $learner->preferredEditor && $learner->preferredEditor->editor_id === $admin->id
+										? 'selected' : '' }}>
+									{{ $admin->full_name }}
+								</option>
+							@endforeach
+						</select>
+					</div>
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.update') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
 		</div>
 
 	</div>

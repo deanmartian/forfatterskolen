@@ -486,12 +486,35 @@
                         {{ csrf_field() }}
                         <div class="form-group">
                             <label>{{ trans_choice('site.editors', 1) }}</label>
-                            <select class="form-control" name="editor_id" required>
+                            <select class="form-control select2" name="editor_id" required>
                                 <option value="" disabled selected>- Select Editor -</option>
                                 @foreach( $editors as $editor )
-                                    <option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
+                                    <?php
+                                        $selected = '';
+
+                                        if ($manuscript->user->preferredEditor
+                                            && $manuscript->user->preferredEditor->editor_id === $editor->id) {
+                                                $selected = 'selected';
+                                        } else {
+                                            if ($manuscript->editor_id === $editor->id) {
+                                                $selected = 'selected';
+                                            }
+                                        }
+                                    ?>
+                                    <option value="{{ $editor->id }}" {{ $selected }}>
+                                        {{ $editor->full_name }}
+                                    </option>
                                 @endforeach
                             </select>
+
+                            @if($manuscript->user->preferredEditor)
+                                <div class="hidden-container">
+                                    <label>
+                                        {{ $manuscript->user->preferredEditor->editor->full_name }}
+                                    </label>
+                                    <a href="javascript:void(0)" onclick="enableSelect('assignEditorModal')">Edit</a>
+                                </div>
+                            @endif
                         </div>
 
                         <button type="submit" class="btn btn-primary pull-right margin-top">
@@ -724,7 +747,9 @@
             let editor = $(this).data('editor');
 
             form.attr('action', action);
-            form.find("select[name=editor_id]").val(editor);
+            @if(!$manuscript->user->preferredEditor)
+                form.find("select[name=editor_id]").val(editor);
+            @endif
         });
 
         $(".lock-toggle").change(function(){
@@ -778,6 +803,12 @@
             } else {
                 modal.find('form').find('input[type=file]').attr('required', 'required');
             }
+        });
+
+        $(document).ready(function() {
+            @if($manuscript->user->preferredEditor )
+                $("#assignEditorModal").find(".select2").hide();
+            @endif
         });
 
         function formSubmitted(t) {

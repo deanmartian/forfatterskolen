@@ -558,6 +558,7 @@ Route::group([
         Route::post('learner/{learner_id}/private-message', 'LearnerController@addPrivateMessage')->name('admin.learner.add-private-message');
         Route::put('learner/{learner_id}/private-message/{id}', 'LearnerController@updatePrivateMessage')->name('admin.learner.update-private-message');
         Route::delete('learner/{learner_id}/private-message/{id}/delete', 'LearnerController@deletePrivateMessage')->name('admin.learner.delete-private-message');
+        Route::post('learner/{learner_id}/set-preferred-editor', 'LearnerController@setPreferredEditor')->name('admin.learner.set-preferred-editor');
 
         Route::post('task/{id}/finish', 'TaskController@finishTask')->name('admin.task.finish');
         Route::resource('task', 'TaskController', [

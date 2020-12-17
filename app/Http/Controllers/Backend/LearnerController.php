@@ -19,6 +19,7 @@ use App\PaymentMode;
 use App\PaymentPlan;
 use App\PrivateMessage;
 use App\UserEmail;
+use App\UserPreferredEditor;
 use App\Workshop;
 use App\WorkshopMenu;
 use App\WorkshopsTaken;
@@ -1752,6 +1753,29 @@ class LearnerController extends Controller
         $privateMessage->delete();
         return redirect()->back()->with([
             'errors'                => AdminHelpers::createMessageBag('Private message deleted successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    /**
+     * @param $learner_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function setPreferredEditor( $learner_id, Request $request )
+    {
+        $learner = User::find($learner_id);
+        if (!$learner) {
+            return redirect()->to('/learner');
+        }
+
+        $preferredEditor = UserPreferredEditor::firstOrNew(['user_id' => $learner_id]);
+        $preferredEditor->editor_id = $request->editor_id;
+        $preferredEditor->save();
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Preferred Editor saved successfully.'),
             'alert_type'            => 'success',
             'not-former-courses'    => true
         ]);

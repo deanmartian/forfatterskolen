@@ -35,6 +35,8 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    protected $with = ['preferredEditor'];
+
     public function getAddressAttribute()
     {
         $address = \App\Address::where('user_id', $this->attributes['id'])->first();
@@ -341,5 +343,10 @@ class User extends Authenticatable
     public function courseOrderAttachments()
     {
         return $this->hasMany('App\CourseOrderAttachment', 'user_id', 'id');
+    }
+
+    public function preferredEditor()
+    {
+        return $this->hasOne('App\UserPreferredEditor', 'user_id', 'id');
     }
 }
