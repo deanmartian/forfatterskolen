@@ -615,8 +615,18 @@
 						    <tbody>
 						    	@foreach( $pending_shop_manuscripts as $pending_shop_manuscript )
 						      	<tr>
-							        <td>{{ $pending_shop_manuscript->shop_manuscript->title }}</td>
-							        <td>{{ $pending_shop_manuscript->user->full_name }}</td>
+							        <td>
+										<a href="{{ route('shop_manuscript_taken',
+										['id' => $pending_shop_manuscript->user->id,
+										'shop_manuscript_taken_id' => $pending_shop_manuscript->id]) }}">
+											{{$pending_shop_manuscript->shop_manuscript->title}}
+										</a>
+									</td>
+							        <td>
+										<a href="{{ route('admin.learner.show', $pending_shop_manuscript->user->id) }}">
+											{{ $pending_shop_manuscript->user->full_name }}
+										</a>
+									</td>
 							        <td>{{ $pending_shop_manuscript->created_at }}</td>
 							        <td>
 							        	<form method="POST" action="{{ route('activate_shop_manuscript_taken') }}" class="inline-block">
