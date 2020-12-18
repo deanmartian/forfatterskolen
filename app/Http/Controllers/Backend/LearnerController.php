@@ -133,7 +133,26 @@ class LearnerController extends Controller
     {
         $learner = User::findOrFail($id);
         $learnerAssignments = $learner->assignments;
-        return view('backend.learner.show', compact('learner', 'learnerAssignments'));
+
+        $learnerAssignmentManuscripts = $learner->assignmentManuscripts->pluck('id');
+        $learnerShopManuscriptsTaken = $learner->shopManuscriptsTaken->pluck('id');
+        $learnerCoursesTaken = $learner->coursesTaken->pluck('id');
+
+        $emailHistories = EmailHistory::where(function($query) use ($learnerAssignmentManuscripts){
+                $query->where('parent', 'LIKE', 'assignment-manuscripts%');
+                $query->whereIn('parent_id', $learnerAssignmentManuscripts);
+            })
+            ->orWhere(function($query) use ($learnerShopManuscriptsTaken){
+                $query->where('parent', 'LIKE', 'shop-manuscripts-taken%');
+                $query->whereIn('parent_id', $learnerShopManuscriptsTaken);
+            })
+            ->orWhere(function($query) use ($learnerCoursesTaken){
+                $query->where('parent', 'LIKE', 'courses-taken%');
+                $query->whereIn('parent_id', $learnerCoursesTaken);
+            })
+            ->get();
+
+        return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories'));
     }
 
 

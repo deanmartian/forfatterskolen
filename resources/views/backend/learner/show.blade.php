@@ -1239,7 +1239,51 @@
 						</tbody>
 					</table>
 				</div>
-			</div> <!-- end emails modal -->
+			</div> <!-- end emails section -->
+
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<h4>
+						Email History
+					</h4>
+				</div>
+				<div class="table-responsive" style="padding: 10px">
+					<table class="table dt-table">
+						<thead>
+						<tr>
+							<th>{{ trans('site.subject') }}</th>
+							<th>{{ trans('site.from') }}</th>
+							<th>{{ trans('site.date-sent') }}</th>
+							<th>Date Opened</th>
+							<th></th>
+						</tr>
+						</thead>
+						<tbody>
+							@foreach($emailHistories as $emailHistory)
+								<tr>
+									<td>
+										{{ $emailHistory->subject }}
+									</td>
+									<td>
+										{{ $emailHistory->from_email }}
+									</td>
+									<td>
+										{{ $emailHistory->created_at }}
+									</td>
+									<td>
+										{{ $emailHistory->date_open }}
+									</td>
+									<td class="text-center">
+										<button class="btn btn-info btn-xs showEmailBtn" data-toggle="modal"
+												data-target="#showEmailModal"
+												data-message="{{ $emailHistory->message }}">Show Message</button>
+									</td>
+								</tr>
+							@endforeach
+						</tbody>
+					</table>
+				</div>
+			</div> <!-- end email history section -->
 
 			<div class="panel panel-default">
 				<div class="panel-body">
