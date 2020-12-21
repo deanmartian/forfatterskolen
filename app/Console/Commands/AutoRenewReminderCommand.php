@@ -6,6 +6,7 @@ use App\CoursesTaken;
 use App\CronLog;
 use App\Http\AdminHelpers;
 use App\Http\FikenInvoice;
+use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
 use App\Package;
 use Carbon\Carbon;
@@ -79,7 +80,11 @@ class AutoRenewReminderCommand extends Command {
                 $emailData['from_email'] = $emailTemplate->from_email;
                 $emailData['attach_file'] = NULL;
 
-                \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+                //\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+                dispatch(new AddMailToQueueJob($to, $emailTemplate->subject, $emailTemplate->email_content,
+                    $emailTemplate->from_email, null, null,
+                    'courses-taken', $courseTaken->id));
+
                 CronLog::create(['activity' => 'AutoRenewReminder CRON sent email to '.$to]);
 
             }
