@@ -1007,7 +1007,9 @@ class LearnerController extends Controller
         $emailData['from_email'] = $from_email;
         $emailData['attach_file'] = NULL;
 
-        \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
+        //\Mail::to($email)->queue(new SubjectBodyEmail($emailData));
+        dispatch(new AddMailToQueueJob($email, $request->subject, $message, $from_email, $from_name,null,
+            'learner', $learner->id));
 
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Email sent.'),
             'alert_type' => 'success', 'not-former-courses' => true]);

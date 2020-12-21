@@ -40,13 +40,13 @@ class EmailHistory extends Model
         $parent_id = $this->attributes['parent_id'];
 
         $learner_id = '';
-        $fullname = $this->attributes['parent_id'];
+        $full_name = $this->attributes['recipient'];
         
         if (strpos($parent, 'shop-manuscripts-taken') !== false ) {
             $shopManuscript = ShopManuscriptsTaken::with('user')->where('id', $parent_id)->first();
             if($shopManuscript) {
                 $learner_id = $shopManuscript->user_id;
-                $fullname = $shopManuscript->user->full_name;
+                $full_name = $shopManuscript->user->full_name;
             }
         }
 
@@ -54,7 +54,7 @@ class EmailHistory extends Model
             $courseTaken = CoursesTaken::with('user')->where('id', $parent_id)->first();
             if($courseTaken) {
                 $learner_id = $courseTaken->user_id;
-                $fullname = $courseTaken->user->full_name;   
+                $full_name = $courseTaken->user->full_name;
             }
         }
 
@@ -62,13 +62,21 @@ class EmailHistory extends Model
             $assignmentManuscript = AssignmentManuscript::with('user')->where('id', $parent_id)->first();
             if($assignmentManuscript) {
                 $learner_id = $assignmentManuscript->user_id;
-                $fullname = $assignmentManuscript->user->full_name;
+                $full_name = $assignmentManuscript->user->full_name;
+            }
+        }
+
+        if ($parent === 'learner') {
+            $learner = User::find($parent_id);
+            if ($learner) {
+                $learner_id = $learner->id;
+                $full_name = $learner->full_name;
             }
         }
 
         return [
             'learner_id' => $learner_id,
-            'full_name' => $fullname
+            'full_name' => $full_name
         ];
 
     }
