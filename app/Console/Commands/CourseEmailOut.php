@@ -9,6 +9,7 @@ use App\EmailOut;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
 use App\Invoice;
+use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -99,9 +100,10 @@ class CourseEmailOut extends Command
                 $emailData['attach_file'] = NULL;
 
                 // add email to queue
-                \Mail::to($toMail)->queue(new SubjectBodyEmail($emailData));
-                /*AdminHelpers::send_email($emailData['email_subject'],
-                    $emailData['from_email'], $toMail, $emailData['email_message']);*/
+                //\Mail::to($toMail)->queue(new SubjectBodyEmail($emailData));
+                dispatch(new AddMailToQueueJob($toMail, $emailOut->subject, $message.$attachmentText,
+                    $emailOut->from_email, $emailOut->from_name, null, 'courses-taken', $courseTaken->id));
+
                 CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$toMail]);
             }
         }
@@ -162,9 +164,9 @@ class CourseEmailOut extends Command
                 $emailData['attach_file'] = NULL;
 
                 // add email to queue
-                \Mail::to($toMail)->queue(new SubjectBodyEmail($emailData));
-                /*AdminHelpers::send_email($emailData['email_subject'],
-                    $emailData['from_email'], $toMail, $emailData['email_message']);*/
+                //\Mail::to($toMail)->queue(new SubjectBodyEmail($emailData));
+                dispatch(new AddMailToQueueJob($toMail, $emailOut->subject, $message.$attachmentText,
+                    $emailOut->from_email, $emailOut->from_name, null, 'courses-taken', $courseTaken->id));
                 CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$toMail]);
             }
         }
