@@ -6,6 +6,7 @@ use App\CoursesTaken;
 use App\EmailAttachment;
 use App\EmailOutLog;
 use App\Http\FrontendHelpers;
+use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
 use App\Package;
 use App\PackageCourse;
@@ -423,7 +424,9 @@ class CourseController extends Controller
                 $emailData['from_name'] = $from_name;
                 $emailData['from_email'] = $from_email;
                 $emailData['attach_file'] = NULL;
-                \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
+                //\Mail::to($email)->queue(new SubjectBodyEmail($emailData));
+                dispatch(new AddMailToQueueJob($email, $subject, $message.$attachmentText, $from_email,
+                    $from_name, null, 'courses-taken', $learner->id));
             }
 
             $selected_learners = NULL;
