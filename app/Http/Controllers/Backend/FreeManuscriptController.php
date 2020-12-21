@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 use App\EmailTemplate;
 use App\FreeManuscriptFeedbackHistory;
 use App\Http\AdminHelpers;
+use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
 use App\Manuscript;
 use App\User;
@@ -160,7 +161,9 @@ class FreeManuscriptController extends Controller
             $emailData['from_email'] = $from;
             $emailData['attach_file'] = NULL;
 
-            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+            //\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+            dispatch(new AddMailToQueueJob($to, $subject, $message, $from, null, null,
+                'free-manuscripts', $id));
 
             $newFeedbackHistory = new FreeManuscriptFeedbackHistory();
             $newFeedbackHistory->free_manuscript_id = $id;
@@ -294,8 +297,10 @@ class FreeManuscriptController extends Controller
         $emailData['from_email'] = $from;
         $emailData['attach_file'] = NULL;
 
-        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        //\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
         //mail($to, 'Subject', $message, $headers);
+        dispatch(new AddMailToQueueJob($to, $subject, $message, $from, null, null,
+            'free-manuscripts', $id));
 
         $newFeedbackHistory = new FreeManuscriptFeedbackHistory();
         $newFeedbackHistory->free_manuscript_id = $id;
