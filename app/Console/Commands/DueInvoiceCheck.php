@@ -6,6 +6,7 @@ use App\CronLog;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
 use App\Invoice;
+use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -73,10 +74,9 @@ Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 
                 'from_email'    => $from,
                 'attach_file'   => NULL
             ];
-            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
-
-            /*AdminHelpers::send_email($subject,
-                $from, $to, $message);*/
+            //\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+            dispatch(new AddMailToQueueJob($to, $subject, $message, $from, null, null,
+                'invoice', $invoice->id));
             CronLog::create(['activity' => 'DueInvoiceCheck CRON sent email to '.$to]);
         }
 
