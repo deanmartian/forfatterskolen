@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\CronLog;
 use App\FreeCourseDelayedEmail;
 use App\Http\AdminHelpers;
+use App\Jobs\AddMailToQueueJob;
 use App\Mail\FreeCourseNewUserEmail;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -67,12 +68,11 @@ class FreeCourseDelayedEmailCommand extends Command
             $email_data['email_subject'] = $course->title;
             $toEmail = $user->email;
 
-            \Mail::to($toEmail)->queue(new FreeCourseNewUserEmail($email_data));
-            /*AdminHelpers::send_email($email_data['email_subject'],
-                'post@forfatterskolen.no', $toEmail, view('emails.free_course_new_user')
-                    ->with(['email_message' => $email_data['email_message']]));*/
+            //\Mail::to($toEmail)->queue(new FreeCourseNewUserEmail($email_data));
+            dispatch(new AddMailToQueueJob($toEmail, $course->title, $message, 'postmail@forfatterskolen.no', null, null,
+                'learner', $user->id));
             CronLog::create(['activity' => 'FreeCourseDelayedEmailCommand sent email to user '.$user->id]);
-            $delayedEmail->delete(); //delete the record after adding it to queue
+            //$delayedEmail->delete(); //delete the record after adding it to queue
         }
     }
 }
