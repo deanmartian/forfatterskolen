@@ -7,6 +7,7 @@ use App\CoursesTaken;
 use App\CronLog;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
+use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
 use App\WebinarEmailOut;
 use Carbon\Carbon;
@@ -102,8 +103,11 @@ class WebinarEmailOutCommand extends Command
                 $emailData['attach_file'] = NULL;
 
                 // add email to queue
-                \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
+                //\Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
+                dispatch(new AddMailToQueueJob($user_email, $subject, $message, 'postmail@forfatterskolen.no',
+                    null, null, 'courses-taken', $courseTaken->id));
                 CronLog::create(['activity' => 'WebinarEmailOutCommand CRON send email to '.$user_email]);
+                break;
             }
         }
         CronLog::create(['activity' => 'WebinarEmailOutCommand CRON done running.']);
