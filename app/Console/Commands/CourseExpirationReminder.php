@@ -7,6 +7,7 @@ use App\CoursesTaken;
 use App\CronLog;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
+use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
 use App\UserRenewedCourse;
 use Carbon\Carbon;
@@ -145,7 +146,9 @@ class CourseExpirationReminder extends Command {
                     'from_email'    => $from,
                     'attach_file'   => NULL
                 ];
-                \Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
+                //\Mail::to($user_email)->queue(new SubjectBodyEmail($emailData));
+                dispatch(new AddMailToQueueJob($user_email, $subject, $message, $from, null, null,
+                     'courses-taken', $courseTaken->id));
 
                 //AdminHelpers::send_email($subject, $from, $user_email, $message);
                 CronLog::create(['activity' => 'CourseExpirationReminder CRON sent email to '.$user_name.'.']);
