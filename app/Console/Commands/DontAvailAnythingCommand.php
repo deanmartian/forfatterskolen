@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\CronLog;
+use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
 use App\User;
 use Illuminate\Console\Command;
@@ -64,9 +65,10 @@ class DontAvailAnythingCommand extends Command
                     'from_email'    => $from,
                     'attach_file'   => NULL
                 ];
-                \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+                //\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+                dispatch(new AddMailToQueueJob($to, $subject, $message, $from, null, null,
+                    'learner', $user->id));
 
-                //mail($user->email, $subject, $message, $headers);
                 CronLog::create(['activity' => 'DontAvailAnything CRON sent email to '.$user->email]);
             }
         }

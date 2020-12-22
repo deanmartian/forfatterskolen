@@ -150,6 +150,15 @@ class LearnerController extends Controller
                 $query->where('parent', 'LIKE', 'courses-taken%');
                 $query->whereIn('parent_id', $learnerCoursesTaken);
             })
+            ->orWhere(function($query) use ($learner){
+                $query->where('parent', '=', 'learner');
+                $query->where('parent_id', $learner->id);
+            })
+            ->orWhere(function($query) use ($learner){
+                $query->where('parent', '=', 'free-manuscripts');
+                $query->where('recipient', $learner->email);
+            })
+            ->latest()
             ->get();
 
         return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories'));
