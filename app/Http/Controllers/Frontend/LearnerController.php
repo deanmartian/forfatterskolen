@@ -32,6 +32,7 @@ use App\PilotReaderReaderProfile;
 use App\Repositories\Services\CompetitionService;
 use App\Repositories\Services\PublishingService;
 use App\Repositories\Services\WritingGroupService;
+use App\Settings;
 use App\ShopManuscriptTakenFeedback;
 use App\ShopManuscriptUpgrade;
 use App\Survey;
@@ -1412,6 +1413,25 @@ class LearnerController extends Controller
             $ShopManuscriptComment->user_id = Auth::user()->id;
             $ShopManuscriptComment->comment = $request->comment;
             $ShopManuscriptComment->save();
+
+            $headEditor = Settings::headEditor();
+            if($headEditor) {
+                $editor = User::find($headEditor);
+                $user = Auth::user();
+                $emailTemplate = AdminHelpers::emailTemplate('Shop Manuscript Comment');
+                $link = route('shop_manuscript_taken', [$user->id, $id]);
+                $search_string = [
+                    ':firstname',
+                    ':link',
+                ];
+                $replace_string = [
+                    $user->first_name,
+                    "<a href='" . $link . "'>".$link."</a>"
+                ];
+                $email_content = str_replace($search_string, $replace_string, $emailTemplate->email_content);
+                AdminHelpers::queue_mail($editor->email, $emailTemplate->subject, $email_content, $emailTemplate->from_email);
+            }
+
             return redirect()->back();
         else :
             return abort('503');

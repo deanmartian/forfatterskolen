@@ -8,6 +8,7 @@ use App\Http\FikenInvoice;
 use App\PageMeta;
 use App\Repositories\Services\PageAccessService;
 use App\Repositories\Services\PublishingService;
+use App\Settings;
 use App\Staff;
 use Carbon\Carbon;
 use Illuminate\Contracts\Cache\Store;
@@ -37,8 +38,9 @@ class AdminController extends Controller
         $customActions = CustomAction::where('is_active',1)->get();
         $pageMetas = PageMeta::all();
         $staffs = Staff::all();
+        $headEditor = (int) Settings::headEditor();
 
-        return view('backend.admin.index', compact('admins','customActions', 'pageMetas', 'staffs'));
+        return view('backend.admin.index', compact('admins','customActions', 'pageMetas', 'staffs', 'headEditor'));
     }
 
 

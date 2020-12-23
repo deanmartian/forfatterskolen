@@ -86,6 +86,17 @@ class SettingsController extends Controller
             'alert_type' => 'success']);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function headEditor( Request $request )
+    {
+        Settings::updateOrCreate(['setting_name' => 'head-editor'], ['setting_value' => $request->editor_id]);
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Head Editor updated successfully.'),
+            'alert_type' => 'success']);
+    }
+
     public function create( $name, Request $request )
     {
         Settings::updateOrCreate(['setting_name' => $name], ['setting_value' => $request->setting_value]);

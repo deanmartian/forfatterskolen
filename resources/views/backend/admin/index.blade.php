@@ -29,6 +29,7 @@
 <div class="col-md-12">
 	<button class="btn btn-primary margin-top" data-toggle="modal" data-target="#addAdminModal">Create admin</button>
 	<a class="btn btn-primary margin-top" href="{{ route('admin.admin.export_nearly_expired_courses') }}">Export Nearly Expired Courses</a>
+	<button class="btn btn-success margin-top" data-toggle="modal" data-target="#headEditorModal">Head Editor</button>
 
 	<ul class="nav nav-tabs margin-top">
 		<li @if( Request::input('tab') == 'admin' || Request::input('tab') == '') class="active" @endif><a href="?tab=admin">Admin</a></li>
@@ -236,6 +237,11 @@
 								<td>{{ $admin->email }}</td>
 								<td>
 									<div class="pull-right">
+										@if($headEditor === $admin->id)
+											<label class="label label-success" style="margin-right: 5px">
+												Head Editor
+											</label>
+										@endif
 										<input type="checkbox" data-toggle="toggle" data-on="Active"
 											   class="status-toggle" data-off="Inactive"
 											   data-id="{{$admin->id}}" data-size="mini" @if(!$admin->deleted_at) {{ 'checked' }} @endif>
@@ -332,6 +338,42 @@
 		      <div class="clearfix"></div>
 		    </form>
 		  </div>
+		</div>
+	</div>
+</div>
+
+<div id="headEditorModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Head Editor</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.settings.update.head-editor') }}">
+					{{ csrf_field() }}
+
+					<select class="form-control select2" name="editor_id" required>
+						<option value="" selected disabled>
+							-- Select Editor --
+						</option>
+						@foreach( App\User::where('role', 1)->orderBy('id', 'desc')->get()  as $admin)
+                            <?php
+                            $selected = '';
+                            if ($headEditor && $headEditor === $admin->id) {
+                                $selected = 'selected';
+                            }
+                            ?>
+							<option value="{{ $admin->id }}" {{ $selected}}>
+								{{ $admin->full_name }}
+							</option>
+						@endforeach
+					</select>
+
+					<button type="submit" class="btn btn-primary pull-right margin-top">Save</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
 		</div>
 	</div>
 </div>

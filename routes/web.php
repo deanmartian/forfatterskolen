@@ -1284,6 +1284,7 @@ Route::group([
         Route::post('/settings/update/webinar_email_template', 'SettingsController@webinarEmailTemplate')->name('admin.settings.update.webinar_email_template');
         Route::post('/settings/update/gt_reminder_email_template', 'SettingsController@gtReminderEmail')->name('admin.settings.update.gt_reminder_email_template');
         Route::post('/settings/update/course_not_started_reminder', 'SettingsController@courseNotStartedReminder')->name('admin.settings.update.course_not_started_reminder');
+        Route::post('/settings/update/head-editor', 'SettingsController@headEditor')->name('admin.settings.update.head-editor');
         Route::post('/settings/create/{name}', 'SettingsController@create')->name('admin.settings.create');
         // Advisories
         Route::put('/advisory/{id}', 'AdvisoryController@update')->name('admin.advisory.update');

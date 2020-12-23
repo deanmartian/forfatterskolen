@@ -66,6 +66,11 @@ class Settings extends Model
         return self::getByName('course_not_started_reminder');
     }
 
+    public static function headEditor()
+    {
+        return self::getByName('head-editor');
+    }
+
     public static function getByName($settingName)
     {
         return self::where('setting_name', $settingName)->pluck('setting_value')->first();
