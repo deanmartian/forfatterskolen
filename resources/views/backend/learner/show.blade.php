@@ -2248,20 +2248,25 @@
 					  enctype="multipart/form-data">
 					{{csrf_field()}}
 
+					<?php
+						$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Send Email to Learner');
+					?>
+
 					<div class="form-group">
 						<label>{{ trans('site.subject') }}</label>
-						<input type="text" class="form-control" name="subject" required>
+						<input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}" required>
 					</div>
 
 					<div class="form-group">
 						<label>{{ trans('site.message') }}</label>
-						<textarea name="message" cols="30" rows="10" class="form-control editor"></textarea>
+						<textarea name="message" cols="30" rows="10"
+								  class="form-control editor">{!! $emailTemplate->email_content !!}</textarea>
 					</div>
 
 					<div class="form-group">
 						<label style="display: block">From</label>
 						<input type="text" class="form-control" placeholder="Name" style="width: 49%; display: inline;"
-							   name="from_name">
+							   name="from_name" value="{{ $emailTemplate->from_email }}">
 						<input type="email" class="form-control" placeholder="Email" style="width: 49%; display: inline;"
 							   name="from_email">
 					</div>
