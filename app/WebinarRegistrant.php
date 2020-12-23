@@ -9,4 +9,8 @@ class WebinarRegistrant extends Model {
     protected $table = 'webinar_registrants';
     protected $fillable = ['webinar_id', 'user_id', 'join_url'];
 
+    public function webinar()
+    {
+        return $this->belongsTo('App\Webinar');
+    }
 }

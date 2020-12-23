@@ -349,4 +349,9 @@ class User extends Authenticatable
     {
         return $this->hasOne('App\UserPreferredEditor', 'user_id', 'id');
     }
+
+    public function registeredWebinars()
+    {
+        return $this->hasMany('App\WebinarRegistrant', 'user_id', 'id');
+    }
 }

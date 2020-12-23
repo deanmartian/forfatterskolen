@@ -138,6 +138,7 @@ class LearnerController extends Controller
         $learnerShopManuscriptsTaken = $learner->shopManuscriptsTaken->pluck('id');
         $learnerCoursesTaken = $learner->coursesTaken->pluck('id');
         $learnerInvoices = $learner->invoices->pluck('id');
+        $registeredWebinars = $learner->registeredWebinars;
 
         $emailHistories = EmailHistory::where(function($query) use ($learnerAssignmentManuscripts){
                 $query->where('parent', 'LIKE', 'assignment-manuscripts%');
@@ -166,7 +167,8 @@ class LearnerController extends Controller
             ->latest()
             ->get();
 
-        return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories'));
+        return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories',
+            'registeredWebinars'));
     }
 
 

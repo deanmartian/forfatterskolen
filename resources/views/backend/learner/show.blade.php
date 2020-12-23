@@ -1287,6 +1287,40 @@
 
 			<div class="panel panel-default">
 				<div class="panel-body">
+					<h4>
+						Registered to Webinars
+					</h4>
+				</div>
+				<div class="table-responsive" style="padding: 10px">
+					<table class="table dt-table">
+						<thead>
+						<tr>
+							<th>{{ trans_choice('site.webinars', 1) }}</th>
+							<th>Join Url</th>
+						</tr>
+						</thead>
+						<tbody>
+						@foreach($registeredWebinars as $registeredWebinar)
+							<tr>
+								<td>
+									<a href="{{ route('admin.course.show', $registeredWebinar->webinar->course_id) }}?section=webinars">
+										{{ $registeredWebinar->webinar->title }}
+									</a>
+								</td>
+								<td>
+									<a href="{{ $registeredWebinar->join_url }}">
+										{{ $registeredWebinar->join_url }}
+									</a>
+								</td>
+							</tr>
+						@endforeach
+						</tbody>
+					</table>
+				</div>
+			</div> <!-- end registered to webinars section -->
+
+			<div class="panel panel-default">
+				<div class="panel-body">
 					<button class="btn btn-primary pull-right btn-xs addPrivateMessageBtn" data-toggle="modal"
 							data-action="{{ route('admin.learner.add-private-message', $learner->id) }}"
 							data-target="#privateMessageModal">
