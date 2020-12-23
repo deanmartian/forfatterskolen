@@ -138,7 +138,7 @@ class LearnerController extends Controller
         $learnerShopManuscriptsTaken = $learner->shopManuscriptsTaken->pluck('id');
         $learnerCoursesTaken = $learner->coursesTaken->pluck('id');
         $learnerInvoices = $learner->invoices->pluck('id');
-        $registeredWebinars = $learner->registeredWebinars;
+        $registeredWebinars = $learner->registeredWebinars()->latest()->get();
 
         $emailHistories = EmailHistory::where(function($query) use ($learnerAssignmentManuscripts){
                 $query->where('parent', 'LIKE', 'assignment-manuscripts%');
