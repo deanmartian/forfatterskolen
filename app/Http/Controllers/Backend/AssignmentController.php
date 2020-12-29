@@ -411,6 +411,21 @@ class AssignmentController extends Controller
     }
 
     /**
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function emailManuscriptUser($id, Request $request)
+    {
+        $manuscript = AssignmentManuscript::find($id);
+        dispatch(new AddMailToQueueJob($manuscript->user->email, $request->subject, $request->message,
+            $request->from_email, null, null,
+            'assignment-manuscripts', $manuscript->id));
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Email sent successfully.'),
+            'alert_type' => 'success', 'not-former-courses' => true]);
+    }
+
+    /**
      * Auto-generate a document from 10 student and put it to one file before downloading
      * @param $assignmentId
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse

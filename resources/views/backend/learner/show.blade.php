@@ -703,6 +703,7 @@
 								<th>{{ trans_choice('site.courses', 1) }}</th>
 								<th>Editor</th>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -760,6 +761,13 @@
 										@elseif( end($extension) == 'docx' )
 										<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">{{ basename($manuscript->filename) }}</a>
 										@endif
+									</td>
+									<td>
+										<button class="btn btn-primary btn-xs assignmentManuscriptEmailBtn" data-toggle="modal"
+												data-target="#assignmentManuscriptEmailModal"
+												data-action="{{ route('assignment.send-email-to-manuscript-user', $manuscript->id) }}">
+											Send Email
+										</button>
 									</td>
 								</tr>
 								@endif
@@ -3034,6 +3042,41 @@
 
 	</div>
 </div>
+
+<div id="assignmentManuscriptEmailModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.send-email') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="formSubmitted(this)">
+					{{csrf_field()}}
+
+					<div class="form-group">
+						<label>{{ trans('site.subject') }}</label>
+						<input type="text" class="form-control" name="subject" required>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.from') }}</label>
+						<input type="text" class="form-control" name="from_email">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.message') }}</label>
+						<textarea name="message" id="" cols="30" rows="10" class="form-control" required></textarea>
+					</div>
+					<div class="text-right">
+						<input type="submit" class="btn btn-primary" value="{{ trans('site.send') }}">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!--end email modal-->
 @stop
 
 @section('scripts')
@@ -3426,6 +3469,12 @@
     $(".deletePrivateMessageBtn").click(function(){
         let action = $(this).data('action');
         let modal = $('#deletePrivateMessageModal');
+        modal.find('form').attr('action', action);
+    });
+
+    $(".assignmentManuscriptEmailBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#assignmentManuscriptEmailModal');
         modal.find('form').attr('action', action);
     });
 
