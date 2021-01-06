@@ -48,7 +48,7 @@
 					@endif
 				</div>
 
-				@foreach($course->webinars->chunk(3) as $webinar_chunk)
+				@foreach($course->webinars()->active()->get()->chunk(3) as $webinar_chunk)
 					<div class="col-sm-12 webinar-list-container">
 						@foreach($webinar_chunk as $webinar)
 							<div class="col-md-4">
@@ -71,12 +71,18 @@
 											>
 												<i class="fa fa-pencil"></i></a>
 
-											<a class="btn btn-xs btn-danger deleteWebinarBtn"
+											{{--<a class="btn btn-xs btn-danger deleteWebinarBtn"
 											   data-toggle="modal"
 											   data-target="#deleteWebinarModal"
 											   data-action="{{ route('admin.webinar.destroy', $webinar->id) }}"
 											   data-title="{{ $webinar->title }}"
-											><i class="fa fa-trash"></i></a>
+											><i class="fa fa-trash"></i></a>--}}
+											<a class="btn btn-xs btn-warning hideWebinarBtn"
+											   data-toggle="modal"
+											   data-target="#hideWebinarModal"
+											   data-action="{{ route('admin.webinar.update-field', $webinar->id) }}"
+											   data-title="{{ $webinar->title }}"
+											><i class="fa fa-eye"></i></a>
 										</div>
 										<strong>{{ $webinar->title }}</strong>
 										<br />
@@ -441,6 +447,34 @@
   </div>
 </div>
 
+<!-- Hide Webinar Modal -->
+<div id="hideWebinarModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Hide Webinar <em></em></h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" enctype="multipart/form-data">
+					{{ csrf_field() }}
+					<input type="hidden" name="field" value="status">
+					<input type="hidden" name="value" value="0">
+					<p>
+						Are you sure to hide this webinar?
+					</p>
+					<div class="text-right">
+						<button type="submit" class="btn btn-primary">
+							{{ trans('site.save') }}
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
 <div id="webinarEmailTempModal" class="modal fade" role="dialog">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -680,6 +714,16 @@
 
 			$('#deleteWebinarModal em').text(title);
 			form.attr('action', action);
+		});
+
+		$(".hideWebinarBtn").click(function(){
+		    let modal = $('#hideWebinarModal');
+            let form = modal.find('form');
+            let action = $(this).data('action');
+            let title = $(this).data('title');
+
+            modal.find('em').text(title);
+            form.attr('action', action);
 		});
 
 		$(".emailOutBtn").click(function(){

@@ -244,7 +244,23 @@ class WebinarController extends Controller
         return redirect()->back();
     }
 
-
+    /**
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateField($id, Request $request)
+    {
+        $field = $request->field;
+        $value = $request->value;
+        $webinar = Webinar::findOrFail($id);
+        $webinar->$field = $value;
+        $webinar->save();
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Webinar hidden successfully.'),
+            'alert_type' => 'success'
+        ]);
+    }
 
 
     public function destroy($id, Request $request)
