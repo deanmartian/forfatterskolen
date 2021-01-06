@@ -27,7 +27,7 @@
                     <label>{{ trans('site.video-url') }}</label>
                     <input type="url" class="form-control" name="video_url" value="{{ $document['video_url'] }}" required>
                 </div>
-                @if(!count($primaryVideo) || $primaryVideo->id == $document['id'])
+                @if(!$primaryVideo->count() || $primaryVideo->id == $document['id'])
                     <div class="form-group">
                         <label>{{ trans('site.is-primary-video') }}?</label> <br>
                         <input type="checkbox" data-toggle="toggle" data-on="Yes"
@@ -67,7 +67,7 @@
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script>
 
-        var primaryVideo = '{{ count($primaryVideo) ? $primaryVideo->id : 0 }}';
+        var primaryVideo = '{{ $primaryVideo->count() ? $primaryVideo->id : 0 }}';
         var documentId = '{{ $document['id'] }}';
 
         if (primaryVideo === documentId) {

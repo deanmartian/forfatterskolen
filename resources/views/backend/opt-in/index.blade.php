@@ -45,7 +45,9 @@
                                 <button class="btn btn-info btn-xs editOptInBtn"
                                 data-toggle="modal" data-target="#optInModal"
                                 data-action="{{ route('admin.opt-in.update', $optIn->id) }}"
-                                data-fields="{{ json_encode($optIn) }}">
+                                data-fields="{{ json_encode($optIn) }}"
+                                data-filename="{{ \App\Http\AdminHelpers::extractFileName($optIn->pdf_file) }}"
+                                data-fileloc="{{ asset($optIn->pdf_file) }}">
                                     <i class="fa fa-pencil"></i>
                                 </button>
 
@@ -114,7 +116,7 @@
                 <div class="modal-body">
                     <form method="POST" action="{{ route('admin.settings.update.opt-in-terms') }}">
                         {{ csrf_field() }}
-                        <textarea class="form-control ckeditor" name="opt_in_terms">{{ App\Settings::optInTerms() }}</textarea>
+                        <textarea class="form-control tinymce" name="opt_in_terms">{{ App\Settings::optInTerms() }}</textarea>
                         <div class="text-right margin-top">
                             <button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
                         </div>
@@ -191,12 +193,12 @@
 
                         <div class="form-group">
                             <label> Main Description </label>
-                            <textarea class="form-control ckeditor" name="main_description" id="main_description"></textarea>
+                            <textarea class="form-control tinymce" name="main_description" id="main_description"></textarea>
                         </div>
 
                         <div class="form-group">
                             <label> Form Description </label>
-                            <textarea class="form-control ckeditor" name="form_description" id="form_description"></textarea>
+                            <textarea class="form-control tinymce" name="form_description" id="form_description"></textarea>
                         </div>
 
                         <div class="form-group">
@@ -206,12 +208,14 @@
 
                         <div class="form-group">
                             <label> {{ trans('site.description') }} </label>
-                            <textarea class="form-control ckeditor" name="description" id="description"></textarea>
+                            <textarea class="form-control tinymce" name="description" id="description"></textarea>
                         </div>
 
                         <div class="form-group">
                             <label> PDF File</label>
                             <input type="file" name="pdf_file" class="form-control">
+                            <p class="file-display hide text-muted text-center">
+                            </p>
                         </div>
 
                         <div class="text-right margin-top">
@@ -250,51 +254,7 @@
 @stop
 
 @section('scripts')
-    <script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
     <script>
-        // tinymce
-        let editor_config = {
-            path_absolute: "{{ URL::to('/') }}",
-            height: '25em',
-            selector: '.ckeditor',
-            plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
-                'searchreplace wordcount visualblocks visualchars code fullscreen',
-                'insertdatetime media nonbreaking save table contextmenu directionality',
-                'emoticons template paste textcolor colorpicker textpattern'],
-            toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript superscript | forecolor backcolor | link | alignleft aligncenter alignright ' +
-            'alignjustify  | removeformat',
-            toolbar2: 'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code | print fullscreen',
-            relative_urls: false,
-            content_css: ['//fonts.googleapis.com/css?family=Montserrat:400,500'],
-            font_formats: "Andale Mono=andale mono,monospace;Arial=arial,helvetica,sans-serif;Arial Black=arial black,sans-serif;" +
-            "Book Antiqua=book antiqua,palatino,serif;Comic Sans MS=comic sans ms,sans-serif;Courier New=courier new,courier,monospace;" +
-            "Georgia=georgia,palatino,serif;Helvetica=helvetica,arial,sans-serif;Impact=impact,sans-serif;Montserrat=montserrat, sans-serif; Symbol=symbol;" +
-            "Tahoma=tahoma,arial,helvetica,sans-serif;Terminal=terminal,monaco,monospace;Times New Roman=times new roman,times,serif;" +
-            "Trebuchet MS=trebuchet ms,geneva,sans-serif;Verdana=verdana,geneva,sans-serif;Webdings=webdings;Wingdings=wingdings,zapf dingbats;",
-            fontsize_formats: "8px 10px 12px 14px 16px 18px 20px 24px 36px 40px",
-            file_browser_callback : function(field_name, url, type, win) {
-                var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
-                var y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
-
-                var cmsURL = editor_config.path_absolute + '/laravel-filemanager?field_name=' + field_name;
-                if (type == 'image') {
-                    cmsURL = cmsURL + '&type=Images';
-                } else {
-                    cmsURL = cmsURL + '&type=Files';
-                }
-
-                tinyMCE.activeEditor.windowManager.open({
-                    file : cmsURL,
-                    title : 'Filemanager',
-                    width : x * 0.8,
-                    height : y * 0.8,
-                    resizable : 'yes',
-                    close_previous : 'no'
-                });
-            }
-        };
-        tinymce.init(editor_config);
-
         let optInModal = $("#optInModal");
         let translations = {
             add_opt_in: "{{ trans('site.add-opt-in') }}",
@@ -323,12 +283,20 @@
         $(".editOptInBtn").click(function(){
             let fields = $(this).data('fields');
             let action = $(this).data('action');
+            let filename = $(this).data('filename');
+            let fileloc = $(this).data('fileloc');
             optInModal.find('form').attr('action', action);
             optInModal.find('form').find('[name=_method]').remove();
             optInModal.find('form').prepend('{{ method_field('PUT') }}');
             optInModal.find('.modal-title').empty().append(translations.edit_opt_in +' <em>'+fields.name+'</em>');
             $.each(fields, function(k, v){
-                optInModal.find("[name="+k+"]").val(v);
+                if (k === 'pdf_file') {
+                    optInModal.find('.file-display').removeClass('hide').empty()
+                        .append('<a href="'+fileloc+'" download>'+filename+'</a>');
+                } else {
+                    optInModal.find("[name="+k+"]").val(v);
+                }
+
                 if (k === 'main_description' || k === 'form_description' || k === 'description') {
                     tinyMCE.get(k).setContent('');
                     if (v !== null) {

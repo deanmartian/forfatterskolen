@@ -410,7 +410,6 @@
 @stop
 
 @section('scripts')
-	<script src="https://cdn.tinymce.com/4/tinymce.min.js"></script>
 <script>
 $(document).ready(function(){
   $('.btn-delete-feedback').click(function(){
@@ -418,13 +417,6 @@ $(document).ready(function(){
 
         var form = $('#deleteFeedbackModal');
         form.find('form').attr('action', action);
-    });
-
-    tinymce.init({
-        selector:'.tinymce',
-        height : "300",
-        menubar: false,
-        toolbar: 'insert | undo redo |  formatselect | bold italic backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
     });
 
 	@if($shopManuscriptTaken->user->preferredEditor )

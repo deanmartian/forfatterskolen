@@ -26,15 +26,15 @@
 				</div>
 				<div class="form-group">
 					<label>{{ trans('site.description') }}</label>
-					<textarea name="description" rows="12" id="description-ct" class="form-control ckeditor">{{ $course['description'] }}</textarea>
+					<textarea name="description" rows="12" id="description-ct" class="form-control tinymce">{{ $course['description'] }}</textarea>
 				</div>
 				<div class="form-group">
 					<label>{{ trans('site.course-plan') }}</label>
-					<textarea name="course_plan" rows="10" class="form-control ckeditor">{{ $course['course_plan'] }}</textarea>
+					<textarea name="course_plan" rows="10" class="form-control tinymce">{{ $course['course_plan'] }}</textarea>
 				</div>
 				<div class="form-group">
 					<label>Course Plan Data</label>
-					<textarea name="course_plan_data" rows="10" class="form-control ckeditor">{{ $course['course_plan_data'] }}</textarea>
+					<textarea name="course_plan_data" rows="10" class="form-control tinymce">{{ $course['course_plan_data'] }}</textarea>
 				</div>
 			</div>
 		</div>
@@ -122,43 +122,5 @@
 </form>
 
 	@section('scripts')
-		<script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 		<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
-		<script>
-            // tinymce
-            var editor_config = {
-                path_absolute: "{{ URL::to('/') }}",
-                height: '15em',
-                selector: '.ckeditor',
-                plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
-                    'searchreplace wordcount visualblocks visualchars code fullscreen',
-                    'insertdatetime media nonbreaking save table contextmenu directionality',
-                    'emoticons template paste textcolor colorpicker textpattern'],
-                toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript superscript | forecolor backcolor | link | alignleft aligncenter alignright ' +
-                'alignjustify  | removeformat',
-                toolbar2: 'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code | print fullscreen',
-                relative_urls: false,
-                file_browser_callback : function(field_name, url, type, win) {
-                    var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
-                    var y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
-
-                    var cmsURL = editor_config.path_absolute + '/laravel-filemanager?field_name=' + field_name;
-                    if (type == 'image') {
-                        cmsURL = cmsURL + '&type=Images';
-                    } else {
-                        cmsURL = cmsURL + '&type=Files';
-                    }
-
-                    tinyMCE.activeEditor.windowManager.open({
-                        file : cmsURL,
-                        title : 'Filemanager',
-                        width : x * 0.8,
-                        height : y * 0.8,
-                        resizable : 'yes',
-                        close_previous : 'no'
-                    });
-                }
-            };
-            tinymce.init(editor_config);
-		</script>
 	@stop

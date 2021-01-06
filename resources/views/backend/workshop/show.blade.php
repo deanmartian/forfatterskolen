@@ -412,7 +412,7 @@
 	          		</div>
 	          		<div class="form-group">
 	                <label>{{ trans('site.description') }}</label>
-	          			<textarea class="form-control editor" name="description" placeholder="{{ trans('site.description') }}"
+	          			<textarea class="form-control tinymce" name="description" placeholder="{{ trans('site.description') }}"
 								  rows="5">{{ $workshop->description }}</textarea>
 	          		</div>
 	          		<div class="form-group">
@@ -622,7 +622,7 @@
 
 					<div class="form-group">
 						<label>{{ trans('site.message') }}</label>
-						<textarea name="message" id="" cols="30" rows="10" class="form-control editor" required>{{ nl2br($workshop->email_body) }}</textarea>
+						<textarea name="message" id="" cols="30" rows="10" class="form-control tinymce" required>{{ nl2br($workshop->email_body) }}</textarea>
 					</div>
 
 					<div class="form-group">
@@ -741,7 +741,6 @@
 @stop
 
 @section('scripts')
-	<script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
 <script>
 
@@ -882,48 +881,10 @@
         send_email.val('Sending....').attr('disabled', true);
     }
 
-    // tinymce editor config and intitalization
-    var editor_config = {
-        path_absolute: "{{ URL::to('/') }}",
-        height: '15em',
-        selector: '.editor',
-        plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
-            'searchreplace wordcount visualblocks visualchars code fullscreen',
-            'insertdatetime media nonbreaking save table contextmenu directionality',
-            'emoticons template paste textcolor colorpicker textpattern'],
-        toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript superscript | forecolor backcolor | ',
-        toolbar2: 'link | alignleft aligncenter alignright ' +
-        'alignjustify  | removeformat',
-		toolbar3:'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code | print fullscreen',
-        relative_urls: false,
-        file_browser_callback : function(field_name, url, type, win) {
-            var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
-            var y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
-
-            var cmsURL = editor_config.path_absolute + '/laravel-filemanager?field_name=' + field_name;
-            if (type == 'image') {
-                cmsURL = cmsURL + '&type=Images';
-            } else {
-                cmsURL = cmsURL + '&type=Files';
-            }
-
-            tinyMCE.activeEditor.windowManager.open({
-                file : cmsURL,
-                title : 'Filemanager',
-                width : x * 0.8,
-                height : y * 0.8,
-                resizable : 'yes',
-                close_previous : 'no'
-            });
-        }
-    };
-    tinymce.init(editor_config);
-
     function courseChanged() {
         let e = document.getElementById("course-selector"),
             selected = e.options[e.selectedIndex],
 			packages = $(selected).data('packages');
-        console.log(packages);
 
         let packageSelector = $("#package-selected");
         packageSelector.empty();

@@ -74,6 +74,8 @@
         <script src="https://Forfatterskolen.cdn.vooplayer.com/assets/vooplayer.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+        <script src="https://cdn.tiny.cloud/1/58zy6vmujertl448ngd6tq81e40p4een1t8y9lnkq9licymu/tinymce/5/tinymce.min.js"
+                referrerpolicy="origin"></script>
         <script>
             $(".dt-table").DataTable({
                 "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
@@ -86,6 +88,47 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+
+            // tinymce load editor
+            let tiny_editor_config = {
+                path_absolute: "{{ URL::to('/') }}",
+                height: '500',
+                selector: '.tinymce',
+                plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                    'searchreplace wordcount visualblocks visualchars code fullscreen',
+                    'insertdatetime media nonbreaking save table directionality',
+                    'emoticons template paste textpattern'],
+                toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript ' +
+                'superscript | forecolor backcolor | link | alignleft aligncenter alignright ' +
+                'alignjustify  | removeformat',
+                toolbar2: 'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code ' +
+                '| print fullscreen',
+                relative_urls: false,
+                file_picker_callback : function(callback, value, meta) {
+                    let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
+                    let y = window.innerHeight|| document.documentElement.clientHeight|| document.getElementsByTagName('body')[0].clientHeight;
+
+                    let cmsURL = tiny_editor_config.path_absolute + '/laravel-filemanager?editor=tinymce5';
+                    if (meta.filetype == 'image') {
+                        cmsURL = cmsURL + "&type=Images";
+                    } else {
+                        cmsURL = cmsURL + "&type=Files";
+                    }
+
+                    tinyMCE.activeEditor.windowManager.openUrl({
+                        url : cmsURL,
+                        title : 'Filemanager',
+                        width : x * 0.8,
+                        height : y * 0.8,
+                        resizable : "yes",
+                        close_previous : "no",
+                        onMessage: (api, message) => {
+                            callback(message.content);
+                        }
+                    });
+                }
+            };
+            tinymce.init(tiny_editor_config);
 
             function disableSubmit(t) {
                 let submit_btn = $(t).find('[type=submit]');

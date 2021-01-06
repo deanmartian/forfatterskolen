@@ -311,7 +311,7 @@
 					
 					<div class="form-group">
 						<label>{{ trans('site.message') }}</label>
-						<textarea name="message" id="" cols="30" rows="10" class="form-control editor"></textarea>
+						<textarea name="message" id="" cols="30" rows="10" class="form-control tinymce"></textarea>
 					</div>
 
 					<div class="form-group">
@@ -372,7 +372,7 @@
 
 					<div class="form-group">
 						<label>{{ trans('site.message') }}</label>
-						<textarea name="message" id="" cols="30" rows="10" class="form-control editor">{{ App\Settings::courseNotStartedReminder() }}</textarea>
+						<textarea name="message" id="" cols="30" rows="10" class="form-control tinymce">{{ App\Settings::courseNotStartedReminder() }}</textarea>
 					</div>
 
 					<div class="form-group">
@@ -406,7 +406,7 @@
 					</div>
 					<div class="form-group">
 						<label>Message</label>
-						<textarea class="form-control editor" name="email_content" rows="6">{{ App\Settings::courseNotStartedReminder() }}</textarea>
+						<textarea class="form-control tinymce" name="email_content" rows="6">{{ App\Settings::courseNotStartedReminder() }}</textarea>
 					</div>
 					<div class="text-right margin-top">
 						<button type="submit" class="btn btn-primary">Save</button>
@@ -437,7 +437,7 @@
 
 					<div class="form-group">
 						<label>Message for 28 days</label>
-						<textarea name="message_28_days" cols="30" rows="10" class="form-control editor">{{ $expiryReminder ? $expiryReminder->message_28_days : ''}}</textarea>
+						<textarea name="message_28_days" cols="30" rows="10" class="form-control tinymce">{{ $expiryReminder ? $expiryReminder->message_28_days : ''}}</textarea>
 					</div>
 
 					<div class="form-group">
@@ -448,7 +448,7 @@
 
 					<div class="form-group">
 						<label>Message 1 week</label>
-						<textarea name="message_1_week" cols="30" rows="10" class="form-control editor">{{ $expiryReminder ? $expiryReminder->message_1_week : ''}}</textarea>
+						<textarea name="message_1_week" cols="30" rows="10" class="form-control tinymce">{{ $expiryReminder ? $expiryReminder->message_1_week : ''}}</textarea>
 					</div>
 
 					<div class="form-group">
@@ -459,7 +459,7 @@
 
 					<div class="form-group">
 						<label>Message 1 day</label>
-						<textarea name="message_1_day" cols="30" rows="10" class="form-control editor">{{ $expiryReminder ? $expiryReminder->message_1_day : ''}}</textarea>
+						<textarea name="message_1_day" cols="30" rows="10" class="form-control tinymce">{{ $expiryReminder ? $expiryReminder->message_1_day : ''}}</textarea>
 					</div>
 
 					<div class="text-right">
@@ -504,7 +504,6 @@
 @stop
 
 @section('scripts')
-	<script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 	<script>
 		function formSubmitted() {
 		    var send_email = $("#send_email_btn");
@@ -518,42 +517,5 @@
                $("[type=checkbox]").prop('checked', false);
 		   }
 		});
-
-        // tinymce editor config and intitalization
-        let editor_config = {
-            path_absolute: "{{ URL::to('/') }}",
-            height: '15em',
-            selector: '.editor',
-            plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
-                'searchreplace wordcount visualblocks visualchars code fullscreen',
-                'insertdatetime media nonbreaking save table contextmenu directionality',
-                'emoticons template paste textcolor colorpicker textpattern'],
-            toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript superscript | forecolor backcolor | ',
-            toolbar2: 'link | alignleft aligncenter alignright ' +
-            'alignjustify  | removeformat',
-            toolbar3:'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code | print fullscreen',
-            relative_urls: false,
-            file_browser_callback : function(field_name, url, type, win) {
-                let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
-                let y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
-
-                let cmsURL = editor_config.path_absolute + '/laravel-filemanager?field_name=' + field_name;
-                if (type == 'image') {
-                    cmsURL = cmsURL + '&type=Images';
-                } else {
-                    cmsURL = cmsURL + '&type=Files';
-                }
-
-                tinyMCE.activeEditor.windowManager.open({
-                    file : cmsURL,
-                    title : 'Filemanager',
-                    width : x * 0.8,
-                    height : y * 0.8,
-                    resizable : 'yes',
-                    close_previous : 'no'
-                });
-            }
-        };
-        tinymce.init(editor_config);
 	</script>
 @stop

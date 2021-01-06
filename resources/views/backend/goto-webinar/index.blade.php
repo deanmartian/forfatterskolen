@@ -65,7 +65,7 @@
                 <div class="modal-body">
                     <form method="POST" action="{{ route('admin.settings.update.gt_confirmation_email') }}">
                         {{ csrf_field() }}
-                        <textarea class="form-control editor" name="gt_confirmation_email">{{ App\Settings::gtWebinarEmailNotification() }}</textarea>
+                        <textarea class="form-control tinymce" name="gt_confirmation_email">{{ App\Settings::gtWebinarEmailNotification() }}</textarea>
                         <div class="text-right margin-top">
                             <button type="submit" class="btn btn-primary">Save</button>
                         </div>
@@ -85,7 +85,7 @@
                 <div class="modal-body">
                     <form method="POST" action="{{ route('admin.settings.update.gt_reminder_email_template') }}">
                         {{ csrf_field() }}
-                        <textarea class="form-control editor" name="gt_reminder_email_template">{{ App\Settings::gtReminderEmailTemplate() }}</textarea>
+                        <textarea class="form-control tinymce" name="gt_reminder_email_template">{{ App\Settings::gtReminderEmailTemplate() }}</textarea>
                         <div class="text-right margin-top">
                             <button type="submit" class="btn btn-primary">Save</button>
                         </div>
@@ -98,44 +98,7 @@
 @stop
 
 @section('scripts')
-    <script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
     <script>
-        // tinymce
-        let editor_config = {
-            path_absolute: "{{ URL::to('/') }}",
-            height: '20em',
-            selector: '.editor',
-            plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
-                'searchreplace wordcount visualblocks visualchars code fullscreen',
-                'insertdatetime media nonbreaking save table contextmenu directionality',
-                'emoticons template paste textcolor colorpicker textpattern'],
-            toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript superscript | forecolor backcolor | link | alignleft aligncenter alignright ' +
-            'alignjustify  | removeformat',
-            toolbar2: 'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code | print fullscreen',
-            relative_urls: false,
-            file_browser_callback : function(field_name, url, type, win) {
-                let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
-                let y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
-
-                let cmsURL = editor_config.path_absolute + '/laravel-filemanager?field_name=' + field_name;
-                if (type === 'image') {
-                    cmsURL = cmsURL + '&type=Images';
-                } else {
-                    cmsURL = cmsURL + '&type=Files';
-                }
-
-                tinyMCE.activeEditor.windowManager.open({
-                    file : cmsURL,
-                    title : 'Filemanager',
-                    width : x * 0.8,
-                    height : y * 0.8,
-                    resizable : 'yes',
-                    close_previous : 'no'
-                });
-            }
-        };
-        tinymce.init(editor_config);
-
         $(document).ready(function(){
 
             $(".deleteWebinarBtn").click(function(){

@@ -88,7 +88,7 @@
                                 <label class="mb-4">
                                     Skriv en valgfri tekst på 1000 ord (innenfor hvilken som helst sjanger, unntatt sakprosa)
                                 </label>
-                                <textarea class="form-control" name="optional_words" rows="12"
+                                <textarea class="form-control tinymce" name="optional_words" rows="12"
                                           id="optional_words">{{ old('optional_words') }}</textarea>
                             </div>
 
@@ -96,7 +96,7 @@
                                 <label class="mb-4">
                                     Hva er årsaken til at du søker dette kurset (kort begrunnelse)
                                 </label>
-                                <textarea class="form-control" name="reason_for_applying" rows="12"
+                                <textarea class="form-control tinymce" name="reason_for_applying" rows="12"
                                           id="reason_for_applying">{{ old('reason_for_applying') }}</textarea>
                             </div>
 
@@ -104,7 +104,7 @@
                                 <label class="mb-4">
                                     Hva skal til for at du fullfører dette kurset?
                                 </label>
-                                <textarea class="form-control" name="need_in_course" rows="12"
+                                <textarea class="form-control tinymce" name="need_in_course" rows="12"
                                           id="need_in_course">{{ old('need_in_course') }}</textarea>
                             </div>
 
@@ -112,7 +112,7 @@
                                 <label class="mb-4">
                                     Hvilke forventninger har du til deg selv – og oss?
                                 </label>
-                                <textarea class="form-control" name="expectations" rows="12"
+                                <textarea class="form-control tinymce" name="expectations" rows="12"
                                           id="expectations">{{ old('expectations') }}</textarea>
                             </div>
 
@@ -145,38 +145,9 @@
 @stop
 
 @section('scripts')
-    <script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
     <script>
         let max_words = 1000;
-        // tinymce
-        let editor_config = {
-            path_absolute: "{{ URL::to('/') }}",
-            height: '15em',
-            selector: 'textarea',
-            menubar:false,
-            plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
-                'searchreplace wordcount visualblocks visualchars code fullscreen',
-                'insertdatetime media nonbreaking save table contextmenu directionality',
-                'emoticons template paste textcolor colorpicker textpattern'],
-            toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript superscript | forecolor backcolor | link | alignleft aligncenter alignright ' +
-            'alignjustify  | removeformat',
-            relative_urls: false,
-
-            setup: function(ed) {
-                ed.on('keydown', function (e) {
-                    let body = ed.getBody(), text = tinymce.trim(body.innerText || body.textContent);
-                    let words = text.split(/[\w\u2019\'-]+/).length - 1;
-
-                    // allow delete and f5 keys
-                    if (words > max_words && e.keyCode !== 8 && e.keyCode !== 116) {
-                        return tinymce.dom.Event.cancel(e);
-                    }
-                });
-
-            }
-        };
-        tinymce.init(editor_config);
 
         function getStats(id) {
             let body = tinymce.get(id).getBody(), text = tinymce.trim(body.innerText || body.textContent);

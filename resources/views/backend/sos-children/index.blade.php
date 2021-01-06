@@ -111,14 +111,14 @@
                             <label>Video URL</label>
                             <input type="url" class="form-control" name="video_url" required>
                         </div>
-                        @if(!count($primaryVideo))
+                        {{--@if(!count($primaryVideo))--}}
                             <div class="form-group">
                                 <label>Is Primary Video?</label> <br>
                                 <input type="checkbox" data-toggle="toggle" data-on="Yes"
                                        class="for-sale-toggle" data-off="No"
                                       name="is_primary">
                             </div>
-                        @endif
+                        {{--@endif--}}
                         <button type="submit" class="btn btn-primary pull-right margin-top">Save</button>
                         <div class="clearfix"></div>
                     </form>

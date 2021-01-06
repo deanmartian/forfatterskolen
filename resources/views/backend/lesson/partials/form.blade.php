@@ -140,7 +140,6 @@
 <span class="video-text hidden">{{ trans('site.video') }}</span>
 @section('scripts')
 <script src="{{asset('content_tools/content-tools.js')}}"></script>
-<script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 <script src="{{ asset('js/toastr/toastr.min.js') }}"></script>
 <script>
 jQuery(document).ready(function(){
@@ -206,24 +205,27 @@ const methods = {
                 'emoticons template paste textcolor colorpicker textpattern'],
             toolbar1: 'media',
             relative_urls: false,
-            file_browser_callback : function(field_name, url, type, win) {
+            file_picker_callback : function(callback, value, meta) {
                 let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
-                let y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
+                let y = window.innerHeight|| document.documentElement.clientHeight|| document.getElementsByTagName('body')[0].clientHeight;
 
-                let cmsURL = loadEditor_config.path_absolute + '/laravel-filemanager?field_name=' + field_name;
-                if (type == 'image') {
-                    cmsURL = cmsURL + '&type=Images';
+                let cmsURL = tiny_editor_config.path_absolute + '/laravel-filemanager?editor=tinymce5';
+                if (meta.filetype == 'image') {
+                    cmsURL = cmsURL + "&type=Images";
                 } else {
-                    cmsURL = cmsURL + '&type=Files';
+                    cmsURL = cmsURL + "&type=Files";
                 }
 
-                tinyMCE.activeEditor.windowManager.open({
-                    file : cmsURL,
+                tinyMCE.activeEditor.windowManager.openUrl({
+                    url : cmsURL,
                     title : 'Filemanager',
                     width : x * 0.8,
                     height : y * 0.8,
-                    resizable : 'yes',
-                    close_previous : 'no'
+                    resizable : "yes",
+                    close_previous : "no",
+                    onMessage: (api, message) => {
+                        callback(message.content);
+                    }
                 });
             }
         };

@@ -456,7 +456,7 @@
 			<div class="modal-body">
 				<form method="POST" action="{{ route('admin.settings.update.terms') }}">
 					{{ csrf_field() }}
-					<textarea class="form-control ckeditor" name="terms">{{ App\Settings::terms() }}</textarea>
+					<textarea class="form-control tinymce" name="terms">{{ App\Settings::terms() }}</textarea>
 					<div class="text-right margin-top">
 						<button type="submit" class="btn btn-primary">Save</button>
 					</div>
@@ -476,7 +476,7 @@
 			<div class="modal-body">
 				<form method="POST" action="{{ route('admin.settings.update.other-terms') }}">
 					{{ csrf_field() }}
-					<textarea class="form-control ckeditor" name="terms"></textarea>
+					<textarea class="form-control tinymce" name="terms" id="termsEditor"></textarea>
 					<input type="hidden" name="terms_type">
 					<div class="text-right margin-top">
 						<button type="submit" class="btn btn-primary">Save</button>
@@ -631,47 +631,10 @@
 @stop
 
 @section('scripts')
-	<script type="text/javascript" src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
 	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
 
 	let other_terms_tab = '{{ Session::has('terms_tab') ? Session::get('terms_tab'): 'course' }}';
-
-    // tinymce
-    var editor_config = {
-        path_absolute: "{{ URL::to('/') }}",
-        height: '25em',
-        selector: '.ckeditor',
-        plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
-            'searchreplace wordcount visualblocks visualchars code fullscreen',
-            'insertdatetime media nonbreaking save table contextmenu directionality',
-            'emoticons template paste textcolor colorpicker textpattern'],
-        toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript superscript | forecolor backcolor | link | alignleft aligncenter alignright ' +
-        'alignjustify  | removeformat',
-        toolbar2: 'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code | print fullscreen',
-        relative_urls: false,
-        file_browser_callback : function(field_name, url, type, win) {
-            var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
-            var y = window.innerHeight || document.documentElement.clientHeight || document.getElementsByTagName('body')[0].clientHeight;
-
-            var cmsURL = editor_config.path_absolute + '/laravel-filemanager?field_name=' + field_name;
-            if (type == 'image') {
-                cmsURL = cmsURL + '&type=Images';
-            } else {
-                cmsURL = cmsURL + '&type=Files';
-            }
-
-            tinyMCE.activeEditor.windowManager.open({
-                file : cmsURL,
-                title : 'Filemanager',
-                width : x * 0.8,
-                height : y * 0.8,
-                resizable : 'yes',
-                close_previous : 'no'
-            });
-        }
-    };
-    tinymce.init(editor_config);
 
 	$('.editAdminBtn').click(function(){
 		var form = $('#editAdminModal form');
@@ -749,7 +712,7 @@
         form.find('[name=terms_type]').val(terms_type);
 
         // set the value for textarea editor
-        tinyMCE.activeEditor.setContent(terms);
+        tinymce.get('termsEditor').setContent(terms);
 	});
 
     $(".btnEditShopAdvisory").click(function(){
