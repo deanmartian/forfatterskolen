@@ -554,6 +554,8 @@ Route::group([
         Route::post('learner/{learner_id}/add-email', 'LearnerController@addSecondaryEmail')->name('admin.learner.add-email');
         Route::post('learner/{email_id}/set-primary-email', 'LearnerController@setPrimaryEmail')->name('admin.learner.set-primary-email');
         Route::delete('learner/{email_id}/delete-secondary-email', 'LearnerController@removeSecondaryEmail')->name('admin.learner.remove-secondary-email');
+        Route::post('learner/{learner_id}/webinar-registrant/{registrant_id}/send-email', 'LearnerController@sendWebinarRegistrantEmail')
+            ->name('admin.learner.send-webinar-registrant-email');
 
         Route::post('learner/{learner_id}/private-message', 'LearnerController@addPrivateMessage')->name('admin.learner.add-private-message');
         Route::put('learner/{learner_id}/private-message/{id}', 'LearnerController@updatePrivateMessage')->name('admin.learner.update-private-message');

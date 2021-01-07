@@ -1304,7 +1304,9 @@
 						<thead>
 						<tr>
 							<th>{{ trans_choice('site.webinars', 1) }}</th>
-							<th>Join Url</th>
+							<th width="200">Join Url</th>
+							<th>Start Date</th>
+							<th></th>
 						</tr>
 						</thead>
 						<tbody>
@@ -1319,6 +1321,15 @@
 									<a href="{{ $registeredWebinar->join_url }}">
 										{{ $registeredWebinar->join_url }}
 									</a>
+								</td>
+								<td>{{ $registeredWebinar->webinar->start_date }}</td>
+								<td>
+									<button class="btn btn-primary btn-xs registeredWebinarEmailBtn" data-toggle="modal"
+											data-target="#registeredWebinarEmailModal"
+											data-action="{{ route('admin.learner.send-webinar-registrant-email',
+											[$learner->id, $registeredWebinar->id]) }}">
+										{{ trans('site.send-email') }}
+									</button>
 								</td>
 							</tr>
 						@endforeach
@@ -3077,6 +3088,51 @@
 	</div>
 </div>
 <!--end email modal-->
+
+<div id="registeredWebinarEmailModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.send-email') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="">
+					{{csrf_field()}}
+
+                    <?php
+                    	$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Webinar-reminder');
+                    ?>
+
+					<div class="form-group">
+						<label>{{ trans('site.subject') }}</label>
+						<input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}"
+							   required>
+					</div>
+
+					<div class="form-group">
+						<label>From</label>
+						<input type="email" class="form-control" placeholder="Email" name="from_email"
+							   value="{{ $emailTemplate->from_email }}">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.message') }}</label>
+						<textarea name="message" cols="30" rows="10"
+								  class="form-control tinymce">{!! $emailTemplate->email_content !!}</textarea>
+					</div>
+
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">
+							{{ trans('site.send') }}
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!--end email modal-->
 @stop
 
 @section('scripts')
@@ -3455,6 +3511,13 @@
             }
         });
 
+    });
+
+    $(".registeredWebinarEmailBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#registeredWebinarEmailModal');
+        modal.find('form').attr('action', action);
+        console.log(action);
     });
 
 	function updateOtherServiceFields(type) {

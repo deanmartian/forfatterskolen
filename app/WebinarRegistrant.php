@@ -13,4 +13,9 @@ class WebinarRegistrant extends Model {
     {
         return $this->belongsTo('App\Webinar');
     }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
 }

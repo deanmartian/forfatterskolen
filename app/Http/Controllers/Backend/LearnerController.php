@@ -138,6 +138,7 @@ class LearnerController extends Controller
         $learnerShopManuscriptsTaken = $learner->shopManuscriptsTaken->pluck('id');
         $learnerCoursesTaken = $learner->coursesTaken->pluck('id');
         $learnerInvoices = $learner->invoices->pluck('id');
+        $registeredWebinarLists = $learner->registeredWebinars->pluck('id');
         $registeredWebinars = $learner->registeredWebinars()->latest()->get();
 
         $emailHistories = EmailHistory::where(function($query) use ($learnerAssignmentManuscripts){
@@ -151,6 +152,10 @@ class LearnerController extends Controller
             ->orWhere(function($query) use ($learnerCoursesTaken){
                 $query->where('parent', 'LIKE', 'courses-taken%');
                 $query->whereIn('parent_id', $learnerCoursesTaken);
+            })
+            ->orWhere(function($query) use ($registeredWebinarLists){
+                $query->where('parent', '=', 'webinar-registrant');
+                $query->whereIn('parent_id', $registeredWebinarLists);
             })
             ->orWhere(function($query) use ($learner){
                 $query->where('parent', '=', 'learner');
@@ -1062,6 +1067,27 @@ class LearnerController extends Controller
             'shop-manuscripts-taken', $request->shop_manuscripts_taken_id));
 
         return redirect()->back();
+    }
+
+    /**
+     * @param $learner_id
+     * @param $registrant_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function sendWebinarRegistrantEmail( $learner_id, $registrant_id, Request $request )
+    {
+        $learner    = User::findOrFail($learner_id);
+        $to         = $learner->email;
+        $from       = $request->from_email;
+        $subject    = $request->subject;
+        $message    = $request->message;
+
+        $message = AdminHelpers::formatEmailContent($message, '', $learner->first_name, '');
+        dispatch(new AddMailToQueueJob($to, $subject, $message, $from, null, null,
+            'webinar-registrant', $registrant_id));
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Email sent.'),
+            'alert_type' => 'success', 'not-former-courses' => true]);
     }
 
     public function addNotes($id, Request $request)
