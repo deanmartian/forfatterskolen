@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Assignment;
 use App\AssignmentGroupLearner;
+use App\AssignmentManuscript;
 use App\CoachingTimerManuscript;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
@@ -1856,9 +1857,13 @@ class LearnerController extends Controller
         if (!$learner || !$assignment) {
             return redirect()->to('/assignment?tab=learner');
         }
+        $manuscript = AssignmentManuscript::where([
+            'user_id' => $learner_id,
+            'assignment_id' => $assignment_id
+        ])->first();
         $editors = \App\User::where('role', 1)->get();
 
-        return view('backend.learner.assignment', compact('assignment', 'learner', 'editors'));
+        return view('backend.learner.assignment', compact('assignment', 'learner', 'editors', 'manuscript'));
     }
 
     /**

@@ -492,12 +492,14 @@
                                     <?php
                                         $selected = '';
 
-                                        if ($manuscript->user->preferredEditor
-                                            && $manuscript->user->preferredEditor->editor_id === $editor->id) {
+                                        if ($manuscript) {
+                                            if ($manuscript->user->preferredEditor
+                                                && $manuscript->user->preferredEditor->editor_id === $editor->id) {
                                                 $selected = 'selected';
-                                        } else {
-                                            if ($manuscript->editor_id === $editor->id) {
-                                                $selected = 'selected';
+                                            } else {
+                                                if ($manuscript->editor_id === $editor->id) {
+                                                    $selected = 'selected';
+                                                }
                                             }
                                         }
                                     ?>
@@ -507,7 +509,7 @@
                                 @endforeach
                             </select>
 
-                            @if($manuscript->user->preferredEditor)
+                            @if($manuscript && $manuscript->user->preferredEditor)
                                 <div class="hidden-container">
                                     <label>
                                         {{ $manuscript->user->preferredEditor->editor->full_name }}
@@ -707,7 +709,7 @@
             let editor = $(this).data('editor');
 
             form.attr('action', action);
-            @if(!$manuscript->user->preferredEditor)
+            @if($manuscript && !$manuscript->user->preferredEditor)
                 form.find("select[name=editor_id]").val(editor);
             @endif
         });
@@ -766,7 +768,7 @@
         });
 
         $(document).ready(function() {
-            @if($manuscript->user->preferredEditor )
+            @if($manuscript && $manuscript->user->preferredEditor )
                 $("#assignEditorModal").find(".select2").hide();
             @endif
         });
