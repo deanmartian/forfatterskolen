@@ -107,7 +107,6 @@ class WebinarEmailOutCommand extends Command
                 dispatch(new AddMailToQueueJob($user_email, $subject, $message, 'postmail@forfatterskolen.no',
                     null, null, 'courses-taken', $courseTaken->id));
                 CronLog::create(['activity' => 'WebinarEmailOutCommand CRON send email to '.$user_email]);
-                break;
             }
         }
         CronLog::create(['activity' => 'WebinarEmailOutCommand CRON done running.']);
