@@ -563,7 +563,7 @@ class FrontendHelpers
     /**
      * Type of assignment uploaded
      * @param null $id
-     * @return array
+     * @return array|string
      */
     public static function assignmentType($id = NULL)
     {

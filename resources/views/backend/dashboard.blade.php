@@ -147,6 +147,7 @@
 							<thead>
 							<tr>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+								<th>{{ trans('site.genre') }}</th>
 								<th>{{ trans_choice('site.learners', 1) }}</th>
 								<th>Locked</th>
 								<th>{{ trans('site.assigned-to') }}</th>
@@ -163,6 +164,9 @@
 											@else
 												{{$shopManuscript->shop_manuscript->title}}
 											@endif
+										</td>
+										<td>
+											{{ \App\Http\FrontendHelpers::assignmentType($shopManuscript->genre) }}
 										</td>
 										<td><a href="{{ route('admin.learner.show', $shopManuscript->user->id) }}">{{ $shopManuscript->user->full_name }}</a></td>
 										<td>
