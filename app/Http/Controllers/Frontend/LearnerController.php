@@ -428,7 +428,10 @@ class LearnerController extends Controller
             $webRegister->join_url = $decoded_response->conference_url;
             $webRegister->save();
         } else {
-            $message = $decoded_response->error;
+            $message = 'Error! Request cannot be processed.';
+            if (isset($decoded_response->error)) {
+                $message = $decoded_response->error;
+            }
             return redirect()->back()->withInput()->with([
                 'errors' => AdminHelpers::createMessageBag($message)
             ]);
