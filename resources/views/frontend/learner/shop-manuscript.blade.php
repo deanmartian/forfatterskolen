@@ -66,7 +66,7 @@
 										@if (!$shopManuscriptTaken->is_manuscript_locked)
 											<button class="btn btn-success updateManuscriptBtn" type="button" data-toggle="modal"
 													data-target="#updateUploadedManuscriptModal" data-fields="{{ json_encode($shopManuscriptTaken) }}"
-													data-action="{{ route('learner.shop-manuscript.update-uploaded-manuscript', $shopManuscriptTaken->id) }}"><i class="fa fa-pencil"></i></button>
+													data-action="{{ route('learner.shop-manuscript.update-uploaded-manuscript', $shopManuscriptTaken->id) }}"><i class="fa fa-pen"></i></button>
 											<button class="btn btn-danger deleteManuscriptBtn" type="button" data-toggle="modal"
 													data-target="#deleteUploadedManuscriptModal"
 													data-action="{{ route('learner.shop-manuscript.delete-uploaded-manuscript', $shopManuscriptTaken->id) }}"><i class="fa fa-trash"></i></button>
