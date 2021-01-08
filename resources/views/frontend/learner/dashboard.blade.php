@@ -332,10 +332,23 @@
                                 <div class="image-container" data-bg="https://www.forfatterskolen.no/{{ $webinar->image }}">
                                 </div>
                             </a>
-                            <div class="details-container">
+                            <div class="details-container learner-webinar-page text-left">
+                                <div class="webinar-header">
+                                    <h4>
+                                        <i class="calendar"></i>
+                                        {{ str_replace(['_date_', '_time_'],
+                                        [\Carbon\Carbon::parse($webinar->start_date)->format('d.m.Y'),
+                                        \Carbon\Carbon::parse($webinar->start_date)->format('H:i')],
+                                        trans('site.front.our-course.show.start-date')) }}
+                                    </h4>
+                                </div>
                                 <h3>
                                     {{ $webinar->title }}
                                 </h3>
+
+                                <p class="note-color my-4">
+                                    {{ $webinar->description }}
+                                </p>
                             </div>
                             <div>
                                 @if( \App\Http\FrontendHelpers::isWebinarAvailable($webinar) )
@@ -410,7 +423,7 @@
                                                                     data-toggle="modal" data-target="#editManuscriptModal"
                                                                     data-action="{{ route('learner.assignment.replace_manuscript',
                                                                     $manuscript->id) }}">
-                                                                <i class="fa fa-pencil"></i>
+                                                                <i class="fa fa-pen"></i>
                                                             </button>
                                                             <button type="button" class="btn btn-danger deleteManuscriptBtn"
                                                                     data-toggle="modal" data-target="#deleteManuscriptModal"
