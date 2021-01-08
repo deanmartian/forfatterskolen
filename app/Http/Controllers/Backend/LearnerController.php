@@ -1010,18 +1010,19 @@ class LearnerController extends Controller
             $redirectLabel      =  FrontendHelpers::getTextBetween($request->message, "[redirect_label]", "[/redirect_label]");
             $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
             $search_string = [
-                '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]'
+                '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]',
+                ':firstname'
             ];
             $replace_string = [
-                $redirectLink, ''
+                $redirectLink, '', $learner->first_name
             ];
             $message = str_replace($search_string, $replace_string, $request->message);
         } else {
             $search_string = [
-                '[login_link]', '[username]', '[password]'
+                '[login_link]', '[username]', '[password]', ':firstname'
             ];
             $replace_string = [
-                $loginLink, $email, $password
+                $loginLink, $email, $password, $learner->first_name
             ];
             $message = str_replace($search_string, $replace_string, $request->message);
         }

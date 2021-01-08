@@ -1128,6 +1128,11 @@ class AdminHelpers
             ->first();
     }
 
+    public static function learnerEmailTemplate()
+    {
+        return EmailTemplate::where('page_name', 'like', 'Send Email to Learner%')->get();
+    }
+
     /**
      * Generate access token, used for every gt webinar request using oauth v2
      * @return mixed

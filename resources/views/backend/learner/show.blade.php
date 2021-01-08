@@ -2267,25 +2267,35 @@
 					  enctype="multipart/form-data">
 					{{csrf_field()}}
 
-					<?php
-						$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Send Email to Learner');
-					?>
+					<div class="form-group">
+						<label>
+							Email Template
+						</label>
+						<select class="form-control select2 template">
+							<option value="" selected disabled>- Search Template -</option>
+							@foreach(\App\Http\AdminHelpers::learnerEmailTemplate() as $template)
+								<option value="{{$template->id}}" data-fields="{{ json_encode($template) }}">
+									{{$template->page_name}}
+								</option>
+							@endforeach
+						</select>
+					</div>
 
 					<div class="form-group">
 						<label>{{ trans('site.subject') }}</label>
-						<input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}" required>
+						<input type="text" class="form-control" name="subject" required>
 					</div>
 
 					<div class="form-group">
 						<label>{{ trans('site.message') }}</label>
 						<textarea name="message" cols="30" rows="10"
-								  class="form-control tinymce">{!! $emailTemplate->email_content !!}</textarea>
+								  class="form-control tinymce" id="sendEmailEditor"></textarea>
 					</div>
 
 					<div class="form-group">
 						<label style="display: block">From</label>
 						<input type="text" class="form-control" placeholder="Name" style="width: 49%; display: inline;"
-							   name="from_name" value="{{ $emailTemplate->from_email }}">
+							   name="from_name">
 						<input type="email" class="form-control" placeholder="Email" style="width: 49%; display: inline;"
 							   name="from_email">
 					</div>
@@ -3517,8 +3527,18 @@
         let action = $(this).data('action');
         let modal = $('#registeredWebinarEmailModal');
         modal.find('form').attr('action', action);
-        console.log(action);
     });
+
+    $("select.template").change(function() {
+        let template = $(this).children("option:selected");
+        let fields = template.data('fields');
+        let modal = $("#sendEmailModal");
+        let form = modal.find('form');
+
+        form.find('[name=subject]').val(fields.subject);
+        tinymce.get('sendEmailEditor').setContent(fields.email_content);
+        form.find('[name=from_email]').val(fields.from_email);
+	});
 
 	function updateOtherServiceFields(type) {
 	    let modal = $("#addOtherServiceModal");
