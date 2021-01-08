@@ -71,12 +71,12 @@
 											>
 												<i class="fa fa-pencil"></i></a>
 
-											{{--<a class="btn btn-xs btn-danger deleteWebinarBtn"
+											<a class="btn btn-xs btn-danger deleteWebinarBtn"
 											   data-toggle="modal"
 											   data-target="#deleteWebinarModal"
 											   data-action="{{ route('admin.webinar.destroy', $webinar->id) }}"
 											   data-title="{{ $webinar->title }}"
-											><i class="fa fa-trash"></i></a>--}}
+											><i class="fa fa-trash"></i></a>
 											<a class="btn btn-xs btn-warning hideWebinarBtn"
 											   data-toggle="modal"
 											   data-target="#hideWebinarModal"
