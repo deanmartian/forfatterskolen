@@ -41,7 +41,24 @@ class EmailHistory extends Model
 
         $learner_id = '';
         $full_name = $this->attributes['recipient'];
-        
+
+        switch ($parent) {
+            case 'invoice':
+                $invoice = Invoice::find($parent_id);
+                if ($invoice) {
+                    $learner_id = $invoice->user->id;
+                    $full_name = $invoice->user->full_name;
+                }
+                break;
+            default:
+                $learner = User::find($parent_id);
+                if ($learner) {
+                    $learner_id = $learner->id;
+                    $full_name = $learner->full_name;
+                }
+                break;
+        }
+
         if (strpos($parent, 'shop-manuscripts-taken') !== false ) {
             $shopManuscript = ShopManuscriptsTaken::with('user')->where('id', $parent_id)->first();
             if($shopManuscript) {
@@ -72,23 +89,6 @@ class EmailHistory extends Model
                 $learner_id = $webinarRegistrant->user_id;
                 $full_name = $webinarRegistrant->user->full_name;
             }
-        }
-
-        switch ($parent) {
-            case 'invoice':
-                $invoice = Invoice::find($parent_id);
-                if ($invoice) {
-                    $learner_id = $invoice->user->id;
-                    $full_name = $invoice->user->full_name;
-                }
-            break;
-            default:
-                $learner = User::find($parent_id);
-                if ($learner) {
-                    $learner_id = $learner->id;
-                    $full_name = $learner->full_name;
-                }
-            break;
         }
 
         return [
