@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\CronLog;
+use App\Http\AdminHelpers;
 use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
 use App\User;
@@ -48,26 +49,14 @@ class DontAvailAnythingCommand extends Command
             // check if the user don't have workshop, manuscript and courses taken
             if ($user->workshopsTaken->count() == 0 && $user->shopManuscriptsTaken->count() == 0 && count($user->coursesTaken) == 0
             && $user->comeptitionApplication->count() === 0) {
-                $from     = 'postmail@forfatterskolen.no';
-                $headers = "From: Forfatterskolen<".$from.">\r\n";
-                $headers .= "MIME-Version: 1.0\r\n";
-                $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-                $subject = "Vi ser at du har registrert deg på Forfatterskolen";
-                $message = "Hei, <br/><br/> Vi ser at du har registrert deg på nettsiden vår (www.forfatterskolen.no). Ønsker du et kurs, 
-                eller en annen tjeneste, og trenger vår hjelp? Gi i så fall en lyd, så vil vi gi deg den assistansen du trenger. <br/><br/>
-                Vi ønsker deg en god dag! <br/><br/> Hilsen oss i Forfatterskolen";
 
                 $to = $user->email;
-                $emailData = [
-                    'email_subject' => $subject,
-                    'email_message' => $message,
-                    'from_name'     => NULL,
-                    'from_email'    => $from,
-                    'attach_file'   => NULL
-                ];
-                //\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
-                dispatch(new AddMailToQueueJob($to, $subject, $message, $from, null, null,
-                    'learner', $user->id));
+
+                $emailTemplate = AdminHelpers::emailTemplate('Do not avail anything');
+                $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $to,
+                    $user->first_name, '');
+                dispatch(new AddMailToQueueJob($to, $emailTemplate->subject, $emailContent,
+                    $emailTemplate->from_email, '', null, 'learner', $user->id));
 
                 CronLog::create(['activity' => 'DontAvailAnything CRON sent email to '.$user->email]);
             }
