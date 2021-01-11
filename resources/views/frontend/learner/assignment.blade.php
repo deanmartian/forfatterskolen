@@ -96,7 +96,7 @@
 												<button type="button" class="btn btn-sm btn-info editManuscriptBtn"
 														data-toggle="modal" data-target="#editManuscriptModal"
 														data-action="{{ route('learner.assignment.replace_manuscript', $manuscript->id) }}">
-													<i class="fa fa-pencil"></i>
+													<i class="fa fa-pen"></i>
 												</button>
 												<button type="button" class="btn btn-sm btn-danger deleteManuscriptBtn"
 														data-toggle="modal" data-target="#deleteManuscriptModal"

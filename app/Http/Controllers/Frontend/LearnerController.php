@@ -15,6 +15,7 @@ use App\Genre;
 use App\Http\AdminHelpers;
 use App\Http\Middleware\Admin;
 use App\Http\Requests\AddWritingGroupRequest;
+use App\Jobs\AddMailToQueueJob;
 use App\Jobs\CourseOrderJob;
 use App\LessonContent;
 use App\LessonDocuments;
@@ -811,7 +812,7 @@ class LearnerController extends Controller
                 $join_group = isset($request->join_group) ? 1 : 0;
             }
 
-            AssignmentManuscript::create([
+            $submittedManuscript = AssignmentManuscript::create([
                 'assignment_id' => $assignment->id,
                 'user_id' => Auth::user()->id,
                 'filename' => '/'.$destinationPath.end($expFileName),
@@ -837,7 +838,15 @@ class LearnerController extends Controller
             // notify user
             $user_email = Auth::user()->email;
             $confirm_email['email_message'] = 'Oppgaven din er levert, har vi problemer med filen vil vi ta kontakt med med deg.';
-            Mail::to($user_email)->queue(new SendEmailMessageOnly($confirm_email));
+            //Mail::to($user_email)->queue(new SendEmailMessageOnly($confirm_email));
+
+            $emailTemplate = AdminHelpers::emailTemplate('Assignment Submitted');
+            $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user_email,
+                Auth::user()->first_name, '');
+
+            dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
+                $emailTemplate->from_email, null, null, 'assignment-manuscripts',
+                $submittedManuscript->id));
 
             return redirect()->back()->with('success', true);
         endif;
@@ -2481,7 +2490,15 @@ class LearnerController extends Controller
                 // notify user
                 $user_email = Auth::user()->email;
                 $confirm_email['email_message'] = 'Oppgaven din er levert, har vi problemer med filen vil vi ta kontakt med med deg.';
-                Mail::to($user_email)->queue(new SendEmailMessageOnly($confirm_email));
+                //Mail::to($user_email)->queue(new SendEmailMessageOnly($confirm_email));
+
+                $emailTemplate = AdminHelpers::emailTemplate('Assignment Submitted');
+                $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user_email,
+                    Auth::user()->first_name, '');
+
+                dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
+                    $emailTemplate->from_email, null, null, 'assignment-manuscripts',
+                    $assignmentManuscript->id));
             }
         }
 
