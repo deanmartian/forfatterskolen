@@ -512,8 +512,13 @@ class AssignmentController extends Controller
                 $emailData['from_email'] = $from;
                 $emailData['attach_file'] = NULL;
 
+                $emailTemplate = AdminHelpers::emailTemplate('Text Number');
+                $message =  AdminHelpers::formatEmailContent($emailTemplate->email_content, $userEmail,
+                    $manuscript->user->first_name, '');
+                $message = str_replace(':text_number', $count, $message);
+
                 //\Mail::to($userEmail)->queue(new SubjectBodyEmail($emailData));
-                dispatch(new AddMailToQueueJob($userEmail, $subject, $message, $from, null, null,
+                dispatch(new AddMailToQueueJob($userEmail, $emailTemplate->subject, $message, $from, null, null,
                     'assignment-manuscripts', $manuscript->id));
                 $count++;
             }
