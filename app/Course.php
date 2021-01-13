@@ -72,6 +72,7 @@ class Course extends Model
                 $query->where('available_date','<=', Carbon::now());
                 $query->orWhereNull('available_date');
             })
+            ->whereNull('parent')
             ->orderBy('created_at', 'desc');
     }
 
