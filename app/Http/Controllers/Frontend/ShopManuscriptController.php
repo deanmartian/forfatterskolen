@@ -124,26 +124,28 @@ class ShopManuscriptController extends Controller
             endif;
 
             $time = time();
-            $destinationPath = 'storage/shop-manuscripts/';
-            $fileName = $time.'.'.$extension; // rename document
-            $request->manuscript->move($destinationPath, $fileName);
+            $destinationPath = 'storage/shop-manuscripts';
+            $filePath = AdminHelpers::checkFileName($destinationPath, Auth::user()->id, $extension); // rename document
+            $expFileName = explode('/', $filePath);
+
+            $request->manuscript->move($destinationPath, end($expFileName));
             if($extension == "pdf") :
-              $pdf  =  new \PdfToText ( $destinationPath.$fileName ) ;
+              $pdf  =  new \PdfToText ( $filePath ) ;
               $pdf_content = $pdf->Text; 
               $word_count = FrontendHelpers::get_num_of_words($pdf_content);
             elseif($extension == "docx") :
-              $docObj = new \Docx2Text($destinationPath.$fileName);
+              $docObj = new \Docx2Text($filePath);
               $docText= $docObj->convertToText();
               $word_count = FrontendHelpers::get_num_of_words($docText);
             elseif($extension == "doc") :
-                $docText = $this->readWord($destinationPath.$fileName);
+                $docText = $this->readWord($filePath);
                 $word_count = FrontendHelpers::get_num_of_words($docText);
             elseif($extension == "odt") :
-              $doc = odt2text($destinationPath.$fileName);
+              $doc = odt2text($filePath);
               $word_count = FrontendHelpers::get_num_of_words($doc);
             endif;
             $word_count = (int) $word_count;
-            $shopManuscriptTaken->file = '/'.$destinationPath.$fileName;
+            $shopManuscriptTaken->file = '/'.$filePath;
             $shopManuscriptTaken->words = $word_count;
 
             // Admin notification
