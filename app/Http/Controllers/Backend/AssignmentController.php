@@ -602,7 +602,8 @@ class AssignmentController extends Controller
                 $email_content = AdminHelpers::formatEmailContent($emailTemplate->email_content, $to, $assignmentManuscript->user->first_name, '');
                 $email_content = str_replace('_date_',$replace_string, $email_content);
 
-                AdminHelpers::queue_mail($to, $subject, $email_content, $from_email);
+                dispatch(new AddMailToQueueJob($to, $subject, $email_content, $from_email, null, null,
+                    'assignment-manuscripts', $assignmentManuscript->id));
             }
 
             $assignmentManuscript->save();
