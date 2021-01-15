@@ -595,11 +595,12 @@ class AssignmentController extends Controller
                 $assignmentManuscript->expected_finish = $request->expected_finish;
 
                 $emailTemplate = AdminHelpers::emailTemplate('Assignment Manuscript Expected Finish');
-                $replace_string = \Carbon\Carbon::parse($emailTemplate->expected_finish)->format('d.m.Y');
-                $email_content = str_replace('_date_',$replace_string, $emailTemplate->email_content);
+                $replace_string = \Carbon\Carbon::parse($assignmentManuscript->expected_finish)->format('d.m.Y');
                 $subject = $emailTemplate->subject;
                 $from_email = $emailTemplate->from_email;
                 $to = $assignmentManuscript->user->email;
+                $email_content = AdminHelpers::formatEmailContent($emailTemplate->email_content, $to, $assignmentManuscript->user->first_name, '');
+                $email_content = str_replace('_date_',$replace_string, $email_content);
 
                 AdminHelpers::queue_mail($to, $subject, $email_content, $from_email);
             }
