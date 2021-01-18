@@ -758,8 +758,8 @@ class AssignmentController extends Controller
             $to             = $assignmentManuscript->user->email;
             $first_name     = $assignmentManuscript->user->first_name;
 
-            $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject,
-                $request->from_email, $assignmentManuscript->id);
+            /*$this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject,
+                $request->from_email, $assignmentManuscript->id);*/
 
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback sent successfully.'),
                 'alert_type' => 'success']);
@@ -818,8 +818,8 @@ class AssignmentController extends Controller
             $to             = $assignmentManuscript->user->email;
             $first_name     = $assignmentManuscript->user->first_name;
 
-            $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject, $request->from_email,
-                $manuscript_id);
+            /*$this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject, $request->from_email,
+                $manuscript_id);*/
 
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback sent successfully.'),
                 'alert_type' => 'success']);
