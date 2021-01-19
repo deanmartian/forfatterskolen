@@ -271,9 +271,10 @@ class InvoiceController extends Controller
     {
         $learner = User::find($request->learner_id);
         $paymentMode = PaymentMode::findOrFail(3);
-        $paymentPlan = PaymentPlan::findOrFail($request->payment_plan_id);
+        $paymentPlan = PaymentPlan::find($request->payment_plan_id);
         $payment_mode = 'Bankoverføring';
-        $payment_plan = $paymentPlan->plan;
+        $payment_plan = (int)$request->payment_plan_id === 10 ? '24 måneder' : $paymentPlan->plan;
+        $divisor = (int)$request->payment_plan_id === 10 ? 24 : $paymentPlan->division;
 
         $inputtedComment = $request->comment;
         $comment = '('.$inputtedComment.' ';
@@ -286,11 +287,11 @@ class InvoiceController extends Controller
         $dueDate = $request->issue_date ?: date("Y-m-d");
 
         if (isset($request->split_invoice) && $request->split_invoice) {
-            $division   = $paymentPlan->division * 100; // multiply the split count to get the correct value
+            $division   = $divisor * 100; // multiply the split count to get the correct value
             $price      = round($price/$division, 2); // round the value to the nearest tenths
             $price      = (int)$price*100;
 
-            for ($i=1; $i <= $paymentPlan->division; $i++ ) { // loop based on the split count
+            for ($i=1; $i <= $divisor; $i++ ) { // loop based on the split count
                 $dueDate =  $request->issue_date ?: date("Y-m-d");
                 $dueDate =  Carbon::parse($dueDate)->addMonth($i)->format('Y-m-d'); // due date on every month on the same day
                 $invoice_fields = [

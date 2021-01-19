@@ -1867,6 +1867,15 @@
 								<label>{{$paymentPlan->plan}} </label>
 							</div>
 						@endforeach
+
+						<div class="col-sm-6">
+							<input type="radio" @if($paymentPlan->plan == 'Full Payment') checked @endif
+							name="payment_plan_id" value="10" data-plan="{{trim('24 måneder')}}"
+								   id="24 måneder" required onchange="payment_plan_change(this)"
+								   data-plan-id="10">
+							<label>24 måneder</label>
+						</div>
+						<div class="clearfix"></div>
 					</div>
 
 					<div class="form-group">
