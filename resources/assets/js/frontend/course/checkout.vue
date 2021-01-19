@@ -62,7 +62,7 @@
                             </td>
                             <td width="30%">
 
-                                <h5 style="font-weight: 400">{{ trans('site.checkout.package') }}:</h5>
+                                <h3>{{ trans('site.front.form.course-package') }}:</h3>
                                 <div class="package-option custom-radio" v-for="(pkg, index) in packages"
                                      :key="pkg.id">
                                     <input type="radio" name="package_id" :id="pkg.variation"
