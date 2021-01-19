@@ -20,6 +20,14 @@ Vue.prototype.trans = (string, args) => {
     return value;
 };
 
+import vueDebounce from 'vue-debounce'
+import toasted from './toasted'
+import Vue2Filters from 'vue2-filters'
+import './global'
+
+Vue.use(vueDebounce);
+Vue.use(Vue2Filters);
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -28,6 +36,7 @@ Vue.prototype.trans = (string, args) => {
 
 Vue.component('example', require('./components/Example.vue'));
 Vue.component('take-survey', require('./components/TakeSurvey.vue'));
+Vue.component('course-checkout', require('./frontend/course/checkout.vue'));
 
 new Vue({
     el: '#app-container'

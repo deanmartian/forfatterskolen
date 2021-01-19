@@ -67,6 +67,8 @@
         @yield('metas')
 
         <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}" />
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
+              integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
         @yield('styles')
 
         <!-- ConnectRetarget PowerPixel -->
@@ -196,7 +198,7 @@
 
         @include('frontend.partials.scripts')
         <script src="https://Forfatterskolen.cdn.vooplayer.com/assets/vooplayer.js" defer></script>
-        <script src="/js/lang.js?v="{{ time() }} async></script>
+        <script src="/js/lang.js"></script>
         <script async>
             $.ajaxSetup({
                 headers: {

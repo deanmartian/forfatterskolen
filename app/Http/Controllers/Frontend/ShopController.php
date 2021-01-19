@@ -13,6 +13,7 @@ use App\Mail\SubjectBodyEmail;
 use App\Order;
 use App\Paypal;
 use App\Repositories\VippsRepository;
+use App\Services\CourseService;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -40,6 +41,19 @@ use PhpOffice\PhpWord\SimpleType\DocProtect;
 class ShopController extends Controller
 {
 
+    /**
+     * @var CourseService
+     */
+    protected $courseService;
+
+    /**
+     * ShopController constructor.
+     * @param CourseService $courseService
+     */
+    public function __construct( CourseService $courseService )
+    {
+        $this->courseService = $courseService;
+    }
 
     public function checkout($course_id)
     {
@@ -67,6 +81,111 @@ class ShopController extends Controller
         }
 
     	return view('frontend.shop.checkout', compact('course', 'packages'));
+    }
+
+    /**
+     * Checkout page
+     * @param $course_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
+     */
+    public function sveaCheckout( $course_id )
+    {
+        $course = Course::findOrFail($course_id);
+
+        $hasPaidCourse = false;
+        if( !Auth::guest() ) :
+            foreach( \Auth::user()->coursesTakenNotOld as $courseTaken ) {
+                if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
+                    if ($courseTaken->package->course->is_free != 1) {
+                        $hasPaidCourse = true;
+                    }
+                    break;
+                endif;
+            }
+
+            $course_packages = $course->packages->pluck('id')->toArray();
+            $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)
+                ->whereIn('package_id', $course_packages)
+                ->first();
+            if($courseTaken) return redirect(route('learner.course.show', ['id' => $courseTaken->id]));
+        endif;
+
+        if ($course->hide_price) {
+            return redirect()->route('front.course.show', $course->id);
+        }
+
+        $packages = $course->packages()->isShow()->get();
+        $package_id = \Request::has('package') ? \Request::get('package') :
+            (isset($packages[1]) ? $packages[1]['id'] : $packages[0]['id']);
+        $coupon = \request()->has('c') ? \request()->get('c') : '';
+
+        if (\request()->has('sp')) {
+            // use try/catch to handle invalid payload
+            try {
+                $package_id = decrypt(\request('sp'));
+                $packages = $course->packages()->where('id', $package_id)->get();
+            } catch (DecryptException $e) {
+                //
+            }
+        }
+
+        $user = \Auth::user();
+
+        if ($user) {
+            $user['address'] = $user->address;
+        }
+
+        return view('frontend.shop.svea-checkout', compact('course', 'packages', 'package_id', 'coupon',
+            'hasPaidCourse', 'user'));
+    }
+
+    /**
+     * Check if user has paid course
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function hasPaidCourse()
+    {
+        $hasPaidCourse = false;
+
+        if( !Auth::guest() ) :
+            foreach( \Auth::user()->coursesTakenNotOld as $courseTaken ) {
+                if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
+                    if ($courseTaken->package->course->is_free != 1) {
+                        $hasPaidCourse = true;
+                    }
+                    break;
+                endif;
+            }
+        endif;
+
+
+        return response()->json($hasPaidCourse);
+    }
+
+    /**
+     * @param $course_id
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function validateCheckoutForm( $course_id, Request $request)
+    {
+        $this->validate($request, [
+            'email'         => 'required',
+            'first_name'    => 'required',
+            'last_name'     => 'required',
+            'street'        => 'required',
+            'zip'           => 'required',
+            'city'          => 'required',
+            'phone'         => 'required',
+        ]);
+
+        if (!\Auth::check()) {
+            $this->validate($request,[
+                'password' => 'required|min:3'
+            ]);
+        }
+
+        return response()->json($this->courseService->processCheckout($request));
     }
 
     public function checkoutTest($course_id)
@@ -189,6 +308,7 @@ class ShopController extends Controller
      */
     public function applyDiscount($course_id, $coupon)
     {
+        //return redirect()->to(route('front.course.svea-checkout', $course_id)."?c=".$coupon);
         $course = Course::find($course_id);
         if (!$course) {
             return redirect()->route('front.course.index');
@@ -384,6 +504,20 @@ class ShopController extends Controller
         return response()->json('', 404);
     }
 
+    /**
+     * @param $course_id
+     * @param $coupon
+     * @param CourseService $courseService
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function checkCouponDiscount( $course_id, $coupon, CourseService $courseService )
+    {
+        $course = Course::find($course_id);
+        if (!$course) {
+            return response()->json([], 404);
+        }
+        return $courseService->checkCouponDiscount( $course_id, $coupon );
+    }
 
 
     public function place_order($course_id, OrderCreateRequest $request)
@@ -1212,8 +1346,25 @@ class ShopController extends Controller
 
     }
 
-    public function thankyou()
+    public function thankyou( Request $request, CourseService $courseService )
     {
+
+        // check if from svea payment
+        if ($request->has('svea_ord')) {
+            $order_id = $request->get('svea_ord');
+            $order = Order::find($order_id);
+
+            // add course to user
+            if (!$order->is_processed) {
+                $courseTaken = $courseService->addCourseToLearner($order->user_id, $order->package_id);
+                $courseService->notifyAdmin($order->user_id, $order->package_id);
+                $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken);
+            }
+
+            $order->is_processed = 1;
+            $order->save();
+        }
+
         return view('frontend.shop.thankyou');
     }
 

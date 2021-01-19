@@ -15,6 +15,8 @@ class Package extends Model
         'full_price_product', 'months_3_product', 'months_6_product', 'months_12_product', 'full_price_due_date',
         'months_3_due_date', 'months_6_due_date', 'months_12_due_date', 'months_3_enable', 'months_6_enable', 'months_12_enable',
         'manuscripts_count', 'due_date', 'has_student_discount', 'is_reward','issue_date', 'validity_period', 'is_show'];
+    protected $appends = ['description_formatted'];
+    protected $with = ['included_courses'];
 
     public function scopeIsShow($query)
     {
@@ -41,5 +43,10 @@ class Package extends Model
     public function included_courses()
     {
         return $this->hasMany('App\PackageCourse', 'package_id')->orderBy('created_at', 'desc');
+    }
+
+    public function getDescriptionFormattedAttribute()
+    {
+        return nl2br($this->attributes['description']);
     }
 }

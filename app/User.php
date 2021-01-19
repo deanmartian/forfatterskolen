@@ -155,7 +155,8 @@ class User extends Authenticatable
 
     public function orders()
     {
-        return $this->hasMany('App\Order')->orderBy('created_at', 'desc');
+        return $this->hasMany('App\Order')->where('is_processed', 1)
+            ->orderBy('created_at', 'desc');
     }
 
     public function books()

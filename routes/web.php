@@ -149,6 +149,8 @@ Route::group([
 
         Route::get('/bambora/accept', 'HomeController@bamboraAccept');
         Route::get('/bambora/paymentComplete', 'HomeController@bamboraPaymentComplete');
+        Route::get('/has-paid-course', 'ShopController@hasPaidCourse');
+        Route::get('/current-user', 'LearnerController@currentUser');
         // Course
         Route::group([
             'prefix' => 'course'
@@ -156,12 +158,15 @@ Route::group([
             Route::get('/', 'CourseController@index')->name('front.course.index'); // Course Listing
             Route::get('/{id}', 'CourseController@show')->name('front.course.show'); // Course Details
             Route::get('/{id}/checkout', 'ShopController@checkout')->name('front.course.checkout'); // Checkout
+            Route::get('/{id}/checkout-svea', 'ShopController@sveaCheckout')->name('front.course.svea-checkout'); // Checkout
+            Route::post('/{id}/checkout/validate-form', 'ShopController@validateCheckoutForm')->name('front.course.checkout.validate-form');
             Route::get('/{id}/checkout-test', 'ShopController@checkoutTest')->name('front.course.checkout-test'); // Checkout
             Route::post('/{id}/proceed-checkout', 'ShopController@proceedCheckout')->name('front.course.proceed-checkout'); // Checkout
             Route::get('/{id}/discount/{coupon}', 'ShopController@applyDiscount')->name('front.course.apply-discount'); // Checkout
             Route::post('/{id}/checkout/place_order', 'ShopController@place_order')->name('front.course.place_order'); // Place Order
             Route::post('/{id}/checkout/place_order_test', 'ShopController@place_order_test')->name('front.course.place_order_test'); // Place Order
             Route::get('/{id}/check_discount/', 'ShopController@checkDiscount')->name('front.course.checkDiscount'); // Check Discount
+            Route::get('/{id}/check_coupon_discount/{coupon}', 'ShopController@checkCouponDiscount')->name('front.course.checkCouponDiscount'); // Check Coupon Discount
             Route::post('/{id}/get-free/', 'CourseController@getFreeCourse')->name('front.course.getFreeCourse'); // Check Discount
             Route::get('/{id}/claim-reward', 'ShopController@claimReward')->name('front.course.claim-reward'); // Claim Reward
             Route::post('/{id}/claim-reward', 'ShopController@claimReward')->name('front.course.claim-reward'); // Claim Reward
@@ -214,6 +219,7 @@ Route::group([
         Route::get('/invoice/{id}', 'LearnerController@invoiceShow')->name('learner.invoice.show'); // Invoice Single Page
         Route::get('/invoice/{invoice_number}/vipps-payment', 'LearnerController@invoiceVippsPayment')->name('learner.invoice.vipps-payment'); // Invoice Single Page
         Route::post('learner/invoice/{id}/e-faktura', 'LearnerController@vippsEFaktura')->name('learner.invoice.vipps-e-faktura');
+        Route::get('/invoice/{id}/download/{type}', 'LearnerController@downloadInvoiceByType')->name('learner.invoice.download-by-type');
         Route::get('/publishing', 'LearnerController@publishing')->name('learner.publishing'); // Publishers House Page
         Route::get('/writing-groups', 'LearnerController@writingGroups')->name('learner.writing-groups'); // Writing Groups Page
         Route::get('/writing-group/{id}', 'LearnerController@writingGroup')->name('learner.writing-group'); // Writing Group Page

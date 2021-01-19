@@ -20,6 +20,7 @@
         "omnipay/paypal": "^3.0",
         "phpoffice/phpword": "^0.14.0",
         "sudiptpa/paypal-ipn": "^2.0",
+        "sveaekonomi/webpay": "^3.13",
         "symfony/event-dispatcher": "2.8",
         "symfony/polyfill-iconv": "^1.8",
         "teodortalov/citrix": "^1.2",

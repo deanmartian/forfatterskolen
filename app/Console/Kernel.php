@@ -34,7 +34,8 @@ class Kernel extends ConsoleKernel
         Commands\CourseExpirationReminder::class,
         Commands\CheckExpiredCourses::class,
         Commands\WebinarRegistrantToLearner::class,
-        Commands\AutoRenewReminderCommand::class
+        Commands\AutoRenewReminderCommand::class,
+        Commands\CheckSveaOrderCommand::class
     ];
 
     /**
@@ -76,6 +77,8 @@ class Kernel extends ConsoleKernel
             ->dailyAt('07:30');
         $schedule->command('autorenewreminder:command')
             ->dailyAt('07:00');
+        $schedule->command('checksveaorder:command')
+            ->dailyAt('07:30');
         /*$schedule->command('updategross:command')
             ->dailyAt('06:00');*/
         $schedule->command('freecoursedelayedemail:command')

@@ -24,6 +24,7 @@ use App\Mail\AssignmentSubmittedEmail;
 use App\Mail\CoachingSuggestionDateEmail;
 use App\Mail\MultipleEmailConfirmation;
 use App\Notification;
+use App\Order;
 use App\OtherServiceFeedback;
 use App\Package;
 use App\PaymentMode;
@@ -937,6 +938,9 @@ class LearnerController extends Controller
             ->paginate(15);
         }
 
+        $sveaOrders = Auth::user()->orders()->svea()->paginate(10);
+        $user = Auth::user();
+
         /*$ch = curl_init($this->fikenInvoices);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
@@ -945,7 +949,7 @@ class LearnerController extends Controller
         $data = curl_exec($ch);
         $data = json_decode($data);
         $fikenInvoices = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};*/
-        return view('frontend.learner.invoice', compact('invoices'));
+        return view('frontend.learner.invoice', compact('invoices', 'sveaOrders', 'user'));
     }
 
 
@@ -1017,6 +1021,72 @@ class LearnerController extends Controller
             'alert_type'            => $alert_type,
             'not-former-courses'    => true
         ]);
+    }
+
+    /**
+     * Download Svea invoice
+     * @param $id
+     * @param $type String
+     * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function downloadInvoiceByType( $id, $type )
+    {
+        $order = Order::find($id);
+
+        if ( $type === 'receipt' ) {
+
+            $user = \Auth::user();
+            $pdf = \App::make('dompdf.wrapper');
+            $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+            $pdf->loadHTML(view('frontend.pdf.order-receipt', compact('order', 'user')));
+            return $pdf->download($order->id . '.pdf');
+
+        } else {
+
+            $orderID = $order->svea_order_id;
+            $invoiceID = $order->svea_invoice_id;
+            $base_url = env('SVEA_PROD_URL') . '/pdf/'.$orderID.'/'.$invoiceID;
+            $timestamp = gmdate('Y-m-d H:i');
+            $merchantId = env('SVEA_CHECKOUTID');
+            $secret = env('SVEA_CHECKOUT_SECRET');
+
+            $token = base64_encode($merchantId.':'.hash('sha512', ''.$secret.$timestamp));
+            $header = array();
+            $header[] = 'Content-type: application/json';
+            $header[] = 'Timestamp: '.$timestamp;
+            $header[] = 'Authorization: Svea '.$token;
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $base_url);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_HEADER, 1);
+
+            $response = curl_exec($ch);
+            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+            // Then, after your curl_exec call:
+            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $responseBody = substr($response, $header_size);
+
+            if ($httpcode === 200) {
+                $decodeResponse = json_decode($responseBody);
+
+                if ($decodeResponse->Pdf) {
+                    $path       = public_path($invoiceID.'.pdf');
+                    $contents   = base64_decode($decodeResponse->Pdf);
+
+                    //store file temporarily
+                    file_put_contents($path, $contents);
+
+                    //download file and delete it
+                    return response()->download($path);
+                }
+            }
+
+            return redirect()->back();
+
+        }
     }
 
     /**
@@ -3470,5 +3540,12 @@ class LearnerController extends Controller
         return response()->json([
             'message' => $decode->message
         ], $httpcode);
+    }
+
+    public function currentUser()
+    {
+        $user = Auth::user();
+        $user['address'] = $user->address;
+        return $user;
     }
 }

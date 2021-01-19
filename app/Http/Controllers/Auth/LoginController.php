@@ -78,15 +78,37 @@ class LoginController extends Controller
 
     public function checkoutLogin(LoginRequest $request)
     {
-        $user = User::where('email', $request->email)->where('role', 2)->first();
-        if(!$user) return redirect()->back()->withInput()->withErrors(['login_error' => 'Unknown email']);
+        if ($request->ajax()) {
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 2])) :
-            // Authentication passed...
-            return redirect()->back();
-        endif;
+            $user = User::where('email', $request->email)->where('role', 2)->first();
+            if(!$user) {
+                return response()->json([
+                    'error' => 'Unknown email'
+                ], 401);
+            }
 
-        return redirect()->back()->withInput()->withErrors(['login_error' => 'Feil passord']);
+            if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 2])) :
+                $user = Auth::user();
+                $user['address'] = $user->address;
+
+                return response()->json(['success' => 'You successfully log in', 'user' => $user], 200);
+            endif;
+
+            return response()->json([
+                'error' => 'Feil passord'
+            ], 401);
+
+        } else {
+            $user = User::where('email', $request->email)->where('role', 2)->first();
+            if(!$user) return redirect()->back()->withInput()->withErrors(['login_error' => 'Unknown email']);
+
+            if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 2])) :
+                // Authentication passed...
+                return redirect()->back();
+            endif;
+
+            return redirect()->back()->withInput()->withErrors(['login_error' => 'Feil passord']);
+        }
     }
 
     /** login using encrypted email
