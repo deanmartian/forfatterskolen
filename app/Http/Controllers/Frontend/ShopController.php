@@ -169,7 +169,7 @@ class ShopController extends Controller
      */
     public function validateCheckoutForm( $course_id, Request $request)
     {
-        $this->validate($request, [
+        /*$this->validate($request, [
             'email'         => 'required',
             'first_name'    => 'required',
             'last_name'     => 'required',
@@ -183,6 +183,26 @@ class ShopController extends Controller
             $this->validate($request,[
                 'password' => 'required|min:3'
             ]);
+        }*/
+
+        $validation = [
+            'email'         => 'required',
+            'first_name'    => 'required',
+            'last_name'     => 'required',
+            'street'        => 'required',
+            'zip'           => 'required',
+            'city'          => 'required',
+            'phone'         => 'required',
+        ];
+
+        if (!\Auth::check()) {
+            $validation['password'] = 'required|min:3';
+        }
+
+        $validator = \Validator::make($request->all(), $validation);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
 
         return response()->json($this->courseService->processCheckout($request));
