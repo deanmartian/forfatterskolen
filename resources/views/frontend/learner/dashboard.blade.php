@@ -263,7 +263,10 @@
                     @if( $diffWithHours >= 0 )
                         <?php
                             $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
-                            $coursesTakenEndDate = $coursesTaken->end_date ?: \Carbon\Carbon::parse($coursesTaken->started_at)->addYear(1)->format('Y-m-d');
+                            $coursesTakenEndDate = \Carbon\Carbon::parse($webinar->start_date)->subDays(1);
+                            if ($coursesTaken) {
+                                $coursesTakenEndDate = $coursesTaken->end_date ?: \Carbon\Carbon::parse($coursesTaken->started_at)->addYear(1)->format('Y-m-d');
+                            }
                         ?>
                         <div class="col-md-3 mb-4">
                             <?php
@@ -315,7 +318,10 @@
                     @if( $diffWithHours >= 0 )
                         <?php
                             $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
-                            $coursesTakenEndDate = $coursesTaken->end_date ?: \Carbon\Carbon::parse($coursesTaken->started_at)->addYear(1)->format('Y-m-d');
+                            $coursesTakenEndDate = \Carbon\Carbon::parse($webinar->start_date)->subDays(1);
+                            if ($coursesTaken) {
+                                $coursesTakenEndDate = $coursesTaken->end_date ?: \Carbon\Carbon::parse($coursesTaken->started_at)->addYear(1)->format('Y-m-d');
+                            }
                         ?>
                         <div class="col-md-3 mb-4">
                             <div class="card card-global" style="background-color: transparent; border: none">
@@ -381,7 +387,7 @@
                                                     </a>
                                                 @else
                                                     <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
-                                                       href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                       href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
                                                         ? 'javascript:void(0)' :route('learner.webinar.register',
                                                         [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]) }}">
                                                         {{ trans('site.learner.register') }}
