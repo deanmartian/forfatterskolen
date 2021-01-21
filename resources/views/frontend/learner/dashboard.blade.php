@@ -335,10 +335,15 @@
                                     [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]);
                                     }
                                 ?>
-                                <a href="{{ $img_web_link }}">
-                                    <div class="image-container" data-bg="https://www.forfatterskolen.no/{{ $webinar->image }}">
-                                    </div>
-                                </a>
+                                    @if($webinar->link)
+                                        <a href="{{ $img_web_link }}">
+                                            <div class="image-container" data-bg="https://www.forfatterskolen.no/{{ $webinar->image }}">
+                                            </div>
+                                        </a>
+                                    @else
+                                        <div class="image-container" data-bg="https://www.forfatterskolen.no/{{ $webinar->image }}">
+                                        </div>
+                                    @endif
                                 <div class="card-body" style="padding: 0; background-color: #fff; border: 1px solid #e8e8e8">
                                     <div class="details-container learner-webinar-page text-left" style="border:none">
                                         <div class="webinar-header">
@@ -386,13 +391,21 @@
                                                         {{ trans('site.learner.signed') }}
                                                     </a>
                                                 @else
-                                                    <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
-                                                       href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
-                                                        ? 'javascript:void(0)' :route('learner.webinar.register',
-                                                        [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]) }}">
-                                                        {{ trans('site.learner.register') }}
-                                                        <i class="img-icon icon-right-arrow"></i>
-                                                    </a>
+                                                    {{-- check if have webinar link --}}
+                                                    @if($webinar->link)
+                                                        <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
+                                                           href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTakenEndDate))
+                                                            ? 'javascript:void(0)' :route('learner.webinar.register',
+                                                            [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]) }}">
+                                                            {{ trans('site.learner.register') }}
+                                                            <i class="img-icon icon-right-arrow"></i>
+                                                        </a>
+                                                    @else
+                                                        <a href="javascript:void(0)"
+                                                           class="btn w-100 rounded-0 btn-success disabled" disabled>
+                                                            Påmelding kommer
+                                                        </a>
+                                                    @endif
                                                 @endif
                                             @endif
                                         @endif
