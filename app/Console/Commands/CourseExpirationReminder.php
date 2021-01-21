@@ -58,6 +58,7 @@ class CourseExpirationReminder extends Command {
             $query->where('auto_renew_courses',0);
         })
         ->whereNotNull('end_date')
+        ->where('send_expiry_reminder', 1)
         ->where(function($query) use ($days_28, $days_7, $tomorrow){
             $query->whereIn('end_date',[$days_28, $days_7, $tomorrow]);
         })->get();
@@ -70,6 +71,7 @@ class CourseExpirationReminder extends Command {
         })
         ->whereNotNull('started_at')
         ->whereNull('end_date')
+        ->where('send_expiry_reminder', 1)
         ->where(function($query) use ($days_28, $days_7, $tomorrow){
             //$query->whereDate('started_at', $tomorrow);
             $query->whereRaw(DB::raw("DATE(started_at) = '".$days_28."' 
