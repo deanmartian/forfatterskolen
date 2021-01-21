@@ -166,7 +166,9 @@
 											@endif
 										</td>
 										<td>
-											{{ \App\Http\FrontendHelpers::assignmentType($shopManuscript->genre) }}
+											@if($shopManuscript->genre > 0)
+												{{ \App\Http\FrontendHelpers::assignmentType($shopManuscript->genre) }}
+											@endif
 										</td>
 										<td><a href="{{ route('admin.learner.show', $shopManuscript->user->id) }}">{{ $shopManuscript->user->full_name }}</a></td>
 										<td>
