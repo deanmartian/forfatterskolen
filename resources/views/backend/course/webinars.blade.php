@@ -330,7 +330,7 @@
           </div>
 			<div class="form-group">
 				<label>{{ 'Webinar ID' }}</label>
-				<input type="text" name="link" class="form-control" required>
+				<input type="text" name="link" class="form-control">
 			</div>
 
           <div class="form-group">
@@ -390,7 +390,7 @@
           </div>
           <div class="form-group">
           	<label>{{ 'Webinar ID' }}</label>
-          	<input type="text" name="link" class="form-control" required>
+          	<input type="text" name="link" class="form-control">
           </div>
 
           <div class="form-group">

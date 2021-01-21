@@ -210,11 +210,17 @@
                                                         [$webinar->link, $webinar->id]);
                                             }
                                         ?>
-                                        <a href="{{ $img_web_link }}">
+                                        @if($webinar->link)
+                                            <a href="{{ $img_web_link }}">
+                                                <div data-bg="https://www.forfatterskolen.no/{{ $webinar->image }}">
+                                                    <i class="play-button"></i>
+                                                </div>
+                                            </a>
+                                        @else
                                             <div data-bg="https://www.forfatterskolen.no/{{ $webinar->image }}">
                                                 <i class="play-button"></i>
                                             </div>
-                                        </a>
+                                        @endif
                                     </div>
                                     <div class="card-body">
                                         <?php $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);?>
@@ -270,13 +276,21 @@
                                                             @endif
                                                         </a>
                                                     @else
-                                                        <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
-                                                           href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                        {{-- check if have webinar link --}}
+                                                        @if($webinar->link)
+                                                            <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
+                                                               href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
                                                     ? 'javascript:void(0)' :route('learner.webinar.register',
                                                     [$webinar->link, $webinar->id]) }}">
-                                                            {{ trans('site.learner.register') }}
-                                                            <i class="img-icon icon-right-arrow"></i>
-                                                        </a>
+                                                                {{ trans('site.learner.register') }}
+                                                                <i class="img-icon icon-right-arrow"></i>
+                                                            </a>
+                                                        @else
+                                                            <a href="javascript:void(0)"
+                                                               class="btn w-100 rounded-0 btn-success disabled" disabled>
+                                                                Påmelding kommer
+                                                            </a>
+                                                        @endif
                                                         {{--<a class="btn site-btn-global w-100 rounded-0 webinarRegister"
                                                            href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
                                                     ? 'javascript:void(0)' :route('learner.webinar.register',
