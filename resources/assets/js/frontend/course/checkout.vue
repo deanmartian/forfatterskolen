@@ -320,6 +320,7 @@
                 couponDiscountFormatted: 0,
                 totalPrice: 0,
                 totalPriceFormatted: 0,
+                saleDiscount: 0,
                 currencyOptions: {
                     thousandsSeparator: '.',
                     decimalSeparator: ',',
@@ -391,7 +392,8 @@
                     }
                 }
 
-                this.totalDiscount = this.couponDiscount;
+                this.saleDiscount = this.coursePackage.sale_discount;
+                this.totalDiscount = this.couponDiscount + this.saleDiscount;
                 this.origPrice = parseFloat(this.coursePackage.full_payment_price);
                 this.orderForm.price = this.coursePackage.full_payment_price;
 
@@ -454,6 +456,10 @@
                     this.loadOptions();
                     this.checkHasPaidCourse();
 
+                    if (response.data.user.course_link) {
+                        window.location.href = response.data.user.course_link;
+                    }
+
                     this.$toasted.global.showSuccessMsg({
                         message : response.data.success
                     });
@@ -488,6 +494,9 @@
                     this.getCurrentUser();
 
                     console.log(response);
+                    if (response.data.course_link) {
+                        window.location.href = response.data.course_link;
+                    }
 
                     $("#checkout-display").html(response.data);
                     return true;

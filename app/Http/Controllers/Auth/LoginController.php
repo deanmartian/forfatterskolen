@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\AccessToken;
+use App\Course;
 use App\Helpers\BrowserDetection;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
@@ -90,6 +91,20 @@ class LoginController extends Controller
             if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 2])) :
                 $user = Auth::user();
                 $user['address'] = $user->address;
+
+                // check if course id is passed
+                if ($request->has('course_id')) {
+                    $course = Course::find($request->course_id);
+                    $course_packages = $course->packages->pluck('id')->toArray();
+                    $courseTaken = \Auth::user()->coursesTaken()->where('user_id', \Auth::user()->id)
+                        ->whereIn('package_id', $course_packages)->first();
+
+                    // check if the user already have the course
+                    if($courseTaken) {
+                        $user['course_link'] = route('learner.course.show', $courseTaken->id);
+                    }
+                }
+
 
                 return response()->json(['success' => 'You successfully log in', 'user' => $user], 200);
             endif;

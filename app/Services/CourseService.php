@@ -6,6 +6,7 @@ use App\Course;
 use App\CourseDiscount;
 use App\CourseOrderAttachment;
 use App\CoursesTaken;
+use App\Events\AddToCampaignList;
 use App\Helpers\SveaConfig;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
@@ -102,7 +103,7 @@ class CourseService {
     /**
      * Process the checkout
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse|array
      */
     public function processCheckout( Request $request )
     {
@@ -121,6 +122,18 @@ class CourseService {
             $request->only('street', 'zip', 'city', 'phone')
         );
 
+        $package = Package::find($request->package_id);
+        $course =  $package->course;
+        $course_packages = $course->packages->pluck('id')->toArray();
+        $courseTaken = \Auth::user()->coursesTaken()->where('user_id', \Auth::user()->id)
+            ->whereIn('package_id', $course_packages)->first();
+        // check if the user is already on the course
+        if($courseTaken) {
+            $course_link = route('learner.course.show', $courseTaken->id);
+            return [
+                'course_link' => $course_link
+            ];
+        }
 
         return $this->generateSveaCheckout($request);
     }
@@ -399,7 +412,7 @@ class CourseService {
                 'last_name' => $user->last_name
             ];
 
-            AdminHelpers::addToActiveCampaignList($list_id, $listData);
+            event( new AddToCampaignList($list_id, $listData));
         }
 
         return $courseTaken;

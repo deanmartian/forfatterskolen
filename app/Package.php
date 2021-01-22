@@ -15,7 +15,7 @@ class Package extends Model
         'full_price_product', 'months_3_product', 'months_6_product', 'months_12_product', 'full_price_due_date',
         'months_3_due_date', 'months_6_due_date', 'months_12_due_date', 'months_3_enable', 'months_6_enable', 'months_12_enable',
         'manuscripts_count', 'due_date', 'has_student_discount', 'is_reward','issue_date', 'validity_period', 'is_show'];
-    protected $appends = ['description_formatted'];
+    protected $appends = ['description_formatted', 'sale_discount'];
     protected $with = ['included_courses'];
 
     public function scopeIsShow($query)
@@ -48,5 +48,18 @@ class Package extends Model
     public function getDescriptionFormattedAttribute()
     {
         return nl2br($this->attributes['description']);
+    }
+
+    public function getSaleDiscountAttribute()
+    {
+        $today 			= \Carbon\Carbon::today()->format('Y-m-d');
+        $fromFull 		= \Carbon\Carbon::parse($this->attributes['full_payment_sale_price_from'])->format('Y-m-d');
+        $toFull 		= \Carbon\Carbon::parse($this->attributes['full_payment_sale_price_to'])->format('Y-m-d');
+        $isBetweenFull 	= (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
+
+        if ( $isBetweenFull && $this->attributes['full_payment_sale_price']) {
+            return $this->attributes['full_payment_price'] - $this->attributes['full_payment_sale_price'];
+        }
+        return 0;
     }
 }
