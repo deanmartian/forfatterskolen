@@ -376,7 +376,7 @@
             </div> <!-- end container -->
         </div> <!-- end popular-course-wrapper -->
 
-        <div id="poem-wrapper">
+        <div id="poem-wrapper" class="d-none">
             <div class="container">
                 <div class="heading">
                     <div class="h1 mt-0 d-inline-block font-montserrat-semibold">{{ trans('site.front.week-poem') }}</div>
