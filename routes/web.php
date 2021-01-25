@@ -277,6 +277,7 @@ Route::group([
         Route::get('/other-service/{id}/download/{type}', 'LearnerController@downloadOtherServiceDoc')->name('learner.other-service.download-doc'); // Download assignment feedback
         Route::get('/other-service/download-feedback/{id}', 'LearnerController@downloadOtherServiceFeedback')->name('learner.other-service.download-feedback');
         Route::get('/forum', 'LearnerController@forum')->name('learner.forum');
+        Route::post('/webinar-auto-register-update', 'LearnerController@autoRegisterCourseWebinar');
 
 
         Route::post('/profile', 'LearnerController@profileUpdate')->name('learner.profile.update'); // Profile Update
@@ -517,6 +518,7 @@ Route::group([
         Route::post('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}/comment', 'LearnerController@shopManuscriptTakenShowComment')->name('shop_manuscript_taken_comment');
         Route::get('learner/{user_id}/assignment/{id}', 'LearnerController@assignment')->name('admin.learner.assignment');
         Route::post('learner/{user_id}/auto-renew', 'LearnerController@setAutoRenewCourses')->name('admin.learner.update-auto-renew');
+        Route::post('learner/{user_id}/webinar-auto-register-update', 'LearnerController@autoRegisterCourseWebinar')->name('admin.learner.webinar-auto-register-update');
 
         Route::post('shop-manuscript/{id}/update_document', 'LearnerController@updateDocumentShopManuscriptTaken')->name('shop_manuscript_taken.update_document');
         Route::post('shop-manuscript/{id}/synopsis', 'LearnerController@saveSynopsis')->name('shop_manuscript_taken.save_synopsis');
@@ -853,6 +855,8 @@ Route::group([
         Route::put('webinar/{id}/make-replay', 'WebinarController@makeReplay')->name('admin.webinar.make-replay');
         Route::post('webinar/{id}/update-field', 'WebinarController@updateField')->name('admin.webinar.update-field');
         Route::post('webinar/{id}/course/{course_id}/email-out', 'WebinarController@webinarEmailOut')->name('admin.webinar.email-out');
+        Route::post('webinar/{id}/course/{course_id}/auto-register-learners', 'WebinarController@autoRegisterLearnersToWebinar')
+            ->name('admin.webinar.auto-register-learners');
 
         // Webinar Presenter Route
         Route::resource('webinar/{webinar_id}/presenter', 'WebinarPresenterController', [

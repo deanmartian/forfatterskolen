@@ -36,6 +36,7 @@ class User extends Authenticatable
     ];
 
     protected $with = ['preferredEditor'];
+    protected $appends = ['is_webinar_pakke_active'];
 
     public function getAddressAttribute()
     {
@@ -66,6 +67,25 @@ class User extends Authenticatable
         $coursesTaken = $this->coursesTaken->pluck('id')->toArray();
         $manuscripts = \App\Manuscript::whereIn('coursetaken_id', $coursesTaken)->orderBy('created_at', 'desc')->get();
         return $manuscripts;
+    }
+
+    public function getIsWebinarPakkeActiveAttribute()
+    {
+        $courseTaken = $this->coursesTaken->where('package_id', 29)->first();
+        if ($courseTaken) {
+            $end_date = $courseTaken->end_date ?: Carbon::parse($courseTaken->started_at)->addYear(1);
+
+            if (Carbon::parse($end_date)->gt(Carbon::today())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function userAutoRegisterToCourseWebinar()
+    {
+        return $this->hasOne('App\UserAutoRegisterToCourseWebinar');
     }
 
     public function coursesTaken()

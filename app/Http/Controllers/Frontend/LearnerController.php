@@ -40,6 +40,7 @@ use App\ShopManuscriptUpgrade;
 use App\Survey;
 use App\SurveyAnswer;
 use App\User;
+use App\UserAutoRegisterToCourseWebinar;
 use App\UserEmail;
 use App\UserRenewedCourse;
 use App\UserSocial;
@@ -3446,6 +3447,25 @@ class LearnerController extends Controller
         return response()->json([
             'redirect_url' => $redirect_url
         ]);
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function autoRegisterCourseWebinar( Request $request )
+    {
+        $user = Auth::user();
+        $course_id = 17; // webinar-pakke course
+
+        $autoRenewToCourse = UserAutoRegisterToCourseWebinar::firstOrCreate([
+           'user_id' => $user->id,
+            'course_id' => $course_id
+        ]);
+
+        // check if not auto renew then delete the record
+        if (!$request->auto_renew) {
+            $autoRenewToCourse->delete();
+        }
     }
 
     /**

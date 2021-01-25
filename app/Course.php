@@ -11,6 +11,7 @@ class Course extends Model
     protected $fillable = ['title', 'description', 'description_simplemde', 'course_image', 'type', 'email',
         'course_plan', 'course_plan_data','start_date', 'end_date', 'extend_courses', 'instructor', 'auto_list_id',
         'photographer', 'is_free', 'hide_price'];
+    protected $appends = ['is_webinar_pakke'];
 
 
     public function packages()
@@ -233,6 +234,11 @@ class Course extends Model
             return true;
         }
         return false;
+    }
+
+    public function getIsWebinarPakkeAttribute()
+    {
+        return $this->attributes['id'] === 17 ? true : false;
     }
 
 }

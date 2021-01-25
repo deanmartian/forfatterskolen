@@ -19,6 +19,7 @@ use App\Mail\SubjectBodyEmail;
 use App\PaymentMode;
 use App\PaymentPlan;
 use App\PrivateMessage;
+use App\UserAutoRegisterToCourseWebinar;
 use App\UserEmail;
 use App\UserPreferredEditor;
 use App\Workshop;
@@ -1885,6 +1886,26 @@ class LearnerController extends Controller
             'alert_type'            => 'success',
             'not-former-courses'    => true
         ]);
+    }
+
+    /**
+     * @param $user_id
+     * @param Request $request
+     */
+    public function autoRegisterCourseWebinar( $user_id, Request $request )
+    {
+        $user = User::find($user_id);
+        $course_id = 17; // webinar-pakke course
+
+        $autoRenewToCourse = UserAutoRegisterToCourseWebinar::firstOrCreate([
+            'user_id' => $user->id,
+            'course_id' => $course_id
+        ]);
+
+        // check if not auto renew then delete the record
+        if (!$request->auto_renew) {
+            $autoRenewToCourse->delete();
+        }
     }
 
     public function vippsEFaktura( $invoice_id, Request $request)

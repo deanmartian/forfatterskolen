@@ -4,6 +4,9 @@
 <title>Dashboard &rsaquo; Forfatterskolen</title>
 @stop
 
+@section('styles')
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+@stop
 
 @section('content')
     <div class="learner-container">
@@ -72,7 +75,24 @@
                 </div> <!-- end dashboard-course -->
 
                 <div class="col-md-4 dashboard-calendar no-right-padding">
-                    <div class="card global-card">
+
+                    @if(Auth::user()->is_webinar_pakke_active)
+                        <div class="card global-card">
+                            <div class="card-body">
+                                <div class="col-sm-12">
+                                    <label class="d-block">
+                                        Automatisk registert for felleswebinarer
+                                    </label>
+                                    <input type="checkbox" data-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
+                                           class="webinar-auto-register-toggle" data-off="{{ trans('site.front.no') }}"
+                                           data-size="mini"
+                                    @if(Auth::user()->userAutoRegisterToCourseWebinar) {{ 'checked' }} @endif>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    <div class="card global-card mt-4">
                         <div class="card-header">
                             <h1>
                                 Logg inn til:
@@ -827,6 +847,7 @@
 @stop
 
 @section('scripts')
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script>
 
         @if (Auth::user()->need_pass_update)
@@ -873,6 +894,19 @@
             let form = $('#deleteManuscriptModal').find('form');
             let action = $(this).data('action');
             form.attr('action', action)
+        });
+
+        $(".webinar-auto-register-toggle").change(function(){
+            let is_checked = $(this).prop('checked');
+            let check_val = is_checked ? 1 : 0;
+            $.ajax({
+                type:'POST',
+                url:'/account/webinar-auto-register-update',
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: { 'auto_renew' : check_val },
+                success: function(data){
+                }
+            });
         });
     </script>
 @stop

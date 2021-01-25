@@ -120,6 +120,17 @@
 											</button>
 										@endif
 
+										{{-- check if webinar-pakke --}}
+										@if($course->is_webinar_pakke)
+											<button class="btn btn-xs btn-info registerLearnersToWebinarBtn"
+													data-target="#registerLearnersToWebinarModal"
+													data-toggle="modal"
+													data-action="{{ route('admin.webinar.auto-register-learners',
+													[$webinar->id, $webinar->course_id]) }}">
+												Register Learners
+											</button>
+										@endif
+
 										<hr />
 										<div >
 											<button class="btn btn-xs btn-primary margin-bottom addPresenterBtn pull-right"
@@ -534,6 +545,31 @@
 		</div>
 	</div>
 </div>
+
+<div id="registerLearnersToWebinarModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Register Learners to Webinar</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action=""
+					  onsubmit="disableSubmit(this)">
+					{{csrf_field()}}
+
+					<p>
+						Are you sure to register the learners to this webinar?
+					</p>
+
+					<div class="text-right">
+						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -739,6 +775,14 @@
             form.find('[name=subject]').val(subject);
 
             tinymce.get('modalEditor').setContent(message);
+		});
+
+		$(".registerLearnersToWebinarBtn").click(function(){
+            let modal 	= $("#registerLearnersToWebinarModal");
+            let action 	= $(this).data('action');
+            let form	= modal.find('form');
+
+            form.attr('action', action);
 		});
 	});
 </script>

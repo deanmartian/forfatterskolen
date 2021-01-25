@@ -207,6 +207,12 @@
 														   data-id="{{$courseTaken->id}}" data-size="mini"
 													@if($courseTaken->send_expiry_reminder) {{ 'checked' }} @endif>
 
+													<br>
+													<label>Automatisk registert for felleswebinarer:</label>
+													<input type="checkbox" data-toggle="toggle" data-on="Yes"
+														   class="webinar-auto-register-toggle" data-off="No"
+														   data-id="{{$learner->id}}" data-size="mini"
+													@if($courseTaken->user->userAutoRegisterToCourseWebinar) {{ "checked" }} @endif>
 												@endif
 
 											</p>
@@ -3526,6 +3532,21 @@
             url:'/course_taken/' + course_taken_id + '/set-expiry-reminder',
             headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
             data: { 'send_expiry_reminder' : check_val },
+            success: function(data){
+            }
+        });
+
+    });
+
+    $(".webinar-auto-register-toggle").change(function(){
+        let learner_id = $(this).attr('data-id');
+        let is_checked = $(this).prop('checked');
+        let check_val = is_checked ? 1 : 0;
+        $.ajax({
+            type:'POST',
+            url:'/learner/' + learner_id + '/webinar-auto-register-update',
+            headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            data: { 'auto_renew' : check_val },
             success: function(data){
             }
         });
