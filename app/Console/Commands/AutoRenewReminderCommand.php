@@ -46,7 +46,7 @@ class AutoRenewReminderCommand extends Command {
     {
 
         CronLog::create(['activity' => 'AutoRenewReminder CRON running.']);
-        $dateAddDays = Carbon::now()->addDays(10);
+        $dateAddDays = Carbon::now()->addDays(17);
         $monthDate = $dateAddDays->format('Y-m-d');
         $yearDate = $dateAddDays->subYear(1)->format('Y-m-d'); // subYear to get the correct started_at
 
