@@ -19,11 +19,11 @@
             <div class="row">
                 <div class="col-sm-12">
                     <h1 class="text-center mb-5">
-                        Reprise: "Dritten" i midten 04.10.2020
+                        Reprise: Forløs ditt kreative potensial 24.01.2021
                     </h1>
                 </div>
                 <div class="col-sm-12 top-page-container">
-                    <iframe src="https://video.easywrite.no/file/Webinarer/Gratis/drittenimidten.html" frameborder="0"
+                    <iframe src="https://video.easywrite.no/file/Webinarer/Gratis/kreativepotensial.html?player=thamer" frameborder="0"
                             allowfullscreen="allowfullscreen"></iframe>
                 </div>
             </div>
