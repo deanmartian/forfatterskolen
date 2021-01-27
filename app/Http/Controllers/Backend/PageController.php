@@ -79,8 +79,11 @@ class PageController extends Controller
         $pendingCorrections = CorrectionManuscript::whereNull('editor_id')->orderBy('created_at','desc')->get();
         $pendingCopyEditings = CopyEditingManuscript::whereNull('editor_id')->orderBy('created_at','desc')->get();
 
-        //$singleCourses = Course::where('type', 'Single')->get()->pluck('id');
-        $singleCourses = [36, 37, 57, 48, 56, 50, 44, 49];
+        $singleCourses = Course::where('type', 'Single')
+            ->where('id', '!=', 17)
+            ->where('is_free', 0)
+            ->get()->pluck('id');
+        //$singleCourses = [36, 37, 57, 48, 56, 50, 44, 49, 64];
         $assignmentForCourse = Assignment::whereIn('course_id', $singleCourses)->get()->pluck('id')->toArray();
         $assignmentForLearners = Assignment::where('parent', 'users')->get()->pluck('id')->toArray();
         $allAssignmentQuery = array_merge($assignmentForCourse, $assignmentForLearners);
