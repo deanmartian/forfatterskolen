@@ -3124,11 +3124,30 @@ class LearnerController extends Controller
             return response()->json(['error' => 'Opss. Something went wrong'], 500);
         }
 
-        $email_data['name'] = Auth::user()->first_name;
+        $user = Auth::user();
+        $user_email = $user->email;
 
-        //Mail::to($email_data['email'])->queue(new MultipleEmailConfirmation($email_data));
-        AdminHelpers::send_email('Email Confirmation',
-            'post@forfatterskolen.no', $email_data['email'], view('emails.email_confirmation', compact('email_data')));
+        /*AdminHelpers::send_email('Email Confirmation',
+            'post@forfatterskolen.no', $email_data['email'], view('emails.email_confirmation', compact('email_data')));*/
+        $buttonStyle = "text-decoration: none; color: #fff; background: #e83945; border-color: #e83945;" .
+                    "padding-right: 1.1rem; padding-left: 1.1rem; padding-top: 0.5rem; padding-bottom: 0.5rem;" .
+                    "-webkit-text-size-adjust: none;line-height: 1.5;border-radius: .2rem;margin-right: 10px";
+        $emailTemplate = AdminHelpers::emailTemplate('Confirm Additional Email');
+        $emailContent = str_replace([
+            ':firstname',
+            ':email',
+            ':button',
+            ':end_button'
+        ], [
+            $user->first_name,
+            $user->email,
+            '<a href="'. route("front.email-confirmation",$email_data['token']) .'" style="' . $buttonStyle . '">',
+            "</a>"
+
+        ], $emailTemplate->email_content);
+
+        dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
+            $emailTemplate->from_email, null, null, 'learner', $user->id));
 
 
         return response()->json(['success' => 'Email Confirmation Sent.'], 200);
