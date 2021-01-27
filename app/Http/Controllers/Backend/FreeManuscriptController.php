@@ -131,7 +131,7 @@ class FreeManuscriptController extends Controller
     {
         $freeManuscripts    = FreeManuscript::find($id);
         if ($freeManuscripts) {
-            $editor             = User::find($freeManuscripts->editor);
+            $editor             = User::find($freeManuscripts->editor_id);
             $to                 = $freeManuscripts->email;
             $email_content      = $freeManuscripts->feedback_content;
 
