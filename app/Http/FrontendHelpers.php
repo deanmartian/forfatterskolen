@@ -561,6 +561,19 @@ class FrontendHelpers
 	}
 
     /**
+     * get the word count with margin
+     * @param $word_count
+     * @param float $margin
+     * @return int
+     */
+    public static function wordCountByMargin( $word_count, $margin = 0.03 )
+    {
+        $calculatedWords = ceil($word_count * $margin);
+        $newWordCount = $word_count - $calculatedWords;
+        return $newWordCount;
+	}
+
+    /**
      * Type of assignment uploaded
      * @param null $id
      * @return array|string

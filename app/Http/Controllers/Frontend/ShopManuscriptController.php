@@ -144,7 +144,7 @@ class ShopManuscriptController extends Controller
               $doc = odt2text($filePath);
               $word_count = FrontendHelpers::get_num_of_words($doc);
             endif;
-            $word_count = (int) $word_count;
+            $word_count = FrontendHelpers::wordCountByMargin((int) $word_count);
             $shopManuscriptTaken->file = '/'.$filePath;
             $shopManuscriptTaken->words = $word_count;
 
@@ -321,7 +321,7 @@ class ShopManuscriptController extends Controller
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->firstOrFail();
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
 
-        
+        $word_count = 0;
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) :
             $extension = pathinfo($_FILES['manuscript']['name'],PATHINFO_EXTENSION);
             $original_filename = $request->manuscript->getClientOriginalName();
@@ -353,7 +353,7 @@ class ShopManuscriptController extends Controller
               $doc = odt2text($filePath);
               $word_count = FrontendHelpers::get_num_of_words($doc);
             endif;
-            $word_count = (int) $word_count;
+            $word_count = FrontendHelpers::wordCountByMargin((int) $word_count);
             $shopManuscriptTaken->file = '/'.$filePath;
             $shopManuscriptTaken->words = $word_count;
         endif;
@@ -478,7 +478,7 @@ class ShopManuscriptController extends Controller
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $id)->where('user_id', Auth::user()->id)->first();
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
 
-
+        $word_count = 0;
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) :
             $extension = pathinfo($_FILES['manuscript']['name'],PATHINFO_EXTENSION);
             $original_filename = $request->manuscript->getClientOriginalName();
@@ -510,7 +510,7 @@ class ShopManuscriptController extends Controller
                 $doc = odt2text($filePath);
                 $word_count = FrontendHelpers::get_num_of_words($doc);
             endif;
-            $word_count = (int) $word_count;
+            $word_count = FrontendHelpers::wordCountByMargin((int) $word_count);
             $shopManuscriptTaken->file = '/'.$filePath;
             $shopManuscriptTaken->words = $word_count;
         endif;
