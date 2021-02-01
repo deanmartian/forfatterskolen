@@ -190,7 +190,7 @@ class FreeManuscriptController extends Controller
         $freeManuscripts->feedback_content = $requests->email_content;
         $freeManuscripts->save();
 
-        $editor             = User::find($freeManuscripts->editor);
+        $editor             = User::find($freeManuscripts->editor_id);
         $to                 = $freeManuscripts->email;
         //$from               = $editor->email;
 
