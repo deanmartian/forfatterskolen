@@ -45,37 +45,36 @@ class DueInvoiceCheck extends Command
     public function handle()
     {
         CronLog::create(['activity' => 'DueInvoiceCheck CRON running.']);
-
-        $from           = 'postmail@forfatterskolen.no';//$request->from_email;
-        $subject        = 'Faktura';
         $dueTomorrow    = Carbon::today()->addDay(1)->format('Y-m-d');
 
         $invoices = Invoice::whereDate('fiken_dueDate',  $dueTomorrow)
             ->where('fiken_is_paid', '=',0)
             ->get();
+
+        $email_template = AdminHelpers::emailTemplate('Due Invoice Check');
+        $from = $email_template->from_email;
+        $subject = $email_template->subject;
+
         foreach ($invoices as $invoice) {
             $balance            = $invoice->fiken_balance;
             $transactions_sum   = $invoice->transactions->sum('amount');
             $remaining          = $balance - $transactions_sum;
+            $user               = $invoice->user;
 
             $to = $invoice->user->email;
-            $encode_email = encrypt($to);
-            $redirectLink = encrypt(route('learner.invoice', ['filter' => $invoice->id]));
-            $link = route('auth.login.emailRedirect',[$encode_email, $redirectLink]);
+            $redirectLink = route('learner.invoice', ['filter' => $invoice->id]);
 
-            $message =  'Du har en faktura som har forfall i morgen <br/>
-Pris: '.FrontendHelpers::currencyFormat($remaining).'<br/> Kontonummer: 9015 18 00393 <br/> Kid nummer: '.$invoice->kid_number.' <br/> 
-<a href="'.$link.'">Se faktura</a> <br><br> <small>*Merknad: Du må være innlogget for å se fakturaen.</small>';
+            $emailContent = AdminHelpers::formatEmailContent($email_template->email_content, $to, $user->first_name, $redirectLink);
+            $emailContent = str_replace([
+                ':price',
+                ':kid_number'
+            ], [
+                FrontendHelpers::currencyFormat($remaining),
+                $invoice->kid_number
+            ], $emailContent);
 
-            $emailData = [
-                'email_subject' => $subject,
-                'email_message' => $message,
-                'from_name'     => NULL,
-                'from_email'    => $from,
-                'attach_file'   => NULL
-            ];
             //\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
-            dispatch(new AddMailToQueueJob($to, $subject, $message, $from, null, null,
+            dispatch(new AddMailToQueueJob($to, $subject, $emailContent, $from, null, null,
                 'invoice', $invoice->id));
             CronLog::create(['activity' => 'DueInvoiceCheck CRON sent email to '.$to]);
         }
