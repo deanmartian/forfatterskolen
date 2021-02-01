@@ -1335,7 +1335,7 @@ class HomeController extends Controller
             $email->save();
         }
 
-        return redirect()->to('/');
+        return view('frontend.email-tracking');
     }
 
     public function gtWebinarSendEmail(Request $request)
