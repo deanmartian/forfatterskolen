@@ -35,6 +35,9 @@
 			
 			<div class="table-responsive">
 				<button type="button" class="pull-right btn btn-primary btn-sm margin-bottom" data-toggle="modal" data-target="#addManuscriptModal">{{ trans('site.add-manuscript') }}</button>
+				<button type="button" class="pull-right btn btn-warning btn-sm margin-bottom margin-right-5" data-toggle="modal" data-target="#addAssignmentToLearnerModal">
+					Add-on for Learner
+				</button>
 				@if ($assignment->for_editor && $assignment->manuscripts->count())
 					@if($assignment->generated_filepath)
 						<a href="{{ route('assignment.group.download-generate-doc', $assignment->id) }}" class="pull-right btn btn-success btn-sm margin-bottom margin-right-5">{{ trans('site.download-generated-file') }}</a>
@@ -377,6 +380,43 @@
 		      	<div class="clearfix"></div>
 		    </form>
 		  </div>
+		</div>
+	</div>
+</div>
+
+<div id="addAssignmentToLearnerModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					Add-on for Learner
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('assignment.add-on-for-learner', $assignment->id) }}">
+					{{ csrf_field() }}
+                    <?php
+                    // get all learners that have already sent manuscript
+                    $assignmentManuscriptLearners = \App\AssignmentManuscript::where('assignment_id', $assignment->id)
+                        ->pluck('user_id')
+                        ->toArray();
+
+                    ?>
+					<div class="form-group">
+						<label>{{ trans_choice('site.learners', 1) }}</label>
+						<select class="form-control select2" name="learner_id" required>
+							<option value="" disabled selected>- Search learner -</option>
+							@foreach( $course->learners->whereNotIn('user_id', $assignmentManuscriptLearners)->get() as $learner )
+								<option value="{{ $learner->user->id }}">{{ $learner->user->full_name }}</option>
+							@endforeach
+						</select>
+					</div>
+
+					<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
 		</div>
 	</div>
 </div>

@@ -347,6 +347,12 @@ class User extends Authenticatable
         return $this->hasMany('App\AssignmentManuscript');
     }
 
+    public function assignmentAddOns()
+    {
+        return $this->hasMany('App\AssignmentAddon', 'user_id', 'id')
+            ->orderBy('created_at', 'desc');
+    }
+
     public function personalTrainerApplication()
     {
         return $this->hasMany('App\PersonalTrainerApplicant');

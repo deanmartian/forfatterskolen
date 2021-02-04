@@ -715,18 +715,45 @@
 						<tbody>
 							<?php
 					        $assignments = [];
+					        $addOns = $learner->assignmentAddOns->pluck('assignment_id')->toArray();
 					        foreach( $learner->coursesTaken as $course ) :
 					            foreach( $course->package->course->assignments as $assignment ) :
-					                $assignments[] = $assignment;
+                            		$allowed_package = json_decode($assignment->allowed_package);
+                            		$package_id = $course->package->id;
+
+                            		$manuscript = $assignment->manuscripts->where('user_id', $learner->id)->first();
+									if ($manuscript) {
+										$assignments[] = $assignment;
+									} else {
+										// check if the assignment is allowed on the learners package or there's no set package allowed
+										if ((!is_null($allowed_package) && in_array($package_id,$allowed_package))
+							|| is_null($allowed_package) || in_array($assignment->id, $addOns)) {
+											// added the condition because of the update for submission date
+											// the original is the else
+											if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
+												if(\Carbon\Carbon::parse($course->started_at)->addDays($assignment->submission_date)
+												->gt(\Carbon\Carbon::now())) {
+													$assignments[] = $assignment;
+													}
+												} else {
+												if (\Carbon\Carbon::parse($assignment->submission_date)->gt(\Carbon\Carbon::now())) {
+													$assignments[] = $assignment;
+												}
+											}
+										}
+									}
+
 					            endforeach;
 					        endforeach;
 					        ?>
 							@foreach($assignments as $assignment)
-								<?php $manuscript = $assignment->manuscripts->where('user_id', $learner->id)->first();
+								<?php
+								$manuscript = $assignment->manuscripts->where('user_id', $learner->id)->first();
 								$assignmentCourse = $assignment->course;
+
 								?>
-								@if( $manuscript )
-								<?php $extension = explode('.', basename($manuscript->filename)); ?>
+								{{--@if( $manuscript )--}}
+								<?php $extension = $manuscript ? explode('.', basename($manuscript->filename)) : ''; ?>
 								<tr>
 									<td>
 										<a href="{{ route('admin.assignment.show',[$assignmentCourse->id, $assignment->id]) }}">
@@ -757,26 +784,30 @@
 										</a>
 									</td>
 									<td>
-										@if ($manuscript->editor)
+										@if ($manuscript && $manuscript->editor)
 											{{ $manuscript->editor->full_name }}
 										@endif
 									</td>
 									<td>
-										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
-										<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">{{ basename($manuscript->filename) }}</a>
-										@elseif( end($extension) == 'docx' )
-										<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">{{ basename($manuscript->filename) }}</a>
+										@if($manuscript)
+											@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+											<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">{{ basename($manuscript->filename) }}</a>
+											@elseif( end($extension) == 'docx' )
+											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">{{ basename($manuscript->filename) }}</a>
+											@endif
 										@endif
 									</td>
 									<td>
-										<button class="btn btn-primary btn-xs assignmentManuscriptEmailBtn" data-toggle="modal"
-												data-target="#assignmentManuscriptEmailModal"
-												data-action="{{ route('assignment.send-email-to-manuscript-user', $manuscript->id) }}">
-											Send Email
-										</button>
+										@if($manuscript)
+											<button class="btn btn-primary btn-xs assignmentManuscriptEmailBtn" data-toggle="modal"
+													data-target="#assignmentManuscriptEmailModal"
+													data-action="{{ route('assignment.send-email-to-manuscript-user', $manuscript->id) }}">
+												Send Email
+											</button>
+										@endif
 									</td>
 								</tr>
-								@endif
+								{{--@endif--}}
 							@endforeach
 						</tbody>
 					</table>

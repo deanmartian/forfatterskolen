@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\AssignmentAddon;
 use App\AssignmentFeedbackNoGroup;
 use App\AssignmentTemplate;
 use App\DelayedEmail;
@@ -217,6 +218,23 @@ class AssignmentController extends Controller
             ]);
             return redirect()->back();
         endif;
+    }
+
+    /**
+     * Add assignment add-on for learner
+     * @param $assignment_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function addOnForLearner( $assignment_id, Request $request )
+    {
+        AssignmentAddon::firstOrCreate([
+            'assignment_id' => $assignment_id,
+            'user_id' => $request->learner_id
+        ]);
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Assignment added to learner successfully.'),
+            'alert_type' => 'success']);
     }
 
     public function replaceManuscript($id, Request $request)

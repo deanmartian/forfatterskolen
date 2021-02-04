@@ -2,11 +2,11 @@
 
 // Domains
 
-$front = 'forfatterskolen.local';
-$admin = 'admin.forfatterskolen.local';
+/*$front = 'forfatterskolen.local';
+$admin = 'admin.forfatterskolen.local';*/
 
-/*$front = 'www.forfatterskolen.no';
-$admin = 'admin.forfatterskolen.no';*/
+$front = 'www.forfatterskolen.no';
+$admin = 'admin.forfatterskolen.no';
 
 
 // get/set the locale
@@ -887,6 +887,7 @@ Route::group([
             ],
         ]);
         Route::post('assignment/{id}/uploadManuscript', 'AssignmentController@uploadManuscript')->name('assignment.group.upload_manuscript');
+        Route::post('assignment/{id}/add-on-for-learner', 'AssignmentController@addOnForLearner')->name('assignment.add-on-for-learner');
         Route::post('assignment_manuscript/{id}/delete', 'AssignmentController@deleteManuscript')->name('assignment.group.delete_manuscript');
         Route::post('assignment_manuscript/{id}/move', 'AssignmentController@moveManuscript')->name('assignment.group.move_manuscript');
         Route::post('assignment_manuscript/{id}/set_grade', 'AssignmentController@setGrade')->name('assignment.group.set_grade');
