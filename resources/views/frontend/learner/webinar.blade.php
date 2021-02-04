@@ -97,14 +97,14 @@
                         $now = Carbon\Carbon::now();
                         $diff = $now->diffIndays($start_date, false);
                         $diffWithHours = $now->diffInHours($start_date, false);
+                        $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
                         ?>
-                        @if( $diffWithHours >= 0 )
+                        @if( $diffWithHours >= 0 && $coursesTaken)
                             <div class="col-sm-12 col-md-6 col-lg-4 mt-5">
                                 <div class="card card-global border-0">
                                     <div class="card-header webinar-thumb">
                                         <?php
                                             $img_web_link = '#';
-                                            $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
                                             if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id)) {
                                                 $img_web_link = \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id);
                                             } else {
@@ -194,14 +194,14 @@
                         $now = Carbon\Carbon::now();
                         $diff = $now->diffIndays($start_date, false);
                         $diffWithHours = $now->diffInHours($start_date, false);
+                        $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
                         ?>
-                        @if( $diffWithHours >= 0 )
+                        @if( $diffWithHours >= 0 && $coursesTaken)
                             <div class="col-sm-12 col-md-6 col-lg-4 mt-5">
                                 <div class="card card-global border-0">
                                     <div class="card-header webinar-thumb">
                                         <?php
                                             $img_web_link = '#';
-                                            $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
                                             if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id)) {
                                                 $img_web_link = \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id);
                                             } else {
