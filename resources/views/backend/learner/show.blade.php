@@ -1362,9 +1362,10 @@
 								<td>{{ $registeredWebinar->webinar->start_date }}</td>
 								<td>
 									<button class="btn btn-primary btn-xs registeredWebinarEmailBtn" data-toggle="modal"
+											data-url="{{ $registeredWebinar->join_url }}"
 											data-target="#registeredWebinarEmailModal"
 											data-action="{{ route('admin.learner.send-webinar-registrant-email',
-											[$learner->id, $registeredWebinar->id]) }}">
+											[$learner->id, $registeredWebinar->id])}}">
 										{{ trans('site.send-email') }}
 									</button>
 								</td>
@@ -3172,6 +3173,9 @@
 							   value="{{ $emailTemplate->from_email }}">
 					</div>
 
+					<input type="hidden" class="form-control join-url" placeholder="Email" name="join_url"
+							value="">
+
 					<div class="form-group">
 						<label>{{ trans('site.message') }}</label>
 						<textarea name="message" cols="30" rows="10"
@@ -3586,8 +3590,10 @@
 
     $(".registeredWebinarEmailBtn").click(function(){
         let action = $(this).data('action');
+		let joinUrl = $(this).data('url');
         let modal = $('#registeredWebinarEmailModal');
         modal.find('form').attr('action', action);
+		modal.find('[name=join_url]').attr('value', joinUrl);
     });
 
     $("select.template").change(function() {

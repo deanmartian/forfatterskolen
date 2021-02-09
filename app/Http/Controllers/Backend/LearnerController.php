@@ -1090,6 +1090,8 @@ class LearnerController extends Controller
         $message    = $request->message;
 
         $message = AdminHelpers::formatEmailContent($message, '', $learner->first_name, '');
+        $message = str_replace(':url', $request->join_url, $message);
+
         dispatch(new AddMailToQueueJob($to, $subject, $message, $from, null, null,
             'webinar-registrant', $registrant_id));
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Email sent.'),
