@@ -555,18 +555,20 @@ class CourseController extends Controller
      * @param $course_id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function learnerListExcel($course_id)
+    public function learnerListExcel($course_id, $type = 'email')
     {
         $course = Course::find($course_id);
         if ($course) {
             $excel          = \App::make('excel');
             $learners       = $course->learners->get();
             $learnerList    = [];
-            $learnerList[]  = ['id', 'learner', 'email']; // first row in excel
+            $learnerList[]  = ['id', 'learner', $type]; // first row in excel
 
             // loop all the learners
             foreach ($learners as $learner) {
-                $learnerList[] = [$learner->user->id, $learner->user->full_name, $learner->user->email];
+                $value = $type === 'email' ? $learner->user->email : $learner->user->fullAddress;
+
+                $learnerList[] = [$learner->user->id, $learner->user->full_name, $value];
             }
 
             $excel->create($course->title.' Learners', function($excel) use ($learnerList) {

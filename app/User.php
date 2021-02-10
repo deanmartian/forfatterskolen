@@ -50,6 +50,29 @@ class User extends Authenticatable
         return $address;
     }
 
+    public function getFullAddressAttribute()
+    {
+        if (!$this->address) {
+            return null;
+        }
+
+        $fullAddress = '';
+
+        if ($this->address->street) {
+            $fullAddress .= $this->address->street. ', ';
+        }
+
+        if ($this->address->city) {
+            $fullAddress .= $this->address->city. ', ';
+        }
+
+        if ($this->address->zip) {
+            $fullAddress .= $this->address->zip;
+        }
+
+        return $fullAddress;
+    }
+
     public function getSocialAttribute()
     {
         $social = \App\UserSocial::where('user_id', $this->attributes['id'])->first();

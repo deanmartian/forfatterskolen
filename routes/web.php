@@ -633,7 +633,7 @@ Route::group([
         Route::post('/course-is-free', 'CourseController@updateIsFreeStatus')->name('learner.course.is-free-status'); // Courses For Sale Status
         Route::post('/course/{id}/send-email-to-learners', 'CourseController@sendEmailToLearners')->name('learner.course.send-email-to-learners'); // Add Learner To Course
         Route::post('/course/{id}/not-started-reminder', 'CourseController@notStartedCourseReminder')->name('learner.course.not-started-reminder');
-        Route::get('/course/{id}/learner-list-excel', 'CourseController@learnerListExcel')->name('learner.course.learner-list-excel'); // Add Learner To Course
+        Route::get('/course/{id}/learner-list-excel/{type?}', 'CourseController@learnerListExcel')->name('learner.course.learner-list-excel'); // Add Learner To Course
         Route::get('/course/{id}/learner-active-list-excel', 'CourseController@learnerActiveListExcel')->name('learner.course.learner-active-list-excel'); // Add Learner To Course
         Route::post('/course/{id}/expirationReminder', 'CourseController@expirationReminder')->name('admin.course.expiration-reminder');
         Route::post('/course/{id}/add-learners-to-webinars', 'CourseController@addLearnersToWebinars')->name('admin.course.add-learners-to-webinars');
