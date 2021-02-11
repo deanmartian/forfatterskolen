@@ -1,0 +1,39 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+
+class CreateCopyEditingManuscriptsTable extends Migration {
+
+	/**
+	 * Run the migrations.
+	 *
+	 * @return void
+	 */
+	public function up()
+	{
+		Schema::create('copy_editing_manuscripts', function(Blueprint $table)
+		{
+			$table->integer('id', true);
+			$table->integer('user_id')->unsigned()->index('user_id');
+			$table->string('file');
+			$table->decimal('payment_price', 11);
+			$table->integer('editor_id')->unsigned()->nullable()->index('copy_editing_manuscripts_editor');
+			$table->boolean('status')->default(0);
+			$table->dateTime('expected_finish')->nullable();
+			$table->timestamps();
+		});
+	}
+
+
+	/**
+	 * Reverse the migrations.
+	 *
+	 * @return void
+	 */
+	public function down()
+	{
+		Schema::drop('copy_editing_manuscripts');
+	}
+
+}

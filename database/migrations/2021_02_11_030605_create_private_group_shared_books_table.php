@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+
+class CreatePrivateGroupSharedBooksTable extends Migration {
+
+	/**
+	 * Run the migrations.
+	 *
+	 * @return void
+	 */
+	public function up()
+	{
+		Schema::create('private_group_shared_books', function(Blueprint $table)
+		{
+			$table->increments('id');
+			$table->integer('private_group_id')->unsigned()->index('private_group_shared_books_private_group_id_foreign');
+			$table->integer('book_id')->index('private_group_shared_books_book_id_foreign');
+			$table->boolean('visibility')->default(2);
+			$table->timestamps();
+		});
+	}
+
+
+	/**
+	 * Reverse the migrations.
+	 *
+	 * @return void
+	 */
+	public function down()
+	{
+		Schema::drop('private_group_shared_books');
+	}
+
+}

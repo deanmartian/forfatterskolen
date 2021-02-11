@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+
+class AddForeignKeysToPilotReaderBookChapterNotesTable extends Migration {
+
+	/**
+	 * Run the migrations.
+	 *
+	 * @return void
+	 */
+	public function up()
+	{
+		Schema::table('pilot_reader_book_chapter_notes', function(Blueprint $table)
+		{
+			$table->foreign('pilot_reader_book_chapter_id', 'pilot_reader_book_chapter_id')->references('id')->on('pilot_reader_book_chapters')->onUpdate('CASCADE')->onDelete('CASCADE');
+		});
+	}
+
+
+	/**
+	 * Reverse the migrations.
+	 *
+	 * @return void
+	 */
+	public function down()
+	{
+		Schema::table('pilot_reader_book_chapter_notes', function(Blueprint $table)
+		{
+			$table->dropForeign('pilot_reader_book_chapter_id');
+		});
+	}
+
+}

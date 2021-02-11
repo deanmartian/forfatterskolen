@@ -50,8 +50,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // allow on dev only
         if ($this->app->environment() !== 'production') {
             $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
+            $this->app->register(\Way\Generators\GeneratorsServiceProvider::class);
+            $this->app->register(\Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
         }
 
         $this->app->singleton('Bambora', function() {

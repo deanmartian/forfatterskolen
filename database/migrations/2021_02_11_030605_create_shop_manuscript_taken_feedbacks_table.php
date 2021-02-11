@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+
+class CreateShopManuscriptTakenFeedbacksTable extends Migration {
+
+	/**
+	 * Run the migrations.
+	 *
+	 * @return void
+	 */
+	public function up()
+	{
+		Schema::create('shop_manuscript_taken_feedbacks', function(Blueprint $table)
+		{
+			$table->increments('id');
+			$table->integer('shop_manuscript_taken_id')->unsigned()->index('manuscript_id');
+			$table->text('filename');
+			$table->string('notes')->nullable();
+			$table->timestamps();
+		});
+	}
+
+
+	/**
+	 * Reverse the migrations.
+	 *
+	 * @return void
+	 */
+	public function down()
+	{
+		Schema::drop('shop_manuscript_taken_feedbacks');
+	}
+
+}

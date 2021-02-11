@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+
+class AddForeignKeysToWorkshopPresentersTable extends Migration {
+
+	/**
+	 * Run the migrations.
+	 *
+	 * @return void
+	 */
+	public function up()
+	{
+		Schema::table('workshop_presenters', function(Blueprint $table)
+		{
+			$table->foreign('workshop_id', 'workshop_presenters_ibfk_1')->references('id')->on('workshops')->onUpdate('RESTRICT')->onDelete('CASCADE');
+		});
+	}
+
+
+	/**
+	 * Reverse the migrations.
+	 *
+	 * @return void
+	 */
+	public function down()
+	{
+		Schema::table('workshop_presenters', function(Blueprint $table)
+		{
+			$table->dropForeign('workshop_presenters_ibfk_1');
+		});
+	}
+
+}

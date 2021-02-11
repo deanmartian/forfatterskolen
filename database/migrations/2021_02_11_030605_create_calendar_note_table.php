@@ -1,0 +1,37 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+
+class CreateCalendarNoteTable extends Migration {
+
+	/**
+	 * Run the migrations.
+	 *
+	 * @return void
+	 */
+	public function up()
+	{
+		Schema::create('calendar_note', function(Blueprint $table)
+		{
+			$table->integer('id', true);
+			$table->text('note', 65535);
+			$table->date('from_date');
+			$table->date('to_date');
+			$table->integer('course_id')->unsigned()->index('course_id');
+			$table->timestamps();
+		});
+	}
+
+
+	/**
+	 * Reverse the migrations.
+	 *
+	 * @return void
+	 */
+	public function down()
+	{
+		Schema::drop('calendar_note');
+	}
+
+}
