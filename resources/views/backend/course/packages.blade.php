@@ -87,6 +87,7 @@
                                 .'/checkout?sp='.encrypt($package->id) }}"
                         data-has_student_discount="{{ $package->has_student_discount }}"
                                 data-is_show="{{ $package->is_show }}"
+                                data-is_upgradeable="{{ $package->is_upgradeable }}"
                                 data-full_payment_upgrade_price="{{ $package->full_payment_upgrade_price }}"
                                 data-months_3_upgrade_price="{{ $package->months_3_upgrade_price }}"
                                 data-months_6_upgrade_price="{{ $package->months_6_upgrade_price }}"
@@ -383,6 +384,11 @@
                 <input type="checkbox" data-toggle="toggle" data-on="Yes"
                        class="for-sale-toggle" data-off="No"
                        name="is_show" data-width="84" checked>
+              </div>
+              <div class="form-group">
+                <label>Allow Upgrade</label> <br>
+                <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                       name="is_upgradeable" data-width="84" checked>
               </div>
             </div>
 
@@ -697,6 +703,12 @@
                 <input type="checkbox" data-toggle="toggle" data-on="Yes"
                        class="for-sale-toggle" data-off="No"
                        name="is_show" data-width="84">
+              </div>
+
+              <div class="form-group">
+                <label>Allow Upgrade</label> <br>
+                <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                       name="is_upgradeable" data-width="84">
               </div>
 
               <div class="form-group sale-link-container">
@@ -1250,6 +1262,8 @@ $(document).ready(function(){
       var selected_course = $(this).data('selected-course');
       var course_type = $(this).data('course-type');
       let is_show = $(this).data('is_show');
+      let is_upgradeable = $(this).data("is_upgradeable");
+      console.log(is_upgradeable);
 
       let issue_date = $(this).data('issue_date');
       let validity_period = $(this).data('validity_period');
@@ -1303,6 +1317,10 @@ $(document).ready(function(){
       if (is_show) {
           $("#editPackageModal input[name=is_show]").bootstrapToggle('on');
           $(".sale-link-container").addClass('hide');
+      }
+
+      if (is_upgradeable) {
+          $("#editPackageModal").find("input[name=is_upgradeable]").bootstrapToggle('on');
       }
 
       if (months_3_enable) {

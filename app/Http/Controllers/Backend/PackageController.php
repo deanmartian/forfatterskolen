@@ -74,7 +74,8 @@ class PackageController extends Controller
             $months_3_enable    = isset($request->months_3_enable) ? 1 : 0 ;
             $months_6_enable    = isset($request->months_6_enable) ? 1 : 0 ;
             $months_12_enable   = isset($request->months_12_enable) ? 1 : 0 ;
-            $isShow             =   isset($request->is_show) ? 1 : 0 ;
+            $isShow             = isset($request->is_show) ? 1 : 0 ;
+            $isUpgradeable      = isset($request->is_upgradeable) ? 1 : 0 ;
 
             $package->disable_upgrade_price_date = $request->disable_upgrade_price_date;
             $package->disable_upgrade_price = isset($request->disable_upgrade_price) ? 1 : NULL ;
@@ -89,6 +90,7 @@ class PackageController extends Controller
             $package->is_reward = isset($request->is_reward) ? $request->is_reward : 0;
             $package->validity_period = $request->validity_period ?: 0 ;
             $package->is_show = $isShow;
+            $package->is_upgradeable = $isUpgradeable;
 
             $package->save();
             return redirect()->back();
@@ -157,6 +159,7 @@ class PackageController extends Controller
             $months_6_enable    = isset($request->months_6_enable) ? 1 : 0 ;
             $months_12_enable   = isset($request->months_12_enable) ? 1 : 0 ;
             $is_show            = isset($request->is_show) ? 1 : 0 ;
+            $isUpgradeable      = isset($request->is_upgradeable) ? 1 : 0 ;
 
             $package->disable_upgrade_price_date = $request->disable_upgrade_price_date;
             $package->disable_upgrade_price = isset($request->disable_upgrade_price) ? 1 : 0 ;
@@ -167,6 +170,7 @@ class PackageController extends Controller
             $package->months_6_enable       = $months_6_enable;
             $package->months_12_enable      = $months_12_enable;
             $package->is_show               = $is_show;
+            $package->is_upgradeable = $isUpgradeable;
 
             $package->issue_date = $request->issue_date;
             $package->is_reward = isset($request->is_reward) ? $request->is_reward : 0;

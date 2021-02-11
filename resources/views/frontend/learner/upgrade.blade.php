@@ -162,7 +162,7 @@
                                                         }
                                                     }
                                                     ?>
-                                                    @if ($displayBtn)
+                                                    @if ($displayBtn && $courseTaken->package->is_upgradeable)
                                                         <a href="{{ route('learner.get-upgrade-course',
                                                             ['course_taken_id' => $courseTaken->id, 'package_id' => $package->id]) }}"
                                                            class="btn site-btn-global site-btn-global-sm">
@@ -252,7 +252,7 @@
                                                         $displayBtn = true;
                                                     }*/
                                                     ?>
-                                                    @if($displayBtn)
+                                                    @if($displayBtn && $courseTaken->package->is_upgradeable)
                                                         <b>{{ $package->variation }}:</b>
                                                         {{ FrontendHelpers::currencyFormat($upgradePrice) }}
                                                         <br>
