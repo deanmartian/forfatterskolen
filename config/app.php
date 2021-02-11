@@ -193,8 +193,6 @@ return [
         Barryvdh\DomPDF\ServiceProvider::class,
 
         Anhskohbo\NoCaptcha\NoCaptchaServiceProvider::class,
-        Way\Generators\GeneratorsServiceProvider::class,
-        Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
     ],
 
     /*
