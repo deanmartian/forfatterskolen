@@ -76,6 +76,13 @@
                     </div>
                 </div>
             </div>
+
+            <br>
+            <div class="container">
+                <div class="col-sm-5 col-sm-offset-6">
+                    Merk: ** Lyrikk har 50% påslag av pris, da dette tar lengre tid.
+                </div>
+            </div>
         </div>
 
         <div class="fourth-section">

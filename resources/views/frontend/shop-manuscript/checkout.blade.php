@@ -283,7 +283,7 @@
 										$shopManuscript->full_payment_price - ($shopManuscript->full_payment_price * 0.05)
 										: $shopManuscript->full_payment_price;
 
-									$increasedPrice = \App\Http\FrontendHelpers::currencyFormat($totalPrice + ($totalPrice * .25));
+									$increasedPrice = \App\Http\FrontendHelpers::currencyFormat($totalPrice + ($totalPrice * .50));
 								?>
 								<span class="theme-text font-barlow-regular"
 								data-increased="{{ $increasedPrice }}" data-orig="{{ \App\Http\FrontendHelpers::currencyFormat($totalPrice) }}">

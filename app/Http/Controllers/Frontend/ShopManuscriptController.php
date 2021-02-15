@@ -205,7 +205,7 @@ class ShopManuscriptController extends Controller
         endif;
 
         if ((int)$request->genre === 10) {
-            $price = $price + ( $price * .25);
+            $price = $price + ( $price * .50);
         }
 
         $invoice_fields = [
