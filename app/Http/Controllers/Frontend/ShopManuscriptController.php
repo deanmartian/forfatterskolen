@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Session;
 use Validator;
 use Carbon\Carbon;
 use App\Http\FikenInvoice;
+use App\Jobs\AddMailToQueueJob;
 
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
@@ -240,6 +241,15 @@ class ShopManuscriptController extends Controller
         $newOrder['plan_id']    = $paymentPlan->id;
 
         Order::create($newOrder);
+
+        // Send Email
+        $user_email = Auth::user()->email;
+        $emailTemplate = AdminHelpers::emailTemplate('Shop Manuscript Welcome Email');
+        $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user_email,
+                Auth::user()->first_name, 'shop-manuscripts-taken');
+
+        dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
+            $emailTemplate->from_email, null, null, 'shop-manuscripts-taken', $shopManuscriptTaken->id));
 
         //if( $request->update_address ) :
             $address = Address::firstOrNew(['user_id' => Auth::user()->id]);
