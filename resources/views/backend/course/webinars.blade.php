@@ -558,9 +558,10 @@
 					  onsubmit="disableSubmit(this)">
 					{{csrf_field()}}
 
-					<p>
-						Are you sure to register the learners to this webinar?
-					</p>
+					<div class="form-group">
+						<label>Date</label>
+						<input type="date" name="date" class="form-control" required>
+					</div>
 
 					<div class="text-right">
 						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>

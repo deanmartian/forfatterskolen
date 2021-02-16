@@ -7,6 +7,7 @@ use App\Mail\SubjectBodyEmail;
 use App\UserAutoRegisterToCourseWebinar;
 use App\WebinarEmailOut;
 use App\WebinarRegistrant;
+use App\WebinarScheduledRegistration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests;
@@ -351,12 +352,19 @@ class WebinarController extends Controller
         ]);
     }
 
-    public function autoRegisterLearnersToWebinar( $webinar_id, $course_id )
+    public function autoRegisterLearnersToWebinar( $webinar_id, $course_id, Request $request )
     {
         $webinar = Webinar::find($webinar_id);
         $autoRegisterLearners = UserAutoRegisterToCourseWebinar::where('course_id', $course_id)->get();
 
-        $header[] = 'API-KEY: '.config('services.big_marker.api_key');
+        $scheduledRegistration = WebinarScheduledRegistration::firstOrCreate([
+            'webinar_id' => $webinar_id
+        ]);
+
+        $scheduledRegistration->date = $request->date;
+        $scheduledRegistration->save();
+
+        /*$header[] = 'API-KEY: '.config('services.big_marker.api_key');
         $counter = 1;
         foreach ( $autoRegisterLearners as $learner ) {
             $user = $learner->user;
@@ -390,9 +398,9 @@ class WebinarController extends Controller
             }
 
             $counter++;
-        }
+        }*/
 
-        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Learners added to webinars.'),
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Webinar scheduled successfully.'),
             'alert_type' => 'success']);
     }
     

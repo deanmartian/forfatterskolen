@@ -12,6 +12,7 @@ use App\Package;
 use App\PackageCourse;
 use App\User;
 use App\WebinarRegistrant;
+use App\WebinarScheduledRegistration;
 use Carbon\Carbon;
 use Illuminate\Contracts\Logging\Log;
 use Illuminate\Http\Request;
@@ -674,7 +675,16 @@ class CourseController extends Controller
         $webinar = $course->webinars()->where('id', $request->webinar_id)->first();
         $learners = $course->learners->get();
 
-        $header[] = 'API-KEY: '.config('services.big_marker.api_key');
+        $scheduledRegistration = WebinarScheduledRegistration::firstOrCreate([
+           'webinar_id' => $request->webinar_id
+        ]);
+
+        $scheduledRegistration->date = $request->date;
+        $scheduledRegistration->save();
+
+        /*
+         * old code before saving to schedule
+         * $header[] = 'API-KEY: '.config('services.big_marker.api_key');
         $counter = 1;
         foreach ( $learners as $learner ) {
             $user = $learner->user;
@@ -714,9 +724,9 @@ class CourseController extends Controller
 
             //}
 
-        }
+        }*/
 
-        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Learners added to webinars.'),
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Webinar scheduled successfully.'),
             'alert_type' => 'success']);
 
     }
