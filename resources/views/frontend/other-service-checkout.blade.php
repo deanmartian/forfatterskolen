@@ -211,7 +211,8 @@
                         </div>
 
                         @if($data['price'])
-                            <button type="submit" class="btn site-btn-global-w-arrow" id="process-order">
+                            <button type="submit" class="btn site-btn-global-w-arrow" id="process-order"
+                            {{ $data['price'] < 484 ? 'disabled' : '' }}>
                                 <i class="fa fa-spinner fa-pulse d-none"></i>
                                 {{ trans('site.front.buy') }}
                             </button>

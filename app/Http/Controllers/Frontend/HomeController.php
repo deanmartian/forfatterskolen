@@ -258,7 +258,7 @@ class HomeController extends Controller
                 }*/
 
                 $word_per_price = 1000;
-                $price_per_word = 30;
+                $price_per_word = 22;
                 $rounded_word = FrontendHelpers::roundUpToNearestMultiple($word_count);
 
                 $calculated_price = ($rounded_word/$word_per_price) * $price_per_word;
@@ -336,7 +336,7 @@ class HomeController extends Controller
                 // count characters with space
                 $word_count = strlen($docObj->convertToText()) - 2;
                 $word_per_price = 1000;
-                $price_per_word = $plan == 1 ? 35 : 30;
+                $price_per_word = $plan == 1 ? 22 : 19;
                 $rounded_word = FrontendHelpers::roundUpToNearestMultiple($word_count);
 
                 $calculated_price = ($rounded_word/$word_per_price) * $price_per_word;
@@ -354,7 +354,7 @@ class HomeController extends Controller
     /**
      * Process order for other service
      * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|void
+     * @return \Illuminate\Http\RedirectResponse|mixed
      */
     public function otherServiceOrder(Request $request)
     {
@@ -375,6 +375,12 @@ class HomeController extends Controller
         if(!\File::exists($data['file_location'])){
             return redirect()->back()->withErrors([
                 'file' => 'Please re-upload the file'
+            ]);
+        }
+
+        if ($request->price < 484) {
+            return redirect()->back()->withErrors([
+                'price' => 'Price should be 484 or more'
             ]);
         }
        
@@ -532,7 +538,7 @@ class HomeController extends Controller
 
 
                 $word_per_price = 1000;
-                $price_per_word = 25;
+                $price_per_word = 19;
                 $rounded_word = FrontendHelpers::roundUpToNearestMultiple($word_count);
 
                 $calculated_price = ($rounded_word/$word_per_price) * $price_per_word;
