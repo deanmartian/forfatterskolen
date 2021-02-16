@@ -74,6 +74,22 @@ class EmailHistory extends Model
             }
         }
 
+        if (strpos($parent, 'copy-editing') !== false ) {
+            $webinarRegistrant = CopyEditingManuscript::with('user')->where('id', $parent_id)->first();
+            if($webinarRegistrant) {
+                $learner_id = $webinarRegistrant->user_id;
+                $full_name = $webinarRegistrant->user->full_name;
+            }
+        }
+
+        if (strpos($parent, 'correction') !== false ) {
+            $webinarRegistrant = CorrectionManuscript::with('user')->where('id', $parent_id)->first();
+            if($webinarRegistrant) {
+                $learner_id = $webinarRegistrant->user_id;
+                $full_name = $webinarRegistrant->user->full_name;
+            }
+        }
+
         if ($parent === 'invoice') {
             $invoice = Invoice::find($parent_id);
             if ($invoice) {

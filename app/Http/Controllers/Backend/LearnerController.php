@@ -171,6 +171,18 @@ class LearnerController extends Controller
                 $query->where('parent', '=', 'invoice');
                 $query->whereIn('parent_id', $learnerInvoices);
             })
+            ->orWhere(function($query) use ($learnerInvoices){
+                $query->where('parent', '=', 'invoice');
+                $query->whereIn('parent_id', $learnerInvoices);
+            })
+            ->orWhere(function($query) use ($learner){
+                $query->where('parent', 'LIKE', 'copy-editing%');
+                $query->where('recipient', $learner->email);
+            })
+            ->orWhere(function($query) use ($learner){
+                $query->where('parent', 'LIKE', 'correction%');
+                $query->where('recipient', $learner->email);
+            })
             ->latest()
             ->get();
 

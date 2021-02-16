@@ -427,6 +427,7 @@ class HomeController extends Controller
 
         $copyEditingManuscript = null;
         $correctionManuscript = null;
+        $newOrder = null;
 
         if (session('os_is_copy_editing') == 1) {
             $copyEditingManuscript = CopyEditingManuscript::create([
@@ -434,14 +435,44 @@ class HomeController extends Controller
                 'file'  => $newFileLocation,
                 'payment_price' => $data['price']
             ]);
+            $newOrder['item_id']    = $copyEditingManuscript->id;
+            $newOrder['type']       = Order::COPY_EDITING_TYPE;
         } else {
             $correctionManuscript = CorrectionManuscript::create([
                 'user_id' => Auth::user()->id,
                 'file'  => $newFileLocation,
                 'payment_price' => $data['price']
             ]);
+            $newOrder['item_id']    = $correctionManuscript->id;
+            $newOrder['type']       = Order::CORRECTION_TYPE;
         }
 
+        // order history
+        $newOrder['user_id']    = Auth::user()->id;
+        $newOrder['package_id'] = 0;
+        $newOrder['plan_id']    = 8;
+
+        Order::create($newOrder);
+
+        // send email 
+        $user_email = Auth::user()->email;
+        $parentID = null;
+        $parent = null;
+        $emailTemplate = AdminHelpers::emailTemplate('Other Services Order');
+
+        if (session('os_is_copy_editing') == 1) {
+            $parentID = $copyEditingManuscript->id;
+            $parent = 'copy-editing-order';
+        }else{
+            $parentID = $correctionManuscript->id;
+            $parent = 'correction-order';
+        }
+
+        $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user_email,
+                Auth::user()->first_name, '');
+
+        dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
+            $emailTemplate->from_email, null, null, $parent, $parentID));
 
         if( $paymentMode->mode == "Paypal" ) :
             echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
@@ -458,28 +489,7 @@ class HomeController extends Controller
             return;
         endif;
 
-        // send email 
-        $user_email = Auth::user()->email;
-        $parentID = null;
-        $parent = null;
-        $emailTemplate = AdminHelpers::emailTemplate('Other Services Order');
-
-        if (session('os_is_copy_editing') == 1) {
-            $parentID = $copyEditingManuscript->id;
-            $parent = 'Copy Editing Order';
-        }else{
-            $parentID = $correctionManuscript->id;
-            $parent = 'Correction Order';
-        }
-
-        $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user_email,
-                Auth::user()->first_name, '');
-
-        dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
-            $emailTemplate->from_email, null, null, $parent, $parentID));
-
-        return redirect(route('front.simple.thankyou'));
-        // return redirect()->to('/thank-you');
+        return redirect()->to('/thank-you');
 
     }
 

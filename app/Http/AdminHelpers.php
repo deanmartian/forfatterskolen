@@ -366,6 +366,12 @@ class AdminHelpers
                 $orderDetails = "<a href='".route('admin.workshop.show', $workshop->id)."'>"
                     .$workshop->title."</a>";
                 break;
+            case 4:
+                $orderDetails = trans('site.front.correction.title');
+                break;
+            case 5:
+                $orderDetails = trans('site.front.copy-editing.title');
+                break;
         }
 
         return $orderDetails;

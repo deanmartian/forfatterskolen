@@ -318,9 +318,9 @@ class OtherServiceController extends Controller
                 $emailTemplate = AdminHelpers::emailTemplate('Other Services Feedback');
 
                 if ($service_type == 1) {
-                    $parent = 'Copy Editing Order';
+                    $parent = 'copy-editing-feedback';
                 }else{
-                    $parent = 'Correction Order';
+                    $parent = 'correction-feedback';
                 }
 
                 $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user_email,
