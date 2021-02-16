@@ -1288,7 +1288,7 @@
 </div>
 
 <div id="addOtherServiceFeedbackModal" class="modal fade" role="dialog">
-    <div class="modal-dialog modal-sm">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -1297,10 +1297,28 @@
             <div class="modal-body">
                 <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
                     {{csrf_field()}}
+					<?php
+					$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Other Services Feedback');
+					?>
                     <div class="form-group">
                         <label>{{ trans_choice('site.manuscripts', 1) }}</label>
                         <input type="file" class="form-control" name="manuscript" multiple accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf" required>
                     </div>
+					<div class="form-group">
+						<label>{{ trans('site.subject') }}</label>
+						<input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}"
+							required>
+					</div>
+					<div class="form-group">
+						<label>{{ trans('site.from') }}</label>
+						<input type="text" class="form-control" name="from_email"
+							value="{{ $emailTemplate->from_email }}" required>
+					</div>
+					<div class="form-group">
+						<label>{{ trans('site.message') }}</label>
+						<textarea class="form-control tinymce" name="message" rows="6"
+								required>{!! $emailTemplate->email_content !!}</textarea>
+					</div>
                     <button type="submit" class="btn btn-primary pull-right">{{ trans('site.add-feedback') }}</button>
                     <div class="clearfix"></div>
                 </form>

@@ -13,6 +13,8 @@ use App\OtherServiceFeedback;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use File;
+use Illuminate\Support\Facades\Auth;
+use App\Jobs\AddMailToQueueJob;
 
 class OtherServiceController extends Controller
 {
@@ -288,16 +290,44 @@ class OtherServiceController extends Controller
 
                 $data['manuscript'] = $file;
 
-                $service = 'Språkvask';
-
-                if ($service_type == 2) {
-                    $service = 'Korrektur';
-                }
+                $service = '';
 
                 $data['service_id'] = $service_id;
                 $data['service_type'] = $service_type;
 
                 OtherServiceFeedback::create($data);
+
+                //update status
+                if ($service_type == 1) {
+                    $copyEditing = CopyEditingManuscript::find($service_id);
+                    $copyEditing->status = 2;
+                    $copyEditing->save();
+                    $service = 'Språkvask';
+                }
+    
+                if ($service_type == 2){
+                    $correction = CorrectionManuscript::find($service_id);
+                    $correction->status = 2;
+                    $correction->save();
+                    $service = 'Korrektur';
+                }
+
+                // send email 
+                $user_email = Auth::user()->email;
+                $parent = null;
+                $emailTemplate = AdminHelpers::emailTemplate('Other Services Feedback');
+
+                if ($service_type == 1) {
+                    $parent = 'Copy Editing Order';
+                }else{
+                    $parent = 'Correction Order';
+                }
+
+                $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user_email,
+                Auth::user()->first_name, '');
+
+                dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
+                    $emailTemplate->from_email, null, null, $parent, $service_id));
 
                 return redirect()->back()->with([
                     'errors'                => AdminHelpers::createMessageBag($service.' Feedback added successfully.'),

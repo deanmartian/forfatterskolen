@@ -372,6 +372,12 @@ class HomeController extends Controller
 
         $newFileLocation = $destination.$time.'.'.$extension;
 
+        if(!\File::exists($data['file_location'])){
+            return redirect()->back()->withErrors([
+                'file' => 'Please re-upload the file'
+            ]);
+        }
+       
         // move the file from manuscript-tests to shop-manuscripts
         \File::move($data['file_location'], $newFileLocation);
 
@@ -419,14 +425,17 @@ class HomeController extends Controller
         $invoice = new FikenInvoice();
         $invoice->create_invoice($invoice_fields);
 
+        $copyEditingManuscript = null;
+        $correctionManuscript = null;
+
         if (session('os_is_copy_editing') == 1) {
-            CopyEditingManuscript::create([
+            $copyEditingManuscript = CopyEditingManuscript::create([
                 'user_id' => Auth::user()->id,
                 'file'  => $newFileLocation,
                 'payment_price' => $data['price']
             ]);
         } else {
-            CorrectionManuscript::create([
+            $correctionManuscript = CorrectionManuscript::create([
                 'user_id' => Auth::user()->id,
                 'file'  => $newFileLocation,
                 'payment_price' => $data['price']
@@ -449,7 +458,28 @@ class HomeController extends Controller
             return;
         endif;
 
+        // send email 
+        $user_email = Auth::user()->email;
+        $parentID = null;
+        $parent = null;
+        $emailTemplate = AdminHelpers::emailTemplate('Other Services Order');
+
+        if (session('os_is_copy_editing') == 1) {
+            $parentID = $copyEditingManuscript->id;
+            $parent = 'Copy Editing Order';
+        }else{
+            $parentID = $correctionManuscript->id;
+            $parent = 'Correction Order';
+        }
+
+        $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user_email,
+                Auth::user()->first_name, '');
+
+        dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
+            $emailTemplate->from_email, null, null, $parent, $parentID));
+
         return redirect(route('front.simple.thankyou'));
+        // return redirect()->to('/thank-you');
 
     }
 
