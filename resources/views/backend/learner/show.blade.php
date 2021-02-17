@@ -108,7 +108,9 @@
 			<button type="button" class="margin-top btn btn-warning" data-toggle="modal" data-target="#preferredEditorModal">Preferred Editor</button>
 			<button type="button" class="margin-top btn btn-success setVippsEFakturaBtn" data-toggle="modal"
 					data-target="#setVippsEFakturaModal"
-					data-vipps-number="{{ $learner->address ? $learner->address->vipps_phone_number : NULL}}">Set VIPPS-eFaktura</button>
+					data-vipps-number="{{ $learner->address ? $learner->address->vipps_phone_number : NULL}}">
+				{!! trans('site.set-vipps-efaktura') !!}
+			</button>
 
 			<div class="former-course-container">
 				<h4>{{ trans('site.former-courses') }}</h4>
@@ -569,7 +571,7 @@
 											data-target="#vippsFakturaModal"
 												data-action="{{ route('admin.learner.invoice.vipps-e-faktura', $invoice->id) }}"
 												data-vipps-number="{{ $learner->address ? $learner->address->vipps_phone_number : NULL}}">
-											VIPPS eFaktura
+											{!! trans('site.vipps-efaktura') !!}
 										</button>
 									@endif
 
@@ -2044,7 +2046,7 @@
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<h4 class="modal-title">
-					VIPPS eFaktura
+					{!! trans('site.vipps-efaktura') !!}
 				</h4>
 			</div>
 			<div class="modal-body">
@@ -2052,7 +2054,7 @@
 					{{ csrf_field() }}
 
 					<div class="form-group">
-						<label>Mobile Number</label>
+						<label>{!! trans('site.mobile-number') !!}</label>
 						<input type="text" class="form-control" name="mobile_number" required>
 					</div>
 
@@ -3204,7 +3206,7 @@
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<h4 class="modal-title">
-					Set VIPPS eFaktura
+					{!! trans('site.set-vipps-efaktura') !!}
 				</h4>
 			</div>
 			<div class="modal-body">
@@ -3212,7 +3214,7 @@
 					{{ csrf_field() }}
 
 					<div class="form-group">
-						<label>Mobile Number</label>
+						<label>{!! trans('site.mobile-number') !!}</label>
 						<input type="text" class="form-control" name="mobile_number">
 					</div>
 

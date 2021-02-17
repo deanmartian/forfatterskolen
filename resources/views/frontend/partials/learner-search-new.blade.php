@@ -5,7 +5,9 @@
 
             <a href="javascript:void(0)" class="btn btn-primary setVippsEFakturaBtn" data-toggle="modal"
                data-target="#setVippsEFakturaModal"
-               data-vipps-number="{{ Auth::user()->address ? Auth::user()->address->vipps_phone_number : NULL}}">Set VIPPS-eFaktura</a>
+               data-vipps-number="{{ Auth::user()->address ? Auth::user()->address->vipps_phone_number : NULL}}">
+                {!! trans('site.set-vipps-efaktura') !!}
+            </a>
         </div>
         <div class="col-md-5 col-sm-12 float-right">
             <div class="input-group">
