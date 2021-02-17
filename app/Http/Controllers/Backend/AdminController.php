@@ -34,13 +34,12 @@ class AdminController extends Controller
    
     public function index()
     {
-        $admins = User::where('role', 1)->withTrashed()->orderBy('created_at', 'desc')->paginate(20);
+        $admins = User::whereIn('role', array(1,3))->withTrashed()->orderBy('created_at', 'desc')->paginate(20);
         $customActions = CustomAction::where('is_active',1)->get();
         $pageMetas = PageMeta::all();
         $staffs = Staff::all();
-        $headEditor = (int) Settings::headEditor();
 
-        return view('backend.admin.index', compact('admins','customActions', 'pageMetas', 'staffs', 'headEditor'));
+        return view('backend.admin.index', compact('admins','customActions', 'pageMetas', 'staffs'));
     }
 
 
@@ -78,18 +77,16 @@ class AdminController extends Controller
             'last_name' => 'required|max:100',
             'email' => 'required|max:100',
         ]);
-        $admin = User::where('id', $id)->where('role', 1)->firstOrFail();
+        $admin = User::where('id', $id)->whereIn('role', array(1,3))->firstOrFail();
         $admin->first_name = $request->first_name;
         $admin->last_name = $request->last_name;
         $admin->email = $request->email;
-
-        $check_bok_fields = array('minimal_access','is_editor');
-        foreach ($check_bok_fields as $field) {
-            $admin->$field = 0; // set value if the field is unchecked
-
-            if ($request->has($field)) {
-                $admin->$field = 1;
-            }
+        
+        if($request->has('minimal_access')){
+            $admin->minimal_access = 1;
+        }
+        if($request->has('is_editor')){
+            $admin->role = 3;
         }
 
         if( $request->password ) :
@@ -103,7 +100,7 @@ class AdminController extends Controller
 
      public function destroy($id, Request $request)
     {
-        $admin = User::where('id', $id)->where('role', 1)->firstOrFail();
+        $admin = User::where('id', $id)->whereIn('role', array(1,3))->firstOrFail();
         $admin->delete();
 
         return redirect()->back();

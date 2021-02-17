@@ -14,21 +14,9 @@
 @stop
 
 @section('content')
-<div class="col-sm-12 col-md-10 dashboard-left">
+<div class="col-sm-12 dashboard-left">
 	<div class="row">
-		<div class="col-sm-12 @if (Auth::user()->role != 3) col-md-5 @endif">
-			<!-- Summary  -->
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="panel panel-default text-center">
-						<div class="panel-body">
-							<h3>{{count(App\User::where('role', 2)->get())}}</h3>
-							{{ trans('site.total-learners') }}
-						</div>
-					</div>
-				</div>
-			</div>
-
+		<div class="col-sm-12">
 
 			<!-- My assigned manuscripts -->
 			<div class="row">
@@ -43,7 +31,7 @@
 							<thead>
 							<tr>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
-								<th>{{ trans_choice('site.learners', 1) }}</th>
+								<th>{{ trans('site.learner-id') }}</th>
 								<th>{{ trans('site.assigned-to') }}</th>
 								<th>Expected Finish</th>
 								<th></th>
@@ -64,11 +52,7 @@
 											</a>
 										@endif
 									</td>
-									<td>
-										<a href="{{ route('admin.learner.show',$assignedManuscript->user->id) }}">
-											{{ $assignedManuscript->user->fullname }}
-										</a>
-									</td>
+									<td>{{ $assignedManuscript->user->id }}</td>
 									<td>
 										{{ $assignedManuscript->editor->full_name }}
 									</td>
@@ -106,39 +90,7 @@
 				</div>
 			</div>
 
-
-		@if (Auth::user()->role != 3)
-
-			<!-- My assigned free manuscripts -->
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="panel panel-default">
-						<div class="panel-heading"><h4>{{ trans('site.my-assigned-free-manuscripts') }}</h4></div>
-						<table class="table">
-						    <thead>
-						      <tr>
-						        <th>{{ trans_choice('site.users', 1) }}</th>
-						        <th>{{ trans_choice('site.emails', 1) }}</th>
-						        <th></th>
-						      </tr>
-						    </thead>
-						    <tbody>
-						    	@foreach( $assigned_free_manuscripts as $freeManuscript )
-						    	<tr>
-						    		<td>{{ $freeManuscript->name }}</td>
-						    		<td>{{ $freeManuscript->email }}</td>
-						    		<td><button class="btn btn-xs btn-primary viewManuscriptBtn" data-toggle="modal" data-fields="{{ json_encode($freeManuscript) }}" data-target="#viewManuscriptModal">{{ trans('site.view') }}</button></td>
-						    	</tr>
-							    @endforeach
-						    </tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-
-
-
-			<!-- Upcoming Webinars -->
+            <!-- Shop manuscripts -->
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
@@ -148,7 +100,7 @@
 							<tr>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 								<th>{{ trans('site.genre') }}</th>
-								<th>{{ trans_choice('site.learners', 1) }}</th>
+								<th>{{ trans('site.learner-id') }}</th>
 								<th>Locked</th>
 								<th>{{ trans('site.assigned-to') }}</th>
 								<th>Expected Finish</th>
@@ -156,7 +108,7 @@
 							</tr>
 							</thead>
 							<tbody>
-							@foreach($shopManuscripts as $shopManuscript)
+							@foreach($assigned_shop_manuscripts as $shopManuscript)
 								@if( $shopManuscript->status == 'Started' )
 									<tr>
 										<td>@if($shopManuscript->is_active)
@@ -170,7 +122,7 @@
 												{{ \App\Http\FrontendHelpers::assignmentType($shopManuscript->genre) }}
 											@endif
 										</td>
-										<td><a href="{{ route('admin.learner.show', $shopManuscript->user->id) }}">{{ $shopManuscript->user->full_name }}</a></td>
+										<td>{{ $shopManuscript->user->id }}</td>
 										<td>
 											@if ($shopManuscript->file)
 												<input type="checkbox" data-toggle="toggle" data-on="Locked"
@@ -250,9 +202,8 @@
 					</div>
 				</div>
 			</div>
-
-		@endif
-
+            
+            <!-- My Assignments -->
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
@@ -323,7 +274,6 @@
 				</div>
 			</div>
 
-
 			<!-- My coaching timer -->
 			<div class="row">
 				<div class="col-sm-12">
@@ -332,7 +282,7 @@
 						<table class="table">
 							<thead>
 							<tr>
-								<th>{{ trans_choice('site.learners', 1) }}</th>
+								<th>{{ trans('site.learner-id') }}</th>
 								<th>{{ trans('site.approved-date') }}</th>
 								<th>{{ trans('site.session-length') }}</th>
 							</tr>
@@ -343,7 +293,7 @@
 								<tr>
 									<td>
 										<a href="{{ route('admin.learner.show', $coachingTimer->user->id) }}">
-											{{ $coachingTimer->user->full_name }}
+											{{ $coachingTimer->user->id }}
 										</a>
 
 										@if ($coachingTimer->help_with)
@@ -380,7 +330,7 @@
 							<thead>
 							<tr>
 								<th>{{ trans_choice('site.manus', 2) }}</th>
-								<th>{{ trans_choice('site.learners', 1) }}</th>
+								<th>{{ trans('site.learner-id') }}</th>
 								<th>{{ trans('site.expected-finish') }}</th>
 								<th>{{ trans('site.status') }}</th>
 								<th></th>
@@ -398,11 +348,7 @@
 											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
 										@endif
 									</td>
-									<td>
-										<a href="{{ route('admin.learner.show', $correction->user->id) }}">
-											{{ $correction->user->full_name }}
-										</a>
-									</td>
+									<td>{{ $correction->user->id }}</td>
 									<td>
 										@if ($correction->expected_finish)
 											{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($correction->expected_finish) }}
@@ -470,7 +416,7 @@
 							<thead>
 							<tr>
 								<th>{{ trans_choice('site.manus', 2) }}</th>
-								<th>{{ trans_choice('site.learners', 1) }}</th>
+								<th>{{ trans('site.learner-id') }}</th>
 								<th>{{ trans('site.expected-finish') }}</th>
 								<th>{{ trans('site.status') }}</th>
 								<th></th>
@@ -488,11 +434,7 @@
 											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copyEditing->file}}">{{ basename($copyEditing->file) }}</a>
 										@endif
 									</td>
-									<td>
-										<a href="{{ route('admin.learner.show', $copyEditing->user->id) }}">
-											{{ $copyEditing->user->full_name }}
-										</a>
-									</td>
+									<td>{{ $copyEditing->user->id }}</td>
 									<td>
 										@if ($copyEditing->expected_finish)
 											{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($copyEditing->expected_finish) }}
@@ -554,474 +496,9 @@
 			<!-- end My Copy Editing -->
 
 		</div>
-
-		@if (Auth::user()->role != 3)
-		<div class="col-sm-12 col-md-7">
-			<!-- Pending Courses -->
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="panel panel-default">
-						<div class="panel-heading"><h4>{{ trans('site.pending-courses') }}</h4></div>
-						<div class="table-responsive">
-							<table class="table">
-							    <thead>
-							      <tr>
-							        <th>{{ trans_choice('site.courses', 1) }}</th>
-							        <th>{{ trans_choice('site.learners', 1) }}</th>
-							        <th>{{ trans('site.date-ordered') }}</th>
-							        <th></th>
-							      </tr>
-							    </thead>
-							    <tbody>
-							    	@foreach( $pending_courses as $pending_course )
-							      	<tr>
-								        <td>{{ $pending_course->package->course->title }}</td>
-								        <td>
-											<a href="{{ route('admin.learner.show', $pending_course->user->id) }}">
-												{{ $pending_course->user->full_name }}
-											</a>
-										</td>
-								        <td>{{ $pending_course->created_at }}</td>
-								        <td>
-								        	<form method="POST" action="{{ route('activate_course_taken') }}" class="inline-block">
-												{{ csrf_field() }}
-												<input type="hidden" name="coursetaken_id" value="{{ $pending_course->id }}">
-												<button class="btn btn-warning btn-xs" type="submit"><i class="fa fa-check"></i></button>
-											</form>
-								        	<form method="POST" action="{{ route('delete_course_taken') }}" class="inline-block">
-												{{ csrf_field() }}
-												<input type="hidden" name="coursetaken_id" value="{{ $pending_course->id }}">
-												<button class="btn btn-danger btn-xs" type="submit"><i class="fa fa-trash"></i></button>
-											</form>
-								        </td>
-							      	</tr>
-							      	@endforeach
-							    </tbody>
-							</table>
-						</div>
-					</div>
-				</div>
-			</div>
-
-
-			<!-- Pending Shop Manuscripts -->
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="panel panel-default">
-						<div class="panel-heading"><h4>{{ trans('site.pending-shop-manuscripts') }}</h4></div>
-						<table class="table">
-						    <thead>
-						      <tr>
-						        <th>{{ trans_choice('site.manuscripts', 1) }}</th>
-						        <th>{{ trans_choice('site.learners', 1) }}</th>
-						        <th>{{ trans('site.date-ordered') }}</th>
-						        <th></th>
-						      </tr>
-						    </thead>
-						    <tbody>
-						    	@foreach( $pending_shop_manuscripts as $pending_shop_manuscript )
-						      	<tr>
-							        <td>
-										<a href="{{ route('shop_manuscript_taken',
-										['id' => $pending_shop_manuscript->user->id,
-										'shop_manuscript_taken_id' => $pending_shop_manuscript->id]) }}">
-											{{$pending_shop_manuscript->shop_manuscript->title}}
-										</a>
-									</td>
-							        <td>
-										<a href="{{ route('admin.learner.show', $pending_shop_manuscript->user->id) }}">
-											{{ $pending_shop_manuscript->user->full_name }}
-										</a>
-									</td>
-							        <td>{{ $pending_shop_manuscript->created_at }}</td>
-							        <td>
-							        	<form method="POST" action="{{ route('activate_shop_manuscript_taken') }}" class="inline-block">
-											{{ csrf_field() }}
-											<input type="hidden" name="shop_manuscript_id" value="{{ $pending_shop_manuscript->id }}">
-											<button class="btn btn-warning btn-xs" type="submit"><i class="fa fa-check"></i></button>
-										</form>
-							        	<form method="POST" action="{{ route('delete_shop_manuscript_taken') }}" class="inline-block">
-											{{ csrf_field() }}
-											<input type="hidden" name="shop_manuscript_id" value="{{ $pending_shop_manuscript->id }}">
-											<button class="btn btn-danger btn-xs" type="submit"><i class="fa fa-trash"></i></button>
-										</form>
-							        </td>
-						      	</tr>
-						      	@endforeach
-						    </tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-				
-
-
-			<!-- Pending Workshops -->
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="panel panel-default">
-						<div class="panel-heading"><h4>{{ trans('site.pending-workshops') }}</h4></div>
-						<table class="table">
-						    <thead>
-						      <tr>
-								  <th>{{ trans_choice('site.manuscripts', 1) }}</th>
-								  <th>{{ trans_choice('site.learners', 1) }}</th>
-								  <th>{{ trans('site.date-ordered') }}</th>
-						        <th></th>
-						      </tr>
-						    </thead>
-						    <tbody>
-						    	@foreach( $pending_workshops as $pending_workshop )
-						      	<tr>
-							        <td>{{ $pending_workshop->workshop->title }}</td>
-							        <td>{{ $pending_workshop->user->full_name }}</td>
-							        <td>{{ $pending_workshop->created_at }}</td>
-							        <td>
-							        	<form method="POST" action="{{ route('admin.package_workshop.approve', $pending_workshop->id) }}" class="inline-block">
-											{{ csrf_field() }}
-											<input type="hidden" name="workshop_user_id" value="{{ $pending_workshop->user_id }}">
-											<input type="hidden" name="workshop_id" value="{{ $pending_workshop->workshop_id }}">
-											<button class="btn btn-warning btn-xs" type="submit"><i class="fa fa-check"></i></button>
-										</form>
-							        	<form method="POST" action="{{ route('admin.package_workshop.disapprove', $pending_workshop->id) }}" class="inline-block">
-											{{ csrf_field() }}
-											<button class="btn btn-danger btn-xs" type="submit"><i class="fa fa-trash"></i></button>
-										</form>
-							        </td>
-						      	</tr>
-						      	@endforeach
-						    </tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h4>Pending Assignment</h4>
-						</div>
-						<table class="table">
-							<thead>
-								<tr>
-									<th>{{ trans_choice('site.manuscripts', 1) }}</th>
-									<th>{{ trans_choice('site.learners', 1) }}</th>
-									<th>{{ trans_choice('site.courses', 1) }}</th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach($pendingAssignments as $pendingAssignment)
-                                    <?php $extension = explode('.', basename($pendingAssignment->filename)); ?>
-									<tr>
-										<td>
-											@if( end($extension) == 'pdf' || end($extension) == 'odt' )
-												<a href="/js/ViewerJS/#../..{{ $pendingAssignment->filename }}">
-													{{ basename($pendingAssignment->filename) }}
-												</a>
-											@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
-												<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$pendingAssignment->filename}}">
-													{{ basename($pendingAssignment->filename) }}
-												</a>
-											@endif
-										</td>
-										<td>
-											<a href="{{ route('admin.learner.show',$pendingAssignment->user->id) }}">
-												{{ $pendingAssignment->user->fullname }}
-											</a>
-										</td>
-										<td>
-											@if($pendingAssignment->assignment->course)
-												<a href="{{ route('admin.course.show', $pendingAssignment->assignment->course->id) }}">
-													{{ $pendingAssignment->assignment->course->title }}
-												</a>
-											@endif
-										</td>
-										<td>
-											<button class="btn btn-xs btn-warning pendingAssignmentEditorBtn" data-toggle="modal"
-													data-target="#pendingAssignmentEditorModal"
-													data-action="{{ route('assignment.group.assign_manu_editor', $pendingAssignment->id) }}"
-													data-preferred-editor="{{ $pendingAssignment->user->preferredEditor
-								? $pendingAssignment->user->preferredEditor->editor_id : "" }}"
-													data-preferred-editor-name="{{ $pendingAssignment->user->preferredEditor
-								? $pendingAssignment->user->preferredEditor->editor->full_name : "" }}"
-											>
-												{{ trans('site.assign-editor') }}
-											</button>
-										</td>
-									</tr>
-								@endforeach
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-
-
-			<!-- Pending Assignment Feedbacks -->
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="panel panel-default">
-						<div class="panel-heading"><h4>{{ trans('site.pending-assignment-feedbacks') }}</h4></div>
-						<table class="table">
-						    <thead>
-						      <tr>
-						        <th>{{ trans_choice('site.manuscripts', 1) }}</th>
-						        <th>{{ trans('site.submitted-by') }}</th>
-						        <th>{{ trans('site.submitted-to') }}</th>
-						        <th>{{ trans_choice('site.assignments', 1) }}</th>
-						        <th></th>
-						      </tr>
-						    </thead>
-						    <tbody>
-						    	@foreach( $pending_assignment_feedbacks as $assignment_feedback )
-						    	<?php $extension = explode('.', basename($assignment_feedback->filename)); ?>
-						      	<tr>
-							        <td>
-							        	
-										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
-										<a href="/js/ViewerJS/#../..{{ $assignment_feedback->filename }}">{{ basename($assignment_feedback->filename) }}</a>
-										@elseif( end($extension) == 'docx' )
-										<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$assignment_feedback->filename}}">{{ basename($assignment_feedback->filename) }}</a>
-										@endif
-							        </td>
-							        <td>{{ $assignment_feedback->user->full_name }}</td>
-							        <td>{{ $assignment_feedback->assignment_group_learner->user->full_name }}</td>
-							        <td><a href="{{ route('admin.assignment.show', ['course_id' => $assignment_feedback->assignment_group_learner->group->assignment->course->id, 'id' => $assignment_feedback->assignment_group_learner->group->assignment->id]) }}">{{ $assignment_feedback->assignment_group_learner->group->assignment->title }}</a></td>
-							        <td>
-										<button type="button" class="btn btn-warning btn-xs approveFeedbackAdminBtn" data-toggle="modal" data-target="#approveFeedbackAdminModal" data-action="{{ route('admin.assignment.group.approve', $assignment_feedback->id) }}"><i class="fa fa-check"></i></button>
-										<button type="button" class="btn btn-xs btn-danger removeFeedbackAdminBtn" data-toggle="modal" data-target="#removeFeedbackAdminModal" data-action="{{ route('admin.assignment.group.remove_feedback', $assignment_feedback->id) }}"><i class="fa fa-trash"></i></button>
-							        </td>
-						      	</tr>
-						      	@endforeach
-						    </tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-
-			<!-- Pending Coaching Timer -->
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="panel panel-default">
-						<div class="panel-heading"><h4>{{ trans('site.pending-coaching-timer') }}</h4></div>
-						<table class="table">
-							<thead>
-							<tr>
-								<th>{{ trans_choice('site.learners', 1) }}</th>
-								<th>{{ trans('site.learner-suggested-date') }}</th>
-								<th>{{ trans('site.session-length') }}</th>
-								<th>{{ trans_choice('site.editors', 1) }}</th>
-								<th></th>
-							</tr>
-							</thead>
-							<tbody>
-							@foreach($pendingCoachingTimers as $coachingTimer)
-								<tr>
-									<td>
-										<a href="{{ route('admin.learner.show', $coachingTimer->user->id) }}">
-											{{ $coachingTimer->user->full_name }}
-										</a>
-
-										@if ($coachingTimer->help_with)
-											<br>
-											<a href="#viewHelpWithModal" style="color:#eea236" class="viewHelpWithBtn"
-											data-toggle="modal" data-details="{{ $coachingTimer->help_with }}">
-												{{ trans('site.view-help-with') }}
-											</a>
-										@endif
-									</td>
-									<td>
-                                        <?php
-                                        $suggested_dates = json_decode($coachingTimer->suggested_date);
-                                        ?>
-										@if($suggested_dates)
-											@for($i =0; $i <= 2; $i++)
-												<div style="margin-top: 5px">
-													{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($suggested_dates[$i]) }}
-													@if (!$coachingTimer->approved_date)
-														<button class="btn btn-success btn-xs approveDateBtn"
-																data-toggle="modal" data-target="#approveDateModal"
-																data-date="{{ $suggested_dates[$i] }}"
-																data-action="{{ route('admin.other-service.coaching-timer.approve_date', $coachingTimer->id) }}">
-															<i class="fa fa-check"></i>
-														</button>
-													@endif
-												</div>
-											@endfor
-										@endif
-									</td>
-									<td>
-										{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($coachingTimer->plan_type) }}
-									</td>
-									<td>
-										@if ($coachingTimer->editor_id)
-											{{ $coachingTimer->editor->full_name }}
-										@else
-											<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $coachingTimer->id, 'type' => 3]) }}">{{ trans('site.assign-editor') }}</button>
-										@endif
-									</td>
-									<td>
-										<button class="btn btn-primary btn-xs approveCoachingSessionBtn" data-toggle="modal"
-												data-target="#approveCoachingSessionModal" data-action="{{ route('admin.coaching-timer.approve', $coachingTimer->id) }}">
-											{{ trans('site.approve') }}
-										</button>
-									</td>
-								</tr>
-							@endforeach
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-			<!-- end Pending Coaching Timer -->
-
-			<!-- Pending Proofing -->
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="panel panel-default">
-						<div class="panel-heading"><h4>{{ trans('site.pending-correction') }}</h4></div>
-						<table class="table">
-							<thead>
-							<tr>
-								<th>{{ trans_choice('site.manus', 2) }}</th>
-								<th>{{ trans_choice('site.learners', 1) }}</th>
-								<th></th>
-							</tr>
-							</thead>
-							<tbody>
-							@foreach($pendingCorrections as $correction)
-                                <?php $extension = explode('.', basename($correction->file)); ?>
-								<tr>
-									<td>
-										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
-											<a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
-										@elseif( end($extension) == 'docx' )
-											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
-										@endif
-									</td>
-									<td>
-										<a href="{{ route('admin.learner.show', $correction->user->id) }}">
-											{{ $correction->user->full_name }}
-										</a>
-									</td>
-									<td>
-										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.assign-editor') }}</button>
-									</td>
-								</tr>
-							@endforeach
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-			<!-- end Pending Proofing -->
-
-			<!-- Pending Copy Editing -->
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="panel panel-default">
-						<div class="panel-heading"><h4>{{ trans('site.pending-copy-editing') }}</h4></div>
-						<table class="table">
-							<thead>
-							<tr>
-								<th>{{ trans_choice('site.manus', 2) }}</th>
-								<th>{{ trans_choice('site.learners', 1) }}</th>
-								<th></th>
-							</tr>
-							</thead>
-							<tbody>
-							@foreach($pendingCopyEditings as $copyEditing)
-                                <?php $extension = explode('.', basename($copyEditing->file)); ?>
-								<tr>
-									<td>
-										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
-											<a href="/js/ViewerJS/#../../{{ $copyEditing->file }}">{{ basename($copyEditing->file) }}</a>
-										@elseif( end($extension) == 'docx' )
-											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copyEditing->file}}">{{ basename($copyEditing->file) }}</a>
-										@endif
-									</td>
-									<td>
-										<a href="{{ route('admin.learner.show', $copyEditing->user->id) }}">
-											{{ $copyEditing->user->full_name }}
-										</a>
-									</td>
-									<td>
-										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $copyEditing->id, 'type' => 1]) }}">{{ trans('site.assign-editor') }}</button>
-									</td>
-								</tr>
-							@endforeach
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-			<!-- end Pending Copy Editing -->
-
-			<!-- Pending tasks -->
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="panel panel-default">
-						<div class="panel-heading"><h4>Pending Tasks</h4></div>
-						<table class="table">
-							<thead>
-							<tr>
-								<th>{{ trans_choice('site.learners', 1) }}</th>
-								<th>Task</th>
-								<th></th>
-							</tr>
-							</thead>
-							<tbody>
-								@foreach($pendingTasks as $task)
-									<tr>
-										<td>
-											<a href="{{ route('admin.learner.show', $task->user->id) }}">
-												{{ $task->user->full_name }}
-											</a>
-										</td>
-										<td>{!! nl2br($task->task) !!}</td>
-										<td>
-											<button class="btn btn-success btn-xs finishTaskBtn" data-toggle="modal"
-													data-target="#finishTaskModal"
-													data-action="{{ route('admin.task.finish', $task->id)}}">
-												<i class="fa fa-check"></i>
-											</button>
-											<button class="btn btn-primary btn-xs editTaskBtn" data-toggle="modal"
-													data-target="#editTaskModal"
-													data-fields="{{ json_encode($task) }}"
-													data-action="{{ route('admin.task.update', $task->id) }}">
-												<i class="fa fa-edit"></i>
-											</button>
-											<button class="btn btn-danger btn-xs deleteTaskBtn" data-toggle="modal"
-													data-target="#deleteTaskModal"
-													data-action="{{ route('admin.task.destroy', $task->id) }}">
-												<i class="fa fa-trash"></i>
-											</button>
-										</td>
-									</tr>
-								@endforeach
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-		@endif
 	</div>
 </div>
 
-<div class="col-sm-12 col-md-2 dashboard-right">
-	<h3 class="actitities-header">{{ trans('site.recent-activities') }}</h3>
-	@foreach( $logs as $log )
-	<div class="dashboard-activity" style="color: green">
-		<p>
-			<span class="activ-time">{{ Carbon\Carbon::parse($log->created_at)->diffForHumans() }}</span>
-			{!! $log->activity !!}
-		</p>
-	</div>
-	@endforeach
-</div>
 <div id="approveFeedbackAdminModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">

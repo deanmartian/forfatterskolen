@@ -63,7 +63,7 @@ class AssignmentController extends Controller
     	$course = Course::findOrFail($course_id);
     	$assignment = Assignment::findOrFail($id);
     	$assignments = Assignment::where('id', '!=', $id)->get();
-        $editors = \App\User::where('role', 1)->get();
+        $editors = \App\User::whereIn('role', array(1,3))->get();
 
     	$section = 'assignments';
     	if( $assignment->course->id == $course->id ) :

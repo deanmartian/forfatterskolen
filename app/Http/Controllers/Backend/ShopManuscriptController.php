@@ -62,7 +62,7 @@ class ShopManuscriptController extends Controller
 
             // check if editor then display only assigned manuscript
             // or manuscript that don't have an owner/assigned admin
-            if (Auth::user()->is_editor) :
+            if (Auth::user()->role == 3) :
                 $shopManuscripts = Manuscript::where('feedback_user_id', Auth::user()->id)
                     ->orWhereNull('feedback_user_id')
                     ->orderBy('created_at', 'desc')

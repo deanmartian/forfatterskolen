@@ -199,7 +199,7 @@
           <div class="form-group">
             <label>Editor</label>
             <select class="form-control select2" name="feedback_user_id" required>
-              @foreach( App\User::where('role', 1)->orderBy('id', 'desc')->get()  as $admin)
+              @foreach( App\User::whereIn('role', array(1,3))->orderBy('id', 'desc')->get()  as $admin)
               <option value="{{ $admin->id }}">{{ $admin->full_name }}</option>
               @endforeach
             </select>

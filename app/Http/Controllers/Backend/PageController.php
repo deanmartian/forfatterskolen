@@ -52,7 +52,7 @@ class PageController extends Controller
         $pending_workshops = WorkshopsTaken::where('is_active', false)->orderBy('created_at', 'desc')->get();
         $assigned_course_manuscripts = Manuscript::where('feedback_user_id', Auth::user()->id)->get();
 
-        if (Auth::user()->is_editor) {
+        if (Auth::user()->role == 3) {
             $assigned_course_manuscripts = Manuscript::where('feedback_user_id', Auth::user()->id)
                 ->orWhereNull('feedback_user_id')
                 ->orderBy('created_at', 'desc')
@@ -102,12 +102,25 @@ class PageController extends Controller
         $pendingTasks = UserTask::where('assigned_to', Auth::user()->id)
             ->where('status', 0)->get();
 
-        return view('backend.dashboard', compact('pending_courses', 'pending_shop_manuscripts',
+        if (Auth::user()->role == 3){
+
+            return view('backend.editor-dashboard', compact('pending_courses', 'pending_shop_manuscripts',
             'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts', 'assigned_free_manuscripts',
             'pending_assignment_feedbacks', 'logs', 'manuscripts','shopManuscripts',
             'nearlyExpiredCoursesCount', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
             'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments',
             'pendingTasks', 'assignedAssignmentManuscripts'));
+
+        }else{
+
+            return view('backend.dashboard', compact('pending_courses', 'pending_shop_manuscripts',
+            'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts', 'assigned_free_manuscripts',
+            'pending_assignment_feedbacks', 'logs', 'manuscripts','shopManuscripts',
+            'nearlyExpiredCoursesCount', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
+            'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments',
+            'pendingTasks', 'assignedAssignmentManuscripts'));
+
+        }
     }
 
     /**

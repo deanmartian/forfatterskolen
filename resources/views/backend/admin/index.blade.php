@@ -237,7 +237,7 @@
 								<td>{{ $admin->email }}</td>
 								<td>
 									<div class="pull-right">
-										@if($headEditor === $admin->id)
+										@if($admin->head_editor)
 											<label class="label label-success" style="margin-right: 5px">
 												Head Editor
 											</label>
@@ -357,12 +357,12 @@
 						<option value="" selected disabled>
 							-- Select Editor --
 						</option>
-						@foreach( App\User::where('role', 1)->orderBy('id', 'desc')->get()  as $admin)
+						@foreach( App\User::whereIn('role', array(1,3))->orderBy('id', 'desc')->get() as $admin)
                             <?php
                             $selected = '';
-                            if ($headEditor && $headEditor === $admin->id) {
-                                $selected = 'selected';
-                            }
+							if ($admin->head_editor){
+								$selected = 'selected';
+							}
                             ?>
 							<option value="{{ $admin->id }}" {{ $selected}}>
 								{{ $admin->full_name }}
@@ -648,8 +648,8 @@
 		/*if (fields.minimal_access) {
             form.find('input[name=minimal_access]').attr('checked', true);
 		}*/
-
-        if (fields.is_editor) {
+		form.find('input[name=is_editor]').attr('checked', false);
+        if (fields.role == 3) {
             form.find('input[name=is_editor]').attr('checked', true);
         }
 	});

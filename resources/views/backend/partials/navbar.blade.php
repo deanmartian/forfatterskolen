@@ -17,31 +17,36 @@ $urlList = array('pulse', 'board');
       <ul class="nav navbar-nav navbar-right">
         <li @if(Request::is('/')) class="active" @endif><a href="{{route('backend.dashboard')}}">{{ trans('site.admin-menu.dashboard') }}</a></li>
 
-        @foreach (\App\Http\AdminHelpers::pageList() as $page)
-          @if (\Auth::user()->pageAccess->count())
-            @if (in_array($page['id'], \Auth::user()->pageAccess->pluck('page_id')->toArray()))
+        @if(\Auth::user()->role==1){
+         
+          @foreach (\App\Http\AdminHelpers::pageList() as $page)
+            @if (\Auth::user()->pageAccess->count())
+              @if (in_array($page['id'], \Auth::user()->pageAccess->pluck('page_id')->toArray()))
+                <li @if(Request::is(strtolower($page['request_name']))) class="active" @endif>
+                  {{--<a href="{{ route($page['route']) }}">{{ $page['option'] }}</a>--}}
+                  <?php
+                    $single = array('support', 'faq', 'admin');
+                    $request_name = in_array($page['request_name'], $single) ?:
+                        ($page['request_name'] == 'publishing' ? 'support' : $page['request_name'].'s');
+                    ?>
+                  <a href="{{ route($page['route']) }}">{{ trans('site.admin-menu.'.$request_name) }}</a>
+                </li>
+              @endif
+            @else
               <li @if(Request::is(strtolower($page['request_name']))) class="active" @endif>
                 {{--<a href="{{ route($page['route']) }}">{{ $page['option'] }}</a>--}}
-                <?php
-                   $single = array('support', 'faq', 'admin');
-                   $request_name = in_array($page['request_name'], $single) ?:
+                  <?php
+                  $single = array('support', 'faq', 'admin');
+                  $request_name = in_array($page['request_name'], $single) ? $page['request_name'] :
                       ($page['request_name'] == 'publishing' ? 'support' : $page['request_name'].'s');
                   ?>
                 <a href="{{ route($page['route']) }}">{{ trans('site.admin-menu.'.$request_name) }}</a>
               </li>
             @endif
-          @else
-            <li @if(Request::is(strtolower($page['request_name']))) class="active" @endif>
-              {{--<a href="{{ route($page['route']) }}">{{ $page['option'] }}</a>--}}
-                <?php
-                $single = array('support', 'faq', 'admin');
-                $request_name = in_array($page['request_name'], $single) ? $page['request_name'] :
-                    ($page['request_name'] == 'publishing' ? 'support' : $page['request_name'].'s');
-                ?>
-              <a href="{{ route($page['route']) }}">{{ trans('site.admin-menu.'.$request_name) }}</a>
-            </li>
-          @endif
-        @endforeach
+          @endforeach
+          
+        @endif
+
         <li><a href="#"><i class="fa fa-bell-o"></i></a></li>
         <li class="dropdown">
         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
