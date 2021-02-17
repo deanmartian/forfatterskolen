@@ -1025,6 +1025,31 @@ class LearnerController extends Controller
     }
 
     /**
+     * Set the phone number that would be use for sending vipss-efaktura
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function setVippsEFaktura( Request $request )
+    {
+        if($request->mobile_number) {
+            $this->validate($request, [
+                'mobile_number' => 'digits:8'
+            ]);
+        }
+
+        $address = Address::firstOrNew([
+            'user_id' => Auth::user()->id
+        ]);
+        $address->vipps_phone_number = $request->mobile_number ?: NULL;
+        $address->save();
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Record saved.'),
+            'alert_type'            => 'success'
+        ]);
+    }
+
+    /**
      * Download Svea invoice
      * @param $id
      * @param $type String

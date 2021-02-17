@@ -106,6 +106,9 @@
 			<button type="button" class="margin-top btn btn-success" data-toggle="modal" data-target="#learnerNotesModal">{{ trans_choice('site.notes', 2) }}</button>
 			<button type="button" class="margin-top btn btn-primary" data-toggle="modal" data-target="#sendEmailModal">{{ trans('site.send-email') }}</button>
 			<button type="button" class="margin-top btn btn-warning" data-toggle="modal" data-target="#preferredEditorModal">Preferred Editor</button>
+			<button type="button" class="margin-top btn btn-success setVippsEFakturaBtn" data-toggle="modal"
+					data-target="#setVippsEFakturaModal"
+					data-vipps-number="{{ $learner->address ? $learner->address->vipps_phone_number : NULL}}">Set VIPPS-eFaktura</button>
 
 			<div class="former-course-container">
 				<h4>{{ trans('site.former-courses') }}</h4>
@@ -140,7 +143,7 @@
 		        {{ session()->get('profile_success') }}
 		    </div>
 			@endif
-			
+
 			@if ( $errors->any() && !session()->has('not-former-courses'))
             <br />
             <br />
@@ -564,7 +567,8 @@
 										<button class="btn btn-success btn-xs vippsFakturaBtn" style="margin-top: 5px"
 												data-toggle="modal"
 											data-target="#vippsFakturaModal"
-												data-action="{{ route('admin.learner.invoice.vipps-e-faktura', $invoice->id) }}">
+												data-action="{{ route('admin.learner.invoice.vipps-e-faktura', $invoice->id) }}"
+												data-vipps-number="{{ $learner->address ? $learner->address->vipps_phone_number : NULL}}">
 											VIPPS eFaktura
 										</button>
 									@endif
@@ -3193,6 +3197,32 @@
 	</div>
 </div>
 <!--end email modal-->
+
+<div id="setVippsEFakturaModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					Set VIPPS eFaktura
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.learner.set-vipps-e-faktura', $learner->id) }}" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+
+					<div class="form-group">
+						<label>Mobile Number</label>
+						<input type="text" class="form-control" name="mobile_number">
+					</div>
+
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -3295,7 +3325,10 @@
 
         $(".vippsFakturaBtn").click(function() {
             let action = $(this).data('action');
-            $("#vippsFakturaModal").find('form').attr('action', action);
+            let vipps_phone_number = $(this).data('vipps-number');
+            let modal = $("#vippsFakturaModal");
+            modal.find('form').attr('action', action);
+            modal.find('input[name=mobile_number]').val(vipps_phone_number);
 		});
 
         $(".fikenCreditNoteBtn").click(function(){
@@ -3606,6 +3639,11 @@
         tinymce.get('sendEmailEditor').setContent(fields.email_content);
         form.find('[name=from_email]').val(fields.from_email);
 	});
+
+    $(".setVippsEFakturaBtn").click(function(){
+        let vipps_phone_number = $(this).data('vipps-number');
+        $("#setVippsEFakturaModal").find('input[name=mobile_number]').val(vipps_phone_number);
+    });
 
 	function updateOtherServiceFields(type) {
 	    let modal = $("#addOtherServiceModal");

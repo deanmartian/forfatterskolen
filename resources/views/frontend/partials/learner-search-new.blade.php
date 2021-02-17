@@ -2,6 +2,10 @@
     <form role="search" class="w-100" method="get" action="{{ route('learner.account.search') }}">
         <div class="col-md-4 col-sm-12">
             <h1 class="font-barlow-regular">@yield('heading')</h1>
+
+            <a href="javascript:void(0)" class="btn btn-primary setVippsEFakturaBtn" data-toggle="modal"
+               data-target="#setVippsEFakturaModal"
+               data-vipps-number="{{ Auth::user()->address ? Auth::user()->address->vipps_phone_number : NULL}}">Set VIPPS-eFaktura</a>
         </div>
         <div class="col-md-5 col-sm-12 float-right">
             <div class="input-group">
