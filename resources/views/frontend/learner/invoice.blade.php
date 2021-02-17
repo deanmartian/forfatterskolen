@@ -230,6 +230,32 @@
 		</div>
 	</div>
 
+	<div id="setVippsEFakturaModal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">
+						VIPPS eFaktura
+					</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<form method="POST" action="{{ route('learner.set-vipps-e-faktura') }}" onsubmit="disableSubmit(this)">
+						{{ csrf_field() }}
+
+						<div class="form-group">
+							<label>Mobile Number</label>
+							<input type="text" class="form-control" name="mobile_number">
+						</div>
+
+						<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
+						<div class="clearfix"></div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div id="viewOrderModal" class="modal fade" role="dialog">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
@@ -377,6 +403,11 @@
             // link.setAttribute('download', 'test.doc');
             document.body.appendChild(link);
             link.click();
+		});
+
+        $(".setVippsEFakturaBtn").click(function(){
+            let vipps_phone_number = $(this).data('vipps-number');
+            $("#setVippsEFakturaModal").find('input[name=mobile_number]').val(vipps_phone_number);
 		});
 	</script>
 @stop

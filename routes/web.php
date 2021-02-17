@@ -221,6 +221,7 @@ Route::group([
         Route::get('/invoice/{id}', 'LearnerController@invoiceShow')->name('learner.invoice.show'); // Invoice Single Page
         Route::get('/invoice/{invoice_number}/vipps-payment', 'LearnerController@invoiceVippsPayment')->name('learner.invoice.vipps-payment'); // Invoice Single Page
         Route::post('learner/invoice/{id}/e-faktura', 'LearnerController@vippsEFaktura')->name('learner.invoice.vipps-e-faktura');
+        Route::post('learner/set-vipss-efaktura', 'LearnerController@setVippsEFaktura')->name('learner.set-vipps-e-faktura');
         Route::get('/invoice/{id}/download/{type}', 'LearnerController@downloadInvoiceByType')->name('learner.invoice.download-by-type');
         Route::get('/publishing', 'LearnerController@publishing')->name('learner.publishing'); // Publishers House Page
         Route::get('/writing-groups', 'LearnerController@writingGroups')->name('learner.writing-groups'); // Writing Groups Page
@@ -558,6 +559,7 @@ Route::group([
         Route::post('learner/invoice/{id}/create-fiken-credit-note', 'LearnerController@addFikenCreditNote')
             ->name('admin.learner.invoice.create-fiken-credit-note');
         Route::post('learner/invoice/{id}/e-faktura', 'LearnerController@vippsEFaktura')->name('admin.learner.invoice.vipps-e-faktura');
+        Route::post('learner/{user_id}/set-vipss-efaktura', 'LearnerController@setVippsEFaktura')->name('admin.learner.set-vipps-e-faktura');
         Route::delete('learner/course/{course_taken_id}/delete', 'LearnerController@deleteFromCourse')->name('admin.learner.delete-from-course');
         Route::post('learner/{learner_id}/course/{course_taken_id}/renew', 'LearnerController@renewCourse')->name('admin.learner.renew-course');
         Route::post('learner/{learner_id}/send-email', 'LearnerController@sendLearnerEmail')->name('admin.learner.send-email');
