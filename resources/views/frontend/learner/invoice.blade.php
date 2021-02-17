@@ -235,7 +235,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h4 class="modal-title">
-						VIPPS eFaktura
+						{!! trans('site.vipps-efaktura') !!}
 					</h4>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
@@ -244,7 +244,9 @@
 						{{ csrf_field() }}
 
 						<div class="form-group">
-							<label>Mobile Number</label>
+							<label>
+								{!! trans('site.mobile-number') !!}
+							</label>
 							<input type="text" class="form-control" name="mobile_number">
 						</div>
 
