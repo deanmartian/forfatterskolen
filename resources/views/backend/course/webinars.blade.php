@@ -93,6 +93,10 @@
 											@if ($webinar->id != 24)
 												<i class="fa fa-calendar-o"></i>&nbsp;&nbsp;{{ $webinar->start_date }} <br />
 										@endif
+
+											<i class="fa fa-calendar-o"></i> <b>Scheduled Registration:</b>
+											<span>{{ $webinar->schedule ? $webinar->schedule->date : NULL }}</span>
+
 										<!-- <i class="fa fa-users"></i>&nbsp;&nbsp;Attendees (20) -->
 										</p>
 

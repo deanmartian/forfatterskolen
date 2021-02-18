@@ -25,5 +25,10 @@ class Webinar extends Model
         return $query->where('status', '=', 1);
     }
 
+    public function schedule()
+    {
+        return $this->hasOne('App\WebinarScheduledRegistration');
+    }
+
 
 }
