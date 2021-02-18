@@ -1263,4 +1263,6 @@ Rektor Kristine
   'set-vipps-efaktura' => 'Set VIPPS-eFaktura',
   'vipps-efaktura' => 'VIPPS eFaktura',
   'mobile-number' => 'Mobile Number',
+  'stop-vipps-efaktura' => 'Stop Vipps eFaktura',
+  'stop-vipps-efaktura-message' => 'Are you sure you want to stop Vipps eFaktura?',
 );

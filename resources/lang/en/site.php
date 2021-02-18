@@ -1227,4 +1227,6 @@ kvittering.',
   'set-vipps-efaktura' => 'Få Vipps eFaktura',
   'vipps-efaktura' => 'Vipps eFaktura',
   'mobile-number' => 'Ditt mobilnummer',
+  'stop-vipps-efaktura' => 'Stop Vipps eFaktura',
+  'stop-vipps-efaktura-message' => 'Are you sure you want to stop Vipps eFaktura?',
 );
