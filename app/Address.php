@@ -18,7 +18,7 @@ class Address extends Model
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'phone', 'street', 'city', 'country', 'zip'];
+    protected $fillable = ['user_id', 'phone', 'street', 'city', 'country', 'zip', 'vipps_phone_number'];
 
     public function user()
     {
