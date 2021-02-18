@@ -247,10 +247,36 @@
 							<label>
 								{!! trans('site.mobile-number') !!}
 							</label>
-							<input type="text" class="form-control" name="mobile_number">
+							<input type="text" class="form-control" name="mobile_number" required>
 						</div>
 
 						<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
+						<div class="clearfix"></div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="stopVippsEFakturaModal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">
+						{!! trans('site.stop-vipps-efaktura') !!}
+					</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<form method="POST" action="{{ route('learner.set-vipps-e-faktura') }}" onsubmit="disableSubmit(this)">
+						{{ csrf_field() }}
+						<input type="hidden" name="mobile_number">
+
+						<div class="form-group">
+							{!! trans('site.stop-vipps-efaktura-message') !!}
+						</div>
+
+						<button type="submit" class="btn btn-danger pull-right">{{ trans('site.delete') }}</button>
 						<div class="clearfix"></div>
 					</form>
 				</div>
@@ -411,5 +437,10 @@
             let vipps_phone_number = $(this).data('vipps-number');
             $("#setVippsEFakturaModal").find('input[name=mobile_number]').val(vipps_phone_number);
 		});
+
+        $(".stopVippsEFakturaBtn").click(function(){
+            let vipps_phone_number = $(this).data('vipps-number');
+            $("#stopVippsEFakturaModal").find('input[name=mobile_number]').val(vipps_phone_number);
+        });
 	</script>
 @stop
