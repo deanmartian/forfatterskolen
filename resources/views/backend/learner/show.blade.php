@@ -97,7 +97,10 @@
 					<b>{{ trans('site.auto-renew-course') }}:</b>
 					<a href="#" data-toggle="modal" data-target="#autoRenewModal">
 					{{ $learner->auto_renew_courses ? 'Yes' : 'No' }}
-					</a>
+					</a> <br>
+					<b>Preferred Editor:</b>
+					<span>{{ $learner->preferredEditor ? $learner->preferredEditor->editor->fullname : '' }}</span>
+
 				</div>
 			</div>
 			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editPasswordModal">{{ trans('site.edit-password') }}</button>
