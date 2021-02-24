@@ -71,16 +71,15 @@
               integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
         @yield('styles')
 
-        <!-- ConnectRetarget PowerPixel -->
+    <!-- ConnectRetarget PowerPixel -->
         <script>
-            let CRConfig = {
-                'pixel_prefix':'forfatterskolen',
-                'init_fb':true,
+            var CRConfig = {
+                'pixel_prefix':'forfatterskolen1',
+                'init_fb':false,
                 'fb_pixel_id':'216415385555961'
             };
         </script>
-        {{--<script src='//connectio.s3.amazonaws.com/connect-retarget.js?v=1.1' defer></script>--}}
-        <script src="{{ asset('js/amazonaws-connect-retarget.min.js') }}" defer></script>
+        <script src='//connectio.s3.amazonaws.com/connect-retarget.js?v=1.1'></script>
         <noscript><img height='1' width='1' style='display:none' src='https://www.facebook.com/tr?id=216415385555961&ev=PageView&noscript=1' /></noscript>
         <!-- End ConnectRetarget PowerPixel -->
 
