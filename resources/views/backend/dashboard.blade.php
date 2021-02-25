@@ -998,61 +998,7 @@
 				</div>
 			</div>
 
-			<!-- Shop Manuscript Feedbacks -->
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="panel panel-default">
-						<div class="panel-heading"><h4>Shop Manuscript Pending Feedbacks</h4></div>
-						<div class="table-users table-responsive">
-							<table class="table">
-								<thead>
-									<tr>
-										<th>{{ trans_choice('site.manuscripts', 1) }}</th>
-										<th>{{ trans_choice('site.learners', 1) }}</th>
-										<th>{{ trans('site.assigned-to') }}</th>
-										<th>Feedback</th>
-									</tr>
-								</thead>
-
-								<tbody>
-									@foreach($shopManuscriptTakenFeedback as $feedback)
-									<tr>
-										<td>@if($feedback->shop_manuscript_taken->is_active)
-												<a href="{{ route('shop_manuscript_taken', ['id' => $feedback->shop_manuscript_taken->user_id, 'shop_manuscript_taken_id' => $feedback->shop_manuscript_taken->id]) }}">{{$feedback->shop_manuscript_taken->shop_manuscript->title}}</a>
-											@else
-												{{$feedback->shop_manuscript_taken->shop_manuscript->title}}
-											@endif
-										</td>
-										<td><a href="{{ route('admin.learner.show', $feedback->shop_manuscript_taken->user->id) }}">{{$feedback->shop_manuscript_taken->user->full_name}}</a></td>
-										<td>
-											@if( $feedback->shop_manuscript_taken->admin )
-												{{ $feedback->shop_manuscript_taken->admin->full_name }}
-											@else
-												<em>Not set</em>
-											@endif
-										</td>
-										<td>
-											@if( $feedback->approved )
-												<span class="label label-success">Approved</span>
-											@else
-												<span class="label label-warning">Pending</span>
-												<button class="btn btn-warning btn-xs updateShopManuscriptFeedbackStatusBtn" type="button"
-													data-toggle="modal" data-target="#updateShopManuscriptFeedbackStatusModal"
-													data-action="{{ route('admin.shop-manuscript-taken.approve-feedback', ['feedback_id' => $feedback->id]) }}"><i class="fa fa-check"></i></button>
-											@endif
-										</td>
-									</tr>
-									@endforeach
-								</tbody>
-							</table>
-						</div>
-						<div class="pull-right">
-							{{$shopManuscriptTakenFeedback->render()}}
-						</div>
-						<div class="clearfix"></div>
-					</div>
-				</div>
-			</div>
+		
 		</div>
 		@endif
 
