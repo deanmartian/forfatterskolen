@@ -36,7 +36,7 @@ class PageController extends Controller
             ->get();
 
         return view('editor.dashboard', compact('assigned_shop_manuscripts', 'assignedAssignments', 'coachingTimers',
-        'corrections', 'copyEditings','pendingTasks', 'assignedAssignmentManuscripts'));
+        'corrections', 'copyEditings', 'assignedAssignmentManuscripts'));
 
     }
 }
