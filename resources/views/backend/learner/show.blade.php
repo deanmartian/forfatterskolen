@@ -99,7 +99,9 @@
 					{{ $learner->auto_renew_courses ? 'Yes' : 'No' }}
 					</a> <br>
 					<b>Preferred Editor:</b>
-					<span>{{ $learner->preferredEditor ? $learner->preferredEditor->editor->fullname : '' }}</span>
+					<span>{{ $learner->preferredEditor ? $learner->preferredEditor->editor->fullname : '' }}</span><br>
+					<b>Vipps Efaktura:</b>
+					<span>{{ $learner->address ? $learner->address->vipps_phone_number : '' }}</span>
 
 				</div>
 			</div>
