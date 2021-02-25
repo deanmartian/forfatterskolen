@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 
-class Admin
+class Editor
 {
     /**
      * The Guard implementation.
@@ -37,10 +38,10 @@ class Admin
             if ($request->ajax()) :
                 return response('Unauthorized.', 401);
             else :
-                return response(view('backend.auth.login'));
+                return response(view('editor.auth.editor_login'));
             endif;
         else :
-            if (!in_array($this->auth->user()->role, array(1))) :
+            if (!in_array($this->auth->user()->role, array(3))) :
                 $this->auth->logout();
                 echo "Forbidden <br />";
                 return redirect('/');
@@ -50,4 +51,3 @@ class Admin
         return $next($request);
     }
 }
-

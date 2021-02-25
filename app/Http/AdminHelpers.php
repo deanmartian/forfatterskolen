@@ -972,6 +972,7 @@ class AdminHelpers
             array( 'id' => 10, 'option' => 'FAQs', 'route' => 'admin.faq.index', 'request_name' => 'faq'),
             array( 'id' => 11, 'option' => 'Admins', 'route' => 'admin.admin.index', 'request_name' => 'admin'),
             /*array( 'id' => 12, 'option' => 'Email', 'route' => 'admin.email.index', 'request_name' => 'email'),*/
+            array('id'=> 12, 'option' => 'Head Editor', 'route'=> 'admin.head-editor-dashboard', 'request_name'=>'head-editor')
         );
 
         if ($id > 0) {

@@ -12,13 +12,12 @@ use App\AssignmentFeedback;
 use App\AssignmentGroupLearner;
 use App\User;
 use App\Http\AdminHelpers;
+use Carbon\Carbon;
+use App\DelayedEmail;
+use App\Jobs\AddMailToQueueJob;
 
 class AssignmentGroupController extends Controller
 {
-
-
-
-
 
     public function show($course_id, $assignment_id, $id)
     {
@@ -127,6 +126,7 @@ class AssignmentGroupController extends Controller
 
         $assignmentManuscript = AssignmentManuscript::find($request->manuscript_id);
         $assignmentManuscript->has_feedback = 1;
+        $assignmentManuscript->status = 0;
         // set grade
         if (is_numeric($request->grade)) {
             $assignmentManuscript->grade = $request->grade;
@@ -168,9 +168,50 @@ class AssignmentGroupController extends Controller
         endif;
     }
 
+    public function approveFeedbackCourse($manuscript_id, $learner_id, Request $request)
+    {
+        $assignmentManuscript = AssignmentManuscript::find($manuscript_id);
+        $assignmentManuscript->has_feedback = 1;
+        $assignmentManuscript->status = 1;
+        $assignmentManuscript->save();
 
+        // send email - no sending email for group assignment
+        // sending email duplicate from assignment no group 
+        $email_content  = $request->message;
+        $to             = $assignmentManuscript->user->email;
+        $first_name     = $assignmentManuscript->user->first_name;
 
+        if($request->availability && Carbon::parse($request->availability)->gt(Carbon::today())) {
+            $redirect_link          = route('learner.assignment');
+            $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
 
+            DelayedEmail::create([
+                'subject'       => $request->subject,
+                'message'       => $formattedMailContent,
+                'from_email'    => $request->from_email,
+                'recipient'     => $to,
+                'send_date'     => $request->availability,
+                'parent'        => 'assignment-manuscripts',
+                'parent_id'     => $assignmentManuscript->id
+            ]);
+        } else {
+            $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject,
+                $request->from_email, $assignmentManuscript->id);
+        }
+        
+        return redirect()->back()->with([
+            'alert_type' => 'success',
+            'errors'    => AdminHelpers::createMessageBag('Successfully approved feedback.')
+        ]);
+    }
+
+    public function sendAssignmentFeedbackMail($email_content, $to, $first_name, $subject, $from_email, $manuscript_id)
+    {
+        $redirect_link          = route('learner.assignment');
+        $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
+        dispatch(new AddMailToQueueJob($to, $subject, $formattedMailContent, $from_email, null, null,
+            'assignment-manuscripts', $manuscript_id));
+    }
 
     public function submit_feedback_learner($group_id, $id, Request $request)
     {

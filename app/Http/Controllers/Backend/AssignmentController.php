@@ -733,6 +733,7 @@ class AssignmentController extends Controller
     {
         $assignmentManuscript = AssignmentManuscript::find($manuscript_id);
         $assignmentManuscript->has_feedback = 1;
+        $assignmentManuscript->status = 0;
         // set grade
         if (is_numeric($request->grade)) {
             $assignmentManuscript->grade = $request->grade;
@@ -772,34 +773,46 @@ class AssignmentController extends Controller
                 'availability' => $request->availability,
             ]);
 
-            // send email
-            $email_content  = $request->message;
-            $to             = $assignmentManuscript->user->email;
-            $first_name     = $assignmentManuscript->user->first_name;
-
-            if($request->availability && Carbon::parse($request->availability)->gt(Carbon::today())) {
-                $redirect_link          = route('learner.assignment');
-                $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
-
-                DelayedEmail::create([
-                    'subject'       => $request->subject,
-                    'message'       => $formattedMailContent,
-                    'from_email'    => $request->from_email,
-                    'recipient'     => $to,
-                    'send_date'     => $request->availability,
-                    'parent'        => 'assignment-manuscripts',
-                    'parent_id'     => $assignmentManuscript->id
-                ]);
-            } else {
-                $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject,
-                   $request->from_email, $assignmentManuscript->id);
-            }
-
-            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback sent successfully.'),
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback successfully saved'),
                 'alert_type' => 'success']);
         endif;
     }
 
+    public function approveFeedbackNoGroup($manuscript_id, $learner_id, Request $request)
+    {
+        // set status = 1 in assignmentManuscript
+        $assignmentManuscript = AssignmentManuscript::find($manuscript_id);
+        $assignmentManuscript->has_feedback = 1;
+        $assignmentManuscript->status = 1;
+        $assignmentManuscript->save();
+
+        // send an email
+        $email_content  = $request->message;
+        $to             = $assignmentManuscript->user->email;
+        $first_name     = $assignmentManuscript->user->first_name;
+
+        if($request->availability && Carbon::parse($request->availability)->gt(Carbon::today())) {
+            $redirect_link          = route('learner.assignment');
+            $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
+
+            DelayedEmail::create([
+                'subject'       => $request->subject,
+                'message'       => $formattedMailContent,
+                'from_email'    => $request->from_email,
+                'recipient'     => $to,
+                'send_date'     => $request->availability,
+                'parent'        => 'assignment-manuscripts',
+                'parent_id'     => $assignmentManuscript->id
+            ]);
+        } else {
+            $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject,
+                $request->from_email, $assignmentManuscript->id);
+        }
+        
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback successfully sent'),
+            'alert_type' => 'success']);
+    }
+    
     public function manuscriptFeedbackNoGroupUpdate($feedback_id, Request $request)
     {
         $feedback = AssignmentFeedbackNoGroup::find($feedback_id);

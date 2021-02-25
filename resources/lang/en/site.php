@@ -17,6 +17,7 @@ return array (
     'shop-manuscripts' => 'Shop Manuscripts',
     'faq' => 'FAQ',
     'admin' => 'Admin',
+    'head-editors' => 'Pending Feedbacks'
   ),
   'total-learners' => 'Total Learners',
   'my-assigned-manuscripts' => 'My assigned manuscripts',
@@ -1166,6 +1167,8 @@ kvittering.',
     'comment' => 'Comment',
     'comments' => 'Comments',
     'add-comment' => 'Add Comment',
+    'approve-feedback' => 'Godkänn feedback',
+    'approve-feedback-question' => 'Är du säker på att du vill godkänna den här feedbacken?'
   ),
   'learner-suggest-date-coaching-time' => 'Foreslå en dato for coaching time',
   'manuscript-generate-count' => 'Manuscript Generate Count',

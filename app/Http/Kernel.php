@@ -61,5 +61,6 @@ class Kernel extends HttpKernel
         'logActivity' => \App\Http\Middleware\LogsActivity::class,
         'checkPageAccess' => \App\Http\Middleware\CheckPageAccess::class,
         'checkAutoRenewCourses' => \App\Http\Middleware\CheckAutoRenewCourses::class,
+        'editor' => \App\Http\Middleware\Editor::class,
     ];
 }

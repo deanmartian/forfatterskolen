@@ -30,6 +30,7 @@ use App\ShopManuscriptsTaken;
 use App\FreeManuscript;
 use Artisan;
 use Illuminate\Support\MessageBag;
+use App\ShopManuscriptTakenFeedback;
 
 require app_path('/Http/BackupDB/MySQLDump.php');
 
@@ -102,25 +103,14 @@ class PageController extends Controller
         $pendingTasks = UserTask::where('assigned_to', Auth::user()->id)
             ->where('status', 0)->get();
 
-        if (Auth::user()->role == 3){
+        $shopManuscriptTakenFeedback = ShopManuscriptTakenFeedback::with('shop_manuscript_taken')->where('approved', 0)->orderBy('created_at', 'desc')->paginate(10);
 
-            return view('backend.editor-dashboard', compact('pending_courses', 'pending_shop_manuscripts',
-            'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts', 'assigned_free_manuscripts',
-            'pending_assignment_feedbacks', 'logs', 'manuscripts','shopManuscripts',
-            'nearlyExpiredCoursesCount', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
-            'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments',
-            'pendingTasks', 'assignedAssignmentManuscripts'));
-
-        }else{
-
-            return view('backend.dashboard', compact('pending_courses', 'pending_shop_manuscripts',
-            'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts', 'assigned_free_manuscripts',
-            'pending_assignment_feedbacks', 'logs', 'manuscripts','shopManuscripts',
-            'nearlyExpiredCoursesCount', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
-            'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments',
-            'pendingTasks', 'assignedAssignmentManuscripts'));
-
-        }
+        return view('backend.dashboard', compact('pending_courses', 'pending_shop_manuscripts',
+        'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts', 'assigned_free_manuscripts',
+        'pending_assignment_feedbacks', 'logs', 'manuscripts','shopManuscripts',
+        'nearlyExpiredCoursesCount', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
+        'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments',
+        'pendingTasks', 'assignedAssignmentManuscripts','shopManuscriptTakenFeedback'));
     }
 
     /**

@@ -300,34 +300,17 @@ class OtherServiceController extends Controller
                 //update status
                 if ($service_type == 1) {
                     $copyEditing = CopyEditingManuscript::find($service_id);
-                    $copyEditing->status = 2;
+                    $copyEditing->status = 3; // set status to pending
                     $copyEditing->save();
                     $service = 'Språkvask';
                 }
     
                 if ($service_type == 2){
                     $correction = CorrectionManuscript::find($service_id);
-                    $correction->status = 2;
+                    $correction->status = 3; // set status to pending
                     $correction->save();
                     $service = 'Korrektur';
                 }
-
-                // send email 
-                $user_email = Auth::user()->email;
-                $parent = null;
-                $emailTemplate = AdminHelpers::emailTemplate('Other Services Feedback');
-
-                if ($service_type == 1) {
-                    $parent = 'copy-editing-feedback';
-                }else{
-                    $parent = 'correction-feedback';
-                }
-
-                $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user_email,
-                Auth::user()->first_name, '');
-
-                dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
-                    $emailTemplate->from_email, null, null, $parent, $service_id));
 
                 return redirect()->back()->with([
                     'errors'                => AdminHelpers::createMessageBag($service.' Feedback added successfully.'),
@@ -340,4 +323,35 @@ class OtherServiceController extends Controller
         return redirect()->back();
     }
 
+    public function approveFeedback($service_id, $service_type, Request $request){
+        
+        // Update status
+        if($service_type==2){
+            $copyEditingManuscript = CopyEditingManuscript::find($service_id);
+            $copyEditingManuscript->status = 2;
+            $copyEditingManuscript->save();
+        }else{
+            $correctionManuscript = CorrectionManuscript::find($service_id);
+            $copyEditingManuscript->status = 2;
+            $copyEditingManuscript->save();
+        }
+
+        // send email 
+        $from = $request->from_email;
+        $parent = null;
+        $emailContent = $request->message;
+        $emailSubject = $request->subject;
+
+        if ($service_type == 1) {
+            $parent = 'copy-editing-feedback';
+        }else{
+            $parent = 'correction-feedback';
+        }
+
+        $emailContent = AdminHelpers::formatEmailContent($emailContent, $from,
+        Auth::user()->first_name, '');
+
+        dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
+            $emailTemplate->from_email, null, null, $parent, $service_id));
+    }
 }

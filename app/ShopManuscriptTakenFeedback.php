@@ -11,7 +11,7 @@ class ShopManuscriptTakenFeedback extends Model
 
     public function shop_manuscript_taken()
     {
-        return $this->belongsTo('App\ShopManuscriptTaken', 'shop_manuscript_taken_id');
+        return $this->belongsTo('App\ShopManuscriptsTaken', 'shop_manuscript_taken_id');
     }
 
     

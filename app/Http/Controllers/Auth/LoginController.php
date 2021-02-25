@@ -22,11 +22,11 @@ class LoginController extends Controller
 {
     public function adminLogin(LoginRequest $request)
     {
-        $user = User::where('email', $request->email)->whereIn('role', array(1,3))->first();
+        $user = User::where('email', $request->email)->whereIn('role', array(1))->first();
 
         if(!$user) return redirect()->back()->withErrors('Unknown email');
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => $user->role])) :
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 1])) :
             // Authentication passed...
             return redirect()->back();
         endif;
@@ -35,9 +35,20 @@ class LoginController extends Controller
         return redirect()->back()->withInput()->withErrors('Feil passord');
     }
 
+    public function editorLogin(LoginRequest $request)
+    {
+        $user = User::where('email', $request->email)->whereIn('role', array(3))->first();
 
+        if(!$user) return redirect()->back()->withErrors('Unknown email');
 
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 3])) :
+            // Authentication passed...
+            return redirect()->back();
+        endif;
+        
 
+        return redirect()->back()->withInput()->withErrors('Feil passord');
+    }
 
     public function login(LoginRequest $request)
     {
