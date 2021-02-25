@@ -1110,6 +1110,13 @@ class AdminHelpers
         return $timestamp->setTimeZone(new \DateTimeZone($timezone));
     }
 
+    public static function convertTZNoFixedTZFormat($date, $timezone) {
+        $original = new \DateTime($date, new \DateTimeZone('UTC'));
+        $timezoneName = timezone_name_from_abbr("", 1*3600, false);
+        $modified = $original->setTimezone(new \DateTimezone($timezoneName));
+        return $modified;
+    }
+
     public static function createMessageBag($message = '')
     {
         $messageBag = new MessageBag();
