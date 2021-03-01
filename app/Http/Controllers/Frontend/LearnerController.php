@@ -3423,7 +3423,9 @@ class LearnerController extends Controller
         }
         $expFile = explode("/", $pdf_url);
 
-        $filename = 'fiken-invoice/'.end($expFile);
+        //$filename = 'fiken-invoice/'.end($expFile);
+        $serverFilename = explode('.', end($expFile));
+        $filename =  AdminHelpers::checkFileName('fiken-invoice', $serverFilename[0], 'pdf');
 
         // write file on the server
         $out = fopen($filename, 'wb');
