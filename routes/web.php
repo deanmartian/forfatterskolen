@@ -490,7 +490,7 @@ Route::group([
         Route::get('backend/{id}/download_assigned_manuscript', 'PageController@downloadAssignedManuscript')->name('backend.download_assigned_manuscript');
         Route::post('backend/change-password', 'PageController@changePassword')->name('backend.change-password');
         Route::get('/tests', 'PageController@tests');
-        Route::get('head-editor/dashboard', 'HeadEditorController@index')->name('admin.head-editor-dashboard');
+        Route::get('head-editor/dashboard', 'HeadEditorController@index')->name('admin.head-editor-dashboard')->middleware('headEditor');;
 
         Route::resource('page_meta','PageMetaController',[
             'except' => ['show', 'create', 'edit'],
@@ -1384,7 +1384,7 @@ Route::group([
 
         // head editor route 
         Route::post('personal_assignment/{id}/approve_feedback/{learner_id}', 'AssignmentController@approveFeedbackNoGroup')->name('head_editor.personal_assignment.feedbac_approve');
-        Route::post('course_assignment/{id}/approve_feedback/{learner_id}', 'AssignmentGroupController@approveFeedbackCourse')->name('head_editor.course_assignment.feedback_approve');
+        Route::post('course_assignment/{id}/approve_feedback/{learner_id}/feedback/{feedback_id}', 'AssignmentGroupController@approveFeedbackCourse')->name('head_editor.course_assignment.feedback_approve');
         Route::post('shop-manuscript-taken/{id}/approve-feedback/{learner_id}/feedback/{feedback_id}', 'ShopManuscriptController@approveFeedback')->name('head_editor.shop-manuscript-taken-feedback.approve');
         Route::post('other-service/{id}/approve-feedback/{type}', 'OtherServiceController@approveFeedback')->name('head_editor.other-service.approve-feedback');
     });

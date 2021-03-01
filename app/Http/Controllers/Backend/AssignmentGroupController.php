@@ -31,9 +31,6 @@ class AssignmentGroupController extends Controller
     	return abort('404');
     }
 
-
-
-
     public function store($course_id, $assignment_id, Request $request)
     {
         $course = Course::findOrFail($course_id);
@@ -162,19 +159,23 @@ class AssignmentGroupController extends Controller
                 'filename' => $filesWithPath,
                 'is_admin' => true,
                 'is_active' => true,
-                'availability' => $request->availability,
             ]);
             return redirect()->back();
         endif;
     }
 
-    public function approveFeedbackCourse($manuscript_id, $learner_id, Request $request)
+    public function approveFeedbackCourse($manuscript_id, $learner_id, $feedback_id, Request $request)
     {
         $assignmentManuscript = AssignmentManuscript::find($manuscript_id);
         $assignmentManuscript->has_feedback = 1;
         $assignmentManuscript->status = 1;
         $assignmentManuscript->save();
 
+        // group assignment - set availability date on feedback
+        $assignmentFeedback = AssignmentFeedback::find($feedback_id);
+        $assignmentFeedback->availability = $request->availability;
+        $assignmentFeedback->save();
+                                   
         // send email - no sending email for group assignment
         // sending email duplicate from assignment no group 
         $email_content  = $request->message;

@@ -770,7 +770,6 @@ class AssignmentController extends Controller
                 'filename' => $filesWithPath,
                 'is_admin' => true,
                 'is_active' => true,
-                'availability' => $request->availability,
             ]);
 
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback successfully saved'),
@@ -786,6 +785,10 @@ class AssignmentController extends Controller
         $assignmentManuscript->status = 1;
         $assignmentManuscript->save();
 
+        // set availability date in feedback
+        $assignmentFeedbackNoGroup = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $manuscript_id)
+                                                            ->where('learner_id', $learner_id)
+                                                            ->update(["availability" => $request->availability]);
         // send an email
         $email_content  = $request->message;
         $to             = $assignmentManuscript->user->email;

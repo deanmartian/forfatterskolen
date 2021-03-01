@@ -62,5 +62,6 @@ class Kernel extends HttpKernel
         'checkPageAccess' => \App\Http\Middleware\CheckPageAccess::class,
         'checkAutoRenewCourses' => \App\Http\Middleware\CheckAutoRenewCourses::class,
         'editor' => \App\Http\Middleware\Editor::class,
+        'headEditor' => \App\Http\Middleware\HeadEditor::class,
     ];
 }

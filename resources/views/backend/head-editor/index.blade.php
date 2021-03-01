@@ -198,19 +198,20 @@
 															data-feedback_grade = "'.$assignedAssignment->grade.'"
 															data-action="'.route('head_editor.course_assignment.feedback_approve',
 																			['id' => $assignedAssignment->id,
-																			'learner_id' => $assignedAssignment->user->id]).'">
+																			'learner_id' => $assignedAssignment->user->id,
+																			'feedback_id' => $feedback[0]->filename]).'">
 															Approve Feedback
 													</button>';
 										}else{ //the course assignment does not belong to a group
 											echo '<button class="btn btn-success btn-xs personalAssignmentShowFeedbackBtn"
 															data-target="#personalAssignmentShowFeedbackModal"
 															data-toggle="modal"
-															data-id = "'.$assignedManuscript->id.'"
-															data-feedback_file = "'.$assignedManuscript->noGroupFeedbacks->first()->filename.'"
-															data-feedback_grade = "'.$assignedManuscript->grade.'"
+															data-id = "'.$assignedAssignment->id.'"
+															data-feedback_file = "'.$assignedAssignment->noGroupFeedbacks->first()->filename.'"
+															data-feedback_grade = "'.$assignedAssignment->grade.'"
 															data-action="'. route('head_editor.personal_assignment.feedbac_approve',
-																			['id' => $assignedManuscript->id,
-																			'learner_id' => $assignedManuscript->user->id]) .'">
+																			['id' => $assignedAssignment->id,
+																			'learner_id' => $assignedAssignment->user->id]) .'">
 															Approve Feedback
 													</button>';
 										}

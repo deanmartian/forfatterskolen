@@ -357,7 +357,7 @@
 						<option value="" selected disabled>
 							-- Select Editor --
 						</option>
-						@foreach( App\User::whereIn('role', array(1,3))->orderBy('id', 'desc')->get() as $admin)
+						@foreach( App\User::whereIn('role', array(1))->orderBy('id', 'desc')->get() as $admin)
                             <?php
                             $selected = '';
 							if ($admin->head_editor){

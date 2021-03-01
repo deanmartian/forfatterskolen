@@ -18,30 +18,72 @@ $urlList = array('pulse', 'board');
         <li @if(Request::is('/')) class="active" @endif><a href="{{route('backend.dashboard')}}">{{ trans('site.admin-menu.dashboard') }}</a></li>
 
         @if(\Auth::user()->role==1)
-         
           @foreach (\App\Http\AdminHelpers::pageList() as $page)
+            
             @if (\Auth::user()->pageAccess->count())
               @if (in_array($page['id'], \Auth::user()->pageAccess->pluck('page_id')->toArray()))
+                  
+                <!-- page id = 12 is for head editor only -->
+            
+                  <li @if(Request::is(strtolower($page['request_name']))) class="active" @endif>
+                    {{--<a href="{{ route($page['route']) }}">{{ $page['option'] }}</a>--}}
+                    <?php
+                      $single = array('support', 'faq', 'admin');
+                      $request_name = in_array($page['request_name'], $single) ?:
+                          ($page['request_name'] == 'publishing' ? 'support' : $page['request_name'].'s');
+                      ?>
+                    <a href="{{ route($page['route']) }}">{{ trans('site.admin-menu.'.$request_name) }}</a>
+                  </li>
+              @else
+                @if($page['id'] === 12)
+                  @if(\Auth::user()->head_editor)
+
+                    <li @if(Request::is(strtolower($page['request_name']))) class="active" @endif>
+                      {{--<a href="{{ route($page['route']) }}">{{ $page['option'] }}</a>--}}
+                      <?php
+                        $single = array('support', 'faq', 'admin');
+                        $request_name = in_array($page['request_name'], $single) ?:
+                            ($page['request_name'] == 'publishing' ? 'support' : $page['request_name'].'s');
+                        ?>
+                      <a href="{{ route($page['route']) }}">{{ trans('site.admin-menu.'.$request_name) }}</a>
+                    </li>
+
+                  @endif
+
+                @endif
+
+              @endif
+            @else
+              @if($page['id'] === 12)
+              
+                @if(\Auth::user()->head_editor)
+
+                  <li @if(Request::is(strtolower($page['request_name']))) class="active" @endif>
+                    {{--<a href="{{ route($page['route']) }}">{{ $page['option'] }}</a>--}}
+                      <?php
+                      $single = array('support', 'faq', 'admin');
+                      $request_name = in_array($page['request_name'], $single) ? $page['request_name'] :
+                          ($page['request_name'] == 'publishing' ? 'support' : $page['request_name'].'s');
+                      ?>
+                    <a href="{{ route($page['route']) }}">{{ trans('site.admin-menu.'.$request_name) }}</a>
+                  </li>
+
+                @endif
+
+              @else
+
                 <li @if(Request::is(strtolower($page['request_name']))) class="active" @endif>
                   {{--<a href="{{ route($page['route']) }}">{{ $page['option'] }}</a>--}}
-                  <?php
+                    <?php
                     $single = array('support', 'faq', 'admin');
-                    $request_name = in_array($page['request_name'], $single) ?:
+                    $request_name = in_array($page['request_name'], $single) ? $page['request_name'] :
                         ($page['request_name'] == 'publishing' ? 'support' : $page['request_name'].'s');
                     ?>
                   <a href="{{ route($page['route']) }}">{{ trans('site.admin-menu.'.$request_name) }}</a>
                 </li>
+
               @endif
-            @else
-              <li @if(Request::is(strtolower($page['request_name']))) class="active" @endif>
-                {{--<a href="{{ route($page['route']) }}">{{ $page['option'] }}</a>--}}
-                  <?php
-                  $single = array('support', 'faq', 'admin');
-                  $request_name = in_array($page['request_name'], $single) ? $page['request_name'] :
-                      ($page['request_name'] == 'publishing' ? 'support' : $page['request_name'].'s');
-                  ?>
-                <a href="{{ route($page['route']) }}">{{ trans('site.admin-menu.'.$request_name) }}</a>
-              </li>
+
             @endif
           @endforeach
           

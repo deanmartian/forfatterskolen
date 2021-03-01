@@ -71,7 +71,7 @@
 												submitPersonalAssignmentFeedbackBtn"
 														data-target="#submitPersonalAssignmentFeedbackModal"
 														data-toggle="modal"
-														data-name="{{ $assignedManuscript->user->full_name }}"
+														data-name="{{ $assignedManuscript->user->id }}"
 														data-action="{{ route('editor.assignment.group.manuscript-feedback-no-group',
 																	['id' => $assignedManuscript->id,
 																	'learner_id' => $assignedManuscript->user->id]) }}">
@@ -183,7 +183,7 @@
 										if($groupDetails){ // Means the course assignment belongs to a group
 											echo '<button type="button" class="btn btn-warning btn-xs submitFeedbackBtn"
 														data-toggle="modal" data-target="#submitFeedbackModal"
-														data-name="'.$assignedAssignment->user->full_name.'"
+														data-name="'.$assignedAssignment->user->id.'"
 														data-action="'.route('editor.assignment.group.submit_feedback',
 														['group_id' => $groupDetails[0]->assignment_group_id, 'id' => $groupDetails[0]->assignment_group_learner_id]).'"
 														data-manuscript="'.$assignedAssignment->id.'">'.
@@ -191,7 +191,7 @@
 										}else{ //the course assignment does not belong to a group
 											echo '<button type="button" class="btn btn-warning btn-xs submitFeedbackBtn"
 														data-toggle="modal" data-target="#submitFeedbackModal"
-														data-name="'.$assignedAssignment->user->full_name.'"
+														data-name="'.$assignedAssignment->user->id.'"
 														data-action="'.route('editor.assignment.group.manuscript-feedback-no-group',
 														['id' => $assignedAssignment->id, 'learner_id' => $assignedAssignment->user_id]).'"
 														data-manuscript="'.$assignedAssignment->id.'">'.
@@ -300,25 +300,27 @@
 										@endif -->
 									</td>
 									<td>
-										<a href="{{ route('editor.other-service.download-doc',
+										<a class="btn btn-primary btn-xs" href="{{ route('editor.other-service.download-doc',
 										   ['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.download') }}</a>
-										<!-- show only if no feedback is given yet for this correction -->
-										@if (!$correction->feedback)
-											<a href="#addOtherServiceFeedbackModal" data-toggle="modal" style="color:#eea236"
-											class="addOtherServiceFeedbackBtn" data-service="2"
-											data-action="{{ route('editor.other-service.add-feedback',
-											['id' => $correction->id, 'type' => 2]) }}">+ {{ trans('site.add-feedback') }}</a>
-										@endif
 									</td>
 									<td>
-										@if( $correction->status == 2 )
-											<span class="label label-success">Finished</span>
-										@elseif( $correction->status == 1 )
-											<span class="label label-primary">Started</span>
-										@elseif( $correction->status == 0 )
-											<span class="label label-warning">Not started</span>
-										@elseif( $correction->status == 3 )
-										<span class="label label-default">Pending</span>
+									
+										<!-- show only if no feedback is given yet for this correction -->
+										@if (!$correction->feedback)
+											<a href="#addOtherServiceFeedbackModal" data-toggle="modal"
+											class="btn btn-warning btn-xs addOtherServiceFeedbackBtn" data-service="2"
+											data-action="{{ route('editor.other-service.add-feedback',
+											['id' => $correction->id, 'type' => 2]) }}">+ {{ trans('site.add-feedback') }}</a>
+										@else
+											@if( $correction->status == 2 )
+												<span class="label label-success">Finished</span>
+											@elseif( $correction->status == 1 )
+												<span class="label label-primary">Started</span>
+											@elseif( $correction->status == 0 )
+												<span class="label label-warning">Not started</span>
+											@elseif( $correction->status == 3 )
+											<span class="label label-default">Pending</span>
+											@endif
 										@endif
 									</td>
 								</tr>
@@ -375,27 +377,27 @@
 										@endif -->
 									</td>
 									<td>
-										<a href="{{ route('editor.other-service.download-doc',
+										<a class="btn btn-primary btn-xs" href="{{ route('editor.other-service.download-doc',
 										   ['id' => $copyEditing->id, 'type' => 1]) }}">{{ trans('site.download') }}</a>
-
-										<!-- show only if no feedback is given yet for this copyEditing -->
-										@if (!$copyEditing->feedback)
-											<a href="#addOtherServiceFeedbackModal" data-toggle="modal" style="color:#eea236"
-											   class="addOtherServiceFeedbackBtn" data-service="1"
-											   data-action="{{ route('editor.other-service.add-feedback',
-											['id' => $copyEditing->id, 'type' => 1]) }}">+ {{ trans('site.add-feedback') }}</a>
-										@endif
 									</td>
 									<td>
-										@if( $copyEditing->status == 2 )
-											<span class="label label-success">Finished</span>
-										@elseif( $copyEditing->status == 1 )
-											<span class="label label-primary">Started</span>
-										@elseif( $copyEditing->status == 0 )
-											<span class="label label-warning">Not started</span>
-										@elseif( $copyEditing->status == 3 )
-											<span class="label label-default">Pending</span>
+										<!-- show only if no feedback is given yet for this copyEditing -->
+										@if (!$copyEditing->feedback)
+											<a href="#addOtherServiceFeedbackModal" data-toggle="modal" class="btn btn-warning btn-xs addOtherServiceFeedbackBtn" data-service="1"
+											   data-action="{{ route('editor.other-service.add-feedback',
+											['id' => $copyEditing->id, 'type' => 1]) }}">+ {{ trans('site.add-feedback') }}</a>
+										@else
+											@if( $copyEditing->status == 2 )
+												<span class="label label-success">Finished</span>
+											@elseif( $copyEditing->status == 1 )
+												<span class="label label-primary">Started</span>
+											@elseif( $copyEditing->status == 0 )
+												<span class="label label-warning">Not started</span>
+											@elseif( $copyEditing->status == 3 )
+												<span class="label label-default">Pending</span>
+											@endif
 										@endif
+										
 									</td>
 								</tr>
 							@endforeach
@@ -483,10 +485,6 @@
 						<label>{{ trans_choice('site.manuscripts', 1) }}</label>
 						<input type="file" class="form-control" required multiple name="filename[]" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 						* Accepted file formats are DOCX, PDF, ODT.
-					</div>
-					<div class="form-group">
-						<label>{{ trans('site.available-date') }}</label>
-						<input type="date" class="form-control" name="availability">
 					</div>
 					<div class="form-group">
 						<label>{{ trans('site.grade') }}</label>
@@ -827,10 +825,6 @@
                                accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
                                    application/pdf, application/vnd.oasis.opendocument.text">
                         * Accepted file formats are DOCX, PDF, ODT.
-                    </div>
-					<div class="form-group">
-                        <label>{{ trans('site.available-date') }}</label>
-                        <input type="date" class="form-control" name="availability">
                     </div>
                     <div class="form-group">
                         <label>{{ trans('site.grade') }}</label>
