@@ -8,6 +8,8 @@ use App\Http\FrontendHelpers;
 use App\Invoice;
 use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
+use App\Transaction;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -66,9 +68,9 @@ class InvoiceDueReminder extends Command
         foreach ($invoices as $invoice) {
 
             $balance            = $invoice->fiken_balance;
-            $transactions_sum   = $invoice->transactions->sum('amount');
+            $transactions_sum   = Transaction::where('invoice_id', $invoice->id)->get()->sum('amount');
             $remaining          = $balance - $transactions_sum;
-            $user               = $invoice->user;
+            $user               = User::find($invoice->user_id);
             $to                 = $user->email;
             $redirectLink       = route('learner.invoice', ['filter' => $invoice->id]);
 
