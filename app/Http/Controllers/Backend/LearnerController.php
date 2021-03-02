@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Assignment;
+use App\AssignmentAddon;
 use App\AssignmentGroupLearner;
 use App\AssignmentManuscript;
 use App\CoachingTimerManuscript;
@@ -1883,6 +1884,28 @@ class LearnerController extends Controller
         $editors = \App\User::where('role', 1)->get();
 
         return view('backend.learner.assignment', compact('assignment', 'learner', 'editors', 'manuscript'));
+    }
+
+    /**
+     * Delete assignment add-on record
+     * @param $learner_id
+     * @param $assignment_id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function deleteAssignmentAddOn( $learner_id, $assignment_id )
+    {
+        $addOn = AssignmentAddon::where([
+            'user_id' => $learner_id,
+            'assignment_id' => $assignment_id
+        ])->firstOrFail();
+
+        $addOn->delete();
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Assignment add-on deleted successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
     }
 
     /**

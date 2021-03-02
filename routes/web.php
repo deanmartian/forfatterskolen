@@ -520,6 +520,7 @@ Route::group([
         Route::get('shop-manuscript/{id}/download_synopsis', 'LearnerController@downloadManuscriptSynopsis')->name('admin.learner.download_synopsis');
         Route::post('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}/comment', 'LearnerController@shopManuscriptTakenShowComment')->name('shop_manuscript_taken_comment');
         Route::get('learner/{user_id}/assignment/{id}', 'LearnerController@assignment')->name('admin.learner.assignment');
+        Route::post('learner/{user_id}/assignment/{id}/delete-add-one', 'LearnerController@deleteAssignmentAddOn')->name('admin.learner.assignment.delete-add-one');
         Route::post('learner/{user_id}/auto-renew', 'LearnerController@setAutoRenewCourses')->name('admin.learner.update-auto-renew');
         Route::post('learner/{user_id}/webinar-auto-register-update', 'LearnerController@autoRegisterCourseWebinar')->name('admin.learner.webinar-auto-register-update');
 

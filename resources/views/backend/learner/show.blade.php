@@ -498,8 +498,8 @@
 							data-target="#createInvoiceModal">+ {{ trans('site.create-invoice') }}</button>
 					<h4>{{ trans_choice('site.invoices', 2) }}</h4>
 				</div>
-				<div class="table-responsive">
-					<table class="table">
+				<div class="table-responsive" style="padding: 10px">
+					<table class="table dt-table">
 						<thead>
 							<tr>
 								<th>{{ trans_choice('site.invoices', 1) }} #</th>
@@ -814,6 +814,14 @@
 													data-target="#assignmentManuscriptEmailModal"
 													data-action="{{ route('assignment.send-email-to-manuscript-user', $manuscript->id) }}">
 												Send Email
+											</button>
+										@endif
+
+										@if (in_array($assignment->id, $addOns))
+											<button class="btn btn-danger btn-xs deleteAssignmentAddOnBtn" data-toggle="modal"
+													data-target="#deleteAssignmentAddOnModal"
+											data-action="{{ route('admin.learner.assignment.delete-add-one', [$learner->id, $assignment->id]) }}">
+												Delete Add-on
 											</button>
 										@endif
 									</td>
@@ -3157,6 +3165,32 @@
 </div>
 <!--end email modal-->
 
+<div id="deleteAssignmentAddOnModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					Delete Add-on
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="formSubmitted(this)">
+					{{csrf_field()}}
+
+					<p>
+						Are you sure to delete this record?
+					</p>
+
+					<div class="text-right">
+						<input type="submit" class="btn btn-danger" value="{{ trans('site.delete') }}">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="registeredWebinarEmailModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-md">
 		<div class="modal-content">
@@ -3595,6 +3629,12 @@
     $(".assignmentManuscriptEmailBtn").click(function(){
         let action = $(this).data('action');
         let modal = $('#assignmentManuscriptEmailModal');
+        modal.find('form').attr('action', action);
+    });
+
+    $(".deleteAssignmentAddOnBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#deleteAssignmentAddOnModal');
         modal.find('form').attr('action', action);
     });
 
