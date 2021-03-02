@@ -219,6 +219,8 @@
 								<th>{{ trans('site.learner-id') }}</th>
 								<th>{{ trans('site.approved-date') }}</th>
 								<th>{{ trans('site.session-length') }}</th>
+								<th></th>
+								<th>Set Replay</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -226,9 +228,7 @@
                                 <?php $extension = explode('.', basename($coachingTimer->file)); ?>
 								<tr>
 									<td>
-										<a href="{{ route('admin.learner.show', $coachingTimer->user->id) }}">
-											{{ $coachingTimer->user->id }}
-										</a>
+										{{ $coachingTimer->user->id }}
 
 										@if ($coachingTimer->help_with)
 											<br>
@@ -245,6 +245,13 @@
 									</td>
 									<td>
 										{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($coachingTimer->plan_type) }}
+									</td>
+									<td>
+										<a href="{{ $coachingTimer->file }}" class="btn btn-primary btn-xs" download>Download</a>
+									</td>
+									<td>
+									<button class="btn btn-xs btn-primary setReplayBtn" data-toggle="modal"
+											data-target="#setReplayModal" data-action="{{ route('editor.other-service.coaching-timer.set_replay', $coachingTimer->id) }}">{{ trans('site.set-replay') }}</button>
 									</td>
 								</tr>
 							@endforeach
@@ -837,6 +844,42 @@
         </div>
     </div>
 </div>
+
+<div id="setReplayModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans('site.set-replay') }}</label>
+						<input type="url" name="replay_link" class="form-control">
+					</div>
+					<div class="form-group">
+						<label>Comment</label>
+						<textarea name="comment" cols="30" rows="10" class="form-control"></textarea>
+					</div>
+					<div class="form-group">
+						<label>Document</label>
+						<input type="file" name="document" class="form-control"
+							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                   application/msword,
+                               application/pdf,">
+					</div>
+					<div class="form-group">
+						<small>*Note: If any of the fields are inputted it would mark as Finished</small>
+					</div>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -1020,6 +1063,12 @@
             modal.find('form').find('input[type=file]').attr('required', 'required');
         }
     });
+
+	$(".setReplayBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#setReplayModal');
+        modal.find('form').attr('action', action);
+	});
 
     function disableSubmit(t) {
         let submit_btn = $(t).find('[type=submit]');

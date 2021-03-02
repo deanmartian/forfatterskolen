@@ -490,7 +490,7 @@ Route::group([
         Route::get('backend/{id}/download_assigned_manuscript', 'PageController@downloadAssignedManuscript')->name('backend.download_assigned_manuscript');
         Route::post('backend/change-password', 'PageController@changePassword')->name('backend.change-password');
         Route::get('/tests', 'PageController@tests');
-        Route::get('head-editor/dashboard', 'HeadEditorController@index')->name('admin.head-editor-dashboard')->middleware('headEditor');;
+        Route::get('head-editor/dashboard', 'HeadEditorController@index')->name('admin.head-editor-dashboard')->middleware('headEditor');
 
         Route::resource('page_meta','PageMetaController',[
             'except' => ['show', 'create', 'edit'],
@@ -1434,6 +1434,8 @@ Route::group([
         Route::post('/other-service/{id}/update-status/{type}', 'OtherServiceController@updateStatus')->name('editor.other-service.update-status');
         Route::post('/other-service/{id}/add-feedback/{type}', 'OtherServiceController@addFeedback')->name('editor.other-service.add-feedback');
         Route::get('/other-service/{id}/download/{type}', 'OtherServiceController@downloadOtherServiceDoc')->name('editor.other-service.download-doc'); // Download assignment feedback
+        Route::post('/other-service/{id}/coaching-timer/set_replay', 'OtherServiceController@editorSetReplay')->name('editor.other-service.coaching-timer.set_replay');
+
     });
 
     // Authentication
