@@ -64,4 +64,9 @@ class Assignment extends Model
     {
         return $this->belongsTo('App\User', 'parent_id', 'id');
     }
+
+    public function getAllowedPackagesAttribute()
+    {
+        return json_decode($this->attributes['allowed_package']);
+    }
 }
