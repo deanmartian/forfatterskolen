@@ -112,7 +112,7 @@
 								<th>{{ trans_choice('site.learners', 1) }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
 								<th>{{ trans_choice('site.packages', 1) }}</th>
-								<th>{{ trans('site.progress') }}</th>
+								<th>Preferred Editor</th>
 								<th></th>
 							</tr>
 							</thead>
@@ -124,12 +124,13 @@
 										<td>{{ $learner->user->id }}</td>
 										<td>{{$learner->package->variation}}</td>
 										<td>
-											<div class="progress learner-progress">
+											{{--<div class="progress learner-progress">
 												<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="70"
 													 aria-valuemin="0" aria-valuemax="100" style="width:70%">
 													70% Complete
 												</div>
-											</div>
+											</div>--}}
+											{{ $learner->user->preferredEditor ? $learner->user->preferredEditor->editor->fullname : '' }}
 										</td>
 										<td>
 											<button type="submit" data-toggle="modal" data-target="#removeLearnerModal" class="btn btn-danger btn-xs pull-right btn-remove-learner" data-learner="{{$learner->user->full_name}}" data-package="{{$learner->package->id}}" data-learner-id="{{$learner->user->id}}">{{ trans('site.remove-learner') }}</button>
