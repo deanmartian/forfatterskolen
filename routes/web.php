@@ -1417,7 +1417,7 @@ Route::group([
     ], function(){
 
         Route::get('/', 'PageController@dashboard')->name('editor.dashboard');
-
+        Route::get('assignmentArchive','PageController@assignmentArchive')->name('editor.assignment-archive');
     });
 
     Route::group([

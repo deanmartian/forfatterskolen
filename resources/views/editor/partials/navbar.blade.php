@@ -14,32 +14,40 @@ $urlList = array('pulse', 'board');
     <div class="collapse navbar-collapse" id="fatterNavbar">
   
       <!-- <button class="btn btn-success navbar-btn btn-sm" data-placement="bottom" data-trigger="focus" data-toggle="popover" data-content='{!! AdminHelpers::newButtonMenu() !!}'><i class="fa fa-plus"></i> New</button> -->
+      
       <ul class="nav navbar-nav navbar-right">
         <!-- <li @if(Request::is('/')) class="active" @endif><a href="{{route('backend.dashboard')}}">{{ trans('site.admin-menu.dashboard') }}</a></li> -->
-
-        <li><a href="#"><i class="fa fa-bell-o"></i></a></li>
-        <li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-          {{Auth::user()->fullName}}
-          <i class="fa fa-angle-down"></i>&nbsp;<span class="nav-user-thumb"></span>
-        </a>
-        <ul class="dropdown-menu">
-          <li class="form-logout">
-              <button type="submit" class="btn btn-block" data-toggle="modal" data-target="#changePasswordModal">Change Password</button>
-          </li>
-          <li>
-            <form method="POST" action="{{route('auth.logout')}}" class="form-logout">
-              {{csrf_field()}}
-              <button type="submit" class="btn btn-block">Logout</button>
-            </form>
-          </li>
-          {{--<li>
-            <a href="{{ route('admin.pulse.index') }}" class="dapulse-link">Dapulse</a>
-          </li>--}}
-        </ul>
+        @foreach (\App\Http\AdminHelpers::editorPageList() as $page)
+        <li @if(Request::is(strtolower($page['request_name']))) class="active" @endif>
+          <a href="{{ route($page['route']) }}">{{ trans('site.admin-menu.'.$page['request_name']) }}</a>
         </li>
-      </li>
+        @endforeach
+        <li>
+          <a href="#"><i class="fa fa-bell-o"></i></a>
+        </li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            {{Auth::user()->fullName}}
+            <i class="fa fa-angle-down"></i>&nbsp;<span class="nav-user-thumb"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li class="form-logout">
+                <button type="submit" class="btn btn-block" data-toggle="modal" data-target="#changePasswordModal">Change Password</button>
+            </li>
+            <li>
+              <form method="POST" action="{{route('auth.logout')}}" class="form-logout">
+                {{csrf_field()}}
+                <button type="submit" class="btn btn-block">Logout</button>
+              </form>
+            </li>
+            {{--<li>
+              <a href="{{ route('admin.pulse.index') }}" class="dapulse-link">Dapulse</a>
+            </li>--}}
+          </ul>
+        </li>
+
       </ul>
+
     </div>
   </div>
 </nav>

@@ -986,6 +986,24 @@ class AdminHelpers
         return $pages;
     }
 
+    public static function editorPageList($id = NULL)
+    {
+        $pages = array(
+            array( 'id' => 1, 'option' => 'Pending Assignments', 'route' => 'editor.dashboard', 'request_name' => 'pending-assignments'),
+            array( 'id' => 2, 'option' => 'Assignment Archive', 'route' => 'editor.assignment-archive', 'request_name' => 'assignment-archive')
+        );
+
+        if ($id > 0) {
+            foreach ($pages as $page) {
+                if ($page['id'] == $id) {
+                    return $page['option'];
+                }
+            }
+        }
+
+        return $pages;
+    }
+
     public static function courseType($id = NULL)
     {
         $types = array(

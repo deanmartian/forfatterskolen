@@ -6,6 +6,7 @@
 
 @section('styles')
 	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="{{asset('css/editor.css')}}">
 	<style>
 		.panel {
 			overflow-x: auto;
@@ -23,9 +24,10 @@
 				<div class="col-sm-12">
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<h4>
+							<h4 class="dib">
 								Assignments/Personal assignments
 							</h4>
+
 						</div>
 						<table class="table">
 							<thead>
@@ -33,7 +35,6 @@
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
 								<th>Expected Finish</th>
-								<th></th>
 								<th>Feedback Status</th>
 							</tr>
 							</thead>
@@ -42,6 +43,12 @@
                                 <?php $extension = explode('.', basename($assignedManuscript->filename)); ?>
 								<tr>
 									<td>
+										
+										<a href="{{ $assignedManuscript->filename }}"
+										   download>
+										   <i class="fa fa-download" aria-hidden="true"></i>
+										</a> &nbsp;
+
 										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
 											<a href="/js/ViewerJS/#../..{{ $assignedManuscript->filename }}">
 												{{ basename($assignedManuscript->filename) }}
@@ -55,12 +62,6 @@
 									<td>{{ $assignedManuscript->user->id }}</td>
 									<td>
 										{{ $assignedManuscript->expected_finish }}
-									</td>
-									<td>
-										<a href="{{ $assignedManuscript->filename }}" class="btn btn-primary btn-xs"
-										   download>
-											{{ trans('site.download') }}
-										</a>
 									</td>
 									<td>
 										<div>
@@ -100,7 +101,6 @@
 								<th>{{ trans('site.genre') }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
 								<th>Expected Finish</th>
-								<th></th>
 								<th>Feedback Status</th>
 							</tr>
 							</thead>
@@ -108,7 +108,11 @@
 							@foreach($assigned_shop_manuscripts as $shopManuscript)
 								@if( $shopManuscript->status == 'Started' || $shopManuscript->status == 'Pending' )
 									<tr>
-										<td>{{$shopManuscript->shop_manuscript->title}}</td>
+										<td>
+											<a href="{{ route('editor.backend.download_shop_manuscript', $shopManuscript->id) }}"><i class="fa fa-download" aria-hidden="true"></i>
+											</a>&nbsp;
+											{{$shopManuscript->shop_manuscript->title}}
+										</td>
 										<td>
 											@if($shopManuscript->genre > 0)
 												{{ \App\Http\FrontendHelpers::assignmentType($shopManuscript->genre) }}
@@ -116,10 +120,6 @@
 										</td>
 										<td>{{ $shopManuscript->user->id }}</td>
 										<td>{{ $shopManuscript->expected_finish }}</td>
-										<td>
-											<a href="{{ route('editor.backend.download_shop_manuscript', $shopManuscript->id) }}"
-											   class="btn btn-primary btn-xs">{{ trans('site.download') }}</a> <br>
-										</td>
 										<td>
 											@if($shopManuscript->status == 'Started')
 											
@@ -154,7 +154,6 @@
 							<tr>
 								<th>{{ trans_choice('site.courses', 1) }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
-								<th></th>
 								<th>Feedback Status</th>
 							</tr>
 							</thead>
@@ -162,6 +161,7 @@
 							@foreach ($assignedAssignments as $assignedAssignment)
 								<tr>
 									<td>
+										<a href="{{ route('editor.backend.download_assigned_manuscript', $assignedAssignment->id) }}"><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
 										@if($assignedAssignment->assignment->course)
 												{{ $assignedAssignment->assignment->course->title }}
 										@else
@@ -169,10 +169,6 @@
 										@endif
 									</td>
 									<td>{{ $assignedAssignment->user_id }}</td>
-									<td>
-										<a href="{{ route('editor.backend.download_assigned_manuscript', $assignedAssignment->id) }}"
-										   class="btn btn-primary btn-xs">{{ trans('site.download') }}</a>
-									</td>
 									<td>
 									<?php
 									if($assignedAssignment->has_feedback){
@@ -219,7 +215,6 @@
 								<th>{{ trans('site.learner-id') }}</th>
 								<th>{{ trans('site.approved-date') }}</th>
 								<th>{{ trans('site.session-length') }}</th>
-								<th></th>
 								<th>Set Replay</th>
 							</tr>
 							</thead>
@@ -228,6 +223,7 @@
                                 <?php $extension = explode('.', basename($coachingTimer->file)); ?>
 								<tr>
 									<td>
+										<a href="{{ $coachingTimer->file }}" download><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
 										{{ $coachingTimer->user->id }}
 
 										@if ($coachingTimer->help_with)
@@ -245,9 +241,6 @@
 									</td>
 									<td>
 										{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($coachingTimer->plan_type) }}
-									</td>
-									<td>
-										<a href="{{ $coachingTimer->file }}" class="btn btn-primary btn-xs" download>Download</a>
 									</td>
 									<td>
 									<button class="btn btn-xs btn-primary setReplayBtn" data-toggle="modal"
@@ -273,7 +266,6 @@
 								<th>{{ trans_choice('site.manus', 2) }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
 								<th>{{ trans('site.expected-finish') }}</th>
-								<th></th>
 								<th>Feedback Status</th>
 							</tr>
 							</thead>
@@ -282,6 +274,7 @@
                                 <?php $extension = explode('.', basename($correction->file)); ?>
 								<tr>
 									<td>
+										<a href="{{ route('editor.other-service.download-doc', ['id' => $correction->id, 'type' => 2]) }}"><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
 										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
 											<a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
 										@elseif( end($extension) == 'docx' )
@@ -305,10 +298,6 @@
 												{{ trans('site.set-date') }}
 											</a>
 										@endif -->
-									</td>
-									<td>
-										<a class="btn btn-primary btn-xs" href="{{ route('editor.other-service.download-doc',
-										   ['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.download') }}</a>
 									</td>
 									<td>
 									
@@ -350,7 +339,6 @@
 								<th>{{ trans_choice('site.manus', 2) }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
 								<th>{{ trans('site.expected-finish') }}</th>
-								<th></th>
 								<th>Feedback Status</th>
 							</tr>
 							</thead>
@@ -359,6 +347,7 @@
                                 <?php $extension = explode('.', basename($copyEditing->file)); ?>
 								<tr>
 									<td>
+										<a href="{{ route('editor.other-service.download-doc', ['id' => $copyEditing->id, 'type' => 1]) }}"><i class="fa fa-download" aria-hidden="true"></i></a>
 										@if( end($extension) == 'pdf' || end($copyEditing) == 'odt' )
 											<a href="/js/ViewerJS/#../../{{ $copyEditing->file }}">{{ basename($copyEditing->file) }}</a>
 										@elseif( end($extension) == 'docx' )
@@ -382,10 +371,6 @@
 												{{ trans('site.set-date') }}
 											</a>
 										@endif -->
-									</td>
-									<td>
-										<a class="btn btn-primary btn-xs" href="{{ route('editor.other-service.download-doc',
-										   ['id' => $copyEditing->id, 'type' => 1]) }}">{{ trans('site.download') }}</a>
 									</td>
 									<td>
 										<!-- show only if no feedback is given yet for this copyEditing -->
