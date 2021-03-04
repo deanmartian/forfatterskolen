@@ -405,7 +405,7 @@
 									</td>
 									<td>
 										@if ($correction->expected_finish)
-											{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($correction->expected_finish) }}
+											{{ $correction->expected_finish_formatted }}
 											<br>
 										@endif
 
@@ -415,7 +415,7 @@
 											   data-action="{{ route('admin.other-service.update-expected-finish',
 										   ['id' => $correction->id, 'type' => 2]) }}"
 											   data-finish="{{ $correction->expected_finish ?
-										strftime('%Y-%m-%dT%H:%M:%S', strtotime($correction->expected_finish)) : '' }}">
+										strftime('%Y-%m-%d', strtotime($correction->expected_finish)) : '' }}">
 												{{ trans('site.set-date') }}
 											</a>
 										@endif
@@ -495,7 +495,7 @@
 									</td>
 									<td>
 										@if ($copyEditing->expected_finish)
-											{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($copyEditing->expected_finish) }}
+											{{ $copyEditing->expected_finish_formatted }}
 											<br>
 										@endif
 
@@ -503,9 +503,9 @@
 											<a href="#setOtherServiceFinishDateModal" data-toggle="modal"
 											   class="setOtherServiceFinishDateBtn"
 											   data-action="{{ route('admin.other-service.update-expected-finish',
-										   ['id' => $copyEditing->id, 'type' => 2]) }}"
+										   ['id' => $copyEditing->id, 'type' => 1]) }}"
 											   data-finish="{{ $copyEditing->expected_finish ?
-										strftime('%Y-%m-%dT%H:%M:%S', strtotime($copyEditing->expected_finish)) : '' }}">
+										strftime('%Y-%m-%d', strtotime($copyEditing->expected_finish)) : '' }}">
 												{{ trans('site.set-date') }}
 											</a>
 										@endif
@@ -1276,7 +1276,7 @@
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>{{ trans('site.expected-finish-date') }}</label>
-						<input type="datetime-local" name="expected_finish" class="form-control" required>
+						<input type="date" name="expected_finish" class="form-control" required>
 					</div>
 					<div class="text-right">
 						<button class="btn btn-primary" type="submit">{{ trans('site.submit') }}</button>

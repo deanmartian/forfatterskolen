@@ -928,7 +928,7 @@
 								</td>
 								<td>
 									@if ($correction->expected_finish)
-										{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($correction->expected_finish) }}
+										{{ $correction->expected_finish_formatted }}
 										<br>
 									@endif
 
@@ -938,7 +938,7 @@
 										   data-action="{{ route('admin.other-service.update-expected-finish',
 										   ['id' => $correction->id, 'type' => 2]) }}"
 										   data-finish="{{ $correction->expected_finish ?
-										strftime('%Y-%m-%dT%H:%M:%S', strtotime($correction->expected_finish)) : '' }}">
+										strftime('%Y-%m-%d', strtotime($correction->expected_finish)) : '' }}">
 											Set Date
 										</a>
 									@endif
@@ -1016,7 +1016,7 @@
 								</td>
 								<td>
 									@if ($copy_editing->expected_finish)
-										{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($copy_editing->expected_finish) }}
+										{{ $copy_editing->expected_finish_formatted }}
 										<br>
 									@endif
 
@@ -1026,7 +1026,7 @@
 										   data-action="{{ route('admin.other-service.update-expected-finish',
 										   ['id' => $copy_editing->id, 'type' => 1]) }}"
 										   data-finish="{{ $copy_editing->expected_finish ?
-										strftime('%Y-%m-%dT%H:%M:%S', strtotime($copy_editing->expected_finish)) : '' }}">
+										strftime('%Y-%m-%d', strtotime($copy_editing->expected_finish)) : '' }}">
 											{{ trans('site.set-date') }}
 										</a>
 									@endif
@@ -1054,7 +1054,7 @@
 
 										<button class="btn btn-danger btn-xs deleteOtherServiceBtn" type="button"
 												data-toggle="modal" data-target="#deleteOtherServiceModal"
-												data-action="{{ route('admin.other-service.delete', ['id' => $copy_editing->id, 'type' => 1]) }}"><i class="fa fa-check"></i></button>
+												data-action="{{ route('admin.other-service.delete', ['id' => $copy_editing->id, 'type' => 1]) }}"><i class="fa fa-trash"></i></button>
 								</td>
 							</tr>
 						@endforeach
@@ -2697,7 +2697,7 @@
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>Expected finish date</label>
-						<input type="datetime-local" name="expected_finish" class="form-control" required>
+						<input type="date" name="expected_finish" class="form-control" required>
 					</div>
 					<div class="text-right">
 						<button class="btn btn-primary" type="submit">Submit</button>
