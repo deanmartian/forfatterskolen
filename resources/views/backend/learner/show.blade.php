@@ -499,7 +499,7 @@
 					<h4>{{ trans_choice('site.invoices', 2) }}</h4>
 				</div>
 				<div class="table-responsive" style="padding: 10px">
-					<table class="table dt-table">
+					<table class="table dt-table" id="invoice-table">
 						<thead>
 							<tr>
 								<th>{{ trans_choice('site.invoices', 1) }} #</th>
@@ -3372,7 +3372,7 @@
             modal.find('input[name=mobile_number]').val(vipps_phone_number);
 		});
 
-        $(".fikenCreditNoteBtn").click(function(){
+        $("#invoice-table").on("click", ".fikenCreditNoteBtn", function(){
             let action = $(this).data('action');
             $("#fikenCreditNoteModal").find('form').attr('action', action);
         });
