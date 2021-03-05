@@ -570,7 +570,7 @@
 										</button>
 									{{--@endif--}}
 
-									@if ($invoice->fiken_invoice_id)
+									@if ($invoice->fiken_invoice_id && !$invoice->fiken_is_paid)
 										<button class="btn btn-success btn-xs vippsFakturaBtn" style="margin-top: 5px"
 												data-toggle="modal"
 											data-target="#vippsFakturaModal"
