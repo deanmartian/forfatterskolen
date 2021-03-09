@@ -3359,31 +3359,14 @@
             });
         });
 
-        $(".deleteInvoiceBtn").click(function(){
-           let action = $(this).data('action');
-           $("#deleteInvoiceModal").find('form').attr('action', action);
-		});
+        let invoice_table = $("#invoice-table");
 
-        $(".vippsFakturaBtn").click(function() {
-            let action = $(this).data('action');
-            let vipps_phone_number = $(this).data('vipps-number');
-            let modal = $("#vippsFakturaModal");
-            modal.find('form').attr('action', action);
-            modal.find('input[name=mobile_number]').val(vipps_phone_number);
-		});
-
-        $("#invoice-table").on("click", ".fikenCreditNoteBtn", function(){
+        invoice_table.on("click", ".fikenCreditNoteBtn", function(){
             let action = $(this).data('action');
             $("#fikenCreditNoteModal").find('form').attr('action', action);
         });
 
-        $("#submitDeleteInvoice").click(function(e) {
-           e.preventDefault();
-            $(this).attr('disabled','disabled');
-            $("#deleteInvoiceModal").find('form').submit();
-		});
-
-        $(".updateDueBtn").click(function(){
+        invoice_table.on("click", ".updateDueBtn", function(){
             let action = $(this).data('action');
             let form = $("#updateInvoiceDueModal").find('form');
             form.attr('action', action);
@@ -3391,6 +3374,25 @@
             form.find("[type=date]").val(due);
 
         });
+
+        invoice_table.on("click", ".deleteInvoiceBtn", function(){
+            let action = $(this).data('action');
+            $("#deleteInvoiceModal").find('form').attr('action', action);
+        });
+
+        invoice_table.on("click", ".vippsFakturaBtn", function(){
+            let action = $(this).data('action');
+            let vipps_phone_number = $(this).data('vipps-number');
+            let modal = $("#vippsFakturaModal");
+            modal.find('form').attr('action', action);
+            modal.find('input[name=mobile_number]').val(vipps_phone_number);
+        });
+
+        $("#submitDeleteInvoice").click(function(e) {
+           e.preventDefault();
+            $(this).attr('disabled','disabled');
+            $("#deleteInvoiceModal").find('form').submit();
+		});
 
         $(".deleteFromCourseBtn").click(function(){
             let action = $(this).data('action');
