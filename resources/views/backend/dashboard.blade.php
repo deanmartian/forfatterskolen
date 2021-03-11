@@ -1006,8 +1006,6 @@
 					</div>
 				</div>
 			</div>
-
-			<div style="max-width:1000px;width:100%;"><div style="position: relative;padding-bottom: 117%;padding-top: 35px;height: 0;overflow: hidden;"><iframe src="https://create.plandisc.com/wheel/embed/pB6HbNe" scrolling="no" frameborder="0" style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe></div></div><a style="font-size:10px;" href="https://create.plandisc.com/pB6HbNe">Problemer med å se Plandiscen? Trykk her</a>
 		</div>
 		@endif
 	</div>

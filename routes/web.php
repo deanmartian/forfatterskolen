@@ -1179,6 +1179,7 @@ Route::group([
         Route::get('/invoice/{id}/download-fiken', 'InvoiceController@downloadFikenPdf')->name('admin.invoice.download-fiken-pdf'); // Store Transaction
 
 
+        Route::get('/yearly_calendar', 'AdminController@yearlyCalendar')->name('admin.yearly-calendar.index');
 
 
         // Package shop manuscripts route
