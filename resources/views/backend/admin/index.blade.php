@@ -226,6 +226,7 @@
 						<tr>
 							<th>Name</th>
 							<th>Email</th>
+							<th>Total worked hours</th>
 							<th></th>
 						</tr>
 						</thead>
@@ -235,6 +236,7 @@
 							<tr>
 								<td>{{ $admin->full_name }}</td>
 								<td>{{ $admin->email }}</td>
+								<td>{{$admin->TotalWorkedHours}}</td>
 								<td>
 									<div class="pull-right">
 										@if($admin->head_editor)

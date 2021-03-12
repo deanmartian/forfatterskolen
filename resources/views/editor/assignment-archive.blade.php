@@ -34,6 +34,7 @@
 							<thead>
 							<tr>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+                                <th>Feedback Sent</th>
 								<th>{{ trans('site.learner-id') }}</th>
                                 <th></th>
 							</tr>
@@ -59,6 +60,13 @@
 											</a>
 										@endif
 									</td>
+                                    <td>
+                                        @if($assignedManuscript->noGroupFeedbacks->first())
+                                            {{$assignedManuscript->noGroupFeedbacks->first()->updated_at}}
+                                        @else
+                                        -
+                                        @endif
+                                    </td>
 									<td>{{ $assignedManuscript->user->id }}</td>
                                     <td>
                                         @if($assignedManuscript->noGroupFeedbacks->first())
@@ -92,6 +100,7 @@
 							<thead>
 							<tr>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+                                <th>Feedback Sent</th>
 								<th>{{ trans('site.genre') }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
                                 <th></th>
@@ -107,22 +116,30 @@
                                             </a>&nbsp;
                                             {{$shopManuscript->shop_manuscript->title}}
                                         </td>
+                                        <td>{{$shopManuscript->feedbacks->first()->updated_at}}</td>
 										<td>
 											@if($shopManuscript->genre > 0)
 												{{ \App\Http\FrontendHelpers::assignmentType($shopManuscript->genre) }}
 											@endif
 										</td>
 										<td>{{ $shopManuscript->user->id }}</td>
-                                        <td><button class="btn btn-primary btn-xs shopManuscriptShowFeedbackBtn"
+                                        <td>
+                                        <?php
+
+                                            $feedbackFile = implode(",",$shopManuscript->feedbacks->first()->filename);
+
+                                        ?>
+                                        <button class="btn btn-primary btn-xs shopManuscriptShowFeedbackBtn"
                                                 data-target="#shopManuscriptShowFeedbackModal"
                                                 data-toggle="modal"
-                                                data-feedback_file = "{{$shopManuscript->feedbacks->first()->filename[0]}}"
+                                                data-feedback_file = "{{$feedbackFile}}"
                                                 data-feedback_notes = "{{$shopManuscript->feedbacks->first()->notes}}"
                                                 data-feedback_grade = "{{$shopManuscript->grade}}"
                                                 data-feedback_created_at = "{{$shopManuscript->feedbacks->first()->created_at}}"
                                                 >
                                                 <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;Feedback
-                                        </button></td>
+                                        </button>
+                                        </td>
 									</tr>
 								@endif
 							@endforeach
@@ -147,6 +164,7 @@
 							<thead>
 							<tr>
 								<th>{{ trans_choice('site.courses', 1) }}</th>
+                                <th>Feedback Sent</th>
 								<th>{{ trans('site.learner-id') }}</th>
                                 <th></th>
 							</tr>
@@ -154,6 +172,12 @@
 							<tbody>
 							@foreach ($assignedAssignments as $assignedAssignment)
 								<tr>
+                                    <?php 
+                                        $groupDetails = DB::SELECT("SELECT A.id as assignment_group_id, B.id AS assignment_group_learner_id FROM assignment_groups A JOIN assignment_group_learners B ON A.id = B.assignment_group_id AND B.user_id = $assignedAssignment->user_id WHERE A.assignment_id = $assignedAssignment->assignment_id");
+                                        if($groupDetails){ // Means the course assignment belongs to a group
+                                            $feedback = DB::SELECT("SELECT A.* FROM assignment_feedbacks A JOIN assignment_group_learners B ON A.assignment_group_learner_id = B.id WHERE B.user_id = $assignedAssignment->user_id AND A.assignment_group_learner_id = ".$groupDetails[0]->assignment_group_learner_id);
+                                        }
+                                    ?>
 									<td>
                                         <a href="{{ route('editor.backend.download_assigned_manuscript', $assignedAssignment->id) }}">
                                             <i class="fa fa-download" aria-hidden="true"></i> 
@@ -164,19 +188,23 @@
 												{{ $assignedAssignment->assignment->title }}
 										@endif
 									</td>
+                                    <td>
+                                        @if($groupDetails)
+                                            {{$feedback[0]->updated_at}}
+                                        @else
+                                            {{$assignedAssignment->noGroupFeedbacks->first()->updated_at}}
+                                        @endif
+                                    </td>
 									<td>{{ $assignedAssignment->user_id }}</td>
                                     <td>
                                         <?php 
-                                            // echo $assignedAssignment->user_id.' '.
-                                            $groupDetails = DB::SELECT("SELECT A.id as assignment_group_id, B.id AS assignment_group_learner_id FROM assignment_groups A JOIN assignment_group_learners B ON A.id = B.assignment_group_id AND B.user_id = $assignedAssignment->user_id WHERE A.assignment_id = $assignedAssignment->assignment_id");
                                             if($groupDetails){ // Means the course assignment belongs to a group
-                                                $feedback = DB::SELECT("SELECT A.* FROM assignment_feedbacks A JOIN assignment_group_learners B ON A.assignment_group_learner_id = B.id WHERE B.user_id = $assignedAssignment->user_id AND A.assignment_group_learner_id = ".$groupDetails[0]->assignment_group_learner_id);
                                                 echo '<button class="btn btn-primary btn-xs courseAssignmentShowFeedbackBtn"
                                                                 data-target="#courseAssignmentShowFeedbackModal"
                                                                 data-toggle="modal"
                                                                 data-feedback_file = "'.$feedback[0]->filename.'"
                                                                 data-feedback_grade = "'.$assignedAssignment->grade.'"
-                                                                data-feedback_created_at = "'.$assignedAssignment->created_at.'"
+                                                                data-feedback_created_at = "'.$feedback[0]->created_at.'"
                                                         >
                                                             <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;Feedback
                                                         </button>';
@@ -225,13 +253,13 @@
                                         </a>&nbsp;
 										{{ $coachingTimer->user->id }}
 
-										@if ($coachingTimer->help_with)
+										<!-- @if ($coachingTimer->help_with)
 											<br>
 											<a href="#viewHelpWithModal" style="color:#eea236" class="viewHelpWithBtn"
 											   data-toggle="modal" data-details="{{ $coachingTimer->help_with }}">
-												{{ trans('site.view-help-with') }}
+                                               {{ $coachingTimer->help_with }}
 											</a>
-										@endif
+										@endif -->
 									</td>
 									<td>
 										{{ $coachingTimer->approved_date ?
@@ -383,7 +411,7 @@
                         </div>
                         <div class="form-group">
                             <label>File</label><br>
-                            <a href="" name="feedback_filename" class="" download>{{ trans('site.download') }}</a>
+                            <div id="feedbackFileAppend"></div>
                         </div>
                         <div class="form-group">
                             <label>Grade</label><br>
@@ -412,7 +440,7 @@
                         </div>
                         <div class="form-group">
                             <label>File</label><br>
-                            <a href="" name="filename" class="" download></a>
+                            <div id="feedbackFileAppend"></div>
                         </div>
                         <div class="form-group">
                             <label>Grade</label><br>
@@ -446,7 +474,7 @@
                         </div>
                         <div class="form-group">
                             <label>File</label><br>
-                            <a href="" name="feedback_filename" class="" download>{{ trans('site.download') }}</a>
+                            <div id="feedbackFileAppend"></div>
                         </div>
                         <div class="form-group">
                             <label>Grade</label><br>
@@ -504,7 +532,7 @@
                         </div>
                         <div class="form-group">
                             <label>Manuscript</label><br>
-                            <a href="" name="feedback_filename" class="" download>{{ trans('site.download') }}</a>
+                            <div id="feedbackFileAppend"></div>
                         </div>
                     </form>
 
@@ -526,8 +554,13 @@
             let modal = $('#personalAssignmentShowFeedbackModal');
             let action = $(this).data('action');
             var feedbackNotes = $(this).data('feedback_notes');
-            modal.find('[name=feedback_filename]').attr("href", feedbackFileName);
-            modal.find('[name=feedback_filename]').text(feedbackFileName);
+            
+            var feedbackArray = feedbackFileName.split(",");
+            modal.find('#feedbackFileAppend').html('');
+            feedbackArray.forEach(function (item, index){
+                modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+            })
+
             modal.find('#feedback_date').text(feedbackDate);
             modal.find('#feedback_grade').text(feedbackGrade);
             modal.find('[name=created_at]').val(feedbackDate);
@@ -539,8 +572,13 @@
             var feedbackGrade =  $(this).data('feedback_grade');
             var feedbackCreatedAt = $(this).data('feedback_created_at');
             let modal = $('#shopManuscriptShowFeedbackModal');
-            modal.find('[name=filename]').attr("href", feedbackFileName);
-            modal.find('[name=filename]').text(feedbackFileName);
+            
+            var feedbackArray = feedbackFileName.split(",");
+            modal.find('#feedbackFileAppend').html('');
+            feedbackArray.forEach(function (item, index){
+                modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+            })
+
             modal.find('#notes').text(feedbackNotes);
             modal.find('#grade').text(feedbackGrade);
             modal.find('#created_at').text(feedbackCreatedAt);
@@ -551,11 +589,17 @@
             var feedbackGrade =  $(this).data('feedback_grade');
             var feedbackDate = $(this).data('feedback_created_at');
             let modal = $('#courseAssignmentShowFeedbackModal');
-            modal.find('[name=feedback_filename]').attr("href", feedbackFileName);
-            modal.find('[name=feedback_filename]').text(feedbackFileName);
+            
+            var feedbackArray = feedbackFileName.split(",");
+            modal.find('#feedbackFileAppend').html('');
+            feedbackArray.forEach(function (item, index){
+                modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+            })
+
             modal.find('#grade').text(feedbackGrade);
             modal.find('#created_at').text(feedbackDate);
         });
+
         $('.coachingTimerFeedbackBtn').click(function(){
             var replayLink = $(this).data('replay_link');
             var comment = $(this).data('comment');
@@ -568,12 +612,18 @@
             modal.find('#replay_link').text(replayLink);
             modal.find('#replay_link').attr("href", replayLink);
         })
+
         $('.approveOtherServiceFeedbackBtn').click(function(){
             var feedbackFileName =  $(this).data('feedback_file');
             var created_at = $(this).data('created_at');
             let modal = $('#approveOtherServiceFeedbackModal');
-            modal.find('[name=feedback_filename]').attr("href", feedbackFileName);
-            modal.find('[name=feedback_filename]').text(feedbackFileName);
+            
+            var feedbackArray = feedbackFileName.split(",");
+            modal.find('#feedbackFileAppend').html('');
+            feedbackArray.forEach(function (item, index){
+                modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+            })
+
             modal.find('#created_at').text(created_at);
         });
     </script>

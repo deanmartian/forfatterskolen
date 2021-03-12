@@ -7,7 +7,7 @@ class AssignmentFeedback extends Model
 {
     
     protected $table = 'assignment_feedbacks';
-    protected $fillable = ['assignment_group_learner_id', 'user_id', 'filename', 'is_admin', 'is_active', 'availability'];
+    protected $fillable = ['assignment_group_learner_id', 'user_id', 'filename', 'is_admin', 'is_active', 'availability', 'hours_worked'];
 
 
 

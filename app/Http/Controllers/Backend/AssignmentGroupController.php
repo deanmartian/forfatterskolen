@@ -117,24 +117,12 @@ class AssignmentGroupController extends Controller
 
     public function submit_feedback($group_id, $id, Request $request)
     {
-        $group = AssignmentGroup::where('id', $group_id)->whereHas('learners', function($query) use ($id){
-            $query->where('id', $id);
-        })->firstOrFail();
 
-        $assignmentManuscript = AssignmentManuscript::find($request->manuscript_id);
-        $assignmentManuscript->has_feedback = 1;
-        $assignmentManuscript->status = 0;
-        // set grade
-        if (is_numeric($request->grade)) {
-            $assignmentManuscript->grade = $request->grade;
-        }
-        $assignmentManuscript->save();
-
+        $filesWithPath = '';
         if ( $request->hasFile('filename')) :
             $time = time();
             $destinationPath = 'storage/assignment-feedbacks'; // upload path
             $extensions = ['pdf', 'docx', 'odt'];
-            $filesWithPath = '';
 
             // loop through all the uploaded files
             foreach ($request->file('filename') as $k => $file) {
@@ -146,22 +134,62 @@ class AssignmentGroupController extends Controller
                 if( !in_array($extension, $extensions) ) :
                     return redirect()->back();
                 endif;
-
                 $file->move($destinationPath, $fileName);
-
             }
-
             $filesWithPath = trim($filesWithPath,", ");
-
-            AssignmentFeedback::create([
-                'assignment_group_learner_id' => $id,
-                'user_id' => Auth::user()->id,
-                'filename' => $filesWithPath,
-                'is_admin' => true,
-                'is_active' => true,
-            ]);
-            return redirect()->back();
         endif;
+
+        if($request->feedback_id){
+            
+            $assignmentManuscript = AssignmentManuscript::find($request->manuscript_id);
+            if (is_numeric($request->grade)) {
+                $assignmentManuscript->grade = $request->grade;
+            }
+            $assignmentManuscript->save();
+
+            if($filesWithPath){
+                $assignmentFeedback = AssignmentFeedback::where('assignment_group_learner_id', $id)
+                                                        ->update(['filename' => $filesWithPath,'hours_worked' => $request->hours]);
+            }else{
+                $assignmentFeedback = AssignmentFeedback::where('assignment_group_learner_id', $id)
+                                                        ->update(['hours_worked' => $request->hours]);
+            }
+            
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback updated successfully.'),
+                    'alert_type' => 'success']);
+
+        }else{
+    
+            if ( $request->hasFile('filename')) :
+
+                $assignmentManuscript = AssignmentManuscript::find($request->manuscript_id);
+                $assignmentManuscript->has_feedback = 1;
+                $assignmentManuscript->status = 0;
+                // set grade
+                if (is_numeric($request->grade)) {
+                    $assignmentManuscript->grade = $request->grade;
+                }
+                $assignmentManuscript->save();
+    
+                AssignmentFeedback::create([
+                    'assignment_group_learner_id' => $id,
+                    'user_id' => Auth::user()->id,
+                    'filename' => $filesWithPath,
+                    'is_admin' => true,
+                    'is_active' => true,
+                    'hours_worked' => $request->hours
+                ]);
+                return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback saved successfully.'),
+                        'alert_type' => 'success']);
+            else:
+
+                return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Please provide a file.'),
+                        'alert_type' => 'warning']);
+
+            endif;
+
+        }
+
     }
 
     public function approveFeedbackCourse($manuscript_id, $learner_id, $feedback_id, Request $request)

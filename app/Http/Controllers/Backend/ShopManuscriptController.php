@@ -176,9 +176,10 @@ class ShopManuscriptController extends Controller
     
     public function addFeedback($shopManuscriptTakenID, Request $request)
     {
-        $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($shopManuscriptTakenID);
-        if( $request->hasFile('files') && $shopManuscriptTaken->feedbacks->count() == 0 ) :
-            $files = [];
+        $files = [];
+            
+        if( $request->hasFile('files')) :
+
             foreach( $request->file('files') as $file ) :
                 $time = Str::random(10).'-'.time();
                 $destinationPath = 'storage/shop-manuscript-taken-feedbacks/'; // upload path
@@ -188,47 +189,46 @@ class ShopManuscriptController extends Controller
                 $files[] = '/'.$destinationPath.$fileName;
             endforeach;
 
-            ShopManuscriptTakenFeedback::create([
-                'shop_manuscript_taken_id' => $shopManuscriptTaken->id,
-                'filename' => json_encode($files),
-                'notes' => $request->notes
-            ]);
-
-            // $to = $shopManuscriptTaken->user->email;
-            // $emailTemplate = $this->emailTemplate('Shop Manuscript Feedback');
-            // $email_content = $request->message;
-            // $encode_email = encrypt($to);
-            // $redirectLink = encrypt(route('learner.shop-manuscript.show', $shopManuscriptTaken->id));
-            // $search_string = [
-            //     ':firstname',
-            //     ':redirect_link',
-            //     ':end_redirect_link'
-            // ];
-            // $replace_string = [
-            //     $shopManuscriptTaken->user->first_name,
-            //     "<a href='" . route('auth.login.emailRedirect',[$encode_email, $redirectLink]) . "'>" ,
-            //     "</a>"
-            // ];
-
-            // $format_content = str_replace($search_string, $replace_string, $email_content);
-
-            // $emailData['email_subject'] = $request->subject;
-            // $emailData['email_message'] = $format_content;
-            // $emailData['from_name'] = NULL;
-            // $emailData['from_email'] = $request->from_email;
-            // $emailData['attach_file'] = NULL;
-
-            // /*\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
-
-            // $this->saleService->createEmailHistory($request->subject, $request->from_email, $format_content,
-            //     'shop-manuscripts-taken-admin-feedback', $shopManuscriptTakenID);*/
-            // dispatch(new AddMailToQueueJob($to, $request->subject, $format_content, $request->from_email,
-            //     null, null,
-            //     'shop-manuscripts-taken-admin-feedback', $shopManuscriptTakenID));
-
         endif;
 
-        return redirect()->back();
+        if($request->feedback_id){
+            
+            $shopManuscriptTakenFeedback = ShopManuscriptTakenFeedback::find($request->feedback_id);
+            if($files){
+                $shopManuscriptTakenFeedback->filename = json_encode($files);
+            }
+            $shopManuscriptTakenFeedback->notes = $request->notes;
+            $shopManuscriptTakenFeedback->hours_worked = $request->hours;
+            $shopManuscriptTakenFeedback->save();
+
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback updated successfully.'),
+                    'alert_type' => 'success']);
+
+        }else{
+
+            $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($shopManuscriptTakenID);
+
+            if( $request->hasFile('files') && $shopManuscriptTaken->feedbacks->count() == 0 ) :
+
+                ShopManuscriptTakenFeedback::create([
+                    'shop_manuscript_taken_id' => $shopManuscriptTaken->id,
+                    'filename' => json_encode($files),
+                    'notes' => $request->notes,
+                    'hours_worked' => $request->hours
+                ]);
+
+                return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback saved successfully.'),
+                    'alert_type' => 'success']);
+
+            else:
+
+                return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Please provide a file.'),
+                'alert_type' => 'warning']);
+
+            endif;
+
+        }
+
     }
     public function approveFeedback($id, $learner_id, $feedback_id, Request $request)
     {

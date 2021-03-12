@@ -38,7 +38,7 @@ class AdminController extends Controller
         $customActions = CustomAction::where('is_active',1)->get();
         $pageMetas = PageMeta::all();
         $staffs = Staff::all();
-
+        
         return view('backend.admin.index', compact('admins','customActions', 'pageMetas', 'staffs'));
     }
 

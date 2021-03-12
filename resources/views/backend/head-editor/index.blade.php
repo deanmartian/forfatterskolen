@@ -64,8 +64,9 @@
                                             {{ trans('site.download') }}
                                         </a>
                                     </td>
-                                    <td>{{ $assignedManuscript->editor->full_name }}</td>
+                                    <td>{{ $assignedManuscript->editor->full_name}}</td>
                                     <td>
+									@if($assignedManuscript->noGroupFeedbacks->first())
                                         <button class="btn btn-success btn-xs personalAssignmentShowFeedbackBtn"
                                                 data-target="#personalAssignmentShowFeedbackModal"
                                                 data-toggle="modal"
@@ -77,6 +78,7 @@
 																'learner_id' => $assignedManuscript->user->id]) }}">
                                                 Approve Feedback
                                         </button>
+									@endif
                                     </td>
                                     <td>
                                         <div>
@@ -127,10 +129,15 @@
 										</td>
                                         <td>{{ $shopManuscript->admin->full_name }}</td>
                                         <td>
+											<?php
+
+												$feedbackFile = implode(",",$shopManuscript->feedbacks->first()->filename);
+
+											?>
                                             <button class="btn btn-success btn-xs shopManuscriptShowFeedbackBtn"
                                                     data-target="#shopManuscriptShowFeedbackModal"
                                                     data-toggle="modal"
-                                                    data-feedback_file = "{{$shopManuscript->feedbacks->first()->filename[0]}}"
+                                                    data-feedback_file = "{{$feedbackFile}}"
                                                     data-feedback_notes = "{{$shopManuscript->feedbacks->first()->notes}}"
                                                     data-action="{{ route('head_editor.shop-manuscript-taken-feedback.approve', 
 														['id' => $shopManuscript->id,
@@ -148,7 +155,7 @@
 						</table>
 					</div>
 				</div>
-			</div>                                      
+			</div>
 
             <!-- My Assignments -->
 			<div class="row">
@@ -199,7 +206,7 @@
 															data-action="'.route('head_editor.course_assignment.feedback_approve',
 																			['id' => $assignedAssignment->id,
 																			'learner_id' => $assignedAssignment->user->id,
-																			'feedback_id' => $feedback[0]->filename]).'">
+																			'feedback_id' => $feedback[0]->id]).'">
 															Approve Feedback
 													</button>';
 										}else{ //the course assignment does not belong to a group
@@ -287,17 +294,6 @@
 											{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($correction->expected_finish) }}
 											<br>
 										@endif
-
-										<!-- @if ($correction->status !== 2)
-											<a href="#setOtherServiceFinishDateModal" data-toggle="modal"
-											   class="setOtherServiceFinishDateBtn"
-											   data-action="{{ route('admin.other-service.update-expected-finish',
-										   ['id' => $correction->id, 'type' => 2]) }}"
-											   data-finish="{{ $correction->expected_finish ?
-										strftime('%Y-%m-%dT%H:%M:%S', strtotime($correction->expected_finish)) : '' }}">
-												{{ trans('site.set-date') }}
-											</a>
-										@endif -->
 									</td>
 									<td>
 										<a href="{{ route('editor.other-service.download-doc',
@@ -389,7 +385,7 @@
 											data-service="2"
 											data-feedback_file = "{{ $copyEditing->feedback->manuscript }}"
 											data-action="{{ route('head_editor.other-service.approve-feedback',
-											['id' => $correction->id, 'type' => 1]) }}"> Approve Feedback</a>
+											['id' => $copyEditing->id, 'type' => 1]) }}"> Approve Feedback</a>
 									</td>
 									<td>
 										@if( $copyEditing->status == 2 )
@@ -430,7 +426,7 @@
                         <!-- Grade -->
                     <div class="form-group">
 						<label>Feedback File</label><br>
-						<a href="" name="feedback_filename" class="" download>{{ trans('site.download') }}</a>
+						<div id="feedbackFileAppend"></div>
 					</div>
                     <div class="form-group">
 						<label>Feedback Grade</label><br>
@@ -494,7 +490,7 @@
                         <!-- Grade -->
                     <div class="form-group">
 						<label>Feedback File</label><br>
-						<a href="" name="feedback_filename" class="" download>{{ trans('site.download') }}</a>
+						<div id="feedbackFileAppend"></div>
 					</div>
                     <div class="form-group">
 						<label>Feedback Notes</label><br>
@@ -549,7 +545,7 @@
                         <!-- Grade -->
                     <div class="form-group">
 						<label>Feedback File</label><br>
-						<a href="" name="feedback_filename" class="" download>{{ trans('site.download') }}</a>
+						<div id="feedbackFileAppend"></div>
 					</div>
                     <div class="form-group">
 						<label>Feedback Grade</label><br>
@@ -613,7 +609,7 @@
                         <!-- Grade -->
                     <div class="form-group">
 						<label>Feedback File</label><br>
-						<a href="" name="feedback_filename" class="" download>{{ trans('site.download') }}</a>
+						<div id="feedbackFileAppend"></div>
 					</div>
                     <hr>
 
@@ -666,8 +662,13 @@
         var feedbackGrade =  $(this).data('feedback_grade');
 		let modal = $('#personalAssignmentShowFeedbackModal');
         let action = $(this).data('action');
-        modal.find('[name=feedback_filename]').attr("href", feedbackFileName);
-        modal.find('[name=feedback_filename]').text(feedbackFileName);
+		
+		var feedbackArray = feedbackFileName.split(",");
+		modal.find('#feedbackFileAppend').html('');
+		feedbackArray.forEach(function (item, index){
+			modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+		})
+
         modal.find('[name=grade]').val(feedbackGrade);
         modal.find('form#personalAssignmentApproveFeedback').attr('action', action);
 	});
@@ -677,8 +678,13 @@
         var feedbackGrade =  $(this).data('feedback_grade');
 		let modal = $('#courseAssignmentShowFeedbackModal');
         let action = $(this).data('action');
-        modal.find('[name=feedback_filename]').attr("href", feedbackFileName);
-        modal.find('[name=feedback_filename]').text(feedbackFileName);
+
+		var feedbackArray = feedbackFileName.split(",");
+		modal.find('#feedbackFileAppend').html('');
+		feedbackArray.forEach(function (item, index){
+			modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+		})
+
         modal.find('[name=grade]').val(feedbackGrade);
         modal.find('form#courseAssignmentApproveFeedback').attr('action', action);
 	});
@@ -687,8 +693,13 @@
         var feedbackNotes =  $(this).data('feedback_notes');
 		let modal = $('#shopManuscriptShowFeedbackModal');
         let action = $(this).data('action');
-        modal.find('[name=feedback_filename]').attr("href", feedbackFileName);
-        modal.find('[name=feedback_filename]').text(feedbackFileName);
+
+		var feedbackArray = feedbackFileName.split(",");
+		modal.find('#feedbackFileAppend').html('');
+		feedbackArray.forEach(function (item, index){
+			modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+		})
+
         modal.find('[name=notes]').val(feedbackNotes);
         modal.find('form#shopManuscriptTakenApproveFeedback').attr('action', action);
 	});
@@ -696,8 +707,13 @@
         var feedbackFileName =  $(this).data('feedback_file');
 		let modal = $('#approveOtherServiceFeedbackModal');
         let action = $(this).data('action');
-        modal.find('[name=feedback_filename]').attr("href", feedbackFileName);
-        modal.find('[name=feedback_filename]').text(feedbackFileName);
+        
+		var feedbackArray = feedbackFileName.split(",");
+		modal.find('#feedbackFileAppend').html('');
+		feedbackArray.forEach(function (item, index){
+			modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+		})
+
         modal.find('form#approveOtherServiceFeedback').attr('action', action);
 	});
     function disableSubmit(t) {

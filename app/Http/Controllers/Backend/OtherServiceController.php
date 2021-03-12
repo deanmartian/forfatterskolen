@@ -179,7 +179,7 @@ class OtherServiceController extends Controller
             $data['document'] = $fileName;
         }
 
-        $data['status'] = 1;
+        $data['status'] = 0;
         $id->update($data);
 
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Replay saved successfully.'),
@@ -299,66 +299,95 @@ class OtherServiceController extends Controller
     {
         $data = $request->except('_token');
         $extensions = ['pdf', 'docx'];
+        $filesWithPath = '';
 
         if ($service_type == 1 || $service_type == 2) {
-            if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) :
-                $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
-                $original_filename = $request->manuscript->getClientOriginalName();
-
-                if (!in_array($extension, $extensions)) :
-                    return redirect()->back()->with([
-                        'alert_type'            => 'danger',
-                        'errors'                => AdminHelpers::createMessageBag('File type not allowed.'),
-                        'not-former-courses'    => true
-                    ]);
-                endif;
-
+            if ($request->hasFile('manuscript')) :
+                // new 
+                $time = time();
                 $destinationPath = 'storage/other-service-feedback'; // upload path
+                $extensions = ['pdf', 'docx', 'odt'];
+                $filesWithPath = '';
+                // loop through all the uploaded files
+                foreach ($request->file('manuscript') as $k => $file) {
+                    $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION);
+                    $original_filename = $file->getClientOriginalName();
+                    $filename = pathinfo($original_filename, PATHINFO_FILENAME);
+                    $fileName = AdminHelpers::checkFileName($destinationPath, $filename, $extension);
+                    $filesWithPath .= "/".AdminHelpers::checkFileName($destinationPath, $filename, $extension).", ";
 
-                // check if path not exists then create it
-                if (!File::exists($destinationPath)) {
-                    File::makeDirectory($destinationPath, $mode = 0777, true, true);
+                    if( !in_array($extension, $extensions) ) :
+                        return redirect()->back();
+                    endif;
+
+                    $file->move($destinationPath, $fileName);
                 }
 
-                $filename = pathinfo($original_filename, PATHINFO_FILENAME);
-                // check the file name and add/increment number if the filename already exists
-                $file = AdminHelpers::checkFileName($destinationPath, $filename, $extension);
-
-                $request->manuscript->move($destinationPath, $file);
-
-                $data['manuscript'] = $file;
-
-                $service = '';
-
-                $data['service_id'] = $service_id;
-                $data['service_type'] = $service_type;
-
-                OtherServiceFeedback::create($data);
-
-                //update status
-                if ($service_type == 1) {
-                    $copyEditing = CopyEditingManuscript::find($service_id);
-                    $copyEditing->status = 3; // set status to pending
-                    $copyEditing->save();
-                    $service = 'Språkvask';
-                }
-    
-                if ($service_type == 2){
-                    $correction = CorrectionManuscript::find($service_id);
-                    $correction->status = 3; // set status to pending
-                    $correction->save();
-                    $service = 'Korrektur';
-                }
-
-                return redirect()->back()->with([
-                    'errors'                => AdminHelpers::createMessageBag($service.' Feedback added successfully.'),
-                    'alert_type'            => 'success',
-                    'not-former-courses'    => true
-                ]);
+                $filesWithPath = trim($filesWithPath,", ");
             endif;
         }
 
-        return redirect()->back();
+        if($request->feedback_id){
+
+            if ($service_type == 1 || $service_type == 2) {
+                
+                    $otherServiceFeedback = OtherServiceFeedback::find($request->feedback_id);
+                    if($filesWithPath){
+                        $otherServiceFeedback->manuscript = $filesWithPath;
+                    }
+                    $otherServiceFeedback->hours_worked = $request->hours_worked;
+                    $otherServiceFeedback->save();
+    
+                    return redirect()->back()->with([
+                        'errors'                => AdminHelpers::createMessageBag('Feedback updated successfully.'),
+                        'alert_type'            => 'success',
+                        'not-former-courses'    => true
+                    ]);
+            }
+
+        }else{
+            
+            if ($service_type == 1 || $service_type == 2) {
+                if ($request->hasFile('manuscript')) :
+                    
+                    $data['manuscript'] = $filesWithPath;
+                    $service = '';
+                    $data['service_id'] = $service_id;
+                    $data['service_type'] = $service_type;
+                    $data['hours_worked'] = $request->hours_worked;
+                    OtherServiceFeedback::create($data);
+    
+                    //update status
+                    if ($service_type == 1) {
+                        $copyEditing = CopyEditingManuscript::find($service_id);
+                        $copyEditing->status = 3; // set status to pending
+                        $copyEditing->save();
+                        $service = 'Språkvask';
+                    }
+        
+                    if ($service_type == 2){
+                        $correction = CorrectionManuscript::find($service_id);
+                        $correction->status = 3; // set status to pending
+                        $correction->save();
+                        $service = 'Korrektur';
+                    }
+    
+                    return redirect()->back()->with([
+                        'errors'                => AdminHelpers::createMessageBag($service.' Feedback added successfully.'),
+                        'alert_type'            => 'success',
+                        'not-former-courses'    => true
+                    ]);
+                else: 
+                    return redirect()->back()->with([
+                        'errors'                => AdminHelpers::createMessageBag('Please provide a file.'),
+                        'alert_type'            => 'warning',
+                        'not-former-courses'    => true
+                    ]);
+                endif;
+            }
+
+        }
+        
     }
 
     public function approveFeedback($service_id, $service_type, Request $request){

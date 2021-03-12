@@ -43,7 +43,6 @@
                                 <?php $extension = explode('.', basename($assignedManuscript->filename)); ?>
 								<tr>
 									<td>
-										
 										<a href="{{ $assignedManuscript->filename }}"
 										   download>
 										   <i class="fa fa-download" aria-hidden="true"></i>
@@ -65,8 +64,25 @@
 									</td>
 									<td>
 										<div>
-											@if($assignedManuscript->has_feedback)
+											@if($assignedManuscript->has_feedback && $assignedManuscript->noGroupFeedbacks->first())
 												<span class="label label-default">Pending</span>
+												<button class="btn btn-xs btn-success submitPersonalAssignmentFeedbackBtn"
+														data-target = "#submitPersonalAssignmentFeedbackModal"
+														data-toggle = "modal"
+														data-manuscript = "{{$assignedManuscript->noGroupFeedbacks->first()->filename}}"
+														data-created_at = "{{$assignedManuscript->noGroupFeedbacks->first()->created_at}}"
+														data-updated_at = "{{$assignedManuscript->noGroupFeedbacks->first()->updated_at}}"
+														data-feedback_id = "{{$assignedManuscript->noGroupFeedbacks->first()->id}}"
+														data-grade = "{{$assignedManuscript->grade}}"
+														data-hours = "{{$assignedManuscript->noGroupFeedbacks->first()->hours_worked}}"
+														data-edit = "1"
+														data-name="{{ $assignedManuscript->user->id }}"
+														data-action="{{ route('editor.assignment.group.manuscript-feedback-no-group',
+																	['id' => $assignedManuscript->id,
+																	'learner_id' => $assignedManuscript->user->id]) }}"
+												>
+													<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+												</button>
 											@else
 												<button class="btn btn-warning btn-xs d-block
 												submitPersonalAssignmentFeedbackBtn"
@@ -125,12 +141,28 @@
 											
 												<button type="button" class="btn btn-warning btn-xs addShopManuscriptFeedback" data-toggle="modal"
 													data-target="#addFeedbackModal"
-												data-action="{{ route('editor.admin.shop-manuscript-taken-feedback.store',
-												$shopManuscript->id) }}">+ {{ trans('site.add-feedback') }}</button>
+													data-action="{{ route('editor.admin.shop-manuscript-taken-feedback.store',
+													$shopManuscript->id) }}">+ {{ trans('site.add-feedback') }}</button>
 
 											@elseif($shopManuscript->status == 'Pending')
 
+											<?php $feedbackFile = implode(",",$shopManuscript->feedbacks->first()->filename); ?>
+
 												<span class="label label-default">Pending</span>
+												<button type="button" class="btn btn-success btn-xs addShopManuscriptFeedback" data-toggle="modal"
+													data-target="#addFeedbackModal"
+													data-f_id = "{{$shopManuscript->feedbacks->first()->id}}"
+													data-edit = "1"
+													data-f_created_at = "{{$shopManuscript->feedbacks->first()->created_at}}"
+													data-f_updated_at = "{{$shopManuscript->feedbacks->first()->updated_at}}"
+													data-f_file = "{{$feedbackFile}}"
+													data-f_notes = "{{$shopManuscript->feedbacks->first()->notes}}"
+													data-hours = "{{$shopManuscript->feedbacks->first()->hours_worked}}"
+													data-action="{{ route('editor.admin.shop-manuscript-taken-feedback.store',
+													$shopManuscript->id) }}">
+													<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+												</button>
+													
 
 											@endif
 										</td>
@@ -171,18 +203,55 @@
 									<td>{{ $assignedAssignment->user_id }}</td>
 									<td>
 									<?php
+									$groupDetails = DB::SELECT("SELECT A.id as assignment_group_id, B.id AS assignment_group_learner_id FROM assignment_groups A JOIN assignment_group_learners B ON A.id = B.assignment_group_id AND B.user_id = $assignedAssignment->user_id WHERE A.assignment_id = $assignedAssignment->assignment_id");
+									if($groupDetails){ // Means the course assignment belongs to a group
+										$feedback = DB::SELECT("SELECT A.* FROM assignment_feedbacks A JOIN assignment_group_learners B ON A.assignment_group_learner_id = B.id WHERE B.user_id = $assignedAssignment->user_id AND A.assignment_group_learner_id = ".$groupDetails[0]->assignment_group_learner_id);
+									}
+									
 									if($assignedAssignment->has_feedback){
-										echo '<span class="label label-default">Pending</span>';
+										echo '<span class="label label-default">Pending</span> ';
+										if($groupDetails){
+											echo '<button type="button" class="btn btn-success btn-xs submitFeedbackBtn"
+													data-toggle="modal" data-target="#submitFeedbackModal"
+													data-manuscript = "'.$feedback[0]->filename.'"
+													data-created_at = "'.$feedback[0]->created_at.'"
+													data-updated_at = "'.$feedback[0]->created_at.'"
+													data-feedback_id = "'.$feedback[0]->id.'"
+													data-hours = "'.$feedback[0]->hours_worked.'"
+													data-grade = "'.$assignedAssignment->grade.'"
+													data-edit = "1"
+													data-name="'.$assignedAssignment->user->id.'"
+													data-action="'.route('editor.assignment.group.submit_feedback',
+													['group_id' => $groupDetails[0]->assignment_group_id, 'id' => $groupDetails[0]->assignment_group_learner_id]).'"
+													data-manuscript_id="'.$assignedAssignment->id.'">
+													<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+													</button>';
+										}else{
+											echo '<button type="button" class="btn btn-success btn-xs submitFeedbackBtn"
+													data-toggle="modal" data-target="#submitFeedbackModal"
+													data-manuscript = "'.$assignedAssignment->noGroupFeedbacks->first()->filename.'"
+													data-created_at = "'.$assignedAssignment->noGroupFeedbacks->first()->created_at.'"
+													data-updated_at = "'.$assignedAssignment->noGroupFeedbacks->first()->updated_at.'"
+													data-feedback_id = "'.$assignedAssignment->noGroupFeedbacks->first()->id.'"
+													data-grade = "'.$assignedAssignment->grade.'"
+													data-hours = "'.$assignedAssignment->noGroupFeedbacks->first()->hours_worked.'"
+													data-edit = "1"
+													data-name="'.$assignedAssignment->user->id.'"
+													data-action="'.route('editor.assignment.group.manuscript-feedback-no-group',
+													['id' => $assignedAssignment->id, 'learner_id' => $assignedAssignment->user_id]).'"
+													data-manuscript_id="'.$assignedAssignment->id.'">
+													<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+													</button>';
+										}
 									}else{
-										// $groupDetails = DB::SELECT("SELECT s.`id`, s.`assignment_group_id` FROM `assignment_group_learners` s WHERE s.`user_id` = $assignedAssignment->user_id AND s.`assignment_group_id` = (SELECT `id` FROM assignment_groups g WHERE g.`assignment_id` = $assignedAssignment->assignment_id)");
-										$groupDetails = DB::SELECT("SELECT A.id as assignment_group_id, B.id AS assignment_group_learner_id FROM assignment_groups A JOIN assignment_group_learners B ON A.id = B.assignment_group_id AND B.user_id = $assignedAssignment->user_id WHERE A.assignment_id = $assignedAssignment->assignment_id");
+										
 										if($groupDetails){ // Means the course assignment belongs to a group
 											echo '<button type="button" class="btn btn-warning btn-xs submitFeedbackBtn"
 														data-toggle="modal" data-target="#submitFeedbackModal"
 														data-name="'.$assignedAssignment->user->id.'"
 														data-action="'.route('editor.assignment.group.submit_feedback',
 														['group_id' => $groupDetails[0]->assignment_group_id, 'id' => $groupDetails[0]->assignment_group_learner_id]).'"
-														data-manuscript="'.$assignedAssignment->id.'">'.
+														data-manuscript_id="'.$assignedAssignment->id.'">'.
 													 '+ '.trans('site.add-feedback').'</button>';
 										}else{ //the course assignment does not belong to a group
 											echo '<button type="button" class="btn btn-warning btn-xs submitFeedbackBtn"
@@ -190,7 +259,7 @@
 														data-name="'.$assignedAssignment->user->id.'"
 														data-action="'.route('editor.assignment.group.manuscript-feedback-no-group',
 														['id' => $assignedAssignment->id, 'learner_id' => $assignedAssignment->user_id]).'"
-														data-manuscript="'.$assignedAssignment->id.'">'.
+														data-manuscript_id="'.$assignedAssignment->id.'">'.
 														'+ '.trans('site.add-feedback').'</button>';
 										}
 									}
@@ -315,8 +384,21 @@
 											@elseif( $correction->status == 0 )
 												<span class="label label-warning">Not started</span>
 											@elseif( $correction->status == 3 )
-											<span class="label label-default">Pending</span>
+												<span class="label label-default">Pending</span>
 											@endif
+
+											<a href="#addOtherServiceFeedbackModal" data-toggle="modal"
+											class="btn btn-success btn-xs addOtherServiceFeedbackBtn" 
+											data-service="2"
+											data-f_id = "{{$correction->feedback->id}}"
+											data-f_created_at = "{{$correction->feedback->created_at}}"
+											data-f_updated_at = "{{$correction->feedback->updated_at}}"
+											data-f_file = "{{$correction->feedback->manuscript}}"
+											data-hours = "{{$correction->feedback->hours_worked}}"
+											data-edit="1"
+											data-action="{{ route('editor.other-service.add-feedback',
+											['id' => $correction->id, 'type' => 2]) }}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+
 										@endif
 									</td>
 								</tr>
@@ -388,8 +470,19 @@
 											@elseif( $copyEditing->status == 3 )
 												<span class="label label-default">Pending</span>
 											@endif
+
+											<a href="#addOtherServiceFeedbackModal" data-toggle="modal" class="btn btn-success btn-xs addOtherServiceFeedbackBtn" 
+											data-f_id = "{{$copyEditing->feedback->id}}"
+											data-f_created_at = "{{$copyEditing->feedback->created_at}}"
+											data-f_updated_at = "{{$copyEditing->feedback->updated_at}}"
+											data-f_file = "{{$copyEditing->feedback->manuscript}}"
+											data-hours = "{{$copyEditing->feedback->hours_worked}}"
+											data-service="1"
+											data-edit="1"
+											data-action="{{ route('editor.other-service.add-feedback',
+											['id' => $copyEditing->id, 'type' => 1]) }}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+
 										@endif
-										
 									</td>
 								</tr>
 							@endforeach
@@ -471,10 +564,13 @@
 				<h4 class="modal-title">{{ trans('site.submit-feedback-to') }} <em></em></h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action=""  enctype="multipart/form-data">
+				<form id="submitFeedbackForm" method="POST" action=""  enctype="multipart/form-data">
 					{{ csrf_field() }}
+					<input type="hidden" class="form-control" name="feedback_id">
+					<div id="dates"></div>
+					<div id="feedbackFileAppend">-</div>
 					<div class="form-group">
-						<label>{{ trans_choice('site.manuscripts', 1) }}</label>
+						<label name="manuscriptLabel">{{ trans_choice('site.manuscripts', 1) }}</label>
 						<input type="file" class="form-control" required multiple name="filename[]" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 						* Accepted file formats are DOCX, PDF, ODT.
 					</div>
@@ -482,6 +578,10 @@
 						<label>{{ trans('site.grade') }}</label>
 						<input type="number" class="form-control" step="0.01" name="grade">
 					</div>
+					<div class="form-group">
+                        <label>Hours Worked</label>
+                        <input type="number" class="form-control" step="0.01" name="hours">
+                    </div>
 					<input type="hidden" name="manuscript_id">
 					<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
 					<div class="clearfix"></div>
@@ -499,13 +599,16 @@
 				<h4 class="modal-title">{{ trans('site.add-feedback') }}</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="" enctype="multipart/form-data">
+				<form id="addFeedbackModalForm" method="POST" action="" enctype="multipart/form-data">
 					<?php
 						$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Shop Manuscript Feedback');
 					?>
 					{{csrf_field()}}
+					<input type="hidden" class="form-control" name="feedback_id">
+					<div id="dates"></div>
+					<div id="feedbackFileAppend">-</div>
 					<div class="form-group">
-						<label>{{ trans_choice('site.files', 2) }}</label>
+						<label name="manuscriptLabel">{{ trans_choice('site.files', 2) }}</label>
 						<input type="file" class="form-control" name="files[]" multiple
 							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
 							   application/pdf, application/vnd.oasis.opendocument.text" required>
@@ -515,6 +618,11 @@
 						<textarea class="form-control" name="notes" rows="6"></textarea>
 					</div>
 					{{ trans('site.add-feedback-note') }}
+					<br><br>
+					<div class="form-group">
+                        <label>Hours Worked</label>
+                        <input type="number" class="form-control" step="0.01" name="hours">
+                    </div>
 					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.add-feedback') }}</button>
 					<div class="clearfix"></div>
 				</form>
@@ -656,14 +764,21 @@
                 <h4 class="modal-title"><span></span> {{ trans('site.add-feedback') }}</h4>
             </div>
             <div class="modal-body">
-                <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
+                <form id="addOtherServiceFeedbackForm" method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
                     {{csrf_field()}}
 					<?php
 					$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Other Services Feedback');
 					?>
+					<input type="hidden" class="form-control" name="feedback_id">
+					<div id="dates"></div>
+					<div id="feedbackFileAppend">-</div>
                     <div class="form-group">
-                        <label>{{ trans_choice('site.manuscripts', 1) }}</label>
-                        <input type="file" class="form-control" name="manuscript" multiple accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf" required>
+                        <label name="manuscriptLabel">{{ trans_choice('site.manuscripts', 1) }}</label>
+                        <input type="file" class="form-control" name="manuscript[]" multiple accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf" required>
+                    </div>
+					<div class="form-group">
+                        <label>Hours Worked</label>
+                        <input type="number" class="form-control" step="0.01" name="hours_worked">
                     </div>
                     <button type="submit" class="btn btn-primary pull-right">{{ trans('site.add-feedback') }}</button>
                     <div class="clearfix"></div>
@@ -805,22 +920,28 @@
                 <h4 class="modal-title">{{ trans('site.submit-feedback-to') }} <em></em></h4>
             </div>
             <div class="modal-body">
-
-                <form method="POST" action=""  enctype="multipart/form-data">
+                <form id="submitPersonalAssignmentFeedbackForm" method="POST" action=""  enctype="multipart/form-data">
+					<input type="hidden" class="form-control" name="feedback_id">
                     <?php
                     	$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Assignment Manuscript Feedback');
                     ?>
                     {{ csrf_field() }}
+					<div id="dates"></div>
+					<div id="feedbackFileAppend">-</div>
                     <div class="form-group">
-                        <label>{{ trans_choice('site.manuscripts', 1) }}</label>
+                        <label name="manuscriptLabel">{{ trans_choice('site.manuscripts', 1) }}</label>
                         <input type="file" class="form-control" required multiple name="filename[]"
                                accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
                                    application/pdf, application/vnd.oasis.opendocument.text">
-                        * Accepted file formats are DOCX, PDF, ODT.
+                        * Accepted file formats are DOCX, PDF, ODT. <br>
                     </div>
                     <div class="form-group">
                         <label>{{ trans('site.grade') }}</label>
                         <input type="number" class="form-control" step="0.01" name="grade">
+                    </div>
+					<div class="form-group">
+                        <label>Hours Worked</label>
+                        <input type="number" class="form-control" step="0.01" name="hours">
                     </div>
                     <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
                     <div class="clearfix"></div>
@@ -854,6 +975,10 @@
                                    application/msword,
                                application/pdf,">
 					</div>
+					<div class="form-group">
+                        <label>Hours Worked</label>
+                        <input type="number" class="form-control" step="0.01" name="hours_worked">
+                    </div>
 					<div class="form-group">
 						<small>*Note: If any of the fields are inputted it would mark as Finished</small>
 					</div>
@@ -892,16 +1017,85 @@
         var modal = $('#submitFeedbackModal');
         var name = $(this).data('name');
         var action = $(this).data('action');
-        var manuscript_id = $(this).data('manuscript');
+        var manuscript_id = $(this).data('manuscript_id');
+		var is_edit = $(this).data('edit');
         modal.find('em').text(name);
         modal.find('form').attr('action', action);
         modal.find('form').find('input[name=manuscript_id]').val(manuscript_id);
+
+		$('#submitFeedbackForm').trigger('reset');
+		modal.find('#feedbackFileAppend').html('');
+		modal.find('.modal-title').text("Feedback");
+		modal.find('#dates').html('');
+		modal.find('form').find('input[type=file]').attr('required');
+		modal.find('[name=feedback_id]').val('')
+
+        if (is_edit) {
+			let feedbackFileName = $(this).data('manuscript');
+			let createdAt = $(this).data('created_at');
+			let updatedAt = $(this).data('updated_at');
+			let feedbackId = $(this).data('feedback_id');
+			let grade = $(this).data('grade');
+			let hours = $(this).data('hours');
+
+            modal.find('form').find('input[type=file]').removeAttr('required');
+			modal.find('.modal-title').text("Edit Feedback");
+			modal.find('[name=grade]').val(grade)
+			modal.find('[name=manuscriptLabel]').text("Replace Manuscript")
+			modal.find('[name=feedback_id]').val(feedbackId)
+			modal.find('[name=hours]').val(hours)
+			
+			modal.find('#dates').append('<label>Created At</label>&nbsp;'+createdAt);
+			modal.find('#dates').append('<br><label>Last Updated At</label>&nbsp;'+updatedAt+'<br><br>');
+
+			var feedbackArray = feedbackFileName.split(",");
+			modal.find('#feedbackFileAppend').append('<label>Manuscript</label><br>')
+            feedbackArray.forEach(function (item, index){
+                modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+            })
+			modal.find('#feedbackFileAppend').append('<br>');
+        }
+
     });
 
     $(".addShopManuscriptFeedback").click(function(){
         var modal = $('#addFeedbackModal');
         var action = $(this).data('action');
+		var is_edit = $(this).data('edit');
         modal.find('form').attr('action', action);
+
+		$('#addFeedbackModalForm').trigger('reset');
+		modal.find('#feedbackFileAppend').html('');
+		modal.find('.modal-title').text("Feedback");
+		modal.find('#dates').html('');
+		modal.find('form').find('input[type=file]').attr('required');
+		modal.find('[name=feedback_id]').val('')
+
+        if (is_edit) {
+			let feedbackFileName = $(this).data('f_file');
+			let createdAt = $(this).data('f_created_at');
+			let updatedAt = $(this).data('f_updated_at');
+			let feedbackId = $(this).data('f_id');
+			let notes = $(this).data('f_notes');
+			let hours = $(this).data('hours');
+
+            modal.find('form').find('input[type=file]').removeAttr('required');
+			modal.find('.modal-title').text("Edit Feedback");
+			modal.find('[name=notes]').val(notes)
+			modal.find('[name=manuscriptLabel]').text("Replace Manuscript")
+			modal.find('[name=feedback_id]').val(feedbackId)
+			modal.find('[name=hours]').val(hours)
+			
+			modal.find('#dates').append('<label>Created At</label>&nbsp;'+createdAt);
+			modal.find('#dates').append('<br><label>Last Updated At</label>&nbsp;'+updatedAt+'<br><br>');
+
+			var feedbackArray = feedbackFileName.split(",");
+			modal.find('#feedbackFileAppend').append('<label>Manuscript</label><br>')
+            feedbackArray.forEach(function (item, index){
+                modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+            })
+			modal.find('#feedbackFileAppend').append('<br>');
+        }
 	});
 
     $(".finishAssignmentBtn").click(function(){
@@ -964,12 +1158,45 @@
         let modal = $('#addOtherServiceFeedbackModal');
         let service = $(this).data('service');
         let title = 'Korrektur';
+		let is_edit = $(this).data('edit');
 
         if (service === 1) {
             title = 'Språkvask';
         }
         modal.find('form').attr('action', action);
         modal.find('.modal-title').find('span').text(title);
+
+		$('#addOtherServiceFeedbackForm').trigger('reset');
+		modal.find('#feedbackFileAppend').html('');
+		modal.find('.modal-title').text("Feedback");
+		modal.find('#dates').html('');
+		modal.find('form').find('input[type=file]').attr('required');
+		modal.find('[name=feedback_id]').val('')
+
+        if (is_edit) {
+			let feedbackFileName = $(this).data('f_file');
+			let createdAt = $(this).data('f_created_at');
+			let updatedAt = $(this).data('f_updated_at');
+			let feedbackId = $(this).data('f_id');
+			let hours = $(this).data('hours');
+
+            modal.find('form').find('input[type=file]').removeAttr('required');
+			modal.find('.modal-title').text("Edit Feedback");
+			modal.find('[name=manuscriptLabel]').text("Replace Manuscript")
+			modal.find('[name=feedback_id]').val(feedbackId)
+			modal.find('[name=hours_worked]').val(hours)
+			
+			modal.find('#dates').append('<label>Created At</label>&nbsp;'+createdAt);
+			modal.find('#dates').append('<br><label>Last Updated At</label>&nbsp;'+updatedAt+'<br><br>');
+
+			var feedbackArray = feedbackFileName.split(",");
+			modal.find('#feedbackFileAppend').append('<label>Manuscript</label><br>')
+            feedbackArray.forEach(function (item, index){
+                modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+            })
+			modal.find('#feedbackFileAppend').append('<br>');
+
+        }
     });
 
     $(".approveCoachingSessionBtn").click(function(){
@@ -1039,13 +1266,42 @@
         let name = $(this).data('name');
         let action = $(this).data('action');
         let is_edit = $(this).data('edit');
-
+		
         modal.find('em').text(name);
         modal.find('form').attr('action', action);
+
+		$('#submitPersonalAssignmentFeedbackForm').trigger('reset');
+		modal.find('#feedbackFileAppend').html('');
+		modal.find('.modal-title').text("Feedback");
+		modal.find('#dates').html('');
+		modal.find('form').find('input[type=file]').attr('required');
+		modal.find('[name=feedback_id]').val('')
+
         if (is_edit) {
+			let feedbackFileName = $(this).data('manuscript');
+			let grade = $(this).data('grade');
+			let createdAt = $(this).data('created_at');
+			let updatedAt = $(this).data('updated_at');
+			let feedbackId = $(this).data('feedback_id');
+			let hours = $(this).data('hours');
+
             modal.find('form').find('input[type=file]').removeAttr('required');
-        } else {
-            modal.find('form').find('input[type=file]').attr('required', 'required');
+			modal.find('.modal-title').text("Edit Feedback");
+			modal.find('[name=grade]').val(grade)
+			modal.find('[name=manuscriptLabel]').text("Replace Manuscript")
+			modal.find('[name=feedback_id]').val(feedbackId)
+			modal.find('[name=hours]').val(hours)
+			
+			modal.find('#dates').append('<label>Created At</label>&nbsp;'+createdAt);
+			modal.find('#dates').append('<br><label>Last Updated At</label>&nbsp;'+updatedAt+'<br><br>');
+
+			var feedbackArray = feedbackFileName.split(",");
+			modal.find('#feedbackFileAppend').append('<label>Manuscript</label><br>')
+            feedbackArray.forEach(function (item, index){
+                modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+            })
+			modal.find('#feedbackFileAppend').append('<br>');
+
         }
     });
 
