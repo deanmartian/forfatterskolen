@@ -74,7 +74,6 @@
 														data-updated_at = "{{$assignedManuscript->noGroupFeedbacks->first()->updated_at}}"
 														data-feedback_id = "{{$assignedManuscript->noGroupFeedbacks->first()->id}}"
 														data-grade = "{{$assignedManuscript->grade}}"
-														data-hours = "{{$assignedManuscript->noGroupFeedbacks->first()->hours_worked}}"
 														data-edit = "1"
 														data-name="{{ $assignedManuscript->user->id }}"
 														data-action="{{ route('editor.assignment.group.manuscript-feedback-no-group',
@@ -217,7 +216,6 @@
 													data-created_at = "'.$feedback[0]->created_at.'"
 													data-updated_at = "'.$feedback[0]->created_at.'"
 													data-feedback_id = "'.$feedback[0]->id.'"
-													data-hours = "'.$feedback[0]->hours_worked.'"
 													data-grade = "'.$assignedAssignment->grade.'"
 													data-edit = "1"
 													data-name="'.$assignedAssignment->user->id.'"
@@ -234,7 +232,6 @@
 													data-updated_at = "'.$assignedAssignment->noGroupFeedbacks->first()->updated_at.'"
 													data-feedback_id = "'.$assignedAssignment->noGroupFeedbacks->first()->id.'"
 													data-grade = "'.$assignedAssignment->grade.'"
-													data-hours = "'.$assignedAssignment->noGroupFeedbacks->first()->hours_worked.'"
 													data-edit = "1"
 													data-name="'.$assignedAssignment->user->id.'"
 													data-action="'.route('editor.assignment.group.manuscript-feedback-no-group',
@@ -578,10 +575,10 @@
 						<label>{{ trans('site.grade') }}</label>
 						<input type="number" class="form-control" step="0.01" name="grade">
 					</div>
-					<div class="form-group">
+					<!-- <div class="form-group">
                         <label>Hours Worked</label>
                         <input type="number" class="form-control" step="0.01" name="hours">
-                    </div>
+                    </div> -->
 					<input type="hidden" name="manuscript_id">
 					<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
 					<div class="clearfix"></div>
@@ -939,10 +936,10 @@
                         <label>{{ trans('site.grade') }}</label>
                         <input type="number" class="form-control" step="0.01" name="grade">
                     </div>
-					<div class="form-group">
+					<!-- <div class="form-group">
                         <label>Hours Worked</label>
                         <input type="number" class="form-control" step="0.01" name="hours">
-                    </div>
+                    </div> -->
                     <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
                     <div class="clearfix"></div>
                 </form>
@@ -975,10 +972,10 @@
                                    application/msword,
                                application/pdf,">
 					</div>
-					<div class="form-group">
+					<!-- <div class="form-group">
                         <label>Hours Worked</label>
                         <input type="number" class="form-control" step="0.01" name="hours_worked">
-                    </div>
+                    </div> -->
 					<div class="form-group">
 						<small>*Note: If any of the fields are inputted it would mark as Finished</small>
 					</div>
@@ -1036,14 +1033,14 @@
 			let updatedAt = $(this).data('updated_at');
 			let feedbackId = $(this).data('feedback_id');
 			let grade = $(this).data('grade');
-			let hours = $(this).data('hours');
+			// let hours = $(this).data('hours');
 
             modal.find('form').find('input[type=file]').removeAttr('required');
 			modal.find('.modal-title').text("Edit Feedback");
 			modal.find('[name=grade]').val(grade)
 			modal.find('[name=manuscriptLabel]').text("Replace Manuscript")
 			modal.find('[name=feedback_id]').val(feedbackId)
-			modal.find('[name=hours]').val(hours)
+			// modal.find('[name=hours]').val(hours)
 			
 			modal.find('#dates').append('<label>Created At</label>&nbsp;'+createdAt);
 			modal.find('#dates').append('<br><label>Last Updated At</label>&nbsp;'+updatedAt+'<br><br>');
@@ -1283,14 +1280,14 @@
 			let createdAt = $(this).data('created_at');
 			let updatedAt = $(this).data('updated_at');
 			let feedbackId = $(this).data('feedback_id');
-			let hours = $(this).data('hours');
+			// let hours = $(this).data('hours');
 
             modal.find('form').find('input[type=file]').removeAttr('required');
 			modal.find('.modal-title').text("Edit Feedback");
 			modal.find('[name=grade]').val(grade)
 			modal.find('[name=manuscriptLabel]').text("Replace Manuscript")
 			modal.find('[name=feedback_id]').val(feedbackId)
-			modal.find('[name=hours]').val(hours)
+			// modal.find('[name=hours]').val(hours)
 			
 			modal.find('#dates').append('<label>Created At</label>&nbsp;'+createdAt);
 			modal.find('#dates').append('<br><label>Last Updated At</label>&nbsp;'+updatedAt+'<br><br>');

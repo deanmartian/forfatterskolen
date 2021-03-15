@@ -302,6 +302,7 @@
 							<thead>
 							<tr>
 								<th>{{ trans_choice('site.manus', 2) }}</th>
+                                <th>Feedback Sent</th>
 								<th>{{ trans('site.learner-id') }}</th>
                                 <th></th>
 							</tr>
@@ -320,6 +321,7 @@
 											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
 										@endif
 									</td>
+                                    <td>{{$correction->feedback->created_at}}</td>
 									<td>{{ $correction->user->id }}</td>
 									<td>
                                     @if($correction->feedback)
@@ -349,6 +351,7 @@
 							<thead>
 							<tr>
 								<th>{{ trans_choice('site.manus', 2) }}</th>
+                                <th>Feedback Sent</th>
 								<th>{{ trans('site.learner-id') }}</th>
 								<th></th>
 							</tr>
@@ -367,6 +370,7 @@
 											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copyEditing->file}}">{{ basename($copyEditing->file) }}</a>
 										@endif
 									</td>
+                                    <td>{{$copyEditing->feedback->created_at}}</td>
 									<td>{{ $copyEditing->user->id }}</td>
 									<td>
                                         @if($correction->feedback)
