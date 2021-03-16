@@ -19,6 +19,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\User;
 use Maatwebsite\Excel\Excel;
+use App\EditorAssignmentPrices;
 
 class AdminController extends Controller
 {
@@ -38,8 +39,9 @@ class AdminController extends Controller
         $customActions = CustomAction::where('is_active',1)->get();
         $pageMetas = PageMeta::all();
         $staffs = Staff::all();
+        $editorAssignmentPrices = EditorAssignmentPrices::all();
         
-        return view('backend.admin.index', compact('admins','customActions', 'pageMetas', 'staffs'));
+        return view('backend.admin.index', compact('admins','customActions', 'pageMetas', 'staffs', 'editorAssignmentPrices'));
     }
 
 

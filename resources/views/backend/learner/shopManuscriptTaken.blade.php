@@ -81,6 +81,14 @@
 				            @endif
 				            <br />
 
+							{{ trans('site.editor-expected-finish') }}:
+				            @if( $shopManuscriptTaken->editor_expected_finish )
+				            {{ date_format(date_create($shopManuscriptTaken->editor_expected_finish), 'M d, Y') }}
+				            @else
+				            <em>Not set</em>
+				            @endif
+				            <br />
+
 							<strong>{{ trans('site.grade') }}: @if($shopManuscriptTaken->grade)
 									{{$shopManuscriptTaken->grade}}
 								@else
@@ -210,6 +218,10 @@
           	<div class="form-group">
             	<label>{{ trans('site.expected-finish') }}</label>
             	<input type="date" class="form-control" name="expected_finish" value="{{ $shopManuscriptTaken->expected_finish }}">
+          	</div>
+			  <div class="form-group">
+            	<label>{{ trans('site.editor-expected-finish') }}</label>
+            	<input type="date" class="form-control" name="editor_expected_finish" value="{{ $shopManuscriptTaken->editor_expected_finish }}">
           	</div>
   			<button type="submit" class="btn btn-primary pull-right">{{ trans('site.update') }}</button>
   			<div class="clearfix"></div>

@@ -1387,6 +1387,11 @@ Route::group([
         Route::post('course_assignment/{id}/approve_feedback/{learner_id}/feedback/{feedback_id}', 'AssignmentGroupController@approveFeedbackCourse')->name('head_editor.course_assignment.feedback_approve');
         Route::post('shop-manuscript-taken/{id}/approve-feedback/{learner_id}/feedback/{feedback_id}', 'ShopManuscriptController@approveFeedback')->name('head_editor.shop-manuscript-taken-feedback.approve');
         Route::post('other-service/{id}/approve-feedback/{type}', 'OtherServiceController@approveFeedback')->name('head_editor.other-service.approve-feedback');
+
+        // editor assignment
+        Route::post('editor_assignment_price/save', 'EditorAssignmentPriceController@save')->name('editor_assignment_price.save');
+        Route::post('editor_assignment_price/{id}/delete', 'EditorAssignmentPriceController@delete')->name('editor_assignment_price.delete');
+
     });
 
     

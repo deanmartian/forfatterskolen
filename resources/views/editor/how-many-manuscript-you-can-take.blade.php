@@ -35,6 +35,7 @@
 						<th>Date To</th>
 						<th>How Many Script</th>
 						<th>How Many Hours</th>
+						<th>Notes</th>
 						<th></th>
 					</tr>
 					</thead>
@@ -45,6 +46,7 @@
 							<td>{{ $data->date_to }}</td>
 							<td>{{ $data->how_many_script }}</td>
 							<td>{{ $data->how_many_hours }}</td>
+							<td>{{ $data->note }}</td>
 							<td>
 								<button class="btn btn-xs btn-success addBtn"
 										data-toggle="modal"
@@ -55,6 +57,7 @@
 										data-date_to="{{ $data->date_to }}"
 										data-how_many_script="{{ $data->how_many_script }}"
 										data-how_many_hours="{{ $data->how_many_hours }}"
+										data-note="{{ $data->note }}"
 										data-action="{{ route('editor.manuscript-you-can-take-save') }}">
 										<i class="fa fa-pencil-square-o" aria-hidden="true"> Edit</i>
 								</button>
@@ -101,6 +104,10 @@
 					<div class="form-group">
                         <label>How Many Hours</label>
                         <input name="how_many_hours" step="0.01" type="number" class="form-control">
+                    </div>
+					<div class="form-group">
+                        <label>Notes</label>
+                        <textarea name="note" rows="3" class="form-control"></textarea>
                     </div>
 					<button type="submit" class="btn btn-primary pull-right">Save</button>
 					<div class="clearfix"></div>
@@ -159,12 +166,14 @@
 				let dateTo= $(this).data('date_to');
 				let howMayScript= $(this).data('how_many_script');
 				let howMayHours= $(this).data('how_many_hours');
+				let note = $(this).data('note');
 
 				modal.find('[name=id]').val(id)
 				modal.find('[name=date_from]').val(dateFrom)
 				modal.find('[name=date_to]').val(dateTo)
 				modal.find('[name=how_many_script]').val(howMayScript)
 				modal.find('[name=how_many_hours]').val(howMayHours)
+				modal.find('[name=note]').val(note)
 
 			}
 			

@@ -287,6 +287,7 @@ class ShopManuscriptController extends Controller
         $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($shopManuscriptTakenID);
         $shopManuscriptTaken->feedback_user_id = $request->feedback_user_id;
         $shopManuscriptTaken->expected_finish = $request->expected_finish;
+        $shopManuscriptTaken->editor_expected_finish = $request->editor_expected_finish;
         $shopManuscriptTaken->grade = $request->grade;
         $shopManuscriptTaken->save();
 
