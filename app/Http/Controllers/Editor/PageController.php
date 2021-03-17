@@ -63,11 +63,11 @@ class PageController extends Controller
                                     ->orderBy('created_at', 'desc')
                                     ->paginate(10, ["*"], "coachingTimers");
         $corrections = CorrectionManuscript::where('editor_id', Auth::user()->id)
-                                            ->where('status', 3)
+                                            ->where('status', 2)
                                             ->orderBy('created_at', 'desc')
                                             ->paginate(10, ["*"], "corrections");
         $copyEditings = CopyEditingManuscript::where('editor_id', Auth::user()->id)
-                                            ->where('status', 3)
+                                            ->where('status', 2)
                                             ->orderBy('created_at', 'desc')
                                             ->paginate(10, ["*"], "copyEditings");
         $assignedAssignmentManuscripts = AssignmentManuscript::where('editor_id', Auth::user()->id) //assigned manuscript no group

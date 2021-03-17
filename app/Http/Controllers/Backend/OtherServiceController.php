@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use File;
 use Illuminate\Support\Facades\Auth;
 use App\Jobs\AddMailToQueueJob;
+use App\user;
 
 class OtherServiceController extends Controller
 {
@@ -288,6 +289,32 @@ class OtherServiceController extends Controller
         return redirect()->route('admin.learner.index');
     }
 
+    public function getFiles($request){
+        if ($request->hasFile('manuscript')) :
+            // new 
+            $time = time();
+            $destinationPath = 'storage/other-service-feedback'; // upload path
+            $extensions = ['pdf', 'docx', 'odt'];
+            $filesWithPath = '';
+            // loop through all the uploaded files
+            foreach ($request->file('manuscript') as $k => $file) {
+                $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION);
+                $original_filename = $file->getClientOriginalName();
+                $filename = pathinfo($original_filename, PATHINFO_FILENAME);
+                $fileName = AdminHelpers::checkFileName($destinationPath, $filename, $extension);
+                $filesWithPath .= "/".AdminHelpers::checkFileName($destinationPath, $filename, $extension).", ";
+
+                if( !in_array($extension, $extensions) ) :
+                    return redirect()->back();
+                endif;
+
+                $file->move($destinationPath, $fileName);
+            }
+
+            return $filesWithPath = trim($filesWithPath,", ");
+        endif;
+    }
+
     /**
      * Add feedback for other services
      * @param $service_id int ID of the service
@@ -298,34 +325,7 @@ class OtherServiceController extends Controller
     public function addFeedback($service_id, $service_type, Request $request)
     {
         $data = $request->except('_token');
-        $extensions = ['pdf', 'docx'];
-        $filesWithPath = '';
-
-        if ($service_type == 1 || $service_type == 2) {
-            if ($request->hasFile('manuscript')) :
-                // new 
-                $time = time();
-                $destinationPath = 'storage/other-service-feedback'; // upload path
-                $extensions = ['pdf', 'docx', 'odt'];
-                $filesWithPath = '';
-                // loop through all the uploaded files
-                foreach ($request->file('manuscript') as $k => $file) {
-                    $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION);
-                    $original_filename = $file->getClientOriginalName();
-                    $filename = pathinfo($original_filename, PATHINFO_FILENAME);
-                    $fileName = AdminHelpers::checkFileName($destinationPath, $filename, $extension);
-                    $filesWithPath .= "/".AdminHelpers::checkFileName($destinationPath, $filename, $extension).", ";
-
-                    if( !in_array($extension, $extensions) ) :
-                        return redirect()->back();
-                    endif;
-
-                    $file->move($destinationPath, $fileName);
-                }
-
-                $filesWithPath = trim($filesWithPath,", ");
-            endif;
-        }
+        $filesWithPath = $this->getFiles($request);
 
         if($request->feedback_id){
 
@@ -392,15 +392,26 @@ class OtherServiceController extends Controller
 
     public function approveFeedback($service_id, $service_type, Request $request){
         
+        // replace feedback file
+        $filesWithPath = $this->getFiles($request);
+        $otherServiceFeedback = OtherServiceFeedback::find($request->feedback_id);
+        if ($filesWithPath){
+            $otherServiceFeedback->manuscript = $filesWithPath;
+        }
+        $otherServiceFeedback->save();
+
         // Update status
-        if($service_type==2){
+        $user_email = '';
+        if($service_type==1){
             $copyEditingManuscript = CopyEditingManuscript::find($service_id);
             $copyEditingManuscript->status = 2;
             $copyEditingManuscript->save();
+            $user_email = User::find($copyEditingManuscript->user_id)->email;
         }else{
             $correctionManuscript = CorrectionManuscript::find($service_id);
-            $copyEditingManuscript->status = 2;
-            $copyEditingManuscript->save();
+            $correctionManuscript->status = 2;
+            $correctionManuscript->save();
+            $user_email = User::find($correctionManuscript->user_id)->email;
         }
 
         // send email 
@@ -415,10 +426,17 @@ class OtherServiceController extends Controller
             $parent = 'correction-feedback';
         }
 
+        $emailTemplate = AdminHelpers::emailTemplate('Other Services Feedback');
+
         $emailContent = AdminHelpers::formatEmailContent($emailContent, $from,
         Auth::user()->first_name, '');
 
         dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
             $emailTemplate->from_email, null, null, $parent, $service_id));
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Feedback approved successfully.'),
+            'alert_type'            => 'success'
+        ]);
     }
 }

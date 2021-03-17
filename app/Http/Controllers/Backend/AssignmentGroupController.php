@@ -112,12 +112,7 @@ class AssignmentGroupController extends Controller
     	return redirect()->back();
     }
 
-
-
-
-    public function submit_feedback($group_id, $id, Request $request)
-    {
-
+    public function getFiles($request, $learner_id){
         $filesWithPath = '';
         if ( $request->hasFile('filename')) :
             $time = time();
@@ -127,7 +122,7 @@ class AssignmentGroupController extends Controller
             // loop through all the uploaded files
             foreach ($request->file('filename') as $k => $file) {
                 $extension = pathinfo($_FILES['filename']['name'][$k],PATHINFO_EXTENSION);
-                $actual_name = AssignmentGroupLearner::find($id)->user_id;
+                $actual_name = $learner_id;
                 $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name."f", $extension);
                 $filesWithPath .= "/".AdminHelpers::checkFileName($destinationPath, $actual_name."f", $extension).", ";
 
@@ -136,8 +131,14 @@ class AssignmentGroupController extends Controller
                 endif;
                 $file->move($destinationPath, $fileName);
             }
-            $filesWithPath = trim($filesWithPath,", ");
+            return $filesWithPath = trim($filesWithPath,", ");
         endif;
+    }
+
+    public function submit_feedback($group_id, $id, Request $request)
+    {
+        $learner_id = AssignmentGroupLearner::find($id)->user_id;
+        $filesWithPath = getFiles($request, $learner_id);
 
         if($request->feedback_id){
             
@@ -194,14 +195,21 @@ class AssignmentGroupController extends Controller
 
     public function approveFeedbackCourse($manuscript_id, $learner_id, $feedback_id, Request $request)
     {
+        $filesWithPath = getFiles($request, $learner_id);
+
         $assignmentManuscript = AssignmentManuscript::find($manuscript_id);
         $assignmentManuscript->has_feedback = 1;
         $assignmentManuscript->status = 1;
+        $assignmentManuscript->grade = $request->grade;
         $assignmentManuscript->save();
 
         // group assignment - set availability date on feedback
         $assignmentFeedback = AssignmentFeedback::find($feedback_id);
         $assignmentFeedback->availability = $request->availability;
+        if($fileWithPath){
+            $assignmentFeedback->filename = $fileWithPath;
+        }
+
         $assignmentFeedback->save();
                                    
         // send email - no sending email for group assignment

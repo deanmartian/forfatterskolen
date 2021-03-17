@@ -732,26 +732,7 @@ class AssignmentController extends Controller
     public function manuscriptFeedbackNoGroup($manuscript_id, $learner_id, Request $request)
     {
 
-        $filesWithPath = '';
-        if ($request->hasFile('filename')) :
-            // file upload 
-            $time = time();
-            $destinationPath = 'storage/assignment-feedbacks'; // upload path
-            $extensions = ['pdf', 'docx', 'odt'];
-            // loop through all the uploaded files
-            foreach ($request->file('filename') as $k => $file) {
-                $extension = pathinfo($_FILES['filename']['name'][$k],PATHINFO_EXTENSION);
-                $actual_name = $learner_id;
-                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name."f", $extension);
-                $filesWithPath .= "/".AdminHelpers::checkFileName($destinationPath, $actual_name."f", $extension).", ";
-                if( !in_array($extension, $extensions) ) :
-                    return redirect()->back();
-                endif;
-                $file->move($destinationPath, $fileName);
-            }
-            $filesWithPath = trim($filesWithPath,", ");
-        endif;
-
+        $filesWithPath = $this->getFiles($request, $learner_id);
 
         if($request->feedback_id){ // update
             
@@ -806,18 +787,46 @@ class AssignmentController extends Controller
         
     }
 
+    public function getFiles($request, $learner_id){
+        if ($request->hasFile('filename')) :
+            $filesWithPath = '';
+            $time = time();
+            $destinationPath = 'storage/assignment-feedbacks'; // upload path
+            $extensions = ['pdf', 'docx', 'odt'];
+            // loop through all the uploaded files
+            foreach ($request->file('filename') as $k => $file) {
+                $extension = pathinfo($_FILES['filename']['name'][$k],PATHINFO_EXTENSION);
+                $actual_name = $learner_id;
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name."f", $extension);
+                $filesWithPath .= "/".AdminHelpers::checkFileName($destinationPath, $actual_name."f", $extension).", ";
+                if( !in_array($extension, $extensions) ) :
+                    return redirect()->back();
+                endif;
+                $file->move($destinationPath, $fileName);
+            }
+            return $filesWithPath = trim($filesWithPath,", ");
+        endif;
+    }
+
     public function approveFeedbackNoGroup($manuscript_id, $learner_id, Request $request)
     {
+        // update feedback
+        $assignmentFeedbackNoGroup = AssignmentFeedbackNoGroup::find($request->feedback_id);
+
+        $filesWithPath = $this->getFiles($request, $learner_id);
+        if($filesWithPath){
+            $assignmentFeedbackNoGroup->filename = $filesWithPath;
+        }
+        $assignmentFeedbackNoGroup->availability = $request->availability;
+        $assignmentFeedbackNoGroup->save();
+
         // set status = 1 in assignmentManuscript
         $assignmentManuscript = AssignmentManuscript::find($manuscript_id);
         $assignmentManuscript->has_feedback = 1;
         $assignmentManuscript->status = 1;
+        $assignmentManuscript->grade = $request->grade;
         $assignmentManuscript->save();
-
-        // set availability date in feedback
-        $assignmentFeedbackNoGroup = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $manuscript_id)
-                                                            ->where('learner_id', $learner_id)
-                                                            ->update(["availability" => $request->availability]);
+        
         // send an email
         $email_content  = $request->message;
         $to             = $assignmentManuscript->user->email;

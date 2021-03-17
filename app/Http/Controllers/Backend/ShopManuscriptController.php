@@ -173,9 +173,7 @@ class ShopManuscriptController extends Controller
     }
 
 
-    
-    public function addFeedback($shopManuscriptTakenID, Request $request)
-    {
+    public function getFiles($request){
         $files = [];
             
         if( $request->hasFile('files')) :
@@ -190,6 +188,11 @@ class ShopManuscriptController extends Controller
             endforeach;
 
         endif;
+        return $files;
+    }
+    public function addFeedback($shopManuscriptTakenID, Request $request)
+    {
+        $files = $this->getFiles($request);
 
         if($request->feedback_id){
             
@@ -232,12 +235,17 @@ class ShopManuscriptController extends Controller
     }
     public function approveFeedback($id, $learner_id, $feedback_id, Request $request)
     {
-    
-        $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($id);
-        // update shop manuscript taken feedback status 
+        $files = $this->getFiles($request);
+        // update feedback
         $shopManuscriptTakenFeedback = ShopManuscriptTakenFeedback::find($feedback_id);
         $shopManuscriptTakenFeedback->approved = 1;
+        $shopManuscriptTakenFeedback->notes = $request->notes;
+        if($files){
+            $shopManuscriptTakenFeedback->filename = json_encode($files);
+        }
         $shopManuscriptTakenFeedback->save();
+    
+        $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($id);
 
         // send email
         $to = $shopManuscriptTakenFeedback->shop_manuscript_taken->user->email;

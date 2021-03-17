@@ -33,7 +33,6 @@
                                 <th>{{ trans_choice('site.manuscripts', 1) }}</th>
                                 <th>{{ trans('site.learner-id') }}</th>
                                 <th>Expected Finish</th>
-                                <th></th>
                                 <th>Editor</th>
                                 <th>Feedback</th>
                                 <th>Feedback Status</th>
@@ -44,6 +43,7 @@
                                 <?php $extension = explode('.', basename($assignedManuscript->filename)); ?>
                                 <tr>
                                     <td>
+									<a href="{{ $assignedManuscript->filename }}" download><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
                                         @if( end($extension) == 'pdf' || end($extension) == 'odt' )
                                             <a href="/js/ViewerJS/#../..{{ $assignedManuscript->filename }}">
                                                 {{ basename($assignedManuscript->filename) }}
@@ -58,19 +58,17 @@
                                     <td>
                                         {{ $assignedManuscript->expected_finish }}
                                     </td>
-                                    <td>
-                                        <a href="{{ $assignedManuscript->filename }}" class="btn btn-primary btn-xs"
-                                            download>
-                                            {{ trans('site.download') }}
-                                        </a>
-                                    </td>
                                     <td>{{ $assignedManuscript->editor->full_name}}</td>
                                     <td>
 									@if($assignedManuscript->noGroupFeedbacks->first())
+										<!-- <button class="btn btn-success btn-xs">
+											<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+										</button> -->
                                         <button class="btn btn-success btn-xs personalAssignmentShowFeedbackBtn"
                                                 data-target="#personalAssignmentShowFeedbackModal"
                                                 data-toggle="modal"
                                                 data-id = "{{$assignedManuscript->id}}"
+												data-feedback_id = "{{ $assignedManuscript->noGroupFeedbacks->first()->id }}"
                                                 data-feedback_file = "{{$assignedManuscript->noGroupFeedbacks->first()->filename}}"
                                                 data-feedback_grade = "{{$assignedManuscript->grade}}"
                                                 data-action="{{ route('head_editor.personal_assignment.feedbac_approve',
@@ -105,7 +103,6 @@
 								<th>{{ trans('site.genre') }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
 								<th>Expected Finish</th>
-								<th></th>
                                 <th>Editor</th>
                                 <th>Feedback</th>
 								<th>Feedback Status</th>
@@ -115,7 +112,10 @@
 							@foreach($assigned_shop_manuscripts as $shopManuscript)
 								@if( $shopManuscript->status == 'Started' || $shopManuscript->status == 'Pending' )
 									<tr>
-										<td>{{$shopManuscript->shop_manuscript->title}}</td>
+										<td>
+										<a href="{{ route('editor.backend.download_shop_manuscript', $shopManuscript->id) }}" download><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
+										{{$shopManuscript->shop_manuscript->title}}
+										</td>
 										<td>
 											@if($shopManuscript->genre > 0)
 												{{ \App\Http\FrontendHelpers::assignmentType($shopManuscript->genre) }}
@@ -123,10 +123,6 @@
 										</td>
 										<td>{{ $shopManuscript->user->id }}</td>
 										<td>{{ $shopManuscript->expected_finish }}</td>
-										<td>
-											<a href="{{ route('editor.backend.download_shop_manuscript', $shopManuscript->id) }}"
-											   class="btn btn-primary btn-xs">{{ trans('site.download') }}</a> <br>
-										</td>
                                         <td>{{ $shopManuscript->admin->full_name }}</td>
                                         <td>
 											<?php
@@ -168,7 +164,6 @@
 								<th>{{ trans_choice('site.courses', 1) }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
 								<th>Expected Finish</th>
-								<th></th>
 								<th>Editor</th>
 								<th>Feedback</th>
 								<th>Feedback Status</th>
@@ -178,6 +173,7 @@
 							@foreach ($assignedAssignments as $assignedAssignment)
 								<tr>
 									<td>
+										<a href="{{ route('editor.backend.download_assigned_manuscript', $assignedAssignment->id) }}" download><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
 										@if($assignedAssignment->assignment->course)
 												{{ $assignedAssignment->assignment->course->title }}
 										@else
@@ -186,10 +182,6 @@
 									</td>
 									<td>{{ $assignedAssignment->user_id }}</td>
 									<td>{{$assignedAssignment->expected_finish}}</td>
-									<td>
-										<a href="{{ route('editor.backend.download_assigned_manuscript', $assignedAssignment->id) }}"
-										   class="btn btn-primary btn-xs">{{ trans('site.download') }}</a>
-									</td>
 									<td>{{$assignedAssignment->editor->full_name}}</td>
 									<td>
 									<?php 
@@ -236,7 +228,7 @@
 			</div>
 
             <!-- My Coaching Timer -->
-			<div class="row">
+			<!-- <div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
 						<div class="panel-heading"><h4>{{ trans('site.my-coaching-timer') }}</h4></div>
@@ -258,7 +250,7 @@
 						</table>
 					</div>
 				</div>
-			</div>
+			</div> -->
 
             <!-- My Correction -->
 			<div class="row">
@@ -271,7 +263,6 @@
 								<th>{{ trans_choice('site.manus', 2) }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
 								<th>{{ trans('site.expected-finish') }}</th>
-								<th></th>
 								<th>Editor</th>
 								<th>Feedback</th>
 								<th>Feedback Status</th>
@@ -282,6 +273,7 @@
                                 <?php $extension = explode('.', basename($correction->file)); ?>
 								<tr>
 									<td>
+										<a href="{{ route('editor.other-service.download-doc', ['id' => $correction->id, 'type' => 2]) }}" download><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
 										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
 											<a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
 										@elseif( end($extension) == 'docx' )
@@ -295,16 +287,12 @@
 											<br>
 										@endif
 									</td>
-									<td>
-										<a href="{{ route('editor.other-service.download-doc',
-										   ['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.download') }}</a>
-										<!-- show only if no feedback is given yet for this correction -->
-									</td>
 									<td>{{ $correction->editor->full_name }}</td>
 									<td>
 										<a href="#approveOtherServiceFeedbackModal" data-toggle="modal"
 											class="btn btn-success btn-xs approveOtherServiceFeedbackBtn " 
 											data-service="2"
+											data-feedback_id = "{{ $correction->feedback->id }}"
 											data-feedback_file = "{{ $correction->feedback->manuscript }}"
 											data-action="{{ route('head_editor.other-service.approve-feedback',
 											['id' => $correction->id, 'type' => 2]) }}"> Approve Feedback</a>
@@ -339,7 +327,6 @@
 								<th>{{ trans_choice('site.manus', 2) }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
 								<th>{{ trans('site.expected-finish') }}</th>
-								<th></th>
 								<th>Editor</th>
 								<th>Feedback</th>
 								<th>Feedback Status</th>
@@ -350,6 +337,7 @@
                                 <?php $extension = explode('.', basename($copyEditing->file)); ?>
 								<tr>
 									<td>
+										<a href="{{ route('editor.other-service.download-doc', ['id' => $copyEditing->id, 'type' => 1]) }}" download><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
 										@if( end($extension) == 'pdf' || end($copyEditing) == 'odt' )
 											<a href="/js/ViewerJS/#../../{{ $copyEditing->file }}">{{ basename($copyEditing->file) }}</a>
 										@elseif( end($extension) == 'docx' )
@@ -373,10 +361,6 @@
 												{{ trans('site.set-date') }}
 											</a>
 										@endif -->
-									</td>
-									<td>
-										<a href="{{ route('editor.other-service.download-doc',
-										   ['id' => $copyEditing->id, 'type' => 1]) }}">{{ trans('site.download') }}</a>
 									</td>
 									<td>{{ $copyEditing->editor->full_name }}</td>
 									<td>
@@ -420,33 +404,28 @@
 			</div>
 			<div class="modal-body">
 
-				<form>
-                    <!-- feedback from editor   -->
-                        <!-- files -->
-                        <!-- Grade -->
-                    <div class="form-group">
-						<label>Feedback File</label><br>
-						<div id="feedbackFileAppend"></div>
-					</div>
-                    <div class="form-group">
-						<label>Feedback Grade</label><br>
-						<input class="form-control" type="number" disabled name="grade">
-					</div>
-                    <hr>
-
-                    <!-- email -->
-                        <!-- available date  -->
-                        <!-- sibject  -->
-                        <!-- from -->
-                        <!-- message  -->
-                    <div></div>
-				</form>
-
                 <form id="personalAssignmentApproveFeedback" method="POST" action=""  enctype="multipart/form-data">
                     <?php
                     	$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Assignment Manuscript Feedback');
                     ?>
                     {{ csrf_field() }}
+					<input type="hidden" class="form-control" name="feedback_id">
+					<div class="form-group">
+						<label>Feedback File</label><br>
+						<div id="feedbackFileAppend"></div>
+					</div>
+					<div class="form-group">
+                        <label name="manuscriptLabel">Replace Feedback File</label>
+                        <input type="file" class="form-control" multiple name="filename[]"
+                               accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                   application/pdf, application/vnd.oasis.opendocument.text">
+                        * Accepted file formats are DOCX, PDF, ODT. <br>
+                    </div>
+                    <div class="form-group">
+						<label>Feedback Grade</label><br>
+						<input class="form-control" type="number" step="0.01" name="grade">
+					</div>
+                    <hr>
                     <div class="form-group">
                         <label>{{ trans('site.available-date') }}</label>
                         <input required type="date" class="form-control" name="availability">
@@ -484,27 +463,27 @@
 			</div>
 			<div class="modal-body">
 
-				<form>
-                    <!-- feedback from editor   -->
-                        <!-- files -->
-                        <!-- Grade -->
-                    <div class="form-group">
-						<label>Feedback File</label><br>
-						<div id="feedbackFileAppend"></div>
-					</div>
-                    <div class="form-group">
-						<label>Feedback Notes</label><br>
-                        <textarea class="form-control" name="notes" disabled rows="6"></textarea>
-					</div>
-                    <hr>
-                    <div></div>
-				</form>
-
                 <form id="shopManuscriptTakenApproveFeedback" method="POST" action="" enctype="multipart/form-data">
 					<?php
 						$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Shop Manuscript Feedback');
 					?>
 					{{csrf_field()}}
+					<div class="form-group">
+						<label>Feedback File</label><br>
+						<div id="feedbackFileAppend"></div>
+					</div>
+					<div class="form-group">
+                        <label name="manuscriptLabel">Replace Feedback File</label>
+                        <input type="file" class="form-control" multiple name="files[]"
+                               accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                   application/pdf, application/vnd.oasis.opendocument.text">
+                        * Accepted file formats are DOCX, PDF, ODT. <br>
+                    </div>
+                    <div class="form-group">
+						<label>Feedback Notes</label><br>
+                        <textarea class="form-control" name="notes" rows="6"></textarea>
+					</div>
+                    <hr>
 					<div class="form-group">
 						<label>{{ trans('site.subject') }}</label>
 						<input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}"
@@ -539,33 +518,27 @@
 			</div>
 			<div class="modal-body">
 
-				<form>
-                    <!-- feedback from editor   -->
-                        <!-- files -->
-                        <!-- Grade -->
-                    <div class="form-group">
-						<label>Feedback File</label><br>
-						<div id="feedbackFileAppend"></div>
-					</div>
-                    <div class="form-group">
-						<label>Feedback Grade</label><br>
-						<input class="form-control" type="number" disabled name="grade">
-					</div>
-                    <hr>
-
-                    <!-- email -->
-                        <!-- available date  -->
-                        <!-- sibject  -->
-                        <!-- from -->
-                        <!-- message  -->
-                    <div></div>
-				</form>
-
                 <form id="courseAssignmentApproveFeedback" method="POST" action=""  enctype="multipart/form-data">
                     <?php
                     	$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Assignment Manuscript Feedback');
                     ?>
                     {{ csrf_field() }}
+					<div class="form-group">
+						<label>Feedback File</label><br>
+						<div id="feedbackFileAppend"></div>
+					</div>
+					<div class="form-group">
+                        <label name="manuscriptLabel">Replace Feedback File</label>
+                        <input type="file" class="form-control" multiple name="filename[]"
+                               accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                   application/pdf, application/vnd.oasis.opendocument.text">
+                        * Accepted file formats are DOCX, PDF, ODT. <br>
+                    </div>
+                    <div class="form-group">
+						<label>Feedback Grade</label><br>
+						<input class="form-control" type="number" step="0.01" name="grade">
+					</div>
+                    <hr>
                     <div class="form-group">
                         <label>{{ trans('site.available-date') }}</label>
                         <input required type="date" class="form-control" name="availability">
@@ -603,29 +576,24 @@
 			</div>
 			<div class="modal-body">
 
-				<form>
-                    <!-- feedback from editor   -->
-                        <!-- files -->
-                        <!-- Grade -->
-                    <div class="form-group">
-						<label>Feedback File</label><br>
-						<div id="feedbackFileAppend"></div>
-					</div>
-                    <hr>
-
-                    <!-- email -->
-                        <!-- available date  -->
-                        <!-- sibject  -->
-                        <!-- from -->
-                        <!-- message  -->
-                    <div></div>
-				</form>
-
                 <form id="approveOtherServiceFeedback" method="POST" action=""  enctype="multipart/form-data">
                     <?php
                     	$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Other Services Feedback');
                     ?>
                     {{ csrf_field() }}
+					<input type="hidden" class="form-control" name="feedback_id">
+					<div class="form-group">
+						<label>Feedback File</label><br>
+						<div id="feedbackFileAppend"></div>
+					</div>
+                    <hr>
+					<div class="form-group">
+                        <label name="manuscriptLabel">Replace Feedback File</label>
+                        <input type="file" class="form-control" multiple name="manuscript[]"
+                               accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                   application/pdf, application/vnd.oasis.opendocument.text">
+                        * Accepted file formats are DOCX, PDF, ODT. <br>
+                    </div>
 					<div class="form-group">
 						<label>{{ trans('site.subject') }}</label>
 						<input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}"
@@ -657,11 +625,15 @@
 	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
 	$('.personalAssignmentShowFeedbackBtn').click(function(){
+
+		$("#personalAssignmentApproveFeedback").trigger('reset');
+
         var manuscript_id = $(this).data('id');
         var feedbackFileName =  $(this).data('feedback_file');
         var feedbackGrade =  $(this).data('feedback_grade');
 		let modal = $('#personalAssignmentShowFeedbackModal');
         let action = $(this).data('action');
+		let feedback_id = $(this).data('feedback_id');
 		
 		var feedbackArray = feedbackFileName.split(",");
 		modal.find('#feedbackFileAppend').html('');
@@ -670,9 +642,13 @@
 		})
 
         modal.find('[name=grade]').val(feedbackGrade);
+        modal.find('[name=feedback_id]').val(feedback_id);
         modal.find('form#personalAssignmentApproveFeedback').attr('action', action);
 	});
 	$('.courseAssignmentShowFeedbackBtn').click(function(){
+
+		$("#courseAssignmentApproveFeedback").trigger("reset");
+
         var manuscript_id = $(this).data('id');
         var feedbackFileName =  $(this).data('feedback_file');
         var feedbackGrade =  $(this).data('feedback_grade');
@@ -689,6 +665,9 @@
         modal.find('form#courseAssignmentApproveFeedback').attr('action', action);
 	});
     $('.shopManuscriptShowFeedbackBtn').click(function(){
+
+		$("#shopManuscriptTakenApproveFeedback").trigger("reset");
+
         var feedbackFileName =  $(this).data('feedback_file');
         var feedbackNotes =  $(this).data('feedback_notes');
 		let modal = $('#shopManuscriptShowFeedbackModal');
@@ -704,10 +683,16 @@
         modal.find('form#shopManuscriptTakenApproveFeedback').attr('action', action);
 	});
 	$('.approveOtherServiceFeedbackBtn').click(function(){
+		
+		$("#approveOtherServiceFeedback").trigger("reset");
+
         var feedbackFileName =  $(this).data('feedback_file');
 		let modal = $('#approveOtherServiceFeedbackModal');
         let action = $(this).data('action');
+		let feedback_id = $(this).data('feedback_id');
         
+		modal.find('[name=feedback_id]').val(feedback_id);
+
 		var feedbackArray = feedbackFileName.split(",");
 		modal.find('#feedbackFileAppend').html('');
 		feedbackArray.forEach(function (item, index){

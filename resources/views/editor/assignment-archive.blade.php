@@ -340,7 +340,7 @@
 						</table>
                         <!-- page -->
                         <div class="pull-right">
-                            {{$coachingTimers->render()}}
+                            {{$corrections->render()}}
                         </div>
 					</div>
 				</div>
@@ -373,11 +373,11 @@
                                     <td>{{$copyEditing->feedback->created_at}}</td>
 									<td>{{ $copyEditing->user->id }}</td>
 									<td>
-                                        @if($correction->feedback)
+                                        @if($copyEditing->feedback)
                                             <a href="#approveOtherServiceFeedbackModal" data-toggle="modal"
                                                 class="btn btn-primary btn-xs approveOtherServiceFeedbackBtn " 
-                                                data-feedback_file = "{{ $correction->feedback->manuscript }}"
-                                                data-created_at = "{{ $correction->feedback->created_at }}"
+                                                data-feedback_file = "{{ $copyEditing->feedback->manuscript }}"
+                                                data-created_at = "{{ $copyEditing->feedback->created_at }}"
                                             >
                                                 <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;Feedback
                                             </a>
@@ -389,7 +389,7 @@
 						</table>
                         <!-- page -->
                         <div class="pull-right">
-                            {{$coachingTimers->render()}}
+                            {{$copyEditings->render()}}
                         </div>
 					</div>
 				</div>
