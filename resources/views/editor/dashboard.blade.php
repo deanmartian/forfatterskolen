@@ -115,7 +115,7 @@
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 								<th>{{ trans('site.genre') }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
-								<th>Expected Finish</th>
+								<th>Deadline</th>
 								<th>Feedback Status</th>
 							</tr>
 							</thead>
@@ -134,7 +134,7 @@
 											@endif
 										</td>
 										<td>{{ $shopManuscript->user->id }}</td>
-										<td>{{ $shopManuscript->expected_finish }}</td>
+										<td>{{ $shopManuscript->editor_expected_finish }}</td>
 										<td>
 											@if($shopManuscript->status == 'Started')
 											
