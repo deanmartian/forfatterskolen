@@ -7,7 +7,7 @@ $admin = 'admin.forfatterskolen.local';
 $editor = 'editor.forfatterskolen.local';
 */
 
-$front = 'forfatterskolen.no';
+$front = 'www.forfatterskolen.no';
 $admin = 'admin.forfatterskolen.no';
 $editor = 'editor.forfatterskolen.no';
 
