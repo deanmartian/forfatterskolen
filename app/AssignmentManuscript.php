@@ -24,7 +24,7 @@ class AssignmentManuscript extends Model
     }
 
 
-    public function feedbacks()
+    public function feedbacks() //cannot use this. 
     {
         return $this->hasMany('App\AssignmentFeedback');
     }

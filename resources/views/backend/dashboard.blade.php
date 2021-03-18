@@ -16,7 +16,7 @@
 @section('content')
 <div class="col-sm-12 col-md-10 dashboard-left">
 	<div class="row">
-		<div class="col-sm-12 @if (!Auth::user()->is_editor) col-md-5 @endif">
+		<div class="col-sm-12 @if (Auth::user()->role != 3) col-md-5 @endif">
 			<!-- Summary  -->
 			<div class="row">
 				<div class="col-sm-12">
@@ -28,7 +28,6 @@
 					</div>
 				</div>
 			</div>
-
 
 			<!-- My assigned manuscripts -->
 			<div class="row">
@@ -106,8 +105,7 @@
 				</div>
 			</div>
 
-
-		@if (!Auth::user()->is_editor)
+		@if (Auth::user()->role != 3)
 
 			<!-- My assigned free manuscripts -->
 			<div class="row">
@@ -135,8 +133,6 @@
 					</div>
 				</div>
 			</div>
-
-
 
 			<!-- Upcoming Webinars -->
 			<div class="row">
@@ -322,7 +318,6 @@
 					</div>
 				</div>
 			</div>
-
 
 			<!-- My coaching timer -->
 			<div class="row">
@@ -555,7 +550,7 @@
 
 		</div>
 
-		@if (!Auth::user()->is_editor)
+		@if (Auth::user()->role != 3)
 		<div class="col-sm-12 col-md-7">
 			<!-- Pending Courses -->
 			<div class="row">
@@ -602,7 +597,6 @@
 					</div>
 				</div>
 			</div>
-
 
 			<!-- Pending Shop Manuscripts -->
 			<div class="row">
@@ -654,8 +648,6 @@
 				</div>
 			</div>
 				
-
-
 			<!-- Pending Workshops -->
 			<div class="row">
 				<div class="col-sm-12">
@@ -757,7 +749,6 @@
 					</div>
 				</div>
 			</div>
-
 
 			<!-- Pending Assignment Feedbacks -->
 			<div class="row">
@@ -1006,8 +997,11 @@
 					</div>
 				</div>
 			</div>
+
+		
 		</div>
 		@endif
+
 	</div>
 </div>
 
@@ -1192,7 +1186,7 @@
 						<label>{{ trans('site.assign-editor') }}</label>
 						<select name="editor_id" class="form-control select2" required>
 							<option value="" disabled="" selected>-- Select Editor --</option>
-							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
+							@foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 							@endforeach
 						</select>
@@ -1216,7 +1210,7 @@
 						<label>{{ trans('site.assign-editor') }}</label>
 						<select name="editor_id" class="form-control select2" required>
 							<option value="" disabled="" selected>-- Select Editor --</option>
-							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
+							@foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 							@endforeach
 						</select>
@@ -1239,8 +1233,6 @@
 		</div>
 	</div>
 </div>
-
-
 
 <div id="updateOtherServiceStatusModal" class="modal fade" role="dialog" data-backdrop="static">
 	<div class="modal-dialog modal-sm">
@@ -1349,7 +1341,6 @@
 	</div>
 </div>
 
-
 <div id="viewHelpWithModal" class="modal fade" role="dialog">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -1414,7 +1405,7 @@
 						</label>
 						<select name="assigned_to" class="form-control select2" required>
 							<option value="" disabled="" selected>-- Select Assignee --</option>
-							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
+							@foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 							@endforeach
 						</select>
@@ -1503,6 +1494,28 @@
         </div>
     </div>
 </div>
+
+<div id="updateShopManuscriptFeedbackStatusModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.approve-feedback') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<p>
+						{{ trans('site.approve-feedback-question') }}
+					</p>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -1586,6 +1599,13 @@
         }
         modal.find('form').attr('action', action);
         modal.find('.modal-title').find('span').text(title);
+    });
+	$(".updateShopManuscriptFeedbackStatusBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#updateShopManuscriptFeedbackStatusModal');
+        let service = $(this).data('service');
+       
+        modal.find('form').attr('action', action);
     });
 
     $(".setOtherServiceFinishDateBtn").click(function(){

@@ -5,6 +5,7 @@ use App\Http\AdminHelpers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Settings;
+use App\User;
 
 class SettingsController extends Controller
 {
@@ -92,7 +93,11 @@ class SettingsController extends Controller
      */
     public function headEditor( Request $request )
     {
-        Settings::updateOrCreate(['setting_name' => 'head-editor'], ['setting_value' => $request->editor_id]);
+        // Settings::updateOrCreate(['setting_name' => 'head-editor'], ['setting_value' => $request->editor_id]);
+
+        User::where('head_editor', 1)->update(array('head_editor' => '0'));
+        User::where('id', $request->editor_id)->update(array('head_editor' => '1')); 
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Head Editor updated successfully.'),
             'alert_type' => 'success']);
     }

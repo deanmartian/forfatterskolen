@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use File;
+use Illuminate\Support\Facades\DB;
+
 
 /**
  * @mixin \Eloquent
@@ -275,7 +277,7 @@ class User extends Authenticatable
     {
         return $this->attributes['role'] == 1 ? 1 : 0;
     }
-
+    
     public function coachingTimers()
     {
         return $this->hasMany('App\CoachingTimerManuscript')->orderBy('created_at', 'desc');

@@ -1,0 +1,14 @@
+.dib{
+    display: inline-block;
+}
+.float-r{
+    float: right;
+}
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    padding: 5px !important;
+}
+.custom-height-1{
+    min-height: 427px;
+    background-color: white;
+    padding: 0px;
+}
