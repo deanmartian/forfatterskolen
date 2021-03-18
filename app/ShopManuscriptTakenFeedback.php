@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class ShopManuscriptTakenFeedback extends Model
 {
     protected $table = 'shop_manuscript_taken_feedbacks';
-    protected $fillable = ['shop_manuscript_taken_id', 'filename', 'grade', 'notes'];
+    protected $fillable = ['shop_manuscript_taken_id', 'filename', 'grade', 'notes', 'hours_worked'];
 
     public function shop_manuscript_taken()
     {
-        return $this->belongsTo('App\ShopManuscriptTaken', 'shop_manuscript_taken_id');
+        return $this->belongsTo('App\ShopManuscriptsTaken', 'shop_manuscript_taken_id');
     }
 
     

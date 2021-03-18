@@ -37,6 +37,7 @@
 		<li @if( Request::input('tab') == 'terms' ) class="active" @endif><a href="?tab=terms">Terms</a></li>
 		<li @if( Request::input('tab') == 'advisory' ) class="active" @endif><a href="?tab=advisory">Advisory</a></li>
 		<li @if( Request::input('tab') == 'staff' ) class="active" @endif><a href="?tab=staff">Staff</a></li>
+		<li @if( Request::input('tab') == 'editor' ) class="active" @endif><a href="?tab=editor">Editor Assignment Prices</a></li>
 	</ul>
 
 	<div class="tab-content">
@@ -219,6 +220,45 @@
 						</tbody>
 					</table>
 				</div>
+			@elseif( Request::input('tab') == 'editor')
+				<div class="table-users table-responsive">
+					<!-- <button class="btn btn-success margin-top btn-sm pull-right" style="margin-right: 10px;"
+					data-toggle="modal" data-target="#addAssignmentModal" id="addAssignment"
+							data-action="{{ route('editor_assignment_price.save') }}">+ Add New</button> -->
+					<div class="clearfix"></div>
+					<table class="table margin-top">
+						<thead>
+						<tr>
+							<th>Assignment</th>
+							<th>Unit</th>
+							<th>Price (kr)</th>
+							<th> </th>
+						</tr>
+						</thead>
+						<tbody>
+						@foreach($editorAssignmentPrices as $editorAssignmentPrice)
+							<tr>
+								<td>{{ $editorAssignmentPrice->assignment }}</td>
+								<td>{{ $editorAssignmentPrice->unit }}</td>
+								<td>{{ $editorAssignmentPrice->price }}</td>
+								<td>
+									<button class="btn btn-success btn-xs addAssignment" style="margin-right: 10px;"
+									data-toggle="modal" 
+									data-target="#addAssignmentModal"
+									data-id="{{ $editorAssignmentPrice->id }}"
+									data-assignment="{{ $editorAssignmentPrice->assignment }}"
+									data-unit="{{ $editorAssignmentPrice->unit }}"
+									data-price="{{ $editorAssignmentPrice->price }}"
+									data-edit="1"
+									data-action="{{ route('editor_assignment_price.save') }}">
+									<i class="fa fa-pencil-square-o" aria-hidden="true"> Edit</i>
+									</button>
+								</td>
+							</tr>
+						@endforeach
+						</tbody>
+					</table>
+				</div>
 			@else
 				<div class="table-users table-responsive">
 					<table class="table">
@@ -226,6 +266,7 @@
 						<tr>
 							<th>Name</th>
 							<th>Email</th>
+							<th>Total Worked</th>
 							<th></th>
 						</tr>
 						</thead>
@@ -236,8 +277,13 @@
 								<td>{{ $admin->full_name }}</td>
 								<td>{{ $admin->email }}</td>
 								<td>
+									@if($admin->role == 3)
+									<a href="{{ route('admin.total_editor_worked', $admin->id) }}" class="btn btn-primary btn-xs">Preview Editor Total Worked</a>
+									@endif
+								</td>
+								<td>
 									<div class="pull-right">
-										@if($headEditor === $admin->id)
+										@if($admin->head_editor)
 											<label class="label label-success" style="margin-right: 5px">
 												Head Editor
 											</label>
@@ -357,12 +403,12 @@
 						<option value="" selected disabled>
 							-- Select Editor --
 						</option>
-						@foreach( App\User::where('role', 1)->orderBy('id', 'desc')->get()  as $admin)
+						@foreach( App\User::whereIn('role', array(1))->orderBy('id', 'desc')->get() as $admin)
                             <?php
                             $selected = '';
-                            if ($headEditor && $headEditor === $admin->id) {
-                                $selected = 'selected';
-                            }
+							if ($admin->head_editor){
+								$selected = 'selected';
+							}
                             ?>
 							<option value="{{ $admin->id }}" {{ $selected}}>
 								{{ $admin->full_name }}
@@ -628,6 +674,39 @@
 		</div>
 	</div>
 </div>
+
+<div id="addAssignmentModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title"></h4>
+			</div>
+			<div class="modal-body">
+				<form id="addAssignmentForm" method="POST" action="" enctype="multipart/form-data">
+					{{csrf_field()}}
+					<input type="hidden" class="form-control" name="id">
+					<div class="form-group">
+						<label>Assignment</label>
+						<input disabled name="assignment" type="text" class="form-control"></input>
+					</div>
+					<div class="form-group">
+						<label>Unit</label>
+						<input disabled name="unit" type="text" class="form-control"></input>
+					</div>
+					<div class="form-group">
+                        <label>Price</label>
+                        <input name="price" step="0.01" type="number" class="form-control">
+                    </div>
+					<button type="submit" class="btn btn-primary pull-right">Save</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -648,8 +727,8 @@
 		/*if (fields.minimal_access) {
             form.find('input[name=minimal_access]').attr('checked', true);
 		}*/
-
-        if (fields.is_editor) {
+		form.find('input[name=is_editor]').attr('checked', false);
+        if (fields.role == 3) {
             form.find('input[name=is_editor]').attr('checked', true);
         }
 	});
@@ -763,6 +842,40 @@
         let form = modal.find("form");
         form.attr('action', action);
     });
+
+	$(".addAssignment").click(function(){
+
+		var modal = $('#addAssignmentModal');
+		var action = $(this).data('action');
+		var is_edit = $(this).data('edit');
+		modal.find('form').attr('action', action);
+
+		$('#addAssignmentForm').trigger('reset');
+		modal.find('[name=id]').val('')
+		
+		if(is_edit){
+
+			let id = $(this).data('id');
+			let assignment = $(this).data('assignment');
+			let unit = $(this).data('unit');
+			let price = $(this).data('price');
+			
+			modal.find('[name=id]').val(id)
+			modal.find('[name=assignment]').val(assignment)
+			modal.find('[name=unit]').val(unit)
+			modal.find('[name=price]').val(price)
+
+		}
+
+	});
+
+	$(".deleteAssignment").click(function(){
+
+		var modal = $('#deleteAssignmentModal');
+		var action = $(this).data('action');
+		modal.find('form').attr('action', action);
+
+	});
 
     if (other_terms_tab) {
         $("#other-terms-tab").find('[href="#nav-'+ other_terms_tab + '"]').trigger('click');

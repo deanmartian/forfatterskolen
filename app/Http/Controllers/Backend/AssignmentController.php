@@ -65,7 +65,7 @@ class AssignmentController extends Controller
     	$course = Course::findOrFail($course_id);
     	$assignment = Assignment::findOrFail($id);
     	$assignments = Assignment::where('id', '!=', $id)->get();
-        $editors = \App\User::where('role', 1)->get();
+        $editors = \App\User::whereIn('role', array(1,3))->get();
 
     	$section = 'assignments';
     	if( $assignment->course->id == $course->id ) :
@@ -787,75 +787,129 @@ class AssignmentController extends Controller
      */
     public function manuscriptFeedbackNoGroup($manuscript_id, $learner_id, Request $request)
     {
-        $assignmentManuscript = AssignmentManuscript::find($manuscript_id);
-        $assignmentManuscript->has_feedback = 1;
-        // set grade
-        if (is_numeric($request->grade)) {
-            $assignmentManuscript->grade = $request->grade;
-        }
-        $assignmentManuscript->save();
 
-        if ( $request->hasFile('filename')) :
+        $filesWithPath = $this->getFiles($request, $learner_id);
+
+        if($request->feedback_id){ // update
+            
+            $assignmentFeedbackNoGroup = AssignmentFeedbackNoGroup::find($request->feedback_id);
+            if($filesWithPath){
+                $assignmentFeedbackNoGroup->filename = $filesWithPath;
+            }
+            $assignmentFeedbackNoGroup->hours_worked = $request->hours;
+            $assignmentFeedbackNoGroup->save();
+
+            $assignmentManuscript = AssignmentManuscript::find($manuscript_id);
+            if (is_numeric($request->grade)) {
+                $assignmentManuscript->grade = $request->grade;
+            }
+            $assignmentManuscript->save();
+
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback updated successfully.'),
+                'alert_type' => 'success']);
+
+        }else{ // new
+
+            if ($request->hasFile('filename')) :
+
+                $assignmentManuscript = AssignmentManuscript::find($manuscript_id);
+                $assignmentManuscript->has_feedback = 1;
+                $assignmentManuscript->status = 0;
+                // set grade
+                if (is_numeric($request->grade)) {
+                    $assignmentManuscript->grade = $request->grade;
+                }
+                $assignmentManuscript->save();
+
+                AssignmentFeedbackNoGroup::create([
+                    'assignment_manuscript_id' => $manuscript_id,
+                    'learner_id' => $learner_id,
+                    'feedback_user_id' => Auth::user()->id,
+                    'filename' => $filesWithPath,
+                    'is_admin' => true,
+                    'is_active' => true,
+                    'hours_worked' => $request->hours
+                ]);
+                return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback saved successfully.'),
+                'alert_type' => 'success']);
+
+            else:
+
+                return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Please provide a file.'),
+                'alert_type' => 'warning']);
+
+            endif;
+        }
+        
+    }
+
+    public function getFiles($request, $learner_id){
+        if ($request->hasFile('filename')) :
+            $filesWithPath = '';
             $time = time();
             $destinationPath = 'storage/assignment-feedbacks'; // upload path
             $extensions = ['pdf', 'docx', 'odt'];
-            $filesWithPath = '';
-
             // loop through all the uploaded files
             foreach ($request->file('filename') as $k => $file) {
                 $extension = pathinfo($_FILES['filename']['name'][$k],PATHINFO_EXTENSION);
                 $actual_name = $learner_id;
                 $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name."f", $extension);
                 $filesWithPath .= "/".AdminHelpers::checkFileName($destinationPath, $actual_name."f", $extension).", ";
-
                 if( !in_array($extension, $extensions) ) :
                     return redirect()->back();
                 endif;
-
                 $file->move($destinationPath, $fileName);
-
             }
-
-            $filesWithPath = trim($filesWithPath,", ");
-
-            AssignmentFeedbackNoGroup::create([
-                'assignment_manuscript_id' => $manuscript_id,
-                'learner_id' => $learner_id,
-                'feedback_user_id' => Auth::user()->id,
-                'filename' => $filesWithPath,
-                'is_admin' => true,
-                'is_active' => true,
-                'availability' => $request->availability,
-            ]);
-
-            // send email
-            $email_content  = $request->message;
-            $to             = $assignmentManuscript->user->email;
-            $first_name     = $assignmentManuscript->user->first_name;
-
-            if($request->availability && Carbon::parse($request->availability)->gt(Carbon::today())) {
-                $redirect_link          = route('learner.assignment');
-                $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
-
-                DelayedEmail::create([
-                    'subject'       => $request->subject,
-                    'message'       => $formattedMailContent,
-                    'from_email'    => $request->from_email,
-                    'recipient'     => $to,
-                    'send_date'     => $request->availability,
-                    'parent'        => 'assignment-manuscripts',
-                    'parent_id'     => $assignmentManuscript->id
-                ]);
-            } else {
-                $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject,
-                   $request->from_email, $assignmentManuscript->id);
-            }
-
-            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback sent successfully.'),
-                'alert_type' => 'success']);
+            return $filesWithPath = trim($filesWithPath,", ");
         endif;
     }
 
+    public function approveFeedbackNoGroup($manuscript_id, $learner_id, Request $request)
+    {
+        // update feedback
+        $assignmentFeedbackNoGroup = AssignmentFeedbackNoGroup::find($request->feedback_id);
+
+        $filesWithPath = $this->getFiles($request, $learner_id);
+        if($filesWithPath){
+            $assignmentFeedbackNoGroup->filename = $filesWithPath;
+        }
+        $assignmentFeedbackNoGroup->availability = $request->availability;
+        $assignmentFeedbackNoGroup->save();
+
+        // set status = 1 in assignmentManuscript
+        $assignmentManuscript = AssignmentManuscript::find($manuscript_id);
+        $assignmentManuscript->has_feedback = 1;
+        $assignmentManuscript->status = 1;
+        $assignmentManuscript->grade = $request->grade;
+        $assignmentManuscript->save();
+        
+        // send an email
+        $email_content  = $request->message;
+        $to             = $assignmentManuscript->user->email;
+        $first_name     = $assignmentManuscript->user->first_name;
+
+        if($request->availability && Carbon::parse($request->availability)->gt(Carbon::today())) {
+            $redirect_link          = route('learner.assignment');
+            $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
+
+            DelayedEmail::create([
+                'subject'       => $request->subject,
+                'message'       => $formattedMailContent,
+                'from_email'    => $request->from_email,
+                'recipient'     => $to,
+                'send_date'     => $request->availability,
+                'parent'        => 'assignment-manuscripts',
+                'parent_id'     => $assignmentManuscript->id
+            ]);
+        } else {
+            $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject,
+                $request->from_email, $assignmentManuscript->id);
+        }
+        
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback successfully sent'),
+            'alert_type' => 'success']);
+    }
+    
     public function manuscriptFeedbackNoGroupUpdate($feedback_id, Request $request)
     {
         $feedback = AssignmentFeedbackNoGroup::find($feedback_id);
@@ -877,7 +931,6 @@ class AssignmentController extends Controller
                 $destinationPath = 'storage/assignment-feedbacks'; // upload path
                 $extensions = ['pdf', 'docx', 'odt'];
                 $filesWithPath = '';
-
                 // loop through all the uploaded files
                 foreach ($request->file('filename') as $k => $file) {
                     $extension = pathinfo($_FILES['filename']['name'][$k],PATHINFO_EXTENSION);

@@ -48,8 +48,18 @@ class ShopManuscriptsTaken extends Model
         if( !$this->attributes['is_active'] ) return "Not started";
         $file = $this->attributes['file'];
         $feedbacks = $this->feedbacks->count();
-        if( $file && $feedbacks > 0 ) :
+        $approved = 0;
+        if($feedbacks > 0){
+            $approved = $this->feedbacks->first()->approved;
+        }
+        // $this->feedbacks->each(function($feedback) {
+        //     $approved = $feedback->approved;
+        // });
+
+        if( $file && $feedbacks > 0 && $approved == 1) :
             return "Finished";
+        elseif( $file && $feedbacks > 0 && $approved == 0 ) :
+            return "Pending";
         elseif( $file && $feedbacks == 0 ) :
             return "Started";
         elseif( !$file ) :
@@ -61,6 +71,9 @@ class ShopManuscriptsTaken extends Model
         return $value ? date_format(date_create($value), 'd.m.Y') : NULL;
     }
 
+    public function getEditorExpectedFinishAttribute($value) {
+        return $value ? date_format(date_create($value), 'd.m.Y') : NULL;
+    }
     
     public function admin(){
         return $this->belongsTo('App\User', 'feedback_user_id');

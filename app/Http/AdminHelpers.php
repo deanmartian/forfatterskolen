@@ -973,6 +973,26 @@ class AdminHelpers
             array( 'id' => 10, 'option' => 'FAQs', 'route' => 'admin.faq.index', 'request_name' => 'faq'),
             array( 'id' => 11, 'option' => 'Admins', 'route' => 'admin.admin.index', 'request_name' => 'admin'),
             /*array( 'id' => 12, 'option' => 'Email', 'route' => 'admin.email.index', 'request_name' => 'email'),*/
+            array('id'=> 12, 'option' => 'Head Editor', 'route'=> 'admin.head-editor-dashboard', 'request_name'=>'head-editor')
+        );
+
+        if ($id > 0) {
+            foreach ($pages as $page) {
+                if ($page['id'] == $id) {
+                    return $page['option'];
+                }
+            }
+        }
+
+        return $pages;
+    }
+
+    public static function editorPageList($id = NULL)
+    {
+        $pages = array(
+            array( 'id' => 1, 'option' => 'Pending Assignments', 'route' => 'editor.dashboard', 'request_name' => 'pending-assignments'),
+            array( 'id' => 2, 'option' => 'Assignment Archive', 'route' => 'editor.assignment-archive', 'request_name' => 'assignment-archive'),
+            array( 'id' => 3, 'options' => 'How Many Manuscript You Can Take?', 'route' => 'editor.manuscript-you-can-take', 'request_name' => 'how-many-manuscript-you-can-take')
         );
 
         if ($id > 0) {

@@ -12,13 +12,12 @@ use App\AssignmentFeedback;
 use App\AssignmentGroupLearner;
 use App\User;
 use App\Http\AdminHelpers;
+use Carbon\Carbon;
+use App\DelayedEmail;
+use App\Jobs\AddMailToQueueJob;
 
 class AssignmentGroupController extends Controller
 {
-
-
-
-
 
     public function show($course_id, $assignment_id, $id)
     {
@@ -31,9 +30,6 @@ class AssignmentGroupController extends Controller
     	endif;
     	return abort('404');
     }
-
-
-
 
     public function store($course_id, $assignment_id, Request $request)
     {
@@ -116,61 +112,143 @@ class AssignmentGroupController extends Controller
     	return redirect()->back();
     }
 
-
-
-
-    public function submit_feedback($group_id, $id, Request $request)
-    {
-        $group = AssignmentGroup::where('id', $group_id)->whereHas('learners', function($query) use ($id){
-            $query->where('id', $id);
-        })->firstOrFail();
-
-        $assignmentManuscript = AssignmentManuscript::find($request->manuscript_id);
-        $assignmentManuscript->has_feedback = 1;
-        // set grade
-        if (is_numeric($request->grade)) {
-            $assignmentManuscript->grade = $request->grade;
-        }
-        $assignmentManuscript->save();
-
+    public function getFiles($request, $learner_id){
+        $filesWithPath = '';
         if ( $request->hasFile('filename')) :
             $time = time();
             $destinationPath = 'storage/assignment-feedbacks'; // upload path
             $extensions = ['pdf', 'docx', 'odt'];
-            $filesWithPath = '';
 
             // loop through all the uploaded files
             foreach ($request->file('filename') as $k => $file) {
                 $extension = pathinfo($_FILES['filename']['name'][$k],PATHINFO_EXTENSION);
-                $actual_name = AssignmentGroupLearner::find($id)->user_id;
+                $actual_name = $learner_id;
                 $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name."f", $extension);
                 $filesWithPath .= "/".AdminHelpers::checkFileName($destinationPath, $actual_name."f", $extension).", ";
 
                 if( !in_array($extension, $extensions) ) :
                     return redirect()->back();
                 endif;
-
                 $file->move($destinationPath, $fileName);
-
             }
-
-            $filesWithPath = trim($filesWithPath,", ");
-
-            AssignmentFeedback::create([
-                'assignment_group_learner_id' => $id,
-                'user_id' => Auth::user()->id,
-                'filename' => $filesWithPath,
-                'is_admin' => true,
-                'is_active' => true,
-                'availability' => $request->availability,
-            ]);
-            return redirect()->back();
+            return $filesWithPath = trim($filesWithPath,", ");
         endif;
     }
 
+    public function submit_feedback($group_id, $id, Request $request)
+    {
+        $learner_id = AssignmentGroupLearner::find($id)->user_id;
+        $filesWithPath = getFiles($request, $learner_id);
 
+        if($request->feedback_id){
+            
+            $assignmentManuscript = AssignmentManuscript::find($request->manuscript_id);
+            if (is_numeric($request->grade)) {
+                $assignmentManuscript->grade = $request->grade;
+            }
+            $assignmentManuscript->save();
 
+            if($filesWithPath){
+                $assignmentFeedback = AssignmentFeedback::where('assignment_group_learner_id', $id)
+                                                        ->update(['filename' => $filesWithPath,'hours_worked' => $request->hours]);
+            }else{
+                $assignmentFeedback = AssignmentFeedback::where('assignment_group_learner_id', $id)
+                                                        ->update(['hours_worked' => $request->hours]);
+            }
+            
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback updated successfully.'),
+                    'alert_type' => 'success']);
 
+        }else{
+    
+            if ( $request->hasFile('filename')) :
+
+                $assignmentManuscript = AssignmentManuscript::find($request->manuscript_id);
+                $assignmentManuscript->has_feedback = 1;
+                $assignmentManuscript->status = 0;
+                // set grade
+                if (is_numeric($request->grade)) {
+                    $assignmentManuscript->grade = $request->grade;
+                }
+                $assignmentManuscript->save();
+    
+                AssignmentFeedback::create([
+                    'assignment_group_learner_id' => $id,
+                    'user_id' => Auth::user()->id,
+                    'filename' => $filesWithPath,
+                    'is_admin' => true,
+                    'is_active' => true,
+                    'hours_worked' => $request->hours
+                ]);
+                return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback saved successfully.'),
+                        'alert_type' => 'success']);
+            else:
+
+                return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Please provide a file.'),
+                        'alert_type' => 'warning']);
+
+            endif;
+
+        }
+
+    }
+
+    public function approveFeedbackCourse($manuscript_id, $learner_id, $feedback_id, Request $request)
+    {
+        $filesWithPath = getFiles($request, $learner_id);
+
+        $assignmentManuscript = AssignmentManuscript::find($manuscript_id);
+        $assignmentManuscript->has_feedback = 1;
+        $assignmentManuscript->status = 1;
+        $assignmentManuscript->grade = $request->grade;
+        $assignmentManuscript->save();
+
+        // group assignment - set availability date on feedback
+        $assignmentFeedback = AssignmentFeedback::find($feedback_id);
+        $assignmentFeedback->availability = $request->availability;
+        if($fileWithPath){
+            $assignmentFeedback->filename = $fileWithPath;
+        }
+
+        $assignmentFeedback->save();
+                                   
+        // send email - no sending email for group assignment
+        // sending email duplicate from assignment no group 
+        $email_content  = $request->message;
+        $to             = $assignmentManuscript->user->email;
+        $first_name     = $assignmentManuscript->user->first_name;
+
+        if($request->availability && Carbon::parse($request->availability)->gt(Carbon::today())) {
+            $redirect_link          = route('learner.assignment');
+            $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
+
+            DelayedEmail::create([
+                'subject'       => $request->subject,
+                'message'       => $formattedMailContent,
+                'from_email'    => $request->from_email,
+                'recipient'     => $to,
+                'send_date'     => $request->availability,
+                'parent'        => 'assignment-manuscripts',
+                'parent_id'     => $assignmentManuscript->id
+            ]);
+        } else {
+            $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject,
+                $request->from_email, $assignmentManuscript->id);
+        }
+        
+        return redirect()->back()->with([
+            'alert_type' => 'success',
+            'errors'    => AdminHelpers::createMessageBag('Successfully approved feedback.')
+        ]);
+    }
+
+    public function sendAssignmentFeedbackMail($email_content, $to, $first_name, $subject, $from_email, $manuscript_id)
+    {
+        $redirect_link          = route('learner.assignment');
+        $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
+        dispatch(new AddMailToQueueJob($to, $subject, $formattedMailContent, $from_email, null, null,
+            'assignment-manuscripts', $manuscript_id));
+    }
 
     public function submit_feedback_learner($group_id, $id, Request $request)
     {

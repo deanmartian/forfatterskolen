@@ -5,8 +5,9 @@
 /*$front = 'forfatterskolen.local';
 $admin = 'admin.forfatterskolen.local';*/
 
-$front = 'www.forfatterskolen.no';
-$admin = 'admin.forfatterskolen.no';
+$front = 'forfatterskolen.local';
+$admin = 'admin.forfatterskolen.local';
+$editor = 'editor.forfatterskolen.local';
 
 
 // get/set the locale
@@ -469,10 +470,6 @@ Route::group([
 });
 
 
-
-
-
-
 /**
  * Admin Routes
  *
@@ -494,6 +491,7 @@ Route::group([
         Route::get('backend/{id}/download_assigned_manuscript', 'PageController@downloadAssignedManuscript')->name('backend.download_assigned_manuscript');
         Route::post('backend/change-password', 'PageController@changePassword')->name('backend.change-password');
         Route::get('/tests', 'PageController@tests');
+        Route::get('head-editor/dashboard', 'HeadEditorController@index')->name('admin.head-editor-dashboard')->middleware('headEditor');
 
         Route::resource('page_meta','PageMetaController',[
             'except' => ['show', 'create', 'edit'],
@@ -1157,6 +1155,7 @@ Route::group([
         Route::post('/shop-manuscript-taken/{id}/add-feedback', 'ShopManuscriptController@addFeedback')->name('admin.shop-manuscript-taken-feedback.store'); // Store Shop Manuscript Feedback
         Route::post('/shop-manuscript-taken/{id}/delete', 'ShopManuscriptController@destroyFeedback')->name('admin.shop-manuscript-taken-feedback.delete'); // Remove Shop Manuscript Feedback
         Route::post('/shop-manuscript-taken/{id}/update-genre', 'ShopManuscriptController@updateGenre')->name('admin.shop-manuscript-taken.update-genre'); // Remove Shop Manuscript Feedback
+        Route::post('/shop-manuscript-taken/{feedback_id}/approve-feedback', 'ShopManuscriptController@approveFeedback')->name('admin.shop-manuscript-taken.approve-feedback');
 
 
         Route::get('/test', 'ShopManuscriptController@testEmail');
@@ -1389,6 +1388,17 @@ Route::group([
             Route::delete('webinar/{webinar_id}/panelist/{panelist_id}', 'ZoomController@deletePanelist')->name('admin.zoom.webinar.panelist.delete');
         });
 
+        // head editor route 
+        Route::post('personal_assignment/{id}/approve_feedback/{learner_id}', 'AssignmentController@approveFeedbackNoGroup')->name('head_editor.personal_assignment.feedbac_approve');
+        Route::post('course_assignment/{id}/approve_feedback/{learner_id}/feedback/{feedback_id}', 'AssignmentGroupController@approveFeedbackCourse')->name('head_editor.course_assignment.feedback_approve');
+        Route::post('shop-manuscript-taken/{id}/approve-feedback/{learner_id}/feedback/{feedback_id}', 'ShopManuscriptController@approveFeedback')->name('head_editor.shop-manuscript-taken-feedback.approve');
+        Route::post('other-service/{id}/approve-feedback/{type}', 'OtherServiceController@approveFeedback')->name('head_editor.other-service.approve-feedback');
+
+        // editor assignment
+        Route::post('editor_assignment_price/save', 'EditorAssignmentPriceController@save')->name('editor_assignment_price.save');
+        Route::post('editor_assignment_price/{id}/delete', 'EditorAssignmentPriceController@delete')->name('editor_assignment_price.delete');
+        Route::get('editor_total_worked/{id}', 'EditorController@total')->name('admin.total_editor_worked');
+
     });
 
     
@@ -1404,6 +1414,54 @@ Route::group([
     Route::get('/backup', 'Backend\PageController@backup')->name('backup');
     Route::get('/check-nearly-expired-course', 'Backend\PageController@checkNearlyExpiredCourses');
 });
+
+
+/**
+ * Editor Routes
+ * 
+ */
+Route::group([
+    'domain' => $editor,
+], function(){
+    Route::group([
+        'middleware' => 'editor',
+        'namespace' => 'Editor'
+    ], function(){
+
+        Route::get('/', 'PageController@dashboard')->name('editor.dashboard');
+        Route::get('assignmentArchive','PageController@assignmentArchive')->name('editor.assignment-archive');
+        Route::get('manuscriptYouCanTake', 'ManuscriptEditorCanTakeController@index')->name('editor.manuscript-you-can-take');
+        Route::post('manuscriptYouCanTake/save', 'ManuscriptEditorCanTakeController@save')->name('editor.manuscript-you-can-take-save');
+        Route::post('manuscriptYouCanTake/{id}/delete', 'ManuscriptEditorCanTakeController@delete')->name('editor.manuscript-you-can-take.delete');
+    });
+
+    Route::group([
+        'middleware' => 'editor',
+        'namespace' => 'Backend'
+    ], function(){
+
+        Route::post('backend/change-password', 'PageController@changePassword')->name('editor.change-password');
+        Route::post('assignment_manuscript/{id}/learner/{learner_id}/feedback', 'AssignmentController@manuscriptFeedbackNoGroup')->name('editor.assignment.group.manuscript-feedback-no-group');
+        Route::post('/shop-manuscript-taken/{id}/add-feedback', 'ShopManuscriptController@addFeedback')->name('editor.admin.shop-manuscript-taken-feedback.store');
+        Route::get('backend/{id}/download_shop_manuscript', 'PageController@downloadShopManuscript')->name('editor.backend.download_shop_manuscript');
+        Route::get('backend/{id}/download_assigned_manuscript', 'PageController@downloadAssignedManuscript')->name('editor.backend.download_assigned_manuscript');
+        Route::post('/group/{group_id}/learner/{id}/submit_feedback', 'AssignmentGroupController@submit_feedback')->name('editor.assignment.group.submit_feedback'); // Submit assignment feedback
+        Route::post('/other-service/{id}/update-status/{type}', 'OtherServiceController@updateStatus')->name('editor.other-service.update-status');
+        Route::post('/other-service/{id}/add-feedback/{type}', 'OtherServiceController@addFeedback')->name('editor.other-service.add-feedback');
+        Route::get('/other-service/{id}/download/{type}', 'OtherServiceController@downloadOtherServiceDoc')->name('editor.other-service.download-doc'); // Download assignment feedback
+        Route::post('/other-service/{id}/coaching-timer/set_replay', 'OtherServiceController@editorSetReplay')->name('editor.other-service.coaching-timer.set_replay');
+
+    });
+
+    // Authentication
+    Route::group([
+        'prefix' => 'auth',
+        'namespace' => 'Auth',
+    ], function () {
+        Route::post('login', 'LoginController@editorLogin')->name('editor.login.store');
+    });
+});
+
 
 
 // File Manager routes

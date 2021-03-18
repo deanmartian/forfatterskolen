@@ -30,6 +30,7 @@ use App\ShopManuscriptsTaken;
 use App\FreeManuscript;
 use Artisan;
 use Illuminate\Support\MessageBag;
+use App\ShopManuscriptTakenFeedback;
 
 require app_path('/Http/BackupDB/MySQLDump.php');
 
@@ -52,7 +53,7 @@ class PageController extends Controller
         $pending_workshops = WorkshopsTaken::where('is_active', false)->orderBy('created_at', 'desc')->get();
         $assigned_course_manuscripts = Manuscript::where('feedback_user_id', Auth::user()->id)->get();
 
-        if (Auth::user()->is_editor) {
+        if (Auth::user()->role == 3) {
             $assigned_course_manuscripts = Manuscript::where('feedback_user_id', Auth::user()->id)
                 ->orWhereNull('feedback_user_id')
                 ->orderBy('created_at', 'desc')
@@ -102,12 +103,14 @@ class PageController extends Controller
         $pendingTasks = UserTask::where('assigned_to', Auth::user()->id)
             ->where('status', 0)->get();
 
+        $shopManuscriptTakenFeedback = ShopManuscriptTakenFeedback::with('shop_manuscript_taken')->where('approved', 0)->orderBy('created_at', 'desc')->paginate(10);
+
         return view('backend.dashboard', compact('pending_courses', 'pending_shop_manuscripts',
-            'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts', 'assigned_free_manuscripts',
-            'pending_assignment_feedbacks', 'logs', 'manuscripts','shopManuscripts',
-            'nearlyExpiredCoursesCount', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
-            'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments',
-            'pendingTasks', 'assignedAssignmentManuscripts'));
+        'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts', 'assigned_free_manuscripts',
+        'pending_assignment_feedbacks', 'logs', 'manuscripts','shopManuscripts',
+        'nearlyExpiredCoursesCount', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
+        'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments',
+        'pendingTasks', 'assignedAssignmentManuscripts','shopManuscriptTakenFeedback'));
     }
 
     /**

@@ -1881,7 +1881,7 @@ class LearnerController extends Controller
             'user_id' => $learner_id,
             'assignment_id' => $assignment_id
         ])->first();
-        $editors = \App\User::where('role', 1)->get();
+        $editors = \App\User::whereIn('role', array(1,3))->get();
 
         return view('backend.learner.assignment', compact('assignment', 'learner', 'editors', 'manuscript'));
     }

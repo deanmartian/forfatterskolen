@@ -1770,7 +1770,7 @@
 						</label>
 						<select name="assigned_to" class="form-control select2" required>
 							<option value="" disabled="" selected>-- Select Assignee --</option>
-							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
+							@foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 							@endforeach
 						</select>
@@ -1835,7 +1835,7 @@
 						</label>
 						<select name="assigned_to" class="form-control select2" required>
 							<option value="" disabled="" selected>-- Select Assignee --</option>
-							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
+							@foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 							@endforeach
 						</select>
@@ -2537,7 +2537,7 @@
 						<label>{{ trans('site.assign-to') }}</label>
 						<select name="editor_id" class="form-control select2">
 							<option value="" disabled="" selected>-- Select Editor --</option>
-							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
+							@foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 							@endforeach
 						</select>
@@ -2590,7 +2590,7 @@
 						<label>Assign editor</label>
 						<select name="editor_id" class="form-control select2" required>
 							<option value="" disabled="" selected>-- Select Editor --</option>
-							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
+							@foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 							@endforeach
 						</select>
@@ -2805,7 +2805,7 @@
 						<label>{{ ucwords(trans('site.assign-to')) }}</label>
 						<select name="editor_id" class="form-control select2" required>
 							<option value="" disabled="" selected>-- Select Editor --</option>
-							@foreach( App\User::where('role', 1)->orderBy('created_at', 'desc')->get() as $editor )
+							@foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 							@endforeach
 						</select>
@@ -3112,7 +3112,7 @@
 							<option value="" selected disabled>
 								-- Select Editor --
 							</option>
-							@foreach( App\User::where('role', 1)->orderBy('id', 'desc')->get()  as $admin)
+							@foreach( App\User::whereIn('role', array(1,3))->orderBy('id', 'desc')->get()  as $admin)
 								<option value="{{ $admin->id }}"
 										{{ $learner->preferredEditor && $learner->preferredEditor->editor_id === $admin->id
 										? 'selected' : '' }}>

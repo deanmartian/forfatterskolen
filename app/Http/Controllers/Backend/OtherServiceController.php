@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use File;
 use Illuminate\Support\Facades\Auth;
 use App\Jobs\AddMailToQueueJob;
+use App\user;
 
 class OtherServiceController extends Controller
 {
@@ -25,7 +26,7 @@ class OtherServiceController extends Controller
     public function __construct()
     {
         // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:13');
+        $this->middleware('checkPageAccess:13', ['except' => 'editorSetReplay']);
     }
 
     public function index()
@@ -149,6 +150,44 @@ class OtherServiceController extends Controller
             'not-former-courses' => true]);
     }
 
+    public function editorSetReplay(CoachingTimerManuscript $id, Request $request)
+    {
+        $data = $request->except('_token');
+
+        if (!$request->replay_link && !$request->document && ! $request->comment) {
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Please fill up at least one field.'),
+                'not-former-courses' => true]);
+        }
+
+        if ($request->hasFile('document') && $request->file('document')->isValid()) {
+
+            $destinationPath = 'storage/coaching-timer-manuscripts'; // upload path
+            $extensions = ['doc', 'docx', 'pdf'];
+
+            $extension = pathinfo($_FILES['document']['name'],PATHINFO_EXTENSION); // getting document extension
+
+            if (!in_array($extension, $extensions)) {
+                return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Invalid file type.'),
+                    'not-former-courses' => true]);
+            }
+
+            $actual_name = pathinfo($request->document->getClientOriginalName(), PATHINFO_FILENAME);
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+
+            $expFileName = explode('/', $fileName);
+
+            $request->document->move($destinationPath, end($expFileName));
+            $data['document'] = $fileName;
+        }
+
+        $data['status'] = 0;
+        $id->update($data);
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Replay saved successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true]);
+    }
+
     public function deleteCoaching(CoachingTimerManuscript $id)
     {
         $id->delete();
@@ -251,6 +290,32 @@ class OtherServiceController extends Controller
         return redirect()->route('admin.learner.index');
     }
 
+    public function getFiles($request){
+        if ($request->hasFile('manuscript')) :
+            // new 
+            $time = time();
+            $destinationPath = 'storage/other-service-feedback'; // upload path
+            $extensions = ['pdf', 'docx', 'odt'];
+            $filesWithPath = '';
+            // loop through all the uploaded files
+            foreach ($request->file('manuscript') as $k => $file) {
+                $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION);
+                $original_filename = $file->getClientOriginalName();
+                $filename = pathinfo($original_filename, PATHINFO_FILENAME);
+                $fileName = AdminHelpers::checkFileName($destinationPath, $filename, $extension);
+                $filesWithPath .= "/".AdminHelpers::checkFileName($destinationPath, $filename, $extension).", ";
+
+                if( !in_array($extension, $extensions) ) :
+                    return redirect()->back();
+                endif;
+
+                $file->move($destinationPath, $fileName);
+            }
+
+            return $filesWithPath = trim($filesWithPath,", ");
+        endif;
+    }
+
     /**
      * Add feedback for other services
      * @param $service_id int ID of the service
@@ -261,84 +326,118 @@ class OtherServiceController extends Controller
     public function addFeedback($service_id, $service_type, Request $request)
     {
         $data = $request->except('_token');
-        $extensions = ['pdf', 'docx'];
+        $filesWithPath = $this->getFiles($request);
 
-        if ($service_type == 1 || $service_type == 2) {
-            if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) :
-                $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
-                $original_filename = $request->manuscript->getClientOriginalName();
+        if($request->feedback_id){
 
-                if (!in_array($extension, $extensions)) :
+            if ($service_type == 1 || $service_type == 2) {
+                
+                    $otherServiceFeedback = OtherServiceFeedback::find($request->feedback_id);
+                    if($filesWithPath){
+                        $otherServiceFeedback->manuscript = $filesWithPath;
+                    }
+                    $otherServiceFeedback->hours_worked = $request->hours_worked;
+                    $otherServiceFeedback->save();
+    
                     return redirect()->back()->with([
-                        'alert_type'            => 'danger',
-                        'errors'                => AdminHelpers::createMessageBag('File type not allowed.'),
+                        'errors'                => AdminHelpers::createMessageBag('Feedback updated successfully.'),
+                        'alert_type'            => 'success',
+                        'not-former-courses'    => true
+                    ]);
+            }
+
+        }else{
+            
+            if ($service_type == 1 || $service_type == 2) {
+                if ($request->hasFile('manuscript')) :
+                    
+                    $data['manuscript'] = $filesWithPath;
+                    $service = '';
+                    $data['service_id'] = $service_id;
+                    $data['service_type'] = $service_type;
+                    $data['hours_worked'] = $request->hours_worked;
+                    OtherServiceFeedback::create($data);
+    
+                    //update status
+                    if ($service_type == 1) {
+                        $copyEditing = CopyEditingManuscript::find($service_id);
+                        $copyEditing->status = 3; // set status to pending
+                        $copyEditing->save();
+                        $service = 'Språkvask';
+                    }
+        
+                    if ($service_type == 2){
+                        $correction = CorrectionManuscript::find($service_id);
+                        $correction->status = 3; // set status to pending
+                        $correction->save();
+                        $service = 'Korrektur';
+                    }
+    
+                    return redirect()->back()->with([
+                        'errors'                => AdminHelpers::createMessageBag($service.' Feedback added successfully.'),
+                        'alert_type'            => 'success',
+                        'not-former-courses'    => true
+                    ]);
+                else: 
+                    return redirect()->back()->with([
+                        'errors'                => AdminHelpers::createMessageBag('Please provide a file.'),
+                        'alert_type'            => 'warning',
                         'not-former-courses'    => true
                     ]);
                 endif;
+            }
 
-                $destinationPath = 'storage/other-service-feedback'; // upload path
-
-                // check if path not exists then create it
-                if (!File::exists($destinationPath)) {
-                    File::makeDirectory($destinationPath, $mode = 0777, true, true);
-                }
-
-                $filename = pathinfo($original_filename, PATHINFO_FILENAME);
-                // check the file name and add/increment number if the filename already exists
-                $file = AdminHelpers::checkFileName($destinationPath, $filename, $extension);
-
-                $request->manuscript->move($destinationPath, $file);
-
-                $data['manuscript'] = $file;
-
-                $service = '';
-
-                $data['service_id'] = $service_id;
-                $data['service_type'] = $service_type;
-
-                OtherServiceFeedback::create($data);
-
-                //update status
-                if ($service_type == 1) {
-                    $copyEditing = CopyEditingManuscript::find($service_id);
-                    $copyEditing->status = 2;
-                    $copyEditing->save();
-                    $service = 'Språkvask';
-                }
-    
-                if ($service_type == 2){
-                    $correction = CorrectionManuscript::find($service_id);
-                    $correction->status = 2;
-                    $correction->save();
-                    $service = 'Korrektur';
-                }
-
-                // send email 
-                $user_email = Auth::user()->email;
-                $parent = null;
-                $emailTemplate = AdminHelpers::emailTemplate('Other Services Feedback');
-
-                if ($service_type == 1) {
-                    $parent = 'copy-editing-feedback';
-                }else{
-                    $parent = 'correction-feedback';
-                }
-
-                $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user_email,
-                Auth::user()->first_name, '');
-
-                dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
-                    $emailTemplate->from_email, null, null, $parent, $service_id));
-
-                return redirect()->back()->with([
-                    'errors'                => AdminHelpers::createMessageBag($service.' Feedback added successfully.'),
-                    'alert_type'            => 'success',
-                    'not-former-courses'    => true
-                ]);
-            endif;
         }
-
-        return redirect()->back();
+        
     }
 
+    public function approveFeedback($service_id, $service_type, Request $request){
+        
+        // replace feedback file
+        $filesWithPath = $this->getFiles($request);
+        $otherServiceFeedback = OtherServiceFeedback::find($request->feedback_id);
+        if ($filesWithPath){
+            $otherServiceFeedback->manuscript = $filesWithPath;
+        }
+        $otherServiceFeedback->save();
+
+        // Update status
+        $user_email = '';
+        if($service_type==1){
+            $copyEditingManuscript = CopyEditingManuscript::find($service_id);
+            $copyEditingManuscript->status = 2;
+            $copyEditingManuscript->save();
+            $user_email = User::find($copyEditingManuscript->user_id)->email;
+        }else{
+            $correctionManuscript = CorrectionManuscript::find($service_id);
+            $correctionManuscript->status = 2;
+            $correctionManuscript->save();
+            $user_email = User::find($correctionManuscript->user_id)->email;
+        }
+
+        // send email 
+        $from = $request->from_email;
+        $parent = null;
+        $emailContent = $request->message;
+        $emailSubject = $request->subject;
+
+        if ($service_type == 1) {
+            $parent = 'copy-editing-feedback';
+        }else{
+            $parent = 'correction-feedback';
+        }
+
+        $emailTemplate = AdminHelpers::emailTemplate('Other Services Feedback');
+
+        $emailContent = AdminHelpers::formatEmailContent($emailContent, $from,
+        Auth::user()->first_name, '');
+
+        dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
+            $emailTemplate->from_email, null, null, $parent, $service_id));
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Feedback approved successfully.'),
+            'alert_type'            => 'success'
+        ]);
+    }
 }

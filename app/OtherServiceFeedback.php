@@ -16,5 +16,5 @@ class OtherServiceFeedback extends Model
      *
      * @var array
      */
-    protected $fillable = ['service_id', 'service_type', 'manuscript'];
+    protected $fillable = ['service_id', 'service_type', 'manuscript', 'hours_worked'];
 }
