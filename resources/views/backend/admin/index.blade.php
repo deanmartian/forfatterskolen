@@ -266,7 +266,7 @@
 						<tr>
 							<th>Name</th>
 							<th>Email</th>
-							<th>Total worked hours</th>
+							<th>Total Worked</th>
 							<th></th>
 						</tr>
 						</thead>
@@ -276,7 +276,11 @@
 							<tr>
 								<td>{{ $admin->full_name }}</td>
 								<td>{{ $admin->email }}</td>
-								<td>{{$admin->TotalWorkedHours}}</td>
+								<td>
+									@if($admin->role == 3)
+									<a href="{{ route('admin.total_editor_worked', $admin->id) }}" class="btn btn-primary btn-xs">Preview Editor Total Worked</a>
+									@endif
+								</td>
 								<td>
 									<div class="pull-right">
 										@if($admin->head_editor)
@@ -702,6 +706,7 @@
 
 	</div>
 </div>
+
 @stop
 
 @section('scripts')

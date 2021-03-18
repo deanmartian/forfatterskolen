@@ -71,6 +71,9 @@ class ShopManuscriptsTaken extends Model
         return $value ? date_format(date_create($value), 'd.m.Y') : NULL;
     }
 
+    public function getEditorExpectedFinishAttribute($value) {
+        return $value ? date_format(date_create($value), 'd.m.Y') : NULL;
+    }
     
     public function admin(){
         return $this->belongsTo('App\User', 'feedback_user_id');

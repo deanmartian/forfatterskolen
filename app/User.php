@@ -277,28 +277,7 @@ class User extends Authenticatable
     {
         return $this->attributes['role'] == 1 ? 1 : 0;
     }
-    public function getTotalWorkedHoursAttribute()
-    {
-        if ($this->attributes['role'] != 2){
-            $assignmentFeedback = DB::select("SELECT sum(hours_worked) as sum_hours_worked FROM assignment_feedbacks WHERE user_id = '".$this->attributes['id']."'");
-            $assignmentFeedbackNoGroup = DB::select("SELECT sum(hours_worked) as sum_hours_worked FROM assignment_feedbacks_no_group WHERE feedback_user_id = '".$this->attributes['id']."'");
-            $shopManuscriptTakenFeedback = DB::select("SELECT sum(hours_worked) as sum_hours_worked FROM shop_manuscript_taken_feedbacks A WHERE A.shop_manuscript_taken_id IN (SELECT id FROM shop_manuscripts_taken WHERE feedback_user_id = '".$this->attributes['id']."')");
-            $otherServiceFeedback1 = DB::select("SELECT sum(hours_worked) as sum_hours_worked FROM other_service_feedbacks WHERE service_type = 1 AND service_id IN (SELECT id FROM copy_editing_manuscripts WHERE editor_id = '".$this->attributes['id']."')");
-            $otherServiceFeedback2 = DB::select("SELECT sum(hours_worked) as sum_hours_worked FROM other_service_feedbacks WHERE service_type = 2 AND service_id IN (SELECT id FROM correction_manuscripts WHERE editor_id = '".$this->attributes['id']."')");
-            $coachingTimerManuscript = DB::select("SELECT sum(hours_worked) as sum_hours_worked FROM coaching_timer_manuscripts WHERE editor_id = '".$this->attributes['id']."'");
-
-            return round((
-                $assignmentFeedback[0]->sum_hours_worked 
-                + $assignmentFeedbackNoGroup[0]->sum_hours_worked
-                + $shopManuscriptTakenFeedback[0]->sum_hours_worked
-                + $otherServiceFeedback1[0]->sum_hours_worked
-                + $otherServiceFeedback2[0]->sum_hours_worked
-                + $coachingTimerManuscript[0]->sum_hours_worked
-            ),2);
-        }
-
-        return 0;
-    }
+    
     public function coachingTimers()
     {
         return $this->hasMany('App\CoachingTimerManuscript')->orderBy('created_at', 'desc');

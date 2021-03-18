@@ -1391,6 +1391,7 @@ Route::group([
         // editor assignment
         Route::post('editor_assignment_price/save', 'EditorAssignmentPriceController@save')->name('editor_assignment_price.save');
         Route::post('editor_assignment_price/{id}/delete', 'EditorAssignmentPriceController@delete')->name('editor_assignment_price.delete');
+        Route::get('editor_total_worked/{id}', 'EditorController@total')->name('admin.total_editor_worked');
 
     });
 

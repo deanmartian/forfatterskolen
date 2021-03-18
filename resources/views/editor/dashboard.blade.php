@@ -609,13 +609,12 @@
 						<input type="file" class="form-control" name="files[]" multiple
 							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
 							   application/pdf, application/vnd.oasis.opendocument.text" required>
+							   * Accepted file formats are DOCX, PDF, ODT.
 					</div>
 					<div class="form-group">
 						<label>{{ trans_choice('site.notes', 2) }}</label>
 						<textarea class="form-control" name="notes" rows="6"></textarea>
 					</div>
-					{{ trans('site.add-feedback-note') }}
-					<br><br>
 					<div class="form-group">
                         <label>Hours Worked</label>
                         <input type="number" class="form-control" step="0.01" name="hours">
@@ -772,6 +771,7 @@
                     <div class="form-group">
                         <label name="manuscriptLabel">{{ trans_choice('site.manuscripts', 1) }}</label>
                         <input type="file" class="form-control" name="manuscript[]" multiple accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf" required>
+						* Accepted file formats are DOCX, PDF, ODT.
                     </div>
 					<div class="form-group">
                         <label>Hours Worked</label>
