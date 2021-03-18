@@ -14,7 +14,7 @@
         <div class="col-sm-12">
             <div class="table-users table-responsive">
                 <h4>{{ $editor }}</h4>
-                <table class="table table-striped">
+                <table id="totalWorked" class="table">
                     <thead>
                         <tr>
                             <th>Month</th>
@@ -29,8 +29,6 @@
                         <?php
                             $month = $var['minMonth'];
                             $year =  $var['minYear'];
-                            $mn = "";
-                            $ml = 1;
                             $sumPAssgn = 0;
                             $sumShpMan = 0;
                             $sumGAssgn = 0;
@@ -40,15 +38,7 @@
                             for($y = $var['maxYear']; $y >= $var['minYear']; $y--){
                                 $year = $y;
                                 
-                                if($year == $var['minYear']){
-                                    $mn = $var['minMonth'];
-                                    $ml = $var['minMonth'];
-                                }elseif($year == $var['maxYear']){
-                                    $mn = $var['maxMonth'];
-                                }else{
-                                    $mn = 12;
-                                }
-                                for($m=$mn; $m>=$ml; $m--){
+                                for($m=12; $m>=1; $m--){
                                     
                                     echo '<tr>';
                                     echo '<td>'.$year.'-'.sprintf("%02d", $m).'</td>';
@@ -60,7 +50,7 @@
                                             $varShpMan += $key->total;
                                         }
                                     }
-                                    echo $varShpMan?$varShpMan:'-';
+                                    echo $varShpMan?$varShpMan:'';
                                     echo '</td>';
                                     echo '<td>';
                                     $allAssgn = 0;
@@ -76,7 +66,7 @@
                                             $allAssgn += $key->total;
                                         }
                                     }
-                                    echo $allAssgn?$allAssgn:'-';
+                                    echo $allAssgn?$allAssgn:'';
                                     echo '</td>';
                                     echo '<td>';
                                     $valChngTmr = 0;
@@ -86,7 +76,7 @@
                                             $valChngTmr += $key->total;
                                         }
                                     }
-                                    echo $valChngTmr?$valChngTmr:'-';
+                                    echo $valChngTmr?$valChngTmr:'';
                                     echo '</td>';
                                     echo '<td>';
                                     $valCrrctn = 0;
@@ -96,7 +86,7 @@
                                             $valCrrctn += $key->total;
                                         }
                                     }
-                                    echo $valCrrctn?$valCrrctn:'-';
+                                    echo $valCrrctn?$valCrrctn:'';
                                     echo '</td>';
                                     echo '<td>';
                                     $valCpyEdtng = 0;
@@ -106,7 +96,7 @@
                                             $valCpyEdtng += $key->total;
                                         }
                                     }
-                                    echo $valCpyEdtng?$valCpyEdtng:'-';
+                                    echo $valCpyEdtng?$valCpyEdtng:'';
                                     echo '</td>';
                                     echo '</tr>';
                     
@@ -134,4 +124,9 @@
 
 @section('scripts')
 	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#totalWorked tr:has(td:nth-child(2):empty):has(td:nth-child(3):empty):has(td:nth-child(4):empty):has(td:nth-child(5):empty):has(td:nth-child(6):empty)').hide();
+        });
+    </script>
 @stop
