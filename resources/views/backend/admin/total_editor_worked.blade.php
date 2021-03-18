@@ -18,11 +18,11 @@
                     <thead>
                         <tr>
                             <th>Month</th>
-                            <th>Shop Manuscript</th>
-                            <th>Assignment</th>
-                            <th>Coaching Timer</th>
-                            <th>Correction</th>
-                            <th>Copy Editing</th>
+                            <th>Shop Manuscript (Price)</th>
+                            <th>Assignment (Price)</th>
+                            <th>Coaching Timer (Price)</th>
+                            <th>Correction (Price)</th>
+                            <th>Copy Editing (Price)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -50,7 +50,7 @@
                                             $varShpMan += $key->total;
                                         }
                                     }
-                                    echo $varShpMan?$varShpMan:'';
+                                    echo $varShpMan?$varShpMan.' hours ('.$price['shpManPrice'].')':'';
                                     echo '</td>';
                                     echo '<td>';
                                     $allAssgn = 0;
@@ -66,7 +66,7 @@
                                             $allAssgn += $key->total;
                                         }
                                     }
-                                    echo $allAssgn?$allAssgn:'';
+                                    echo $allAssgn?$allAssgn.' ('.$price['assgnPrice'].')':'';
                                     echo '</td>';
                                     echo '<td>';
                                     $valChngTmr = 0;
@@ -76,7 +76,7 @@
                                             $valChngTmr += $key->total;
                                         }
                                     }
-                                    echo $valChngTmr?$valChngTmr:'';
+                                    echo $valChngTmr?$valChngTmr.' ('.$price['chngTmrPrice'].')':'';
                                     echo '</td>';
                                     echo '<td>';
                                     $valCrrctn = 0;
@@ -86,7 +86,7 @@
                                             $valCrrctn += $key->total;
                                         }
                                     }
-                                    echo $valCrrctn?$valCrrctn:'';
+                                    echo $valCrrctn?$valCrrctn.' hours ('.$price['crrctnPrice'].')':'';
                                     echo '</td>';
                                     echo '<td>';
                                     $valCpyEdtng = 0;
@@ -96,7 +96,7 @@
                                             $valCpyEdtng += $key->total;
                                         }
                                     }
-                                    echo $valCpyEdtng?$valCpyEdtng:'';
+                                    echo $valCpyEdtng?$valCpyEdtng.' hours ('.$price['cpyEdtngPrice'].')':'';
                                     echo '</td>';
                                     echo '</tr>';
                     
@@ -108,7 +108,7 @@
                     <tfoot>
                         <tr>
                            <td><strong>Total</strong></td>
-                           <td><strong>{{ $sumShpMan }}</strong></td>
+                           <td><strong>{{ $sumShpMan.' hours' }}</strong></td>
                            <td><strong>{{ $sumGAssgn + $sumPAssgn }}</strong></td>
                            <td><strong>{{ $sumChngTmr }}</strong></td>
                            <td><strong>{{ $sumCrrctn }}</strong></td>

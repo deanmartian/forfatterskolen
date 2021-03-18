@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use File;
 use Illuminate\Support\Facades\DB;
 use App\User;
+use App\EditorAssignmentPrices;
 
 class EditorController extends Controller
 {
@@ -187,7 +188,35 @@ class EditorController extends Controller
         ];
 
         $editor = User::find($editor_id)->FullName;
+        $prices = EditorAssignmentPrices::all();
 
-        return view('backend.admin.total_editor_worked', compact('editor', 'var', 'data', 'editor'));
+        $assgnPrice = 0;
+        $shpManPrice = 0;
+        $chngTmrPrice = 0;
+        $crrctnPrice = 0;
+        $cpyEdtngPrice = 0;
+        foreach ($prices as $key) {
+            if ($key->assignment == 'Assignment'){
+                $assgnPrice = $key->price;
+            }elseif($key->assignment == 'Shop Manuscript'){
+                $shpManPrice = $key->price;
+            }elseif($key->assignment == 'Coaching Timer'){
+                $chngTmrPrice = $key->price;
+            }elseif($key->assignment == 'Correction'){
+                $crrctnPrice = $key->price;
+            }elseif($key->assignment == 'Copy Editing'){
+                $cpyEdtngPrice = $key->price;
+            }
+        }
+
+        $price = [
+            'assgnPrice' => $assgnPrice,
+            'shpManPrice' => $shpManPrice,
+            'chngTmrPrice' => $chngTmrPrice,
+            'crrctnPrice' => $crrctnPrice,
+            'cpyEdtngPrice' => $cpyEdtngPrice
+        ];
+
+        return view('backend.admin.total_editor_worked', compact('editor', 'var', 'data', 'editor','price'));
     }
 }

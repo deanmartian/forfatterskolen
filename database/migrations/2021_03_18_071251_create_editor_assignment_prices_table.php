@@ -13,6 +13,7 @@ class CreateEditorAssignmentPricesTable extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('editor_assignment_prices');
         Schema::create('editor_assignment_prices', function (Blueprint $table) {
             $table->increments('id');
             $table->string('assignment', 100)->default('');
@@ -23,9 +24,8 @@ class CreateEditorAssignmentPricesTable extends Migration
 
         DB::beginTransaction();
         $data = [
-            ['assignment' => 'Personal Assignments', 'unit' => 'Item', 'price' => '0.00'],
             ['assignment' => 'Shop Manuscript', 'unit' => 'Hour', 'price' => '0.00'],
-            ['assignment' => 'My Assignments', 'unit' => 'Item', 'price' => '0.00'],
+            ['assignment' => 'Assignment', 'unit' => 'Item', 'price' => '0.00'],
             ['assignment' => 'Coaching Timer', 'unit' => 'Item', 'price' => '0.00'],
             ['assignment' => 'Correction', 'unit' => 'Hour', 'price' => '0.00'],
             ['assignment' => 'Copy Editing', 'unit' => 'Hour', 'price' => '0.00']
