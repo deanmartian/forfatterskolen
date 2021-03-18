@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Assignment;
+use App\AssignmentAddon;
 use App\AssignmentGroupLearner;
 use App\AssignmentManuscript;
 use App\CoachingTimerManuscript;
@@ -1886,6 +1887,28 @@ class LearnerController extends Controller
     }
 
     /**
+     * Delete assignment add-on record
+     * @param $learner_id
+     * @param $assignment_id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function deleteAssignmentAddOn( $learner_id, $assignment_id )
+    {
+        $addOn = AssignmentAddon::where([
+            'user_id' => $learner_id,
+            'assignment_id' => $assignment_id
+        ])->firstOrFail();
+
+        $addOn->delete();
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Assignment add-on deleted successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    /**
      * @param $user_id
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
@@ -1941,6 +1964,33 @@ class LearnerController extends Controller
         return redirect()->back()->with([
             'errors'                => AdminHelpers::createMessageBag($message),
             'alert_type'            => $alert_type,
+            'not-former-courses'    => true
+        ]);
+    }
+
+    /**
+     * Set the phone number that would be use for sending vipss-efaktura
+     * @param $user_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function setVippsEFaktura( $user_id, Request $request )
+    {
+        if($request->mobile_number) {
+            $this->validate($request, [
+                'mobile_number' => 'digits:8'
+            ]);
+        }
+
+        $address = Address::firstOrNew([
+            'user_id' => $user_id
+        ]);
+        $address->vipps_phone_number = $request->mobile_number ?: NULL;
+        $address->save();
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Record saved.'),
+            'alert_type'            => 'success',
             'not-former-courses'    => true
         ]);
     }

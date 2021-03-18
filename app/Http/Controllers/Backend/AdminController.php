@@ -233,6 +233,10 @@ class AdminController extends Controller
         ]);
     }
 
+    public function yearlyCalendar()
+    {
+        return view('backend.yearly-calendar');
+    }
 
     public function fikenRedirect( Request $request )
     {

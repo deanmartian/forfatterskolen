@@ -47,8 +47,17 @@ class DueInvoiceCheck extends Command
         CronLog::create(['activity' => 'DueInvoiceCheck CRON running.']);
         $dueTomorrow    = Carbon::today()->addDay(1)->format('Y-m-d');
 
-        $invoices = Invoice::whereDate('fiken_dueDate',  $dueTomorrow)
+        /*$invoices = Invoice::whereDate('fiken_dueDate',  $dueTomorrow)
             ->where('fiken_is_paid', '=',0)
+            ->get();*/
+
+        $invoices   = \DB::table('invoices')
+            ->select('invoices.*', 'vipps_phone_number')
+            ->leftJoin('users', 'users.id', '=', 'invoices.user_id')
+            ->leftJoin('addresses', 'addresses.user_id', '=', 'users.id')
+            ->whereDate('fiken_dueDate',  $dueTomorrow)
+            ->where('fiken_is_paid', '=',0)
+            ->whereNull('vipps_phone_number')
             ->get();
 
         $email_template = AdminHelpers::emailTemplate('Due Invoice Check');

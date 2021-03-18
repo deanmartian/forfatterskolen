@@ -111,11 +111,13 @@
 										   value="{{ old('email') }}" required>
 								</div>
 
-								<div class="form-group col-md-3">
-									<button type="submit" class="btn btn-theme">
-										{{ trans('site.front.form.get-free-course') }}
-									</button>
-								</div>
+								@if($course->status)
+									<div class="form-group col-md-3">
+										<button type="submit" class="btn btn-theme">
+											{{ trans('site.front.form.get-free-course') }}
+										</button>
+									</div>
+								@endif
 							@else
 								<?php
 								$course_packages = $course->packages->pluck('id')->toArray();

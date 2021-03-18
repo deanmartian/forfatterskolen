@@ -71,8 +71,8 @@ class WebinarEmailOutCommand extends Command
 
             $webinarDetails = AdminHelpers::getBigMarkerDetails($webinar->link);
             $presenterList = AdminHelpers::getBigMarkerPanelist($webinarDetails->conference->presenters);
-            $startDate      = AdminHelpers::convertTZNoFormat($webinarDetails->conference->start_time, 'Europe/Madrid')->format('d, M Y');
-            $startTime      = AdminHelpers::convertTZNoFormat($webinarDetails->conference->start_time, 'Europe/Madrid')->format('H:i');
+            $startDate      = AdminHelpers::convertTZNoFixedTZFormat($webinarDetails->conference->start_time, 'Europe/Madrid')->format('d, M Y');
+            $startTime      = AdminHelpers::convertTZNoFixedTZFormat($webinarDetails->conference->start_time, 'Europe/Madrid')->format('H:i');
             $webinarDate    = $startDate.' klokken '.$startTime;
             $subject = $emailOut->subject;//"Webinar ".$webinarDate." med ".$presenterList;
             foreach ($coursesTaken as $courseTaken) {

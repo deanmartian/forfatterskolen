@@ -97,7 +97,12 @@
 					<b>{{ trans('site.auto-renew-course') }}:</b>
 					<a href="#" data-toggle="modal" data-target="#autoRenewModal">
 					{{ $learner->auto_renew_courses ? 'Yes' : 'No' }}
-					</a>
+					</a> <br>
+					<b>Preferred Editor:</b>
+					<span>{{ $learner->preferredEditor ? $learner->preferredEditor->editor->fullname : '' }}</span><br>
+					<b>Vipps Efaktura:</b>
+					<span>{{ $learner->address ? $learner->address->vipps_phone_number : '' }}</span>
+
 				</div>
 			</div>
 			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editPasswordModal">{{ trans('site.edit-password') }}</button>
@@ -106,6 +111,11 @@
 			<button type="button" class="margin-top btn btn-success" data-toggle="modal" data-target="#learnerNotesModal">{{ trans_choice('site.notes', 2) }}</button>
 			<button type="button" class="margin-top btn btn-primary" data-toggle="modal" data-target="#sendEmailModal">{{ trans('site.send-email') }}</button>
 			<button type="button" class="margin-top btn btn-warning" data-toggle="modal" data-target="#preferredEditorModal">Preferred Editor</button>
+			<button type="button" class="margin-top btn btn-success setVippsEFakturaBtn" data-toggle="modal"
+					data-target="#setVippsEFakturaModal"
+					data-vipps-number="{{ $learner->address ? $learner->address->vipps_phone_number : NULL}}">
+				{!! trans('site.set-vipps-efaktura') !!}
+			</button>
 
 			<div class="former-course-container">
 				<h4>{{ trans('site.former-courses') }}</h4>
@@ -140,7 +150,7 @@
 		        {{ session()->get('profile_success') }}
 		    </div>
 			@endif
-			
+
 			@if ( $errors->any() && !session()->has('not-former-courses'))
             <br />
             <br />
@@ -488,8 +498,8 @@
 							data-target="#createInvoiceModal">+ {{ trans('site.create-invoice') }}</button>
 					<h4>{{ trans_choice('site.invoices', 2) }}</h4>
 				</div>
-				<div class="table-responsive">
-					<table class="table">
+				<div class="table-responsive" style="padding: 10px">
+					<table class="table dt-table" id="invoice-table">
 						<thead>
 							<tr>
 								<th>{{ trans_choice('site.invoices', 1) }} #</th>
@@ -560,12 +570,13 @@
 										</button>
 									{{--@endif--}}
 
-									@if ($invoice->fiken_invoice_id)
+									@if ($invoice->fiken_invoice_id && !$invoice->fiken_is_paid)
 										<button class="btn btn-success btn-xs vippsFakturaBtn" style="margin-top: 5px"
 												data-toggle="modal"
 											data-target="#vippsFakturaModal"
-												data-action="{{ route('admin.learner.invoice.vipps-e-faktura', $invoice->id) }}">
-											VIPPS eFaktura
+												data-action="{{ route('admin.learner.invoice.vipps-e-faktura', $invoice->id) }}"
+												data-vipps-number="{{ $learner->address ? $learner->address->vipps_phone_number : NULL}}">
+											{!! trans('site.vipps-efaktura') !!}
 										</button>
 									@endif
 
@@ -805,6 +816,14 @@
 												Send Email
 											</button>
 										@endif
+
+										@if (in_array($assignment->id, $addOns))
+											<button class="btn btn-danger btn-xs deleteAssignmentAddOnBtn" data-toggle="modal"
+													data-target="#deleteAssignmentAddOnModal"
+											data-action="{{ route('admin.learner.assignment.delete-add-one', [$learner->id, $assignment->id]) }}">
+												Delete Add-on
+											</button>
+										@endif
 									</td>
 								</tr>
 								{{--@endif--}}
@@ -909,7 +928,7 @@
 								</td>
 								<td>
 									@if ($correction->expected_finish)
-										{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($correction->expected_finish) }}
+										{{ $correction->expected_finish_formatted }}
 										<br>
 									@endif
 
@@ -919,7 +938,7 @@
 										   data-action="{{ route('admin.other-service.update-expected-finish',
 										   ['id' => $correction->id, 'type' => 2]) }}"
 										   data-finish="{{ $correction->expected_finish ?
-										strftime('%Y-%m-%dT%H:%M:%S', strtotime($correction->expected_finish)) : '' }}">
+										strftime('%Y-%m-%d', strtotime($correction->expected_finish)) : '' }}">
 											Set Date
 										</a>
 									@endif
@@ -997,7 +1016,7 @@
 								</td>
 								<td>
 									@if ($copy_editing->expected_finish)
-										{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($copy_editing->expected_finish) }}
+										{{ $copy_editing->expected_finish_formatted }}
 										<br>
 									@endif
 
@@ -1007,7 +1026,7 @@
 										   data-action="{{ route('admin.other-service.update-expected-finish',
 										   ['id' => $copy_editing->id, 'type' => 1]) }}"
 										   data-finish="{{ $copy_editing->expected_finish ?
-										strftime('%Y-%m-%dT%H:%M:%S', strtotime($copy_editing->expected_finish)) : '' }}">
+										strftime('%Y-%m-%d', strtotime($copy_editing->expected_finish)) : '' }}">
 											{{ trans('site.set-date') }}
 										</a>
 									@endif
@@ -1035,7 +1054,7 @@
 
 										<button class="btn btn-danger btn-xs deleteOtherServiceBtn" type="button"
 												data-toggle="modal" data-target="#deleteOtherServiceModal"
-												data-action="{{ route('admin.other-service.delete', ['id' => $copy_editing->id, 'type' => 1]) }}"><i class="fa fa-check"></i></button>
+												data-action="{{ route('admin.other-service.delete', ['id' => $copy_editing->id, 'type' => 1]) }}"><i class="fa fa-trash"></i></button>
 								</td>
 							</tr>
 						@endforeach
@@ -2040,7 +2059,7 @@
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<h4 class="modal-title">
-					VIPPS eFaktura
+					{!! trans('site.vipps-efaktura') !!}
 				</h4>
 			</div>
 			<div class="modal-body">
@@ -2048,7 +2067,7 @@
 					{{ csrf_field() }}
 
 					<div class="form-group">
-						<label>Mobile Number</label>
+						<label>{!! trans('site.mobile-number') !!}</label>
 						<input type="text" class="form-control" name="mobile_number" required>
 					</div>
 
@@ -2678,7 +2697,7 @@
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>Expected finish date</label>
-						<input type="datetime-local" name="expected_finish" class="form-control" required>
+						<input type="date" name="expected_finish" class="form-control" required>
 					</div>
 					<div class="text-right">
 						<button class="btn btn-primary" type="submit">Submit</button>
@@ -3146,6 +3165,32 @@
 </div>
 <!--end email modal-->
 
+<div id="deleteAssignmentAddOnModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					Delete Add-on
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="formSubmitted(this)">
+					{{csrf_field()}}
+
+					<p>
+						Are you sure to delete this record?
+					</p>
+
+					<div class="text-right">
+						<input type="submit" class="btn btn-danger" value="{{ trans('site.delete') }}">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="registeredWebinarEmailModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-md">
 		<div class="modal-content">
@@ -3193,6 +3238,32 @@
 	</div>
 </div>
 <!--end email modal-->
+
+<div id="setVippsEFakturaModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					{!! trans('site.set-vipps-efaktura') !!}
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.learner.set-vipps-e-faktura', $learner->id) }}" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+
+					<div class="form-group">
+						<label>{!! trans('site.mobile-number') !!}</label>
+						<input type="text" class="form-control" name="mobile_number">
+					</div>
+
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -3288,28 +3359,14 @@
             });
         });
 
-        $(".deleteInvoiceBtn").click(function(){
-           let action = $(this).data('action');
-           $("#deleteInvoiceModal").find('form').attr('action', action);
-		});
+        let invoice_table = $("#invoice-table");
 
-        $(".vippsFakturaBtn").click(function() {
-            let action = $(this).data('action');
-            $("#vippsFakturaModal").find('form').attr('action', action);
-		});
-
-        $(".fikenCreditNoteBtn").click(function(){
+        invoice_table.on("click", ".fikenCreditNoteBtn", function(){
             let action = $(this).data('action');
             $("#fikenCreditNoteModal").find('form').attr('action', action);
         });
 
-        $("#submitDeleteInvoice").click(function(e) {
-           e.preventDefault();
-            $(this).attr('disabled','disabled');
-            $("#deleteInvoiceModal").find('form').submit();
-		});
-
-        $(".updateDueBtn").click(function(){
+        invoice_table.on("click", ".updateDueBtn", function(){
             let action = $(this).data('action');
             let form = $("#updateInvoiceDueModal").find('form');
             form.attr('action', action);
@@ -3317,6 +3374,25 @@
             form.find("[type=date]").val(due);
 
         });
+
+        invoice_table.on("click", ".deleteInvoiceBtn", function(){
+            let action = $(this).data('action');
+            $("#deleteInvoiceModal").find('form').attr('action', action);
+        });
+
+        invoice_table.on("click", ".vippsFakturaBtn", function(){
+            let action = $(this).data('action');
+            let vipps_phone_number = $(this).data('vipps-number');
+            let modal = $("#vippsFakturaModal");
+            modal.find('form').attr('action', action);
+            modal.find('input[name=mobile_number]').val(vipps_phone_number);
+        });
+
+        $("#submitDeleteInvoice").click(function(e) {
+           e.preventDefault();
+            $(this).attr('disabled','disabled');
+            $("#deleteInvoiceModal").find('form').submit();
+		});
 
         $(".deleteFromCourseBtn").click(function(){
             let action = $(this).data('action');
@@ -3558,6 +3634,12 @@
         modal.find('form').attr('action', action);
     });
 
+    $(".deleteAssignmentAddOnBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#deleteAssignmentAddOnModal');
+        modal.find('form').attr('action', action);
+    });
+
     $(".expiry-reminder-toggle").change(function(){
         let course_taken_id = $(this).attr('data-id');
         let is_checked = $(this).prop('checked');
@@ -3606,6 +3688,11 @@
         tinymce.get('sendEmailEditor').setContent(fields.email_content);
         form.find('[name=from_email]').val(fields.from_email);
 	});
+
+    $(".setVippsEFakturaBtn").click(function(){
+        let vipps_phone_number = $(this).data('vipps-number');
+        $("#setVippsEFakturaModal").find('input[name=mobile_number]').val(vipps_phone_number);
+    });
 
 	function updateOtherServiceFields(type) {
 	    let modal = $("#addOtherServiceModal");

@@ -8,6 +8,8 @@ use App\Http\FrontendHelpers;
 use App\Invoice;
 use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
+use App\Transaction;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -47,8 +49,17 @@ class InvoiceDueReminder extends Command
         CronLog::create(['activity' => 'InvoiceDueReminder CRON running.']);
 
         $dueDate    = Carbon::today()->addDay(14)->format('Y-m-d');
-        $invoices = Invoice::whereDate('fiken_dueDate',  $dueDate)
+        /*$invoices = Invoice::whereDate('fiken_dueDate',  $dueDate)
             ->where('fiken_is_paid', '=',0)
+            ->get();*/
+
+        $invoices   = \DB::table('invoices')
+            ->select('invoices.*', 'vipps_phone_number')
+            ->leftJoin('users', 'users.id', '=', 'invoices.user_id')
+            ->leftJoin('addresses', 'addresses.user_id', '=', 'users.id')
+            ->whereDate('fiken_dueDate',  $dueDate)
+            ->where('fiken_is_paid', '=',0)
+            ->whereNull('vipps_phone_number')
             ->get();
 
         $email_template = AdminHelpers::emailTemplate('Invoice Due Reminder');
@@ -57,9 +68,9 @@ class InvoiceDueReminder extends Command
         foreach ($invoices as $invoice) {
 
             $balance            = $invoice->fiken_balance;
-            $transactions_sum   = $invoice->transactions->sum('amount');
+            $transactions_sum   = Transaction::where('invoice_id', $invoice->id)->get()->sum('amount');
             $remaining          = $balance - $transactions_sum;
-            $user               = $invoice->user;
+            $user               = User::find($invoice->user_id);
             $to                 = $user->email;
             $redirectLink       = route('learner.invoice', ['filter' => $invoice->id]);
 

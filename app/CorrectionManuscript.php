@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\FrontendHelpers;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -34,5 +35,10 @@ class CorrectionManuscript extends Model {
     {
         return $this->hasOne('App\OtherServiceFeedback', 'service_id', 'id')
             ->where('service_type','=',2);
+    }
+
+    public function getExpectedFinishFormattedAttribute()
+    {
+        return $this->attributes['expected_finish'] ? FrontendHelpers::formatDate($this->attributes['expected_finish']) : '';
     }
 }

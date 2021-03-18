@@ -967,7 +967,8 @@ class AdminHelpers
             array( 'id' => 6, 'option' => 'Support', 'route' => 'admin.publishing.index', 'request_name' => 'publishing'),
             array( 'id' => 7, 'option' => 'Free Manuscripts', 'route' => 'admin.free-manuscript.index', 'request_name' => 'free-manuscript'),
             array( 'id' => 13, 'option' => 'Other Services', 'route' => 'admin.other-service.index', 'request_name' => 'other-service'),
-            array( 'id' => 8, 'option' => 'Invoices', 'route' => 'admin.invoice.index', 'request_name' => 'invoice'),
+            array( 'id' => 8, 'option' => 'Årshjul', 'route' => 'admin.yearly-calendar.index', 'request_name' => 'yearly_calendar'),
+            //array( 'id' => 8, 'option' => 'Invoices', 'route' => 'admin.invoice.index', 'request_name' => 'invoice'),
             array( 'id' => 9, 'option' => 'Shop Manuscripts', 'route' => 'admin.shop-manuscript.index', 'request_name' => 'shop-manuscript'),
             array( 'id' => 10, 'option' => 'FAQs', 'route' => 'admin.faq.index', 'request_name' => 'faq'),
             array( 'id' => 11, 'option' => 'Admins', 'route' => 'admin.admin.index', 'request_name' => 'admin'),
@@ -1128,6 +1129,13 @@ class AdminHelpers
 
         // set it to whatever you want to convert it
         return $timestamp->setTimeZone(new \DateTimeZone($timezone));
+    }
+
+    public static function convertTZNoFixedTZFormat($date, $timezone) {
+        $original = new \DateTime($date, new \DateTimeZone('UTC'));
+        $timezoneName = timezone_name_from_abbr("", 1*3600, false);
+        $modified = $original->setTimezone(new \DateTimezone($timezoneName));
+        return $modified;
     }
 
     public static function createMessageBag($message = '')

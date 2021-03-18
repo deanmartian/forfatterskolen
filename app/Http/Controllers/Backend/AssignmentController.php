@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 use App\AssignmentAddon;
 use App\AssignmentFeedbackNoGroup;
 use App\AssignmentTemplate;
+use App\CoursesTaken;
 use App\DelayedEmail;
 use App\Helpers\DocumentParser;
 use App\Helpers\Html2Text;
@@ -12,6 +13,7 @@ use App\Http\FrontendHelpers;
 use App\Jobs\AddMailToQueueJob;
 use App\Mail\AssignmentManuscriptEmailToList;
 use App\Mail\SubjectBodyEmail;
+use App\Package;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -398,6 +400,60 @@ class AssignmentController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * Download learners with the assignment even if they don't submit assignment manuscript yet
+     * include the users that have the assignment as add-on
+     * @param $assignment_id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function exportLearnersIncludeAddOnLearners( $assignment_id )
+    {
+        $assignment = Assignment::find($assignment_id);
+
+        $packages = Package::where('course_id', $assignment->course->id)->get()->pluck('id');
+        $learners = \DB::table('users')
+            ->join('courses_taken', 'courses_taken.user_id', '=', 'users.id')
+            ->whereIn('package_id', $packages)
+            ->get();
+
+        if ($packages = $assignment->allowed_packages) {
+            $learners = \DB::table('users')
+                ->join('courses_taken', 'courses_taken.user_id', '=', 'users.id')
+                ->whereIn('package_id', $packages)
+                ->get();
+        }
+
+        $addOnLearners = \DB::table('users')
+            ->join('assignment_addons', 'assignment_addons.user_id', '=', 'users.id')
+            ->where('assignment_id', $assignment_id)
+            ->get();
+
+        $allLearners = collect($learners)->merge($addOnLearners);
+
+        if ($allLearners->count()) {
+            $excel          = \App::make('excel');
+            $learnerList    = [];
+            $learnerList[]  = ['Name', 'Email'];
+
+            // loop all the learners
+            foreach ($allLearners as $learner) {
+                $learnerList[] = [$learner->first_name . ' ' . $learner->last_name, $learner->email];
+            }
+
+            $excel->create($assignment->title.' Learners', function($excel) use ($learnerList) {
+
+                // Build the spreadsheet, passing in the payments array
+                $excel->sheet('sheet1', function($sheet) use ($learnerList) {
+                    // prevent inserting an empty first row
+                    $sheet->fromArray($learnerList, null, 'A1', false, false);
+                });
+            })->download('xlsx');
+        }
+
+        return redirect()->back();
+
     }
 
     /**

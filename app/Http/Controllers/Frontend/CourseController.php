@@ -59,7 +59,7 @@ class CourseController extends Controller
     public function getFreeCourse($course_id, Request $request)
     {
         $course = Course::find($course_id);
-        if ($course && $course->is_free) {
+        if ($course && $course->is_free && $course->status) {
             $package = $course->packages()->first();
 
             if (Auth::guest()) {

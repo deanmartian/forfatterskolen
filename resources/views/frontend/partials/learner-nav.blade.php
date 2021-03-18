@@ -191,7 +191,7 @@
             <div>
                 <a href="{{route('learner.course')}}">
                     <i class="sprite-menu student-cap d-block"></i>
-                    Mine Kurs
+                    {!! trans('site.learner.nav.course') !!}
                 </a>
             </div>
         </div>
@@ -199,7 +199,7 @@
             <div>
                 <a href="{{route('learner.shop-manuscript')}}">
                     <i class="sprite-menu file d-block"></i>
-                    Manuskripter
+                    {!! trans('site.learner.nav.manuscript') !!}
                 </a>
             </div>
         </div>
@@ -207,7 +207,7 @@
             <div>
                 <a href="{{route('learner.workshop')}}">
                     <i class="sprite-menu briefcase d-block"></i>
-                    Skriveverksted
+                    {!! trans('site.learner.nav.workshop') !!}
                 </a>
             </div>
         </div>
@@ -215,7 +215,7 @@
             <div>
                 <a href="{{route('learner.webinar')}}">
                     <i class="sprite-menu play-button d-block"></i>
-                    Felleswebinarer
+                    {!! trans('site.learner.nav.webinars') !!}
                 </a>
             </div>
         </div>
@@ -223,7 +223,7 @@
             <div>
                 <a href="{{route('learner.course-webinar')}}">
                     <i class="sprite-menu play-button d-block"></i>
-                    Kurswebinarer
+                    {!! trans('site.learner.nav.course-webinars') !!}
                 </a>
             </div>
         </div>
@@ -231,7 +231,7 @@
             <div>
                 <a href="{{route('learner.assignment')}}">
                     <i class="sprite-menu agenda d-block"></i>
-                    Oppgaver
+                    {!! trans('site.learner.nav.assignment') !!}
                 </a>
             </div>
         </div>
@@ -239,7 +239,7 @@
             <div>
                 <a href="{{route('learner.calendar')}}">
                     <i class="sprite-menu calendar d-block"></i>
-                    Kalender
+                    {!! trans('site.learner.nav.calendar') !!}
                 </a>
             </div>
         </div>
@@ -247,7 +247,7 @@
             <div>
                 <a href="{{route('learner.invoice')}}">
                     <i class="sprite-menu list-on-window d-block"></i>
-                    Fakturaer
+                    {!! trans('site.learner.nav.invoice') !!}
                 </a>
             </div>
         </div>
@@ -255,7 +255,7 @@
             <div>
                 <a href="{{route('learner.upgrade')}}">
                     <i class="sprite-menu internet d-block"></i>
-                    Kurspakker - Oppgradering
+                    {!! trans('site.learner.nav.upgrade') !!}
                 </a>
             </div>
         </div>
@@ -271,7 +271,7 @@
             <div>
                 <a href="{{route('learner.private-message')}}">
                     <i class="fa fa-comment fa-use-comment d-block"></i>
-                    Beskjeder
+                    {!! trans('site.learner.nav.message') !!}
                 </a>
             </div>
         </div>
@@ -279,7 +279,7 @@
             <div>
                 <a href="{{route('learner.profile')}}">
                     <i class="sprite-menu user d-block"></i>
-                    Profil \ Kursbevis
+                    {!! trans('site.learner.nav.profile') !!}
                 </a>
             </div>
         </div>

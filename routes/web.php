@@ -222,6 +222,7 @@ Route::group([
         Route::get('/invoice/{id}', 'LearnerController@invoiceShow')->name('learner.invoice.show'); // Invoice Single Page
         Route::get('/invoice/{invoice_number}/vipps-payment', 'LearnerController@invoiceVippsPayment')->name('learner.invoice.vipps-payment'); // Invoice Single Page
         Route::post('learner/invoice/{id}/e-faktura', 'LearnerController@vippsEFaktura')->name('learner.invoice.vipps-e-faktura');
+        Route::post('learner/set-vipss-efaktura', 'LearnerController@setVippsEFaktura')->name('learner.set-vipps-e-faktura');
         Route::get('/invoice/{id}/download/{type}', 'LearnerController@downloadInvoiceByType')->name('learner.invoice.download-by-type');
         Route::get('/publishing', 'LearnerController@publishing')->name('learner.publishing'); // Publishers House Page
         Route::get('/writing-groups', 'LearnerController@writingGroups')->name('learner.writing-groups'); // Writing Groups Page
@@ -517,6 +518,7 @@ Route::group([
         Route::get('shop-manuscript/{id}/download_synopsis', 'LearnerController@downloadManuscriptSynopsis')->name('admin.learner.download_synopsis');
         Route::post('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}/comment', 'LearnerController@shopManuscriptTakenShowComment')->name('shop_manuscript_taken_comment');
         Route::get('learner/{user_id}/assignment/{id}', 'LearnerController@assignment')->name('admin.learner.assignment');
+        Route::post('learner/{user_id}/assignment/{id}/delete-add-one', 'LearnerController@deleteAssignmentAddOn')->name('admin.learner.assignment.delete-add-one');
         Route::post('learner/{user_id}/auto-renew', 'LearnerController@setAutoRenewCourses')->name('admin.learner.update-auto-renew');
         Route::post('learner/{user_id}/webinar-auto-register-update', 'LearnerController@autoRegisterCourseWebinar')->name('admin.learner.webinar-auto-register-update');
 
@@ -556,6 +558,7 @@ Route::group([
         Route::post('learner/invoice/{id}/create-fiken-credit-note', 'LearnerController@addFikenCreditNote')
             ->name('admin.learner.invoice.create-fiken-credit-note');
         Route::post('learner/invoice/{id}/e-faktura', 'LearnerController@vippsEFaktura')->name('admin.learner.invoice.vipps-e-faktura');
+        Route::post('learner/{user_id}/set-vipss-efaktura', 'LearnerController@setVippsEFaktura')->name('admin.learner.set-vipps-e-faktura');
         Route::delete('learner/course/{course_taken_id}/delete', 'LearnerController@deleteFromCourse')->name('admin.learner.delete-from-course');
         Route::post('learner/{learner_id}/course/{course_taken_id}/renew', 'LearnerController@renewCourse')->name('admin.learner.renew-course');
         Route::post('learner/{learner_id}/send-email', 'LearnerController@sendLearnerEmail')->name('admin.learner.send-email');
@@ -904,6 +907,8 @@ Route::group([
         Route::get('assignment/{id}/download', 'AssignmentController@downloadManuscript')->name('assignment.group.download_manuscript');
         Route::get('assignment/{id}/downloadAll', 'AssignmentController@downloadAllManuscript')->name('assignment.group.download_all_manuscript');
         Route::get('assignment/{id}/exportEmailList', 'AssignmentController@exportEmailList')->name('assignment.group.export_email_list');
+        Route::get('assignment/{id}/export-all-learners-include-add-on-learners', 'AssignmentController@exportLearnersIncludeAddOnLearners')
+            ->name('assignment.export-all-learners-include-add-on-learners');
         Route::post('assignment/{id}/send-email-to-list', 'AssignmentController@sendEmailToList')->name('assignment.group.send-email-to-list');
         Route::get('assignment/{id}/generate-doc', 'AssignmentController@generateDoc')->name('assignment.group.generate-doc');
         Route::get('assignment/{id}/download-generate-doc', 'AssignmentController@downloadGenerateDoc')->name('assignment.group.download-generate-doc');
@@ -1173,6 +1178,7 @@ Route::group([
         Route::get('/invoice/{id}/download-fiken', 'InvoiceController@downloadFikenPdf')->name('admin.invoice.download-fiken-pdf'); // Store Transaction
 
 
+        Route::get('/yearly_calendar', 'AdminController@yearlyCalendar')->name('admin.yearly-calendar.index');
 
 
         // Package shop manuscripts route

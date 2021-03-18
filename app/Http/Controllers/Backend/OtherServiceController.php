@@ -241,14 +241,15 @@ class OtherServiceController extends Controller
     {
         if ($service_type == 1 || $service_type == 2 || $service_type == 3) {
             $service = '';
-            if ($service_type == 1) {
+
+            if (intval($service_type) === 1) {
                 $copyEditing = CopyEditingManuscript::find($service_id);
                 $copyEditing->expected_finish = $request->expected_finish;
                 $copyEditing->save();
                 $service = 'Språkvask';
             }
 
-            if ($service_type == 2){
+            if (intval($service_type) === 2){
                 $correction = CorrectionManuscript::find($service_id);
                 $correction->expected_finish = $request->expected_finish;
                 $correction->save();

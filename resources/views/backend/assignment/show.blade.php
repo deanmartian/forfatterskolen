@@ -35,9 +35,13 @@
 			
 			<div class="table-responsive">
 				<button type="button" class="pull-right btn btn-primary btn-sm margin-bottom" data-toggle="modal" data-target="#addManuscriptModal">{{ trans('site.add-manuscript') }}</button>
-				<button type="button" class="pull-right btn btn-warning btn-sm margin-bottom margin-right-5" data-toggle="modal" data-target="#addAssignmentToLearnerModal">
+				<a type="button" class="pull-right btn btn-warning btn-sm margin-bottom margin-right-5" data-toggle="modal" data-target="#addAssignmentToLearnerModal">
 					Add-on for Learner
-				</button>
+				</a>
+				<a href="{{ route('assignment.export-all-learners-include-add-on-learners', $assignment->id) }}" class="pull-right btn btn-secondary btn-sm margin-bottom margin-right-5"
+						style="border: 1px solid #000">
+					Export Learners
+				</a>
 				@if ($assignment->for_editor && $assignment->manuscripts->count())
 					@if($assignment->generated_filepath)
 						<a href="{{ route('assignment.group.download-generate-doc', $assignment->id) }}" class="pull-right btn btn-success btn-sm margin-bottom margin-right-5">{{ trans('site.download-generated-file') }}</a>

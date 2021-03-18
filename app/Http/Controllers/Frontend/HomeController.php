@@ -258,7 +258,7 @@ class HomeController extends Controller
                 }*/
 
                 $word_per_price = 1000;
-                $price_per_word = 22;
+                $price_per_word = 33;
                 $rounded_word = FrontendHelpers::roundUpToNearestMultiple($word_count);
 
                 $calculated_price = ($rounded_word/$word_per_price) * $price_per_word;
@@ -336,7 +336,7 @@ class HomeController extends Controller
                 // count characters with space
                 $word_count = strlen($docObj->convertToText()) - 2;
                 $word_per_price = 1000;
-                $price_per_word = $plan == 1 ? 22 : 19;
+                $price_per_word = $plan == 1 ? 33 : 25;
                 $rounded_word = FrontendHelpers::roundUpToNearestMultiple($word_count);
 
                 $calculated_price = ($rounded_word/$word_per_price) * $price_per_word;
@@ -538,7 +538,7 @@ class HomeController extends Controller
 
 
                 $word_per_price = 1000;
-                $price_per_word = 19;
+                $price_per_word = 25;
                 $rounded_word = FrontendHelpers::roundUpToNearestMultiple($word_count);
 
                 $calculated_price = ($rounded_word/$word_per_price) * $price_per_word;
