@@ -30,7 +30,7 @@
                             $month = $var['minMonth'];
                             $year =  $var['minYear'];
                             $mn = "";
-                            $ml = 0;
+                            $ml = 1;
                             $sumPAssgn = 0;
                             $sumShpMan = 0;
                             $sumGAssgn = 0;
