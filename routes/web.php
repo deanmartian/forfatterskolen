@@ -2,14 +2,13 @@
 
 // Domains
 
-/*$front = 'forfatterskolen.local';
-$admin = 'admin.forfatterskolen.local';
-$editor = 'editor.forfatterskolen.local';
-*/
-
 $front = 'www.forfatterskolen.no';
 $admin = 'admin.forfatterskolen.no';
 $editor = 'editor.forfatterskolen.no';
+
+/*$front = 'forfatterskolen.local';
+$admin = 'admin.forfatterskolen.local';
+$editor = 'editor.forfatterskolen.local';*/
 
 
 // get/set the locale

@@ -1172,12 +1172,12 @@ class HomeController extends Controller
 
             // validate the post request
             $this->validate($request, $validates);
-            $list_id = 10;
+            $list_id = 136;
             AdminHelpers::addToActiveCampaignList($list_id, $request->except('_token','terms'));
-            return redirect()->route('front.subscribe-success');
+            return response()->json(['redirect_link' => route('front.subscribe-success')]);
         }
 
-        return redirect()->back();
+        return response()->json(['redirect_link' => route('front.home')]);
     }
 
     /**

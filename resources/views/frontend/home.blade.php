@@ -37,60 +37,12 @@
                                 {{ trans('site.front.main-form.sub-heading') }}
                             </h2>
 
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fa user-icon"></i></span>
-                                </div>
-                                <input type="text" name="name" class="form-control no-border-left"
-                                       placeholder="Fornavn" required value="{{old('name')}}">
+                            <div class="btn-container text-center" style="margin-top: 50px">
+                                <button type="button" class="btn font-montserrat-light" data-toggle="modal"
+                                        data-target="#writingPlanModal">
+                                    {{ trans('site.front.main-form.submit-text') }}
+                                </button>
                             </div>
-
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fa email-icon"></i></span>
-                                </div>
-                                <input type="email" name="email" placeholder="Epost"
-                                       class="form-control no-border-left" required>
-                            </div>
-
-                            <div class="row options-row">
-                                <div class="col-md-6">
-                                    <div class="custom-checkbox">
-                                        <input type="checkbox" name="terms" id="terms" required>
-                                        <?php
-                                            $search_string = [
-                                                '[start_link]', '[end_link]'
-                                            ];
-                                            $replace_string = [
-                                                '<a href="'.route('front.opt-in-terms').'" title="View front page terms">','</a>'
-                                            ];
-                                            $terms_link = str_replace($search_string, $replace_string, trans('site.front.accept-terms'))
-                                        ?>
-                                        <label for="terms">{!! $terms_link !!}</label>
-                                    </div>
-
-                                    <small class="font-montserrat-light">{{ trans('site.front.main-form.note') }}</small>
-                                </div>
-
-                                <div class="col-md-6 btn-container">
-                                    <button type="submit" class="btn font-montserrat-light">
-                                        {{ trans('site.front.main-form.submit-text') }}
-                                    </button>
-                                </div>
-                            </div>
-
-                            {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJS() !!}
-                            {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display() !!}
-
-                            @if ( $errors->any() )
-                                <div class="alert alert-danger no-bottom-margin mt-3">
-                                    <ul>
-                                        @foreach($errors->all() as $error)
-                                            <li>{{$error}}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
                         </form>
                     </div> <!-- end form-container -->
                 </div> <!-- end main-form -->
@@ -447,6 +399,76 @@
 
         </div>
     </div>
+
+    <div id="writingPlanModal" class="modal fade no-header-modal" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body main-form" style="padding: 30px">
+
+                    <div class="form-container">
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa user-icon"></i></span>
+                            </div>
+                            <input type="text" name="name" class="form-control no-border-left"
+                                   placeholder="Fornavn" required value="{{old('name')}}">
+                        </div>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa email-icon"></i></span>
+                            </div>
+                            <input type="email" name="email" placeholder="Epost"
+                                   class="form-control no-border-left" required>
+                        </div>
+
+                        <div class="row options-row">
+                            <div class="col-md-6">
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" name="terms" id="terms" required>
+                                    <?php
+                                    $search_string = [
+                                        '[start_link]', '[end_link]'
+                                    ];
+                                    $replace_string = [
+                                        '<a href="'.route('front.opt-in-terms').'" title="View front page terms">','</a>'
+                                    ];
+                                    $terms_link = str_replace($search_string, $replace_string, trans('site.front.accept-terms'))
+                                    ?>
+                                    <label for="terms">{!! $terms_link !!}</label>
+                                </div>
+
+                                <small class="font-montserrat-light">{{ trans('site.front.main-form.note') }}</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJS() !!}
+                                {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display(['data-callback' => 'captchaCB']) !!}
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="captcha" value="">
+
+                        <div class="btn-container text-right" style="margin-top: 20px">
+                            <button type="button" class="btn font-montserrat-light" onclick="submitWritingPlan(this)">
+                                {{ trans('site.front.main-form.submit-text') }}
+                            </button>
+                        </div>
+
+                        <div class="alert alert-danger no-bottom-margin mt-3 d-none">
+                            <ul>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 @stop
 @section('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
@@ -589,6 +611,50 @@
                 item_third.find('.item__third').not(':eq(1)').remove();
             }
 
+        }
+
+        function submitWritingPlan(self) {
+            let modal = $("#writingPlanModal");
+            let name = modal.find('[name=name]').val();
+            let email = modal.find('[name=email]').val();
+            let terms = modal.find('[name=terms]:checked').length ? 1 : '';
+            let captcha = modal.find('[name=captcha]').val();
+
+            let data = {
+                name: name,
+                email: email,
+                terms: terms,
+                'g-recaptcha-response': captcha
+            };
+
+            let error_container = modal.find('.alert-danger');
+            error_container.find("li").remove();
+            self.disabled = true;
+
+            $.post("/", data).then(function(response) {
+
+                error_container.addClass('d-none');
+                window.location.href = response.redirect_link;
+
+            }).catch( error => {
+                self.disabled = false;
+                $.each(error.responseJSON, function(k, v) {
+                    let item = "<li>" + v[0] + "</li>";
+
+                    if (error_container.hasClass('d-none')) {
+                        error_container.removeClass('d-none');
+                    }
+
+                    error_container.find("ul").append(item);
+                })
+
+            } );
+
+        }
+
+        // callback function if the captcha is checked
+        function captchaCB(captcha) {
+            $("#writingPlanModal").find('[name=captcha]').val(captcha);
         }
     </script>
 @stop
