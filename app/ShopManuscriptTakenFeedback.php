@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ShopManuscriptTakenFeedback extends Model
 {
     protected $table = 'shop_manuscript_taken_feedbacks';
-    protected $fillable = ['shop_manuscript_taken_id', 'filename', 'grade', 'notes', 'hours_worked'];
+    protected $fillable = ['shop_manuscript_taken_id', 'filename', 'grade', 'notes', 'hours_worked', 'notes_to_head_editor'];
 
     public function shop_manuscript_taken()
     {

@@ -1,0 +1,56 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class AddNotesToHeadEditorColumnOnFeedbackTables extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('assignment_feedbacks', function (Blueprint $table) {
+            $table->string('notes_to_head_editor', 1000)->after('hours_worked')->default('')->nullable();
+        });
+        Schema::table('assignment_feedbacks_no_group', function (Blueprint $table) {
+            $table->string('notes_to_head_editor', 1000)->after('hours_worked')->default('')->nullable();
+        });
+        Schema::table('shop_manuscript_taken_feedbacks', function (Blueprint $table) {
+            $table->string('notes_to_head_editor', 1000)->after('hours_worked')->default('')->nullable();
+        });
+        Schema::table('other_service_feedbacks', function (Blueprint $table) {
+            $table->string('notes_to_head_editor', 1000)->after('hours_worked')->default('')->nullable();
+        });
+        Schema::table('coaching_timer_manuscripts', function (Blueprint $table) {
+            $table->string('notes_to_head_editor', 1000)->after('hours_worked')->default('')->nullable();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('assignment_feedbacks', function ($table) {
+            $table->dropColumn('notes_to_head_editor');
+        });
+        Schema::table('assignment_feedbacks_no_group', function ($table) {
+            $table->dropColumn('notes_to_head_editor');
+        });
+        Schema::table('shop_manuscript_taken_feedbacks', function ($table) {
+            $table->dropColumn('notes_to_head_editor');
+        });
+        Schema::table('other_service_feedbacks', function ($table) {
+            $table->dropColumn('notes_to_head_editor');
+        });
+        Schema::table('coaching_timer_manuscripts', function ($table) {
+            $table->dropColumn('notes_to_head_editor');
+        });
+    }
+}

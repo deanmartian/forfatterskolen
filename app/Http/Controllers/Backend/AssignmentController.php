@@ -797,6 +797,7 @@ class AssignmentController extends Controller
                 $assignmentFeedbackNoGroup->filename = $filesWithPath;
             }
             $assignmentFeedbackNoGroup->hours_worked = $request->hours;
+            $assignmentFeedbackNoGroup->notes_to_head_editor = $request->notes_to_head_editor;
             $assignmentFeedbackNoGroup->save();
 
             $assignmentManuscript = AssignmentManuscript::find($manuscript_id);
@@ -828,8 +829,18 @@ class AssignmentController extends Controller
                     'filename' => $filesWithPath,
                     'is_admin' => true,
                     'is_active' => true,
-                    'hours_worked' => $request->hours
+                    'hours_worked' => $request->hours,
+                    'notes_to_head_editor' => $request->notes_to_head_editor
                 ]);
+
+                // send email to head editor
+                $emailTemplate = AdminHelpers::emailTemplate('New Pending Feedback');
+                $to = User::where('role', 1)->where('head_editor', 1)->first();
+
+                dispatch(new AddMailToQueueJob($to->email, $emailTemplate->subject, $emailTemplate->email_content, $emailTemplate->from_email,
+                null, null,
+                'new-pending-feedback', null));
+
                 return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback saved successfully.'),
                 'alert_type' => 'success']);
 
@@ -839,6 +850,7 @@ class AssignmentController extends Controller
                 'alert_type' => 'warning']);
 
             endif;
+
         }
         
     }

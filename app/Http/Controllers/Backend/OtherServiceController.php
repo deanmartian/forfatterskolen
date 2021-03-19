@@ -337,6 +337,7 @@ class OtherServiceController extends Controller
                         $otherServiceFeedback->manuscript = $filesWithPath;
                     }
                     $otherServiceFeedback->hours_worked = $request->hours_worked;
+                    $otherServiceFeedback->notes_to_head_editor = $request->notes_to_head_editor;
                     $otherServiceFeedback->save();
     
                     return redirect()->back()->with([
@@ -356,6 +357,7 @@ class OtherServiceController extends Controller
                     $data['service_id'] = $service_id;
                     $data['service_type'] = $service_type;
                     $data['hours_worked'] = $request->hours_worked;
+                    $data['notes_to_head_editor'] = $request->notes_to_head_editor;
                     OtherServiceFeedback::create($data);
     
                     //update status
@@ -372,6 +374,14 @@ class OtherServiceController extends Controller
                         $correction->save();
                         $service = 'Korrektur';
                     }
+
+                    // send email to head editor
+                    $emailTemplate = AdminHelpers::emailTemplate('New Pending Feedback');
+                    $to = User::where('role', 1)->where('head_editor', 1)->first();
+
+                    dispatch(new AddMailToQueueJob($to->email, $emailTemplate->subject, $emailTemplate->email_content, $emailTemplate->from_email,
+                    null, null,
+                    'new-pending-feedback', null));
     
                     return redirect()->back()->with([
                         'errors'                => AdminHelpers::createMessageBag($service.' Feedback added successfully.'),

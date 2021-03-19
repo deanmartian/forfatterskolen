@@ -138,7 +138,7 @@ class AssignmentGroupController extends Controller
     public function submit_feedback($group_id, $id, Request $request)
     {
         $learner_id = AssignmentGroupLearner::find($id)->user_id;
-        $filesWithPath = getFiles($request, $learner_id);
+        $filesWithPath = $this->getFiles($request, $learner_id);
 
         if($request->feedback_id){
             
@@ -150,10 +150,13 @@ class AssignmentGroupController extends Controller
 
             if($filesWithPath){
                 $assignmentFeedback = AssignmentFeedback::where('assignment_group_learner_id', $id)
-                                                        ->update(['filename' => $filesWithPath,'hours_worked' => $request->hours]);
+                                                        ->update(['filename' => $filesWithPath,
+                                                                'hours_worked' => $request->hours,
+                                                                'notes_to_head_editor' => $request->notes_to_head_editor]);
             }else{
                 $assignmentFeedback = AssignmentFeedback::where('assignment_group_learner_id', $id)
-                                                        ->update(['hours_worked' => $request->hours]);
+                                                        ->update(['hours_worked' => $request->hours,
+                                                                'notes_to_head_editor' => $request->notes_to_head_editor]);
             }
             
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback updated successfully.'),
@@ -178,8 +181,18 @@ class AssignmentGroupController extends Controller
                     'filename' => $filesWithPath,
                     'is_admin' => true,
                     'is_active' => true,
-                    'hours_worked' => $request->hours
+                    'hours_worked' => $request->hours,
+                    'notes_to_head_editor' => $request->notes_to_head_editor
                 ]);
+
+                // send email to head editor
+                $emailTemplate = AdminHelpers::emailTemplate('New Pending Feedback');
+                $to = User::where('role', 1)->where('head_editor', 1)->first();
+
+                dispatch(new AddMailToQueueJob($to->email, $emailTemplate->subject, $emailTemplate->email_content, $emailTemplate->from_email,
+                null, null,
+                'new-pending-feedback', null));
+
                 return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback saved successfully.'),
                         'alert_type' => 'success']);
             else:
@@ -195,7 +208,7 @@ class AssignmentGroupController extends Controller
 
     public function approveFeedbackCourse($manuscript_id, $learner_id, $feedback_id, Request $request)
     {
-        $filesWithPath = getFiles($request, $learner_id);
+        $filesWithPath = $this->getFiles($request, $learner_id);
 
         $assignmentManuscript = AssignmentManuscript::find($manuscript_id);
         $assignmentManuscript->has_feedback = 1;

@@ -202,6 +202,7 @@ class ShopManuscriptController extends Controller
             }
             $shopManuscriptTakenFeedback->notes = $request->notes;
             $shopManuscriptTakenFeedback->hours_worked = $request->hours;
+            $shopManuscriptTakenFeedback->notes_to_head_editor = $request->notes_to_head_editor;
             $shopManuscriptTakenFeedback->save();
 
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback updated successfully.'),
@@ -217,8 +218,17 @@ class ShopManuscriptController extends Controller
                     'shop_manuscript_taken_id' => $shopManuscriptTaken->id,
                     'filename' => json_encode($files),
                     'notes' => $request->notes,
-                    'hours_worked' => $request->hours
+                    'hours_worked' => $request->hours,
+                    'notes_to_head_editor' => $request->notes_to_head_editor
                 ]);
+
+                // send email to head editor
+                $emailTemplate = AdminHelpers::emailTemplate('New Pending Feedback');
+                $to = User::where('role', 1)->where('head_editor', 1)->first();
+
+                dispatch(new AddMailToQueueJob($to->email, $emailTemplate->subject, $emailTemplate->email_content, $emailTemplate->from_email,
+                null, null,
+                'new-pending-feedback', null));
 
                 return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback saved successfully.'),
                     'alert_type' => 'success']);

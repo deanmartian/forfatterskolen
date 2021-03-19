@@ -74,6 +74,7 @@
 														data-updated_at = "{{$assignedManuscript->noGroupFeedbacks->first()->updated_at}}"
 														data-feedback_id = "{{$assignedManuscript->noGroupFeedbacks->first()->id}}"
 														data-grade = "{{$assignedManuscript->grade}}"
+														data-notes_to_head_editor = "{{$assignedManuscript->noGroupFeedbacks->first()->notes_to_head_editor}}"
 														data-edit = "1"
 														data-name="{{ $assignedManuscript->user->id }}"
 														data-action="{{ route('editor.assignment.group.manuscript-feedback-no-group',
@@ -157,6 +158,7 @@
 													data-f_file = "{{$feedbackFile}}"
 													data-f_notes = "{{$shopManuscript->feedbacks->first()->notes}}"
 													data-hours = "{{$shopManuscript->feedbacks->first()->hours_worked}}"
+													data-notes_to_head_editor = "{{$shopManuscript->feedbacks->first()->notes_to_head_editor}}"
 													data-action="{{ route('editor.admin.shop-manuscript-taken-feedback.store',
 													$shopManuscript->id) }}">
 													<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
@@ -218,6 +220,7 @@
 													data-feedback_id = "'.$feedback[0]->id.'"
 													data-grade = "'.$assignedAssignment->grade.'"
 													data-edit = "1"
+													data-notes_to_head_editor = "'.$feedback[0]->notes_to_head_editor.'"
 													data-name="'.$assignedAssignment->user->id.'"
 													data-action="'.route('editor.assignment.group.submit_feedback',
 													['group_id' => $groupDetails[0]->assignment_group_id, 'id' => $groupDetails[0]->assignment_group_learner_id]).'"
@@ -233,6 +236,7 @@
 													data-feedback_id = "'.$assignedAssignment->noGroupFeedbacks->first()->id.'"
 													data-grade = "'.$assignedAssignment->grade.'"
 													data-edit = "1"
+													data-notes_to_head_editor = "'.$assignedAssignment->noGroupFeedbacks->first()->notes_to_head_editor.'"
 													data-name="'.$assignedAssignment->user->id.'"
 													data-action="'.route('editor.assignment.group.manuscript-feedback-no-group',
 													['id' => $assignedAssignment->id, 'learner_id' => $assignedAssignment->user_id]).'"
@@ -392,6 +396,7 @@
 											data-f_updated_at = "{{$correction->feedback->updated_at}}"
 											data-f_file = "{{$correction->feedback->manuscript}}"
 											data-hours = "{{$correction->feedback->hours_worked}}"
+											data-notes_to_head_editor = "{{ $correction->feedback->notes_to_head_editor }}"
 											data-edit="1"
 											data-action="{{ route('editor.other-service.add-feedback',
 											['id' => $correction->id, 'type' => 2]) }}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
@@ -474,6 +479,7 @@
 											data-f_updated_at = "{{$copyEditing->feedback->updated_at}}"
 											data-f_file = "{{$copyEditing->feedback->manuscript}}"
 											data-hours = "{{$copyEditing->feedback->hours_worked}}"
+											data-notes_to_head_editor = "{{ $copyEditing->feedback->notes_to_head_editor }}"
 											data-service="1"
 											data-edit="1"
 											data-action="{{ route('editor.other-service.add-feedback',
@@ -575,6 +581,10 @@
 						<label>{{ trans('site.grade') }}</label>
 						<input type="number" class="form-control" step="0.01" name="grade">
 					</div>
+					<div class="form-group">
+                        <label>{{ trans('site.notes_to_head_editor') }}</label>
+                        <textarea name="notes_to_head_editor" class="form-control" cols="30" rows="3"></textarea>
+                    </div>
 					<!-- <div class="form-group">
                         <label>Hours Worked</label>
                         <input type="number" class="form-control" step="0.01" name="hours">
@@ -618,6 +628,10 @@
 					<div class="form-group">
                         <label>Hours Worked</label>
                         <input type="number" class="form-control" step="0.01" name="hours">
+                    </div>
+					<div class="form-group">
+                        <label>{{ trans('site.notes_to_head_editor') }}</label>
+                        <textarea name="notes_to_head_editor" class="form-control" cols="30" rows="3"></textarea>
                     </div>
 					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.add-feedback') }}</button>
 					<div class="clearfix"></div>
@@ -776,6 +790,10 @@
 					<div class="form-group">
                         <label>Hours Worked</label>
                         <input type="number" class="form-control" step="0.01" name="hours_worked">
+                    </div>
+					<div class="form-group">
+                        <label>{{ trans('site.notes_to_head_editor') }}</label>
+                        <textarea name="notes_to_head_editor" class="form-control" cols="30" rows="3"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary pull-right">{{ trans('site.add-feedback') }}</button>
                     <div class="clearfix"></div>
@@ -936,6 +954,10 @@
                         <label>{{ trans('site.grade') }}</label>
                         <input type="number" class="form-control" step="0.01" name="grade">
                     </div>
+					<div class="form-group">
+                        <label>{{ trans('site.notes_to_head_editor') }}</label>
+                        <textarea name="notes_to_head_editor" class="form-control" cols="30" rows="3"></textarea>
+                    </div>
 					<!-- <div class="form-group">
                         <label>Hours Worked</label>
                         <input type="number" class="form-control" step="0.01" name="hours">
@@ -1033,6 +1055,7 @@
 			let updatedAt = $(this).data('updated_at');
 			let feedbackId = $(this).data('feedback_id');
 			let grade = $(this).data('grade');
+			let notes_to_head_editor = $(this).data('notes_to_head_editor');
 			// let hours = $(this).data('hours');
 
             modal.find('form').find('input[type=file]').removeAttr('required');
@@ -1040,6 +1063,7 @@
 			modal.find('[name=grade]').val(grade)
 			modal.find('[name=manuscriptLabel]').text("Replace Manuscript")
 			modal.find('[name=feedback_id]').val(feedbackId)
+			modal.find('[name=notes_to_head_editor]').val(notes_to_head_editor)
 			// modal.find('[name=hours]').val(hours)
 			
 			modal.find('#dates').append('<label>Created At</label>&nbsp;'+createdAt);
@@ -1075,6 +1099,7 @@
 			let feedbackId = $(this).data('f_id');
 			let notes = $(this).data('f_notes');
 			let hours = $(this).data('hours');
+			let notes_to_head_editor = $(this).data('notes_to_head_editor');
 
             modal.find('form').find('input[type=file]').removeAttr('required');
 			modal.find('.modal-title').text("Edit Feedback");
@@ -1082,6 +1107,7 @@
 			modal.find('[name=manuscriptLabel]').text("Replace Manuscript")
 			modal.find('[name=feedback_id]').val(feedbackId)
 			modal.find('[name=hours]').val(hours)
+			modal.find('[name=notes_to_head_editor]').val(notes_to_head_editor)
 			
 			modal.find('#dates').append('<label>Created At</label>&nbsp;'+createdAt);
 			modal.find('#dates').append('<br><label>Last Updated At</label>&nbsp;'+updatedAt+'<br><br>');
@@ -1176,12 +1202,14 @@
 			let updatedAt = $(this).data('f_updated_at');
 			let feedbackId = $(this).data('f_id');
 			let hours = $(this).data('hours');
+			let notes_to_head_editor = $(this).data('notes_to_head_editor');
 
             modal.find('form').find('input[type=file]').removeAttr('required');
 			modal.find('.modal-title').text("Edit Feedback");
 			modal.find('[name=manuscriptLabel]').text("Replace Manuscript")
 			modal.find('[name=feedback_id]').val(feedbackId)
 			modal.find('[name=hours_worked]').val(hours)
+			modal.find('[name=notes_to_head_editor]').val(notes_to_head_editor)
 			
 			modal.find('#dates').append('<label>Created At</label>&nbsp;'+createdAt);
 			modal.find('#dates').append('<br><label>Last Updated At</label>&nbsp;'+updatedAt+'<br><br>');
@@ -1280,6 +1308,7 @@
 			let createdAt = $(this).data('created_at');
 			let updatedAt = $(this).data('updated_at');
 			let feedbackId = $(this).data('feedback_id');
+			let notesToHeadEditor = $(this).data('notes_to_head_editor');
 			// let hours = $(this).data('hours');
 
             modal.find('form').find('input[type=file]').removeAttr('required');
@@ -1287,6 +1316,7 @@
 			modal.find('[name=grade]').val(grade)
 			modal.find('[name=manuscriptLabel]').text("Replace Manuscript")
 			modal.find('[name=feedback_id]').val(feedbackId)
+			modal.find('[name=notes_to_head_editor]').val(notesToHeadEditor)
 			// modal.find('[name=hours]').val(hours)
 			
 			modal.find('#dates').append('<label>Created At</label>&nbsp;'+createdAt);
