@@ -57,7 +57,7 @@
         </div>--}}
 
         <div class="container upcoming-container">
-            <video loop id="vid">
+            <video loop muted id="vid">
                 <source src="{{ asset('video/Reisen_final.mp4') }}" type="video/mp4">
             </video>
             <div class="row upcoming-row">
