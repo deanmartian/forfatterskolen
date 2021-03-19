@@ -12130,10 +12130,10 @@ textarea.form-control {
 .front-page-new .main-form {
     background: linear-gradient( rgba(135, 39, 54, .9), rgba(135, 39, 54, .9));
     position: absolute;
-    bottom: 0;
+    bottom: 12%;
     right: 5%;
     width: 50%;
-    min-height: 530px;
+    min-height: 330px;
     padding: 70px 70px 0;
 }
 
@@ -13041,7 +13041,7 @@ footer .copyright {
     }
 
     .front-page-new .main-form {
-        min-height: 500px;
+        min-height: 300px;
         padding: 55px 25px 0;
         right: 0;
     }
@@ -13162,6 +13162,10 @@ footer .copyright {
         width: 300px;
         right: 70px;
     }
+
+    #writingPlanModal .modal-dialog {
+        max-width: 675px;
+    }
 }
 
 @media only screen and (max-width: 640px) {
@@ -13280,6 +13284,10 @@ footer .copyright {
         right: 40px;
         top: -160px;
     }
+
+    #writingPlanModal .modal-dialog {
+        max-width: 615px;
+    }
 }
 
 @media only screen and (max-width: 450px) {
@@ -13326,15 +13334,20 @@ footer .copyright {
     }
 
     .front-page-new .main-form {
-        padding: 45px 25px 0;
+        padding: 45px 25px 20px;
         right: 8px;
         width: 96%;
+        bottom: 30%;
     }
 
     .front-page-new .main-form .envelope-container {
         height: 70px;
         top: -35px;
         width: 70px;
+    }
+
+    .front-page-new .upcoming-row {
+        margin-top: -145px;
     }
 
     .multi-item-carousel .carousel-inner .item .card-body {
