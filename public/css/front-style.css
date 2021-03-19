@@ -12418,8 +12418,17 @@ textarea.form-control {
 
 /* upcoming row */
 .front-page-new .upcoming-row {
-    margin-top: 30px;
-    margin-bottom: 30px;
+    margin-top: 150px;
+    margin-bottom: 60px;
+}
+
+.upcoming-container {
+    position: relative;
+}
+
+.upcoming-container video {
+    position: absolute;
+    width: 98%;
 }
 
 .front-page-new .upcoming-row .column {
@@ -12440,6 +12449,7 @@ textarea.form-control {
     width: 94%;
     left: 3%;
     padding: 30px 20px 20px 20px;
+    opacity: 0.8;
 }
 
 .front-page-new .upcoming-row .column .content-container .title {
@@ -12463,7 +12473,7 @@ textarea.form-control {
 
 .front-page-new .upcoming-row .column.webinar {
     /*background-image: url("../images-new/front-page/two-women.jpg");*/
-    margin-top: 50px;
+    /*margin-top: 50px;*/
 }
 
 .front-page-new .upcoming-row .column.free-webinar {
@@ -13052,6 +13062,10 @@ footer .copyright {
         width: 70px;
     }
 
+    .front-page-new .upcoming-row {
+        margin-top: 50px;
+    }
+
     .cta:after {
         bottom: -3px;
         height: 155px;
@@ -13089,6 +13103,10 @@ footer .copyright {
 
     .front-page-new .main-form .form-container .btn-container .btn {
         width: 96%;
+    }
+
+    .front-page-new .upcoming-row {
+        margin-top: -20px;
     }
 
     .front-page-new .latest-seminar-wrapper {
@@ -13169,6 +13187,18 @@ footer .copyright {
 }
 
 @media only screen and (max-width: 640px) {
+
+    .upcoming-container video {
+        display: none;
+    }
+
+    .front-page-new .upcoming-row .column {
+        border: 1px solid gray;
+    }
+
+    .front-page-new .upcoming-row .column .content-container {
+        opacity: 1;
+    }
 
     .front-page-new .main-form .form-container .btn-container .btn {
         width: 96%;

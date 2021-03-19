@@ -56,11 +56,18 @@
             </a>
         </div>--}}
 
-        <div class="container">
+        <div class="container upcoming-container">
+            <video loop id="vid">
+                <source src="{{ asset('video/Reisen_final.mp4') }}" type="video/mp4">
+            </video>
             <div class="row upcoming-row">
+                {{--<div style="position: fixed; top: 0; width: 100%; height: 100%; z-index: -1;">--}}
+                    {{--<video id="video" style="width:100%; height:100%" src="{{ asset('video/Reisen_final.mov') }}">
+                    </video>--}}
+                {{--</div>--}}
+
                 <div class="col-md-4">
-                    <div class="column blog" data-bg="https://www.forfatterskolen.no/images-new/front-page/blog.png"
-                         itemscope itemtype="http://schema.org/CreativeWork">
+                    <div class="column blog">
                         <div class="content-container">
                             <div class="title">
                                 {{ trans('site.front.latest-blog-post') }}
@@ -87,8 +94,7 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="column webinar" data-bg="https://www.forfatterskolen.no/images-new/front-page/webinar-image.png"
-                         itemscope itemtype="http://schema.org/CreativeWork">
+                    <div class="column webinar">
                         <div class="content-container">
                             <div class="title">
                                 {{ trans('site.front.next-webinar') }}
@@ -117,8 +123,7 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="column free-webinar" itemscope itemtype="http://schema.org/CreativeWork"
-                         data-bg="https://www.forfatterskolen.no/images-new/front-page/kristine.jpeg" style="    background-size: cover;
+                    <div class="column free-webinar" style="background-size: cover;
     background-position: 40%;
     background-repeat: no-repeat;">
                         <div class="content-container">
@@ -473,6 +478,20 @@
 @section('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
     <script>
+        $(document).ready(function(){
+            if ($(window).width() > 640) {
+                document.getElementById('vid').play();
+            }
+        });
+
+        $(window).resize(function() {
+            if ($(window).width() <= 640) {
+                document.getElementById('vid').pause();
+            } else {
+                document.getElementById('vid').play();
+            }
+        });
+
         let url_link = '{{ route('front.agree-gdpr') }}';
         let $carousel = jQuery('.carousel-onebyone .carousel');
         if($carousel.length){
