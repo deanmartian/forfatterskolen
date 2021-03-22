@@ -10,7 +10,7 @@ class Assignment extends Model
     protected $table = 'assignments';
     protected $fillable = ['course_id', 'title', 'description', 'submission_date', 'available_date','allowed_package', 'add_on_price',
         'max_words', 'for_editor', 'editor_manu_generate_count', 'generated_filepath', 'show_join_group_question',
-        'parent_id', 'parent'];
+        'parent_id', 'parent', 'editor_expected_finish'];
 
 
     // filter for course assignments
@@ -68,5 +68,9 @@ class Assignment extends Model
     public function getAllowedPackagesAttribute()
     {
         return json_decode($this->attributes['allowed_package']);
+    }
+    
+    public function getEditorExpectedFinishAttribute($value) {
+        return $value ? date_format(date_create($value), 'd.m.Y') : NULL;
     }
 }

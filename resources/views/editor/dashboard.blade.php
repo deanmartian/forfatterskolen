@@ -25,7 +25,7 @@
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<h4 class="dib">
-								Assignments/Personal assignments
+								{{ trans('site.personal-assignment') }}
 							</h4>
 
 						</div>
@@ -34,8 +34,8 @@
 							<tr>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
-								<th>Expected Finish</th>
-								<th>Feedback Status</th>
+								<th>{{ trans('site.deadline') }}</th>
+								<th>{{ trans('site.feedback-status') }}</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -60,12 +60,12 @@
 									</td>
 									<td>{{ $assignedManuscript->user->id }}</td>
 									<td>
-										{{ $assignedManuscript->expected_finish }}
+										{{ $assignedManuscript->editor_expected_finish?$assignedManuscript->editor_expected_finish:$assignedManuscript->assignment->editor_expected_finish }}
 									</td>
 									<td>
 										<div>
 											@if($assignedManuscript->has_feedback && $assignedManuscript->noGroupFeedbacks->first())
-												<span class="label label-default">Pending</span>
+												<span class="label label-default">{{ trans('site.pending') }}</span>
 												<button class="btn btn-xs btn-success submitPersonalAssignmentFeedbackBtn"
 														data-target = "#submitPersonalAssignmentFeedbackModal"
 														data-toggle = "modal"
@@ -116,8 +116,8 @@
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 								<th>{{ trans('site.genre') }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
-								<th>Deadline</th>
-								<th>Feedback Status</th>
+								<th>{{ trans('site.deadline') }}</th>
+								<th>{{ trans('site.feedback-status') }}</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -187,7 +187,8 @@
 							<tr>
 								<th>{{ trans_choice('site.courses', 1) }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
-								<th>Feedback Status</th>
+								<th>{{ trans('site.deadline') }}</th>
+								<th>{{ trans('site.feedback-status') }}</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -202,6 +203,7 @@
 										@endif
 									</td>
 									<td>{{ $assignedAssignment->user_id }}</td>
+									<td>{{ $assignedAssignment->editor_expected_finish?$assignedAssignment->editor_expected_finish:$assignedAssignment->assignment->editor_expected_finish }}</td>
 									<td>
 									<?php
 									$groupDetails = DB::SELECT("SELECT A.id as assignment_group_id, B.id AS assignment_group_learner_id FROM assignment_groups A JOIN assignment_group_learners B ON A.id = B.assignment_group_id AND B.user_id = $assignedAssignment->user_id WHERE A.assignment_id = $assignedAssignment->assignment_id");
@@ -285,7 +287,7 @@
 								<th>{{ trans('site.learner-id') }}</th>
 								<th>{{ trans('site.approved-date') }}</th>
 								<th>{{ trans('site.session-length') }}</th>
-								<th>Set Replay</th>
+								<th>{{ trans('site.set-replay') }}</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -336,7 +338,7 @@
 								<th>{{ trans_choice('site.manus', 2) }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
 								<th>{{ trans('site.expected-finish') }}</th>
-								<th>Feedback Status</th>
+								<th>{{ trans('site.feedback-status') }}</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -379,13 +381,13 @@
 											['id' => $correction->id, 'type' => 2]) }}">+ {{ trans('site.add-feedback') }}</a>
 										@else
 											@if( $correction->status == 2 )
-												<span class="label label-success">Finished</span>
+												<span class="label label-success">{{ trans('site.finished') }}</span>
 											@elseif( $correction->status == 1 )
-												<span class="label label-primary">Started</span>
+												<span class="label label-primary">{{ trans('site.started') }}</span>
 											@elseif( $correction->status == 0 )
-												<span class="label label-warning">Not started</span>
+												<span class="label label-warning">{{ trans('site.not-started') }}</span>
 											@elseif( $correction->status == 3 )
-												<span class="label label-default">Pending</span>
+												<span class="label label-default">{{ trans('site.pending') }}</span>
 											@endif
 
 											<a href="#addOtherServiceFeedbackModal" data-toggle="modal"
@@ -423,7 +425,7 @@
 								<th>{{ trans_choice('site.manus', 2) }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
 								<th>{{ trans('site.expected-finish') }}</th>
-								<th>Feedback Status</th>
+								<th>{{ trans('site.feedback-status') }}</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -464,13 +466,13 @@
 											['id' => $copyEditing->id, 'type' => 1]) }}">+ {{ trans('site.add-feedback') }}</a>
 										@else
 											@if( $copyEditing->status == 2 )
-												<span class="label label-success">Finished</span>
+												<span class="label label-success">{{ trans('site.finished') }}</span>
 											@elseif( $copyEditing->status == 1 )
-												<span class="label label-primary">Started</span>
+												<span class="label label-primary">{{ trans('site.started') }}</span>
 											@elseif( $copyEditing->status == 0 )
-												<span class="label label-warning">Not started</span>
+												<span class="label label-warning">{{ trans('site.not-started') }}</span>
 											@elseif( $copyEditing->status == 3 )
-												<span class="label label-default">Pending</span>
+												<span class="label label-default">{{ trans('site.pending') }}</span>
 											@endif
 
 											<a href="#addOtherServiceFeedbackModal" data-toggle="modal" class="btn btn-success btn-xs addOtherServiceFeedbackBtn" 
@@ -575,7 +577,7 @@
 					<div class="form-group">
 						<label name="manuscriptLabel">{{ trans_choice('site.manuscripts', 1) }}</label>
 						<input type="file" class="form-control" required multiple name="filename[]" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
-						* Accepted file formats are DOCX, PDF, ODT.
+						{{ trans('site.docx-pdf-odt-text') }}
 					</div>
 					<div class="form-group">
 						<label>{{ trans('site.grade') }}</label>
@@ -619,14 +621,14 @@
 						<input type="file" class="form-control" name="files[]" multiple
 							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
 							   application/pdf, application/vnd.oasis.opendocument.text" required>
-							   * Accepted file formats are DOCX, PDF, ODT.
+							   {{ trans('site.docx-pdf-odt-text') }}
 					</div>
 					<div class="form-group">
 						<label>{{ trans_choice('site.notes', 2) }}</label>
 						<textarea class="form-control" name="notes" rows="6"></textarea>
 					</div>
 					<div class="form-group">
-                        <label>Hours Worked</label>
+                        <label>{{ trans('site.hours-worked') }}</label>
                         <input type="number" class="form-control" step="0.01" name="hours">
                     </div>
 					<div class="form-group">
@@ -785,10 +787,10 @@
                     <div class="form-group">
                         <label name="manuscriptLabel">{{ trans_choice('site.manuscripts', 1) }}</label>
                         <input type="file" class="form-control" name="manuscript[]" multiple accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf" required>
-						* Accepted file formats are DOCX, PDF, ODT.
+						{{ trans('site.docx-pdf-odt-text') }}
                     </div>
 					<div class="form-group">
-                        <label>Hours Worked</label>
+                        <label>{{ trans('site.hours-worked') }}</label>
                         <input type="number" class="form-control" step="0.01" name="hours_worked">
                     </div>
 					<div class="form-group">
@@ -948,7 +950,7 @@
                         <input type="file" class="form-control" required multiple name="filename[]"
                                accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
                                    application/pdf, application/vnd.oasis.opendocument.text">
-                        * Accepted file formats are DOCX, PDF, ODT. <br>
+                        {{ trans('site.docx-pdf-odt-text') }} <br>
                     </div>
                     <div class="form-group">
                         <label>{{ trans('site.grade') }}</label>
@@ -980,15 +982,15 @@
 				<form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<label>{{ trans('site.set-replay') }}</label>
+						<label>{{ trans('site.replay-link') }}</label>
 						<input type="url" name="replay_link" class="form-control">
 					</div>
 					<div class="form-group">
-						<label>Comment</label>
+						<label>{{ trans_choice('site.comments', 1) }}</label>
 						<textarea name="comment" cols="30" rows="10" class="form-control"></textarea>
 					</div>
 					<div class="form-group">
-						<label>Document</label>
+						<label>{{ trans('site.document') }}</label>
 						<input type="file" name="document" class="form-control"
 							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
                                    application/msword,
@@ -999,7 +1001,7 @@
                         <input type="number" class="form-control" step="0.01" name="hours_worked">
                     </div> -->
 					<div class="form-group">
-						<small>*Note: If any of the fields are inputted it would mark as Finished</small>
+						<small>{{ trans('site.coaching-timer.form.note') }}</small>
 					</div>
 					<div class="text-right">
 						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>

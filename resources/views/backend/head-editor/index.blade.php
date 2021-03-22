@@ -24,7 +24,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4>
-                                Assignments/Personal assignments
+								{{ trans('site.personal-assignment') }}
                             </h4>
                         </div>
                         <table class="table">
@@ -32,10 +32,10 @@
                             <tr>
                                 <th>{{ trans_choice('site.manuscripts', 1) }}</th>
                                 <th>{{ trans('site.learner-id') }}</th>
-                                <th>Expected Finish</th>
-                                <th>Editor</th>
-                                <th>Feedback</th>
-                                <th>Feedback Status</th>
+                                <th>{{ trans('site.expected-finish') }}</th>
+                                <th>{{ trans_choice('site.editors', 1) }}</th>
+                                <th>{{ trans_choice('site.feedbacks', 1) }}</th>
+                                <th>{{ trans('site.feedback-status') }}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -74,13 +74,13 @@
                                                 data-action="{{ route('head_editor.personal_assignment.feedbac_approve',
 																['id' => $assignedManuscript->id,
 																'learner_id' => $assignedManuscript->user->id]) }}">
-                                                Approve Feedback
+                                                {{ trans('site.approve-feedback') }}
                                         </button>
 									@endif
                                     </td>
                                     <td>
                                         <div>
-                                            <span class="label label-default">Pending</span>
+                                            <span class="label label-default">{{ trans('site.pending') }}</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -102,10 +102,10 @@
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 								<th>{{ trans('site.genre') }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
-								<th>Expected Finish</th>
-                                <th>Editor</th>
-                                <th>Feedback</th>
-								<th>Feedback Status</th>
+								<th>{{ trans('site.learner.expected-finish') }}</th>
+                                <th>{{ trans_choice('site.editors', 1) }}</th>
+                                <th>{{ trans_choice('site.feedbacks', 1) }}</th>
+								<th>{{ trans('site.feedback-status') }}</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -139,10 +139,10 @@
 														['id' => $shopManuscript->id,
 														'learner_id' => $shopManuscript->user->id,
 														'feedback_id' => $shopManuscript->feedbacks->first()->id]) }}">
-                                                    Approve Feedback
+                                                    {{ trans('site.approve-feedback') }}
                                             </button>
                                         </td>
-										<td><span class="label label-default">Pending</span></td>
+										<td><span class="label label-default">{{ trans('site.pending') }}</span></td>
 									
 									</tr>
 								@endif
@@ -163,10 +163,10 @@
 							<tr>
 								<th>{{ trans_choice('site.courses', 1) }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
-								<th>Expected Finish</th>
-								<th>Editor</th>
-								<th>Feedback</th>
-								<th>Feedback Status</th>
+								<th>{{ trans('site.expected-finish') }}</th>
+								<th>{{ trans_choice('site.editors', 1) }}</th>
+								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
+								<th>{{ trans('site.feedback-status') }}</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -199,7 +199,7 @@
 																			['id' => $assignedAssignment->id,
 																			'learner_id' => $assignedAssignment->user->id,
 																			'feedback_id' => $feedback[0]->id]).'">
-															Approve Feedback
+															'. trans('site.approve-feedback') .'
 													</button>';
 										}else{ //the course assignment does not belong to a group
 											echo '<button class="btn btn-success btn-xs personalAssignmentShowFeedbackBtn"
@@ -211,14 +211,14 @@
 															data-action="'. route('head_editor.personal_assignment.feedbac_approve',
 																			['id' => $assignedAssignment->id,
 																			'learner_id' => $assignedAssignment->user->id]) .'">
-															Approve Feedback
+															'. trans('site.approve-feedback') .'
 													</button>';
 										}
 
 									?>
 										
 									</td>
-									<td> <span class="label label-default">Pending</span> </td>
+									<td> <span class="label label-default">{{ trans('site.pending') }}</span> </td>
 								</tr>
 							@endforeach
 							</tbody>
@@ -263,9 +263,9 @@
 								<th>{{ trans_choice('site.manus', 2) }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
 								<th>{{ trans('site.expected-finish') }}</th>
-								<th>Editor</th>
-								<th>Feedback</th>
-								<th>Feedback Status</th>
+								<th>{{ trans_choice('site.editors', 1) }}</th>
+								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
+								<th>{{ trans('site.feedback-status') }}</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -295,17 +295,17 @@
 											data-feedback_id = "{{ $correction->feedback->id }}"
 											data-feedback_file = "{{ $correction->feedback->manuscript }}"
 											data-action="{{ route('head_editor.other-service.approve-feedback',
-											['id' => $correction->id, 'type' => 2]) }}"> Approve Feedback</a>
+											['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.approve-feedback') }}</a>
 									</td>
 									<td>
 										@if( $correction->status == 2 )
-											<span class="label label-success">Finished</span>
+											<span class="label label-success">{{ trans('site.finished') }}</span>
 										@elseif( $correction->status == 1 )
-											<span class="label label-primary">Started</span>
+											<span class="label label-primary">{{ trans('site.started') }}</span>
 										@elseif( $correction->status == 0 )
-											<span class="label label-warning">Not started</span>
+											<span class="label label-warning">{{ trans('site.not-started') }}</span>
 										@elseif( $correction->status == 3 )
-										<span class="label label-default">Pending</span>
+										<span class="label label-default">{{ trans('site.pending') }}</span>
 										@endif
 									</td>
 								</tr>
@@ -327,9 +327,9 @@
 								<th>{{ trans_choice('site.manus', 2) }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
 								<th>{{ trans('site.expected-finish') }}</th>
-								<th>Editor</th>
-								<th>Feedback</th>
-								<th>Feedback Status</th>
+								<th>{{ trans_choice('site.editors', 1) }}</th>
+								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
+								<th>{{ trans('site.feedback-status') }}</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -369,17 +369,17 @@
 											data-service="2"
 											data-feedback_file = "{{ $copyEditing->feedback->manuscript }}"
 											data-action="{{ route('head_editor.other-service.approve-feedback',
-											['id' => $copyEditing->id, 'type' => 1]) }}"> Approve Feedback</a>
+											['id' => $copyEditing->id, 'type' => 1]) }}"> {{ trans('site.approve-feedback') }}</a>
 									</td>
 									<td>
 										@if( $copyEditing->status == 2 )
-											<span class="label label-success">Finished</span>
+											<span class="label label-success">{{ trans('site.finished') }}</span>
 										@elseif( $copyEditing->status == 1 )
-											<span class="label label-primary">Started</span>
+											<span class="label label-primary">{{ trans('site.started') }}</span>
 										@elseif( $copyEditing->status == 0 )
-											<span class="label label-warning">Not started</span>
+											<span class="label label-warning">{{ trans('site.not-started') }}</span>
 										@elseif( $copyEditing->status == 3 )
-											<span class="label label-default">Pending</span>
+											<span class="label label-default">{{ trans('site.pending') }}</span>
 										@endif
 									</td>
 								</tr>
@@ -411,18 +411,18 @@
                     {{ csrf_field() }}
 					<input type="hidden" class="form-control" name="feedback_id">
 					<div class="form-group">
-						<label>Feedback File</label><br>
+						<label>{{ trans_choice('site.feedback-file', 1) }}</label><br>
 						<div id="feedbackFileAppend"></div>
 					</div>
 					<div class="form-group">
-                        <label name="manuscriptLabel">Replace Feedback File</label>
+                        <label name="manuscriptLabel">{{ trans('site.replace-feedback-file') }}</label>
                         <input type="file" class="form-control" multiple name="filename[]"
                                accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
                                    application/pdf, application/vnd.oasis.opendocument.text">
-                        * Accepted file formats are DOCX, PDF, ODT. <br>
+						{{ trans('site.docx-pdf-odt-text') }} <br>
                     </div>
                     <div class="form-group">
-						<label>Feedback Grade</label><br>
+						<label>{{ trans('site.grade') }}</label><br>
 						<input class="form-control" type="number" step="0.01" name="grade">
 					</div>
                     <hr>
@@ -445,7 +445,7 @@
 						<textarea class="form-control tinymce" name="message" rows="6"
 								  required>{!! $emailTemplate->email_content !!}</textarea>
 					</div>
-                    <button type="submit" class="btn btn-primary pull-right margin-top">Approve Feedback</button>
+                    <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('approve-feedback') }}</button>
                     <div class="clearfix"></div>
                 </form>
 
@@ -469,18 +469,18 @@
 					?>
 					{{csrf_field()}}
 					<div class="form-group">
-						<label>Feedback File</label><br>
+						<label>{{ trans('site.feedback-file') }}</label><br>
 						<div id="feedbackFileAppend"></div>
 					</div>
 					<div class="form-group">
-                        <label name="manuscriptLabel">Replace Feedback File</label>
+                        <label name="manuscriptLabel">{{ trans('site.replace-feedback-file') }}</label>
                         <input type="file" class="form-control" multiple name="files[]"
                                accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
                                    application/pdf, application/vnd.oasis.opendocument.text">
-                        * Accepted file formats are DOCX, PDF, ODT. <br>
+								   {{ trans('site.docx-pdf-odt-text') }} <br>
                     </div>
                     <div class="form-group">
-						<label>Feedback Notes</label><br>
+						<label>{{ trans_choice('site.notes', 1) }}</label><br>
                         <textarea class="form-control" name="notes" rows="6"></textarea>
 					</div>
                     <hr>
@@ -500,7 +500,7 @@
 								  required>{!! $emailTemplate->email_content !!}</textarea>
 					</div>
 					{{ trans('site.add-feedback-note') }}
-					<button type="submit" class="btn btn-primary pull-right">Approve Feedback</button>
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.approve-feedback') }}</button>
 					<div class="clearfix"></div>
 				</form>
 
@@ -524,18 +524,18 @@
                     ?>
                     {{ csrf_field() }}
 					<div class="form-group">
-						<label>Feedback File</label><br>
+						<label>{{ trans('site.feedback-file') }}</label><br>
 						<div id="feedbackFileAppend"></div>
 					</div>
 					<div class="form-group">
-                        <label name="manuscriptLabel">Replace Feedback File</label>
+                        <label name="manuscriptLabel">{{ trans('site.replace-feedback-file') }}</label>
                         <input type="file" class="form-control" multiple name="filename[]"
                                accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
                                    application/pdf, application/vnd.oasis.opendocument.text">
-                        * Accepted file formats are DOCX, PDF, ODT. <br>
+								   {{ trans('site.docx-pdf-odt-text') }} <br>
                     </div>
                     <div class="form-group">
-						<label>Feedback Grade</label><br>
+						<label>{{ trans('site.grade') }}</label><br>
 						<input class="form-control" type="number" step="0.01" name="grade">
 					</div>
                     <hr>
@@ -558,7 +558,7 @@
 						<textarea class="form-control tinymce" name="message" rows="6"
 								  required>{!! $emailTemplate->email_content !!}</textarea>
 					</div>
-                    <button type="submit" class="btn btn-primary pull-right margin-top">Approve Feedback</button>
+                    <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.approve-feedback') }}</button>
                     <div class="clearfix"></div>
                 </form>
 
@@ -583,16 +583,16 @@
                     {{ csrf_field() }}
 					<input type="hidden" class="form-control" name="feedback_id">
 					<div class="form-group">
-						<label>Feedback File</label><br>
+						<label>{{ trans('site.feedback-file') }}</label><br>
 						<div id="feedbackFileAppend"></div>
 					</div>
                     <hr>
 					<div class="form-group">
-                        <label name="manuscriptLabel">Replace Feedback File</label>
+                        <label name="manuscriptLabel">{{ trans('site.replace-feedback-file') }}</label>
                         <input type="file" class="form-control" multiple name="manuscript[]"
                                accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
                                    application/pdf, application/vnd.oasis.opendocument.text">
-                        * Accepted file formats are DOCX, PDF, ODT. <br>
+								   {{ trans('site.docx-pdf-odt-text') }} <br>
                     </div>
 					<div class="form-group">
 						<label>{{ trans('site.subject') }}</label>
@@ -609,7 +609,7 @@
 						<textarea class="form-control tinymce" name="message" rows="6"
 								  required>{!! $emailTemplate->email_content !!}</textarea>
 					</div>
-                    <button type="submit" class="btn btn-primary pull-right margin-top">Approve Feedback</button>
+                    <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.approve-feedback') }}</button>
                     <div class="clearfix"></div>
                 </form>
 

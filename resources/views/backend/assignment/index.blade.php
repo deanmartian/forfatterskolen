@@ -348,6 +348,10 @@
 								<label>{{ trans('site.available-date') }}</label>
 								<input type="date" class="form-control" name="available_date">
 							</div>
+							<div class="form-group">
+								<label>{{ trans('site.editor-expected-finish') }}</label>
+								<input type="date" class="form-control" name="editor_expected_finish">
+							</div>
 
 							<div class="form-group">
 								<label>{{ trans('site.max-words') }}</label>

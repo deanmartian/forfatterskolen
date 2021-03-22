@@ -8,7 +8,7 @@ class AssignmentManuscript extends Model
     
     protected $table = 'assignment_manuscripts';
     protected $fillable = ['assignment_id', 'user_id', 'filename', 'words', 'grade', 'type', 'manu_type', 'editor_id',
-        'join_group', 'expected_finish'];
+        'join_group', 'expected_finish', 'editor_expected_finish'];
 
 
 
@@ -60,6 +60,10 @@ class AssignmentManuscript extends Model
     }
 
     public function getExpectedFinishAttribute($value) {
+        return $value ? date_format(date_create($value), 'd.m.Y') : NULL;
+    }
+
+    public function getEditorExpectedFinishAttribute($value) {
         return $value ? date_format(date_create($value), 'd.m.Y') : NULL;
     }
 

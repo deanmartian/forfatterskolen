@@ -106,7 +106,10 @@
 					<label>{{ trans('site.max-words') }}</label>
 					<input type="number" class="form-control" name="max_words">
 				</div>
-
+				<div class="form-group">
+					<label>{{ trans('site.editor-expected-finish') }}</label>
+					<input type="date" class="form-control" name="editor_expected_finish">
+				</div>
 				<div class="form-group">
 					<label>{{ trans('site.for-editor') }}</label> <br>
 					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small" name="for_editor">

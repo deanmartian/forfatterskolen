@@ -97,12 +97,12 @@ $urlList = array('pulse', 'board');
         </a>
         <ul class="dropdown-menu">
           <li class="form-logout">
-              <button type="submit" class="btn btn-block" data-toggle="modal" data-target="#changePasswordModal">Change Password</button>
+              <button type="submit" class="btn btn-block" data-toggle="modal" data-target="#changePasswordModal">{{ trans('site.change-password') }}</button>
           </li>
           <li>
             <form method="POST" action="{{route('auth.logout')}}" class="form-logout">
               {{csrf_field()}}
-              <button type="submit" class="btn btn-block">Logout</button>
+              <button type="submit" class="btn btn-block">{{ trans('site.logout') }}</button>
             </form>
           </li>
           {{--<li>

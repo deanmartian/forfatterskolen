@@ -21,21 +21,21 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h4 class="dib">
-						How Many Manuscript You Can Take?
+						{{ trans('site.admin-menu.how-many-manuscript-you-can-take') }}
 					</h4>
 					<button class="btn btn-xs btn-primary addBtn pull-right"
 							data-toggle="modal"
 							data-target="#addModal"
-							data-action="{{ route('editor.manuscript-you-can-take-save') }}">+ Add New</button>
+							data-action="{{ route('editor.manuscript-you-can-take-save') }}">{{ trans('site.add-new') }}</button>
 				</div>
 				<table class="table">
 					<thead>
 					<tr>
-						<th>Date From</th>
-						<th>Date To</th>
-						<th>How Many Script</th>
-						<th>How Many Hours</th>
-						<th>Notes</th>
+						<th>{{ trans('site.start-date') }}</th>
+						<th>{{ trans('site.end-date') }}</th>
+						<th>{{ trans('site.how-many-manuscript') }}</th>
+						<th>{{ trans('site.how-many-hours') }}</th>
+						<th>{{ trans_choice('site.notes', 1) }}</th>
 						<th></th>
 					</tr>
 					</thead>
@@ -59,13 +59,13 @@
 										data-how_many_hours="{{ $data->how_many_hours }}"
 										data-note="{{ $data->note }}"
 										data-action="{{ route('editor.manuscript-you-can-take-save') }}">
-										<i class="fa fa-pencil-square-o" aria-hidden="true"> Edit</i>
+										<i class="fa fa-pencil-square-o" aria-hidden="true"> {{ trans('site.edit') }}</i>
 								</button>
 								<button class="btn btn-xs btn-danger deleteBtn"
 										data-toggle="modal"
 										data-target="#deleteModal"
 										data-action="{{ route('editor.manuscript-you-can-take.delete', $data->id) }}">
-										<i class="fa fa-trash" aria-hidden="true"> Delete</i>
+										<i class="fa fa-trash" aria-hidden="true"> {{ trans('site.delete') }}</i>
 								</button>
 							</td>
 						</tr>
@@ -90,26 +90,26 @@
 					{{csrf_field()}}
 					<input type="hidden" class="form-control" name="id">
 					<div class="form-group">
-						<label>Date From</label>
+						<label>{{ trans('site.start-date') }}</label>
 						<input name="date_from" type="date" class="form-control"></input>
 					</div>
 					<div class="form-group">
-                        <label>Date To</label>
+                        <label>{{ trans('site.end-date') }}</label>
                         <input name="date_to" type="date" class="form-control">
                     </div>
 					<div class="form-group">
-                        <label>How Many Manuscript</label>
+                        <label>{{ trans('site.how-many-manuscript') }}</label>
                         <input name="how_many_script" step="0.01" type="number" class="form-control">
                     </div>
 					<div class="form-group">
-                        <label>How Many Hours</label>
+                        <label>{{ trans('site.how-many-hours') }}</label>
                         <input name="how_many_hours" step="0.01" type="number" class="form-control">
                     </div>
 					<div class="form-group">
-                        <label>Notes</label>
+                        <label>{{ trans_choice('site.notes', 1) }}</label>
                         <textarea name="note" rows="3" class="form-control"></textarea>
                     </div>
-					<button type="submit" class="btn btn-primary pull-right">Save</button>
+					<button type="submit" class="btn btn-primary pull-right">{{ trans_choice('site.save', 1) }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -123,15 +123,15 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
-				<h4 class="modal-title">Are you sure you want to delete the record?</h4>
+				<h4 class="modal-title">{{ trans('site.delete-question') }}</h4>
 			</div>
 			<div class="modal-body">
 				<form id="deleteForm" method="POST" action="" enctype="multipart/form-data">
 					{{csrf_field()}}
 					<input type="hidden" class="form-control" name="id">
 					<div style="text-align: center;" class="decision">
-						<button style="padding: 10px 65px;" type="submit" class="btn btn-lg btn-danger">Yes</button>
-						<button style="padding: 10px 65px; margin-right: 4px;" type="button" data-dismiss="modal" class="btn btn-lg btn-default">No</button>
+						<button style="padding: 10px 65px;" type="submit" class="btn btn-lg btn-danger">{{ trans('site.front.yes') }}</button>
+						<button style="padding: 10px 65px; margin-right: 4px;" type="button" data-dismiss="modal" class="btn btn-lg btn-default">{{ trans('site.front.no') }}</button>
 					</div>
 					
 					<div class="clearfix"></div>

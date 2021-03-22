@@ -35,7 +35,7 @@
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<h4>
-								Assignments/Personal assignments
+								{{ trans('site.personal-assignment') }}
 							</h4>
 						</div>
 						<table class="table">
@@ -44,7 +44,7 @@
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 								<th>{{ trans_choice('site.learners', 1) }}</th>
 								<th>{{ trans('site.assigned-to') }}</th>
-								<th>Expected Finish</th>
+								<th>{{ trans('site.expected-finish') }}</th>
 								<th></th>
 							</tr>
 							</thead>
@@ -145,9 +145,9 @@
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 								<th>{{ trans('site.genre') }}</th>
 								<th>{{ trans_choice('site.learners', 1) }}</th>
-								<th>Locked</th>
+								<th>{{ trans('site.locked') }}</th>
 								<th>{{ trans('site.assigned-to') }}</th>
-								<th>Expected Finish</th>
+								<th>{{ trans('site.learner.deadline') }}</th>
 								<th></th>
 							</tr>
 							</thead>
@@ -417,11 +417,11 @@
 									</td>
 									<td>
 										@if( $correction->status == 2 )
-											<span class="label label-success">Finished</span>
+											<span class="label label-success">{{ trans('site.finished') }}</span>
 										@elseif( $correction->status == 1 )
-											<span class="label label-primary">Started</span>
+											<span class="label label-primary">{{ trans('site.started') }}</span>
 										@elseif( $correction->status == 0 )
-											<span class="label label-warning">Not started</span>
+											<span class="label label-warning">{{ trans('site.not-started') }}</span>
 										@endif
 									</td>
 									<td>
@@ -507,11 +507,11 @@
 									</td>
 									<td>
 										@if( $copyEditing->status == 2 )
-											<span class="label label-success">Finished</span>
+											<span class="label label-success">{{ trans('site.finished') }}</span>
 										@elseif( $copyEditing->status == 1 )
-											<span class="label label-primary">Started</span>
+											<span class="label label-primary">{{ trans('site.started') }}</span>
 										@elseif( $copyEditing->status == 0 )
-											<span class="label label-warning">Not started</span>
+											<span class="label label-warning">{{ trans('site.not-started') }}</span>
 										@endif
 									</td>
 									<td>
@@ -1088,7 +1088,7 @@
 					<div class="form-group">
 						<label>{{ trans_choice('site.manuscripts', 1) }}</label>
 						<input type="file" class="form-control" required multiple name="filename[]" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
-						* Accepted file formats are DOCX, PDF, ODT.
+						{{ trans('site.docx-pdf-odt-text') }}
 					</div>
 					<div class="form-group">
 						<label>{{ trans('site.available-date') }}</label>
@@ -1125,6 +1125,7 @@
 						<input type="file" class="form-control" name="files[]" multiple
 							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
 							   application/pdf, application/vnd.oasis.opendocument.text" required>
+							   {{ trans('site.docx-pdf-odt-text') }}
 					</div>
 					<div class="form-group">
 						<label>{{ trans_choice('site.notes', 2) }}</label>
@@ -1218,12 +1219,16 @@
 						<div class="hidden-container">
 							<label>
 							</label>
-							<a href="javascript:void(0)" onclick="enableSelect('pendingAssignmentEditorModal')">Edit</a>
+							<a href="javascript:void(0)" onclick="enableSelect('pendingAssignmentEditorModal')">{{ trans('site.edit') }}</a>
 						</div>
 					</div>
 					<div class="form-group">
-						<label>Expected Finish</label>
+						<label>{{ trans('site.learner-expected-finish') }}</label>
 						<input type="date" class="form-control" name="expected_finish">
+					</div>
+					<div class="form-group">
+						<label>{{ trans('site.editor-expected-finish') }}</label>
+						<input type="date" class="form-control" name="editor_expected_finish">
 					</div>
 					<div class="text-right">
 						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
@@ -1462,7 +1467,7 @@
                         <input type="file" class="form-control" required multiple name="filename[]"
                                accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
                                    application/pdf, application/vnd.oasis.opendocument.text">
-                        * Accepted file formats are DOCX, PDF, ODT.
+						{{ trans('site.docx-pdf-odt-text') }}
                     </div>
                     <div class="form-group">
                         <label>{{ trans('site.available-date') }}</label>

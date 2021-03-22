@@ -101,7 +101,8 @@ class AssignmentController extends Controller
                 'max_words' => (int) $request->max_words,
                 'for_editor' => isset($request->for_editor) ? 1 : 0,
                 'editor_manu_generate_count' => $request->editor_manu_generate_count,
-                'show_join_group_question' => isset($request->show_join_group_question) ? 1 : 0
+                'show_join_group_question' => isset($request->show_join_group_question) ? 1 : 0,
+                'editor_expected_finish' => $request->editor_expected_finish
     		]);
 
     	endif;
@@ -126,6 +127,7 @@ class AssignmentController extends Controller
             $assignment->for_editor = isset($request->for_editor) ? 1 : 0;
             $assignment->editor_manu_generate_count = isset($request->for_editor) ? $request->editor_manu_generate_count : NULL;
             $assignment->show_join_group_question = isset($request->show_join_group_question) ? 1 : 0;
+            $assignment->editor_expected_finish = $request->editor_expected_finish;
     		$assignment->save();
     	endif;
     	return redirect()->back();
@@ -681,6 +683,10 @@ class AssignmentController extends Controller
                     'assignment-manuscripts', $assignmentManuscript->id));
             }
 
+            if ($request->has('editor_expected_finish')) {
+                $assignmentManuscript->editor_expected_finish = $request->editor_expected_finish;
+            }
+
             $assignmentManuscript->save();
         }
 
@@ -1088,7 +1094,8 @@ class AssignmentController extends Controller
             'show_join_group_question' => 0,
             'course_id' => $request->course_id,
             'parent_id' => $request->learner_id,
-            'parent' => 'users'
+            'parent' => 'users',
+            'editor_expected_finish' => $request->editor_expected_finish
         ];
 
         if ($id) {

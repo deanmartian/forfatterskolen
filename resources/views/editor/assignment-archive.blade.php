@@ -26,7 +26,7 @@
 					<div class="panel panel-default custom-height-1">
 						<div class="panel-heading">
 							<h4 class="dib">
-								Assignments/Personal assignments
+								{{ trans('site.personal-assignment') }}
 							</h4>
 
 						</div>
@@ -34,7 +34,7 @@
 							<thead>
 							<tr>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
-                                <th>Feedback Sent</th>
+                                <th>{{ trans('site.feedback-sent') }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
                                 <th></th>
 							</tr>
@@ -77,10 +77,11 @@
                                                 data-feedback_file = "{{$assignedManuscript->noGroupFeedbacks->first()->filename}}"
                                                 data-feedback_date = "{{$assignedManuscript->noGroupFeedbacks->first()->created_at}}"
                                                 data-feedback_grade = "{{$assignedManuscript->grade}}">
-                                                <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;Feedback
+                                                <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;
+                                                {{ trans_choice('site.feedbacks',1) }}
                                             </a>
                                         @else
-                                            <i class="fa fa-exclamation-triangle" style="color: #dc3545;" aria-hidden="true">&nbsp;&nbsp;No feedback found</i>
+                                            <i class="fa fa-exclamation-triangle" style="color: #dc3545;" aria-hidden="true">&nbsp;&nbsp;{{ trans('site.no-feedback-found') }}</i>
                                         @endif
                                     </td>
 								</tr>
@@ -100,7 +101,7 @@
 							<thead>
 							<tr>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
-                                <th>Feedback Sent</th>
+                                <th>{{ trans('site.feedback-sent') }}</th>
 								<th>{{ trans('site.genre') }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
                                 <th></th>
@@ -137,7 +138,7 @@
                                                 data-feedback_grade = "{{$shopManuscript->grade}}"
                                                 data-feedback_created_at = "{{$shopManuscript->feedbacks->first()->created_at}}"
                                                 >
-                                                <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;Feedback
+                                                <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;{{ trans_choice('site.feedbacks',1) }}
                                         </button>
                                         </td>
 									</tr>
@@ -164,7 +165,7 @@
 							<thead>
 							<tr>
 								<th>{{ trans_choice('site.courses', 1) }}</th>
-                                <th>Feedback Sent</th>
+                                <th>{{ trans('site.feedback-sent') }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
                                 <th></th>
 							</tr>
@@ -206,7 +207,7 @@
                                                                 data-feedback_grade = "'.$assignedAssignment->grade.'"
                                                                 data-feedback_created_at = "'.$feedback[0]->created_at.'"
                                                         >
-                                                            <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;Feedback
+                                                            <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;'.trans_choice('site.feedbacks',1).'
                                                         </button>';
                                             }else{
                                                 echo '<button class="btn btn-primary btn-xs personalAssignmentShowFeedbackBtn"
@@ -215,7 +216,7 @@
 															data-feedback_file = "'.$assignedAssignment->noGroupFeedbacks->first()->filename.'"
 															data-feedback_grade = "'.$assignedAssignment->grade.'"
                                                             data-feedback_date = "'.$assignedAssignment->noGroupFeedbacks->first()->created_at.'">
-															<i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;Feedback
+															<i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;'.trans_choice('site.feedbacks',1).'
 													</button>';
                                             }
                                         ?>
@@ -277,7 +278,7 @@
                                                 data-comment = "{{$coachingTimer->comment}}"
                                                 data-document = "{{$coachingTimer->document}}"
                                                 >
-                                                <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;Feedback
+                                                <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;{{trans_choice('site.feedbacks',1)}}
                                         </button>
                                     </td>
 								</tr>
@@ -302,7 +303,7 @@
 							<thead>
 							<tr>
 								<th>{{ trans_choice('site.manus', 2) }}</th>
-                                <th>Feedback Sent</th>
+                                <th>{{ trans('site.feedback-sent') }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
                                 <th></th>
 							</tr>
@@ -330,7 +331,7 @@
                                             data-feedback_file = "{{ $correction->feedback->manuscript }}"
                                             data-created_at = "{{ $correction->feedback->created_at }}"
                                         >
-                                            <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;Feedback
+                                            <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;{{trans_choice('site.feedbacks',1)}}
                                         </a>
                                     @endif
                                     </td>
@@ -351,7 +352,7 @@
 							<thead>
 							<tr>
 								<th>{{ trans_choice('site.manus', 2) }}</th>
-                                <th>Feedback Sent</th>
+                                <th>{{ trans('site.feedback-sent') }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
 								<th></th>
 							</tr>
@@ -379,7 +380,7 @@
                                                 data-feedback_file = "{{ $copyEditing->feedback->manuscript }}"
                                                 data-created_at = "{{ $copyEditing->feedback->created_at }}"
                                             >
-                                                <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;Feedback
+                                                <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;&nbsp;{{trans_choice('site.feedbacks',1)}}
                                             </a>
                                         @endif
 									</td>
@@ -404,21 +405,21 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Feedback Details</h4>
+                    <h4 class="modal-title">{{ trans('site.feedback-details') }}</h4>
                 </div>
                 <div class="modal-body">
 
                     <form>
                         <div class="form-group">
-                            <label>Created At</label><br>
+                            <label>{{ trans('site.created_at') }}</label><br>
                             <p id="feedback_date"></p>
                         </div>
                         <div class="form-group">
-                            <label>File</label><br>
+                            <label>{{ trans_choice('site.files', 1) }}</label><br>
                             <div id="feedbackFileAppend"></div>
                         </div>
                         <div class="form-group">
-                            <label>Grade</label><br>
+                            <label>{{ trans('site.grade') }}</label><br>
                             <p id="feedback_grade"></p>
                         </div>
                     </form>
@@ -433,25 +434,25 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Feedback Details</h4>
+                    <h4 class="modal-title">{{ trans('site.feedback-details') }}</h4>
                 </div>
                 <div class="modal-body">
 
                     <form>
                         <div class="form-group">
-                            <label>Created At</label><br>
+                            <label>{{ trans('site.created_at') }}</label><br>
                             <p id="created_at"></p>
                         </div>
                         <div class="form-group">
-                            <label>File</label><br>
+                            <label>{{ trans_choice('site.files', 1) }}</label><br>
                             <div id="feedbackFileAppend"></div>
                         </div>
                         <div class="form-group">
-                            <label>Grade</label><br>
+                            <label>{{ trans('site.grade') }}</label><br>
                             <p id="grade"></p>
                         </div>
                         <div class="form-group">
-                            <label>Notes</label><br>
+                            <label>{{ trans_choice('site.grade', 1) }}</label><br>
                             <p id="notes"></p>
                         </div>
                         <div></div>
@@ -467,21 +468,21 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Feedback Details</h4>
+                    <h4 class="modal-title">{{ trans('site.feedback-details') }}</h4>
                 </div>
                 <div class="modal-body">
 
                     <form>
                         <div class="form-group">
-                            <label>Created At</label><br>
+                            <label>{{ trans('site.created_at') }}</label><br>
                             <p id="created_at"></p>
                         </div>
                         <div class="form-group">
-                            <label>File</label><br>
+                            <label>{{ trans_choice('site.files', 1) }}</label><br>
                             <div id="feedbackFileAppend"></div>
                         </div>
                         <div class="form-group">
-                            <label>Grade</label><br>
+                            <label>{{ trans('site.grade') }}</label><br>
                             <p id="grade"></p>
                         </div>
                     </form>
@@ -496,21 +497,21 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Feedback Details</h4>
+                    <h4 class="modal-title">{{ trans('site.feedback-details') }}</h4>
                 </div>
                 <div class="modal-body">
 
                     <form>
                         <div class="form-group">
-                            <label>Replay Link</label><br>
+                            <label>{{ trans('site.replay-link') }}</label><br>
                             <a href="" id="replay_link"></a>
                         </div>
                         <div class="form-group">
-                            <label>Document</label><br>
+                            <label>{{ trans('site.document') }}</label><br>
                             <a href="" name="document" class="" download></a>
                         </div>
                         <div class="form-group">
-                            <label>Comment</label><br>
+                            <label>{{ trans_choice('site.comments', 1) }}</label><br>
                             <p id="comment"></p>
                         </div>
                     </form>
@@ -525,17 +526,17 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Feedback Details</h4>
+                    <h4 class="modal-title">{{ trans('site.feedback-details') }}</h4>
                 </div>
                 <div class="modal-body">
 
                     <form>
                         <div class="form-group">
-                            <label>Created At</label><br>
+                            <label>{{ trans('site.created_at') }}</label><br>
                             <p id="created_at"></p>
                         </div>
                         <div class="form-group">
-                            <label>Manuscript</label><br>
+                            <label>{{ trans_choice('site.manuscripts', 1) }}</label><br>
                             <div id="feedbackFileAppend"></div>
                         </div>
                     </form>
