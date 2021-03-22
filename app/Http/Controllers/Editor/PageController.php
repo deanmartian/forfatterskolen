@@ -82,4 +82,9 @@ class PageController extends Controller
         'corrections', 'copyEditings', 'assignedAssignmentManuscripts'));
     }
 
+    public function yearlyCalendar()
+    {
+        return view('editor.yearly-calendar');
+    }
+
 }

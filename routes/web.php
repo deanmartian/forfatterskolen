@@ -32,6 +32,7 @@ Route::group([
         Route::get('/', 'HomeController@index')->name('front.home'); // Homepage
         Route::post('/agree-gdpr', 'HomeController@agreeGdpr')->name('front.agree-gdpr');
         Route::get('/testemail', 'HomeController@testEmail');
+        Route::get('/bisnode', 'HomeController@bisnode');
         Route::get('/test-fiken', 'HomeController@testFiken');
         Route::get('/test-excel', 'HomeController@testExcel');
         Route::post('/gotowebinar', 'HomeController@gtWebinarSendEmail');
@@ -1434,6 +1435,7 @@ Route::group([
         Route::get('manuscriptYouCanTake', 'ManuscriptEditorCanTakeController@index')->name('editor.manuscript-you-can-take');
         Route::post('manuscriptYouCanTake/save', 'ManuscriptEditorCanTakeController@save')->name('editor.manuscript-you-can-take-save');
         Route::post('manuscriptYouCanTake/{id}/delete', 'ManuscriptEditorCanTakeController@delete')->name('editor.manuscript-you-can-take.delete');
+        Route::get('/yearly-calendar', 'PageController@yearlyCalendar')->name('editor.yearly-calendar.index');
     });
 
     Route::group([
