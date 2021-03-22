@@ -75,7 +75,12 @@
 																['id' => $assignedManuscript->id,
 																'learner_id' => $assignedManuscript->user->id]) }}">
                                                 {{ trans('site.approve-feedback') }}
-                                        </button>
+                                        </button> &nbsp;
+										<?php $files = explode(',',$assignedManuscript->noGroupFeedbacks->first()->filename); ?>
+										@foreach($files as $file)
+											<a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
+										@endforeach
+										
 									@endif
                                     </td>
                                     <td>
@@ -140,7 +145,11 @@
 														'learner_id' => $shopManuscript->user->id,
 														'feedback_id' => $shopManuscript->feedbacks->first()->id]) }}">
                                                     {{ trans('site.approve-feedback') }}
-                                            </button>
+                                            </button> &nbsp;
+											<?php $files = $shopManuscript->feedbacks->first()->filename; ?>
+											@foreach($files as $file)
+												<a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
+											@endforeach
                                         </td>
 										<td><span class="label label-default">{{ trans('site.pending') }}</span></td>
 									
@@ -200,7 +209,13 @@
 																			'learner_id' => $assignedAssignment->user->id,
 																			'feedback_id' => $feedback[0]->id]).'">
 															'. trans('site.approve-feedback') .'
-													</button>';
+													</button> &nbsp';
+
+													$files = explode(',',$feedback[0]->filename);
+													foreach($files as $file){
+														echo '<a href="'.$file.'" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp';
+													}
+												
 										}else{ //the course assignment does not belong to a group
 											echo '<button class="btn btn-success btn-xs personalAssignmentShowFeedbackBtn"
 															data-target="#personalAssignmentShowFeedbackModal"
@@ -212,11 +227,14 @@
 																			['id' => $assignedAssignment->id,
 																			'learner_id' => $assignedAssignment->user->id]) .'">
 															'. trans('site.approve-feedback') .'
-													</button>';
+													</button> &nbsp';
+											$files = explode(',',$assignedAssignment->noGroupFeedbacks->first()->filename);
+											foreach($files as $file){
+												echo '<a href="'.$file.'" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp';
+											}
 										}
 
 									?>
-										
 									</td>
 									<td> <span class="label label-default">{{ trans('site.pending') }}</span> </td>
 								</tr>
@@ -295,7 +313,11 @@
 											data-feedback_id = "{{ $correction->feedback->id }}"
 											data-feedback_file = "{{ $correction->feedback->manuscript }}"
 											data-action="{{ route('head_editor.other-service.approve-feedback',
-											['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.approve-feedback') }}</a>
+											['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.approve-feedback') }}</a> &nbsp;
+											<?php $files = explode(',',$correction->feedback->manuscript); ?>
+											@foreach($files as $file)
+												<a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
+											@endforeach
 									</td>
 									<td>
 										@if( $correction->status == 2 )
@@ -369,7 +391,11 @@
 											data-service="2"
 											data-feedback_file = "{{ $copyEditing->feedback->manuscript }}"
 											data-action="{{ route('head_editor.other-service.approve-feedback',
-											['id' => $copyEditing->id, 'type' => 1]) }}"> {{ trans('site.approve-feedback') }}</a>
+											['id' => $copyEditing->id, 'type' => 1]) }}"> {{ trans('site.approve-feedback') }}</a> &nbsp;
+										<?php $files = explode(',',$copyEditing->feedback->manuscript); ?>
+										@foreach($files as $file)
+											<a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
+										@endforeach
 									</td>
 									<td>
 										@if( $copyEditing->status == 2 )
