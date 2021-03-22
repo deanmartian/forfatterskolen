@@ -36,6 +36,7 @@
                                 <th>{{ trans_choice('site.editors', 1) }}</th>
                                 <th>{{ trans_choice('site.feedbacks', 1) }}</th>
                                 <th>{{ trans('site.feedback-status') }}</th>
+								<th>{{ trans_choice('site.notes', 2) }}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -88,6 +89,14 @@
                                             <span class="label label-default">{{ trans('site.pending') }}</span>
                                         </div>
                                     </td>
+									<td>
+										@if($assignedManuscript->noGroupFeedbacks->first()->notes_to_head_editor)
+										<a class="notes" data-target="#notesModal" data-toggle="modal" data-notes="{{ $assignedManuscript->noGroupFeedbacks->first()->notes_to_head_editor }}">
+											{{ substr($assignedManuscript->noGroupFeedbacks->first()->notes_to_head_editor, 0, 10) }}
+											<i class="fa fa-file-text-o" aria-hidden="true"></i>
+                                        </a>
+										@endif
+									</td>
                                 </tr>
                             @endforeach
                             </tbody>
@@ -111,6 +120,7 @@
                                 <th>{{ trans_choice('site.editors', 1) }}</th>
                                 <th>{{ trans_choice('site.feedbacks', 1) }}</th>
 								<th>{{ trans('site.feedback-status') }}</th>
+								<th>{{ trans_choice('site.notes', 2) }}</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -152,7 +162,14 @@
 											@endforeach
                                         </td>
 										<td><span class="label label-default">{{ trans('site.pending') }}</span></td>
-									
+										<td>
+											@if($shopManuscript->feedbacks->first()->notes_to_head_editor)
+											<a class="notes" data-target="#notesModal" data-toggle="modal" data-notes="{{ $shopManuscript->feedbacks->first()->notes_to_head_editor }}">
+												{{ substr($shopManuscript->feedbacks->first()->notes_to_head_editor, 0, 10) }}
+												<i class="fa fa-file-text-o" aria-hidden="true"></i>
+											</a>
+											@endif
+										</td>
 									</tr>
 								@endif
 							@endforeach
@@ -176,6 +193,7 @@
 								<th>{{ trans_choice('site.editors', 1) }}</th>
 								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
 								<th>{{ trans('site.feedback-status') }}</th>
+								<th>{{ trans_choice('site.notes', 2) }}</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -192,12 +210,12 @@
 									<td>{{ $assignedAssignment->user_id }}</td>
 									<td>{{$assignedAssignment->expected_finish}}</td>
 									<td>{{$assignedAssignment->editor->full_name}}</td>
-									<td>
 									<?php 
 										// echo $assignedAssignment->user_id.' '.
 										$groupDetails = DB::SELECT("SELECT A.id as assignment_group_id, B.id AS assignment_group_learner_id FROM assignment_groups A JOIN assignment_group_learners B ON A.id = B.assignment_group_id AND B.user_id = $assignedAssignment->user_id WHERE A.assignment_id = $assignedAssignment->assignment_id");
 										if($groupDetails){ // Means the course assignment belongs to a group
 											$feedback = DB::SELECT("SELECT A.* FROM assignment_feedbacks A JOIN assignment_group_learners B ON A.assignment_group_learner_id = B.id WHERE B.user_id = $assignedAssignment->user_id AND A.assignment_group_learner_id = ".$groupDetails[0]->assignment_group_learner_id);
+											echo '<td>';
 											echo '<button class="btn btn-success btn-xs courseAssignmentShowFeedbackBtn"
 															data-target="#courseAssignmentShowFeedbackModal"
 															data-toggle="modal"
@@ -215,8 +233,18 @@
 													foreach($files as $file){
 														echo '<a href="'.$file.'" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp';
 													}
-												
+											echo '</td>';
+											echo '<td> <span class="label label-default">'.trans('site.pending').'</span> </td>';
+											echo '<td>';
+											if($feedback[0]->notes_to_head_editor){
+												echo '<a class="notes" data-target="#notesModal" data-toggle="modal" data-notes="'.$feedback[0]->notes_to_head_editor.'">
+												'.substr($feedback[0]->notes_to_head_editor, 0, 10).'
+												<i class="fa fa-file-text-o" aria-hidden="true"></i>
+											</a>';
+											}
+											echo '</td>';
 										}else{ //the course assignment does not belong to a group
+											echo '<td>';
 											echo '<button class="btn btn-success btn-xs personalAssignmentShowFeedbackBtn"
 															data-target="#personalAssignmentShowFeedbackModal"
 															data-toggle="modal"
@@ -232,11 +260,21 @@
 											foreach($files as $file){
 												echo '<a href="'.$file.'" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp';
 											}
+											echo '</td>';
+											echo '<td> <span class="label label-default">'.trans('site.pending').'</span> </td>';
+											echo '<td>';
+											if($assignedAssignment->noGroupFeedbacks->first()->notes_to_head_editor){
+												echo '<a class="notes" data-target="#notesModal" data-toggle="modal" data-notes="'.$assignedAssignment->noGroupFeedbacks->first()->notes_to_head_editor.'">
+												'.substr($assignedAssignment->noGroupFeedbacks->first()->notes_to_head_editor, 0, 10).'
+												<i class="fa fa-file-text-o" aria-hidden="true"></i>
+											</a>';
+											}
+											echo '</td>';
 										}
 
 									?>
-									</td>
-									<td> <span class="label label-default">{{ trans('site.pending') }}</span> </td>
+									
+									
 								</tr>
 							@endforeach
 							</tbody>
@@ -284,6 +322,7 @@
 								<th>{{ trans_choice('site.editors', 1) }}</th>
 								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
 								<th>{{ trans('site.feedback-status') }}</th>
+								<th>{{ trans_choice('site.notes', 2) }}</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -330,6 +369,14 @@
 										<span class="label label-default">{{ trans('site.pending') }}</span>
 										@endif
 									</td>
+									<td>
+										@if($correction->feedback->notes_to_head_editor)
+											<a class="notes" data-target="#notesModal" data-toggle="modal" data-notes="{{ $correction->feedback->notes_to_head_editor }}">
+												{{ substr($correction->feedback->notes_to_head_editor, 0, 10) }}
+												<i class="fa fa-file-text-o" aria-hidden="true"></i>
+											</a>
+										@endif
+									</td>
 								</tr>
 							@endforeach
 							</tbody>
@@ -352,6 +399,7 @@
 								<th>{{ trans_choice('site.editors', 1) }}</th>
 								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
 								<th>{{ trans('site.feedback-status') }}</th>
+								<th>{{ trans_choice('site.notes', 2) }}</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -406,6 +454,14 @@
 											<span class="label label-warning">{{ trans('site.not-started') }}</span>
 										@elseif( $copyEditing->status == 3 )
 											<span class="label label-default">{{ trans('site.pending') }}</span>
+										@endif
+									</td>
+									<td>
+										@if($copyEditing->feedback->notes_to_head_editor)
+											<a class="notes" data-target="#notesModal" data-toggle="modal" data-notes="{{ $copyEditing->feedback->notes_to_head_editor }}">
+												{{ substr($copyEditing->feedback->notes_to_head_editor, 0, 10) }}
+												<i class="fa fa-file-text-o" aria-hidden="true"></i>
+											</a>
 										@endif
 									</td>
 								</tr>
@@ -644,6 +700,21 @@
 	</div>
 </div>
 
+<div id="notesModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans_choice('site.notes', 2) }}</h4>
+			</div>
+			<div class="modal-body">
+
+                <p name="notes"></p>
+
+			</div>
+		</div>
+	</div>
+</div>
 
 @stop
 
@@ -726,6 +797,13 @@
 		})
 
         modal.find('form#approveOtherServiceFeedback').attr('action', action);
+	});
+	$('.notes').click(function(){
+
+		var notes = $(this).data('notes');
+		let modal = $('#notesModal');
+		modal.find('[name=notes]').text(notes);
+
 	});
     function disableSubmit(t) {
         let submit_btn = $(t).find('[type=submit]');
