@@ -1072,7 +1072,7 @@
 							data-target="#addCoachingSessionModal">
 						+ {{ trans('site.add-coaching-session') }}
 					</button>
-					<h4>{{ trans('site.coaching-timer') }}</h4>
+					<h4>{{ trans('site.coaching-timer-text') }}</h4>
 				</div>
 
 				<div class="table-responsive">
