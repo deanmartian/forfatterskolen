@@ -12,7 +12,7 @@
 
     <div class="margin-top">
         <ul class="nav nav-tabs margin-top">
-            <li @if( Request::input('tab') == 'coaching-timer' || Request::input('tab') == '') class="active" @endif><a href="?tab=coaching-timer">{{ trans('site.coaching-timer') }}</a></li>
+            <li @if( Request::input('tab') == 'coaching-timer' || Request::input('tab') == '') class="active" @endif><a href="?tab=coaching-timer">{{ trans('site.coaching-timer-text') }}</a></li>
             <li @if( Request::input('tab') == 'correction' ) class="active" @endif><a href="?tab=correction">{{ trans('site.correction') }}</a></li>
             <li @if( Request::input('tab') == 'copy-editing' ) class="active" @endif><a href="?tab=copy-editing">{{ trans('site.copy-editing') }}</a></li>
         </ul>
