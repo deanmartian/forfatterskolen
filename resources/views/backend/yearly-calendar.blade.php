@@ -39,7 +39,7 @@
                             </thead>
 
                             <tbody>
-                                <?php $hm = \App\ManuscriptEditorCanTake::where('editor_id', $key->id)->paginate(10, ["*"], $key->id); ?>
+                                <?php $hm = \App\ManuscriptEditorCanTake::where('editor_id', $key->id)->orderBy('date_from', 'DESC')->paginate(10, ["*"], $key->id); ?>
                                 @foreach($hm as $i)
                                     <tr>
                                         <td></td>
@@ -52,12 +52,12 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        <div style="margin-top: -13px;" class="pull-right">
+                            @if($hm)
+                                {{$hm->render()}}
+                            @endif
+                        </div>
                     @endif
-                    <div style="margin-top: -13px;" class="pull-right">
-                        @if($hm)
-                            {{$hm->render()}}
-                        @endif
-                    </div>
 
                 @endforeach
 
