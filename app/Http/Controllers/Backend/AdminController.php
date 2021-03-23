@@ -20,6 +20,7 @@ use App\Http\Controllers\Controller;
 use App\User;
 use Maatwebsite\Excel\Excel;
 use App\EditorAssignmentPrices;
+use App\ManuscriptEditorCanTake;
 
 class AdminController extends Controller
 {
@@ -235,7 +236,8 @@ class AdminController extends Controller
 
     public function yearlyCalendar()
     {
-        return view('backend.yearly-calendar');
+        $editor = User::where('role', 3)->orderBy('first_name', 'ASC')->orderBy('last_name', 'ASC')->get();
+        return view('backend.yearly-calendar', compact('editor'));
     }
 
     public function fikenRedirect( Request $request )

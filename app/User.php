@@ -256,6 +256,11 @@ class User extends Authenticatable
         return $this->attributes['first_name'] . ' ' . $this->attributes['last_name'];
     }
 
+    public function HowManyManuscriptYouCanTake()
+    {
+        return $this->hasMany('App\ManuscriptEditorCanTake','editor_id', 'id')
+        ->orderBy('date_from', 'DESC');
+    }
 
     public function getHasProfileImageAttribute()
     {
