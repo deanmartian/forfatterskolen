@@ -19,11 +19,11 @@
             <div class="row">
                 <div class="col-sm-12">
                     <h1 class="text-center mb-5">
-                        Reprise: Forløs ditt kreative potensial 24.01.2021
+                        Reprise: Slik skriver du et førsteutkast 24.01.2021
                     </h1>
                 </div>
                 <div class="col-sm-12 top-page-container">
-                    <iframe src="https://video.easywrite.no/file/Webinarer/Gratis/kreativepotensial.html?player=thamer" frameborder="0"
+                    <iframe src="https://video.easywrite.no/file/Webinarer/2021/Mars/salgswebinar23.3.html?player=thamer" frameborder="0"
                             allowfullscreen="allowfullscreen"></iframe>
                 </div>
             </div>
