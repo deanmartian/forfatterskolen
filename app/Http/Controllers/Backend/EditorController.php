@@ -239,11 +239,15 @@ class EditorController extends Controller
         return view('editor.editor-settings', compact('manuscriptEditorCanTake','genrePrefrences','genreIHaveNotSelected'));
     }
 
-    public function saveGenrePrefences(Request $request){
+    public function saveGenrePrefences($fromAdmin, Request $request){
 
         if ($request->genre_id){
-
-            $data['editor_id'] = Auth::user()->id;
+            if($fromAdmin){
+                $data['editor_id'] = $request->editor_id;
+            }else{
+                $data['editor_id'] = Auth::user()->id;
+            }
+            
             $data['genre_id'] = $request->genre_id;
             EditorGenrePreferences::create($data);
 

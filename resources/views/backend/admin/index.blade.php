@@ -6,6 +6,17 @@
 
 @section('styles')
 	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+	<style>
+		a.hover-red:hover{
+			color:#d9534f;
+		}
+		a.hover-red i{
+			visibility:hidden;
+		}
+		a.hover-red:hover i{
+			visibility:visible;
+		}
+	</style>
 @stop
 
 @section('content')
@@ -267,6 +278,7 @@
 							<th>Name</th>
 							<th>Email</th>
 							<th>Total Worked</th>
+							<th style="width: 250px;">{{ trans('site.editor-assigned-genre') }}</th>
 							<th></th>
 						</tr>
 						</thead>
@@ -279,6 +291,51 @@
 								<td>
 									@if($admin->role == 3)
 									<a href="{{ route('admin.total_editor_worked', $admin->id) }}" class="btn btn-primary btn-xs">Preview Editor Total Worked</a>
+									@endif
+								</td>
+								<td>
+									@if($admin->role == 3)
+
+										<?php
+											$count = 0;
+											foreach($admin->editorGenrePreferences as $key){
+												$count++;
+												echo "<a class='hover-red deleteGenrePreferencesBtn' 
+													data-toggle='modal'
+													data-target='#deleteGenrePreferences'
+													data-action='".route('admin.delete-genre-preferences', $key->id)."'>
+													<i class='fa fa-times' aria-hidden='true'></i> ".$key->genre->name."</a>";
+												if ($count!=$admin->editorGenrePreferences->count()){
+													echo ', ';
+												}
+											}
+
+											$genre = null;
+											$genreComma= null;
+											foreach($admin->editorGenrePreferences as $key){
+												$genre[] = $key->genre->name;
+											}
+											if ($genre){
+												$genreComma = implode(",", $genre);
+											}
+
+											$allGenre = \App\Genre::whereNotIn('id', function($query) use($admin){
+												$query->select('genre_id')->from('editor_genre_preferences')->where('editor_id', $admin->id);
+											})->get();
+
+										?>
+
+										<button class="btn btn-success btn-xs genrePreferenceBtn" 
+												data-toggle="modal" 
+												data-target="#genrePreferenceModal"
+												data-genre_preferences = "{{ $genreComma }}"
+												data-all_genre = "{{ $allGenre }}"
+												data-all_genre_count = "{{ $allGenre->count() }}"
+												data-editor_id = "{{ $admin->id }}"
+												data-genre_preferences_count = "{{ $admin->editorGenrePreferences->count() }}">
+												<i class="fa fa-plus"></i>
+										</button>
+
 									@endif
 								</td>
 								<td>
@@ -707,6 +764,63 @@
 	</div>
 </div>
 
+<div id="genrePreferenceModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.add-new') }}</h4>
+			</div>
+			<div class="modal-body">
+				<!-- <table class="table table-striped">
+					<thead>
+						
+					</thead>
+					<tbody class="content">
+							
+					</tbody>
+				</table> -->
+				<form id="addAssignmentForm" method="POST" action="{{ route('admin.save-genre-prefences', 1) }}" enctype="multipart/form-data">
+					{{csrf_field()}}
+					<input type="hidden" class="form-control" name="editor_id">
+					<div class="form-group">
+						<label>{{ trans('site.genre') }}</label>
+						<select class="form-control select2" name="genre_id" required>
+							<option value="" disabled selected>- Select Genre -</option>
+						</select>
+					</div>
+					<button type="submit" class="btn btn-primary pull-right">Save</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<div id="deleteGenrePreferences" class="modal fade " role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.delete-question') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form id="deleteForm" method="POST" action="" enctype="multipart/form-data">
+					{{csrf_field()}}
+					<input type="hidden" class="form-control" name="id">
+					<div style="text-align: center;" class="decision">
+						<button style="padding: 10px 65px;" type="submit" class="btn btn-lg btn-danger">{{ trans('site.front.yes') }}</button>
+						<button style="padding: 10px 65px; margin-right: 4px;" type="button" data-dismiss="modal" class="btn btn-lg btn-default">{{ trans('site.front.no') }}</button>
+					</div>
+					
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -875,6 +989,34 @@
 		var action = $(this).data('action');
 		modal.find('form').attr('action', action);
 
+	});
+
+	$(".genrePreferenceBtn").click(function(){
+
+		var modal = $("#genrePreferenceModal");
+		var genre = $(this).data('genre_preferences');
+		var genreArray = genre.split(",");
+		var all_genre_count = $(this).data('all_genre_count');
+		var all_genre = $(this).data('all_genre');
+		var editor_id = $(this).data('editor_id');
+		
+		modal.find('[name=editor_id]').val(editor_id);
+
+		modal.find('.content').html('');
+		genreArray.forEach(function (item, index){
+			modal.find('.content').append('<tr><td>'+ item +'</td><td></td</tr>');
+		})
+		console.log(all_genre, all_genre_count)
+		for(var i = 0; i<all_genre_count; i++){
+			modal.find('[name=genre_id]').append('<option value="'+all_genre[i]['id']+'">'+all_genre[i]['name']+'</option>');
+		}
+
+	});
+
+	$(".deleteGenrePreferencesBtn").click(function(){
+		var modal = $('#deleteGenrePreferences');
+		var action = $(this).data('action');
+		modal.find('form').attr('action', action);
 	});
 
     if (other_terms_tab) {

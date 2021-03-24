@@ -1400,6 +1400,8 @@ Route::group([
         Route::post('editor_assignment_price/save', 'EditorAssignmentPriceController@save')->name('editor_assignment_price.save');
         Route::post('editor_assignment_price/{id}/delete', 'EditorAssignmentPriceController@delete')->name('editor_assignment_price.delete');
         Route::get('editor_total_worked/{id}', 'EditorController@total')->name('admin.total_editor_worked');
+        Route::post('saveGenrePrefences/{from_admin}', 'EditorController@saveGenrePrefences')->name('admin.save-genre-prefences');
+        Route::post('deleteGenrePreferences/{id}', 'EditorController@deleteGenrePreferences')->name('admin.delete-genre-preferences');
 
     });
 
@@ -1454,7 +1456,7 @@ Route::group([
         Route::get('/other-service/{id}/download/{type}', 'OtherServiceController@downloadOtherServiceDoc')->name('editor.other-service.download-doc'); // Download assignment feedback
         Route::post('/other-service/{id}/coaching-timer/set_replay', 'OtherServiceController@editorSetReplay')->name('editor.other-service.coaching-timer.set_replay');
         Route::get('settings', 'EditorController@settings')->name('editor.settings');
-        Route::post('saveGenrePrefences', 'EditorController@saveGenrePrefences')->name('editor.save-genre-prefences');
+        Route::post('saveGenrePrefences/{from_admin}', 'EditorController@saveGenrePrefences')->name('editor.save-genre-prefences');
         Route::post('deleteGenrePreferences/{id}', 'EditorController@deleteGenrePreferences')->name('editor.delete-genre-preferences');
 
     });

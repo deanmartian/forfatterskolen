@@ -200,7 +200,7 @@
 				<h4 class="modal-title">{{ trans('site.add-new') }}</h4>
 			</div>
 			<div class="modal-body">
-				<form id="addForm" method="POST" action="{{ route('editor.save-genre-prefences') }}" enctype="multipart/form-data">
+				<form id="addForm" method="POST" action="{{ route('editor.save-genre-prefences', 0) }}" enctype="multipart/form-data">
 					{{csrf_field()}}
 					
 					<select class="form-control select2" name="genre_id" required>
