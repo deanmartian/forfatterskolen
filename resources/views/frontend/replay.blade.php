@@ -8,7 +8,7 @@
     @if ($pageMeta)
         <title>{{ $pageMeta->meta_title }}</title>
     @else
-        <title>Reprise: Slik forløser du ditt kreative potensial</title>
+        <title>Reprise: Slik skriver du et førsteutkast</title>
     @endif
 @stop
 
@@ -19,7 +19,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <h1 class="text-center mb-5">
-                        Reprise: Slik skriver du et førsteutkast 24.01.2021
+                        Reprise: Slik skriver du et førsteutkast 23.03.2021
                     </h1>
                 </div>
                 <div class="col-sm-12 top-page-container">
