@@ -185,22 +185,35 @@
       		<div class="form-group">
       			<label>{{ trans_choice('site.editors', 1) }}</label>
       			<select class="form-control select2" name="feedback_user_id" required>
-					<option value="" selected disabled>
-						-- Select Editor --
-					</option>
-      				@foreach( App\User::whereIn('role', array(1,3))->orderBy('id', 'desc')->get()  as $admin)
-						<?php
-							$selected = '';
+					
+					@if($shopManuscriptTaken->genre)
+						@if($editor->count()>0)
+							<option value="" selected disabled>
+								-- Select Editor --
+							</option>
+						@else
+							<option value="" selected disabled>
+								-- {{ trans('site.no-editor-found') }} --
+							</option>
+						@endif
+						@foreach($editor as $admin)
+							<?php
+								$selected = '';
 
-                        if ($shopManuscriptTaken->user->preferredEditor
-                            && $shopManuscriptTaken->user->preferredEditor->editor_id === $admin->id) {
-                            $selected = 'selected';
-                        }
-						?>
-      				<option value="{{ $admin->id }}" {{ $selected}}>
-						{{ $admin->full_name }}
-					</option>
-      				@endforeach
+							if ($shopManuscriptTaken->user->preferredEditor
+								&& $shopManuscriptTaken->user->preferredEditor->editor_id === $admin->id) {
+								$selected = 'selected';
+							}
+							?>
+						<option value="{{ $admin->id }}" {{ $selected}}>
+							{{ $admin->full_name }}
+						</option>
+						@endforeach
+					@else
+						<option value="" selected disabled>
+							-- {{ trans('site.provide-a-genre-to-select-editor') }} --
+						</option>
+					@endif
       			</select>
 				@if($shopManuscriptTaken->user->preferredEditor)
 					<div class="hidden-container">

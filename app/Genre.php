@@ -19,4 +19,8 @@ class Genre extends Model
      * @var array
      */
     protected $fillable = ['name'];
+
+    public function editorGenrePreferences(){
+        return $this->hasMany('App\Models\EditorGenrePreferences', 'genre_id', 'id');
+    }
 }

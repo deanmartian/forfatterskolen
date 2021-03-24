@@ -1453,6 +1453,9 @@ Route::group([
         Route::post('/other-service/{id}/add-feedback/{type}', 'OtherServiceController@addFeedback')->name('editor.other-service.add-feedback');
         Route::get('/other-service/{id}/download/{type}', 'OtherServiceController@downloadOtherServiceDoc')->name('editor.other-service.download-doc'); // Download assignment feedback
         Route::post('/other-service/{id}/coaching-timer/set_replay', 'OtherServiceController@editorSetReplay')->name('editor.other-service.coaching-timer.set_replay');
+        Route::get('settings', 'EditorController@settings')->name('editor.settings');
+        Route::post('saveGenrePrefences', 'EditorController@saveGenrePrefences')->name('editor.save-genre-prefences');
+        Route::post('deleteGenrePreferences/{id}', 'EditorController@deleteGenrePreferences')->name('editor.delete-genre-preferences');
 
     });
 

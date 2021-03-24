@@ -992,7 +992,7 @@ class AdminHelpers
         $pages = array(
             array( 'id' => 1, 'option' => 'Pending Assignments', 'route' => 'editor.dashboard', 'request_name' => 'pending-assignments'),
             array( 'id' => 2, 'option' => 'Assignment Archive', 'route' => 'editor.assignment-archive', 'request_name' => 'assignment-archive'),
-            array( 'id' => 3, 'options' => 'How Many Manuscript You Can Take?', 'route' => 'editor.manuscript-you-can-take', 'request_name' => 'how-many-manuscript-you-can-take'),
+            array( 'id' => 4, 'options' => 'Editor Settings', 'route' => 'editor.settings', 'request_name' => 'editor-settings'),
             array( 'id' => 8, 'option' => 'Årshjul', 'route' => 'editor.yearly-calendar.index', 'request_name' => 'yearly_calendar')
         );
 

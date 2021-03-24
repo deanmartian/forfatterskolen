@@ -11,6 +11,10 @@ use File;
 use Illuminate\Support\Facades\DB;
 use App\User;
 use App\EditorAssignmentPrices;
+use App\ManuscriptEditorCanTake;
+use Illuminate\Support\Facades\Auth;
+use App\EditorGenrePreferences;
+use App\Genre;
 
 class EditorController extends Controller
 {
@@ -219,4 +223,43 @@ class EditorController extends Controller
 
         return view('backend.admin.total_editor_worked', compact('editor', 'var', 'data', 'editor','price'));
     }
+
+    public function settings(){
+
+        $manuscriptEditorCanTake = ManuscriptEditorCanTake::where('editor_id', Auth::user()->id)
+        ->orderBy('date_from', 'asc')
+        ->get();
+
+        $genrePrefrences = EditorGenrePreferences::where('editor_id', Auth::user()->id)->get();
+        $genreIHaveNotSelected = Genre::whereNotIn('id', function($query){
+            $query->select('genre_id')->from('editor_genre_preferences')->where('editor_id', Auth::user()->id);
+        })
+        ->get();
+
+        return view('editor.editor-settings', compact('manuscriptEditorCanTake','genrePrefrences','genreIHaveNotSelected'));
+    }
+
+    public function saveGenrePrefences(Request $request){
+
+        if ($request->genre_id){
+
+            $data['editor_id'] = Auth::user()->id;
+            $data['genre_id'] = $request->genre_id;
+            EditorGenrePreferences::create($data);
+
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Genre preference saved successfully'),
+                'alert_type' => 'success']);
+
+        }
+        
+        return redirect()->back();
+        
+    }
+
+    public function deleteGenrePreferences($id){
+        EditorGenrePreferences::find($id)->delete();
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record deleted successfully.'),
+            'alert_type' => 'success']);
+    }
+
 }

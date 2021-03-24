@@ -731,9 +731,19 @@
 											@endif
 										</td>
 										<td>
+											<?php 
+												$genreEditors = \App\User::where('role', 3)
+												->whereHas('editorGenrePreferences', function($q) use ($pendingAssignment){
+													$q->where('genre_id', $pendingAssignment->type);
+												})
+												->orderBy('id', 'desc')
+												->get();
+											 ?>
 											<button class="btn btn-xs btn-warning pendingAssignmentEditorBtn" data-toggle="modal"
 													data-target="#pendingAssignmentEditorModal"
 													data-action="{{ route('assignment.group.assign_manu_editor', $pendingAssignment->id) }}"
+													data-genre_editors="{{ $genreEditors }}"
+													data-genre_editors_count="{{ $genreEditors->count() }}"
 													data-preferred-editor="{{ $pendingAssignment->user->preferredEditor
 								? $pendingAssignment->user->preferredEditor->editor_id : "" }}"
 													data-preferred-editor-name="{{ $pendingAssignment->user->preferredEditor
@@ -1211,9 +1221,6 @@
 						<label>{{ trans('site.assign-editor') }}</label>
 						<select name="editor_id" class="form-control select2" required>
 							<option value="" disabled="" selected>-- Select Editor --</option>
-							@foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
-								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
-							@endforeach
 						</select>
 
 						<div class="hidden-container">
@@ -1582,6 +1589,15 @@
         let modal = $('#pendingAssignmentEditorModal');
         modal.find('select').val(preferred_editor).trigger('change');
         modal.find('form').attr('action', action);
+
+		let genreEditors = $(this).data('genre_editors');
+		console.log(genreEditors)
+		let genreEditorsCount = $(this).data('genre_editors_count');
+		modal.find('select[name=editor_id]').html('<option value="" disabled selected>- Select Editor -</option>');
+
+		for(var i = 0; i<genreEditorsCount; i++){
+			modal.find('select[name=editor_id]').append('<option value="'+genreEditors[i]['id']+'">'+genreEditors[i]['first_name']+' '+genreEditors[i]['last_name']+'</option>');
+		}
 
         if (preferred_editor) {
             modal.find('.select2').hide();

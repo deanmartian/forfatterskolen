@@ -411,4 +411,8 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\WebinarRegistrant', 'user_id', 'id');
     }
+
+    public function editorGenrePreferences(){
+        return $this->hasMany('App\EditorGenrePreferences', 'editor_id', 'id');
+    }
 }

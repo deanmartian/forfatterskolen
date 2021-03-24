@@ -135,16 +135,26 @@
 									@endif
 							</td>
 							<td>
-								<?php $editor = $manuscript->editor_id ? \App\User::find($manuscript->editor_id) : '';?>
+								<?php 
+									$editor = $manuscript->editor_id ? \App\User::find($manuscript->editor_id) : '';
+									$genreEditors = \App\User::where('role', 3)
+									->whereHas('editorGenrePreferences', function($q) use ($manuscript){
+										$q->where('genre_id', $manuscript->type);
+									})
+									->orderBy('id', 'desc')
+									->get();
+								?>
 
 								{{ $editor ? $editor->full_name."\n" : "" }}
 								<button class="btn btn-xs btn-primary assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal"
 								data-action="{{ route('assignment.group.assign_manu_editor', $manuscript->id) }}"
-								data-editor="{{ $editor ? $editor->id : "" }}"
+								data-editor="{{ $editor ? $editor->id : '' }}"
+								data-genre_editors = "{{ $genreEditors }}"
+								data-genre_editors_count = "{{ $genreEditors->count() }}"
 								data-preferred-editor="{{ $manuscript->user->preferredEditor
-								? $manuscript->user->preferredEditor->editor_id : "" }}"
+								? $manuscript->user->preferredEditor->editor_id : '' }}"
 								data-preferred-editor-name="{{ $manuscript->user->preferredEditor
-								? $manuscript->user->preferredEditor->editor->full_name : "" }}">
+								? $manuscript->user->preferredEditor->editor->full_name : '' }}">
 									{{ trans('site.assign-editor') }}
 								</button>
 							</td>
@@ -439,9 +449,6 @@
 						<label>{{ trans_choice('site.editors', 1) }}</label>
 						<select class="form-control select2" name="editor_id" required>
 							<option value="" disabled selected>- Select Editor -</option>
-							@foreach( $editors as $editor )
-								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
-							@endforeach
 						</select>
 
 						<div class="hidden-container">
@@ -997,12 +1004,20 @@
     });
 
     $(".assignEditorBtn").click(function(){
+		
         let modal = $("#assignEditorModal");
         let form = modal.find('form');
         let action = $(this).data('action');
         let editor = $(this).data('editor');
         let preferred_editor = $(this).data('preferred-editor');
         let preferred_editor_name = $(this).data('preferred-editor-name');
+		let genreEditors = $(this).data('genre_editors');
+		let genreEditorsCount = $(this).data('genre_editors_count');
+		modal.find('select[name=editor_id]').html('<option value="" disabled selected>- Select Editor -</option>');
+
+		for(var i = 0; i<genreEditorsCount; i++){
+			modal.find('select[name=editor_id]').append('<option value="'+genreEditors[i]['id']+'">'+genreEditors[i]['first_name']+' '+genreEditors[i]['last_name']+'</option>');
+		}
 
         form.attr('action', action);
         form.find("select[name=editor_id]").val(preferred_editor ? preferred_editor : editor).trigger('change');

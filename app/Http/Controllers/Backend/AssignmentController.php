@@ -69,7 +69,7 @@ class AssignmentController extends Controller
 
     	$section = 'assignments';
     	if( $assignment->course->id == $course->id ) :
-    		return view('backend.assignment.show', compact('course', 'assignment', 'editors', 'section',
+    		return view('backend.assignment.show', compact('course','editors','assignment', 'section',
                 'assignments'));
     	endif;
     	return abort('404');
@@ -218,7 +218,8 @@ class AssignmentController extends Controller
                 'user_id' => $learner->id,
                 'words' => $word_count,
                 'filename' => '/'.$fileName,
-                'join_group' => $request->join_group
+                'join_group' => $request->join_group,
+                'editor_expected_finish' => $assignment->editor_expected_finish
             ]);
             return redirect()->back();
         endif;
