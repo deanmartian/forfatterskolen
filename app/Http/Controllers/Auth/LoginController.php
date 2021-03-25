@@ -37,11 +37,14 @@ class LoginController extends Controller
 
     public function editorLogin(LoginRequest $request)
     {
-        $user = User::where('email', $request->email)->whereIn('role', array(3))->first();
+        $user = User::where('email', $request->email)->whereIn('role', array(3))->orWhere('admin_with_editor_access', 1)->first();
 
         if(!$user) return redirect()->back()->withErrors('Unknown email');
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 3])) :
+            // Authentication passed...
+            return redirect()->back();
+        elseif (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'admin_with_editor_access' => 1])) :
             // Authentication passed...
             return redirect()->back();
         endif;

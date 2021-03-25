@@ -137,12 +137,22 @@
 							<td>
 								<?php 
 									$editor = $manuscript->editor_id ? \App\User::find($manuscript->editor_id) : '';
-									$genreEditors = \App\User::where('role', 3)
-									->whereHas('editorGenrePreferences', function($q) use ($manuscript){
-										$q->where('genre_id', $manuscript->type);
-									})
-									->orderBy('id', 'desc')
-									->get();
+
+									$genreEditors = \App\User::where(function($query){
+												$query->where('role', 3)->orWhere('admin_with_editor_access', 1);
+											})
+											->whereHas('editorGenrePreferences', function($q) use ($manuscript){
+												$q->where('genre_id', $manuscript->type);
+											})
+											->orderBy('id', 'desc')
+											->get();
+									if($genreEditors->count() < 1){
+										$genreEditors = \App\User::where(function($query){
+											$query->where('role', 3)->orWhere('admin_with_editor_access', 1);
+										})
+										->orderBy('id', 'desc')
+										->get();
+								}
 								?>
 
 								{{ $editor ? $editor->full_name."\n" : "" }}

@@ -732,12 +732,22 @@
 										</td>
 										<td>
 											<?php 
-												$genreEditors = \App\User::where('role', 3)
-												->whereHas('editorGenrePreferences', function($q) use ($pendingAssignment){
-													$q->where('genre_id', $pendingAssignment->type);
-												})
-												->orderBy('id', 'desc')
-												->get();
+												$genreEditors = \App\User::where(function($query){
+																	$query->where('role', 3)->orWhere('admin_with_editor_access', 1);
+																})
+																->whereHas('editorGenrePreferences', function($q) use ($pendingAssignment){
+																	$q->where('genre_id', $pendingAssignment->type);
+																})
+																->orderBy('id', 'desc')
+																->get();
+												if($genreEditors->count() < 1){
+													$genreEditors = \App\User::where(function($query){
+														$query->where('role', 3)->orWhere('admin_with_editor_access', 1);
+													})
+													->orderBy('id', 'desc')
+													->get();
+												}
+												
 											 ?>
 											<button class="btn btn-xs btn-warning pendingAssignmentEditorBtn" data-toggle="modal"
 													data-target="#pendingAssignmentEditorModal"

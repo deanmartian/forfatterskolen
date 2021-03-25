@@ -186,7 +186,6 @@
       			<label>{{ trans_choice('site.editors', 1) }}</label>
       			<select class="form-control select2" name="feedback_user_id" required>
 					
-					@if($shopManuscriptTaken->genre)
 						@if($editor->count()>0)
 							<option value="" selected disabled>
 								-- Select Editor --
@@ -209,11 +208,7 @@
 							{{ $admin->full_name }}
 						</option>
 						@endforeach
-					@else
-						<option value="" selected disabled>
-							-- {{ trans('site.provide-a-genre-to-select-editor') }} --
-						</option>
-					@endif
+						
       			</select>
 				@if($shopManuscriptTaken->user->preferredEditor)
 					<div class="hidden-container">

@@ -403,12 +403,21 @@ class LearnerController extends Controller
     {
         $learner = User::findOrFail($id);
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $shopManuscriptTakenID)->where('user_id', $learner->id)->firstOrFail();
-        $editor = User::where('role', 3)
-                            ->whereHas('editorGenrePreferences', function($q) use ($shopManuscriptTaken){
-                                $q->where('genre_id', $shopManuscriptTaken->genre);
-                            })
-                            ->orderBy('id', 'desc')
-                            ->get();
+        $editor = User::where(function($query){
+                    $query->where('role', 3)->orWhere('admin_with_editor_access', 1);
+                })
+                ->whereHas('editorGenrePreferences', function($q) use ($shopManuscriptTaken){
+                    $q->where('genre_id', $shopManuscriptTaken->genre);
+                })
+                ->orderBy('id', 'desc')
+                ->get();
+        if($editor->count() < 1){
+            $editor = User::where(function($query){
+                $query->where('role', 3)->orWhere('admin_with_editor_access', 1);
+            })
+            ->orderBy('id', 'desc')
+            ->get();
+        }
         $emailTemplate = EmailTemplate::where('page_name', '=', 'Manuscript')->first();
         return view('backend.learner.shopManuscriptTaken', compact('shopManuscriptTaken', 'learner', 'emailTemplate','editor'));
     }

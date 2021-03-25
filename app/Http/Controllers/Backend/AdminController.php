@@ -88,8 +88,14 @@ class AdminController extends Controller
         if($request->has('minimal_access')){
             $admin->minimal_access = 1;
         }
-        if($request->has('is_editor')){
+        if($request->has('is_editor') && !$request->has('is_admin')){
             $admin->role = 3;
+        }elseif($request->has('is_editor') && $request->has('is_admin')){
+            $admin->role = 1;
+            $admin->admin_with_editor_access = 1;
+        }else{
+            $admin->role = 1;
+            $admin->admin_with_editor_access = 0;
         }
 
         if( $request->password ) :

@@ -289,12 +289,12 @@
 								<td>{{ $admin->full_name }}</td>
 								<td>{{ $admin->email }}</td>
 								<td>
-									@if($admin->role == 3)
+									@if($admin->role == 3 || $admin ->admin_with_editor_access == 1)
 									<a href="{{ route('admin.total_editor_worked', $admin->id) }}" class="btn btn-primary btn-xs">Preview Editor Total Worked</a>
 									@endif
 								</td>
 								<td>
-									@if($admin->role == 3)
+									@if($admin->role == 3 || $admin ->admin_with_editor_access == 1)
 
 										<?php
 											$count = 0;
@@ -434,8 +434,14 @@
 				{{--<div class="form-group">
 					<input type="checkbox" name="minimal_access"> Allow manuscript and learners page only
 				</div>--}}
-				<div class="form-group">
-					<input type="checkbox" name="is_editor"> Is Editor?
+				<div>
+					<div class="form-group">
+						<input type="checkbox" name="is_editor"> Is Editor? &nbsp;&nbsp;
+						<input type="checkbox" name="is_admin"> Is Admin?
+					</div>
+					<div class="form-group">
+						
+					</div>
 				</div>
 		      <button type="submit" class="btn btn-primary pull-right margin-top">Save</button>
 		      <div class="clearfix"></div>
@@ -842,9 +848,15 @@
             form.find('input[name=minimal_access]').attr('checked', true);
 		}*/
 		form.find('input[name=is_editor]').attr('checked', false);
-        if (fields.role == 3) {
+		form.find('input[name=is_admin]').attr('checked', false);
+        if (fields.role == 3 && fields.admin_with_editor_access != 1) {
             form.find('input[name=is_editor]').attr('checked', true);
-        }
+        }else if(fields.role == 1 && fields.admin_with_editor_access == 1){
+			form.find('input[name=is_editor]').attr('checked', true);
+			form.find('input[name=is_admin]').attr('checked', true);
+		}else if(fields.role == 1 && fields.admin_with_editor_access != 1){
+			form.find('input[name=is_admin]').attr('checked', true);
+		}
 	});
 
     $('.editAdminAccessPageBtn').click(function(){
