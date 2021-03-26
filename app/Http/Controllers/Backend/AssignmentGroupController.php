@@ -175,7 +175,7 @@ class AssignmentGroupController extends Controller
                 }
                 $assignmentManuscript->save();
     
-                AssignmentFeedback::create([
+                $assignmentFeedback = AssignmentFeedback::create([
                     'assignment_group_learner_id' => $id,
                     'user_id' => Auth::user()->id,
                     'filename' => $filesWithPath,
@@ -190,8 +190,7 @@ class AssignmentGroupController extends Controller
                 $to = User::where('role', 1)->where('head_editor', 1)->first();
 
                 dispatch(new AddMailToQueueJob($to->email, $emailTemplate->subject, $emailTemplate->email_content, $emailTemplate->from_email,
-                null, null,
-                'new-pending-feedback', null));
+                null, null, 'new-pending-assignment-feedback', $assignmentFeedback->id));
 
                 return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback saved successfully.'),
                         'alert_type' => 'success']);

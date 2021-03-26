@@ -358,7 +358,7 @@ class OtherServiceController extends Controller
                     $data['service_type'] = $service_type;
                     $data['hours_worked'] = $request->hours_worked;
                     $data['notes_to_head_editor'] = $request->notes_to_head_editor;
-                    OtherServiceFeedback::create($data);
+                    $otherServiceFeedback = OtherServiceFeedback::create($data);
     
                     //update status
                     if ($service_type == 1) {
@@ -380,8 +380,7 @@ class OtherServiceController extends Controller
                     $to = User::where('role', 1)->where('head_editor', 1)->first();
 
                     dispatch(new AddMailToQueueJob($to->email, $emailTemplate->subject, $emailTemplate->email_content, $emailTemplate->from_email,
-                    null, null,
-                    'new-pending-feedback', null));
+                    null, null, 'new-pending-'.$service.'-feedback', $otherServiceFeedback->id));
     
                     return redirect()->back()->with([
                         'errors'                => AdminHelpers::createMessageBag($service.' Feedback added successfully.'),

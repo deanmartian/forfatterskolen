@@ -214,7 +214,7 @@ class ShopManuscriptController extends Controller
 
             if( $request->hasFile('files') && $shopManuscriptTaken->feedbacks->count() == 0 ) :
 
-                ShopManuscriptTakenFeedback::create([
+                $shopManuscriptTakenFeedback = ShopManuscriptTakenFeedback::create([
                     'shop_manuscript_taken_id' => $shopManuscriptTaken->id,
                     'filename' => json_encode($files),
                     'notes' => $request->notes,
@@ -227,8 +227,7 @@ class ShopManuscriptController extends Controller
                 $to = User::where('role', 1)->where('head_editor', 1)->first();
 
                 dispatch(new AddMailToQueueJob($to->email, $emailTemplate->subject, $emailTemplate->email_content, $emailTemplate->from_email,
-                null, null,
-                'new-pending-feedback', null));
+                null, null, 'new-pending-shop-manuscript-taken-feedback', $shopManuscriptTakenFeedback->id));
 
                 return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback saved successfully.'),
                     'alert_type' => 'success']);
