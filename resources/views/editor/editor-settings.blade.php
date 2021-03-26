@@ -21,6 +21,7 @@
             <ul class="nav nav-tabs margin-top">
                 <li @if( Request::input('tab') == 'howManyManuscriptEditorCanTake' || Request::input('tab') == '') class="active" @endif><a href="?tab=howManyManuscriptEditorCanTake">{{ trans('site.admin-menu.how-many-manuscript-you-can-take') }}</a></li>
                 <li @if( Request::input('tab') == 'genrePreference' ) class="active" @endif><a href="?tab=genrePreference">{{ trans('site.genre-preference') }}</a></li>
+                <li @if( Request::input('tab') == 'assignmentManuscriptYouCanTake' ) class="active" @endif><a href="?tab=assignmentManuscriptYouCanTake">{{ trans('site.how-many-assignment-manuscript-you-can-take') }}</a></li>
             </ul>
 			
             @if( Request::input('tab') == 'howManyManuscriptEditorCanTake' || Request::input('tab') == '')
@@ -81,6 +82,59 @@
 						</tbody>
 					</table>
 				</div>
+			@elseif( Request::input('tab') == 'assignmentManuscriptYouCanTake' )
+
+			<div class="panel panel-default">
+				<br>
+				<div class="panel-heading">
+					<h4 class="dib">
+						{{ trans('site.how-many-assignment-manuscript-you-can-take') }}
+					</h4>
+
+				</div>
+				<table class="table">
+					<thead>
+					<tr>
+						<th>{{ trans_choice('site.courses', 1) }}</th>
+						<th>{{ trans_choice('site.assignments', 1) }}</th>
+						<th>{{ trans('site.learner.submission-date') }}</th>
+						<th>{{ trans('site.deadline') }}</th>
+						<th style="width: 200px;">{{ trans('site.how-many-you-can-take') }}</th>
+					</tr>
+					</thead>
+					<tbody>
+						@foreach($assignmentsBeforeEditorDeadline as $key)
+						<tr>
+							<td>{{ $key->course->title }}</td>
+							<td>{{ $key->title }}</td>
+							<td>{{ $key->submission_date }}</td>
+							<td>{{ $key->editor_expected_finish }}</td>
+							<td>
+								<?php 
+									$data = \App\AssignmentManuscriptEditorCanTake::where('assignment_manuscript_id', $key->id)->where('editor_id', Auth::user()->id)->first(); 
+									if($data){
+										echo $data->how_many_you_can_take;
+										echo '<button style="margin-right: 16px;" type="button" class="pull-right btn btn-sm btn-xs btn-info editHowManyYouCanTakeBtn" 
+													data-toggle="modal"
+													data-action="'.route('editor.saveAssignmentManuscriptEditorCanTake', ['id' => $data->id, 'assignment_manu_id' => $key->id]).'" 
+													data-target="#editHowManyYouCanTake"
+													data-edit = "1"
+													data-value ="'.$data->how_many_you_can_take.'">
+													<i class="fa fa-pencil"></i></button>';
+									}else{
+										echo '<button style="margin-right: 16px;" type="button" class="pull-right btn btn-sm btn-xs btn-info editHowManyYouCanTakeBtn" 
+													data-toggle="modal"
+													data-action="'.route('editor.saveAssignmentManuscriptEditorCanTake', ['id' => 0, 'assignment_manu_id' => $key->id]).'" 
+													data-target="#editHowManyYouCanTake">
+													<i class="fa fa-pencil"></i></button>';
+									}
+								?>
+							</td>
+						</tr>
+						@endforeach
+					</tbody>
+				</table>
+			</div>
 
             @else
 				<div class="panel panel-default">
@@ -247,6 +301,29 @@
 	</div>
 </div>
 
+<div id="editHowManyYouCanTake" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.how-many-you-can-take') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form id="addForm" method="POST" action="" enctype="multipart/form-data">
+					{{csrf_field()}}
+					<div class="form-group">
+                        <label>{{ trans('site.how-many-you-can-take') }}</label>
+                        <input name="how_many_you_can_take" type="text" class="form-control">
+                    </div>
+					<button type="submit" class="btn btn-primary pull-right">{{ trans_choice('site.save', 1) }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -282,6 +359,21 @@
 
 			}
 			
+		});
+
+		$(".editHowManyYouCanTakeBtn").click(function(){
+			var is_edit = $(this).data('edit');
+			var action = $(this).data('action');
+			var value = $(this).data('value'); //$(this).data('action');
+			var modal = $('#editHowManyYouCanTake');
+			modal.find('form').attr('action', action);
+			
+			if (is_edit){
+				modal.find('[name=how_many_you_can_take]').val(value);
+			}else{
+				modal.find('[name=how_many_you_can_take]').val('');
+			}
+
 		});
 
 		$(".deleteBtn").click(function(){

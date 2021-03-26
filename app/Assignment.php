@@ -73,4 +73,8 @@ class Assignment extends Model
     public function getEditorExpectedFinishAttribute($value) {
         return $value ? date_format(date_create($value), 'd.m.Y') : NULL;
     }
+
+    public function assignmentManuscriptEditorCanTake(){
+        return $this->hasMany('App\AssignmentManuscriptEditorCanTake', 'assignment_manuscript_id', 'id');
+    }
 }

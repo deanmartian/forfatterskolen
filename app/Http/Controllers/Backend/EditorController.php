@@ -15,6 +15,9 @@ use App\ManuscriptEditorCanTake;
 use Illuminate\Support\Facades\Auth;
 use App\EditorGenrePreferences;
 use App\Genre;
+use App\Assignment;
+use Carbon\Carbon;
+use App\AssignmentManuscriptEditorCanTake;
 
 class EditorController extends Controller
 {
@@ -236,7 +239,10 @@ class EditorController extends Controller
         })
         ->get();
 
-        return view('editor.editor-settings', compact('manuscriptEditorCanTake','genrePrefrences','genreIHaveNotSelected'));
+        // get the newly added assignments 
+        $assignmentsBeforeEditorDeadline = Assignment::where('editor_expected_finish','>=',Carbon::now())->where('for_editor', 0)->get();
+
+        return view('editor.editor-settings', compact('manuscriptEditorCanTake','genrePrefrences','genreIHaveNotSelected', 'assignmentsBeforeEditorDeadline'));
     }
 
     public function saveGenrePrefences($fromAdmin, Request $request){
@@ -263,6 +269,26 @@ class EditorController extends Controller
     public function deleteGenrePreferences($id){
         EditorGenrePreferences::find($id)->delete();
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record deleted successfully.'),
+            'alert_type' => 'success']);
+    }
+
+    public function saveAssignmentManuscriptEditorCanTake($id, $assignment_manu_id, Request $request)
+    {
+        if(!$request->has('how_many_you_can_take')){
+            return redirect()->back();
+        }
+        if($id){ //edit
+            $assignmentManuscriptEditorCanTake = AssignmentManuscriptEditorCanTake::find($id);
+            $assignmentManuscriptEditorCanTake->how_many_you_can_take = $request->how_many_you_can_take;
+            $assignmentManuscriptEditorCanTake->editor_id = Auth::user()->id;
+            $assignmentManuscriptEditorCanTake->save();
+        }else{
+            $data['how_many_you_can_take'] = $request->how_many_you_can_take;
+            $data['editor_id'] = Auth::user()->id;
+            $data['assignment_manuscript_id'] = $assignment_manu_id;
+            AssignmentManuscriptEditorCanTake::create($data);
+        }
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record saved successfully.'),
             'alert_type' => 'success']);
     }
 

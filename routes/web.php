@@ -1458,6 +1458,7 @@ Route::group([
         Route::get('settings', 'EditorController@settings')->name('editor.settings');
         Route::post('saveGenrePrefences/{from_admin}', 'EditorController@saveGenrePrefences')->name('editor.save-genre-prefences');
         Route::post('deleteGenrePreferences/{id}', 'EditorController@deleteGenrePreferences')->name('editor.delete-genre-preferences');
+        Route::post('saveAssignmentManuscriptEditorCanTake/{id}/{assignment_manu_id}', 'EditorController@saveAssignmentManuscriptEditorCanTake')->name('editor.saveAssignmentManuscriptEditorCanTake');
 
     });
 

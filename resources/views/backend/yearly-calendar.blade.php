@@ -9,6 +9,7 @@
     <ul class="nav nav-tabs margin-top">
         <li @if( Request::input('tab') == 'howManyManuscriptEditorCanTake' || Request::input('tab') == '') class="active" @endif><a href="?tab=howManyManuscriptEditorCanTake">How Many Manuscript You Can Take</a></li>
         <li @if( Request::input('tab') == 'yearlyCalendar' ) class="active" @endif><a href="?tab=yearlyCalendar">Yearly Calendar</a></li>
+        <li @if( Request::input('tab') == 'howManyAssignmentsEditorCanTake' ) class="active" @endif><a href="?tab=howManyAssignmentsEditorCanTake">{{ trans('site.how-many-manuscript-assignments-editor-can-take') }}</a></li>
     </ul>
     <div class="col-sm-12 dashboard-left">
         @if( Request::input('tab') == 'yearlyCalendar')
@@ -17,6 +18,38 @@
                 <h3><i class="fa fa-file-text-o"></i> Yearly Calendar</h3>
                 <div class="clearfix"></div>
                 <div style="max-width:1000px;width:100%;"><div style="position: relative;padding-bottom: 117%;padding-top: 35px;height: 0;overflow: hidden;"><iframe src="https://create.plandisc.com/wheel/embed/pB6HbNe" scrolling="no" frameborder="0" style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe></div></div><a style="font-size:10px;" href="https://create.plandisc.com/pB6HbNe">Problemer med å se Plandiscen? Trykk her</a>
+            </div>
+        @elseif( Request::input('tab') == 'howManyAssignmentsEditorCanTake')
+
+            <div class="table-users table-responsive">
+            
+                    <table class="table margin-top">
+                        <thead>
+                        <tr>
+                            <th>{{ trans_choice('site.editors', 1) }}</th>
+                            <th>{{ trans_choice('site.courses', 1) }}</th>
+                            <th>{{ trans_choice('site.assignments', 1) }}</th>
+                            <th>{{ trans('site.learner.submission-date') }}</th>
+                            <th>{{ trans('site.deadline') }}</th>
+                            <th style="width: 200px;">{{ trans('site.how-many-you-can-take') }}</th>
+                            <th>{{ trans('site.assigned-assignment-count') }}</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach($assignmentManuscriptEditorCanTake as $i)
+                                <tr>
+                                    <td>{{ $i->editor->full_name }}</td>
+                                    <td>{{ $i->assignment->course->title }}</td>
+                                    <td>{{ $i->assignment->title }}</td>
+                                    <td>{{ $i->assignment->submission_date }}</td>
+                                    <td>{{ $i->assignment->editor_expected_finish }}</td>
+                                    <td>{{ $i->how_many_you_can_take }}</td>
+                                    <td>{{ $i->AssignedCount }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
             </div>
 
         @elseif( Request::input('tab') == 'howManyManuscriptEditorCanTake' || Request::input('tab') == '')
@@ -62,7 +95,7 @@
                 @endforeach
 
             </div>
-
+            
         @endif
     </div>
 </div>

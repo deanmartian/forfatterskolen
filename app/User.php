@@ -415,4 +415,8 @@ class User extends Authenticatable
     public function editorGenrePreferences(){
         return $this->hasMany('App\EditorGenrePreferences', 'editor_id', 'id');
     }
+
+    public function assignmentManuscriptEditorCanTake(){
+        return $this->hasMany('App\AssignmentManuscriptEditorCanTake', 'editor_id', 'id');
+    }
 }

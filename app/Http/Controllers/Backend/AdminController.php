@@ -21,6 +21,7 @@ use App\User;
 use Maatwebsite\Excel\Excel;
 use App\EditorAssignmentPrices;
 use App\ManuscriptEditorCanTake;
+use App\AssignmentManuscriptEditorCanTake;
 
 class AdminController extends Controller
 {
@@ -242,8 +243,13 @@ class AdminController extends Controller
 
     public function yearlyCalendar()
     {
-        $editor = User::where('role', 3)->orderBy('first_name', 'ASC')->orderBy('last_name', 'ASC')->get();
-        return view('backend.yearly-calendar', compact('editor'));
+        $editor = User::where(function($query){
+            $query->where('role', 3)->orWhere('admin_with_editor_access', 1);
+        })->orderBy('first_name', 'ASC')->orderBy('last_name', 'ASC')->get();
+
+        $assignmentManuscriptEditorCanTake = AssignmentManuscriptEditorCanTake::orderBy('editor_id')->get();
+
+        return view('backend.yearly-calendar', compact('editor', 'assignmentManuscriptEditorCanTake'));
     }
 
     public function fikenRedirect( Request $request )
