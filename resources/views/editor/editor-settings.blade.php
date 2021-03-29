@@ -21,7 +21,7 @@
             <ul class="nav nav-tabs margin-top">
                 <li @if( Request::input('tab') == 'howManyManuscriptEditorCanTake' || Request::input('tab') == '') class="active" @endif><a href="?tab=howManyManuscriptEditorCanTake">{{ trans('site.admin-menu.how-many-manuscript-you-can-take') }}</a></li>
                 <li @if( Request::input('tab') == 'genrePreference' ) class="active" @endif><a href="?tab=genrePreference">{{ trans('site.genre-preference') }}</a></li>
-                <li @if( Request::input('tab') == 'assignmentManuscriptYouCanTake' ) class="active" @endif><a href="?tab=assignmentManuscriptYouCanTake">{{ trans('site.how-many-assignment-manuscript-you-can-take') }}</a></li>
+                <li @if( Request::input('tab') == 'assignmentManuscriptYouCanTake' ) class="active" @endif><a href="?tab=assignmentManuscriptYouCanTake">{{ trans('site.how-many-manuscript-assignments-editor-can-take') }}</a></li>
             </ul>
 			
             @if( Request::input('tab') == 'howManyManuscriptEditorCanTake' || Request::input('tab') == '')
