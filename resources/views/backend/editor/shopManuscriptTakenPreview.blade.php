@@ -1,4 +1,4 @@
-@extends('backend.layout')
+@extends('editor.layout')
 
 @section('title')
 <title>Shop Manuscript &rsaquo; Forfatterskolen Admin</title>
