@@ -88,7 +88,7 @@
 				<br>
 				<div class="panel-heading">
 					<h4 class="dib">
-						{{ trans('site.how-many-assignment-manuscript-you-can-take') }}
+						{{ trans('site.how-many-manuscript-assignments-editor-can-take') }}
 					</h4>
 
 				</div>
