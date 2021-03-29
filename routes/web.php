@@ -1459,6 +1459,7 @@ Route::group([
         Route::post('saveGenrePrefences/{from_admin}', 'EditorController@saveGenrePrefences')->name('editor.save-genre-prefences');
         Route::post('deleteGenrePreferences/{id}', 'EditorController@deleteGenrePreferences')->name('editor.delete-genre-preferences');
         Route::post('saveAssignmentManuscriptEditorCanTake/{id}/{assignment_manu_id}', 'EditorController@saveAssignmentManuscriptEditorCanTake')->name('editor.saveAssignmentManuscriptEditorCanTake');
+        Route::get('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}', 'LearnerController@shopManuscriptTakenShowEditorPreview')->name('editor.shop_manuscript_taken');
 
     });
 

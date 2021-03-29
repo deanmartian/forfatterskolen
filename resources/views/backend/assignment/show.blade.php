@@ -265,7 +265,7 @@
 			</div>
 
 			<?php
-				$assignment_manuscripts_list = $assignment->manuscripts->pluck('id')->toArray();
+				$assignment_manuscripts_list = $assignment->manuscripts->where('status', 1)->pluck('id')->toArray();
 				$noGroupFeedbackList = \App\AssignmentFeedbackNoGroup::whereIn('assignment_manuscript_id', $assignment_manuscripts_list)
 				->get();
 			?>

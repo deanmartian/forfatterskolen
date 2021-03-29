@@ -38,7 +38,7 @@ class User extends Authenticatable
     ];
 
     protected $with = ['preferredEditor'];
-    protected $appends = ['is_webinar_pakke_active'];
+    protected $appends = ['is_webinar_pakke_active', 'assigned_with_no_feedback'];
 
     public function getAddressAttribute()
     {
@@ -418,5 +418,10 @@ class User extends Authenticatable
 
     public function assignmentManuscriptEditorCanTake(){
         return $this->hasMany('App\AssignmentManuscriptEditorCanTake', 'editor_id', 'id');
+    }
+
+    public function getAssignedWithNoFeedbackAttribute(){ //not availble if currently assigned on manuscript assignment
+        $query = \App\AssignmentManuscript::where('editor_id', $this->attributes['id'])->where('has_feedback', 0)->get();
+        return count($query);
     }
 }

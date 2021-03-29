@@ -195,19 +195,19 @@
 					<input type="hidden" class="form-control" name="id">
 					<div class="form-group">
 						<label>{{ trans('site.start-date') }}</label>
-						<input name="date_from" type="date" class="form-control"></input>
+						<input required name="date_from" type="date" class="form-control"></input>
 					</div>
 					<div class="form-group">
                         <label>{{ trans('site.end-date') }}</label>
-                        <input name="date_to" type="date" class="form-control">
+                        <input required name="date_to" type="date" class="form-control">
                     </div>
 					<div class="form-group">
                         <label>{{ trans('site.how-many-manuscript') }}</label>
-                        <input name="how_many_script" step="0.01" type="number" class="form-control">
+                        <input required name="how_many_script" type="number" value=0 class="form-control">
                     </div>
 					<div class="form-group">
                         <label>{{ trans('site.how-many-hours') }}</label>
-                        <input name="how_many_hours" step="0.01" type="number" class="form-control">
+                        <input required name="how_many_hours" step="0.01" type="number" value=0 class="form-control">
                     </div>
 					<div class="form-group">
                         <label>{{ trans_choice('site.notes', 1) }}</label>

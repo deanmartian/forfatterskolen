@@ -33,6 +33,8 @@
                             <th>{{ trans('site.deadline') }}</th>
                             <th style="width: 200px;">{{ trans('site.how-many-you-can-take') }}</th>
                             <th>{{ trans('site.assigned-assignment-count') }}</th>
+                            <th>{{ trans('site.finished') }}</th>
+                            <th>{{ trans('site.pending') }}</th>
                         </tr>
                         </thead>
 
@@ -46,6 +48,8 @@
                                     <td>{{ $i->assignment->editor_expected_finish }}</td>
                                     <td>{{ $i->how_many_you_can_take }}</td>
                                     <td>{{ $i->AssignedCount }}</td>
+                                    <td>{{ $i->FinishedCount }}</td>
+                                    <td>{{ $i->PendingCount }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

@@ -34,6 +34,8 @@
 							<tr>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
+								<th>{{ trans('site.type') }}</th>
+								<th>{{ trans('site.where') }}</th>
 								<th>{{ trans('site.deadline') }}</th>
 								<th>{{ trans('site.feedback-status') }}</th>
 							</tr>
@@ -59,6 +61,8 @@
 										@endif
 									</td>
 									<td>{{ $assignedManuscript->user->id }}</td>
+									<td>{{ \App\Http\AdminHelpers::assignmentType($assignedManuscript->type) }}</td>
+									<td>{{ \App\Http\AdminHelpers::manuscriptType($assignedManuscript->manu_type) }}</td>
 									<td>
 										{{ $assignedManuscript->editor_expected_finish?$assignedManuscript->editor_expected_finish:$assignedManuscript->assignment->editor_expected_finish }}
 									</td>
@@ -127,7 +131,11 @@
 										<td>
 											<a href="{{ route('editor.backend.download_shop_manuscript', $shopManuscript->id) }}"><i class="fa fa-download" aria-hidden="true"></i>
 											</a>&nbsp;
-											{{$shopManuscript->shop_manuscript->title}}
+											@if($shopManuscript->is_active)
+												<a href="{{ route('editor.shop_manuscript_taken', ['id' => $shopManuscript->user->id, 'shop_manuscript_taken_id' => $shopManuscript->id]) }}">{{$shopManuscript->shop_manuscript->title}}</a>
+											@else
+												{{$shopManuscript->shop_manuscript->title}}
+											@endif
 										</td>
 										<td>
 											@if($shopManuscript->genre > 0)
@@ -187,6 +195,8 @@
 							<tr>
 								<th>{{ trans_choice('site.courses', 1) }}</th>
 								<th>{{ trans('site.learner-id') }}</th>
+								<th>{{ trans('site.type') }}</th>
+								<th>{{ trans('site.where') }}</th>
 								<th>{{ trans('site.deadline') }}</th>
 								<th>{{ trans('site.feedback-status') }}</th>
 							</tr>
@@ -203,6 +213,8 @@
 										@endif
 									</td>
 									<td>{{ $assignedAssignment->user_id }}</td>
+									<td>{{ \App\Http\AdminHelpers::assignmentType($assignedAssignment->type) }}</td>
+									<td>{{ \App\Http\AdminHelpers::manuscriptType($assignedAssignment->manu_type) }}</td>
 									<td>{{ $assignedAssignment->editor_expected_finish?$assignedAssignment->editor_expected_finish:$assignedAssignment->assignment->editor_expected_finish }}</td>
 									<td>
 									<?php
