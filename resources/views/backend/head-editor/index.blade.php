@@ -251,6 +251,7 @@
 															data-id = "'.$assignedAssignment->id.'"
 															data-feedback_file = "'.$assignedAssignment->noGroupFeedbacks->first()->filename.'"
 															data-feedback_grade = "'.$assignedAssignment->grade.'"
+															data-feedback_id = "'.$assignedAssignment->noGroupFeedbacks->first()->id.'"
 															data-action="'. route('head_editor.personal_assignment.feedbac_approve',
 																			['id' => $assignedAssignment->id,
 																			'learner_id' => $assignedAssignment->user->id]) .'">
