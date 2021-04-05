@@ -732,18 +732,29 @@
 										</td>
 										<td>
 											<?php 
+												$eEFDate = strftime('%Y-%m-%d', strtotime($pendingAssignment->editor_expected_finish));
+												$hiddenEditors = DB::select("CALL getIDWhereHidden('$eEFDate')");
+												$hiddenEditorIds = [];
+												reset($hiddenEditorIds);
+												if($hiddenEditors){
+													foreach ($hiddenEditors as $key) {
+														$hiddenEditorIds[] = $key->editor_id;
+													}
+												}
 												$genreEditors = \App\User::where(function($query){
 																	$query->where('role', 3)->orWhere('admin_with_editor_access', 1);
 																})
 																->whereHas('editorGenrePreferences', function($q) use ($pendingAssignment){
 																	$q->where('genre_id', $pendingAssignment->type);
 																})
+																->whereNotIn('users.id', $hiddenEditorIds)
 																->orderBy('id', 'desc')
 																->get();
 												if($genreEditors->count() < 1){
 													$genreEditors = \App\User::where(function($query){
 														$query->where('role', 3)->orWhere('admin_with_editor_access', 1);
 													})
+													->whereNotIn('users.id', $hiddenEditorIds)
 													->orderBy('id', 'desc')
 													->get();
 												}

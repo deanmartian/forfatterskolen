@@ -139,9 +139,12 @@
 									$editor = $manuscript->editor_id ? \App\User::find($manuscript->editor_id) : '';
 									$eEFDate = strftime('%Y-%m-%d', strtotime($manuscript->editor_expected_finish));
 									$hiddenEditors = DB::select("CALL getIDWhereHidden('$eEFDate')");
-									$hiddenEditorIds = null;
-									foreach ($hiddenEditors as $key) {
-										$hiddenEditorIds[] = $key->editor_id;
+									$hiddenEditorIds = [];
+									reset($hiddenEditorIds);
+									if($hiddenEditors){
+										foreach ($hiddenEditors as $key) {
+											$hiddenEditorIds[] = $key->editor_id;
+										}
 									}
 									// dd($hiddenEditorIds);
 									$genreEditors = \App\User::where(function($query){
