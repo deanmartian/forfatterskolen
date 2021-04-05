@@ -137,19 +137,28 @@
 							<td>
 								<?php 
 									$editor = $manuscript->editor_id ? \App\User::find($manuscript->editor_id) : '';
-
+									$eEFDate = strftime('%Y-%m-%d', strtotime($manuscript->editor_expected_finish));
+									$hiddenEditors = DB::select("CALL getIDWhereHidden('$eEFDate')");
+									$hiddenEditorIds = null;
+									foreach ($hiddenEditors as $key) {
+										$hiddenEditorIds[] = $key->editor_id;
+									}
+									// dd($hiddenEditorIds);
 									$genreEditors = \App\User::where(function($query){
 												$query->where('role', 3)->orWhere('admin_with_editor_access', 1);
 											})
 											->whereHas('editorGenrePreferences', function($q) use ($manuscript){
 												$q->where('genre_id', $manuscript->type);
 											})
+											->whereNotIn('users.id', $hiddenEditorIds)
 											->orderBy('id', 'desc')
 											->get();
+									
 									if($genreEditors->count() < 1){
 										$genreEditors = \App\User::where(function($query){
 											$query->where('role', 3)->orWhere('admin_with_editor_access', 1);
 										})
+										->whereNotIn('users.id', $hiddenEditorIds)
 										->orderBy('id', 'desc')
 										->get();
 								}
@@ -640,7 +649,7 @@
 				<div class="form-group">
 					<label>{{ trans('site.editor-expected-finish') }}</label>
 					<input type="date" class="form-control" name="editor_expected_finish"
-					value="{{ $assignment->editor_expected_finish }}">
+					@if( $assignment->editor_expected_finish ) value="{{ strftime('%Y-%m-%d', strtotime($assignment->editor_expected_finish)) }}" @endif>
 				</div>
 				<div class="form-group">
 					<label>{{ trans('site.for-editor') }}</label> <br>

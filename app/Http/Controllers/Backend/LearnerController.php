@@ -128,10 +128,7 @@ class LearnerController extends Controller
 
     	return view('backend.learner.index', compact('learners'));
     }
-
-
-
-
+    
     public function show($id)
     {
         $learner = User::findOrFail($id);

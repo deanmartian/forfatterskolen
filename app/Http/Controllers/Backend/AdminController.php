@@ -247,7 +247,7 @@ class AdminController extends Controller
             $query->where('role', 3)->orWhere('admin_with_editor_access', 1);
         })->orderBy('first_name', 'ASC')->orderBy('last_name', 'ASC')->get();
 
-        $assignmentManuscriptEditorCanTake = AssignmentManuscriptEditorCanTake::orderBy('editor_id')->get();
+        $assignmentManuscriptEditorCanTake = AssignmentManuscriptEditorCanTake::orderBy('assignment_manuscript_id', 'DESC')->get();
 
         return view('backend.yearly-calendar', compact('editor', 'assignmentManuscriptEditorCanTake'));
     }

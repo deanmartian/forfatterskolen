@@ -1402,6 +1402,10 @@ Route::group([
         Route::get('editor_total_worked/{id}', 'EditorController@total')->name('admin.total_editor_worked');
         Route::post('saveGenrePrefences/{from_admin}', 'EditorController@saveGenrePrefences')->name('admin.save-genre-prefences');
         Route::post('deleteGenrePreferences/{id}', 'EditorController@deleteGenrePreferences')->name('admin.delete-genre-preferences');
+        Route::post('hideShowEditor/{editor_id}/{hide}', 'EditorController@hideShowEditor')->name('admin.hide-show-editor');
+
+        Route::get('showEditorHidden/{editor_id}', 'EditorController@showEditorHidden')->name('admin.show-editor-hidden');
+        Route::get('deleteEditorHidden/{id}', 'EditorController@deleteEditorHidden')->name('admin.delete-editor-hidden');
 
     });
 

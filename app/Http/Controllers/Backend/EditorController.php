@@ -18,6 +18,8 @@ use App\Genre;
 use App\Assignment;
 use Carbon\Carbon;
 use App\AssignmentManuscriptEditorCanTake;
+use App\HiddenEditor;
+use App\AssignmentManuscript;
 
 class EditorController extends Controller
 {
@@ -292,4 +294,38 @@ class EditorController extends Controller
             'alert_type' => 'success']);
     }
 
-}
+    public function hideShowEditor($editor_id, $hide, Request $request)
+    {
+        $dateEnd = null;
+        if(!$request->hideUntilTurnedBackUnhidden){
+            $dateEnd = $request->end_date;
+        }
+
+        HiddenEditor::create([
+            'editor_id' => $editor_id,
+            'hide_date_from' => $request->start_date,
+            'hide_date_to' => $dateEnd,
+            'notes' => $request->notes,
+        ]);
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record successfully saved.'),
+            'alert_type' => 'success']);
+    }
+
+    public function showEditorHidden($editor_id){
+
+        $editor = User::find($editor_id);
+        $hiddenEditor = HiddenEditor::where('editor_id', $editor_id)->get();
+        $assignmentManuscript = AssignmentManuscript::where('editor_id', $editor_id)->get();
+        $assignment = Assignment::whereIn('id', $assignmentManuscript)->orderBy('created_at', 'desc')->get();
+        return view('editor.editor-hidden', compact('hiddenEditor','editor', 'assignmentManuscript', 'assignment'));
+
+    }
+
+    public function deleteEditorHidden($id){
+        HiddenEditor::find($id)->delete();
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Deleted successfully.'),
+            'alert_type' => 'success']);
+    }
+
+};

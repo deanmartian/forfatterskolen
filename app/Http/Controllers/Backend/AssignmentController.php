@@ -219,7 +219,7 @@ class AssignmentController extends Controller
                 'words' => $word_count,
                 'filename' => '/'.$fileName,
                 'join_group' => $request->join_group,
-                'editor_expected_finish' => $assignment->editor_expected_finish
+                'editor_expected_finish' => strftime('%Y-%m-%d', strtotime($assignment->editor_expected_finish))
             ]);
             return redirect()->back();
         endif;

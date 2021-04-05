@@ -10,6 +10,7 @@
         <li @if( Request::input('tab') == 'howManyManuscriptEditorCanTake' || Request::input('tab') == '') class="active" @endif><a href="?tab=howManyManuscriptEditorCanTake">How Many Manuscript You Can Take</a></li>
         <li @if( Request::input('tab') == 'yearlyCalendar' ) class="active" @endif><a href="?tab=yearlyCalendar">Yearly Calendar</a></li>
         <li @if( Request::input('tab') == 'howManyAssignmentsEditorCanTake' ) class="active" @endif><a href="?tab=howManyAssignmentsEditorCanTake">{{ trans('site.how-many-manuscript-assignments-editor-can-take') }}</a></li>
+        <li @if( Request::input('tab') == 'editorsAvailability' ) class="active" @endif><a href="?tab=editorsAvailability">{{ trans('site.editors-availability') }}</a></li>
     </ul>
     <div class="col-sm-12 dashboard-left">
         @if( Request::input('tab') == 'yearlyCalendar')
@@ -100,6 +101,40 @@
 
             </div>
             
+        @elseif(Request::input('tab') == 'editorsAvailability')
+            
+            <div class="table-users table-responsive">
+                <table class="table margin-top">
+                    <thead>
+                    <tr>
+                        <th>{{ trans_choice('editors', 1) }}</th>
+                        <th>{{ trans('site.hide-editor') }}</th>
+                        <th>{{ trans('site.preview-editor-assignments-and-editor-hidden-dates') }}</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach($editor as $key)
+                        <tr>
+                            <td>{{ $key->FullName }}</td>
+                            <td>
+                                <button class="btn btn-warning btn-xs hideEditorBtn" 
+                                        data-toggle="modal" 
+                                        data-target="#hideEditorModal"
+                                        data-action="{{ route('admin.hide-show-editor', ['editor_id' => $key->id, 'hide' => 1]) }}"
+                                >
+                                + {{ trans('site.hide-editor') }}
+                                </button>
+                            </td>
+                            <td>
+                                <a class="btn btn-xs btn-primary" href="{{ route('admin.show-editor-hidden', $key->id) }}"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;{{ trans('site.preview-details') }}</a>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
         @endif
     </div>
 </div>
@@ -126,6 +161,42 @@
 	</div>
 </div>
 
+<div id="hideEditorModal" class="modal fade" role="dialog" tabindex="-1">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{{ trans('site.hide-editor') }} <em></em></h4>
+            </div>
+		    <div class="modal-body">
+                <form id="hideEditorForm" method="POST" action=""  enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    <div class="form-group">
+                        <label>{{ trans('site.start-date') }}</label>
+                        <input required type="date" class="form-control" step="0.01" name="start_date">
+                    </div>
+                    <input class="form-check-input" type="checkbox" value="" id="hideUntilTurnedBackUnhidden" name="hideUntilTurnedBackUnhidden">
+                    <label class="form-check-label" for="hideUntilTurnedBackUnhidden">
+                        <strong>{{ trans('site.until-turned-back-unhidden') }}</strong>
+                    </label>
+                    <br><br>
+                    <div class="form-group">
+                        <div class="hide-end-date">
+                            <label>{{ trans('site.end-date') }}</label>
+                            <input type="date" class="form-control" step="0.01" name="end_date">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ trans_choice('site.notes', 2) }}</label>
+                        <textarea name="notes" maxlength="1000" cols="39" rows="5"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-warning pull-right margin-top">{{ trans('site.hide-editor') }}</button>
+                    <div class="clearfix"></div>
+                </form>
+		  </div>
+		</div>
+	</div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -140,6 +211,27 @@
             modal.find('.content').append('<tr><td>'+data[i]['date_from']+'</td><td>'+data[i]['date_to']+'</td><td>'+data[i]['how_many_script']+'</td><td>'+data[i]['how_many_hours']+'</td><td>'+data[i]['note']+'</td></tr>');
         }
 	});
+
+    $('#hideUntilTurnedBackUnhidden').click(function(){
+        if($(this).is(':checked')){
+            $('.hide-end-date').css('display','none');
+        }else{
+            $('.hide-end-date').css('display','block');
+        }
+    });
+
+    $('.hideEditorBtn').click(function(){
+        let action = $(this).data('action');
+        let modal = $('#hideEditorModal');
+        let edit = $(this).data('edit');
+
+        let dateFrom = $(this).data('date_from');
+        let dateTo = $(this).data('date_to');
+        let notes = $(this).data('notes');
+
+        modal.find('form').attr('action', action);
+        modal.find('#hideUntilTurnedBackUnhidden').prop("checked", false);
+    })
 
     </script>
 @stop
