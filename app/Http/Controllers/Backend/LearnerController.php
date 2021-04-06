@@ -871,7 +871,23 @@ class LearnerController extends Controller
         return redirect(route('admin.learner.index'));
     }
 
-
+    /**
+     * update the course taken started at field
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateCourseTakenStartedAt( $id, Request $request )
+    {
+        $courseTaken = CoursesTaken::findOrFail($id);
+        $courseTaken->started_at = $request->started_at;
+        $courseTaken->save();
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Course started at updated successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true
+        ]);
+    }
 
     public function setCourseTakenAvailability($id, Request $request)
     {

@@ -184,6 +184,13 @@
 												{{ trans('site.plan') }}: {{ $courseTaken->package->variation }} <br />
 												@if( $courseTaken->hasStarted )
 													{{ trans('site.started-at') }}: {{ Carbon\Carbon::parse($courseTaken->started_at)->format('M d, Y H.i') }}
+													@php
+														$started_at_parse = \Carbon\Carbon::parse($courseTaken->started_at);
+													@endphp
+													<a href="#" class="btn btn-primary btn-xs setCourseTakenStartedAtBtn" data-toggle="modal"
+													   data-target="#updateCourseTakenStartedAtModal"
+													   data-started_at="{{ $started_at_parse->format('Y-m-d').'T'.$started_at_parse->format('H:i') }}"
+														data-action="{{ route('admin.course_taken.updated_started_at', $courseTaken->id) }}">Edit</a>
 												@else
 													{{ trans('site.started-at') }}: <em>Not yet started</em>
 												@endif
@@ -1602,6 +1609,31 @@
 			</div>
 
 		</div>
+	</div>
+</div>
+
+<div id="updateCourseTakenStartedAtModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Update Start Date <strong></strong></h4>
+			</div>
+
+			<div class="modal-body">
+				<form method="POST">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ ucfirst(strtolower(trans('site.started-at'))) }}</label>
+						<input type="datetime-local" class="form-control" name="started_at">
+					</div>
+					<div class="text-right">
+						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
 	</div>
 </div>
 
@@ -3318,6 +3350,16 @@
 			form.attr('action', action);
 			form.find('input[name=start_date]').val(start_date);
 			form.find('input[name=end_date]').val(end_date);
+		});
+
+		$(".setCourseTakenStartedAtBtn").click(function(){
+            let started_at = $(this).data('started_at');
+            let modal = $('#updateCourseTakenStartedAtModal');
+            let form = modal.find('form');
+            let action = $(this).data('action');
+
+            form.attr('action', action);
+            form.find('input[name=started_at]').val(started_at);
 		});
 
 		$("#moveToggle").change(function() {
