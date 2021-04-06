@@ -80,7 +80,41 @@
 								<a href="{{ route('admin.learner.download_synopsis', $shopManuscriptTaken->id) }}">{{ trans('site.download-synopsis') }}</a>
 							@endif
 							<br><br>
+
+							<br />
+							<h4>{{ trans_choice('site.comments', 2) }}</h4>
+							<form method="POST" class="margin-top" action="{{ route('editor.shop_manuscript_taken_comment', ['id' => $learner->id, 'shop_manuscript_taken_id' => $shopManuscriptTaken->id]) }}">
+								{{ csrf_field() }}
+								<input type="text" placeholder="{{ trans_choice('site.comments', 1) }}" name="comment" class="form-control" required>
+								<div class="text-right margin-top">
+									<button class="btn btn-info btn-sm" type="submit">{{ trans('site.add-comment') }}</button>
+								</div>
+							</form>
+
+							<hr />
+							<div class="margin-top">
+								@foreach( $shopManuscriptTaken->comments as $comment )
+									@if( $comment->user_id == Auth::user()->id )
+										<div class="text-right">
+											<div class="comment owner">
+												<div>{{ $comment->comment }}</div>
+												<div><small><em>{{ trans('site.you') }}</em></small></div>
+												<small>{{ $comment->created_at }}</small>
+											</div>
+										</div>
+									@else
+										<div>
+											<div class="comment">
+												<div>{{ $comment->comment }}</div>
+												<div><small><em>{{ $comment->user->full_name }}</em></small></div>
+												<small>{{ $comment->created_at }}</small>
+											</div>
+										</div>
+									@endif
+								@endforeach
+							</div>
 						</div>
+						
 					</div>
 				</div>
 			</div>

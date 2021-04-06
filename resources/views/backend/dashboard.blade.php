@@ -1799,7 +1799,7 @@
 		modal.find('tbody').html('');
 		let answer = null;
 		data.forEach(function (item, index){
-			modal.find('tbody').append('<tr><td>'+ item['created_at'] +'</td><td>'+ item['editor_name'] +'</td><td>'+ answer +'</td><td>'+ item['AnswerP'] +'</td></tr>');
+			modal.find('tbody').append('<tr><td>'+ item['created_at'] +'</td><td>'+ item['editor_name'] +'</td><td>'+ item['answer_until'] +'</td><td>'+ item['AnswerP'] +'</td></tr>');
 		})
 	});
 

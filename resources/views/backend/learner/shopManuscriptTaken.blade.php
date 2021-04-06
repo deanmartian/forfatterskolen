@@ -145,25 +145,25 @@
 							</form>
 							<hr />
 							<div class="margin-top">
-							@foreach( $shopManuscriptTaken->comments as $comment )
-							@if( $comment->user_id == Auth::user()->id )
-							<div class="text-right">
-								<div class="comment owner">
-									<div>{{ $comment->comment }}</div>
-									<div><small><em>{{ trans('site.you') }}</em></small></div>
-									<small>{{ $comment->created_at }}</small>
-								</div>
-							</div>
-							@else
-							<div>
-								<div class="comment">
-									<div>{{ $comment->comment }}</div>
-									<div><small><em>{{ $comment->user->full_name }}</em></small></div>
-									<small>{{ $comment->created_at }}</small>
-								</div>
-							</div>
-							@endif
-							@endforeach
+								@foreach( $shopManuscriptTaken->comments as $comment )
+									@if( $comment->user_id == Auth::user()->id )
+										<div class="text-right">
+											<div class="comment owner">
+												<div>{{ $comment->comment }}</div>
+												<div><small><em>{{ trans('site.you') }}</em></small></div>
+												<small>{{ $comment->created_at }}</small>
+											</div>
+										</div>
+									@else
+										<div>
+											<div class="comment">
+												<div>{{ $comment->comment }}</div>
+												<div><small><em>{{ $comment->user->full_name }}</em></small></div>
+												<small>{{ $comment->created_at }}</small>
+											</div>
+										</div>
+									@endif
+								@endforeach
 							</div>
 						</div>
 					</div>
@@ -471,7 +471,7 @@
 						</div>
 						<div class="form-group">
 							<label>{{ trans('site.answer-until') }}</label>
-							<input type="date" class="form-control" name="answer_until">
+							<input type="date" class="form-control" name="answer_until" required>
 						</div>
 						<div class="form-group">
 							<label>{{ trans('site.editor-expected-finish') }}</label>

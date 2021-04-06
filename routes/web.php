@@ -1468,6 +1468,7 @@ Route::group([
         Route::post('saveAssignmentManuscriptEditorCanTake/{id}/{assignment_manu_id}', 'EditorController@saveAssignmentManuscriptEditorCanTake')->name('editor.saveAssignmentManuscriptEditorCanTake');
         Route::get('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}', 'LearnerController@shopManuscriptTakenShowEditorPreview')->name('editor.shop_manuscript_taken');
         Route::get('acceptShopManuscriptRequest/{shop_manuscript_taken_id}/{accept}/{request_id}', 'ShopManuscriptController@editorAcceptRequest')->name('editor.acceptShopManuscriptRequest');
+        Route::post('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}/comment', 'LearnerController@shopManuscriptTakenShowComment')->name('editor.shop_manuscript_taken_comment');
 
     });
 
