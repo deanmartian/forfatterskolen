@@ -26,6 +26,7 @@ use Mail;
 use Swift_Mailer;
 use Swift_Message;
 use Swift_Transport;
+use App\RequestToEditor;
 
 class ShopManuscriptController extends Controller
 {
@@ -346,6 +347,51 @@ class ShopManuscriptController extends Controller
         return redirect()->back();
     }
 
+    public function editorAcceptRequest($taken_id, $accepted, $request_id)
+    {
+        if($accepted){
+
+            $requestToEditor = RequestToEditor::find($request_id);
+            $requestToEditor->answer = "yes";
+            $requestToEditor->save();
+
+            // assign the editor 
+            $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($taken_id);
+            $shopManuscriptTaken->feedback_user_id = Auth::user()->id;
+            $shopManuscriptTaken->save();
+
+            // send an email to the learner
+            if($shopManuscriptTaken->expected_finish){
+                $emailTemplate = EmailTemplate::where('page_name', 'Manuscript')->first();
+
+                $user = User::find($shopManuscriptTaken->user_id);
+                $to = $user->email;
+
+                $replace_string = Carbon::parse($shopManuscriptTaken->expected_finish)->format('d.m.Y');
+                $replace_content = str_replace('_date_',$replace_string, $emailTemplate->email_content);
+                $email_body = $replace_content;
+
+                $subject = $emailTemplate->subject;
+
+                dispatch(new AddMailToQueueJob($to, $subject, $email_body, $emailTemplate->from_email, null, null,
+                    'shop-manuscripts-taken-expected-finish', $taken_id));
+
+                return redirect()->back()->with([
+                    'errors'                => AdminHelpers::createMessageBag('Shop Manuscript accepted.'),
+                    'alert_type'            => 'success'
+                ]);
+            }
+
+        }else{
+            $requestToEditor = RequestToEditor::find($request_id);
+            $requestToEditor->answer = "no";
+            $requestToEditor->save();
+            return redirect()->back()->with([
+                'errors'                => AdminHelpers::createMessageBag('Shop Manuscript rejected.'),
+                'alert_type'            => 'success'
+            ]);
+        }
+    }
 
     public function freeManuscriptIndex()
     {

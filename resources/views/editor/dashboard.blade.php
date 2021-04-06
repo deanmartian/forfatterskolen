@@ -179,6 +179,43 @@
 									</tr>
 								@endif
 							@endforeach
+							@foreach($shopManuscriptRequests as $request)
+								<tr style="background-color: beige;">
+									<td>
+										<a href="{{ route('editor.backend.download_shop_manuscript', $request->manuscript_id) }}"><i class="fa fa-download" aria-hidden="true"></i>
+										</a>&nbsp;
+										@if($request->manuscript->is_active)
+											<a href="{{ route('editor.shop_manuscript_taken', ['id' => $request->manuscript->user->id, 'shop_manuscript_taken_id' => $request->manuscript_id]) }}">{{$request->manuscript->shop_manuscript->title}}</a>
+										@else
+											{{$request->manuscript->shop_manuscript->title}}
+										@endif
+									</td>
+									<td>
+										@if($request->manuscript->genre > 0)
+											{{ \App\Http\FrontendHelpers::assignmentType($shopManuscript->genre) }}
+										@endif
+									</td>
+									<td>{{ $request->manuscript->user->id }}</td>
+									<td>{{ $request->manuscript->editor_expected_finish }}</td>
+									<td>
+										<button class="btn btn-success btn-xs acceptRequestBtn"
+												data-toggle="modal"
+												data-target="#acceptRequest"
+												data-title="{{ trans('site.are-you-sure-you-want-to-accept') }}"
+												data-sub_title="{{ trans('site.are-you-sure-you-want-to-accept-sub') }}"
+												data-action="{{ route('editor.acceptShopManuscriptRequest', ['shop_manuscript_taken_id' => $request->manuscript_id, 'accept' => '1', 'request_id' => $request->id]) }}"
+										><i class="fa fa-check" aria-hidden="true"></i>&nbsp;{{ trans('site.accept') }}</button>&nbsp;&nbsp;
+										<button class="btn btn-danger btn-xs acceptRequestBtn"
+												data-toggle="modal"
+												data-target="#acceptRequest"
+												data-title="{{ trans('site.are-you-sure-you-want-to-reject') }}"
+												data-sub_title="{{ trans('site.are-you-sure-you-want-to-reject-sub') }}"
+												data-action="{{ route('editor.acceptShopManuscriptRequest', ['shop_manuscript_taken_id' => $request->manuscript_id, 'accept' => '0', 'request_id' => $request->id]) }}"
+										><i class="fa fa-times" aria-hidden="true"></i>&nbsp;{{ trans('site.reject') }}</button>&nbsp;&nbsp;
+										<span class="label label-info" style="font-size: 1.2rem; font-weight: 100;"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;{{ trans('site.answer-until') }}&nbsp;{{ $request->answer_until }}</span>
+									</td>
+								</tr>
+							@endforeach
 							</tbody>
 						</table>
 					</div>
@@ -984,7 +1021,7 @@
     </div>
 </div>
 
-<div id="setReplayModal" class="modal fade" role="dialog">
+<div id="setReplayModal" class="modal fade" role="dialog" tabindex="-1">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -1020,6 +1057,23 @@
 					</div>
 				</form>
 			</div>
+		</div>
+	</div>
+</div>
+
+<div id="acceptRequest" class="modal fade" role="dialog" tabindex="-1">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title main-title"><em></em></h4>
+				<h5 class="modal-title sub-title"></h5>
+			</div>
+			<div class="modal-body">
+				<a href="#" style="width: 100px;" class="btn btn-success yesBtn">{{ trans('site.front.yes') }}</a>
+				<a href="#" style="width: 100px;" class="btn btn-danger" data-dismiss="modal">{{ trans('site.front.no') }}</a>
+			</div>
+
 		</div>
 	</div>
 </div>
@@ -1357,7 +1411,18 @@
         submit_btn.text('');
         submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
         submit_btn.attr('disabled', 'disabled');
-    }
+    };
+
+	$('.acceptRequestBtn').click(function(){
+		let action = $(this).data('action');
+		let title = $(this).data('title');
+		let sub_title = $(this).data('sub_title');
+		let modal = $('#acceptRequest');
+
+		modal.find('.main-title').text(title);
+		modal.find('.sub-title').text(title);
+		modal.find('.yesBtn').attr('href', action);
+	});
 
 </script>
 @stop

@@ -424,4 +424,9 @@ class User extends Authenticatable
         $query = \App\AssignmentManuscript::where('editor_id', $this->attributes['id'])->where('has_feedback', 0)->get();
         return count($query);
     }
+
+    public function shopManuscriptRequests()
+    {
+        return $this->hasMany('App\RequestToEditor', 'editor_id', 'id')->where('from_type', 'shop-manuscript');
+    }
 }

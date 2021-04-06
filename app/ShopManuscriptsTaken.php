@@ -102,4 +102,9 @@ class ShopManuscriptsTaken extends Model
         return $this->hasOne('App\EmailHistory', 'parent_id', 'id')
             ->where('parent', 'shop-manuscripts-taken-follow-up')->latest();
     }
+
+    public function requests()
+    {
+        return $this->hasMany('App\RequestToEditor', 'manuscript_id', 'id')->where('from_type', 'shop-manuscript');
+    }
 }

@@ -1407,7 +1407,9 @@ Route::group([
 
         Route::get('showEditorHidden/{editor_id}', 'EditorController@showEditorHidden')->name('admin.show-editor-hidden');
         Route::get('deleteEditorHidden/{id}', 'EditorController@deleteEditorHidden')->name('admin.delete-editor-hidden');
-
+        Route::post('setHowManyManuscriptYouCanTake/{id}', 'EditorController@setHowManyManuscriptYouCanTake')->name('admin.setHowManyManuscriptYouCanTake');
+        Route::post('sendRequestToEditor/{id}', 'LearnerController@sendRequestToEditor')->name('admin.send-request-to-editor');
+        
     });
 
     
@@ -1465,6 +1467,7 @@ Route::group([
         Route::post('deleteGenrePreferences/{id}', 'EditorController@deleteGenrePreferences')->name('editor.delete-genre-preferences');
         Route::post('saveAssignmentManuscriptEditorCanTake/{id}/{assignment_manu_id}', 'EditorController@saveAssignmentManuscriptEditorCanTake')->name('editor.saveAssignmentManuscriptEditorCanTake');
         Route::get('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}', 'LearnerController@shopManuscriptTakenShowEditorPreview')->name('editor.shop_manuscript_taken');
+        Route::get('acceptShopManuscriptRequest/{shop_manuscript_taken_id}/{accept}/{request_id}', 'ShopManuscriptController@editorAcceptRequest')->name('editor.acceptShopManuscriptRequest');
 
     });
 

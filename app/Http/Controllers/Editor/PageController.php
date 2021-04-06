@@ -10,6 +10,7 @@ use App\AssignmentManuscript;
 use App\Course;
 use App\CorrectionManuscript;
 use App\CopyEditingManuscript;
+use Carbon\Carbon;
 
 class PageController extends Controller
 {
@@ -22,7 +23,6 @@ class PageController extends Controller
             $query->whereNull('parent');
         })
         ->get();
-        
         $coachingTimers = Auth::user()->assignedCoachingTimers()->where('status',0)->get();
         $corrections = Auth::user()->assignedCorrections;
         $copyEditings = Auth::user()->assignedCopyEditing;
@@ -36,9 +36,10 @@ class PageController extends Controller
                 $query->where('parent', 'users');
             })
             ->get();
+        $shopManuscriptRequests = Auth::user()->shopManuscriptRequests->where('answer', '')->where('answer_until', '>=', strftime('%Y-%m-%d', strtotime(Carbon::now())));
 
         return view('editor.dashboard', compact('assigned_shop_manuscripts', 'assignedAssignments', 'coachingTimers',
-        'corrections', 'copyEditings', 'assignedAssignmentManuscripts'));
+        'corrections', 'copyEditings', 'assignedAssignmentManuscripts', 'shopManuscriptRequests'));
 
     }
 

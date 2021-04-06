@@ -146,6 +146,7 @@
 								<th>{{ trans('site.genre') }}</th>
 								<th>{{ trans_choice('site.learners', 1) }}</th>
 								<th>{{ trans('site.locked') }}</th>
+								<th>{{ trans('site.requests-sent') }}</th>
 								<th>{{ trans('site.assigned-to') }}</th>
 								<th>{{ trans('site.learner.deadline') }}</th>
 								<th></th>
@@ -174,6 +175,15 @@
 													   data-id="{{$shopManuscript->id}}" data-size="mini"
 												@if($shopManuscript->is_manuscript_locked) {{ 'checked' }} @endif>
 											@endif
+										</td>
+										<td>
+											<button class="btn btn-xs btn-success previewRequestsSentBtn"
+													data-toggle="modal"
+													data-target="#previewRequestsSent"
+													data-requests="{{ $shopManuscript->requests }}"
+													>
+												{{ trans('site.learner.preview-text') }}
+											</button>
 										</td>
 										<td>
 											@if( $shopManuscript->admin )
@@ -1549,6 +1559,33 @@
 		</div>
 	</div>
 </div>
+
+<div id="previewRequestsSent" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.requests-sent') }}</h4>
+			</div>
+			<div class="modal-body">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>{{ trans('site.date-sent') }}</th>
+							<th>{{ trans('site.editor') }}</th>
+							<th>{{ trans('site.answer-until') }}</th>
+							<th>{{ trans('site.answer-text') }}</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -1755,6 +1792,16 @@
         submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
         submit_btn.attr('disabled', 'disabled');
     }
+
+	$('.previewRequestsSentBtn').click(function(){
+		let data = $(this).data('requests');
+		let modal = $("#previewRequestsSent");
+		modal.find('tbody').html('');
+		let answer = null;
+		data.forEach(function (item, index){
+			modal.find('tbody').append('<tr><td>'+ item['created_at'] +'</td><td>'+ item['editor_name'] +'</td><td>'+ answer +'</td><td>'+ item['AnswerP'] +'</td></tr>');
+		})
+	});
 
 </script>
 @stop

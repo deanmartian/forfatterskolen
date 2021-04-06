@@ -328,4 +328,11 @@ class EditorController extends Controller
             'alert_type' => 'success']);
     }
 
+    public function setHowManyManuscriptYouCanTake($id, Request $request) {
+        $assignmentManuscriptEditorCanTake = AssignmentManuscriptEditorCanTake::find($id);
+        $assignmentManuscriptEditorCanTake->how_many_you_can_take = $request->howManyManuscriptYouCanTake;
+        $assignmentManuscriptEditorCanTake->save();
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record successfully saved.'),
+            'alert_type' => 'success']);
+    }
 };

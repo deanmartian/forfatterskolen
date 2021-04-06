@@ -52,6 +52,7 @@
 									<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#sendEmailModal"><i class="fa fa-envelope"></i></button>
 								@endif
 							<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#updateDocumentModal">{{ trans('site.update-document') }}</button>
+							<button class="btn btn-success btn-sm" data-toggle="modal" data-target="#sendRequestToEditor"><i class="fa fa-paper-plane" aria-hidden="true"></i>&nbsp;&nbsp;{{ trans('site.send-request-to-editor') }}</button>
 							</div>
 				  			@if( $shopManuscriptTaken->status == 'Finished' )
 							<span class="label label-success">Finished</span>
@@ -418,6 +419,70 @@
 						@endforeach
 					</select>
 					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<div id="sendRequestToEditor" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.send-request-to-editor') }}</h4>
+			</div>
+			<div class="modal-body">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>{{ trans('site.date-sent') }}</th>
+							<th>{{ trans('site.editor') }}</th>
+							<th>{{ trans('site.answer-until') }}</th>
+							<th>{{ trans('site.answer-text') }}</th>
+						</tr>
+					</thead>
+					<tbody>
+					@foreach($shopManuscriptTaken->requests as $key)
+						<tr>
+							<td>{{ $key->created_at }}</td>
+							<td>{{ $key->editor->full_name }}</td>
+							<td>{{ $key->answer_until }}</td>
+							<td>{{ $key->answer?$key->answer:trans('site.no-answer') }}</td>
+						</tr>
+					@endforeach
+					</tbody>
+				</table>
+				<hr>
+				<label for="">{{ trans('site.can-you-take-this-manuscript') }}</label>
+				<form method="POST" action="{{ route('admin.send-request-to-editor', $shopManuscriptTaken->id) }}">
+					{{ csrf_field() }}
+					<div class="margin-top">
+						<div class="form-group">
+							<select class="form-control select2" name="editor_id" required>
+								<option value="" disabled selected>- Select Editor -</option>
+								@foreach( $editor as $key )
+									<option value="{{ $key->id }}">{{ $key->full_name }}</option>
+								@endforeach
+							</select>
+						</div>
+						<div class="form-group">
+							<label>{{ trans('site.answer-until') }}</label>
+							<input type="date" class="form-control" name="answer_until">
+						</div>
+						<div class="form-group">
+							<label>{{ trans('site.editor-Expected-finish') }}</label>
+							<input type="date" class="form-control" name="editor_expected_finish" 
+							@if( $shopManuscriptTaken->editor_expected_finish ) value="{{ strftime('%Y-%m-%d', strtotime($shopManuscriptTaken->editor_expected_finish)) }}" @endif>
+						</div>
+						<div class="form-group">
+							<label>{{ trans('site.expected-finish') }}</label>
+							<input type="date" class="form-control" name="expected_finish" 
+							@if( $shopManuscriptTaken->expected_finish ) value="{{ strftime('%Y-%m-%d', strtotime($shopManuscriptTaken->expected_finish)) }}" @endif>
+						</div>
 						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
 					</div>
 				</form>

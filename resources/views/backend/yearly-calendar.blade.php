@@ -47,7 +47,16 @@
                                     <td>{{ $i->assignment->title }}</td>
                                     <td>{{ $i->assignment->submission_date }}</td>
                                     <td>{{ $i->assignment->editor_expected_finish }}</td>
-                                    <td>{{ $i->how_many_you_can_take }}</td>
+                                    <td>
+                                    {{ $i->how_many_you_can_take }} &nbsp;
+                                   <a style="margin-right: 130px; color: green;" class="pull-right editHowManyYouCanTake"
+                                        data-toggle="modal" 
+                                        data-target="#editHowManyYouCanTake"
+                                        data-how_many_manuscript = "{{ $i->how_many_you_can_take }}"
+                                        data-action="{{ route('admin.setHowManyManuscriptYouCanTake', $i->id) }}">
+                                   <i class="fa fa-pencil" aria-hidden="true"></i>
+                                   </a>
+                                    </td>
                                     <td>{{ $i->AssignedCount }}</td>
                                     <td>{{ $i->FinishedCount }}</td>
                                     <td>{{ $i->PendingCount }}</td>
@@ -197,6 +206,24 @@
 	</div>
 </div>
 
+<div id="editHowManyYouCanTake" class="modal fade" role="dialog" tabindex="-1">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+		    <div class="modal-body">
+                <form id="hideEditorForm" method="POST" action=""  enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    <div class="form-group">
+                        <label>{{ trans('site.how-many-you-can-take') }}</label>
+                        <input required type="number" class="form-control" name="howManyManuscriptYouCanTake">
+                    </div>
+                    <button type="submit" class="btn btn-warning pull-right margin-top">{{ trans('site.save') }}</button>
+                    <div class="clearfix"></div>
+                </form>
+		  </div>
+		</div>
+	</div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -231,6 +258,15 @@
 
         modal.find('form').attr('action', action);
         modal.find('#hideUntilTurnedBackUnhidden').prop("checked", false);
+    })
+
+    $('.editHowManyYouCanTake').click(function(){
+        let action = $(this).data('action');
+        let modal = $('#editHowManyYouCanTake');
+        let hMMYCT = $(this).data('how_many_manuscript');
+
+        modal.find('form').attr('action', action);
+        modal.find('[name=howManyManuscriptYouCanTake]').val(hMMYCT);
     })
 
     </script>

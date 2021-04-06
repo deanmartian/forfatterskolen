@@ -45,6 +45,7 @@ use App\Lesson;
 use App\Http\AdminHelpers;
 use File;
 use App\Http\FrontendHelpers;
+use App\RequestToEditor;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
 include_once($_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php');
@@ -400,18 +401,29 @@ class LearnerController extends Controller
     {
         $learner = User::findOrFail($id);
         $shopManuscriptTaken = ShopManuscriptsTaken::where('id', $shopManuscriptTakenID)->where('user_id', $learner->id)->firstOrFail();
+
+        $eEFDate = strftime('%Y-%m-%d', strtotime($shopManuscriptTaken->editor_expected_finish));
+        $hiddenEditors = \DB::select("CALL getIDWhereHidden('$eEFDate')");
+        $hiddenEditorIds = [];
+        if($hiddenEditors){
+            foreach ($hiddenEditors as $key) {
+                $hiddenEditorIds[] = $key->editor_id;
+            }
+        }
         $editor = User::where(function($query){
                     $query->where('role', 3)->orWhere('admin_with_editor_access', 1);
                 })
                 ->whereHas('editorGenrePreferences', function($q) use ($shopManuscriptTaken){
                     $q->where('genre_id', $shopManuscriptTaken->genre);
                 })
+                ->whereNotIn('users.id', $hiddenEditorIds)
                 ->orderBy('id', 'desc')
                 ->get();
         if($editor->count() < 1){
             $editor = User::where(function($query){
                 $query->where('role', 3)->orWhere('admin_with_editor_access', 1);
             })
+            ->whereNotIn('users.id', $hiddenEditorIds)
             ->orderBy('id', 'desc')
             ->get();
         }
@@ -2040,6 +2052,46 @@ class LearnerController extends Controller
 
         return redirect()->back()->with([
             'errors'                => AdminHelpers::createMessageBag('Record saved.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+    public function sendRequestToEditor($id, Request $request)
+    {
+        // set expected finish
+        $shopManuscriptsTaken = ShopManuscriptsTaken::find($id);
+        $shopManuscriptsTaken->expected_finish = $request->expected_finish;
+        $shopManuscriptsTaken->editor_expected_finish = $request->editor_expected_finish;
+        $shopManuscriptsTaken->save();
+
+        $this->validate($request, [
+            'editor_id' => 'required',
+            'answer_until' => 'required'
+        ]);
+
+        $data['from_type'] = 'shop-manuscript';
+        $data['editor_id'] = $request->editor_id;
+        $data['manuscript_id'] = $id;
+        $data['answer_until'] = $request->answer_until;
+
+        $requestToEditor = RequestToEditor::create($data);
+
+        // send email
+        $to = User::where('id', $request->editor_id)->pluck('email');
+        $emailTemplate = AdminHelpers::emailTemplate('Request To Editor');
+
+        $editor_expected_finish = Carbon::parse($request->editor_expected_finish)->format('d.m.Y');
+        $expected_finish = Carbon::parse($request->expected_finish)->format('d.m.Y');
+        $emailTemplate_content =  $emailTemplate->email_content;
+        $emailTemplate_content = str_replace(':editor_expected_finish',$editor_expected_finish, $emailTemplate_content);
+        $emailTemplate_content = str_replace(':manuscript_finish',$expected_finish, $emailTemplate_content);
+
+        dispatch(new AddMailToQueueJob($to, $emailTemplate->subject, $emailTemplate_content, $emailTemplate->from_email,
+            null, null,
+            'shop-manuscript-new-request-to-editor', $id));
+        
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Record successfully saved.'),
             'alert_type'            => 'success',
             'not-former-courses'    => true
         ]);

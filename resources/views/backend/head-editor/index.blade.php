@@ -31,7 +31,7 @@
                             <thead>
                             <tr>
                                 <th>{{ trans_choice('site.manuscripts', 1) }}</th>
-                                <th>{{ trans('site.learner-id') }}</th>
+                                <th>{{ trans_choice('site.learners', 1) }}</th>
                                 <th>{{ trans('site.expected-finish') }}</th>
                                 <th>{{ trans_choice('site.editors', 1) }}</th>
                                 <th>{{ trans_choice('site.feedbacks', 1) }}</th>
@@ -55,7 +55,7 @@
                                             </a>
                                         @endif
                                     </td>
-                                    <td>{{ $assignedManuscript->user->id }}</td>
+                                    <td>{{ $assignedManuscript->user->full_name }}</td>
                                     <td>
                                         {{ $assignedManuscript->expected_finish }}
                                     </td>
@@ -115,7 +115,7 @@
 							<tr>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 								<th>{{ trans('site.genre') }}</th>
-								<th>{{ trans('site.learner-id') }}</th>
+								<th>{{ trans_choice('site.learners', 1) }}</th>
 								<th>{{ trans('site.learner.expected-finish') }}</th>
                                 <th>{{ trans_choice('site.editors', 1) }}</th>
                                 <th>{{ trans_choice('site.feedbacks', 1) }}</th>
@@ -136,7 +136,7 @@
 												{{ \App\Http\FrontendHelpers::assignmentType($shopManuscript->genre) }}
 											@endif
 										</td>
-										<td>{{ $shopManuscript->user->id }}</td>
+										<td>{{ $shopManuscript->user->full_name }}</td>
 										<td>{{ $shopManuscript->expected_finish }}</td>
                                         <td>{{ $shopManuscript->admin->full_name }}</td>
                                         <td>
@@ -188,7 +188,7 @@
 							<thead>
 							<tr>
 								<th>{{ trans_choice('site.courses', 1) }}</th>
-								<th>{{ trans('site.learner-id') }}</th>
+								<th>{{ trans_choice('site.learners', 1) }}</th>
 								<th>{{ trans('site.expected-finish') }}</th>
 								<th>{{ trans_choice('site.editors', 1) }}</th>
 								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
@@ -207,7 +207,7 @@
 												{{ $assignedAssignment->assignment->title }}
 										@endif
 									</td>
-									<td>{{ $assignedAssignment->user_id }}</td>
+									<td>{{ $assignedAssignment->user->full_name }}</td>
 									<td>{{$assignedAssignment->expected_finish}}</td>
 									<td>{{$assignedAssignment->editor->full_name}}</td>
 									<?php 
@@ -318,7 +318,7 @@
 							<thead>
 							<tr>
 								<th>{{ trans_choice('site.manus', 2) }}</th>
-								<th>{{ trans('site.learner-id') }}</th>
+								<th>{{ trans_choice('site.learners', 1) }}</th>
 								<th>{{ trans('site.expected-finish') }}</th>
 								<th>{{ trans_choice('site.editors', 1) }}</th>
 								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
@@ -338,7 +338,7 @@
 											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
 										@endif
 									</td>
-									<td>{{ $correction->user->id }}</td>
+									<td>{{ $correction->user->full_name }}</td>
 									<td>
 										@if ($correction->expected_finish)
 											{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($correction->expected_finish) }}
@@ -395,7 +395,7 @@
 							<thead>
 							<tr>
 								<th>{{ trans_choice('site.manus', 2) }}</th>
-								<th>{{ trans('site.learner-id') }}</th>
+								<th>{{ trans_choice('site.learners', 1) }}</th>
 								<th>{{ trans('site.expected-finish') }}</th>
 								<th>{{ trans_choice('site.editors', 1) }}</th>
 								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
@@ -415,7 +415,7 @@
 											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copyEditing->file}}">{{ basename($copyEditing->file) }}</a>
 										@endif
 									</td>
-									<td>{{ $copyEditing->user->id }}</td>
+									<td>{{ $copyEditing->user->full_name }}</td>
 									<td>
 										@if ($copyEditing->expected_finish)
 											{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($copyEditing->expected_finish) }}
