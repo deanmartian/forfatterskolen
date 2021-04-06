@@ -1839,7 +1839,7 @@ class LearnerController extends Controller
                         $coursesTaken->end_date = $addYear;
                     }
 
-                    $coursesTaken->started_at = Carbon::now();
+                    //$coursesTaken->started_at = Carbon::now();
                     $coursesTaken->save();
                     $courseCounter++;
                 }
@@ -1936,7 +1936,7 @@ class LearnerController extends Controller
                                 $coursesTaken->end_date = $addYear;
                             }
 
-                            $coursesTaken->started_at = Carbon::now();
+                            //$coursesTaken->started_at = Carbon::now();
                             $coursesTaken->save();
                         }
                     }
