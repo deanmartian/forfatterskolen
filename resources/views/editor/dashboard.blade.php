@@ -192,7 +192,7 @@
 									</td>
 									<td>
 										@if($request->manuscript->genre > 0)
-											{{ \App\Http\FrontendHelpers::assignmentType($shopManuscript->genre) }}
+											{{ \App\Http\FrontendHelpers::assignmentType($request->manuscript->genre) }}
 										@endif
 									</td>
 									<td>{{ $request->manuscript->user->id }}</td>

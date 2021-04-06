@@ -440,7 +440,7 @@
 					<thead>
 						<tr>
 							<th>{{ trans('site.date-sent') }}</th>
-							<th>{{ trans('site.editor') }}</th>
+							<th>{{ trans_choice('site.editors', 1) }}</th>
 							<th>{{ trans('site.answer-until') }}</th>
 							<th>{{ trans('site.answer-text') }}</th>
 						</tr>
@@ -474,7 +474,7 @@
 							<input type="date" class="form-control" name="answer_until">
 						</div>
 						<div class="form-group">
-							<label>{{ trans('site.editor-Expected-finish') }}</label>
+							<label>{{ trans('site.editor-expected-finish') }}</label>
 							<input type="date" class="form-control" name="editor_expected_finish" 
 							@if( $shopManuscriptTaken->editor_expected_finish ) value="{{ strftime('%Y-%m-%d', strtotime($shopManuscriptTaken->editor_expected_finish)) }}" @endif>
 						</div>
