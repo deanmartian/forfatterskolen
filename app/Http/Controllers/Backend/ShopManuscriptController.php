@@ -39,7 +39,7 @@ class ShopManuscriptController extends Controller
     public function __construct( SaleService $saleService )
     {
         // middleware to check if admin have access to this page
-        $this->middleware('checkPageAccess:9');
+        $this->middleware('checkPageAccess:9')->except('addFeedback');
         $this->saleService = $saleService;
     }
 
