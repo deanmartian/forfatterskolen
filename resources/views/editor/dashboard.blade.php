@@ -623,6 +623,10 @@
 					<input type="hidden" class="form-control" name="feedback_id">
 					<div id="dates"></div>
 					<div id="feedbackFileAppend">-</div>
+					<div class="form-check" id="replaceAdd">
+						<input class="form-check-input" type="checkbox" id="flexCheckDefault" name="replaceFiles">
+						<label id="replace" class="form-check-label" for="flexCheckDefault">{{ trans('site.replace-feedback-file') }}</label>
+					</div>
 					<div class="form-group">
 						<label name="manuscriptLabel">{{ trans_choice('site.manuscripts', 1) }}</label>
 						<input type="file" class="form-control" required multiple name="filename[]" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
@@ -665,6 +669,10 @@
 					<input type="hidden" class="form-control" name="feedback_id">
 					<div id="dates"></div>
 					<div id="feedbackFileAppend">-</div>
+					<div class="form-check" id="replaceAdd">
+						<input class="form-check-input" type="checkbox" id="flexCheckDefault" name="replaceFiles">
+						<label id="replace" class="form-check-label" for="flexCheckDefault">{{ trans('site.replace-feedback-file') }}</label>
+					</div>
 					<div class="form-group">
 						<label name="manuscriptLabel">{{ trans_choice('site.files', 2) }}</label>
 						<input type="file" class="form-control" name="files[]" multiple
@@ -833,6 +841,10 @@
 					<input type="hidden" class="form-control" name="feedback_id">
 					<div id="dates"></div>
 					<div id="feedbackFileAppend">-</div>
+					<div class="form-check" id="replaceAdd">
+						<input class="form-check-input" type="checkbox" id="flexCheckDefault" name="replaceFiles">
+						<label id="replace" class="form-check-label" for="flexCheckDefault">{{ trans('site.replace-feedback-file') }}</label>
+					</div>
                     <div class="form-group">
                         <label name="manuscriptLabel">{{ trans_choice('site.manuscripts', 1) }}</label>
                         <input type="file" class="form-control" name="manuscript[]" multiple accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf" required>
@@ -994,6 +1006,10 @@
                     {{ csrf_field() }}
 					<div id="dates"></div>
 					<div id="feedbackFileAppend">-</div>
+					<div class="form-check" id="replaceAdd">
+						<input class="form-check-input" type="checkbox" id="flexCheckDefault" name="replaceFiles">
+						<label id="replace" class="form-check-label" for="flexCheckDefault">{{ trans('site.replace-feedback-file') }}</label>
+					</div>
                     <div class="form-group">
                         <label name="manuscriptLabel">{{ trans_choice('site.manuscripts', 1) }}</label>
                         <input type="file" class="form-control" required multiple name="filename[]"
@@ -1117,6 +1133,9 @@
 		modal.find('form').find('input[type=file]').attr('required');
 		modal.find('[name=feedback_id]').val('')
 
+		modal.find('[name=manuscriptLabel]').show();
+		modal.find('#replaceAdd').hide();
+
         if (is_edit) {
 			let feedbackFileName = $(this).data('manuscript');
 			let createdAt = $(this).data('created_at');
@@ -1143,6 +1162,9 @@
                 modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
             })
 			modal.find('#feedbackFileAppend').append('<br>');
+
+			modal.find('[name=manuscriptLabel]').hide();
+			modal.find('#replaceAdd').show();
         }
 
     });
@@ -1159,6 +1181,9 @@
 		modal.find('#dates').html('');
 		modal.find('form').find('input[type=file]').attr('required');
 		modal.find('[name=feedback_id]').val('')
+
+		modal.find('[name=manuscriptLabel]').show();
+		modal.find('#replaceAdd').hide();
 
         if (is_edit) {
 			let feedbackFileName = $(this).data('f_file');
@@ -1186,6 +1211,9 @@
                 modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
             })
 			modal.find('#feedbackFileAppend').append('<br>');
+
+			modal.find('[name=manuscriptLabel]').hide();
+			modal.find('#replaceAdd').show();
         }
 	});
 
@@ -1263,6 +1291,8 @@
 		modal.find('#dates').html('');
 		modal.find('form').find('input[type=file]').attr('required');
 		modal.find('[name=feedback_id]').val('')
+		modal.find('[name=manuscriptLabel]').show();
+		modal.find('#replaceAdd').hide();
 
         if (is_edit) {
 			let feedbackFileName = $(this).data('f_file');
@@ -1274,7 +1304,6 @@
 
             modal.find('form').find('input[type=file]').removeAttr('required');
 			modal.find('.modal-title').text("Edit Feedback");
-			modal.find('[name=manuscriptLabel]').text("Replace Manuscript")
 			modal.find('[name=feedback_id]').val(feedbackId)
 			modal.find('[name=hours_worked]').val(hours)
 			modal.find('[name=notes_to_head_editor]').val(notes_to_head_editor)
@@ -1288,7 +1317,8 @@
                 modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
             })
 			modal.find('#feedbackFileAppend').append('<br>');
-
+			modal.find('[name=manuscriptLabel]').hide();
+			modal.find('#replaceAdd').show();
         }
     });
 
@@ -1370,6 +1400,9 @@
 		modal.find('form').find('input[type=file]').attr('required');
 		modal.find('[name=feedback_id]').val('')
 
+		modal.find('[name=manuscriptLabel]').show();
+		modal.find('#replaceAdd').hide();
+
         if (is_edit) {
 			let feedbackFileName = $(this).data('manuscript');
 			let grade = $(this).data('grade');
@@ -1382,7 +1415,6 @@
             modal.find('form').find('input[type=file]').removeAttr('required');
 			modal.find('.modal-title').text("Edit Feedback");
 			modal.find('[name=grade]').val(grade)
-			modal.find('[name=manuscriptLabel]').text("Replace Manuscript")
 			modal.find('[name=feedback_id]').val(feedbackId)
 			modal.find('[name=notes_to_head_editor]').val(notesToHeadEditor)
 			// modal.find('[name=hours]').val(hours)
@@ -1396,6 +1428,9 @@
                 modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
             })
 			modal.find('#feedbackFileAppend').append('<br>');
+
+			modal.find('[name=manuscriptLabel]').hide();
+			modal.find('#replaceAdd').show();
 
         }
     });

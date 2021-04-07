@@ -148,17 +148,18 @@ class AssignmentGroupController extends Controller
             }
             $assignmentManuscript->save();
 
+            $assignmentFeedback = AssignmentFeedback::where('assignment_group_learner_id', $id)->first();
             if($filesWithPath){
-                $assignmentFeedback = AssignmentFeedback::where('assignment_group_learner_id', $id)
-                                                        ->update(['filename' => $filesWithPath,
-                                                                'hours_worked' => $request->hours,
-                                                                'notes_to_head_editor' => $request->notes_to_head_editor]);
-            }else{
-                $assignmentFeedback = AssignmentFeedback::where('assignment_group_learner_id', $id)
-                                                        ->update(['hours_worked' => $request->hours,
-                                                                'notes_to_head_editor' => $request->notes_to_head_editor]);
+                if($request->replaceFiles){
+                    $assignmentFeedback->filename = $filesWithPath;
+                }else{
+                    $assignmentFeedback->filename = $assignmentFeedback->filename.', '.$filesWithPath;
+                }
             }
-            
+            $assignmentFeedback->hours_worked = $request->hours;
+            $assignmentFeedback->notes_to_head_editor = $request->notes_to_head_editor;
+            $assignmentFeedback->save();
+
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback updated successfully.'),
                     'alert_type' => 'success']);
 

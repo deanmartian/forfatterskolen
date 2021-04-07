@@ -199,7 +199,12 @@ class ShopManuscriptController extends Controller
             
             $shopManuscriptTakenFeedback = ShopManuscriptTakenFeedback::find($request->feedback_id);
             if($files){
-                $shopManuscriptTakenFeedback->filename = json_encode($files);
+                if($request->replaceFiles){
+                    $shopManuscriptTakenFeedback->filename = json_encode($files);
+                }else{
+                    $oldfiles = $shopManuscriptTakenFeedback->filename;
+                    $shopManuscriptTakenFeedback->filename = json_encode(array_merge($oldfiles,$files));
+                }
             }
             $shopManuscriptTakenFeedback->notes = $request->notes;
             $shopManuscriptTakenFeedback->hours_worked = $request->hours;

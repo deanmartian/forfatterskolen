@@ -334,7 +334,11 @@ class OtherServiceController extends Controller
                 
                     $otherServiceFeedback = OtherServiceFeedback::find($request->feedback_id);
                     if($filesWithPath){
-                        $otherServiceFeedback->manuscript = $filesWithPath;
+                        if($request->replaceFiles){
+                            $otherServiceFeedback->manuscript = $filesWithPath;
+                        }else{
+                            $otherServiceFeedback->manuscript = $otherServiceFeedback->manuscript.', '.$filesWithPath;
+                        }
                     }
                     $otherServiceFeedback->hours_worked = $request->hours_worked;
                     $otherServiceFeedback->notes_to_head_editor = $request->notes_to_head_editor;

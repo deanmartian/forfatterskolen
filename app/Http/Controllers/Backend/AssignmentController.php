@@ -796,12 +796,17 @@ class AssignmentController extends Controller
     {
 
         $filesWithPath = $this->getFiles($request, $learner_id);
-
+        
         if($request->feedback_id){ // update
             
             $assignmentFeedbackNoGroup = AssignmentFeedbackNoGroup::find($request->feedback_id);
             if($filesWithPath){
-                $assignmentFeedbackNoGroup->filename = $filesWithPath;
+                // check if replace or add manuscript
+                if($request->replaceFiles){
+                    $assignmentFeedbackNoGroup->filename = $filesWithPath;
+                }else{
+                    $assignmentFeedbackNoGroup->filename = $assignmentFeedbackNoGroup->filename.', '.$filesWithPath;
+                }
             }
             $assignmentFeedbackNoGroup->hours_worked = $request->hours;
             $assignmentFeedbackNoGroup->notes_to_head_editor = $request->notes_to_head_editor;
