@@ -2078,18 +2078,17 @@ class LearnerController extends Controller
 
         // send email
         $to = User::where('id', $request->editor_id)->pluck('email');
-        $emailTemplate = AdminHelpers::emailTemplate('Request To Editor');
 
         $editor_expected_finish = Carbon::parse($request->editor_expected_finish)->format('d.m.Y');
         $expected_finish = Carbon::parse($request->expected_finish)->format('d.m.Y');
-        $emailTemplate_content =  $emailTemplate->email_content;
+        $emailTemplate_content =  $request->message;
         $emailTemplate_content = str_replace(':editor_expected_finish',$editor_expected_finish, $emailTemplate_content);
         $emailTemplate_content = str_replace(':manuscript_finish',$expected_finish, $emailTemplate_content);
 
-        dispatch(new AddMailToQueueJob($to, $emailTemplate->subject, $emailTemplate_content, $emailTemplate->from_email,
+        dispatch(new AddMailToQueueJob($to, $request->subject, $emailTemplate_content, $request->from_email,
             null, null,
             'shop-manuscript-new-request-to-editor', $id));
-        
+
         return redirect()->back()->with([
             'errors'                => AdminHelpers::createMessageBag('Record successfully saved.'),
             'alert_type'            => 'success',

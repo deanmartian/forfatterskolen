@@ -459,6 +459,9 @@
 				<hr>
 				<label for="">{{ trans('site.can-you-take-this-manuscript') }}</label>
 				<form method="POST" action="{{ route('admin.send-request-to-editor', $shopManuscriptTaken->id) }}">
+					<?php
+						$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Request To Editor');
+					?>
 					{{ csrf_field() }}
 					<div class="margin-top">
 						<div class="form-group">
@@ -483,6 +486,23 @@
 							<input type="date" class="form-control" name="expected_finish" 
 							@if( $shopManuscriptTaken->expected_finish ) value="{{ strftime('%Y-%m-%d', strtotime($shopManuscriptTaken->expected_finish)) }}" @endif>
 						</div>
+						<div class="form-group">
+							<label>{{ trans('site.subject') }}</label>
+							<input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}"
+								required>
+						</div>
+						<div class="form-group">
+							<label>{{ trans('site.from') }}</label>
+							<input type="text" class="form-control" name="from_email"
+									value="{{ $emailTemplate->from_email }}" required>
+						</div>
+						<div class="form-group">
+							<label>{{ trans('site.message') }}</label>
+							<textarea class="form-control tinymce" name="message" rows="6"
+									required>{!! $emailTemplate->email_content !!}</textarea>
+						</div>
+						<br>
+						<hr>
 						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
 					</div>
 				</form>
