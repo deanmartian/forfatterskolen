@@ -873,8 +873,11 @@ Route::group([
                 'destroy' => 'admin.webinar.webinar-presenter.destroy',
             ],
         ]);
-
-
+        
+        // Webinar Editor Route
+        Route::post('storeWebinarEditor/{webinar_id}', 'WebinarEditorController@store')->name('admin.webinar.webinar-editor.store');
+        Route::post('updateWebinarEditor/{id}', 'WebinarEditorController@update')->name('admin.webinar.webinar-editor.update');
+        Route::delete('deleteWebinarEditor/{id}', 'WebinarEditorController@deleteEditor')->name('admin.webinar.webinar-editor.delete');
 
         // Assignments Route
         Route::resource('/assignment', 'AssignmentController', [
@@ -1445,6 +1448,7 @@ Route::group([
         Route::post('manuscriptYouCanTake/save', 'ManuscriptEditorCanTakeController@save')->name('editor.manuscript-you-can-take-save');
         Route::post('manuscriptYouCanTake/{id}/delete', 'ManuscriptEditorCanTakeController@delete')->name('editor.manuscript-you-can-take.delete');
         Route::get('/yearly-calendar', 'PageController@yearlyCalendar')->name('editor.yearly-calendar.index');
+        Route::get('/assigned-webinar', 'AssignedWebinarController@show')->name('editor.assigned-webinar');
     });
 
     Route::group([
