@@ -51,7 +51,7 @@
                                     [\Carbon\Carbon::parse($webinar->start_date)->format('d.m.Y'),
                                     \Carbon\Carbon::parse($webinar->start_date)->format('H:i')],
                                     trans('site.front.our-course.show.start-date')) }} <br>
-                                <i class="fa fa-link" aria-hidden="true"></i>&nbsp;{{ trans('site.presenter_url') }}&nbsp;<a href="{{ $webinar->presenter_url }}">{{ $webinar->presenter_url }}</a>
+                                <i class="fa fa-link" aria-hidden="true"></i>&nbsp;{{ trans('site.presenter-url') }}&nbsp;<a href="{{ $webinar->presenter_url }}">{{ $webinar->presenter_url }}</a>
                             </div>
                         </div>
                     </div>

@@ -315,7 +315,7 @@
 				</select>
 			</div>
 			<div class="form-group">
-				<label>{{ trans('site.presenter_url') }}</label>
+				<label>{{ trans('site.presenter-url') }}</label>
 				<input type="URL" name="presenter_url" class="form-control" maxlength="1000"></input>
 			</div>
 	      	<div class="text-right">
