@@ -120,97 +120,129 @@
 
             <tab-content :title="trans('site.front.form.user-information')" icon="fas fa-id-card"
                          :before-change="validateForm">
+                <form @submit.prevent="handleLogin($event)" v-if="!currentUser" class="mb-4">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <span>
+                                {{ trans('site.front.form.already-registered-text') }}
+                            </span>
+                        </div>
+                    </div>
 
-                <template v-if="!currentUser">
+                    <div class="row">
+                        <div class="form-group col-sm-4 mb-0">
+                            <input type="text" name="email" :placeholder="trans('site.front.form.email')"
+                                   class="form-control" v-model="loginForm.email" required>
 
-                    <p class="text-center" v-if="!isAlreadyAMember && !isNewCustomer">
-                        Are you <a href="javascript:void(0)" @click="isAlreadyAMember = true">already a member</a>?
-                        or a <a href="javascript:void(0)" @click="isNewCustomer = true">new customer</a>
-                    </p>
+                            <p style="margin-top: 7px;">
+                                <a href="/auth/login?t=passwordreset" tabindex="-1" class="text-red">
+                                    {{ trans('site.front.form.reset-password') }}?
+                                </a>
+                            </p>
+                        </div>
 
-                    <form @submit.prevent="handleLogin($event)" v-if="isAlreadyAMember" class="mb-4">
-                        <div class="row">
-                            <div class="col-sm-6 col-sm-offset-3">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fa at-icon"></i></span>
-                                    </div>
-                                    <input type="email" name="email" class="form-control no-border-left"
-                                           :placeholder="trans('site.front.form.email')" v-model="loginForm.email">
-                                </div>
+                        <div class="form-group col-sm-4 mb-0">
+                            <input type="password" name="login_password" :placeholder="trans('site.front.form.password')"
+                                   class="form-control" v-model="loginForm.password" required>
+                        </div>
+                        <div class="form-group col-sm-4 mb-0">
+                            <button type="submit" class="btn site-btn-global"
+                                    :disabled="isLoginDisabled">
+                                <i class="fas fa-spinner fa-spin" v-if="isLoginDisabled"></i>
+                                {{ loginText }}
+                            </button>
+                        </div>
+                    </div><!-- end row -->
 
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fa lock-icon"></i></span>
-                                    </div>
-                                    <input type="password" name="password" :placeholder="trans('site.front.form.password')"
-                                           class="form-control no-border-left" v-model="loginForm.password">
-                                </div>
-
-                                <div class="form-group mb-0">
-                                    <button type="submit" class="btn site-btn-global"
-                                            :disabled="isLoginDisabled">
-                                        <i class="fas fa-spinner fa-spin" v-if="isLoginDisabled"></i>
-                                        {{ loginText }}
-                                    </button>
-                                </div>
-
-                                <div class="social-btn-container">
-                                    <a href="" class="loginBtn loginBtn--facebook btn">
-                                        {{ trans('site.front.form.login-with-facebook') }}
-                                    </a>
-
-                                    <a href="/auth/login/google" class="loginBtn loginBtn--google btn">
-                                        {{ trans('site.front.form.login-with-google') }}
-                                    </a>
-                                </div>
-                            </div> <!-- end col-sm-6 -->
-
-                        </div><!-- end row -->
-
-                        <div class="row">
-                            <div class="col-sm-12">
+                    <div class="row">
+                        <div class="col-sm-12">
                             <span class="text-danger invalid-credentials" v-if="invalidCred">
                                 <i class="fas fa-exclamation-circle"></i>
                                 <span v-html="errorMsg"></span>
                             </span>
-                            </div>
                         </div>
-                    </form> <!-- end login form -->
+                    </div>
+                </form> <!-- end login form -->
 
-                </template> <!-- end not logged in user -->
+                <div class="form-group">
+                    <label for="email" class="control-label">
+                        {{ trans('site.front.form.email') }}
+                    </label>
+                    <input type="email" id="email" class="form-control" name="email" required
+                           v-model="orderForm.email"
+                           :disabled="currentUser"
+                           :placeholder="trans('site.front.form.email')">
+                </div> <!-- end email form-group -->
 
-                <template v-if="currentUser || isNewCustomer">
-                    logged in or new customer
-                </template>
+                <div class="form-group row">
+                    <div class="col-md-6">
+                        <label for="first_name" class="control-label">
+                            {{ trans('site.first-name') }}
+                        </label>
+                        <input type="text" id="first_name" class="form-control" name="first_name" required
+                               v-model="orderForm.first_name"
+                               :disabled="currentUser"
+                               :placeholder="trans('site.first-name')">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="last_name" class="control-label">
+                            {{ trans('site.last-name') }}
+                        </label>
+                        <input type="text" id="last_name" class="form-control" name="last_name" required
+                               v-model="orderForm.last_name"
+                               :disabled="currentUser"
+                               :placeholder="trans('site.last-name')">
+                    </div>
+                </div> <!-- end first and last name -->
 
+                <div class="form-group">
+                    <label for="street" class="control-label">
+                        {{ trans('site.front.form.street') }}
+                    </label>
+                    <input type="text" id="street" class="form-control" name="street" required
+                           v-model="orderForm.street"
+                           :placeholder="trans('site.checkout.street')">
+                </div> <!-- end street -->
+
+                <div class="form-group row">
+                    <div class="col-md-6">
+                        <label for="zip" class="control-label">{{ trans('site.front.form.zip') }}</label>
+                        <input type="text" id="zip" class="form-control" name="zip" required
+                               v-model="orderForm.zip" :placeholder="trans('site.checkout.zip')">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="city" class="control-label">{{ trans('site.front.form.city') }}</label>
+                        <input type="text" id="city" class="form-control" name="city" required
+                               v-model="orderForm.city" :placeholder="trans('site.checkout.city')">
+                    </div>
+                </div> <!-- end zip, city -->
+
+                <div class="form-group row">
+                    <div class="col-md-6">
+                        <label for="phone" class="control-label">
+                            {{ trans('site.front.form.phone-number') }}
+                        </label>
+                        <input type="text" id="phone" class="form-control" name="phone" required
+                               v-model="orderForm.phone" :placeholder="trans('site.checkout.phone')">
+                    </div>
+
+                    <div class="col-md-6" v-if="!currentUser">
+                        <label for="password" class="control-label">
+                            {{ trans('site.front.form.create-password') }}
+                        </label>
+                        <input type="password" id="password" class="form-control"
+                               name="password" required :placeholder="trans('site.front.form.create-password')"
+                               v-model="orderForm.password">
+                    </div>
+                </div>
             </tab-content>
 
             <tab-content :title="trans('site.checkout.payment-details')" icon="fas fa-credit-card"
-                         :before-change="processOrder">
+                         :before-change="validateForm">
 
-                other options here
+                <div id="checkout-display"></div>
 
             </tab-content>
-
-            <template slot="footer" slot-scope="props">
-                <div class="wizard-footer-left">
-                    <wizard-button  v-if="props.activeTabIndex > 0 && !props.isLastStep" @click.native="props.prevTab()"
-                                    :style="props.fillButtonStyle">
-                        {{ trans('site.back') }}
-                    </wizard-button>
-                </div>
-                <div class="wizard-footer-right">
-                    <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab()" class="wizard-footer-right"
-                                   :style="props.fillButtonStyle" :disabled="!currentUser && props.activeTabIndex > 0">
-                        {{ trans('site.learner.next-text') }}
-                    </wizard-button>
-
-                    <wizard-button v-else @click.native="props.nextTab()" class="wizard-footer-right finish-button"
-                                   :style="props.fillButtonStyle">  {{props.isLastStep ? trans('site.front.buy')
-                        : trans('site.learner.next-text')}}</wizard-button>
-                </div>
-            </template> <!-- end buttons slot -->
 
             <button slot="finish" class="d-none">{{ trans('site.checkout.finish') }}</button>
         </form-wizard>
@@ -233,10 +265,6 @@
 
     #cardForm [type='submit'] {
         display: none;
-    }
-
-    .input-group, .site-btn-global {
-        margin-top: 20px;
     }
 </style>
 
@@ -306,8 +334,6 @@
                 isLoginDisabled: false,
                 loginText: i18n.site.front.form.login,
                 hasPaidCourse: false,
-                isAlreadyAMember: false,
-                isNewCustomer: false,
                 requestUrl: '/course/'+this.course.id
             }
         },
@@ -453,7 +479,7 @@
                             let element = $("[name="+k+"]");
 
                             // append error message after the element
-                            element.closest('.input-group').after("<small class='text-danger validation-err'>" +
+                            element.after("<small class='text-danger validation-err'>" +
                                 "<i class='fas fa-exclamation-circle'></i> " +
                                 "<span>" + v+"</span></small>");
                         });
@@ -467,12 +493,12 @@
                     this.checkHasPaidCourse();
                     this.getCurrentUser();
 
-                    /*console.log(response);
+                    console.log(response);
                     if (response.data.course_link) {
                         window.location.href = response.data.course_link;
                     }
 
-                    $("#checkout-display").html(response.data);*/
+                    $("#checkout-display").html(response.data);
                     return true;
 
                 }).catch(error => {
@@ -480,11 +506,6 @@
                     this.processError(error);
 
                 });
-            },
-
-            processOrder() {
-                console.log("process order");
-                return false;
             },
 
             prevTab() {

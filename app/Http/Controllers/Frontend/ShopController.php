@@ -58,6 +58,13 @@ class ShopController extends Controller
     public function checkout($course_id)
     {
         $course = Course::findOrFail($course_id);
+
+        if (!$course->is_free): // added this condition to check if the course is for sale
+            if( !FrontendHelpers::isCourseActive($course) || count($course->packages) == 0 ) : // Display 404 if Course has no Packages
+                return abort(404);
+            endif;
+        endif;
+
         if( !Auth::guest() ) :
             $course_packages = $course->packages->pluck('id')->toArray(); 
             $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
@@ -91,6 +98,12 @@ class ShopController extends Controller
     public function sveaCheckout( $course_id )
     {
         $course = Course::findOrFail($course_id);
+
+        if (!$course->is_free): // added this condition to check if the course is for sale
+            if( !FrontendHelpers::isCourseActive($course) || count($course->packages) == 0 ) : // Display 404 if Course has no Packages
+                return abort(404);
+            endif;
+        endif;
 
         $hasPaidCourse = false;
         if( !Auth::guest() ) :
@@ -135,7 +148,8 @@ class ShopController extends Controller
             $user['address'] = $user->address;
         }
 
-        return view('frontend.shop.svea-checkout', compact('course', 'packages', 'package_id', 'coupon',
+        // old view svea-checkout
+        return view('frontend.shop.checkout-update', compact('course', 'packages', 'package_id', 'coupon',
             'hasPaidCourse', 'user'));
     }
 
@@ -205,7 +219,9 @@ class ShopController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        return response()->json($this->courseService->processCheckout($request));
+        return response()->json();
+        // the code below is for using svea
+        //return response()->json($this->courseService->processCheckout($request));
     }
 
     public function checkoutTest($course_id)
