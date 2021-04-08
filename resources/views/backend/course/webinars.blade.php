@@ -155,8 +155,8 @@
 													data-editors = "{{ $selectEditor }}"
 													data-editors_count = "{{ $selectEditor->keys()->last() }}"
 													data-action="{{ route('admin.webinar.webinar-editor.store', $webinar->id) }}">
-												{{ trans('site.add-presenter') }}</button>
-											<strong style="font-size: 15px">{{ trans('site.presenters') }}</strong> <br />
+												{{ trans('site.add-editor') }}</button>
+											<strong style="font-size: 15px">{{ trans_choice('site.editors', 1) }}</strong> <br />
 											<div class="clearfix"></div>
 
 											@foreach( $webinar->webinar_editors as $webinar_editor )
