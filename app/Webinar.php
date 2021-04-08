@@ -30,5 +30,10 @@ class Webinar extends Model
         return $this->hasOne('App\WebinarScheduledRegistration');
     }
 
+    public function webinar_editors()
+    {
+        return $this->hasMany('App\WebinarEditor');
+    }
+
 
 }

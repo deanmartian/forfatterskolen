@@ -429,4 +429,9 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\RequestToEditor', 'editor_id', 'id')->where('from_type', 'shop-manuscript');
     }
+
+    public function assignedWebinars()
+    {
+        return $this->hasMany('App\WebinarEditor', 'editor_id', 'id');
+    }
 }
