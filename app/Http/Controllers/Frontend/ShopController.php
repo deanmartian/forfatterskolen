@@ -131,6 +131,7 @@ class ShopController extends Controller
         $package_id = \Request::has('package') ? \Request::get('package') :
             (isset($packages[1]) ? $packages[1]['id'] : $packages[0]['id']);
         $coupon = \request()->has('c') ? \request()->get('c') : '';
+        $startIndex = \request()->has('si') ? \request()->get('si') : 0;
 
         if (\request()->has('sp')) {
             // use try/catch to handle invalid payload
@@ -150,7 +151,7 @@ class ShopController extends Controller
 
         // old view svea-checkout
         return view('frontend.shop.checkout-update', compact('course', 'packages', 'package_id', 'coupon',
-            'hasPaidCourse', 'user'));
+            'hasPaidCourse', 'user', 'startIndex'));
     }
 
     /**

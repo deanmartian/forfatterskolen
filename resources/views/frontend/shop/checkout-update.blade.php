@@ -11,7 +11,7 @@
             <course-checkout :course="{{ json_encode($course) }}" :package-id="{{ $package_id }}"
                              :passed-coupon="{{ json_encode($coupon) }}"
                              :packages="{{ json_encode($packages) }}"
-                             :user="{{ json_encode($user) }}"></course-checkout>
+                             :user="{{ json_encode($user) }}" :start-index="{{ $startIndex }}"></course-checkout>
         </div>
     </div>
 

@@ -3,7 +3,7 @@
 
         <form-wizard color="#c12938" error-color="#ff4949"
                      :nextButtonText="trans('site.paginate.next')" :backButtonText="trans('site.paginate.previous')"
-                     :finishButtonText="trans('site.front.buy')" title="" subtitle="">
+                     :finishButtonText="trans('site.front.buy')" title="" subtitle="" :startIndex="startIndex">
             <tab-content :title="'Bestillingsskjema'" icon="fa fa-clipboard-list">
                 <table class="table table-hover">
                     <tbody>
@@ -156,11 +156,14 @@
                                 </div>
 
                                 <div class="social-btn-container">
-                                    <a href="" class="loginBtn loginBtn--facebook btn">
+                                    <a :href="'/auth/login/facebook?package=' + orderForm.package_id + '&c=' + orderForm.coupon
+                                    + '&si=1'" class="loginBtn loginBtn--facebook btn">
                                         {{ trans('site.front.form.login-with-facebook') }}
                                     </a>
 
-                                    <a href="/auth/login/google" class="loginBtn loginBtn--google btn">
+                                    <a :href="'/auth/login/google?package=' + orderForm.package_id + '&c=' + orderForm.coupon
+                                    + '&si=1'"
+                                       class="loginBtn loginBtn--google btn">
                                         {{ trans('site.front.form.login-with-google') }}
                                     </a>
                                 </div>
@@ -254,6 +257,7 @@
             passedCoupon: String,
             packages: Array,
             user: Object,
+            startIndex: Number,
         },
 
         data() {
