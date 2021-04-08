@@ -34,7 +34,13 @@
 <div class="course-container">
 	
 	@include('backend.partials.course_submenu')
-
+	<?php 
+		$editors = \App\User::where(function($query){
+            $query->where('role', 3)->orWhere('admin_with_editor_access', 1);
+        })
+        ->orderBy('id', 'desc')
+        ->get();
+	?>
 	<div class="col-sm-12 col-md-10 sub-right-content">
 		<div class="col-sm-12">
 			<div class="row">
@@ -137,40 +143,53 @@
 
 										<hr />
 										<div >
+											<?php 
+												$selectEditor = $editors->filter(function ($value, $key) use($webinar){
+													return !in_array($value['id'], $webinar->webinar_editors->pluck('editor_id')->toArray());
+												});
+											?>
 											<button class="btn btn-xs btn-primary margin-bottom addPresenterBtn pull-right"
 													data-toggle="modal"
 													data-target="#addPresenterModal"
-													data-title="{{ $webinar->title }}"
-													data-action="{{ route('admin.webinar.webinar-presenter.store', ['webinar_id' => $webinar->id]) }}">
-												{{ trans('site.add-presenter') }}</button>
-											<strong style="font-size: 15px">{{ trans('site.presenters') }}</strong> <br />
+													data-title="{{ trans('site.add-editor-to').' '.$webinar->title }}"
+													data-editors = "{{ $selectEditor }}"
+													data-editors_count = "{{ $selectEditor->keys()->last() }}"
+													data-action="{{ route('admin.webinar.webinar-editor.store', $webinar->id) }}">
+												{{ trans('site.add-editor') }}</button>
+											<strong style="font-size: 15px">{{ trans_choice('site.editors', 1) }}</strong> <br />
 											<div class="clearfix"></div>
 
-											@foreach( $webinar->webinar_presenters as $webinar_presenter )
+											@foreach( $webinar->webinar_editors as $webinar_editor )
 												<div>
 													<div class="pull-right">
-														<a class="btn btn-xs btn-info editPresenterBtn"
+														<a class="btn btn-xs btn-info addPresenterBtn"
 														   data-toggle="modal"
-														   data-target="#editPresenterModal"
-														   data-first_name="{{ $webinar_presenter->first_name }}"
-														   data-last_name="{{ $webinar_presenter->last_name }}"
-														   data-email="{{ $webinar_presenter->email }}"
-														   data-action="{{ route('admin.webinar.webinar-presenter.update', ['webinar_id' =>$webinar->id, 'id' => $webinar_presenter->id]) }}"
+														   data-edit="1"
+														   data-target="#addPresenterModal"
+														   data-editor_id="{{ $webinar_editor->editor->id }}"
+														   data-first_name="{{ $webinar_editor->editor->first_name }}"
+														   data-last_name="{{ $webinar_editor->editor->last_name }}"
+														   data-title="{{ trans('site.edit-editor').' '.$webinar_editor->editor->first_name.' '.$webinar_editor->editor->last_name }}"
+														   data-editors = "{{ $selectEditor }}"
+														   data-editors_count = "{{ $selectEditor->keys()->last() }}"
+														   data-presenter_url="{{ $webinar_editor->presenter_url }}"
+														   data-action="{{ route('admin.webinar.webinar-editor.update', $webinar_editor->id) }}"
 														>
 															<i class="fa fa-pencil"></i></a>
 
 														<a class="btn btn-xs btn-danger deletePresenterBtn"
 														   data-toggle="modal"
 														   data-target="#deletePresenterModal"
-														   data-first_name="{{ $webinar_presenter->first_name }}"
-														   data-last_name="{{ $webinar_presenter->last_name }}"
-														   data-action="{{ route('admin.webinar.webinar-presenter.destroy', ['webinar_id' =>$webinar->id, 'id' => $webinar_presenter->id]) }}">
+														   data-first_name="{{ $webinar_editor->editor->first_name }}"
+														   data-last_name="{{ $webinar_editor->editor->last_name }}"
+														   data-action="{{ route('admin.webinar.webinar-editor.delete', $webinar_editor->id) }}">
 															<i class="fa fa-trash"></i></a>
 													</div>
 													<div class="webinar-presenter">
-														<div class="presenter-thumb" style="background-image: url('{{ $webinar_presenter->image  }}')"></div>
-														{{ $webinar_presenter->first_name }} {{ $webinar_presenter->last_name }} <br />
-														{{ $webinar_presenter->email }}
+														<div class="presenter-thumb" style="background-image: url('{{ $webinar_editor->editor->profile_image  }}')"></div>
+														{{ $webinar_editor->editor->first_name }} {{ $webinar_editor->editor->last_name }} <br />
+														{{ $webinar_editor->editor->email }} <br>
+														{{ $webinar_editor->presenter_url }}
 													</div>
 												</div>
 												<br />
@@ -284,33 +303,23 @@
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
-      	<h4 class="no-margin">{{ trans('site.add-presenter-to') }} <em></em></h4>
+      	<h4 class="no-margin"><em></em></h4>
       </div>
       <div class="modal-body">
       	<form method="POST" enctype="multipart/form-data" action="">
       		{{ csrf_field() }}
 	      	<div class="form-group">
-	      		<div class="text-center">
-			        <div class="user-thumb-image image-file margin-bottom">
-			          <div class="image-preview" title="Select Image" data-toggle="tooltip" data-placement="bottom"></div>
-			          <input type="file" accept="image/*" name="image" accept="image/jpg, image/jpeg, image/png">
-			        </div>
-		        </div>
-	      	</div>
-	      	<div class="form-group">
-	      		<label>{{ trans('site.first-name') }}</label>
-	      		<input type="text" name="first_name" required class="form-control"> 
-	      	</div>
-	      	<div class="form-group">
-	      		<label>{{ trans('site.last-name') }}</label>
-	      		<input type="text" name="last_name" required class="form-control"> 
-	      	</div>
-	      	<div class="form-group">
-	      		<label>{{ trans_choice('site.emails', 1) }}</label>
-	      		<input type="email" name="email" required class="form-control"> 
-	      	</div>
+				<label>{{ trans('site.assign-editor') }}</label>
+				<select name="editor_id" class="form-control select2" required>
+					<option value="" disabled="" selected>-- Select Editor --</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label>{{ trans('site.presenter-url') }}</label>
+				<input type="URL" name="presenter_url" class="form-control" maxlength="1000"></input>
+			</div>
 	      	<div class="text-right">
-				<button type="submit" class="btn btn-primary">{{ ucwords(trans('site.add-presenter')) }}</button>
+				<button type="submit" class="btn btn-primary">{{ ucwords(trans('site.save')) }}</button>
 	      	</div>
       	</form>
       </div>
@@ -716,6 +725,25 @@
 			var modal = $('#addPresenterModal');
 			var title = $(this).data('title');
 			var action = $(this).data('action');
+			var editors = $(this).data('editors');
+			var editors_count = $(this).data('editors_count')
+			var edit = $(this).data('edit');
+			modal.find('form').trigger('reset');
+			modal.find('select[name=editor_id]').html('');
+			
+			if(edit){ //add selected editor on drpdwn && set presenter_url
+				var first_name = $(this).data('first_name')
+				var last_name = $(this).data('last_name')
+				var editor_id = $(this).data('editor_id')
+				var presenter_url = $(this).data('presenter_url')
+				modal.find('select[name=editor_id]').append('<option value="'+editor_id+'">'+first_name+' '+last_name+'</option>');
+				modal.find('[name=presenter_url]').val(presenter_url);
+			}
+			for(var i =0; i <= editors_count; i++){
+				if(editors[i]){
+					modal.find('select[name=editor_id]').append('<option value="'+editors[i]['id']+'">'+editors[i]['first_name']+' '+editors[i]['last_name']+'</option>');
+				}
+			}
 			modal.find('em').text(title);
 			modal.find('form').attr('action', action);
 		});
