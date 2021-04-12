@@ -25,10 +25,23 @@
 				<div class="col-sm-6">
 					<div class="panel panel-default custom-height-1">
 						<div class="panel-heading">
-							<h4 class="dib">
-								{{ trans('site.personal-assignment') }}
-							</h4>
-
+                            <div class="navbar-form navbar-left">
+                                <h4 class="dib">
+                                    {{ trans('site.personal-assignment') }}
+                                </h4>
+                            </div>
+                            <div class="navbar-form navbar-right">
+                                <div class="form-group">
+                                    <form role="search" method="get" action="">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="search_personal_assignment" placeholder="{{ trans('site.search-learner-id') }}..">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+                                            </span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
 						</div>
 						<table class="table">
 							<thead>
@@ -96,7 +109,23 @@
 				</div>
                 <div class="col-sm-6">
 					<div class="panel panel-default custom-height-1">
-						<div class="panel-heading"><h4>{{ trans_choice('site.shop-manuscripts', 2) }}</h4></div>
+						<div class="panel-heading">
+                            <div class="navbar-form navbar-left">
+                                <h4>{{ trans_choice('site.shop-manuscripts', 2) }}</h4>
+                            </div>
+                            <div class="navbar-form navbar-right">
+                                <div class="form-group">
+                                    <form role="search" method="get" action="">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="search_shop_manuscript" placeholder="{{ trans('site.search-learner-id') }}..">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+                                            </span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
 						<table class="table">
 							<thead>
 							<tr>
@@ -160,7 +189,23 @@
 			<div class="row">
 				<div class="col-sm-6">
 					<div class="panel panel-default custom-height-1">
-						<div class="panel-heading"><h4>{{ trans('site.my-assignments') }}</h4></div>
+						<div class="panel-heading">
+                            <div class="navbar-form navbar-left">
+                                <h4>{{ trans('site.my-assignments') }}</h4>
+                            </div>
+                            <div class="navbar-form navbar-right">
+                                <div class="form-group">
+                                    <form role="search" method="get" action="">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="search_my_assignments" placeholder="{{ trans('site.search-learner-id') }}..">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+                                            </span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
 						<table class="table">
 							<thead>
 							<tr>
@@ -234,7 +279,23 @@
 				</div>
                 <div class="col-sm-6">
 					<div class="panel panel-default custom-height-1">
-						<div class="panel-heading"><h4>{{ trans('site.my-coaching-timer') }}</h4></div>
+						<div class="panel-heading">
+                            <div class="navbar-form navbar-left">
+                                <h4>{{ trans('site.my-coaching-timer') }}</h4>
+                            </div>
+                            <div class="navbar-form navbar-right">
+                                <div class="form-group">
+                                    <form role="search" method="get" action="">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="search_coaching_timer" placeholder="{{ trans('site.search-learner-id') }}..">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+                                            </span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
 						<table class="table">
 							<thead>
 							<tr>
@@ -298,7 +359,25 @@
 			<div class="row">
 				<div class="col-sm-6">
 					<div class="panel panel-default custom-height-1">
-						<div class="panel-heading"><h4>{{ trans('site.my-correction') }}</h4></div>
+						<div class="panel-heading">
+                            <div class="panel-heading">
+                                <div class="navbar-form navbar-left">
+                                    <h4>{{ trans('site.my-correction') }}</h4>
+                                </div>
+                                <div class="navbar-form navbar-right">
+                                    <div class="form-group">
+                                        <form role="search" method="get" action="">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" name="search_correction" placeholder="{{ trans('site.search-learner-id') }}..">
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+                                                </span>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 						<table class="table">
 							<thead>
 							<tr>
@@ -347,7 +426,23 @@
 				</div>
                 <div class="col-sm-6">
 					<div class="panel panel-default custom-height-1">
-						<div class="panel-heading"><h4>{{ trans('site.my-copy-editing') }}</h4></div>
+						<div class="panel-heading">
+                            <div class="navbar-form navbar-left">
+                                <h4>{{ trans('site.my-copy-editing') }}</h4>
+                            </div>
+                            <div class="navbar-form navbar-right">
+                                <div class="form-group">
+                                    <form role="search" method="get" action="">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="search_copy_editing" placeholder="{{ trans('site.search-learner-id') }}..">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+                                            </span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
 						<table class="table">
 							<thead>
 							<tr>
