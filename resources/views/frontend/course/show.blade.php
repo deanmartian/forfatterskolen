@@ -230,9 +230,9 @@
 							{!! nl2br($course->description) !!}
 							@if (!$course->is_free && !$course->hide_price)
                                 <?php
-                                $price = \App\Http\FrontendHelpers::currencyFormat($isBetween && $course->packages[0]->full_payment_sale_price
-                                    ? $course->packages[0]->full_payment_sale_price
-                                    : $course->packages[0]->full_payment_price);
+                                $price = \App\Http\FrontendHelpers::currencyFormat($isBetween && $course->packagesIsShow[0]->full_payment_sale_price
+                                    ? $course->packagesIsShow[0]->full_payment_sale_price
+                                    : $course->packagesIsShow[0]->full_payment_price);
                                 ?>
 								<p class="course-price">
 									{{ str_replace('_price_', $price, trans('site.front.our-course.show.price')) }}
