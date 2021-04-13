@@ -40,8 +40,8 @@
                         <td> {{ $discount->valid_to ? \App\Http\FrontendHelpers::formatDate($discount->valid_to) : ''}} </td>
                         <td>
                             <?php
-                                $discountUrl = "https://forfatterskolen.no/course/".$discount->course_id
-                                    ."/discount/".$discount->coupon;
+                                $discountUrl = env('APP_LIVE_URL')."/course/".$discount->course_id
+                                    ."/checkout?c=".$discount->coupon;
                             ?>
                             <input type="text" value="{{ $discountUrl }}"
                                    style="position: absolute; left: -10000px;">
