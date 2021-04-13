@@ -162,7 +162,7 @@ Route::group([
         ], function(){
             Route::get('/', 'CourseController@index')->name('front.course.index'); // Course Listing
             Route::get('/{id}', 'CourseController@show')->name('front.course.show'); // Course Details
-            Route::get('/{id}/checkout', 'ShopController@checkout')->name('front.course.checkout'); // Checkout
+            Route::get('/{id}/checkout', 'ShopController@sveaCheckout')->name('front.course.checkout'); // Checkout
             Route::get('/{id}/checkout-svea', 'ShopController@sveaCheckout')->name('front.course.svea-checkout'); // Checkout
             Route::post('/{id}/checkout/process-order', 'ShopController@processOrder')->name('front.course.process_order'); // Place Order
             Route::post('/{id}/checkout/validate-form', 'ShopController@validateCheckoutForm')->name('front.course.checkout.validate-form');
