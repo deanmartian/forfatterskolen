@@ -31,7 +31,7 @@
                                     <p v-html="coursePackage.description_formatted" class="mt-2">
                                     </p>
 
-                                    <template
+                                    <!--<template
                                             v-if="coursePackage.has_coaching
                                             || (coursePackage.included_courses
                                             && coursePackage.included_courses.length)">
@@ -48,7 +48,7 @@
                                             </template>
 
                                         </template>
-                                    </template>
+                                    </template>-->
 
                                     <div class="mt-3">
                                         <h3 class="font-weight-bold">
@@ -119,7 +119,7 @@
             </tab-content> <!-- end order details-->
 
             <tab-content :title="trans('site.front.form.user-information')" icon="fas fa-id-card"
-                         :before-change="validateForm">
+                         :before-change="validateForm" style="min-height: 300px">
 
                 <template v-if="!currentUser">
 
