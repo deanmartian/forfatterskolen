@@ -8,7 +8,7 @@
                 <table class="table table-hover">
                     <tbody>
                         <tr>
-                            <td width="25%">
+                            <td width="25%" id="image-td">
                                 <div class="media">
                                     <a class="thumbnail mr-3" href="#">
                                         <img class="media-object w-100" :src="course.course_image"
@@ -285,6 +285,9 @@
                                         v-html="paymentMode.mode"></option>
                             </select>
                         </div>
+
+                        <h1 v-html="coursePackage.variation" style="margin-top: 30px" class="text-red">
+                        </h1>
                     </div>
 
                     <div class="col-sm-6">
@@ -465,6 +468,12 @@
 
     .btn-block+.btn-block {
         margin-top: .5rem;
+    }
+
+    @media only screen and (max-width: 640px) {
+        #image-td {
+            display: none;
+        }
     }
 </style>
 
