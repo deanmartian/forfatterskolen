@@ -1,6 +1,6 @@
 <template>
     <div class="card">
-
+        <div id="scrollhere"></div>
         <form-wizard color="#c12938" error-color="#ff4949"
                      :nextButtonText="trans('site.paginate.next')" :backButtonText="trans('site.paginate.previous')"
                      :finishButtonText="trans('site.front.buy')" title="" subtitle="" :startIndex="startIndex">
@@ -369,7 +369,8 @@
 
             <template slot="footer" slot-scope="props">
                 <div class="wizard-footer-left">
-                    <wizard-button  v-if="props.activeTabIndex > 0 && !props.isLastStep" @click.native="props.prevTab()"
+                    <wizard-button  v-if="props.activeTabIndex > 0 && !props.isLastStep"
+                                    @click.native="props.prevTab(); scrollTop()"
                                     :style="props.fillButtonStyle">
                         {{ trans('site.back') }}
                     </wizard-button>
@@ -379,7 +380,7 @@
                         {{ trans('site.front.checkout.note') }}
                     </span>
 
-                    <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab()" class="wizard-footer-right"
+                    <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab(); scrollTop()" class="wizard-footer-right"
                                    :style="props.fillButtonStyle" :disabled="!currentUser && !isNewCustomer && props.activeTabIndex > 0">
                         {{ trans('site.learner.next-text') }}
                     </wizard-button>
@@ -849,6 +850,12 @@
 
             toggleNewCustomer() {
                 this.isNewCustomer = !this.isNewCustomer;
+            },
+
+            scrollTop() {
+                jQuery([document.documentElement, document.body]).animate({
+                    scrollTop: $("#scrollhere").offset().top
+                }, 1000);
             }
 
         }
