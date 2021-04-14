@@ -128,6 +128,11 @@
                         or a <a href="javascript:void(0)" @click="isNewCustomer = true">new customer</a>
                     </p>-->
 
+                    <button class="btn btn-default" @click="toggleNewCustomer()" v-if="isNewCustomer"
+                            style="margin-bottom: 10px">
+                        < {{ trans('site.back') }}
+                    </button>
+
                     <form @submit.prevent="handleLogin($event)" v-if="!isNewCustomer" class="second-col mb-4">
 
                         <p class="text-center" v-html="trans('site.login-or-register-below')">
@@ -170,7 +175,7 @@
                                     {{ trans('site.front.form.login-with-google') }}
                                 </a>
 
-                                <button class="btn btn-dark-red site-btn btn-block" type="button" @click="isNewCustomer = true">
+                                <button class="btn btn-dark-red site-btn btn-block" type="button" @click="toggleNewCustomer()">
                                     {{ trans('site.front.login.register') }}
                                 </button>
                             </div> <!-- end col-sm-6 -->
@@ -798,8 +803,11 @@
 
             prevTab() {
                 console.log("adfafd");
-            }
+            },
 
+            toggleNewCustomer() {
+                this.isNewCustomer = !this.isNewCustomer;
+            }
 
         }
 
