@@ -312,7 +312,8 @@
                             <div class="col-sm-12 margin-top custom-checkbox">
                                 <input type="checkbox" name="agree_terms" id="agree_terms" v-model="orderForm.agree_terms">
                                 <label for="agree_terms">
-                                    Jeg aksepterer <a href="/terms/course-terms">kjøpsvilkårene</a>
+                                    Jeg aksepterer
+                                    <a href="javascript:void(0)" @click="$refs.termsModal.show()">kjøpsvilkårene</a>
                                 </label>
                             </div>
                         </div>
@@ -394,6 +395,16 @@
             <button slot="finish" class="d-none">{{ trans('site.checkout.finish') }}</button>
         </form-wizard>
 
+        <b-modal
+                ref="termsModal"
+                :title="trans('site.terms')"
+                size="lg"
+                :hide-footer="true"
+        >
+            <div v-html="terms" class="card-body">
+            </div>
+        </b-modal>
+
     </div> <!-- end card -->
 </template>
 
@@ -468,6 +479,20 @@
 
     .btn-block+.btn-block {
         margin-top: .5rem;
+    }
+
+    .modal-backdrop {
+        background-color: #0009;
+    }
+
+    .modal-dialog .modal-header .close {
+        padding: 1rem 2rem;
+        font-size: 40px;
+    }
+
+    .modal-dialog .modal-title {
+        line-height: 1.6;
+        font-size: 26px;
     }
 
     @media only screen and (max-width: 640px) {
@@ -550,6 +575,7 @@
                 paymentModes: [],
                 paymentPlans: [],
                 disableOtherPlan: false,
+                terms: '',
                 isLoading: false,
                 requestUrl: '/course/'+this.course.id
             }
@@ -576,6 +602,7 @@
             this.checkHasPaidCourse();
             this.getPaymentModeOptions();
             this.getPaymentPlanOptions();
+            this.getTerms();
             this.loadOptions();
             if (this.orderForm.coupon) {
                 this.checkDiscount(this.orderForm.coupon);
@@ -608,6 +635,12 @@
             getPaymentPlanOptions() {
                 axios.get('/payment-plan-options/' + this.orderForm.package_id).then(response => {
                     this.paymentPlans = response.data;
+                });
+            },
+
+            getTerms() {
+                axios.get('/terms/course-terms').then(response => {
+                    this.terms = response.data;
                 });
             },
 
