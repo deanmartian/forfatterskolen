@@ -16,7 +16,7 @@
                 </div>
             </div> <!-- end row -->
 
-            <div class="row sub-header">
+            {{--<div class="row sub-header">
                 <div class="col-md-4">
                     <a href="{{ route('front.support-articles', 3) }}" class="red-underline-hover">
                         <div class="panel panel-default">
@@ -62,7 +62,7 @@
                         </div>
                     </div>
                 </div>
-            </div> <!-- end sub-header -->
+            </div>--}} <!-- end sub-header -->
 
             <div class="row">
                 <div class="col-sm-12 faq-container">
