@@ -84,7 +84,7 @@ class LoginController extends Controller
             return redirect(route('learner.dashboard'));
         endif;
 
-        return redirect()->back()->withInput()->withErrors('Feil passord');
+        return redirect()->route('auth.login.show')->withInput()->withErrors('Feil passord');
     }
 
 

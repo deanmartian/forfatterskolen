@@ -123,50 +123,56 @@
 
                 <template v-if="!currentUser">
 
-                    <p class="text-center" v-if="!isAlreadyAMember && !isNewCustomer">
+                    <!--<p class="text-center" v-if="!isAlreadyAMember && !isNewCustomer">
                         Are you <a href="javascript:void(0)" @click="isAlreadyAMember = true">already a member</a>?
                         or a <a href="javascript:void(0)" @click="isNewCustomer = true">new customer</a>
-                    </p>
+                    </p>-->
 
-                    <form @submit.prevent="handleLogin($event)" v-if="isAlreadyAMember" class="mb-4">
+                    <form @submit.prevent="handleLogin($event)" v-if="!isNewCustomer" class="second-col mb-4">
+
+                        <p class="text-center" v-html="trans('site.login-or-register-below')">
+                        </p>
+
                         <div class="row">
                             <div class="col-sm-6 col-sm-offset-3">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fa at-icon"></i></span>
-                                    </div>
+                                <div class="form-group">
                                     <input type="email" name="email" class="form-control no-border-left"
                                            :placeholder="trans('site.front.form.email')" v-model="loginForm.email">
                                 </div>
 
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fa lock-icon"></i></span>
-                                    </div>
+                                <div class="form-group">
                                     <input type="password" name="password" :placeholder="trans('site.front.form.password')"
                                            class="form-control no-border-left" v-model="loginForm.password">
                                 </div>
 
-                                <div class="form-group mb-0">
-                                    <button type="submit" class="btn site-btn-global"
-                                            :disabled="isLoginDisabled">
-                                        <i class="fas fa-spinner fa-spin" v-if="isLoginDisabled"></i>
-                                        {{ loginText }}
-                                    </button>
-                                </div>
-
-                                <div class="social-btn-container">
-                                    <a :href="'/auth/login/facebook?package=' + orderForm.package_id + '&c=' + orderForm.coupon
-                                    + '&si=1'" class="loginBtn loginBtn--facebook btn">
-                                        {{ trans('site.front.form.login-with-facebook') }}
+                                <div class="form-group clearfix">
+                                    <a href="/auth/login?t=passwordreset" class="no-underline pull-left">
+                                        {{ trans('site.front.login.password-reset') }}
                                     </a>
-
-                                    <a :href="'/auth/login/google?package=' + orderForm.package_id + '&c=' + orderForm.coupon
-                                    + '&si=1'"
-                                       class="loginBtn loginBtn--google btn">
-                                        {{ trans('site.front.form.login-with-google') }}
+                                    <a href="/auth/login?t=password-change" class="no-underline pull-right">
+                                        {{ trans('site.front.login.change-password') }}
                                     </a>
                                 </div>
+
+                                <button type="submit" class="btn btn-dark site-btn btn-block"
+                                        :disabled="isLoginDisabled">
+                                    <i class="fas fa-spinner fa-spin" v-if="isLoginDisabled"></i>
+                                    {{ loginText }}
+                                </button>
+
+                                <a :href="'/auth/login/facebook?package=' + orderForm.package_id + '&c=' + orderForm.coupon
+                                + '&si=1'" class="btn site-btn btn-block fb-link">
+                                    {{ trans('site.front.form.login-with-facebook') }}
+                                </a>
+
+                                <a :href="'/auth/login/google?package=' + orderForm.package_id + '&c=' + orderForm.coupon
+                                + '&si=1'" class="btn site-btn btn-block google-link">
+                                    {{ trans('site.front.form.login-with-google') }}
+                                </a>
+
+                                <button class="btn btn-dark-red site-btn btn-block" type="button" @click="isNewCustomer = true">
+                                    {{ trans('site.front.login.register') }}
+                                </button>
                             </div> <!-- end col-sm-6 -->
 
                         </div><!-- end row -->
@@ -360,6 +366,10 @@
                     </wizard-button>
                 </div>
                 <div class="wizard-footer-right">
+                    <span v-if="props.activeTabIndex === 0" style="margin-right: 10px">
+                        {{ trans('site.front.checkout.note') }}
+                    </span>
+
                     <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab()" class="wizard-footer-right"
                                    :style="props.fillButtonStyle" :disabled="!currentUser && !isNewCustomer && props.activeTabIndex > 0">
                         {{ trans('site.learner.next-text') }}
@@ -398,6 +408,58 @@
 
     .input-group, .site-btn-global {
         margin-top: 20px;
+    }
+
+    .second-col p {
+        font-size: 19.8px;
+        margin-top: 20px;
+        color: #a2a2a2;
+    }
+
+    .second-col .form-group {
+        margin-top: 3rem;
+    }
+
+    .second-col .form-control, .second-col .form-control:focus {
+        border-style: none none solid none !important;
+        border-radius: 0;
+        font-size: 18px;
+        text-align: center;
+        border-width: 1.5px !important;
+        box-shadow: none;
+    }
+
+    .second-col .form-control:focus {
+        border-color: #354350 !important;
+    }
+
+    .second-col p, .second-col a.no-underline, .second-col .form-control::placeholder {
+        color: #a2a2a2;
+    }
+
+    .second-col .btn {
+        padding: 5px 0;
+        font-size: 18px;
+        white-space: normal;
+    }
+
+    .second-col .fb-link {
+        background-color: #1b4c8f;
+        color: #fff;
+    }
+
+    .second-col .google-link {
+        background-color: #cb2f1e;
+        color: #fff;
+    }
+
+    .second-col .btn-dark-red, .second-col .btn-outline-dark-red:hover {
+        background: #C12938;
+        color: #fff;
+    }
+
+    .btn-block+.btn-block {
+        margin-top: .5rem;
     }
 </style>
 
@@ -685,7 +747,7 @@
                             let element = $("[name="+k+"]");
 
                             // append error message after the element
-                            element.closest('.input-group').after("<small class='text-danger validation-err'>" +
+                            element.after("<small class='text-danger validation-err'>" +
                                 "<i class='fas fa-exclamation-circle'></i> " +
                                 "<span>" + v+"</span></small>");
                         });
