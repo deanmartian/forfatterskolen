@@ -37,6 +37,10 @@ class Controller extends BaseController
                 $initiatePaymentResult->getCode());
         }
 
+        if (isset($data['is_ajax'])) {
+            return $initiatePaymentResult['data']->url;
+        }
+
         return redirect()->to($initiatePaymentResult['data']->url);
     }
 

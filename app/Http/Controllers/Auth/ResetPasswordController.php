@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\AdminHelpers;
+use App\Http\Requests\ChangePasswordRequest;
 use Illuminate\Http\Request;
 use App\Mail\PasswordResetEmail;
 use App\Http\Controllers\Controller;
@@ -69,7 +70,7 @@ class ResetPasswordController extends Controller
 
             return redirect()->back()->with(['passwordreset_success' => 'Vi har sendt en passord tilbakestillingslink til din epost.']);
         else :
-            return redirect()->back()->withErrors("We can't find the email in our records.");
+            return redirect()->route('auth.login.show', 't=passwordreset')->withErrors("We can't find the email in our records.");
         endif;
     }
 
@@ -100,5 +101,24 @@ class ResetPasswordController extends Controller
         $passwordReset = PasswordReset::where('email', $passwordReset->email)->delete();
 
         return redirect(route('frontend.login.store'));
+    }
+
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        $user = User::where('email',$request->email)->first();
+
+        if (!\Hash::check($request->current_password, $user->password)) {
+
+            return redirect()->route('auth.login.show', 't=password-change')
+                ->withInput()
+                ->withErrors("User credentials doesn't match");
+        }
+
+        $user->fill([
+            'password' => \Hash::make($request->password)
+        ])->save();
+
+        return redirect()->route('auth.login.show', 't=password-change')
+            ->with(['password_change_success' => 'Password changed successfully.']);
     }
 }

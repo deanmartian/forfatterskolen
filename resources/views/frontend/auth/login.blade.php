@@ -8,6 +8,8 @@ Login
 Register
 @elseif(Request::input('t') == 'passwordreset')
 Password Reset
+@elseif(Request::input('t') == 'password-change')
+Password Change
 @endif
 &rsaquo; Forfatterskolen
 </title>
@@ -32,6 +34,11 @@ Password Reset
 					<li class="nav-item">
 						<a data-toggle="tab" href="#passwordreset" class="nav-link @if(Request::input('t') == 'passwordreset') active @endif" role="tab">
 							<span>{{ trans('site.front.login.password-reset') }}</span>
+						</a>
+					</li>
+					<li class="nav-item">
+						<a data-toggle="tab" href="#password-change" class="nav-link @if(Request::input('t') == 'password-change') active @endif" role="tab">
+							<span>{{ trans('site.front.login.change-password') }}</span>
 						</a>
 					</li>
 				</ul> <!-- end signup-tab -->
@@ -84,7 +91,7 @@ Password Reset
 									</div>
 								@endif
 
-								@if ( $errors->any() )
+								{{--@if ( $errors->any() )
 									<div class="alert alert-danger no-bottom-margin d-flex mt-3">
 										<ul>
 											@foreach($errors->all() as $error)
@@ -92,7 +99,7 @@ Password Reset
 											@endforeach
 										</ul>
 									</div>
-								@endif
+								@endif--}}
 
 							</div> <!-- end login pane -->
 							<div id="register" class="tab-pane fade @if(Request::input('t') == 'register') in active @endif" role="tabpanel">
@@ -157,7 +164,7 @@ Password Reset
 									</div>
 								@endif
 
-								@if ( $errors->any() )
+								{{--@if ( $errors->any() )
 									<div class="alert alert-danger no-bottom-margin d-flex mt-3">
 										<ul>
 											@foreach($errors->all() as $error)
@@ -165,7 +172,7 @@ Password Reset
 											@endforeach
 										</ul>
 									</div>
-								@endif
+								@endif--}}
 
 							</div> <!-- end register pane -->
 							<div id="passwordreset" class="tab-pane fade @if(Request::input('t') == 'passwordreset') in active @endif" role="tabpanel">
@@ -191,7 +198,7 @@ Password Reset
 									</div>
 								@endif
 
-								@if ( $errors->any() )
+								{{--@if ( $errors->any() )
 									<div class="alert alert-danger no-bottom-margin d-flex mt-3">
 										<ul>
 											@foreach($errors->all() as $error)
@@ -199,9 +206,64 @@ Password Reset
 											@endforeach
 										</ul>
 									</div>
-								@endif
+								@endif--}}
 
 							</div> <!-- end passwordreset pane -->
+
+							<div id="password-change" class="tab-pane fade @if(Request::input('t') == 'password-change') in active @endif" role="tabpanel">
+								<form method="post" action="{{route('frontend.password-change')}}" onsubmit="disableSubmit(this)">
+									{{csrf_field()}}
+									<h1>{{ trans('site.front.login.change-password') }}</h1>
+
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><i class="fa at-icon"></i></span>
+										</div>
+										<input type="email" name="email" placeholder="{{ trans('site.front.form.email') }}"
+											   class="form-control no-border-left" required value="{{old('email')}}">
+									</div>
+
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><i class="fa lock-icon"></i></span>
+										</div>
+										<input type="password" name="current_password"
+											   placeholder="{{ trans('site.front.login.enter-your-current-password') }}"
+											   class="form-control no-border-left" required>
+									</div>
+
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><i class="fa lock-icon"></i></span>
+										</div>
+										<input type="password" name="password"
+											   placeholder="{{ trans('site.front.login.enter-your-new-password') }}"
+											   class="form-control no-border-left" required>
+									</div>
+
+									<div class="input-group">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><i class="fa lock-icon"></i></span>
+										</div>
+										<input type="password" name="password_confirmation"
+											   placeholder="{{ trans('site.confirm-password') }}"
+											   class="form-control no-border-left" required>
+									</div>
+
+									<button type="submit" class="btn site-btn-global">
+										{{ trans('site.front.login.change-password') }}
+									</button>
+								</form>
+
+								<div class="clearfix"></div>
+
+								@if (Session::has('password_change_success'))
+									<div class="alert alert-success no-bottom-margin  d-flex mt-3">
+										{{Session::get('password_change_success')}}
+									</div>
+								@endif
+							</div>
+
 						</div> <!-- end tab-content -->
 					</div> <!-- end d-table-cell -->
 				</div> <!-- end d-table -->

@@ -24,9 +24,11 @@ import vueDebounce from 'vue-debounce'
 import toasted from './toasted'
 import Vue2Filters from 'vue2-filters'
 import './global'
+import BootstrapVue from 'bootstrap-vue'
 
 Vue.use(vueDebounce);
 Vue.use(Vue2Filters);
+Vue.use(BootstrapVue);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -36,6 +38,7 @@ Vue.use(Vue2Filters);
 
 Vue.component('example', require('./components/Example.vue'));
 Vue.component('take-survey', require('./components/TakeSurvey.vue'));
+Vue.component('svea-checkout', require('./frontend/course/svea-checkout.vue'));
 Vue.component('course-checkout', require('./frontend/course/checkout.vue'));
 
 new Vue({

@@ -1149,6 +1149,9 @@ class HomeController extends Controller
     {
         $terms = $slug == 'all' ? Settings::getAllTerms() :Settings::getByName($slug ?: 'terms');
         if ($terms || $slug == 'all') {
+            if (\request()->ajax()) {
+                return $terms;
+            }
             return view('frontend.terms', compact('terms', 'slug'));
         }
 

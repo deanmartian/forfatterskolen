@@ -33,6 +33,7 @@ class OrderCreateRequest extends FormRequest
             'payment_mode_id' => 'required',
             'payment_plan_id' => 'required',
             'package_id' => 'required',
+            'agree_terms' => 'required|accepted'
         ];
     }
 

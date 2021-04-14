@@ -16,7 +16,7 @@ class Package extends Model
         'months_3_due_date', 'months_6_due_date', 'months_12_due_date', 'months_3_enable', 'months_6_enable', 'months_12_enable',
         'manuscripts_count', 'due_date', 'has_student_discount', 'is_reward','issue_date', 'validity_period', 'is_show',
         'is_upgradeable'];
-    protected $appends = ['description_formatted', 'sale_discount'];
+    protected $appends = ['description_formatted', 'sale_discount', 'full_payment_is_sale', 'months_3_is_sale', 'months_6_is_sale', 'months_12_is_sale'];
     protected $with = ['included_courses'];
 
     public function scopeIsShow($query)
@@ -62,5 +62,37 @@ class Package extends Model
             return $this->attributes['full_payment_price'] - $this->attributes['full_payment_sale_price'];
         }
         return 0;
+    }
+
+    public function getFullPaymentIsSaleAttribute()
+    {
+        $today 			    = \Carbon\Carbon::today()->format('Y-m-d');
+        $fromMonthsFull 		= \Carbon\Carbon::parse($this->attributes['full_payment_sale_price_from'])->format('Y-m-d');
+        $toMonthsFull 			= \Carbon\Carbon::parse($this->attributes['full_payment_sale_price_to'])->format('Y-m-d');
+        return (($today >= $fromMonthsFull) && ($today <= $toMonthsFull)) ? true : false;
+    }
+
+    public function getMonths3IsSaleAttribute()
+    {
+        $today 			    = \Carbon\Carbon::today()->format('Y-m-d');
+        $fromMonths3 		= \Carbon\Carbon::parse($this->attributes['months_3_sale_price_from'])->format('Y-m-d');
+        $toMonths3 			= \Carbon\Carbon::parse($this->attributes['months_3_sale_price_to'])->format('Y-m-d');
+        return (($today >= $fromMonths3) && ($today <= $toMonths3)) ? true : false;
+    }
+
+    public function getMonths6IsSaleAttribute()
+    {
+        $today 			    = \Carbon\Carbon::today()->format('Y-m-d');
+        $fromMonths6		= \Carbon\Carbon::parse($this->attributes['months_6_sale_price_from'])->format('Y-m-d');
+        $toMonths6 			= \Carbon\Carbon::parse($this->attributes['months_6_sale_price_to'])->format('Y-m-d');
+        return (($today >= $fromMonths6) && ($today <= $toMonths6)) ? true : false;
+    }
+
+    public function getMonths12IsSaleAttribute()
+    {
+        $today 			    = \Carbon\Carbon::today()->format('Y-m-d');
+        $fromMonths12 		= \Carbon\Carbon::parse($this->attributes['months_12_sale_price_from'])->format('Y-m-d');
+        $toMonths12 		= \Carbon\Carbon::parse($this->attributes['months_12_sale_price_to'])->format('Y-m-d');
+        return (($today >= $fromMonths12) && ($today <= $toMonths12)) ? true : false;
     }
 }

@@ -84,7 +84,7 @@ class LoginController extends Controller
             return redirect(route('learner.dashboard'));
         endif;
 
-        return redirect()->back()->withInput()->withErrors('Feil passord');
+        return redirect()->route('auth.login.show')->withInput()->withErrors('Feil passord');
     }
 
 
@@ -216,7 +216,10 @@ class LoginController extends Controller
      */
     public function redirectToFacebook()
     {
-        \Session::push('redirect_page',\URL::previous());
+        $prevUrl = explode('?',\URL::previous());
+        $queryString = count(\request()->query()) ? '?' .http_build_query(\request()->query()) : '';
+        $redirectPage = $prevUrl[0] . $queryString;
+        \Session::push('redirect_page', $redirectPage);
         return Socialite::driver('facebook')->redirect();
     }
     /**
@@ -262,7 +265,10 @@ class LoginController extends Controller
      */
     public function redirectToGoogle()
     {
-        \Session::push('redirect_page',\URL::previous());
+        $prevUrl = explode('?',\URL::previous());
+        $queryString = count(\request()->query()) ? '?' .http_build_query(\request()->query()) : '';
+        $redirectPage = $prevUrl[0] . $queryString;
+        \Session::push('redirect_page', $redirectPage);
         return Socialite::driver('google')->redirect();
     }
     /**

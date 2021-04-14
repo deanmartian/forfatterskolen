@@ -24,6 +24,11 @@ Vue.mixin({
             $.each(err_data,function(k, v){
                 errList[k] = v[0];
                 let element = $("[name="+k+"]");
+
+                if (element.closest('.input-group').length) {
+                    element = element.closest('.input-group');
+                }
+
                 element.after("<small class='text-danger validation-err'>" +
                     "<i class='fas fa-exclamation-circle'></i> " +
                     "<span>" + v[0]+"</span></small>");

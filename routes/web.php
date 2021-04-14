@@ -162,8 +162,9 @@ Route::group([
         ], function(){
             Route::get('/', 'CourseController@index')->name('front.course.index'); // Course Listing
             Route::get('/{id}', 'CourseController@show')->name('front.course.show'); // Course Details
-            Route::get('/{id}/checkout', 'ShopController@checkout')->name('front.course.checkout'); // Checkout
+            Route::get('/{id}/checkout', 'ShopController@sveaCheckout')->name('front.course.checkout'); // Checkout
             Route::get('/{id}/checkout-svea', 'ShopController@sveaCheckout')->name('front.course.svea-checkout'); // Checkout
+            Route::post('/{id}/checkout/process-order', 'ShopController@processOrder')->name('front.course.process_order'); // Place Order
             Route::post('/{id}/checkout/validate-form', 'ShopController@validateCheckoutForm')->name('front.course.checkout.validate-form');
             Route::get('/{id}/checkout-test', 'ShopController@checkoutTest')->name('front.course.checkout-test'); // Checkout
             Route::post('/{id}/proceed-checkout', 'ShopController@proceedCheckout')->name('front.course.proceed-checkout'); // Checkout
@@ -203,6 +204,7 @@ Route::group([
         });
 
         Route::get('/payment-plan-options/{id}', 'ShopController@getPaymentPlanOptions');
+        Route::get('/payment-modes', 'ShopController@getPaymentModeOptions');
 
     });
 
@@ -423,6 +425,7 @@ Route::group([
         Route::post('passwordreset', 'ResetPasswordController@store')->name('frontend.passwordreset.store');
         Route::get('passwordreset/{token}', 'ResetPasswordController@resetForm')->name('frontend.passwordreset.form');
         Route::post('passwordreset/{token}/update', 'ResetPasswordController@updatePassword')->name('frontend.passwordreset.update');
+        Route::post('password-change', 'ResetPasswordController@changePassword')->name('frontend.password-change');
 
         Route::get('login/email/{email_hash}', 'LoginController@emailLogin')->name('auth.login.email');
         Route::get('login/email-normal/{email}', 'LoginController@emailLoginNormal')->name('auth.login.email-normal');
