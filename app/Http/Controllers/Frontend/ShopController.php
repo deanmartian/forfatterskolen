@@ -183,6 +183,7 @@ class ShopController extends Controller
         $payment_plan = trim($payment_plan);
         $price = 0;
         $product_ID = 0;
+        $isStudentDiscounted = false;
         $saleDiscount = 0;
         $discount = 0;
 
@@ -256,9 +257,14 @@ class ShopController extends Controller
 
         if( $hasPaidCourse && $package->course->type == 'Group' && $package->has_student_discount) {
             $groupDiscount = 1000;
+            $isStudentDiscounted = true;
 
             if ($groupDiscount > $discount) {
                 $discount = ( (int)$groupDiscount*100 );
+            }
+
+            if ($saleDiscount) {
+                $discount = $discount + $saleDiscount;
             }
 
             $comment .= ' - Discount: Kr '.number_format($discount/100, 2,',','.');
@@ -266,16 +272,21 @@ class ShopController extends Controller
 
         if( $hasPaidCourse && $package->course->type == 'Single' && $package->has_student_discount) {
             $singleDiscount = 500;
+            $isStudentDiscounted = true;
 
             if ($singleDiscount > $discount) {
                 $discount = ( (int)$singleDiscount*100 );
             }
 
+            if ($saleDiscount) {
+                $discount = $discount + $saleDiscount;
+            }
+
             $comment .= ' - Discount: Kr '.number_format($discount/100, 2,',','.');
         }
 
-        if ($saleDiscount) {
-            $comment .= ' - Sale Discount: Kr '.number_format($saleDiscount/100, 2,',','.');
+        if ($saleDiscount && !$isStudentDiscounted) {
+            $comment .= ' - Discount: Kr '.number_format($saleDiscount/100, 2,',','.');
         }
 
         $price = $price - $discount;
