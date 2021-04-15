@@ -51,7 +51,7 @@ class VippsRepository extends BaseRepository {
         $method = "POST";
         $header = array();
         $header[] = 'Authorization: '.$token_access;
-        $fallbackUrl = isset($data['fallbackUrl']) ? $data['fallbackUrl'] : 'https://www.forfatterskolen.no/thankyou';
+        $fallbackUrl = isset($data['fallbackUrl']) ? $data['fallbackUrl'] : route('front.shop.thankyou');//'https://www.forfatterskolen.no/thankyou'
 
         $body = array(
             'customerInfo' => [

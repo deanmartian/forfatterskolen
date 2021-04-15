@@ -492,7 +492,8 @@ class ShopController extends Controller
                 'amount' => $price,
                 'orderId' => $orderId,
                 'transactionText' => $transactionText,
-                'is_ajax' => true
+                'is_ajax' => true,
+                'fallbackUrl' => route('front.shop.thankyou', 'iu='.encrypt($invoice->fikenUrl))
             ];
             return response()->json(['redirect_link' => $this->vippsInitiatePayment($vippsData)]);
         endif;
@@ -1756,6 +1757,15 @@ class ShopController extends Controller
 
             $order->is_processed = 1;
             $order->save();
+        }
+
+        // check if fiken invoice url is set
+        // this is set when vipps payment is cancelled
+        if ($request->has('iu')) {
+            $fikenUrl = decrypt($request->get('iu'));
+            $fiken = new FikenInvoice();
+            $fikenInvoice   = $fiken->get_invoice_data($fikenUrl);
+            $fiken->send_invoice($fikenInvoice);
         }
 
         return view('frontend.shop.thankyou');
