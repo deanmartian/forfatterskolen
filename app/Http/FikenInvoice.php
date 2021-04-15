@@ -26,6 +26,7 @@ class FikenInvoice
 
 	public $invoiceID;
 	public $invoice_number;
+	public $fikenUrl;
 	protected $mobile_number;
 	protected $fiken_invoice_id;
 
@@ -106,6 +107,7 @@ class FikenInvoice
 
         $headers        = $this->get_headers_from_curl_response($data);
         $fiken_url    = isset($headers['location']) ? $headers['location'] : $headers['Location'];
+        $this->fikenUrl = $fiken_url;
         $fikenInvoice   = $this->get_invoice_data($fiken_url);
         $pdf_url        = $fikenInvoice->invoicePdf->downloadUrl;
 
