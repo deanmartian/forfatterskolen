@@ -85,8 +85,15 @@
                         @if(isset($group))
                             {{--<form class="form-inline form-publish" method="POST" action="{{ action('\Barryvdh\TranslationManager\Controller@postPublish', $group) }}" data-remote="true" role="form" data-confirm="Are you sure you want to publish the translations? This will overwrite existing language files.">
                                 {{ csrf_field() }}--}}
+                            @if(Session::has('success'))
+                                <div class="alert alert-success">
+                                    {{ Session::get('success') }}
+                                </div>
+                            @endif
                             <button type="button" class="btn btn-info" data-disable-with="Publishing.."
                                     onclick="publishTranslations(this)">Publish translations</button>
+
+                            <a href="{{ route('admin.clear.cache') }}" class="btn btn-warning">Clear Cache</a>
                             {{--</form>--}}
                             @endif
                             </p>
@@ -176,6 +183,10 @@
                     triggerEditableHidden();
                 }
             });
+
+            setTimeout(function(){
+                $(".alert").hide();
+            }, 3000);
 
             $.ajaxSetup({
                 beforeSend: function(xhr, settings) {

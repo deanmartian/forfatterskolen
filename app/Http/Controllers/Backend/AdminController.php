@@ -186,6 +186,12 @@ class AdminController extends Controller
         ]);
     }
 
+    public function clearCache()
+    {
+        \Artisan::call('cache:clear');
+        return redirect()->back()->with('success','Cache Cleared!');
+    }
+
     public function saveStaff( $id = null, Request $request )
     {
 
