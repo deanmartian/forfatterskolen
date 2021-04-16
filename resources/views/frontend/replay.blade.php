@@ -56,7 +56,7 @@
                         Melder du på nå får du en rabatt på kroner 3000,- (gjelder alle kurspakkene: basic, standard og pro)
                     </a>
 
-                    <a href="#" class="d-block">
+                    <a href="{{ url('/storage/files/Minner_og_løgn_april_2021.pdf') }}" class="d-block" download>
                         Last ned Power Point presentasjon
                     </a>
                 </div>
