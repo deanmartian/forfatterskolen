@@ -57,7 +57,7 @@
                     </a>
 
                     <a href="{{ url('/storage/files/Minner_og_løgn_april_2021.pdf') }}" class="d-block" download>
-                        Last ned Power Point presentasjon
+                        Last ned Power Point-presentasjon
                     </a>
                 </div>
             </div>
