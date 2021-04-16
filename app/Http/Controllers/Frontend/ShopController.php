@@ -158,13 +158,13 @@ class ShopController extends Controller
     public function processOrder( $course_id, OrderCreateRequest $request )
     {
         // check if webinar-pakke
-        if ($course_id == 17) {
+       // if ($course_id == 17) {
             $course = Course::findOrFail($course_id);
             $course_packages = $course->packages->pluck('id')->toArray();
             $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
             // check if the user already avails this course
             if($courseTaken) return response()->json(['redirect_link' => route('learner.course.show', ['id' => $courseTaken->id])]);
-        }
+        //}
         $hasPaidCourse = $this->hasPaidCourse()->original; // get result of json
 
         $paymentMode = PaymentMode::findOrFail($request->payment_mode_id);
@@ -702,7 +702,7 @@ class ShopController extends Controller
      */
     public function applyDiscount($course_id, $coupon)
     {
-        //return redirect()->to(route('front.course.svea-checkout', $course_id)."?c=".$coupon);
+        return redirect()->to(route('front.course.checkout', $course_id)."?c=".$coupon);
         $course = Course::find($course_id);
         if (!$course) {
             return redirect()->route('front.course.index');
