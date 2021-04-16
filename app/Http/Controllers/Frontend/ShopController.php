@@ -346,6 +346,15 @@ class ShopController extends Controller
             $invoice->create_invoice($invoice_fields);
         }
 
+        // update the users address
+        $address = Address::firstOrNew(['user_id' => Auth::user()->id]);
+        $address->street = $request->street;
+        $address->city = $request->city;
+        $address->zip = $request->zip;
+        $address->phone = $request->phone;
+        $address->save();
+
+        // create course taken record
         $course_status = $paymentMode->mode == "Vipps" || $paymentMode->mode == "Paypal" ? 1 : 0;
         $courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
         $courseTaken->is_active = $course_status;

@@ -294,7 +294,7 @@ class FikenInvoice
                 'streetAddress' => $data['address'],
                 'city' => $data['postalPlace'],
                 'postCode' => $data['postalCode'],
-                'country' => 'Norway'
+                'country' => 'Norge'
             ],
             'contactPerson' => [
                 [
@@ -305,7 +305,7 @@ class FikenInvoice
                         'streetAddress' => $data['address'],
                         'city' => $data['postalPlace'],
                         'postCode' => $data['postalCode'],
-                        'country' => 'Norway'
+                        'country' => 'Norge'
                     ],
                 ]
             ],
