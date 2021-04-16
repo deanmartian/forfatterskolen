@@ -158,13 +158,13 @@ class ShopController extends Controller
     public function processOrder( $course_id, OrderCreateRequest $request )
     {
         // check if webinar-pakke
-        if ($course_id == 17) {
+       // if ($course_id == 17) {
             $course = Course::findOrFail($course_id);
             $course_packages = $course->packages->pluck('id')->toArray();
             $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
             // check if the user already avails this course
             if($courseTaken) return response()->json(['redirect_link' => route('learner.course.show', ['id' => $courseTaken->id])]);
-        }
+        //}
         $hasPaidCourse = $this->hasPaidCourse()->original; // get result of json
 
         $paymentMode = PaymentMode::findOrFail($request->payment_mode_id);
@@ -183,6 +183,7 @@ class ShopController extends Controller
         $payment_plan = trim($payment_plan);
         $price = 0;
         $product_ID = 0;
+        $isStudentDiscounted = false;
         $saleDiscount = 0;
         $discount = 0;
 
@@ -256,9 +257,14 @@ class ShopController extends Controller
 
         if( $hasPaidCourse && $package->course->type == 'Group' && $package->has_student_discount) {
             $groupDiscount = 1000;
+            $isStudentDiscounted = true;
 
             if ($groupDiscount > $discount) {
                 $discount = ( (int)$groupDiscount*100 );
+            }
+
+            if ($saleDiscount) {
+                $discount = $discount + $saleDiscount;
             }
 
             $comment .= ' - Discount: Kr '.number_format($discount/100, 2,',','.');
@@ -266,16 +272,21 @@ class ShopController extends Controller
 
         if( $hasPaidCourse && $package->course->type == 'Single' && $package->has_student_discount) {
             $singleDiscount = 500;
+            $isStudentDiscounted = true;
 
             if ($singleDiscount > $discount) {
                 $discount = ( (int)$singleDiscount*100 );
             }
 
+            if ($saleDiscount) {
+                $discount = $discount + $saleDiscount;
+            }
+
             $comment .= ' - Discount: Kr '.number_format($discount/100, 2,',','.');
         }
 
-        if ($saleDiscount) {
-            $comment .= ' - Sale Discount: Kr '.number_format($saleDiscount/100, 2,',','.');
+        if ($saleDiscount && !$isStudentDiscounted) {
+            $comment .= ' - Discount: Kr '.number_format($saleDiscount/100, 2,',','.');
         }
 
         $price = $price - $discount;
@@ -481,7 +492,8 @@ class ShopController extends Controller
                 'amount' => $price,
                 'orderId' => $orderId,
                 'transactionText' => $transactionText,
-                'is_ajax' => true
+                'is_ajax' => true,
+                'fallbackUrl' => route('front.shop.thankyou', 'iu='.encrypt($invoice->fikenUrl))
             ];
             return response()->json(['redirect_link' => $this->vippsInitiatePayment($vippsData)]);
         endif;
@@ -690,7 +702,7 @@ class ShopController extends Controller
      */
     public function applyDiscount($course_id, $coupon)
     {
-        //return redirect()->to(route('front.course.svea-checkout', $course_id)."?c=".$coupon);
+        return redirect()->to(route('front.course.checkout', $course_id)."?c=".$coupon);
         $course = Course::find($course_id);
         if (!$course) {
             return redirect()->route('front.course.index');
@@ -1745,6 +1757,15 @@ class ShopController extends Controller
 
             $order->is_processed = 1;
             $order->save();
+        }
+
+        // check if fiken invoice url is set
+        // this is set when vipps payment is cancelled
+        if ($request->has('iu')) {
+            $fikenUrl = decrypt($request->get('iu'));
+            $fiken = new FikenInvoice();
+            $fikenInvoice   = $fiken->get_invoice_data($fikenUrl);
+            $fiken->send_invoice($fikenInvoice);
         }
 
         return view('frontend.shop.thankyou');
