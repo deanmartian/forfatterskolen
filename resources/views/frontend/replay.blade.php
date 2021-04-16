@@ -12,6 +12,30 @@
     @endif
 @stop
 
+@section('styles')
+    <style>
+        .btn {
+            color: #fff;
+            border-radius: 24px;
+            padding: 0px 20px;
+            background-color: #C12938;
+            font-size: 1em;
+            display: inline-block;
+            font-weight: 400;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            border: 1px solid transparent;
+            line-height: 1.5;
+            transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        }
+    </style>
+@stop
+
 @section('content')
 
     <div class="manuscript-page">
@@ -19,12 +43,22 @@
             <div class="row">
                 <div class="col-sm-12">
                     <h1 class="text-center mb-5">
-                        Reprise: Slik skriver du et førsteutkast 23.03.2021
+                        Reprise: Kunsten å stå i et minne – og lyve 15.04.2021
                     </h1>
                 </div>
                 <div class="col-sm-12 top-page-container">
-                    <iframe src="https://video.easywrite.no/file/Webinarer/2021/Mars/salgswebinar23.3.html?player=thamer" frameborder="0"
+                    <iframe src="https://fast.wistia.com/embed/medias/kiwq6qxnm6" frameborder="0"
                             allowfullscreen="allowfullscreen"></iframe>
+                </div>
+
+                <div class="text-center w-100">
+                    <a href="https://forfatterskolen.no/course/66/checkout?c=Bok21" class="btn btn-dark-red">
+                        Melder du på nå får du en rabatt på kroner 3000,- (gjelder alle kurspakkene: basic, standard og pro)
+                    </a>
+
+                    <a href="#" class="d-block">
+                        Last ned Power Point presentasjon
+                    </a>
                 </div>
             </div>
         </div>
