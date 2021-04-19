@@ -43,6 +43,18 @@
             <div class="row">
                 <div class="col-sm-12">
                     <h1 class="text-center mb-5">
+                        Reprise: Hvordan skape spennende karakterer? 18.04.2021
+                    </h1>
+                </div>
+                <div class="col-sm-12 top-page-container">
+                    <iframe src="https://post-forfatterskolen.wistia.com/medias/b0fgthihm9" frameborder="0"
+                            allowfullscreen="allowfullscreen"></iframe>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 150px">
+                <div class="col-sm-12">
+                    <h1 class="text-center mb-5">
                         Reprise: Kunsten å stå i et minne – og lyve 15.04.2021
                     </h1>
                 </div>
