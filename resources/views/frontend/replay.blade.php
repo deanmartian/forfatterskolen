@@ -47,7 +47,7 @@
                     </h1>
                 </div>
                 <div class="col-sm-12 top-page-container">
-                    <iframe src="https://post-forfatterskolen.wistia.com/medias/b0fgthihm9" frameborder="0"
+                    <iframe src="https://fast.wistia.com/embed/medias/b0fgthihm9" frameborder="0"
                             allowfullscreen="allowfullscreen"></iframe>
                 </div>
             </div>
