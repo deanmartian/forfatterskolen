@@ -565,13 +565,26 @@ class CourseController extends Controller
             $excel          = \App::make('excel');
             $learners       = $course->learners->get();
             $learnerList    = [];
-            $learnerList[]  = ['id', 'learner', $type]; // first row in excel
+
+            if ($type === 'address') {
+                $learnerList[]  = ['id', 'learner', 'street', 'postnumber', 'city']; // first row in excel
+            } else {
+                $learnerList[]  = ['id', 'learner', $type]; // first row in excel
+            }
 
             // loop all the learners
             foreach ($learners as $learner) {
                 $value = $type === 'email' ? $learner->user->email : $learner->user->fullAddress;
 
-                $learnerList[] = [$learner->user->id, $learner->user->full_name, $value];
+                if ($type === 'email') {
+                    $learnerList[] = [$learner->user->id, $learner->user->full_name, $value];
+                } else {
+                    $learnerAddress = $learner->user->address;
+                    $street = $learnerAddress ? $learnerAddress->street : '';
+                    $zip = $learnerAddress ? $learnerAddress->zip : '';
+                    $city = $learnerAddress ? $learnerAddress->city : '';
+                    $learnerList[] = [$learner->user->id, $learner->user->full_name, $street, $zip, $city];
+                }
             }
 
             $excel->create($course->title.' Learners', function($excel) use ($learnerList) {
