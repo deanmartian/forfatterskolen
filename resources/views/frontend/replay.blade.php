@@ -64,10 +64,6 @@
                 </div>
 
                 <div class="text-center w-100">
-                    <a href="https://forfatterskolen.no/course/66/checkout?c=Bok21" class="btn btn-dark-red">
-                        Meld deg på nå og få en rabatt på kroner 3000,- (gjelder alle kurspakkene: Basic, Standard og Pro)
-                    </a>
-
                     <a href="{{ url('/storage/files/Minner_og_løgn_april_2021.pdf') }}" class="d-block" download>
                         Last ned Power Point-presentasjon
                     </a>
