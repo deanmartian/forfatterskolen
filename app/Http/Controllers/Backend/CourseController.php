@@ -5,8 +5,10 @@ use App\CourseExpiryReminder;
 use App\CoursesTaken;
 use App\EmailAttachment;
 use App\EmailOutLog;
+use App\Http\Controllers\Frontend\ShopController;
 use App\Http\FrontendHelpers;
 use App\Jobs\AddMailToQueueJob;
+use App\Jobs\CourseOrderJob;
 use App\Mail\SubjectBodyEmail;
 use App\Package;
 use App\PackageCourse;
@@ -729,6 +731,41 @@ class CourseController extends Controller
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Webinar scheduled successfully.'),
             'alert_type' => 'success']);
 
+    }
+
+    /**
+     * @param $package_id
+     * @param $user_id
+     * @param $courseTakenID
+     * @param ShopController $shopController
+     */
+    public function resendWelcomeEmailToUser( $package_id, $user_id, $courseTakenID, ShopController $shopController )
+    {
+        $user = User::findOrFail($user_id);
+        $package = Package::findOrFail($package_id);
+        $courseTaken = CoursesTaken::findOrFail($courseTakenID); // this is fixed for the certain user
+
+        $user_email = $user->email;
+        $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
+
+        $search_string = [
+            '[username]', '[password]'
+        ];
+        $replace_string = [
+            $user_email, $password
+        ];
+        $email_content = str_replace($search_string, $replace_string, $package->course->email);
+
+        $encode_email = encrypt($user_email);
+        $redirectLink = encrypt(route('learner.course'));
+        $actionUrl = route('auth.login.emailRedirect',[$encode_email, $redirectLink]);
+        $actionText = 'Mine Kurs';
+        $attachments = [asset($shopController->generateDocx($user->id, $package->id)),
+            asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
+
+        dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
+            'postmail@forfatterskolen.no', 'Forfatterskolen', $attachments, 'courses-taken-order',
+            $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
     }
 
 }
