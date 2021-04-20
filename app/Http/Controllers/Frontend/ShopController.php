@@ -557,7 +557,7 @@ class ShopController extends Controller
         }*/
 
         $validation = [
-            'email'         => 'required',
+            'email'         => 'required|email',
             'first_name'    => 'required',
             'last_name'     => 'required',
             'street'        => 'required',
