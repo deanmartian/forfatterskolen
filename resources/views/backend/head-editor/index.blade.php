@@ -233,6 +233,7 @@
 													foreach($files as $file){
 														echo '<a href="'.$file.'" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp';
 													}
+											echo $feedback[0]->created_at;
 											echo '</td>';
 											echo '<td> <span class="label label-default">'.trans('site.pending').'</span> </td>';
 											echo '<td>';
@@ -261,6 +262,7 @@
 											foreach($files as $file){
 												echo '<a href="'.$file.'" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp';
 											}
+                                            echo $assignedAssignment->noGroupFeedbacks->first()->created_at;
 											echo '</td>';
 											echo '<td> <span class="label label-default">'.trans('site.pending').'</span> </td>';
 											echo '<td>';
