@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\Assignment;
+use App\AssignmentManuscript;
 use App\CoursesTaken;
 use App\CustomAction;
 use App\Http\AdminHelpers;
@@ -255,7 +257,15 @@ class AdminController extends Controller
 
         $assignmentManuscriptEditorCanTake = AssignmentManuscriptEditorCanTake::orderBy('assignment_manuscript_id', 'DESC')->get();
 
-        return view('backend.yearly-calendar', compact('editor', 'assignmentManuscriptEditorCanTake'));
+        $unfinishedAssignments = AssignmentManuscript::whereHas('assignment',  function($query) {
+            $query->where('for_editor', 0);
+        })->with('user')
+            ->where('editor_id', 0)
+            ->latest()
+            ->get();
+
+        return view('backend.yearly-calendar', compact('editor', 'assignmentManuscriptEditorCanTake',
+            'unfinishedAssignments'));
     }
 
     public function fikenRedirect( Request $request )
