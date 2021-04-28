@@ -258,9 +258,12 @@ class AdminController extends Controller
         $assignmentManuscriptEditorCanTake = AssignmentManuscriptEditorCanTake::orderBy('assignment_manuscript_id', 'DESC')->get();
 
         $unfinishedAssignments = AssignmentManuscript::whereHas('assignment',  function($query) {
-            $query->where('for_editor', 0);
-        })->with('user')
-            ->where('editor_id', 0)
+                $query->where('for_editor', 0);
+            })->with('user')
+            ->where(function($query){
+                $query->where('editor_id', 0)
+                    ->orWhere('manuscript_status', 'unfinished');
+            })
             ->latest()
             ->get();
 

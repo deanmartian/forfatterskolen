@@ -1175,6 +1175,16 @@ class AssignmentController extends Controller
         return $striped_content;
     }
 
+    public function updateAssignmentManuscriptStatus($manu_id, Request $request)
+    {
+        $assignmentManu = AssignmentManuscript::find($manu_id);
+        $assignmentManu->manuscript_status = $request->manuscript_status;
+        $assignmentManu->save();
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record saved successfully.'),
+            'alert_type' => 'success']);
+    }
+
     function specialCharacters($string)
     {
         $characters = [

@@ -178,7 +178,21 @@
 								data-preferred-editor-name="{{ $manuscript->user->preferredEditor
 								? $manuscript->user->preferredEditor->editor->full_name : '' }}">
 									{{ trans('site.assign-editor') }}
-								</button>
+								</button> <br> <br>
+								
+								@if($manuscript->editor_id)
+								<form method="POST" class="manuscript_status_update_form" action="{{ route('admin.update_assignment_manuscript_status', $manuscript->id) }}">
+								{{ csrf_field() }}
+									<div class="form-group">
+										<select style="width: 131px;" class="form-control manuscript_status_update" name="manuscript_status" required>
+											<option disabled selected>- {{ trans('site.assignment-status.select-status') }} -</option>
+											<option <?php if($manuscript->manuscript_status=='started'){?> selected <?php } ?> value="started">{{ trans('site.assignment-status.started') }}</option>
+											<option <?php if($manuscript->manuscript_status=='unfinished'){?> selected <?php } ?> value="unfinished">{{ trans('site.assignment-status.unfinished') }}</option>
+										</select>
+									</div>
+								</form>
+								@endif
+								
 							</td>
 							<td>
 								<div class="text-right">
@@ -1095,6 +1109,10 @@
             $('#assignment-delay').attr('type', 'datetime-local');
         }
         $('.assignment-delay-text').text(delay);
+    });
+
+	$('.manuscript_status_update').change(function(){
+		$(this).parents('form.manuscript_status_update_form:first').submit();
     });
 
     $("[name=for_editor]").change(function(){

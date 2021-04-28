@@ -2,9 +2,14 @@
 
 // Domains
 
-$front = 'www.forfatterskolen.no';
-$admin = 'admin.forfatterskolen.no';
-$editor = 'editor.forfatterskolen.no';
+/*$front = 'forfatterskolen.local';
+$admin = 'admin.forfatterskolen.local';
+$editor = 'editor.forfatterskolen.local';
+*/
+
+$front = 'forfatterskolen.local';
+$admin = 'admin.forfatterskolen.local';
+$editor = 'editor.forfatterskolen.local';
 
 /*$front = 'forfatterskolen.local';
 $admin = 'admin.forfatterskolen.local';
@@ -897,9 +902,11 @@ Route::group([
                 'show' => 'admin.assignment.show', 
                 'store' => 'admin.assignment.store', 
                 'update' => 'admin.assignment.update', 
-                'destroy' => 'admin.assignment.destroy', 
+                'destroy' => 'admin.assignment.destroy',
             ],
         ]);
+
+        Route::post('update_assignment_manuscript_status/{manu_id}', 'AssignmentController@updateAssignmentManuscriptStatus')->name('admin.update_assignment_manuscript_status');
         Route::post('assignment/{id}/uploadManuscript', 'AssignmentController@uploadManuscript')->name('assignment.group.upload_manuscript');
         Route::post('assignment/{id}/add-on-for-learner', 'AssignmentController@addOnForLearner')->name('assignment.add-on-for-learner');
         Route::post('assignment_manuscript/{id}/delete', 'AssignmentController@deleteManuscript')->name('assignment.group.delete_manuscript');
