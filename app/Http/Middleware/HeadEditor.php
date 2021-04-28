@@ -35,7 +35,7 @@ class HeadEditor
     public function handle($request, Closure $next)
     {
         
-        if (!$this->auth->user()->head_editor) :
+        if (!$this->auth->user()->head_editor && !$this->auth->user()->with_head_editor_access) :
             echo "Forbidden <br />";
             return redirect('/');
         endif;

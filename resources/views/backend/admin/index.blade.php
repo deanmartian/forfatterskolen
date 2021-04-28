@@ -345,6 +345,11 @@
 												Head Editor
 											</label>
 										@endif
+										@if($admin->with_head_editor_access)
+											<label class="label label-info" style="margin-right: 5px">
+												with Head Editor access
+											</label>
+										@endif
 										<input type="checkbox" data-toggle="toggle" data-on="Active"
 											   class="status-toggle" data-off="Inactive"
 											   data-id="{{$admin->id}}" data-size="mini" @if(!$admin->deleted_at) {{ 'checked' }} @endif>
@@ -435,12 +440,12 @@
 					<input type="checkbox" name="minimal_access"> Allow manuscript and learners page only
 				</div>--}}
 				<div>
-					<div class="form-group">
-						<input type="checkbox" name="is_editor"> Is Editor? &nbsp;&nbsp;
-						<input type="checkbox" name="is_admin"> Is Admin?
+					<div class="form-group with_head_editor_access">
+						<input type="checkbox" name="with_head_editor_access"> with Head Editor access?</input>
 					</div>
 					<div class="form-group">
-						
+						<input type="checkbox" name="is_editor"> Is Editor? &nbsp;
+						<input type="checkbox" name="is_admin"> Is Admin? &nbsp; <br>
 					</div>
 				</div>
 		      <button type="submit" class="btn btn-primary pull-right margin-top">Save</button>
@@ -843,12 +848,15 @@
 		form.find('input[name=first_name]').val(fields.first_name);
 		form.find('input[name=last_name]').val(fields.last_name);
 		form.find('input[name=email]').val(fields.email);
+		form.find('.with_head_editor_access').hide();
 
 		/*if (fields.minimal_access) {
             form.find('input[name=minimal_access]').attr('checked', true);
 		}*/
 		form.find('input[name=is_editor]').attr('checked', false);
 		form.find('input[name=is_admin]').attr('checked', false);
+		form.find('input[name=with_head_editor_access]').attr('checked', false);
+
         if (fields.role == 3 && fields.admin_with_editor_access != 1) {
             form.find('input[name=is_editor]').attr('checked', true);
         }else if(fields.role == 1 && fields.admin_with_editor_access == 1){
@@ -856,6 +864,14 @@
 			form.find('input[name=is_admin]').attr('checked', true);
 		}else if(fields.role == 1 && fields.admin_with_editor_access != 1){
 			form.find('input[name=is_admin]').attr('checked', true);
+		}
+
+		if(fields.with_head_editor_access == 1){
+			form.find('input[name=with_head_editor_access]').attr('checked', true);
+		}
+
+		if(fields.role==1 && fields.head_editor ==0){
+			form.find('.with_head_editor_access').show();
 		}
 	});
 
