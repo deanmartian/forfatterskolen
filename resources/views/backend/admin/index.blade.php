@@ -40,7 +40,7 @@
 <div class="col-md-12">
 	<button class="btn btn-primary margin-top" data-toggle="modal" data-target="#addAdminModal">Create admin</button>
 	<a class="btn btn-primary margin-top" href="{{ route('admin.admin.export_nearly_expired_courses') }}">Export Nearly Expired Courses</a>
-	<button class="btn btn-success margin-top" data-toggle="modal" data-target="#headEditorModal">Head Editor</button>
+	<!-- <button class="btn btn-success margin-top" data-toggle="modal" data-target="#headEditorModal">Head Editor</button> -->
 
 	<ul class="nav nav-tabs margin-top">
 		<li @if( Request::input('tab') == 'admin' || Request::input('tab') == '') class="active" @endif><a href="?tab=admin">Admin</a></li>
@@ -436,11 +436,11 @@
 				</div>--}}
 				<div>
 					<div class="form-group">
-						<input type="checkbox" name="is_editor"> Is Editor? &nbsp;&nbsp;
-						<input type="checkbox" name="is_admin"> Is Admin?
+						<input type="checkbox" name="is_head_editor"> Is Head Editor?</input>
 					</div>
 					<div class="form-group">
-						
+						<input type="checkbox" name="is_editor"> Is Editor? &nbsp;
+						<input type="checkbox" name="is_admin"> Is Admin? &nbsp; <br>
 					</div>
 				</div>
 		      <button type="submit" class="btn btn-primary pull-right margin-top">Save</button>
@@ -849,6 +849,8 @@
 		}*/
 		form.find('input[name=is_editor]').attr('checked', false);
 		form.find('input[name=is_admin]').attr('checked', false);
+		form.find('input[name=is_head_editor]').attr('checked', false);
+
         if (fields.role == 3 && fields.admin_with_editor_access != 1) {
             form.find('input[name=is_editor]').attr('checked', true);
         }else if(fields.role == 1 && fields.admin_with_editor_access == 1){
@@ -856,6 +858,10 @@
 			form.find('input[name=is_admin]').attr('checked', true);
 		}else if(fields.role == 1 && fields.admin_with_editor_access != 1){
 			form.find('input[name=is_admin]').attr('checked', true);
+		}
+
+		if(fields.head_editor == 1){
+			form.find('input[name=is_head_editor]').attr('checked', true);
 		}
 	});
 

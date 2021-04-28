@@ -102,6 +102,13 @@ class AdminController extends Controller
         if( $request->password ) :
             $admin->password =  bcrypt($request->password);
         endif;
+
+        if($request->is_head_editor){
+            $admin->head_editor = 1;
+        }else{
+            $admin->head_editor = 0;
+        }
+
         $admin->save();
 
         return redirect()->back();
