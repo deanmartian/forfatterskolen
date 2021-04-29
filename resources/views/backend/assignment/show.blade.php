@@ -179,6 +179,7 @@
 								? $manuscript->user->preferredEditor->editor->full_name : '' }}">
 									{{ trans('site.assign-editor') }}
 								</button>
+
 							</td>
 							<td>
 								<div class="text-right">

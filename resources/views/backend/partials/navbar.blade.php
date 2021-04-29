@@ -36,7 +36,7 @@ $urlList = array('pulse', 'board');
                   </li>
               @else
                 @if($page['id'] === 12)
-                  @if(\Auth::user()->head_editor)
+                  @if(\Auth::user()->head_editor || \Auth::user()->with_head_editor_access)
 
                     <li @if(Request::is(strtolower($page['request_name']))) class="active" @endif>
                       {{--<a href="{{ route($page['route']) }}">{{ $page['option'] }}</a>--}}
@@ -56,7 +56,7 @@ $urlList = array('pulse', 'board');
             @else
               @if($page['id'] === 12)
               
-                @if(\Auth::user()->head_editor)
+                @if(\Auth::user()->head_editor || \Auth::user()->with_head_editor_access)
 
                   <li @if(Request::is(strtolower($page['request_name']))) class="active" @endif>
                     {{--<a href="{{ route($page['route']) }}">{{ $page['option'] }}</a>--}}

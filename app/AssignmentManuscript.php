@@ -1,6 +1,7 @@
 <?php
 namespace App;
 
+use App\Http\AdminHelpers;
 use Illuminate\Database\Eloquent\Model;
 
 class AssignmentManuscript extends Model
@@ -9,7 +10,7 @@ class AssignmentManuscript extends Model
     protected $table = 'assignment_manuscripts';
     protected $fillable = ['assignment_id', 'user_id', 'filename', 'words', 'grade', 'type', 'manu_type', 'editor_id',
         'join_group', 'expected_finish', 'editor_expected_finish'];
-
+    protected $appends = ['file_link', 'assignment_type', 'where_in_script'];
 
 
     public function assignment()
@@ -67,4 +68,13 @@ class AssignmentManuscript extends Model
         return $value ? date_format(date_create($value), 'd.m.Y') : NULL;
     }
 
+    public function getAssignmentTypeAttribute()
+    {
+        return AdminHelpers::assignmentType($this->attributes['type']);
+    }
+
+    public function getWhereInScriptAttribute()
+    {
+        return AdminHelpers::manuscriptType($this->attributes['manu_type']);
+    }
 }

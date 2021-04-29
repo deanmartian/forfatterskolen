@@ -11,6 +11,7 @@
         <li @if( Request::input('tab') == 'yearlyCalendar' ) class="active" @endif><a href="?tab=yearlyCalendar">Yearly Calendar</a></li>
         <li @if( Request::input('tab') == 'howManyAssignmentsEditorCanTake' ) class="active" @endif><a href="?tab=howManyAssignmentsEditorCanTake">{{ trans('site.how-many-manuscript-assignments-editor-can-take') }}</a></li>
         <li @if( Request::input('tab') == 'editorsAvailability' ) class="active" @endif><a href="?tab=editorsAvailability">{{ trans('site.editors-availability') }}</a></li>
+        <li @if( Request::input('tab') == 'unfinished-manuscript' ) class="active" @endif><a href="?tab=unfinished-manuscript">{{ trans('site.unfinished-manuscript') }}</a></li>
     </ul>
     <div class="col-sm-12 dashboard-left">
         @if( Request::input('tab') == 'yearlyCalendar')
@@ -144,6 +145,120 @@
                 </table>
             </div>
 
+        @elseif(Request::input('tab') == 'unfinished-manuscript')
+        <!-- assignment -->
+            <div class="panel">
+                <div class="panel-body">
+                    <h3>{{ trans_choice('site.assignments', 1) }}</h3>
+
+                    <div class="table-users table-responsive margin-top">
+                        <table class="table dt-table">
+                            <thead>
+                                <tr>
+                                    <th>{{ trans_choice('site.assignments', 1) }}</th>
+                                    <th>{{ trans_choice('site.manuscripts', 1) }}</th>
+                                    <th>{{ trans_choice('site.learners', 1) }}</th>
+                                    <th>{{ trans_choice('site.editors', 1) }}</th>
+                                    <th>{{ trans('site.type') }}</th>
+                                    <th>{{ trans('site.where') }}</th>
+                                    <th>{{ trans_choice('site.words', 2) }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($unfinishedAssignments as $unfinishedAssignment)
+                                    <tr>
+                                        <td>
+                                            <a href="{{ route('admin.assignment.show',
+                                            [
+                                                'course_id' => $unfinishedAssignment->assignment->course_id ,
+                                                'id' => $unfinishedAssignment->assignment_id
+                                            ]) }}">
+                                                {{$unfinishedAssignment->assignment->title}}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {!! $unfinishedAssignment->file_link !!}
+                                        </td>
+                                        <td>
+                                            <a href="{{route('admin.learner.show', $unfinishedAssignment->user->id)}}">{{ $unfinishedAssignment->user->full_name }}</a>
+                                        </td>
+                                        <td>
+                                            @if( $unfinishedAssignment->editor )
+                                                {{ $unfinishedAssignment->editor->full_name }}
+											@else
+												<em>Not set</em>
+											@endif
+                                        </td>
+                                        <td>
+                                            {{ $unfinishedAssignment->assignment_type }}
+                                        </td>
+                                        <td>
+                                            {{ $unfinishedAssignment->where_in_script }}
+                                        </td>
+                                        <td>
+                                            {{ $unfinishedAssignment->words }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        <!-- shop manu -->
+            <div class="panel">
+                <div class="panel-body">
+                    <h3>{{ trans_choice('site.shop-manuscripts', 1) }}</h3>
+
+                    <div class="table-users table-responsive margin-top">
+                        <table class="table dt-table">
+                            <thead>
+                                <tr>
+                                    <th>{{ trans_choice('site.manuscripts', 1) }}</th>
+                                    <th>{{ trans_choice('site.learners', 1) }}</th>
+                                    <th>{{ trans_choice('site.editors', 1) }}</th>
+                                    <th>{{ trans('site.genre') }}</th>
+                                    <th>{{ trans_choice('site.words', 2) }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($unfinishedShopManuscripts as $unfinishedShopManuscript)
+                                    <tr>
+                                        <td>
+                                            <a href="{{ route('shop_manuscript_taken',
+                                            ['id' => $unfinishedShopManuscript->user->id,
+                                            'shop_manuscript_taken_id' => $unfinishedShopManuscript->id]) }}">
+                                                {{$unfinishedShopManuscript->shop_manuscript->title}}
+                                            </a>
+                                        </td>
+                                        <td>
+                                        <a href="{{ route('admin.learner.show', $unfinishedShopManuscript->user->id) }}">
+											{{ $unfinishedShopManuscript->user->full_name }}
+										</a>
+                                        </td>
+                                        <td>
+                                            @if( $unfinishedShopManuscript->admin )
+                                                {{ $unfinishedShopManuscript->admin->full_name }}
+											@else
+												<em>Not set</em>
+											@endif
+                                        </td>
+                                        <td>
+                                            @if($unfinishedShopManuscript->genre > 0)
+												{{ \App\Http\FrontendHelpers::assignmentType($unfinishedShopManuscript->genre) }}
+											@endif
+                                        </td>
+                                        <td>
+                                            {{ $unfinishedAssignment->words }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         @endif
     </div>
 </div>
