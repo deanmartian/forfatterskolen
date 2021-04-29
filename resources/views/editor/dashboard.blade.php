@@ -29,82 +29,86 @@
 							</h4>
 
 						</div>
-						<table class="table">
-							<thead>
-							<tr>
-								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
-								<th>{{ trans('site.learner-id') }}</th>
-								<th>{{ trans('site.type') }}</th>
-								<th>{{ trans('site.where') }}</th>
-								<th>{{ trans('site.deadline') }}</th>
-								<th>{{ trans('site.feedback-status') }}</th>
-							</tr>
-							</thead>
-							<tbody>
-							@foreach($assignedAssignmentManuscripts as $assignedManuscript)
-                                <?php $extension = explode('.', basename($assignedManuscript->filename)); ?>
-								<tr>
-									<td>
-										<a href="{{ $assignedManuscript->filename }}"
-										   download>
-										   <i class="fa fa-download" aria-hidden="true"></i>
-										</a> &nbsp;
+						<div class="panel-body">
+							<div class="table-users table-responsive margin-top">
+								<table class="table dt-table">
+									<thead>
+									<tr>
+										<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+										<th>{{ trans('site.learner-id') }}</th>
+										<th>{{ trans('site.type') }}</th>
+										<th>{{ trans('site.where') }}</th>
+										<th>{{ trans('site.deadline') }}</th>
+										<th>{{ trans('site.feedback-status') }}</th>
+									</tr>
+									</thead>
+									<tbody>
+									@foreach($assignedAssignmentManuscripts as $assignedManuscript)
+										<?php $extension = explode('.', basename($assignedManuscript->filename)); ?>
+										<tr>
+											<td>
+												<a href="{{ $assignedManuscript->filename }}"
+												download>
+												<i class="fa fa-download" aria-hidden="true"></i>
+												</a> &nbsp;
 
-										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
-											<a href="/js/ViewerJS/#../..{{ $assignedManuscript->filename }}">
-												{{ basename($assignedManuscript->filename) }}
-											</a>
-										@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
-											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$assignedManuscript->filename}}">
-												{{ basename($assignedManuscript->filename) }}
-											</a>
-										@endif
-									</td>
-									<td>{{ $assignedManuscript->user->id }}</td>
-									<td>{{ \App\Http\AdminHelpers::assignmentType($assignedManuscript->type) }}</td>
-									<td>{{ \App\Http\AdminHelpers::manuscriptType($assignedManuscript->manu_type) }}</td>
-									<td>
-										{{ $assignedManuscript->editor_expected_finish?$assignedManuscript->editor_expected_finish:$assignedManuscript->assignment->editor_expected_finish }}
-									</td>
-									<td>
-										<div>
-											@if($assignedManuscript->has_feedback && $assignedManuscript->noGroupFeedbacks->first())
-												<span class="label label-default">{{ trans('site.pending') }}</span>
-												<button class="btn btn-xs btn-success submitPersonalAssignmentFeedbackBtn"
-														data-target = "#submitPersonalAssignmentFeedbackModal"
-														data-toggle = "modal"
-														data-manuscript = "{{$assignedManuscript->noGroupFeedbacks->first()->filename}}"
-														data-created_at = "{{$assignedManuscript->noGroupFeedbacks->first()->created_at}}"
-														data-updated_at = "{{$assignedManuscript->noGroupFeedbacks->first()->updated_at}}"
-														data-feedback_id = "{{$assignedManuscript->noGroupFeedbacks->first()->id}}"
-														data-grade = "{{$assignedManuscript->grade}}"
-														data-notes_to_head_editor = "{{$assignedManuscript->noGroupFeedbacks->first()->notes_to_head_editor}}"
-														data-edit = "1"
-														data-name="{{ $assignedManuscript->user->id }}"
-														data-action="{{ route('editor.assignment.group.manuscript-feedback-no-group',
-																	['id' => $assignedManuscript->id,
-																	'learner_id' => $assignedManuscript->user->id]) }}"
-												>
-													<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-												</button>
-											@else
-												<button class="btn btn-warning btn-xs d-block
-												submitPersonalAssignmentFeedbackBtn"
-														data-target="#submitPersonalAssignmentFeedbackModal"
-														data-toggle="modal"
-														data-name="{{ $assignedManuscript->user->id }}"
-														data-action="{{ route('editor.assignment.group.manuscript-feedback-no-group',
-																	['id' => $assignedManuscript->id,
-																	'learner_id' => $assignedManuscript->user->id]) }}">
-													+ {{ trans('site.add-feedback') }}
-												</button>
-											@endif
-										</div>
-									</td>
-								</tr>
-							@endforeach
-							</tbody>
-						</table>
+												@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+													<a href="/js/ViewerJS/#../..{{ $assignedManuscript->filename }}">
+														{{ basename($assignedManuscript->filename) }}
+													</a>
+												@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
+													<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$assignedManuscript->filename}}">
+														{{ basename($assignedManuscript->filename) }}
+													</a>
+												@endif
+											</td>
+											<td>{{ $assignedManuscript->user->id }}</td>
+											<td>{{ \App\Http\AdminHelpers::assignmentType($assignedManuscript->type) }}</td>
+											<td>{{ \App\Http\AdminHelpers::manuscriptType($assignedManuscript->manu_type) }}</td>
+											<td>
+												{{ $assignedManuscript->editor_expected_finish?$assignedManuscript->editor_expected_finish:$assignedManuscript->assignment->editor_expected_finish }}
+											</td>
+											<td>
+												<div>
+													@if($assignedManuscript->has_feedback && $assignedManuscript->noGroupFeedbacks->first())
+														<span class="label label-default">{{ trans('site.pending') }}</span>
+														<button class="btn btn-xs btn-success submitPersonalAssignmentFeedbackBtn"
+																data-target = "#submitPersonalAssignmentFeedbackModal"
+																data-toggle = "modal"
+																data-manuscript = "{{$assignedManuscript->noGroupFeedbacks->first()->filename}}"
+																data-created_at = "{{$assignedManuscript->noGroupFeedbacks->first()->created_at}}"
+																data-updated_at = "{{$assignedManuscript->noGroupFeedbacks->first()->updated_at}}"
+																data-feedback_id = "{{$assignedManuscript->noGroupFeedbacks->first()->id}}"
+																data-grade = "{{$assignedManuscript->grade}}"
+																data-notes_to_head_editor = "{{$assignedManuscript->noGroupFeedbacks->first()->notes_to_head_editor}}"
+																data-edit = "1"
+																data-name="{{ $assignedManuscript->user->id }}"
+																data-action="{{ route('editor.assignment.group.manuscript-feedback-no-group',
+																			['id' => $assignedManuscript->id,
+																			'learner_id' => $assignedManuscript->user->id]) }}"
+														>
+															<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+														</button>
+													@else
+														<button class="btn btn-warning btn-xs d-block
+														submitPersonalAssignmentFeedbackBtn"
+																data-target="#submitPersonalAssignmentFeedbackModal"
+																data-toggle="modal"
+																data-name="{{ $assignedManuscript->user->id }}"
+																data-action="{{ route('editor.assignment.group.manuscript-feedback-no-group',
+																			['id' => $assignedManuscript->id,
+																			'learner_id' => $assignedManuscript->user->id]) }}">
+															+ {{ trans('site.add-feedback') }}
+														</button>
+													@endif
+												</div>
+											</td>
+										</tr>
+									@endforeach
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -114,110 +118,114 @@
 				<div class="col-sm-12">
 					<div class="panel panel-default">
 						<div class="panel-heading"><h4>{{ trans_choice('site.shop-manuscripts', 2) }}</h4></div>
-						<table class="table">
-							<thead>
-							<tr>
-								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
-								<th>{{ trans('site.genre') }}</th>
-								<th>{{ trans('site.learner-id') }}</th>
-								<th>{{ trans('site.deadline') }}</th>
-								<th>{{ trans('site.feedback-status') }}</th>
-							</tr>
-							</thead>
-							<tbody>
-							@foreach($assigned_shop_manuscripts as $shopManuscript)
-								@if( $shopManuscript->status == 'Started' || $shopManuscript->status == 'Pending' )
+						<div class="panel-body">
+							<div class="table-users table-responsive margin-top">
+								<table class="table dt-table">
+									<thead>
 									<tr>
-										<td>
-											<a href="{{ route('editor.backend.download_shop_manuscript', $shopManuscript->id) }}"><i class="fa fa-download" aria-hidden="true"></i>
-											</a>&nbsp;
-											@if($shopManuscript->is_active)
-												<a href="{{ route('editor.shop_manuscript_taken', ['id' => $shopManuscript->user->id, 'shop_manuscript_taken_id' => $shopManuscript->id]) }}">{{$shopManuscript->shop_manuscript->title}}</a>
-											@else
-												{{$shopManuscript->shop_manuscript->title}}
-											@endif
-										</td>
-										<td>
-											@if($shopManuscript->genre > 0)
-												{{ \App\Http\FrontendHelpers::assignmentType($shopManuscript->genre) }}
-											@endif
-										</td>
-										<td>{{ $shopManuscript->user->id }}</td>
-										<td>{{ $shopManuscript->editor_expected_finish }}</td>
-										<td>
-											@if($shopManuscript->status == 'Started')
-											
-												<button type="button" class="btn btn-warning btn-xs addShopManuscriptFeedback" data-toggle="modal"
-													data-target="#addFeedbackModal"
-													data-action="{{ route('editor.admin.shop-manuscript-taken-feedback.store',
-													$shopManuscript->id) }}">+ {{ trans('site.add-feedback') }}</button>
-
-											@elseif($shopManuscript->status == 'Pending')
-
-											<?php $feedbackFile = implode(",",$shopManuscript->feedbacks->first()->filename); ?>
-
-												<span class="label label-default">Pending</span>
-												<button type="button" class="btn btn-success btn-xs addShopManuscriptFeedback" data-toggle="modal"
-													data-target="#addFeedbackModal"
-													data-f_id = "{{$shopManuscript->feedbacks->first()->id}}"
-													data-edit = "1"
-													data-f_created_at = "{{$shopManuscript->feedbacks->first()->created_at}}"
-													data-f_updated_at = "{{$shopManuscript->feedbacks->first()->updated_at}}"
-													data-f_file = "{{$feedbackFile}}"
-													data-f_notes = "{{$shopManuscript->feedbacks->first()->notes}}"
-													data-hours = "{{$shopManuscript->feedbacks->first()->hours_worked}}"
-													data-notes_to_head_editor = "{{$shopManuscript->feedbacks->first()->notes_to_head_editor}}"
-													data-action="{{ route('editor.admin.shop-manuscript-taken-feedback.store',
-													$shopManuscript->id) }}">
-													<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-												</button>
-													
-
-											@endif
-										</td>
-									
+										<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+										<th>{{ trans('site.genre') }}</th>
+										<th>{{ trans('site.learner-id') }}</th>
+										<th>{{ trans('site.deadline') }}</th>
+										<th>{{ trans('site.feedback-status') }}</th>
 									</tr>
-								@endif
-							@endforeach
-							@foreach($shopManuscriptRequests as $request)
-								<tr style="background-color: beige;">
-									<td>
-										<a href="{{ route('editor.backend.download_shop_manuscript', $request->manuscript_id) }}"><i class="fa fa-download" aria-hidden="true"></i>
-										</a>&nbsp;
-										@if($request->manuscript->is_active)
-											<a href="{{ route('editor.shop_manuscript_taken', ['id' => $request->manuscript->user->id, 'shop_manuscript_taken_id' => $request->manuscript_id]) }}">{{$request->manuscript->shop_manuscript->title}}</a>
-										@else
-											{{$request->manuscript->shop_manuscript->title}}
+									</thead>
+									<tbody>
+									@foreach($assigned_shop_manuscripts as $shopManuscript)
+										@if( $shopManuscript->status == 'Started' || $shopManuscript->status == 'Pending' )
+											<tr>
+												<td>
+													<a href="{{ route('editor.backend.download_shop_manuscript', $shopManuscript->id) }}"><i class="fa fa-download" aria-hidden="true"></i>
+													</a>&nbsp;
+													@if($shopManuscript->is_active)
+														<a href="{{ route('editor.shop_manuscript_taken', ['id' => $shopManuscript->user->id, 'shop_manuscript_taken_id' => $shopManuscript->id]) }}">{{$shopManuscript->shop_manuscript->title}}</a>
+													@else
+														{{$shopManuscript->shop_manuscript->title}}
+													@endif
+												</td>
+												<td>
+													@if($shopManuscript->genre > 0)
+														{{ \App\Http\FrontendHelpers::assignmentType($shopManuscript->genre) }}
+													@endif
+												</td>
+												<td>{{ $shopManuscript->user->id }}</td>
+												<td>{{ $shopManuscript->editor_expected_finish }}</td>
+												<td>
+													@if($shopManuscript->status == 'Started')
+													
+														<button type="button" class="btn btn-warning btn-xs addShopManuscriptFeedback" data-toggle="modal"
+															data-target="#addFeedbackModal"
+															data-action="{{ route('editor.admin.shop-manuscript-taken-feedback.store',
+															$shopManuscript->id) }}">+ {{ trans('site.add-feedback') }}</button>
+
+													@elseif($shopManuscript->status == 'Pending')
+
+													<?php $feedbackFile = implode(",",$shopManuscript->feedbacks->first()->filename); ?>
+
+														<span class="label label-default">Pending</span>
+														<button type="button" class="btn btn-success btn-xs addShopManuscriptFeedback" data-toggle="modal"
+															data-target="#addFeedbackModal"
+															data-f_id = "{{$shopManuscript->feedbacks->first()->id}}"
+															data-edit = "1"
+															data-f_created_at = "{{$shopManuscript->feedbacks->first()->created_at}}"
+															data-f_updated_at = "{{$shopManuscript->feedbacks->first()->updated_at}}"
+															data-f_file = "{{$feedbackFile}}"
+															data-f_notes = "{{$shopManuscript->feedbacks->first()->notes}}"
+															data-hours = "{{$shopManuscript->feedbacks->first()->hours_worked}}"
+															data-notes_to_head_editor = "{{$shopManuscript->feedbacks->first()->notes_to_head_editor}}"
+															data-action="{{ route('editor.admin.shop-manuscript-taken-feedback.store',
+															$shopManuscript->id) }}">
+															<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+														</button>
+															
+
+													@endif
+												</td>
+											
+											</tr>
 										@endif
-									</td>
-									<td>
-										@if($request->manuscript->genre > 0)
-											{{ \App\Http\FrontendHelpers::assignmentType($request->manuscript->genre) }}
-										@endif
-									</td>
-									<td>{{ $request->manuscript->user->id }}</td>
-									<td>{{ $request->manuscript->editor_expected_finish }}</td>
-									<td>
-										<button class="btn btn-success btn-xs acceptRequestBtn"
-												data-toggle="modal"
-												data-target="#acceptRequest"
-												data-title="{{ trans('site.are-you-sure-you-want-to-accept') }}"
-												data-sub_title="{{ trans('site.are-you-sure-you-want-to-accept-sub') }}"
-												data-action="{{ route('editor.acceptShopManuscriptRequest', ['shop_manuscript_taken_id' => $request->manuscript_id, 'accept' => '1', 'request_id' => $request->id]) }}"
-										><i class="fa fa-check" aria-hidden="true"></i>&nbsp;{{ trans('site.accept') }}</button>&nbsp;&nbsp;
-										<button class="btn btn-danger btn-xs acceptRequestBtn"
-												data-toggle="modal"
-												data-target="#acceptRequest"
-												data-title="{{ trans('site.are-you-sure-you-want-to-reject') }}"
-												data-sub_title="{{ trans('site.are-you-sure-you-want-to-reject-sub') }}"
-												data-action="{{ route('editor.acceptShopManuscriptRequest', ['shop_manuscript_taken_id' => $request->manuscript_id, 'accept' => '0', 'request_id' => $request->id]) }}"
-										><i class="fa fa-times" aria-hidden="true"></i>&nbsp;{{ trans('site.reject') }}</button>&nbsp;&nbsp;
-										<span class="label label-info" style="font-size: 1.2rem; font-weight: 100;"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;{{ trans('site.answer-until') }}&nbsp;{{ $request->answer_until }}</span>
-									</td>
-								</tr>
-							@endforeach
-							</tbody>
-						</table>
+									@endforeach
+									@foreach($shopManuscriptRequests as $request)
+										<tr style="background-color: beige;">
+											<td>
+												<a href="{{ route('editor.backend.download_shop_manuscript', $request->manuscript_id) }}"><i class="fa fa-download" aria-hidden="true"></i>
+												</a>&nbsp;
+												@if($request->manuscript->is_active)
+													<a href="{{ route('editor.shop_manuscript_taken', ['id' => $request->manuscript->user->id, 'shop_manuscript_taken_id' => $request->manuscript_id]) }}">{{$request->manuscript->shop_manuscript->title}}</a>
+												@else
+													{{$request->manuscript->shop_manuscript->title}}
+												@endif
+											</td>
+											<td>
+												@if($request->manuscript->genre > 0)
+													{{ \App\Http\FrontendHelpers::assignmentType($request->manuscript->genre) }}
+												@endif
+											</td>
+											<td>{{ $request->manuscript->user->id }}</td>
+											<td>{{ $request->manuscript->editor_expected_finish }}</td>
+											<td>
+												<button class="btn btn-success btn-xs acceptRequestBtn"
+														data-toggle="modal"
+														data-target="#acceptRequest"
+														data-title="{{ trans('site.are-you-sure-you-want-to-accept') }}"
+														data-sub_title="{{ trans('site.are-you-sure-you-want-to-accept-sub') }}"
+														data-action="{{ route('editor.acceptShopManuscriptRequest', ['shop_manuscript_taken_id' => $request->manuscript_id, 'accept' => '1', 'request_id' => $request->id]) }}"
+												><i class="fa fa-check" aria-hidden="true"></i>&nbsp;{{ trans('site.accept') }}</button>&nbsp;&nbsp;
+												<button class="btn btn-danger btn-xs acceptRequestBtn"
+														data-toggle="modal"
+														data-target="#acceptRequest"
+														data-title="{{ trans('site.are-you-sure-you-want-to-reject') }}"
+														data-sub_title="{{ trans('site.are-you-sure-you-want-to-reject-sub') }}"
+														data-action="{{ route('editor.acceptShopManuscriptRequest', ['shop_manuscript_taken_id' => $request->manuscript_id, 'accept' => '0', 'request_id' => $request->id]) }}"
+												><i class="fa fa-times" aria-hidden="true"></i>&nbsp;{{ trans('site.reject') }}</button>&nbsp;&nbsp;
+												<span class="label label-info" style="font-size: 1.2rem; font-weight: 100;"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;{{ trans('site.answer-until') }}&nbsp;{{ $request->answer_until }}</span>
+											</td>
+										</tr>
+									@endforeach
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -227,100 +235,105 @@
 				<div class="col-sm-12">
 					<div class="panel panel-default">
 						<div class="panel-heading"><h4>{{ trans('site.my-assignments') }}</h4></div>
-						<table class="table">
-							<thead>
-							<tr>
-								<th>{{ trans_choice('site.courses', 1) }}</th>
-								<th>{{ trans('site.learner-id') }}</th>
-								<th>{{ trans('site.type') }}</th>
-								<th>{{ trans('site.where') }}</th>
-								<th>{{ trans('site.deadline') }}</th>
-								<th>{{ trans('site.feedback-status') }}</th>
-							</tr>
-							</thead>
-							<tbody>
-							@foreach ($assignedAssignments as $assignedAssignment)
-								<tr>
-									<td>
-										<a href="{{ route('editor.backend.download_assigned_manuscript', $assignedAssignment->id) }}"><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
-										@if($assignedAssignment->assignment->course)
-												{{ $assignedAssignment->assignment->course->title }}
-										@else
-												{{ $assignedAssignment->assignment->title }}
-										@endif
-									</td>
-									<td>{{ $assignedAssignment->user_id }}</td>
-									<td>{{ \App\Http\AdminHelpers::assignmentType($assignedAssignment->type) }}</td>
-									<td>{{ \App\Http\AdminHelpers::manuscriptType($assignedAssignment->manu_type) }}</td>
-									<td>{{ $assignedAssignment->editor_expected_finish?$assignedAssignment->editor_expected_finish:$assignedAssignment->assignment->editor_expected_finish }}</td>
-									<td>
-									<?php
-									$groupDetails = DB::SELECT("SELECT A.id as assignment_group_id, B.id AS assignment_group_learner_id FROM assignment_groups A JOIN assignment_group_learners B ON A.id = B.assignment_group_id AND B.user_id = $assignedAssignment->user_id WHERE A.assignment_id = $assignedAssignment->assignment_id");
-									if($groupDetails){ // Means the course assignment belongs to a group
-										$feedback = DB::SELECT("SELECT A.* FROM assignment_feedbacks A JOIN assignment_group_learners B ON A.assignment_group_learner_id = B.id WHERE B.user_id = $assignedAssignment->user_id AND A.assignment_group_learner_id = ".$groupDetails[0]->assignment_group_learner_id);
-									}
-									
-									if($assignedAssignment->has_feedback){
-										echo '<span class="label label-default">Pending</span> ';
-										if($groupDetails){
-											echo '<button type="button" class="btn btn-success btn-xs submitFeedbackBtn"
-													data-toggle="modal" data-target="#submitFeedbackModal"
-													data-manuscript = "'.$feedback[0]->filename.'"
-													data-created_at = "'.$feedback[0]->created_at.'"
-													data-updated_at = "'.$feedback[0]->created_at.'"
-													data-feedback_id = "'.$feedback[0]->id.'"
-													data-grade = "'.$assignedAssignment->grade.'"
-													data-edit = "1"
-													data-notes_to_head_editor = "'.$feedback[0]->notes_to_head_editor.'"
-													data-name="'.$assignedAssignment->user->id.'"
-													data-action="'.route('editor.assignment.group.submit_feedback',
-													['group_id' => $groupDetails[0]->assignment_group_id, 'id' => $groupDetails[0]->assignment_group_learner_id]).'"
-													data-manuscript_id="'.$assignedAssignment->id.'">
-													<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-													</button>';
-										}else{
-											echo '<button type="button" class="btn btn-success btn-xs submitFeedbackBtn"
-													data-toggle="modal" data-target="#submitFeedbackModal"
-													data-manuscript = "'.$assignedAssignment->noGroupFeedbacks->first()->filename.'"
-													data-created_at = "'.$assignedAssignment->noGroupFeedbacks->first()->created_at.'"
-													data-updated_at = "'.$assignedAssignment->noGroupFeedbacks->first()->updated_at.'"
-													data-feedback_id = "'.$assignedAssignment->noGroupFeedbacks->first()->id.'"
-													data-grade = "'.$assignedAssignment->grade.'"
-													data-edit = "1"
-													data-notes_to_head_editor = "'.$assignedAssignment->noGroupFeedbacks->first()->notes_to_head_editor.'"
-													data-name="'.$assignedAssignment->user->id.'"
-													data-action="'.route('editor.assignment.group.manuscript-feedback-no-group',
-													['id' => $assignedAssignment->id, 'learner_id' => $assignedAssignment->user_id]).'"
-													data-manuscript_id="'.$assignedAssignment->id.'">
-													<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-													</button>';
-										}
-									}else{
-										
-										if($groupDetails){ // Means the course assignment belongs to a group
-											echo '<button type="button" class="btn btn-warning btn-xs submitFeedbackBtn"
-														data-toggle="modal" data-target="#submitFeedbackModal"
-														data-name="'.$assignedAssignment->user->id.'"
-														data-action="'.route('editor.assignment.group.submit_feedback',
-														['group_id' => $groupDetails[0]->assignment_group_id, 'id' => $groupDetails[0]->assignment_group_learner_id]).'"
-														data-manuscript_id="'.$assignedAssignment->id.'">'.
-													 '+ '.trans('site.add-feedback').'</button>';
-										}else{ //the course assignment does not belong to a group
-											echo '<button type="button" class="btn btn-warning btn-xs submitFeedbackBtn"
-														data-toggle="modal" data-target="#submitFeedbackModal"
-														data-name="'.$assignedAssignment->user->id.'"
-														data-action="'.route('editor.assignment.group.manuscript-feedback-no-group',
-														['id' => $assignedAssignment->id, 'learner_id' => $assignedAssignment->user_id]).'"
-														data-manuscript_id="'.$assignedAssignment->id.'">'.
-														'+ '.trans('site.add-feedback').'</button>';
-										}
-									}
-									?>
-									</td>
-								</tr>
-							@endforeach
-							</tbody>
-						</table>
+						<div class="panel-body">
+							<div class="table-users table-responsive margin-top">
+								<table class="table dt-table">
+						
+									<thead>
+									<tr>
+										<th>{{ trans_choice('site.courses', 1) }}</th>
+										<th>{{ trans('site.learner-id') }}</th>
+										<th>{{ trans('site.type') }}</th>
+										<th>{{ trans('site.where') }}</th>
+										<th>{{ trans('site.deadline') }}</th>
+										<th>{{ trans('site.feedback-status') }}</th>
+									</tr>
+									</thead>
+									<tbody>
+									@foreach ($assignedAssignments as $assignedAssignment)
+										<tr>
+											<td>
+												<a href="{{ route('editor.backend.download_assigned_manuscript', $assignedAssignment->id) }}"><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
+												@if($assignedAssignment->assignment->course)
+														{{ $assignedAssignment->assignment->course->title }}
+												@else
+														{{ $assignedAssignment->assignment->title }}
+												@endif
+											</td>
+											<td>{{ $assignedAssignment->user_id }}</td>
+											<td>{{ \App\Http\AdminHelpers::assignmentType($assignedAssignment->type) }}</td>
+											<td>{{ \App\Http\AdminHelpers::manuscriptType($assignedAssignment->manu_type) }}</td>
+											<td>{{ $assignedAssignment->editor_expected_finish?$assignedAssignment->editor_expected_finish:$assignedAssignment->assignment->editor_expected_finish }}</td>
+											<td>
+											<?php
+											$groupDetails = DB::SELECT("SELECT A.id as assignment_group_id, B.id AS assignment_group_learner_id FROM assignment_groups A JOIN assignment_group_learners B ON A.id = B.assignment_group_id AND B.user_id = $assignedAssignment->user_id WHERE A.assignment_id = $assignedAssignment->assignment_id");
+											if($groupDetails){ // Means the course assignment belongs to a group
+												$feedback = DB::SELECT("SELECT A.* FROM assignment_feedbacks A JOIN assignment_group_learners B ON A.assignment_group_learner_id = B.id WHERE B.user_id = $assignedAssignment->user_id AND A.assignment_group_learner_id = ".$groupDetails[0]->assignment_group_learner_id);
+											}
+											
+											if($assignedAssignment->has_feedback){
+												echo '<span class="label label-default">Pending</span> ';
+												if($groupDetails){
+													echo '<button type="button" class="btn btn-success btn-xs submitFeedbackBtn"
+															data-toggle="modal" data-target="#submitFeedbackModal"
+															data-manuscript = "'.$feedback[0]->filename.'"
+															data-created_at = "'.$feedback[0]->created_at.'"
+															data-updated_at = "'.$feedback[0]->created_at.'"
+															data-feedback_id = "'.$feedback[0]->id.'"
+															data-grade = "'.$assignedAssignment->grade.'"
+															data-edit = "1"
+															data-notes_to_head_editor = "'.$feedback[0]->notes_to_head_editor.'"
+															data-name="'.$assignedAssignment->user->id.'"
+															data-action="'.route('editor.assignment.group.submit_feedback',
+															['group_id' => $groupDetails[0]->assignment_group_id, 'id' => $groupDetails[0]->assignment_group_learner_id]).'"
+															data-manuscript_id="'.$assignedAssignment->id.'">
+															<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+															</button>';
+												}else{
+													echo '<button type="button" class="btn btn-success btn-xs submitFeedbackBtn"
+															data-toggle="modal" data-target="#submitFeedbackModal"
+															data-manuscript = "'.$assignedAssignment->noGroupFeedbacks->first()->filename.'"
+															data-created_at = "'.$assignedAssignment->noGroupFeedbacks->first()->created_at.'"
+															data-updated_at = "'.$assignedAssignment->noGroupFeedbacks->first()->updated_at.'"
+															data-feedback_id = "'.$assignedAssignment->noGroupFeedbacks->first()->id.'"
+															data-grade = "'.$assignedAssignment->grade.'"
+															data-edit = "1"
+															data-notes_to_head_editor = "'.$assignedAssignment->noGroupFeedbacks->first()->notes_to_head_editor.'"
+															data-name="'.$assignedAssignment->user->id.'"
+															data-action="'.route('editor.assignment.group.manuscript-feedback-no-group',
+															['id' => $assignedAssignment->id, 'learner_id' => $assignedAssignment->user_id]).'"
+															data-manuscript_id="'.$assignedAssignment->id.'">
+															<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+															</button>';
+												}
+											}else{
+												
+												if($groupDetails){ // Means the course assignment belongs to a group
+													echo '<button type="button" class="btn btn-warning btn-xs submitFeedbackBtn"
+																data-toggle="modal" data-target="#submitFeedbackModal"
+																data-name="'.$assignedAssignment->user->id.'"
+																data-action="'.route('editor.assignment.group.submit_feedback',
+																['group_id' => $groupDetails[0]->assignment_group_id, 'id' => $groupDetails[0]->assignment_group_learner_id]).'"
+																data-manuscript_id="'.$assignedAssignment->id.'">'.
+															'+ '.trans('site.add-feedback').'</button>';
+												}else{ //the course assignment does not belong to a group
+													echo '<button type="button" class="btn btn-warning btn-xs submitFeedbackBtn"
+																data-toggle="modal" data-target="#submitFeedbackModal"
+																data-name="'.$assignedAssignment->user->id.'"
+																data-action="'.route('editor.assignment.group.manuscript-feedback-no-group',
+																['id' => $assignedAssignment->id, 'learner_id' => $assignedAssignment->user_id]).'"
+																data-manuscript_id="'.$assignedAssignment->id.'">'.
+																'+ '.trans('site.add-feedback').'</button>';
+												}
+											}
+											?>
+											</td>
+										</tr>
+									@endforeach
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -330,47 +343,51 @@
 				<div class="col-sm-12">
 					<div class="panel panel-default">
 						<div class="panel-heading"><h4>{{ trans('site.my-coaching-timer') }}</h4></div>
-						<table class="table">
-							<thead>
-							<tr>
-								<th>{{ trans('site.learner-id') }}</th>
-								<th>{{ trans('site.approved-date') }}</th>
-								<th>{{ trans('site.session-length') }}</th>
-								<th>{{ trans('site.set-replay') }}</th>
-							</tr>
-							</thead>
-							<tbody>
-							@foreach($coachingTimers as $coachingTimer)
-                                <?php $extension = explode('.', basename($coachingTimer->file)); ?>
-								<tr>
-									<td>
-										<a href="{{ $coachingTimer->file }}" download><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
-										{{ $coachingTimer->user->id }}
+						<div class="panel-body">
+							<div class="table-users table-responsive margin-top">
+								<table class="table dt-table">
+									<thead>
+									<tr>
+										<th>{{ trans('site.learner-id') }}</th>
+										<th>{{ trans('site.approved-date') }}</th>
+										<th>{{ trans('site.session-length') }}</th>
+										<th>{{ trans('site.set-replay') }}</th>
+									</tr>
+									</thead>
+									<tbody>
+									@foreach($coachingTimers as $coachingTimer)
+										<?php $extension = explode('.', basename($coachingTimer->file)); ?>
+										<tr>
+											<td>
+												<a href="{{ $coachingTimer->file }}" download><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
+												{{ $coachingTimer->user->id }}
 
-										@if ($coachingTimer->help_with)
-											<br>
-											<a href="#viewHelpWithModal" style="color:#eea236" class="viewHelpWithBtn"
-											   data-toggle="modal" data-details="{{ $coachingTimer->help_with }}">
-												{{ trans('site.view-help-with') }}
-											</a>
-										@endif
-									</td>
-									<td>
-										{{ $coachingTimer->approved_date ?
-                                        \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
-                                         : ''}}
-									</td>
-									<td>
-										{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($coachingTimer->plan_type) }}
-									</td>
-									<td>
-									<button class="btn btn-xs btn-primary setReplayBtn" data-toggle="modal"
-											data-target="#setReplayModal" data-action="{{ route('editor.other-service.coaching-timer.set_replay', $coachingTimer->id) }}">{{ trans('site.set-replay') }}</button>
-									</td>
-								</tr>
-							@endforeach
-							</tbody>
-						</table>
+												@if ($coachingTimer->help_with)
+													<br>
+													<a href="#viewHelpWithModal" style="color:#eea236" class="viewHelpWithBtn"
+													data-toggle="modal" data-details="{{ $coachingTimer->help_with }}">
+														{{ trans('site.view-help-with') }}
+													</a>
+												@endif
+											</td>
+											<td>
+												{{ $coachingTimer->approved_date ?
+												\App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
+												: ''}}
+											</td>
+											<td>
+												{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($coachingTimer->plan_type) }}
+											</td>
+											<td>
+											<button class="btn btn-xs btn-primary setReplayBtn" data-toggle="modal"
+													data-target="#setReplayModal" data-action="{{ route('editor.other-service.coaching-timer.set_replay', $coachingTimer->id) }}">{{ trans('site.set-replay') }}</button>
+											</td>
+										</tr>
+									@endforeach
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -381,83 +398,87 @@
 				<div class="col-sm-12">
 					<div class="panel panel-default">
 						<div class="panel-heading"><h4>{{ trans('site.my-correction') }}</h4></div>
-						<table class="table">
-							<thead>
-							<tr>
-								<th>{{ trans_choice('site.manus', 2) }}</th>
-								<th>{{ trans('site.learner-id') }}</th>
-								<th>{{ trans('site.expected-finish') }}</th>
-								<th>{{ trans('site.feedback-status') }}</th>
-							</tr>
-							</thead>
-							<tbody>
-							@foreach($corrections as $correction)
-                                <?php $extension = explode('.', basename($correction->file)); ?>
-								<tr>
-									<td>
-										<a href="{{ route('editor.other-service.download-doc', ['id' => $correction->id, 'type' => 2]) }}"><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
-										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
-											<a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
-										@elseif( end($extension) == 'docx' )
-											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
-										@endif
-									</td>
-									<td>{{ $correction->user->id }}</td>
-									<td>
-										@if ($correction->expected_finish)
-											{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($correction->expected_finish) }}
-											<br>
-										@endif
+						<div class="panel-body">
+							<div class="table-users table-responsive margin-top">
+								<table class="table dt-table">
+									<thead>
+									<tr>
+										<th>{{ trans_choice('site.manus', 2) }}</th>
+										<th>{{ trans('site.learner-id') }}</th>
+										<th>{{ trans('site.expected-finish') }}</th>
+										<th>{{ trans('site.feedback-status') }}</th>
+									</tr>
+									</thead>
+									<tbody>
+									@foreach($corrections as $correction)
+										<?php $extension = explode('.', basename($correction->file)); ?>
+										<tr>
+											<td>
+												<a href="{{ route('editor.other-service.download-doc', ['id' => $correction->id, 'type' => 2]) }}"><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
+												@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+													<a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
+												@elseif( end($extension) == 'docx' )
+													<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+												@endif
+											</td>
+											<td>{{ $correction->user->id }}</td>
+											<td>
+												@if ($correction->expected_finish)
+													{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($correction->expected_finish) }}
+													<br>
+												@endif
 
-										<!-- @if ($correction->status !== 2)
-											<a href="#setOtherServiceFinishDateModal" data-toggle="modal"
-											   class="setOtherServiceFinishDateBtn"
-											   data-action="{{ route('admin.other-service.update-expected-finish',
-										   ['id' => $correction->id, 'type' => 2]) }}"
-											   data-finish="{{ $correction->expected_finish ?
-										strftime('%Y-%m-%dT%H:%M:%S', strtotime($correction->expected_finish)) : '' }}">
-												{{ trans('site.set-date') }}
-											</a>
-										@endif -->
-									</td>
-									<td>
-									
-										<!-- show only if no feedback is given yet for this correction -->
-										@if (!$correction->feedback)
-											<a href="#addOtherServiceFeedbackModal" data-toggle="modal"
-											class="btn btn-warning btn-xs addOtherServiceFeedbackBtn" data-service="2"
-											data-action="{{ route('editor.other-service.add-feedback',
-											['id' => $correction->id, 'type' => 2]) }}">+ {{ trans('site.add-feedback') }}</a>
-										@else
-											@if( $correction->status == 2 )
-												<span class="label label-success">{{ trans('site.finished') }}</span>
-											@elseif( $correction->status == 1 )
-												<span class="label label-primary">{{ trans('site.started') }}</span>
-											@elseif( $correction->status == 0 )
-												<span class="label label-warning">{{ trans('site.not-started') }}</span>
-											@elseif( $correction->status == 3 )
-												<span class="label label-default">{{ trans('site.pending') }}</span>
-											@endif
+												<!-- @if ($correction->status !== 2)
+													<a href="#setOtherServiceFinishDateModal" data-toggle="modal"
+													class="setOtherServiceFinishDateBtn"
+													data-action="{{ route('admin.other-service.update-expected-finish',
+												['id' => $correction->id, 'type' => 2]) }}"
+													data-finish="{{ $correction->expected_finish ?
+												strftime('%Y-%m-%dT%H:%M:%S', strtotime($correction->expected_finish)) : '' }}">
+														{{ trans('site.set-date') }}
+													</a>
+												@endif -->
+											</td>
+											<td>
+											
+												<!-- show only if no feedback is given yet for this correction -->
+												@if (!$correction->feedback)
+													<a href="#addOtherServiceFeedbackModal" data-toggle="modal"
+													class="btn btn-warning btn-xs addOtherServiceFeedbackBtn" data-service="2"
+													data-action="{{ route('editor.other-service.add-feedback',
+													['id' => $correction->id, 'type' => 2]) }}">+ {{ trans('site.add-feedback') }}</a>
+												@else
+													@if( $correction->status == 2 )
+														<span class="label label-success">{{ trans('site.finished') }}</span>
+													@elseif( $correction->status == 1 )
+														<span class="label label-primary">{{ trans('site.started') }}</span>
+													@elseif( $correction->status == 0 )
+														<span class="label label-warning">{{ trans('site.not-started') }}</span>
+													@elseif( $correction->status == 3 )
+														<span class="label label-default">{{ trans('site.pending') }}</span>
+													@endif
 
-											<a href="#addOtherServiceFeedbackModal" data-toggle="modal"
-											class="btn btn-success btn-xs addOtherServiceFeedbackBtn" 
-											data-service="2"
-											data-f_id = "{{$correction->feedback->id}}"
-											data-f_created_at = "{{$correction->feedback->created_at}}"
-											data-f_updated_at = "{{$correction->feedback->updated_at}}"
-											data-f_file = "{{$correction->feedback->manuscript}}"
-											data-hours = "{{$correction->feedback->hours_worked}}"
-											data-notes_to_head_editor = "{{ $correction->feedback->notes_to_head_editor }}"
-											data-edit="1"
-											data-action="{{ route('editor.other-service.add-feedback',
-											['id' => $correction->id, 'type' => 2]) }}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+													<a href="#addOtherServiceFeedbackModal" data-toggle="modal"
+													class="btn btn-success btn-xs addOtherServiceFeedbackBtn" 
+													data-service="2"
+													data-f_id = "{{$correction->feedback->id}}"
+													data-f_created_at = "{{$correction->feedback->created_at}}"
+													data-f_updated_at = "{{$correction->feedback->updated_at}}"
+													data-f_file = "{{$correction->feedback->manuscript}}"
+													data-hours = "{{$correction->feedback->hours_worked}}"
+													data-notes_to_head_editor = "{{ $correction->feedback->notes_to_head_editor }}"
+													data-edit="1"
+													data-action="{{ route('editor.other-service.add-feedback',
+													['id' => $correction->id, 'type' => 2]) }}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
 
-										@endif
-									</td>
-								</tr>
-							@endforeach
-							</tbody>
-						</table>
+												@endif
+											</td>
+										</tr>
+									@endforeach
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -468,80 +489,84 @@
 				<div class="col-sm-12">
 					<div class="panel panel-default">
 						<div class="panel-heading"><h4>{{ trans('site.my-copy-editing') }}</h4></div>
-						<table class="table">
-							<thead>
-							<tr>
-								<th>{{ trans_choice('site.manus', 2) }}</th>
-								<th>{{ trans('site.learner-id') }}</th>
-								<th>{{ trans('site.expected-finish') }}</th>
-								<th>{{ trans('site.feedback-status') }}</th>
-							</tr>
-							</thead>
-							<tbody>
-							@foreach($copyEditings as $copyEditing)
-                                <?php $extension = explode('.', basename($copyEditing->file)); ?>
-								<tr>
-									<td>
-										<a href="{{ route('editor.other-service.download-doc', ['id' => $copyEditing->id, 'type' => 1]) }}"><i class="fa fa-download" aria-hidden="true"></i></a>
-										@if( end($extension) == 'pdf' || end($copyEditing) == 'odt' )
-											<a href="/js/ViewerJS/#../../{{ $copyEditing->file }}">{{ basename($copyEditing->file) }}</a>
-										@elseif( end($extension) == 'docx' )
-											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copyEditing->file}}">{{ basename($copyEditing->file) }}</a>
-										@endif
-									</td>
-									<td>{{ $copyEditing->user->id }}</td>
-									<td>
-										@if ($copyEditing->expected_finish)
-											{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($copyEditing->expected_finish) }}
-											<br>
-										@endif
+						<div class="panel-body">
+							<div class="table-users table-responsive margin-top">
+								<table class="table dt-table">
+									<thead>
+									<tr>
+										<th>{{ trans_choice('site.manus', 2) }}</th>
+										<th>{{ trans('site.learner-id') }}</th>
+										<th>{{ trans('site.expected-finish') }}</th>
+										<th>{{ trans('site.feedback-status') }}</th>
+									</tr>
+									</thead>
+									<tbody>
+									@foreach($copyEditings as $copyEditing)
+										<?php $extension = explode('.', basename($copyEditing->file)); ?>
+										<tr>
+											<td>
+												<a href="{{ route('editor.other-service.download-doc', ['id' => $copyEditing->id, 'type' => 1]) }}"><i class="fa fa-download" aria-hidden="true"></i></a>
+												@if( end($extension) == 'pdf' || end($copyEditing) == 'odt' )
+													<a href="/js/ViewerJS/#../../{{ $copyEditing->file }}">{{ basename($copyEditing->file) }}</a>
+												@elseif( end($extension) == 'docx' )
+													<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copyEditing->file}}">{{ basename($copyEditing->file) }}</a>
+												@endif
+											</td>
+											<td>{{ $copyEditing->user->id }}</td>
+											<td>
+												@if ($copyEditing->expected_finish)
+													{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($copyEditing->expected_finish) }}
+													<br>
+												@endif
 
-										<!-- @if ($copyEditing->status !== 2)
-											<a href="#setOtherServiceFinishDateModal" data-toggle="modal"
-											   class="setOtherServiceFinishDateBtn"
-											   data-action="{{ route('admin.other-service.update-expected-finish',
-										   ['id' => $copyEditing->id, 'type' => 2]) }}"
-											   data-finish="{{ $copyEditing->expected_finish ?
-										strftime('%Y-%m-%dT%H:%M:%S', strtotime($copyEditing->expected_finish)) : '' }}">
-												{{ trans('site.set-date') }}
-											</a>
-										@endif -->
-									</td>
-									<td>
-										<!-- show only if no feedback is given yet for this copyEditing -->
-										@if (!$copyEditing->feedback)
-											<a href="#addOtherServiceFeedbackModal" data-toggle="modal" class="btn btn-warning btn-xs addOtherServiceFeedbackBtn" data-service="1"
-											   data-action="{{ route('editor.other-service.add-feedback',
-											['id' => $copyEditing->id, 'type' => 1]) }}">+ {{ trans('site.add-feedback') }}</a>
-										@else
-											@if( $copyEditing->status == 2 )
-												<span class="label label-success">{{ trans('site.finished') }}</span>
-											@elseif( $copyEditing->status == 1 )
-												<span class="label label-primary">{{ trans('site.started') }}</span>
-											@elseif( $copyEditing->status == 0 )
-												<span class="label label-warning">{{ trans('site.not-started') }}</span>
-											@elseif( $copyEditing->status == 3 )
-												<span class="label label-default">{{ trans('site.pending') }}</span>
-											@endif
+												<!-- @if ($copyEditing->status !== 2)
+													<a href="#setOtherServiceFinishDateModal" data-toggle="modal"
+													class="setOtherServiceFinishDateBtn"
+													data-action="{{ route('admin.other-service.update-expected-finish',
+												['id' => $copyEditing->id, 'type' => 2]) }}"
+													data-finish="{{ $copyEditing->expected_finish ?
+												strftime('%Y-%m-%dT%H:%M:%S', strtotime($copyEditing->expected_finish)) : '' }}">
+														{{ trans('site.set-date') }}
+													</a>
+												@endif -->
+											</td>
+											<td>
+												<!-- show only if no feedback is given yet for this copyEditing -->
+												@if (!$copyEditing->feedback)
+													<a href="#addOtherServiceFeedbackModal" data-toggle="modal" class="btn btn-warning btn-xs addOtherServiceFeedbackBtn" data-service="1"
+													data-action="{{ route('editor.other-service.add-feedback',
+													['id' => $copyEditing->id, 'type' => 1]) }}">+ {{ trans('site.add-feedback') }}</a>
+												@else
+													@if( $copyEditing->status == 2 )
+														<span class="label label-success">{{ trans('site.finished') }}</span>
+													@elseif( $copyEditing->status == 1 )
+														<span class="label label-primary">{{ trans('site.started') }}</span>
+													@elseif( $copyEditing->status == 0 )
+														<span class="label label-warning">{{ trans('site.not-started') }}</span>
+													@elseif( $copyEditing->status == 3 )
+														<span class="label label-default">{{ trans('site.pending') }}</span>
+													@endif
 
-											<a href="#addOtherServiceFeedbackModal" data-toggle="modal" class="btn btn-success btn-xs addOtherServiceFeedbackBtn" 
-											data-f_id = "{{$copyEditing->feedback->id}}"
-											data-f_created_at = "{{$copyEditing->feedback->created_at}}"
-											data-f_updated_at = "{{$copyEditing->feedback->updated_at}}"
-											data-f_file = "{{$copyEditing->feedback->manuscript}}"
-											data-hours = "{{$copyEditing->feedback->hours_worked}}"
-											data-notes_to_head_editor = "{{ $copyEditing->feedback->notes_to_head_editor }}"
-											data-service="1"
-											data-edit="1"
-											data-action="{{ route('editor.other-service.add-feedback',
-											['id' => $copyEditing->id, 'type' => 1]) }}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+													<a href="#addOtherServiceFeedbackModal" data-toggle="modal" class="btn btn-success btn-xs addOtherServiceFeedbackBtn" 
+													data-f_id = "{{$copyEditing->feedback->id}}"
+													data-f_created_at = "{{$copyEditing->feedback->created_at}}"
+													data-f_updated_at = "{{$copyEditing->feedback->updated_at}}"
+													data-f_file = "{{$copyEditing->feedback->manuscript}}"
+													data-hours = "{{$copyEditing->feedback->hours_worked}}"
+													data-notes_to_head_editor = "{{ $copyEditing->feedback->notes_to_head_editor }}"
+													data-service="1"
+													data-edit="1"
+													data-action="{{ route('editor.other-service.add-feedback',
+													['id' => $copyEditing->id, 'type' => 1]) }}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
 
-										@endif
-									</td>
-								</tr>
-							@endforeach
-							</tbody>
-						</table>
+												@endif
+											</td>
+										</tr>
+									@endforeach
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
