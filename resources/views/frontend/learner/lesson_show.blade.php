@@ -19,6 +19,14 @@
 			display: inline-block;
 			color: #fff;
 		}
+
+        .wistia_responsive_padding {
+            padding: 0 !important;
+        }
+
+        .wistia_responsive_wrapper {
+            position: inherit !important;
+        }
 	</style>
 @stop
 
