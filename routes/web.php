@@ -1,20 +1,19 @@
 <?php
 
 // Domains
-
-/*$front = 'forfatterskolen.local';
-$admin = 'admin.forfatterskolen.local';
-$editor = 'editor.forfatterskolen.local';
-*/
-
-$front = 'forfatterskolen.local';
-$admin = 'admin.forfatterskolen.local';
-$editor = 'editor.forfatterskolen.local';
-
-/*$front = 'forfatterskolen.local';
-$admin = 'admin.forfatterskolen.local';
-$editor = 'editor.forfatterskolen.local';*/
-
+if(config('app.app_site') == 'no'){
+    $front = 'www.forfatterskolen.no';
+    $admin = 'admin.forfatterskolen.no';
+    $editor = 'editor.forfatterskolen.no';
+}elseif(config('app.app_site') == 'localhost'){
+    $front = 'forfatterskolen.local';
+    $admin = 'admin.forfatterskolen.local';
+    $editor = 'editor.forfatterskolen.local';
+}elseif(config('app.app_site') == 'dev.no'){
+    $front = 'dev.forfatterskolen.no';
+    $admin = 'admin.dev.forfatterskolen.no';
+    $editor = 'editor.dev.forfatterskolen.no';
+}
 
 // get/set the locale
 $locale = App::getLocale();
