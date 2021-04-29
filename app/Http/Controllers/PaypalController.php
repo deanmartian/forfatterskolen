@@ -9,6 +9,7 @@ use App\Paypal;
 use App\PayPalIPN;
 use App\Repositories\IPNRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use PayPal\IPN\Event\IPNInvalid;
 use PayPal\IPN\Event\IPNVerificationFailure;
 use PayPal\IPN\Event\IPNVerified;
@@ -21,6 +22,7 @@ use PayPal\IPN\Listener\Http\ArrayListener;
 class PaypalController extends Controller
 {
 
+    protected $repository;
     /**
      * @param IPNRepository $repository
      */
@@ -123,19 +125,23 @@ class PaypalController extends Controller
             $listener->useSandbox();
         }
 
+        Log::info("inside webhook");
         $listener->setData($request->all());
 
         $listener = $listener->run();
 
         $listener->onInvalid(function (IPNInvalid $event) use ($invoice_id) {
+            Log::info("inside invalid");
             $this->repository->handle($event, PayPalIPN::IPN_INVALID, $invoice_id);
         });
 
         $listener->onVerified(function (IPNVerified $event) use ($invoice_id) {
+            Log::info("inside verified");
             $this->repository->handle($event, PayPalIPN::IPN_VERIFIED, $invoice_id);
         });
 
         $listener->onVerificationFailure(function (IPNVerificationFailure $event) use ($invoice_id) {
+            Log::info("inside failure");
             $this->repository->handle($event, PayPalIPN::IPN_FAILURE, $invoice_id);
         });
 

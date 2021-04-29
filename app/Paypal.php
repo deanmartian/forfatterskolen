@@ -3,6 +3,7 @@
 namespace App;
 
 use Omnipay\Omnipay;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class PayPal
@@ -31,6 +32,7 @@ class Paypal
      */
     public function purchase(array $parameters)
     {
+        Log::info("purchase");
         $response = $this->gateway()
             ->purchase($parameters)
             ->send();
@@ -80,7 +82,8 @@ class Paypal
     public function getNotifyUrl($invoice_id)
     {
         $env = /*config('paypal.credentials.sandbox') ? "sandbox" :*/ "live";
-
+        Log::info("inside get notifiy url");
+        Log::info(route('webhook.paypal.ipn', [$invoice_id, $env]));
         return route('webhook.paypal.ipn', [$invoice_id, $env]);
     }
 }

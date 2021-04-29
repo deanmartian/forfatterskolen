@@ -10,6 +10,7 @@ use App\Mail\SubjectBodyEmail;
 use App\Settings;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class VippsRepository extends BaseRepository {
 
@@ -47,6 +48,7 @@ class VippsRepository extends BaseRepository {
      */
     public function initiatePayment($token_access, $data)
     {
+        Log::info("VIPPS inside initiate payment");
         $url = '/ecomm/v2/payments';
         $method = "POST";
         $header = array();
@@ -134,7 +136,7 @@ class VippsRepository extends BaseRepository {
     public function capturePayment($orderId)
     {
         $get_token = $this->getAccessToken();
-
+        Log::info("VIPPS inside capture payment");
         if ($get_token instanceof ApiException) {
             return ApiResponse::error($get_token->getMessage(), $get_token->getData(), $get_token->getCode());
         }
@@ -166,7 +168,7 @@ class VippsRepository extends BaseRepository {
 
             return new ApiException($response['data']->message, null, $response['http_code']);
         }
-
+        Log::info("VIPPS inside capture payment after IF");
         $data = $response['data'];
         $invoice = Invoice::where('invoice_number',$orderId)->first();
         $transactionInfo = $response['data']->transactionInfo;
@@ -181,9 +183,10 @@ class VippsRepository extends BaseRepository {
         $emailData['from_name'] = NULL;
         $emailData['from_email'] = NULL;
         $emailData['attach_file'] = NULL;
-
+        Log::info("VIPPS inside capture payment before if captured");
         // notify admin once the payment is captured
         if ($transactionInfo->status == 'Captured') {
+            Log::info("VIPPS inside capture payment inside captured");
             // mark the invoice as paid
             $invoice->fiken_is_paid = 1;
             $invoice->save();

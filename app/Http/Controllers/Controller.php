@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\EmailTemplate;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
+use App\Log;
 use App\Repositories\VippsRepository;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
@@ -38,6 +39,7 @@ class Controller extends BaseController
         }
 
         if (isset($data['is_ajax'])) {
+            \Illuminate\Support\Facades\Log::info("VIPPS inside is ajax");
             return $initiatePaymentResult['data']->url;
         }
 
