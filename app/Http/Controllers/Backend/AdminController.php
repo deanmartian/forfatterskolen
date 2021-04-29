@@ -24,6 +24,7 @@ use Maatwebsite\Excel\Excel;
 use App\EditorAssignmentPrices;
 use App\ManuscriptEditorCanTake;
 use App\AssignmentManuscriptEditorCanTake;
+use App\ShopManuscriptsTaken;
 
 class AdminController extends Controller
 {
@@ -269,13 +270,19 @@ class AdminController extends Controller
             })->with('user')
             ->where(function($query){
                 $query->where('editor_id', 0)
-                    ->orWhere('manuscript_status', 'unfinished');
+                ->orWhere('status', 0);
             })
             ->latest()
             ->get();
+        
+        $unfinishedShopManuscripts = ShopManuscriptsTaken::whereHas('admin')
+        ->whereDoesntHave('feedbacks', function($query){
+            $query->where('approved', 1);
+        })
+        ->latest()->get();
 
         return view('backend.yearly-calendar', compact('editor', 'assignmentManuscriptEditorCanTake',
-            'unfinishedAssignments'));
+            'unfinishedAssignments', 'unfinishedShopManuscripts'));
     }
 
     public function fikenRedirect( Request $request )

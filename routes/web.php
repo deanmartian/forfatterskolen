@@ -906,7 +906,6 @@ Route::group([
             ],
         ]);
 
-        Route::post('update_assignment_manuscript_status/{manu_id}', 'AssignmentController@updateAssignmentManuscriptStatus')->name('admin.update_assignment_manuscript_status');
         Route::post('assignment/{id}/uploadManuscript', 'AssignmentController@uploadManuscript')->name('assignment.group.upload_manuscript');
         Route::post('assignment/{id}/add-on-for-learner', 'AssignmentController@addOnForLearner')->name('assignment.add-on-for-learner');
         Route::post('assignment_manuscript/{id}/delete', 'AssignmentController@deleteManuscript')->name('assignment.group.delete_manuscript');
