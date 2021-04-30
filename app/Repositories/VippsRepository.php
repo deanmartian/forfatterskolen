@@ -187,6 +187,7 @@ class VippsRepository extends BaseRepository {
         // notify admin once the payment is captured
         if ($transactionInfo->status == 'Captured') {
             Log::info("VIPPS inside capture payment inside captured");
+            Log::info(json_encode($emailData));
             // mark the invoice as paid
             $invoice->fiken_is_paid = 1;
             $invoice->save();
