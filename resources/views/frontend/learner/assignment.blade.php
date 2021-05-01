@@ -182,7 +182,7 @@
                                     ?>
 									@if($noGroupWithFeedback->count() > 0)
 										@foreach( $noGroupWithFeedback as $feedback )
-											@if( $feedback->is_active && (!$feedback->availability ||  date('Y-m-d') >= $feedback->availability) )
+											@if( $feedback->is_active && (!$feedback->availability ||  date('Y-m-d') >= $feedback->availability) && $feedback->manuscript->status)
 												<div class="mb-4">
 													<?php
 													$files = explode(',',$feedback->filename);
