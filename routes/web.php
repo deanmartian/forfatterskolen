@@ -1422,6 +1422,7 @@ Route::group([
         Route::get('deleteEditorHidden/{id}', 'EditorController@deleteEditorHidden')->name('admin.delete-editor-hidden');
         Route::post('setHowManyManuscriptYouCanTake/{id}', 'EditorController@setHowManyManuscriptYouCanTake')->name('admin.setHowManyManuscriptYouCanTake');
         Route::post('sendRequestToEditor/{id}', 'LearnerController@sendRequestToEditor')->name('admin.send-request-to-editor');
+        Route::post('headEditorToEditor/{editor_id}/{type}/{title}/{learner}', 'HeadEditorController@sendEmail')->name('admin.head-editor-to-editor');
         
     });
 

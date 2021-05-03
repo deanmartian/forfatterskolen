@@ -59,7 +59,18 @@
                                     <td>
                                         {{ $assignedManuscript->expected_finish }}
                                     </td>
-                                    <td>{{ $assignedManuscript->editor->full_name}}</td>
+                                    <td>
+										{{ $assignedManuscript->editor->full_name}}
+										<button class="btn btn-info btn-xs send-email"
+										data-toggle="modal"
+										data-target="#sendEmail"
+										data-action="{{ route('admin.head-editor-to-editor', 
+															['type' => 'assignment',
+															'title' => basename($assignedManuscript->filename),
+															'learner' => $assignedManuscript->user->id,
+															'editor_id' => $assignedManuscript->editor->id]) }}"
+										><i class="fa fa-paper-plane" aria-hidden="true"></i>&nbsp;{{ trans('site.send-email') }}</button>
+									</td>
                                     <td>
 									@if($assignedManuscript->noGroupFeedbacks->first())
 										<!-- <button class="btn btn-success btn-xs">
@@ -138,7 +149,18 @@
 										</td>
 										<td>{{ $shopManuscript->user->full_name }}</td>
 										<td>{{ $shopManuscript->expected_finish }}</td>
-                                        <td>{{ $shopManuscript->admin->full_name }}</td>
+                                        <td>
+										{{ $shopManuscript->admin->full_name }}
+										<button class="btn btn-info btn-xs send-email"
+										data-toggle="modal"
+										data-target="#sendEmail"
+										data-action="{{ route('admin.head-editor-to-editor', 
+															['type' => 'shop-manuscript',
+															'title' => $shopManuscript->shop_manuscript->title,
+															'learner' => $shopManuscript->user->id,
+															'editor_id' => $shopManuscript->admin->id]) }}"
+										><i class="fa fa-paper-plane" aria-hidden="true"></i>&nbsp;{{ trans('site.send-email') }}</button>
+										</td>
                                         <td>
 											<?php
 
@@ -209,7 +231,21 @@
 									</td>
 									<td>{{ $assignedAssignment->user->full_name }}</td>
 									<td>{{$assignedAssignment->expected_finish}}</td>
-									<td>{{$assignedAssignment->editor->full_name}}</td>
+									<td>
+										{{$assignedAssignment->editor->full_name}}
+										<?php 
+											$title = $assignedAssignment->assignment->course?$assignedAssignment->assignment->course->title:$assignedAssignment->assignment->title;
+										?>
+										<button class="btn btn-info btn-xs send-email"
+										data-toggle="modal"
+										data-target="#sendEmail"
+										data-action="{{ route('admin.head-editor-to-editor', 
+															['type' => 'assignment-group',
+															'title' => $title,
+															'learner' => $assignedAssignment->user->id,
+															'editor_id' => $assignedAssignment->editor->id]) }}"
+										><i class="fa fa-paper-plane" aria-hidden="true"></i>&nbsp;{{ trans('site.send-email') }}</button>
+									</td>
 									<?php 
 										// echo $assignedAssignment->user_id.' '.
 										$groupDetails = DB::SELECT("SELECT A.id as assignment_group_id, B.id AS assignment_group_learner_id FROM assignment_groups A JOIN assignment_group_learners B ON A.id = B.assignment_group_id AND B.user_id = $assignedAssignment->user_id WHERE A.assignment_id = $assignedAssignment->assignment_id");
@@ -347,7 +383,18 @@
 											<br>
 										@endif
 									</td>
-									<td>{{ $correction->editor->full_name }}</td>
+									<td>
+									{{ $correction->editor->full_name }}
+									<button class="btn btn-info btn-xs send-email"
+										data-toggle="modal"
+										data-target="#sendEmail"
+										data-action="{{ route('admin.head-editor-to-editor', 
+															['type' => 'correction',
+															'title' => basename($correction->file),
+															'learner' => $correction->user->id,
+															'editor_id' => $correction->editor->id]) }}"
+									><i class="fa fa-paper-plane" aria-hidden="true"></i>&nbsp;{{ trans('site.send-email') }}</button>
+									</td>
 									<td>
 										<a href="#approveOtherServiceFeedbackModal" data-toggle="modal"
 											class="btn btn-success btn-xs approveOtherServiceFeedbackBtn " 
@@ -435,7 +482,18 @@
 											</a>
 										@endif -->
 									</td>
-									<td>{{ $copyEditing->editor->full_name }}</td>
+									<td>
+									{{ $copyEditing->editor->full_name }}
+									<button class="btn btn-info btn-xs send-email"
+									data-toggle="modal"
+									data-target="#sendEmail"
+									data-action="{{ route('admin.head-editor-to-editor', 
+															['type' => 'correction',
+															'title' => basename($copyEditing->file),
+															'learner' => $copyEditing->user->id,
+															'editor_id' => $copyEditing->editor->id]) }}"
+									><i class="fa fa-paper-plane" aria-hidden="true"></i>&nbsp;{{ trans('site.send-email') }}</button>
+									</td>
 									<td>
 										<a href="#approveOtherServiceFeedbackModal" data-toggle="modal"
 											class="btn btn-success btn-xs approveOtherServiceFeedbackBtn" 
@@ -719,6 +777,47 @@
 	</div>
 </div>
 
+<div id="sendEmail" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.send-email') }}</h4>
+			</div>
+			<div class="modal-body">
+
+				<form method="POST" action="">
+					<?php
+						$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Head Editor To Editor');
+					?>
+					{{ csrf_field() }}
+					<div class="margin-top">
+						<div class="form-group">
+							<label>{{ trans('site.subject') }}</label>
+							<input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}"
+								required>
+						</div>
+						<div class="form-group">
+							<label>{{ trans('site.from') }}</label>
+							<input type="text" class="form-control" name="from_email"
+									value="{{ $emailTemplate->from_email }}" required>
+						</div>
+						<div class="form-group">
+							<label>{{ trans('site.message') }}</label>
+							<textarea class="form-control tinymce" name="message" rows="6"
+									required>{!! $emailTemplate->email_content !!}</textarea>
+						</div>
+						<br>
+						<hr>
+						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -806,6 +905,18 @@
 		var notes = $(this).data('notes');
 		let modal = $('#notesModal');
 		modal.find('[name=notes]').text(notes);
+
+	});
+	$('.send-email').click(function(){
+
+		var type = $(this).data('type');
+		var assignmentTitle = $(this).data('assignmentTitle');
+		var learner = $(this).data('leaner');
+		var action = $(this).data('action');
+
+		let modal = $('#sendEmail');
+
+		modal.find('form').attr('action', action);
 
 	});
     function disableSubmit(t) {
