@@ -31,7 +31,7 @@
 						</div>
 						<div class="panel-body">
 							<div class="table-users table-responsive margin-top">
-								<table class="table dt-table">
+								<table class="table dt-table" id="myAssignedShopManuTable">
 									<thead>
 									<tr>
 										<th>{{ trans_choice('site.manuscripts', 1) }}</th>
@@ -120,7 +120,7 @@
 						<div class="panel-heading"><h4>{{ trans_choice('site.shop-manuscripts', 2) }}</h4></div>
 						<div class="panel-body">
 							<div class="table-users table-responsive margin-top">
-								<table class="table dt-table">
+								<table class="table dt-table" id="shopManuTable">
 									<thead>
 									<tr>
 										<th>{{ trans_choice('site.manuscripts', 1) }}</th>
@@ -237,7 +237,7 @@
 						<div class="panel-heading"><h4>{{ trans('site.my-assignments') }}</h4></div>
 						<div class="panel-body">
 							<div class="table-users table-responsive margin-top">
-								<table class="table dt-table">
+								<table class="table dt-table" id="myAssignmentTable">
 						
 									<thead>
 									<tr>
@@ -345,7 +345,7 @@
 						<div class="panel-heading"><h4>{{ trans('site.my-coaching-timer') }}</h4></div>
 						<div class="panel-body">
 							<div class="table-users table-responsive margin-top">
-								<table class="table dt-table">
+								<table class="table dt-table" id="coachingTable">
 									<thead>
 									<tr>
 										<th>{{ trans('site.learner-id') }}</th>
@@ -400,7 +400,7 @@
 						<div class="panel-heading"><h4>{{ trans('site.my-correction') }}</h4></div>
 						<div class="panel-body">
 							<div class="table-users table-responsive margin-top">
-								<table class="table dt-table">
+								<table class="table dt-table" id="correctionTable">
 									<thead>
 									<tr>
 										<th>{{ trans_choice('site.manus', 2) }}</th>
@@ -491,7 +491,7 @@
 						<div class="panel-heading"><h4>{{ trans('site.my-copy-editing') }}</h4></div>
 						<div class="panel-body">
 							<div class="table-users table-responsive margin-top">
-								<table class="table dt-table">
+								<table class="table dt-table" id="copyEditingTable">
 									<thead>
 									<tr>
 										<th>{{ trans_choice('site.manus', 2) }}</th>
@@ -1141,8 +1141,9 @@
 		modal.find('form').attr('action', action);
 	});
 
-    $('.submitFeedbackBtn').click(function(){
-        var modal = $('#submitFeedbackModal');
+	$('#myAssignmentTable').on('click','.submitFeedbackBtn',function (){
+		
+		var modal = $('#submitFeedbackModal');
         var name = $(this).data('name');
         var action = $(this).data('action');
         var manuscript_id = $(this).data('manuscript_id');
@@ -1191,10 +1192,9 @@
 			modal.find('[name=manuscriptLabel]').hide();
 			modal.find('#replaceAdd').show();
         }
-
     });
 
-    $(".addShopManuscriptFeedback").click(function(){
+	$('#shopManuTable').on('click','.addShopManuscriptFeedback',function (){
         var modal = $('#addFeedbackModal');
         var action = $(this).data('action');
 		var is_edit = $(this).data('edit');
@@ -1297,7 +1297,57 @@
         modal.find('form').find('[name=expected_finish]').val(finish);
     });
 
-    $(".addOtherServiceFeedbackBtn").click(function(){
+	$('#correctionTable').on('click','.addOtherServiceFeedbackBtn',function (){
+        let action = $(this).data('action');
+        let modal = $('#addOtherServiceFeedbackModal');
+        let service = $(this).data('service');
+        let title = 'Korrektur';
+		let is_edit = $(this).data('edit');
+
+        if (service === 1) {
+            title = 'Språkvask';
+        }
+        modal.find('form').attr('action', action);
+        modal.find('.modal-title').find('span').text(title);
+
+		$('#addOtherServiceFeedbackForm').trigger('reset');
+		modal.find('#feedbackFileAppend').html('');
+		modal.find('.modal-title').text("Feedback");
+		modal.find('#dates').html('');
+		modal.find('form').find('input[type=file]').attr('required');
+		modal.find('[name=feedback_id]').val('')
+		modal.find('[name=manuscriptLabel]').show();
+		modal.find('#replaceAdd').hide();
+
+        if (is_edit) {
+			let feedbackFileName = $(this).data('f_file');
+			let createdAt = $(this).data('f_created_at');
+			let updatedAt = $(this).data('f_updated_at');
+			let feedbackId = $(this).data('f_id');
+			let hours = $(this).data('hours');
+			let notes_to_head_editor = $(this).data('notes_to_head_editor');
+
+            modal.find('form').find('input[type=file]').removeAttr('required');
+			modal.find('.modal-title').text("Edit Feedback");
+			modal.find('[name=feedback_id]').val(feedbackId)
+			modal.find('[name=hours_worked]').val(hours)
+			modal.find('[name=notes_to_head_editor]').val(notes_to_head_editor)
+			
+			modal.find('#dates').append('<label>Created At</label>&nbsp;'+createdAt);
+			modal.find('#dates').append('<br><label>Last Updated At</label>&nbsp;'+updatedAt+'<br><br>');
+
+			var feedbackArray = feedbackFileName.split(",");
+			modal.find('#feedbackFileAppend').append('<label>Manuscript</label><br>')
+            feedbackArray.forEach(function (item, index){
+                modal.find('#feedbackFileAppend').append('<a href="'+ item +'" name="feedback_filename" class="" download>'+ item +'</a><br>')
+            })
+			modal.find('#feedbackFileAppend').append('<br>');
+			modal.find('[name=manuscriptLabel]').hide();
+			modal.find('#replaceAdd').show();
+        }
+    });
+	
+	$('#copyEditingTable').on('click','.addOtherServiceFeedbackBtn',function (){
         let action = $(this).data('action');
         let modal = $('#addOtherServiceFeedbackModal');
         let service = $(this).data('service');
@@ -1353,7 +1403,7 @@
         modal.find('form').attr('action', action);
 	});
 
-    $(".viewHelpWithBtn").click(function(){
+	$('#coachingTable').on('click','.viewHelpWithBtn',function (){
        let details = $(this).data('details');
        let modal = $("#viewHelpWithModal");
 
@@ -1409,7 +1459,7 @@
         modal.find('form').attr('action', action);
     });
 
-    $('.submitPersonalAssignmentFeedbackBtn').click(function(){
+	$('#myAssignedShopManuTable').on('click','.submitPersonalAssignmentFeedbackBtn',function (){
         let modal = $('#submitPersonalAssignmentFeedbackModal');
         let name = $(this).data('name');
         let action = $(this).data('action');
@@ -1460,7 +1510,7 @@
         }
     });
 
-	$(".setReplayBtn").click(function(){
+	$('#coachingTable').on('click','.setReplayBtn',function (){
         let action = $(this).data('action');
         let modal = $('#setReplayModal');
         modal.find('form').attr('action', action);
