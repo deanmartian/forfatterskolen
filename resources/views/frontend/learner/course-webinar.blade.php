@@ -66,7 +66,7 @@
                         ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
                         ->join('courses', 'packages.course_id', '=', 'courses.id')
                         ->join('webinars', 'courses.id', '=', 'webinars.course_id')
-                        ->select('webinars.*','courses_taken.id as courses_taken_id','courses.title as course_title')
+                        ->select('webinars.*','courses_taken.id as courses_taken_id','courses.title as course_title', 'courses_taken.deleted_at')
                         ->where('user_id',Auth::user()->id)
                         ->where('courses.id','!=',17) // just added this line to show all other courses webinar except webinar pakke
                         ->where(function($query){
@@ -74,6 +74,7 @@
                             $query->orWhere('set_as_replay',1);
                         })
                         //->whereIn('webinars.id',[24, 25, 31]) // remove this to return the original
+                        ->whereNull('courses_taken.deleted_at')
                         ->orderBy('courses.type', 'ASC')
                         ->orderBy('webinars.start_date', 'ASC')
                         ->get();
@@ -82,11 +83,12 @@
                         ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
                         ->join('courses', 'packages.course_id', '=', 'courses.id')
                         ->join('webinars', 'courses.id', '=', 'webinars.course_id')
-                        ->select('webinars.*','courses_taken.id as courses_taken_id','courses.title as course_title')
+                        ->select('webinars.*','courses_taken.id as courses_taken_id','courses.title as course_title', 'courses_taken.deleted_at')
                         ->where('user_id',Auth::user()->id)
                         ->where('courses.id','!=',17) // just added this line to show all other courses webinar except webinar pakke
                         ->whereNotIn('webinars.id',[24, 25, 31])
                         ->where('set_as_replay',0)
+                        ->whereNull('courses_taken.deleted_at')
                         ->orderBy('courses.type', 'ASC')
                         ->orderBy('webinars.start_date', 'ASC')
                         ->get();
