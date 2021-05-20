@@ -439,6 +439,7 @@ class ShopController extends Controller
             'attach_file' => NULL
         ];
         \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        \Mail::to("post@forfatterskolen.no")->queue(new SubjectBodyEmail($emailData));
         /*AdminHelpers::send_email('New Course Order',
             'post@forfatterskolen.no', 'support@forfatterskolen.no', Auth::user()->first_name . ' has ordered the course ' . $package->course->title);*/
 
