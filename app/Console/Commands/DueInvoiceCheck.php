@@ -52,7 +52,10 @@ class DueInvoiceCheck extends Command
             ->get();*/
 
         $invoices   = \DB::table('invoices')
-            ->select('invoices.*', 'vipps_phone_number')
+            ->select('invoices.*', 'vipps_phone_number',
+                \DB::raw('SUM(transactions.amount) as transaction_amount'), 'users.first_name as user_first_name',
+                'users.email as user_email')
+            ->leftJoin('transactions', 'invoices.id', '=', 'transactions.invoice_id')
             ->leftJoin('users', 'users.id', '=', 'invoices.user_id')
             ->leftJoin('addresses', 'addresses.user_id', '=', 'users.id')
             ->whereDate('fiken_dueDate',  $dueTomorrow)
@@ -66,14 +69,14 @@ class DueInvoiceCheck extends Command
 
         foreach ($invoices as $invoice) {
             $balance            = $invoice->fiken_balance;
-            $transactions_sum   = $invoice->transactions->sum('amount');
+            $transactions_sum   = $invoice->transaction_amount;//$invoice->transactions->sum('amount');
             $remaining          = $balance - $transactions_sum;
-            $user               = $invoice->user;
+            //$user               = $invoice->user;
 
-            $to = $invoice->user->email;
+            $to = $invoice->user_email;//$invoice->user->email;
             $redirectLink = route('learner.invoice', ['filter' => $invoice->id]);
 
-            $emailContent = AdminHelpers::formatEmailContent($email_template->email_content, $to, $user->first_name, $redirectLink);
+            $emailContent = AdminHelpers::formatEmailContent($email_template->email_content, $to, $invoice->user_first_name, $redirectLink);
             $emailContent = str_replace([
                 ':price',
                 ':kid_number'
