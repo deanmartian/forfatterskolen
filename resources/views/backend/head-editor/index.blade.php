@@ -92,6 +92,7 @@
 										@foreach($files as $file)
 											<a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
 										@endforeach
+										{{ $assignedManuscript->noGroupFeedbacks->first()->created_at }}
 										
 									@endif
                                     </td>
@@ -182,6 +183,7 @@
 											@foreach($files as $file)
 												<a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
 											@endforeach
+											{{ $shopManuscript->feedbacks->first()->created_at }}
                                         </td>
 										<td><span class="label label-default">{{ trans('site.pending') }}</span></td>
 										<td>
@@ -407,6 +409,7 @@
 											@foreach($files as $file)
 												<a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
 											@endforeach
+											{{ $correction->feedback->created_at }}
 									</td>
 									<td>
 										@if( $correction->status == 2 )
@@ -505,6 +508,8 @@
 										@foreach($files as $file)
 											<a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
 										@endforeach
+
+										{{ $copyEditing->feedback->created_at }}
 									</td>
 									<td>
 										@if( $copyEditing->status == 2 )
