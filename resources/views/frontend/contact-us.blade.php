@@ -112,10 +112,10 @@
                                         <i class="fa fa-envelope"></i>
                                         <a href="mailto:post@forfatterskolen.no" class="theme-text">post@forfatterskolen.no</a>
                                     </p>
-                                    <p>
+                                    {{--<p>
                                         <i class="sprite telephone"></i>
                                         <span>+47 411 23 555</span>
-                                    </p>
+                                    </p>--}}
                                     <p>
                                         <a href="https://twitter.com/Forfatterrektor" target="_blank" class="ml-0">
                                             <i class="sprite-social twitter"></i>

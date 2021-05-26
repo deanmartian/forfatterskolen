@@ -31,10 +31,10 @@
                     <span class="font-montserrat-light">post@forfatterskolen.no</span>
                 </p>
 
-                <p>
+                {{--<p>
                     <i class="icons telephone"></i><span class="font-montserrat-semibold text-uppercase">Kontakt Telefon:</span>
                     <span class="font-montserrat-light">+47 411 23 555</span>
-                </p>
+                </p>--}}
 
                 <p>
                     <a href="https://twitter.com/Forfatterrektor" target="_blank" class="ml-0 mr-3"
