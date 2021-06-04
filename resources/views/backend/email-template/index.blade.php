@@ -11,7 +11,7 @@
     </div>
 
     <div class="col-md-12 margin-top">
-        <button class="btn btn-success addTemplateBtn" data-toggle="modal" data-target="#templateModal"
+        <button class="btn btn-success addTemplateBtn" data-toggle="modal" data-target="#templateModal" data-courses = "{{ json_encode($courses) }}"
                 data-action="{{ route('admin.manuscript.add_email_template') }}">
             Add Template
         </button>
@@ -40,6 +40,7 @@
                                         data-target="#templateModal"
                                         data-action="{{ route('admin.manuscript.edit_email_template', $template->id) }}"
                                         data-fields="{{ json_encode($template) }}"
+                                        data-courses = "{{ json_encode($courses) }}"
                                 >
                                     <i class="fa fa-edit"></i>
                                 </button>
@@ -67,6 +68,21 @@
                                 Identifier
                             </label>
                             <input type="text" name="page_name" class="form-control">
+                        </div>
+
+                        <div class="form-group" id="is_course_for_sale_div">
+                            <input type="checkbox" name="is_course_for_sale" id="is_course_for_sale"> {{ trans('site.course-for-sale') }}</input>
+                        </div>
+
+                        <div class="form-group" id="courses">
+
+                            <label>Course</label>
+                            <select class="form-control select2" id="course-drpdwn" name="course_id">
+                            </select>
+                            <br>
+                            <div id="group-course-multi-invioce-email-div"> <!-- if group, show this option -->
+                                <input type="checkbox" name="group-course-multi-invioce-email" id="group-course-multi-invioce-email"> {{ trans('site.group-course-multi-invioce-email') }}</input>
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -101,6 +117,7 @@
 
 @section('scripts')
     <script type="text/javascript">
+        $('#courses').hide()
         $(".addTemplateBtn").click(function() {
             let action = $(this).data('action');
             let modal = $('#templateModal');
@@ -110,6 +127,16 @@
             modal.find('[name=page_name]').attr('disabled', false);
             modal.find('.form-control').val('');
             tinyMCE.activeEditor.setContent('');
+
+            let courses = $(this).data('courses');
+
+            $('#course-drpdwn').append('<option>-- select course --</option>');
+            courses.forEach(function (item, index){
+                $('#course-drpdwn').append('<option data-type=' + item.type + ' value=' + item.id + '>' + item.title + '</option>');
+            })
+
+            $('#is_course_for_sale').prop('checked', false)
+            $('#is_course_for_sale_div').show()
         });
 
         $(".editTemplateBtn").click(function() {
@@ -124,6 +151,49 @@
             modal.find('[name=from_email]').val(fields.from_email);
             modal.find('[name=subject]').val(fields.subject);
             tinyMCE.activeEditor.setContent(fields.email_content);
+
+            $('#is_course_for_sale').prop('checked', false)
+            $('#is_course_for_sale_div').hide()
+            $('#courses').hide()
         });
+
+        $('#is_course_for_sale').change(function() {
+            if(this.checked) {
+                $('#courses').show()
+                $('#course_id').prop('required', true)
+                $('[name=page_name]').prop('readonly', true)
+            }else{
+                $('#courses').hide()
+                $('#course_id').prop('required', false)
+                $('[name=page_name]').prop('readonly', false)
+
+                let modal = $('#templateModal');
+                modal.find('[name=page_name]').val('')
+            }
+        });
+
+        $('#course-drpdwn').change(function(){
+            let modal = $('#templateModal');
+            let type = null;
+            if($('[name=course_id] option:selected').data('type') == 'Group'){
+                $('#group-course-multi-invioce-email-div').show()
+                type = ':GROUP'
+            }else{
+                $('#group-course-multi-invioce-email').prop('checked', false)
+                $('#group-course-multi-invioce-email-div').hide()
+                type = ':SINGLE'
+            }
+            modal.find('[name=page_name]').val('COURSE-FOR-SALE:' + $('[name=course_id] option:selected').text() + type)
+        });
+
+        $('#group-course-multi-invioce-email').change(function(){
+            let modal = $('#templateModal');
+            if(this.checked){
+                modal.find('[name=page_name]').val('COURSE-FOR-SALE:' + $('[name=course_id] option:selected').text() + ':GROUP-MULTI-INVOICE')
+            }else{
+                modal.find('[name=page_name]').val('COURSE-FOR-SALE:' + $('[name=course_id] option:selected').text() + ':GROUP')
+            }
+        });
+
     </script>
 @stop

@@ -98,4 +98,16 @@ class SaleController extends Controller {
         ]);
     }
 
+    public function moveToArchive($id)
+    {
+        $courseTaken = $this->service->courseTaken($id);
+        $courseTaken->is_welcome_email_sent = 1;
+        $courseTaken->save();
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Successfuly moved to archive.'),
+            'alert_type' => 'success'
+        ]);
+    }
+
 }

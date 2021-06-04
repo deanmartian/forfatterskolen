@@ -67,14 +67,20 @@
                                                 </td>
                                                 <td>
                                                     <?php
-                                                        $emailTemplate = $singleCourseEmail;
+                                                    // select the template for course, if not template for course use the general.
+                                                        $emailTemplate = \App\EmailTemplate::where('course_id', $newCourseTaken->package->course->id)->get();
+
+                                                        $emailTemplate = $emailTemplate->where('course_type', 'SINGLE')->first()?$emailTemplate->where('course_type', 'SINGLE')->first():$singleCourseEmail;
 
                                                         if ($newCourseTaken->package->course->type === 'Group') {
-                                                            $emailTemplate = $groupCourseEmail;
-
-                                                            if ($newCourseTaken->order->paymentPlan->division > 1) {
-                                                                $emailTemplate = $groupCourseMultiInvoiceEmail;
+                                                            $emailTemplate = $emailTemplate->where('course_type', 'GROUP')->first()?$emailTemplate->where('course_type', 'GROUP')->first():$groupCourseEmail;
+                                                            
+                                                            if($newCourseTaken->order){
+                                                                if ($newCourseTaken->order->paymentPlan->division > 1) {
+                                                                    $emailTemplate = $emailTemplate->where('course_type', 'GROUP-MULTI-INVOICE')->first()?$emailTemplate->where('course_type', 'GROUP-MULTI-INVOICE')->first():$groupCourseMultiInvoiceEmail;
+                                                                }
                                                             }
+                                                            
                                                         }
 
                                                     ?>
@@ -85,6 +91,12 @@
                                                         data-action="{{ route('admin.sales.send-email',
                                                         [$newCourseTaken->id, 'courses-taken-welcome']) }}">
                                                         {{ trans('site.send-email') }}
+                                                    </button>
+                                                    <button class="btn btn-warning btn-xs moveToArchiveBtn"
+                                                        data-toggle="modal"
+                                                        data-target="#moveToArchiveModal"
+                                                        data-action="{{ route('admin.sales.move-to-archive', [$newCourseTaken->id]) }}">
+                                                        {{ trans('site.move-to-archive') }}
                                                     </button>
                                                 </td>
                                             </tr>
@@ -394,7 +406,26 @@
             </div>
         </div>
     </div> <!-- end viewShopManuscriptEmailModal-->
-
+    
+    <div id="moveToArchiveModal" class="modal fade" role="dialog">
+	    <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">{{ trans('site.move-to-archive') }}</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="GET" action="" enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        {{ method_field('delete') }}
+                        <p>{{ trans('site.are-you-sure-you-want-to-move-this-record-to-archive') }}</p>
+                        <button type="submit" class="btn btn-danger pull-right margin-top">{{ trans('site.move-to-archive') }}</button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('styles')
@@ -425,6 +456,14 @@
             form.find('[name=subject]').val(emailTemplate.subject);
             form.find('[name=from_email]').val(emailTemplate.from_email);
             tinymce.get('send_email_editor').setContent(emailTemplate.email_content);
+        });
+
+        $(".moveToArchiveBtn").click(function(){
+            let action = $(this).data('action');
+            let modal = $('#moveToArchiveModal');
+            let form = modal.find('form');
+
+            form.attr('action', action);
         });
 
         $(".viewEmailBtn").click(function(){

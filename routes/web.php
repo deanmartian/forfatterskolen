@@ -987,6 +987,7 @@ Route::group([
             Route::get('/', 'SaleController@index')->name('admin.sales.index');
             Route::post('/send-email/{id}/{parent}', 'SaleController@sendEmail')
                 ->name('admin.sales.send-email');
+            Route::get('/move-to-archive/{id}', 'SaleController@moveToArchive')->name('admin.sales.move-to-archive');
 
         });
 
