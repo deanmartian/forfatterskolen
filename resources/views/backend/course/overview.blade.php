@@ -20,6 +20,11 @@
 					<div class="pull-right">
 						<a class="btn btn-sm btn-success" href="{{route('admin.course.edit', $course->id)}}"><i class="fa fa-pencil"></i> {{ trans('site.edit') }}</a>
 						<button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#cloneModal"><i class="fa fa-copy"></i> {{ trans('site.clone') }}</button>
+						<!-- get the email template here -->
+						<?php
+							$emailTemplate = \App\EmailTemplate::where('course_id', $course->id)->get();
+						?>
+						<button class="btn btn-sm btn-success" id="editEmailTemplateBtn" data-action="{{ route('admin.email_template.courseEditAdd', $course->id) }}" data-toggle="modal" data-templates="{{ $emailTemplate }}" data-course="{{ $course }}" data-target="#editEmailTemplate"><i class="fa fa-envelope"></i> {{ trans('site.edit') }} {{ trans('site.email-template') }}</button>
 					</div>
 
 					<h4>{{ trans('site.course-details') }}</h4>
@@ -295,6 +300,57 @@
     </div>
   </div>
 </div>
+
+<div id="editEmailTemplate" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.send-feedback') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="">
+					{{ csrf_field() }}
+
+					<div class="form-group">
+						<label>
+							Identifier
+						</label>
+						<input readonly="readonly" type="text" name="page_name" class="form-control">
+					</div>
+
+					<div class="form-group" id="group-course-multi-invioce-email-div"> <!-- if group, show this option -->
+						<input type="checkbox" name="group_course_multi_invioce_email" id="group-course-multi-invioce-email"> {{ trans('site.group-course-multi-invioce-email') }}</input>
+					</div>
+
+					<div class="form-group">
+						<label>
+							{{ trans('site.from') }}
+						</label>
+						<input type="email" name="from_email" class="form-control" required>
+					</div>
+
+					<div class="form-group">
+						<label>
+							{{ trans('site.subject') }}
+						</label>
+						<input type="text" name="subject" class="form-control" required>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.body') }}</label>
+						<textarea name="email_content" cols="30" rows="10" class="form-control tinymce"></textarea>
+					</div>
+					<div class="clearfix"></div>
+					<button type="submit" class="btn btn-primary pull-right margin-top">
+						{{ trans('site.save') }}
+					</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -306,5 +362,59 @@
 		removeSimilarCourseModal.find('form').attr('action', action);
 		removeSimilarCourseModal.find('strong').text(title);
 	});
+	$('#editEmailTemplateBtn').click(function(){
+		var modal = $('#editEmailTemplate');
+		var action = $(this).data('action');
+		var emailTemplate = $(this).data('templates');
+		var course = $(this).data('course');
+		modal.find('form').attr('action', action);
+		// set email template modal attibutes
+		console.log(emailTemplate);
+		if(emailTemplate.length > 0){
+			modal.find('[name=page_name]').val(emailTemplate[0].page_name + ':' + course.title + ':' + course.type.toUpperCase());
+			modal.find('[name=from_email]').val(emailTemplate[0].from_email);
+			modal.find('[name=subject]').val(emailTemplate[0].subject);
+			tinyMCE.activeEditor.setContent(emailTemplate[0].email_content);
+		}else{
+			modal.find('[name=page_name]').val('COURSE-FOR-SALE' + ':' + course.title + ':' + course.type.toUpperCase());
+		}
+
+		if(course.type == 'Single'){
+			$('#group-course-multi-invioce-email-div').hide()
+		}else{
+			$('#group-course-multi-invioce-email-div').show()
+		}
+		
+		modal.find('#group-course-multi-invioce-email').data('course', course);
+		modal.find('#group-course-multi-invioce-email').data('templates', emailTemplate);
+	});
+	$('#group-course-multi-invioce-email').change(function(){
+		var modal = $('#editEmailTemplate');
+		var templates = $(this).data('templates');
+		var course = $(this).data('course');
+		if(this.checked){
+			// look for multip-invoice
+			templates.forEach(function (item, index){
+				if(item.course_type == 'GROUP-MULTI-INVOICE'){
+					modal.find('[name=page_name]').val(item.page_name + ':' + course.title + ':GROUP-MULTI-INVOICE');
+					modal.find('[name=from_email]').val(item.from_email);
+					modal.find('[name=subject]').val(item.subject);
+
+					tinyMCE.activeEditor.setContent(item.email_content);
+				}
+			})
+		}else{
+			templates.forEach(function (item, index){
+				if(item.course_type == 'GROUP' || item.course_type == 'SINGLE'){
+					modal.find('[name=page_name]').val(item.page_name + ':' + course.title + ':' + course.type.toUpperCase());
+					modal.find('[name=from_email]').val(item.from_email);
+					modal.find('[name=subject]').val(item.subject);
+
+					tinyMCE.activeEditor.setContent(item.email_content);
+				}
+			})
+		}
+	});
+
 </script>
 @stop

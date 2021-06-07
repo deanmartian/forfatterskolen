@@ -442,7 +442,7 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
-						<div class="panel-heading"><h4>{{ trans('site.my-copy-editing') }}</h4></div>
+						<div class="panel-heading"><h4>{{ trans('site.my-copy-editing') }}d</h4></div>
 						<table class="table">
 							<thead>
 							<tr>
@@ -508,7 +508,6 @@
 										@foreach($files as $file)
 											<a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
 										@endforeach
-
 										{{ $copyEditing->feedback->created_at }}
 									</td>
 									<td>
