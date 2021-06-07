@@ -88,4 +88,64 @@ class EmailTemplateController extends Controller
         }
         return redirect()->back();
     }
+
+    public function courseEditAdd($courseId, Request $request)
+    {
+        $course = Course::find($courseId);
+        $emailtemplate = null;
+
+        if($course->type == 'Single'){
+            $emailtemplate = EmailTemplate::where('course_id', $courseId)->where('course_type', 'SINGLE')->first();
+        }else{
+            if($request->group_course_multi_invioce_email){
+                $emailtemplate = EmailTemplate::where('course_id', $courseId)->where('course_type', 'GROUP-MULTI-INVOICE')->first();
+            }else{
+                $emailtemplate = EmailTemplate::where('course_id', $courseId)->where('course_type', 'GROUP')->first();
+            }
+        }
+
+        if($emailtemplate){ // edit
+
+            $emailtemplate->page_name = 'COURSE-FOR-SALE';
+            $emailtemplate->subject = $request->subject ?: $emailtemplate->subject;
+            $emailtemplate->from_email = $request->from_email ? $request->from_email : $emailtemplate->from_email;
+            $emailtemplate->email_content = $request->email_content;
+            $emailtemplate->save();
+    
+        }else{ //create
+
+            $this->validate($request, [
+                'email_content' => 'required'
+            ]);
+
+            $type = null;
+    
+            if($course->type === 'Group'){
+                $type = 'GROUP';
+                if($request['group-course-multi-invioce-email']){
+                    $type = 'GROUP-MULTI-INVOICE';
+                }
+            }else{
+                $type = 'SINGLE';
+            }
+
+            $page_name = 'COURSE-FOR-SALE';
+
+            EmailTemplate::create([
+                'page_name' => $page_name,
+                'subject' => $request->subject,
+                'from_email' => $request->from_email,
+                'email_content' => $request->email_content,
+                'course_id' => $course->id,
+                'course_type' => $type
+            ]);
+
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Email template saved.'),
+            'alert_type' => 'success'
+        ]);
+        
+    }
 }

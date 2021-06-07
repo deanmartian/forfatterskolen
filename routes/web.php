@@ -978,6 +978,7 @@ Route::group([
         Route::get('email-template', 'EmailTemplateController@index')->name('admin.email-template.index');
         Route::post('/email_template/add_email_template', 'EmailTemplateController@addEmailTemplate')->name('admin.manuscript.add_email_template'); // Store Email Template
         Route::put('/email_template/edit_email_template/{id}', 'EmailTemplateController@editEmailTemplate')->name('admin.manuscript.edit_email_template'); // Update Email Template
+        Route::post('/email_template/courseEditAdd/{course_id}', 'EmailTemplateController@courseEditAdd')->name('admin.email_template.courseEditAdd'); // Update Email Template
 
 
         Route::group([
