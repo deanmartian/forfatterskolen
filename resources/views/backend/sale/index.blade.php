@@ -68,19 +68,25 @@
                                                 <td>
                                                     <?php
                                                     // select the template for course, if not template for course use the general.
-                                                        $emailTemplate = \App\EmailTemplate::where('course_id', $newCourseTaken->package->course->id)->get();
-
-                                                        $emailTemplate = $emailTemplate->where('course_type', 'SINGLE')->first()?$emailTemplate->where('course_type', 'SINGLE')->first():$singleCourseEmail;
-
+                                                        $emailTemplate = null;
+                                                        $tempData = null;
+                                                        
+                                                        $emailTemplate = null;
+                                                        $tempData = null;
+                                                        
                                                         if ($newCourseTaken->package->course->type === 'Group') {
-                                                            $emailTemplate = $emailTemplate->where('course_type', 'GROUP')->first()?$emailTemplate->where('course_type', 'GROUP')->first():$groupCourseEmail;
-                                                            
-                                                            if($newCourseTaken->order){
-                                                                if ($newCourseTaken->order->paymentPlan->division > 1) {
-                                                                    $emailTemplate = $emailTemplate->where('course_type', 'GROUP-MULTI-INVOICE')->first()?$emailTemplate->where('course_type', 'GROUP-MULTI-INVOICE')->first():$groupCourseMultiInvoiceEmail;
-                                                                }
+
+                                                            if($newCourseTaken->order && $newCourseTaken->order->paymentPlan->division > 1){
+                                                                $tempData = \App\EmailTemplate::where('course_id', $newCourseTaken->package->course->id)->where('course_type', 'GROUP-MULTI-INVOICE')->first();
+                                                                $emailTemplate = $tempData ? $tempData : $groupCourseMultiInvoiceEmail;
+                                                            }else{ //group
+                                                                $tempData = \App\EmailTemplate::where('course_id', $newCourseTaken->package->course->id)->where('course_type', 'GROUP')->first();
+                                                                $emailTemplate = $tempData ? $tempData : $groupCourseEmail;
                                                             }
-                                                            
+
+                                                        }else{ //Single
+                                                            $tempData = \App\EmailTemplate::where('course_id', $newCourseTaken->package->course->id)->where('course_type', 'SINGLE')->first();
+                                                            $emailTemplate = $tempData ? $tempData : $singleCourseEmail;
                                                         }
 
                                                     ?>
