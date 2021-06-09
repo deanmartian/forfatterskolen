@@ -27,9 +27,6 @@ App::setLocale($locale);
 Route::get('/easywrite', function () {
     return view('frontend-easywrite.index');
 });
-Route::get('/', function () {
-    return view('greeting', ['name' => 'James']);
-});
 Route::group([
     'domain' => $front,
 ], function(){
