@@ -286,7 +286,15 @@
 						<tbody>
 						@foreach($admins as $admin)
 							<tr>
-								<td>{{ $admin->full_name }}</td>
+								<td>
+									@if (Auth::user()->isSuperUser())
+										<a href="{{ route('admin.admin.show', $admin->id)}}">
+											{{ $admin->full_name }}
+										</a>
+									@else
+										{{ $admin->full_name }}
+									@endif
+								</td>
 								<td>{{ $admin->email }}</td>
 								<td>
 									@if($admin->role == 3 || $admin ->admin_with_editor_access == 1)

@@ -40,7 +40,7 @@ class AdminController extends Controller
    
     public function index()
     {
-        $admins = User::whereIn('role', array(1,3))->withTrashed()->orderBy('created_at', 'desc')->paginate(20);
+        $admins = User::admins()->withTrashed()->orderBy('created_at', 'desc')->paginate(20);
         $customActions = CustomAction::where('is_active',1)->get();
         $pageMetas = PageMeta::all();
         $staffs = Staff::all();
@@ -49,6 +49,16 @@ class AdminController extends Controller
         return view('backend.admin.index', compact('admins','customActions', 'pageMetas', 'staffs', 'editorAssignmentPrices'));
     }
 
+    public function show($userId)
+    {
+        if (!\auth()->user()->isSuperUser() || !$user = User::find($userId)) {
+            return redirect()->route('admin.admin.index');
+        }
+
+        $user = $user->load('logins.loginActivity');
+
+        return view('backend.admin.show', compact('user'));
+    }
 
     public function store(Request $request)
     {

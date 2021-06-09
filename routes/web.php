@@ -492,7 +492,7 @@ Route::group([
 ], function(){
 
     Route::group([
-        'middleware' => 'admin',
+        'middleware' => ['admin', 'logActivity'],
         'namespace' => 'Backend'
     ], function(){
 
@@ -815,9 +815,10 @@ Route::group([
 
         // Lessons Route
         Route::resource('/admin', 'AdminController', [
-            'except' => ['show', 'create', 'edit'],
+            'except' => ['create', 'edit'],
             'names' => [
                 'index' => 'admin.admin.index',
+                'show' => 'admin.admin.show',
                 'store' => 'admin.admin.store',
                 'update' => 'admin.admin.update',
                 'destroy' => 'admin.admin.destroy',

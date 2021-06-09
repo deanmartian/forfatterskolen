@@ -43,7 +43,7 @@ class LogsActivity
 
             LearnerLoginActivity::create([
                 'learner_login_id' => \Session::get('learner_login_id'),
-                'activity'         => "User visited {$request->fullUrl()}"
+                'activity'         => "User visited {$request->fullUrl()} | {$request->method()}"
             ]);
         }
 

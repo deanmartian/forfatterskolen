@@ -40,6 +40,13 @@ class User extends Authenticatable
     protected $with = ['preferredEditor'];
     protected $appends = ['is_webinar_pakke_active', 'assigned_with_no_feedback'];
 
+    // filter admins and exclude the user of Sven
+    public function scopeAdmins($query)
+    {
+        return $query->whereIn('role', array(1,3))
+            ->where('id', '!=', 1376);// 1376 is the id of sven.inge@forfatterskolen.no
+    }
+
     public function getAddressAttribute()
     {
         $address = \App\Address::where('user_id', $this->attributes['id'])->first();
