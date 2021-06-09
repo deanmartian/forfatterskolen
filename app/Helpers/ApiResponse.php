@@ -13,6 +13,8 @@ class ApiResponse
     const HTTPCODE_FORBIDDEN                = 403;
     const HTTPCODE_REDIRECT                 = 301;
 
+    protected $statusCode = 200;
+
     /**
      * Generate success response
      *
@@ -91,5 +93,30 @@ class ApiResponse
         }
 
         return $errorMessage;
+    }
+
+    public function getStatusCode()
+    {
+        return $this->statusCode;
+    }
+
+    public function setStatusCode($statusCode)
+    {
+        $this->statusCode = $statusCode;
+        return $this;
+    }
+
+    public function respond($data, $headers = [])
+    {
+        return response()->json($data, $this->getStatusCode(), $headers);
+    }
+
+    public function respondWithError($message)
+    {
+        return $this->respond([
+            'error' => [
+                'message' => $message
+            ]
+        ]);
     }
 }

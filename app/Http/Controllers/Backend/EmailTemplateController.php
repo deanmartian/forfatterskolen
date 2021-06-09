@@ -33,10 +33,10 @@ class EmailTemplateController extends Controller
         ]);
 
         $page_name = $request->page_name;
-        $course = Course::find($request->course_id);
         $type = null;
 
         if($request['is_course_for_sale']){
+            $course = Course::find($request->course_id);
             $this->validate($request, [
                 'course_id' => 'required'
             ]);
@@ -69,7 +69,7 @@ class EmailTemplateController extends Controller
             'subject' => $request->subject,
             'from_email' => $request->from_email,
             'email_content' => $request->email_content,
-            'course_id' => $request->course_id,
+            'course_id' => is_numeric($request->course_id) ? $request->course_id : NULL,
             'course_type' => $type
         ]);
 
