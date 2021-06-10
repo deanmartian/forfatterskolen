@@ -27,26 +27,34 @@
             <div class="div-1">
                 <div class="bullets font-blue">Choose the right package for you</div>
                 <div class="packages">
-                    <div>
-                        <div class="price font-red">$000</div>&nbsp;
-                        <div class="title font-blue">Express</div>
-                        <div class="sub-title font-gray">For authors with print ready files</div>&nbsp;
-                        <div class="desc">25 softcover books eBook conversion & distribution Print On Demand distribution Two ISBN barcodes</div>&nbsp;
-                        <div class="more font-red">Find out more</div>
-                    </div>
-                    <div>
-                        <div class="price font-red">$0000</div>&nbsp;
-                        <div class="title font-blue">COMPLETE</div>
-                        <div class="sub-title font-gray">The essentials for a professional book release.</div>&nbsp;
-                        <div class="desc">25 softcover books eBook conversion & distribution Print On Demand distribution Two ISBN barcodes</div>&nbsp;
-                        <div class="more font-red">Find out more</div>
-                    </div>
-                    <div>
-                        <div class="price font-red">$000</div>&nbsp;
-                        <div class="title font-blue">DELUXE</div>
-                        <div class="sub-title font-gray">The best way to print, publish, and promote your book.</div>&nbsp;
-                        <div class="desc">25 softcover books eBook conversion & distribution Print On Demand distribution Two ISBN barcodes</div>&nbsp;
-                        <div class="more font-red">Find out more</div>
+                    <div class="slider" id="package-slide">
+                        <div class="slide">
+                            <div class="package-data">
+                                <div class="price font-red">$000</div>&nbsp;
+                                <div class="title font-blue">Express</div>
+                                <div class="sub-title font-gray">For authors with print ready files</div>&nbsp;
+                                <div class="desc">25 softcover books eBook conversion & distribution Print On Demand distribution Two ISBN barcodes</div>&nbsp;
+                                <div class="more font-red">Find out more</div>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <div class="package-data">
+                                <div class="price font-red">$0000</div>&nbsp;
+                                <div class="title font-blue">COMPLETE</div>
+                                <div class="sub-title font-gray">The essentials for a professional book release.</div>&nbsp;
+                                <div class="desc">25 softcover books eBook conversion & distribution Print On Demand distribution Two ISBN barcodes</div>&nbsp;
+                                <div class="more font-red">Find out more</div>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <div class="package-data">
+                                <div class="price font-red">$000</div>&nbsp;
+                                <div class="title font-blue">DELUXE</div>
+                                <div class="sub-title font-gray">The best way to print, publish, and promote your book.</div>&nbsp;
+                                <div class="desc">25 softcover books eBook conversion & distribution Print On Demand distribution Two ISBN barcodes</div>&nbsp;
+                                <div class="more font-red">Find out more</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="rates">
@@ -56,7 +64,7 @@
             </div>
             <div class="div-2">
                 <div class="all_features">
-                    <div class="features">
+                    <div class="features box">
                         <div>Features</div>&nbsp;
                         <div>Price for Full-Length Book</div>
                         <div>Why Choose this Package?</div>
@@ -65,33 +73,44 @@
                         <div>Strategy Session Team</div>
                         <div>Strategy Session Location</div>
                     </div>
-                    <div class="express">
-                        <div>Express</div>
-                        <div class="price font-red">$000 - $0000</div>
-                        <div>Comprehensive book-writing and publishing navigation services performed by a team of talented industry insiders.</div>&nbsp;
-                        <div><i class="fa fa-check font-red"></i></div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                        <div><i class="fa fa-check font-red"></i></div>
+                    <div class="features-data">
+                        <div class="slider" id="features-slide">
+                            <div class="slide">
+                                <div class="express box">
+                                    <div>Express</div>
+                                    <div class="price font-red">$000 - $0000</div>
+                                    <div>Comprehensive book-writing and publishing navigation services performed by a team of talented industry insiders.</div>&nbsp;
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <div class="complete box">
+                                    <div>Complete</div>
+                                    <div class="price font-red">$000 - $0000</div>
+                                    <div>Comprehensive book-writing package with detailed market research, beta testing, and tailored publishing navigation.</div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <div class="delux box">
+                                    <div>Delux</div>
+                                    <div class="price font-red">$000 - $0000</div>
+                                    <div>For exceptional authors who demand the highest level of service and talent in the industry, our Black Card package includes every available amenity.<br><br><p>Limited availability.</p></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="complete">
-                        <div>Complete</div>
-                        <div class="price font-red">$000 - $0000</div>
-                        <div>Comprehensive book-writing package with detailed market research, beta testing, and tailored publishing navigation.</div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                    </div>
-                    <div class="delux">
-                        <div>Delux</div>
-                        <div class="price font-red">$000 - $0000</div>
-                        <div>For exceptional authors who demand the highest level of service and talent in the industry, our Black Card package includes every available amenity.<br><br><p>Limited availability.</p></div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                    </div>
+                    
                 </div>
                 <div class="see-all-rates">
                     <button class="btn button-red">See all rates</button>
@@ -358,7 +377,7 @@ $jq(document).ready(function() {
 
 		speed: 1000,
 
-		slidesToShow: 5,
+		slidesToShow: 6,
 		slidesToScroll: 1,
 
 		autoplay: true,
@@ -373,7 +392,7 @@ $jq(document).ready(function() {
 		// Breakpoint triggered settings
 		responsive: [
 		{
-		    breakpoint: 1024,
+		    breakpoint: 1599,
 		    settings: {
 		        slidesToShow: 5,
 		        slidesToScroll: 1,
@@ -382,14 +401,28 @@ $jq(document).ready(function() {
 		    }
 		},
 		{
-		    breakpoint: 750,
+		    breakpoint: 1000,
+		    settings: {
+		        slidesToShow: 4,
+		        slidesToScroll: 1
+		    }
+		},
+        {
+		    breakpoint: 800,
+		    settings: {
+		        slidesToShow: 3,
+		        slidesToScroll: 1
+		    }
+		},
+        {
+		    breakpoint: 600,
 		    settings: {
 		        slidesToShow: 2,
 		        slidesToScroll: 1
 		    }
 		},
 		{
-		    breakpoint: 530,
+		    breakpoint: 400,
 		    settings: {
 		        slidesToShow: 1,
 		        slidesToScroll: 1
@@ -418,6 +451,102 @@ $jq(document).ready(function() {
 		pauseOnDotsHover: false,
 
 		zIndex: 1000,
+
+        // break point
+        responsive: [
+		{
+		    breakpoint: 800,
+		    settings: {
+		        slidesToShow: 1,
+		        slidesToScroll: 1,
+		        infinite: true,
+		        dots: true
+		    }
+		},
+        ]
+	});
+    $jq('#features-slide').slick({
+		dots: true,
+		arrows: false,
+
+		speed: 1000,
+
+		slidesToShow: 3,
+		slidesToScroll: 1,
+
+		autoplay: true,
+		autoplaySpeed: 2000,
+
+		// Pauses autoplay on focus
+		pauseOnFocus: true,
+
+		// Pauses autoplay when a dot is hovered
+		pauseOnDotsHover: false,
+
+		zIndex: 1000,
+        responsive: [
+		{
+		    breakpoint: 1000,
+		    settings: {
+		        slidesToShow: 2,
+		        slidesToScroll: 1,
+		        infinite: true,
+		        dots: true
+		    }
+		},
+        {
+		    breakpoint: 800,
+		    settings: {
+		        slidesToShow: 1,
+		        slidesToScroll: 1,
+		        infinite: true,
+		        dots: true
+		    }
+		},
+        ]
+        // break point
+	});
+    $jq('#package-slide').slick({
+		dots: true,
+		arrows: false,
+
+		speed: 1000,
+
+		slidesToShow: 3,
+		slidesToScroll: 1,
+
+		autoplay: true,
+		autoplaySpeed: 2000,
+
+		// Pauses autoplay on focus
+		pauseOnFocus: true,
+
+		// Pauses autoplay when a dot is hovered
+		pauseOnDotsHover: false,
+
+		zIndex: 1000,
+
+        // break point
+        responsive: [
+		{
+		    breakpoint: 1000,
+		    settings: {
+		        slidesToShow: 2,
+		        slidesToScroll: 1,
+		        infinite: true,
+		        dots: true
+		    }
+		},
+        {
+		    breakpoint: 800,
+		    settings: {
+		        slidesToShow: 1,
+		        slidesToScroll: 1,
+		        infinite: true,
+		        dots: true
+		    }
+		},
+        ]
 	});
 });
 </script>
