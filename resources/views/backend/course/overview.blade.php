@@ -319,9 +319,9 @@
 						<input readonly="readonly" type="text" name="page_name" class="form-control">
 					</div>
 
-					<div class="form-group" id="group-course-multi-invioce-email-div"> <!-- if group, show this option -->
+					<!-- <div class="form-group" id="group-course-multi-invioce-email-div">
 						<input type="checkbox" name="group_course_multi_invioce_email" id="group-course-multi-invioce-email"> {{ trans('site.group-course-multi-invioce-email') }}</input>
-					</div>
+					</div> -->
 
 					<div class="form-group">
 						<label>
