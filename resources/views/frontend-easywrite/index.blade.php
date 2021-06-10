@@ -205,6 +205,79 @@
             <div class="div-3"></div>
         </div>
 
+        <div class="section-4b">
+            <div class="some-of-our-works">
+                <div class="head">
+                    <div class="bullets font-blue">Some of our works</div>
+                    <div><button class="btn button-red">See all our works</button></div>
+                </div>
+                <div class="slider" id="some-of-our-works-books">
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/1.jpg') }}" alt="">
+                    </div>
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/2.jpg') }}" alt="">
+                    </div>
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/3.jpg') }}" alt="">
+                    </div>
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/4.jpg') }}" alt="">
+                    </div>
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/5.jpg') }}" alt="">
+                    </div>
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/6.jpg') }}" alt="">
+                    </div>
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/7.png') }}" alt="">
+                    </div>
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/8.png') }}" alt="">
+                    </div>
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/9.png') }}" alt="">
+                    </div>
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/10.png') }}" alt="">
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="what-our-customer-say">
+                <div>
+                    <div class="title">What our customers say</div>
+                    <div class="content">
+                        <div class="slider" id="what-our-customer-say">
+                            <div class="slide">
+                                <div class="qoute"><img src="{{ URL::asset('images/front-end/qoute-icon.png') }}" alt=""></div>
+                                <div class="content">Nunc consequat interdum varius sit amet mattis. Nascetur ridiculus mus mauris vitae. Gravida neque convallis a cras semper auctor. Volutpat blandit aliquam etiam erat velit scelerisque in dictum. Porta non pulvinar neque laoreet suspendisse interdum consectetur libero. Sed vulputate odio ut enim. Ut porttitor leo a diam sollicitudin tempor id eu.</div>
+                                <div class="author">
+                                    <div class="img">
+                                        <img src="{{ URL::asset('images/front-end/section-1-bg.jpg') }}" alt="">
+                                    </div>
+                                    <div class="authorname">Author 1</div>
+                                    <div class="desc2">Cursus eget nunc scelerisque <br> viverra mauris in</div>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <div class="qoute"><img src="{{ URL::asset('images/front-end/qoute-icon.png') }}" alt=""></div>
+                                <div class="content">Nunc consequat interdum varius sit amet mattis. Nascetur ridiculus mus mauris vitae. Gravida neque convallis a cras semper auctor. Volutpat blandit aliquam etiam erat velit scelerisque in dictum. Porta non pulvinar neque laoreet suspendisse interdum consectetur libero. Sed vulputate odio ut enim. Ut porttitor leo a diam sollicitudin tempor id eu.</div>
+                                <div class="author">
+                                    <div class="img">
+                                        <img src="{{ URL::asset('images/front-end/section-1-bg.jpg') }}" alt="">
+                                    </div>
+                                    <div class="authorname">Author 2</div>
+                                    <div class="desc2">Cursus eget nunc scelerisque <br> viverra mauris in</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+
         <div class="section-5">
             <div class="why-choose">
                 <div>
@@ -266,4 +339,86 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('styles')
+<link rel="stylesheet" href="{{ asset('/components/slick-master/slick/slick.css')  }}">
+<link rel="stylesheet" href="{{ asset('/components/slick-master/slick/slick-theme.css')  }}">
+@endsection
+
+@section('scripts')
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script src="{{ asset('/components/slick-master/slick/slick.min.js')  }}"></script>
+<script type="text/javascript">
+var $jq = jQuery.noConflict();
+$jq(document).ready(function() { 
+    $jq('#some-of-our-works-books').slick({
+		dots: true,
+		arrows: false,
+
+		speed: 1000,
+
+		slidesToShow: 5,
+		slidesToScroll: 1,
+
+		autoplay: true,
+		autoplaySpeed: 2000,
+
+		// Pauses autoplay on focus
+		pauseOnFocus: true,
+
+		// Pauses autoplay when a dot is hovered
+		pauseOnDotsHover: false,
+		
+		// Breakpoint triggered settings
+		responsive: [
+		{
+		    breakpoint: 1024,
+		    settings: {
+		        slidesToShow: 5,
+		        slidesToScroll: 1,
+		        infinite: true,
+		        dots: true
+		    }
+		},
+		{
+		    breakpoint: 750,
+		    settings: {
+		        slidesToShow: 2,
+		        slidesToScroll: 1
+		    }
+		},
+		{
+		    breakpoint: 530,
+		    settings: {
+		        slidesToShow: 1,
+		        slidesToScroll: 1
+		    }
+		}
+		],
+
+		zIndex: 1000,
+	});
+    $jq('#what-our-customer-say').slick({
+		dots: true,
+		arrows: false,
+
+		speed: 1000,
+
+		slidesToShow: 2,
+		slidesToScroll: 1,
+
+		autoplay: true,
+		autoplaySpeed: 2000,
+
+		// Pauses autoplay on focus
+		pauseOnFocus: true,
+
+		// Pauses autoplay when a dot is hovered
+		pauseOnDotsHover: false,
+
+		zIndex: 1000,
+	});
+});
+</script>
 @endsection

@@ -290,9 +290,9 @@
     margin-right: 17px;
 }
 .section-4{
-    
     width: 75%;
     margin: 50px auto 0 auto;
+    padding-bottom: 50px;
 }
 .section-4 .icons > div {
     width: 22%;
@@ -309,6 +309,82 @@
 .section-4 .icons > div img {
     width: 40%;
 }
+.section-4b .some-of-our-works{
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 50px;
+}
+.section-4b .head > div{
+    display: inline-block;
+}
+.section-4b .head > div:nth-child(2){
+    float: right;
+}
+.section-4b .some-of-our-works img {
+    width: 100%;
+    height: 260px;
+}
+.section-4b{
+    background-color: #ffff;
+    padding: 50px 0;
+}
+/* secion 4b what-our-customer-say */
+
+.section-4b .what-our-customer-say{
+    width: 80%;
+    margin: 50px auto 0 auto;
+    text-align: center;
+}
+
+.section-4b .what-our-customer-say .title{
+    font-size: 20px;
+    font-weight: bolder;
+    color: #354350;
+    text-transform: uppercase;
+    font-family: system-ui;
+}
+
+.section-4b .what-our-customer-say .slide .qoute img{
+    width: 50px;
+    margin: 0 auto;
+    margin-bottom: 22px;
+}
+
+.section-4b .what-our-customer-say .slide .img img {
+    width: 85px;
+    height: 85px;
+    margin: 0 auto;
+    margin-bottom: 22px;
+    border-radius: 60px;
+    margin-top: 20px
+}
+.section-4b .what-our-customer-say .slide .authorname{
+    font-size: 18px;
+    color: #C12937;
+    font-weight: bolder;
+    font-family: system-ui;
+}
+.section-4b .what-our-customer-say .slide .desc2, .section-4b .what-our-customer-say .slide .content{
+    font-size: 16px;
+    color: #727C96;
+    font-family: system-ui;
+}
+
+/* end section 4d what-our-customer-say */
+.slick-track > div {
+    margin-right: 21px;
+}
+#some-of-our-works-books{
+    margin-top: 50px;
+}
+.slick-dots li button:before {
+    font-size: 12px !important;
+    color: #ac0e1d !important;
+}
+.slick-list{
+    padding-bottom: 11px !important;
+}
+/* end section 4 */
 .section-5{
     margin-top: 50px;
     background-color: #F9FAFF;
@@ -414,5 +490,4 @@
 .section-6 .footer-1 ul{
     padding: 0px;
 }
-
 /* end section 3 */
