@@ -272,14 +272,14 @@
     color: white;
 }
 .section-3 > div.what-we-do{
-    width: 70%;
+    width: 60%;
     margin: 0 auto;
     padding: 50px 0;
     /* position: relative; */
 }
 .section-3 .div-2 > div > div{
     display: inline-block;
-    width: 35%;
+    width: 43%;
     min-height: 350px;
 }
 .section-3 .left{
@@ -575,6 +575,9 @@
     }
     .section-3 .what-we-do .div-2 div:nth-child(1) img, .section-3 .what-we-do .div-2 div:nth-child(3) img {
         margin-top: 0;
+    }
+    .section-3 > div.what-we-do{
+        width: 70%;
     }
 }
 @media only screen and (max-width: 1200px) {
