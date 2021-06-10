@@ -80,9 +80,9 @@
                             <select class="form-control select2" id="course-drpdwn" name="course_id">
                             </select>
                             <br>
-                            <div id="group-course-multi-invioce-email-div"> <!-- if group, show this option -->
+                            <!-- <div id="group-course-multi-invioce-email-div"> 
                                 <input type="checkbox" name="group-course-multi-invioce-email" id="group-course-multi-invioce-email"> {{ trans('site.group-course-multi-invioce-email') }}</input>
-                            </div>
+                            </div> -->
                         </div>
 
                         <div class="form-group">
