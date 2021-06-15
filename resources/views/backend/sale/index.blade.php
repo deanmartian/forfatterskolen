@@ -75,14 +75,17 @@
                                                         $tempData = null;
                                                         
                                                         if ($newCourseTaken->package->course->type === 'Group') {
-
-                                                            if($newCourseTaken->order && $newCourseTaken->order->paymentPlan->division > 1){
-                                                                $tempData = \App\EmailTemplate::where('course_id', $newCourseTaken->package->course->id)->where('course_type', 'GROUP-MULTI-INVOICE')->first();
-                                                                $emailTemplate = $tempData ? $tempData : $groupCourseMultiInvoiceEmail;
-                                                            }else{ //group
-                                                                $tempData = \App\EmailTemplate::where('course_id', $newCourseTaken->package->course->id)->where('course_type', 'GROUP')->first();
-                                                                $emailTemplate = $tempData ? $tempData : $groupCourseEmail;
-                                                            }
+                                                            
+                                                            $tempData = \App\EmailTemplate::where('course_id', $newCourseTaken->package->course->id)->where('course_type', 'GROUP')->first();
+                                                            $emailTemplate = $tempData ? $tempData : $groupCourseEmail;
+                                                            // no group multiple invoice
+                                                            // if($newCourseTaken->order && $newCourseTaken->order->paymentPlan->division > 1){
+                                                            //     $tempData = \App\EmailTemplate::where('course_id', $newCourseTaken->package->course->id)->where('course_type', 'GROUP-MULTI-INVOICE')->first();
+                                                            //     $emailTemplate = $tempData ? $tempData : $groupCourseMultiInvoiceEmail;
+                                                            // }else{ //group
+                                                            //     $tempData = \App\EmailTemplate::where('course_id', $newCourseTaken->package->course->id)->where('course_type', 'GROUP')->first();
+                                                            //     $emailTemplate = $tempData ? $tempData : $groupCourseEmail;
+                                                            // }
 
                                                         }else{ //Single
                                                             $tempData = \App\EmailTemplate::where('course_id', $newCourseTaken->package->course->id)->where('course_type', 'SINGLE')->first();

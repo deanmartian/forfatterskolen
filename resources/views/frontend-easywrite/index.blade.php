@@ -27,26 +27,34 @@
             <div class="div-1">
                 <div class="bullets font-blue">Choose the right package for you</div>
                 <div class="packages">
-                    <div>
-                        <div class="price font-red">$000</div>&nbsp;
-                        <div class="title font-blue">Express</div>
-                        <div class="sub-title font-gray">For authors with print ready files</div>&nbsp;
-                        <div class="desc">25 softcover books eBook conversion & distribution Print On Demand distribution Two ISBN barcodes</div>&nbsp;
-                        <div class="more font-red">Find out more</div>
-                    </div>
-                    <div>
-                        <div class="price font-red">$0000</div>&nbsp;
-                        <div class="title font-blue">COMPLETE</div>
-                        <div class="sub-title font-gray">The essentials for a professional book release.</div>&nbsp;
-                        <div class="desc">25 softcover books eBook conversion & distribution Print On Demand distribution Two ISBN barcodes</div>&nbsp;
-                        <div class="more font-red">Find out more</div>
-                    </div>
-                    <div>
-                        <div class="price font-red">$000</div>&nbsp;
-                        <div class="title font-blue">DELUXE</div>
-                        <div class="sub-title font-gray">The best way to print, publish, and promote your book.</div>&nbsp;
-                        <div class="desc">25 softcover books eBook conversion & distribution Print On Demand distribution Two ISBN barcodes</div>&nbsp;
-                        <div class="more font-red">Find out more</div>
+                    <div class="slider" id="package-slide">
+                        <div class="slide">
+                            <div class="package-data">
+                                <div class="price font-red">$000</div>&nbsp;
+                                <div class="title font-blue">Express</div>
+                                <div class="sub-title font-gray">For authors with print ready files</div>&nbsp;
+                                <div class="desc">25 softcover books eBook conversion & distribution Print On Demand distribution Two ISBN barcodes</div>&nbsp;
+                                <div class="more font-red">Find out more</div>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <div class="package-data">
+                                <div class="price font-red">$0000</div>&nbsp;
+                                <div class="title font-blue">COMPLETE</div>
+                                <div class="sub-title font-gray">The essentials for a professional book release.</div>&nbsp;
+                                <div class="desc">25 softcover books eBook conversion & distribution Print On Demand distribution Two ISBN barcodes</div>&nbsp;
+                                <div class="more font-red">Find out more</div>
+                            </div>
+                        </div>
+                        <div class="slide">
+                            <div class="package-data">
+                                <div class="price font-red">$000</div>&nbsp;
+                                <div class="title font-blue">DELUXE</div>
+                                <div class="sub-title font-gray">The best way to print, publish, and promote your book.</div>&nbsp;
+                                <div class="desc">25 softcover books eBook conversion & distribution Print On Demand distribution Two ISBN barcodes</div>&nbsp;
+                                <div class="more font-red">Find out more</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="rates">
@@ -56,7 +64,7 @@
             </div>
             <div class="div-2">
                 <div class="all_features">
-                    <div class="features">
+                    <div class="features box">
                         <div>Features</div>&nbsp;
                         <div>Price for Full-Length Book</div>
                         <div>Why Choose this Package?</div>
@@ -65,33 +73,44 @@
                         <div>Strategy Session Team</div>
                         <div>Strategy Session Location</div>
                     </div>
-                    <div class="express">
-                        <div>Express</div>
-                        <div class="price font-red">$000 - $0000</div>
-                        <div>Comprehensive book-writing and publishing navigation services performed by a team of talented industry insiders.</div>&nbsp;
-                        <div><i class="fa fa-check font-red"></i></div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                        <div><i class="fa fa-check font-red"></i></div>
+                    <div class="features-data">
+                        <div class="slider" id="features-slide">
+                            <div class="slide">
+                                <div class="express box">
+                                    <div>Express</div>
+                                    <div class="price font-red">$000 - $0000</div>
+                                    <div>Comprehensive book-writing and publishing navigation services performed by a team of talented industry insiders.</div>&nbsp;
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <div class="complete box">
+                                    <div>Complete</div>
+                                    <div class="price font-red">$000 - $0000</div>
+                                    <div>Comprehensive book-writing package with detailed market research, beta testing, and tailored publishing navigation.</div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <div class="delux box">
+                                    <div>Delux</div>
+                                    <div class="price font-red">$000 - $0000</div>
+                                    <div>For exceptional authors who demand the highest level of service and talent in the industry, our Black Card package includes every available amenity.<br><br><p>Limited availability.</p></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                    <div><i class="fa fa-check font-red"></i></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="complete">
-                        <div>Complete</div>
-                        <div class="price font-red">$000 - $0000</div>
-                        <div>Comprehensive book-writing package with detailed market research, beta testing, and tailored publishing navigation.</div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                    </div>
-                    <div class="delux">
-                        <div>Delux</div>
-                        <div class="price font-red">$000 - $0000</div>
-                        <div>For exceptional authors who demand the highest level of service and talent in the industry, our Black Card package includes every available amenity.<br><br><p>Limited availability.</p></div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                        <div><i class="fa fa-check font-red"></i></div>
-                    </div>
+                    
                 </div>
                 <div class="see-all-rates">
                     <button class="btn button-red">See all rates</button>
@@ -205,6 +224,79 @@
             <div class="div-3"></div>
         </div>
 
+        <div class="section-4b">
+            <div class="some-of-our-works">
+                <div class="head">
+                    <div class="bullets font-blue">Some of our works</div>
+                    <div><button class="btn button-red">See all our works</button></div>
+                </div>
+                <div class="slider" id="some-of-our-works-books">
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/1.jpg') }}" alt="">
+                    </div>
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/2.jpg') }}" alt="">
+                    </div>
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/3.jpg') }}" alt="">
+                    </div>
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/4.jpg') }}" alt="">
+                    </div>
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/5.jpg') }}" alt="">
+                    </div>
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/6.jpg') }}" alt="">
+                    </div>
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/7.png') }}" alt="">
+                    </div>
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/8.png') }}" alt="">
+                    </div>
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/9.png') }}" alt="">
+                    </div>
+                    <div class="slide">
+                        <img src="{{ URL::asset('images/front-end/books/10.png') }}" alt="">
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="what-our-customer-say">
+                <div>
+                    <div class="title">What our customers say</div>
+                    <div class="content">
+                        <div class="slider" id="what-our-customer-say">
+                            <div class="slide">
+                                <div class="qoute"><img src="{{ URL::asset('images/front-end/qoute-icon.png') }}" alt=""></div>
+                                <div class="content">Nunc consequat interdum varius sit amet mattis. Nascetur ridiculus mus mauris vitae. Gravida neque convallis a cras semper auctor. Volutpat blandit aliquam etiam erat velit scelerisque in dictum. Porta non pulvinar neque laoreet suspendisse interdum consectetur libero. Sed vulputate odio ut enim. Ut porttitor leo a diam sollicitudin tempor id eu.</div>
+                                <div class="author">
+                                    <div class="img">
+                                        <img src="{{ URL::asset('images/front-end/section-1-bg.jpg') }}" alt="">
+                                    </div>
+                                    <div class="authorname">Author 1</div>
+                                    <div class="desc2">Cursus eget nunc scelerisque <br> viverra mauris in</div>
+                                </div>
+                            </div>
+                            <div class="slide">
+                                <div class="qoute"><img src="{{ URL::asset('images/front-end/qoute-icon.png') }}" alt=""></div>
+                                <div class="content">Nunc consequat interdum varius sit amet mattis. Nascetur ridiculus mus mauris vitae. Gravida neque convallis a cras semper auctor. Volutpat blandit aliquam etiam erat velit scelerisque in dictum. Porta non pulvinar neque laoreet suspendisse interdum consectetur libero. Sed vulputate odio ut enim. Ut porttitor leo a diam sollicitudin tempor id eu.</div>
+                                <div class="author">
+                                    <div class="img">
+                                        <img src="{{ URL::asset('images/front-end/section-1-bg.jpg') }}" alt="">
+                                    </div>
+                                    <div class="authorname">Author 2</div>
+                                    <div class="desc2">Cursus eget nunc scelerisque <br> viverra mauris in</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+
         <div class="section-5">
             <div class="why-choose">
                 <div>
@@ -266,4 +358,196 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('styles')
+<link rel="stylesheet" href="{{ asset('/components/slick-master/slick/slick.css')  }}">
+<link rel="stylesheet" href="{{ asset('/components/slick-master/slick/slick-theme.css')  }}">
+@endsection
+
+@section('scripts')
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script src="{{ asset('/components/slick-master/slick/slick.min.js')  }}"></script>
+<script type="text/javascript">
+var $jq = jQuery.noConflict();
+$jq(document).ready(function() { 
+    $jq('#some-of-our-works-books').slick({
+		dots: true,
+		arrows: false,
+
+		speed: 1000,
+
+		slidesToShow: 6,
+		slidesToScroll: 1,
+
+		autoplay: true,
+		autoplaySpeed: 2000,
+
+		// Pauses autoplay on focus
+		pauseOnFocus: true,
+
+		// Pauses autoplay when a dot is hovered
+		pauseOnDotsHover: false,
+		
+		// Breakpoint triggered settings
+		responsive: [
+		{
+		    breakpoint: 1599,
+		    settings: {
+		        slidesToShow: 5,
+		        slidesToScroll: 1,
+		        infinite: true,
+		        dots: true
+		    }
+		},
+		{
+		    breakpoint: 1000,
+		    settings: {
+		        slidesToShow: 4,
+		        slidesToScroll: 1
+		    }
+		},
+        {
+		    breakpoint: 800,
+		    settings: {
+		        slidesToShow: 3,
+		        slidesToScroll: 1
+		    }
+		},
+        {
+		    breakpoint: 600,
+		    settings: {
+		        slidesToShow: 2,
+		        slidesToScroll: 1
+		    }
+		},
+		{
+		    breakpoint: 400,
+		    settings: {
+		        slidesToShow: 1,
+		        slidesToScroll: 1
+		    }
+		}
+		],
+
+		zIndex: 1000,
+	});
+    $jq('#what-our-customer-say').slick({
+		dots: true,
+		arrows: false,
+
+		speed: 1000,
+
+		slidesToShow: 2,
+		slidesToScroll: 1,
+
+		autoplay: true,
+		autoplaySpeed: 2000,
+
+		// Pauses autoplay on focus
+		pauseOnFocus: true,
+
+		// Pauses autoplay when a dot is hovered
+		pauseOnDotsHover: false,
+
+		zIndex: 1000,
+
+        // break point
+        responsive: [
+		{
+		    breakpoint: 800,
+		    settings: {
+		        slidesToShow: 1,
+		        slidesToScroll: 1,
+		        infinite: true,
+		        dots: true
+		    }
+		},
+        ]
+	});
+    $jq('#features-slide').slick({
+		dots: true,
+		arrows: false,
+
+		speed: 1000,
+
+		slidesToShow: 3,
+		slidesToScroll: 1,
+
+		autoplay: true,
+		autoplaySpeed: 2000,
+
+		// Pauses autoplay on focus
+		pauseOnFocus: true,
+
+		// Pauses autoplay when a dot is hovered
+		pauseOnDotsHover: false,
+
+		zIndex: 1000,
+        responsive: [
+		{
+		    breakpoint: 1000,
+		    settings: {
+		        slidesToShow: 2,
+		        slidesToScroll: 1,
+		        infinite: true,
+		        dots: true
+		    }
+		},
+        {
+		    breakpoint: 800,
+		    settings: {
+		        slidesToShow: 1,
+		        slidesToScroll: 1,
+		        infinite: true,
+		        dots: true
+		    }
+		},
+        ]
+        // break point
+	});
+    $jq('#package-slide').slick({
+		dots: true,
+		arrows: false,
+
+		speed: 1000,
+
+		slidesToShow: 3,
+		slidesToScroll: 1,
+
+		autoplay: true,
+		autoplaySpeed: 2000,
+
+		// Pauses autoplay on focus
+		pauseOnFocus: true,
+
+		// Pauses autoplay when a dot is hovered
+		pauseOnDotsHover: false,
+
+		zIndex: 1000,
+
+        // break point
+        responsive: [
+		{
+		    breakpoint: 1000,
+		    settings: {
+		        slidesToShow: 2,
+		        slidesToScroll: 1,
+		        infinite: true,
+		        dots: true
+		    }
+		},
+        {
+		    breakpoint: 800,
+		    settings: {
+		        slidesToShow: 1,
+		        slidesToScroll: 1,
+		        infinite: true,
+		        dots: true
+		    }
+		},
+        ]
+	});
+});
+</script>
 @endsection
