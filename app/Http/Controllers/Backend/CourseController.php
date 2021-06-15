@@ -230,8 +230,16 @@ class CourseController extends Controller
 
             // clone the documents of the lesson
             foreach($lesson->documents as $document) {
+                // get parts of the file
+                $parts = pathinfo($document->document);
+
+                // check filename and copy the file
+                $newDocumentName = AdminHelpers::checkFileName(ltrim($parts['dirname'], '/'), $parts['filename'], $parts['extension']);
+                File::copy($document->document, $newDocumentName);
+
                 $clone_document = $document->replicate();
                 $clone_document->lesson_id = $clone_lesson->id;
+                $clone_document->document = $newDocumentName;
                 $clone_document->push();
             }
         endforeach;
@@ -243,13 +251,40 @@ class CourseController extends Controller
         endforeach;
 
         foreach( $course->webinars as $webinar ):
+
+            $newImage = NULL;
+            if ($webinar->image) {
+                $parts = pathinfo($webinar->image);
+                // check filename and copy the file
+                $newImage = AdminHelpers::checkFileName(ltrim($parts['dirname'], '/'), $parts['filename'], $parts['extension']);
+                File::copy(ltrim($webinar->image, '/'), $newImage); // use ltrim to remove first /
+            }
+
             $clone_webinar = $webinar->replicate();
             $clone_webinar->course_id = $clone_course->id;
+            $clone_webinar->image = $newImage;
             $clone_webinar->push();
         endforeach;
 
         foreach( $course->emailOut as $emailOut ):
             $clone_email_out = $emailOut->replicate();
+
+            // check if email has attachment
+            if ($emailOut->attachment) {
+                $parts = pathinfo($emailOut->attachment);
+                // check filename and copy the file
+                $newAttachment = AdminHelpers::checkFileName(ltrim($parts['dirname'], '/'), $parts['filename'], $parts['extension']);
+                File::copy(ltrim($emailOut->attachment, '/'), $newAttachment); // use ltrim to remove first /
+
+                // create email-attachment record
+                $emailAttach['filename'] =  $newAttachment;
+                $emailAttach['hash'] = substr(md5(microtime()), 0, 6);
+                $emailAttachment = EmailAttachment::create($emailAttach);
+
+                $clone_email_out->attachment = $newAttachment;
+                $clone_email_out->attachment_hash = $emailAttachment->hash;
+            }
+
             $clone_email_out->course_id = $clone_course->id;
             $clone_email_out->push();
         endforeach;
