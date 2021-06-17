@@ -305,7 +305,7 @@
 						<div id="kursplan" class="tab-pane fade" role="tabpanel">
 							@if ($course->id == 17)
                                 <?php
-                                $webinars = $course->webinars()->where('set_as_replay',0)->get();
+                                $webinars = $course->webinars()->active()->notReplay()->get();
                                 ?>
 								<div class="row webinars-container">
 

@@ -25,6 +25,11 @@ class Webinar extends Model
         return $query->where('status', '=', 1);
     }
 
+    public function scopeNotReplay($query)
+    {
+        return $query->where('set_as_replay', '=', 0);
+    }
+
     public function schedule()
     {
         return $this->hasOne('App\WebinarScheduledRegistration');
