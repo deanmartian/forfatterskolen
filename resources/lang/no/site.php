@@ -158,8 +158,8 @@ return array (
   'make-as-replay-question' => 'Make this webinar as replay?',
   'save' => 'Save',
   'add-presenter-to' => 'Add Presenter to',
-  'first-name' => 'First Name',
-  'last-name' => 'Last Name',
+  'first-name' => 'Fornavn',
+  'last-name' => 'Etternavn',
   'edit-presenter' => 'Edit Presenter',
   'update-presenter' => 'Update Presenter',
   'delete-presenter' => 'Delete Presenter',
@@ -431,7 +431,7 @@ Warning: This cannot be undone.',
   'delete-solution-question' => '<b>Are you sure to delete this solution?</b> <br>
 <em>*This would also delete the articles</em>',
   'add-article' => 'Add Article',
-  'back' => 'Back',
+  'back' => 'Tilbake',
   'add-new-article' => 'Add New Article',
   'create-article' => 'Create Article',
   'delete-article' => 'Delete Article',
@@ -679,7 +679,7 @@ Warning: This cannot be undone.',
     'accept-terms' => 'Jeg aksepterer [start_link]vilkårene[end_link]',
     'latest-seminars' => 'Siste nytt',
     'next-webinar' => 'Neste webinar',
-    'next-free-webinar' => 'Neste gratis webinar',
+    'next-free-webinar' => 'Gratis kurs',
     'next-workshop' => 'Neste Workshop',
     'latest-blog-post' => 'Siste blogginnlegg',
     'register' => 'Registrer deg',
@@ -759,7 +759,7 @@ Warning: This cannot be undone.',
       'accept-terms' => '_start_label_ Jeg aksepterer _end_label_ _start_link_ kjøpsvilkårene _end_link_',
       'student-discount-1000' => 'Du har en rabatt som elev på Kr 1000,00',
       'student-discount-500' => 'Du har en rabatt som elev på Kr 500,00',
-      'login' => 'Login',
+      'login' => 'Logg inn',
       'upload-manuscript' => 'Last opp manuskriptet',
       'send-to-email' => 'Send til E-post',
       'manuscript-description' => 'Noen ord om manuset (valgfritt)',
@@ -846,10 +846,10 @@ Warning: This cannot be undone.',
     ),
     'login' => 
     array (
-      'register' => 'Registrer',
+      'register' => 'Registrer deg med ny konto',
       'password-reset' => 'Tilbakestill passordet ditt',
       'password-reset-title' => 'Tilbakestill passordet',
-      'change-password' => 'Change Password',
+      'change-password' => 'Bytt passord',
       'enter-your-current-password' => 'Skriv inn ditt nåværende passord',
       'enter-your-new-password' => 'Skriv inn ditt nye passord',
     ),
@@ -908,7 +908,49 @@ Warning: This cannot be undone.',
     'former-courses' => 'Tidligere kurs',
     'checkout' => 
     array (
-      'note' => 'Checkout Note',
+      'note' => '(mulighet for delbetaling på utsjekksiden)',
+    ),
+    'competition' => 
+    array (
+      'title' => 'Eventyrlig skrivekonkurranse',
+      'description' => 'Få teksten din på trykk – sammen med kjente forfattere.
+
+I høst kommer boken «Ut på eventyr», som er et samarbeid mellom Papermoon Publishing og Plan International Norge. 
+
+«Ut på eventyr» er en samling tekster skrevet av et knippe forfattere: Vigdis Hjorth, Frode Grytten, Tom Egeland, Nina Lykke m.fl. Tekstene er basert på ulike eventyr og skrevet i et likestillingsperspektiv.
+
+Over hele verden blir jenter møtt med ord og holdninger som holder dem tilbake, også i Norge. Plan mener at likestilte samfunn er gode samfunn som gagner oss alle. Derfor er det viktig at jenter vokser opp med fortellinger som viser dem at jenter kan det samme som gutter, og at de er like mye verdt. 
+
+Papermoon har satt av én plass til en tekst som er skrevet av en ikke-utgitt forfatter. Er dette deg? I så fall er du invitert til å sende inn teksten din til konkurransen. Alle kan delta – eneste kriterium er at du ikke er utgitt tidligere. 
+
+Teksten vil komme på trykk i boken «Ut på eventyr» og blir honorert. Boken vil bli distribuert i bokhandel og nettbutikk fra oktober 2021.
+
+Slik gjør du:
+
+– Ta for deg et av eventyrene på listen nedenfor
+– Lag din unike twist, der du justerer historien for likestilling 
+– Send teksten i word-format, med 12 punkts skrift og halvannen linjeavstand
+– Teksten må ikke være lengre enn det originale eventyret. Det kan gjerne være kortere.
+– Send til: post@papermoon.no. Skriv Eventyr i emnefeltet.
+
+Juryen består av:
+
+Anne Gaathaug, forlagssjef Papermoon
+Helene Uri, forfatter og redaktør
+Kristine Storli Henningsen, forlegger Papermoon og rektor Forfatterskolen
+Annika Bohnenblust, Content Manager Plan Norge
+
+Frist for innsendelse: 10.7.2021.
+
+Bruk et av disse eventyrene som utgangspunkt:
+Tyrihans som fikk kongsdatteren til å le
+Prinsessen på erten
+Froskekongen
+Tornerose
+Snehvit
+Dukken i gresset
+Soria Moria slott
+De tolv villender',
     ),
   ),
   'free-webinars' => 
@@ -1262,8 +1304,7 @@ Kurset vil ha en fullpris på kroner 30 000 ,- (inkludert alt det ovennevnte).
 Vi har også fikset en 2 års avbetalingsplan, så penger ikke skal være noen hindring for drømmen.
 
 Skrivegira hilsen,
-Rektor Kristine
-+ 47 411 23 555',
+Rektor Kristine',
   ),
   'innlevering' => 
   array (
@@ -1275,7 +1316,7 @@ Rektor Kristine
     'header' => 'Takk for at du bekreftet at du har lest mailen!',
   ),
   'shop-manuscript-price-increase-note' => 'Merk: ** Lyrikk har 50% påslag (pris), da dette tar lengre tid å vurdere.',
-  'set-vipps-efaktura' => 'Set VIPPS-eFaktura',
+  'set-vipps-efaktura' => 'Opprett VIPPS-eFaktura avtale',
   'vipps-efaktura' => 'VIPPS eFaktura',
   'mobile-number' => 'Mobile Number',
   'stop-vipps-efaktura' => 'Stop Vipps eFaktura',
@@ -1334,5 +1375,17 @@ Rektor Kristine
   'presenter_url' => 'Presentatør-URL',
   'add-editor' => 'Legg til redaktør',
   'presenter-url' => 'Presentatør-URL',
-  'login-or-register-below' => 'Logga in eller registrera dig nedan',
+  'login-or-register-below' => 'Logg inn eller registrer deg her:',
+  'unfinished-manuscript' => 'Unfinished Manuscript',
+  'assignment-status' => 
+  array (
+    'started' => 'startet',
+    'unfinished' => 'Uferdig',
+    'finished' => 'Ferdig',
+    'select-status' => 'Velg status',
+  ),
+  'move-to-archive' => 'Gå til arkivet',
+  'are-you-sure-you-want-to-move-this-record-to-archive' => 'Er du sikker på at du vil flytte denne posten til arkivet?',
+  'course-for-sale' => 'Kurs til salgs',
+  'group-course-multi-invioce-email' => 'Gruppekurs e-post med flere fakturaer',
 );

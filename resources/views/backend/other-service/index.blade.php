@@ -85,7 +85,8 @@
                                                     <a href="#addOtherServiceFeedbackModal" data-toggle="modal" style="color:#dc3545"
                                                     class="addOtherServiceFeedbackBtn" data-service="2"
                                                     data-action="{{ route('admin.other-service.add-feedback',
-                                                    ['id' => $correction->id, 'type' => 2]) }}">+ {{ trans('site.add-feedback') }}</a>
+                                                    ['id' => $correction->id, 'type' => 2]) }}"
+                                                    data-email-template="{{ json_encode($correctionFeedbackTemplate) }}">+ {{ trans('site.add-feedback') }}</a>
                                                 @endif
                                             </td>
                                             <td>
@@ -186,7 +187,8 @@
                                                         <a href="#addOtherServiceFeedbackModal" data-toggle="modal" style="color:#dc3545"
                                                         class="addOtherServiceFeedbackBtn" data-service="1"
                                                         data-action="{{ route('admin.other-service.add-feedback',
-                                                        ['id' => $editing->id, 'type' => 1]) }}">+ {{ trans('site.add-feedback') }}</a>
+                                                        ['id' => $editing->id, 'type' => 1]) }}"
+                                                           data-email-template="{{ json_encode($copyEditingFeedbackTemplate) }}">+ {{ trans('site.add-feedback') }}</a>
                                                     @endif
                                                 </td>
                                                 <td>
@@ -440,18 +442,18 @@
                         </div>
                         <div class="form-group">
                             <label>{{ trans('site.subject') }}</label>
-                            <input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}"
+                            <input type="text" class="form-control" name="subject" value=""
                                 required>
                         </div>
                         <div class="form-group">
                             <label>{{ trans('site.from') }}</label>
                             <input type="text" class="form-control" name="from_email"
-                                value="{{ $emailTemplate->from_email }}" required>
+                                value="" required>
                         </div>
                         <div class="form-group">
                             <label>{{ trans('site.message') }}</label>
                             <textarea class="form-control tinymce" name="message" rows="6"
-                                    required>{!! $emailTemplate->email_content !!}</textarea>
+                                    required></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary pull-right">{{ trans('site.add-feedback') }}</button>
                         <div class="clearfix"></div>
@@ -626,6 +628,7 @@
             let action = $(this).data('action');
             let modal = $('#addOtherServiceFeedbackModal');
             let service = $(this).data('service');
+            let emailTemplate = $(this).data('email-template');
             let title = 'Korrektur';
 
             if (service === 1) {
@@ -633,6 +636,9 @@
             }
             modal.find('form').attr('action', action);
             modal.find('.modal-title').find('span').text(title);
+            modal.find('.modal-body').find('[name=subject]').val(emailTemplate.subject);
+            modal.find('.modal-body').find('[name=from_email]').val(emailTemplate.from_email);
+            tinyMCE.activeEditor.setContent(emailTemplate.email_content);
         });
 
         function disableSubmit(t) {

@@ -34,7 +34,11 @@ class OtherServiceController extends Controller
         $copyEditing = CopyEditingManuscript::paginate(10);
         $corrections = CorrectionManuscript::paginate(10);
         $coachingTimers = CoachingTimerManuscript::paginate(10);
-        return view('backend.other-service.index', compact('copyEditing', 'corrections', 'coachingTimers'));
+        $coachingFeedbackTemplate = AdminHelpers::emailTemplate('Coaching Feedback');
+        $correctionFeedbackTemplate = AdminHelpers::emailTemplate('Correction Feedback');
+        $copyEditingFeedbackTemplate = AdminHelpers::emailTemplate('Copy Editing Feedback');
+        return view('backend.other-service.index', compact('copyEditing', 'corrections',
+            'coachingTimers', 'coachingFeedbackTemplate', 'correctionFeedbackTemplate', 'copyEditingFeedbackTemplate'));
     }
 
     /**
