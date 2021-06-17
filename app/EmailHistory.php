@@ -90,6 +90,14 @@ class EmailHistory extends Model
             }
         }
 
+        if (strpos($parent, 'coaching-time') !== false ) {
+            $coaching = CoachingTimerManuscript::with('user')->where('id', $parent_id)->first();
+            if($coaching) {
+                $learner_id = $coaching->user_id;
+                $full_name = $coaching->user->full_name;
+            }
+        }
+
         if ($parent === 'invoice') {
             $invoice = Invoice::find($parent_id);
             if ($invoice) {

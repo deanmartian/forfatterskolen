@@ -469,14 +469,15 @@ class HomeController extends Controller
         $user_email = Auth::user()->email;
         $parentID = null;
         $parent = null;
-        $emailTemplate = AdminHelpers::emailTemplate('Other Services Order');
 
         if (session('os_is_copy_editing') == 1) {
             $parentID = $copyEditingManuscript->id;
             $parent = 'copy-editing-order';
+            $emailTemplate = AdminHelpers::emailTemplate('Copy Editing Order');
         }else{
             $parentID = $correctionManuscript->id;
             $parent = 'correction-order';
+            $emailTemplate = AdminHelpers::emailTemplate('Correction Order');
         }
 
         $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user_email,
@@ -753,7 +754,7 @@ class HomeController extends Controller
         $invoice = new FikenInvoice();
         $invoice->create_invoice($invoice_fields);
 
-        CoachingTimerManuscript::create([
+        $coaching = CoachingTimerManuscript::create([
            'user_id'        => Auth::user()->id,
            'file'           => $newFileLocation,
             'payment_price' => $data['price'],
@@ -765,6 +766,13 @@ class HomeController extends Controller
         AdminHelpers::send_email('New Coaching Session',
             'post@forfatterskolen.no', 'camilla@forfatterskolen.no', Auth::user()->first_name
             . ' has ordered the Coaching Time '.$title);
+
+        $emailTemplate = AdminHelpers::emailTemplate('Coaching Order');
+        $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user->email,
+            Auth::user()->first_name, '');
+        dispatch(new AddMailToQueueJob($user->email, $emailTemplate->subject, $emailContent,
+            $emailTemplate->from_email, 'Forfatterskolen',null,
+            'coaching-time-order', $coaching->id));
 
         if( $paymentMode->mode == "Paypal" ) :
             echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
