@@ -184,6 +184,11 @@ class HomeController extends Controller
         return view('frontend.publishing', compact('books'));
     }
 
+    public function competition()
+    {
+        return view('frontend.competition');
+    }
+
     /**
      * Display all blog
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View

@@ -73,7 +73,15 @@
                                 {{ trans('site.front.latest-blog-post') }}
                             </div>
 
-                            @if ($latest_blog)
+                            <div class="h2 mt-0 mb-4 font-montserrat-semibold">
+                                {!! trans('site.front.competition.title') !!}
+                            </div>
+
+                            <a href="{{ route('front.competition') }}" class="btn buy-btn mt-4"
+                               title="View blog link">
+                                {{ trans('site.front.view') }}
+                            </a>
+                            {{--@if ($latest_blog)
                                 <div class="h2 mt-0 mb-4 font-montserrat-semibold">
                                     {{ $latest_blog->title }}
                                 </div>
@@ -89,7 +97,7 @@
                                    title="View blog link">
                                     {{ trans('site.front.view') }}
                                 </a>
-                            @endif
+                            @endif--}}
                         </div>
                     </div>
                 </div>

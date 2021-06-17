@@ -62,6 +62,7 @@ Route::group([
         Route::get('/blog', 'HomeController@blog')->name('front.blog'); // Blog Page
         Route::get('/blog/{id}', 'HomeController@readBlog')->name('front.read-blog'); // Blog Page
         Route::get('/publishing', 'HomeController@publishing')->name('front.publishing'); // Forlag page
+        Route::get('/konkurranse', 'HomeController@competition')->name('front.competition'); // Forlag page
         Route::get('/coaching-timer', 'HomeController@coachingTimer')->name('front.coaching-timer'); // Coaching Timer Page
         Route::get('/coaching-timer/checkout/{plan}', 'HomeController@coachingTimerCheckout')->name('front.coaching-timer-checkout'); // Coaching Timer Page
         Route::post('/coaching-timer/checkout/{plan}', 'HomeController@coachingTimerCheckout')->name('front.coaching-timer-checkout'); // Coaching Timer Page
