@@ -71,21 +71,22 @@ class InvoiceDueReminder extends Command
             $transactions_sum   = Transaction::where('invoice_id', $invoice->id)->get()->sum('amount');
             $remaining          = $balance - $transactions_sum;
             $user               = User::find($invoice->user_id);
-            $to                 = $user->email;
             $redirectLink       = route('learner.invoice', ['filter' => $invoice->id]);
 
-            $emailContent = AdminHelpers::formatEmailContent($email_template->email_content, $to, $user->first_name, $redirectLink);
-            $emailContent = str_replace([
-                ':price',
-                ':kid_number'
-            ], [
-                FrontendHelpers::currencyFormat($remaining),
-                $invoice->kid_number
-            ], $emailContent);
-
-            dispatch(new AddMailToQueueJob($to, $email_template->subject, $emailContent, $from, null, null,
-                'invoice', $invoice->id));
-            CronLog::create(['activity' => 'InvoiceDueReminder CRON sent email to '.$to]);
+            if ($user) {
+                $to                 = $user->email;
+                $emailContent = AdminHelpers::formatEmailContent($email_template->email_content, $to, $user->first_name, $redirectLink);
+                $emailContent = str_replace([
+                    ':price',
+                    ':kid_number'
+                ], [
+                    FrontendHelpers::currencyFormat($remaining),
+                    $invoice->kid_number
+                ], $emailContent);
+                dispatch(new AddMailToQueueJob($to, $email_template->subject, $emailContent, $from, null, null,
+                    'invoice', $invoice->id));
+                CronLog::create(['activity' => 'InvoiceDueReminder CRON sent email to '.$to]);
+            }
         }
 
         CronLog::create(['activity' => 'InvoiceDueReminder CRON done running.']);
