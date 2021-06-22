@@ -40,7 +40,27 @@
 
     <div class="manuscript-page">
         <div class="container main-container">
-            <div class="row">
+            @foreach($replays as $k => $replay)
+                <div class="row" style="{{ $k > 0 ? 'margin-top: 150px' : ''}}">
+                    <div class="col-sm-12">
+                        <h1 class="text-center mb-5">
+                            {!! $replay->title !!}
+                        </h1>
+                    </div>
+                    <div class="col-sm-12 top-page-container">
+                        <iframe src="{{ $replay->video_link }}" frameborder="0"
+                                allowfullscreen="allowfullscreen"></iframe>
+                    </div>
+                    @if($replay->file)
+                        <div class="text-center w-100">
+                            <a href="{{ url($replay->file) }}" class="d-block" download>
+                                Last ned Power Point-presentasjon
+                            </a>
+                        </div>
+                    @endif
+                </div>
+            @endforeach
+            {{--<div class="row">
                 <div class="col-sm-12">
                     <h1 class="text-center mb-5">
                         Reprise: Hvordan skape spennende karakterer? 18.04.2021
@@ -68,7 +88,7 @@
                         Last ned Power Point-presentasjon
                     </a>
                 </div>
-            </div>
+            </div>--}}
         </div>
     </div>
 

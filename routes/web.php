@@ -998,6 +998,15 @@ Route::group([
         });
 
         Route::get('/email-history', 'EmailHistoryController@index')->name('admin.email-history.index');
+        Route::resource('/replays', 'ReplayController', [
+            'except' => ['show'],
+            'names' => [
+                'index' => 'admin.replay.index',
+                'store' => 'admin.replay.store',
+                'update' => 'admin.replay.update',
+                'destroy' => 'admin.replay.delete',
+            ],
+        ]);
 
         Route::resource('/publishing', 'PublishingController', [
             'except' => ['show'],

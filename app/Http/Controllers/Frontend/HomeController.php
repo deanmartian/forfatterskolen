@@ -34,6 +34,7 @@ use App\PilotReaderBookReading;
 use App\PilotReaderBookSettings;
 use App\Poem;
 use App\PublisherBook;
+use App\Replay;
 use App\Repositories\Services\SaleService;
 use App\Repositories\VippsRepository;
 use App\Settings;
@@ -1925,7 +1926,8 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
      */
     public function replay()
     {
-        return view('frontend.replay');
+        $replays = Replay::latest()->get();
+        return view('frontend.replay', compact('replays'));
     }
 
     public function barn()
