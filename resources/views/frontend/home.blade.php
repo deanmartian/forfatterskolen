@@ -137,16 +137,17 @@
                         <div class="content-container">
 
                             <div class="title">
-                                {{ trans('site.front.next-free-webinar') }}
+                                {{--{{ trans('site.front.next-free-webinar') }}--}}
+                                Reprise dagskurs
                             </div>
 
-                            {{--<p>
+                            <p>
                                 <a href="{{ route('front.reprise') }}" class="btn buy-btn mt-4">
                                     Se her
                                 </a>
-                            </p>--}}
+                            </p>
 
-                            @if ($next_free_webinar)
+                            {{--@if ($next_free_webinar)
                                 <div class="h2 mt-0 mb-4 font-montserrat-semibold">
                                     {{ $next_free_webinar->title }}
                                 </div>
@@ -167,7 +168,7 @@
                                    title="View free webinar">
                                     {{ trans('site.front.view') }}
                                 </a>
-                            @endif
+                            @endif--}}
                         </div> <!-- end content container -->
                     </div>
                 </div>
