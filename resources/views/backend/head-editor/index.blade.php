@@ -234,19 +234,23 @@
 									<td>{{ $assignedAssignment->user->full_name }}</td>
 									<td>{{$assignedAssignment->expected_finish}}</td>
 									<td>
-										{{$assignedAssignment->editor->full_name}}
-										<?php 
-											$title = $assignedAssignment->assignment->course?$assignedAssignment->assignment->course->title:$assignedAssignment->assignment->title;
-										?>
-										<button class="btn btn-info btn-xs send-email"
-										data-toggle="modal"
-										data-target="#sendEmail"
-										data-action="{{ route('admin.head-editor-to-editor', 
-															['type' => 'assignment-group',
-															'title' => $title,
-															'learner' => $assignedAssignment->user->id,
-															'editor_id' => $assignedAssignment->editor->id]) }}"
-										><i class="fa fa-paper-plane" aria-hidden="true"></i>&nbsp;{{ trans('site.send-email') }}</button>
+										@if ($assignedAssignment->editor)
+											{{$assignedAssignment->editor->full_name}}
+											<?php
+												$title = $assignedAssignment->assignment->course?$assignedAssignment->assignment->course->title:$assignedAssignment->assignment->title;
+											?>
+											<button class="btn btn-info btn-xs send-email"
+											data-toggle="modal"
+											data-target="#sendEmail"
+											data-action="{{ route('admin.head-editor-to-editor',
+																['type' => 'assignment-group',
+																'title' => $title,
+																'learner' => $assignedAssignment->user->id,
+																'editor_id' => $assignedAssignment->editor->id]) }}"
+											><i class="fa fa-paper-plane" aria-hidden="true"></i>&nbsp;{{ trans('site.send-email') }}</button>
+										@else
+											No Assigned Editor
+										@endif
 									</td>
 									<?php 
 										// echo $assignedAssignment->user_id.' '.
