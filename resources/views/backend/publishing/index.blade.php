@@ -44,6 +44,7 @@
 	<a class="btn btn-success margin-top" href="{{ route('admin.sales.index') }}">Sales</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.email-history.index') }}">Email History</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.replay.index') }}">Replay</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.checkout-log.index') }}">Checkout Logs</a>
 
 	<div class="table-users table-responsive">
 		<table class="table">

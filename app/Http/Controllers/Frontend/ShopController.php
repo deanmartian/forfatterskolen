@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Frontend;
 
+use App\CheckoutLog;
 use App\CourseDiscount;
 use App\CourseOrderAttachment;
 use App\CourseShared;
@@ -148,6 +149,10 @@ class ShopController extends Controller
 
         if ($user) {
             $user['address'] = $user->address;
+            $user->checkoutLogs()->firstOrCreate([
+                'parent' => 'course',
+                'parent_id' => $course->id
+            ]);
         }
 
         // old view svea-checkout
@@ -368,6 +373,15 @@ class ShopController extends Controller
         $newOrder['plan_id']    = $paymentPlan->id;
 
         Order::create($newOrder);
+
+        // update the created log to mark it as ordered
+        $checkoutLog = CheckoutLog::where([
+            'user_id' => \auth()->id(),
+            'parent' => 'course',
+            'parent_id' => $course_id
+        ])->first();
+        $checkoutLog->is_ordered = true;
+        $checkoutLog->save();
 
         // Check for shop manuscripts
         if( $package->shop_manuscripts->count() > 0 ) :

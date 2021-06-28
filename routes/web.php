@@ -1008,6 +1008,8 @@ Route::group([
             ],
         ]);
 
+        Route::get('/checkout-log', 'CheckoutLogController@index')->name('admin.checkout-log.index');
+
         Route::resource('/publishing', 'PublishingController', [
             'except' => ['show'],
             'names' => [

@@ -441,4 +441,9 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\WebinarEditor', 'editor_id', 'id');
     }
+
+    public function checkoutLogs()
+    {
+        return $this->hasMany('App\CHeckoutLog');
+    }
 }
