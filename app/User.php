@@ -444,6 +444,6 @@ class User extends Authenticatable
 
     public function checkoutLogs()
     {
-        return $this->hasMany('App\CHeckoutLog');
+        return $this->hasMany('App\CheckoutLog');
     }
 }
