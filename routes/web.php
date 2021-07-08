@@ -173,6 +173,7 @@ Route::group([
             Route::get('/{id}/checkout', 'ShopController@sveaCheckout')->name('front.course.checkout'); // Checkout
             Route::get('/{id}/checkout-svea', 'ShopController@sveaCheckout')->name('front.course.svea-checkout'); // Checkout
             Route::post('/{id}/checkout/process-order', 'ShopController@processOrder')->name('front.course.process_order'); // Place Order
+            Route::get('/{id}/thank-you', 'CourseController@thankyou')->name('front.course.thank-you'); // Checkout
             Route::post('/{id}/checkout/validate-form', 'ShopController@validateCheckoutForm')->name('front.course.checkout.validate-form');
             Route::get('/{id}/checkout-test', 'ShopController@checkoutTest')->name('front.course.checkout-test'); // Checkout
             Route::post('/{id}/proceed-checkout', 'ShopController@proceedCheckout')->name('front.course.proceed-checkout'); // Checkout

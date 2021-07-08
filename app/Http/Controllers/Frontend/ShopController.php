@@ -522,7 +522,7 @@ class ShopController extends Controller
             return response()->json(['redirect_link' => $this->vippsInitiatePayment($vippsData)]);
         endif;
 
-        return response()->json(['redirect_link' => route('front.shop.thankyou')]);
+        return response()->json(['redirect_link' => route('front.course.thank-you', $course_id)]);
     }
 
     /**

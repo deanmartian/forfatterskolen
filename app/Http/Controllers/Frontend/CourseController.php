@@ -5,7 +5,10 @@ use App\CoursesTaken;
 use App\Events\AddToCampaignList;
 use App\FreeCourseDelayedEmail;
 use App\Http\AdminHelpers;
+use App\Http\FikenInvoice;
 use App\Mail\FreeCourseNewUserEmail;
+use App\Order;
+use App\Services\CourseService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -125,6 +128,36 @@ class CourseController extends Controller
             return redirect()->route('front.thank-you');
         }
         return redirect()->back();
+    }
+
+    public function thankyou( $course_id, Request $request, CourseService $courseService )
+    {
+        // check if from svea payment
+        if ($request->has('svea_ord')) {
+            $order_id = $request->get('svea_ord');
+            $order = Order::find($order_id);
+
+            // add course to user
+            if (!$order->is_processed) {
+                $courseTaken = $courseService->addCourseToLearner($order->user_id, $order->package_id);
+                $courseService->notifyAdmin($order->user_id, $order->package_id);
+                $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken);
+            }
+
+            $order->is_processed = 1;
+            $order->save();
+        }
+
+        // check if fiken invoice url is set
+        // this is set when vipps payment is cancelled
+        if ($request->has('iu')) {
+            $fikenUrl = decrypt($request->get('iu'));
+            $fiken = new FikenInvoice();
+            $fikenInvoice   = $fiken->get_invoice_data($fikenUrl);
+            $fiken->send_invoice($fikenInvoice);
+        }
+
+        return view('frontend.shop.thankyou');
     }
 
 }
