@@ -98,6 +98,14 @@
 					<a href="#" data-toggle="modal" data-target="#autoRenewModal">
 					{{ $learner->auto_renew_courses ? 'Yes' : 'No' }}
 					</a> <br>
+
+					<div>
+						<b>Could buy course:</b>
+						<a href="#" data-toggle="modal" data-target="#couldBuyCourseModal">
+							{{ $learner->could_buy_course ? 'Yes' : 'No' }}
+						</a>
+					</div>
+
 					<b>Preferred Editor:</b>
 					<span>{{ $learner->preferredEditor ? $learner->preferredEditor->editor->fullname : '' }}</span><br>
 					<b>Vipps Efaktura:</b>
@@ -2073,6 +2081,37 @@
 						<select name="auto_renew" class="form-control">
 							<option value="1" {{ $learner->auto_renew_courses ? 'selected' : '' }}>Yes</option>
 							<option value="0" {{ !$learner->auto_renew_courses ? 'selected' : '' }}>No</option>
+						</select>
+					</div>
+
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<div id="couldBuyCourseModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					Allow to buy course
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.learner.update-could-buy-course', $learner->id) }}"
+					  onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+
+					<div class="form-group">
+						<label>Allow user to buy course</label>
+						<select name="could_buy_course" class="form-control">
+							<option value="1" {{ $learner->could_buy_course ? 'selected' : '' }}>Yes</option>
+							<option value="0" {{ !$learner->could_buy_course ? 'selected' : '' }}>No</option>
 						</select>
 					</div>
 

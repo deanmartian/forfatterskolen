@@ -1987,6 +1987,21 @@ class LearnerController extends Controller
         ]);
     }
 
+    public function setCouldBuyCourse( $user_id, Request $request )
+    {
+        $user = User::find($user_id);
+        $user->could_buy_course = $request->could_buy_course;
+        $user->save();
+
+        $message = $request->could_buy_course ? 'User is allowed to buy course' : 'User is not allowed to buy course';
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag($message),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
     /**
      * @param $user_id
      * @param Request $request

@@ -380,16 +380,18 @@
                         {{ trans('site.front.checkout.note') }}
                     </span>
 
-                    <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab(); scrollTop()" class="wizard-footer-right"
-                                   :style="props.fillButtonStyle" :disabled="!currentUser && !isNewCustomer && props.activeTabIndex > 0">
-                        {{ trans('site.learner.next-text') }}
-                    </wizard-button>
+                    <template v-if="!currentUser || (currentUser && currentUser.could_buy_course)">
+                        <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab(); scrollTop()" class="wizard-footer-right"
+                                       :style="props.fillButtonStyle" :disabled="!currentUser && !isNewCustomer && props.activeTabIndex > 0">
+                            {{ trans('site.learner.next-text') }}
+                        </wizard-button>
 
-                    <wizard-button v-else @click.native="props.nextTab()" class="wizard-footer-right finish-button"
-                                   :style="props.fillButtonStyle" :disabled="isLoading && props.isLastStep">
-                        <i class="fa fa-pulse fa-spinner" v-if="isLoading && props.isLastStep"></i>
-                        {{props.isLastStep ? trans('site.front.buy')
-                        : trans('site.learner.next-text')}}</wizard-button>
+                        <wizard-button v-else @click.native="props.nextTab()" class="wizard-footer-right finish-button"
+                                       :style="props.fillButtonStyle" :disabled="isLoading && props.isLastStep">
+                            <i class="fa fa-pulse fa-spinner" v-if="isLoading && props.isLastStep"></i>
+                            {{props.isLastStep ? trans('site.front.buy')
+                            : trans('site.learner.next-text')}}</wizard-button>
+                    </template>
                 </div>
             </template> <!-- end buttons slot -->
 
