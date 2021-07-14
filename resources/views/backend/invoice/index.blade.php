@@ -4,7 +4,42 @@
 <title>Invoices &rsaquo; Forfatterskolen Admin</title>
 @stop
 
+@section('styles')
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+	<style>
+		.center-area {
+			display: inline-block;
+			position: absolute;
+			left: 40%;
+		}
+	</style>
+@stop
+
 @section('content')
+
+	<div class="page-toolbar" style="position: relative;">
+		<h3><i class="fa fa-file-o"></i> {{ trans_choice('site.invoices', 2) }}</h3>
+
+		<div class="center-area centered">
+			<h3>
+				{{ trans('site.balance') }}: {{ \App\Http\FrontendHelpers::currencyFormat($totalBalance - $totalPaid) }}
+			</h3>
+		</div>
+
+		<div class="navbar-form navbar-right">
+			<div class="form-group">
+				<form role="search" method="GET">
+					<div id="reportrange" style="background: #fff; cursor: pointer; padding: 8px 10px;
+					border: 1px solid #ccc; width: 100%; display: inline; margin-right: 5px">
+						<i class="fa fa-calendar"></i>&nbsp;
+						<input type="text" name="dates" style="border: none; width: 180px"/> <i class="fa fa-caret-down"></i>
+					</div>
+
+					<button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+				</form>
+			</div>
+		</div>
+	</div>
 
 <div class="col-md-12">
 	<div class="table-users table-responsive">
@@ -15,6 +50,7 @@
 			        <th>{{ trans_choice('site.learners', 1) }}</th>
 			        <th>{{ trans('site.status') }}</th>
 			        <th>{{ trans('site.pdf-url') }}</th>
+					<th>{{ trans('site.due-date') }}</th>
 			        <th>{{ trans('site.date-created') }}</th>
 		      	</tr>
 		    </thead>
@@ -34,6 +70,7 @@
 						@endif
 					</td>
 		    		<td><a href="{{$invoice->pdf_url}}" target="_blank">{{ trans('site.view-pdf') }}</a></td>
+					<td>{{ $invoice->fiken_dueDate }}</td>
 		    		<td>{{$invoice->created_at}}</td>
 		      	</tr>
 		      	@endforeach
@@ -45,4 +82,37 @@
 	<div class="clearfix"></div>
 </div>
 
+@stop
+
+@section('scripts')
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+	<script>
+        $(function() {
+            let start = moment('{{ $startDate }}');
+            let end = moment('{{ $endDate }}');
+
+            function cb(start, end) {
+                $('#reportrange').find('input').val(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            }
+
+            $('#reportrange').daterangepicker({
+                startDate: start,
+                endDate: end,
+                ranges: {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb);
+
+            cb(start, end);
+
+        });
+	</script>
 @stop

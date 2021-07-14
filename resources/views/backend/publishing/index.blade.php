@@ -45,6 +45,9 @@
 	<a class="btn btn-success margin-top" href="{{ route('admin.email-history.index') }}">Email History</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.replay.index') }}">Replay</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.checkout-log.index') }}">Checkout Logs</a>
+	@if(Auth::user()->isSuperUser())
+		<a class="btn btn-success margin-top" href="{{ route('admin.invoice.index') }}">Invoices</a>
+	@endif
 
 	<div class="table-users table-responsive">
 		<table class="table">

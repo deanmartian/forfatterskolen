@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\AdminHelpers;
+use App\Http\FrontendHelpers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,7 @@ use App\Invoice;
 use App\Transaction;
 use App\Http\Requests\TransactionCreateRequest;
 use App\Http\Requests\InvoiceCreateRequest;
+use Illuminate\Validation\Rules\In;
 use Validator;
 use App\Http\FikenInvoice;
 use App\Package;
@@ -46,9 +48,35 @@ class InvoiceController extends Controller
     }
 
 
-    public function index()
+    public function index( Request $request )
     {
-        $invoices = Invoice::orderBy('created_at', 'desc')->paginate(15);
+
+        if (!Auth::user()->isSuperUser()) {
+            return redirect()->route('backend.dashboard');
+        }
+
+        $invoiceQuery = new Invoice();
+        $invoiceFilter = $invoiceQuery->orderBy('created_at', 'desc');
+
+        $startDate = Carbon::parse(new Carbon('first day of this month'))->format('Y-m-d');
+        $endDate = Carbon::parse(new Carbon('last day of this month'))->format('Y-m-d');
+
+        if ($request->has('dates')) {
+            $dates = explode('-',$request->dates);
+            $startDate = Carbon::parse($dates[0])->format('Y-m-d');
+            $endDate = Carbon::parse($dates[1])->format('Y-m-d');
+        }
+
+        $invoiceFilter = $invoiceFilter->where('fiken_is_paid', 0)
+            ->whereBetween('fiken_dueDate', [$startDate, $endDate]);
+
+        $totalBalance = $invoiceQuery->whereIn('id', $invoiceFilter->pluck('id'))
+            ->sum('fiken_balance');
+        $totalPaid = Transaction::whereIn('invoice_id', $invoiceFilter->pluck('id'))
+            ->sum('amount');
+
+        // add to last to prevent wrong calculations
+        $invoices = $invoiceFilter->paginate(15);
         /*$ch = curl_init($this->fikenInvoices);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
@@ -58,7 +86,8 @@ class InvoiceController extends Controller
         $data = json_decode($data);
         $fikenInvoices = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};*/
 
-    	return view('backend.invoice.index', compact('invoices'));
+    	return view('backend.invoice.index', compact('invoices', 'totalBalance', 'totalPaid',
+            'startDate', 'endDate'));
     }
 
 
