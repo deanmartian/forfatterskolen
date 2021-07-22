@@ -46,7 +46,7 @@ class InvoiceDueReminder extends Command
      */
     public function handle()
     {
-        CronLog::create(['activity' => 'InvoiceDueReminder CRON running.']);
+        //CronLog::create(['activity' => 'InvoiceDueReminder CRON running.']);
 
         $dueDate    = Carbon::today()->addDay(14)->format('Y-m-d');
         /*$invoices = Invoice::whereDate('fiken_dueDate',  $dueDate)
@@ -73,7 +73,7 @@ class InvoiceDueReminder extends Command
             $user               = User::find($invoice->user_id);
             $redirectLink       = route('learner.invoice', ['filter' => $invoice->id]);
 
-            if ($user) {
+            if ($user && !empty($user)) {
                 $to                 = $user->email;
                 $emailContent = AdminHelpers::formatEmailContent($email_template->email_content, $to, $user->first_name, $redirectLink);
                 $emailContent = str_replace([
