@@ -40,11 +40,11 @@
                     </button>
 
                     @if ($course->certificate)
-                        <button class="btn btn-primary pull-right previewBtn" type="button" data-toggle="modal"
+                        {{--<button class="btn btn-primary pull-right previewBtn" type="button" data-toggle="modal"
                                 data-target="#previewModal"
                                 style="margin-right: 10px">
                             Preview
-                        </button>
+                        </button>--}}
 
                         <a href="{{ route('admin.course.download-certificate-template', $course->id) }}"
                            class="btn btn-info pull-right"
