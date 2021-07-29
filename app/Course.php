@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Course extends Model
 {
     protected $table = 'courses';
+
+    // completed_date and issue_date is used on downloading certificate
     protected $fillable = ['title', 'description', 'description_simplemde', 'course_image', 'type', 'email',
-        'course_plan', 'course_plan_data','start_date', 'end_date', 'extend_courses', 'instructor', 'auto_list_id',
-        'photographer', 'is_free', 'hide_price'];
+        'course_plan', 'course_plan_data','start_date', 'end_date', 'completed_date', 'issue_date', 'extend_courses',
+        'instructor', 'auto_list_id', 'photographer', 'is_free', 'hide_price'];
     protected $appends = ['is_webinar_pakke'];
 
 
@@ -146,6 +148,11 @@ class Course extends Model
     public function surveys()
     {
         return $this->hasMany(Survey::class);
+    }
+
+    public function certificate()
+    {
+        return $this->hasOne('App\CourseCertificate');
     }
 
     //for deleting the children

@@ -291,6 +291,7 @@ Route::group([
         Route::post('/take-survey/{id}', 'LearnerController@takeSurvey')->name('learner.take-survey'); // Survey Page
         Route::get('/notifications', 'LearnerController@notifications')->name('learner.notifications'); // Survey Page
         Route::get('diploma/{id}/download', 'LearnerController@downloadDiploma')->name('learner.download-diploma');
+        Route::get('course-certificate/{id}/download', 'LearnerController@downloadCourseCertificate')->name('learner.download-course-certificate');
         Route::get('/other-service/{id}/download/{type}', 'LearnerController@downloadOtherServiceDoc')->name('learner.other-service.download-doc'); // Download assignment feedback
         Route::get('/other-service/download-feedback/{id}', 'LearnerController@downloadOtherServiceFeedback')->name('learner.other-service.download-feedback');
         Route::get('/forum', 'LearnerController@forum')->name('learner.forum');
@@ -654,7 +655,11 @@ Route::group([
         Route::get('/course/{id}/learner-active-list-excel', 'CourseController@learnerActiveListExcel')->name('learner.course.learner-active-list-excel'); // Add Learner To Course
         Route::post('/course/{id}/expirationReminder', 'CourseController@expirationReminder')->name('admin.course.expiration-reminder');
         Route::post('/course/{id}/add-learners-to-webinars', 'CourseController@addLearnersToWebinars')->name('admin.course.add-learners-to-webinars');
+        Route::post('/course/{id}/certificate-dates', 'CourseController@updateCertificateDates')->name('admin.course.update-certificate-dates');
         Route::get('course/resend-welcome-email/{package_id}/{user_id}/{course_taken_id}', 'CourseController@resendWelcomeEmailToUser');
+        Route::get('course/{id}/certificate', 'CourseController@certificate')->name('admin.course.certificate');
+        Route::get('course/{id}/download-certificate', 'CourseController@downloadCertificate')->name('admin.course.download-certificate-template');
+        Route::post('course/{id}/save-certificate-template', 'CourseController@saveCertificateTemplate')->name('admin.course.save-certificate-template');
 
         Route::get('/shareable-course/get-package/{course_id}', 'ShareableCourseController@getCoursePackage');
         Route::resource('shareable-course', 'ShareableCourseController', [

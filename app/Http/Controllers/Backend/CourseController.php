@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\CourseCertificate;
 use App\CourseExpiryReminder;
 use App\CoursesTaken;
 use App\EmailAttachment;
@@ -816,4 +817,68 @@ class CourseController extends Controller
             $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
     }
 
+    /**
+     * @param $course_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateCertificateDates( $course_id, Request $request )
+    {
+        $course = Course::find($course_id);
+        $course->completed_date = $request->completed_date ?: NULL;
+        $course->issue_date = $request->issue_date ?: NULL;
+        $course->save();
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Certificate dates updated successfully.'),
+            'alert_type' => 'success']);
+    }
+
+    /**
+     * @param $course_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function saveCertificateTemplate( $course_id, Request $request )
+    {
+
+        CourseCertificate::updateOrCreate([
+            'course_id' => $course_id
+        ], [
+            'template' => $request->template
+        ]);
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Certificate saved successfully.'),
+            'alert_type' => 'success']);
+
+    }
+
+    /**
+     * @param $course_id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function certificate( $course_id )
+    {
+        $certificate = CourseCertificate::where('course_id', $course_id)->first();
+
+        if (!$certificate) {
+            $certificate = (object)[
+                'template' => view('backend.course.partials.certificate-template')->render()
+            ];
+        }
+
+        return response()->json($certificate);
+    }
+
+    /**
+     * @param $course_id
+     * @return mixed
+     */
+    public function downloadCertificate( $course_id )
+    {
+        $course = Course::find($course_id);
+        $certificate = $course->certificate;
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        $pdf->setPaper('letter', 'landscape');
+        $pdf->loadHTML($certificate->template);
+        return $pdf->download($course->title . ' certificate.pdf');
+    }
 }

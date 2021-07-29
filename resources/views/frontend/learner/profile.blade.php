@@ -332,6 +332,22 @@
 														</div>
 													</div>
 												@endforeach
+
+												@foreach($certificates as $certificate)
+														<div class="col-lg-4 col-md-6">
+															<div class="card card-global">
+																<div class="card-body text-center">
+																	<img data-src="https://www.forfatterskolen.no/images-new/diploma.png" alt="">
+																	<h3 class="font-weight-normal">
+																		{{ $certificate->course_title }}
+																	</h3>
+
+																	<a href="{{ route('learner.download-course-certificate', $certificate->id) }}"
+																	   class="btn site-btn-global">{{ trans('site.learner.download-text') }}</a>
+																</div>
+															</div>
+														</div>
+												@endforeach
 											</div>
 										</section>
 									</div>

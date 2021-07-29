@@ -68,7 +68,7 @@
 				        <i class="glyphicon glyphicon-search"></i>
 				      </button>
 				    </div>
-				  </div> 
+				  </div>
 			</form>
 			<button type="button" class="btn btn-primary margin-bottom" data-toggle="modal" data-target="#addLearnerModal">+ {{ trans('site.add-learner') }}</button>
 			@if(count($learners) > 0)
@@ -80,6 +80,10 @@
 				<button type="button" class="btn btn-primary margin-bottom" data-toggle="modal"
 						data-target="#addLearnersToWebinarsModal">
 					Add learners to webinar
+				</button>
+				<button type="button" class="btn btn-success margin-bottom" data-toggle="modal"
+						data-target="#certificateDatesModal">
+					Certificate Dates
 				</button>
 				@if ($course->is_free)
 					<button type="button" class="btn btn-info margin-bottom" data-toggle="modal"
@@ -510,6 +514,38 @@
 		</div>
 	</div>
 </div>
+
+<div id="certificateDatesModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Certificate Dates</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.course.update-certificate-dates', $course->id) }}"
+					  onsubmit="disableSubmit(this)">
+				{{csrf_field()}}
+
+					<div class="form-group">
+						<label>Completed Date</label>
+						<input type="date" name="completed_date" class="form-control" value="{{ $course->completed_date }}">
+					</div>
+
+					<div class="form-group">
+						<label>Issue Date</label>
+						<input type="date" name="issue_date" class="form-control" value="{{ $course->issue_date }}">
+					</div>
+
+					<div class="text-right">
+						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 @stop
 
 @section('scripts')

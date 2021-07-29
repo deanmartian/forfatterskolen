@@ -9,6 +9,7 @@ use App\CoachingTimerManuscript;
 use App\CoachingTimerTaken;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
+use App\CourseCertificate;
 use App\Diploma;
 use App\EmailConfirmation;
 use App\Genre;
@@ -1273,7 +1274,18 @@ class LearnerController extends Controller
 
     public function profile()
     {
-        return view('frontend.learner.profile');
+        // get course certificates based on users course taken
+        $certificates = DB::table('course_certificates')
+            ->leftJoin('courses', 'course_certificates.course_id','=','courses.id')
+            ->leftJoin('packages','packages.course_id','=','courses.id')
+            ->leftJoin('courses_taken','courses_taken.package_id', '=','packages.id')
+            ->select('course_certificates.*', 'courses.title as course_title')
+            ->whereNotNull('courses.completed_date')
+            ->whereNotNull('courses.issue_date')
+            ->where('courses_taken.user_id', \Auth::user()->id)
+            ->groupBy('course_certificates.id')
+            ->get();
+        return view('frontend.learner.profile', compact('certificates'));
     }
 
 
@@ -3059,6 +3071,42 @@ class LearnerController extends Controller
         }
 
         return redirect()->route('admin.learner.index');
+    }
+
+    public function downloadCourseCertificate( $course_id )
+    {
+        $certificate = CourseCertificate::findOrFail($course_id);
+        $course = $certificate->course;
+
+        $courseLearner = Auth::user()->coursesTaken()->whereIn('package_id', $course->packages()->pluck('id'))
+            ->get();
+        // check if not learner of the course
+        if (!$courseLearner->count()) {
+            return redirect()->back();
+        }
+
+        $issueDate = Carbon::parse($course->issue_date);
+        $template = str_replace([
+            '{LEARNERNAME}',
+            '{COURSENAME}',
+            '{COMPLETEDDATE}',
+            '{ISSUEDDATE}'
+            ],
+            [
+                Auth::user()->full_name,
+                $course->title,
+                $course->completed_date,
+                $issueDate->format('d') . '. ' . FrontendHelpers::convertMonthLanguage($issueDate->format('n')) . ' ' . $issueDate->format('Y')
+            ],
+            $certificate->template
+        );
+
+
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        $pdf->setPaper('letter', 'landscape');
+        $pdf->loadHTML($template);
+        return $pdf->download($course->title . ' certificate.pdf');
     }
 
     /**

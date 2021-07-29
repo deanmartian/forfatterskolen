@@ -28,5 +28,11 @@
             <i class="fa fa-question"></i>&nbsp;&nbsp;{{ trans('site.surveys') }}
         </a>
     </li>
+
+    <li @if($section == 'certificate') class="active" @endif>
+        <a href="{{route('admin.course.show', $course->id)}}?section=certificate">
+            <i class="fa fa-certificate"></i>&nbsp;&nbsp;Certificate
+        </a>
+    </li>
 </ul>
 </div>
