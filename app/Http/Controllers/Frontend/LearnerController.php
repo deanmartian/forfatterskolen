@@ -10,6 +10,7 @@ use App\CoachingTimerTaken;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\CourseCertificate;
+use App\CourseOrderAttachment;
 use App\Diploma;
 use App\EmailConfirmation;
 use App\Genre;
@@ -943,6 +944,18 @@ class LearnerController extends Controller
         $sveaOrders = Auth::user()->orders()->svea()->paginate(10);
         $user = Auth::user();
 
+        $orderAttachments = DB::table('course_order_attachments')
+            ->leftJoin('courses', 'course_order_attachments.course_id','=','courses.id')
+            ->leftJoin('packages','course_order_attachments.package_id','=','packages.id')
+            ->leftJoin('courses_taken','courses_taken.package_id', '=','packages.id')
+            ->select('course_order_attachments.*', 'courses.title as course_title',
+                'courses_taken.id as course_taken_id', 'courses_taken.deleted_at')
+            ->where('courses_taken.user_id', $user->id)
+            ->where('course_order_attachments.user_id', $user->id)
+            ->whereNull('courses_taken.deleted_at')
+            ->groupBy('course_order_attachments.id')
+            ->get();
+
         /*$ch = curl_init($this->fikenInvoices);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
@@ -951,7 +964,7 @@ class LearnerController extends Controller
         $data = curl_exec($ch);
         $data = json_decode($data);
         $fikenInvoices = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};*/
-        return view('frontend.learner.invoice', compact('invoices', 'sveaOrders', 'user'));
+        return view('frontend.learner.invoice', compact('invoices', 'sveaOrders', 'user', 'orderAttachments'));
     }
 
 

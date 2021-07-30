@@ -32,7 +32,7 @@
 				<div class="col-sm-12">
 
 					<ul class="nav nav-tabs margin-top">
-						<li @if( Request::input('tab') !== 'svea') class="active" @endif>
+						<li @if( Request::input('tab') == 'fiken') class="active" @endif>
 							<a href="?tab=fiken">
 								Fiken
 							</a>
@@ -41,6 +41,12 @@
 						<li @if( Request::input('tab') == 'svea' ) class="active" @endif>
 							<a href="?tab=svea">
 								Svea
+							</a>
+						</li>
+
+						<li @if( Request::input('tab') == 'regret-form' ) class="active" @endif>
+							<a href="?tab=regret-form">
+								Angreskjema
 							</a>
 						</li>
 					</ul>
@@ -99,6 +105,36 @@
 
 								<div class="float-right">
 									{{ $sveaOrders->appends(request()->except('page')) }}
+								</div>
+							@elseif( Request::input('tab') == 'regret-form' )
+								<div class="card global-card">
+									<div class="card-body py-0">
+										<table class="table table-global">
+											<thead>
+											<tr>
+												<th>{{ trans_choice('site.courses', 1) }}</th>
+												<th>{{ trans('site.learner.files-text') }}</th>
+											</tr>
+											</thead>
+											<tbody>
+											@foreach($orderAttachments as $orderAttachment)
+												<tr>
+													<td>
+														<a href="{{ route('learner.course.show', $orderAttachment->course_taken_id) }}">
+															{{ $orderAttachment->course_title }}
+														</a>
+													</td>
+													<td>
+														<a href="{{ $orderAttachment->file_path }}" download>
+															{{ basename($orderAttachment->file_path) }}
+														</a>
+													</td>
+													<td></td>
+												</tr>
+											@endforeach
+											</tbody>
+										</table>
+									</div>
 								</div>
 							@else
 
