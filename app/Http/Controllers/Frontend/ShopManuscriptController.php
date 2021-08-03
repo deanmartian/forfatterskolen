@@ -942,15 +942,15 @@ Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">po
             $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
             //mail('post@forfatterskolen.no', 'Free Manuscript', view('emails.free-manuscript', compact('name', 'email', 'content', 'word_count')), $headers);
-            AdminHelpers::send_email('Free Manuscript',
-                'post@forfatterskolen.no', 'post@forfatterskolen.no',
-                view('emails.free-manuscript', compact('name', 'email', 'content', 'word_count')));
             FreeManuscript::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'genre' => $request->genre,
                 'content' => $request->manuscript_content
             ]);
+            AdminHelpers::send_email('Free Manuscript',
+                'post@forfatterskolen.no', 'post@forfatterskolen.no',
+                view('emails.free-manuscript', compact('name', 'email', 'content', 'word_count')));
 
             // forget the wordcount
             Session::forget('wordcount');
