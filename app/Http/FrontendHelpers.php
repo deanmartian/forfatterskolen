@@ -752,6 +752,29 @@ class FrontendHelpers
 	}
 
     /**
+     * Generate unique code
+     * @param int $codeLength
+     * @return string
+     */
+    public static function generateUniqueCode($codeLength = 20)
+    {
+
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersNumber = strlen($characters);
+
+        $code = '';
+
+        while (strlen($code) < $codeLength) {
+            $position = rand(0, $charactersNumber - 1);
+            $character = $characters[$position];
+            $code = $code.$character;
+        }
+
+        return $code;
+
+    }
+
+    /**
      * Get content from .doc file
      * @param $filename
      * @return bool|string

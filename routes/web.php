@@ -45,6 +45,7 @@ Route::group([
         Route::post('/gotowebinar', 'HomeController@gtWebinarSendEmail');
         Route::post('/gotowebinar/course/{id}/register', 'HomeController@gtWebinarCourseRegister');
         Route::get('/contact-us', 'HomeController@contact_us')->name('front.contact-us'); // Contact Us
+        Route::get('/gift-cards', 'HomeController@giftCards')->name('front.gift-cards');
         Route::post('/contact-us', 'HomeController@contact_us'); // Contact Us
         Route::get('/faq', 'HomeController@faq')->name('front.faq'); // FAQ
         Route::get('/support', 'HomeController@support')->name('front.support'); // Support
@@ -198,6 +199,21 @@ Route::group([
             Route::get('/{id}', 'WorkshopController@show')->name('front.workshop.show'); // workshop Details
             Route::get('/{id}/checkout', 'WorkshopController@checkout')->name('front.workshop.checkout'); // Checkout
             Route::post('/{id}/checkout/place_order', 'WorkshopController@place_order')->name('front.workshop.place_order'); // Place Order
+        });
+
+        Route::group([
+            'prefix' => 'gift'
+        ], function(){
+            Route::group([
+                'prefix' => 'course'
+            ], function(){
+                Route::get('/', 'GiftController@course')->name('front.gift.course');
+                Route::get('/{id}', 'GiftController@courseShow')->name('front.gift.course.show');
+                Route::get('/{id}/checkout', 'GiftController@courseCheckout')->name('front.gift.course.checkout');
+                Route::post('/{id}/checkout/validate-form', 'GiftController@validateCheckoutForm')->name('front.gift.course.checkout.validate-form');
+                Route::post('/{id}/checkout/process-order', 'GiftController@processCourseOrder')->name('front.gift.course.checkout.process-order');
+                Route::get('/{id}/thankyou', 'GiftController@courseThankyou')->name('front.gift.course.thankyou');
+            });
         });
 
         Route::get('/thankyou', 'ShopController@thankyou')->name('front.shop.thankyou'); // Thank You

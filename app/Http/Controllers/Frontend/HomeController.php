@@ -148,6 +148,10 @@ class HomeController extends Controller
         return view('frontend.contact-us', compact('hasAdvisory', 'advisory'));
     }
 
+    public function giftCards()
+    {
+        return view('frontend.gift-cards');
+    }
 
     public function faq()
     {

@@ -40,6 +40,7 @@ Vue.component('example', require('./components/Example.vue'));
 Vue.component('take-survey', require('./components/TakeSurvey.vue'));
 Vue.component('svea-checkout', require('./frontend/course/svea-checkout.vue'));
 Vue.component('course-checkout', require('./frontend/course/checkout.vue'));
+Vue.component('gift-course-checkout', require('./frontend/gift/course-checkout.vue'));
 
 new Vue({
     el: '#app-container'
