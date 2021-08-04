@@ -375,13 +375,13 @@ class ShopController extends Controller
         Order::create($newOrder);
 
         // update the created log to mark it as ordered
-        $checkoutLog = CheckoutLog::where([
+        $checkoutLog = CheckoutLog::updateOrCreate([
             'user_id' => \auth()->id(),
             'parent' => 'course',
             'parent_id' => $course_id
-        ])->first();
-        $checkoutLog->is_ordered = true;
-        $checkoutLog->save();
+        ], [
+            'is_ordered' => true
+        ]);
 
         // Check for shop manuscripts
         if( $package->shop_manuscripts->count() > 0 ) :
