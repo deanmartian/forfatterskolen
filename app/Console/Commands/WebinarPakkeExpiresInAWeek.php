@@ -6,6 +6,7 @@ use App\CoursesTaken;
 use App\CronLog;
 use App\Http\AdminHelpers;
 use App\Http\FikenInvoice;
+use App\Mail\SubjectBodyEmail;
 use App\Package;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -130,9 +131,17 @@ class WebinarPakkeExpiresInAWeek extends Command {
                 // Email to support
                 $from = 'postmail@forfatterskolen.no';
                 $to = 'support@forfatterskolen.no';
-                AdminHelpers::send_email('All Courses Renewed',
+                /*AdminHelpers::send_email('All Courses Renewed',
                     $from, $to,
-                    $user_name . ' has renewed all the courses');
+                    $user_name . ' has renewed all the courses');*/
+                $emailData = [
+                    'email_subject' => 'All Courses Renewed',
+                    'email_message' => $user_name . ' has renewed all the courses',
+                    'from_name' => '',
+                    'from_email' => $from,
+                    'attach_file' => NULL
+                ];
+                \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
                 CronLog::create(['activity' => 'WebinarPakkeExpiresInAWeek CRON renewed the courses for user '.$user->id]);
             }
         }

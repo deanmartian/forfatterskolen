@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\AdminHelpers;
+use App\Mail\SubjectBodyEmail;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -49,8 +50,17 @@ class RegisterController extends Controller
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
         //mail($user->email, 'Velkommen til Forfatterskolen', view('emails.registration', compact('actionText', 'actionUrl', 'user')), $headers);
-        AdminHelpers::send_email('Velkommen til Forfatterskolen',
-            'post@forfatterskolen.no', $user->email, view('emails.registration', compact('actionText', 'actionUrl', 'user')));
+        /*AdminHelpers::send_email('Velkommen til Forfatterskolen',
+            'post@forfatterskolen.no', $user->email, view('emails.registration', compact('actionText', 'actionUrl', 'user')));*/
+        $to = $user->email; //
+        $emailData = [
+            'email_subject' => 'Velkommen til Forfatterskolen',
+            'email_message' => view('emails.registration', compact('actionText', 'actionUrl', 'user'))->render(),
+            'from_name' => '',
+            'from_email' => 'post@forfatterskolen.no',
+            'attach_file' => NULL
+        ];
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
         Auth::login($user);
 

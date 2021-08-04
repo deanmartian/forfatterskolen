@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Editor;
 use App\Http\AdminHelpers;
 use App\Invoice;
+use App\Mail\SubjectBodyEmail;
 use App\Order;
 use App\Paypal;
 use App\ShopManuscriptUpgrade;
@@ -152,8 +153,17 @@ class ShopManuscriptController extends Controller
             // Admin notification
             $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
             $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
-            AdminHelpers::send_email('New manuscript submitted for shop manuscript',
-                'post@forfatterskolen.no',$toMail, $message);
+            /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
+                'post@forfatterskolen.no',$toMail, $message);*/
+            $to = 'Camilla@forfatterskolen.no'; //
+            $emailData = [
+                'email_subject' => 'New manuscript submitted for shop manuscript',
+                'email_message' => $message,
+                'from_name' => '',
+                'from_email' => 'post@forfatterskolen.no',
+                'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
             //mail($toMail, 'New manuscript submitted for shop manuscript', $message);
         endif;
 
@@ -433,8 +443,17 @@ class ShopManuscriptController extends Controller
         $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
         $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
         //mail($toMail, 'New manuscript submitted for shop manuscript', $message);
-            AdminHelpers::send_email('New manuscript submitted for shop manuscript',
-                'post@forfatterskolen.no', $toMail, $message);
+            /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
+                'post@forfatterskolen.no', $toMail, $message);*/
+            $to = $toMail; //
+            $emailData = [
+                'email_subject' => 'New manuscript submitted for shop manuscript',
+                'email_message' => $message,
+                'from_name' => '',
+                'from_email' => 'post@forfatterskolen.no',
+                'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag(trans('site.learner.upload-manuscript-success')),
                 'alert_type' => 'success'
@@ -586,8 +605,17 @@ class ShopManuscriptController extends Controller
             $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
             //mail('post@forfatterskolen.no', 'New manuscript submitted for shop manuscript', $message);
             $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
-            AdminHelpers::send_email('New manuscript submitted for shop manuscript',
-                'post@forfatterskolen.no', $toMail, $message);
+            /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
+                'post@forfatterskolen.no', $toMail, $message);*/
+            $to = $toMail; //
+            $emailData = [
+                'email_subject' => 'New manuscript submitted for shop manuscript',
+                'email_message' => $message,
+                'from_name' => '',
+                'from_email' => 'post@forfatterskolen.no',
+                'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
             return redirect()->back();
         }
     }
@@ -948,9 +976,18 @@ Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">po
                 'genre' => $request->genre,
                 'content' => $request->manuscript_content
             ]);
-            AdminHelpers::send_email('Free Manuscript',
+            /*AdminHelpers::send_email('Free Manuscript',
                 'post@forfatterskolen.no', 'post@forfatterskolen.no',
-                view('emails.free-manuscript', compact('name', 'email', 'content', 'word_count')));
+                view('emails.free-manuscript', compact('name', 'email', 'content', 'word_count')));*/
+            $to = 'post@forfatterskolen.no'; //
+            $emailData = [
+                'email_subject' => 'Free Manuscript',
+                'email_message' => view('emails.free-manuscript', compact('name', 'email', 'content', 'word_count'))->render(),
+                'from_name' => '',
+                'from_email' => 'post@forfatterskolen.no',
+                'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
             // forget the wordcount
             Session::forget('wordcount');

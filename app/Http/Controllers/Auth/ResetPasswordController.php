@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\AdminHelpers;
 use App\Http\Requests\ChangePasswordRequest;
+use App\Mail\SubjectBodyEmail;
 use Illuminate\Http\Request;
 use App\Mail\PasswordResetEmail;
 use App\Http\Controllers\Controller;
@@ -64,8 +65,17 @@ class ResetPasswordController extends Controller
             $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
             //mail($request->reset_email, 'Forespørsel om å tilbakestille passordet ditt', view('emails.passwordreset', compact('actionText', 'actionUrl', 'level')), $headers);
-            AdminHelpers::send_email('Forespørsel om å tilbakestille passordet ditt',
-                'postmail@forfatterskolen.no', $request->reset_email, view('emails.passwordreset', compact('actionText', 'actionUrl', 'level')));
+            /*AdminHelpers::send_email('Forespørsel om å tilbakestille passordet ditt',
+                'postmail@forfatterskolen.no', $request->reset_email, view('emails.passwordreset', compact('actionText', 'actionUrl', 'level')));*/
+            $to = $request->reset_email; //
+            $emailData = [
+                'email_subject' => 'Forespørsel om å tilbakestille passordet ditt',
+                'email_message' => view('emails.passwordreset', compact('actionText', 'actionUrl', 'level'))->render(),
+                'from_name' => '',
+                'from_email' => 'postmail@forfatterskolen.no',
+                'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
             //Mail::to($request->reset_email)->send(new PasswordResetEmail($passwordReset));
 
             return redirect()->back()->with(['passwordreset_success' => 'Vi har sendt en passord tilbakestillingslink til din epost.']);

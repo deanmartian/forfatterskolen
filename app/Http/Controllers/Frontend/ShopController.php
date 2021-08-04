@@ -1308,8 +1308,17 @@ class ShopController extends Controller
         $headers1 .= "MIME-Version: 1.0\r\n";
         $headers1 .= "Content-Type: text/html; charset=UTF-8\r\n";
         //mail('support@forfatterskolen.no', 'New Course Order', Auth::user()->first_name . ' has ordered the course ' . $package->course->title, $headers1);
-        AdminHelpers::send_email('New Course Order',
-            'post@forfatterskolen.no', 'support@forfatterskolen.no', Auth::user()->first_name . ' has ordered the course ' . $package->course->title);
+        $to = 'support@forfatterskolen.no'; //
+        $emailData = [
+            'email_subject' => 'New Course Order',
+            'email_message' => Auth::user()->first_name . ' has ordered the course ' . $package->course->title,
+            'from_name' => '',
+            'from_email' => 'post@forfatterskolen.no',
+            'attach_file' => NULL
+        ];
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        /*AdminHelpers::send_email('New Course Order',
+            'post@forfatterskolen.no', 'support@forfatterskolen.no', Auth::user()->first_name . ' has ordered the course ' . $package->course->title);*/
 
 
         // Send course email
