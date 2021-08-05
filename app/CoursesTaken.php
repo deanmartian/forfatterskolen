@@ -10,8 +10,8 @@ class CoursesTaken extends Model
     use SoftDeletes;
 
     protected $table = 'courses_taken';
-    protected $fillable = ['user_id', 'package_id', 'is_active', 'started_at', 'start_date', 'end_date', 'access_lessons',
-        'years', 'is_free', 'send_expiry_reminder', 'is_welcome_email_sent'];
+    protected $fillable = ['user_id', 'package_id', 'gift_purchase_id', 'is_active', 'started_at', 'start_date',
+        'end_date', 'access_lessons', 'years', 'is_free', 'send_expiry_reminder', 'is_welcome_email_sent'];
 
     protected $appends = ['order'];
 

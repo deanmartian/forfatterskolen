@@ -49,6 +49,18 @@
 								Angreskjema
 							</a>
 						</li>
+
+						<li @if( Request::input('tab') == 'gift' ) class="active" @endif>
+							<a href="?tab=gift">
+								Gift Purchases
+							</a>
+						</li>
+
+						<li @if( Request::input('tab') == 'redeem' ) class="active" @endif>
+							<a href="?tab=redeem">
+								Redeem Gift
+							</a>
+						</li>
 					</ul>
 
 
@@ -134,6 +146,66 @@
 											@endforeach
 											</tbody>
 										</table>
+									</div>
+								</div>
+							@elseif( Request::input('tab') == 'gift' )
+
+								<div class="card global-card">
+									<div class="card-body py-0">
+										<table class="table table-global">
+											<thead>
+											<tr>
+												<th>Item</th>
+												<th>Redeem Code</th>
+												<th>Redeemed</th>
+											</tr>
+											</thead>
+											<tbody>
+											@foreach($giftPurchases as $giftPurchase)
+												<tr>
+													<td>
+														<a href="{{ $giftPurchase->item_link }}">
+															{{ $giftPurchase->item_name }}
+														</a>
+													</td>
+													<td>{{ $giftPurchase->redeem_code }}</td>
+													<td>
+														@if ($giftPurchase->is_redeemed)
+															<label class="label label-success" style="font-size: 13px">
+																{{ trans('site.front.yes') }}
+															</label>
+														@else
+															<label class="label label-danger" style="font-size: 13px">
+																{{ trans('site.front.no') }}
+															</label>
+														@endif
+
+													</td>
+												</tr>
+											@endforeach
+											</tbody>
+										</table>
+									</div>
+								</div>
+
+							@elseif( Request::input('tab') == 'redeem' )
+								<div class="card global-card">
+									<div class="card-body">
+										<div class="col-md-4 col-md-offset-4">
+											<form action="{{ route('learner.redeem-gift') }}" method="POST">
+												{{ csrf_field() }}
+
+												<div class="form-group mb-0">
+													<label>Redeem Code</label>
+													<input type="text" name="redeem_code" class="form-control"
+														   style="text-transform: uppercase" required>
+												</div>
+
+												<button class="btn btn-success w-100" type="submit">
+													Submit
+												</button>
+											</form>
+										</div>
 									</div>
 								</div>
 							@else

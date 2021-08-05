@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Auth;
 class GiftController extends Controller
 {
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function course()
     {
         $courses = Course::where('status', 1)
@@ -36,6 +39,10 @@ class GiftController extends Controller
         return view('frontend.course.index', compact('courses', 'showRoute'));
     }
 
+    /**
+     * @param $course_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|mixed
+     */
     public function courseShow($course_id)
     {
         $course = Course::findOrFail($course_id);
@@ -49,6 +56,10 @@ class GiftController extends Controller
         return view('frontend.course.show', compact('course', 'checkoutRoute'));
     }
 
+    /**
+     * @param $course_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View|mixed
+     */
     public function courseCheckout( $course_id )
     {
         $course = Course::findOrFail($course_id);
@@ -95,6 +106,13 @@ class GiftController extends Controller
             'hasPaidCourse', 'user', 'startIndex'));
     }
 
+    /**
+     * @param $course_id
+     * @param Request $request
+     * @param CourseService $courseService
+     * @param GiftService $giftService
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function validateCheckoutForm( $course_id, Request $request, CourseService $courseService, GiftService $giftService )
     {
 
@@ -131,6 +149,12 @@ class GiftController extends Controller
         return response()->json($giftService->processCheckout($request));
     }
 
+    /**
+     * @param $course_id
+     * @param Request $request
+     * @param GiftService $giftService
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function courseThankyou( $course_id, Request $request, GiftService $giftService )
     {
         $course = Course::find($course_id);
@@ -146,14 +170,14 @@ class GiftController extends Controller
             // add course to user
             if (!$order->is_processed) {
                 $giftPurchase = $giftService->addGiftPurchase($order->user_id, 'course-package', $order->package_id);
-                return $giftService->notifyGiftBuyer($giftPurchase);
-                /*$giftService->notifyAdmin($order->user_id, $order->package_id);*/
+                $giftService->notifyGiftBuyer($giftPurchase);
+                $giftService->notifyAdmin($giftPurchase);
             }
 
             $order->is_processed = 1;
-            //$order->save();
+            $order->save();
         }
-        return $course_id;
+        return view('frontend.gift.thankyou', ['page' => 'gift-course']);
     }
 
 }

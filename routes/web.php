@@ -250,6 +250,7 @@ Route::group([
         Route::get('/invoice', 'LearnerController@invoice')->name('learner.invoice'); // Invoice Listing Page
         Route::get('/invoice/{id}', 'LearnerController@invoiceShow')->name('learner.invoice.show'); // Invoice Single Page
         Route::get('/invoice/{invoice_number}/vipps-payment', 'LearnerController@invoiceVippsPayment')->name('learner.invoice.vipps-payment'); // Invoice Single Page
+        Route::post('/redeem-gift', 'LearnerController@redeemGift')->name('learner.redeem-gift');
         Route::post('learner/invoice/{id}/e-faktura', 'LearnerController@vippsEFaktura')->name('learner.invoice.vipps-e-faktura');
         Route::post('learner/set-vipss-efaktura', 'LearnerController@setVippsEFaktura')->name('learner.set-vipps-e-faktura');
         Route::get('/invoice/{id}/download/{type}', 'LearnerController@downloadInvoiceByType')->name('learner.invoice.download-by-type');

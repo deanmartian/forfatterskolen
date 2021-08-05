@@ -446,4 +446,9 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\CheckoutLog');
     }
+
+    public function giftPurchases()
+    {
+        return $this->hasMany('App\GiftPurchase');
+    }
 }

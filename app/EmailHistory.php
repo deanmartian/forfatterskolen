@@ -98,6 +98,14 @@ class EmailHistory extends Model
             }
         }
 
+        if (strpos($parent, 'gift-purchase') !== false ) {
+            $giftPurchase = GiftPurchase::with('buyer')->where('id', $parent_id)->first();
+            if($giftPurchase) {
+                $learner_id = $giftPurchase->buyer->id;
+                $full_name = $giftPurchase->buyer->full_name;
+            }
+        }
+
         if ($parent === 'invoice') {
             $invoice = Invoice::find($parent_id);
             if ($invoice) {

@@ -4,18 +4,26 @@ namespace App\Services;
 
 use App\Address;
 use App\CourseDiscount;
+use App\CourseOrderAttachment;
 use App\GiftPurchase;
 use App\Helpers\SveaConfig;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
+use App\Jobs\AddMailToQueueJob;
 use App\Order;
 use App\Package;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use PhpOffice\PhpWord\SimpleType\DocProtect;
 
 class GiftService {
 
+    /**
+     * @param Request $request
+     * @param string $type
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function processCheckout( Request $request, $type = 'course' )
     {
         // update address
@@ -269,6 +277,12 @@ class GiftService {
         return Order::create($newOrder);
     }
 
+    /**
+     * @param $user_id
+     * @param $parent
+     * @param $parent_id
+     * @return $this|\Illuminate\Database\Eloquent\Model
+     */
     public function addGiftPurchase( $user_id, $parent, $parent_id )
     {
 
@@ -285,9 +299,14 @@ class GiftService {
 
     }
 
+    /**
+     * Send email to the buyer
+     * @param $giftPurchase
+     * @return mixed
+     */
     public function notifyGiftBuyer( $giftPurchase )
     {
-        $user = $giftPurchase->user;
+        $user = $giftPurchase->buyer;
         $user_email = $user->email;
 
         $emailTemplate = AdminHelpers::emailTemplate('Gift Purchase');
@@ -296,7 +315,283 @@ class GiftService {
         ], [
             $giftPurchase->redeem_code
         ], $emailTemplate->email_content);
+
+
+        $attachments = NULL;
+        if ($giftPurchase->parent === 'course-package') {
+            $package = $giftPurchase->coursePackage;
+            $attachments = [asset($this->generateRegretForm($user->id, $package->id)),
+                asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
+        }
+
+        dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent, $emailTemplate->from_email,
+            NULL,$attachments, 'gift-purchase', $giftPurchase->id));
+
         return $emailContent;
+    }
+
+    /**
+     * Notify the admin regarding the purchase
+     * @param $giftPurchase
+     */
+    public function notifyAdmin( $giftPurchase )
+    {
+        $user = $giftPurchase->buyer;
+        $itemName = '';
+        if ($giftPurchase->parent === 'course-package') {
+            $package = Package::find($giftPurchase->parent_id);
+            $course = $package->course;
+            $itemName = $course->title;
+        }
+
+        $to = 'support@forfatterskolen.no';
+        $from = 'post@forfatterskolen.no';
+        $subject = 'New Course Order';
+        $message = $user->first_name .
+            ' has purchased a gift course ' . $itemName;
+
+        AdminHelpers::queue_mail($to, $subject, $message, $from);
+    }
+
+    /**
+     * Generate regret form when user orders a course
+     * @param $user_id
+     * @param $package_id
+     * @return string
+     */
+    public function generateRegretForm($user_id, $package_id)
+    {
+        $user = User::find($user_id);
+        $address = $user->address;
+        $package = Package::find($package_id);
+        $course = $package->course;
+
+        $parseDate = Carbon::today()->addDays(13);
+        if ($course->type === "Group" && Carbon::today()->lt(Carbon::parse($course->start_date))) {
+            $parseDate = Carbon::parse($course->start_date)->addDays(13);
+        }
+
+        $expirationDate = $parseDate->format('d.m.Y');
+        $expirationDay = FrontendHelpers::convertDayLanguage($parseDate->format('N'));
+
+        $phpWord = new \PhpOffice\PhpWord\PhpWord();
+        $phpWord->setDefaultFontName('Times New Roman');
+        $phpWord->setDefaultFontSize(12);
+
+        // prevent user from editing/copying from the file
+        $documentProtection = $phpWord->getSettings()->getDocumentProtection();
+        $documentProtection->setEditing(DocProtect::FORMS);
+
+        $sectionStyle = array(
+            'marginTop' => 1150,
+            'marginBottom' => 1150,
+            'marginLeft' => 800,
+            'marginRight' => 800
+        );
+        $section = $phpWord->addSection(
+            $sectionStyle
+        );
+
+        $section->addText("Angreskjema",
+            [
+                'size' => 18
+            ],
+            [
+                'alignment' => 'center',
+                'marginBottom' => 0,
+                'space' => array('before' => 0, 'after' => 70),
+            ]);
+
+        $section->addText('ved kjøp av varer og tjenester som ikke er finansielle tjenester',
+            ['size' => 10], [
+                'alignment' => 'center',
+                'space' => array('after' => 250)
+            ]);
+
+        $section->addText('Fyll ut og returner dette skjemaet dersom du ønsker å gå fra avtalen', [],
+            [
+                'alignment' => 'center',
+                'space' => array('after' => 350)
+            ]);
+
+        $section->addText('Utfylt skjema sendes til:', [], [
+            'space' => array('after' => 0)
+        ]);
+        $section->addText('(den næringsdrivende skal sette inn sitt navn, geografiske adresse og ev.'.
+            'telefaksnummer og e-postadresse)', ['size' => 10], [
+            'space' => array('after' => 350)
+        ]);
+
+
+        $width = 100 * 100;
+
+        $table = $section->addTable([
+            'width' => $width,
+        ]);
+
+        $table->addRow(0);
+        $table->addCell($width, [
+            'borderBottomSize' => 6,
+            'height' => 1
+        ])->addText('Forfatterskolen, Postboks 9233, 3064 DRAMMEN', [
+            'bgColor' => 'CCCCCC',
+        ], [
+            'space' => array('before' => 150, 'after' => 0),
+            'indent' => 0.1
+        ]);
+
+        $table->addRow(0);
+        $table->addCell($width, [
+            'borderBottomSize' => 6,
+            'height' => 1
+        ])->addText('post@forfatterskolen.no', [
+            'bgColor' => 'CCCCCC'
+        ], [
+            'space' => array('before' => 250, 'after' => 0),
+            'indent' => 0.1
+        ]);
+
+        $section->addTable($table);
+
+        $listItemRun = $section->addTextRun([
+            'space' => array('before' => 550)
+        ]);
+        $listItemRun->addText('Jeg/vi underretter herved om at jeg/vi ønsker å gå fra min/vår avtale om kjøp av følgende:');
+        $listItemRun->addText(' (sett kryss)', array('size' => 10));
+
+        $checkBox = $section->addTextRun();
+        $checkBox->addFormField('checkbox')->setValue(true);
+        $checkBox->addText(' tjenester');
+        $checkBox->addText(' (spesifiser på linjene nedenfor)', array('size' => 10));
+
+        $table = $section->addTable([
+            'width' => $width,
+        ]);
+        $table->addRow(0);
+        $table->addCell($width, [
+            'borderBottomSize' => 6,
+            'height' => 1
+        ])->addText('Gjelder kjøp av '.$course->title, [
+            'bgColor' => 'CCCCCC',
+        ], [
+            'space' => array('before' => 150, 'after' => 0),
+            'indent' => 0.1
+        ]);
+
+        $table->addRow(0);
+        $table->addCell($width, [
+            'borderBottomSize' => 6,
+            'height' => 1
+        ])->addText('Frist for avbestilling for  å kunne benytte angreretten: Innen klokken 23.59 '
+            . $expirationDay .' '. $expirationDate, [
+            'bgColor' => 'CCCCCC',
+        ], [
+            'space' => array('before' => 150, 'after' => 0),
+            'indent' => 0.1
+        ]);
+
+        $section->addText('Sett kryss og dato:', ['size'=>10], [
+            'space' => array('before' => 400),
+        ]);
+
+        $textRun = $section->addTextRun();
+        $textRun->addFormField('checkbox')->setValue(true);
+        $textRun->addText(' Avtalen ble inngått den');
+        $textRun->addText(' (dato)', array('size' => 10));
+        $textRun->addText('     ');//spacing
+        $textRun->addText( Carbon::today()->format('d.m.Y'), [
+            'bgColor' => 'CCCCCC',
+            'underline' => 'single'
+        ]);
+        $textRun->addText(' (ved kjøp av tjenester)', array('size' => 10));
+
+        $table = $section->addTable([
+            'width' => $width
+        ]);
+        $table->addRow(0);
+        $table->addCell($width, [
+            'height' => 1
+        ])->addText('Forbrukerens/forbrukemesnavn:', ['size'=>10], [
+            'space' => array('before' => 500),
+        ]);
+
+        $table->addRow(0);
+        $table->addCell($width, [
+            'borderBottomSize' => 6,
+            'height' => 1
+        ])->addFormField('textinput', [
+            'bgColor' => 'CCCCCC'
+        ], [
+            'space' => array('before' => 0, 'after' => 0),
+            'indent' => 0.1
+        ])->setValue(" ");
+
+        $table->addRow(0);
+        $table->addCell($width, [
+            'height' => 1
+        ])->addText('Forbrukerens/forbrukemes adresse:', ['size'=>10], [
+            'space' => array('before' => 300, 'after' => 0)
+        ]);
+
+        $table->addRow(0);
+        $table->addCell($width, [
+            'borderBottomSize' => 6,
+            'height' => 1
+        ])->addFormField('textinput', [
+            'bgColor' => 'CCCCCC'
+        ], [
+            'space' => array('before' => 200, 'after' => 0),
+            'indent' => 0.1
+        ])->setValue(" ");
+
+
+        $table = $section->addTable();
+        $table->addRow();
+        $cell = $table->addCell($width)->addTextRun([
+            'space' => array('before' => 1800, 'after' => 0)
+        ]);
+
+        $cell->addText('Dato:', array('size' => 10));
+        $cell->addText('     ');//spacing
+        $cell->addFormField('textinput',[
+            'indent' => 2
+        ])->setValue("dd. dd. åååå");
+
+        $table = $section->addTable();
+        $table->addRow(0);
+        $table->addCell($width, [
+            'borderBottomSize' => 6,
+        ])->addText('', [], [
+            'space' => array('before' => 500, 'after' => 0),
+        ]);
+
+        $section->addText("Forbrukerens/forbrukemes underskrift (dersom papirskjema benyttes)",
+            [
+                'size' => 10
+            ],
+            [
+                'alignment' => 'center',
+            ]);
+
+        $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+        try {
+            $objWriter->save(public_path('email-attachments/angrerettskjema.docx'));
+
+            $courseOrderAttachmentCopy = '/storage/course-order-attachments/' .
+                str_replace(':','-',$course->title).'-'.$user_id.'.docx';
+            $objWriter->save(public_path($courseOrderAttachmentCopy));
+
+            CourseOrderAttachment::create([
+                'user_id' => $user_id,
+                'course_id' => $course->id,
+                'package_id' => $package_id,
+                'file_path' => $courseOrderAttachmentCopy
+            ]);
+
+            return 'email-attachments/angrerettskjema.docx';
+        } catch (\Exception $e) {
+            return "";
+        }
     }
 
 }
