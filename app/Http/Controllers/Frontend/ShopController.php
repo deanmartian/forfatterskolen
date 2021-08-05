@@ -375,7 +375,7 @@ class ShopController extends Controller
         Order::create($newOrder);
 
         // update the created log to mark it as ordered
-        $checkoutLog = CheckoutLog::updateOrCreate([
+        CheckoutLog::updateOrCreate([
             'user_id' => \auth()->id(),
             'parent' => 'course',
             'parent_id' => $course_id
