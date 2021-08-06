@@ -24,6 +24,11 @@ class Order extends Model {
         return $this->belongsTo('App\PaymentPlan', 'plan_id', 'id');
     }
 
+    public function paymentMode()
+    {
+        return $this->belongsTo('App\PaymentMode');
+    }
+
     public function package()
     {
         return $this->belongsTo('App\Package');

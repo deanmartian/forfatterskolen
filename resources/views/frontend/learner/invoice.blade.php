@@ -31,36 +31,41 @@
 			<div class="row mt-5">
 				<div class="col-sm-12">
 
+					@php
+						$tabWithLabel = [
+							[
+								'name' => 'svea',
+								'label' => 'Svea'
+							],
+							[
+								'name' => 'regret-form',
+								'label' => 'Angreskjema'
+							],
+							[
+								'name' => 'gift',
+								'label' => 'Gift Purchases'
+							],
+							[
+								'name' => 'redeem',
+								'label' => 'Redeem Gift'
+							]
+						]
+					@endphp
+
 					<ul class="nav nav-tabs margin-top">
-						<li @if( Request::input('tab') == 'fiken') class="active" @endif>
+						<li @if(!in_array(Request::input('tab'), array_column($tabWithLabel, 'name'))) class="active" @endif>
 							<a href="?tab=fiken">
 								Fiken
 							</a>
 						</li>
 
-						<li @if( Request::input('tab') == 'svea' ) class="active" @endif>
-							<a href="?tab=svea">
-								Svea
-							</a>
-						</li>
-
-						<li @if( Request::input('tab') == 'regret-form' ) class="active" @endif>
-							<a href="?tab=regret-form">
-								Angreskjema
-							</a>
-						</li>
-
-						<li @if( Request::input('tab') == 'gift' ) class="active" @endif>
-							<a href="?tab=gift">
-								Gift Purchases
-							</a>
-						</li>
-
-						<li @if( Request::input('tab') == 'redeem' ) class="active" @endif>
-							<a href="?tab=redeem">
-								Redeem Gift
-							</a>
-						</li>
+						@foreach($tabWithLabel as $tab)
+							<li @if( Request::input('tab') == $tab['name'] ) class="active" @endif>
+								<a href="?tab={{ $tab['name'] }}">
+									{{ $tab['label'] }}
+								</a>
+							</li>
+						@endforeach
 					</ul>
 
 
