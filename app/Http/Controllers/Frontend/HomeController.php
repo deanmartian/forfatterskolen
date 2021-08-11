@@ -692,7 +692,7 @@ class HomeController extends Controller
     public function coachingTimerPlaceOrder($plan, Request $request)
     {
         $data = $request->except('_token');
-        $suggested_dates = $data['suggested_date'];
+        $suggested_dates = [];//$data['suggested_date'];
         $newFileLocation = NULL;
 
         // format the sent suggested dates
@@ -764,7 +764,7 @@ class HomeController extends Controller
            'file'           => $newFileLocation,
             'payment_price' => $data['price'],
             'plan_type'     => $plan,
-            'suggested_date' => json_encode($suggested_dates),
+            //'suggested_date' => json_encode($suggested_dates),
             'help_with'     => $data['help_with']
         ]);
 

@@ -3292,6 +3292,21 @@ class LearnerController extends Controller
     }
 
     /**
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function setCoachingStatus($id, Request $request)
+    {
+        if($coachingTimer = CoachingTimerManuscript::find($id)) {
+            $coachingTimer->status = $request->status;
+            $coachingTimer->save();
+        }
+
+        return redirect()->back();
+    }
+
+    /**
      * List all user emails
      * @return \Illuminate\Http\JsonResponse
      */

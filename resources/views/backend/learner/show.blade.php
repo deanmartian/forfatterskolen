@@ -1097,8 +1097,8 @@
 							<th>{{ trans_choice('site.manus', 2) }}</th>
 							<th>{{ trans_choice('site.learners', 1) }}</th>
 							<th>{{ trans('site.length') }}</th>
-							<th>{{ trans('site.learner-suggestion') }}</th>
-							<th>{{ trans('site.admin-suggestion') }}</th>
+							{{--<th>{{ trans('site.learner-suggestion') }}</th>
+							<th>{{ trans('site.admin-suggestion') }}</th>--}}
 							<th>{{ trans('site.approved-date') }}</th>
 							<th>{{ trans('site.assigned-to') }}</th>
 							<th>{{ trans('site.replay') }}</th>
@@ -1125,10 +1125,10 @@
 								<td>
 									{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($courseTaken->package->has_coaching) }}
 								</td>
-								<td>
+								<!--<td>
 
 								</td>
-								<td></td>
+								<td></td>-->
 								<td>
 									<button class="btn btn-xs btn-warning setApprovedDateBtn" data-toggle="modal" data-target="#setApprovedDateModal"
 									data-course_taken_id="{{ $courseTaken->id }}">
@@ -1168,7 +1168,7 @@
 								<td>
 									{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($coachingTimer->plan_type) }}
 								</td>
-								<td>
+								<!--<td>
                                     <?php
                                     $suggested_dates = json_decode($coachingTimer->suggested_date);
                                     ?>
@@ -1209,11 +1209,18 @@
 										   class="suggestDateBtn"
 										   data-action="{{ route('admin.other-service.coaching-timer.suggestDate', $coachingTimer->id) }}">{{ trans('site.suggest-different-dates') }}</a>
 									@endif
-								</td>
+								</td>-->
 								<td>
 									{{ $coachingTimer->approved_date ?
                                     \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
                                      : ''}}
+
+									<button data-target="#setCoachingApprovedDateModal" class="btn btn-success btn-xs setCoachingApprovedDateBtn"
+									   data-toggle="modal" data-approved_date="{{ $coachingTimer->approved_date }}"
+									   data-action="{{ route('admin.other-service.coaching-timer.set-coaching-approve-date', $coachingTimer->id) }}"
+									style="display: block">
+										Set approve date
+									</button>
 								</td>
 								<td>
 									@if ($coachingTimer->editor_id)
@@ -1252,6 +1259,12 @@
 								<td>
 									@if ($coachingTimer->status === 1)
 										<span class="label label-success">Finished</span>
+									@endif
+
+									@if($coachingTimer->status === 2 && !$coachingTimer->approved_date)
+										<span class="label label-info" style="font-size: 13px">
+											Pending approval
+										</span> <br>
 									@endif
 
 									<button class="btn btn-xs btn-danger deleteCoachingBtn margin-top" data-toggle="modal"
@@ -3020,6 +3033,30 @@
 	</div>
 </div>
 
+<div id="setCoachingApprovedDateModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Approve Date</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>Approve Date</label>
+						<input type="datetime-local" class="form-control" name="approved_date">
+					</div>
+
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="setApprovedDateModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -3626,6 +3663,15 @@
 
         modal.find('.modal-body').find('pre').text(details);
     });
+
+    $(".setCoachingApprovedDateBtn").click(function(){
+        let approved_date = $(this).data('approved_date');
+        let action = $(this).data('action');
+        let modal = $("#setCoachingApprovedDateModal");
+
+        modal.find('form').attr('action', action);
+        modal.find('.modal-body').find('[name=approved_date]').val(approved_date);
+	});
 
     $(".editDiplomaBtn").click(function(){
        let action = $(this).data('action');

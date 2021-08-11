@@ -94,9 +94,9 @@
 								<tr>
 									<th>{{ trans('site.learner.script') }}</th>
 									<th>{{ trans('site.learner.coaching-timer') }}</th>
-									<th>{{ trans('site.learner.my-suggested-dates') }}</th>
+									{{--<th>{{ trans('site.learner.my-suggested-dates') }}</th>--}}
 									<th>{{ trans('site.front.coaching-timer.help-with-text') }}</th>
-									<th>{{ trans('site.learner.admin-proposed-dates') }}</th>
+									{{--<th>{{ trans('site.learner.admin-proposed-dates') }}</th>--}}
 									<th>{{ trans('site.learner.agreed-date-time') }}</th>
 									<th>{{ trans('site.learner.reprise-text') }}</th>
 									<th></th>
@@ -119,7 +119,7 @@
 										<td>
 											{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($coachingTimer->plan_type) }}
 										</td>
-										<td>
+										<!--<td>
 											<?php
 											$suggested_dates = json_decode($coachingTimer->suggested_date);
 											?>
@@ -138,7 +138,8 @@
 												   data-action="{{ route('learner.coaching-timer.suggest_date', $coachingTimer->id) }}">
 													{{ trans('site.learner.suggest-other-dates') }}</a>
 											@endif
-										</td>
+
+										</td>-->
 										<td>
 											<a href="#viewHelpWithModal" class="viewHelpWithBtn"
 											   data-toggle="modal" data-details="{{ $coachingTimer->help_with }}"
@@ -146,7 +147,7 @@
 												{{ trans('site.learner.need-help-with-text') }}
 											</a>
 										</td>
-										<td>
+										<!--<td>
 											<?php
 											$suggested_dates_admin = json_decode($coachingTimer->suggested_date_admin);
 											?>
@@ -166,7 +167,7 @@
 													</div>
 												@endfor
 											@endif
-										</td>
+										</td> -->
 										<td>
 											{{ $coachingTimer->approved_date ?
 											\App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
@@ -196,10 +197,27 @@
 												@endif
 											@endif
 										</td>
-										<td>
+										<td id="coaching-time-{{ $coachingTimer->id }}">
 											@if ($coachingTimer->status === 1)
 												<span class="label label-success">{{ trans('site.learner.finished') }}</span>
 											@endif
+
+											@if($coachingTimer->status === 0 && !$coachingTimer->approved_date)
+												<div class="form-group">
+													<button data-et-click-type="start-scheduling"
+															data-et-agent-id="610cd73bc02659717c0355b4" type="button"
+															onclick="triggerConsoltoAction('open-widget');"
+															class="consolto-btn btn site-btn-global font-15"
+															data-fields="{{ json_encode($coachingTimer) }}">Book an appointment</button>
+												</div>
+											@endif
+
+											@if($coachingTimer->status === 2 && !$coachingTimer->approved_date)
+												<span class="label label-info">
+													Pending Approval
+												</span>
+											@endif
+
 										</td>
 									</tr>
 								@endforeach
@@ -377,6 +395,7 @@
 @stop
 
 @section('scripts')
+	<script id="et-iframe" data-version="0.5" data-widgetId="610cd762c02659717c0355e1" src="https://client.consolto.com/iframeApp/iframeApp.js"  ></script>
 	<script>
         $(".approveDateBtn").click(function(){
             let action = $(this).data('action');
@@ -423,6 +442,28 @@
             submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
             submit_btn.attr('disabled', 'disabled');
         }
+
+        let selectedCoaching = '';
+        $(".consolto-btn").click(function(){
+            selectedCoaching = $(this).data('fields');
+		});
+
+        window.addEventListener('consoltoEvent', function (e) {
+            if (e.detail.action === 'SEND_BOOKING_REQUEST') {
+                $.ajax({
+                    type:'POST',
+                    url:'/account/coaching-timer/' + selectedCoaching.id + '/set-status',
+                    headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    data: { "status" : 2 },
+                    success: function(data){
+                        let tr = $("#coaching-time-" + selectedCoaching.id);
+                        tr.find('.consolto-btn').remove();
+                        tr.html('<span class="label label-info">Pending Approval</span>');
+                    }
+                });
+			}
+
+        });
 	</script>
 @stop
 

@@ -111,6 +111,26 @@ class OtherServiceController extends Controller
     }
 
     /**
+     * @param $coaching_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function setCoachingApproveDate( $coaching_id, Request $request )
+    {
+        if ($coachingTimer = CoachingTimerManuscript::find($coaching_id)) {
+            $approvedDate = Carbon::parse($request->approved_date)->format('Y-m-d H:i:s');
+            $coachingTimer->update([
+                'approved_date' => $approvedDate
+            ]);
+            return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Approved date saved successfully.'),
+                'alert_type' => 'success',
+                'not-former-courses' => true]);
+        }
+
+        return redirect()->back();
+    }
+
+    /**
      * Set replay for coaching timer
      * @param $id
      * @param Request $request

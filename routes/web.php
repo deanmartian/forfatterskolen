@@ -273,6 +273,7 @@ Route::group([
         Route::post('/coaching-timer/{id}/approve_date', 'LearnerController@approveCoachingDate')->name('learner.coaching-timer.approve_date');
         Route::post('/coaching-timer/{id}/suggest_date', 'LearnerController@suggestCoachingDate')->name('learner.coaching-timer.suggest_date');
         Route::post('/coaching-timer/{id}/help_with', 'LearnerController@updateHelpWith')->name('learner.coaching-timer.help_with');
+        Route::post('/coaching-timer/{id}/set-status', 'LearnerController@setCoachingStatus')->name('learner.coaching-timer.set-status');
         Route::post('/course-taken/coaching-timer/add', 'LearnerController@addCoachingSession')->name('learner.course-taken.coaching-timer.add');
         Route::get('/webinar', 'LearnerController@webinar')->name('learner.webinar'); // Webinars Page
         Route::post('/webinar', 'LearnerController@webinar')->name('learner.webinar'); // Webinars Page
@@ -1190,6 +1191,8 @@ Route::group([
         ]);
 
         Route::post('/other-service/{id}/coaching-timer/approve_date', 'OtherServiceController@approveDate')->name('admin.other-service.coaching-timer.approve_date');
+        Route::post('/other-service/{id}/coaching-timer/set-approve-date', 'OtherServiceController@setCoachingApproveDate')
+            ->name('admin.other-service.coaching-timer.set-coaching-approve-date');
         Route::post('/other-service/{id}/coaching-timer/suggest_date', 'OtherServiceController@suggestDate')->name('admin.other-service.coaching-timer.suggestDate');
         Route::post('/other-service/set-approved-date', 'OtherServiceController@setApprovedDate')->name('admin.other-service.coaching-timer.set-approved-date');
         Route::post('/other-service/{id}/coaching-timer/set_replay', 'OtherServiceController@setReplay')->name('admin.other-service.coaching-timer.set_replay');
