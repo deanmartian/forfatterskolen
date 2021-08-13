@@ -212,7 +212,16 @@ Route::group([
                 Route::get('/{id}/checkout', 'GiftController@courseCheckout')->name('front.gift.course.checkout');
                 Route::post('/{id}/checkout/validate-form', 'GiftController@validateCheckoutForm')->name('front.gift.course.checkout.validate-form');
                 Route::post('/{id}/checkout/process-order', 'GiftController@processCourseOrder')->name('front.gift.course.checkout.process-order');
-                Route::get('/{id}/thankyou', 'GiftController@courseThankyou')->name('front.gift.course.thankyou');
+                Route::get('/{id}/thankyou', 'GiftController@thankyou')->name('front.gift.course.thankyou');
+            });
+
+            Route::group([
+                'prefix' => 'shop-manuscript'
+            ], function(){
+                Route::get('/', 'GiftController@shopManuscript')->name('front.gift.shop-manuscript');
+                Route::get('/{id}/checkout', 'GiftController@shopManuscriptCheckout')->name('front.gift.shop-manuscript.checkout'); // Checkout Shop Manuscript
+                Route::post('/{id}/checkout/validate-form', 'GiftController@validateCheckoutForm');
+                Route::get('/{id}/thankyou', 'GiftController@thankyou');
             });
         });
 

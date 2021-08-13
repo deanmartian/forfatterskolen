@@ -34,7 +34,7 @@
                     Buy Course
                 </a>
 
-                <a href="" class="btn site-btn-global">
+                <a href="{{ route('front.gift.shop-manuscript') }}" class="btn site-btn-global">
                     Buy Manuscript
                 </a>
             </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Course;
 use App\CoursesTaken;
+use App\Editor;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
 use App\Http\Requests\OrderCreateRequest;
@@ -11,6 +12,7 @@ use App\Order;
 use App\Package;
 use App\Services\CourseService;
 use App\Services\GiftService;
+use App\ShopManuscript;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -146,30 +148,52 @@ class GiftController extends Controller
             $courseService->evaluateUser($request->email, $request->password, $request->first_name, $request->last_name, $addressData);
         }
 
-        return response()->json($giftService->processCheckout($request));
+        $itemType = 'course';
+        if ($request->has('item_type') && $request->item_type === 2) {
+            $itemType = 'shop-manuscript';
+        }
+
+        return response()->json($giftService->processCheckout($request, $itemType));
     }
 
     /**
-     * @param $course_id
+     * @param $item_id
      * @param Request $request
      * @param GiftService $giftService
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function courseThankyou( $course_id, Request $request, GiftService $giftService )
+    public function thankyou( $item_id, Request $request, GiftService $giftService )
     {
-        $course = Course::find($course_id);
-        if (!$course) {
-            abort(404);
-        }
 
         // check if from svea payment
         if ($request->has('svea_ord')) {
+
             $order_id = $request->get('svea_ord');
             $order = Order::find($order_id);
+            $parent = '';
+            $parent_id = '';
+
+            if ($order->type === 1) {
+                $course = Course::find($item_id);
+                $parent = 'course-package';
+                $parent_id = $order->package_id;
+                if (!$course) {
+                    abort(404);
+                }
+            }
+
+            if ($order->type === 2) {
+                $shopManuscript = ShopManuscript::find($item_id);
+                $parent = 'shop-manuscript';
+                $parent_id = $order->item_id;
+                if (!$shopManuscript) {
+                    abort(404);
+                }
+            }
 
             // add course to user
             if (!$order->is_processed) {
-                $giftPurchase = $giftService->addGiftPurchase($order->user_id, 'course-package', $order->package_id);
+                $giftPurchase = $giftService->addGiftPurchase($order->user_id, $parent, $parent_id);
                 $giftService->notifyGiftBuyer($giftPurchase);
                 $giftService->notifyAdmin($giftPurchase);
             }
@@ -178,6 +202,26 @@ class GiftController extends Controller
             $order->save();
         }
         return view('frontend.gift.thankyou', ['page' => 'gift-course']);
+    }
+
+    public function shopManuscript()
+    {
+        $shopManuscripts = ShopManuscript::orderBy('full_payment_price', 'asc')->get();
+        $editors = Editor::orderBy('id', 'ASC')->get();
+        $checkoutRoute = 'front.gift.shop-manuscript.checkout';
+        return view('frontend.shop-manuscript.index', compact('shopManuscripts', 'editors', 'checkoutRoute'));
+    }
+
+    public function shopManuscriptCheckout( $manuscript_id )
+    {
+        $shopManuscript = ShopManuscript::findOrFail($manuscript_id);
+
+        $user = \Auth::user();
+        if ($user) {
+            $user['address'] = $user->address;
+        }
+
+        return view('frontend.gift.shop-manuscript-checkout', compact('shopManuscript', 'user'));
     }
 
 }

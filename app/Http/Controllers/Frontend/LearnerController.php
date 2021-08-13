@@ -1052,6 +1052,10 @@ class LearnerController extends Controller
             $this->redeemCourse( $giftPurchase );
         }
 
+        if ($giftPurchase->parent === 'shop-manuscript') {
+            $this->redeemManuscript( $giftPurchase );
+        }
+
         $giftPurchase->is_redeemed = 1;
         $giftPurchase->save();
 
@@ -1123,6 +1127,31 @@ class LearnerController extends Controller
         dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
             'postmail@forfatterskolen.no', 'Forfatterskolen', $attachments, 'courses-taken-order',
             $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
+    }
+
+    /**
+     * @param $giftPurchase
+     */
+    public function redeemManuscript( $giftPurchase )
+    {
+        $user = Auth::user();
+        $user_email = $user->email;
+
+        $shopManuscriptTaken = new ShopManuscriptsTaken();
+        $shopManuscriptTaken->user_id               = $user->id;
+        $shopManuscriptTaken->description           = NULL;
+        $shopManuscriptTaken->shop_manuscript_id    = $giftPurchase->parent_id;
+        $shopManuscriptTaken->is_active = false;
+        $shopManuscriptTaken->coaching_time_later = 0;
+        $shopManuscriptTaken->is_welcome_email_sent = 0;
+        $shopManuscriptTaken->save();
+
+        $emailTemplate = AdminHelpers::emailTemplate('Shop Manuscript Welcome Email');
+        $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user_email,
+            Auth::user()->first_name, 'shop-manuscripts-taken');
+
+        dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
+            $emailTemplate->from_email, null, null, 'shop-manuscripts-taken', $shopManuscriptTaken->id));
     }
 
     public function vippsEFaktura( $invoice_id, Request $request)

@@ -12,6 +12,7 @@ use App\Http\FrontendHelpers;
 use App\Jobs\AddMailToQueueJob;
 use App\Order;
 use App\Package;
+use App\ShopManuscript;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -54,6 +55,13 @@ class GiftService {
             $merchantDataTitle = $course->title;
             $checkoutUri = '/gift/course/' . $course->id . '/checkout';
             $confirmationUri = '/gift/course/' . $course->id;
+        }
+
+        if ($type === 'shop-manuscript') {
+            $shopManuscript = ShopManuscript::find($request->shop_manuscript_id);
+            $merchantDataTitle = $shopManuscript->title;
+            $checkoutUri = '/gift/shop-manuscript/' . $shopManuscript->id . '/checkout';
+            $confirmationUri = '/gift/shop-manuscript/' . $shopManuscript->id;
         }
 
         $discount = $request->price - $discountedPrice;
@@ -263,6 +271,11 @@ class GiftService {
             $package_id = $package->id;
         }
 
+        if ($parent === 'shop-manuscript') {
+            $item_id = $request->shop_manuscript_id;
+            $type = Order::MANUSCRIPT_TYPE;
+        }
+
         $newOrder['user_id']    = \Auth::user()->id;
         $newOrder['item_id']    = $item_id;
         $newOrder['type']       = $type;
@@ -341,14 +354,19 @@ class GiftService {
         if ($giftPurchase->parent === 'course-package') {
             $package = Package::find($giftPurchase->parent_id);
             $course = $package->course;
-            $itemName = $course->title;
+            $itemName = 'course ' . $course->title;
+        }
+
+        if ($giftPurchase->parent === 'shop-manuscript') {
+            $shopManuscript = ShopManuscript::find($giftPurchase->parent_id);
+            $itemName = 'manuscript ' . $shopManuscript->title;
         }
 
         $to = 'support@forfatterskolen.no';
         $from = 'post@forfatterskolen.no';
-        $subject = 'New Course Order';
+        $subject = 'New Gift Order';
         $message = $user->first_name .
-            ' has purchased a gift course ' . $itemName;
+            ' has purchased a gift ' . $itemName;
 
         AdminHelpers::queue_mail($to, $subject, $message, $from);
     }

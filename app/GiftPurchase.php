@@ -21,6 +21,11 @@ class GiftPurchase extends Model
         return $this->belongsTo('App\Package', 'parent_id', 'id');
     }
 
+    public function shopManuscript()
+    {
+        return $this->belongsTo('App\ShopManuscript', 'parent_id', 'id');
+    }
+
     public function getItemNameAttribute()
     {
         $itemName = '';
