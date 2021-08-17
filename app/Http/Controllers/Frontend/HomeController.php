@@ -58,6 +58,7 @@ use App\Package;
 use App\Faq;
 use App\Http\FikenInvoice;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
 include_once($_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php');
@@ -150,7 +151,14 @@ class HomeController extends Controller
 
     public function giftCards()
     {
+        Session::remove('gift-card');
         return view('frontend.gift-cards');
+    }
+
+    public function setGiftCard( Request $request )
+    {
+        \Session::put('gift-card', $request->card);
+        return Session::all();
     }
 
     public function faq()

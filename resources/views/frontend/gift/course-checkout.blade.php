@@ -11,7 +11,9 @@
             <gift-course-checkout :course="{{ json_encode($course) }}" :package-id="{{ $package_id }}"
                              :passed-coupon="{{ json_encode($coupon) }}"
                              :packages="{{ json_encode($packages) }}"
-                             :user="{{ json_encode($user) }}" :start-index="{{ $startIndex }}"></gift-course-checkout>
+                             :user="{{ json_encode($user) }}" :start-index="{{ $startIndex }}"
+                                  :gift-card="{{ json_encode($giftCard) }}" :gift-cards="{{ json_encode($giftCards) }}">
+            </gift-course-checkout>
         </div>
     </div>
 

@@ -15,6 +15,7 @@ use App\Services\GiftService;
 use App\ShopManuscript;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class GiftController extends Controller
 {
@@ -104,8 +105,11 @@ class GiftController extends Controller
             ]);
         }
 
+        $giftCards = FrontendHelpers::gitCards();
+        $giftCard = Session::get('gift-card');
+
         return view('frontend.gift.course-checkout', compact('course', 'packages', 'package_id', 'coupon',
-            'hasPaidCourse', 'user', 'startIndex'));
+            'hasPaidCourse', 'user', 'startIndex', 'giftCard', 'giftCards'));
     }
 
     /**

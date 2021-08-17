@@ -45,8 +45,9 @@ Route::group([
         Route::post('/gotowebinar', 'HomeController@gtWebinarSendEmail');
         Route::post('/gotowebinar/course/{id}/register', 'HomeController@gtWebinarCourseRegister');
         Route::get('/contact-us', 'HomeController@contact_us')->name('front.contact-us'); // Contact Us
-        Route::get('/gift-cards', 'HomeController@giftCards')->name('front.gift-cards');
         Route::post('/contact-us', 'HomeController@contact_us'); // Contact Us
+        Route::get('/gift-cards', 'HomeController@giftCards')->name('front.gift-cards');
+        Route::post('/set-gift-card', 'HomeController@setGiftCard');
         Route::get('/faq', 'HomeController@faq')->name('front.faq'); // FAQ
         Route::get('/support', 'HomeController@support')->name('front.support'); // Support
         Route::get('/support/{id}/articles', 'HomeController@supportArticles')->name('front.support-articles'); // Support Articles

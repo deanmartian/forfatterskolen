@@ -774,6 +774,45 @@ class FrontendHelpers
 
     }
 
+    public static function gitCards($giftCard = null)
+    {
+        $giftCards = [
+            [
+                'label' => 'Christmas Present',
+                'name' => 'christmas',
+                'image' => '/images-new/gift-cards/christmas.png'
+            ],
+
+            [
+                'label' => 'Birthday Present',
+                'name' => 'birthday',
+                'image' => '/images-new/gift-cards/birthday.png'
+            ],
+
+            [
+                'label' => 'Giftcard Present',
+                'name' => 'gift-card',
+                'image' => '/images-new/gift-cards/gift-card.png'
+            ],
+
+            [
+                'label' => 'Love Present',
+                'name' => 'love-present',
+                'image' => '/images-new/gift-cards/love-present.png'
+            ]
+        ];
+
+        if ($giftCard) {
+            foreach ($giftCards as $gift) {
+                if ($gift['name'] === $giftCard) {
+                    return $gift;
+                }
+            }
+        }
+
+        return $giftCards;
+    }
+
     /**
      * Get content from .doc file
      * @param $filename

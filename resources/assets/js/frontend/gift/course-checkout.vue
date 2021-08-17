@@ -76,6 +76,22 @@
 
                     <tr>
                         <td></td>
+                        <td>
+                            <div class="col-sm-6 text-center" v-for="giftCard in giftCards">
+                                <label>
+                                    <input type="radio" name="card" :value="giftCard.name" v-model="orderForm.gift_card"
+                                           class="image-radio" @click="setGiftCard()">
+                                    <img :src="giftCard.image">
+                                    <b> {{ giftCard.label }} </b>
+                                </label>
+                            </div>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td></td>
                         <td class="text-right h3">{{ trans('site.front.price') }}:</td>
                         <td class="text-right h3 text-red">
                             {{ orderForm.price | currency('Kr', 2, currencyOptions) }}
@@ -523,6 +539,8 @@
             packages: Array,
             user: Object,
             startIndex: Number,
+            giftCard: String,
+            giftCards: Array
         },
 
         data() {
@@ -551,7 +569,8 @@
                     campaign_admin_fee: 0,
                     totalDiscount: 0,
                     hasPaidCourse: false,
-                    agree_terms: false
+                    agree_terms: false,
+                    gift_card: this.giftCard
                 },
                 singleCourseDiscount: 500,
                 groupCourseDiscount: 1000,
@@ -602,17 +621,6 @@
                 return scope.paymentPlans.filter(plan => {
                     return plan.id === scope.orderForm.payment_plan_id;
                 })[0];
-            }
-        },
-
-        mounted() {
-            this.checkHasPaidCourse();
-            this.getPaymentModeOptions();
-            this.getPaymentPlanOptions();
-            this.getTerms();
-            this.loadOptions();
-            if (this.orderForm.coupon) {
-                this.checkDiscount(this.orderForm.coupon);
             }
         },
 
@@ -838,8 +846,30 @@
                 jQuery([document.documentElement, document.body]).animate({
                     scrollTop: $("#scrollhere").offset().top
                 }, 1000);
+            },
+
+            setGiftCard() {
+                let self = this;
+                setTimeout(function(){
+                    axios.post('/set-gift-card', {card: self.orderForm.gift_card}).then(response => {
+                        console.log(response);
+                    })
+                }, 200);
             }
 
+        },
+
+        mounted() {
+            this.checkHasPaidCourse();
+            this.getPaymentModeOptions();
+            this.getPaymentPlanOptions();
+            this.getTerms();
+            this.loadOptions();
+            if (this.orderForm.coupon) {
+                this.checkDiscount(this.orderForm.coupon);
+            }
+
+            console.log(this.giftCard);
         }
 
     }

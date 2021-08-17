@@ -47,6 +47,7 @@ class GiftService {
         $merchantDataTitle = '';
         $checkoutUri = '';
         $confirmationUri = '';
+        $terms = '';
 
         if ($type === 'course') {
             $package = Package::find($request->package_id);
@@ -55,6 +56,7 @@ class GiftService {
             $merchantDataTitle = $course->title;
             $checkoutUri = '/gift/course/' . $course->id . '/checkout';
             $confirmationUri = '/gift/course/' . $course->id;
+            $terms = '/terms/course-terms';
         }
 
         if ($type === 'shop-manuscript') {
@@ -62,9 +64,12 @@ class GiftService {
             $merchantDataTitle = $shopManuscript->title;
             $checkoutUri = '/gift/shop-manuscript/' . $shopManuscript->id . '/checkout';
             $confirmationUri = '/gift/shop-manuscript/' . $shopManuscript->id;
+            $terms = '/terms/manuscript-terms';
         }
 
         $discount = $request->price - $discountedPrice;
+        $giftCard = $request->gift_card ?  FrontendHelpers::gitCards($request->gift_card) : NULL;
+
         $request->merge(['discount' => $discount]);
         $orderRecord = $this->createOrder($request, $type);
         $checkoutMerchantId = config('services.svea.checkoutid_test');
@@ -130,7 +135,7 @@ class GiftService {
                     )
                 ),
                 "merchantSettings" => array(
-                    "termsUri" => url('/terms'),
+                    "termsUri" => url($terms),
                     "checkoutUri" => url($checkoutUri), // load checkout
                     "confirmationUri" => url($confirmationUri . '/thankyou?svea_ord='.$orderRecord->id),
                     "pushUri" => url('/svea-callback?svea_order_id={checkout.order.uri}')
@@ -146,6 +151,55 @@ class GiftService {
             return $guiSnippet;
 
         } catch (\Svea\Checkout\Exception\SveaApiException $ex) {
+            return response()->json($ex->getMessage(), 400);
+        } catch (\Svea\Checkout\Exception\SveaConnectorException $ex) {
+            return response()->json($ex->getMessage(), 400);
+        } catch (\Svea\Checkout\Exception\SveaInputValidationException $ex) {
+            return response()->json($ex->getMessage(), 400);
+        } catch (\Exception $ex) {
+            return response()->json($ex->getMessage(), 400);
+        }
+    }
+
+    /**
+     * get the order details from svea
+     * @param $order
+     * @return \Illuminate\Http\JsonResponse|mixed
+     */
+    public function sveaOrderDetails( $order )
+    {
+        $checkoutMerchantId = config('services.svea.checkoutid_test');
+        $checkoutSecret = config('services.svea.checkout_secret_test');
+
+        //set endpoint url. Eg. test or prod
+        $baseUrl = \Svea\Checkout\Transport\Connector::TEST_ADMIN_BASE_URL;
+
+        $connector = \Svea\Checkout\Transport\Connector::init($checkoutMerchantId, $checkoutSecret, $baseUrl);
+
+        try {
+            /**
+             * Create Connector object
+             *
+             * Exception \Svea\Checkout\Exception\SveaConnectorException will be returned if
+             * some of fields $merchantId, $sharedSecret and $baseUrl is missing
+             *
+             *
+             * Deliver Order
+             *
+             * Possible Exceptions are:
+             * \Svea\Checkout\Exception\SveaInputValidationException
+             * \Svea\Checkout\Exception\SveaApiException
+             * \Exception - for any other error
+             */
+            $conn = \Svea\Checkout\Transport\Connector::init($checkoutMerchantId, $checkoutSecret, $baseUrl);
+            $checkoutClient = new \Svea\Checkout\CheckoutAdminClient($conn);
+            $data = array(
+                "orderId" => (int)$order->svea_order_id,
+            );
+            //$response = $checkoutClient->deliverOrder($data);
+            $response = $checkoutClient->getOrder($data);
+            return $response;
+        }  catch (\Svea\Checkout\Exception\SveaApiException $ex) {
             return response()->json($ex->getMessage(), 400);
         } catch (\Svea\Checkout\Exception\SveaConnectorException $ex) {
             return response()->json($ex->getMessage(), 400);
