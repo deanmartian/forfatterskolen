@@ -601,9 +601,9 @@ class ShopController extends Controller
             $this->courseService->evaluateUser($request->email, $request->password, $request->first_name, $request->last_name, $addressData);
         }
 
-        return response()->json();
-        // the code below is for using svea
-        //return response()->json($this->courseService->processCheckout($request));
+        //return response()->json();
+
+        return response()->json($this->courseService->processCheckout($request));
     }
 
     public function checkoutTest($course_id)
