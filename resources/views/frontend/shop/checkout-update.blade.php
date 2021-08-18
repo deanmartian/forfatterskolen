@@ -8,11 +8,11 @@
 
     <div class="checkout-page" data-bg="https://www.forfatterskolen.no/images-new/checkout-bg.png" id="app-container">
         <div class="container">
-            <course-checkout :course="{{ json_encode($course) }}" :package-id="{{ $package_id }}"
+            <svea-checkout :course="{{ json_encode($course) }}" :package-id="{{ $package_id }}"
                              :passed-coupon="{{ json_encode($coupon) }}"
                              :packages="{{ json_encode($packages) }}"
                              :user="{{ json_encode($user) }}" :start-index="{{ $startIndex }}"
-            ></course-checkout>
+            ></svea-checkout>
         </div>
     </div>
 
