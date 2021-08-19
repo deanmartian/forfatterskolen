@@ -154,11 +154,11 @@ class CourseService {
 
         $orderRecord = $this->createOrder($request);
 
-        $checkoutMerchantId = env('SVEA_CHECKOUTID_TEST');
-        $checkoutSecret = env('SVEA_CHECKOUT_SECRET_TEST');
+        $checkoutMerchantId = env('SVEA_CHECKOUTID');
+        $checkoutSecret = env('SVEA_CHECKOUT_SECRET');
 
         //set endpoint url. Eg. test or prod
-        $baseUrl = \Svea\Checkout\Transport\Connector::TEST_BASE_URL;
+        $baseUrl = \Svea\Checkout\Transport\Connector::PROD_BASE_URL;
 
         try {
             /**
@@ -216,7 +216,7 @@ class CourseService {
                     )
                 ),
                 "merchantSettings" => array(
-                    "termsUri" => url('/terms'),
+                    "termsUri" => url('/terms/course-terms'),
                     "checkoutUri" => url('/course/' . $course->id . '/checkout?t=1'), // load checkout
                     "confirmationUri" => url('/thankyou?svea_ord='.$orderRecord->id),
                     "pushUri" => url('/svea-callback?svea_order_id={checkout.order.uri}')
