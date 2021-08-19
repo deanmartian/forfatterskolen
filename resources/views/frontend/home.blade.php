@@ -73,6 +73,9 @@
                                 $next_free_webinar1 = \App\FreeWebinar::find(31);
                                 $next_free_webinar2 = \App\FreeWebinar::find(32);
                             @endphp
+                            <div class="title">
+                                Gratis webinar
+                            </div>
                             @if ($next_free_webinar1)
                                 <div class="h2 mt-0 mb-4 font-montserrat-semibold">
                                     {{ $next_free_webinar1->title }}
@@ -175,6 +178,9 @@
                                 {{ trans('site.front.view') }}
                             </a>--}}
 
+                            <div class="title">
+                                Gratis webinar
+                            </div>
                             @if ($next_free_webinar2)
                                 <div class="h2 mt-0 mb-4 font-montserrat-semibold">
                                     {{ $next_free_webinar2->title }}
