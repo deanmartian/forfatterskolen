@@ -350,7 +350,7 @@ class CourseService {
     public function addCourseToLearner( $user_id, $package_id )
     {
 
-        $course_status = 0;
+        $course_status = 1;
 
         $courseTaken = CoursesTaken::firstOrNew(['user_id' => $user_id, 'package_id' => $package_id]);
         $courseTaken->is_active = $course_status;
