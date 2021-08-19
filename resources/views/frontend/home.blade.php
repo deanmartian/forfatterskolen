@@ -69,7 +69,33 @@
                 <div class="col-md-4">
                     <div class="column blog">
                         <div class="content-container">
-                            <div class="title">
+                            @php
+                                $next_free_webinar1 = \App\FreeWebinar::find(31);
+                                $next_free_webinar2 = \App\FreeWebinar::find(32);
+                            @endphp
+                            @if ($next_free_webinar1)
+                                <div class="h2 mt-0 mb-4 font-montserrat-semibold">
+                                    {{ $next_free_webinar1->title }}
+                                </div>
+
+                                <div class="date-time-cont">
+                                    <i class="img-icon16 icon-calendar"></i>
+                                    <span>
+                                        {{ \App\Http\FrontendHelpers::formatDate($next_free_webinar1->start_date) }}
+                                    </span>
+                                    <i class="img-icon16 icon-clock ml-3"></i>
+                                    <span>
+                                        {{ \App\Http\FrontendHelpers::getTimeFromDT($next_free_webinar1->start_date) }}
+                                    </span>
+                                </div>
+
+                                <a href="{{ route('front.free-webinar', $next_free_webinar1->id) }}"
+                                   class="btn buy-btn mt-4"
+                                   title="View free webinar">
+                                    {{ trans('site.front.view') }}
+                                </a>
+                            @endif
+                            {{--<div class="title">
                                 {{ trans('site.front.latest-blog-post') }}
                             </div>
 
@@ -80,7 +106,7 @@
                             <a href="{{ route('front.competition') }}" class="btn buy-btn mt-4"
                                title="View blog link">
                                 {{ trans('site.front.view') }}
-                            </a>
+                            </a>--}}
                             {{--@if ($latest_blog)
                                 <div class="h2 mt-0 mb-4 font-montserrat-semibold">
                                     {{ $latest_blog->title }}
@@ -136,7 +162,7 @@
     background-repeat: no-repeat;">
                         <div class="content-container">
 
-                            <div class="title">
+                            {{--<div class="title">
                                 {{ trans('site.front.latest-blog-post') }}
                             </div>
 
@@ -147,30 +173,30 @@
                             <a href="{{ route('front.competition') }}" class="btn buy-btn mt-4"
                                title="View blog link">
                                 {{ trans('site.front.view') }}
-                            </a>
+                            </a>--}}
 
-                            {{--@if ($next_free_webinar)
+                            @if ($next_free_webinar1)
                                 <div class="h2 mt-0 mb-4 font-montserrat-semibold">
-                                    {{ $next_free_webinar->title }}
+                                    {{ $next_free_webinar1->title }}
                                 </div>
 
                                 <div class="date-time-cont">
                                     <i class="img-icon16 icon-calendar"></i>
                                     <span>
-                                        {{ \App\Http\FrontendHelpers::formatDate($next_free_webinar->start_date) }}
+                                        {{ \App\Http\FrontendHelpers::formatDate($next_free_webinar1->start_date) }}
                                     </span>
                                     <i class="img-icon16 icon-clock ml-3"></i>
                                     <span>
-                                        {{ \App\Http\FrontendHelpers::getTimeFromDT($next_free_webinar->start_date) }}
+                                        {{ \App\Http\FrontendHelpers::getTimeFromDT($next_free_webinar1->start_date) }}
                                     </span>
                                 </div>
 
-                                <a href="{{ route('front.free-webinar', $next_free_webinar->id) }}"
+                                <a href="{{ route('front.free-webinar', $next_free_webinar1->id) }}"
                                    class="btn buy-btn mt-4"
                                    title="View free webinar">
                                     {{ trans('site.front.view') }}
                                 </a>
-                            @endif--}}
+                            @endif
                         </div> <!-- end content container -->
                     </div>
                 </div>
