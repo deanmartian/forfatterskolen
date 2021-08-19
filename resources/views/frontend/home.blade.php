@@ -175,23 +175,23 @@
                                 {{ trans('site.front.view') }}
                             </a>--}}
 
-                            @if ($next_free_webinar1)
+                            @if ($next_free_webinar2)
                                 <div class="h2 mt-0 mb-4 font-montserrat-semibold">
-                                    {{ $next_free_webinar1->title }}
+                                    {{ $next_free_webinar2->title }}
                                 </div>
 
                                 <div class="date-time-cont">
                                     <i class="img-icon16 icon-calendar"></i>
                                     <span>
-                                        {{ \App\Http\FrontendHelpers::formatDate($next_free_webinar1->start_date) }}
+                                        {{ \App\Http\FrontendHelpers::formatDate($next_free_webinar2->start_date) }}
                                     </span>
                                     <i class="img-icon16 icon-clock ml-3"></i>
                                     <span>
-                                        {{ \App\Http\FrontendHelpers::getTimeFromDT($next_free_webinar1->start_date) }}
+                                        {{ \App\Http\FrontendHelpers::getTimeFromDT($next_free_webinar2->start_date) }}
                                     </span>
                                 </div>
 
-                                <a href="{{ route('front.free-webinar', $next_free_webinar1->id) }}"
+                                <a href="{{ route('front.free-webinar', $next_free_webinar2->id) }}"
                                    class="btn buy-btn mt-4"
                                    title="View free webinar">
                                     {{ trans('site.front.view') }}
