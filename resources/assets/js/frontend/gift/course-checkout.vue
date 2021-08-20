@@ -869,7 +869,6 @@
                 this.checkDiscount(this.orderForm.coupon);
             }
 
-            console.log(this.giftCard);
         }
 
     }

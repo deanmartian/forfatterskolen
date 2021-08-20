@@ -30,14 +30,23 @@
                                 </p>
                             </div>
                         </td>
-                        <td></td>
+                        <td>
+                            <div class="col-sm-6 text-center" v-for="giftCard in giftCards">
+                                <label>
+                                    <input type="radio" name="card" :value="giftCard.name" v-model="orderForm.gift_card"
+                                           class="image-radio" @click="setGiftCard()">
+                                    <img :src="giftCard.image">
+                                    <b> {{ giftCard.label }} </b>
+                                </label>
+                            </div>
+                        </td>
                         <td></td>
                     </tr>
 
                     <tr>
                         <td></td>
                         <td class="text-right h3">{{ trans('site.front.price') }}:</td>
-                        <td class="text-right h3 text-red">
+                        <td class="text-right h3 text-red" style="width: 125px">
                             {{ orderForm.price | currency('Kr', 2, currencyOptions) }}
                         </td>
                     </tr>
@@ -45,7 +54,7 @@
                     <tr>
                         <td></td>
                         <td class="text-right h3">{{ trans('site.front.total') }}:</td>
-                        <td class="text-right h3 text-red">
+                        <td class="text-right h3 text-red" style="width: 125px">
                             {{ totalPrice | currency('Kr', 2, currencyOptions) }}
                         </td>
                     </tr>
@@ -244,7 +253,9 @@
 
         props: {
             user: Object,
-            shopManuscript: Object
+            shopManuscript: Object,
+            giftCard: String,
+            giftCards: Array
         },
 
         data() {
@@ -269,7 +280,8 @@
                     hasPaidCourse: false,
                     agree_terms: false,
                     item_type: 2,
-                    shop_manuscript_id: this.shopManuscript.id
+                    shop_manuscript_id: this.shopManuscript.id,
+                    gift_card: this.giftCard
                 },
                 currencyOptions: {
                     thousandsSeparator: '.',
@@ -369,6 +381,15 @@
                 jQuery([document.documentElement, document.body]).animate({
                     scrollTop: $("#scrollhere").offset().top
                 }, 1000);
+            },
+
+            setGiftCard() {
+                let self = this;
+                setTimeout(function(){
+                    axios.post('/set-gift-card', {card: self.orderForm.gift_card}).then(response => {
+
+                    })
+                }, 200);
             }
 
         },

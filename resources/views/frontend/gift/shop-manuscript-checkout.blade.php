@@ -9,7 +9,9 @@
     <div class="checkout-page" data-bg="https://www.forfatterskolen.no/images-new/checkout-bg.png" id="app-container">
         <div class="container">
             <gift-shop-manuscript-checkout :user="{{ json_encode($user) }}" :shop-manuscript="{{ json_encode($shopManuscript) }}"
-            ></gift-shop-manuscript-checkout>
+                                           :gift-card="{{ json_encode($giftCard) }}" :gift-cards="{{ json_encode($giftCards) }}">
+
+            </gift-shop-manuscript-checkout>
         </div>
     </div>
 

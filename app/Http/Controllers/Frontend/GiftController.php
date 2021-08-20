@@ -225,7 +225,11 @@ class GiftController extends Controller
             $user['address'] = $user->address;
         }
 
-        return view('frontend.gift.shop-manuscript-checkout', compact('shopManuscript', 'user'));
+        $giftCards = FrontendHelpers::gitCards();
+        $giftCard = Session::get('gift-card');
+
+        return view('frontend.gift.shop-manuscript-checkout', compact('shopManuscript', 'user', 'giftCards',
+            'giftCard'));
     }
 
 }
