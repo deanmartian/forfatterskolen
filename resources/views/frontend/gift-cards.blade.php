@@ -19,6 +19,16 @@
                         <p>
                             {!! trans('site.gift-card.description') !!}
                         </p>
+
+                        <div style="margin-top: 20px">
+                            <a href="{{ route('front.gift.course') }}" class="btn site-btn-global" style="margin-right: 20px">
+                                Buy Course
+                            </a>
+
+                            <a href="{{ route('front.gift.shop-manuscript') }}" class="btn site-btn-global">
+                                Buy Manuscript
+                            </a>
+                        </div>
                     </div>
                 </div> <!-- end card-body -->
             </div> <!-- end card -->
