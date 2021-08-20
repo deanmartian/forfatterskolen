@@ -852,7 +852,7 @@
                 let self = this;
                 setTimeout(function(){
                     axios.post('/set-gift-card', {card: self.orderForm.gift_card}).then(response => {
-                        console.log(response);
+
                     })
                 }, 200);
             }

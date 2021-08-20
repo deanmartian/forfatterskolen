@@ -198,7 +198,7 @@ class GiftController extends Controller
             // add course to user
             if (!$order->is_processed) {
                 $giftPurchase = $giftService->addGiftPurchase($order->user_id, $parent, $parent_id);
-                $giftService->notifyGiftBuyer($giftPurchase);
+                $giftService->notifyGiftBuyer($giftPurchase, $order);
                 $giftService->notifyAdmin($giftPurchase);
             }
 

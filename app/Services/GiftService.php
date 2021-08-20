@@ -68,9 +68,9 @@ class GiftService {
         }
 
         $discount = $request->price - $discountedPrice;
-        $giftCard = $request->gift_card ?  FrontendHelpers::gitCards($request->gift_card) : NULL;
+        $giftCard = $request->gift_card ?  FrontendHelpers::gitCards($request->gift_card)['image'] : NULL;
 
-        $request->merge(['discount' => $discount]);
+        $request->merge(['discount' => $discount, 'gift_card' => $giftCard]);
         $orderRecord = $this->createOrder($request, $type);
         $checkoutMerchantId = config('services.svea.checkoutid_test');
         $checkoutSecret = config('services.svea.checkout_secret_test');
@@ -339,7 +339,7 @@ class GiftService {
         $newOrder['discount']   = $request->discount;
         $newOrder['payment_mode_id']   = $request->payment_mode_id;
         $newOrder['is_processed'] = 0;
-        $newOrder['is_gift'] = 1;
+        $newOrder['gift_card'] = $request->gift_card;
 
         return Order::create($newOrder);
     }
@@ -369,9 +369,10 @@ class GiftService {
     /**
      * Send email to the buyer
      * @param $giftPurchase
+     * @param $order
      * @return mixed
      */
-    public function notifyGiftBuyer( $giftPurchase )
+    public function notifyGiftBuyer( $giftPurchase, $order )
     {
         $user = $giftPurchase->buyer;
         $user_email = $user->email;
@@ -389,6 +390,10 @@ class GiftService {
             $package = $giftPurchase->coursePackage;
             $attachments = [asset($this->generateRegretForm($user->id, $package->id)),
                 asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
+        }
+
+        if ($order->gift_card) {
+            $attachments[] = asset($order->gift_card);
         }
 
         dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent, $emailTemplate->from_email,

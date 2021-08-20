@@ -2653,6 +2653,13 @@ margin-right: 5px;
     z-index: 1;
 }
 
+.gift-cards-page .details-container {
+    background-image: url("../images-new/gift-cards/giftbox-icon.svg");
+    background-size: 400px;
+    background-repeat: no-repeat;
+    background-position: right;
+}
+
 .gift-cards-page .card {
     padding: 30px;
     border-radius: 10px;

@@ -9,7 +9,7 @@
     <div class="gift-cards-page" data-bg="https://www.forfatterskolen.no/images-new/gift-cards/bg-image.jpg">
         <div class="container">
 
-            <div class="card">
+            <div class="card details-container">
                 <div class="card-body">
                     <h1 class="page-title">
                         Gift Cards
