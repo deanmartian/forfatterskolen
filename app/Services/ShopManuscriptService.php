@@ -115,11 +115,11 @@ class ShopManuscriptService {
         $calculatedPrice = $orderRecord->price - $orderRecord->discount;
         $shopManuscript = ShopManuscript::find($orderRecord->item_id);
 
-        $checkoutMerchantId = env('SVEA_CHECKOUTID_TEST');
-        $checkoutSecret = env('SVEA_CHECKOUT_SECRET_TEST');
+        $checkoutMerchantId = env('SVEA_CHECKOUTID');
+        $checkoutSecret = env('SVEA_CHECKOUT_SECRET');
 
         //set endpoint url. Eg. test or prod
-        $baseUrl = \Svea\Checkout\Transport\Connector::TEST_BASE_URL;
+        $baseUrl = \Svea\Checkout\Transport\Connector::PROD_BASE_URL;
 
         try {
             /**
