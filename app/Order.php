@@ -29,6 +29,16 @@ class Order extends Model {
         return $this->belongsTo('App\Package');
     }
 
+    public function shopManuscriptOrder()
+    {
+        return $this->hasOne('App\OrderShopManuscript');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
     public function scopeSvea($query)
     {
         return $query->whereNotNull('svea_order_id');
