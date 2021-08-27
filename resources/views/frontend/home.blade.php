@@ -70,34 +70,14 @@
                     <div class="column blog">
                         <div class="content-container">
                             @php
-                                $next_free_webinar1 = \App\FreeWebinar::find(31);
                                 $next_free_webinar2 = \App\FreeWebinar::find(32);
                             @endphp
                             <div class="title">
-                                Gratis webinar
+                                Reprise webinar
                             </div>
-                            @if ($next_free_webinar1)
-                                <div class="h2 mt-0 mb-4 font-montserrat-semibold">
-                                    {{ $next_free_webinar1->title }}
-                                </div>
-
-                                <div class="date-time-cont">
-                                    <i class="img-icon16 icon-calendar"></i>
-                                    <span>
-                                        {{ \App\Http\FrontendHelpers::formatDate($next_free_webinar1->start_date) }}
-                                    </span>
-                                    <i class="img-icon16 icon-clock ml-3"></i>
-                                    <span>
-                                        {{ \App\Http\FrontendHelpers::getTimeFromDT($next_free_webinar1->start_date) }}
-                                    </span>
-                                </div>
-
-                                <a href="{{ route('front.free-webinar', $next_free_webinar1->id) }}"
-                                   class="btn buy-btn mt-4"
-                                   title="View free webinar">
-                                    {{ trans('site.front.view') }}
-                                </a>
-                            @endif
+                            <a href="{{ route('front.reprise') }}" class="btn buy-btn mt-4">
+                                {{ trans('site.front.view') }}
+                            </a>
                             {{--<div class="title">
                                 {{ trans('site.front.latest-blog-post') }}
                             </div>
