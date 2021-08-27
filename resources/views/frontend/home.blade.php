@@ -70,14 +70,21 @@
                     <div class="column blog">
                         <div class="content-container">
                             @php
+                                $next_free_webinar1 = \App\FreeWebinar::find(31);
                                 $next_free_webinar2 = \App\FreeWebinar::find(32);
                             @endphp
                             <div class="title">
                                 Reprise webinar
                             </div>
-                            <a href="{{ route('front.reprise') }}" class="btn buy-btn mt-4">
-                                {{ trans('site.front.view') }}
-                            </a>
+                            @if ($next_free_webinar1)
+                                <div class="h2 mt-0 mb-4 font-montserrat-semibold">
+                                    {{ $next_free_webinar1->title }}
+                                </div>
+
+                                <a href="{{ route('front.reprise') }}" class="btn buy-btn mt-4">
+                                    {{ trans('site.front.view') }}
+                                </a>
+                            @endif
                             {{--<div class="title">
                                 {{ trans('site.front.latest-blog-post') }}
                             </div>
