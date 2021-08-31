@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Editor;
 use App\Http\AdminHelpers;
 use App\Invoice;
+use App\Jobs\SveaUpdateOrderDetailsJob;
 use App\Mail\SubjectBodyEmail;
 use App\Order;
 use App\Paypal;
@@ -154,6 +155,8 @@ class ShopManuscriptController extends Controller
         if ($request->has('svea_ord')) {
             $order_id = $request->get('svea_ord');
             $order = Order::find($order_id);
+
+            SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
 
             // add shop manuscript to user
             if (!$order->is_processed) {

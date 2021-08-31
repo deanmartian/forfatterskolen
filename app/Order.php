@@ -14,7 +14,7 @@ class Order extends Model {
     const COPY_EDITING_TYPE = 5;
 
     protected $fillable = ['user_id', 'item_id', 'type', 'package_id', 'plan_id', 'payment_mode_id', 'price', 'discount',
-        'svea_order_id', 'svea_invoice_id', 'is_processed'];
+        'svea_order_id', 'svea_invoice_id', 'svea_payment_type', 'svea_payment_type_description', 'is_processed'];
     protected $appends = ['item', 'packageVariation', 'created_at_formatted', 'price_formatted', 'discount_formatted',
         'monthly_price_formatted', 'total_formatted'];
     protected $with = ['paymentPlan'];

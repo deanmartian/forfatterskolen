@@ -86,6 +86,17 @@ return [
     'jwt' => [
         'secret' => 'cdDmzJqoOjolwgsyrY4bl6Sl3ThPYlFw', // secret used for cross domain login
         'private_key' => "51d3e2c89cccc640c52987e2e70fe410c518900cc038211b"
+    ],
+
+    'svea' => [
+        'identifier' => env('SVEA_IDENTIFIER'),
+        'country_code' => env('SVEA_COUNTRY_CODE'),
+        'currency' => env('SVEA_CURRENCY'),
+        'locale' => env('SVEA_LOCALE'),
+        'checkoutid' => env('SVEA_CHECKOUTID'),
+        'checkout_secret' => env('SVEA_CHECKOUT_SECRET'),
+        'checkoutid_test' => env('SVEA_CHECKOUTID_TEST'),
+        'checkout_secret_test' => env('SVEA_CHECKOUT_SECRET_TEST')
     ]
 
 ];
