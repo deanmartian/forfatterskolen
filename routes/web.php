@@ -106,11 +106,18 @@ Route::group([
 
         Route::get('/terms/{slug?}', 'HomeController@terms')->name('front.terms'); // Terms page
 
-        Route::get('/shop-manuscript/{id}/checkout', 'ShopManuscriptController@checkout')->name('front.shop-manuscript.checkout'); // Checkout Shop Manuscript
         Route::get('/upgrade-manuscript/{id}/checkout', 'ShopManuscriptController@checkoutUpgradeManuscript')->name('front.shop-manuscript.upgrade-manuscript-checkout'); // Checkout Shop Manuscript
 
+        Route::group([
+            'prefix' => 'shop-manuscript'
+        ], function() {
+            Route::get('/{id}/checkout', 'ShopManuscriptController@checkout')->name('front.shop-manuscript.checkout'); // Checkout Shop Manuscript
+            Route::post('/{id}/place_order', 'ShopManuscriptController@place_order')->name('front.shop-manuscript.place_order'); // Checkout Shop Manuscript
+            Route::post('/{id}/checkout/validate-order', 'ShopManuscriptController@validateOrder')->name('front.shop-manuscript.validate-order');
+            Route::post('/{id}/checkout/validate-form', 'ShopManuscriptController@validateForm')->name('front.shop-manuscript.validate-form');
+            Route::get('/{id}/thankyou', 'ShopManuscriptController@thankyou');
+        });
 
-        Route::post('/shop-manuscript/{id}/place_order', 'ShopManuscriptController@place_order')->name('front.shop-manuscript.place_order'); // Checkout Shop Manuscript
         Route::get('/shop-manuscript/payment/paypal/{invoice_id}', 'ShopManuscriptController@paypalPayment')->name('front.shop-manuscript.paypal-payment'); // Paypal Payment
         Route::post('/upgrade-manuscript/{id}/place_upgrade', 'ShopManuscriptController@upgradeManuscript')->name('front.shop-manuscript.upgrade-manuscript'); // Checkout Shop Manuscript
 

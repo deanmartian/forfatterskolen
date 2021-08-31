@@ -11,6 +11,7 @@ use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Http\AdminHelpers;
 use App\Jobs\CourseOrderJob;
+use App\Jobs\SveaUpdateOrderDetailsJob;
 use App\Mail\SubjectBodyEmail;
 use App\Order;
 use App\Paypal;
@@ -1780,6 +1781,8 @@ class ShopController extends Controller
         if ($request->has('svea_ord')) {
             $order_id = $request->get('svea_ord');
             $order = Order::find($order_id);
+
+            SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
 
             // add course to user
             if (!$order->is_processed) {
