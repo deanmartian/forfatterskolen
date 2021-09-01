@@ -4,13 +4,18 @@
 <title>Learners &rsaquo; {{$course->title}} &rsaquo; Forfatterskolen Admin</title>
 @stop
 
+@section('styles')
+	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+@stop
+
+
 @section('content')
 
 @include('backend.course.partials.toolbar')
 
 
 <div class="course-container">
-	
+
 	@include('backend.partials.course_submenu')
 
     <?php
@@ -506,6 +511,16 @@
 						<input type="date" name="date" class="form-control" required>
 					</div>
 
+					<div class="form-group">
+						<label>
+							Run the cron after save?
+						</label>
+						<br>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes"
+							   class="for-sale-toggle" data-off="No"
+							   name="run_cron" data-width="84">
+					</div>
+
 					<div class="text-right">
 						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
 					</div>
@@ -549,6 +564,7 @@
 @stop
 
 @section('scripts')
+	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 	<script>
 		function formSubmitted() {
 		    var send_email = $("#send_email_btn");
