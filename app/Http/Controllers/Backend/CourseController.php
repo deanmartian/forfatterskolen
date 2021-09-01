@@ -10,10 +10,12 @@ use App\Http\Controllers\Frontend\ShopController;
 use App\Http\FrontendHelpers;
 use App\Jobs\AddMailToQueueJob;
 use App\Jobs\CourseOrderJob;
+use App\Jobs\WebinarScheduleRegistrationJob;
 use App\Mail\SubjectBodyEmail;
 use App\Package;
 use App\PackageCourse;
 use App\User;
+use App\UserAutoRegisterToCourseWebinar;
 use App\WebinarRegistrant;
 use App\WebinarScheduledRegistration;
 use Carbon\Carbon;
@@ -732,6 +734,12 @@ class CourseController extends Controller
 
         $scheduledRegistration->date = $request->date;
         $scheduledRegistration->save();
+
+
+        // run the cron
+        if ($request->has('run_cron')) {
+            dispatch(new WebinarScheduleRegistrationJob($scheduledRegistration));
+        }
 
         /*
          * old code before saving to schedule
