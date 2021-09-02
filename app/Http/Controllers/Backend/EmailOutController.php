@@ -7,6 +7,7 @@ use App\EmailOut;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
+use App\Mail\SubjectBodyEmail;
 use \Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
 
@@ -95,7 +96,15 @@ class EmailOutController extends Controller {
                 $content = str_replace($search_string, $replace_string, $request->message);
             }
 
-            AdminHelpers::send_email($subject, $from, $to, $content);
+            //AdminHelpers::send_email($subject, $from, $to, $content);
+            $emailData = [
+                'email_subject' => $subject,
+                'email_message' => $content,
+                'from_name' => '',
+                'from_email' => $from,
+                'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
         }
 
         return redirect()->back()->with([
@@ -189,7 +198,15 @@ class EmailOutController extends Controller {
                 $content = str_replace($search_string, $replace_string, $request->message);
             }
 
-            AdminHelpers::send_email($subject, $from, $to, $content);
+            /*AdminHelpers::send_email($subject, $from, $to, $content);*/
+            $emailData = [
+                'email_subject' => $subject,
+                'email_message' => $content,
+                'from_name' => '',
+                'from_email' => $from,
+                'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
         }
 
         return redirect()->back()->with([

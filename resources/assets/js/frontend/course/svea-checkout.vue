@@ -493,7 +493,7 @@
                     this.checkHasPaidCourse();
                     this.getCurrentUser();
 
-                    console.log(response);
+                    //console.log(response);
                     if (response.data.course_link) {
                         window.location.href = response.data.course_link;
                     }

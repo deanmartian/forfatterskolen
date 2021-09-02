@@ -25,10 +25,12 @@ import toasted from './toasted'
 import Vue2Filters from 'vue2-filters'
 import './global'
 import BootstrapVue from 'bootstrap-vue'
+import ToggleButton from 'vue-js-toggle-button'
 
 Vue.use(vueDebounce);
 Vue.use(Vue2Filters);
 Vue.use(BootstrapVue);
+Vue.use(ToggleButton);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -42,6 +44,7 @@ Vue.component('svea-checkout', require('./frontend/course/svea-checkout.vue'));
 Vue.component('course-checkout', require('./frontend/course/checkout.vue'));
 Vue.component('gift-course-checkout', require('./frontend/gift/course-checkout.vue'));
 Vue.component('gift-shop-manuscript-checkout', require('./frontend/gift/shop-manuscript-checkout.vue'));
+Vue.component('shop-manuscript-checkout', require('./frontend/shop-manuscript/checkout.vue'));
 
 new Vue({
     el: '#app-container'

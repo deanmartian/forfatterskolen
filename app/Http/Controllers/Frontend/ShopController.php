@@ -11,6 +11,7 @@ use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Http\AdminHelpers;
 use App\Jobs\CourseOrderJob;
+use App\Jobs\SveaUpdateOrderDetailsJob;
 use App\Mail\SubjectBodyEmail;
 use App\Order;
 use App\Paypal;
@@ -375,13 +376,13 @@ class ShopController extends Controller
         Order::create($newOrder);
 
         // update the created log to mark it as ordered
-        $checkoutLog = CheckoutLog::where([
+        CheckoutLog::updateOrCreate([
             'user_id' => \auth()->id(),
             'parent' => 'course',
             'parent_id' => $course_id
-        ])->first();
-        $checkoutLog->is_ordered = true;
-        $checkoutLog->save();
+        ], [
+            'is_ordered' => true
+        ]);
 
         // Check for shop manuscripts
         if( $package->shop_manuscripts->count() > 0 ) :
@@ -601,9 +602,9 @@ class ShopController extends Controller
             $this->courseService->evaluateUser($request->email, $request->password, $request->first_name, $request->last_name, $addressData);
         }
 
-        return response()->json();
-        // the code below is for using svea
-        //return response()->json($this->courseService->processCheckout($request));
+        //return response()->json();
+
+        return response()->json($this->courseService->processCheckout($request));
     }
 
     public function checkoutTest($course_id)
@@ -1308,8 +1309,17 @@ class ShopController extends Controller
         $headers1 .= "MIME-Version: 1.0\r\n";
         $headers1 .= "Content-Type: text/html; charset=UTF-8\r\n";
         //mail('support@forfatterskolen.no', 'New Course Order', Auth::user()->first_name . ' has ordered the course ' . $package->course->title, $headers1);
-        AdminHelpers::send_email('New Course Order',
-            'post@forfatterskolen.no', 'support@forfatterskolen.no', Auth::user()->first_name . ' has ordered the course ' . $package->course->title);
+        $to = 'support@forfatterskolen.no'; //
+        $emailData = [
+            'email_subject' => 'New Course Order',
+            'email_message' => Auth::user()->first_name . ' has ordered the course ' . $package->course->title,
+            'from_name' => '',
+            'from_email' => 'post@forfatterskolen.no',
+            'attach_file' => NULL
+        ];
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        /*AdminHelpers::send_email('New Course Order',
+            'post@forfatterskolen.no', 'support@forfatterskolen.no', Auth::user()->first_name . ' has ordered the course ' . $package->course->title);*/
 
 
         // Send course email
@@ -1771,6 +1781,8 @@ class ShopController extends Controller
         if ($request->has('svea_ord')) {
             $order_id = $request->get('svea_ord');
             $order = Order::find($order_id);
+
+            SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
 
             // add course to user
             if (!$order->is_processed) {

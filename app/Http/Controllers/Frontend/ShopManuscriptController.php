@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Frontend;
 use App\Editor;
 use App\Http\AdminHelpers;
 use App\Invoice;
+use App\Jobs\SveaUpdateOrderDetailsJob;
+use App\Mail\SubjectBodyEmail;
 use App\Order;
 use App\Paypal;
+use App\Services\CourseService;
+use App\Services\ShopManuscriptService;
 use App\ShopManuscriptUpgrade;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -47,11 +51,126 @@ class ShopManuscriptController extends Controller
     public function checkout($id)
     {
       $shopManuscript = ShopManuscript::findOrFail($id);
-      return view('frontend.shop-manuscript.checkout', compact('shopManuscript'));
+        $user = \Auth::user();
+
+        if ($user) {
+            $user['address'] = $user->address;
+            $user->checkoutLogs()->firstOrCreate([
+                'parent' => 'shop-manuscript',
+                'parent_id' => $shopManuscript->id
+            ]);
+        }
+        $assignmentTypes = FrontendHelpers::assignmentType();
+
+      return view('frontend.shop-manuscript.checkout-svea', compact('shopManuscript', 'user', 'assignmentTypes'));
     }
 
+    /**
+     * @param $shop_manuscript_id
+     * @param Request $request
+     * @param ShopManuscriptService $shopManuscriptService
+     * @return array|\Illuminate\Http\JsonResponse
+     */
+    public function validateOrder( $shop_manuscript_id, Request $request, ShopManuscriptService $shopManuscriptService )
+    {
+        $this->validate($request, [
+            'manuscript' => 'required|mimes:pdf,odt,doc,docx',
+            'genre' => 'required'
+        ]);
 
+        if ($request->has('synopsis')) {
+            $this->validate($request, [
+                'synopsis' => 'mimes:pdf,doc,docx,odt',
+            ]);
+        }
 
+        $shopManuscript = ShopManuscript::find($shop_manuscript_id);
+        $word_count =  $shopManuscriptService->countManuscriptWord( $request );
+
+        // check if the uploaded file exceeds the plan max words
+        if ($word_count > $shopManuscript->max_words) {
+            // get the plan that meets the word count uploaded
+            $nextPlan = ShopManuscript::where('max_words','>=',$word_count)->first();
+            return response()->json([
+                'message' => 'Ditt manus er '.$word_count
+                    .' ord, du må bestille <a href="'.route('front.shop-manuscript.checkout', $nextPlan->id).'">'
+                    .$nextPlan->title.'</a>.'
+            ], 400);
+        }
+
+        return $request->all();
+    }
+
+    /**
+     * @param $shop_manuscript_id
+     * @param Request $request
+     * @param CourseService $courseService
+     * @param ShopManuscriptService $shopManuscriptService
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function validateForm( $shop_manuscript_id, Request $request, CourseService $courseService,
+        ShopManuscriptService $shopManuscriptService )
+    {
+        $validation = [
+            'email'         => 'required|email',
+            'first_name'    => 'required',
+            'last_name'     => 'required',
+            'street'        => 'required',
+            'zip'           => 'required',
+            'city'          => 'required',
+            'phone'         => 'required',
+        ];
+
+        if (!\Auth::check()) {
+            $validation['password'] = 'required|min:3';
+        }
+
+        $validator = \Validator::make($request->all(), $validation);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        if (!\Auth::check()) {
+            $addressData = [
+                'street'    => $request->street,
+                'zip'       => $request->zip,
+                'city'      => $request->city,
+                'phone'     => $request->phone
+            ];
+            $courseService->evaluateUser($request->email, $request->password, $request->first_name, $request->last_name, $addressData);
+        }
+
+        return response()->json($shopManuscriptService->processCheckout($request));
+    }
+
+    /**
+     * @param $id
+     * @param Request $request
+     * @param ShopManuscriptService $shopManuscriptService
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function thankyou($id, Request $request, ShopManuscriptService $shopManuscriptService)
+    {
+        // check if from svea payment
+        if ($request->has('svea_ord')) {
+            $order_id = $request->get('svea_ord');
+            $order = Order::find($order_id);
+
+            SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
+
+            // add shop manuscript to user
+            if (!$order->is_processed) {
+                $shopManuscriptTaken = $shopManuscriptService->addShopManuscriptToLearner($order);
+                $shopManuscriptService->notifyAdmin($order);
+                $shopManuscriptService->notifyUser($order, $shopManuscriptTaken);
+            }
+
+            $order->is_processed = 1;
+            $order->save();
+        }
+        return view('frontend.shop-manuscript.thankyou');
+    }
 
     public function place_order($id, Request $request)
     {
@@ -153,8 +272,17 @@ class ShopManuscriptController extends Controller
             // Admin notification
             $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
             $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
-            AdminHelpers::send_email('New manuscript submitted for shop manuscript',
-                'post@forfatterskolen.no',$toMail, $message);
+            /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
+                'post@forfatterskolen.no',$toMail, $message);*/
+            $to = 'Camilla@forfatterskolen.no'; //
+            $emailData = [
+                'email_subject' => 'New manuscript submitted for shop manuscript',
+                'email_message' => $message,
+                'from_name' => '',
+                'from_email' => 'post@forfatterskolen.no',
+                'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
             //mail($toMail, 'New manuscript submitted for shop manuscript', $message);
         endif;
 
@@ -434,8 +562,17 @@ class ShopManuscriptController extends Controller
         $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
         $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
         //mail($toMail, 'New manuscript submitted for shop manuscript', $message);
-            AdminHelpers::send_email('New manuscript submitted for shop manuscript',
-                'post@forfatterskolen.no', $toMail, $message);
+            /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
+                'post@forfatterskolen.no', $toMail, $message);*/
+            $to = $toMail; //
+            $emailData = [
+                'email_subject' => 'New manuscript submitted for shop manuscript',
+                'email_message' => $message,
+                'from_name' => '',
+                'from_email' => 'post@forfatterskolen.no',
+                'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag(trans('site.learner.upload-manuscript-success')),
                 'alert_type' => 'success'
@@ -587,8 +724,17 @@ class ShopManuscriptController extends Controller
             $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
             //mail('post@forfatterskolen.no', 'New manuscript submitted for shop manuscript', $message);
             $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
-            AdminHelpers::send_email('New manuscript submitted for shop manuscript',
-                'post@forfatterskolen.no', $toMail, $message);
+            /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
+                'post@forfatterskolen.no', $toMail, $message);*/
+            $to = $toMail; //
+            $emailData = [
+                'email_subject' => 'New manuscript submitted for shop manuscript',
+                'email_message' => $message,
+                'from_name' => '',
+                'from_email' => 'post@forfatterskolen.no',
+                'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
             return redirect()->back();
         }
     }
@@ -949,15 +1095,24 @@ Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">po
             $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
             //mail('post@forfatterskolen.no', 'Free Manuscript', view('emails.free-manuscript', compact('name', 'email', 'content', 'word_count')), $headers);
-            AdminHelpers::send_email('Free Manuscript',
-                'post@forfatterskolen.no', 'post@forfatterskolen.no',
-                view('emails.free-manuscript', compact('name', 'email', 'content', 'word_count')));
             FreeManuscript::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'genre' => $request->genre,
                 'content' => $request->manuscript_content
             ]);
+            /*AdminHelpers::send_email('Free Manuscript',
+                'post@forfatterskolen.no', 'post@forfatterskolen.no',
+                view('emails.free-manuscript', compact('name', 'email', 'content', 'word_count')));*/
+            $to = 'post@forfatterskolen.no'; //
+            $emailData = [
+                'email_subject' => 'Free Manuscript',
+                'email_message' => view('emails.free-manuscript', compact('name', 'email', 'content', 'word_count'))->render(),
+                'from_name' => '',
+                'from_email' => 'post@forfatterskolen.no',
+                'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
             // forget the wordcount
             Session::forget('wordcount');

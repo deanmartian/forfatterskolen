@@ -931,4 +931,53 @@ class FrontendHelpers
         $staffs = Staff::orderByRaw('sequence = 0, sequence')->get();
         return $staffs;
     }
+
+    /**
+     * get the order details from svea
+     * @param $svea_order_id
+     * @return \Illuminate\Http\JsonResponse|mixed
+     */
+    public static function sveaOrderDetails( $svea_order_id )
+    {
+        $checkoutMerchantId = config('services.svea.checkoutid');
+        $checkoutSecret = config('services.svea.checkout_secret');
+
+        //set endpoint url. Eg. test or prod
+        $baseUrl = \Svea\Checkout\Transport\Connector::PROD_ADMIN_BASE_URL;
+
+        $connector = \Svea\Checkout\Transport\Connector::init($checkoutMerchantId, $checkoutSecret, $baseUrl);
+
+        try {
+            /**
+             * Create Connector object
+             *
+             * Exception \Svea\Checkout\Exception\SveaConnectorException will be returned if
+             * some of fields $merchantId, $sharedSecret and $baseUrl is missing
+             *
+             *
+             * Deliver Order
+             *
+             * Possible Exceptions are:
+             * \Svea\Checkout\Exception\SveaInputValidationException
+             * \Svea\Checkout\Exception\SveaApiException
+             * \Exception - for any other error
+             */
+            $conn = \Svea\Checkout\Transport\Connector::init($checkoutMerchantId, $checkoutSecret, $baseUrl);
+            $checkoutClient = new \Svea\Checkout\CheckoutAdminClient($conn);
+            $data = array(
+                "orderId" => (int)$svea_order_id,
+            );
+
+            $response = $checkoutClient->getOrder($data);
+            return $response;
+        }  catch (\Svea\Checkout\Exception\SveaApiException $ex) {
+            return response()->json($ex->getMessage(), 400);
+        } catch (\Svea\Checkout\Exception\SveaConnectorException $ex) {
+            return response()->json($ex->getMessage(), 400);
+        } catch (\Svea\Checkout\Exception\SveaInputValidationException $ex) {
+            return response()->json($ex->getMessage(), 400);
+        } catch (\Exception $ex) {
+            return response()->json($ex->getMessage(), 400);
+        }
+    }
 }

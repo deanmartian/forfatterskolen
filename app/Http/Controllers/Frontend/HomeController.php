@@ -132,7 +132,16 @@ class HomeController extends Controller
             $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
             //mail('post@forfatterskolen.no', 'Inquiry Message', $email_content, $headers);
-            AdminHelpers::send_email('Inquiry Message','post@forfatterskolen.no','post@forfatterskolen.no', $email_content);
+            //AdminHelpers::send_email('Inquiry Message','post@forfatterskolen.no','post@forfatterskolen.no', $email_content);
+            $to = 'post@forfatterskolen.no'; //
+            $emailData = [
+                'email_subject' => 'Inquiry Message',
+                'email_message' => $email_content,
+                'from_name' => '',
+                'from_email' => 'post@forfatterskolen.no',
+                'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Din melding er sendt'),
                 'alert_type' => 'success']);
         }
@@ -776,9 +785,18 @@ class HomeController extends Controller
             'help_with'     => $data['help_with']
         ]);
 
-        AdminHelpers::send_email('New Coaching Session',
+        /*AdminHelpers::send_email('New Coaching Session',
             'post@forfatterskolen.no', 'camilla@forfatterskolen.no', Auth::user()->first_name
-            . ' has ordered the Coaching Time '.$title);
+            . ' has ordered the Coaching Time '.$title);*/
+        $to = 'camilla@forfatterskolen.no'; //
+        $emailData = [
+            'email_subject' => 'New Coaching Session',
+            'email_message' => Auth::user()->first_name . ' has ordered the Coaching Time '.$title,
+            'from_name' => '',
+            'from_email' => 'post@forfatterskolen.no',
+            'attach_file' => NULL
+        ];
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
         $emailTemplate = AdminHelpers::emailTemplate('Coaching Order');
         $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user->email,
@@ -1264,6 +1282,15 @@ class HomeController extends Controller
         $parent_id = 1;
         dispatch(new AddMailToQueueJob($to, $subject, 'testing', 'post@forfatterskolen.no', null, null,
             $parent, $parent_id));
+
+        $emailData = [
+            'email_subject' => 'testing',
+            'email_message' => 'testing mail queue',
+            'from_name' => '',
+            'from_email' => 'post@forfatterskolen.no',
+            'attach_file' => NULL
+        ];
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
         echo env('MAIL_DRIVER');
     }
 

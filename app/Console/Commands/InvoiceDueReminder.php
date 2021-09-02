@@ -46,7 +46,7 @@ class InvoiceDueReminder extends Command
      */
     public function handle()
     {
-        //CronLog::create(['activity' => 'InvoiceDueReminder CRON running.']);
+        CronLog::create(['activity' => 'InvoiceDueReminder CRON running.']);
 
         $dueDate    = Carbon::today()->addDay(14)->format('Y-m-d');
         /*$invoices = Invoice::whereDate('fiken_dueDate',  $dueDate)
@@ -60,6 +60,7 @@ class InvoiceDueReminder extends Command
             ->whereDate('fiken_dueDate',  $dueDate)
             ->where('fiken_is_paid', '=',0)
             ->whereNull('vipps_phone_number')
+            ->whereNull('users.deleted_at')
             ->get();
 
         $email_template = AdminHelpers::emailTemplate('Invoice Due Reminder');

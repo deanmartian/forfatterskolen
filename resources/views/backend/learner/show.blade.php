@@ -621,6 +621,8 @@
 						<thead>
 						<tr>
 							<th>{{ trans('site.details') }}</th>
+							<th>Svea Payment Type</th>
+							<th>Svea Payment Plan</th>
 							<th>{{ trans('site.date-ordered') }}</th>
 						</tr>
 						</thead>
@@ -629,6 +631,12 @@
 							<tr>
 								<td>
 									{!! \App\Http\AdminHelpers::getOrderDetails($order) !!}
+								</td>
+								<td>
+									{{ $order->svea_payment_type }}
+								</td>
+								<td>
+									{{ $order->svea_payment_type_description }}
 								</td>
 								<td>{{ \App\Http\FrontendHelpers::formatDate($order->created_at) }}</td>
 							</tr>

@@ -26,6 +26,7 @@ use App\Mail\SendEmailMessageOnly;
 use App\Mail\AssignmentSubmittedEmail;
 use App\Mail\CoachingSuggestionDateEmail;
 use App\Mail\MultipleEmailConfirmation;
+use App\Mail\SubjectBodyEmail;
 use App\Notification;
 use App\Order;
 use App\OtherServiceFeedback;
@@ -1652,8 +1653,17 @@ class LearnerController extends Controller
                     // Admin notification
                     $message = Auth::user()->full_name.' submitted a manuscript for course '.$courseTaken->package->course->title;
                     //mail('post@forfatterskolen.no', 'New manuscript submitted for course', $message);
-                    AdminHelpers::send_email('New manuscript submitted for course',
-                        'post@forfatterskolen.no','post@forfatterskolen.no', $message);
+                    /*AdminHelpers::send_email('New manuscript submitted for course',
+                        'post@forfatterskolen.no','post@forfatterskolen.no', $message);*/
+                    $to = 'post@forfatterskolen.no'; //
+                    $emailData = [
+                        'email_subject' => 'New manuscript submitted for course',
+                        'email_message' => $message,
+                        'from_name' => '',
+                        'from_email' => 'post@forfatterskolen.no',
+                        'attach_file' => NULL
+                    ];
+                    \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
                 else :
                     return abort('503');
                 endif;
@@ -1808,9 +1818,18 @@ class LearnerController extends Controller
 
             // Email to support
             //mail('support@forfatterskolen.no', 'Course Renewed', Auth::user()->first_name . ' has renewed the course ' . $package->course->title);
-            AdminHelpers::send_email('Course Renewed',
+            /*AdminHelpers::send_email('Course Renewed',
                 'post@forfatterskolen.no', 'support@forfatterskolen.no',
-                Auth::user()->first_name . ' has renewed the course ' . $package->course->title);
+                Auth::user()->first_name . ' has renewed the course ' . $package->course->title);*/
+            $to = 'support@forfatterskolen.no'; //
+            $emailData = [
+                'email_subject' => 'Course Renewed',
+                'email_message' => Auth::user()->first_name . ' has renewed the course ' . $package->course->title,
+                'from_name' => '',
+                'from_email' => 'post@forfatterskolen.no',
+                'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
             // Send course email
             $actionText = 'Mine Kurs';
@@ -1820,8 +1839,17 @@ class LearnerController extends Controller
             $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
             $email_content = $package->course->email;
             //mail($send_to, $package->course->title, view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')), $headers);
-            AdminHelpers::send_email($package->course->title, 'post@forfatterskolen.no', $send_to,
-                view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')));
+            /*AdminHelpers::send_email($package->course->title, 'post@forfatterskolen.no', $send_to,
+                view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content')));*/
+            $to = $send_to; //
+            $emailData = [
+                'email_subject' => $package->course->title,
+                'email_message' => view('emails.course_order', compact('actionText', 'actionUrl', 'user', 'email_content'))->render(),
+                'from_name' => '',
+                'from_email' => 'post@forfatterskolen.no',
+                'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
             if( $paymentMode->mode == "Paypal" ) :
                 echo '<form name="_xclick" id="paypal_form" style="display:none" action="https://www.paypal.com/cgi-bin/webscr" method="post">
@@ -1904,9 +1932,18 @@ class LearnerController extends Controller
 
             // Email to support
             //mail('support@forfatterskolen.no', 'All Courses Renewed', Auth::user()->first_name . ' has renewed all the courses');
-            AdminHelpers::send_email('All Courses Renewed',
+            /*AdminHelpers::send_email('All Courses Renewed',
                 'post@forfatterskolen.no', 'support@forfatterskolen.no',
-                Auth::user()->first_name . ' has renewed all the courses');
+                Auth::user()->first_name . ' has renewed all the courses');*/
+            $to = 'support@forfatterskolen.no'; //
+            $emailData = [
+                'email_subject' => 'All Courses Renewed',
+                'email_message' => Auth::user()->first_name . ' has renewed all the courses',
+                'from_name' => '',
+                'from_email' => 'post@forfatterskolen.no',
+                'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
             return redirect(route('front.shop.thankyou'));
         }
 
@@ -2023,8 +2060,16 @@ class LearnerController extends Controller
             $to = 'support@forfatterskolen.no';
             $messageText = $user_name . ' has renewed webinar-pakke';
             $message = $courseCounter > 1 ? $messageText.$extraText : $messageText;
-            AdminHelpers::send_email('Webinar-pakke Course Renewed',
-                $from, $to, $message);
+            /*AdminHelpers::send_email('Webinar-pakke Course Renewed',
+                $from, $to, $message);*/
+            $emailData = [
+                'email_subject' => 'Webinar-pakke Course Renewed',
+                'email_message' => $message,
+                'from_name' => '',
+                'from_email' => $from,
+                'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
         }
 
         return redirect()->back();
@@ -2131,9 +2176,18 @@ class LearnerController extends Controller
 
                     // Email to support
                     //mail('support@forfatterskolen.no', 'All Courses Renewed', Auth::user()->first_name . ' has renewed all the courses');
-                    AdminHelpers::send_email('All Courses Renewed',
+                    /*AdminHelpers::send_email('All Courses Renewed',
                         'post@forfatterskolen.no', 'support@forfatterskolen.no',
-                        Auth::user()->first_name . ' has renewed all the courses');
+                        Auth::user()->first_name . ' has renewed all the courses');*/
+                    $to = 'support@forfatterskolen.no'; //
+                    $emailData = [
+                        'email_subject' => 'All Courses Renewed',
+                        'email_message' => Auth::user()->first_name . ' has renewed all the courses',
+                        'from_name' => '',
+                        'from_email' => 'post@forfatterskolen.no',
+                        'attach_file' => NULL
+                    ];
+                    \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
                     return redirect(route('front.shop.thankyou'));
                 }
             }
@@ -2418,9 +2472,18 @@ class LearnerController extends Controller
 
         // Email to support
         //mail('support@forfatterskolen.no', 'New Course Order', Auth::user()->first_name . ' has ordered the course ' . $package->course->title);
-        AdminHelpers::send_email('New Course Order',
+        /*AdminHelpers::send_email('New Course Order',
             'post@forfatterskolen.no', 'support@forfatterskolen.no',
-            Auth::user()->first_name . ' has ordered the course ' . $package->course->title);
+            Auth::user()->first_name . ' has ordered the course ' . $package->course->title);*/
+        $to = 'support@forfatterskolen.no'; //
+        $emailData = [
+            'email_subject' => 'New Course Order',
+            'email_message' => Auth::user()->first_name . ' has ordered the course ' . $package->course->title,
+            'from_name' => '',
+            'from_email' => 'post@forfatterskolen.no',
+            'attach_file' => NULL
+        ];
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
 
         // Send course email
         $actionText = 'Mine Kurs';
