@@ -120,7 +120,7 @@
                                                     <h1>{{ $shopManuscript->title }}</h1>
                                                     <p>{{ $shopManuscript->description }}</p>
                                                     <h1 class="price">{{ \App\Http\FrontendHelpers::formatCurrency($shopManuscript->full_payment_price) }} KR</h1>
-                                                    <a class="btn buy-btn" href="{{ route('front.shop-manuscript.checkout', $shopManuscript->id) }}">
+                                                    <a class="btn buy-btn" href="{{ route($checkoutRoute, $shopManuscript->id) }}">
                                                         {{ trans('site.front.buy') }}
                                                     </a>
                                                 </div>

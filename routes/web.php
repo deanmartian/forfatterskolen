@@ -46,6 +46,8 @@ Route::group([
         Route::post('/gotowebinar/course/{id}/register', 'HomeController@gtWebinarCourseRegister');
         Route::get('/contact-us', 'HomeController@contact_us')->name('front.contact-us'); // Contact Us
         Route::post('/contact-us', 'HomeController@contact_us'); // Contact Us
+        Route::get('/gift-cards', 'HomeController@giftCards')->name('front.gift-cards');
+        Route::post('/set-gift-card', 'HomeController@setGiftCard');
         Route::get('/faq', 'HomeController@faq')->name('front.faq'); // FAQ
         Route::get('/support', 'HomeController@support')->name('front.support'); // Support
         Route::get('/support/{id}/articles', 'HomeController@supportArticles')->name('front.support-articles'); // Support Articles
@@ -207,6 +209,30 @@ Route::group([
             Route::post('/{id}/checkout/place_order', 'WorkshopController@place_order')->name('front.workshop.place_order'); // Place Order
         });
 
+        Route::group([
+            'prefix' => 'gift'
+        ], function(){
+            Route::group([
+                'prefix' => 'course'
+            ], function(){
+                Route::get('/', 'GiftController@course')->name('front.gift.course');
+                Route::get('/{id}', 'GiftController@courseShow')->name('front.gift.course.show');
+                Route::get('/{id}/checkout', 'GiftController@courseCheckout')->name('front.gift.course.checkout');
+                Route::post('/{id}/checkout/validate-form', 'GiftController@validateCheckoutForm')->name('front.gift.course.checkout.validate-form');
+                Route::post('/{id}/checkout/process-order', 'GiftController@processCourseOrder')->name('front.gift.course.checkout.process-order');
+                Route::get('/{id}/thankyou', 'GiftController@thankyou')->name('front.gift.course.thankyou');
+            });
+
+            Route::group([
+                'prefix' => 'shop-manuscript'
+            ], function(){
+                Route::get('/', 'GiftController@shopManuscript')->name('front.gift.shop-manuscript');
+                Route::get('/{id}/checkout', 'GiftController@shopManuscriptCheckout')->name('front.gift.shop-manuscript.checkout'); // Checkout Shop Manuscript
+                Route::post('/{id}/checkout/validate-form', 'GiftController@validateCheckoutForm');
+                Route::get('/{id}/thankyou', 'GiftController@thankyou');
+            });
+        });
+
         Route::get('/thankyou', 'ShopController@thankyou')->name('front.shop.thankyou'); // Thank You
         Route::get('/thank-you', 'HomeController@thankyou')->name('front.thank-you'); // Thank You
 
@@ -241,6 +267,7 @@ Route::group([
         Route::get('/invoice', 'LearnerController@invoice')->name('learner.invoice'); // Invoice Listing Page
         Route::get('/invoice/{id}', 'LearnerController@invoiceShow')->name('learner.invoice.show'); // Invoice Single Page
         Route::get('/invoice/{invoice_number}/vipps-payment', 'LearnerController@invoiceVippsPayment')->name('learner.invoice.vipps-payment'); // Invoice Single Page
+        Route::post('/redeem-gift', 'LearnerController@redeemGift')->name('learner.redeem-gift');
         Route::post('learner/invoice/{id}/e-faktura', 'LearnerController@vippsEFaktura')->name('learner.invoice.vipps-e-faktura');
         Route::post('learner/set-vipss-efaktura', 'LearnerController@setVippsEFaktura')->name('learner.set-vipps-e-faktura');
         Route::get('/invoice/{id}/download/{type}', 'LearnerController@downloadInvoiceByType')->name('learner.invoice.download-by-type');
@@ -263,6 +290,7 @@ Route::group([
         Route::post('/coaching-timer/{id}/approve_date', 'LearnerController@approveCoachingDate')->name('learner.coaching-timer.approve_date');
         Route::post('/coaching-timer/{id}/suggest_date', 'LearnerController@suggestCoachingDate')->name('learner.coaching-timer.suggest_date');
         Route::post('/coaching-timer/{id}/help_with', 'LearnerController@updateHelpWith')->name('learner.coaching-timer.help_with');
+        Route::post('/coaching-timer/{id}/set-status', 'LearnerController@setCoachingStatus')->name('learner.coaching-timer.set-status');
         Route::post('/course-taken/coaching-timer/add', 'LearnerController@addCoachingSession')->name('learner.course-taken.coaching-timer.add');
         Route::get('/webinar', 'LearnerController@webinar')->name('learner.webinar'); // Webinars Page
         Route::post('/webinar', 'LearnerController@webinar')->name('learner.webinar'); // Webinars Page
@@ -1180,6 +1208,8 @@ Route::group([
         ]);
 
         Route::post('/other-service/{id}/coaching-timer/approve_date', 'OtherServiceController@approveDate')->name('admin.other-service.coaching-timer.approve_date');
+        Route::post('/other-service/{id}/coaching-timer/set-approve-date', 'OtherServiceController@setCoachingApproveDate')
+            ->name('admin.other-service.coaching-timer.set-coaching-approve-date');
         Route::post('/other-service/{id}/coaching-timer/suggest_date', 'OtherServiceController@suggestDate')->name('admin.other-service.coaching-timer.suggestDate');
         Route::post('/other-service/set-approved-date', 'OtherServiceController@setApprovedDate')->name('admin.other-service.coaching-timer.set-approved-date');
         Route::post('/other-service/{id}/coaching-timer/set_replay', 'OtherServiceController@setReplay')->name('admin.other-service.coaching-timer.set_replay');

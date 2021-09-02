@@ -42,6 +42,8 @@ Vue.component('example', require('./components/Example.vue'));
 Vue.component('take-survey', require('./components/TakeSurvey.vue'));
 Vue.component('svea-checkout', require('./frontend/course/svea-checkout.vue'));
 Vue.component('course-checkout', require('./frontend/course/checkout.vue'));
+Vue.component('gift-course-checkout', require('./frontend/gift/course-checkout.vue'));
+Vue.component('gift-shop-manuscript-checkout', require('./frontend/gift/shop-manuscript-checkout.vue'));
 Vue.component('shop-manuscript-checkout', require('./frontend/shop-manuscript/checkout.vue'));
 
 new Vue({

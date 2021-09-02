@@ -14,6 +14,7 @@ use App\CourseOrderAttachment;
 use App\Diploma;
 use App\EmailConfirmation;
 use App\Genre;
+use App\GiftPurchase;
 use App\Http\AdminHelpers;
 use App\Http\Middleware\Admin;
 use App\Http\Requests\AddWritingGroupRequest;
@@ -957,6 +958,8 @@ class LearnerController extends Controller
             ->groupBy('course_order_attachments.id')
             ->get();
 
+        $giftPurchases = Auth::user()->giftPurchases;
+
         /*$ch = curl_init($this->fikenInvoices);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
@@ -965,7 +968,8 @@ class LearnerController extends Controller
         $data = curl_exec($ch);
         $data = json_decode($data);
         $fikenInvoices = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};*/
-        return view('frontend.learner.invoice', compact('invoices', 'sveaOrders', 'user', 'orderAttachments'));
+        return view('frontend.learner.invoice', compact('invoices', 'sveaOrders', 'user',
+            'orderAttachments', 'giftPurchases'));
     }
 
 
@@ -1012,6 +1016,143 @@ class LearnerController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * Redeem purchased gift
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function redeemGift( Request $request )
+    {
+
+        $giftPurchase = GiftPurchase::where('redeem_code', $request->redeem_code)->first();
+
+        if (!$giftPurchase || $giftPurchase->is_redeemed || $giftPurchase->user_id === Auth::user()->id) {
+
+            $errorMessage = '';
+            if (!$giftPurchase) {
+                $errorMessage = AdminHelpers::createMessageBag('Invalid Redeem code.');
+            }
+
+            if ($giftPurchase && $giftPurchase->is_redeemed) {
+                $errorMessage = AdminHelpers::createMessageBag('Gift already redeemed.');
+            }
+
+            if ($giftPurchase && $giftPurchase->user_id === Auth::user()->id) {
+                $errorMessage = AdminHelpers::createMessageBag('Buyer cannot claim the gift.');
+            }
+
+            return redirect()->back()->with([
+                'errors'                => $errorMessage,
+                'alert_type'            => 'danger'
+            ]);
+        }
+
+        if ($giftPurchase->parent === 'course-package') {
+            $this->redeemCourse( $giftPurchase );
+        }
+
+        if ($giftPurchase->parent === 'shop-manuscript') {
+            $this->redeemManuscript( $giftPurchase );
+        }
+
+        $giftPurchase->is_redeemed = 1;
+        $giftPurchase->save();
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Gift redeemed successfully.'),
+            'alert_type'            => 'success'
+        ]);
+    }
+
+    /**
+     * @param GiftPurchase $giftPurchase
+     */
+    public function redeemCourse( GiftPurchase $giftPurchase )
+    {
+        $package = $giftPurchase->coursePackage;
+        $course_status = 0;
+        $courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
+        $courseTaken->is_active = $course_status;
+        $courseTaken->is_welcome_email_sent = 0;
+        $courseTaken->gift_purchase_id = $giftPurchase->id;
+        $courseTaken->save();
+
+        // Check for shop manuscripts
+        if( $package->shop_manuscripts->count() > 0 ) :
+            foreach( $package->shop_manuscripts as $shop_manuscript ) :
+                $shopManuscriptTaken = new ShopManuscriptsTaken();
+                $shopManuscriptTaken->user_id = Auth::user()->id;
+                $shopManuscriptTaken->shop_manuscript_id = $shop_manuscript->shop_manuscript_id;
+                $shopManuscriptTaken->is_active = false;
+                $shopManuscriptTaken->package_shop_manuscripts_id = $package->shop_manuscripts[0]->id;
+                $shopManuscriptTaken->gift_purchase_id = $giftPurchase->id;
+                $shopManuscriptTaken->save();
+            endforeach;
+        endif;
+
+
+        if ($package->included_courses->count() > 0) {
+            foreach ($package->included_courses as $included_course) {
+                // add user to the included course
+                $courseIncluded = CoursesTaken::firstOrNew([
+                    'user_id' => Auth::user()->id,
+                    'package_id' => $included_course->included_package_id
+                ]);
+                $courseIncluded->is_active = $course_status;
+                $courseIncluded->gift_purchase_id = $giftPurchase->id;
+                $courseIncluded->save();
+            }
+        }
+
+        $user = Auth::user();
+        $user_email = $user->email;
+
+        $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
+        $search_string = [
+            '[username]', '[password]'
+        ];
+        $replace_string = [
+            $courseTaken->user->email, $password
+        ];
+
+        $email_content = str_replace($search_string, $replace_string, $package->course->email);
+        $attachments = NULL;
+
+        $encode_email = encrypt($user_email);
+        $redirectLink = encrypt(route('learner.course'));
+        $actionUrl = route('auth.login.emailRedirect',[$encode_email, $redirectLink]);
+        $actionText = 'Mine Kurs';
+
+        dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
+            'postmail@forfatterskolen.no', 'Forfatterskolen', $attachments, 'courses-taken-order',
+            $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
+    }
+
+    /**
+     * @param $giftPurchase
+     */
+    public function redeemManuscript( $giftPurchase )
+    {
+        $user = Auth::user();
+        $user_email = $user->email;
+
+        $shopManuscriptTaken = new ShopManuscriptsTaken();
+        $shopManuscriptTaken->user_id               = $user->id;
+        $shopManuscriptTaken->description           = NULL;
+        $shopManuscriptTaken->shop_manuscript_id    = $giftPurchase->parent_id;
+        $shopManuscriptTaken->is_active = false;
+        $shopManuscriptTaken->coaching_time_later = 0;
+        $shopManuscriptTaken->is_welcome_email_sent = 0;
+        $shopManuscriptTaken->save();
+
+        $emailTemplate = AdminHelpers::emailTemplate('Shop Manuscript Welcome Email');
+        $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $user_email,
+            Auth::user()->first_name, 'shop-manuscripts-taken');
+
+        dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
+            $emailTemplate->from_email, null, null, 'shop-manuscripts-taken', $shopManuscriptTaken->id));
     }
 
     public function vippsEFaktura( $invoice_id, Request $request)
@@ -3237,6 +3378,21 @@ class LearnerController extends Controller
             $coachingTimer->save();
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Skriv litt her om hva du vil ha hjelp til saved successfully.'),
                 'alert_type' => 'success']);
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function setCoachingStatus($id, Request $request)
+    {
+        if($coachingTimer = CoachingTimerManuscript::find($id)) {
+            $coachingTimer->status = $request->status;
+            $coachingTimer->save();
         }
 
         return redirect()->back();

@@ -110,7 +110,7 @@
                                     {{ trans('site.front.coaching-timer.note') }}
                                 </div>
 
-                                <div class="row mb-4">
+                                <!--<div class="row mb-4">
                                     @for($i = 1; $i <=3; $i++)
                                         <?php
                                             $style = '';
@@ -133,7 +133,7 @@
                                             <input type="datetime-local" class="form-control p-1" name="suggested_date[]" required>
                                         </div>
                                     @endfor
-                                </div>
+                                </div>-->
 
                                 <div class="form-group">
                                     <label for="">

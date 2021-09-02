@@ -41,7 +41,7 @@
 				<div class="sub-header">
 					@if(Auth::guest())
 						@if ($course->for_sale && !$course->is_free && !$course->hide_price)
-							<a href="{{route('front.course.checkout', ['id' => $course->id])}}" class="btn buy-course">
+							<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn buy-course">
 								{{ trans('site.front.our-course.show.buy-course') }}
 							</a>
 						@endif
@@ -56,7 +56,7 @@
 							</a>
 						@else
 							@if ($course->for_sale && !$course->is_free && !$course->hide_price)
-									<a href="{{route('front.course.checkout', ['id' => $course->id])}}" class="btn buy-course">
+									<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn buy-course">
 										{{ trans('site.front.our-course.show.buy-course') }}
 									</a>
 							@endif
@@ -293,7 +293,7 @@
                                                 <br>
 											@endif
 										@endif
-										<a class="btn site-btn-global mt-2" href="{{ route('front.course.checkout',
+										<a class="btn site-btn-global mt-2" href="{{ route($checkoutRoute,
 										[$course->id,'package' => $package->id]) }}">
 											{{ trans('site.front.buy') }}
 										</a>
@@ -359,7 +359,7 @@
 																	<div class="card-footer border-0 p-0">
 																		@if(Auth::guest())
 																			@if ($course->for_sale && !$course->is_free && !$course->hide_price)
-																				<a href="{{route('front.course.checkout', ['id' => $course->id])}}"
+																				<a href="{{route($checkoutRoute, ['id' => $course->id])}}"
 																				   class="btn site-btn-global w-100 rounded-0">
 																					{{ trans('site.front.our-course.show.buy-course') }}
 																				</a>
@@ -376,7 +376,7 @@
 																				</a>
 																			@else
 																				@if ($course->for_sale && !$course->is_free && !$course->hide_price)
-																					<a href="{{route('front.course.checkout', ['id' => $course->id])}}"
+																					<a href="{{route($checkoutRoute, ['id' => $course->id])}}"
 																					   class="btn site-btn-global w-100 rounded-0">
 																						{{ trans('site.front.our-course.show.buy-course') }}
 																					</a>

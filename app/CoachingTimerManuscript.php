@@ -13,6 +13,9 @@ class CoachingTimerManuscript extends Model {
      * 2 is 30 min
      */
 
+    const STATUS_FINISHED = 1;
+    const STATUS_BOOKED = 2;
+
     /**
      * The database table used by the model.
      *

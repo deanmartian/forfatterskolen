@@ -58,6 +58,7 @@ use App\Package;
 use App\Faq;
 use App\Http\FikenInvoice;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
 include_once($_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php');
@@ -157,6 +158,17 @@ class HomeController extends Controller
         return view('frontend.contact-us', compact('hasAdvisory', 'advisory'));
     }
 
+    public function giftCards()
+    {
+        Session::remove('gift-card');
+        return view('frontend.gift-cards');
+    }
+
+    public function setGiftCard( Request $request )
+    {
+        \Session::put('gift-card', $request->card);
+        return Session::all();
+    }
 
     public function faq()
     {
@@ -697,7 +709,7 @@ class HomeController extends Controller
     public function coachingTimerPlaceOrder($plan, Request $request)
     {
         $data = $request->except('_token');
-        $suggested_dates = $data['suggested_date'];
+        $suggested_dates = [];//$data['suggested_date'];
         $newFileLocation = NULL;
 
         // format the sent suggested dates
@@ -769,7 +781,7 @@ class HomeController extends Controller
            'file'           => $newFileLocation,
             'payment_price' => $data['price'],
             'plan_type'     => $plan,
-            'suggested_date' => json_encode($suggested_dates),
+            //'suggested_date' => json_encode($suggested_dates),
             'help_with'     => $data['help_with']
         ]);
 

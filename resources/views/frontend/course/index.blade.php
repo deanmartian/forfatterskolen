@@ -53,7 +53,7 @@
 											@endif
 										</div>
 
-										<a href="{{ route('front.course.show', $course->id) }}" class="btn btn-details">
+										<a href="{{ route($showRoute, $course->id) }}" class="btn btn-details">
 											{{ trans('site.front.our-course.view-details') }}
 										</a>
 									</div>
@@ -64,7 +64,7 @@
 
 										<p class="color-b4">{{ str_limit(strip_tags($course->description), 180)}}</p>
 
-										<a href="{{ route('front.course.show', $course->id) }}" class="btn buy-btn">
+										<a href="{{ route($showRoute, $course->id) }}" class="btn buy-btn">
 											{{ trans('site.front.view') }}
 										</a>
 									</div>
