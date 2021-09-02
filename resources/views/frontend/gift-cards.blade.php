@@ -12,7 +12,7 @@
             <div class="card details-container">
                 <div class="card-body">
                     <h1 class="page-title">
-                        Gift Cards
+                        {{ trans('site.gift-card.title') }}
                     </h1>
 
                     <div class="col-sm-8 description-container">
@@ -22,11 +22,11 @@
 
                         <div style="margin-top: 20px">
                             <a href="{{ route('front.gift.course') }}" class="btn site-btn-global" style="margin-right: 20px">
-                                Buy Course
+                                {{ trans('site.gift-card.buy-course') }}
                             </a>
 
                             <a href="{{ route('front.gift.shop-manuscript') }}" class="btn site-btn-global">
-                                Buy Manuscript
+                                {{ trans('site.gift-card.buy-manuscript') }}
                             </a>
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                 <div class="card-body">
 
                     <h3>
-                        Select gift cards
+                        {{ trans('site.gift-card.select-gift-cards') }}
                     </h3>
 
                     @php
@@ -64,7 +64,7 @@
 
             <div class="btn-container">
                 <a href="{{ route('front.gift.course') }}" class="btn site-btn-global" style="margin-right: 20px">
-                    Buy Course
+                    {{ trans('site.gift-card.buy-course') }}
                 </a>
 
                 <a href="{{ route('front.gift.shop-manuscript') }}" class="btn site-btn-global">
