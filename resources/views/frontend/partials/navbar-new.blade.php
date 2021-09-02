@@ -100,11 +100,11 @@
                    title="View contact page">{{ trans('site.front.nav.contact-us') }}</a>
             </li>
 
-            <li class="nav-item @if(Route::currentRouteName() == 'front.gift-cards') active @endif">
+            {{--<li class="nav-item @if(Route::currentRouteName() == 'front.gift-cards') active @endif">
                 <a href="{{route('front.gift-cards')}}" class="nav-link">
                     Gift Cards
                 </a>
-            </li>
+            </li>--}}
 
             @if (Auth::user())
                 <li class="nav-item dropdown">

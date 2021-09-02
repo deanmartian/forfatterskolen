@@ -72,11 +72,11 @@ class GiftService {
 
         $request->merge(['discount' => $discount, 'gift_card' => $giftCard]);
         $orderRecord = $this->createOrder($request, $type);
-        $checkoutMerchantId = config('services.svea.checkoutid_test');
-        $checkoutSecret = config('services.svea.checkout_secret_test');
+        $checkoutMerchantId = config('services.svea.checkoutid');
+        $checkoutSecret = config('services.svea.checkout_secret');
 
         //set endpoint url. Eg. test or prod
-        $baseUrl = \Svea\Checkout\Transport\Connector::TEST_BASE_URL;
+        $baseUrl = \Svea\Checkout\Transport\Connector::PROD_BASE_URL;
 
         $connector = \Svea\Checkout\Transport\Connector::init($checkoutMerchantId, $checkoutSecret, $baseUrl);
         try {
@@ -168,11 +168,11 @@ class GiftService {
      */
     public function sveaOrderDetails( $order )
     {
-        $checkoutMerchantId = config('services.svea.checkoutid_test');
-        $checkoutSecret = config('services.svea.checkout_secret_test');
+        $checkoutMerchantId = config('services.svea.checkoutid');
+        $checkoutSecret = config('services.svea.checkout_secret');
 
         //set endpoint url. Eg. test or prod
-        $baseUrl = \Svea\Checkout\Transport\Connector::TEST_ADMIN_BASE_URL;
+        $baseUrl = \Svea\Checkout\Transport\Connector::PROD_ADMIN_BASE_URL;
 
         $connector = \Svea\Checkout\Transport\Connector::init($checkoutMerchantId, $checkoutSecret, $baseUrl);
 
