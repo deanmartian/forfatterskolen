@@ -778,25 +778,25 @@ class FrontendHelpers
     {
         $giftCards = [
             [
-                'label' => 'Christmas Present',
+                'label' => trans('site.gift-card.christmas-present'),
                 'name' => 'christmas',
                 'image' => '/images-new/gift-cards/christmas.png'
             ],
 
             [
-                'label' => 'Birthday Present',
+                'label' => trans('site.gift-card.birthday-present'),
                 'name' => 'birthday',
                 'image' => '/images-new/gift-cards/birthday.png'
             ],
 
             [
-                'label' => 'Giftcard Present',
+                'label' => trans('site.gift-card.giftcard-present'),
                 'name' => 'gift-card',
                 'image' => '/images-new/gift-cards/gift-card.png'
             ],
 
             [
-                'label' => 'Love Present',
+                'label' => trans('site.gift-card.love-present'),
                 'name' => 'love-present',
                 'image' => '/images-new/gift-cards/love-present.png'
             ]
