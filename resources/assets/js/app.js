@@ -43,6 +43,7 @@ Vue.component('take-survey', require('./components/TakeSurvey.vue'));
 Vue.component('svea-checkout', require('./frontend/course/svea-checkout.vue'));
 Vue.component('course-checkout', require('./frontend/course/checkout.vue'));
 Vue.component('shop-manuscript-checkout', require('./frontend/shop-manuscript/checkout.vue'));
+Vue.component('course-upgrade', require('./frontend/upgrade/course.vue'));
 
 new Vue({
     el: '#app-container'

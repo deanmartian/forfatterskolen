@@ -289,6 +289,7 @@ Route::group([
         Route::get('/upgrade', 'LearnerController@upgrade')->name('learner.upgrade');
         Route::get('/upgrade/get-course/{course_taken_id}/package/{package_id}', 'LearnerController@getUpgradeCourse')->name('learner.get-upgrade-course');
         Route::post('/upgrade/course/{id}', 'LearnerController@upgradeCourse')->name('learner.upgrade-course');
+        Route::post('/upgrade-course/{id}/validate-form', 'LearnerController@validateUpgradeCourseForm');
         Route::get('/upgrade/get-manuscript/{id}', 'LearnerController@getUpgradeManuscript')->name('learner.get-upgrade-manuscript');
         Route::post('/upgrade/manuscript/{id}', 'LearnerController@upgradeManuscript')->name('learner.upgrade-manuscript');
         Route::post('/upgrade/autoRenew', 'LearnerController@setAutoRenewCourses')->name('learner.upgrade-auto-renew');

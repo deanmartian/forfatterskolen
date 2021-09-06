@@ -17,6 +17,7 @@ use App\Genre;
 use App\Http\AdminHelpers;
 use App\Http\Middleware\Admin;
 use App\Http\Requests\AddWritingGroupRequest;
+use App\Http\Requests\OrderCreateRequest;
 use App\Jobs\AddMailToQueueJob;
 use App\Jobs\CourseOrderJob;
 use App\LessonContent;
@@ -37,6 +38,7 @@ use App\PilotReaderReaderProfile;
 use App\Repositories\Services\CompetitionService;
 use App\Repositories\Services\PublishingService;
 use App\Repositories\Services\WritingGroupService;
+use App\Services\CourseService;
 use App\Settings;
 use App\ShopManuscriptTakenFeedback;
 use App\ShopManuscriptUpgrade;
@@ -2073,7 +2075,44 @@ class LearnerController extends Controller
             return redirect()->route('learner.upgrade');
         }
 
-        return view('frontend.learner.upgrade-course', compact('courseTaken', 'currentPackage', 'package_id'));
+        $currentUser = Auth::user();
+
+        return view('frontend.learner.upgrade-course', compact('courseTaken', 'currentPackage', 'package_id', 'currentUser'));
+    }
+
+    /**
+     * @param $courseTakenId
+     * @param Request $request
+     * @param CourseService $courseService
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function validateUpgradeCourseForm( $courseTakenId, Request $request, CourseService $courseService )
+    {
+        $validation = [
+            'email'         => 'required|email',
+            'first_name'    => 'required',
+            'last_name'     => 'required',
+            'street'        => 'required',
+            'zip'           => 'required',
+            'city'          => 'required',
+            'phone'         => 'required',
+        ];
+
+        $validator = \Validator::make($request->all(), $validation);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        // update address
+        Address::updateOrCreate(
+            ['user_id' => \Auth::user()->id],
+            $request->only('street', 'zip', 'city', 'phone')
+        );
+
+        $request->merge(['parent' => 'course-taken', 'parent_id' => $courseTakenId]);
+
+        return response()->json($courseService->generateSveaCheckout($request));
     }
 
     /**
