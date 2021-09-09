@@ -78,7 +78,7 @@
                             </div>
                             @if ($next_free_webinar1)
                                 <div class="h2 mt-0 mb-4 font-montserrat-semibold">
-                                    {{ $next_free_webinar1->title }}
+                                    Slik skriver du for barn
                                 </div>
 
                                 <a href="{{ route('front.reprise') }}" class="btn buy-btn mt-4">
@@ -165,7 +165,7 @@
                                 {{ trans('site.front.view') }}
                             </a>--}}
 
-                            <div class="title">
+                            {{--<div class="title">
                                 Gratis webinar
                             </div>
                             @if ($next_free_webinar2)
@@ -189,7 +189,20 @@
                                    title="View free webinar">
                                     {{ trans('site.front.view') }}
                                 </a>
-                            @endif
+                            @endif--}}
+
+                            <div class="title">
+                                Reprise webinar
+                            </div>
+
+                            <div class="h2 mt-0 mb-4 font-montserrat-semibold">
+                                Marit Reiersgård - Fra tegn til tegning
+                            </div>
+
+                            <a href="{{ route('front.here-i-am') }}" class="btn buy-btn mt-4"
+                               title="View blog link">
+                                {{ trans('site.front.view') }}
+                            </a>
                         </div> <!-- end content container -->
                     </div>
                 </div>
