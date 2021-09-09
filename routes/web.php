@@ -138,6 +138,8 @@ Route::group([
             ->name('front.barn'); // Replay Page
         Route::get('/skrivdittliv', 'HomeController@skrivdittliv')
             ->name('front.skrivdittliv');
+        Route::get('/hererjeg', 'HomeController@hereIam')
+            ->name('front.here-i-am'); // Replay Page
 
         // Test Manuscript (Shop Manuscript)
         Route::post('/test_manuscript', 'ShopManuscriptController@test_manuscript')->name('front.shop-manuscript.test_manuscript'); // Test count shop manuscript

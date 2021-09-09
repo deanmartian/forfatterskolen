@@ -1979,4 +1979,10 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         return view('frontend.skrivdittliv');
     }
 
+    public function hereIam()
+    {
+        $replays = Replay::latest()->get();
+        return view('frontend.here-i-am', compact('replays'));
+    }
+
 }
