@@ -55,9 +55,9 @@
         <tr>
             <td>
                 <b class="mr-2">Item:</b>
-                @if ($order->type === 1)
+                @if (in_array($order->type, [1, 6]))
                     <b><i>{{ $order->item }} - {{ $order->package->variation }}</i></b>
-                @elseif ($order->type === 2)
+                @elseif (in_array($order->type, [2, 7]))
                     <b><i>{{ $order->item }}</i></b>
                 @endif
                     <br>

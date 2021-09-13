@@ -437,7 +437,7 @@
            let modal = $("#viewOrderModal");
 
            modal.find("#displayDate").text(fields.created_at_formatted);
-           modal.find(".package-variation").text(fields.packageVariation);
+           modal.find(".package-variation").text(fields.packageVariation ? fields.packageVariation : fields.item);
            modal.find(".payment-mode").text(fields.payment_mode_id === 1 ? 'Bankoverføring' : '');
            modal.find(".payment-plan").text(fields.payment_plan.plan);
 
