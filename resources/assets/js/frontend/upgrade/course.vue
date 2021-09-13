@@ -258,8 +258,6 @@
         },
 
         mounted() {
-            console.log("course upgrade here");
-            console.log(this.currentUser);
             this.loadOptions();
             this.checkHasPaidCourse();
         }

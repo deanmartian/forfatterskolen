@@ -291,6 +291,7 @@ Route::group([
         Route::post('/upgrade/course/{id}', 'LearnerController@upgradeCourse')->name('learner.upgrade-course');
         Route::post('/upgrade-course/{id}/validate-form', 'LearnerController@validateUpgradeCourseForm');
         Route::get('/upgrade/get-manuscript/{id}', 'LearnerController@getUpgradeManuscript')->name('learner.get-upgrade-manuscript');
+        Route::post('/upgrade-manuscript/{id}/validate-form', 'LearnerController@validateUpgradeManuscriptForm');
         Route::post('/upgrade/manuscript/{id}', 'LearnerController@upgradeManuscript')->name('learner.upgrade-manuscript');
         Route::post('/upgrade/autoRenew', 'LearnerController@setAutoRenewCourses')->name('learner.upgrade-auto-renew');
         Route::get('/upgrade/assignment/{id}', 'LearnerController@getUpgradeAssignment')->name('learner.get-upgrade-assignment'); // Assignment Add on Page

@@ -13,6 +13,7 @@ class Order extends Model {
     const CORRECTION_TYPE = 4;
     const COPY_EDITING_TYPE = 5;
     const COURSE_UPGRADE_TYPE = 6;
+    const MANUSCRIPT_UPGRADE_TYPE = 7;
 
     protected $fillable = ['user_id', 'item_id', 'type', 'package_id', 'plan_id', 'payment_mode_id', 'price', 'discount',
         'svea_order_id', 'svea_invoice_id', 'svea_payment_type', 'svea_payment_type_description', 'is_processed'];
@@ -52,7 +53,7 @@ class Order extends Model {
 
     public function getItemAttribute()
     {
-        if ($this->attributes['type'] === 2) {
+        if (in_array($this->attributes['type'], [2, 7])) {
             return ShopManuscript::find($this->attributes['item_id'])->title;
         }
 

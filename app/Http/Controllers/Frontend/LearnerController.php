@@ -20,6 +20,7 @@ use App\Http\Requests\AddWritingGroupRequest;
 use App\Http\Requests\OrderCreateRequest;
 use App\Jobs\AddMailToQueueJob;
 use App\Jobs\CourseOrderJob;
+use App\Jobs\SveaUpdateOrderDetailsJob;
 use App\LessonContent;
 use App\LessonDocuments;
 use App\Mail\SendEmailMessageOnly;
@@ -39,6 +40,7 @@ use App\Repositories\Services\CompetitionService;
 use App\Repositories\Services\PublishingService;
 use App\Repositories\Services\WritingGroupService;
 use App\Services\CourseService;
+use App\Services\ShopManuscriptService;
 use App\Settings;
 use App\ShopManuscriptTakenFeedback;
 use App\ShopManuscriptUpgrade;
@@ -1225,8 +1227,27 @@ class LearnerController extends Controller
         return redirect()->route('learner.writing-groups');
     }
 
-    public function upgrade()
+    public function upgrade(Request $request)
     {
+
+        // check if from svea payment
+        if ($request->has('svea_ord')) {
+            $order_id = $request->get('svea_ord');
+            $order = Order::find($order_id);
+
+            SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
+
+            // add shop manuscript to user
+            if (!$order->is_processed) {
+                $shopManuscriptService = new ShopManuscriptService();
+                $shopManuscriptService->upgradeShopManuscript($order);
+            }
+
+            $order->is_processed = 1;
+            $order->save();
+        }
+
+
         $assignments = [];
         $coursesTaken = Auth::user()->coursesTaken;
         $today = Carbon::now();
@@ -2458,10 +2479,41 @@ class LearnerController extends Controller
         if ($shopManuscriptTaken && $shopManuscriptTaken->status == 'Not started') {
             $shopManuscriptId = $shopManuscriptTaken->shop_manuscript->id;
             $shopManuscriptUpgrades = ShopManuscriptUpgrade::where('shop_manuscript_id', $shopManuscriptId)->get();
-            return view('frontend.learner.upgrade-manuscript', compact('shopManuscriptTaken', 'shopManuscriptUpgrades'));
+            $currentUser = $this->currentUser();
+            return view('frontend.learner.upgrade-manuscript',
+                compact('shopManuscriptTaken', 'shopManuscriptUpgrades', 'currentUser'));
         }
 
         return redirect()->route('learner.upgrade');
+    }
+
+    public function validateUpgradeManuscriptForm( $manuscriptTakenId, Request $request, ShopManuscriptService $shopManuscriptService )
+    {
+        $validation = [
+            'email'         => 'required|email',
+            'first_name'    => 'required',
+            'last_name'     => 'required',
+            'street'        => 'required',
+            'zip'           => 'required',
+            'city'          => 'required',
+            'phone'         => 'required',
+        ];
+
+        $validator = \Validator::make($request->all(), $validation);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        // update address
+        Address::updateOrCreate(
+            ['user_id' => \Auth::user()->id],
+            $request->only('street', 'zip', 'city', 'phone')
+        );
+
+        $request->merge(['parent' => 'manuscript-taken', 'parent_id' => $manuscriptTakenId]);
+
+        return response()->json($shopManuscriptService->generateSveaCheckout($request));
     }
 
     /**
