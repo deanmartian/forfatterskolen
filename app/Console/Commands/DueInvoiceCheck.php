@@ -68,27 +68,29 @@ class DueInvoiceCheck extends Command
         $subject = $email_template->subject;
 
         foreach ($invoices as $invoice) {
-            $balance            = $invoice->fiken_balance;
-            $transactions_sum   = $invoice->transaction_amount;//$invoice->transactions->sum('amount');
-            $remaining          = $balance - $transactions_sum;
-            //$user               = $invoice->user;
+            if($invoice->id){
+                $balance            = $invoice->fiken_balance;
+                $transactions_sum   = $invoice->transaction_amount;//$invoice->transactions->sum('amount');
+                $remaining          = $balance - $transactions_sum;
+                //$user               = $invoice->user;
 
-            $to = $invoice->user_email;//$invoice->user->email;
-            $redirectLink = route('learner.invoice', ['filter' => $invoice->id]);
+                $to = $invoice->user_email;//$invoice->user->email;
+                $redirectLink = route('learner.invoice', ['filter' => $invoice->id]);
 
-            $emailContent = AdminHelpers::formatEmailContent($email_template->email_content, $to, $invoice->user_first_name, $redirectLink);
-            $emailContent = str_replace([
-                ':price',
-                ':kid_number'
-            ], [
-                FrontendHelpers::currencyFormat($remaining),
-                $invoice->kid_number
-            ], $emailContent);
+                $emailContent = AdminHelpers::formatEmailContent($email_template->email_content, $to, $invoice->user_first_name, $redirectLink);
+                $emailContent = str_replace([
+                    ':price',
+                    ':kid_number'
+                ], [
+                    FrontendHelpers::currencyFormat($remaining),
+                    $invoice->kid_number
+                ], $emailContent);
 
-            //\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
-            dispatch(new AddMailToQueueJob($to, $subject, $emailContent, $from, null, null,
-                'invoice', $invoice->id));
-            CronLog::create(['activity' => 'DueInvoiceCheck CRON sent email to '.$to]);
+                //\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+                dispatch(new AddMailToQueueJob($to, $subject, $emailContent, $from, null, null,
+                    'invoice', $invoice->id));
+                CronLog::create(['activity' => 'DueInvoiceCheck CRON sent email to '.$to]);
+            }
         }
 
         CronLog::create(['activity' => 'DueInvoiceCheck CRON done running.']);
