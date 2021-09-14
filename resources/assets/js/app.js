@@ -45,6 +45,7 @@ Vue.component('course-checkout', require('./frontend/course/checkout.vue'));
 Vue.component('shop-manuscript-checkout', require('./frontend/shop-manuscript/checkout.vue'));
 Vue.component('course-upgrade', require('./frontend/upgrade/course.vue'));
 Vue.component('manuscript-upgrade', require('./frontend/upgrade/manuscript.vue'));
+Vue.component('assignment-upgrade', require('./frontend/upgrade/assignment.vue'));
 
 new Vue({
     el: '#app-container'

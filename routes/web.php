@@ -208,6 +208,7 @@ Route::group([
         });
 
         Route::get('/thankyou', 'ShopController@thankyou')->name('front.shop.thankyou'); // Thank You
+        Route::get('/assignment/thankyou', 'HomeController@assignmentThankyou')->name('front.assignment.thankyou'); // Thank You
         Route::get('/thank-you', 'HomeController@thankyou')->name('front.thank-you'); // Thank You
 
 
@@ -295,6 +296,7 @@ Route::group([
         Route::post('/upgrade/manuscript/{id}', 'LearnerController@upgradeManuscript')->name('learner.upgrade-manuscript');
         Route::post('/upgrade/autoRenew', 'LearnerController@setAutoRenewCourses')->name('learner.upgrade-auto-renew');
         Route::get('/upgrade/assignment/{id}', 'LearnerController@getUpgradeAssignment')->name('learner.get-upgrade-assignment'); // Assignment Add on Page
+        Route::post('/upgrade/assignment/{id}/validate-form', 'LearnerController@validateUpgradeAssignmentForm');
         Route::post('/upgrade/assignment/{id}', 'LearnerController@upgradeAssignment')->name('learner.upgrade-assignment'); // Assignment Add on Page
         Route::get('/survey/{id}', 'LearnerController@survey')->name('learner.survey'); // Survey Page
         Route::post('/take-survey/{id}', 'LearnerController@takeSurvey')->name('learner.take-survey'); // Survey Page

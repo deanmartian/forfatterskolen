@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Assignment;
 use App\Course;
 use App\CoursesTaken;
 use App\CronLog;
@@ -374,6 +375,13 @@ class AdminHelpers
                 break;
             case 5:
                 $orderDetails = trans('site.front.copy-editing.title');
+                break;
+            case 8:
+                $assignment = Assignment::find(($order->item_id));
+                $orderDetails = "<a href='".route('admin.assignment.show',
+                        ['course_id' => $assignment->course->id, 'id' => $assignment->id])."'>"
+                    .$assignment->title."</a>";
+
                 break;
         }
 

@@ -32,7 +32,7 @@
 				<div class="col-sm-12">
 
 					<ul class="nav nav-tabs margin-top">
-						<li @if( Request::input('tab') == 'fiken') class="active" @endif>
+						<li @if( !Request::has('tab') || Request::input('tab') == 'fiken') class="active" @endif>
 							<a href="?tab=fiken">
 								Fiken
 							</a>

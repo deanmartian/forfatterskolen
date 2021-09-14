@@ -21,6 +21,7 @@ use App\Http\FrontendHelpers;
 use App\Http\Middleware\Admin;
 use App\Invoice;
 use App\Jobs\AddMailToQueueJob;
+use App\Jobs\SveaUpdateOrderDetailsJob;
 use App\Log;
 use App\Mail\DiscussionEmail;
 use App\Mail\DiscussionRepliesEmail;
@@ -37,6 +38,7 @@ use App\PublisherBook;
 use App\Replay;
 use App\Repositories\Services\SaleService;
 use App\Repositories\VippsRepository;
+use App\Services\AssignmentService;
 use App\Settings;
 use App\Solution;
 use App\SolutionArticle;
@@ -518,6 +520,33 @@ class HomeController extends Controller
     public function thankyou()
     {
         return view('frontend.thank-you');
+    }
+
+    /**
+     * @param Request $request
+     * @param AssignmentService $assignmentService
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function assignmentThankyou( Request $request, AssignmentService $assignmentService )
+    {
+        // check if from svea payment
+        if ($request->has('svea_ord')) {
+            $order_id = $request->get('svea_ord');
+            $order = Order::find($order_id);
+
+            SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
+
+            // add course to user
+            if (!$order->is_processed) {
+
+                $assignmentService->upgradeAssignment($order);
+            }
+
+            $order->is_processed = 1;
+            $order->save();
+        }
+
+        return view('frontend.shop.thankyou');
     }
 
     /**

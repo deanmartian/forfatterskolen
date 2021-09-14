@@ -39,6 +39,7 @@ use App\PilotReaderReaderProfile;
 use App\Repositories\Services\CompetitionService;
 use App\Repositories\Services\PublishingService;
 use App\Repositories\Services\WritingGroupService;
+use App\Services\AssignmentService;
 use App\Services\CourseService;
 use App\Services\ShopManuscriptService;
 use App\Settings;
@@ -2631,6 +2632,39 @@ class LearnerController extends Controller
             return view('frontend.learner.upgrade-assignment', compact('assignment'));
         }
         return redirect()->route('learner.upgrade');
+    }
+
+    /**
+     * @param $assignment_id
+     * @param Request $request
+     * @param AssignmentService $assignmentService
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function validateUpgradeAssignmentForm( $assignment_id, Request $request, AssignmentService $assignmentService )
+    {
+        $validation = [
+            'email'         => 'required|email',
+            'first_name'    => 'required',
+            'last_name'     => 'required',
+            'street'        => 'required',
+            'zip'           => 'required',
+            'city'          => 'required',
+            'phone'         => 'required',
+        ];
+
+        $validator = \Validator::make($request->all(), $validation);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        // update address
+        Address::updateOrCreate(
+            ['user_id' => \Auth::user()->id],
+            $request->only('street', 'zip', 'city', 'phone')
+        );
+
+        return response()->json($assignmentService->generateSveaCheckout($request));
     }
 
     /**

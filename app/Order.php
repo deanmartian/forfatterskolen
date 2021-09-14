@@ -14,6 +14,7 @@ class Order extends Model {
     const COPY_EDITING_TYPE = 5;
     const COURSE_UPGRADE_TYPE = 6;
     const MANUSCRIPT_UPGRADE_TYPE = 7;
+    const ASSIGNMENT_UPGRADE_TYPE = 8;
 
     protected $fillable = ['user_id', 'item_id', 'type', 'package_id', 'plan_id', 'payment_mode_id', 'price', 'discount',
         'svea_order_id', 'svea_invoice_id', 'svea_payment_type', 'svea_payment_type_description', 'is_processed'];
@@ -55,6 +56,10 @@ class Order extends Model {
     {
         if (in_array($this->attributes['type'], [2, 7])) {
             return ShopManuscript::find($this->attributes['item_id'])->title;
+        }
+
+        if ($this->attributes['type'] === $this::ASSIGNMENT_UPGRADE_TYPE) {
+            return Assignment::find($this->attributes['item_id'])->title;
         }
 
         return Course::find($this->attributes['item_id'])->title;

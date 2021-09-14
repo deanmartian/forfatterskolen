@@ -57,7 +57,7 @@
                 <b class="mr-2">Item:</b>
                 @if (in_array($order->type, [1, 6]))
                     <b><i>{{ $order->item }} - {{ $order->package->variation }}</i></b>
-                @elseif (in_array($order->type, [2, 7]))
+                @else
                     <b><i>{{ $order->item }}</i></b>
                 @endif
                     <br>
