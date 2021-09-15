@@ -137,8 +137,8 @@ class HomeController extends Controller
             $emailData = [
                 'email_subject' => 'Inquiry Message',
                 'email_message' => $email_content,
-                'from_name' => '',
-                'from_email' => 'post@forfatterskolen.no',
+                'from_name' => $request->fullname,
+                'from_email' => $request->email,
                 'attach_file' => NULL
             ];
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
