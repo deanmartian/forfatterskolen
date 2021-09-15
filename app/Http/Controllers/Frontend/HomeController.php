@@ -1388,6 +1388,7 @@ class HomeController extends Controller
 
     public function henrikPage()
     {
+        abort(404);
         return view('frontend.henrik-langeland');
     }
 
