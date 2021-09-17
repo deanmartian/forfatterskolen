@@ -105,6 +105,17 @@
             </tr><!-- check if full payment-->
         @endif
 
+        @if($order->coachingTime && $order->coachingTime->additional_price)
+            <tr>
+                <td>
+                    <b>{{ trans('site.add-on-price') }}</b>
+                </td>
+                <td>
+                    {{ $order->coachingTime->additional_price_formatted }}
+                </td>
+            </tr>
+        @endif
+
         <tr>
             <td>
                 <b>{{ trans('site.front.total') }}</b>

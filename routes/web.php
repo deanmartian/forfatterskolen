@@ -68,6 +68,14 @@ Route::group([
         Route::post('/coaching-timer/checkout/{plan}', 'HomeController@coachingTimerCheckout')->name('front.coaching-timer-checkout'); // Coaching Timer Page
         Route::post('/coaching-timer', 'HomeController@coachingTimer')->name('front.coaching-timer'); // Coaching Timer Page
         Route::post('coaching-timer/{plan}/place-order', 'HomeController@coachingTimerPlaceOrder')->name('front.coaching-timer-place-order'); // Coaching Timer Page
+
+        Route::group([
+            'prefix' => 'coaching-time'
+        ], function() {
+            Route::post('/calculate', 'HomeController@coachingTimeCalculate');
+            Route::post('/validate-form', 'HomeController@coachingTimeValidate');
+        });
+
         Route::get('/copy-editing', 'HomeController@copyEditing')->name('front.copy-editing'); // Copy Editing Page
         Route::post('/copy-editing', 'HomeController@copyEditing')->name('front.copy-editing'); // Copy Editing Page
         Route::get('/other-services', 'HomeController@otherServices')->name('front.other-services-page');

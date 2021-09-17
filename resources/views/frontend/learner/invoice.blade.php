@@ -408,6 +408,13 @@
 									<td class="per-month">
 									</td>
 								</tr>
+								<tr class="additional-price-row hide">
+									<td>
+										<b>{{ trans('site.add-on-price') }}</b>
+									</td>
+									<td class="additional-price">
+									</td>
+								</tr>
 								<tr>
 									<td>
 										<b>{{ trans('site.front.total') }}</b>
@@ -438,7 +445,7 @@
 
            modal.find("#displayDate").text(fields.created_at_formatted);
            modal.find(".package-variation").text(fields.packageVariation ? fields.packageVariation : fields.item);
-           modal.find(".payment-mode").text(fields.payment_mode_id === 1 ? 'Bankoverføring' : '');
+           modal.find(".payment-mode").text(fields.payment_mode_id === 1 ? 'Bankoverføring' : fields.payment_mode.mode);
            modal.find(".payment-plan").text(fields.payment_plan.plan);
 
            modal.find('.price-formatted').text(fields.price_formatted);
@@ -454,6 +461,12 @@
 		   if (fields.plan_id !== 8) {
                modal.find('.per-month-row').removeClass('hide');
 		   }
+
+            modal.find('.additional-price-row').addClass('hide');
+            if (fields.coaching_time && fields.coaching_time.additional_price) {
+                modal.find('.additional-price-row').removeClass('hide');
+                modal.find('.additional-price').text(fields.coaching_time.additional_price_formatted);
+			}
 
 		   modal.find('.per-month').text(fields.monthly_price_formatted);
 		   modal.find('.total-formatted').text(fields.total_formatted);

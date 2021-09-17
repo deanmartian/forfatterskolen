@@ -947,7 +947,7 @@ class LearnerController extends Controller
             ->paginate(15);
         }
 
-        $sveaOrders = Auth::user()->orders()->svea()->paginate(10);
+        $sveaOrders = Auth::user()->orders()->svea()->with('coachingTime')->paginate(10);
         $user = Auth::user();
 
         $orderAttachments = DB::table('course_order_attachments')
