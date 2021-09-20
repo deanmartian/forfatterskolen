@@ -76,15 +76,15 @@
                             <div class="title">
                                 Reprise webinar
                             </div>
-                            @if ($next_free_webinar1)
+                            {{--@if ($next_free_webinar1)--}}
                                 <div class="h2 mt-0 mb-4 font-montserrat-semibold">
-                                    Slik skriver du for barn
+                                    Markedsføring for forfattere
                                 </div>
 
                                 <a href="{{ route('front.reprise') }}" class="btn buy-btn mt-4">
                                     {{ trans('site.front.view') }}
                                 </a>
-                            @endif
+                            {{--@endif--}}
                             {{--<div class="title">
                                 {{ trans('site.front.latest-blog-post') }}
                             </div>
