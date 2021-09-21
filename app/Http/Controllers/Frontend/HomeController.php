@@ -42,6 +42,7 @@ use App\Solution;
 use App\SolutionArticle;
 use App\SosChildren;
 use App\Testimonial;
+use App\UpcomingSection;
 use App\UserEmail;
 use App\Webinar;
 use App\WebinarRegistrant;
@@ -94,8 +95,11 @@ class HomeController extends Controller
         $testimonials = Testimonial::active()->get();
         $workshop = Workshop::find(12); // gro-dahle
 
+        $upcomingSections = UpcomingSection::all();
+
         return view('frontend.home', compact('popular_courses', 'free_courses', 'free_webinars',
-            'next_webinar', 'next_free_webinar', 'next_workshop','latest_blog', 'poems', 'testimonials', 'workshop'));
+            'next_webinar', 'next_free_webinar', 'next_workshop','latest_blog', 'poems', 'testimonials', 'workshop',
+            'upcomingSections'));
     }
 
     // set cookie for gdpr

@@ -66,40 +66,69 @@
                     </video>--}}
                 {{--</div>--}}
 
-                @foreach($upcomingSections as $upcomingSection)
                 <div class="col-md-4">
-                    <div class="column">
+                    <div class="column blog">
                         <div class="content-container">
+                            @php
+                                $next_free_webinar1 = \App\FreeWebinar::find(31);
+                                $next_free_webinar2 = \App\FreeWebinar::find(32);
+                            @endphp
                             <div class="title">
-                                {{ $upcomingSection->name }}
+                                Reprise webinar
+                            </div>
+                            {{--@if ($next_free_webinar1)--}}
+                                <div class="h2 mt-0 mb-4 font-montserrat-semibold">
+                                    Markedsføring for forfattere
+                                </div>
+
+                                <a href="{{ route('front.reprise') }}" class="btn buy-btn mt-4">
+                                    {{ trans('site.front.view') }}
+                                </a>
+                            {{--@endif--}}
+                            {{--<div class="title">
+                                {{ trans('site.front.latest-blog-post') }}
                             </div>
 
                             <div class="h2 mt-0 mb-4 font-montserrat-semibold">
-                                {{ $upcomingSection->title }}
+                                {!! trans('site.front.competition.title') !!}
                             </div>
 
-                            @if ($upcomingSection->date)
+                            <a href="{{ route('front.competition') }}" class="btn buy-btn mt-4"
+                               title="View blog link">
+                                {{ trans('site.front.view') }}
+                            </a>--}}
+                            {{--@if ($latest_blog)
+                                <div class="h2 mt-0 mb-4 font-montserrat-semibold">
+                                    {{ $latest_blog->title }}
+                                </div>
+
                                 <div class="date-time-cont">
                                     <i class="img-icon16 icon-calendar"></i>
-                                    <span>{{ \App\Http\FrontendHelpers::formatDate($upcomingSection->date) }}</span>
-                                    <i class="img-icon16 icon-clock ml-3"></i>
                                     <span>
-                                        {{ \App\Http\FrontendHelpers::getTimeFromDT($upcomingSection->date) }}
+                                        {{ \App\Http\FrontendHelpers::formatDate($latest_blog->schedule ?: $latest_blog->created_at) }}
                                     </span>
                                 </div>
-                            @endif
 
-                            <a href="{{ url($upcomingSection->link) }}" class="btn buy-btn mt-4"
-                               title="View course plan tab on course">
-                                {{ $upcomingSection->link_label }}
-                            </a>
+                                <a href="{{ route('front.read-blog', $latest_blog->id) }}" class="btn buy-btn mt-4"
+                                   title="View blog link">
+                                    {{ trans('site.front.view') }}
+                                </a>
+                            @endif--}}
                         </div>
                     </div>
                 </div>
-                @endforeach
-                {{--<div class="col-md-4">
+                <div class="col-md-4">
                     <div class="column webinar">
                         <div class="content-container">
+                            <div class="title">
+                                {{ trans('site.front.next-webinar') }}
+                            </div>
+
+                            @if ($next_webinar)
+                                <div class="h2 mt-0 mb-4 font-montserrat-semibold">
+                                    {{ $next_webinar->title }}
+                                </div>
+
                                 <div class="date-time-cont">
                                     <i class="img-icon16 icon-calendar"></i>
                                     <span>{{ \App\Http\FrontendHelpers::formatDate($next_webinar->start_date) }}</span>
@@ -108,9 +137,75 @@
                                         {{ \App\Http\FrontendHelpers::getTimeFromDT($next_webinar->start_date) }}
                                     </span>
                                 </div>
+
+                                <a href="{{ url('/course/17?show_kursplan=1') }}" class="btn buy-btn mt-4"
+                                   title="View course plan tab on course">
+                                    {{ trans('site.front.see-complete-list') }}
+                                </a>
+                            @endif
                         </div>
                     </div>
-                </div>--}}
+                </div>
+                <div class="col-md-4">
+                    <div class="column free-webinar" style="background-size: cover;
+    background-position: 40%;
+    background-repeat: no-repeat;">
+                        <div class="content-container">
+
+                            {{--<div class="title">
+                                {{ trans('site.front.latest-blog-post') }}
+                            </div>
+
+                            <div class="h2 mt-0 mb-4 font-montserrat-semibold">
+                                {!! trans('site.front.competition.title') !!}
+                            </div>
+
+                            <a href="{{ route('front.competition') }}" class="btn buy-btn mt-4"
+                               title="View blog link">
+                                {{ trans('site.front.view') }}
+                            </a>--}}
+
+                            {{--<div class="title">
+                                Gratis webinar
+                            </div>
+                            @if ($next_free_webinar2)
+                                <div class="h2 mt-0 mb-4 font-montserrat-semibold">
+                                    {{ $next_free_webinar2->title }}
+                                </div>
+
+                                <div class="date-time-cont">
+                                    <i class="img-icon16 icon-calendar"></i>
+                                    <span>
+                                        {{ \App\Http\FrontendHelpers::formatDate($next_free_webinar2->start_date) }}
+                                    </span>
+                                    <i class="img-icon16 icon-clock ml-3"></i>
+                                    <span>
+                                        {{ \App\Http\FrontendHelpers::getTimeFromDT($next_free_webinar2->start_date) }}
+                                    </span>
+                                </div>
+
+                                <a href="{{ route('front.free-webinar', $next_free_webinar2->id) }}"
+                                   class="btn buy-btn mt-4"
+                                   title="View free webinar">
+                                    {{ trans('site.front.view') }}
+                                </a>
+                            @endif--}}
+
+                            <div class="title">
+                                Reprise webinar
+                            </div>
+
+                            <div class="h2 mt-0 mb-4 font-montserrat-semibold">
+                                Marit Reiersgård - Fra tegn til tegning
+                            </div>
+
+                            <a href="{{ route('front.here-i-am') }}" class="btn buy-btn mt-4"
+                               title="View blog link">
+                                {{ trans('site.front.view') }}
+                            </a>
+                        </div> <!-- end content container -->
+                    </div>
+                </div>
             </div>
         </div>
 

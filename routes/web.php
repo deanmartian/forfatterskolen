@@ -1054,6 +1054,13 @@ Route::group([
 
         Route::get('/checkout-log', 'CheckoutLogController@index')->name('admin.checkout-log.index');
 
+        Route::group([
+            'prefix' => 'upcoming'
+        ], function(){
+            Route::get('/', 'UpcomingController@index')->name('admin.upcoming.index');
+            Route::post('/{id}/save', 'UpcomingController@saveSection')->name('admin.upcoming.save');
+        });
+
         Route::resource('/publishing', 'PublishingController', [
             'except' => ['show'],
             'names' => [
