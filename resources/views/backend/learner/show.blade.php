@@ -9,6 +9,15 @@
 		.secondary-emails li:not(:last-child) {
 			padding-bottom: 10px
 		}
+
+		#viewOrderModal .modal-header {
+			padding: 0;
+			border-bottom: 1px solid #e5e5e5;
+		}
+
+		#viewOrderModal table.no-border td, #viewOrderModal table.no-border tr {
+			border: none;
+		}
 	</style>
 @stop
 
@@ -624,6 +633,7 @@
 							<th>Svea Payment Type</th>
 							<th>Svea Payment Plan</th>
 							<th>{{ trans('site.date-ordered') }}</th>
+							<th></th>
 						</tr>
 						</thead>
 						<tbody>
@@ -639,6 +649,13 @@
 									{{ $order->svea_payment_type_description }}
 								</td>
 								<td>{{ \App\Http\FrontendHelpers::formatDate($order->created_at) }}</td>
+								<td>
+									<button class="btn btn-primary btn-xs viewOrderBtn" data-toggle="modal"
+											data-target="#viewOrderModal"
+											data-fields="{{ json_encode($order) }}">
+										Receipt
+									</button>
+								</td>
 							</tr>
 						@endforeach
 						</tbody>
@@ -2527,6 +2544,110 @@
 	</div>
 </div>
 
+<div id="viewOrderModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" style="padding: 2rem; font-size: 3rem">&times;</button>
+			</div>
+			<div class="modal-body" style="padding: 22px 30px;">
+
+				<div class="row">
+					<div class="col-sm-6">
+						<span>Retur:</span> <br>
+						<span>Forfatterskolen AS</span> <br>
+						<span>Postboks 9233 Kjøsterud</span> <br>
+						<span>3064 DRAMMEN</span> <br>
+						<span>NORWAY</span>
+					</div>
+
+					<div class="col-sm-6">
+						<img src="{{ asset('/images-new/logo-tagline.png') }}" alt="Logo" class="w-100"
+							 style="height: 100px;object-fit: contain;">
+					</div>
+				</div>
+
+				<div class="row mt-3">
+					<div class="col-sm-6">
+						<span>{{ $learner->full_name }}</span> <br>
+						<span>{{ $learner->address->street }}</span> <br>
+						<span>{{ $learner->address->zip }} {{ $learner->address->city }}</span>
+					</div>
+					<div class="col-sm-6">
+						<span class="mr-2">{{ trans('site.date') }}: </span> <span id="displayDate"></span>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-sm-12">
+						<h3 class="mt-4 mb-0 font-weight-bold">Faktura</h3>
+					</div>
+				</div>
+
+				<div class="col-sm-12 mt-4">
+					<table class="table no-border">
+						<tbody>
+						<tr>
+							<td>
+								<b class="mr-2">Item:</b>
+								<b class="package-variation"></b>
+								<br>
+
+								<span>
+										{{ trans('site.front.form.payment-method') }}: <i class="payment-mode"></i>
+									</span>,
+
+								<span>
+										{{ trans('site.front.form.payment-plan') }}: <i class="payment-plan"></i>
+									</span>
+							</td>
+							<td>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="col-sm-5 col-sm-offset-7">
+					<table class="table">
+						<tbody>
+						<tr>
+							<td>
+								<b>{{ trans('site.front.price') }}</b>
+							</td>
+							<td class="price-formatted">
+							</td>
+						</tr>
+						<tr class="discount-row">
+							<td>
+								<b>{{ trans('site.front.discount') }}</b>
+							</td>
+							<td class="discount-formatted">
+							</td>
+						</tr>
+						<tr class="per-month-row">
+							<td>
+								<b>{{ trans('site.front.per-month') }}</b>
+							</td>
+							<td class="per-month">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<b>{{ trans('site.front.total') }}</b>
+							</td>
+							<td class="total-formatted">
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="clearfix"></div>
+			</div> <!-- end modal-body -->
+		</div> <!-- end modal content -->
+	</div> <!-- view order modal -->
+</div>
+
 <div id="deleteInvoiceModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -3513,6 +3634,33 @@
             modal.find('form').attr('action', action);
             modal.find('input[name=mobile_number]').val(vipps_phone_number);
         });
+
+        $(".viewOrderBtn").click(function(){
+            let fields = $(this).data('fields');
+            let modal = $("#viewOrderModal");
+
+            modal.find("#displayDate").text(fields.created_at_formatted);
+            modal.find(".package-variation").text(fields.packageVariation);
+            modal.find(".payment-mode").text(fields.payment_mode_id === 1 ? 'Bankoverføring' : '');
+            modal.find(".payment-plan").text(fields.payment_plan.plan);
+
+            modal.find('.price-formatted').text(fields.price_formatted);
+
+            modal.find('.discount-row').removeClass('hide');
+            modal.find('.discount-formatted').text(fields.discount_formatted);
+
+            if (!fields.discount) {
+                modal.find('.discount-row').addClass('hide');
+            }
+
+            modal.find('.per-month-row').addClass('hide');
+            if (fields.plan_id !== 8) {
+                modal.find('.per-month-row').removeClass('hide');
+            }
+
+            modal.find('.per-month').text(fields.monthly_price_formatted);
+            modal.find('.total-formatted').text(fields.total_formatted);
+		});
 
         $("#submitDeleteInvoice").click(function(e) {
            e.preventDefault();
