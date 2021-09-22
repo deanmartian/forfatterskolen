@@ -66,32 +66,35 @@
                     </video>--}}
                 {{--</div>--}}
 
-                @foreach($upcomingSections as $upcomingSection)
+                @foreach($upcomingSections as $k => $upcomingSection)
+                    @php
+                        $hasNextWebinar = $k === 1 && $next_webinar ? true : false;
+                    @endphp
                 <div class="col-md-4">
                     <div class="column">
                         <div class="content-container">
                             <div class="title">
-                                {{ $upcomingSection->name }}
+                                {{ $hasNextWebinar ? trans('site.front.next-webinar') : $upcomingSection->name }}
                             </div>
 
                             <div class="h2 mt-0 mb-4 font-montserrat-semibold">
-                                {{ $upcomingSection->title }}
+                                {{ $hasNextWebinar ? $next_webinar->title : $upcomingSection->title }}
                             </div>
 
-                            @if ($upcomingSection->date)
+                            @if ($upcomingSection->date || $hasNextWebinar)
                                 <div class="date-time-cont">
                                     <i class="img-icon16 icon-calendar"></i>
-                                    <span>{{ \App\Http\FrontendHelpers::formatDate($upcomingSection->date) }}</span>
+                                    <span>{{ \App\Http\FrontendHelpers::formatDate($hasNextWebinar ? $next_webinar->start_date : $upcomingSection->date) }}</span>
                                     <i class="img-icon16 icon-clock ml-3"></i>
                                     <span>
-                                        {{ \App\Http\FrontendHelpers::getTimeFromDT($upcomingSection->date) }}
+                                        {{ \App\Http\FrontendHelpers::getTimeFromDT($hasNextWebinar ? $next_webinar->start_date : $upcomingSection->date) }}
                                     </span>
                                 </div>
                             @endif
 
-                            <a href="{{ url($upcomingSection->link) }}" class="btn buy-btn mt-4"
+                            <a href="{{ url($hasNextWebinar ? '/course/17?show_kursplan=1' : $upcomingSection->link) }}" class="btn buy-btn mt-4"
                                title="View course plan tab on course">
-                                {{ $upcomingSection->link_label }}
+                                {{ $hasNextWebinar ? trans('site.front.see-complete-list') : $upcomingSection->link_label }}
                             </a>
                         </div>
                     </div>
