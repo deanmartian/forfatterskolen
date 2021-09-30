@@ -63,7 +63,6 @@ class AdminHelpers
     {
         $course = new Course();
         if ($id) {
-            return $id;
             return $course->find($id);
         }
 
