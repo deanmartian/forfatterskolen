@@ -55,6 +55,10 @@ class Order extends Model {
             return ShopManuscript::find($this->attributes['item_id'])->title;
         }
 
+        if ($this->attributes['type'] === 3) {
+            return Workshop::find($this->attributes['item_id'])->title;
+        }
+
         return Course::find($this->attributes['item_id'])->title;
     }
 
@@ -87,7 +91,7 @@ class Order extends Model {
     {
         $paymentPlan =  PaymentPlan::find($this->attributes['plan_id']);
         $totalPrice = $this->attributes['price'] - $this->attributes['discount'];
-        $price = $totalPrice/$paymentPlan->division;
+        $price = $paymentPlan ? $totalPrice/$paymentPlan->division : $totalPrice;
         return FrontendHelpers::currencyFormat($price);
     }
 
