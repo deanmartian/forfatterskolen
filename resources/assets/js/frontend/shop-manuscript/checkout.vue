@@ -56,7 +56,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                                 <label class="font-weight-500">
                                     {{ trans('site.front.genre') }}
                                 </label>
-                                <select class="form-control" name="genre" v-model="orderForm.genre">
+                                <select class="form-control" name="genre" v-model="orderForm.genre" @change="genreChanged()">
                                     <option value="" disabled="disabled" selected
                                             v-html="trans('site.free-text-evaluation.choose-genre')">
                                     </option>
@@ -106,6 +106,13 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                         <td class="text-right h3">{{ trans('site.front.price') }}:</td>
                         <td class="text-right h3 text-red" style="width: 150px">
                             {{ orderForm.price | currency('Kr', 2, currencyOptions) }}
+                        </td>
+                    </tr>
+
+                    <tr v-if="orderForm.totalDiscount">
+                        <td class="text-right h3">{{ trans('site.front.discount') }}:</td>
+                        <td class="text-right h3 text-red">
+                            {{ orderForm.totalDiscount | currency('Kr', 2, currencyOptions) }}
                         </td>
                     </tr>
 
@@ -352,11 +359,17 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                 isLoginDisabled: false,
                 loginText: i18n.site.front.form.login,
                 isNewCustomer: false,
-                totalPrice: this.shopManuscript.full_payment_price,
                 manuscriptName: i18n.site['learner.files-text'],
                 synopsisName: i18n.site['learner.files-text'],
+                hasPaidCourse: false,
                 isLoading: false,
                 requestUrl: '/shop-manuscript/'+this.shopManuscript.id
+            }
+        },
+
+        computed: {
+            totalPrice() {
+                return parseFloat(this.orderForm.price) - this.orderForm.totalDiscount;
             }
         },
 
@@ -494,10 +507,31 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
 
                 $(".validation-err").remove();
             },
+
+            checkHasPaidCourse() {
+                axios.get('/has-paid-course/').then(response => {
+                    this.hasPaidCourse = response.data;
+                    this.genreChanged();
+                })
+            },
+
+            genreChanged() {
+                let shopManuscript = this.shopManuscript;
+                let totalDiscount = this.hasPaidCourse ? (shopManuscript.full_payment_price * 0.05) : 0;
+                let price = parseFloat(this.shopManuscript.full_payment_price);
+
+                if (this.orderForm.genre === 10) {
+                    price = price + ((price - totalDiscount) * .50);
+                }
+
+                this.orderForm.totalDiscount = totalDiscount;
+                this.orderForm.price = price;
+            }
         },
 
         mounted() {
             this.loadOptions();
+            this.checkHasPaidCourse();
         }
 
     }

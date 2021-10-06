@@ -514,7 +514,13 @@
            let modal = $("#viewOrderModal");
 
            modal.find("#displayDate").text(fields.created_at_formatted);
-           modal.find(".package-variation").text(fields.packageVariation);
+           if (fields.type === 1) {
+               modal.find(".package-variation").text(fields.item + " - " + fields.packageVariation);
+		   }
+
+            if (fields.type === 2) {
+                modal.find(".package-variation").text(fields.item);
+            }
            modal.find(".payment-mode").text(fields.payment_mode_id === 1 ? 'Bankoverføring' : '');
            modal.find(".payment-plan").text(fields.payment_plan.plan);
 
