@@ -1347,9 +1347,9 @@
 										@endif
 									</td>
 									<td class="text-center">
-										<button class="btn btn-info btn-xs showEmailBtn" data-toggle="modal"
+										<button class="btn btn-info btn-xs" data-toggle="modal"
 										data-target="#showEmailModal"
-										data-message="{{ $email->email }}">Show Message</button>
+										data-message="{{ $email->email }}" onclick="showEmailMessage(this)">Show Message</button>
 									</td>
 								</tr>
 							@endforeach
@@ -1391,9 +1391,9 @@
 										{{ $emailHistory->date_open }}
 									</td>
 									<td class="text-center">
-										<button class="btn btn-info btn-xs showEmailBtn" data-toggle="modal"
+										<button class="btn btn-info btn-xs" data-toggle="modal"
 												data-target="#showEmailModal"
-												data-message="{{ $emailHistory->message }}">Show Message</button>
+												data-message="{{ $emailHistory->message }}" onclick="showEmailMessage(this)">Show Message</button>
 									</td>
 								</tr>
 							@endforeach
@@ -4006,6 +4006,12 @@
             split_invoice.prop('disabled', true);
             split_invoice.prop('checked', false);
         }
+    }
+
+    function showEmailMessage(t) {
+        let modal = $("#showEmailModal");
+        let message = $(t).data('message');
+        modal.find('.modal-body').html(message);
     }
 
     function countChar(val) {
