@@ -58,8 +58,14 @@ class ShopController extends Controller
         $this->courseService = $courseService;
     }
 
-    public function checkout($course_id)
+    public function checkout($course_id, Request $request)
     {
+        $countryCode = AdminHelpers::ip_info($request->ip(), "Country Code");
+
+        if ($countryCode === 'NO') {
+            return redirect()->route('front.course.checkout', $course_id);
+        }
+
         $course = Course::findOrFail($course_id);
 
         if (!$course->is_free): // added this condition to check if the course is for sale
@@ -98,8 +104,10 @@ class ShopController extends Controller
      * @param $course_id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
-    public function sveaCheckout( $course_id )
+    public function sveaCheckout( $course_id, Request $request )
     {
+        $countryCode = AdminHelpers::ip_info($request->ip(), "Country Code");
+
         $course = Course::findOrFail($course_id);
 
         if (!$course->is_free): // added this condition to check if the course is for sale
@@ -158,7 +166,7 @@ class ShopController extends Controller
 
         // old view svea-checkout
         return view('frontend.shop.checkout-update', compact('course', 'packages', 'package_id', 'coupon',
-            'hasPaidCourse', 'user', 'startIndex'));
+            'hasPaidCourse', 'user', 'startIndex', 'countryCode'));
     }
 
     public function processOrder( $course_id, OrderCreateRequest $request )

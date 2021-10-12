@@ -9,9 +9,10 @@
     <div class="checkout-page" data-bg="https://www.forfatterskolen.no/images-new/checkout-bg.png" id="app-container">
         <div class="container">
             <svea-checkout :course="{{ json_encode($course) }}" :package-id="{{ $package_id }}"
-                             :passed-coupon="{{ json_encode($coupon) }}"
-                             :packages="{{ json_encode($packages) }}"
-                             :user="{{ json_encode($user) }}" :start-index="{{ $startIndex }}"
+                           :passed-coupon="{{ json_encode($coupon) }}"
+                           :packages="{{ json_encode($packages) }}"
+                           :user="{{ json_encode($user) }}" :start-index="{{ $startIndex }}"
+                           :country-code="{{ json_encode($countryCode) }}"
             ></svea-checkout>
         </div>
     </div>
