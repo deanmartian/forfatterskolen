@@ -7,7 +7,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Forfatterskolen</title>
 
-    <link rel="stylesheet" type="text/css" href="http://keith-wood.name/css/jquery.signature.css">
     <link rel="stylesheet" href="{{asset('css/vendor-bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{asset('css/font-awesome/css/font-awesome.min.css')}}">
     <style>
@@ -223,6 +222,16 @@
             right: 0;
         }
 
+        /* Styles for signature plugin v1.2.0. */
+        .kbw-signature {
+            display: inline-block;
+            border: 1px solid #a0a0a0;
+            -ms-touch-action: none;
+        }
+        .kbw-signature-disabled {
+            opacity: 0.35;
+        }
+
         @media print {
             .actions-bar, .signature-note-container {
                 display: none;
@@ -329,13 +338,13 @@
 @endif
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
-<script type="text/javascript" src="http://keith-wood.name/js/jquery.signature.js"></script>
+<script type="text/javascript" src="{{ asset('/js/jquery.signature.js') }}"></script>
 <script>
     function printPage() {
         window.print();
