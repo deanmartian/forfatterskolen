@@ -1,0 +1,42 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateContractsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('contracts', function(Blueprint $table)
+        {
+            $table->increments('id');
+            $table->string('code');
+            $table->string('title');
+            $table->string('image')->nullable();
+            $table->longText('details')->nullable();
+            $table->string('signature_label')->mullable();
+            $table->string('signature')->nullable();
+            $table->string('receiver_name')->nullable();
+            $table->string('receiver_email')->nullable();
+            $table->timestamp('signed_date')->nullable();
+            $table->tinyInteger('status')->default(0);
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::drop('contracts');
+    }
+}

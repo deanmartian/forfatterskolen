@@ -109,6 +109,10 @@ Route::group([
         Route::get('/terms/{slug?}', 'HomeController@terms')->name('front.terms'); // Terms page
 
         Route::get('/upgrade-manuscript/{id}/checkout', 'ShopManuscriptController@checkoutUpgradeManuscript')->name('front.shop-manuscript.upgrade-manuscript-checkout'); // Checkout Shop Manuscript
+        Route::get('/contract/{code}', 'HomeController@contract')->name('front.contract-view');
+        Route::get('/contract/{code}/download', 'HomeController@contractDownload')->name('front.contract.download');
+        Route::post('/contract/{code}/sign', 'HomeController@contractSign')->name('front.contract.sign');
+        Route::post('/ssssss', 'HomeController@contractSign')->name('signaturepad.upload');
 
         Route::group([
             'prefix' => 'shop-manuscript'
@@ -877,6 +881,23 @@ Route::group([
         Route::post('/save-staff/{id?}', 'AdminController@saveStaff')->name('admin.staff.save');
         Route::delete('/delete-staff/{id?}', 'AdminController@deleteStaff')->name('admin.staff.delete');
         Route::get('/fiken-redirect', 'AdminController@fikenRedirect')->name('admin.fiken.redirect');
+
+        Route::post('/contract/{id}/send-contract', 'ContractController@sendContract')
+            ->name('admin.contract.send-contract');
+        Route::post('/contract/template/save/{id?}', 'ContractController@saveContractTemplate')->name('admin.contract-template.save');
+        Route::delete('/contract/template/delete/{id?}', 'ContractController@deleteContractTemplate')->name('admin.contract-template.delete');
+        Route::resource('/contract','ContractController',[
+            'except' => ['show'],
+            'names' => [
+                'index' => 'admin.contract.index',
+                'create' => 'admin.contract.create',
+                'show' => 'admin.contract.show',
+                'store' => 'admin.contract.store',
+                'edit' => 'admin.contract.edit',
+                'update' => 'admin.contract.update',
+                'destroy' => 'admin.contract.destroy'
+            ]
+        ]);
 
         Route::resource('/email','EmailController',[
             'except' => ['create', 'edit'],
