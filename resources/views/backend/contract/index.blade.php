@@ -96,7 +96,8 @@
                                 @foreach($contracts as $contract)
                                     <tr>
                                         <td>
-                                            <a href="{{ route('admin.contract.edit', $contract->id) }}">
+                                            <a href="{{ $contract->signature ? route('admin.contract.show', $contract->id) :
+                                            route('admin.contract.edit', $contract->id) }}">
                                                 {{ $contract->title }}
                                             </a>
                                         </td>

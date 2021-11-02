@@ -21,6 +21,14 @@
             width: 100%;
             height: 250px;
         }
+
+        .float-left {
+            float:left
+        }
+
+        .float-right {
+            float: right;
+        }
     </style>
 </head>
 
@@ -30,12 +38,43 @@
 @endif
 {!! $contract->details !!}
 
-@if ($contract->signature)
-<h3>
-    {{ $contract->signature_label }}
-</h3>
-<img src="{{ asset($contract->signature) }}" style="height: 100px;">
-@endif
+    @if ($contract->signature)
+        <div class="float-left">
+            <p>
+                {{ $contract->signature_label }}
+            </p>
+            <img src="{{ asset($contract->admin_signature) }}" style="height: 100px; margin-top: 7px">
+
+            <div>
+                <p style="margin-top: 0">
+                    {{ trans('site.front.form.name') }}: {{ $contract->admin_name }}
+                </p>
+                <p style="margin-top: 0">
+                    {{ trans('site.date') }}: {{ \App\Http\FrontendHelpers::formatDate($contract->admin_signed_date) }}
+                </p>
+            </div>
+        </div>
+
+        <div class="float-right">
+            <p>
+                {{ $contract->signature_label }}
+            </p>
+
+            <img src="{{ asset($contract->signature) }}" style="height: 100px; margin-top: 7px">
+
+            <div>
+                <p style="margin-top: 0">
+                    {{ trans('site.front.form.name') }}: {{ $contract->receiver_name }}
+                </p>
+                <p style="margin-top: 0">
+                    {{ trans('site.date') }}: {{ \App\Http\FrontendHelpers::formatDate($contract->signed_date) }}
+                </p>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+
+    @endif
 </body>
 
 </html>

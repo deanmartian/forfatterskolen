@@ -271,30 +271,62 @@
 
 
             <div style="padding: 30px 0; width: auto">
-                <h2>
-                    {{ $contract->signature_label }}
-                </h2>
-
                 @if (!$contract->signature)
-                <div class="signature-note-container">
-                    <div style="margin-top: 2px">Signatures will appear here once this document is signed.</div>
+                    <h2>
+                        {{ $contract->signature_label }}
+                    </h2>
+                    <div class="signature-note-container">
+                        <div style="margin-top: 2px">Signatures will appear here once this document is signed.</div>
 
-                    <div class="signature-wrapper">
-                        <div class="signature">
-                            <div class="signature-canvas">
-                                <div class="signature-cta">
-                                    <a class="button button-green" data-target="#signContractModal" data-toggle="modal">
-                                        <div class="link-content">
-                                            <i class="fa fa-arrow-right"></i><span>Sign here</span>
-                                        </div>
-                                    </a>
+                        <div class="signature-wrapper">
+                            <div class="signature">
+                                <div class="signature-canvas">
+                                    <div class="signature-cta">
+                                        <a class="button button-green" data-target="#signContractModal" data-toggle="modal">
+                                            <div class="link-content">
+                                                <i class="fa fa-arrow-right"></i><span>Sign here</span>
+                                            </div>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 @else
-                    <img src="{{ asset($contract->signature) }}" style="height: 100px">
+
+                    <div class="float-left">
+                        <h2>
+                            {{ $contract->signature_label }}
+                        </h2>
+                        <img src="{{ asset($contract->admin_signature) }}" style="height: 100px">
+
+                        <div>
+                            <h3>
+                                {{ trans('site.front.form.name') }}: {{ $contract->admin_name }}
+                            </h3>
+                            <h3>
+                                {{ trans('site.date') }}: {{ \App\Http\FrontendHelpers::formatDate($contract->admin_signed_date) }}
+                            </h3>
+                        </div>
+                    </div>
+
+                    <div class="float-right">
+                        <h2>
+                            {{ $contract->signature_label }}
+                        </h2>
+                        <img src="{{ asset($contract->signature) }}" style="height: 100px">
+
+                        <div>
+                            <h3>
+                                {{ trans('site.front.form.name') }}: {{ $contract->receiver_name }}
+                            </h3>
+                            <h3>
+                                {{ trans('site.date') }}: {{ \App\Http\FrontendHelpers::formatDate($contract->signed_date) }}
+                            </h3>
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
                 @endif
             </div>
 

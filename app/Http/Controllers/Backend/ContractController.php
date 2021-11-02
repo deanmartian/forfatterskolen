@@ -59,10 +59,21 @@ class ContractController extends Controller
     public function edit( $id )
     {
         $contract = Contract::findOrFail($id)->toArray();
+
+        if ($contract['signature']) {
+            return redirect()->route('admin.contract.show', $contract['id']);
+        }
+
         $route = route('admin.contract.update', $contract['id']);
         $action = 'edit';
         $title = 'Edit ' . $contract['title'];
         return view('backend.contract.form', compact('route', 'action', 'contract', 'title'));
+    }
+
+    public function show( $id )
+    {
+        $contract = Contract::findOrFail($id);
+        return view('backend.contract.show', compact('contract'));
     }
 
     /**\
@@ -201,5 +212,45 @@ class ContractController extends Controller
         return redirect()->back()
             ->with(['errors' => AdminHelpers::createMessageBag('Contract template deleted successfully.'),
                 'alert_type' => 'success']);
+    }
+
+    /**
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function signContract( $id, Request $request )
+    {
+        $contract = Contract::findOrFail($id);
+
+        $this->validate($request, [
+            'admin_name' => 'required'
+        ]);
+
+        $folderPath = 'storage/contract-signatures/';
+        if (!\File::exists($folderPath)) {
+            \File::makeDirectory($folderPath);
+        }
+
+        $image_parts = explode(";base64,", $request->signed);
+
+        $image_type_aux = explode("image/", $image_parts[0]);
+
+        $image_type = $image_type_aux[1];
+
+        $image_base64 = base64_decode($image_parts[1]);
+
+        $file = $folderPath . uniqid() . '.'.$image_type;
+        file_put_contents($file, $image_base64);
+
+        $contract->admin_name = $request->admin_name;
+        $contract->admin_signature = $file;
+        $contract->admin_signed_date = Carbon::now();
+        $contract->save();
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Contract signed successfully'),
+                'alert_type' => 'success']);
+
     }
 }

@@ -7,6 +7,7 @@
 @section('styles')
 <link rel="stylesheet" href="{{asset('simplemde/simplemde.min.css')}}">
 <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{{asset('css/font-awesome/css/font-awesome.min.css')}}">
 <style>
     .signature-wrapper {
         margin-top: 10px;
@@ -64,6 +65,13 @@
         -ms-flex-align: center;
         align-items: center;
         text-align: initial;
+        text-decoration: none;
+    }
+
+    .button-green:hover {
+        background-color: #48ab36;
+        text-decoration: none;
+        color: #fff;
     }
 
     .link-content {
@@ -96,6 +104,16 @@
     h3 {
         font-weight: bold;
     }
+
+    /* Styles for signature plugin v1.2.0. */
+    .kbw-signature {
+        display: inline-block;
+        border: 1px solid #a0a0a0;
+        -ms-touch-action: none;
+    }
+    .kbw-signature-disabled {
+        opacity: 0.35;
+    }
 </style>
 @stop
 
@@ -119,12 +137,14 @@
                         <i class="fa fa-cog"></i> Settings
                     </button>
                     <ul class="dropdown-menu">
-                        <li>
-                            <button type="button" class="btn btn-block" data-toggle="modal"
-                                    data-target="#sendContractModal">
-                                <i class="fa fa-paper-plane"></i> Send Contract
-                            </button>
-                        </li>
+                        @if ($contract['admin_signature'])
+                            <li>
+                                <button type="button" class="btn btn-block" data-toggle="modal"
+                                        data-target="#sendContractModal">
+                                    <i class="fa fa-paper-plane"></i> Send Contract
+                                </button>
+                            </li>
+                        @endif
                         <li>
                             <button type="button" class="btn btn-block" data-toggle="modal"
                                     data-target="#deleteContractModal">
@@ -187,22 +207,31 @@
                             <div class="form-group">
                                 <label>Signature Label</label>
                                 <input type="text" name="signature_label" value="{{ $contract['signature_label'] }}" class="form-control">
-                                <div style="margin-top: 2px">Signatures will appear here once this document is signed.</div>
                             </div>
 
-                            <div class="signature-wrapper">
-                                <div class="signature">
-                                    <div class="signature-canvas">
-                                        <div class="signature-cta">
-                                            <a class="button button-green disabled">
-                                                <div class="link-content">
-                                                    <i class="fa fa-arrow-right"></i><span>Sign here</span>
+                            @if ($action !== 'create')
+                                @if (!$contract['admin_signature'])
+                                    <div style="margin-top: 2px">Signatures will appear here once this document is signed.</div>
+                                    <div class="signature-wrapper">
+                                        <div class="signature">
+                                            <div class="signature-canvas">
+                                                <div class="signature-cta">
+                                                    <a class="button button-green signContractBtn"
+                                                       data-target="#signContractModal" data-toggle="modal">
+                                                        <div class="link-content">
+                                                            <i class="fa fa-arrow-right"></i><span>Sign here</span>
+                                                        </div>
+                                                    </a>
                                                 </div>
-                                            </a>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
+                                @else
+                                    <img src="{{ asset($contract['admin_signature']) }}" style="height: 100px"> <br>
+                                    <button class="btn btn-info btn-xs editSignContractBtn" type="button" data-toggle="modal"
+                                            data-target="#signContractModal" data-fields="{{ json_encode($contract) }}">Edit Signature</button>
+                                @endif
+                            @endif
 
                             <button type="submit" class="btn btn-primary btn-block margin-top">{{ trans('site.save') }}</button>
                         </div>
@@ -286,12 +315,52 @@
             </div>
         </div>
 
+        <div id="signContractModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"><em>Sign Contract</em></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="{{ route('admin.contract.sign', $contract['id']) }}">
+                            {{ csrf_field() }}
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>
+                                        Admin Name
+                                    </label>
+                                    <input type="text" class="form-control" name="admin_name" required>
+                                </div>
+
+                                <label class="" for="">Signature:</label>
+                                <br/>
+                                <div id="sig" ></div>
+                                <br/>
+                                <button id="clear" class="btn btn-sm btn-danger">Clear Signature</button>
+                                <textarea id="signature64" name="signed" style="display: none"></textarea>
+                            </div>
+
+                            <button class="btn btn-success mt-3 pull-right">{{ trans('site.save') }}</button>
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     @endif
 
 @stop
 
 @section('scripts')
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    {{--<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>--}}
+    <link type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="{{ asset('/js/jquery.signature.js') }}"></script>
     <script>
         // tinymce load editor
         let tiny_editor_config_contract = {
@@ -322,6 +391,18 @@
             tinymce.get('editContentEditor').setContent(content);
 
             $('[name=signature_label]').val(fields.signature_label);
+        });
+
+        let sig = $('#sig').signature({syncField: '#signature64', syncFormat: 'PNG'});
+        $('#clear').click(function(e) {
+            e.preventDefault();
+            sig.signature('clear');
+            $("#signature64").val('');
+        });
+
+        $(".editSignContractBtn").click(function() {
+            let fields = $(this).data('fields');
+            $("#signContractModal").find("input[name=admin_name]").val(fields.admin_name);
         });
     </script>
 @stop

@@ -886,8 +886,8 @@ Route::group([
             ->name('admin.contract.send-contract');
         Route::post('/contract/template/save/{id?}', 'ContractController@saveContractTemplate')->name('admin.contract-template.save');
         Route::delete('/contract/template/delete/{id?}', 'ContractController@deleteContractTemplate')->name('admin.contract-template.delete');
+        Route::post('/contract/{id}/sign', 'ContractController@signContract')->name('admin.contract.sign');
         Route::resource('/contract','ContractController',[
-            'except' => ['show'],
             'names' => [
                 'index' => 'admin.contract.index',
                 'create' => 'admin.contract.create',
