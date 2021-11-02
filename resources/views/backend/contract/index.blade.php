@@ -118,7 +118,7 @@
     </div>
 
     <div id="contractTemplateModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -138,7 +138,7 @@
 
                         <div class="form-group">
                             <label>{{ trans('site.details') }}</label>
-                            <textarea name="details" rows="12" class="form-control editor"></textarea>
+                            <textarea name="details" rows="12" class="form-control editor" id="editContentEditor"></textarea>
                         </div>
 
                         <div class="form-group">
@@ -186,6 +186,23 @@
 
 @section('scripts')
     <script>
+        // tinymce load editor
+        let tiny_editor_config_contract = {
+            path_absolute: "{{ URL::to('/') }}",
+            height: '500',
+            selector: '.editor',
+            plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                'searchreplace wordcount visualblocks visualchars code fullscreen',
+                'insertdatetime media nonbreaking save table directionality',
+                'emoticons template paste textpattern'],
+            toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript ' +
+            'superscript | forecolor backcolor | link | alignleft aligncenter alignright ' +
+            'alignjustify  | removeformat',
+            toolbar2: 'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor ',
+            relative_urls: false,
+        };
+        tinymce.init(tiny_editor_config_contract);
+
         $(".contractTemplateBtn").click(function() {
             let action = $(this).data('action');
             let modal = $('#contractTemplateModal');
@@ -195,10 +212,16 @@
                 let fields = $(this).data('fields');
                 let form = modal.find('form');
                 form.find('[name=title]').val(fields.title);
-                form.find('[name=details]').text(fields.details);
                 form.find('[name=signature_label]').val(fields.signature_label);
+
+                let content = '';
+                if (fields.details) {
+                    content = fields.details;
+                }
+                tinymce.get('editContentEditor').setContent(content);
             } else {
                 modal.find(".form-control").val('');
+                tinymce.get('editContentEditor').setContent('');
             }
         });
 

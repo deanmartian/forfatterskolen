@@ -383,7 +383,7 @@
             let template = $(this).children("option:selected");
             let fields = template.data('fields');
             $('[name=title]').val(fields.title);
-            console.log(tinymce.get('editContentEditor'));
+
             let content = '';
             if (fields.details) {
                 content = fields.details;
