@@ -433,7 +433,7 @@
 
 					<div class="row">
 						<div class="col-sm-12">
-							<h3 class="mt-4 mb-0 font-weight-bold">Faktura</h3>
+							<h3 class="mt-4 mb-0 font-weight-bold">Ordre</h3>
 						</div>
 					</div>
 
@@ -442,17 +442,17 @@
 							<tbody>
 							<tr>
 								<td>
-									<b class="mr-2">Item:</b>
+									<b class="mr-2">Kjøp av:</b>
 									<b class="package-variation"></b>
 									<br>
 
-									<span>
+									{{--<span>
 										{{ trans('site.front.form.payment-method') }}: <i class="payment-mode"></i>
 									</span>,
 
 									<span>
 										{{ trans('site.front.form.payment-plan') }}: <i class="payment-plan"></i>
-									</span>
+									</span>--}}
 								</td>
 								<td>
 								</td>
