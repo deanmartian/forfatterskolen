@@ -16,6 +16,9 @@
     <div class="front-page-new">
         <div class="header" data-bg="https://www.forfatterskolen.no/images-new/home/main-image.png">
             <div class="container h-100 position-relative">
+
+                <h3 class="dark-mode-title">Svart Skrivehelg</h3>
+
                 <div class="main-form">
                     <div class="envelope-container">
                         <img data-src="https://www.forfatterskolen.no/images-new/home/envelope.png" alt="envelope icon">

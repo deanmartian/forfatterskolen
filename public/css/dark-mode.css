@@ -1,0 +1,93 @@
+body.dark-mode, .dark-mode #topNav, .dark-mode #mainSiteNav, .dark-mode .course-single-page .course-tabs #kursplan,
+.dark-mode .manuscript-page .second-section .details, .dark-mode .manuscript-page .fourth-section,
+.dark-mode .faq-page .panel-group .panel>.panel-heading,
+.dark-mode .faq-page .panel-default>.panel-heading+.panel-collapse>.panel-body {
+    background-color: #403d3d;
+}
+
+.dark-mode .navbar-brand img {
+    height: 95px;
+}
+
+.dark-mode #topNav .nav-link, .dark-mode #mainSiteNav .nav-link {
+    color: #fff;
+}
+
+.dark-mode .dark-mode-title {
+    position: absolute;
+    top: 95px;
+    right: 4%;
+    font-size: 70px;
+    font-weight: normal;
+}
+
+.dark-mode .front-page-new .carousel-onebyone .title, .dark-mode .courses-container p, .dark-mode .courses-container h3,
+.dark-mode .cta .h1, .dark-mode .course-single-page #overview *, .dark-mode .course-single-page #packages *,
+.dark-mode .course-single-page #kursplan *, .dark-mode .manuscript-page .second-section .details *,
+.dark-mode .main-container h1, .panel-default>.panel-heading, .faq-page .panel-group .panel .panel-body>p,
+.dark-mode .contact-page .secondary-container h1, .dark-mode .contact-page .stab-row *, .dark-mode .contact-page .accept-terms,
+.dark-mode .contact-page .note, .dark-mode .contact-page .save-data-container *,
+.dark-mode .course-single-page .theme-tabs li a, .dark-mode .blog-read-container * {
+    color: #fff;
+}
+
+.dark-mode .front-page-new .popular-course-wrapper .courses-container .card-body {
+    background-color: #403d3d;
+    border: 1px solid #fff;
+}
+
+.dark-mode .navbar-default .navbar-nav>.active>a {
+    color: #862736 !important;
+}
+
+/* course list page  */
+.dark-mode .course-page .courses-list-container .course-body {
+    background-color: #403d3d;
+    color: #fff;
+    border-top: 1px solid #fff;
+    border-left: 1px solid #fff;
+    border-right: 1px solid #fff;
+}
+
+.dark-mode .course-page .courses-list-container .course-body .buy-btn {
+    color: #e57184;
+}
+
+.dark-mode .course-page .courses-list-container .course-body .buy-btn:hover {
+    color: #e58e9c;
+}
+
+.dark-mode #learnerNav, .dark-mode #learnerNav .navbar-default {
+    background: #fff;
+}
+
+@media only screen and (max-width: 1024px) {
+    .dark-mode .dark-mode-title {
+        font-size: 50px;
+        right: 6%;
+        top: 45px;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .dark-mode .dark-mode-title {
+        font-size: 35px;
+        right: 17%;
+        top: -2px;
+    }
+}
+
+@media only screen and (max-width: 640px) {
+    .dark-mode .dark-mode-title {
+        font-size: 28px;
+        right: 14%;
+    }
+}
+
+@media only screen and (max-width: 414px) {
+    .dark-mode .dark-mode-title {
+        font-size: 20px;
+        right: 17%;
+        top: -15px;
+    }
+}
