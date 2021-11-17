@@ -18,7 +18,7 @@ class Order extends Model {
     const COACHING_TIME_TYPE = 9;
 
     protected $fillable = ['user_id', 'item_id', 'type', 'package_id', 'plan_id', 'payment_mode_id', 'price', 'discount',
-        'svea_order_id', 'svea_invoice_id', 'svea_payment_type', 'svea_payment_type_description', 'is_processed'];
+        'svea_order_id', 'svea_invoice_id', 'svea_payment_type', 'svea_payment_type_description', 'gift_card', 'is_processed'];
     protected $appends = ['item', 'packageVariation', 'created_at_formatted', 'price_formatted', 'discount_formatted',
         'monthly_price_formatted', 'total_formatted'];
     protected $with = ['paymentPlan', 'paymentMode'];
@@ -69,11 +69,11 @@ class Order extends Model {
             return ShopManuscript::find($this->attributes['item_id'])->title;
         }
 
-        if ($this->attributes['type'] === $this::ASSIGNMENT_UPGRADE_TYPE) {
+        if ($this->attributes['type'] === static::ASSIGNMENT_UPGRADE_TYPE) {
             return Assignment::find($this->attributes['item_id'])->title;
         }
 
-        if ($this->attributes['type'] === $this::COACHING_TIME_TYPE) {
+        if ($this->attributes['type'] === static::COACHING_TIME_TYPE) {
             $title = 'Coaching time';
             if ($this->attributes['item_id'] === 1) {
                 $title .= ' (1 time)';
@@ -81,6 +81,10 @@ class Order extends Model {
                 $title .= ' (0,5 time)';
             }
             return $title;
+        }
+
+        if ($this->attributes['type'] === static::WORKSHOP_TYPE) {
+            return Workshop::find($this->attributes['item_id'])->title;
         }
 
         return Course::find($this->attributes['item_id'])->title;
@@ -115,7 +119,7 @@ class Order extends Model {
     {
         $paymentPlan =  PaymentPlan::find($this->attributes['plan_id']);
         $totalPrice = $this->attributes['price'] - $this->attributes['discount'];
-        $price = $totalPrice/$paymentPlan->division;
+        $price = $paymentPlan ? $totalPrice/$paymentPlan->division : $totalPrice;
         return FrontendHelpers::currencyFormat($price);
     }
 

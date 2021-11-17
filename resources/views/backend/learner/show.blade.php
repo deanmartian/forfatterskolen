@@ -9,6 +9,15 @@
 		.secondary-emails li:not(:last-child) {
 			padding-bottom: 10px
 		}
+
+		#viewOrderModal .modal-header {
+			padding: 0;
+			border-bottom: 1px solid #e5e5e5;
+		}
+
+		#viewOrderModal table.no-border td, #viewOrderModal table.no-border tr {
+			border: none;
+		}
 	</style>
 @stop
 
@@ -624,6 +633,7 @@
 							<th>Svea Payment Type</th>
 							<th>Svea Payment Plan</th>
 							<th>{{ trans('site.date-ordered') }}</th>
+							<th></th>
 						</tr>
 						</thead>
 						<tbody>
@@ -639,6 +649,13 @@
 									{{ $order->svea_payment_type_description }}
 								</td>
 								<td>{{ \App\Http\FrontendHelpers::formatDate($order->created_at) }}</td>
+								<td>
+									<button class="btn btn-primary btn-xs viewOrderBtn" data-toggle="modal"
+											data-target="#viewOrderModal"
+											data-fields="{{ json_encode($order) }}">
+										Receipt
+									</button>
+								</td>
 							</tr>
 						@endforeach
 						</tbody>
@@ -1105,8 +1122,8 @@
 							<th>{{ trans_choice('site.manus', 2) }}</th>
 							<th>{{ trans_choice('site.learners', 1) }}</th>
 							<th>{{ trans('site.length') }}</th>
-							<th>{{ trans('site.learner-suggestion') }}</th>
-							<th>{{ trans('site.admin-suggestion') }}</th>
+							{{--<th>{{ trans('site.learner-suggestion') }}</th>
+							<th>{{ trans('site.admin-suggestion') }}</th>--}}
 							<th>{{ trans('site.approved-date') }}</th>
 							<th>{{ trans('site.assigned-to') }}</th>
 							<th>{{ trans('site.replay') }}</th>
@@ -1133,10 +1150,10 @@
 								<td>
 									{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($courseTaken->package->has_coaching) }}
 								</td>
-								<td>
+								<!--<td>
 
 								</td>
-								<td></td>
+								<td></td>-->
 								<td>
 									<button class="btn btn-xs btn-warning setApprovedDateBtn" data-toggle="modal" data-target="#setApprovedDateModal"
 									data-course_taken_id="{{ $courseTaken->id }}">
@@ -1176,7 +1193,7 @@
 								<td>
 									{{ \App\Http\FrontendHelpers::getCoachingTimerPlanType($coachingTimer->plan_type) }}
 								</td>
-								<td>
+								<!--<td>
                                     <?php
                                     $suggested_dates = json_decode($coachingTimer->suggested_date);
                                     ?>
@@ -1217,11 +1234,18 @@
 										   class="suggestDateBtn"
 										   data-action="{{ route('admin.other-service.coaching-timer.suggestDate', $coachingTimer->id) }}">{{ trans('site.suggest-different-dates') }}</a>
 									@endif
-								</td>
+								</td>-->
 								<td>
 									{{ $coachingTimer->approved_date ?
                                     \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
                                      : ''}}
+
+									<button data-target="#setCoachingApprovedDateModal" class="btn btn-success btn-xs setCoachingApprovedDateBtn"
+									   data-toggle="modal" data-approved_date="{{ $coachingTimer->approved_date }}"
+									   data-action="{{ route('admin.other-service.coaching-timer.set-coaching-approve-date', $coachingTimer->id) }}"
+									style="display: block">
+										Set approve date
+									</button>
 								</td>
 								<td>
 									@if ($coachingTimer->editor_id)
@@ -1260,6 +1284,12 @@
 								<td>
 									@if ($coachingTimer->status === 1)
 										<span class="label label-success">Finished</span>
+									@endif
+
+									@if($coachingTimer->status === 2 && !$coachingTimer->approved_date)
+										<span class="label label-info" style="font-size: 13px">
+											Pending approval
+										</span> <br>
 									@endif
 
 									<button class="btn btn-xs btn-danger deleteCoachingBtn margin-top" data-toggle="modal"
@@ -1317,9 +1347,9 @@
 										@endif
 									</td>
 									<td class="text-center">
-										<button class="btn btn-info btn-xs showEmailBtn" data-toggle="modal"
+										<button class="btn btn-info btn-xs" data-toggle="modal"
 										data-target="#showEmailModal"
-										data-message="{{ $email->email }}">Show Message</button>
+										data-message="{{ $email->email }}" onclick="showEmailMessage(this)">Show Message</button>
 									</td>
 								</tr>
 							@endforeach
@@ -1361,9 +1391,9 @@
 										{{ $emailHistory->date_open }}
 									</td>
 									<td class="text-center">
-										<button class="btn btn-info btn-xs showEmailBtn" data-toggle="modal"
+										<button class="btn btn-info btn-xs" data-toggle="modal"
 												data-target="#showEmailModal"
-												data-message="{{ $emailHistory->message }}">Show Message</button>
+												data-message="{{ $emailHistory->message }}" onclick="showEmailMessage(this)">Show Message</button>
 									</td>
 								</tr>
 							@endforeach
@@ -2514,6 +2544,110 @@
 	</div>
 </div>
 
+<div id="viewOrderModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" style="padding: 2rem; font-size: 3rem">&times;</button>
+			</div>
+			<div class="modal-body" style="padding: 22px 30px;">
+
+				<div class="row">
+					<div class="col-sm-6">
+						<span>Retur:</span> <br>
+						<span>Forfatterskolen AS</span> <br>
+						<span>Postboks 9233 Kjøsterud</span> <br>
+						<span>3064 DRAMMEN</span> <br>
+						<span>NORWAY</span>
+					</div>
+
+					<div class="col-sm-6">
+						<img src="{{ asset('/images-new/logo-tagline.png') }}" alt="Logo" class="w-100"
+							 style="height: 100px;object-fit: contain;">
+					</div>
+				</div>
+
+				<div class="row mt-3">
+					<div class="col-sm-6">
+						<span>{{ $learner->full_name }}</span> <br>
+						<span>{{ $learner->address->street }}</span> <br>
+						<span>{{ $learner->address->zip }} {{ $learner->address->city }}</span>
+					</div>
+					<div class="col-sm-6">
+						<span class="mr-2">{{ trans('site.date') }}: </span> <span id="displayDate"></span>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-sm-12">
+						<h3 class="mt-4 mb-0 font-weight-bold">Ordre</h3>
+					</div>
+				</div>
+
+				<div class="col-sm-12 mt-4">
+					<table class="table no-border">
+						<tbody>
+						<tr>
+							<td>
+								<b class="mr-2">Kjøp av:</b>
+								<b class="package-variation"></b>
+								<br>
+
+								{{--<span>
+										{{ trans('site.front.form.payment-method') }}: <i class="payment-mode"></i>
+									</span>,
+
+								<span>
+										{{ trans('site.front.form.payment-plan') }}: <i class="payment-plan"></i>
+									</span>--}}
+							</td>
+							<td>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="col-sm-5 col-sm-offset-7">
+					<table class="table">
+						<tbody>
+						<tr>
+							<td>
+								<b>{{ trans('site.front.price') }}</b>
+							</td>
+							<td class="price-formatted">
+							</td>
+						</tr>
+						<tr class="discount-row">
+							<td>
+								<b>{{ trans('site.front.discount') }}</b>
+							</td>
+							<td class="discount-formatted">
+							</td>
+						</tr>
+						<tr class="per-month-row">
+							<td>
+								<b>{{ trans('site.front.per-month') }}</b>
+							</td>
+							<td class="per-month">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<b>{{ trans('site.front.total') }}</b>
+							</td>
+							<td class="total-formatted">
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="clearfix"></div>
+			</div> <!-- end modal-body -->
+		</div> <!-- end modal content -->
+	</div> <!-- view order modal -->
+</div>
+
 <div id="deleteInvoiceModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -3028,6 +3162,30 @@
 	</div>
 </div>
 
+<div id="setCoachingApprovedDateModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Approve Date</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>Approve Date</label>
+						<input type="datetime-local" class="form-control" name="approved_date">
+					</div>
+
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="setApprovedDateModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -3477,6 +3635,33 @@
             modal.find('input[name=mobile_number]').val(vipps_phone_number);
         });
 
+        $(".viewOrderBtn").click(function(){
+            let fields = $(this).data('fields');
+            let modal = $("#viewOrderModal");
+
+            modal.find("#displayDate").text(fields.created_at_formatted);
+            modal.find(".package-variation").text(fields.packageVariation);
+            modal.find(".payment-mode").text(fields.payment_mode_id === 1 ? 'Bankoverføring' : '');
+            modal.find(".payment-plan").text(fields.payment_plan.plan);
+
+            modal.find('.price-formatted').text(fields.price_formatted);
+
+            modal.find('.discount-row').removeClass('hide');
+            modal.find('.discount-formatted').text(fields.discount_formatted);
+
+            if (!fields.discount) {
+                modal.find('.discount-row').addClass('hide');
+            }
+
+            modal.find('.per-month-row').addClass('hide');
+            if (fields.plan_id !== 8) {
+                modal.find('.per-month-row').removeClass('hide');
+            }
+
+            modal.find('.per-month').text(fields.monthly_price_formatted);
+            modal.find('.total-formatted').text(fields.total_formatted);
+		});
+
         $("#submitDeleteInvoice").click(function(e) {
            e.preventDefault();
             $(this).attr('disabled','disabled');
@@ -3634,6 +3819,15 @@
 
         modal.find('.modal-body').find('pre').text(details);
     });
+
+    $(".setCoachingApprovedDateBtn").click(function(){
+        let approved_date = $(this).data('approved_date');
+        let action = $(this).data('action');
+        let modal = $("#setCoachingApprovedDateModal");
+
+        modal.find('form').attr('action', action);
+        modal.find('.modal-body').find('[name=approved_date]').val(approved_date);
+	});
 
     $(".editDiplomaBtn").click(function(){
        let action = $(this).data('action');
@@ -3812,6 +4006,12 @@
             split_invoice.prop('disabled', true);
             split_invoice.prop('checked', false);
         }
+    }
+
+    function showEmailMessage(t) {
+        let modal = $("#showEmailModal");
+        let message = $(t).data('message');
+        modal.find('.modal-body').html(message);
     }
 
     function countChar(val) {

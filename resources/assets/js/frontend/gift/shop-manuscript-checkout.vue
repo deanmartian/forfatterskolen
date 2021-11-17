@@ -5,7 +5,7 @@
                      :nextButtonText="trans('site.paginate.next')" :backButtonText="trans('site.paginate.previous')"
                      :finishButtonText="trans('site.front.buy')" title="" subtitle="">
 
-            <tab-content :title="'Bestillingsskjema'" icon="fa fa-clipboard-list" :before-change="validateOrder">
+            <tab-content :title="'Bestillingsskjema'" icon="fa fa-clipboard-list">
                 <table class="table table-hover">
                     <tbody>
                     <tr>
@@ -31,97 +31,34 @@
                             </div>
                         </td>
                         <td>
-                            <div class="form-group">
+                            <div class="col-sm-6 text-center" v-for="giftCard in giftCards">
                                 <label>
-                                    {{ trans('site.front.form.upload-manuscript') }}
+                                    <input type="radio" name="card" :value="giftCard.name" v-model="orderForm.gift_card"
+                                           class="image-radio" @click="setGiftCard()">
+                                    <img :src="giftCard.image">
+                                    <b> {{ giftCard.label }} </b>
                                 </label>
-                                <div class="custom-file">
-                                    <input type="file" name="manuscript" class="form-control"
-                                           @change="onManuscriptChange"
-                                           id="manuscript"
-                                           accept="application/msword,
-application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
-                                </div>
-
-                                <div class="custom-checkbox mt-4">
-                                    <input type="checkbox" name="send_to_email" id="send_to_email"
-                                           v-model="orderForm.send_to_email">
-                                    <label for="send_to_email" class="control-label">
-                                        {{ trans('site.front.form.send-to-email') }}
-                                    </label>
-                                </div>
-                            </div> <!-- end manuscript -->
-
-                            <div class="form-group">
-                                <label class="font-weight-500">
-                                    {{ trans('site.front.genre') }}
-                                </label>
-                                <select class="form-control" name="genre" v-model="orderForm.genre" @change="genreChanged()">
-                                    <option value="" disabled="disabled" selected
-                                            v-html="trans('site.free-text-evaluation.choose-genre')">
-                                    </option>
-
-                                    <option :value="type.id" v-for="type in assignmentTypes" v-text="type.option">
-                                    </option>
-                                </select>
-                            </div> <!-- end genre -->
-
-                            <div class="form-group">
-                                <label>
-                                    {{ trans('site.front.form.synopsis-optional') }}
-                                </label>
-                                <div class="custom-file d-block">
-                                    <input type="file" name="synopsis" class="form-control"
-                                           @change="onSynopsisChange"
-                                           id="synopsis"
-                                           accept="application/msword,
-application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label>{{ trans('site.front.form.coaching-time-later-in-manus') }}</label>
-                                <toggle-button :labels="{checked: trans('site.front.yes'), unchecked: trans('site.front.no')}"
-                                               :width="60" :height="30" :font-size="12"
-                                               :color="{checked:'#337ab7', unchecked:'#354350'}" class="mt-2 ml-2"
-                                               v-model="orderForm.coaching_time_later">
-                                </toggle-button>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="">
-                                    {{ trans('site.front.form.manuscript-description') }}
-                                </label>
-                                <textarea name="description" id="" cols="30" rows="7" class="form-control"
-                                          v-model="orderForm.description"></textarea>
                             </div>
                         </td>
+                        <td></td>
                     </tr>
-                    </tbody>
-                </table>
 
-                <table class="table table-hover">
-                    <tbody>
                     <tr>
+                        <td></td>
                         <td class="text-right h3">{{ trans('site.front.price') }}:</td>
-                        <td class="text-right h3 text-red" style="width: 150px">
+                        <td class="text-right h3 text-red" style="width: 125px">
                             {{ orderForm.price | currency('Kr', 2, currencyOptions) }}
                         </td>
                     </tr>
 
-                    <tr v-if="orderForm.totalDiscount">
-                        <td class="text-right h3">{{ trans('site.front.discount') }}:</td>
-                        <td class="text-right h3 text-red">
-                            {{ orderForm.totalDiscount | currency('Kr', 2, currencyOptions) }}
-                        </td>
-                    </tr>
-
                     <tr>
+                        <td></td>
                         <td class="text-right h3">{{ trans('site.front.total') }}:</td>
-                        <td class="text-right h3 text-red" style="width: 150px">
+                        <td class="text-right h3 text-red" style="width: 125px">
                             {{ totalPrice | currency('Kr', 2, currencyOptions) }}
                         </td>
                     </tr>
+
                     </tbody>
                 </table>
             </tab-content>
@@ -317,7 +254,8 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
         props: {
             user: Object,
             shopManuscript: Object,
-            assignmentTypes: Array
+            giftCard: String,
+            giftCards: Array
         },
 
         data() {
@@ -331,6 +269,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                     zip: '',
                     city: '',
                     phone: '',
+                    national_id: '',
                     password: '',
                     package_id: 0,
                     price: this.shopManuscript.full_payment_price,
@@ -338,12 +277,11 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                     payment_mode_id: 3,
                     mobile_number: "",
                     totalDiscount: 0,
-                    send_to_email: false,
-                    genre: '',
-                    description: '',
-                    coaching_time_later: false,
+                    hasPaidCourse: false,
+                    agree_terms: false,
                     item_type: 2,
                     shop_manuscript_id: this.shopManuscript.id,
+                    gift_card: this.giftCard
                 },
                 currencyOptions: {
                     thousandsSeparator: '.',
@@ -359,17 +297,9 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                 isLoginDisabled: false,
                 loginText: i18n.site.front.form.login,
                 isNewCustomer: false,
-                manuscriptName: i18n.site['learner.files-text'],
-                synopsisName: i18n.site['learner.files-text'],
-                hasPaidCourse: false,
+                totalPrice: this.shopManuscript.full_payment_price,
                 isLoading: false,
-                requestUrl: '/shop-manuscript/'+this.shopManuscript.id
-            }
-        },
-
-        computed: {
-            totalPrice() {
-                return parseFloat(this.orderForm.price) - this.orderForm.totalDiscount;
+                requestUrl: '/gift/shop-manuscript/'+this.shopManuscript.id
             }
         },
 
@@ -391,6 +321,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                 this.orderForm.zip = this.currentUser && this.currentUser.address ? this.currentUser.address.zip : '';
                 this.orderForm.city = this.currentUser && this.currentUser.address ? this.currentUser.address.city : '';
                 this.orderForm.phone = this.currentUser && this.currentUser.address ? this.currentUser.address.phone : '';
+                this.orderForm.national_id = this.currentUser && this.currentUser.address ? this.currentUser.address.national_id : '';
             },
 
             handleLogin(event) {
@@ -424,32 +355,8 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                 });
             },
 
-            validateOrder() {
-
-                this.removeValidationError();
-
-                let formData = new FormData();
-                $.each(this.orderForm, function(k, v) {
-                    formData.append(k, v);
-                });
-
-                return axios.post(this.requestUrl+'/checkout/validate-order', formData).then(response => {
-                    return true;
-                }).catch(error => {
-                    this.processError(error);
-                });
-            },
-
             validateForm() {
-
-                this.removeValidationError();
-
-                let formData = new FormData();
-                $.each(this.orderForm, function(k, v) {
-                    formData.append(k, v);
-                });
-
-                return axios.post(this.requestUrl+'/checkout/validate-form', formData).then(response => {
+                return axios.post(this.requestUrl+'/checkout/validate-form', this.orderForm).then(response => {
                     this.removeValidationError();
                     this.getCurrentUser();
                     $("#checkout-display").html(response.data);
@@ -476,70 +383,20 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                 }, 1000);
             },
 
-            onManuscriptChange(e) {
-                let files = e.target.files;
+            setGiftCard() {
+                let self = this;
+                setTimeout(function(){
+                    axios.post('/set-gift-card', {card: self.orderForm.gift_card}).then(response => {
 
-                if (!files.length)
-                {
-                    this.manuscriptName = i18n.site['learner.files-text'];
-                    this.orderForm.manuscript = [];
-                    return;
-                }
-
-                this.manuscriptName = files[0].name;
-                this.orderForm.manuscript = files[0];
-
-                $(".validation-err").remove();
-            },
-
-            onSynopsisChange(e) {
-                let files = e.target.files;
-
-                if (!files.length)
-                {
-                    this.synopsisName = i18n.site['learner.files-text'];
-                    this.orderForm.synopsis = [];
-                    return;
-                }
-
-                this.synopsisName = files[0].name;
-                this.orderForm.synopsis = files[0];
-
-                $(".validation-err").remove();
-            },
-
-            checkHasPaidCourse() {
-                axios.get('/has-paid-course/').then(response => {
-                    this.hasPaidCourse = response.data;
-                    this.genreChanged();
-                })
-            },
-
-            genreChanged() {
-                let shopManuscript = this.shopManuscript;
-                let totalDiscount = this.hasPaidCourse ? (shopManuscript.full_payment_price * 0.05) : 0;
-                let price = parseFloat(this.shopManuscript.full_payment_price);
-
-                if (this.orderForm.genre === 10) {
-                    price = price + ((price - totalDiscount) * .50);
-                }
-
-                this.orderForm.totalDiscount = totalDiscount;
-                this.orderForm.price = price;
+                    })
+                }, 200);
             }
+
         },
 
         mounted() {
             this.loadOptions();
-            this.checkHasPaidCourse();
         }
 
     }
 </script>
-
-<style>
-    .custom-checkbox>[type=checkbox]:checked+label:before, .custom-checkbox>[type=checkbox]:not(:checked)+label:before {
-        border: 1px solid;
-    }
-
-</style>

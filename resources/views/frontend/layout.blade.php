@@ -113,7 +113,7 @@
         <script async src="https://cdn.gumlet.com/gumlet.js/2.0/gumlet.min.js"></script>
     </head>
     <body>
-    <img src="https://www.sociamonials.com/tracking.php?t=l&tid=6502" width="1" height="1">
+    {{--<img src="https://www.sociamonials.com/tracking.php?t=l&tid=6502" width="1" height="1">--}}
     @if(Session::has('new_user_social'))
         <div class="alert alert-success" role="alert" id="fixed_to_bottom_alert">
             Thank you. The default password is 123. Please update your password

@@ -47,23 +47,24 @@
     </div>
 </div>
 
-<h4 class="mt-4 mb-0">Faktura</h4>
+<h4 class="mt-4 mb-0">Ordre</h4>
 
 <div class="col-sm-12 mt-5">
     <table class="table no-border">
         <tbody>
         <tr>
             <td>
-                <b class="mr-2">Item:</b>
-                @if (in_array($order->type, [1, 6]))
+
+                <b class="mr-2">Kjøp av:</b>
+                @if ($order->type === 1)
                     <b><i>{{ $order->item }} - {{ $order->package->variation }}</i></b>
                 @else
                     <b><i>{{ $order->item }}</i></b>
                 @endif
                     <br>
-                (<span>{{ trans('site.front.form.payment-method') }}: {{ $order->payment_mode_id === 1 ? 'Bankoverføring'
+                {{--(<span>{{ trans('site.front.form.payment-method') }}: {{ $order->payment_mode_id === 1 ? 'Bankoverføring'
                                     : $order->paymentMode->mode }}</span>,
-                <span>{{ trans('site.front.form.payment-plan') }}: {{ $order->paymentPlan->plan }}</span>)
+                <span>{{ trans('site.front.form.payment-plan') }}: {{ $order->paymentPlan->plan }}</span>)--}}
             </td>
             <td>
             </td>

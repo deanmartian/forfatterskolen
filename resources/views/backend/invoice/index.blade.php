@@ -50,6 +50,7 @@
 			        <th>{{ trans_choice('site.learners', 1) }}</th>
 			        <th>{{ trans('site.status') }}</th>
 			        <th>{{ trans('site.pdf-url') }}</th>
+					<th>Amount</th>
 					<th>{{ trans('site.due-date') }}</th>
 			        <th>{{ trans('site.date-created') }}</th>
 		      	</tr>
@@ -70,6 +71,7 @@
 						@endif
 					</td>
 		    		<td><a href="{{$invoice->pdf_url}}" target="_blank">{{ trans('site.view-pdf') }}</a></td>
+					<td>{{ \App\Http\FrontendHelpers::currencyFormat($invoice->fiken_balance) }}</td>
 					<td>{{ $invoice->fiken_dueDate }}</td>
 		    		<td>{{$invoice->created_at}}</td>
 		      	</tr>

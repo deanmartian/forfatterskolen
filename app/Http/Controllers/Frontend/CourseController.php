@@ -36,7 +36,8 @@ class CourseController extends Controller
         ->filter(function($item) {
             return $item->is_active || $item->is_free;
         }); // the original don't have this filter
-    	return view('frontend.course.index', compact('courses'));
+        $showRoute = 'front.course.show';
+    	return view('frontend.course.index', compact('courses', 'showRoute'));
     }
 
 
@@ -49,8 +50,8 @@ class CourseController extends Controller
                 return abort(404);
             endif;
         endif;
-
-    	return view('frontend.course.show', compact('course'));
+        $checkoutRoute = 'front.course.checkout';
+    	return view('frontend.course.show', compact('course', 'checkoutRoute'));
     }
 
     /**

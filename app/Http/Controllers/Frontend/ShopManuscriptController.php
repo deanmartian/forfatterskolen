@@ -41,7 +41,8 @@ class ShopManuscriptController extends Controller
     {
         $shopManuscripts = ShopManuscript::orderBy('full_payment_price', 'asc')->get();
         $editors = Editor::orderBy('id', 'ASC')->get();
-    	return view('frontend.shop-manuscript.index', compact('shopManuscripts', 'editors'));
+        $checkoutRoute = 'front.shop-manuscript.checkout';
+    	return view('frontend.shop-manuscript.index', compact('shopManuscripts', 'editors', 'checkoutRoute'));
     }
 
 
@@ -814,11 +815,17 @@ class ShopManuscriptController extends Controller
                 $button_link = 'http://www.forfatterskolen.no/shop-manuscript/8/checkout';
             endif;*/
 
+            $checkoutRoute = 'front.shop-manuscript.checkout';
+            $prevRoute = app('router')->getRoutes()->match(app('request')->create(\URL::previous()))->getName();
+            if ($prevRoute === 'front.gift.shop-manuscript') {
+                $checkoutRoute = 'front.gift.shop-manuscript.checkout';
+            }
+
             $suggestedPlan = ShopManuscript::where('max_words','>=', $word_count)
                 ->orderBy('max_words', 'ASC')->first();
             if ($suggestedPlan) {
                 $price = $suggestedPlan->full_payment_price;
-                $button_link = route('front.shop-manuscript.checkout', $suggestedPlan->id);
+                $button_link = route($checkoutRoute, $suggestedPlan->id);
             }
 
     	endif;

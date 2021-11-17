@@ -1,6 +1,11 @@
 <template>
     <div class="card">
 
+        <a :href="'/course/' + course.id + '/fs-checkout'" class="btn site-btn-global"
+           v-if="countryCode != 'NO'" style="width: 200px; border-radius: 0;">
+            FS Checkout
+        </a>
+
         <form-wizard color="#c12938" error-color="#ff4949"
                      :nextButtonText="trans('site.paginate.next')" :backButtonText="trans('site.paginate.previous')"
                      :finishButtonText="trans('site.front.buy')" title="" subtitle="">
@@ -282,6 +287,7 @@
             passedCoupon: String,
             packages: Array,
             user: Object,
+            countryCode: String
         },
 
         data() {

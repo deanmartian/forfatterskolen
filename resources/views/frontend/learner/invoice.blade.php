@@ -31,24 +31,41 @@
 			<div class="row mt-5">
 				<div class="col-sm-12">
 
+					@php
+						$tabWithLabel = [
+							[
+								'name' => 'svea',
+								'label' => 'Svea'
+							],
+							[
+								'name' => 'regret-form',
+								'label' => 'Angreskjema'
+							],
+							[
+								'name' => 'gift',
+								'label' => 'Gift Purchases'
+							],
+							[
+								'name' => 'redeem',
+								'label' => 'Redeem Gift'
+							]
+						]
+					@endphp
+
 					<ul class="nav nav-tabs margin-top">
-						<li @if( !Request::has('tab') || Request::input('tab') == 'fiken') class="active" @endif>
+						<li @if(!in_array(Request::input('tab'), array_column($tabWithLabel, 'name'))) class="active" @endif>
 							<a href="?tab=fiken">
 								Fiken
 							</a>
 						</li>
 
-						<li @if( Request::input('tab') == 'svea' ) class="active" @endif>
-							<a href="?tab=svea">
-								Svea
-							</a>
-						</li>
-
-						<li @if( Request::input('tab') == 'regret-form' ) class="active" @endif>
-							<a href="?tab=regret-form">
-								Angreskjema
-							</a>
-						</li>
+						@foreach($tabWithLabel as $tab)
+							<li @if( Request::input('tab') == $tab['name'] ) class="active" @endif>
+								<a href="?tab={{ $tab['name'] }}">
+									{{ $tab['label'] }}
+								</a>
+							</li>
+						@endforeach
 					</ul>
 
 
@@ -134,6 +151,66 @@
 											@endforeach
 											</tbody>
 										</table>
+									</div>
+								</div>
+							@elseif( Request::input('tab') == 'gift' )
+
+								<div class="card global-card">
+									<div class="card-body py-0">
+										<table class="table table-global">
+											<thead>
+											<tr>
+												<th>Item</th>
+												<th>Redeem Code</th>
+												<th>Redeemed</th>
+											</tr>
+											</thead>
+											<tbody>
+											@foreach($giftPurchases as $giftPurchase)
+												<tr>
+													<td>
+														<a href="{{ $giftPurchase->item_link }}">
+															{{ $giftPurchase->item_name }}
+														</a>
+													</td>
+													<td>{{ $giftPurchase->redeem_code }}</td>
+													<td>
+														@if ($giftPurchase->is_redeemed)
+															<label class="label label-success" style="font-size: 13px">
+																{{ trans('site.front.yes') }}
+															</label>
+														@else
+															<label class="label label-danger" style="font-size: 13px">
+																{{ trans('site.front.no') }}
+															</label>
+														@endif
+
+													</td>
+												</tr>
+											@endforeach
+											</tbody>
+										</table>
+									</div>
+								</div>
+
+							@elseif( Request::input('tab') == 'redeem' )
+								<div class="card global-card">
+									<div class="card-body">
+										<div class="col-md-4 col-md-offset-4">
+											<form action="{{ route('learner.redeem-gift') }}" method="POST">
+												{{ csrf_field() }}
+
+												<div class="form-group mb-0">
+													<label>Redeem Code</label>
+													<input type="text" name="redeem_code" class="form-control"
+														   style="text-transform: uppercase" required>
+												</div>
+
+												<button class="btn btn-success w-100" type="submit">
+													Submit
+												</button>
+											</form>
+										</div>
 									</div>
 								</div>
 							@else
@@ -356,7 +433,7 @@
 
 					<div class="row">
 						<div class="col-sm-12">
-							<h3 class="mt-4 mb-0 font-weight-bold">Faktura</h3>
+							<h3 class="mt-4 mb-0 font-weight-bold">Ordre</h3>
 						</div>
 					</div>
 
@@ -365,17 +442,17 @@
 							<tbody>
 							<tr>
 								<td>
-									<b class="mr-2">Item:</b>
+									<b class="mr-2">Kjøp av:</b>
 									<b class="package-variation"></b>
 									<br>
 
-									<span>
+									{{--<span>
 										{{ trans('site.front.form.payment-method') }}: <i class="payment-mode"></i>
 									</span>,
 
 									<span>
 										{{ trans('site.front.form.payment-plan') }}: <i class="payment-plan"></i>
-									</span>
+									</span>--}}
 								</td>
 								<td>
 								</td>
@@ -444,8 +521,15 @@
            let modal = $("#viewOrderModal");
 
            modal.find("#displayDate").text(fields.created_at_formatted);
-           modal.find(".package-variation").text(fields.packageVariation ? fields.packageVariation : fields.item);
-           modal.find(".payment-mode").text(fields.payment_mode_id === 1 ? 'Bankoverføring' : fields.payment_mode.mode);
+
+           if (fields.type === 1) {
+               modal.find(".package-variation").text(fields.item + " - " + fields.packageVariation);
+		   }
+
+            if (fields.type === 2) {
+                modal.find(".package-variation").text(fields.item);
+            }
+           modal.find(".payment-mode").text(fields.payment_mode_id === 1 ? 'Bankoverføring' : '');
            modal.find(".payment-plan").text(fields.payment_plan.plan);
 
            modal.find('.price-formatted').text(fields.price_formatted);

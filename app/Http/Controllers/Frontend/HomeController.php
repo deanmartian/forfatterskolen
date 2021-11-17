@@ -46,6 +46,7 @@ use App\Solution;
 use App\SolutionArticle;
 use App\SosChildren;
 use App\Testimonial;
+use App\UpcomingSection;
 use App\UserEmail;
 use App\Webinar;
 use App\WebinarRegistrant;
@@ -62,6 +63,7 @@ use App\Package;
 use App\Faq;
 use App\Http\FikenInvoice;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
 include_once($_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php');
@@ -97,8 +99,11 @@ class HomeController extends Controller
         $testimonials = Testimonial::active()->get();
         $workshop = Workshop::find(12); // gro-dahle
 
+        $upcomingSections = UpcomingSection::all();
+
         return view('frontend.home', compact('popular_courses', 'free_courses', 'free_webinars',
-            'next_webinar', 'next_free_webinar', 'next_workshop','latest_blog', 'poems', 'testimonials', 'workshop'));
+            'next_webinar', 'next_free_webinar', 'next_workshop','latest_blog', 'poems', 'testimonials', 'workshop',
+            'upcomingSections'));
     }
 
     // set cookie for gdpr
@@ -140,8 +145,8 @@ class HomeController extends Controller
             $emailData = [
                 'email_subject' => 'Inquiry Message',
                 'email_message' => $email_content,
-                'from_name' => '',
-                'from_email' => 'post@forfatterskolen.no',
+                'from_name' => $request->fullname,
+                'from_email' => $request->email,
                 'attach_file' => NULL
             ];
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
@@ -161,6 +166,17 @@ class HomeController extends Controller
         return view('frontend.contact-us', compact('hasAdvisory', 'advisory'));
     }
 
+    public function giftCards()
+    {
+        Session::remove('gift-card');
+        return view('frontend.gift-cards');
+    }
+
+    public function setGiftCard( Request $request )
+    {
+        \Session::put('gift-card', $request->card);
+        return Session::all();
+    }
 
     public function faq()
     {
@@ -833,7 +849,7 @@ class HomeController extends Controller
     public function coachingTimerPlaceOrder($plan, Request $request)
     {
         $data = $request->except('_token');
-        $suggested_dates = $data['suggested_date'];
+        $suggested_dates = [];//$data['suggested_date'];
         $newFileLocation = NULL;
 
         // format the sent suggested dates
@@ -905,7 +921,7 @@ class HomeController extends Controller
            'file'           => $newFileLocation,
             'payment_price' => $data['price'],
             'plan_type'     => $plan,
-            'suggested_date' => json_encode($suggested_dates),
+            //'suggested_date' => json_encode($suggested_dates),
             'help_with'     => $data['help_with']
         ]);
 
@@ -1512,6 +1528,7 @@ class HomeController extends Controller
 
     public function henrikPage()
     {
+        abort(404);
         return view('frontend.henrik-langeland');
     }
 
@@ -2101,6 +2118,12 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
     public function skrivdittliv()
     {
         return view('frontend.skrivdittliv');
+    }
+
+    public function hereIam()
+    {
+        $replays = Replay::latest()->get();
+        return view('frontend.here-i-am', compact('replays'));
     }
 
 }

@@ -752,6 +752,68 @@ class FrontendHelpers
 	}
 
     /**
+     * Generate unique code
+     * @param int $codeLength
+     * @return string
+     */
+    public static function generateUniqueCode($codeLength = 20)
+    {
+
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersNumber = strlen($characters);
+
+        $code = '';
+
+        while (strlen($code) < $codeLength) {
+            $position = rand(0, $charactersNumber - 1);
+            $character = $characters[$position];
+            $code = $code.$character;
+        }
+
+        return $code;
+
+    }
+
+    public static function gitCards($giftCard = null)
+    {
+        $giftCards = [
+            [
+                'label' => trans('site.gift-card.christmas-present'),
+                'name' => 'christmas',
+                'image' => '/images-new/gift-cards/christmas.png'
+            ],
+
+            [
+                'label' => trans('site.gift-card.birthday-present'),
+                'name' => 'birthday',
+                'image' => '/images-new/gift-cards/birthday.png'
+            ],
+
+            [
+                'label' => trans('site.gift-card.giftcard-present'),
+                'name' => 'gift-card',
+                'image' => '/images-new/gift-cards/gift-card.png'
+            ],
+
+            [
+                'label' => trans('site.gift-card.love-present'),
+                'name' => 'love-present',
+                'image' => '/images-new/gift-cards/love-present.png'
+            ]
+        ];
+
+        if ($giftCard) {
+            foreach ($giftCards as $gift) {
+                if ($gift['name'] === $giftCard) {
+                    return $gift;
+                }
+            }
+        }
+
+        return $giftCards;
+    }
+
+    /**
      * Get content from .doc file
      * @param $filename
      * @return bool|string

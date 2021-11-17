@@ -38,7 +38,13 @@ class AddMailToQueueMail extends Mailable
 
         // check if there's an attachment to prevent error
         if ($this->attach_file) {
-            $email->attach(asset($this->attach_file));
+            if(is_array($this->attach_file)) {
+                foreach ($this->attach_file as $attachment) {
+                    $email->attach($attachment);
+                }
+            } else {
+                $email->attach($this->attach_file);
+            }
         }
 
         return $email;

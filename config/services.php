@@ -36,6 +36,8 @@ return [
     ],
 
     'facebook' => [
+        'client_id_new' => '3002661156716042',
+        'client_secret_new' => '4c286c6c840db1d5304e4acccf2c5227',
         'client_id' => '300010277156315',
         'client_secret' => '39c7964cecb16b346c8df0ae2e21bcd4',
         'redirect' => 'https://www.forfatterskolen.no/auth/login/facebook/callback',

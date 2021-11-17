@@ -681,7 +681,7 @@ Warning: This cannot be undone.',
     'next-webinar' => 'Neste webinar',
     'next-free-webinar' => 'Gratis kurs',
     'next-workshop' => 'Neste Workshop',
-    'latest-blog-post' => 'Siste blogginnlegg',
+    'latest-blog-post' => 'Konkurranse',
     'register' => 'Registrer deg',
     'view' => 'Les mer',
     'see-complete-list' => 'Se komplett liste her',
@@ -935,10 +935,10 @@ Slik gjør du:
 
 Juryen består av:
 
-Anne Gaathaug, forlagssjef Papermoon
 Helene Uri, forfatter og redaktør
-Kristine Storli Henningsen, forlegger Papermoon og rektor Forfatterskolen
-Annika Bohnenblust, Content Manager Plan Norge
+Eilif Swensen, kommunikasjonssjef Plan International Norge
+Kristine Henningsen, rektor Forfatterskolen.no og forlegger i Papermoon Publishing
+
 
 Frist for innsendelse: 10.7.2021.
 
@@ -1388,4 +1388,91 @@ Rektor Kristine',
   'are-you-sure-you-want-to-move-this-record-to-archive' => 'Er du sikker på at du vil flytte denne posten til arkivet?',
   'course-for-sale' => 'Kurs til salgs',
   'group-course-multi-invioce-email' => 'Gruppekurs e-post med flere fakturaer',
+  'homepage' => 
+  array (
+    'header-description' => 'Vil du gi ut boken din selv? Vi tilbyr profesjonell hjelp og veiledning i alle ledd. Målet er et ferdig produkt som oser kvalitet, så både du og vi kan være stolte.',
+    'header-text' => 'Fordi boken din fortjener det beste.',
+    'portal-for-published' => 'Portal for publiserte',
+    'book-an-hour' => 'Book en time',
+    'choose-package' => 'Velg riktig pakke for prosjektet ditt',
+    'package-1-title' => 'Basic',
+    'package-1-subtitle' => 'For den som vil ha en enkel løsning.',
+    'package-1-description' => 'Basic-pakken inneholder:
+- Tilbakemelding fra redaktør (fra 17 500 ord)
+- Språkvask og korrektur
+- Omslag
+- Ombrekk
+- Trykking
+- Inkludert i pakken er en bonus fra oss: Markedsføringskurs med Anne Gaathaug. Fordi vi ønsker at du skal nå frem til flest mulig lesere med boken din!',
+    'package-2-title' => 'Standard',
+    'package-2-subtitle' => 'Alt du trenger for en bok med kvalitet.',
+    'package-2-description' => 'Standard-pakken inneholder:
+- To tilbakemeldinger fra redaktør på teksten din (fra 17 500 ord)
+- Språkvask og korrektur
+- Omslag
+- Ombrekk
+- Trykking
+- 60 minutters coaching om salg og markedsføring av din bok.
+- Inkludert i pakken er en bonus fra oss: Markedsføringskurs med Anne Gaathaug. Fordi vi ønsker at du skal nå frem til flest mulig lesere med boken din!',
+    'package-3-title' => 'Pro',
+    'package-3-subtitle' => 'For deg som vil ha perfekt sluttresultat.',
+    'package-3-description' => 'Pro-pakken inneholder:
+- Tre tilbakemeldinger fra redaktør (fra 17 500 ord)
+- Språkvask og korrektur
+- Omslag
+- Ombrekk
+- Trykking
+- 60 minutter med coaching angående salg og markedsføring.
+- Inkludert i pakken er en bonus fra oss: Markedsføringskurs med Anne Gaathaug. Fordi vi ønsker at du skal nå frem til flest mulig lesere med boken din!',
+    'read-more' => 'Les mer',
+    'prices' => 'Priser',
+    'price-note' => 'Kontakt oss gjerne for spørsmål om pakker, og for et uforpliktende tilbud på ditt manus.',
+    'package-1-why-choose' => 'For den som vil ha en enkel løsning.',
+    'package-2-why-choose' => 'Alt du trenger for en bok med kvalitet',
+    'package-3-why-choose' => 'For deg som vil ha perfekt sluttresultat.',
+    'see-all-rates' => 'Se alle rater',
+    'what-we-do-title' => 'Hva vi gjør',
+    'what-we-do-1-title' => 'Trykker bøker',
+    'what-we-do-1-description' => 'Har du et ferdig manus som du ønsker å trykke? Vi sørger for at manuset ditt blir behandlet og trykket på best mulig måte, og at de trykkede eksemplarene bringes trygt frem til deg. Gjennom oss får du kvalitetssjekk og gode priser.',
+    'what-we-do-2-title' => 'Profesjonell skyggeskriving',
+    'what-we-do-2-description' => 'Har du en historie som du ikke vil, orker eller klarer å skrive selv? Vi tilbyr profesjonelle skyggeskrivere (ghostwritere) i flere sjangre.',
+    'what-we-do-3-title' => 'Bearbeidelse av manus',
+    'what-we-do-3-description' => 'Trenger du profesjonell tilbakemelding på teksten din? Vi har redaktører innenfor de fleste sjangre som sitter parate til å gi deg en grundig tilbakemelding – så manuset ditt løftes flere hakk før publisering.',
+    'what-we-do-4-title' => 'Redaksjonelle tjenester',
+    'what-we-do-4-description' => 'Vi tilbyr tjenester innenfor alle ledd av bokproduksjon – redaktør, språkvask, korrektur, omslag, ombrekk og trykking. Så boken din blir kvalitetssikret i alle ledd.',
+    'see-more-service' => 'Se flere tjenester',
+    'contact-us' => 'Kontakt oss',
+    'our-writing-services-include' => 'Våre skrivetjenester inkluderer:',
+    'book-planning' => 'Planlegging av bokproduksjonen',
+    'ghost-writing' => 'Skyggeskriving (ghostwriting)',
+    'editors' => 'Redaktør',
+    'printing' => 'Trykk',
+    'project-assistance' => 'Språkvask og korrektur',
+    'illustration-cover-design' => 'Omslag (cover)',
+    'book-proposals-and-queries' => 'Salg – og markedsføring',
+    'beta-reader-testing' => 'Pilotlesere',
+    'some-of-our-works' => 'Bøker vi har vært med på å produsere',
+    'see-all-of-our-works' => 'Se alle våre produserte bøker',
+    'why-choose-easywrite-publishing' => 'Hvorfor velge Easywrite Publishing?',
+    'why-choose-easywrite-publishing-description' => 'Vi velger de mest profesjonelle på markedet for å gi deg et optimalt sluttprodukt. Vi vet hvor mye svette og følelser det ligger bak et manus, og setter vår ære i at det blir en best mulig bok. En bok du kan være stolt av, og presentere for omverdenen med rak rygg og et smil om munnen. Vi gir deg også kyndig hjelp med salg og markedsføring, ettersom vi vet hvor viktig dette er når boken er ferdig!',
+    'do-you-want-a-binding-chat-with-us' => 'Vil du ha en forpliktende prat med oss?',
+    'do-you-want-a-binding-chat-with-us-details' => 'Vi tar gjerne en prat om bokprosjektet ditt, uansett hvor du er i prosessen. Kontakt oss gjerne, så tar vi en virtuell kaffe.',
+    'book-a-consult' => 'Book en time',
+    'for-publishers' => 'For publiserte forfattere',
+    'about' => 'Om oss',
+    'about-desc' => 'Vil du gi ut boken din selv? Vi tilbyr profesjonell hjelp og veiledning i alle ledd. Målet er et ferdig produkt som oser kvalitet, så både du og vi kan være stolte.',
+    'services' => 'Hva vi kan tilby',
+    'services-1' => 'Bokplanlegging',
+    'services-2' => 'Salg og markedsføring',
+    'services-3' => 'Skyggeskriving',
+    'services-4' => 'Omslag/design',
+    'services-5' => 'Redaktører',
+    'services-6' => 'Språkvask og korrektur',
+    'services-7' => 'Trykk',
+    'services-8' => 'Pilotlesere',
+  ),
+  'gift-card' => 
+  array (
+    'description' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,',
+  ),
 );
