@@ -5,6 +5,7 @@ use App\Address;
 use App\Advisory;
 use App\Blog;
 use App\CoachingTimerManuscript;
+use App\Contract;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\CoursesTaken;
@@ -62,6 +63,7 @@ use App\FreeCourse;
 use App\Package;
 use App\Faq;
 use App\Http\FikenInvoice;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 
@@ -2124,6 +2126,59 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
     {
         $replays = Replay::latest()->get();
         return view('frontend.here-i-am', compact('replays'));
+    }
+
+    /**
+     * @param $code
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function contract( $code )
+    {
+        $contract = Contract::where("code", $code)->firstOrFail();
+        return view('frontend.contract', compact('contract'));
+    }
+
+    /**
+     * @param $code
+     * @return mixed
+     */
+    public function contractDownload( $code )
+    {
+        $contract = Contract::where("code", $code)->firstOrFail();
+        $pdf = PDF::loadView('frontend.pdf.contract', compact('contract'));
+        return $pdf->download($code . ".pdf");
+    }
+
+    public function contractSign( $code, Request $request )
+    {
+
+        $contract = Contract::where("code", $code)->firstOrFail();
+
+        if ( !$request->signed || $contract->signature ) {
+            return redirect()->back();
+        }
+
+        $folderPath = 'storage/contract-signatures/'; // upload path
+        if (!\File::exists($folderPath)) {
+            \File::makeDirectory($folderPath);
+        }
+
+        $image_parts = explode(";base64,", $request->signed);
+
+        $image_type_aux = explode("image/", $image_parts[0]);
+
+        $image_type = $image_type_aux[1];
+
+        $image_base64 = base64_decode($image_parts[1]);
+
+        $file = $folderPath . uniqid() . '.'.$image_type;
+        file_put_contents($file, $image_base64);
+
+        $contract->signature = $file;
+        $contract->signed_date = Carbon::now();
+        $contract->save();
+
+        return back()->with('success', 'Contract signed successfully');
     }
 
 }

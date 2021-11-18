@@ -14,6 +14,7 @@ class SubjectBodyEmail extends Mailable
     public $from_name;
     public $from_email;
     public $attach_file;
+    public $email_view;
 
     public function __construct($email_data)
     {
@@ -22,13 +23,14 @@ class SubjectBodyEmail extends Mailable
         $this->from_name = $email_data['from_name'] ? $email_data['from_name'] : 'Forfatterskolen';
         $this->from_email = $email_data['from_email'] ? $email_data['from_email'] : 'postmail@forfatterskolen.no';
         $this->attach_file = $email_data['attach_file'] ?: NULL;
+        $this->email_view = isset($email_data['view']) ? $email_data['view'] : 'emails.subject_body';
     }
 
     public function build()
     {
         $email =  $this->from($this->from_email, $this->from_name)
             ->subject($this->email_subject)
-            ->view('emails.subject_body')
+            ->view($this->email_view)
             ->text('emails.subject_body_plain');
 
         // check if there's an attachment to prevent error

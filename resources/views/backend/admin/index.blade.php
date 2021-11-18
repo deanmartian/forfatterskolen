@@ -41,6 +41,10 @@
 	<button class="btn btn-primary margin-top" data-toggle="modal" data-target="#addAdminModal">Create admin</button>
 	<a class="btn btn-primary margin-top" href="{{ route('admin.admin.export_nearly_expired_courses') }}">Export Nearly Expired Courses</a>
 	<button class="btn btn-success margin-top" data-toggle="modal" data-target="#headEditorModal">Head Editor</button>
+	@if (Auth::user()->isSuperUser())
+		<a class="btn btn-primary margin-top" href="{{ route('admin.contract.index') }}">Contract</a>
+	@endif
+
 
 	<ul class="nav nav-tabs margin-top">
 		<li @if( Request::input('tab') == 'admin' || Request::input('tab') == '') class="active" @endif><a href="?tab=admin">Admin</a></li>

@@ -54,7 +54,6 @@
         <tbody>
         <tr>
             <td>
-
                 <b class="mr-2">Kjøp av:</b>
                 @if ($order->type === 1)
                     <b><i>{{ $order->item }} - {{ $order->package->variation }}</i></b>
