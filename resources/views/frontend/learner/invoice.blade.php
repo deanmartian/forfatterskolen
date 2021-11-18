@@ -485,6 +485,13 @@
 									<td class="per-month">
 									</td>
 								</tr>
+								<tr class="additional-price-row hide">
+									<td>
+										<b>{{ trans('site.add-on-price') }}</b>
+									</td>
+									<td class="additional-price">
+									</td>
+								</tr>
 								<tr>
 									<td>
 										<b>{{ trans('site.front.total') }}</b>
@@ -514,6 +521,7 @@
            let modal = $("#viewOrderModal");
 
            modal.find("#displayDate").text(fields.created_at_formatted);
+
            if (fields.type === 1) {
                modal.find(".package-variation").text(fields.item + " - " + fields.packageVariation);
 		   }
@@ -537,6 +545,12 @@
 		   if (fields.plan_id !== 8) {
                modal.find('.per-month-row').removeClass('hide');
 		   }
+
+            modal.find('.additional-price-row').addClass('hide');
+            if (fields.coaching_time && fields.coaching_time.additional_price) {
+                modal.find('.additional-price-row').removeClass('hide');
+                modal.find('.additional-price').text(fields.coaching_time.additional_price_formatted);
+			}
 
 		   modal.find('.per-month').text(fields.monthly_price_formatted);
 		   modal.find('.total-formatted').text(fields.total_formatted);

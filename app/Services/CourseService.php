@@ -149,6 +149,11 @@ class CourseService {
         $course =  $package->course;
         $calculatedPrice = $this->calculatePrice($course, $package, $request);
 
+        // check if upgrade course
+        if ($request->has('order_type') && $request->order_type === 6) {
+            $calculatedPrice = $request->price;
+        }
+
         $discount = $request->price - $calculatedPrice;
         $request->merge(['discount' => $discount]);
 
@@ -326,18 +331,37 @@ class CourseService {
         $sveaPrice = $request->campaign_initial_fee + ($request->campaign_admin_fee * $request->campaign_months);
         $totalPrice = $request->price + $sveaPrice;
 
+        $orderType = Order::COURSE_TYPE;
+        $discount = $request->discount;
+        if ($request->has('order_type')) {
+            $orderType = $request->order_type;
+
+            if ($orderType === 6) {
+                $discount = 0;
+            }
+        }
+
         $package = Package::find($request->package_id);
         $newOrder['user_id']    = \Auth::user()->id;
         $newOrder['item_id']    = $package->course_id;
-        $newOrder['type']       = Order::COURSE_TYPE;
+        $newOrder['type']       = $orderType;
         $newOrder['package_id'] = $package->id;
         $newOrder['plan_id']    = $plan_id;
         $newOrder['price']      = $totalPrice;
-        $newOrder['discount']   = $request->discount;
+        $newOrder['discount']   = $discount;
         $newOrder['payment_mode_id']   = $request->payment_mode_id;
         $newOrder['is_processed'] = 0;
 
-        return Order::create($newOrder);
+        $order = Order::create($newOrder);
+
+        if ($orderType === 6) {
+            $order->upgrade()->create([
+               'parent' => $request->parent,
+               'parent_id' => $request->parent_id
+            ]);
+        }
+
+        return $order;
     }
 
     /**
@@ -420,6 +444,57 @@ class CourseService {
     }
 
     /**
+     * @param $order
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]
+     */
+    public function upgradeCourseTaken( $order )
+    {
+
+        $orderUpgrade = $order->upgrade;
+        $courseTaken = CoursesTaken::find($orderUpgrade->parent_id);
+
+        $package = Package::findOrFail($order->package_id);
+        $courseTaken->package_id = $package->id;
+        $courseTaken->save();
+
+        $add_to_automation = 0;
+
+        // Check for shop manuscripts
+        if( $package->shop_manuscripts->count() > 0 ) :
+            foreach( $package->shop_manuscripts as $shop_manuscript ) :
+                $shopManuscriptTaken = ShopManuscriptsTaken::firstOrNew(['user_id' => $order->user_id, 'shop_manuscript_id' => $shop_manuscript->shop_manuscript_id]);
+                $shopManuscriptTaken->user_id = $order->user_id;
+                $shopManuscriptTaken->shop_manuscript_id = $shop_manuscript->shop_manuscript_id;
+                $shopManuscriptTaken->is_active = false;
+                $shopManuscriptTaken->save();
+            endforeach;
+        endif;
+
+        if ($package->included_courses->count() > 0) {
+            foreach ($package->included_courses as $included_course) {
+                if ($included_course->included_package_id == 29) { // check if webinar-pakke is included
+                    $add_to_automation++;
+                }
+            }
+        }
+
+        if ($package->course->id == 17) { //check if webinar-pakke
+            $add_to_automation++;
+        }
+
+        if ($add_to_automation > 0) {
+            $user = User::find($order->user_id);
+            $user_email = $user->email;
+            $automation_id = 73;
+            $user_name = $user->first_name;
+
+            AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
+        }
+
+        return $courseTaken;
+    }
+
+    /**
      * Send Email to admin
      * @param $user_id
      * @param $package_id
@@ -470,6 +545,24 @@ class CourseService {
 
         dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
             'postmail@forfatterskolen.no', 'Forfatterskolen', $attachments, 'courses-taken-order',
+            $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
+    }
+
+    /**
+     * @param $order
+     * @param $courseTaken
+     */
+    public function notifyUserForUpgrade( $order, $courseTaken )
+    {
+        $package = $order->package;
+        $user = User::find($order->user_id);
+        $user_email = $user->email;
+        $email_content = $package->course->email;
+        $actionText = 'Mine Kurs';
+        $actionUrl = 'http://www.forfatterskolen.no/account/course';
+
+        dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
+            'postmail@forfatterskolen.no', 'Forfatterskolen', null, 'courses-taken-upgrade',
             $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
     }
 

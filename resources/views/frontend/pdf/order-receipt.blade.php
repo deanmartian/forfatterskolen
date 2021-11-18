@@ -54,10 +54,11 @@
         <tbody>
         <tr>
             <td>
+
                 <b class="mr-2">Kjøp av:</b>
                 @if ($order->type === 1)
                     <b><i>{{ $order->item }} - {{ $order->package->variation }}</i></b>
-                @elseif ($order->type === 2)
+                @else
                     <b><i>{{ $order->item }}</i></b>
                 @endif
                     <br>
@@ -103,6 +104,17 @@
                     {{ $order->monthly_price_formatted }}
                 </td>
             </tr><!-- check if full payment-->
+        @endif
+
+        @if($order->coachingTime && $order->coachingTime->additional_price)
+            <tr>
+                <td>
+                    <b>{{ trans('site.add-on-price') }}</b>
+                </td>
+                <td>
+                    {{ $order->coachingTime->additional_price_formatted }}
+                </td>
+            </tr>
         @endif
 
         <tr>

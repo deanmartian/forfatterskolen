@@ -1794,9 +1794,16 @@ class ShopController extends Controller
 
             // add course to user
             if (!$order->is_processed) {
-                $courseTaken = $courseService->addCourseToLearner($order->user_id, $order->package_id);
+
+                if ($order->type === 6) {
+                    $courseTaken = $courseService->upgradeCourseTaken($order);
+                    $courseService->notifyUserForUpgrade($order, $courseTaken);
+                } else {
+                    $courseTaken = $courseService->addCourseToLearner($order->user_id, $order->package_id);
+                    $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken);
+                }
+
                 $courseService->notifyAdmin($order->user_id, $order->package_id);
-                $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken);
             }
 
             $order->is_processed = 1;

@@ -21,6 +21,7 @@ use App\Http\FrontendHelpers;
 use App\Http\Middleware\Admin;
 use App\Invoice;
 use App\Jobs\AddMailToQueueJob;
+use App\Jobs\SveaUpdateOrderDetailsJob;
 use App\Log;
 use App\Mail\DiscussionEmail;
 use App\Mail\DiscussionRepliesEmail;
@@ -37,6 +38,9 @@ use App\PublisherBook;
 use App\Replay;
 use App\Repositories\Services\SaleService;
 use App\Repositories\VippsRepository;
+use App\Services\AssignmentService;
+use App\Services\CoachingTimeService;
+use App\Services\CourseService;
 use App\Settings;
 use App\Solution;
 use App\SolutionArticle;
@@ -531,9 +535,56 @@ class HomeController extends Controller
 
     }
 
-    public function thankyou()
+    public function thankyou( Request $request, CoachingTimeService $coachingTimeService )
     {
+        // check if from svea payment
+        if ($request->has('svea_ord')) {
+            $order_id = $request->get('svea_ord');
+            $order = Order::find($order_id);
+
+            SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
+
+            // add course to user
+            if (!$order->is_processed) {
+
+                if ($order->type === 9) {
+                    $coachingTime = $coachingTimeService->addCoachingTime($order);
+                    $coachingTimeService->notifyUser($order, $coachingTime);
+                    $coachingTimeService->notifyAdmin($order);
+                }
+            }
+
+            $order->is_processed = 1;
+            $order->save();
+        }
         return view('frontend.thank-you');
+    }
+
+    /**
+     * @param Request $request
+     * @param AssignmentService $assignmentService
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function assignmentThankyou( Request $request, AssignmentService $assignmentService )
+    {
+        // check if from svea payment
+        if ($request->has('svea_ord')) {
+            $order_id = $request->get('svea_ord');
+            $order = Order::find($order_id);
+
+            SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
+
+            // add course to user
+            if (!$order->is_processed) {
+
+                $assignmentService->upgradeAssignment($order);
+            }
+
+            $order->is_processed = 1;
+            $order->save();
+        }
+
+        return view('frontend.shop.thankyou');
     }
 
     /**
@@ -699,9 +750,94 @@ class HomeController extends Controller
                 endif;
             }
 
-            return view('frontend.coaching-timer-checkout', compact('data'));
+            $user = \Auth::user();
+
+            if ($user) {
+                $user['address'] = $user->address;
+            }
+
+            return view('frontend.coaching-timer-checkout', compact('data', 'user'));
         }
         return view('frontend.coaching-timer');
+    }
+
+    public function coachingTimeCalculate( Request $request )
+    {
+        $this->validate($request, [
+            'manuscript' => 'mimes:docx'
+        ]);
+
+        $data = [
+            'file_name' => '',
+            'file_location' => '',
+            'additional_price' => 0
+        ];
+
+        if( $request->hasFile('manuscript') &&  $request->file('manuscript')->isValid() ) :
+            $original_filename = $request->manuscript->getClientOriginalName();
+
+            $destinationPath = 'storage/manuscript-tests/'; // upload path
+            $fileName = $original_filename; // rename document
+            $request->manuscript->move($destinationPath, $fileName);
+            $docObj = new \Docx2Text($destinationPath.$fileName);
+            $docText= $docObj->convertToText();
+            $word_count = FrontendHelpers::get_num_of_words($docText);
+
+            $data['file_name'] = $original_filename;
+            $data['file_location'] = $destinationPath.$fileName;
+
+            $word_7500_price    = 690;
+            $excess_word_price  = 0;
+
+            // the initial calculated word is 7500 if excess then calculate the total excess price
+            if ($word_count > 7500) {
+                $excess_word = $word_count - 7500;
+                // 69 is the price for every 1250 that is excess
+                $excess_word_price = ceil($excess_word/1250) * 69;
+            }
+
+            $additional_price = $word_7500_price + $excess_word_price;
+            $data['additional_price'] = $additional_price;
+
+        endif;
+
+        return response()->json($data);
+    }
+
+    public function coachingTimeValidate( Request $request, CourseService $courseService, CoachingTimeService $coachingTimeService )
+    {
+
+        $validation = [
+            'email'         => 'required|email',
+            'first_name'    => 'required',
+            'last_name'     => 'required',
+            'street'        => 'required',
+            'zip'           => 'required',
+            'city'          => 'required',
+            'phone'         => 'required',
+        ];
+
+        if (!\Auth::check()) {
+            $validation['password'] = 'required|min:3';
+        }
+
+        $validator = \Validator::make($request->all(), $validation);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        if (!\Auth::check()) {
+            $addressData = [
+                'street'    => $request->street,
+                'zip'       => $request->zip,
+                'city'      => $request->city,
+                'phone'     => $request->phone
+            ];
+            $courseService->evaluateUser($request->email, $request->password, $request->first_name, $request->last_name, $addressData);
+        }
+
+        return response()->json($coachingTimeService->generateSveaCheckout($request));
     }
 
     /**

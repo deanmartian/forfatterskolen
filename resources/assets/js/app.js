@@ -45,6 +45,10 @@ Vue.component('course-checkout', require('./frontend/course/checkout.vue'));
 Vue.component('gift-course-checkout', require('./frontend/gift/course-checkout.vue'));
 Vue.component('gift-shop-manuscript-checkout', require('./frontend/gift/shop-manuscript-checkout.vue'));
 Vue.component('shop-manuscript-checkout', require('./frontend/shop-manuscript/checkout.vue'));
+Vue.component('course-upgrade', require('./frontend/upgrade/course.vue'));
+Vue.component('manuscript-upgrade', require('./frontend/upgrade/manuscript.vue'));
+Vue.component('assignment-upgrade', require('./frontend/upgrade/assignment.vue'));
+Vue.component('coaching-time-checkout', require('./frontend/coaching-time/checkout.vue'));
 
 new Vue({
     el: '#app-container'
