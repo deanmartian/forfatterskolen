@@ -1,12 +1,12 @@
 @extends('frontend.layout')
 
 @section('title')
-<title>Forfatterskolen – Din litterære familie. Skrivekurs for deg</title>
+    <title>Forfatterskolen – Din litterære familie. Skrivekurs for deg</title>
 @stop
 
 @section('styles')
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css"
-    as="style" onload="this.onload=null;this.rel='stylesheet'">
+          as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
     </noscript>
@@ -62,43 +62,43 @@
             </video>
             <div class="row upcoming-row">
                 {{--<div style="position: fixed; top: 0; width: 100%; height: 100%; z-index: -1;">--}}
-                    {{--<video id="video" style="width:100%; height:100%" src="{{ asset('video/Reisen_final.mov') }}">
-                    </video>--}}
+                {{--<video id="video" style="width:100%; height:100%" src="{{ asset('video/Reisen_final.mov') }}">
+                </video>--}}
                 {{--</div>--}}
 
                 @foreach($upcomingSections as $k => $upcomingSection)
                     @php
                         $hasNextWebinar = $k === 1 && $next_webinar ? true : false;
                     @endphp
-                <div class="col-md-4">
-                    <div class="column">
-                        <div class="content-container">
-                            <div class="title">
-                                {{ $hasNextWebinar ? trans('site.front.next-webinar') : $upcomingSection->name }}
-                            </div>
+                    <div class="col-md-4">
+                        <div class="column">
+                            <div class="content-container">
+                                <div class="title">
+                                    {{ $hasNextWebinar ? trans('site.front.next-webinar') : $upcomingSection->name }}
+                                </div>
 
-                            <div class="h2 mt-0 mb-4 font-montserrat-semibold">
-                                {{ $hasNextWebinar ? $next_webinar->title : $upcomingSection->title }}
-                            </div>
+                                <div class="h2 mt-0 mb-4 font-montserrat-semibold">
+                                    {{ $hasNextWebinar ? $next_webinar->title : $upcomingSection->title }}
+                                </div>
 
-                            @if ($upcomingSection->date || $hasNextWebinar)
-                                <div class="date-time-cont">
-                                    <i class="img-icon16 icon-calendar"></i>
-                                    <span>{{ \App\Http\FrontendHelpers::formatDate($hasNextWebinar ? $next_webinar->start_date : $upcomingSection->date) }}</span>
-                                    <i class="img-icon16 icon-clock ml-3"></i>
-                                    <span>
+                                @if ($upcomingSection->date || $hasNextWebinar)
+                                    <div class="date-time-cont">
+                                        <i class="img-icon16 icon-calendar"></i>
+                                        <span>{{ \App\Http\FrontendHelpers::formatDate($hasNextWebinar ? $next_webinar->start_date : $upcomingSection->date) }}</span>
+                                        <i class="img-icon16 icon-clock ml-3"></i>
+                                        <span>
                                         {{ \App\Http\FrontendHelpers::getTimeFromDT($hasNextWebinar ? $next_webinar->start_date : $upcomingSection->date) }}
                                     </span>
-                                </div>
-                            @endif
+                                    </div>
+                                @endif
 
-                            <a href="{{ url($hasNextWebinar ? '/course/17?show_kursplan=1' : $upcomingSection->link) }}" class="btn buy-btn mt-4"
-                               title="View course plan tab on course">
-                                {{ $hasNextWebinar ? trans('site.front.see-complete-list') : $upcomingSection->link_label }}
-                            </a>
+                                <a href="{{ url($hasNextWebinar ? '/course/17?show_kursplan=1' : $upcomingSection->link) }}" class="btn buy-btn mt-4"
+                                   title="View course plan tab on course">
+                                    {{ $hasNextWebinar ? trans('site.front.see-complete-list') : $upcomingSection->link_label }}
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
                 @endforeach
                 {{--<div class="col-md-4">
                     <div class="column webinar">
@@ -129,7 +129,7 @@
                         @foreach($testimonials as $k => $testimonial)
                             <div class="carousel-item col-md-3 {{ $k == 0 ? 'active' : '' }}">
                                 <a href="javascript:void(0)" data-toggle="modal" data-target="#vooModal" class="vooBtn"
-                                data-link="{{ $testimonial->testimony }}">
+                                   data-link="{{ $testimonial->testimony }}">
                                     <div class="img-container"
                                          data-bg="https://www.forfatterskolen.no/{{ $testimonial->author_image }}">
                                         <img data-src="https://www.forfatterskolen.no/{{ '/images-new/play-white.png' }}" class="play-image">
@@ -236,7 +236,7 @@
                                 @foreach( $popular_courses as $popular_course )
                                     @if( $featured == 0)
                                         <a href="{{ route('front.course.show', $popular_course->id) }}"
-                                        class="featured-link" title="View course details">
+                                           class="featured-link" title="View course details">
                                             <div class="row featured-item" style="background-image: url({{$popular_course->course_image}})">
                                                 <div class="details">
                                                     <div class="indicator">
@@ -256,31 +256,31 @@
                                 <?php $counter = 0 ?>
                                 <div class="row courses-container">
                                     @foreach( $popular_courses as $popular_course )
-                                            @if ($counter == 0)
-                                                <?php $counter++?>
-                                            @else
-                                                <div class="col-md-6 mt-5 course-item" itemscope
-                                                     itemtype="http://schema.org/CreativeWork">
-                                                    <div class="card rounded-0 border-0">
-                                                        <div class="card-header p-0 rounded-0"
-                                                             data-bg="https://www.forfatterskolen.no/{{$popular_course->course_image}}">
-                                                            <span>{{ trans('site.front.course-text') }}</span>
-                                                        </div>
-                                                        <div class="card-body">
-                                                            <h3 class="font-montserrat-semibold" itemprop="headline">
-                                                                {{ str_limit(strip_tags($popular_course->title), 40)}}
-                                                            </h3>
-                                                            <p class="font-montserrat-light mt-4"
-                                                               itemprop="about">{{ str_limit(strip_tags($popular_course->description), 130)}}</p>
-                                                            <a href="{{ route('front.course.show', $popular_course->id) }}"
-                                                               class="site-btn-global rounded-0 mt-3 d-inline-block"
-                                                            title="View course details" itemprop="url">
-                                                                {{ trans('site.front.view') }}
-                                                            </a>
-                                                        </div>
+                                        @if ($counter == 0)
+                                            <?php $counter++?>
+                                        @else
+                                            <div class="col-md-6 mt-5 course-item" itemscope
+                                                 itemtype="http://schema.org/CreativeWork">
+                                                <div class="card rounded-0 border-0">
+                                                    <div class="card-header p-0 rounded-0"
+                                                         data-bg="https://www.forfatterskolen.no/{{$popular_course->course_image}}">
+                                                        <span>{{ trans('site.front.course-text') }}</span>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <h3 class="font-montserrat-semibold" itemprop="headline">
+                                                            {{ str_limit(strip_tags($popular_course->title), 40)}}
+                                                        </h3>
+                                                        <p class="font-montserrat-light mt-4"
+                                                           itemprop="about">{{ str_limit(strip_tags($popular_course->description), 130)}}</p>
+                                                        <a href="{{ route('front.course.show', $popular_course->id) }}"
+                                                           class="site-btn-global rounded-0 mt-3 d-inline-block"
+                                                           title="View course details" itemprop="url">
+                                                            {{ trans('site.front.view') }}
+                                                        </a>
                                                     </div>
                                                 </div>
-                                            @endif
+                                            </div>
+                                        @endif
                                     @endforeach
                                 </div> <!-- end courses-container -->
                             </div> <!-- end container -->
@@ -300,12 +300,12 @@
                 </div> <!-- end heading -->
 
                 <?php
-                    $latestPoem = $poems->first();
+                $latestPoem = $poems->first();
                 ?>
 
                 <div class="row poem-details">
                     <div class="col-md-6 col-sm-12 poem-author-container">
-                            <img data-src="https://www.forfatterskolen.no/{{ $latestPoem->author_image }}" class="author-image" alt="author image">
+                        <img data-src="https://www.forfatterskolen.no/{{ $latestPoem->author_image }}" class="author-image" alt="author image">
                         <div class="author-info">
                             <span class="indicator">{{ trans('site.front.poem-of-the-week') }}</span>
                             <h3 class="font-weight-normal font-montserrat-regular">{{ $latestPoem->title }}</h3>

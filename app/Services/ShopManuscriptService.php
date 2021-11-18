@@ -110,10 +110,20 @@ class ShopManuscriptService {
     public function generateSveaCheckout( Request $request )
     {
         $orderRecord = $this->createOrder($request);
-        $this->createOrderShopManuscript($orderRecord->id, $request);
+
+        if (!$request->has('order_type') ||
+            ($request->has('order_type') && $request->order_type === Order::MANUSCRIPT_TYPE)) {
+            $this->createOrderShopManuscript($orderRecord->id, $request);
+        }
 
         $calculatedPrice = $orderRecord->price - $orderRecord->discount;
         $shopManuscript = ShopManuscript::find($orderRecord->item_id);
+
+        $confirmationUrl = url('/shop-manuscript/' . $shopManuscript->id .'/thankyou?svea_ord='.$orderRecord->id);
+
+        if ($request->has('order_type') && $request->order_type === Order::MANUSCRIPT_UPGRADE_TYPE) {
+            $confirmationUrl = route('learner.upgrade',['svea_ord' => $orderRecord->id]);
+        }
 
         $checkoutMerchantId = env('SVEA_CHECKOUTID');
         $checkoutSecret = env('SVEA_CHECKOUT_SECRET');
@@ -179,7 +189,7 @@ class ShopManuscriptService {
                 "merchantSettings" => array(
                     "termsUri" => url('/terms/manuscript-terms'),
                     "checkoutUri" => url('/shop-manuscript/' . $shopManuscript->id . '/checkout?t=1'), // load checkout
-                    "confirmationUri" => url('/shop-manuscript/' . $shopManuscript->id .'/thankyou?svea_ord='.$orderRecord->id),
+                    "confirmationUri" => $confirmationUrl,
                     "pushUri" => url('/svea-callback?svea_order_id={checkout.order.uri}')
                     //"https://localhost:51925/push.php?svea_order_id={checkout.order.uri}",
                 )
@@ -210,17 +220,37 @@ class ShopManuscriptService {
      */
     public function createOrder( Request $request )
     {
+
+        $orderType = Order::MANUSCRIPT_TYPE;
+        $discount = $request->discount;
+        if ($request->has('order_type')) {
+            $orderType = $request->order_type;
+
+            if ($orderType === Order::MANUSCRIPT_UPGRADE_TYPE) {
+                $discount = 0;
+            }
+        }
+
         $newOrder['user_id']    = \Auth::user()->id;
         $newOrder['item_id']    = $request->shop_manuscript_id;
-        $newOrder['type']       = Order::MANUSCRIPT_TYPE;
+        $newOrder['type']       = $orderType;
         $newOrder['package_id'] = 0;
         $newOrder['plan_id']    = $request->payment_plan_id;
         $newOrder['price']      = $request->price;
-        $newOrder['discount']   = $request->totalDiscount;
+        $newOrder['discount']   = $discount;
         $newOrder['payment_mode_id']   = $request->payment_mode_id;
         $newOrder['is_processed'] = 0;
 
-        return Order::create($newOrder);
+        $order = Order::create($newOrder);
+
+        if ($orderType === Order::MANUSCRIPT_UPGRADE_TYPE) {
+            $order->upgrade()->create([
+                'parent' => $request->parent,
+                'parent_id' => $request->parent_id
+            ]);
+        }
+
+        return $order;
     }
 
     /**
@@ -304,6 +334,15 @@ class ShopManuscriptService {
         $shopManuscriptTaken->save();
 
         return $shopManuscriptTaken;
+    }
+
+    public function upgradeShopManuscript( $order )
+    {
+        $orderUpgrade = $order->upgrade;
+        $shopManuscriptTaken = ShopManuscriptsTaken::find($orderUpgrade->parent_id);
+        // change the manuscript plan/package
+        $shopManuscriptTaken->shop_manuscript_id = $order->item_id;
+        $shopManuscriptTaken->save();
     }
 
     /**

@@ -11,6 +11,7 @@ class Assignment extends Model
     protected $fillable = ['course_id', 'title', 'description', 'submission_date', 'available_date','allowed_package', 'add_on_price',
         'max_words', 'for_editor', 'editor_manu_generate_count', 'generated_filepath', 'show_join_group_question',
         'parent_id', 'parent', 'editor_expected_finish'];
+    protected $appends = ['submission_date_time_text'];
 
 
     // filter for course assignments
@@ -72,6 +73,13 @@ class Assignment extends Model
     
     public function getEditorExpectedFinishAttribute($value) {
         return $value ? date_format(date_create($value), 'd.m.Y') : NULL;
+    }
+
+    public function getSubmissionDateTimeTextAttribute()
+    {
+        return ucwords(strtr(trans('site.learner.submission-date-value'), [
+            '_date_' => \Carbon\Carbon::parse($this->attributes['submission_date'])->format('d M Y'),
+            '_time_' => \Carbon\Carbon::parse($this->attributes['submission_date'])->format('H:i')]));
     }
 
     public function assignmentManuscriptEditorCanTake(){

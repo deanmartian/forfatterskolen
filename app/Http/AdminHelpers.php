@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Assignment;
 use App\Course;
 use App\CoursesTaken;
 use App\CronLog;
@@ -348,18 +349,21 @@ class AdminHelpers
     public static function getOrderDetails($order)
     {
         $orderDetails = '';
+
+        if (in_array($order->type, [1, 6])) {
+            $package = Package::find($order->package_id);
+            $paymentPlan = PaymentPlan::find($order->plan_id);
+            $orderDetails = "<a href='".route('admin.course.show', $order->item_id)."?section=packages'>"
+                .$package->variation."</a>"." - ".$paymentPlan->plan;
+        }
+
+        if (in_array($order->type, [2, 7])) {
+            $shopManuscript = ShopManuscript::find($order->item_id);
+            $orderDetails = "<a href='".route('admin.shop-manuscript.index')."'>"
+                .$shopManuscript->title."</a>";
+        }
+
         switch ($order->type) {
-            case 1:
-                $package = Package::find($order->package_id);
-                $paymentPlan = PaymentPlan::find($order->plan_id);
-                $orderDetails = "<a href='".route('admin.course.show', $order->item_id)."?section=packages'>"
-                    .$package->variation."</a>"." - ".$paymentPlan->plan;
-                break;
-            case 2:
-                $shopManuscript = ShopManuscript::find($order->item_id);
-                $orderDetails = "<a href='".route('admin.shop-manuscript.index')."'>"
-                    .$shopManuscript->title."</a>";
-                break;
             case 3:
                 $workshop = Workshop::find($order->item_id);
                 $orderDetails = "<a href='".route('admin.workshop.show', $workshop->id)."'>"
@@ -370,6 +374,13 @@ class AdminHelpers
                 break;
             case 5:
                 $orderDetails = trans('site.front.copy-editing.title');
+                break;
+            case 8:
+                $assignment = Assignment::find(($order->item_id));
+                $orderDetails = "<a href='".route('admin.assignment.show',
+                        ['course_id' => $assignment->course->id, 'id' => $assignment->id])."'>"
+                    .$assignment->title."</a>";
+
                 break;
         }
 

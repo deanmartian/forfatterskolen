@@ -12,21 +12,20 @@ class Order extends Model {
     const WORKSHOP_TYPE = 3;
     const CORRECTION_TYPE = 4;
     const COPY_EDITING_TYPE = 5;
+    const COURSE_UPGRADE_TYPE = 6;
+    const MANUSCRIPT_UPGRADE_TYPE = 7;
+    const ASSIGNMENT_UPGRADE_TYPE = 8;
+    const COACHING_TIME_TYPE = 9;
 
     protected $fillable = ['user_id', 'item_id', 'type', 'package_id', 'plan_id', 'payment_mode_id', 'price', 'discount',
         'svea_order_id', 'svea_invoice_id', 'svea_payment_type', 'svea_payment_type_description', 'gift_card', 'is_processed'];
     protected $appends = ['item', 'packageVariation', 'created_at_formatted', 'price_formatted', 'discount_formatted',
         'monthly_price_formatted', 'total_formatted'];
-    protected $with = ['paymentPlan'];
+    protected $with = ['paymentPlan', 'paymentMode'];
 
     public function paymentPlan()
     {
         return $this->belongsTo('App\PaymentPlan', 'plan_id', 'id');
-    }
-
-    public function paymentMode()
-    {
-        return $this->belongsTo('App\PaymentMode');
     }
 
     public function package()
@@ -44,6 +43,21 @@ class Order extends Model {
         return $this->belongsTo('App\User');
     }
 
+    public function upgrade()
+    {
+        return $this->hasOne('App\OrderUpgrade');
+    }
+
+    public function coachingTime()
+    {
+        return $this->hasOne('App\OrderCoachingTime');
+    }
+
+    public function paymentMode()
+    {
+        return $this->hasOne('App\PaymentMode', 'id', 'payment_mode_id');
+    }
+
     public function scopeSvea($query)
     {
         return $query->whereNotNull('svea_order_id');
@@ -51,11 +65,25 @@ class Order extends Model {
 
     public function getItemAttribute()
     {
-        if ($this->attributes['type'] === 2) {
+        if (in_array($this->attributes['type'], [2, 7])) {
             return ShopManuscript::find($this->attributes['item_id'])->title;
         }
 
-        if ($this->attributes['type'] === 3) {
+        if ($this->attributes['type'] === static::ASSIGNMENT_UPGRADE_TYPE) {
+            return Assignment::find($this->attributes['item_id'])->title;
+        }
+
+        if ($this->attributes['type'] === static::COACHING_TIME_TYPE) {
+            $title = 'Coaching time';
+            if ($this->attributes['item_id'] === 1) {
+                $title .= ' (1 time)';
+            } else {
+                $title .= ' (0,5 time)';
+            }
+            return $title;
+        }
+
+        if ($this->attributes['type'] === static::WORKSHOP_TYPE) {
             return Workshop::find($this->attributes['item_id'])->title;
         }
 
@@ -98,6 +126,9 @@ class Order extends Model {
     public function getTotalFormattedAttribute()
     {
         $total = $this->attributes['price'] - $this->attributes['discount'];
+        if ($this->coachingTime) {
+            $total = $total + $this->coachingTime->additional_price;
+        }
         return FrontendHelpers::currencyFormat($total);
     }
 }
