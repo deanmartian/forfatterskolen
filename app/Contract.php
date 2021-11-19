@@ -20,6 +20,7 @@ class Contract extends Model
         'admin_signed_date',
         'signature_label',
         'signature',
+        'end_date',
         'signed_date',
         'status'
     ];

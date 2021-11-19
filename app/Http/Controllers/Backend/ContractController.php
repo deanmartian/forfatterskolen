@@ -37,7 +37,8 @@ class ContractController extends Controller
         $contract = [
             'title' => '',
             'details' => '',
-            'signature_label' => 'Signature'
+            'signature_label' => 'Signature',
+            'end_date' => null
         ];
         $title = 'Create Contract';
         $templates = ContractTemplate::all();
@@ -95,7 +96,8 @@ class ContractController extends Controller
     public function processSave( Request $request, $id = null )
     {
         $this->validate($request, [
-            'title' => 'required'
+            'title' => 'required',
+            'end_date' => 'required'
         ]);
 
         $data = $request->except('_token');

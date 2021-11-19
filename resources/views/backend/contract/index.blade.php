@@ -89,6 +89,8 @@
                                 <thead>
                                 <tr>
                                     <th>Name</th>
+                                    <th>Receiver Name</th>
+                                    <th>End Date</th>
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -101,7 +103,17 @@
                                                 {{ $contract->title }}
                                             </a>
                                         </td>
-                                        <td></td>
+                                        <td>
+                                            {{ $contract->receiver_name }}
+                                        </td>
+                                        <td>{{ $contract->end_date }}</td>
+                                        <td>
+                                            @if ($contract->signature)
+                                                <label class="label label-success">Signed</label>
+                                            @else
+                                                <label class="label label-warning">Unsigned</label>
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endforeach
                                 </tbody>

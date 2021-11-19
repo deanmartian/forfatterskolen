@@ -194,6 +194,12 @@
                             </div>
 
                             <div class="form-group">
+                                <label>End Date</label>
+                                <input type="date" class="form-control" name="end_date"
+                                       value="{{ $contract['end_date'] }}" required>
+                            </div>
+
+                            <div class="form-group">
                                 <label>Image</label>
                                 <input type="file" class="form-control" name="image">
                             </div>
