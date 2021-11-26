@@ -39,3 +39,4 @@
     <link rel="stylesheet" href="{{asset('css/vendor-bootstrap.min.css')}}">
 </noscript>--}}
 <link rel="stylesheet" href="{{asset('css/front-style.min.css?v='.time())}}">
+<link rel="stylesheet" href="{{asset('css/dark-mode.css?v='.time())}}">
