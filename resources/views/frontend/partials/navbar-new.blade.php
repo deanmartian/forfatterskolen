@@ -4,14 +4,14 @@
     </button>
 
     <a class="navbar-brand mx-auto" href="{{url('')}}" title="View front page">
-        <img src="{{ asset('images-new/home/logo-white.png') }}" alt="logo with tagline">
+        <img src="{{ asset('images-new/logo-tagline.png') }}" alt="logo with tagline">
         {{--asset('images-new/logo-tagline.png')--}}
     </a>
 
     <div class="navbar-collapse collapse pr-0">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="#"  title="View front page">Velkommen til Forfatterskolen</a> {{--style="color: #000"--}}
+                <a class="nav-link" href="#"  title="View front page" style="color: #000">Velkommen til Forfatterskolen</a> {{--style="color: #000"--}}
             </li>
         </ul>
 
@@ -19,28 +19,28 @@
             <li class="nav-item">
                 <a class="nav-link" href="https://twitter.com/Forfatterrektor" target="_blank"
                    title="View twitter page">
-                    <i class="sprite-social twitter-white"></i>
+                    <i class="sprite-social twitter"></i>
                     {{--<img src="{{asset('images-new/social-icons/twitter.png')}}" class="social-image">--}}
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="https://no.pinterest.com/forfatterskolen_norge/" target="_blank"
                    title="View pinterest page">
-                    <i class="sprite-social pinterest-white"></i>
+                    <i class="sprite-social pinterest"></i>
                     {{--<img src="{{asset('images-new/social-icons/pinterest.png')}}" class="social-image">--}}
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="https://www.instagram.com/forfatterskolen_norge/" target="_blank"
                     title="View instagram page">
-                    <i class="sprite-social instagram-white"></i>
+                    <i class="sprite-social instagram"></i>
                     {{--<img src="{{asset('images-new/social-icons/instagram.png')}}" class="social-image">--}}
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="https://www.facebook.com/bliforfatter/" target="_blank"
                     title="View facebook page">
-                    <i class="sprite-social facebook-white"></i>
+                    <i class="sprite-social facebook"></i>
                     {{--<img src="{{asset('images-new/social-icons/facebook.png')}}" class="social-image">--}}
                 </a>
             </li>
