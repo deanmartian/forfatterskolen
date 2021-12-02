@@ -25,7 +25,7 @@ class UpcomingController extends Controller
         $section->name = $request->name;
         $section->title = $request->title;
         $section->description = $request->description;
-        $section->date = $request->date ? Carbon::parse($request->date)->format('d-m-y H:i:s') : NULL;
+        $section->date = $request->date ? Carbon::parse($request->date)->format('Y-m-d H:i:s') : NULL;
         $section->link = $request->link;
         $section->link_label = $request->link_label;
         $section->save();
