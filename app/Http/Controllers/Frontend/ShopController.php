@@ -63,7 +63,7 @@ class ShopController extends Controller
         $countryCode = AdminHelpers::ip_info($request->ip(), "Country Code");
 
         if ($countryCode === 'NO') {
-            return redirect()->route('front.course.checkout', $course_id);
+            //return redirect()->route('front.course.checkout', $course_id);
         }
 
         $course = Course::findOrFail($course_id);
