@@ -258,7 +258,10 @@ class GiftController extends Controller
             $user = User::where('email', $request->email)->first();
 
             if (!$user) {
-                return redirect()->route('auth.login.show', "t=register")->withErrors([
+                return redirect()->route('auth.login.show', [
+                    "t" => "register",
+                    "r" => "redeem-gift"
+                ])->withErrors([
                     'login_error' => 'User does not exist. Please create one before claiming'
                 ]);
             }

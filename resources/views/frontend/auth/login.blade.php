@@ -105,6 +105,9 @@ Password Change
 							<div id="register" class="tab-pane fade @if(Request::input('t') == 'register') in active @endif" role="tabpanel">
 								<form method="post" method="post" action="{{route('frontend.register.store')}}" onsubmit="disableSubmit(this)">
 									{{csrf_field()}}
+									@if (Request::has('r'))
+										<input type="hidden" name="redirect" value="{{ Request::get('r') }}">
+									@endif
 									<h1>{{ trans('site.front.login.register') }}</h1>
 
 									<div class="input-group">

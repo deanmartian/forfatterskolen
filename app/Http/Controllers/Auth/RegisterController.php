@@ -64,6 +64,12 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
+        if ($request->has('redirect')) {
+            if ($request->redirect === 'redeem-gift') {
+                return redirect(route('front.gift.show-redeem'));
+            }
+        }
+
         return redirect(route('learner.course'));
     }
 
