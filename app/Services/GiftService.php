@@ -379,25 +379,34 @@ class GiftService {
 
         $emailTemplate = AdminHelpers::emailTemplate('Gift Purchase');
         $emailContent = str_replace([
-            ':redeem_code'
+            ':redeem_code',
+            ':redeem_link',
+            ':end_redeem_link'
         ], [
-            $giftPurchase->redeem_code
+            $giftPurchase->redeem_code,
+            "<a class='btn buy-btn' href='" . route('front.gift.show-redeem'). "'>",
+            "</a>"
         ], $emailTemplate->email_content);
 
 
-        $attachments = NULL;
+        $giftAttachments = NULL;
         if ($giftPurchase->parent === 'course-package') {
             $package = $giftPurchase->coursePackage;
             $attachments = [asset($this->generateRegretForm($user->id, $package->id)),
                 asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
+
+            dispatch(new AddMailToQueueJob($user_email, $package->course->title, '',
+                'postmail@forfatterskolen.no', 'Forfatterskolen', $attachments,
+                'gift-purchase', $giftPurchase->id));
+
         }
 
         if ($order->gift_card) {
-            $attachments[] = asset($order->gift_card);
+            $giftAttachments[] = asset($order->gift_card);
         }
 
         dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent, $emailTemplate->from_email,
-            NULL,$attachments, 'gift-purchase', $giftPurchase->id));
+            NULL,$giftAttachments, 'gift-purchase', $giftPurchase->id));
 
         return $emailContent;
     }

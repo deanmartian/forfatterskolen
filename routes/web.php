@@ -246,6 +246,9 @@ Route::group([
                 Route::post('/{id}/checkout/validate-form', 'GiftController@validateCheckoutForm');
                 Route::get('/{id}/thankyou', 'GiftController@thankyou');
             });
+
+            Route::get('/redeem', 'GiftController@showRedeem')->name('front.gift.show-redeem');
+            Route::post('/redeem', 'GiftController@redeemGift');
         });
 
         Route::get('/thankyou', 'ShopController@thankyou')->name('front.shop.thankyou'); // Thank You

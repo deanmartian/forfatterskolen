@@ -125,8 +125,8 @@ class ShopManuscriptService {
             $confirmationUrl = route('learner.upgrade',['svea_ord' => $orderRecord->id]);
         }
 
-        $checkoutMerchantId = env('SVEA_CHECKOUTID');
-        $checkoutSecret = env('SVEA_CHECKOUT_SECRET');
+        $checkoutMerchantId = config('services.svea.checkoutid');
+        $checkoutSecret = config('services.svea.checkout_secret');
 
         //set endpoint url. Eg. test or prod
         $baseUrl = \Svea\Checkout\Transport\Connector::PROD_BASE_URL;

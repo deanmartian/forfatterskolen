@@ -5,14 +5,20 @@ namespace App\Http\Controllers\Frontend;
 use App\Course;
 use App\CoursesTaken;
 use App\Editor;
+use App\GiftPurchase;
+use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
+use App\Http\Middleware\Learner;
 use App\Http\Requests\OrderCreateRequest;
+use App\Jobs\SveaUpdateOrderDetailsJob;
 use App\Order;
 use App\Package;
 use App\Services\CourseService;
 use App\Services\GiftService;
 use App\ShopManuscript;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -195,11 +201,13 @@ class GiftController extends Controller
                 }
             }
 
+            SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
+
             // add course to user
             if (!$order->is_processed) {
                 $giftPurchase = $giftService->addGiftPurchase($order->user_id, $parent, $parent_id);
                 $giftService->notifyGiftBuyer($giftPurchase, $order);
-                $giftService->notifyAdmin($giftPurchase);
+                //$giftService->notifyAdmin($giftPurchase);
             }
 
             $order->is_processed = 1;
@@ -232,4 +240,68 @@ class GiftController extends Controller
             'giftCard'));
     }
 
+    public function showRedeem()
+    {
+        return view('frontend.gift.redeem');
+    }
+
+    public function redeemGift( Request $request, LearnerController $learnerController )
+    {
+        $giftPurchase = GiftPurchase::where('redeem_code', $request->redeem_code)->first();
+
+        $this->validate($request, [
+            'email' => 'required|email',
+            'redeem_code' => 'required'
+        ]);
+
+        if (Auth::guest()) {
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user) {
+                return redirect()->route('auth.login.show', "t=register")->withErrors([
+                    'login_error' => 'User does not exist. Please create one before claiming'
+                ]);
+            }
+
+            Auth::login($user);
+        }
+
+        if (!$giftPurchase || $giftPurchase->is_redeemed || $giftPurchase->user_id === Auth::user()->id) {
+
+            $errorMessage = '';
+            if (!$giftPurchase) {
+                $errorMessage = 'Invalid Redeem code.';
+            }
+
+            if ($giftPurchase && $giftPurchase->is_redeemed) {
+                $errorMessage = 'Gift already redeemed.';
+            }
+
+            if ($giftPurchase && $giftPurchase->user_id === Auth::user()->id) {
+                $errorMessage = 'Buyer cannot claim the gift.';
+            }
+
+            return redirect()->back()->withInput()->withErrors([
+                'login_error' => $errorMessage
+            ]);
+
+        }
+
+        if ($giftPurchase->parent === 'course-package') {
+            $learnerController->redeemCourse( $giftPurchase );
+        }
+
+        if ($giftPurchase->parent === 'shop-manuscript') {
+            $learnerController->redeemManuscript( $giftPurchase );
+        }
+
+        $giftPurchase->is_redeemed = 1;
+        $giftPurchase->save();
+
+        if ($giftPurchase->parent === 'course-package') {
+            return redirect()->route('learner.course');
+        }
+
+        return redirect()->route('learner.shop-manuscript');
+    }
 }
