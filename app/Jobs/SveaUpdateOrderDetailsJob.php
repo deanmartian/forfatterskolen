@@ -40,7 +40,19 @@ class SveaUpdateOrderDetailsJob implements ShouldQueue
             $order->svea_payment_type_description = $sveaOrderDetails['Campaign']['Description'];
         }
 
+
+        $fullname = $sveaOrderDetails['BillingAddress']['FullName'] ?: $sveaOrderDetails['ShippingAddress']['FullName'];
+        $street = $sveaOrderDetails['BillingAddress']['StreetAddress'] ?: $sveaOrderDetails['ShippingAddress']['StreetAddress'];
+        $postalCode = $sveaOrderDetails['BillingAddress']['PostalCode'] ?: $sveaOrderDetails['ShippingAddress']['PostalCode'];
+        $city = $sveaOrderDetails['BillingAddress']['City'] ?: $sveaOrderDetails['ShippingAddress']['City'];
+        $countryCode = $sveaOrderDetails['BillingAddress']['CountryCode'] ?: $sveaOrderDetails['ShippingAddress']['CountryCode'];
+
         $order->svea_payment_type = $sveaOrderDetails['PaymentType'];
+        $order->svea_fullname = $fullname;
+        $order->svea_street = $street;
+        $order->svea_postal_code = $postalCode;
+        $order->svea_city = $city;
+        $order->svea_country_code = $countryCode;
         $order->save();
     }
 }
