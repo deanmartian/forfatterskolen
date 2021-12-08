@@ -92,6 +92,9 @@
                 <a href="https://pilotleser.no" class="nav-link"
                    title="Pilotleser" target="_blank">Pilotleser</a>
             </li>
+            <li class="nav-item @if(Route::currentRouteName() == 'front.gift-cards') active @endif">
+                <a href="{{route('front.gift-cards')}}" class="nav-link">Gavekort</a>
+            </li>
             <li class="nav-item @if(Route::currentRouteName() == 'front.faq') active @endif">
                 <a href="{{route('front.faq')}}" class="nav-link"
                    title="View faqs">{{ trans('site.front.nav.faq') }}</a>
