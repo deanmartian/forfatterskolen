@@ -141,6 +141,7 @@ class LearnerController extends Controller
         $learnerInvoices = $learner->invoices->pluck('id');
         $registeredWebinarLists = $learner->registeredWebinars->pluck('id');
         $registeredWebinars = $learner->registeredWebinars()->latest()->get();
+        $learnerGiftPurchases = $learner->giftPurchases->pluck('id');
 
         $emailHistories = EmailHistory::where(function($query) use ($learnerAssignmentManuscripts){
                 $query->where('parent', 'LIKE', 'assignment-manuscripts%');
@@ -180,6 +181,10 @@ class LearnerController extends Controller
             })
             ->orWhere(function($query) use ($learner){
                 $query->where('parent', 'LIKE', 'correction%');
+                $query->where('recipient', $learner->email);
+            })
+            ->orWhere(function($query) use ($learner){
+                $query->where('parent', 'LIKE', 'gift-purchase');
                 $query->where('recipient', $learner->email);
             })
             ->latest()
