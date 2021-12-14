@@ -207,7 +207,7 @@ class GiftController extends Controller
             if (!$order->is_processed) {
                 $giftPurchase = $giftService->addGiftPurchase($order->user_id, $parent, $parent_id);
                 $giftService->notifyGiftBuyer($giftPurchase, $order);
-                //$giftService->notifyAdmin($giftPurchase);
+                $giftService->notifyAdmin($giftPurchase);
             }
 
             $order->is_processed = 1;
