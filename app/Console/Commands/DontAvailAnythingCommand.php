@@ -48,7 +48,7 @@ class DontAvailAnythingCommand extends Command
         foreach($users as $user) {
             // check if the user don't have workshop, manuscript and courses taken
             if ($user->workshopsTaken->count() == 0 && $user->shopManuscriptsTaken->count() == 0 && count($user->coursesTaken) == 0
-            && $user->comeptitionApplication->count() === 0) {
+            && $user->comeptitionApplication->count() === 0 && $user->giftPurchases->count() === 0) {
 
                 $to = $user->email;
 
