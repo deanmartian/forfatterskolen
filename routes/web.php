@@ -608,6 +608,7 @@ Route::group([
         Route::post('/workshop-taken/{id}/edit-notes', 'LearnerController@updateWorkshopTakenNotes')->name('admin.learner.workshop-taken.update-notes'); // Update workshop count for learner
         Route::post('/course_taken/{id}/update_started_at', 'LearnerController@updateCourseTakenStartedAt')->name('admin.course_taken.updated_started_at');
         Route::post('/course_taken/{id}/set_availability', 'LearnerController@setCourseTakenAvailability')->name('admin.course_taken.set_availability'); // Shop Manuscript add learner
+        Route::post('/course_taken/{id}/send-regret-form', 'LearnerController@sendRegretForm')->name('admin.course_taken.send_regret_form');
         Route::post('/course_taken/{id}/allow_lesson_access/{lesson_id}', 'LearnerController@allow_lesson_access')->name('admin.course_taken.allow_lesson_access'); //allow_lesson_access
         Route::post('/course_taken/{id}/default_lesson_access/{lesson_id}', 'LearnerController@default_lesson_access')->name('admin.course_taken.default_lesson_access'); //default_lesson_access
         Route::post('/course_taken/{id}/set-expiry-reminder', 'LearnerController@setCourseTakenExpiryReminder')

@@ -264,6 +264,13 @@
 											>
 												{{ trans('site.set-availability') }}</button>
 
+											<button class="btn btn-xs btn-info d-block sendRegretFormBtn margin-top"
+													data-toggle="modal"
+													data-target="#sendRegretFormModal"
+													data-action="{{ route('admin.course_taken.send_regret_form', $courseTaken->id) }}">
+												Send Regret Form
+											</button>
+
 											@if( !$courseTaken->is_active )
 												<form method="POST" action="{{ route('activate_course_taken') }}" style="margin-top: 7px">
 													{{ csrf_field() }}
@@ -1781,6 +1788,35 @@
     </div>
 
   </div>
+</div>
+
+<div id="sendRegretFormModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Send Regret Form</h4>
+			</div>
+
+			<div class="modal-body">
+				<form method="POST" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+
+					<div class="form-group">
+						<label>
+							Email Content
+						</label>
+						<textarea name="email_content" class="form-control" cols="30" rows="10"></textarea>
+					</div>
+					
+					<div class="text-right">
+						<button type="submit" class="btn btn-primary">{{ trans('site.send') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+	</div>
 </div>
 
 
@@ -3555,6 +3591,14 @@
 			form.attr('action', action);
 			form.find('input[name=start_date]').val(start_date);
 			form.find('input[name=end_date]').val(end_date);
+		});
+
+		$(".sendRegretFormBtn").click(function() {
+            let modal = $('#sendRegretFormModal');
+            let action = $(this).data('action');
+            let form = modal.find('form');
+
+            form.attr('action', action);
 		});
 
 		$(".setCourseTakenStartedAtBtn").click(function(){

@@ -20,6 +20,7 @@ use App\Mail\SubjectBodyEmail;
 use App\PaymentMode;
 use App\PaymentPlan;
 use App\PrivateMessage;
+use App\Services\CourseService;
 use App\UserAutoRegisterToCourseWebinar;
 use App\UserEmail;
 use App\UserPreferredEditor;
@@ -944,6 +945,26 @@ class LearnerController extends Controller
         $courseTaken->end_date = $request->end_date;
         $courseTaken->save();
         return redirect()->back();
+    }
+
+    public function sendRegretForm( $course_taken_id, Request $request, CourseService $courseService )
+    {
+        $courseTaken = CoursesTaken::findOrFail($course_taken_id);
+        $package = $courseTaken->package;
+        $user = $courseTaken->user;
+
+        $attachments = [asset($courseService->generateDocx($courseTaken->user_id, $courseTaken->package_id)),
+            asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
+
+        $email_content = $request->email_content ?: '';
+        dispatch(new AddMailToQueueJob($user->email, $package->course->title, $email_content,
+            'postmail@forfatterskolen.no', 'Forfatterskolen', $attachments, 'courses-taken-order', $courseTaken->id));
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Regret schema sent.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true
+        ]);
     }
 
 
