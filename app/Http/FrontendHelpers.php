@@ -932,6 +932,10 @@ class FrontendHelpers
         return $staffs;
     }
 
+    public static function getNews() {
+        return \App\Settings::where('setting_name', 'news')->first();
+    }
+
     /**
      * get the order details from svea
      * @param $svea_order_id

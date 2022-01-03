@@ -108,5 +108,24 @@ class SettingsController extends Controller
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record updated successfully.'),
             'alert_type' => 'success']);
     }
+
+    public function news()
+    {
+        $model = Settings::where('setting_name','news')->first();
+        return view('backend.news.index', compact('model'));
+    }
+
+    public function saveNews( Request $request )
+    {
+        $model = Settings::firstOrNew([
+            'setting_name' => 'news'
+        ]);
+
+        $content = $request->details;
+        $model->lb_content = $content;
+        $model->save();
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag("News saved successfully."),
+            'alert_type' => 'success']);
+    }
     
 }

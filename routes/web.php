@@ -1433,6 +1433,8 @@ Route::group([
         Route::post('/settings/update/course_not_started_reminder', 'SettingsController@courseNotStartedReminder')->name('admin.settings.update.course_not_started_reminder');
         Route::post('/settings/update/head-editor', 'SettingsController@headEditor')->name('admin.settings.update.head-editor');
         Route::post('/settings/create/{name}', 'SettingsController@create')->name('admin.settings.create');
+        Route::get('/news', 'SettingsController@news')->name('admin.news.index');
+        Route::post('/news/save', 'SettingsController@saveNews')->name('admin.news.save');
         // Advisories
         Route::put('/advisory/{id}', 'AdvisoryController@update')->name('admin.advisory.update');
 
@@ -1608,8 +1610,7 @@ Route::group([
 
 
 // File Manager routes
-
-Route::group(['middleware' => 'auth'], function () {
+/*Route::group(['middleware' => 'auth'], function () {
     Route::get('/laravel-filemanager', '\Unisharp\Laravelfilemanager\controllers\LfmController@show');
     Route::post('/laravel-filemanager/upload', '\Unisharp\Laravelfilemanager\controllers\UploadController@upload');
     // list all lfm routes here...
@@ -1718,7 +1719,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get($files_url, 'RedirectController@getFile')
             ->where('file_name', '.*');
     });
-});
+});*/
 
 Route::get('/check-nearly-expired-course', function(){
     \App\Http\AdminHelpers::checkNearlyExpiredCourses();
