@@ -10,6 +10,7 @@
     <noscript>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
     </noscript>
+    <link rel="stylesheet" href="{{asset('vendor/laraberg/css/laraberg.css')}}"> <!-- for news section in front page -->
 @stop
 
 @section('content')
@@ -116,6 +117,14 @@
                     </div>
                 </div>--}}
             </div>
+        </div>
+
+        <div class="container" id="news-container">
+            @if ($news = \App\Http\FrontendHelpers::getNews())
+                <div class="news-section">
+                    {!! $news->lb_content !!}
+                </div>
+            @endif
         </div>
 
         <div class="container">

@@ -3,9 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use VanOns\Laraberg\Models\Gutenbergable;
 
 class Settings extends Model
 {
+
+    use Gutenbergable;
+
     protected $table = 'settings';
     public $timestamps = false;
     protected $fillable = ['setting_name', 'setting_value',];
