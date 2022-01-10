@@ -58,6 +58,14 @@
             </a>
         </div>--}}
 
+        <div class="container" id="news-container">
+            @if ($news = \App\Http\FrontendHelpers::getNews())
+                <div class="news-section">
+                    {!! $news->lb_content !!}
+                </div>
+            @endif
+        </div>
+
         <div class="container upcoming-container">
             <video loop muted id="vid">
                 <source src="{{ asset('video/Reisen_final.mp4') }}" type="video/mp4">
@@ -117,14 +125,6 @@
                     </div>
                 </div>--}}
             </div>
-        </div>
-
-        <div class="container" id="news-container">
-            @if ($news = \App\Http\FrontendHelpers::getNews())
-                <div class="news-section">
-                    {!! $news->lb_content !!}
-                </div>
-            @endif
         </div>
 
         <div class="container">
