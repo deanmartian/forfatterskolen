@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Contract extends Model
 {
 
-    const SENT_STATUS = 1;
+    const SUPER_ADMIN_ONLY = 1;
 
     protected $fillable = [
         'code',
@@ -33,6 +33,11 @@ class Contract extends Model
         static::creating(function ($query) {
             $query->code = AdminHelpers::generateHash(10);
         });
+    }
+
+    public function scopeAdminOnly($query)
+    {
+        return $query->where('status', 1);
     }
 
 }

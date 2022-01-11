@@ -4,6 +4,10 @@
     <title>Admins &rsaquo; Forfatterskolen Contract</title>
 @stop
 
+@section('styles')
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+@stop
+
 @section('content')
     <div class="page-toolbar">
         <h3><i class="fa fa-handshake-o"></i> Contract</h3>
@@ -113,6 +117,12 @@
                                             @else
                                                 <label class="label label-warning">Unsigned</label>
                                             @endif
+
+                                            @if (Auth::user()->isSuperUser())
+                                                    <input type="checkbox" data-toggle="toggle" data-on="Show" data-off="Hide" data-size="mini" name="status"
+                                                           class="status-toggle" data-id="{{ $contract->id }}"
+                                                           @if ($contract->status === 1) checked @endif>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -197,6 +207,7 @@
 @stop
 
 @section('scripts')
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script>
         // tinymce load editor
         let tiny_editor_config_contract = {
@@ -241,6 +252,21 @@
             let action = $(this).data('action');
             let modal = $('#deleteContractTemplateModal');
             modal.find('form').attr('action', action);
+        });
+
+        $(".status-toggle").change(function(){
+            let contract_id = $(this).attr('data-id');
+            let is_checked = $(this).prop('checked');
+            let check_val = is_checked ? 1 : 0;
+
+            $.ajax({
+                type:'POST',
+                url:'/contract/' + contract_id + '/status',
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: { 'status' : check_val },
+                success: function(data){
+                }
+            });
         });
     </script>
 @stop

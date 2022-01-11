@@ -19,10 +19,10 @@ class ContractController extends Controller
      */
     public function index()
     {
-        if (!\Auth::user()->isSuperUser()) {
-            return redirect()->route('admin.admin.index');
-        }
         $contracts = Contract::paginate(10);
+        if (!\Auth::user()->isSuperUser()) {
+            $contracts = Contract::adminOnly()->paginate(10);
+        }
         $templates = ContractTemplate::paginate(10);
         return view('backend.contract.index', compact('contracts', 'templates'));
     }
@@ -74,6 +74,14 @@ class ContractController extends Controller
     public function show( $id )
     {
         $contract = Contract::findOrFail($id);
+
+        if (!\Auth::user()->isSuperUser()) {
+            $contracts = Contract::adminOnly()->pluck('id')->toArray();
+            if (!in_array($id, $contracts)) {
+                return redirect()->route('admin.contract.index');
+            }
+        }
+
         return view('backend.contract.show', compact('contract'));
     }
 
@@ -112,6 +120,8 @@ class ContractController extends Controller
             $request->image->move($destinationPath, $fileName);
             $data['image'] = '/'.$destinationPath.$fileName;
         endif;
+
+        $data['status'] = 1;
 
         if ($id) {
             $contract = Contract::find($id);
@@ -180,12 +190,29 @@ class ContractController extends Controller
 
         $contract->receiver_name = $request->name;
         $contract->receiver_email = $request->email;
-        $contract->status = Contract::SENT_STATUS;
         $contract->save();
 
         return redirect()->back()
             ->with(['errors' => AdminHelpers::createMessageBag('Contract sent successfully.'),
                 'alert_type' => 'success']);
+    }
+
+    public function contractStatus( $id, Request $request )
+    {
+        $contract = Contract::find($id);
+        $success = false;
+
+        if ($contract) {
+            $contract->status = $request->status;
+            $contract->save();
+            $success = TRUE;
+        }
+
+        return response()->json([
+            'data' => [
+                'success' => $success,
+            ]
+        ]);
     }
 
     public function saveContractTemplate( $id = NULL, Request $request )

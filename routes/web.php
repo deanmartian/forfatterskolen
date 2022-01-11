@@ -903,6 +903,7 @@ Route::group([
         Route::post('/contract/template/save/{id?}', 'ContractController@saveContractTemplate')->name('admin.contract-template.save');
         Route::delete('/contract/template/delete/{id?}', 'ContractController@deleteContractTemplate')->name('admin.contract-template.delete');
         Route::post('/contract/{id}/sign', 'ContractController@signContract')->name('admin.contract.sign');
+        Route::post('/contract/{id}/status', 'ContractController@contractStatus')->name('admin.contract.status');
         Route::resource('/contract','ContractController',[
             'names' => [
                 'index' => 'admin.contract.index',
