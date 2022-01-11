@@ -1001,6 +1001,7 @@ Route::group([
         Route::post('assignment_manuscript/lock-status', 'AssignmentController@updateLockStatus')->name('assignment.group.lock-status'); // Courses For Sale Status
         Route::post('assignment_manuscript/{id}/update_manu_types', 'AssignmentController@updateTypes')->name('assignment.group.update_manu_types');
         Route::post('assignment_manuscript/{id}/assignEditor', 'AssignmentController@assignManuscriptEditor')->name('assignment.group.assign_manu_editor');
+        Route::delete('assignment_manuscript/{id}/remove-editor', 'AssignmentController@removeManuscriptEditor')->name('assignment.group.remove_manu_editor');
         Route::post('assignment_manuscript/{id}/download_editor_manuscript', 'AssignmentController@downloadEditorManuscript')->name('assignment.group.download_editor_manuscript');
         Route::post('assignment_manuscript/{id}/learner/{learner_id}/feedback', 'AssignmentController@manuscriptFeedbackNoGroup')->name('assignment.group.manuscript-feedback-no-group');
         Route::post('assignment_manuscript/{id}/send-email-to-user', 'AssignmentController@emailManuscriptUser')->name('assignment.send-email-to-manuscript-user');

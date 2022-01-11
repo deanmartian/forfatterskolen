@@ -697,6 +697,21 @@ class AssignmentController extends Controller
         ]);
     }
 
+    public function removeManuscriptEditor( $id )
+    {
+        $assignmentManuscript = AssignmentManuscript::find($id);
+
+        if ($assignmentManuscript) {
+            $assignmentManuscript->editor_id = 0;
+            $assignmentManuscript->save();
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Editor removed successfully.'),
+            'alert_type' => 'success'
+        ]);
+    }
+
     /**
      * Download manuscript based on the assigned editor
      * @param $id

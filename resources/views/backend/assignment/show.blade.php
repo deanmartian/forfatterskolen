@@ -168,6 +168,7 @@
 								?>
 
 								{{ $editor ? $editor->full_name."\n" : "" }}
+								<br>
 								<button class="btn btn-xs btn-primary assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal"
 								data-action="{{ route('assignment.group.assign_manu_editor', $manuscript->id) }}"
 								data-editor="{{ $editor ? $editor->id : '' }}"
@@ -179,6 +180,14 @@
 								? $manuscript->user->preferredEditor->editor->full_name : '' }}">
 									{{ trans('site.assign-editor') }}
 								</button>
+
+								@if($editor)
+									<button class="btn btn-xs btn-danger removeEditorBtn"
+											data-action="{{ route('assignment.group.remove_manu_editor', $manuscript->id) }}"
+											data-toggle="modal" data-target="#removeEditorModal">
+										Remove Editor
+									</button>
+								@endif
 
 							</td>
 							<td>
@@ -482,6 +491,29 @@
 					</div>
 
 					<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="removeEditorModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Remove Editor</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" enctype="multipart/form-data">
+					{{ csrf_field() }}
+					{{ method_field('DELETE') }}
+					<p>
+						Are you sure you want to remove the editor?
+					</p>
+
+					<button type="submit" class="btn btn-danger pull-right margin-top">Remove</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -1053,6 +1085,13 @@
             modal.find('.select2').show();
             modal.find('.hidden-container').hide();
         }
+	});
+
+    $(".removeEditorBtn").click(function(){
+        let modal = $("#removeEditorModal");
+        let form = modal.find('form');
+        let action = $(this).data('action');
+        form.attr('action', action);
 	});
 
     $('.submitFeedbackBtn').click(function(){
