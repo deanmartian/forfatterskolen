@@ -73,7 +73,7 @@
                         </div>
                         <div class="form-group">
                             <label>Meta Title</label>
-                            <input type="text" name="meta_title" class="form-control" required>
+                            <input type="text" name="meta_title" class="form-control" minlength="40" maxlength="70" required>
                         </div>
                         <div class="form-group">
                             <label>Meta Image</label>
@@ -112,7 +112,7 @@
                         </div>
                         <div class="form-group">
                             <label>Meta Title</label>
-                            <input type="text" name="meta_title" class="form-control" required>
+                            <input type="text" name="meta_title" class="form-control" minlength="40" maxlength="70" required>
                         </div>
                         <div class="form-group">
                             <label>Meta Image</label>
