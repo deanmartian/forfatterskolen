@@ -52,7 +52,7 @@
 
             <div class="row secondary-container">
                 <div class="col-md-6">
-                    <h1>{{ trans('site.front.contact-us.our-staff') }}</h1>
+                    <div class="h1">{{ trans('site.front.contact-us.our-staff') }}</div>
                     <div class="row stab-row">
                         <ul>
                             @foreach(\App\Http\FrontendHelpers::getStaffs() as $staff)
@@ -85,7 +85,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <h1>{{ trans('site.front.contact-us.contact-us-today') }}</h1>
+                    <div class="h1">{{ trans('site.front.contact-us.contact-us-today') }}</div>
                     <div class="row contact-row"data-bg="https://www.forfatterskolen.no/images-new/contact-bg.png">
                         <div class="col-md-12">
                             <div class="row">
@@ -193,9 +193,9 @@
                     </div> <!-- end contact-row -->
 
                     <div class="row save-data-container">
-                        <h1>
+                        <div class="h1" style="font-size: 2.5rem; margin-bottom: .5rem; margin-top: 0">
                             {{ trans('site.front.contact-us.save-data-title') }}
-                        </h1>
+                        </div>
                         <p>
                             {{ trans('site.front.contact-us.save-data-description') }}
                         </p>

@@ -461,9 +461,9 @@
 
 		<div class="similar-courses">
 			<div class="container">
-				<h1 class="text-center">
+				<div class="text-center h1 mb-0 mt-0">
 					{{ trans('site.front.our-course.show.similar-course') }}
-				</h1>
+				</div>
 
 				<div class="row similar-courses-row">
 					@foreach( $course->similar_courses as $similar_course )

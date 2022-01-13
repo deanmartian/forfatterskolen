@@ -2510,7 +2510,7 @@ margin-right: 5px;
     width: 80px;
 }
 
-.contact-page .secondary-container h1 {
+.contact-page .secondary-container .h1 {
     color: #323232;
     font-size: 30px;
     margin-bottom: 20px;
@@ -8060,7 +8060,7 @@ textarea.form-control {
         margin-top: 45%; /*400px*/
     }
 
-    .contact-page .secondary-container h1 {
+    .contact-page .secondary-container .h1 {
         font-size: 25px;
     }
 
