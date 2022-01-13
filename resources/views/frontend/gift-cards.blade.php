@@ -53,7 +53,7 @@
                                 <label>
                                     <input type="radio" name="card" value="{{ $card['name'] }}" class="image-radio"
                                            onclick="setGiftCard(this)">
-                                    <img src="{{ $card['image'] }}">
+                                    <img src="{{ $card['image'] }}" alt="card image">
                                     <b> {{ $card['label'] }} </b>
                                 </label>
                             </div>

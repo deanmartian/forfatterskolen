@@ -149,7 +149,7 @@
                     <a href="{{ route('front.coaching-timer') }}">
                         <div class="row box-white">
                             <div class="col-sm-3">
-                                <img data-src="https://www.forfatterskolen.no/images-new/other-services/open-book.png">
+                                <img data-src="https://www.forfatterskolen.no/images-new/other-services/open-book.png" alt="open book">
                             </div>
 
                             <div class="col-sm-9">
@@ -237,7 +237,7 @@
                                     </div>
                                     <div class="card-body text-center">
                                         <div class="editor-circle">
-                                            <img src="{{ asset($editor['editor_image']) }}" alt="" class="rounded-circle">
+                                            <img src="{{ asset($editor['editor_image']) }}" alt="editor image" class="rounded-circle">
                                         </div>
                                         <p>
                                             <strong class="editor-name">{{ $editor['name'] }}</strong> {{ $editor['description'] }}
