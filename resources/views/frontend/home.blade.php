@@ -10,7 +10,7 @@
     <noscript>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
     </noscript>
-    <link rel="stylesheet" href="{{asset('vendor/laraberg/css/laraberg.css')}}"> <!-- for news section in front page -->
+    <link rel="stylesheet" href="{{asset('vendor/laraberg/css/laraberg.css')}}">
 @stop
 
 @section('content')
@@ -51,13 +51,6 @@
             </div> <!-- end container -->
         </div> <!-- end header -->
 
-        {{--<div class="container py-4">
-            <a href="{{ route('front.skrive2020') }}">
-            <img src="{{ url('/images-new/skrive.jpeg') }}" class="w-100 img-responsive"
-                 style="max-height: 600px; object-fit: contain">
-            </a>
-        </div>--}}
-
         <div class="container" id="news-container">
             @if ($news = \App\Http\FrontendHelpers::getNews())
                 <div class="news-section">
@@ -71,11 +64,6 @@
                 <source src="{{ asset('video/Reisen_final.mp4') }}" type="video/mp4">
             </video>
             <div class="row upcoming-row">
-                {{--<div style="position: fixed; top: 0; width: 100%; height: 100%; z-index: -1;">--}}
-                {{--<video id="video" style="width:100%; height:100%" src="{{ asset('video/Reisen_final.mov') }}">
-                </video>--}}
-                {{--</div>--}}
-
                 @foreach($upcomingSections as $k => $upcomingSection)
                     @php
                         $hasNextWebinar = $k === 1 && $next_webinar ? true : false;
@@ -110,20 +98,6 @@
                         </div>
                     </div>
                 @endforeach
-                {{--<div class="col-md-4">
-                    <div class="column webinar">
-                        <div class="content-container">
-                                <div class="date-time-cont">
-                                    <i class="img-icon16 icon-calendar"></i>
-                                    <span>{{ \App\Http\FrontendHelpers::formatDate($next_webinar->start_date) }}</span>
-                                    <i class="img-icon16 icon-clock ml-3"></i>
-                                    <span>
-                                        {{ \App\Http\FrontendHelpers::getTimeFromDT($next_webinar->start_date) }}
-                                    </span>
-                                </div>
-                        </div>
-                    </div>
-                </div>--}}
             </div>
         </div>
 
@@ -166,55 +140,6 @@
                     </a>
                 </div>
             </div>
-            {{--<div class="testimonial-row row">
-                <div class="col-md-12">
-                    <div class="h1 mt-0 text-center font-montserrat-semibold">
-                        {{ trans('site.front.student-testimonial.heading') }}
-                    </div>
-                    <div id="testimonials-carousel" class="carousel slide global-carousel"
-                         data-ride="carousel" data-interval="15000">
-
-                        <!-- The slideshow -->
-                        <div class="container carousel-inner no-padding">
-
-                            @foreach($testimonials as $k => $testimonial)
-                                <div class="carousel-item {{ $k == 0 ? 'active' : '' }}">
-                                    <div class="col-md-12">
-                                        <div class="row testimonial-details-row">
-                                            <p class="font-montserrat-medium w-100">
-                                                {!! nl2br($testimonial->testimony) !!}
-                                            </p>
-                                            <div class="user-details">
-                                                <div class="images-container">
-                                                    <img data-src="https://www.forfatterskolen.no/{{ $testimonial->author_image }}" class="user-image"
-                                                    alt="user icon">
-                                                    <img data-src="https://www.forfatterskolen.no/{{ $testimonial->book_image }}" class="book-image"
-                                                    alt="book icon">
-                                                </div>
-                                                <div class="user-info">
-                                                    <span class="font-montserrat-semibold theme-text">{{ $testimonial->name }}</span>
-                                                    <span class="font-montserrat-regular">{{ $testimonial->description }}</span>
-                                                </div>
-                                            </div>
-                                        </div> <!-- end testimonial-details-row -->
-                                    </div> <!-- end col-md-12 -->
-                                </div> <!-- end carousel-item -->
-                            @endforeach
-                        </div> <!-- end carousel-inner -->
-
-                        <!-- Left and right controls -->
-                        <a class="carousel-control-prev" href="#testimonials-carousel" data-slide="prev"
-                           title="View previous item">
-                            <span class="carousel-control-prev-icon"></span>
-                        </a>
-                        <a class="carousel-control-next" href="#testimonials-carousel" data-slide="next"
-                            title="View next item">
-                            <span class="carousel-control-next-icon"></span>
-                        </a>
-
-                    </div> <!-- end testimonials-carousel -->
-                </div> <!-- end col-md-12 -->
-            </div>--}}
         </div> <!-- end container-->
 
         <div class="our-course-wrapper">

@@ -2,6 +2,8 @@
 <html lang="en">
     <head>
         <link rel="manifest" href="{{ asset('manifest.json') }}">
+        <link rel="alternate" href="{{ config('app.url') }}" hreflang="x-default" />
+        <link rel="canonical" href="{{ url()->current() }}">
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-44061222-1"></script>
         <script async>
