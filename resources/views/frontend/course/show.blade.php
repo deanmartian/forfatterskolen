@@ -436,7 +436,7 @@
 														@if(!$testimonial->is_video)
 															<div class="avatar">
 																<img src="{{$testimonial['user_image'] ? asset($testimonial['user_image']) : asset('images/user.png')}}"
-																	 class="rounded-circle">
+																	 class="rounded-circle" alt="user image">
 															</div>
 															<div class="divider"></div>
 														@endif
