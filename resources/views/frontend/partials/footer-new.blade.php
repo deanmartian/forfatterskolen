@@ -96,14 +96,14 @@
                 </div>
                 <div class="col-xl-3 col-lg-4 col-md-4">
                     <img data-src="https://www.forfatterskolen.no/images-new/email-envelope.png" alt="envelope icon">
-                    <h2 class="mt-4">E-post</h2>
+                    <div class="mt-4 h2">E-post</div>
                     <p class="mt-4">
                         post@forfatterskolen.no
                     </p>
                 </div>
                 <div class="col-xl-3 col-lg-4 col-md-4">
                     <img data-src="https://www.forfatterskolen.no/images-new/telephone.png" alt="">
-                    <h2 class="mt-4">Kontakt Telefon</h2>
+                    <div class="mt-4 h2">Kontakt Telefon</div>
                     <p class="mt-4">
                         +47 411 23 555
                     </p>

@@ -17,9 +17,9 @@
                 <div class="col-sm-12 top-page-container">
                     <div class="main-blog" data-bg="https://www.forfatterskolen.no/{{ $mainBlog->image }}">
                         <div class="details text-center">
-                            <h1 class="title">
+                            <div class="title h1 mt-0">
                                 {{ $mainBlog->title }}
-                            </h1>
+                            </div>
 
                             <div class="date-author-cont color-b4 my-4">
                                 <span class="date mr-5">

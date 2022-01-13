@@ -17,9 +17,9 @@
                             </span>
                         </div> <!-- end date-author-cont color-b4 -->
 
-                        <h1 class="title mb-4">
+                        <div class="title mb-4" style="line-height: 1.2;">
                             {{ $blog->title }}
-                        </h1>
+                        </div>
 
                         <div class="description color-b4 mb-5">
                             {!! strlen($blog->description) > 200

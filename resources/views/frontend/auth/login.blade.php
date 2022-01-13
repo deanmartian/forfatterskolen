@@ -108,7 +108,7 @@ Password Change
 									@if (Request::has('r'))
 										<input type="hidden" name="redirect" value="{{ Request::get('r') }}">
 									@endif
-									<h1>{{ trans('site.front.login.register') }}</h1>
+									<div class="h1">{{ trans('site.front.login.register') }}</div>
 
 									<div class="input-group">
 										<div class="input-group-prepend">
@@ -181,7 +181,7 @@ Password Change
 							<div id="passwordreset" class="tab-pane fade @if(Request::input('t') == 'passwordreset') in active @endif" role="tabpanel">
 								<form method="post" action="{{route('frontend.passwordreset.store')}}" onsubmit="disableSubmit(this)">
 									{{csrf_field()}}
-									<h1>{{ trans('site.front.login.password-reset-title') }}</h1>
+									<div class="h1">{{ trans('site.front.login.password-reset-title') }}</div>
 
 									<div class="input-group">
 										<div class="input-group-prepend">
@@ -216,7 +216,7 @@ Password Change
 							<div id="password-change" class="tab-pane fade @if(Request::input('t') == 'password-change') in active @endif" role="tabpanel">
 								<form method="post" action="{{route('frontend.password-change')}}" onsubmit="disableSubmit(this)">
 									{{csrf_field()}}
-									<h1>{{ trans('site.front.login.change-password') }}</h1>
+									<div class="h1">{{ trans('site.front.login.change-password') }}</div>
 
 									<div class="input-group">
 										<div class="input-group-prepend">
