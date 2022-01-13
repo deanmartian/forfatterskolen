@@ -17,16 +17,16 @@
                     <div class="left-column" data-bg="https://www.forfatterskolen.no/images-new/ctimer-left.jpg">
                         <div class="circle">
                             <div class="smaller-circle">
-                                <h1>1190 KR</h1>
+                                <div class="h1">1190 KR</div>
                                 <h2 class="theme-text">
                                     {{ trans('site.front.30-mins') }}
                                 </h2>
                             </div>
                         </div>
 
-                        <h1>
+                        <div class="h1">
                             {{ trans('site.front.coaching-timer.one-on-one-coaching') }}
-                        </h1>
+                        </div>
                         <p class="position-relative">
                             {{ trans('site.front.coaching-timer.one-on-one-coaching-description') }}
                         </p>
@@ -39,16 +39,16 @@
                     <div class="right-column" data-bg="https://www.forfatterskolen.no/images-new/ctimer-right.jpg">
                         <div class="circle">
                             <div class="smaller-circle">
-                                <h1>1690 KR</h1>
+                                <div class="h1">1690 KR</div>
                                 <h2 class="theme-text">
                                     {{ trans('site.front.60-mins') }}
                                 </h2>
                             </div>
                         </div>
 
-                        <h1>
+                        <div class="h1">
                             {{ trans('site.front.coaching-timer.one-on-one-coaching') }}
-                        </h1>
+                        </div>
                         <p class="position-relative">
                             {{ trans('site.front.coaching-timer.one-on-one-coaching-description') }}
                         </p>

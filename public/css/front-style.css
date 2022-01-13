@@ -2876,7 +2876,7 @@ margin-right: 5px;
 }
 
 
-.coaching-timer-page h1 {
+.coaching-timer-page h1, .coaching-timer-page .h1 {
     font-family: "Barlow Regular", sans serif;
     font-size: 35px;
     position: relative;
@@ -2936,14 +2936,14 @@ margin-right: 5px;
     position: relative;
 }
 
-.coaching-timer-page .details-container .smaller-circle h1 {
+.coaching-timer-page .details-container .smaller-circle .h1 {
     color: #323232;
     font-family: "Barlow Light", sans serif;
     font-size: 30px;
     margin: 0;
 }
 
-.coaching-timer-page .details-container h1 {
+.coaching-timer-page .details-container .h1 {
     font-size: 23px;
     margin-bottom: 20px;
     margin-top: 20px;
@@ -10586,7 +10586,7 @@ textarea.form-control {
         width: 120px;
     }
 
-    .coaching-timer-page .details-container .smaller-circle h1 {
+    .coaching-timer-page .details-container .smaller-circle .h1 {
         font-size: 28px;
     }
 
