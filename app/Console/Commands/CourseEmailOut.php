@@ -51,7 +51,8 @@ class CourseEmailOut extends Command
         CronLog::create(['activity' => 'CourseEmailOut CRON running.']);
         $emailOutList = EmailOut::where('for_free_course', 0)->whereDate('delay', '=', $today)->get();
         foreach($emailOutList as $emailOut) {
-            $packages = $emailOut->course->packages->pluck('id')->toArray();
+            $packages = $emailOut->allowed_package ? json_decode($emailOut->allowed_package) :
+                $emailOut->course->packages->pluck('id')->toArray();
             $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
                 ->get();
 
@@ -111,7 +112,8 @@ class CourseEmailOut extends Command
         $emailOutListDay = EmailOut::where('for_free_course', 0)->where('delay', 'NOT LIKE', '%-%')->get();
         foreach ($emailOutListDay as $emailOut) {
             $emailDate = Carbon::now()->subDays($emailOut->delay)->format('Y-m-d');
-            $packages = $emailOut->course->packages->pluck('id')->toArray();
+            $packages = $emailOut->allowed_package ? json_decode($emailOut->allowed_package) :
+                $emailOut->course->packages->pluck('id')->toArray();
             $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
                 ->where(function($query) use ($emailDate) {
                     $query->whereDate('started_at', '=', $emailDate);

@@ -43,6 +43,7 @@ class EmailOutController extends Controller {
         $data = $request->except('_token');
         $data['course_id'] = $course_id;
         $data['for_free_course'] = $request->has('for_free_course') ? 1 : 0;
+        $data['allowed_package'] = isset($request->allowed_package) ? json_encode($request->allowed_package) : NULL;
 
         if ($request->hasFile('attachment')) :
             $destinationPath = 'storage/course-email-out-attachments'; // upload path
@@ -146,6 +147,7 @@ class EmailOutController extends Controller {
         $data = $request->except('_token');
         $data['course_id'] = $course_id;
         $data['for_free_course'] = $request->has('for_free_course') ? 1 : 0;
+        $data['allowed_package'] = isset($request->allowed_package) ? json_encode($request->allowed_package) : NULL;
 
         if ($request->hasFile('attachment')) :
             $destinationPath = 'storage/course-email-out-attachments'; // upload path

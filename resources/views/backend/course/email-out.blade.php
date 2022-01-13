@@ -133,6 +133,18 @@
                         </div>
 
                         <div class="form-group">
+                            <label>{{ trans('site.allowed-package') }}</label>
+                            @foreach($course->packages as $package)
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="{{ $package->id }}" name="allowed_package[]">
+                                    <label class="form-check-label" for="{{ $package->variation }}">
+                                        {{ $package->variation }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <div class="form-group">
                             <label>{{ trans('site.send-test-to') }}</label>
                             <input type="email" class="form-control" name="send_to">
                         </div>
@@ -183,6 +195,7 @@
             emailModal.find('.modal-title').text(translations.add_email);
             emailModalForm.attr('action', action);
             emailModalForm.find('.file-display').addClass('hide').empty();
+            emailModalForm.find('input[name="allowed_package[]"]').prop('checked', true);
             let fields = emailModalForm.find('.form-control');
             $("[name=_method]").remove();
             $.each(fields, function (k, v) {
@@ -203,6 +216,19 @@
             let action = $(this).data('action');
             let filename = $(this).data('filename');
             let fileloc = $(this).data('fileloc');
+            let allowed_package = JSON.parse(fields.allowed_package);
+            if (!allowed_package) {
+                emailModalForm.find('input[name="allowed_package[]"]').prop('checked', true);
+            } else {
+                $.each(emailModalForm.find('input[name="allowed_package[]"]'), function(k, v) {
+                    if (allowed_package.includes($(v).val())) {
+                        $("input:checkbox[value='"+ $(v).val() +"']").prop("checked", true);
+                    } else {
+                        $("input:checkbox[value='"+ $(v).val() +"']").prop("checked", false);
+                    }
+                });
+            }
+
             emailModal.find('.modal-title').text(translations.edit_email);
             emailModalForm.attr('action', action);
             emailModalForm.prepend('<input type="hidden" name="_method" value="PUT">');
