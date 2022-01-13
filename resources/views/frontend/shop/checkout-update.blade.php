@@ -14,6 +14,7 @@
                            :user="{{ json_encode($user) }}" :start-index="{{ $startIndex }}"
                            :country-code="{{ json_encode($countryCode) }}"
             ></svea-checkout>
+            <h1 class="hidden">{{ $course->title }}</h1>
         </div>
     </div>
 

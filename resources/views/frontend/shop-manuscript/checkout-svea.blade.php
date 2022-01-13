@@ -12,6 +12,7 @@
 									  :assignment-types="{{ json_encode($assignmentTypes) }}">
 			</shop-manuscript-checkout>
 		</div>
+		<h1 class="hidden">{{ $shopManuscript->title }}</h1>
 	</div>
 
 @stop
