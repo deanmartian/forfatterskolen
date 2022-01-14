@@ -43,9 +43,9 @@
             @foreach($replays as $k => $replay)
                 <div class="row" style="{{ $k > 0 ? 'margin-top: 150px' : ''}}">
                     <div class="col-sm-12">
-                        <h1 class="text-center mb-5">
+                        <div class="h1 text-center mb-5 mt-0">
                             {!! $replay->title !!}
-                        </h1>
+                        </div>
                     </div>
                     <div class="col-sm-12 top-page-container">
                         <iframe src="{{ $replay->video_link }}" frameborder="0"
