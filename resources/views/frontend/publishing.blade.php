@@ -52,7 +52,7 @@
                                             <img data-src="https://www.forfatterskolen.no/{{ $author_image }}" alt="{{ $book['title'] }}" class="img-responsive">
                                         </div>
                                         <div class="right-container">
-                                            <h1 class="book-title">{{ $book['title'] }}</h1>
+                                            <div class="book-title h1">{{ $book['title'] }}</div>
                                             <div>
                                                 {!! $book['quote_description'] !!}
                                             </div>

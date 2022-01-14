@@ -32,9 +32,9 @@
         <div class="row second-section mx-0" data-bg="https://www.forfatterskolen.no/images-new/coffee-book.png">
             <div class="container">
                 <div class="col-sm-9 details">
-                    <h1 class="title mb-5">
+                    <div class="title mb-5 h1 mt-0">
                         {{ trans('site.front.shop-manuscript.first-section.title') }}
-                    </h1>
+                    </div>
 
                     {!! trans('site.front.shop-manuscript.first-section.description') !!}
                     {{--<button class="btn site-btn-global-w-arrow" data-toggle="modal" data-target="#editorsModal">Redaktører</button>--}}
@@ -117,9 +117,9 @@
                                                             <h2>ORD</h2>
                                                         </div>
                                                     </div>
-                                                    <h1>{{ $shopManuscript->title }}</h1>
+                                                    <div class="h1">{{ $shopManuscript->title }}</div>
                                                     <p>{{ $shopManuscript->description }}</p>
-                                                    <h1 class="price">{{ \App\Http\FrontendHelpers::formatCurrency($shopManuscript->full_payment_price) }} KR</h1>
+                                                    <div class="h1 price">{{ \App\Http\FrontendHelpers::formatCurrency($shopManuscript->full_payment_price) }} KR</div>
                                                     <a class="btn buy-btn" href="{{ route($checkoutRoute, $shopManuscript->id) }}">
                                                         {{ trans('site.front.buy') }}
                                                     </a>
@@ -153,9 +153,9 @@
                             </div>
 
                             <div class="col-sm-9">
-                                <h1>
+                                <div class="h1 mt-0">
                                     {{ trans('site.front.coaching-timer.title') }}
-                                </h1>
+                                </div>
                                 <a href="{{ route('front.coaching-timer') }}" class="link-with-arrow">
                                     {{ ucwords(trans('site.front.view')) }}
                                 </a>

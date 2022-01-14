@@ -762,7 +762,8 @@ start today section
     position: relative;
 }
 
-.manuscript-page .carousel .col-md-3 .panel-body h1 {
+.manuscript-page .carousel .col-md-3 .panel-body h1,
+.manuscript-page .carousel .col-md-3 .panel-body .h1 {
     font-family: "Barlow Regular", sans serif;
     font-size: 24px;
     margin: 20px 0;
@@ -850,7 +851,8 @@ start today section
     height: 80px;
 }
 
-.manuscript-page .box-white h1 {
+.manuscript-page .box-white h1,
+.manuscript-page .box-white .h1 {
     font-size: 40px;
     color: #fff
 }
@@ -1844,7 +1846,9 @@ margin-right: 5px;
     text-align: center;
 }
 
-.course-single-page .course-image-row .date-container h1, .workshop-single-page .workshop-image-row .date-container h1 {
+.course-single-page .course-image-row .date-container h1,
+.course-single-page .course-image-row .date-container .h1,
+.workshop-single-page .workshop-image-row .date-container h1 {
     font-size: 40px;
 }
 
@@ -6927,7 +6931,8 @@ textarea.form-control {
         display: none;
     }
 
-    .manuscript-page .carousel .col-md-3 .panel-body h1 {
+    .manuscript-page .carousel .col-md-3 .panel-body h1,
+    .manuscript-page .carousel .col-md-3 .panel-body .h1 {
         font-size: 21px;
     }
 
@@ -6951,7 +6956,8 @@ textarea.form-control {
         padding: 10px 50px;
     }
 
-    .manuscript-page .box-white h1 {
+    .manuscript-page .box-white h1,
+    .manuscript-page .box-white .h1  {
         font-size: 37px;
     }
 
@@ -7547,7 +7553,8 @@ textarea.form-control {
         font-size: 21px;
     }
 
-    .manuscript-page .carousel .col-md-3 .panel-body h1 {
+    .manuscript-page .carousel .col-md-3 .panel-body h1,
+    .manuscript-page .carousel .col-md-3 .panel-body .h1 {
         font-size: 14px;
         margin: 10px 0;
     }
@@ -7574,7 +7581,8 @@ textarea.form-control {
         height: 60px;
     }
 
-    .manuscript-page .box-white h1 {
+    .manuscript-page .box-white h1,
+    .manuscript-page .box-white .h1  {
         font-size: 25px;
     }
 
@@ -8778,7 +8786,8 @@ textarea.form-control {
         height: 40px;
     }
 
-    .manuscript-page .box-white h1 {
+    .manuscript-page .box-white h1,
+    .manuscript-page .box-white .h1  {
         font-size: 17px;
     }
 
@@ -9112,7 +9121,8 @@ textarea.form-control {
         padding: 7px 30px;
     }
 
-    .course-single-page .course-image-row .date-container h1 {
+    .course-single-page .course-image-row .date-container h1,
+    .course-single-page .course-image-row .date-container .h1{
         font-size: 30px;
     }
 
@@ -10074,7 +10084,8 @@ textarea.form-control {
         height: 85%;
     }
 
-    .manuscript-page .carousel .col-md-3 .panel-body h1 {
+    .manuscript-page .carousel .col-md-3 .panel-body h1,
+    .manuscript-page .carousel .col-md-3 .panel-body .h1 {
         font-size: 22px;
         margin: 10px 0;
     }
@@ -11904,7 +11915,8 @@ textarea.form-control {
         padding: 7px 24px;
     }
 
-    .course-single-page .course-image-row .date-container h1 {
+    .course-single-page .course-image-row .date-container h1,
+    .course-single-page .course-image-row .date-container .h1{
         font-size: 20px;
     }
 

@@ -95,9 +95,9 @@
 			<div class="row course-image-row" data-bg="https://www.forfatterskolen.no/{{$course->course_image}}">
 				@if ($course->start_date)
 					<div class="date-container">
-						<h1>
+						<div class="h1 mt-0">
 							{{ $start_date->format('d') }}
-						</h1>
+						</div>
 						<h2>
 							{{ strtoupper($start_date->format('M')) }}
 						</h2>
@@ -106,7 +106,7 @@
 
 				@if($course->photographer)
 					<div class="photographer-container">
-						<h1>{{ trans('site.front.our-course.show.photo') }}: {{ $course->photographer }}</h1>
+						<div class="h1" style="margin-top: 0">{{ trans('site.front.our-course.show.photo') }}: {{ $course->photographer }}</div>
 					</div>
 				@endif
 			</div> <!-- end course-image-row -->
