@@ -4,6 +4,30 @@
 <title>{{$course->title}} &rsaquo; Forfatterskolen</title>
 @stop
 
+@section('metas')
+	<meta property="og:title" content="{{ $course->meta_title }}">
+	<meta property="og:description" content="{{ $course->meta_description }}">
+	<meta name="description" content="{{ $course->meta_description }}">
+	<meta property="og:site_name" content="Forfatterskolen">
+	<meta property="og:url" content="{{ url()->current() }}">
+	<meta property="og:type" content="website" />
+	@if ($course->meta_image)
+		<meta property="og:image" content="{{ url($course->meta_image) }}">
+		<meta property="twitter:image" content="{{ url($course->meta_image) }}">
+	@endif
+
+	<meta property="twitter:title" content="{{ $course->meta_title }}">
+	<meta property="twitter:description" content="{{ $course->meta_description }}">
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:title" content="{{ $course->meta_title }}" />
+	<meta name="twitter:description" content="{{ $course->meta_description }}" />
+	<meta property="fb:app_id" content="300010277156315" />
+
+	<title>
+		{{ $course->meta_title }}
+	</title>
+@stop
+
 @section('styles')
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
 	<style>

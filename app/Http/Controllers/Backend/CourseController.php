@@ -14,6 +14,7 @@ use App\Jobs\WebinarScheduleRegistrationJob;
 use App\Mail\SubjectBodyEmail;
 use App\Package;
 use App\PackageCourse;
+use App\PageMeta;
 use App\User;
 use App\UserAutoRegisterToCourseWebinar;
 use App\WebinarRegistrant;
@@ -93,7 +94,10 @@ class CourseController extends Controller
             'instructor' => '',
             'auto_list_id' => '',
             'photographer' => '',
-            'hide_price' => ''
+            'hide_price' => '',
+            'meta_title' => '',
+            'meta_description' => '',
+            'meta_image' => ''
         ];
         return view('backend.course.create', compact('course'));
     }
@@ -123,15 +127,37 @@ class CourseController extends Controller
             $course->course_image = '/'.$destinationPath.$fileName;
         endif;
 
-        $course->type = $request->type;
-        $course->start_date = $request->start_date;
-        $course->end_date = $request->end_date;
-        $course->is_free = isset($request->is_free) ? 1 : 0;
-        $course->instructor = $request->instructor;
-        $course->auto_list_id = $request->auto_list_id ?: 0;
-        $course->photographer = $request->photographer;
-        $course->hide_price = isset($request->hide_price) ? 1 : 0;
+        if ($request->hasFile('meta_image')) :
+            if( !File::exists('storage/meta-images/') ) :
+                File::makeDirectory('meta-images');
+            endif;
+            $destinationPath = 'storage/meta-images/'; // upload path
+            $extension = $request->meta_image->extension(); // getting image extension
+            $fileName = time().'.'.$extension; // renaming image
+            $request->meta_image->move($destinationPath, $fileName);
+            // optimize image
+            if ( strtolower( $extension ) == "png" ) :
+                $image = imagecreatefrompng($destinationPath.$fileName);
+                imagepng($image, $destinationPath.$fileName, 9);
+            else :
+                $image = imagecreatefromjpeg($destinationPath.$fileName);
+                imagejpeg($image, $destinationPath.$fileName, 70);
+            endif;
+            $course->meta_image = '/'.$destinationPath.$fileName;
+        endif;
+
+        $course->type               = $request->type;
+        $course->start_date         = $request->start_date;
+        $course->end_date           = $request->end_date;
+        $course->is_free            = isset($request->is_free) ? 1 : 0;
+        $course->instructor         = $request->instructor;
+        $course->auto_list_id       = $request->auto_list_id ?: 0;
+        $course->photographer       = $request->photographer;
+        $course->hide_price         = isset($request->hide_price) ? 1 : 0;
+        $course->meta_title         = $request->meta_title;
+        $course->meta_description   = $request->meta_description;
         $course->save();
+
         return redirect(route('admin.course.show', $course->id));
     }
 
@@ -179,14 +205,35 @@ class CourseController extends Controller
             $course->course_image = '/'.$destinationPath.$fileName;
         endif;
 
-        $course->type = $request->type;
-        $course->start_date = $request->start_date;
-        $course->end_date = $request->end_date;
-        $course->instructor = $request->instructor;
-        $course->auto_list_id = $request->auto_list_id ?: 0;
-        $course->photographer = $request->photographer;
-        $course->is_free = isset($request->is_free) ? 1 : 0;
-        $course->hide_price = isset($request->hide_price) ? 1 : 0;
+        if ($request->hasFile('meta_image')) :
+            if( !File::exists('storage/meta-images/') ) :
+                File::makeDirectory('meta-images');
+            endif;
+            $destinationPath = 'storage/meta-images/'; // upload path
+            $extension = $request->meta_image->extension(); // getting image extension
+            $fileName = time().'.'.$extension; // renaming image
+            $request->meta_image->move($destinationPath, $fileName);
+            // optimize image
+            if ( strtolower( $extension ) == "png" ) :
+                $image = imagecreatefrompng($destinationPath.$fileName);
+                imagepng($image, $destinationPath.$fileName, 9);
+            else :
+                $image = imagecreatefromjpeg($destinationPath.$fileName);
+                imagejpeg($image, $destinationPath.$fileName, 70);
+            endif;
+            $course->meta_image = '/'.$destinationPath.$fileName;
+        endif;
+
+        $course->type               = $request->type;
+        $course->start_date         = $request->start_date;
+        $course->end_date           = $request->end_date;
+        $course->instructor         = $request->instructor;
+        $course->auto_list_id       = $request->auto_list_id ?: 0;
+        $course->photographer       = $request->photographer;
+        $course->is_free            = isset($request->is_free) ? 1 : 0;
+        $course->hide_price         = isset($request->hide_price) ? 1 : 0;
+        $course->meta_title         = $request->meta_title;
+        $course->meta_description   = $request->meta_description;
         $course->save();
         return redirect(route('admin.course.show', $course->id));
     }

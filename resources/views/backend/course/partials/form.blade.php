@@ -36,6 +36,22 @@
 					<label>Course Plan Data</label>
 					<textarea name="course_plan_data" rows="10" class="form-control tinymce">{{ $course['course_plan_data'] }}</textarea>
 				</div>
+				<div class="form-group">
+					<label>Meta Title</label>
+					<input type="text" name="meta_title" class="form-control" minlength="40" maxlength="70"
+						   value="{{ $course['meta_title'] }}" required>
+				</div>
+				<div class="form-group">
+					<label>Meta Image</label>
+					<input type="file" name="meta_image" accept="image/jpg, image/jpeg, image/png">
+				</div>
+				<div class="form-group">
+					<label>Meta Description</label>
+					<textarea class="form-control" name="meta_description" rows="6" maxlength="160"
+							  minlength="70"
+							  onkeyup="countChar(this)" required>{{ $course['meta_description'] }}</textarea>
+					<div class="charNum">160 characters left</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -123,4 +139,19 @@
 
 	@section('scripts')
 		<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+		<script>
+            function countChar(val) {
+                let len = val.value.length;
+                if (len >= 160) {
+                    val.value = val.value.substring(0, 160);
+                    $('.charNum').text(0 + " character left");
+                } else {
+                    let charText = "characters left";
+                    if (160 - len === 1) {
+                        charText = "character left";
+                    }
+                    $('.charNum').text(160 - len + " "+charText);
+                }
+            }
+		</script>
 	@stop
