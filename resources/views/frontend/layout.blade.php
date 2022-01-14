@@ -49,6 +49,7 @@
 
             <meta property="twitter:title" content="{{ $pageMeta->meta_title }}">
             <meta property="twitter:description" content="{{ $pageMeta->meta_description }}">
+            <meta name="twitter:site" content="@forfatterskolen" />
             <meta name="twitter:card" content="summary" />
             <meta name="twitter:title" content="{{ $pageMeta->meta_title }}" />
             <meta name="twitter:description" content="{{ $pageMeta->meta_description }}" />
