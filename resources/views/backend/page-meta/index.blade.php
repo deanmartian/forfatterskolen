@@ -21,6 +21,7 @@
                     <th>Link</th>
                     <th>Meta Title</th>
                     <th>Meta Description</th>
+                    <th>Image</th>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -34,6 +35,11 @@
                             {{ $pageMeta->meta_title }}
                         </td>
                         <td>{{ $pageMeta->meta_description }}</td>
+                        <td>
+                            <a href="{{ asset($pageMeta->meta_image) }}" target="_blank">
+                                {{ $pageMeta->meta_image }}
+                            </a>
+                        </td>
                         <td>
                             <button type="button" class="btn btn-primary btn-xs pull-right editPageMetaBtn"
                                     data-toggle="modal" data-target="#editPageMetaModal" data-fields="{{ json_encode($pageMeta) }}"
