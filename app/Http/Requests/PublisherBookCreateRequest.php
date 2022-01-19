@@ -27,7 +27,7 @@ class PublisherBookCreateRequest extends FormRequest
             'title'             => 'required',
             'description'       => 'required',
             'author_image'      => 'required|image',
-            'book_image'        => 'required|image'
+            /*'book_image'        => 'required|image'*/
         ];
     }
 }

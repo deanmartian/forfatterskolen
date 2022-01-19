@@ -213,7 +213,8 @@ class HomeController extends Controller
     {
         $books = PublisherBook::select(['*', \DB::raw('IF(display_order > 0, display_order, 1000000) display_order')])
             ->orderBy('display_order', 'asc')->get();
-        return view('frontend.publishing', compact('books'));
+        return view('frontend.publishing-library', compact('books'));
+        //return view('frontend.publishing', compact('books'));
     }
 
     public function competition()
