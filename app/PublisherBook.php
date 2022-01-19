@@ -9,4 +9,9 @@ class PublisherBook extends Model
     protected $fillable = ['title', 'description', 'quote_description', 'author_image', 'book_image', 'book_image_link',
         'display_order'];
 
+    public function libraries()
+    {
+        return $this->hasMany('App\PublisherBookLibrary');
+    }
+
 }
