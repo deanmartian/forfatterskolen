@@ -1200,6 +1200,14 @@ Route::group([
             ],
         ]);
 
+        Route::group([
+            'prefix' => '/publisher-book-library',
+        ],function(){
+            Route::post('/{book_id}/store', 'PublisherBookController@storeLibrary')->name('publisher-book-library.store');
+            Route::put('/{id}/update', 'PublisherBookController@updateLibrary')->name('publisher-book-library.update');
+            Route::delete('/{id}/delete', 'PublisherBookController@deleteLibrary')->name('publisher-book-library.delete');
+        });
+
         Route::resource('/opt-in','OptInController', [
             'except' => ['show'],
             'names' => [
