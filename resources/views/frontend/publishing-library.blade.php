@@ -80,7 +80,7 @@
 
                                                 {!! $book['description'] !!}
 
-                                                <span class="readLess" title="Click to Show Less"> Read Less</span>
+                                                <span class="readLess" title="Click to Show Less"> {{ trans('site.homepage.read-less') }}</span>
                                             </div>
 
                                             <div class="book-images-container m-auto">
@@ -130,9 +130,9 @@
             //This limit you can set after how much characters you want to show Read More.
             let carLmt = 280;
             // Text to show when text is collapsed
-            let readMoreTxt = " ... Read More";
+            let readMoreTxt = " ... {{ trans('site.homepage.read-more') }}";
             // Text to show when text is expanded
-            let readLessTxt = " Read Less";
+            let readLessTxt = " {{ trans('site.homepage.read-less') }}";
 
 
             //Traverse all selectors with this class and manupulate HTML part to show Read More

@@ -1470,9 +1470,28 @@ Rektor Kristine',
     'services-6' => 'Språkvask og korrektur',
     'services-7' => 'Trykk',
     'services-8' => 'Pilotlesere',
+    'read-less' => 'Les mindre',
   ),
   'gift-card' => 
   array (
-    'description' => 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,',
+    'description' => '<p class="mb-3">Vil du hjelpe noen med å realisere en drøm? Nå tilbyr Forfatterskolen gavekort på skrivekurs i flere sjangre. Du kan også bestille gavekort på manusutvikling. </p>
+
+<p class="mb-3">Stadig blir vi kontaktet av personer som vil gi en av sine kjære et skrivekurs i julegave – en mor man vil skal skrive sine memoarer, en bestemor som bør lage barnebok av historiene til barnebarna, en far som vil hjelpe en kreativ datter, en som vet kjæresten er god til å skrive – og at hun ikke tør å ta spranget helt ut.</p> 
+
+<p class="mb-3">Da er dette tidenes gave: Et skrivekurs som er skreddersydd for sjangeren man vil skrive i!</p>
+
+<p class="mb-3">Du kan også bestille manusutvikling fra profesjonell redaktør.</p>
+
+<p class="mb-3">Gaven inkluderer en grundig tilbakemelding på tekst, der man får hjelp til å se hva som fungerer og hva som kan utvikles videre. Elevene våre opplever tilbakemeldingene som konstruktive og inspirerende.</p>
+
+<p class="mb-3">Hjelp en du er glad i med å skape en helstøpt fortelling. Denne gaven vil garantert bli husket for alltid, og kan få større betydning enn du tror.</p>',
+    'title' => 'Gavekort',
+    'buy-course' => 'Kjøp kurs',
+    'buy-manuscript' => 'Kjøp manusutvikling',
+    'select-gift-cards' => 'Velg gavekort',
+    'christmas-present' => 'Julegave',
+    'birthday-present' => 'Bursdagsgave',
+    'giftcard-present' => 'Gavekort',
+    'love-present' => 'Kjærestegave',
   ),
 );
