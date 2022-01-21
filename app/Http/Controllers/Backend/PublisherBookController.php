@@ -24,7 +24,7 @@ class PublisherBookController extends Controller {
      */
     public function index()
     {
-        $books = $this->publisherBook->orderBy('id','DESC')->paginate(10);
+        $books = $this->publisherBook->orderBy('id','DESC')->get();
         return view('backend.publisher-book.index', compact('books'));
     }
 
@@ -34,6 +34,7 @@ class PublisherBookController extends Controller {
      */
     public function create()
     {
+        $lastOrderedBook = $this->publisherBook->orderBy('display_order','DESC')->first();
         $book = [
             'id'                => '',
             'title'             => '',
@@ -42,7 +43,7 @@ class PublisherBookController extends Controller {
             'author_image'      => '',
             'book_image'        => '',
             'book_image_link'   => '',
-            'display_order'     => ''
+            'display_order'     => $lastOrderedBook->display_order + 1
         ];
         return view('backend.publisher-book.create', compact('book'));
     }
@@ -74,7 +75,9 @@ class PublisherBookController extends Controller {
 
         $requestData['display_order'] = $requestData['display_order'] ? $requestData['display_order'] : 0;
 
+        $display_order = $requestData['display_order'];
         $book = $this->publisherBook->create($requestData);
+        $this->updateDisplayOrder($display_order, $book->id);
 
         return redirect()->route('admin.publisher-book.edit', $book->id)->with([
             'errors' => AdminHelpers::createMessageBag('Publisher book created successfully.'),
@@ -131,7 +134,10 @@ class PublisherBookController extends Controller {
 
             $requestData['display_order'] = $requestData['display_order'] ? $requestData['display_order'] : 0;
 
+            $display_order = $requestData['display_order'];
             $book->update($requestData);
+            $this->updateDisplayOrder($display_order, $id);
+
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('Publisher book updated successfully.'),
                 'alert_type' => 'success'
@@ -225,5 +231,30 @@ class PublisherBookController extends Controller {
             ]);
         }
         return redirect()->back();
+    }
+
+    /**
+     * Update the sequence of display order
+     * @param $display_order
+     * @param $id
+     */
+    public function updateDisplayOrder($display_order, $id)
+    {
+        while($publishedBook = PublisherBook::where('display_order', $display_order)->where('id', '!=', $id)->first()) {
+            $lastBook = PublisherBook::orderBy('display_order', 'DESC')->first();
+            if ($publishedBook && $publishedBook->id !== $lastBook->id) {
+                $publishedBook->display_order = $display_order+1;
+                $publishedBook->save();
+            } else {
+                $lastDisplay = PublisherBook::where('display_order', $display_order)->get();
+                // check if last display order is more than 1
+                if ($lastDisplay->count() > 1) {
+                    $lastBook->display_order = $lastBook->display_order + 1;
+                    $lastBook->save();
+                }
+            }
+
+            $display_order++;
+        }
     }
 }

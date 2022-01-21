@@ -13,8 +13,8 @@
     <div class="col-md-12">
         <a href="{{ route('admin.publisher-book.create') }}" class="btn btn-success margin-top">{{ trans('site.add-publisher-book') }}</a>
 
-        <div class="table-users table-responsive">
-            <table class="table">
+        <div class="table-users table-responsive" style="margin-top: 20px">
+            <table class="table dt-table" id="invoice-table">
                 <thead>
                 <tr>
                     <th>{{ trans('site.id') }}</th>
@@ -44,9 +44,9 @@
             </table>
         </div>
 
-        <div class="pull-right">
+        {{--<div class="pull-right">
             {{ $books->render() }}
-        </div>
+        </div>--}}
 
     </div>
 
