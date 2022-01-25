@@ -596,6 +596,17 @@
 						<textarea class="form-control tinymce" name="message" rows="6"
 								  required>{!! $emailTemplate->email_content !!}</textarea>
 					</div>
+
+					<div class="form-group">
+						<label>
+							Send Email
+						</label>
+						<br>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes"
+							   class="for-sale-toggle" data-off="No"
+							   name="send_email" data-width="84" checked>
+					</div>
+
                     <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('approve-feedback') }}</button>
                     <div class="clearfix"></div>
                 </form>
