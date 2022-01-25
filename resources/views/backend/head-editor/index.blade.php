@@ -607,7 +607,7 @@
 							   name="send_email" data-width="84" checked>
 					</div>
 
-                    <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('approve-feedback') }}</button>
+                    <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.approve-feedback') }}</button>
                     <div class="clearfix"></div>
                 </form>
 
