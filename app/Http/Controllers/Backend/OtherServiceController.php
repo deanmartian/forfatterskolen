@@ -469,8 +469,10 @@ class OtherServiceController extends Controller
         $emailContent = AdminHelpers::formatEmailContent($emailContent, $from,
         Auth::user()->first_name, '');
 
-        dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
-            $emailTemplate->from_email, null, null, $parent, $service_id));
+        if ($request->has('send_email')) {
+            dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
+                $emailTemplate->from_email, null, null, $parent, $service_id));
+        }
 
         return redirect()->back()->with([
             'errors'                => AdminHelpers::createMessageBag('Feedback approved successfully.'),

@@ -231,22 +231,25 @@ class AssignmentGroupController extends Controller
         $to             = $assignmentManuscript->user->email;
         $first_name     = $assignmentManuscript->user->first_name;
 
-        if($request->availability && Carbon::parse($request->availability)->gt(Carbon::today())) {
-            $redirect_link          = route('learner.assignment');
-            $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
+        if ($request->has('send_email')) {
+            if ($request->availability && Carbon::parse($request->availability)->gt(Carbon::today())) {
+                $redirect_link = route('learner.assignment');
+                $formattedMailContent = AdminHelpers::formatEmailContent($email_content, $to, $first_name,
+                    $redirect_link);
 
-            DelayedEmail::create([
-                'subject'       => $request->subject,
-                'message'       => $formattedMailContent,
-                'from_email'    => $request->from_email,
-                'recipient'     => $to,
-                'send_date'     => $request->availability,
-                'parent'        => 'assignment-manuscripts',
-                'parent_id'     => $assignmentManuscript->id
-            ]);
-        } else {
-            $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject,
-                $request->from_email, $assignmentManuscript->id);
+                DelayedEmail::create([
+                    'subject' => $request->subject,
+                    'message' => $formattedMailContent,
+                    'from_email' => $request->from_email,
+                    'recipient' => $to,
+                    'send_date' => $request->availability,
+                    'parent' => 'assignment-manuscripts',
+                    'parent_id' => $assignmentManuscript->id
+                ]);
+            } else {
+                $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject,
+                    $request->from_email, $assignmentManuscript->id);
+            }
         }
         
         return redirect()->back()->with([
