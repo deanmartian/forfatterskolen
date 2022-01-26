@@ -433,10 +433,10 @@ class OtherServiceController extends Controller
         // replace feedback file
         $filesWithPath = $this->getFiles($request);
         $otherServiceFeedback = OtherServiceFeedback::find($request->feedback_id);
-        if ($filesWithPath){
+        if ($filesWithPath && $otherServiceFeedback){
             $otherServiceFeedback->manuscript = $filesWithPath;
+            $otherServiceFeedback->save();
         }
-        $otherServiceFeedback->save();
 
         // Update status
         $user_email = '';
