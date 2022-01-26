@@ -1,20 +1,20 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\Assignment;
+use App\AssignmentFeedback;
+use App\AssignmentGroup;
+use App\AssignmentGroupLearner;
 use App\AssignmentManuscript;
+use App\Course;
+use App\DelayedEmail;
+use App\Http\AdminHelpers;
+use App\Http\Controllers\Controller;
+use App\Jobs\AddMailToQueueJob;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller;
-use App\Course;
-use App\Assignment;
-use App\AssignmentGroup;
-use App\AssignmentFeedback;
-use App\AssignmentGroupLearner;
-use App\User;
-use App\Http\AdminHelpers;
-use Carbon\Carbon;
-use App\DelayedEmail;
-use App\Jobs\AddMailToQueueJob;
 
 class AssignmentGroupController extends Controller
 {
@@ -219,8 +219,8 @@ class AssignmentGroupController extends Controller
         // group assignment - set availability date on feedback
         $assignmentFeedback = AssignmentFeedback::find($feedback_id);
         $assignmentFeedback->availability = $request->availability;
-        if($fileWithPath){
-            $assignmentFeedback->filename = $fileWithPath;
+        if($filesWithPath){
+            $assignmentFeedback->filename = $filesWithPath;
         }
 
         $assignmentFeedback->save();
