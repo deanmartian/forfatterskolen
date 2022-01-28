@@ -67,6 +67,7 @@ class WebinarEmailOutCommand extends Command
                 $query->where('end_date','>=', Carbon::now())
                     ->orWhereNull('end_date');
             })
+            ->where('can_receive_email', 1)
             ->get();
 
             $webinarDetails = AdminHelpers::getBigMarkerDetails($webinar->link);

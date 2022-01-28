@@ -122,6 +122,7 @@
 								<th>{{ trans('site.learner-id') }}</th>
 								<th>{{ trans_choice('site.packages', 1) }}</th>
 								<th>Preferred Editor</th>
+								<th>Include in email list</th>
 								<th></th>
 							</tr>
 							</thead>
@@ -142,7 +143,14 @@
 											{{ $learner->user->preferredEditor ? $learner->user->preferredEditor->editor->fullname : '' }}
 										</td>
 										<td>
-											<button type="submit" data-toggle="modal" data-target="#removeLearnerModal" class="btn btn-danger btn-xs pull-right btn-remove-learner" data-learner="{{$learner->user->full_name}}" data-package="{{$learner->package->id}}" data-learner-id="{{$learner->user->id}}">{{ trans('site.remove-learner') }}</button>
+											<input type="checkbox" data-toggle="toggle" data-on="Yes"
+												   class="receive-email-toggle" data-off="No" data-id="{{ $learner->id }}"
+												   name="can_receive_email" data-size="mini" @if($learner->can_receive_email) {{ 'checked' }} @endif>
+										</td>
+										<td>
+											<button type="submit" data-toggle="modal" data-target="#removeLearnerModal" class="btn btn-danger btn-xs pull-right btn-remove-learner"
+													data-learner="{{$learner->user->full_name}}" data-package="{{$learner->package->id}}"
+													data-learner-id="{{$learner->user->id}}">{{ trans('site.remove-learner') }}</button>
 										</td>
 									</tr>
 								@endforeach
@@ -578,5 +586,19 @@
                $("[type=checkbox]").prop('checked', false);
 		   }
 		});
+
+        $(".receive-email-toggle").change(function(){
+            let learner_id = $(this).attr('data-id');
+            let is_checked = $(this).prop('checked');
+            let check_val = is_checked ? 1 : 0;
+            $.ajax({
+                type:'POST',
+                url:'/course-taken/' + learner_id + '/update-can-receive-email',
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: { 'can_receive_email' : check_val },
+                success: function(data){
+                }
+            });
+        });
 	</script>
 @stop

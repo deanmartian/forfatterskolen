@@ -905,6 +905,24 @@ class CourseController extends Controller
 
     }
 
+    public function canReceiveEmailUpdate( $course_taken_id, Request $request )
+    {
+        $courseTaken = CoursesTaken::find($course_taken_id);
+        $success = false;
+
+        if ($courseTaken) {
+            $courseTaken->can_receive_email = $request->can_receive_email;
+            $courseTaken->save();
+            $success = TRUE;
+        }
+
+        return response()->json([
+            'data' => [
+                'success' => $success,
+            ]
+        ]);
+    }
+
     /**
      * @param $course_id
      * @return \Illuminate\Http\JsonResponse
