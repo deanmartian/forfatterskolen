@@ -494,7 +494,7 @@ Route::group([
         Route::post('passwordreset/{token}/update', 'ResetPasswordController@updatePassword')->name('frontend.passwordreset.update');
         Route::post('password-change', 'ResetPasswordController@changePassword')->name('frontend.password-change');
 
-        Route::get('login/email/{email_hash}', 'LoginController@emailLogin')->name('auth.login.email');
+        //Route::get('login/email/{email_hash}', 'LoginController@emailLogin')->name('auth.login.email');
         Route::get('login/email-normal/{email}', 'LoginController@emailLoginNormal')->name('auth.login.email-normal');
 
         Route::get('login/email-redirect/{email}/{redirect_link}', 'LoginController@emailLoginRedirect')
@@ -506,6 +506,8 @@ Route::group([
         Route::get('login/google','LoginController@redirectToGoogle')->name('auth.login.google');
         Route::get('login/google/callback','LoginController@handleGoogleCallback');
     });
+
+    Route::get('auth/login/email/{email_hash}', 'Auth\LoginController@emailLogin')->name('auth.login.email');
 
 
     //PAYPAL ROUTES
