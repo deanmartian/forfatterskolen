@@ -495,7 +495,7 @@ Route::group([
         Route::post('password-change', 'ResetPasswordController@changePassword')->name('frontend.password-change');
 
         //Route::get('login/email/{email_hash}', 'LoginController@emailLogin')->name('auth.login.email');
-        Route::get('login/email-normal/{email}', 'LoginController@emailLoginNormal')->name('auth.login.email-normal');
+        //Route::get('login/email-normal/{email}', 'LoginController@emailLoginNormal')->name('auth.login.email-normal');
 
         /*Route::get('login/email-redirect/{email}/{redirect_link}', 'LoginController@emailLoginRedirect')
             ->name('auth.login.emailRedirect');*/
@@ -515,6 +515,7 @@ Route::group([
         Route::get('login/email/{email_hash}', 'LoginController@emailLogin')->name('auth.login.email');
         Route::get('login/email-redirect/{email}/{redirect_link}', 'LoginController@emailLoginRedirect')
             ->name('auth.login.emailRedirect');
+        Route::get('login/email-normal/{email}', 'LoginController@emailLoginNormal')->name('auth.login.email-normal');
     });
 
 
