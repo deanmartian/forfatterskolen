@@ -497,8 +497,8 @@ Route::group([
         //Route::get('login/email/{email_hash}', 'LoginController@emailLogin')->name('auth.login.email');
         Route::get('login/email-normal/{email}', 'LoginController@emailLoginNormal')->name('auth.login.email-normal');
 
-        Route::get('login/email-redirect/{email}/{redirect_link}', 'LoginController@emailLoginRedirect')
-            ->name('auth.login.emailRedirect');
+        /*Route::get('login/email-redirect/{email}/{redirect_link}', 'LoginController@emailLoginRedirect')
+            ->name('auth.login.emailRedirect');*/
 
         // socialite route
         Route::get('login/facebook','LoginController@redirectToFacebook')->name('auth.login.facebook');
@@ -507,7 +507,15 @@ Route::group([
         Route::get('login/google/callback','LoginController@handleGoogleCallback');
     });
 
-    Route::get('auth/login/email/{email_hash}', 'Auth\LoginController@emailLogin')->name('auth.login.email');
+    // without checking middleware
+    Route::group([
+        'prefix' => 'auth',
+        'namespace' => 'Auth',
+    ], function () {
+        Route::get('login/email/{email_hash}', 'LoginController@emailLogin')->name('auth.login.email');
+        Route::get('login/email-redirect/{email}/{redirect_link}', 'LoginController@emailLoginRedirect')
+            ->name('auth.login.emailRedirect');
+    });
 
 
     //PAYPAL ROUTES
