@@ -3145,6 +3145,76 @@ class LearnerController extends Controller
     {
         $group = AssignmentGroup::find($group_id);
         if ($group) {
+            $user_id = Auth::user()->id;
+            $assignment_group_learner_id = $group->learners()->where('user_id', $user_id)->first()->id;
+            // get all feedback for the assignment group
+            $feedbacks = AssignmentFeedback::where('assignment_group_learner_id', $assignment_group_learner_id)->get();
+            $manuscript = $group->assignment->manuscripts->where('user_id', $user_id)->first();
+            if ($feedbacks->count()) {
+                $zipFileName    = $group->title.' Feedbacks.zip';
+                $public_dir     = public_path('storage');
+                $zip            = new \ZipArchive();
+
+                // open zip file connection and create the zip
+                if ($zip->open($public_dir . '/' . $zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== TRUE) {
+                    die ("An error occurred creating your ZIP file.");
+                }
+
+                foreach($feedbacks as $feedback) {
+                    if (($manuscript->editor_id === $feedback->user_id && $manuscript->status) || $manuscript->editor_id !== $feedback->user_id) {
+                        $files = explode(',', $feedback->filename);
+                        // for multiple files in a feedback
+                        if (count($files) > 1) {
+                            foreach($files as $feedFile) {
+                                if (file_exists(public_path().'/'.trim($feedFile))) {
+
+                                    //get the correct filename
+                                    $expFileName = explode('/', $feedFile);
+                                    $file = str_replace('\\', '/', public_path());
+
+                                    // physical file location and name of the file
+                                    $zip->addFile(trim($file.trim($feedFile)), end($expFileName));
+                                }
+                            }
+                        } else {
+                            if (file_exists(public_path().'/'.$feedback->filename)) {
+                                //get the correct filename
+                                $expFileName = explode('/', $feedback->filename);
+                                $file = str_replace('\\', '/', public_path());
+
+                                // physical file location and name of the file
+                                $zip->addFile($file.$feedback->filename, end($expFileName));
+                            }
+                        }
+                    }
+                }
+
+                $zip->close(); // close zip connection
+
+                $headers = array(
+                    'Content-Type' => 'application/octet-stream',
+                );
+
+                $fileToPath = $public_dir.'/'.$zipFileName;
+
+                if(file_exists($fileToPath)){
+                    return response()->download($fileToPath, $zipFileName, $headers)->deleteFileAfterSend(true);
+                }
+            }
+            return redirect()->back();
+        }
+        return redirect()->back();
+    }
+
+    /**
+     * Download all assignment group feedback
+     * @param $group_id
+     * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function downloadAssignmentGroupAllFeedbackOrig($group_id)
+    {
+        $group = AssignmentGroup::find($group_id);
+        if ($group) {
             $learners = $group->learners;
             $assignment_group_learners = []; // array variable where learner group id is stored
 
