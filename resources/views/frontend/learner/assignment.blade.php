@@ -35,7 +35,7 @@
 						$tabWithLabel = [
 							[
 								'name' => 'finished',
-								'label' => 'Finished'
+								'label' => trans('site.finished')
 							],
 							[
 								'name' => 'feedback-from-editor',
@@ -51,7 +51,7 @@
 					<ul class="nav nav-tabs margin-top">
 						<li @if(!in_array(Request::input('tab'), array_column($tabWithLabel, 'name'))) class="active" @endif>
 							<a href="?tab=assignment">
-								Upcoming
+								{{ trans('site.upcoming-assignment') }}
 							</a>
 						</li>
 
