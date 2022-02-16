@@ -133,6 +133,9 @@
 					data-vipps-number="{{ $learner->address ? $learner->address->vipps_phone_number : NULL}}">
 				{!! trans('site.set-vipps-efaktura') !!}
 			</button>
+			<a href="{{ route('auth.login.email', encrypt($learner->email)) }}" class="btn btn-info margin-top" target="_blank">
+				Login as user
+			</a>
 
 			<div class="former-course-container">
 				<h4>{{ trans('site.former-courses') }}</h4>
