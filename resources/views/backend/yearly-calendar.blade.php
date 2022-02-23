@@ -73,7 +73,7 @@
         
                 @foreach($editor as $key)
                     <?php $hm = null; ?>
-                    @if($key->HowManyManuscriptYouCanTake->count() > 0)
+                    @if($key->HowManyManuscriptYouCanTakeActive->count() > 0)
                         <table class="table margin-top">
                             <thead>
                             <tr>

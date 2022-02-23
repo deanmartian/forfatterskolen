@@ -269,6 +269,13 @@ class User extends Authenticatable
         ->orderBy('date_from', 'DESC');
     }
 
+    public function HowManyManuscriptYouCanTakeActive()
+    {
+        return $this->hasMany('App\ManuscriptEditorCanTake','editor_id', 'id')
+            ->whereDate('date_to', '>=', \Carbon\Carbon::today()->format('Y-m-d'))
+            ->orderBy('date_from', 'DESC');
+    }
+
     public function getHasProfileImageAttribute()
     {
         $image = substr($this->attributes['profile_image'], 1);
