@@ -508,7 +508,7 @@
 						<label>Webinar</label>
 						<select name="webinar_id" class="form-control select2" required>
 							<option value="" disabled selected> - Select Webinar -</option>
-							@foreach($course->webinars as $webinar)
+							@foreach($course->activeWebinars as $webinar)
 								<option value="{{ $webinar->id }}">{{ $webinar->title }}</option>
 							@endforeach
 						</select>
