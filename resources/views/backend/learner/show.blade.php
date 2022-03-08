@@ -347,6 +347,7 @@
 								<th>{{ trans('site.date-ordered') }}</th>
 								<th>Assigned Admin</th>
 								<th>{{ trans('site.status') }}</th>
+								<th>{{ trans_choice('site.notes', 2) }}</th>
 								<th></th>
 							</tr>
 						</thead>
@@ -374,6 +375,19 @@
 												<span class="label label-primary">Started</span>
 											@elseif( $shopManuscriptTaken->status == 'Not started' )
 												<span class="label label-warning">Not started</span>
+											@endif
+										</td>
+										<td>
+											<?php
+                                            	$manuscriptFeedback = $shopManuscriptTaken->feedbacks->first();
+											?>
+											@if($manuscriptFeedback && $manuscriptFeedback->notes_to_head_editor)
+												<a class="pointer notes" data-target="#scriptNotesModal"
+												   data-toggle="modal" data-notes="{{ $manuscriptFeedback->notes_to_head_editor }}"
+												   style="cursor: pointer;">
+													{{ substr($manuscriptFeedback->notes_to_head_editor, 0, 10) }}
+													<i class="fa fa-file-text-o" aria-hidden="true"></i>
+												</a>
 											@endif
 										</td>
 										<td class="text-right">
@@ -3540,6 +3554,22 @@
 		</div>
 	</div>
 </div>
+
+<div id="scriptNotesModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans_choice('site.notes', 2) }}</h4>
+			</div>
+			<div class="modal-body">
+
+				<p></p>
+
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -4022,6 +4052,13 @@
     $(".setVippsEFakturaBtn").click(function(){
         let vipps_phone_number = $(this).data('vipps-number');
         $("#setVippsEFakturaModal").find('input[name=mobile_number]').val(vipps_phone_number);
+    });
+
+    $('.notes').click(function(){
+        let notes = $(this).data('notes');
+        let modal = $('#scriptNotesModal');
+        modal.find('p').text(notes);
+
     });
 
 	function updateOtherServiceFields(type) {
