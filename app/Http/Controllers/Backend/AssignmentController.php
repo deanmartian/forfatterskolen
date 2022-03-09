@@ -102,6 +102,7 @@ class AssignmentController extends Controller
                 'for_editor' => isset($request->for_editor) ? 1 : 0,
                 'editor_manu_generate_count' => $request->editor_manu_generate_count,
                 'show_join_group_question' => isset($request->show_join_group_question) ? 1 : 0,
+                'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0,
                 'editor_expected_finish' => $request->editor_expected_finish
     		]);
 
@@ -127,6 +128,7 @@ class AssignmentController extends Controller
             $assignment->for_editor = isset($request->for_editor) ? 1 : 0;
             $assignment->editor_manu_generate_count = isset($request->for_editor) ? $request->editor_manu_generate_count : NULL;
             $assignment->show_join_group_question = isset($request->show_join_group_question) ? 1 : 0;
+            $assignment->send_letter_to_editor = isset($request->send_letter_to_editor) ? 1 : 0;
             $assignment->editor_expected_finish = $request->editor_expected_finish;
     		$assignment->save();
     	endif;
@@ -322,6 +324,17 @@ class AssignmentController extends Controller
 
         if ($assignmentManuscript) {
             $filename = $assignmentManuscript->filename;
+            return response()->download(public_path($filename));
+        }
+        return redirect()->back();
+    }
+
+    public function downloadManuscriptLetter($id)
+    {
+        $assignmentManuscript = AssignmentManuscript::find($id);
+
+        if ($assignmentManuscript) {
+            $filename = $assignmentManuscript->letter_to_editor;
             return response()->download(public_path($filename));
         }
         return redirect()->back();
@@ -1117,7 +1130,8 @@ class AssignmentController extends Controller
             'course_id' => $request->course_id,
             'parent_id' => $request->learner_id,
             'parent' => 'users',
-            'editor_expected_finish' => $request->editor_expected_finish
+            'editor_expected_finish' => $request->editor_expected_finish,
+            'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0
         ];
 
         if ($id) {

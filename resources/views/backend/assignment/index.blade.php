@@ -1,5 +1,9 @@
 @extends('backend.layout')
 
+@section('styles')
+	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+@stop
+
 @section('title')
 <title>Assignments &rsaquo; Forfatterskolen Admin</title>
 @stop
@@ -359,6 +363,12 @@
 							</div>
 
 							<div class="form-group">
+								<label>{{ trans('site.send-letter-to-editor') }}</label> <br>
+								<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small"
+									   name="send_letter_to_editor">
+							</div>
+
+							<div class="form-group">
 								<label>{{ trans_choice('site.courses', 1) }}</label>
 								<select class="form-control select2" name="course_id">
 									<option value="" selected disabled>- Search Course -</option>
@@ -400,6 +410,7 @@
 @stop
 
 @section('scripts')
+	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 	<script>
         $('#assignmentTemplateModal, #learnerAssignmentModal').find('.assignment-delay-toggle').change(function(){
             let delay = $(this).val();

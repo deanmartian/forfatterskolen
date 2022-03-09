@@ -103,6 +103,7 @@
 																			data-target="#submitEditorManuscriptModal"
 																			data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 																			data-show-group-question="{{ $assignment->show_join_group_question }}"
+																			data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
 																			@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
 																		{{ trans('site.learner.upload-script') }}
 																	</button>
@@ -111,6 +112,7 @@
 																			data-target="#submitManuscriptModal"
 																			data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 																			data-show-group-question="{{ $assignment->show_join_group_question }}"
+																			data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
 																			@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
 																		{{ trans('site.learner.upload-script') }}
 																	</button>
@@ -282,6 +284,7 @@
 																			data-target="#submitEditorManuscriptModal"
 																			data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 																			data-show-group-question="{{ $assignment->show_join_group_question }}"
+																			data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
 																			@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
 																		{{ trans('site.learner.upload-script') }}
 																	</button>
@@ -290,6 +293,7 @@
 																			data-target="#submitManuscriptModal"
 																			data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 																			data-show-group-question="{{ $assignment->show_join_group_question }}"
+																			data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
 																			@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
 																		{{ trans('site.learner.upload-script') }}
 																	</button>
@@ -382,7 +386,7 @@
 </div>
 
 <div id="submitEditorManuscriptModal" class="modal fade" role="dialog">
-	<div class="modal-dialog modal-sm">
+	<div class="modal-dialog modal-md">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3 class="modal-title">
@@ -432,6 +436,15 @@
 						</div>
 					</div>
 
+					<div class="form-group letter-to-editor hide">
+						<label>
+							{{ trans('site.letter-to-editor') }}
+						</label>
+						<input type="file" class="form-control margin-top" name="letter_to_editor" accept="application/msword,
+					application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+					application/vnd.oasis.opendocument.text,application/pdf">
+					</div>
+
 					<button type="submit" class="btn btn-primary pull-right">
 						{{ trans('site.front.upload') }}
 					</button>
@@ -443,7 +456,7 @@
 </div>
 
 <div id="submitManuscriptModal" class="modal fade" role="dialog">
-	<div class="modal-dialog modal-sm">
+	<div class="modal-dialog modal-md">
 		<div class="modal-content">
 		  <div class="modal-header">
 		    <h3 class="modal-title">
@@ -491,6 +504,15 @@
 						<label>{{ trans('site.learner.join-group-question') }}?</label> <br>
 						<input type="checkbox" data-toggle="toggle" data-on="Ja" data-off="Nei" data-size="small" name="join_group">
 					</div>
+				</div>
+
+				<div class="form-group letter-to-editor hide">
+					<label>
+						{{ trans('site.letter-to-editor') }}
+					</label>
+					<input type="file" class="form-control margin-top" name="letter_to_editor" accept="application/msword,
+					application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+					application/vnd.oasis.opendocument.text,application/pdf">
 				</div>
 
 		      	<button type="submit" class="btn btn-primary pull-right">
@@ -599,9 +621,10 @@
 	@endif
 
 	$('.submitManuscriptBtn').click(function(){
-		let form = $('#submitManuscriptModal form');
+		let form = $('#submitManuscriptModal').find("form");
         let action = $(this).data('action');
         let show_group_question = $(this).data('show-group-question');
+        let send_letter_to_editor = $(this).data('send-letter-to-editor');
 		form.attr('action', action);
 
 		if (show_group_question) {
@@ -609,18 +632,31 @@
 		} else {
             form.find('.join-question-container').addClass('hide');
 		}
+
+		if (send_letter_to_editor) {
+            form.find('.letter-to-editor').removeClass('hide');
+		} else {
+            form.find('.letter-to-editor').addClass('hide');
+		}
 	});
 
     $('.submitEditorManuscriptBtn').click(function(){
-        let form = $('#submitEditorManuscriptModal form');
+        let form = $('#submitEditorManuscriptModal').find("form");
         let action = $(this).data('action');
         let show_group_question = $(this).data('show-group-question');
+        let send_letter_to_editor = $(this).data('send-letter-to-editor');
         form.attr('action', action);
 
         if (show_group_question) {
             form.find('.join-question-container').removeClass('hide');
         } else {
             form.find('.join-question-container').addClass('hide');
+        }
+
+        if (send_letter_to_editor) {
+            form.find('.letter-to-editor').removeClass('hide');
+        } else {
+            form.find('.letter-to-editor').addClass('hide');
         }
     });
 

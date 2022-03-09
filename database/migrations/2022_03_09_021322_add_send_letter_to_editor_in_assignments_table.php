@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class AddSendLetterToEditorInAssignmentsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('assignments', function (Blueprint $table) {
+            $table->boolean('send_letter_to_editor')->default(0)->after('show_join_group_question');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('assignments', function (Blueprint $table) {
+            $table->dropColumn('send_letter_to_editor');
+        });
+    }
+}

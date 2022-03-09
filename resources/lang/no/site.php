@@ -1496,4 +1496,6 @@ Rektor Kristine',
   ),
   'upcoming' => 'Upcoming',
   'upcoming-assignment' => 'Nye oppgaver',
+  'send-letter-to-editor' => 'Send Letter to Editor',
+  'letter-to-editor' => 'Letter to Editor',
 );

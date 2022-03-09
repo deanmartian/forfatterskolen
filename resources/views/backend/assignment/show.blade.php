@@ -80,6 +80,11 @@
 								@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
 								<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">{{ basename($manuscript->filename) }}</a>
 								@endif
+
+								@if ($manuscript->letter_to_editor)
+									<br>
+									<a href="{{ route('assignment.manuscript.download_letter', $manuscript->id) }}">Download Letter</a>
+								@endif
 							</td>
 							<td><a href="{{route('admin.learner.show', $manuscript->user->id)}}">{{ $manuscript->user->full_name }}</a></td>
 							<td>{{ $manuscript->grade }}</td>
@@ -703,6 +708,12 @@
 					<label>{{ trans('site.show-join-group-question') }}</label> <br>
 					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small" name="show_join_group_question"
 					   @if ($assignment->show_join_group_question) checked @endif>
+				</div>
+
+				<div class="form-group">
+					<label>{{ trans('site.send-letter-to-editor') }}</label> <br>
+					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small" name="send_letter_to_editor"
+						   @if ($assignment->send_letter_to_editor) checked @endif>
 				</div>
 
 		      <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.save') }}</button>

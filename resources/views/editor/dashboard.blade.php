@@ -35,6 +35,7 @@
 									<thead>
 									<tr>
 										<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+										<th>Brev</th>
 										<th>{{ trans('site.learner-id') }}</th>
 										<th>{{ trans('site.type') }}</th>
 										<th>{{ trans('site.where') }}</th>
@@ -60,6 +61,14 @@
 													<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$assignedManuscript->filename}}">
 														{{ basename($assignedManuscript->filename) }}
 													</a>
+												@endif
+											</td>
+											<td>
+												@if ($assignedManuscript->letter_to_editor)
+													<a href="{{ route('assignment.manuscript.download_letter', $assignedManuscript->id) }}">
+														<i class="fa fa-download" aria-hidden="true"></i>
+													</a>&nbsp;
+													{{ basename($assignedManuscript->letter_to_editor) }}
 												@endif
 											</td>
 											<td>{{ $assignedManuscript->user->id }}</td>
@@ -242,6 +251,7 @@
 									<thead>
 									<tr>
 										<th>{{ trans_choice('site.courses', 1) }}</th>
+										<th>Brev</th>
 										<th>{{ trans('site.learner-id') }}</th>
 										<th>{{ trans('site.type') }}</th>
 										<th>{{ trans('site.where') }}</th>
@@ -258,6 +268,14 @@
 														{{ $assignedAssignment->assignment->course->title }}
 												@else
 														{{ $assignedAssignment->assignment->title }}
+												@endif
+											</td>
+											<td>
+												@if ($assignedAssignment->letter_to_editor)
+													<a href="{{ route('assignment.manuscript.download_letter', $assignedAssignment->id) }}">
+														<i class="fa fa-download" aria-hidden="true"></i>
+													</a>&nbsp;
+													{{ basename($assignedAssignment->letter_to_editor) }}
 												@endif
 											</td>
 											<td>{{ $assignedAssignment->user_id }}</td>

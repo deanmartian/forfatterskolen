@@ -823,6 +823,26 @@ class LearnerController extends Controller
                 $join_group = isset($request->join_group) ? 1 : 0;
             }
 
+            $letterToEditor = NULL;
+            if ($request->hasFile('letter_to_editor') && $request->file('letter_to_editor')->isValid()
+                && $assignment->send_letter_to_editor) :
+                $destinationPathLetter = 'storage/letter-to-editor';
+                $extensionLetter = pathinfo($_FILES['letter_to_editor']['name'],PATHINFO_EXTENSION);
+                $actualNameLetter = pathinfo($_FILES['letter_to_editor']['name'],PATHINFO_FILENAME);
+                $fileNameLetter = AdminHelpers::checkFileName($destinationPathLetter, $actualNameLetter, $extension);// rename document
+                $expFileNameLetter = explode("/",$fileNameLetter);
+
+                if( !in_array($extensionLetter, $extensions) ) :
+                    return redirect()->back()->withInput()->with(
+                        'manuscript_test_error', 'Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF'
+                    );
+                endif;
+
+                $request->letter_to_editor->move($destinationPathLetter, end($expFileNameLetter));
+                $letterToEditor = '/'.$fileNameLetter;
+
+            endif;
+
             $submittedManuscript = AssignmentManuscript::create([
                 'assignment_id' => $assignment->id,
                 'user_id' => Auth::user()->id,
@@ -830,7 +850,8 @@ class LearnerController extends Controller
                 'words' => $word_count,
                 'type' => $request->type,
                 'manu_type' => $request->manu_type,
-                'join_group' => $join_group
+                'join_group' => $join_group,
+                'letter_to_editor' => $letterToEditor
             ]);
             Log::create([
                 'activity' => '<strong>'.Auth::user()->full_name.'</strong> submitted a manuscript for assignment '.$assignment->title

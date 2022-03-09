@@ -67,6 +67,11 @@
                     <tr>
                         <td>
                             {!! $manuscript->file_link !!}
+
+                            @if ($manuscript->letter_to_editor)
+                                <br>
+                                <a href="{{ route('assignment.manuscript.download_letter', $manuscript->id) }}">Download Letter</a>
+                            @endif
                         </td>
                         <td>
                             <a href="{{route('admin.learner.show', $manuscript->user->id)}}">
@@ -308,6 +313,12 @@
                             <label>{{ trans('site.max-words') }}</label>
                             <input type="number" class="form-control" name="max_words"
                                    value="{{ $assignment->max_words }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ trans('site.send-letter-to-editor') }}</label> <br>
+                            <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small"
+                                   name="send_letter_to_editor" @if ($assignment->send_letter_to_editor) checked @endif>
                         </div>
 
                         <div class="form-group">
