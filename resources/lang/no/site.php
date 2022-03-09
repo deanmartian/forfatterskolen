@@ -1494,4 +1494,6 @@ Rektor Kristine',
     'giftcard-present' => 'Gavekort',
     'love-present' => 'Kjærestegave',
   ),
+  'upcoming' => 'Upcoming',
+  'upcoming-assignment' => 'Nye oppgaver',
 );

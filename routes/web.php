@@ -1587,6 +1587,7 @@ Route::group([
     ], function(){
 
         Route::get('/', 'PageController@dashboard')->name('editor.dashboard');
+        Route::get('/upcoming-assignments', 'PageController@upcomingAssignments')->name('editor.upcoming-assignment');
         Route::get('assignmentArchive','PageController@assignmentArchive')->name('editor.assignment-archive');
         Route::get('manuscriptYouCanTake', 'ManuscriptEditorCanTakeController@index')->name('editor.manuscript-you-can-take');
         Route::post('manuscriptYouCanTake/save', 'ManuscriptEditorCanTakeController@save')->name('editor.manuscript-you-can-take-save');

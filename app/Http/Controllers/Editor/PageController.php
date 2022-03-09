@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Editor;
 
+use App\Assignment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -41,6 +42,16 @@ class PageController extends Controller
         return view('editor.dashboard', compact('assigned_shop_manuscripts', 'assignedAssignments', 'coachingTimers',
         'corrections', 'copyEditings', 'assignedAssignmentManuscripts', 'shopManuscriptRequests'));
 
+    }
+
+    public function upcomingAssignments()
+    {
+        $upcomingAssignments = Assignment::whereDate('submission_date', '>=',
+            Carbon::now()->format('Y-m-d') .'T'.Carbon::now()->format('H:i:s'))
+            ->oldest('submission_date')
+            ->get();
+
+        return view('editor.upcoming-assignment', compact('upcomingAssignments'));
     }
 
     public function assignmentArchive(Request $request)
