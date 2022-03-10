@@ -322,6 +322,18 @@
                         </div>
 
                         <div class="form-group">
+                            <label>{{ trans_choice('site.editors', 1) }}</label>
+                            <select class="form-control select2" name="editor_id">
+                                <option value="" selected disabled>- Select Editor -</option>
+                                @foreach(\App\Http\AdminHelpers::editorList() as $editor)
+                                    <option value="{{ $editor->id }}" @if($assignment->editor_id === $editor->id) selected @endif>
+                                        {{ $editor->first_name . " " . $editor->last_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group">
                             <label>{{ trans_choice('site.courses', 1) }}</label>
                             <select class="form-control select2" name="course_id">
                                 <option value="" selected>- Search Course -</option>

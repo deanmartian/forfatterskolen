@@ -46,9 +46,8 @@ class PageController extends Controller
 
     public function upcomingAssignments()
     {
-        $upcomingAssignments = Assignment::whereDate('submission_date', '>=',
-            Carbon::now()->format('Y-m-d') .'T'.Carbon::now()->format('H:i:s'))
-            ->oldest('submission_date')
+        $upcomingAssignments = Assignment::where('editor_id', '=', Auth::user()->id)
+            ->whereDoesntHave('manuscripts') // check if there's no submitted manuscript yet
             ->get();
 
         return view('editor.upcoming-assignment', compact('upcomingAssignments'));

@@ -66,6 +66,7 @@
 								<tr>
 									<th>{{ trans_choice('site.assignments', 1) }}</th>
 									<th>{{ trans('site.description') }}</th>
+                                    <th>{{ trans_choice('site.editors', 1) }}</th>
 									<th>
 										{{ trans_choice('site.learners', 1) }}
 									</th>
@@ -87,6 +88,23 @@
 											<td>
 												{{ $learnerAssignment->description }}
 											</td>
+                                            <td>
+                                                {{ $learnerAssignment->editor ? $learnerAssignment->editor->full_name."\n" : "" }}
+                                                <button class="btn btn-xs btn-primary assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal"
+                                                        data-action="{{ route('assignment.assign_editor', $learnerAssignment->id) }}"
+                                                        data-editor="{{ $learnerAssignment->editor_id }}"
+                                                        data-editor-name="{{ $learnerAssignment->editor ? $learnerAssignment->editor->full_name : "" }}">
+                                                    {{ trans('site.assign-editor') }}
+                                                </button>
+
+                                                @if($learnerAssignment->editor)
+                                                    <button class="btn btn-xs btn-danger removeEditorBtn"
+                                                            data-action="{{ route('assignment.remove_editor', $learnerAssignment->id) }}"
+                                                            data-toggle="modal" data-target="#removeEditorModal">
+                                                        Remove Editor
+                                                    </button>
+                                                @endif
+                                            </td>
 											<td>
 												<a href="{{ route('admin.learner.show', $learnerAssignment->parent_id) }}">
 													{{ $learnerAssignment->learner->full_name }}
@@ -368,6 +386,18 @@
 									   name="send_letter_to_editor">
 							</div>
 
+                            <div class="form-group">
+                                <label>{{ trans_choice('site.editors', 1) }}</label>
+                                <select class="form-control select2" name="editor_id">
+                                    <option value="" selected disabled>- Select Editor -</option>
+                                    @foreach(\App\Http\AdminHelpers::editorList() as $editor)
+                                        <option value="{{ $editor->id }}">
+                                            {{ $editor->first_name . " " . $editor->last_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
 							<div class="form-group">
 								<label>{{ trans_choice('site.courses', 1) }}</label>
 								<select class="form-control select2" name="course_id">
@@ -404,6 +434,64 @@
 			</div>
 		</div>
 
+        <div id="assignEditorModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">{{ trans('site.assign-editor') }}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="" enctype="multipart/form-data">
+                            {{ csrf_field() }}
+                            <div class="form-group">
+                                <label>{{ trans_choice('site.editors', 1) }}</label>
+                                <select class="form-control select2" name="editor_id" required>
+                                    <option value="" disabled selected>- Select Editor -</option>
+                                    @foreach(\App\Http\AdminHelpers::editorList() as $editor)
+                                        <option value="{{ $editor->id }}">
+                                            {{ $editor->first_name . " " . $editor->last_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                                <div class="hidden-container">
+                                    <label>
+                                    </label>
+                                    <a href="javascript:void(0)" onclick="enableSelect('assignEditorModal')">Edit</a>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="removeEditorModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Remove Editor</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="" enctype="multipart/form-data">
+                            {{ csrf_field() }}
+                            {{ method_field('DELETE') }}
+                            <p>
+                                Are you sure you want to remove the editor?
+                            </p>
+
+                            <button type="submit" class="btn btn-danger pull-right margin-top">Remove</button>
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
 	</div> <!-- end tab-content -->
 	<div class="clearfix"></div>
 </div>
@@ -479,6 +567,34 @@
             let action = $(this).data('action');
             let modal = $('#learnerAssignmentModal');
             modal.find('form').attr('action', action);
+        });
+
+        $(".assignEditorBtn").click(function(){
+
+            let modal = $("#assignEditorModal");
+            let form = modal.find('form');
+            let action = $(this).data('action');
+            let editor = $(this).data('editor');
+            let editor_name = $(this).data('editor-name');
+
+            form.attr('action', action);
+            form.find("select[name=editor_id]").val(editor ? editor : '').trigger('change');
+
+            if (editor) {
+                modal.find('.select2').hide();
+                modal.find('.hidden-container').show();
+                modal.find('.hidden-container').find('label').empty().text(editor_name);
+            } else {
+                modal.find('.select2').show();
+                modal.find('.hidden-container').hide();
+            }
+        });
+
+        $(".removeEditorBtn").click(function(){
+            let modal = $("#removeEditorModal");
+            let form = modal.find('form');
+            let action = $(this).data('action');
+            form.attr('action', action);
         });
 	</script>
 @stop

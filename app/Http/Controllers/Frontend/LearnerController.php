@@ -851,7 +851,8 @@ class LearnerController extends Controller
                 'type' => $request->type,
                 'manu_type' => $request->manu_type,
                 'join_group' => $join_group,
-                'letter_to_editor' => $letterToEditor
+                'letter_to_editor' => $letterToEditor,
+                'editor_id' => $assignment->editor_id
             ]);
             Log::create([
                 'activity' => '<strong>'.Auth::user()->full_name.'</strong> submitted a manuscript for assignment '.$assignment->title

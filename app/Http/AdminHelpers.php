@@ -70,6 +70,14 @@ class AdminHelpers
         return $course->all();
     }
 
+    public static function editorList()
+    {
+        return \App\User::where(function($query){
+            $query->where('role', 3)->orWhere('admin_with_editor_access', 1);
+        })
+            ->orderBy('id', 'desc')
+            ->get();
+    }
 	
 	public static function currencyFormat($value)
 	{

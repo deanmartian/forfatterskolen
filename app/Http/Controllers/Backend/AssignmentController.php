@@ -27,6 +27,7 @@ use App\Http\AdminHelpers;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Reader\HTML;
+use PhpParser\Node\Expr\Assign;
 
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
@@ -701,7 +702,28 @@ class AssignmentController extends Controller
                 $assignmentManuscript->editor_expected_finish = $request->editor_expected_finish;
             }
 
+            $assignment = $assignmentManuscript->assignment;
+            if ($assignment->parent === 'users') {
+                $assignment->editor_id = $request->editor_id;
+                $assignment->save();
+            }
+
             $assignmentManuscript->save();
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Editor assigned successfully.'),
+            'alert_type' => 'success'
+        ]);
+    }
+
+    public function assignEditor( $assignment_id, Request $request )
+    {
+        $assignment = Assignment::find($assignment_id);
+
+        if ($assignment) {
+            $assignment->editor_id = $request->editor_id;
+            $assignment->save();
         }
 
         return redirect()->back()->with([
@@ -717,6 +739,21 @@ class AssignmentController extends Controller
         if ($assignmentManuscript) {
             $assignmentManuscript->editor_id = 0;
             $assignmentManuscript->save();
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Editor removed successfully.'),
+            'alert_type' => 'success'
+        ]);
+    }
+
+    public function removeEditor( $id )
+    {
+        $assignment = Assignment::find($id);
+
+        if ($assignment) {
+            $assignment->editor_id = 0;
+            $assignment->save();
         }
 
         return redirect()->back()->with([
@@ -1130,12 +1167,19 @@ class AssignmentController extends Controller
             'course_id' => $request->course_id,
             'parent_id' => $request->learner_id,
             'parent' => 'users',
+            'editor_id' => $request->editor_id,
             'editor_expected_finish' => $request->editor_expected_finish,
             'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0
         ];
 
         if ($id) {
             Assignment::find($id)->update($data);
+
+            $assignmentManuscript = AssignmentManuscript::where('assignment_id', $id)->first();
+            if ($assignmentManuscript) {
+                $assignmentManuscript->editor_id = $request->editor_id;
+                $assignmentManuscript->save();
+            }
         } else {
             Assignment::create($data);
         }

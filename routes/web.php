@@ -1031,6 +1031,8 @@ Route::group([
         Route::get('assignment/{id}/generate-doc', 'AssignmentController@generateDoc')->name('assignment.group.generate-doc');
         Route::get('assignment/{id}/download-generate-doc', 'AssignmentController@downloadGenerateDoc')->name('assignment.group.download-generate-doc');
         Route::get('assignment/{id}/download-excel-sheet', 'AssignmentController@downloadExcelSheet')->name('assignment.group.download-excel-sheet');
+        Route::post('assignment/{id}/assign-editor', 'AssignmentController@assignEditor')->name('assignment.assign_editor');
+        Route::delete('assignment/{id}/remove-editor', 'AssignmentController@removeEditor')->name('assignment.remove_editor');
         Route::post('assignment/template/save/{id?}', 'AssignmentController@saveAssignmentTemplate')->name('assignment.template.save');
         Route::delete('assignment/template/delete/{id}', 'AssignmentController@deleteAssignmentTemplate')->name('assignment.template.delete');
         Route::post('assignment/learner-assignment/save/{id?}', 'AssignmentController@learnerAssignment')->name('assignment.learner-assignment.save');
