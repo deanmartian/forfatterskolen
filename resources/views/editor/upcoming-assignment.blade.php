@@ -30,6 +30,7 @@
                                         <thead>
                                         <tr>
                                             <th>{{ trans_choice('site.assignments', 1) }}</th>
+                                            <th>{{ trans_choice('site.words', 2) }}</th>
                                             <th>{{ trans('site.learner-id') }}</th>
                                             <th>{{ trans_choice('site.learners', 1) }}</th>
                                             <th>
@@ -53,6 +54,7 @@
                                                         </a>
                                                     @endif
                                                 </td>
+                                                <td> {{ $assignment->max_words }} </td>
                                                 <td>{{ $assignment->learner->id }}</td>
                                                 <td>{{ $assignment->learner->full_name }}</td>
                                                 <td>
