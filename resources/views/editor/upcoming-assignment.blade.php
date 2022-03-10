@@ -58,6 +58,7 @@
                                                 <td>{{ $assignment->learner->id }}</td>
                                                 <td>{{ $assignment->learner->full_name }}</td>
                                                 <td>
+                                                    <span style="display:none;">{{ strtotime($assignment->submission_date) }}</span>
                                                     {{ $assignment->submission_date }}
                                                 </td>
                                             </tr>

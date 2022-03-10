@@ -242,7 +242,10 @@ class EditorController extends Controller
         ->get();
 
         // get the newly added assignments 
-        $assignmentsBeforeEditorDeadline = Assignment::where('editor_expected_finish','>=',Carbon::now())->where('for_editor', 0)->get();
+        $assignmentsBeforeEditorDeadline = Assignment::where('editor_expected_finish','>=',Carbon::now())
+            ->where('for_editor', 0)
+            ->where('parent', '!=', 'users')
+            ->get();
 
         return view('editor.editor-settings', compact('manuscriptEditorCanTake','genrePrefrences','genreIHaveNotSelected', 'assignmentsBeforeEditorDeadline'));
     }
