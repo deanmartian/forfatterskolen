@@ -66,7 +66,7 @@
 								<tr>
 									<th>{{ trans_choice('site.assignments', 1) }}</th>
 									<th>{{ trans('site.description') }}</th>
-                                    <th>{{ trans_choice('site.editors', 1) }}</th>
+                                    <th width="250">{{ trans_choice('site.editors', 1) }}</th>
 									<th>
 										{{ trans_choice('site.learners', 1) }}
 									</th>
@@ -89,11 +89,17 @@
 												{{ $learnerAssignment->description }}
 											</td>
                                             <td>
-                                                {{ $learnerAssignment->editor ? $learnerAssignment->editor->full_name."\n" : "" }}
+												<div>
+													{{ $learnerAssignment->editor ? $learnerAssignment->editor->full_name : "" }}
+												</div>
                                                 <button class="btn btn-xs btn-primary assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal"
                                                         data-action="{{ route('assignment.assign_editor', $learnerAssignment->id) }}"
                                                         data-editor="{{ $learnerAssignment->editor_id }}"
-                                                        data-editor-name="{{ $learnerAssignment->editor ? $learnerAssignment->editor->full_name : "" }}">
+                                                        data-editor-name="{{ $learnerAssignment->editor ? $learnerAssignment->editor->full_name : "" }}"
+														data-preferred-editor="{{ $learnerAssignment->learner->preferredEditor
+								? $learnerAssignment->learner->preferredEditor->editor_id : '' }}"
+														data-preferred-editor-name="{{ $learnerAssignment->learner->preferredEditor
+								? $learnerAssignment->learner->preferredEditor->editor->full_name : '' }}">
                                                     {{ trans('site.assign-editor') }}
                                                 </button>
 
@@ -386,18 +392,6 @@
 									   name="send_letter_to_editor">
 							</div>
 
-                            <div class="form-group">
-                                <label>{{ trans_choice('site.editors', 1) }}</label>
-                                <select class="form-control select2" name="editor_id">
-                                    <option value="" selected disabled>- Select Editor -</option>
-                                    @foreach(\App\Http\AdminHelpers::editorList() as $editor)
-                                        <option value="{{ $editor->id }}">
-                                            {{ $editor->first_name . " " . $editor->last_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
 							<div class="form-group">
 								<label>{{ trans_choice('site.courses', 1) }}</label>
 								<select class="form-control select2" name="course_id">
@@ -417,8 +411,21 @@
 								<select class="form-control select2" name="learner_id" required>
 									<option value="" selected disabled>- Search Learner -</option>
 									@foreach(\App\Http\AdminHelpers::getLearnerList() as $learner)
-										<option value="{{$learner->id}}">
+										<option value="{{$learner->id}}"
+												data-preferred-editor="{{ $learner->preferredEditor ? $learner->preferredEditor->editor_id : '' }}">
 											{{$learner->full_name}}
+										</option>
+									@endforeach
+								</select>
+							</div>
+
+							<div class="form-group">
+								<label>{{ trans_choice('site.editors', 1) }}</label>
+								<select class="form-control select2" name="editor_id">
+									<option value="" selected disabled>- Select Editor -</option>
+									@foreach(\App\Http\AdminHelpers::editorList() as $editor)
+										<option value="{{ $editor->id }}">
+											{{ $editor->first_name . " " . $editor->last_name }}
 										</option>
 									@endforeach
 								</select>
@@ -576,14 +583,16 @@
             let action = $(this).data('action');
             let editor = $(this).data('editor');
             let editor_name = $(this).data('editor-name');
+            let preferred_editor = $(this).data('preferred-editor');
+            let preferred_editor_name = $(this).data('preferred-editor-name');
 
             form.attr('action', action);
-            form.find("select[name=editor_id]").val(editor ? editor : '').trigger('change');
+            form.find("select[name=editor_id]").val(editor ? editor : (preferred_editor ? preferred_editor :'')).trigger('change');
 
-            if (editor) {
+            if (editor || preferred_editor) {
                 modal.find('.select2').hide();
                 modal.find('.hidden-container').show();
-                modal.find('.hidden-container').find('label').empty().text(editor_name);
+                modal.find('.hidden-container').find('label').empty().text(editor ? editor_name : preferred_editor_name);
             } else {
                 modal.find('.select2').show();
                 modal.find('.hidden-container').hide();
@@ -596,5 +605,15 @@
             let action = $(this).data('action');
             form.attr('action', action);
         });
+
+        $("select[name='learner_id']").change(function() {
+            let preferred_editor = $(this).select2("data")[0].element.dataset['preferredEditor'];
+            if (preferred_editor) {
+                $("#learnerAssignmentModal").find('form').find("select[name=editor_id]")
+					.val(preferred_editor).trigger('change');
+			} else {
+                $("#learnerAssignmentModal").find('form').find("select[name=editor_id]").val('').trigger('change')
+			}
+		});
 	</script>
 @stop

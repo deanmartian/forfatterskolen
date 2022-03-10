@@ -30,6 +30,8 @@
                                         <thead>
                                         <tr>
                                             <th>{{ trans_choice('site.assignments', 1) }}</th>
+                                            <th>{{ trans('site.learner-id') }}</th>
+                                            <th>{{ trans_choice('site.learners', 1) }}</th>
                                             <th>
                                                 {{ trans('site.submission-date') }}
                                             </th>
@@ -51,6 +53,8 @@
                                                         </a>
                                                     @endif
                                                 </td>
+                                                <td>{{ $assignment->learner->id }}</td>
+                                                <td>{{ $assignment->learner->full_name }}</td>
                                                 <td>
                                                     {{ $assignment->submission_date }}
                                                 </td>

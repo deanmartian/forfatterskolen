@@ -73,7 +73,8 @@ class AdminHelpers
     public static function editorList()
     {
         return \App\User::where(function($query){
-            $query->where('role', 3)->orWhere('admin_with_editor_access', 1);
+            $query->whereIn('role', [1, 3])
+                ->orWhere('admin_with_editor_access', 1);
         })
             ->orderBy('id', 'desc')
             ->get();
