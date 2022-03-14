@@ -694,6 +694,12 @@ class LearnerController extends Controller
         $addOns = AssignmentAddon::where('user_id', \Auth::user()->id)->pluck('assignment_id')->toArray();
         $userAssignments = Auth::user()->activeAssignments;
         $userExpiredAssignments = Auth::user()->expiredAssignments;
+        $upcomingPersonalAssignments = Assignment::where('parent', 'users')
+            ->where('parent_id', Auth::user()->id)
+            ->where('submission_date', '>=', Carbon::now())
+            ->where('available_date','>', Carbon::now())
+            ->oldest('submission_date')
+            ->get();
 
         foreach( $coursesTaken as $course ) :
             foreach( $course->package->course->activeAssignments as $assignment ) :
@@ -753,7 +759,7 @@ class LearnerController extends Controller
             }
         }
 
-        return view('frontend.learner.assignment', compact('assignments', 'expiredAssignments'));
+        return view('frontend.learner.assignment', compact('assignments', 'expiredAssignments', 'upcomingPersonalAssignments'));
     }
 
 

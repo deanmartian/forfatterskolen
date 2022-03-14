@@ -44,6 +44,10 @@
 							[
 								'name' => 'groups',
 								'label' => trans('site.learner.groups')
+							],
+							[
+								'name' => 'upcoming',
+								'label' => 'Kommende Oppgaver'
 							]
 						]
 					@endphp
@@ -126,7 +130,7 @@
 														{{ $assignment->description }}
 													</p>
 
-													<span class="font-barlow-regular">Frist:</span>
+													<span class="font-barlow-regular">{{ trans('site.deadline') }}:</span>
 													<span>{{--{{ \App\Http\FrontendHelpers::formatDateTimeNor2($assignment->submission_date) }}--}}</span>
 													@if( $manuscript )
 														<div class="mt-3">
@@ -246,6 +250,30 @@
 										</div>
 									@endforeach
 								@endif
+							@elseif( Request::input('tab') == 'upcoming' )
+								<div class="row past-assignment grid mt-5">
+									@foreach($upcomingPersonalAssignments as $assignment)
+										<div class="col-md-6 mb-5 grid-item">
+										<div class="card">
+											<div class="card-header py-4">
+												<div class="row">
+													<div class="col-md-9">
+														<h2><i class="contract-sign"></i> {{ $assignment->title }}</h2>
+													</div>
+												</div> <!-- end row-->
+											</div> <!-- end card-header -->
+											<div class="card-body">
+												<p>
+													{{ $assignment->description }}
+												</p>
+
+												<span class="font-barlow-regular">{{ trans('site.deadline') }}:</span>
+												<span>{{ \App\Http\FrontendHelpers::formatDateTimeNor2($assignment->submission_date) }}</span>
+											</div> <!-- end card-body -->
+										</div> <!-- end card -->
+									</div> <!-- end grid-item -->
+									@endforeach
+								</div>
 							@else
 								<div class="row">
 									@foreach($assignments as $assignment)
