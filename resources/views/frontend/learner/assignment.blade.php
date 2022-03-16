@@ -267,8 +267,13 @@
 													{{ $assignment->description }}
 												</p>
 
+												<p>
+													{{ trans('site.max-words') }}: {{ $assignment->max_words }}
+												</p>
+
 												<span class="font-barlow-regular">{{ trans('site.deadline') }}:</span>
 												<span>{{ \App\Http\FrontendHelpers::formatDateTimeNor2($assignment->submission_date) }}</span>
+
 											</div> <!-- end card-body -->
 										</div> <!-- end card -->
 									</div> <!-- end grid-item -->
