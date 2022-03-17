@@ -77,9 +77,16 @@ class Assignment extends Model
 
     public function getSubmissionDateTimeTextAttribute()
     {
-        return ucwords(strtr(trans('site.learner.submission-date-value'), [
-            '_date_' => \Carbon\Carbon::parse($this->attributes['submission_date'])->format('d M Y'),
-            '_time_' => \Carbon\Carbon::parse($this->attributes['submission_date'])->format('H:i')]));
+        $value = $this->attributes['submission_date'];
+        $submission_date = NULL;
+        if ($value) {
+            if (!is_numeric($value)) {
+                $submission_date = ucwords(strtr(trans('site.learner.submission-date-value'), [
+                    '_date_' => \Carbon\Carbon::parse($this->attributes['submission_date'])->format('d M Y'),
+                    '_time_' => \Carbon\Carbon::parse($this->attributes['submission_date'])->format('H:i')]));
+            }
+        }
+        return $submission_date;
     }
 
     public function assignmentManuscriptEditorCanTake(){

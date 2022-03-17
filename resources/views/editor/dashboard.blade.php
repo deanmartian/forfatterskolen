@@ -37,6 +37,7 @@
 										<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 										<th>Brev</th>
 										<th>{{ trans('site.learner-id') }}</th>
+										<th>{{ trans_choice('site.courses', 1) }}</th>
 										<th>{{ trans('site.type') }}</th>
 										<th>{{ trans('site.where') }}</th>
 										<th>{{ trans('site.deadline') }}</th>
@@ -45,7 +46,9 @@
 									</thead>
 									<tbody>
 									@foreach($assignedAssignmentManuscripts as $assignedManuscript)
-										<?php $extension = explode('.', basename($assignedManuscript->filename)); ?>
+										<?php $extension = explode('.', basename($assignedManuscript->filename));
+                                        	$course = $assignedManuscript->assignment->course;
+										?>
 										<tr>
 											<td>
 												<a href="{{ $assignedManuscript->filename }}"
@@ -72,6 +75,13 @@
 												@endif
 											</td>
 											<td>{{ $assignedManuscript->user->id }}</td>
+											<td>
+												@if($course)
+													<a href="{{ route('admin.course.show', $course->id) }}">
+														{{ $course->title }}
+													</a>
+												@endif
+											</td>
 											<td>{{ \App\Http\AdminHelpers::assignmentType($assignedManuscript->type) }}</td>
 											<td>{{ \App\Http\AdminHelpers::manuscriptType($assignedManuscript->manu_type) }}</td>
 											<td>

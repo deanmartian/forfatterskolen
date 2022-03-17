@@ -43,6 +43,7 @@
 							<tr>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 								<th>{{ trans_choice('site.learners', 1) }}</th>
+								<th>{{ trans_choice('site.courses', 1) }}</th>
 								<th>{{ trans('site.assigned-to') }}</th>
 								<th>{{ trans('site.expected-finish') }}</th>
 								<th></th>
@@ -50,7 +51,9 @@
 							</thead>
 							<tbody>
 							@foreach($assignedAssignmentManuscripts as $assignedManuscript)
-                                <?php $extension = explode('.', basename($assignedManuscript->filename)); ?>
+                                <?php $extension = explode('.', basename($assignedManuscript->filename));
+                                	$course = $assignedManuscript->assignment->course;
+                                ?>
 								<tr>
 									<td>
 										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
@@ -67,6 +70,13 @@
 										<a href="{{ route('admin.learner.show',$assignedManuscript->user->id) }}">
 											{{ $assignedManuscript->user->fullname }}
 										</a>
+									</td>
+									<td>
+										@if($course)
+											<a href="{{ route('admin.course.show', $course->id) }}">
+												{{ $course->title }}
+											</a>
+										@endif
 									</td>
 									<td>
 										{{ $assignedManuscript->editor->full_name }}
