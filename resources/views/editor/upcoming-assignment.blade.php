@@ -30,6 +30,7 @@
                                         <thead>
                                         <tr>
                                             <th>{{ trans_choice('site.assignments', 1) }}</th>
+                                            <th>{{ trans_choice('site.courses', 1) }}</th>
                                             <th>{{ trans_choice('site.words', 2) }}</th>
                                             <th>{{ trans('site.learner-id') }}</th>
                                             <th>{{ trans_choice('site.learners', 1) }}</th>
@@ -51,6 +52,13 @@
                                                         <a href="{{ route('admin.assignment.show',
 										['course_id' => $assignment->course->id, 'id' => $assignment->id]) }}">
                                                             {{$assignment->title}}
+                                                        </a>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if($assignment->course)
+                                                        <a href="{{ route('admin.course.show', $assignment->course->id) }}">
+                                                            {{ $assignment->course->title }}
                                                         </a>
                                                     @endif
                                                 </td>
