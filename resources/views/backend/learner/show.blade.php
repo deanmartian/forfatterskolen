@@ -791,10 +791,11 @@
 							<?php
 					        $assignments = [];
 					        $addOns = $learner->assignmentAddOns->pluck('assignment_id')->toArray();
-					        foreach( $learner->coursesTaken as $course ) :
-					            foreach( $course->package->course->assignments as $assignment ) :
+					        foreach( $learner->coursesTaken as $courseTaken ) :
+					            foreach( $courseTaken->package->course->assignments as $assignment ) :
                             		$allowed_package = json_decode($assignment->allowed_package);
-                            		$package_id = $course->package->id;
+                            		$package_id = $courseTaken->package->id;
+                            		$course = $courseTaken->package->course;
 
                             		$manuscript = $assignment->manuscripts->where('user_id', $learner->id)->first();
 									if ($manuscript) {
@@ -806,11 +807,16 @@
 											// added the condition because of the update for submission date
 											// the original is the else
 											if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
-												if(\Carbon\Carbon::parse($course->started_at)->addDays($assignment->submission_date)
-												->gt(\Carbon\Carbon::now())) {
-													$assignments[] = $assignment;
+												if ($course->type == 'Single' && $assignment->submission_date == '365') {
+													if(\Carbon\Carbon::parse($courseTaken->end_date)->gt(\Carbon\Carbon::now())) {
+														$assignments[] = $assignment;
 													}
 												} else {
+													if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)->gt(\Carbon\Carbon::now())) {
+														$assignments[] = $assignment;
+													}
+												}
+											} else {
 												if (\Carbon\Carbon::parse($assignment->submission_date)->gt(\Carbon\Carbon::now())) {
 													$assignments[] = $assignment;
 												}
