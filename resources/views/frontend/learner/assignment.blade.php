@@ -299,6 +299,9 @@
                                                             $courseStarted =  $course['started_at'];
                                                         }
                                                     }
+                                                    if ($assignment['course_taken_end_date']) {
+														$courseStarted = $assignment['course_taken_end_date'];
+													}
 
                                                     $submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
                                                         ->addDays($assignment->submission_date);

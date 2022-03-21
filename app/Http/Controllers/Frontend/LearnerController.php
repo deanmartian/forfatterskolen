@@ -714,7 +714,9 @@ class LearnerController extends Controller
                     if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
                         if ($course->type == 'Single' && $assignment->submission_date == '365') {
                             if(\Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
-                                $assignments[] = $assignment;
+                                $includeAssignment = $assignment;
+                                $includeAssignment->course_taken_end_date = $courseTaken->end_date; // for displaying submit button
+                                $assignments[] = $includeAssignment;
                             }
                         } else {
                             if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)
