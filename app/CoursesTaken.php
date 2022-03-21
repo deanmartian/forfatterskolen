@@ -31,9 +31,9 @@ class CoursesTaken extends Model
         return $this->hasMany('App\Manuscript', 'coursetaken_id')->orderBy('created_at', 'desc');
     }
 
-    public function getStartedAtAttribute()
+    public function getStartedAtAttribute($value)
     {
-        return date_format(date_create($this->attributes['started_at']), 'M d, Y h:i a');
+        return $value ? date_format(date_create($value), 'M d, Y h:i a') : NULL;
     }
 
     public function getStartedAtValueAttribute()

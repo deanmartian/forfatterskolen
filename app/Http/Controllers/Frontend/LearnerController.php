@@ -701,19 +701,26 @@ class LearnerController extends Controller
             ->oldest('submission_date')
             ->get();
 
-        foreach( $coursesTaken as $course ) :
-            foreach( $course->package->course->activeAssignments as $assignment ) :
+        foreach( $coursesTaken as $courseTaken ) :
+            foreach( $courseTaken->package->course->activeAssignments as $assignment ) :
 
                 $allowed_package = json_decode($assignment->allowed_package);
-                $package_id = $course->package->id;
+                $package_id = $courseTaken->package->id;
+                $course = $courseTaken->package->course;
                 // check if the assignment is allowed on the learners package or there's no set package allowed
                 if ((!is_null($allowed_package) && in_array($package_id,$allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)) {
                     // added the condition because of the update for submission date
                     // the original is the else
                     if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
-                        if(\Carbon\Carbon::parse($course->started_at)->addDays($assignment->submission_date)
-                        ->gt(Carbon::now())) {
-                            $assignments[] = $assignment;
+                        if ($course->type == 'Single' && $assignment->submission_date == '365') {
+                            if(\Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
+                                $assignments[] = $assignment;
+                            }
+                        } else {
+                            if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)
+                                ->gt(Carbon::now())) {
+                                $assignments[] = $assignment;
+                            }
                         }
                     } else {
                         if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
@@ -723,18 +730,25 @@ class LearnerController extends Controller
                 }
             endforeach;
 
-            foreach( $course->package->course->expiredAssignments as $assignment ) :
+            foreach( $courseTaken->package->course->expiredAssignments as $assignment ) :
 
                 $allowed_package = json_decode($assignment->allowed_package);
-                $package_id = $course->package->id;
+                $package_id = $courseTaken->package->id;
+                $course = $courseTaken->package->course;
                 // check if the assignment is allowed on the learners package or there's no set package allowed
                 if ((!is_null($allowed_package) && in_array($package_id,$allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)) {
                     // added the condition because of the update for submission date
                     // the original is the else
                     if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
-                        if(\Carbon\Carbon::parse($course->started_at)->addDays($assignment->submission_date)
-                            ->lt(Carbon::now())) {
-                            $expiredAssignments[] = $assignment;
+                        if ($course->type == 'Single' && $assignment->submission_date == '365') {
+                            if(\Carbon\Carbon::parse($courseTaken->end_date)->lt(Carbon::now())) {
+                                $expiredAssignments[] = $assignment;
+                            }
+                        } else {
+                            if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)
+                                ->lt(Carbon::now())) {
+                                $expiredAssignments[] = $assignment;
+                            }
                         }
                     } else {
                         if (\Carbon\Carbon::parse($assignment->submission_date)->lt(Carbon::now())) {
