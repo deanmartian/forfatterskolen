@@ -84,7 +84,7 @@ class CheckAutoRenewCourses
                         // Email to support
                         $emailData = [
                             'email_subject' => 'All Courses Renewed',
-                            'email_message' => 'All Courses Renewed', Auth::user()->first_name . ' has renewed all the courses',
+                            'email_message' => Auth::user()->first_name . ' has renewed all the courses',
                             'from_name' => NULL,
                             'from_email' => NULL,
                             'attach_file' => NULL
