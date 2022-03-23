@@ -348,6 +348,7 @@
 								<th>Assigned Admin</th>
 								<th>{{ trans('site.status') }}</th>
 								<th>{{ trans_choice('site.notes', 2) }}</th>
+								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
 								<th></th>
 							</tr>
 						</thead>
@@ -388,6 +389,15 @@
 													{{ substr($manuscriptFeedback->notes_to_head_editor, 0, 10) }}
 													<i class="fa fa-file-text-o" aria-hidden="true"></i>
 												</a>
+											@endif
+										</td>
+										<td>
+											@if($manuscriptFeedback)
+												@foreach( $manuscriptFeedback->filename as $filename )
+													<a href="{{ $filename }}" class="d-block" download>
+														{{ basename($filename) }}
+													</a>
+												@endforeach
 											@endif
 										</td>
 										<td class="text-right">
@@ -784,6 +794,7 @@
 								<th>{{ trans_choice('site.courses', 1) }}</th>
 								<th>Editor</th>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
 								<th></th>
 							</tr>
 						</thead>
@@ -879,6 +890,32 @@
 										@endif
 									</td>
 									<td>
+										<?php
+											$groupFeedbacks = \App\AssignmentFeedback::leftJoin('assignment_group_learners', 'assignment_group_learners.id', '=', 'assignment_feedbacks.assignment_group_learner_id')
+											->leftJoin('assignment_groups', 'assignment_group_learners.assignment_group_id', '=', 'assignment_groups.id')
+											->where('assignment_group_learners.user_id', $learner->id)
+                                        	->where('assignment_id', $assignment->id)->get();
+											if ($groupFeedbacks->count() > 0) {
+												foreach($groupFeedbacks as $groupFeedback) {
+                                        			$files = explode(',',$groupFeedback->filename);
+                                        			foreach($files as $file) {
+														echo "<a href='" . $file . "' class='d-block' download>"
+														. basename($file) . "</a>";
+													}
+												}
+											} else {
+											    if ($manuscript) {
+                                        			$feedback = \App\AssignmentFeedbackNoGroup::where('learner_id', $learner->id)
+													->where('assignment_manuscript_id', $manuscript->id)->first();
+                                        			if ($feedback) {
+														echo "<a href='" . $feedback->filename . "' class='d-block' download>"
+														. basename($feedback->filename) . "</a>";
+													}
+												}
+											}
+										?>
+									</td>
+									<td>
 										@if($manuscript)
 											<button class="btn btn-primary btn-xs assignmentManuscriptEmailBtn" data-toggle="modal"
 													data-target="#assignmentManuscriptEmailModal"
@@ -917,6 +954,7 @@
 							<th>{{ trans_choice('site.courses', 1) }}</th>
 							<th>Editor</th>
 							<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+							<th>{{ trans_choice('site.feedbacks', 1) }}</th>
 						</tr>
 						</thead>
 						<tbody>
@@ -947,6 +985,18 @@
 										@if ($manuscript)
 											{!! $manuscript->file_link !!}
 										@endif
+									</td>
+									<td>
+										@php
+											if ($manuscript) {
+												$feedback = \App\AssignmentFeedbackNoGroup::where('learner_id', $learner->id)
+												->where('assignment_manuscript_id', $manuscript->id)->first();
+												if ($feedback) {
+													echo "<a href='" . $feedback->filename . "' class='d-block' download>"
+													. basename($feedback->filename) . "</a>";
+												}
+											}
+										@endphp
 									</td>
 								</tr>
 							@endforeach
