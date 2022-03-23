@@ -83,6 +83,13 @@
 									</td>
 									<td>
 										{{ $assignedManuscript->expected_finish }}
+										<button class="btn btn-primary btn-xs editExpectedFinishBtn" data-toggle="modal"
+												data-target="#editExpectedFinishModal"
+												data-action="{{ route('backend.update-expected-finish', ['assignment', $assignedManuscript->id]) }}"
+												data-expected_finish="{{ $assignedManuscript->expected_finish
+												? strftime('%Y-%m-%d', strtotime($assignedManuscript->expected_finish)) : NULL }}">
+											<i class="fa fa-edit"></i> Edit
+										</button>
 									</td>
 									<td>
 										<a href="{{ $assignedManuscript->filename }}" class="btn btn-primary btn-xs"
@@ -144,7 +151,7 @@
 				</div>
 			</div>
 
-			<!-- Upcoming Webinars -->
+			<!-- Shop Manuscript -->
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="panel panel-default">
@@ -202,7 +209,16 @@
 												<em>Not set</em>
 											@endif
 										</td>
-										<td>{{ $shopManuscript->expected_finish }}</td>
+										<td>
+											{{ $shopManuscript->expected_finish }}
+											<button class="btn btn-primary btn-xs editExpectedFinishBtn" data-toggle="modal"
+													data-target="#editExpectedFinishModal"
+													data-action="{{ route('backend.update-expected-finish', ['shop-manuscript', $shopManuscript->id]) }}"
+													data-expected_finish="{{ $shopManuscript->expected_finish
+												? strftime('%Y-%m-%d', strtotime($shopManuscript->expected_finish)) : NULL }}">
+												<i class="fa fa-edit"></i> Edit
+											</button>
+										</td>
 										<td>
 											<a href="{{ route('backend.download_shop_manuscript', $shopManuscript->id) }}"
 											   class="btn btn-primary btn-xs">{{ trans('site.download') }}</a> <br>
@@ -1496,6 +1512,29 @@
 	</div>
 </div>
 
+<div id="editExpectedFinishModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Edit Expected Finish</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans('site.expected-finish') }}</label>
+						<input type="date" name="expected_finish" class="form-control" required>
+					</div>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="submitPersonalAssignmentFeedbackModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -1601,6 +1640,14 @@
 @section('scripts')
 	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
+	$(".editExpectedFinishBtn").click(function() {
+        let expected_finish = $(this).data('expected_finish');
+        let modal = $('#editExpectedFinishModal');
+        let action = $(this).data('action');
+        modal.find('form').attr('action', action);
+        modal.find('[name=expected_finish]').val(expected_finish);
+	});
+
 	$('.viewManuscriptBtn').click(function(){
 		var fields = $(this).data('fields');
 		var modal = $('#viewManuscriptModal');

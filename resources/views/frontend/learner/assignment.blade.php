@@ -149,7 +149,7 @@
 																	<button type="button" class="btn btn-sm btn-info editManuscriptBtn"
 																			data-toggle="modal" data-target="#editManuscriptModal"
 																			data-action="{{ route('learner.assignment.replace_manuscript', $manuscript->id) }}">
-																		<i class="fa fa-pencil"></i>
+																		<i class="fa fa-pen"></i>
 																	</button>
 																	<button type="button" class="btn btn-sm btn-danger deleteManuscriptBtn"
 																			data-toggle="modal" data-target="#deleteManuscriptModal"
@@ -334,6 +334,13 @@
 																		{{ trans('site.learner.upload-script') }}
 																	</button>
 																@endif
+															@else
+																@if($assignment->parent === 'users')
+																	<label class="badge badge-info w-100"
+																		   style="font-size: 100%">
+																		{{ trans('site.started') }}
+																	</label>
+																@endif
 															@endif
 														</div>
 													</div> <!-- end row -->
@@ -376,6 +383,12 @@
 																</div>
 															@endif
 														</div>
+
+														@if($assignment->parent === 'users')
+															<p class="mt-3">
+																{{ trans('site.expected-finish') }}: {{ $manuscript->expected_finish }}
+															</p>
+														@endif
 													@endif
 												</div> <!-- end card-body -->
 												@if($assignment->course)

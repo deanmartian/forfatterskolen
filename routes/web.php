@@ -575,6 +575,7 @@ Route::group([
         Route::post('backend/change-password', 'PageController@changePassword')->name('backend.change-password');
         Route::get('/tests', 'PageController@tests');
         Route::get('head-editor/dashboard', 'HeadEditorController@index')->name('admin.head-editor-dashboard')->middleware('headEditor');
+        Route::post('/update-expected-finish/{type}/{id}', 'PageController@updateExpectedFinish')->name('backend.update-expected-finish');
 
         Route::resource('page_meta','PageMetaController',[
             'except' => ['show', 'create', 'edit'],
