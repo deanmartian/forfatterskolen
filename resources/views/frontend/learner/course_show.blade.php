@@ -155,7 +155,7 @@
 											</tr>
 											</thead>
 											<tbody>
-											@foreach( $courseTaken->package->course->webinars as $webinar )
+											@foreach( $courseTaken->package->course->activeWebinars as $webinar )
 												<tr>
 													<td><strong>{{ $webinar->title }}</strong></td>
 													<td>{{ date_format(date_create($webinar->start_date), 'M d, Y H.i') }}</td>
