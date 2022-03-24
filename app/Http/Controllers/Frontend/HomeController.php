@@ -931,7 +931,7 @@ class HomeController extends Controller
         /*AdminHelpers::send_email('New Coaching Session',
             'post@forfatterskolen.no', 'camilla@forfatterskolen.no', Auth::user()->first_name
             . ' has ordered the Coaching Time '.$title);*/
-        $to = 'camilla@forfatterskolen.no'; //
+        $to = 'post@forfatterskolen.no'; //
         $emailData = [
             'email_subject' => 'New Coaching Session',
             'email_message' => Auth::user()->first_name . ' has ordered the Coaching Time '.$title,

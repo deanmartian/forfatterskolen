@@ -343,7 +343,7 @@ class LearnerController extends Controller
 
             $email_data['sender']           = Auth::user()->full_name;
             $email_data['suggested_dates']  = $data['suggested_date'];
-            $toMail = 'Camilla@forfatterskolen.no';
+            $toMail = 'post@forfatterskolen.no';
             // use queue to send email on background
             Mail::to($toMail)->queue(new CoachingSuggestionDateEmail($email_data));
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Suggested date saved successfully.'),
@@ -883,7 +883,7 @@ class LearnerController extends Controller
             // Admin notification
             if (($assignment->course && $assignment->course->type === "Single") || $assignment->parent === 'users') {
                 $message = Auth::user()->full_name.' submitted a manuscript for assignment '.$assignment->title;
-                $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
+                $toMail = 'post@forfatterskolen.no'; //post@forfatterskolen.no
 
                 $email_data['email_message'] = $message;
                 // use queue to send email on background

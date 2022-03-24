@@ -274,10 +274,10 @@ class ShopManuscriptController extends Controller
 
             // Admin notification
             $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
-            $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
+            $toMail = 'post@forfatterskolen.no'; //post@forfatterskolen.no
             /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
                 'post@forfatterskolen.no',$toMail, $message);*/
-            $to = 'Camilla@forfatterskolen.no'; //
+            $to = 'post@forfatterskolen.no'; //
             $emailData = [
                 'email_subject' => 'New manuscript submitted for shop manuscript',
                 'email_message' => $message,
@@ -563,7 +563,7 @@ class ShopManuscriptController extends Controller
         ]);
         // Admin notification
         $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
-        $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
+        $toMail = 'post@forfatterskolen.no'; //post@forfatterskolen.no
         //mail($toMail, 'New manuscript submitted for shop manuscript', $message);
             /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
                 'post@forfatterskolen.no', $toMail, $message);*/
@@ -726,7 +726,7 @@ class ShopManuscriptController extends Controller
             // Admin notification
             $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
             //mail('post@forfatterskolen.no', 'New manuscript submitted for shop manuscript', $message);
-            $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
+            $toMail = 'post@forfatterskolen.no'; //post@forfatterskolen.no
             /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
                 'post@forfatterskolen.no', $toMail, $message);*/
             $to = $toMail; //
