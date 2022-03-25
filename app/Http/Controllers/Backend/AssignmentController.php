@@ -1257,6 +1257,31 @@ class AssignmentController extends Controller
             'alert_type' => 'success']);
     }
 
+    public function multipleLearnerAssignment( Request $request )
+    {
+
+        foreach($request->templates as $t) {
+            $template = AssignmentTemplate::find($t);
+
+            Assignment::create([
+                'title' => $template->title,
+                'description' => $template->description,
+                'submission_date' => $template->submission_date,
+                'available_date' => $template->available_date,
+                'max_words' => (int) $template->max_words,
+                'show_join_group_question' => 0,
+                'course_id' => $request->course_id,
+                'parent_id' => $request->learner_id,
+                'parent' => 'users',
+                'editor_id' => $request->editor_id,
+                'editor_expected_finish' => $request->editor_expected_finish,
+                'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0
+            ]);
+        }
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record saved successfully.'),
+            'alert_type' => 'success']);
+    }
+
     /**
      * @param $assignment_id
      * @return \Illuminate\Http\RedirectResponse

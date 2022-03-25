@@ -60,6 +60,14 @@
 							{{ trans('site.add-assignment') }}
 						</button>
 
+						<button type="button"
+								class="btn btn-success margin-bottom bulkLearnerAssignmentBtn" data-toggle="modal"
+								data-target="#bulkLearnerAssignmentModal"
+								data-action="{{ route('assignment.multiple-learner-assignment.save') }}"
+						>
+							Add Multiple Assignment
+						</button>
+
 						<div class="table-users table-responsive">
 							<table class="table">
 								<thead>
@@ -441,6 +449,93 @@
 			</div>
 		</div>
 
+		<div id="bulkLearnerAssignmentModal" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">
+							Multiple Learner Assignment
+						</h4>
+					</div>
+					<div class="modal-body">
+						<form method="POST" action="" onsubmit="disableSubmit(this)">
+							{{ csrf_field() }}
+
+							<div class="form-group">
+								<label>
+									Assignment Template
+								</label>
+								<select name="templates[]" class="form-control select2 template" multiple="multiple">
+									@foreach($assignmentTemplates as $template)
+										<option value="{{$template->id}}" data-fields="{{ json_encode($template) }}">
+											{{$template->title}}
+										</option>
+									@endforeach
+								</select>
+							</div>
+
+							<div class="form-group">
+								<label>{{ trans('site.editor-expected-finish') }}</label>
+								<input type="date" class="form-control" name="editor_expected_finish">
+							</div>
+
+							<div class="form-group">
+								<label>{{ trans('site.send-letter-to-editor') }}</label> <br>
+								<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small"
+									   name="send_letter_to_editor">
+							</div>
+
+							<div class="form-group">
+								<label>{{ trans_choice('site.courses', 1) }}</label>
+								<select class="form-control select2" name="course_id">
+									<option value="" selected disabled>- Search Course -</option>
+									@foreach(\App\Http\AdminHelpers::courseList() as $course)
+										<option value="{{$course->id}}">
+											{{$course->title}}
+										</option>
+									@endforeach
+								</select>
+							</div>
+
+							<div class="form-group">
+								<label>
+									{{ trans_choice('site.learners', 1) }}
+								</label>
+								<select class="form-control select2" name="learner_id" required>
+									<option value="" selected disabled>- Search Learner -</option>
+									@foreach(\App\Http\AdminHelpers::getLearnerList() as $learner)
+										<option value="{{$learner->id}}"
+												data-preferred-editor="{{ $learner->preferredEditor ? $learner->preferredEditor->editor_id : '' }}">
+											{{$learner->full_name}}
+										</option>
+									@endforeach
+								</select>
+							</div>
+
+							<div class="form-group">
+								<label>{{ trans_choice('site.editors', 1) }}</label>
+								<select class="form-control select2" name="editor_id">
+									<option value="" selected disabled>- Select Editor -</option>
+									@foreach(\App\Http\AdminHelpers::editorList() as $editor)
+										<option value="{{ $editor->id }}">
+											{{ $editor->first_name . " " . $editor->last_name }}
+										</option>
+									@endforeach
+								</select>
+							</div>
+
+							<button type="submit" class="btn btn-primary pull-right margin-top">
+								{{ trans('site.save') }}
+							</button>
+							<div class="clearfix"></div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
         <div id="assignEditorModal" class="modal fade" role="dialog">
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">
@@ -573,6 +668,12 @@
         $(".learnerAssignmentBtn").click(function() {
             let action = $(this).data('action');
             let modal = $('#learnerAssignmentModal');
+            modal.find('form').attr('action', action);
+        });
+
+        $(".bulkLearnerAssignmentBtn").click(function() {
+            let action = $(this).data('action');
+            let modal = $('#bulkLearnerAssignmentModal');
             modal.find('form').attr('action', action);
         });
 
