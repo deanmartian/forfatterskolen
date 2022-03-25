@@ -40,6 +40,7 @@
 										<th>{{ trans_choice('site.courses', 1) }}</th>
 										<th>{{ trans('site.type') }}</th>
 										<th>{{ trans('site.where') }}</th>
+										<th>{{ trans('site.expected-finish') }}</th>
 										<th>{{ trans('site.deadline') }}</th>
 										<th>{{ trans('site.feedback-status') }}</th>
 									</tr>
@@ -84,6 +85,18 @@
 											</td>
 											<td>{{ \App\Http\AdminHelpers::assignmentType($assignedManuscript->type) }}</td>
 											<td>{{ \App\Http\AdminHelpers::manuscriptType($assignedManuscript->manu_type) }}</td>
+											<td>
+												{{ $assignedManuscript->expected_finish }}
+												@if(!$assignedManuscript->expected_finish)
+													<button class="btn btn-primary btn-xs editExpectedFinishBtn" data-toggle="modal"
+															data-target="#editExpectedFinishModal"
+															data-action="{{ route('editor.personal-assignment.update-expected-finish', ['assignment', $assignedManuscript->id]) }}"
+															data-expected_finish="{{ $assignedManuscript->expected_finish
+												? strftime('%Y-%m-%d', strtotime($assignedManuscript->expected_finish)) : NULL }}">
+														<i class="fa fa-edit"></i> Edit
+													</button>
+												@endif
+											</td>
 											<td>
 												{{ $assignedManuscript->editor_expected_finish?$assignedManuscript->editor_expected_finish:$assignedManuscript->assignment->editor_expected_finish }}
 											</td>
@@ -1043,6 +1056,29 @@
 	</div>
 </div>
 
+<div id="editExpectedFinishModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Edit Expected Finish</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans('site.expected-finish') }}</label>
+						<input type="date" name="expected_finish" class="form-control" required>
+					</div>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="submitPersonalAssignmentFeedbackModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -1485,6 +1521,14 @@
         let action = $(this).data('action');
         let modal = $('#deleteTaskModal');
         modal.find('form').attr('action', action);
+    });
+
+    $(".editExpectedFinishBtn").click(function() {
+        let expected_finish = $(this).data('expected_finish');
+        let modal = $('#editExpectedFinishModal');
+        let action = $(this).data('action');
+        modal.find('form').attr('action', action);
+        modal.find('[name=expected_finish]').val(expected_finish);
     });
 
 	$('#myAssignedShopManuTable').on('click','.submitPersonalAssignmentFeedbackBtn',function (){

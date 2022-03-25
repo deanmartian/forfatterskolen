@@ -1039,6 +1039,7 @@ Route::group([
         Route::delete('assignment/template/delete/{id}', 'AssignmentController@deleteAssignmentTemplate')->name('assignment.template.delete');
         Route::post('assignment/learner-assignment/save/{id?}', 'AssignmentController@learnerAssignment')->name('assignment.learner-assignment.save');
         Route::delete('assignment/learner-assignment/{id}/delete', 'AssignmentController@deleteLearnerAssignment')->name('assignment.learner-assignment.delete');
+        Route::post('assignment/multiple-learner-assignment/save', 'AssignmentController@multipleLearnerAssignment')->name('assignment.multiple-learner-assignment.save');
 
 
 
@@ -1623,6 +1624,7 @@ Route::group([
         Route::get('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}', 'LearnerController@shopManuscriptTakenShowEditorPreview')->name('editor.shop_manuscript_taken');
         Route::get('acceptShopManuscriptRequest/{shop_manuscript_taken_id}/{accept}/{request_id}', 'ShopManuscriptController@editorAcceptRequest')->name('editor.acceptShopManuscriptRequest');
         Route::post('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}/comment', 'LearnerController@shopManuscriptTakenShowComment')->name('editor.shop_manuscript_taken_comment');
+        Route::post('/update-expected-finish/{type}/{id}', 'PageController@updateExpectedFinish')->name('editor.personal-assignment.update-expected-finish');
 
     });
 
