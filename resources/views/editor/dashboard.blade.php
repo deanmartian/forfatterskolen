@@ -41,7 +41,7 @@
 										<th>{{ trans('site.type') }}</th>
 										<th>{{ trans('site.where') }}</th>
 										<th>{{ trans('site.expected-finish') }}</th>
-										<th>{{ trans('site.deadline') }}</th>
+										{{--<th>{{ trans('site.deadline') }}</th>--}}
 										<th>{{ trans('site.feedback-status') }}</th>
 									</tr>
 									</thead>
@@ -97,9 +97,9 @@
 													</button>
 												@endif
 											</td>
-											<td>
+											{{--<td>
 												{{ $assignedManuscript->editor_expected_finish?$assignedManuscript->editor_expected_finish:$assignedManuscript->assignment->editor_expected_finish }}
-											</td>
+											</td>--}}
 											<td>
 												<div>
 													@if($assignedManuscript->has_feedback && $assignedManuscript->noGroupFeedbacks->first())
