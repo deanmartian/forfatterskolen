@@ -4129,8 +4129,9 @@ class LearnerController extends Controller
             ]);
         }
 
+        // added fiter for $decode->message: this causes error : cron fix
         return response()->json([
-            'message' => $decode->message
+            'message' => $decode ? $decode->message : ''
         ], $httpcode);
     }
 
