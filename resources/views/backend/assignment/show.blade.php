@@ -363,7 +363,10 @@
 			@endif
 
 			<div class="table-responsive margin-top">
-				<button type="button" class="pull-right btn btn-primary btn-sm margin-bottom" data-toggle="modal" data-target="#addGroupModal">{{ trans('site.create-group') }}</button>
+				<div class="pull-right">
+					<button type="button" class="btn btn-primary btn-sm margin-bottom" data-toggle="modal" data-target="#addGroupModal">{{ trans('site.create-group') }}</button>
+					<button type="button" data-toggle="modal" class="btn btn-primary btn-sm margin-bottom" data-target="#generateGroup">{{ trans('site.generate') }}</button>
+				</div>
 				<h5>{{ trans_choice('site.groups', 2) }}</h5>
 				<table class="table table-side-bordered table-white">
 					<thead>
@@ -574,6 +577,35 @@
 						   name="allow_feedback_download">
 				</div>
 		      <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.create') }}</button>
+		      <div class="clearfix"></div>
+		    </form>
+		  </div>
+		</div>
+	</div>
+</div>
+
+<div id="generateGroup" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+		  <div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal">&times;</button>
+		    <h4 class="modal-title">{{ trans('site.generate-group') }}</h4>
+		  </div>
+		  <div class="modal-body">
+		    <form method="POST" action="{{ route('assignment.generate_assignment_group', $assignment->id) }}">
+		      {{ csrf_field() }}
+				<div class="form-group">
+					<label>{{ trans('site.submission-date') }}</label>
+					<input type="datetime-local" class="form-control" name="submission_date" required>
+				</div>
+				<div class="form-group">
+					<label>{{ trans('site.allow-download-all-feedback') }}</label> <br>
+					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+						   data-id="@if (isset($group)){{$group->allow_feedback_download}}@endif"
+						   @if(isset($group) && $group->allow_feedback_download) {{ 'checked' }} @endif
+						   name="allow_feedback_download">
+				</div>
+		      <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.generate') }}</button>
 		      <div class="clearfix"></div>
 		    </form>
 		  </div>

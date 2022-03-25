@@ -28,6 +28,8 @@ use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Reader\HTML;
 use PhpParser\Node\Expr\Assign;
+use App\AssignmentGroupLearner;
+use App\AssignmentGroup;
 
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
@@ -85,7 +87,74 @@ class AssignmentController extends Controller
         return redirect()->back();
     }
 
+    public function generateGroup($assignmentID, Request $request)
+    {
+        $this->validate($request, [
+            'submission_date' => 'required',
+        ]);
 
+        // get all users where not in assignment group learners
+        $existingGroups = Assignment::find($assignmentID)->groups->pluck('id');
+        $learnersInGroup = AssignmentGroupLearner::whereIn('assignment_group_id', $existingGroups)->pluck('user_id');
+        $learnersToGroup = AssignmentManuscript::where('assignment_id', $assignmentID)
+                ->whereNotIn('user_id', $learnersInGroup)
+                ->where('join_group', 1)->orderBy('type')->get();
+
+        // group by 3 according to genre (prioritize grouping by genre)
+        foreach (FrontendHelpers::assignmentType() as $genre) {
+
+            $saved = array();
+            $min = 1;
+            
+            $learnedToGroupFiltered = $learnersToGroup->filter(function ($value, $key) use ($saved, $genre) {
+                return !(in_array($value->user_id,$saved)) && ($value->type == $genre['id']);
+            });
+
+            $groupCount = AssignmentGroup::where('assignment_id', $assignmentID)->count() + 1;
+            
+            if($learnedToGroupFiltered->count() >= $min){
+
+                $count = 0;
+                $max = 3;
+                $assignmentGroup = null;
+
+                // echo 'genre: '.$genre['id'].'</br></br>';
+                // print_r($learnedToGroupFiltered);
+                // echo '</br></br></br>';
+
+                foreach ($learnedToGroupFiltered as $key) {
+
+                    if($count == 0){
+                        // create assignment group
+                        $assignmentGroup = new AssignmentGroup;
+                        $assignmentGroup->assignment_id = $assignmentID;
+                        $assignmentGroup->title = trans('site.group-number').' '.$groupCount;
+                        $assignmentGroup->submission_date = $request->submission_date;
+                        $assignmentGroup->allow_feedback_download = isset($request->allow_feedback_download) ? 1 : 0;
+                        $assignmentGroup->availability = null;
+                        $assignmentGroup->save();
+                        $groupCount++;
+                    }
+
+                    // create assignment group learners
+                    $assignment_group_learners = new AssignmentGroupLearner;
+                    $assignment_group_learners->assignment_group_id = $assignmentGroup->id;
+                    $assignment_group_learners->user_id = $key->user_id;
+                    $assignment_group_learners->save();
+
+                    $count++;
+                    if($count == $max){
+                        $count = 0;
+                    }
+
+                    array_push($saved, $key->user_id);
+                }
+            }
+        }
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Groups generated successfully.'),
+            'alert_type' => 'success']);
+    }
 
     public function store($course_id, Request $request)
     {
