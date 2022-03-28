@@ -101,7 +101,10 @@ class AssignmentController extends Controller
                 ->where('join_group', 1)->orderBy('type')->get();
 
         // group by 3 according to genre (prioritize grouping by genre)
-        foreach (FrontendHelpers::assignmentType() as $genre) {
+        $assignmentType = FrontendHelpers::assignmentType();
+        $assignmentType[] = [ 'id' => '', 'option' => 'none'];
+
+        foreach ($assignmentType as $genre) {
 
             $saved = array();
             $min = 1;
