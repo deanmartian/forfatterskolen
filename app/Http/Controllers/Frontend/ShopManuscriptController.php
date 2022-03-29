@@ -86,14 +86,17 @@ class ShopManuscriptController extends Controller
 
         $shopManuscript = ShopManuscript::find($shop_manuscript_id);
         $word_count =  $shopManuscriptService->countManuscriptWord( $request );
+        $word_to_deduct = $word_count * 0.02;
+        $new_word_count = ceil($word_count - $word_to_deduct);
 
         // check if the uploaded file exceeds the plan max words
-        if ($word_count > $shopManuscript->max_words) {
+        if ($new_word_count > $shopManuscript->max_words) {
             // get the plan that meets the word count uploaded
-            $nextPlan = ShopManuscript::where('max_words','>=',$word_count)->first();
+            $nextPlan = ShopManuscript::where('max_words','>=',$new_word_count)->first();
             return response()->json([
                 'message' => 'Ditt manus er '.$word_count
-                    .' ord, du må bestille <a href="'.route('front.shop-manuscript.checkout', $nextPlan->id).'">'
+                    .' ord, du må bestille <a href="'.route('front.shop-manuscript.checkout', $nextPlan->id).'"
+                     style="color: #000; font-weight: bold">'
                     .$nextPlan->title.'</a>.'
             ], 400);
         }
@@ -271,10 +274,10 @@ class ShopManuscriptController extends Controller
 
             // Admin notification
             $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
-            $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
+            $toMail = 'post@forfatterskolen.no'; //post@forfatterskolen.no
             /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
                 'post@forfatterskolen.no',$toMail, $message);*/
-            $to = 'Camilla@forfatterskolen.no'; //
+            $to = 'post@forfatterskolen.no'; //
             $emailData = [
                 'email_subject' => 'New manuscript submitted for shop manuscript',
                 'email_message' => $message,
@@ -560,7 +563,7 @@ class ShopManuscriptController extends Controller
         ]);
         // Admin notification
         $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
-        $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
+        $toMail = 'post@forfatterskolen.no'; //post@forfatterskolen.no
         //mail($toMail, 'New manuscript submitted for shop manuscript', $message);
             /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
                 'post@forfatterskolen.no', $toMail, $message);*/
@@ -723,7 +726,7 @@ class ShopManuscriptController extends Controller
             // Admin notification
             $message = Auth::user()->full_name.' submitted a manuscript for shop manuscript '.$shopManuscriptTaken->shop_manuscript->title;
             //mail('post@forfatterskolen.no', 'New manuscript submitted for shop manuscript', $message);
-            $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
+            $toMail = 'post@forfatterskolen.no'; //post@forfatterskolen.no
             /*AdminHelpers::send_email('New manuscript submitted for shop manuscript',
                 'post@forfatterskolen.no', $toMail, $message);*/
             $to = $toMail; //
@@ -789,6 +792,8 @@ class ShopManuscriptController extends Controller
               $word_count = FrontendHelpers::get_num_of_words($doc);
             endif;
             $word_count = FrontendHelpers::wordCountByMargin((int) $word_count);
+            $word_to_deduct = $word_count * 0.02;
+            $new_word_count = ceil($word_count - $word_to_deduct);
 
             /*
              * original code for price
@@ -821,7 +826,7 @@ class ShopManuscriptController extends Controller
                 $checkoutRoute = 'front.gift.shop-manuscript.checkout';
             }
 
-            $suggestedPlan = ShopManuscript::where('max_words','>=', $word_count)
+            $suggestedPlan = ShopManuscript::where('max_words','>=', $new_word_count)
                 ->orderBy('max_words', 'ASC')->first();
             if ($suggestedPlan) {
                 $price = $suggestedPlan->full_payment_price;

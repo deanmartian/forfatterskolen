@@ -200,7 +200,7 @@ class CoachingTimeService
         }
 
         $message = $user->full_name.' has ordered the '.$title;
-        $to = 'camilla@forfatterskolen.no';
+        $to = 'post@forfatterskolen.no';
         $emailData = [
             'email_subject' => 'New Coaching Session',
             'email_message' => $message,

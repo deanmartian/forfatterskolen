@@ -133,6 +133,9 @@
 					data-vipps-number="{{ $learner->address ? $learner->address->vipps_phone_number : NULL}}">
 				{!! trans('site.set-vipps-efaktura') !!}
 			</button>
+			<a href="{{ route('auth.login.email', encrypt($learner->email)) }}" class="btn btn-info margin-top" target="_blank">
+				Login as user
+			</a>
 
 			<div class="former-course-container">
 				<h4>{{ trans('site.former-courses') }}</h4>
@@ -344,6 +347,8 @@
 								<th>{{ trans('site.date-ordered') }}</th>
 								<th>Assigned Admin</th>
 								<th>{{ trans('site.status') }}</th>
+								<th>{{ trans_choice('site.notes', 2) }}</th>
+								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
 								<th></th>
 							</tr>
 						</thead>
@@ -371,6 +376,28 @@
 												<span class="label label-primary">Started</span>
 											@elseif( $shopManuscriptTaken->status == 'Not started' )
 												<span class="label label-warning">Not started</span>
+											@endif
+										</td>
+										<td>
+											<?php
+                                            	$manuscriptFeedback = $shopManuscriptTaken->feedbacks->first();
+											?>
+											@if($manuscriptFeedback && $manuscriptFeedback->notes_to_head_editor)
+												<a class="pointer notes" data-target="#scriptNotesModal"
+												   data-toggle="modal" data-notes="{{ $manuscriptFeedback->notes_to_head_editor }}"
+												   style="cursor: pointer;">
+													{{ substr($manuscriptFeedback->notes_to_head_editor, 0, 10) }}
+													<i class="fa fa-file-text-o" aria-hidden="true"></i>
+												</a>
+											@endif
+										</td>
+										<td>
+											@if($manuscriptFeedback)
+												@foreach( $manuscriptFeedback->filename as $filename )
+													<a href="{{ $filename }}" class="d-block" download>
+														{{ basename($filename) }}
+													</a>
+												@endforeach
 											@endif
 										</td>
 										<td class="text-right">
@@ -767,6 +794,7 @@
 								<th>{{ trans_choice('site.courses', 1) }}</th>
 								<th>Editor</th>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
 								<th></th>
 							</tr>
 						</thead>
@@ -774,10 +802,11 @@
 							<?php
 					        $assignments = [];
 					        $addOns = $learner->assignmentAddOns->pluck('assignment_id')->toArray();
-					        foreach( $learner->coursesTaken as $course ) :
-					            foreach( $course->package->course->assignments as $assignment ) :
+					        foreach( $learner->coursesTaken as $courseTaken ) :
+					            foreach( $courseTaken->package->course->assignments as $assignment ) :
                             		$allowed_package = json_decode($assignment->allowed_package);
-                            		$package_id = $course->package->id;
+                            		$package_id = $courseTaken->package->id;
+                            		$course = $courseTaken->package->course;
 
                             		$manuscript = $assignment->manuscripts->where('user_id', $learner->id)->first();
 									if ($manuscript) {
@@ -789,11 +818,16 @@
 											// added the condition because of the update for submission date
 											// the original is the else
 											if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
-												if(\Carbon\Carbon::parse($course->started_at)->addDays($assignment->submission_date)
-												->gt(\Carbon\Carbon::now())) {
-													$assignments[] = $assignment;
+												if ($course->type == 'Single' && $assignment->submission_date == '365') {
+													if(\Carbon\Carbon::parse($courseTaken->end_date)->gt(\Carbon\Carbon::now())) {
+														$assignments[] = $assignment;
 													}
 												} else {
+													if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)->gt(\Carbon\Carbon::now())) {
+														$assignments[] = $assignment;
+													}
+												}
+											} else {
 												if (\Carbon\Carbon::parse($assignment->submission_date)->gt(\Carbon\Carbon::now())) {
 													$assignments[] = $assignment;
 												}
@@ -856,6 +890,32 @@
 										@endif
 									</td>
 									<td>
+										<?php
+											$groupFeedbacks = \App\AssignmentFeedback::leftJoin('assignment_group_learners', 'assignment_group_learners.id', '=', 'assignment_feedbacks.assignment_group_learner_id')
+											->leftJoin('assignment_groups', 'assignment_group_learners.assignment_group_id', '=', 'assignment_groups.id')
+											->where('assignment_group_learners.user_id', $learner->id)
+                                        	->where('assignment_id', $assignment->id)->get();
+											if ($groupFeedbacks->count() > 0) {
+												foreach($groupFeedbacks as $groupFeedback) {
+                                        			$files = explode(',',$groupFeedback->filename);
+                                        			foreach($files as $file) {
+														echo "<a href='" . $file . "' class='d-block' download>"
+														. basename($file) . "</a>";
+													}
+												}
+											} else {
+											    if ($manuscript) {
+                                        			$feedback = \App\AssignmentFeedbackNoGroup::where('learner_id', $learner->id)
+													->where('assignment_manuscript_id', $manuscript->id)->first();
+                                        			if ($feedback) {
+														echo "<a href='" . $feedback->filename . "' class='d-block' download>"
+														. basename($feedback->filename) . "</a>";
+													}
+												}
+											}
+										?>
+									</td>
+									<td>
 										@if($manuscript)
 											<button class="btn btn-primary btn-xs assignmentManuscriptEmailBtn" data-toggle="modal"
 													data-target="#assignmentManuscriptEmailModal"
@@ -894,6 +954,7 @@
 							<th>{{ trans_choice('site.courses', 1) }}</th>
 							<th>Editor</th>
 							<th>{{ trans_choice('site.manuscripts', 1) }}</th>
+							<th>{{ trans_choice('site.feedbacks', 1) }}</th>
 						</tr>
 						</thead>
 						<tbody>
@@ -924,6 +985,18 @@
 										@if ($manuscript)
 											{!! $manuscript->file_link !!}
 										@endif
+									</td>
+									<td>
+										@php
+											if ($manuscript) {
+												$feedback = \App\AssignmentFeedbackNoGroup::where('learner_id', $learner->id)
+												->where('assignment_manuscript_id', $manuscript->id)->first();
+												if ($feedback) {
+													echo "<a href='" . $feedback->filename . "' class='d-block' download>"
+													. basename($feedback->filename) . "</a>";
+												}
+											}
+										@endphp
 									</td>
 								</tr>
 							@endforeach
@@ -3537,6 +3610,22 @@
 		</div>
 	</div>
 </div>
+
+<div id="scriptNotesModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans_choice('site.notes', 2) }}</h4>
+			</div>
+			<div class="modal-body">
+
+				<p></p>
+
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -4019,6 +4108,13 @@
     $(".setVippsEFakturaBtn").click(function(){
         let vipps_phone_number = $(this).data('vipps-number');
         $("#setVippsEFakturaModal").find('input[name=mobile_number]').val(vipps_phone_number);
+    });
+
+    $('.notes').click(function(){
+        let notes = $(this).data('notes');
+        let modal = $('#scriptNotesModal');
+        modal.find('p').text(notes);
+
     });
 
 	function updateOtherServiceFields(type) {

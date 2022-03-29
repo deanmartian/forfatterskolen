@@ -57,6 +57,14 @@ class Course extends Model
         return $this->hasMany('App\Webinar')->orderByRaw("id=24 DESC")->orderBy('start_date', 'asc');
     }
 
+    public function activeWebinars()
+    {
+        //display id of 24 first then other record is by start date
+        return $this->hasMany('App\Webinar')->orderByRaw("id=24 DESC")
+            ->where('start_date', '>=', Carbon::today())
+            ->orderBy('start_date', 'asc');
+    }
+
     public function assignments()
     {
         return $this->hasMany('App\Assignment')->whereNull('parent')->orderBy('created_at', 'desc');

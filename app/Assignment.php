@@ -9,8 +9,8 @@ class Assignment extends Model
     
     protected $table = 'assignments';
     protected $fillable = ['course_id', 'title', 'description', 'submission_date', 'available_date','allowed_package', 'add_on_price',
-        'max_words', 'for_editor', 'editor_manu_generate_count', 'generated_filepath', 'show_join_group_question',
-        'parent_id', 'parent', 'editor_expected_finish'];
+        'max_words', 'for_editor', 'editor_id', 'editor_manu_generate_count', 'generated_filepath', 'show_join_group_question',
+        'send_letter_to_editor', 'parent_id', 'parent', 'editor_expected_finish'];
     protected $appends = ['submission_date_time_text'];
 
 
@@ -77,12 +77,24 @@ class Assignment extends Model
 
     public function getSubmissionDateTimeTextAttribute()
     {
-        return ucwords(strtr(trans('site.learner.submission-date-value'), [
-            '_date_' => \Carbon\Carbon::parse($this->attributes['submission_date'])->format('d M Y'),
-            '_time_' => \Carbon\Carbon::parse($this->attributes['submission_date'])->format('H:i')]));
+        $value = $this->attributes['submission_date'];
+        $submission_date = NULL;
+        if ($value) {
+            if (!is_numeric($value)) {
+                $submission_date = ucwords(strtr(trans('site.learner.submission-date-value'), [
+                    '_date_' => \Carbon\Carbon::parse($this->attributes['submission_date'])->format('d M Y'),
+                    '_time_' => \Carbon\Carbon::parse($this->attributes['submission_date'])->format('H:i')]));
+            }
+        }
+        return $submission_date;
     }
 
     public function assignmentManuscriptEditorCanTake(){
         return $this->hasMany('App\AssignmentManuscriptEditorCanTake', 'assignment_manuscript_id', 'id');
+    }
+
+    public function editor()
+    {
+        return $this->belongsTo('App\User', 'editor_id', 'id');
     }
 }

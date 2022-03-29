@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Editor;
 
+use App\Assignment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -41,6 +42,16 @@ class PageController extends Controller
         return view('editor.dashboard', compact('assigned_shop_manuscripts', 'assignedAssignments', 'coachingTimers',
         'corrections', 'copyEditings', 'assignedAssignmentManuscripts', 'shopManuscriptRequests'));
 
+    }
+
+    public function upcomingAssignments()
+    {
+        $upcomingAssignments = Assignment::where('editor_id', '=', Auth::user()->id)
+            ->whereDoesntHave('manuscripts') // check if there's no submitted manuscript yet
+            ->oldest('submission_date')
+            ->get();
+
+        return view('editor.upcoming-assignment', compact('upcomingAssignments'));
     }
 
     public function assignmentArchive(Request $request)

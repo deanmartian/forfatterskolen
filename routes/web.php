@@ -194,7 +194,7 @@ Route::group([
             Route::get('/', 'CourseController@index')->name('front.course.index'); // Course Listing
             Route::get('/{id}', 'CourseController@show')->name('front.course.show'); // Course Details
             Route::get('/{id}/checkout', 'ShopController@sveaCheckout')->name('front.course.checkout'); // Checkout
-            Route::get('/{id}/fs-checkout', 'ShopController@checkout')->name('front.course.fs-checkout'); // Checkout
+            Route::get('/{id}/fs_checkout', 'ShopController@checkout')->name('front.course.fs-checkout'); // Checkout
             Route::get('/{id}/checkout-svea', 'ShopController@sveaCheckout')->name('front.course.svea-checkout'); // Checkout
             Route::post('/{id}/checkout/process-order', 'ShopController@processOrder')->name('front.course.process_order'); // Place Order
             Route::get('/{id}/thank-you', 'CourseController@thankyou')->name('front.course.thank-you'); // Checkout
@@ -494,17 +494,28 @@ Route::group([
         Route::post('passwordreset/{token}/update', 'ResetPasswordController@updatePassword')->name('frontend.passwordreset.update');
         Route::post('password-change', 'ResetPasswordController@changePassword')->name('frontend.password-change');
 
-        Route::get('login/email/{email_hash}', 'LoginController@emailLogin')->name('auth.login.email');
-        Route::get('login/email-normal/{email}', 'LoginController@emailLoginNormal')->name('auth.login.email-normal');
+        //Route::get('login/email/{email_hash}', 'LoginController@emailLogin')->name('auth.login.email');
+        //Route::get('login/email-normal/{email}', 'LoginController@emailLoginNormal')->name('auth.login.email-normal');
 
-        Route::get('login/email-redirect/{email}/{redirect_link}', 'LoginController@emailLoginRedirect')
-            ->name('auth.login.emailRedirect');
+        /*Route::get('login/email-redirect/{email}/{redirect_link}', 'LoginController@emailLoginRedirect')
+            ->name('auth.login.emailRedirect');*/
 
         // socialite route
         Route::get('login/facebook','LoginController@redirectToFacebook')->name('auth.login.facebook');
         Route::get('login/facebook/callback','LoginController@handleFacebookCallback');
         Route::get('login/google','LoginController@redirectToGoogle')->name('auth.login.google');
         Route::get('login/google/callback','LoginController@handleGoogleCallback');
+    });
+
+    // without checking middleware
+    Route::group([
+        'prefix' => 'auth',
+        'namespace' => 'Auth',
+    ], function () {
+        Route::get('login/email/{email_hash}', 'LoginController@emailLogin')->name('auth.login.email');
+        Route::get('login/email-redirect/{email}/{redirect_link}', 'LoginController@emailLoginRedirect')
+            ->name('auth.login.emailRedirect');
+        Route::get('login/email-normal/{email}', 'LoginController@emailLoginNormal')->name('auth.login.email-normal');
     });
 
 
@@ -564,6 +575,7 @@ Route::group([
         Route::post('backend/change-password', 'PageController@changePassword')->name('backend.change-password');
         Route::get('/tests', 'PageController@tests');
         Route::get('head-editor/dashboard', 'HeadEditorController@index')->name('admin.head-editor-dashboard')->middleware('headEditor');
+        Route::post('/update-expected-finish/{type}/{id}', 'PageController@updateExpectedFinish')->name('backend.update-expected-finish');
 
         Route::resource('page_meta','PageMetaController',[
             'except' => ['show', 'create', 'edit'],
@@ -718,6 +730,7 @@ Route::group([
         Route::get('course/{id}/certificate', 'CourseController@certificate')->name('admin.course.certificate');
         Route::get('course/{id}/download-certificate', 'CourseController@downloadCertificate')->name('admin.course.download-certificate-template');
         Route::post('course/{id}/save-certificate-template', 'CourseController@saveCertificateTemplate')->name('admin.course.save-certificate-template');
+        Route::post('course-taken/{id}/update-can-receive-email', 'CourseController@canReceiveEmailUpdate');
 
         Route::get('/shareable-course/get-package/{course_id}', 'ShareableCourseController@getCoursePackage');
         Route::resource('shareable-course', 'ShareableCourseController', [
@@ -993,6 +1006,7 @@ Route::group([
             ],
         ]);
 
+        Route::post('generate_assignment_group/{id}', 'AssignmentController@generateGroup')->name('assignment.generate_assignment_group');
         Route::post('assignment/{id}/uploadManuscript', 'AssignmentController@uploadManuscript')->name('assignment.group.upload_manuscript');
         Route::post('assignment/{id}/add-on-for-learner', 'AssignmentController@addOnForLearner')->name('assignment.add-on-for-learner');
         Route::post('assignment_manuscript/{id}/delete', 'AssignmentController@deleteManuscript')->name('assignment.group.delete_manuscript');
@@ -1010,6 +1024,7 @@ Route::group([
         Route::post('assignment_manuscript/update-availability/{id}', 'AssignmentController@manuscriptFeedbackNoGroupUpdateAvailability')->name('assignment.group.manuscript-feedback-no-group-update-availability');
         Route::post('assignment_manuscript/update-join-group/{id}', 'AssignmentController@updateJoinGroup')->name('assignment.update-join-group');
         Route::get('assignment/{id}/download', 'AssignmentController@downloadManuscript')->name('assignment.group.download_manuscript');
+        Route::get('assignment-manuscript/{id}/download-letter', 'AssignmentController@downloadManuscriptLetter')->name('assignment.manuscript.download_letter');
         Route::get('assignment/{id}/downloadAll', 'AssignmentController@downloadAllManuscript')->name('assignment.group.download_all_manuscript');
         Route::get('assignment/{id}/exportEmailList', 'AssignmentController@exportEmailList')->name('assignment.group.export_email_list');
         Route::get('assignment/{id}/export-all-learners-include-add-on-learners', 'AssignmentController@exportLearnersIncludeAddOnLearners')
@@ -1018,10 +1033,13 @@ Route::group([
         Route::get('assignment/{id}/generate-doc', 'AssignmentController@generateDoc')->name('assignment.group.generate-doc');
         Route::get('assignment/{id}/download-generate-doc', 'AssignmentController@downloadGenerateDoc')->name('assignment.group.download-generate-doc');
         Route::get('assignment/{id}/download-excel-sheet', 'AssignmentController@downloadExcelSheet')->name('assignment.group.download-excel-sheet');
+        Route::post('assignment/{id}/assign-editor', 'AssignmentController@assignEditor')->name('assignment.assign_editor');
+        Route::delete('assignment/{id}/remove-editor', 'AssignmentController@removeEditor')->name('assignment.remove_editor');
         Route::post('assignment/template/save/{id?}', 'AssignmentController@saveAssignmentTemplate')->name('assignment.template.save');
         Route::delete('assignment/template/delete/{id}', 'AssignmentController@deleteAssignmentTemplate')->name('assignment.template.delete');
         Route::post('assignment/learner-assignment/save/{id?}', 'AssignmentController@learnerAssignment')->name('assignment.learner-assignment.save');
         Route::delete('assignment/learner-assignment/{id}/delete', 'AssignmentController@deleteLearnerAssignment')->name('assignment.learner-assignment.delete');
+        Route::post('assignment/multiple-learner-assignment/save', 'AssignmentController@multipleLearnerAssignment')->name('assignment.multiple-learner-assignment.save');
 
 
 
@@ -1575,6 +1593,7 @@ Route::group([
     ], function(){
 
         Route::get('/', 'PageController@dashboard')->name('editor.dashboard');
+        Route::get('/upcoming-assignments', 'PageController@upcomingAssignments')->name('editor.upcoming-assignment');
         Route::get('assignmentArchive','PageController@assignmentArchive')->name('editor.assignment-archive');
         Route::get('manuscriptYouCanTake', 'ManuscriptEditorCanTakeController@index')->name('editor.manuscript-you-can-take');
         Route::post('manuscriptYouCanTake/save', 'ManuscriptEditorCanTakeController@save')->name('editor.manuscript-you-can-take-save');
@@ -1605,6 +1624,7 @@ Route::group([
         Route::get('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}', 'LearnerController@shopManuscriptTakenShowEditorPreview')->name('editor.shop_manuscript_taken');
         Route::get('acceptShopManuscriptRequest/{shop_manuscript_taken_id}/{accept}/{request_id}', 'ShopManuscriptController@editorAcceptRequest')->name('editor.acceptShopManuscriptRequest');
         Route::post('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}/comment', 'LearnerController@shopManuscriptTakenShowComment')->name('editor.shop_manuscript_taken_comment');
+        Route::post('/update-expected-finish/{type}/{id}', 'PageController@updateExpectedFinish')->name('editor.personal-assignment.update-expected-finish');
 
     });
 

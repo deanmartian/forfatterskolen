@@ -18,8 +18,8 @@ $urlList = array('pulse', 'board');
       <ul class="nav navbar-nav navbar-right">
         <!-- <li @if(Request::is('/')) class="active" @endif><a href="{{route('backend.dashboard')}}">{{ trans('site.admin-menu.dashboard') }}</a></li> -->
         @foreach (\App\Http\AdminHelpers::editorPageList() as $page)
-        <li @if(Request::is(strtolower($page['request_name']))) class="active" @endif>
-          <a href="{{ route($page['route']) }}">{{ trans('site.admin-menu.'.$page['request_name']) }}</a>
+        <li @if(Route::currentRouteName() === strtolower($page['route'])) class="active" @endif>
+          <a href="{{ route($page['route']) }}">{{ trans($page['request_name'] === 'upcoming-assignment' ? 'site.'.$page['request_name'] : 'site.admin-menu.'.$page['request_name']) }}</a>
         </li>
         @endforeach
         <li>

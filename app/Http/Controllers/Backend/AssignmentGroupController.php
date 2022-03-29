@@ -1,20 +1,20 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\Assignment;
+use App\AssignmentFeedback;
+use App\AssignmentGroup;
+use App\AssignmentGroupLearner;
 use App\AssignmentManuscript;
+use App\Course;
+use App\DelayedEmail;
+use App\Http\AdminHelpers;
+use App\Http\Controllers\Controller;
+use App\Jobs\AddMailToQueueJob;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller;
-use App\Course;
-use App\Assignment;
-use App\AssignmentGroup;
-use App\AssignmentFeedback;
-use App\AssignmentGroupLearner;
-use App\User;
-use App\Http\AdminHelpers;
-use Carbon\Carbon;
-use App\DelayedEmail;
-use App\Jobs\AddMailToQueueJob;
 
 class AssignmentGroupController extends Controller
 {
@@ -219,8 +219,8 @@ class AssignmentGroupController extends Controller
         // group assignment - set availability date on feedback
         $assignmentFeedback = AssignmentFeedback::find($feedback_id);
         $assignmentFeedback->availability = $request->availability;
-        if($fileWithPath){
-            $assignmentFeedback->filename = $fileWithPath;
+        if($filesWithPath){
+            $assignmentFeedback->filename = $filesWithPath;
         }
 
         $assignmentFeedback->save();
@@ -231,22 +231,25 @@ class AssignmentGroupController extends Controller
         $to             = $assignmentManuscript->user->email;
         $first_name     = $assignmentManuscript->user->first_name;
 
-        if($request->availability && Carbon::parse($request->availability)->gt(Carbon::today())) {
-            $redirect_link          = route('learner.assignment');
-            $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
+        if ($request->has('send_email')) {
+            if ($request->availability && Carbon::parse($request->availability)->gt(Carbon::today())) {
+                $redirect_link = route('learner.assignment', 'tab=feedback-from-editor');
+                $formattedMailContent = AdminHelpers::formatEmailContent($email_content, $to, $first_name,
+                    $redirect_link);
 
-            DelayedEmail::create([
-                'subject'       => $request->subject,
-                'message'       => $formattedMailContent,
-                'from_email'    => $request->from_email,
-                'recipient'     => $to,
-                'send_date'     => $request->availability,
-                'parent'        => 'assignment-manuscripts',
-                'parent_id'     => $assignmentManuscript->id
-            ]);
-        } else {
-            $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject,
-                $request->from_email, $assignmentManuscript->id);
+                DelayedEmail::create([
+                    'subject' => $request->subject,
+                    'message' => $formattedMailContent,
+                    'from_email' => $request->from_email,
+                    'recipient' => $to,
+                    'send_date' => $request->availability,
+                    'parent' => 'assignment-manuscripts',
+                    'parent_id' => $assignmentManuscript->id
+                ]);
+            } else {
+                $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject,
+                    $request->from_email, $assignmentManuscript->id);
+            }
         }
         
         return redirect()->back()->with([
@@ -257,7 +260,7 @@ class AssignmentGroupController extends Controller
 
     public function sendAssignmentFeedbackMail($email_content, $to, $first_name, $subject, $from_email, $manuscript_id)
     {
-        $redirect_link          = route('learner.assignment');
+        $redirect_link          = route('learner.assignment', 'tab=feedback-from-editor');
         $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
         dispatch(new AddMailToQueueJob($to, $subject, $formattedMailContent, $from_email, null, null,
             'assignment-manuscripts', $manuscript_id));

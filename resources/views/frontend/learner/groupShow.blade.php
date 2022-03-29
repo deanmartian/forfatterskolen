@@ -148,7 +148,8 @@
 						</div> <!-- end card-header -->
 						<div class="card-body">
 							@foreach( $feedbacks as $feedback )
-								@if( $feedback->is_active && (!$feedback->availability ||  date('Y-m-d') >= $feedback->availability) )
+								@if( $feedback->is_active && (!$feedback->availability ||  date('Y-m-d') >= $feedback->availability)
+								 && (($manuscript->editor_id === $feedback->user_id && $manuscript->status) || $manuscript->editor_id !== $feedback->user_id))
 									<p>
 										<?php
 											$files = explode(',',$feedback->filename);

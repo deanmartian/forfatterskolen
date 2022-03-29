@@ -291,7 +291,7 @@
 								{{ trans('site.front.form.discount-coupon') }}
 							</div>
 							<div class="panel-body px-0 pb-0">
-								<input type="text" name="coupon" class="form-control">
+								<input type="text" name="coupon" class="form-control" value="{{ $coupon }}">
 							</div>
 
 							<div class="panel-heading-underlined">
@@ -522,6 +522,12 @@
             coupon.on('keydown', function () {
                 clearTimeout(typingTimer);
             });
+
+            let passed_coupon = '{{ $coupon }}';
+            if (passed_coupon) {
+                console.log("inside if coupon");
+                coupon.trigger('keyup');
+            }
 
             //user is "finished typing," do something
             function checkDiscount () {

@@ -113,6 +113,30 @@ class PageController extends Controller
         'pendingTasks', 'assignedAssignmentManuscripts','shopManuscriptTakenFeedback'));
     }
 
+    public function updateExpectedFinish( $type, $id, Request $request )
+    {
+        $manuscript = null;
+        if ($type === 'assignment') {
+            $manuscript = AssignmentManuscript::find($id);
+        }
+
+        if ($type === 'shop-manuscript') {
+            $manuscript = ShopManuscriptsTaken::find($id);
+        }
+
+        if ($manuscript) {
+            $manuscript->expected_finish = $request->expected_finish;
+            $manuscript->save();
+
+            return redirect()->back()->with([
+                'errors'                => AdminHelpers::createMessageBag('Expected finish date updated successfully.'),
+                'alert_type'            => 'success',
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
     /**
      * Finish an assignment
      * @param $assignment_id

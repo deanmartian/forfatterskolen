@@ -11,7 +11,8 @@ class CoursesTaken extends Model
 
     protected $table = 'courses_taken';
     protected $fillable = ['user_id', 'package_id', 'gift_purchase_id', 'is_active', 'started_at', 'start_date',
-        'end_date', 'access_lessons', 'years', 'is_free', 'send_expiry_reminder', 'is_welcome_email_sent'];
+        'end_date', 'access_lessons', 'years', 'is_free', 'send_expiry_reminder', 'is_welcome_email_sent',
+        'can_receive_email'];
 
     protected $appends = ['order'];
 
@@ -30,9 +31,9 @@ class CoursesTaken extends Model
         return $this->hasMany('App\Manuscript', 'coursetaken_id')->orderBy('created_at', 'desc');
     }
 
-    public function getStartedAtAttribute()
+    public function getStartedAtAttribute($value)
     {
-        return date_format(date_create($this->attributes['started_at']), 'M d, Y h:i a');
+        return $value ? date_format(date_create($value), 'M d, Y h:i a') : NULL;
     }
 
     public function getStartedAtValueAttribute()

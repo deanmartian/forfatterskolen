@@ -85,6 +85,7 @@ class ShopController extends Controller
         }
 
         $packages = $course->packages()->isShow()->get();
+        $coupon = \request()->has('c') ? \request()->get('c') : '';
 
         if (\request()->has('sp')) {
             // use try/catch to handle invalid payload
@@ -96,7 +97,7 @@ class ShopController extends Controller
             }
         }
 
-    	return view('frontend.shop.checkout', compact('course', 'packages'));
+    	return view('frontend.shop.checkout', compact('course', 'packages', 'coupon'));
     }
 
     /**

@@ -27,6 +27,9 @@ use App\Http\AdminHelpers;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Reader\HTML;
+use PhpParser\Node\Expr\Assign;
+use App\AssignmentGroupLearner;
+use App\AssignmentGroup;
 
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
@@ -84,7 +87,77 @@ class AssignmentController extends Controller
         return redirect()->back();
     }
 
+    public function generateGroup($assignmentID, Request $request)
+    {
+        $this->validate($request, [
+            'submission_date' => 'required',
+        ]);
 
+        // get all users where not in assignment group learners
+        $existingGroups = Assignment::find($assignmentID)->groups->pluck('id');
+        $learnersInGroup = AssignmentGroupLearner::whereIn('assignment_group_id', $existingGroups)->pluck('user_id');
+        $learnersToGroup = AssignmentManuscript::where('assignment_id', $assignmentID)
+                ->whereNotIn('user_id', $learnersInGroup)
+                ->where('join_group', 1)->orderBy('type')->get();
+
+        // group by 3 according to genre (prioritize grouping by genre)
+        $assignmentType = FrontendHelpers::assignmentType();
+        $assignmentType[] = [ 'id' => '', 'option' => 'none'];
+
+        foreach ($assignmentType as $genre) {
+
+            $saved = array();
+            $min = 1;
+            
+            $learnedToGroupFiltered = $learnersToGroup->filter(function ($value, $key) use ($saved, $genre) {
+                return !(in_array($value->user_id,$saved)) && ($value->type == $genre['id']);
+            });
+
+            $groupCount = AssignmentGroup::where('assignment_id', $assignmentID)->count() + 1;
+            
+            if($learnedToGroupFiltered->count() >= $min){
+
+                $count = 0;
+                $max = 3;
+                $assignmentGroup = null;
+
+                // echo 'genre: '.$genre['id'].'</br></br>';
+                // print_r($learnedToGroupFiltered);
+                // echo '</br></br></br>';
+
+                foreach ($learnedToGroupFiltered as $key) {
+
+                    if($count == 0){
+                        // create assignment group
+                        $assignmentGroup = new AssignmentGroup;
+                        $assignmentGroup->assignment_id = $assignmentID;
+                        $assignmentGroup->title = trans('site.group-number').' '.$groupCount;
+                        $assignmentGroup->submission_date = $request->submission_date;
+                        $assignmentGroup->allow_feedback_download = isset($request->allow_feedback_download) ? 1 : 0;
+                        $assignmentGroup->availability = null;
+                        $assignmentGroup->save();
+                        $groupCount++;
+                    }
+
+                    // create assignment group learners
+                    $assignment_group_learners = new AssignmentGroupLearner;
+                    $assignment_group_learners->assignment_group_id = $assignmentGroup->id;
+                    $assignment_group_learners->user_id = $key->user_id;
+                    $assignment_group_learners->save();
+
+                    $count++;
+                    if($count == $max){
+                        $count = 0;
+                    }
+
+                    array_push($saved, $key->user_id);
+                }
+            }
+        }
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Groups generated successfully.'),
+            'alert_type' => 'success']);
+    }
 
     public function store($course_id, Request $request)
     {
@@ -102,6 +175,7 @@ class AssignmentController extends Controller
                 'for_editor' => isset($request->for_editor) ? 1 : 0,
                 'editor_manu_generate_count' => $request->editor_manu_generate_count,
                 'show_join_group_question' => isset($request->show_join_group_question) ? 1 : 0,
+                'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0,
                 'editor_expected_finish' => $request->editor_expected_finish
     		]);
 
@@ -127,6 +201,7 @@ class AssignmentController extends Controller
             $assignment->for_editor = isset($request->for_editor) ? 1 : 0;
             $assignment->editor_manu_generate_count = isset($request->for_editor) ? $request->editor_manu_generate_count : NULL;
             $assignment->show_join_group_question = isset($request->show_join_group_question) ? 1 : 0;
+            $assignment->send_letter_to_editor = isset($request->send_letter_to_editor) ? 1 : 0;
             $assignment->editor_expected_finish = $request->editor_expected_finish;
     		$assignment->save();
     	endif;
@@ -322,6 +397,17 @@ class AssignmentController extends Controller
 
         if ($assignmentManuscript) {
             $filename = $assignmentManuscript->filename;
+            return response()->download(public_path($filename));
+        }
+        return redirect()->back();
+    }
+
+    public function downloadManuscriptLetter($id)
+    {
+        $assignmentManuscript = AssignmentManuscript::find($id);
+
+        if ($assignmentManuscript) {
+            $filename = $assignmentManuscript->letter_to_editor;
             return response()->download(public_path($filename));
         }
         return redirect()->back();
@@ -688,7 +774,28 @@ class AssignmentController extends Controller
                 $assignmentManuscript->editor_expected_finish = $request->editor_expected_finish;
             }
 
+            $assignment = $assignmentManuscript->assignment;
+            if ($assignment->parent === 'users') {
+                $assignment->editor_id = $request->editor_id;
+                $assignment->save();
+            }
+
             $assignmentManuscript->save();
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Editor assigned successfully.'),
+            'alert_type' => 'success'
+        ]);
+    }
+
+    public function assignEditor( $assignment_id, Request $request )
+    {
+        $assignment = Assignment::find($assignment_id);
+
+        if ($assignment) {
+            $assignment->editor_id = $request->editor_id;
+            $assignment->save();
         }
 
         return redirect()->back()->with([
@@ -704,6 +811,21 @@ class AssignmentController extends Controller
         if ($assignmentManuscript) {
             $assignmentManuscript->editor_id = 0;
             $assignmentManuscript->save();
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Editor removed successfully.'),
+            'alert_type' => 'success'
+        ]);
+    }
+
+    public function removeEditor( $id )
+    {
+        $assignment = Assignment::find($id);
+
+        if ($assignment) {
+            $assignment->editor_id = 0;
+            $assignment->save();
         }
 
         return redirect()->back()->with([
@@ -926,22 +1048,24 @@ class AssignmentController extends Controller
         $to             = $assignmentManuscript->user->email;
         $first_name     = $assignmentManuscript->user->first_name;
 
-        if($request->availability && Carbon::parse($request->availability)->gt(Carbon::today())) {
-            $redirect_link          = route('learner.assignment');
-            $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
+        if ($request->has('send_email')) {
+            if($request->availability && Carbon::parse($request->availability)->gt(Carbon::today())) {
+                $redirect_link          = route('learner.assignment', 'tab=feedback-from-editor');
+                $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
 
-            DelayedEmail::create([
-                'subject'       => $request->subject,
-                'message'       => $formattedMailContent,
-                'from_email'    => $request->from_email,
-                'recipient'     => $to,
-                'send_date'     => $request->availability,
-                'parent'        => 'assignment-manuscripts',
-                'parent_id'     => $assignmentManuscript->id
-            ]);
-        } else {
-            $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject,
-                $request->from_email, $assignmentManuscript->id);
+                DelayedEmail::create([
+                    'subject'       => $request->subject,
+                    'message'       => $formattedMailContent,
+                    'from_email'    => $request->from_email,
+                    'recipient'     => $to,
+                    'send_date'     => $request->availability,
+                    'parent'        => 'assignment-manuscripts',
+                    'parent_id'     => $assignmentManuscript->id
+                ]);
+            } else {
+                $this->sendAssignmentFeedbackMail($email_content, $to, $first_name, $request->subject,
+                    $request->from_email, $assignmentManuscript->id);
+            }
         }
         
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback successfully sent'),
@@ -1000,7 +1124,7 @@ class AssignmentController extends Controller
             $first_name     = $assignmentManuscript->user->first_name;
 
             if($request->availability && Carbon::parse($request->availability)->gt(Carbon::today())) {
-                $redirect_link          = route('learner.assignment');
+                $redirect_link          = route('learner.assignment', 'tab=feedback-from-editor');
                 $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
 
                 DelayedEmail::create([
@@ -1115,15 +1239,48 @@ class AssignmentController extends Controller
             'course_id' => $request->course_id,
             'parent_id' => $request->learner_id,
             'parent' => 'users',
-            'editor_expected_finish' => $request->editor_expected_finish
+            'editor_id' => $request->editor_id,
+            'editor_expected_finish' => $request->editor_expected_finish,
+            'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0
         ];
 
         if ($id) {
             Assignment::find($id)->update($data);
+
+            $assignmentManuscript = AssignmentManuscript::where('assignment_id', $id)->first();
+            if ($assignmentManuscript) {
+                $assignmentManuscript->editor_id = $request->editor_id;
+                $assignmentManuscript->save();
+            }
         } else {
             Assignment::create($data);
         }
 
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record saved successfully.'),
+            'alert_type' => 'success']);
+    }
+
+    public function multipleLearnerAssignment( Request $request )
+    {
+
+        foreach($request->templates as $t) {
+            $template = AssignmentTemplate::find($t);
+
+            Assignment::create([
+                'title' => $template->title,
+                'description' => $template->description,
+                'submission_date' => $template->submission_date,
+                'available_date' => $template->available_date,
+                'max_words' => (int) $template->max_words,
+                'show_join_group_question' => 0,
+                'course_id' => $request->course_id,
+                'parent_id' => $request->learner_id,
+                'parent' => 'users',
+                'editor_id' => $request->editor_id,
+                'editor_expected_finish' => $request->editor_expected_finish,
+                'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0
+            ]);
+        }
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record saved successfully.'),
             'alert_type' => 'success']);
     }
@@ -1149,7 +1306,7 @@ class AssignmentController extends Controller
      */
     public function sendAssignmentFeedbackMail($email_content, $to, $first_name, $subject, $from_email, $manuscript_id)
     {
-        $redirect_link          = route('learner.assignment');
+        $redirect_link          = route('learner.assignment', 'tab=feedback-from-editor');
         $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
         dispatch(new AddMailToQueueJob($to, $subject, $formattedMailContent, $from_email, null, null,
             'assignment-manuscripts', $manuscript_id));

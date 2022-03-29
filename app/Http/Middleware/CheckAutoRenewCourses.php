@@ -3,6 +3,7 @@ namespace App\Http\Middleware;
 
 use App\Http\AdminHelpers;
 use App\Http\FikenInvoice;
+use App\Mail\SubjectBodyEmail;
 use App\Package;
 use Carbon\Carbon;
 use Closure;
@@ -22,7 +23,7 @@ class CheckAutoRenewCourses
         if (auth()->check()) {
             foreach(Auth::user()->coursesTaken as $courseTaken) {
                 $package = Package::find($courseTaken->package_id);
-                if ($package && $package->course_id == 17) {
+                if ($package && $package->course_id == 17 && $courseTaken->started_at) {
 
                     $checkDate = date('Y-m-d', strtotime($courseTaken->started_at));
                     if ($courseTaken->end_date) {
@@ -81,7 +82,15 @@ class CheckAutoRenewCourses
                         //AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
 
                         // Email to support
-                        mail('support@forfatterskolen.no', 'All Courses Renewed', Auth::user()->first_name . ' has renewed all the courses');
+                        $emailData = [
+                            'email_subject' => 'All Courses Renewed',
+                            'email_message' => Auth::user()->first_name . ' has renewed all the courses',
+                            'from_name' => NULL,
+                            'from_email' => NULL,
+                            'attach_file' => NULL
+                        ];
+                        \Mail::to('support@forfatterskolen.no')->queue(new SubjectBodyEmail($emailData));
+                        //mail('support@forfatterskolen.no', 'All Courses Renewed', Auth::user()->first_name . ' has renewed all the courses');
                     }
                 }
             }

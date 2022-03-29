@@ -1,7 +1,7 @@
 <template>
     <div class="card">
 
-        <a :href="'/course/' + course.id + '/fs-checkout'" class="btn site-btn-global"
+        <a :href="'/course/' + course.id + '/fs_checkout'" class="btn site-btn-global"
            style="width: 200px; border-radius: 0;"> <!--v-if="countryCode != 'NO'"-->
             FS Checkout
         </a>

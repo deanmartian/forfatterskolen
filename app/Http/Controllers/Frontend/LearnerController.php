@@ -343,7 +343,7 @@ class LearnerController extends Controller
 
             $email_data['sender']           = Auth::user()->full_name;
             $email_data['suggested_dates']  = $data['suggested_date'];
-            $toMail = 'Camilla@forfatterskolen.no';
+            $toMail = 'post@forfatterskolen.no';
             // use queue to send email on background
             Mail::to($toMail)->queue(new CoachingSuggestionDateEmail($email_data));
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Suggested date saved successfully.'),
@@ -694,20 +694,35 @@ class LearnerController extends Controller
         $addOns = AssignmentAddon::where('user_id', \Auth::user()->id)->pluck('assignment_id')->toArray();
         $userAssignments = Auth::user()->activeAssignments;
         $userExpiredAssignments = Auth::user()->expiredAssignments;
+        $upcomingPersonalAssignments = Assignment::where('parent', 'users')
+            ->where('parent_id', Auth::user()->id)
+            ->where('submission_date', '>=', Carbon::now())
+            ->where('available_date','>', Carbon::now())
+            ->oldest('submission_date')
+            ->get();
 
-        foreach( $coursesTaken as $course ) :
-            foreach( $course->package->course->activeAssignments as $assignment ) :
+        foreach( $coursesTaken as $courseTaken ) :
+            foreach( $courseTaken->package->course->activeAssignments as $assignment ) :
 
                 $allowed_package = json_decode($assignment->allowed_package);
-                $package_id = $course->package->id;
+                $package_id = $courseTaken->package->id;
+                $course = $courseTaken->package->course;
                 // check if the assignment is allowed on the learners package or there's no set package allowed
                 if ((!is_null($allowed_package) && in_array($package_id,$allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)) {
                     // added the condition because of the update for submission date
                     // the original is the else
                     if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
-                        if(\Carbon\Carbon::parse($course->started_at)->addDays($assignment->submission_date)
-                        ->gt(Carbon::now())) {
-                            $assignments[] = $assignment;
+                        if ($course->type == 'Single' && $assignment->submission_date == '365') {
+                            if(\Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
+                                $includeAssignment = $assignment;
+                                $includeAssignment->course_taken_end_date = $courseTaken->end_date; // for displaying submit button
+                                $assignments[] = $includeAssignment;
+                            }
+                        } else {
+                            if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)
+                                ->gt(Carbon::now())) {
+                                $assignments[] = $assignment;
+                            }
                         }
                     } else {
                         if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
@@ -717,18 +732,25 @@ class LearnerController extends Controller
                 }
             endforeach;
 
-            foreach( $course->package->course->expiredAssignments as $assignment ) :
+            foreach( $courseTaken->package->course->expiredAssignments as $assignment ) :
 
                 $allowed_package = json_decode($assignment->allowed_package);
-                $package_id = $course->package->id;
+                $package_id = $courseTaken->package->id;
+                $course = $courseTaken->package->course;
                 // check if the assignment is allowed on the learners package or there's no set package allowed
                 if ((!is_null($allowed_package) && in_array($package_id,$allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)) {
                     // added the condition because of the update for submission date
                     // the original is the else
                     if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
-                        if(\Carbon\Carbon::parse($course->started_at)->addDays($assignment->submission_date)
-                            ->lt(Carbon::now())) {
-                            $expiredAssignments[] = $assignment;
+                        if ($course->type == 'Single' && $assignment->submission_date == '365') {
+                            if(\Carbon\Carbon::parse($courseTaken->end_date)->lt(Carbon::now())) {
+                                $expiredAssignments[] = $assignment;
+                            }
+                        } else {
+                            if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)
+                                ->lt(Carbon::now())) {
+                                $expiredAssignments[] = $assignment;
+                            }
                         }
                     } else {
                         if (\Carbon\Carbon::parse($assignment->submission_date)->lt(Carbon::now())) {
@@ -753,7 +775,7 @@ class LearnerController extends Controller
             }
         }
 
-        return view('frontend.learner.assignment', compact('assignments', 'expiredAssignments'));
+        return view('frontend.learner.assignment', compact('assignments', 'expiredAssignments', 'upcomingPersonalAssignments'));
     }
 
 
@@ -823,6 +845,26 @@ class LearnerController extends Controller
                 $join_group = isset($request->join_group) ? 1 : 0;
             }
 
+            $letterToEditor = NULL;
+            if ($request->hasFile('letter_to_editor') && $request->file('letter_to_editor')->isValid()
+                && $assignment->send_letter_to_editor) :
+                $destinationPathLetter = 'storage/letter-to-editor';
+                $extensionLetter = pathinfo($_FILES['letter_to_editor']['name'],PATHINFO_EXTENSION);
+                $actualNameLetter = pathinfo($_FILES['letter_to_editor']['name'],PATHINFO_FILENAME);
+                $fileNameLetter = AdminHelpers::checkFileName($destinationPathLetter, $actualNameLetter, $extension);// rename document
+                $expFileNameLetter = explode("/",$fileNameLetter);
+
+                if( !in_array($extensionLetter, $extensions) ) :
+                    return redirect()->back()->withInput()->with(
+                        'manuscript_test_error', 'Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF'
+                    );
+                endif;
+
+                $request->letter_to_editor->move($destinationPathLetter, end($expFileNameLetter));
+                $letterToEditor = '/'.$fileNameLetter;
+
+            endif;
+
             $submittedManuscript = AssignmentManuscript::create([
                 'assignment_id' => $assignment->id,
                 'user_id' => Auth::user()->id,
@@ -830,7 +872,9 @@ class LearnerController extends Controller
                 'words' => $word_count,
                 'type' => $request->type,
                 'manu_type' => $request->manu_type,
-                'join_group' => $join_group
+                'join_group' => $join_group,
+                'letter_to_editor' => $letterToEditor,
+                'editor_id' => $assignment->editor_id
             ]);
             Log::create([
                 'activity' => '<strong>'.Auth::user()->full_name.'</strong> submitted a manuscript for assignment '.$assignment->title
@@ -839,7 +883,7 @@ class LearnerController extends Controller
             // Admin notification
             if (($assignment->course && $assignment->course->type === "Single") || $assignment->parent === 'users') {
                 $message = Auth::user()->full_name.' submitted a manuscript for assignment '.$assignment->title;
-                $toMail = 'Camilla@forfatterskolen.no'; //post@forfatterskolen.no
+                $toMail = 'post@forfatterskolen.no'; //post@forfatterskolen.no
 
                 $email_data['email_message'] = $message;
                 // use queue to send email on background
@@ -3145,6 +3189,76 @@ class LearnerController extends Controller
     {
         $group = AssignmentGroup::find($group_id);
         if ($group) {
+            $user_id = Auth::user()->id;
+            $assignment_group_learner_id = $group->learners()->where('user_id', $user_id)->first()->id;
+            // get all feedback for the assignment group
+            $feedbacks = AssignmentFeedback::where('assignment_group_learner_id', $assignment_group_learner_id)->get();
+            $manuscript = $group->assignment->manuscripts->where('user_id', $user_id)->first();
+            if ($feedbacks->count()) {
+                $zipFileName    = $group->title.' Feedbacks.zip';
+                $public_dir     = public_path('storage');
+                $zip            = new \ZipArchive();
+
+                // open zip file connection and create the zip
+                if ($zip->open($public_dir . '/' . $zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== TRUE) {
+                    die ("An error occurred creating your ZIP file.");
+                }
+
+                foreach($feedbacks as $feedback) {
+                    if (($manuscript->editor_id === $feedback->user_id && $manuscript->status) || $manuscript->editor_id !== $feedback->user_id) {
+                        $files = explode(',', $feedback->filename);
+                        // for multiple files in a feedback
+                        if (count($files) > 1) {
+                            foreach($files as $feedFile) {
+                                if (file_exists(public_path().'/'.trim($feedFile))) {
+
+                                    //get the correct filename
+                                    $expFileName = explode('/', $feedFile);
+                                    $file = str_replace('\\', '/', public_path());
+
+                                    // physical file location and name of the file
+                                    $zip->addFile(trim($file.trim($feedFile)), end($expFileName));
+                                }
+                            }
+                        } else {
+                            if (file_exists(public_path().'/'.$feedback->filename)) {
+                                //get the correct filename
+                                $expFileName = explode('/', $feedback->filename);
+                                $file = str_replace('\\', '/', public_path());
+
+                                // physical file location and name of the file
+                                $zip->addFile($file.$feedback->filename, end($expFileName));
+                            }
+                        }
+                    }
+                }
+
+                $zip->close(); // close zip connection
+
+                $headers = array(
+                    'Content-Type' => 'application/octet-stream',
+                );
+
+                $fileToPath = $public_dir.'/'.$zipFileName;
+
+                if(file_exists($fileToPath)){
+                    return response()->download($fileToPath, $zipFileName, $headers)->deleteFileAfterSend(true);
+                }
+            }
+            return redirect()->back();
+        }
+        return redirect()->back();
+    }
+
+    /**
+     * Download all assignment group feedback
+     * @param $group_id
+     * @return \Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function downloadAssignmentGroupAllFeedbackOrig($group_id)
+    {
+        $group = AssignmentGroup::find($group_id);
+        if ($group) {
             $learners = $group->learners;
             $assignment_group_learners = []; // array variable where learner group id is stored
 
@@ -4015,8 +4129,9 @@ class LearnerController extends Controller
             ]);
         }
 
+        // added fiter for $decode->message: this causes error : cron fix
         return response()->json([
-            'message' => $decode->message
+            'message' => $decode ? $decode->message : ''
         ], $httpcode);
     }
 

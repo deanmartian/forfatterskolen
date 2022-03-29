@@ -284,9 +284,11 @@ class ShopManuscriptController extends Controller
 
         $this->saleService->createEmailHistory($request->subject, $request->from_email, $format_content,
             'shop-manuscripts-taken-admin-feedback', $shopManuscriptTakenID);*/
-        dispatch(new AddMailToQueueJob($to, $request->subject, $format_content, $request->from_email,
-            null, null,
-            'shop-manuscripts-taken-admin-feedback', $id));
+        if ($request->has('send_email')) {
+            dispatch(new AddMailToQueueJob($to, $request->subject, $format_content, $request->from_email,
+                null, null,
+                'shop-manuscripts-taken-admin-feedback', $id));
+        }
 
         return redirect()->back()->with([
             'alert_type' => 'success',

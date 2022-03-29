@@ -354,7 +354,8 @@ class ShopManuscriptService {
         $shopManuscript = ShopManuscript::find($order->item_id);
 
         $message = $user->full_name.' submitted a manuscript for shop manuscript '.$shopManuscript->title;
-        $to = 'Camilla@forfatterskolen.no';
+        $headEditor = User::where('head_editor', 1)->first();
+        $to = $headEditor->email; //'Camilla@forfatterskolen.no'; head editor email
         $emailData = [
             'email_subject' => 'New manuscript submitted for shop manuscript',
             'email_message' => $message,

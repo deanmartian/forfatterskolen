@@ -70,6 +70,15 @@ class AdminHelpers
         return $course->all();
     }
 
+    public static function editorList()
+    {
+        return \App\User::where(function($query){
+            $query->whereIn('role', [1, 3])
+                ->orWhere('admin_with_editor_access', 1);
+        })
+            ->orderBy('id', 'desc')
+            ->get();
+    }
 	
 	public static function currencyFormat($value)
 	{
@@ -1001,6 +1010,7 @@ class AdminHelpers
     {
         $pages = array(
             array( 'id' => 1, 'option' => 'Pending Assignments', 'route' => 'editor.dashboard', 'request_name' => 'pending-assignments'),
+            array( 'id' => 1, 'option' => 'Upcoming Assignment', 'route' => 'editor.upcoming-assignment', 'request_name' => 'upcoming-assignment'),
             array( 'id' => 2, 'option' => 'Assignment Archive', 'route' => 'editor.assignment-archive', 'request_name' => 'assignment-archive'),
             array( 'id' => 4, 'options' => 'Editor Settings', 'route' => 'editor.settings', 'request_name' => 'editor-settings'),
             array( 'id' => 5, 'options' => 'Assigned Webinar', 'route' => 'editor.assigned-webinar', 'request_name' => 'assigned-webinar'),
