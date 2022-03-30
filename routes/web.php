@@ -120,7 +120,6 @@ Route::group([
         Route::get('/contract/{code}', 'HomeController@contract')->name('front.contract-view');
         Route::get('/contract/{code}/download', 'HomeController@contractDownload')->name('front.contract.download');
         Route::post('/contract/{code}/sign', 'HomeController@contractSign')->name('front.contract.sign');
-        Route::get('/vipps-login-redirect', 'HomeController@vippsLoginRedirect');
 
         Route::group([
             'prefix' => 'shop-manuscript'
@@ -505,6 +504,8 @@ Route::group([
         Route::get('login/facebook/callback','LoginController@handleFacebookCallback');
         Route::get('login/google','LoginController@redirectToGoogle')->name('auth.login.google');
         Route::get('login/google/callback','LoginController@handleGoogleCallback');
+        Route::get('/vipps-login', 'LoginController@vippsLogin')->name('auth.login.vipps');
+        Route::get('/vipps-login-redirect', 'LoginController@vippsLoginRedirect');
     });
 
     // without checking middleware

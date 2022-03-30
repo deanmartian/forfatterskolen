@@ -80,6 +80,8 @@ Password Change
 										<a href="{{ route('auth.login.google') }}" class="loginBtn loginBtn--google btn">
 											{{ ucwords(trans('site.front.form.login-with-google')) }}
 										</a>
+
+										<a href="{{ route('auth.login.vipps') }}">Vipps Login</a>
 									</div>
 								</form>
 

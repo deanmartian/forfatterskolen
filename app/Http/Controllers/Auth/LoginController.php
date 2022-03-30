@@ -392,4 +392,56 @@ class LoginController extends Controller
             "redirect_url" => route('auth.login.email-normal', $encode_email)
         ]);
     }
+
+    public function vippsLogin()
+    {
+        $query = [
+            'client_id' => config('services.vipps.client_id'),
+            'response_type' => 'code',
+            'state' => 'login_state',
+            'redirect_uri' => 'https://dev.forfatterskolen.no/auth/vipps-login-redirect'
+        ];
+
+        $vipps_auth_url = 'https://api.vipps.no/access-management-1.0/access/oauth2/auth';
+        return redirect()->to($vipps_auth_url . '?' . http_build_query($query));
+    }
+
+    public function vippsLoginRedirect( Request $request )
+    {
+
+        $vipps_credentials = base64_encode(config('services.vipps.client_id') . ":"
+            . config('services.vipps.client_secret'));
+
+        $long_url = 'https://api.vipps.no/access-management-1.0/access/oauth2/token';
+
+        $code = $request->code;
+        $redirect_url = 'https://dev.forfatterskolen.no/auth/vipps-login-redirect';
+
+        $body = [
+            'grant_type'    => 'authorization_code',
+            'code'          => $code,
+            'redirect_uri'  => $redirect_url
+        ];
+
+        $header = array();
+        $header[] = 'Accept: application/json';
+        $header[] = 'Content-type: application/x-www-form-urlencoded';
+        $header[] = 'Authorization: Basic '.$vipps_credentials;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $long_url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($body)); // use HTTP POST to send form data
+        $response = curl_exec($ch);
+        $decoded_response = json_decode($response);
+
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        echo $http_code . "<br/>";
+        print_r($decoded_response);
+        if ($http_code != 200) {
+            echo "not success";
+            //return redirect()->route('auth.login.show');
+        }
+    }
 }

@@ -2182,9 +2182,4 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         return back()->with('success', 'Contract signed successfully');
     }
 
-    public function vippsLoginRedirect( Request $request )
-    {
-        print_r($request->all());
-    }
-
 }
