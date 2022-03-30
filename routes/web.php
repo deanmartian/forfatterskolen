@@ -120,7 +120,7 @@ Route::group([
         Route::get('/contract/{code}', 'HomeController@contract')->name('front.contract-view');
         Route::get('/contract/{code}/download', 'HomeController@contractDownload')->name('front.contract.download');
         Route::post('/contract/{code}/sign', 'HomeController@contractSign')->name('front.contract.sign');
-        Route::post('/ssssss', 'HomeController@contractSign')->name('signaturepad.upload');
+        Route::get('/vipps-login-redirect', 'HomeController@vippsLoginRedirect');
 
         Route::group([
             'prefix' => 'shop-manuscript'
