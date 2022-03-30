@@ -396,23 +396,25 @@ class LoginController extends Controller
     public function vippsLogin()
     {
         $query = [
-            'client_id' => config('services.vipps.client_id'),
+            'client_id' => config('services.vipps.client_id_test'),
             'response_type' => 'code',
             'state' => 'login_state',
             'redirect_uri' => 'https://dev.forfatterskolen.no/auth/vipps-login-redirect'
         ];
 
         $vipps_auth_url = 'https://api.vipps.no/access-management-1.0/access/oauth2/auth';
+        $vipps_auth_url = 'https://apitest.vipps.no/access-management-1.0/access/oauth2/auth';
         return redirect()->to($vipps_auth_url . '?' . http_build_query($query));
     }
 
     public function vippsLoginRedirect( Request $request )
     {
 
-        $vipps_credentials = base64_encode(config('services.vipps.client_id') . ":"
-            . config('services.vipps.client_secret'));
+        $vipps_credentials = base64_encode(config('services.vipps.client_id_test') . ":"
+            . config('services.vipps.client_secret_test'));
 
         $long_url = 'https://api.vipps.no/access-management-1.0/access/oauth2/token';
+        $long_url = 'https://apitest.vipps.no/access-management-1.0/access/oauth2/token';
 
         $code = $request->code;
         $redirect_url = 'https://dev.forfatterskolen.no/auth/vipps-login-redirect';
