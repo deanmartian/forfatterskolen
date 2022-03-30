@@ -407,6 +407,12 @@ class LoginController extends Controller
         return redirect()->to($vipps_auth_url . '?' . http_build_query($query));
     }
 
+    /**
+     * This is where the vipps would redirect after getting auth
+     * Use the generated code to get access_token
+     * @param Request $request
+     * @return $this
+     */
     public function vippsLoginRedirect( Request $request )
     {
 
@@ -438,11 +444,42 @@ class LoginController extends Controller
 
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        echo $http_code . "<br/>";
-        print_r($decoded_response);
+
         if ($http_code != 200) {
-            echo "not success";
-            //return redirect()->route('auth.login.show');
+            return redirect()->route('auth.login.show')->withInput()->withErrors($decoded_response->error_description);
         }
+
+        return $this->vippsUserInfo($decoded_response['access_token']);
+    }
+
+    /**
+     * Get the user info from vipps
+     * @param $access_token
+     * @return $this
+     */
+    public function vippsUserInfo($access_token)
+    {
+        $long_url = 'https://api.vipps.no/vipps-userinfo-api/userinfo';
+
+        $header = array();
+        $header[] = 'Accept: application/json';
+        $header[] = 'Content-type: application/x-www-form-urlencoded';
+        $header[] = 'Authorization: Bearer '.$access_token;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $long_url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        $response = curl_exec($ch);
+        $decoded_response = json_decode($response);
+
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($http_code != 200) {
+            return redirect()->route('auth.login.show')->withInput()->withErrors($decoded_response->title);
+        }
+
+        print_r($decoded_response);
     }
 }
