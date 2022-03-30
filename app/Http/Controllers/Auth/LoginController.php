@@ -449,7 +449,7 @@ class LoginController extends Controller
             return redirect()->route('auth.login.show')->withInput()->withErrors($decoded_response->error_description);
         }
 
-        return $this->vippsUserInfo($decoded_response['access_token']);
+        return $this->vippsUserInfo($decoded_response->access_token);
     }
 
     /**
