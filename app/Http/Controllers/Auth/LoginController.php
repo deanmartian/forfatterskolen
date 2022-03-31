@@ -509,6 +509,9 @@ class LoginController extends Controller
                 'zip'       => $decoded_response->address->postal_code,
             ]);
 
+            $actionText = 'Se dine kurs';
+            $actionUrl = \URL::to('/account/course');
+
             $to = $user->email; //
             $emailData = [
                 'email_subject' => 'Velkommen til Forfatterskolen',
