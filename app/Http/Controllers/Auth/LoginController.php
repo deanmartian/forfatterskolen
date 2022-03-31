@@ -486,6 +486,10 @@ class LoginController extends Controller
             return redirect()->route('auth.login.show')->withInput()->withErrors($decoded_response->title);
         }
 
+        if (!$decoded_response->email_verified) {
+            return redirect()->route('auth.login.show')->withInput()->withErrors("Email not yet verified.");
+        }
+
         $user = User::where('email', $decoded_response->email)->where('role', 2)->first();
         $secondaryEmail = UserEmail::where('email', $decoded_response->email)->first();
 
