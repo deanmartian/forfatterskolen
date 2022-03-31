@@ -375,13 +375,16 @@ class CourseService {
     {
 
         $course_status = 1;
+        $package = Package::find($package_id);
+        $course = $package->course;
+
+        $start_date = $course->type === 'Group' ? $package->course->start_date : Carbon::today();
 
         $courseTaken = CoursesTaken::firstOrNew(['user_id' => $user_id, 'package_id' => $package_id]);
         $courseTaken->is_active = $course_status;
         $courseTaken->is_welcome_email_sent = 0;
+        $courseTaken->end_date = Carbon::parse($start_date)->addYear();
         $courseTaken->save();
-
-        $package = Package::find($package_id);
 
         // Check for shop manuscripts
         if( $package->shop_manuscripts->count() > 0 ) :
