@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\AccessToken;
+use App\Address;
 use App\Course;
 use App\Helpers\BrowserDetection;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\LearnerLogin;
+use App\Mail\SubjectBodyEmail;
 use App\UserEmail;
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
@@ -400,11 +402,11 @@ class LoginController extends Controller
             'client_id' => config('services.vipps.client_id_test'),
             'response_type' => 'code',
             'state' => 'login_state',
-            'redirect_uri' => 'https://dev.forfatterskolen.no/auth/vipps-login-redirect'
+            'redirect_uri' => config('services.vipps.login_redirect_uri'),
+            'scope' => config('services.vipps.login_scope')
         ];
 
-        //$vipps_auth_url = 'https://api.vipps.no/access-management-1.0/access/oauth2/auth';
-        $vipps_auth_url = 'https://apitest.vipps.no/access-management-1.0/access/oauth2/auth';
+        $vipps_auth_url = config('services.vipps.login_auth_link');
 
         return redirect()->to($vipps_auth_url . '?' . http_build_query($query));
     }
@@ -423,15 +425,13 @@ class LoginController extends Controller
         $vipps_credentials = base64_encode(config('services.vipps.client_id_test') . ":"
             . config('services.vipps.client_secret_test'));
 
-        //$long_url = 'https://api.vipps.no/access-management-1.0/access/oauth2/token';
-        $long_url = 'https://apitest.vipps.no/access-management-1.0/access/oauth2/token';
+        $long_url = config('services.vipps.login_token_link');
 
         $code = $request->code;
-        $redirect_url = 'https://dev.forfatterskolen.no/auth/vipps-login-redirect';
+        $redirect_url = config('services.vipps.login_redirect_uri');
 
         $body = [
-            //'grant_type'    => 'authorization_code',
-            'grant_type'    => 'client_credentials',
+            'grant_type'    => 'authorization_code',
             'code'          => $code,
             'redirect_uri'  => $redirect_url
         ];
@@ -465,8 +465,7 @@ class LoginController extends Controller
      */
     public function vippsUserInfo($access_token)
     {
-        //$long_url = 'https://api.vipps.no/vipps-userinfo-api/userinfo';
-        $long_url = 'https://apitest.vipps.no/vipps-userinfo-api/userinfo';
+        $long_url = config('services.vipps.login_user_info_link');
 
         $header = array();
         $header[] = 'Accept: application/json';
@@ -487,6 +486,43 @@ class LoginController extends Controller
             return redirect()->route('auth.login.show')->withInput()->withErrors($decoded_response->title);
         }
 
-        print_r($decoded_response);
+        $user = User::where('email', $decoded_response->email)->where('role', 2)->first();
+        $secondaryEmail = UserEmail::where('email', $decoded_response->email)->first();
+
+        if(!$user && !$secondaryEmail) {
+            $user               = new User();
+            $user->first_name   = $decoded_response->given_name;
+            $user->last_name    = $decoded_response->family_name;
+            $user->email        = $decoded_response->email;
+            $user->password     = bcrypt(123);
+            $user->save();
+
+            Address::create([
+                'user_id'   => $user->id,
+                'phone'     => $decoded_response->phone_number,
+                'street'    => $decoded_response->address->street_address,
+                'city'      => $decoded_response->address->region,
+                'zip'       => $decoded_response->address->postal_code,
+            ]);
+
+            $to = $user->email; //
+            $emailData = [
+                'email_subject' => 'Velkommen til Forfatterskolen',
+                'email_message' => view('emails.registration', compact('actionText', 'actionUrl', 'user'))->render(),
+                'from_name' => '',
+                'from_email' => 'post@forfatterskolen.no',
+                'attach_file' => NULL
+            ];
+
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        }
+
+        if (!$user && $secondaryEmail) {
+            $user = $secondaryEmail->users->first();
+        }
+
+        Auth::login($user);
+
+        return redirect(route('learner.course'));
     }
 }
