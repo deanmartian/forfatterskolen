@@ -455,7 +455,7 @@ class LoginController extends Controller
             return redirect()->route('auth.login.show')->withInput()->withErrors($decoded_response->error_description);
         }
 
-        return $this->vippsUserInfo($decoded_response->access_token);
+        return $this->vippsUserInfo($decoded_response->access_token, $request->state);
     }
 
     /**
@@ -463,7 +463,7 @@ class LoginController extends Controller
      * @param $access_token
      * @return $this
      */
-    public function vippsUserInfo($access_token)
+    public function vippsUserInfo($access_token, $state)
     {
         $long_url = config('services.vipps.login_user_info_link');
 
@@ -530,6 +530,13 @@ class LoginController extends Controller
 
         \Session::put('new_user_social', 1);
         Auth::login($user);
+
+        if ($state === 'checkout_state') {
+            print_r("checkout state here");
+            echo "<br/>";
+            print_r($decoded_response);
+            return;
+        }
 
         return redirect(route('learner.dashboard'));
     }
