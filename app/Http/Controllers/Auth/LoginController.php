@@ -395,13 +395,13 @@ class LoginController extends Controller
         ]);
     }
 
-    public function vippsLogin()
+    public function vippsLogin($state = 'login_state')
     {
         $query = [
             //'client_id' => config('services.vipps.client_id'),
             'client_id' => config('services.vipps.client_id_test'),
             'response_type' => 'code',
-            'state' => 'login_state',
+            'state' => $state,
             'redirect_uri' => config('services.vipps.login_redirect_uri'),
             'scope' => config('services.vipps.login_scope')
         ];

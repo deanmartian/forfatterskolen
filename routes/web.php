@@ -504,8 +504,6 @@ Route::group([
         Route::get('login/facebook/callback','LoginController@handleFacebookCallback');
         Route::get('login/google','LoginController@redirectToGoogle')->name('auth.login.google');
         Route::get('login/google/callback','LoginController@handleGoogleCallback');
-        Route::get('/vipps-login', 'LoginController@vippsLogin')->name('auth.login.vipps');
-        Route::get('/vipps-login-redirect', 'LoginController@vippsLoginRedirect');
     });
 
     // without checking middleware
@@ -517,6 +515,8 @@ Route::group([
         Route::get('login/email-redirect/{email}/{redirect_link}', 'LoginController@emailLoginRedirect')
             ->name('auth.login.emailRedirect');
         Route::get('login/email-normal/{email}', 'LoginController@emailLoginNormal')->name('auth.login.email-normal');
+        Route::get('/vipps-login/{state}', 'LoginController@vippsLogin')->name('auth.login.vipps');
+        Route::get('/vipps-login-redirect', 'LoginController@vippsLoginRedirect');
     });
 
 
