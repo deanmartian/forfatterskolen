@@ -520,7 +520,7 @@
             },
 
             processVipps() {
-                this.isLoading = true;
+                //this.isLoading = true;
                 return axios.post(this.requestUrl+'/checkout/process-vipps', this.orderForm).then(response => {
                     console.log(response);
                     //this.isLoading = false;
