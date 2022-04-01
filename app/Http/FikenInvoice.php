@@ -66,7 +66,7 @@ class FikenInvoice
 	public function create_invoice($post_fields)
 	{
 		$customer = $this->customer($post_fields);
-        return $customer;
+        return json_decode($customer);
 		// if an issue date is set and not empty then use it else use today
         $fields = [
             'issueDate' => isset($post_fields['issueDate']) && $post_fields['issueDate']
@@ -334,7 +334,7 @@ class FikenInvoice
         curl_close($ch);
         $data = json_decode($data);
         // get the http code response
-        return $http_code;
+
         //$contacts = $data->_embedded->{'https://fiken.no/api/v1/rel/contacts'}; - this is for v1 of fiken
         $item = $data;
         if( $item ) :
