@@ -522,13 +522,13 @@ class LoginController extends Controller
             ];
 
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+            \Session::put('new_user_social', 1);
         }
 
         if (!$user && $secondaryEmail) {
             $user = $secondaryEmail->users->first();
         }
 
-        \Session::put('new_user_social', 1);
         Auth::login($user);
 
         if ($state === 'checkout_state') {
