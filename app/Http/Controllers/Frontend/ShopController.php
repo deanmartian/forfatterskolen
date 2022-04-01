@@ -616,6 +616,139 @@ class ShopController extends Controller
         return response()->json($this->courseService->processCheckout($request));
     }
 
+    public function processVipps( $course_id, Request $request, CourseService $courseService )
+    {
+        if (\Auth::check()) {
+
+            $package = Package::find($request->package_id);
+            $course =  $package->course;
+            $course_packages = $course->packages->pluck('id')->toArray();
+            $courseTaken = \Auth::user()->coursesTaken()->where('user_id', \Auth::user()->id)
+                ->whereIn('package_id', $course_packages)->first();
+            // check if the user is already on the course
+            if($courseTaken) {
+                $course_link = route('learner.course.show', $courseTaken->id);
+                return [
+                    'course_link' => $course_link
+                ];
+            }
+
+            $paymentPlan = PaymentPlan::findOrFail($request->payment_plan_id);
+            $paymentMode = PaymentMode::findOrFail(5); //vipps payment
+            $payment_mode = $paymentMode->mode;
+            $payment_plan = trim($paymentPlan->plan);
+            $hasPaidCourse = false;
+
+            // check if course bought is not expired yet
+            foreach( Auth::user()->coursesTakenNotOld as $courseTaken ) :
+                if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
+                    // check if course taken is not free
+                    if ($courseTaken->package->course->is_free != 1) {
+                        $hasPaidCourse = true;
+                    }
+                    break;
+                endif;
+            endforeach;
+
+            /* check if there's an issue date set ir not then use today*/
+            $dueDate = date("Y-m-d");
+            if ($package->issue_date && Carbon::parse($package->issue_date)->gt(Carbon::today())) {
+                $dueDate = $package->issue_date;
+            }
+            $dueDate = Carbon::parse($dueDate);
+            $payment_plan = trim($payment_plan);
+
+            // this is use to check if the current date is within a sale date
+            // for the 3 plans/payments
+            $today 			= \Carbon\Carbon::today()->format('Y-m-d');
+            $fromFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
+            $toFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
+            $isBetweenFull 	= (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
+
+            $price = $isBetweenFull && $package->full_payment_sale_price
+                ? (int)$package->full_payment_sale_price*100
+                : (int)$package->full_payment_price*100;
+            $product_ID = $package->full_price_product;
+            $dueDate->addDays($package->full_price_due_date);
+            $dueDate = date_format(date_create($dueDate), 'Y-m-d');
+
+
+            $comment = '(Kurs: ' . $package->course->title . ' ['.$package->variation.'], ';
+            $comment .= 'Betalingsmodus: ' . $payment_mode . ', ';
+            $comment .= 'Betalingsplan: ' . $payment_plan . ')';
+
+            $discount = 0;
+
+            if ($request->coupon) {
+                $discountCoupon = CourseDiscount::where('coupon', $request->coupon)->where('course_id', $course_id)->first();
+
+                if ($discountCoupon->valid_to) {
+                    $valid_from = Carbon::parse($discountCoupon->valid_from)->format('Y-m-d');
+                    $valid_to   = Carbon::parse($discountCoupon->valid_to)->format('Y-m-d');
+                    $today      = Carbon::today()->format('Y-m-d');
+
+                    if ( ($today >= $valid_from) && ($today <= $valid_to)) {
+                        //echo "valid date <br/>";
+                    } else {
+                        return redirect()->back()->withInput()->with([
+                            'errors' => AdminHelpers::createMessageBag('Rabattkupongen er ugyldig eller utløpt.')
+                        ]);
+                    }
+                }
+
+                if ($discountCoupon) {
+                    $discount = ( (int) $discountCoupon->discount);
+                    $price = $price - ( (int)$discount*100 );
+                }
+
+            }
+
+            if( $hasPaidCourse && $package->course->type == 'Group' && $package->has_student_discount) {
+                $groupDiscount = 1000;
+
+                if ($groupDiscount > $discount) {
+                    $discount = $groupDiscount;
+                }
+
+                $comment .= ' - Discount: Kr '.number_format($discount, 2,',','.');
+                $price = $price - ( (int)$discount*100 );
+            }
+
+            if( $hasPaidCourse && $package->course->type == 'Single' && $package->has_student_discount) {
+                $singleDiscount = 500;
+
+                if ($singleDiscount > $discount) {
+                    $discount = $singleDiscount;
+                }
+
+                $comment .= ' - Discount: Kr '.number_format($discount, 2,',','.');
+                $price = $price - ( (int)$discount*100 );
+            }
+
+            $invoice_fields = [
+                'user_id' => Auth::user()->id,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'netAmount' => $price,
+                'dueDate' => $dueDate,
+                'description' => 'Kursordrefaktura',
+                'productID' => $product_ID,
+                'email' => $request->email,
+                'telephone' => $request->telephone,
+                'address' => $request->street,
+                'postalPlace' => $request->city,
+                'postalCode' => $request->zip,
+                'comment' => $comment,
+                'payment_mode'  => $paymentMode->mode,
+            ];
+
+            $invoice = new FikenInvoice();
+            return $invoice->create_invoice($invoice_fields);
+        }
+
+        return "not logged in";
+    }
+
     public function checkoutTest($course_id)
     {
         $course = Course::findOrFail($course_id);

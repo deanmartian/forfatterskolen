@@ -32,7 +32,7 @@ class FikenInvoice
 
 	public function __construct()
 	{
-        $fiken_company = "https://api.fiken.no/api/v2/companies/forfatterskolen-as";
+        $fiken_company = "https://api.fiken.no/api/v2/companies/fiken-demo-glede-og-bil-as2";
         // Demo: fiken-demo-nordisk-og-tidlig-rytme-enk
         // Forfatterskolen: forfatterskolen-as
         // DemoAS: fiken-demo-glede-og-bil-as2
@@ -66,6 +66,7 @@ class FikenInvoice
 	public function create_invoice($post_fields)
 	{
 		$customer = $this->customer($post_fields);
+        return $customer;
 		// if an issue date is set and not empty then use it else use today
         $fields = [
             'issueDate' => isset($post_fields['issueDate']) && $post_fields['issueDate']
@@ -329,8 +330,11 @@ class FikenInvoice
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);;*/
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
         $data = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
         $data = json_decode($data);
+        // get the http code response
+        return $http_code;
         //$contacts = $data->_embedded->{'https://fiken.no/api/v1/rel/contacts'}; - this is for v1 of fiken
         $item = $data;
         if( $item ) :

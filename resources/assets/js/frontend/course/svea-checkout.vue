@@ -249,6 +249,10 @@
 
             </tab-content>
 
+            <button type="button" class="vipps-btn" slot="custom-buttons-right" slot-scope="props"
+                    v-if="props.activeTabIndex === 0" @click="processVipps()" :disabled="isLoading">
+                Vipps
+            </button>
             <button slot="finish" class="d-none">{{ trans('site.checkout.finish') }}</button>
         </form-wizard>
 
@@ -340,6 +344,7 @@
                 isLoginDisabled: false,
                 loginText: i18n.site.front.form.login,
                 hasPaidCourse: false,
+                isLoading: false,
                 requestUrl: '/course/'+this.course.id
             }
         },
@@ -511,6 +516,14 @@
 
                     this.processError(error);
 
+                });
+            },
+
+            processVipps() {
+                this.isLoading = true;
+                return axios.post(this.requestUrl+'/checkout/process-vipps', this.orderForm).then(response => {
+                    console.log(response);
+                    //this.isLoading = false;
                 });
             },
 
