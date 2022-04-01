@@ -521,6 +521,7 @@
 
             processVipps() {
                 //this.isLoading = true;
+                console.log("process vipps");
                 return axios.post(this.requestUrl+'/checkout/process-vipps', this.orderForm).then(response => {
                     console.log(response);
                     //this.isLoading = false;
