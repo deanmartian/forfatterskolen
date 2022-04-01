@@ -250,7 +250,7 @@
             </tab-content>
 
             <button type="button" class="vipps-btn" slot="custom-buttons-right" slot-scope="props"
-                    v-if="props.activeTabIndex === 0" @click="processVipps()" :disabled="isLoading">
+                    v-if="props.activeTabIndex === 0" @click="processVipps();" :disabled="isLoading">
                 Vipps
             </button>
             <button slot="finish" class="d-none">{{ trans('site.checkout.finish') }}</button>
