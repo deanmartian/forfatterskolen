@@ -530,6 +530,6 @@ class LoginController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('learner.course'));
+        return redirect(route('learner.dashboard'));
     }
 }
