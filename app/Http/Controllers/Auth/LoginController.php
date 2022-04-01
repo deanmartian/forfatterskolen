@@ -528,6 +528,7 @@ class LoginController extends Controller
             $user = $secondaryEmail->users->first();
         }
 
+        \Session::put('new_user_social', 1);
         Auth::login($user);
 
         return redirect(route('learner.dashboard'));
