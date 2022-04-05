@@ -1449,9 +1449,9 @@ class AdminHelpers
     public static function vippsAPI($method, $loc_url, $data = false, $header = [])
     {
         $curl = curl_init();
-        $url = env('VIPPS_URL').$loc_url;
+        $url = env('VIPPS_URL_TEST').$loc_url;
 
-        $subscription_key = env('VIPPS_SUBSCRIPTION');
+        $subscription_key = env('VIPPS_SUBSCRIPTION_TEST');
 
         $header[] = 'Ocp-Apim-Subscription-Key: '.$subscription_key;
         $header[] = 'Content-type: application/json';

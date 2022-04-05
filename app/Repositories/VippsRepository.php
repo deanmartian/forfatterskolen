@@ -22,8 +22,8 @@ class VippsRepository extends BaseRepository {
      */
     public function getAccessToken()
     {
-        $client_id = env('VIPPS_CLIENT_ID');
-        $client_secret = env('VIPPS_CLIENT_SECRET');
+        $client_id = env('VIPPS_CLIENT_ID_TEST');
+        $client_secret = env('VIPPS_CLIENT_SECRET_TEST');
 
         $url = '/accesstoken/get';
         $method = "POST";
@@ -64,7 +64,7 @@ class VippsRepository extends BaseRepository {
                 'callbackPrefix' => 'https://www.forfatterskolen.no/vipps/payment',//url('/vipps/payment'),
                 'fallBack' => $fallbackUrl,//url('/thankyou'),
                 'paymentType' => 'eComm Regular Payment',
-                'merchantSerialNumber' => env('VIPPS_MSN')//AdminHelpers::generateHash(6)
+                'merchantSerialNumber' => env('VIPPS_MSN_TEST')//AdminHelpers::generateHash(6)
             ],
 
             'transaction' => [
@@ -150,7 +150,7 @@ class VippsRepository extends BaseRepository {
 
         $body = array(
             'merchantInfo' => [
-                'merchantSerialNumber' => env('VIPPS_MSN')
+                'merchantSerialNumber' => env('VIPPS_MSN_TEST')
             ],
 
             'transaction' => [

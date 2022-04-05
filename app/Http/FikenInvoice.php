@@ -66,7 +66,7 @@ class FikenInvoice
 	public function create_invoice($post_fields)
 	{
 		$customer = $this->customer($post_fields);
-        return json_decode($customer);
+
 		// if an issue date is set and not empty then use it else use today
         $fields = [
             'issueDate' => isset($post_fields['issueDate']) && $post_fields['issueDate']
@@ -75,7 +75,7 @@ class FikenInvoice
             'lines' => [[
                 'net'           => $post_fields['netAmount'],
                 'description'   => $post_fields['description'],
-                'productId'     => $post_fields['productID'],
+                'productId'     => 279633093,//$post_fields['productID'],
                 'comment'       => $post_fields['comment'],
                 'quantity'      => 1,
                 'vatType'       => 'NONE',
