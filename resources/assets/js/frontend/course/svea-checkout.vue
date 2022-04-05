@@ -524,6 +524,11 @@
                 console.log("process vipps");
                 return axios.post(this.requestUrl+'/checkout/process-vipps', this.orderForm).then(response => {
                     console.log(response);
+
+                    if (response.data.redirect_link) {
+                        window.location.href = response.data.redirect_link;
+                    }
+
                     //this.isLoading = false;
                 });
             },
