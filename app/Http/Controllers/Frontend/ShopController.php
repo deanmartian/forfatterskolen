@@ -1230,9 +1230,13 @@ class ShopController extends Controller
         //endif;
 
         $course_status = $paymentMode->mode == "Vipps" || $paymentMode->mode == "Paypal" ? 1 : 0;
+        $course = $package->course;
+        $start_date = $course->type === 'Group' ? $package->course->start_date : Carbon::today();
+
         $courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
         $courseTaken->is_active = $course_status;
         $courseTaken->is_welcome_email_sent = 0;
+        $courseTaken->end_date = Carbon::parse($start_date)->addYear();
         $courseTaken->save();
 
         $newOrder['user_id']    = Auth::user()->id;
@@ -1270,6 +1274,16 @@ class ShopController extends Controller
                 ]);
                 $courseIncluded->is_active = $course_status;
                 $courseIncluded->save();
+            }
+
+            // this means webinar-pakke is included
+            if ($add_to_automation) {
+                $user = Auth::user();
+                $userCoursesTaken = $user->coursesTaken;
+                foreach($userCoursesTaken as $userCourseTaken) {
+                    $userCourseTaken->end_date = Carbon::parse($start_date)->addYear();
+                    $userCourseTaken->save();
+                }
             }
         }
 
