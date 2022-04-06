@@ -530,13 +530,13 @@ class LoginController extends Controller
             $user = $secondaryEmail->users->first();
         }
 
+        Auth::login($user);
+
         // update address
         Address::updateOrCreate(
             ['user_id' => \Auth::user()->id],
             ['vipps_phone_number' => $decoded_response->phone_number]
         );
-
-        Auth::login($user);
 
         if ($state === 'checkout_state') {
             print_r("checkout state here");
