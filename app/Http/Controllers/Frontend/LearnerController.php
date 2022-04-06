@@ -775,6 +775,8 @@ class LearnerController extends Controller
             }
         }
 
+        $expiredAssignments = array_unique($expiredAssignments);
+
         return view('frontend.learner.assignment', compact('assignments', 'expiredAssignments', 'upcomingPersonalAssignments'));
     }
 

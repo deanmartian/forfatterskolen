@@ -132,7 +132,7 @@
 														</p>
 
 														<span class="font-barlow-regular">{{ trans('site.deadline') }}:</span>
-														<span>{{--{{ \App\Http\FrontendHelpers::formatDateTimeNor2($assignment->submission_date) }}--}}</span>
+														<span>{{ \App\Http\FrontendHelpers::formatDateTimeNor($submission_date_formatted) }}</span>
 														@if( $manuscript )
 															<div class="mt-3">
 																@if( end($extension) == 'pdf' || end($extension) == 'odt' )
