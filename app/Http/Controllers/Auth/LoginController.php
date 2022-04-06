@@ -503,10 +503,11 @@ class LoginController extends Controller
 
             Address::create([
                 'user_id'   => $user->id,
-                'phone'     => $decoded_response->phone_number,
+                'phone'     => NULL,
                 'street'    => $decoded_response->address->street_address,
                 'city'      => $decoded_response->address->region,
                 'zip'       => $decoded_response->address->postal_code,
+                'vipps_phone_number' => $decoded_response->phone_number,
             ]);
 
             $actionText = 'Se dine kurs';
@@ -528,6 +529,12 @@ class LoginController extends Controller
         if (!$user && $secondaryEmail) {
             $user = $secondaryEmail->users->first();
         }
+
+        // update address
+        Address::updateOrCreate(
+            ['user_id' => \Auth::user()->id],
+            ['vipps_phone_number' => $decoded_response->phone_number]
+        );
 
         Auth::login($user);
 
