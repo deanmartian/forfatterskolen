@@ -54,6 +54,7 @@ class CourseEmailOut extends Command
             $packages = $emailOut->allowed_package ? json_decode($emailOut->allowed_package) :
                 $emailOut->course->packages->pluck('id')->toArray();
             $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
+                ->whereNull('renewed_at')
                 ->get();
 
             $emailAttachment = EmailAttachment::where('hash', $emailOut->attachment_hash)->first();
@@ -119,6 +120,7 @@ class CourseEmailOut extends Command
                     $query->whereDate('started_at', '=', $emailDate);
                     $query->orWhereDate('start_date', '=', $emailDate);
                 })
+                ->whereNull('renewed_at')
                 ->get();
 
             $emailAttachment = EmailAttachment::where('hash', $emailOut->attachment_hash)->first();
