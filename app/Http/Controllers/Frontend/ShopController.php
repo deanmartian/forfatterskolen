@@ -742,7 +742,7 @@ class ShopController extends Controller
             'description' => 'Kursordrefaktura',
             'productID' => $product_ID,
             'email' => $vippsCheckout['email'],
-            'telephone' => $vippsCheckout['telephone'],
+            'telephone' => $vippsCheckout['phone'],
             'address' => $vippsCheckout['street'],
             'postalPlace' => $vippsCheckout['city'],
             'postalCode' => $vippsCheckout['zip'],
