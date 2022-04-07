@@ -10,6 +10,7 @@ use App\Events\AddToCampaignList;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Http\AdminHelpers;
+use App\Http\Controllers\Auth\LoginController;
 use App\Jobs\CourseOrderJob;
 use App\Jobs\SveaUpdateOrderDetailsJob;
 use App\Mail\SubjectBodyEmail;
@@ -616,8 +617,9 @@ class ShopController extends Controller
         return response()->json($this->courseService->processCheckout($request));
     }
 
-    public function processVipps( $course_id, Request $request, CourseService $courseService )
+    public function processVipps( $course_id, Request $request, CourseService $courseService, LoginController $loginController )
     {
+        return $loginController->vippsLogin('checkout_state');
         $package = Package::find($request->package_id);
         $course =  $package->course;
         $course_packages = $course->packages->pluck('id')->toArray();

@@ -408,6 +408,9 @@ class LoginController extends Controller
 
         $vipps_auth_url = config('services.vipps.login_auth_link');
 
+        if ($state === 'checkout_state') {
+            return $vipps_auth_url . '?' . http_build_query($query);
+        }
         return redirect()->to($vipps_auth_url . '?' . http_build_query($query));
     }
 
