@@ -542,7 +542,8 @@ class LoginController extends Controller
         );
 
         if ($state === 'checkout_state') {
-            return redirect()->route('front.course.checkout.process-vipps');
+            $vipps = \Session::get('vipps_checkout');
+            return redirect()->route('front.course.checkout.process-vipps',$vipps->course_id);
         }
 
         return redirect(route('learner.dashboard'));
