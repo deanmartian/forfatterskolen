@@ -251,7 +251,7 @@
 
             <button type="button" class="vipps-btn" slot="custom-buttons-right" slot-scope="props"
                     v-if="props.activeTabIndex === 0" @click="vippsCheckout();" :disabled="isLoading">
-                Vipps
+                <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Vipps
             </button>
             <button slot="finish" class="d-none">{{ trans('site.checkout.finish') }}</button>
         </form-wizard>
@@ -520,7 +520,7 @@
             },
 
             vippsCheckout() {
-                //this.isLoading = true;
+                this.isLoading = true;
                 console.log("vipps checkout");
                 return axios.post(this.requestUrl+'/checkout/vipps', this.orderForm).then(response => {
                     console.log(response);
@@ -529,7 +529,11 @@
                         window.location.href = response.data.redirect_link;
                     }
 
-                    //this.isLoading = false;
+                    this.isLoading = false;
+                }).catch(error => {
+
+                    this.processError(error);
+
                 });
             },
 
