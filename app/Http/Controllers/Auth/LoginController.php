@@ -503,7 +503,7 @@ class LoginController extends Controller
 
             Address::create([
                 'user_id'   => $user->id,
-                'phone'     => NULL,
+                'phone'     => $decoded_response->phone_number,
                 'street'    => $decoded_response->address->street_address,
                 'city'      => $decoded_response->address->region,
                 'zip'       => $decoded_response->address->postal_code,
