@@ -870,7 +870,7 @@ class ShopController extends Controller
             'vipps_phone_number' => $user->address->vipps_phone_number
         ];
 
-        return $this->vippsInitiatePayment($vippsData);
+        return redirect()->to($this->vippsInitiatePayment($vippsData));
     }
 
     public function checkoutTest($course_id)
