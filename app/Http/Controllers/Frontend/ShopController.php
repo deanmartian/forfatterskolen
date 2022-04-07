@@ -627,6 +627,9 @@ class ShopController extends Controller
 
     public function processVipps($course_id, Request $request)
     {
+        print_r("checkout state here");
+        echo "<br/>";
+        print_r(\Session::get('vipps_checkout'));
         $package = Package::find($request->package_id);
         $course =  $package->course;
         $course_packages = $course->packages->pluck('id')->toArray();
