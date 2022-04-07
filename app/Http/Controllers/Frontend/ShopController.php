@@ -617,9 +617,16 @@ class ShopController extends Controller
         return response()->json($this->courseService->processCheckout($request));
     }
 
-    public function processVipps( $course_id, Request $request, CourseService $courseService, LoginController $loginController )
+    public function vippsCheckout( $course_id, Request $request, CourseService $courseService, LoginController $loginController )
     {
-        return $loginController->vippsLogin('checkout_state');
+        $request->merge(['course_id' => $course_id]);
+        $checkoutDetails = collect($request->except('_token'));
+        \Session::put('vipps_checkout', $checkoutDetails);
+        return response()->json(['redirect_link' => $loginController->vippsLogin('checkout_state')]);
+    }
+
+    public function processVipps($course_id, Request $request)
+    {
         $package = Package::find($request->package_id);
         $course =  $package->course;
         $course_packages = $course->packages->pluck('id')->toArray();

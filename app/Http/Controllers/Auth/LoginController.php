@@ -545,6 +545,8 @@ class LoginController extends Controller
             print_r("checkout state here");
             echo "<br/>";
             print_r($decoded_response);
+            echo "<br/>";
+            print_r(\Session::get('vipps_checkout'));
             return;
         }
 
