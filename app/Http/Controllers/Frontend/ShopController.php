@@ -856,7 +856,8 @@ class ShopController extends Controller
             'amount' => $price,
             'orderId' => $orderId,
             'transactionText' => $transactionText,
-            'is_ajax' => true
+            'is_ajax' => true,
+            'vipps_phone_number' => $user->address->vipps_phone_number
         ];
 
         return response()->json(['redirect_link' => $this->vippsInitiatePayment($vippsData)]);
