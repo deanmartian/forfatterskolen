@@ -625,12 +625,10 @@ class ShopController extends Controller
         return response()->json(['redirect_link' => $loginController->vippsLogin('checkout_state')]);
     }
 
-    public function processVipps($course_id, Request $request)
+    public function processVipps()
     {
-        print_r("checkout state here");
-        echo "<br/>";
-        print_r(\Session::get('vipps_checkout'));
-        $package = Package::find($request->package_id);
+        $vippsCheckout = \Session::get('vipps_checkout');
+        $package = Package::find($vippsCheckout['package_id']);
         $course =  $package->course;
         $course_packages = $course->packages->pluck('id')->toArray();
         $courseTaken = \Auth::user()->coursesTaken()->where('user_id', \Auth::user()->id)
@@ -643,7 +641,7 @@ class ShopController extends Controller
             ];
         }
 
-        $paymentPlan = PaymentPlan::findOrFail($request->payment_plan_id);
+        $paymentPlan = PaymentPlan::findOrFail($vippsCheckout['payment_plan_id']);
         $paymentMode = PaymentMode::findOrFail(5); //vipps payment
         $payment_mode = $paymentMode->mode;
         $payment_plan = trim($paymentPlan->plan);
@@ -689,8 +687,8 @@ class ShopController extends Controller
 
         $discount = 0;
 
-        if ($request->coupon) {
-            $discountCoupon = CourseDiscount::where('coupon', $request->coupon)->where('course_id', $course_id)->first();
+        if ($vippsCheckout['coupon']) {
+            $discountCoupon = CourseDiscount::where('coupon', $vippsCheckout['coupon'])->where('course_id', $vippsCheckout['course_id'])->first();
 
             if ($discountCoupon->valid_to) {
                 $valid_from = Carbon::parse($discountCoupon->valid_from)->format('Y-m-d');
@@ -737,17 +735,17 @@ class ShopController extends Controller
 
         $invoice_fields = [
             'user_id' => Auth::user()->id,
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
+            'first_name' => $vippsCheckout['first_name'],
+            'last_name' => $vippsCheckout['last_name'],
             'netAmount' => $price,
             'dueDate' => $dueDate,
             'description' => 'Kursordrefaktura',
             'productID' => $product_ID,
-            'email' => $request->email,
-            'telephone' => $request->telephone,
-            'address' => $request->street,
-            'postalPlace' => $request->city,
-            'postalCode' => $request->zip,
+            'email' => $vippsCheckout['email'],
+            'telephone' => $vippsCheckout['telephone'],
+            'address' => $vippsCheckout['street'],
+            'postalPlace' => $vippsCheckout['city'],
+            'postalCode' => $vippsCheckout['zip'],
             'comment' => $comment,
             'payment_mode'  => $paymentMode->mode,
         ];
@@ -764,7 +762,7 @@ class ShopController extends Controller
         $courseTaken->save();
 
         $newOrder['user_id']    = Auth::user()->id;
-        $newOrder['item_id']    = $course_id;
+        $newOrder['item_id']    = $vippsCheckout['course_id'];
         $newOrder['type']       = Order::COURSE_TYPE;
         $newOrder['package_id'] = $package->id;
         $newOrder['plan_id']    = $paymentPlan->id;
