@@ -107,9 +107,9 @@ return [
         'client_id_test' => env('VIPPS_CLIENT_ID_TEST'),
         'client_secret_test' => env('VIPPS_CLIENT_SECRET_TEST'),
         'login_scope' => 'openid name email address phoneNumber nin birthDate accountNumbers',
-        'login_redirect_uri' => 'https://dev.forfatterskolen.no/auth/vipps-login-redirect',
-        'login_auth_link' => 'https://apitest.vipps.no/access-management-1.0/access/oauth2/auth',
-        'login_token_link' => 'https://apitest.vipps.no/access-management-1.0/access/oauth2/token',
-        'login_user_info_link' => 'https://apitest.vipps.no/vipps-userinfo-api/userinfo'
+        'login_redirect_uri' => 'https://www.forfatterskolen.no/auth/vipps-login-redirect',
+        'login_auth_link' => 'https://api.vipps.no/access-management-1.0/access/oauth2/auth',
+        'login_token_link' => 'https://api.vipps.no/access-management-1.0/access/oauth2/token',
+        'login_user_info_link' => 'https://api.vipps.no/vipps-userinfo-api/userinfo'
     ]
 ];

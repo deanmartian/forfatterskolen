@@ -32,7 +32,7 @@ class FikenInvoice
 
 	public function __construct()
 	{
-        $fiken_company = "https://api.fiken.no/api/v2/companies/fiken-demo-glede-og-bil-as2";
+        $fiken_company = "https://api.fiken.no/api/v2/companies/forfatterskolen-as";
         // Demo: fiken-demo-nordisk-og-tidlig-rytme-enk
         // Forfatterskolen: forfatterskolen-as
         // DemoAS: fiken-demo-glede-og-bil-as2
@@ -75,7 +75,7 @@ class FikenInvoice
             'lines' => [[
                 'net'           => $post_fields['netAmount'],
                 'description'   => $post_fields['description'],
-                'productId'     => 279633093,//$post_fields['productID'],
+                'productId'     => $post_fields['productID'],
                 'comment'       => $post_fields['comment'],
                 'quantity'      => 1,
                 'vatType'       => 'NONE',
