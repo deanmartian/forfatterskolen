@@ -249,6 +249,12 @@
 
             </tab-content>
 
+            <button type="button" class="vipps-btn" slot="custom-buttons-right" slot-scope="props"
+                    v-if="props.activeTabIndex === 0" @click="vippsCheckout();" :disabled="isLoading">
+                <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i>
+                <img src="/images-new/betal-vipps.png" height="36" alt="vipps-buy-button"
+                     :style="isLoading ? 'opacity: .8;' : ''">
+            </button>
             <button slot="finish" class="d-none">{{ trans('site.checkout.finish') }}</button>
         </form-wizard>
 
@@ -270,6 +276,22 @@
 
     #cardForm [type='submit'] {
         display: none;
+    }
+
+    .vipps-btn {
+        border: none;
+        background-color: transparent;
+        position: relative;
+    }
+
+    .vipps-btn i.fa {
+        top: 0;
+        bottom: 0;
+        left: 8px;
+        display: flex;
+        align-items: center;
+        position: absolute;
+        z-index: 1;
     }
 </style>
 
@@ -340,6 +362,7 @@
                 isLoginDisabled: false,
                 loginText: i18n.site.front.form.login,
                 hasPaidCourse: false,
+                isLoading: false,
                 requestUrl: '/course/'+this.course.id
             }
         },
@@ -511,6 +534,24 @@
 
                     this.processError(error);
 
+                });
+            },
+
+            vippsCheckout() {
+                this.isLoading = true;
+                console.log("vipps checkout");
+                return axios.post(this.requestUrl+'/checkout/vipps', this.orderForm).then(response => {
+                    console.log(response);
+
+                    if (response.data.redirect_link) {
+                        window.location.href = response.data.redirect_link;
+                        return;
+                    }
+
+                    this.isLoading = false;
+                }).catch(error => {
+                    this.processError(error);
+                    this.isLoading = false;
                 });
             },
 

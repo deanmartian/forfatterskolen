@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\AccessToken;
+use App\Address;
 use App\Course;
 use App\Helpers\BrowserDetection;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\LearnerLogin;
+use App\Mail\SubjectBodyEmail;
 use App\UserEmail;
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
@@ -391,5 +393,159 @@ class LoginController extends Controller
         return response()->json([
             "redirect_url" => route('auth.login.email-normal', $encode_email)
         ]);
+    }
+
+    public function vippsLogin($state = 'login_state')
+    {
+        $query = [
+            //'client_id' => config('services.vipps.client_id'),
+            'client_id' => config('services.vipps.client_id'),
+            'response_type' => 'code',
+            'state' => $state,
+            'redirect_uri' => config('services.vipps.login_redirect_uri'),
+            'scope' => config('services.vipps.login_scope')
+        ];
+
+        $vipps_auth_url = config('services.vipps.login_auth_link');
+
+        if ($state === 'checkout_state') {
+            return $vipps_auth_url . '?' . http_build_query($query);
+        }
+        return redirect()->to($vipps_auth_url . '?' . http_build_query($query));
+    }
+
+    /**
+     * This is where the vipps would redirect after getting auth
+     * Use the generated code to get access_token
+     * @param Request $request
+     * @return $this
+     */
+    public function vippsLoginRedirect( Request $request )
+    {
+
+        /*$vipps_credentials = base64_encode(config('services.vipps.client_id') . ":"
+            . config('services.vipps.client_secret'));*/
+        $vipps_credentials = base64_encode(config('services.vipps.client_id') . ":"
+            . config('services.vipps.client_secret'));
+
+        $long_url = config('services.vipps.login_token_link');
+
+        $code = $request->code;
+        $redirect_url = config('services.vipps.login_redirect_uri');
+
+        $body = [
+            'grant_type'    => 'authorization_code',
+            'code'          => $code,
+            'redirect_uri'  => $redirect_url
+        ];
+
+        $header = array();
+        $header[] = 'Accept: application/json';
+        $header[] = 'Content-type: application/x-www-form-urlencoded';
+        $header[] = 'Authorization: Basic '.$vipps_credentials;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $long_url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($body)); // use HTTP POST to send form data
+        $response = curl_exec($ch);
+        $decoded_response = json_decode($response);
+
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($http_code != 200) {
+            return redirect()->route('auth.login.show')->withInput()->withErrors($decoded_response->error_description);
+        }
+
+        return $this->vippsUserInfo($decoded_response->access_token, $request->state);
+    }
+
+    /**
+     * Get the user info from vipps
+     * @param $access_token
+     * @return $this
+     */
+    public function vippsUserInfo($access_token, $state)
+    {
+        $long_url = config('services.vipps.login_user_info_link');
+
+        $header = array();
+        $header[] = 'Accept: application/json';
+        $header[] = 'Content-type: application/x-www-form-urlencoded';
+        $header[] = 'Authorization: Bearer '.$access_token;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $long_url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        $response = curl_exec($ch);
+        $decoded_response = json_decode($response);
+
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($http_code != 200) {
+            return redirect()->route('auth.login.show')->withInput()->withErrors($decoded_response->title);
+        }
+
+        if (!$decoded_response->email_verified) {
+            return redirect()->route('auth.login.show')->withInput()->withErrors("Email not yet verified.");
+        }
+
+        $user = User::where('email', $decoded_response->email)->where('role', 2)->first();
+        $secondaryEmail = UserEmail::where('email', $decoded_response->email)->first();
+
+        if(!$user && !$secondaryEmail) {
+            $user               = new User();
+            $user->first_name   = $decoded_response->given_name;
+            $user->last_name    = $decoded_response->family_name;
+            $user->email        = $decoded_response->email;
+            $user->password     = bcrypt(123);
+            $user->save();
+
+            Address::create([
+                'user_id'   => $user->id,
+                'phone'     => $decoded_response->phone_number,
+                'street'    => $decoded_response->address->street_address,
+                'city'      => $decoded_response->address->region,
+                'zip'       => $decoded_response->address->postal_code,
+                'vipps_phone_number' => $decoded_response->phone_number,
+            ]);
+
+            $actionText = 'Se dine kurs';
+            $actionUrl = \URL::to('/account/course');
+
+            $to = $user->email; //
+            $emailData = [
+                'email_subject' => 'Velkommen til Forfatterskolen',
+                'email_message' => view('emails.registration', compact('actionText', 'actionUrl', 'user'))->render(),
+                'from_name' => '',
+                'from_email' => 'post@forfatterskolen.no',
+                'attach_file' => NULL
+            ];
+
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+            \Session::put('new_user_social', 1);
+        }
+
+        if (!$user && $secondaryEmail) {
+            $user = $secondaryEmail->users->first();
+        }
+
+        Auth::login($user);
+
+        // update address
+        Address::updateOrCreate(
+            ['user_id' => \Auth::user()->id],
+            ['vipps_phone_number' => $decoded_response->phone_number]
+        );
+
+        if ($state === 'checkout_state') {
+            $vipps = \Session::get('vipps_checkout');
+            return redirect()->route('front.course.checkout.process-vipps',$vipps['course_id']);
+        }
+
+        return redirect(route('learner.dashboard'));
     }
 }

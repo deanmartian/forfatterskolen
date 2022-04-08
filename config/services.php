@@ -99,6 +99,17 @@ return [
         'checkout_secret' => env('SVEA_CHECKOUT_SECRET'),
         'checkoutid_test' => env('SVEA_CHECKOUTID_TEST'),
         'checkout_secret_test' => env('SVEA_CHECKOUT_SECRET_TEST')
-    ]
+    ],
 
+    'vipps' => [
+        'client_id' => env('VIPPS_CLIENT_ID'),
+        'client_secret' => env('VIPPS_CLIENT_SECRET'),
+        'client_id_test' => env('VIPPS_CLIENT_ID_TEST'),
+        'client_secret_test' => env('VIPPS_CLIENT_SECRET_TEST'),
+        'login_scope' => 'openid name email address phoneNumber nin birthDate accountNumbers',
+        'login_redirect_uri' => 'https://www.forfatterskolen.no/auth/vipps-login-redirect',
+        'login_auth_link' => 'https://api.vipps.no/access-management-1.0/access/oauth2/auth',
+        'login_token_link' => 'https://api.vipps.no/access-management-1.0/access/oauth2/token',
+        'login_user_info_link' => 'https://api.vipps.no/vipps-userinfo-api/userinfo'
+    ]
 ];

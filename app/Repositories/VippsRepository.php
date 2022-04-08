@@ -57,7 +57,7 @@ class VippsRepository extends BaseRepository {
 
         $body = array(
             'customerInfo' => [
-                'mobileNumber' => ''
+                'mobileNumber' => isset($data['vipps_phone_number']) ? $data['vipps_phone_number'] : ''
             ],
 
             'merchantInfo' => [

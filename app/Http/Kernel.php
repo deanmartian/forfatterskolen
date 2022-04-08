@@ -63,5 +63,6 @@ class Kernel extends HttpKernel
         'checkAutoRenewCourses' => \App\Http\Middleware\CheckAutoRenewCourses::class,
         'editor' => \App\Http\Middleware\Editor::class,
         'headEditor' => \App\Http\Middleware\HeadEditor::class,
+        'cors' => \App\Http\Middleware\Cors::class,
     ];
 }

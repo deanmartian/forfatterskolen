@@ -120,7 +120,6 @@ Route::group([
         Route::get('/contract/{code}', 'HomeController@contract')->name('front.contract-view');
         Route::get('/contract/{code}/download', 'HomeController@contractDownload')->name('front.contract.download');
         Route::post('/contract/{code}/sign', 'HomeController@contractSign')->name('front.contract.sign');
-        Route::post('/ssssss', 'HomeController@contractSign')->name('signaturepad.upload');
 
         Route::group([
             'prefix' => 'shop-manuscript'
@@ -199,6 +198,8 @@ Route::group([
             Route::post('/{id}/checkout/process-order', 'ShopController@processOrder')->name('front.course.process_order'); // Place Order
             Route::get('/{id}/thank-you', 'CourseController@thankyou')->name('front.course.thank-you'); // Checkout
             Route::post('/{id}/checkout/validate-form', 'ShopController@validateCheckoutForm')->name('front.course.checkout.validate-form');
+            Route::post('/{id}/checkout/vipps', 'ShopController@vippsCheckout')->name('front.course.checkout.vipps');
+            Route::get('/{id}/checkout/process-vipps', 'ShopController@processVipps')->name('front.course.checkout.process-vipps');
             Route::get('/{id}/checkout-test', 'ShopController@checkoutTest')->name('front.course.checkout-test'); // Checkout
             Route::post('/{id}/proceed-checkout', 'ShopController@proceedCheckout')->name('front.course.proceed-checkout'); // Checkout
             Route::get('/{id}/discount/{coupon}', 'ShopController@applyDiscount')->name('front.course.apply-discount'); // Checkout
@@ -516,6 +517,8 @@ Route::group([
         Route::get('login/email-redirect/{email}/{redirect_link}', 'LoginController@emailLoginRedirect')
             ->name('auth.login.emailRedirect');
         Route::get('login/email-normal/{email}', 'LoginController@emailLoginNormal')->name('auth.login.email-normal');
+        Route::get('/vipps-login/{state?}', 'LoginController@vippsLogin')->name('auth.login.vipps');
+        Route::get('/vipps-login-redirect', 'LoginController@vippsLoginRedirect');
     });
 
 
