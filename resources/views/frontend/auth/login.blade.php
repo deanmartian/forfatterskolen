@@ -81,10 +81,10 @@ Password Change
 											{{ ucwords(trans('site.front.form.login-with-google')) }}
 										</a>
 
-										{{--<a href="{{ route('auth.login.vipps') }}" class="loginBtn btn mt-2">
+										<a href="{{ route('auth.login.vipps') }}" class="loginBtn btn mt-2">
 											<img src="{{ asset('images-new/vipps-login.png') }}" height="38px"
 												 alt="vipps-login-button">
-										</a>--}}
+										</a>
 									</div>
 								</form>
 
