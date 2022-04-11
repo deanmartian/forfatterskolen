@@ -386,6 +386,33 @@
 															@endif
 														</div>
 
+														@if($manuscript->letter_to_editor)
+															<div class="mt-3">
+																<?php
+                                                                	$extension = $manuscript ? explode('.', basename($manuscript->letter_to_editor)) : '';
+																?>
+																@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+																	<a href="/js/ViewerJS/#../..{{ $manuscript->letter_to_editor }}">
+																		{{ basename($manuscript->letter_to_editor) }}
+																	</a>
+																@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
+																	<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->letter_to_editor}}">
+																		{{ basename($manuscript->letter_to_editor) }}
+																	</a>
+																@endif
+
+																	@if (!$manuscript->locked)
+																		<div class="pull-right">
+																			<button type="button" class="btn btn-sm btn-info editLetterBtn"
+																					data-toggle="modal" data-target="#editLetterModal"
+																					data-action="{{ route('learner.assignment.replace_letter', $manuscript->id) }}">
+																				<i class="fa fa-pen"></i>
+																			</button>
+																		</div>
+																	@endif
+															</div>
+														@endif
+
 														@if($assignment->parent === 'users')
 															<p class="mt-3">
 																{{ trans('site.expected-finish') }}:
@@ -636,6 +663,36 @@
 	</div>
 </div>
 
+	<div id="editLetterModal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title">
+						{{ trans('site.learner.manuscript.replace-manuscript') }}
+					</h3>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
+						{{ csrf_field() }}
+						<div class="form-group">
+							<label>
+								{{ trans('site.letter-to-editor') }}
+							</label>
+							<input type="file" class="form-control" required name="filename"
+								   accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+							* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
+						</div>
+
+						<button type="submit" class="btn btn-primary pull-right">
+							{{ trans('site.front.submit') }}
+						</button>
+						<div class="clearfix"></div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 @if(Session::has('manuscript_test_error'))
 	<div id="manuscriptTestErrorModal" class="modal fade" role="dialog">
 		<div class="modal-dialog modal-sm">
@@ -727,6 +784,12 @@
         let action = $(this).data('action');
         form.attr('action', action)
     });
+
+    $(".editLetterBtn").click(function() {
+        let form = $('#editLetterModal').find('form');
+        let action = $(this).data('action');
+        form.attr('action', action)
+	});
 </script>
 @stop
 

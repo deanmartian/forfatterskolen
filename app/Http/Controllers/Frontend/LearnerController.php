@@ -852,7 +852,7 @@ class LearnerController extends Controller
                 && $assignment->send_letter_to_editor) :
                 $destinationPathLetter = 'storage/letter-to-editor';
                 $extensionLetter = pathinfo($_FILES['letter_to_editor']['name'],PATHINFO_EXTENSION);
-                $actualNameLetter = pathinfo($_FILES['letter_to_editor']['name'],PATHINFO_FILENAME);
+                $actualNameLetter = time();//pathinfo($_FILES['letter_to_editor']['name'],PATHINFO_FILENAME);
                 $fileNameLetter = AdminHelpers::checkFileName($destinationPathLetter, $actualNameLetter, $extension);// rename document
                 $expFileNameLetter = explode("/",$fileNameLetter);
 
@@ -3003,6 +3003,43 @@ class LearnerController extends Controller
                 dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
                     $emailTemplate->from_email, null, null, 'assignment-manuscripts',
                     $assignmentManuscript->id));
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    public function replaceAssignmentLetter($id, Request $request)
+    {
+        $assignmentManuscript = AssignmentManuscript::find($id);
+
+        if ($assignmentManuscript) {
+            if ( $request->hasFile('filename') && $request->file('filename')->isValid() ) {
+                $oldManuscript = $assignmentManuscript->filename;
+
+                $destinationPath = 'storage/letter-to-editor'; // upload path
+                $extension = pathinfo($_FILES['filename']['name'],PATHINFO_EXTENSION); // getting document extension
+                $actual_name = time();
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+                $expFileName = explode('/', $fileName);
+
+                $extensions = ['doc', 'docx', 'odt', 'pdf'];
+                if( !in_array($extension, $extensions) ) :
+                    return redirect()->back()->withInput()->with(
+                        'manuscript_test_error', 'Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF'
+                    );
+                endif;
+
+                $request->filename->move($destinationPath, end($expFileName));
+
+
+                // delete the old file from the server
+                if (File::exists(public_path($oldManuscript))) {
+                    File::delete(public_path($oldManuscript));
+                }
+
+                $assignmentManuscript->letter_to_editor = '/'.$fileName;
+                $assignmentManuscript->save();
             }
         }
 
