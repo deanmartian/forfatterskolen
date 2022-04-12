@@ -416,7 +416,7 @@
 														@if($assignment->parent === 'users')
 															<p class="mt-3">
 																{{ trans('site.expected-finish') }}:
-																{{ \Carbon\Carbon::parse($manuscript->expected_finish)->addDay()->format('d.m.Y') }}
+																{{ $manuscript->expected_finish ? \Carbon\Carbon::parse($manuscript->expected_finish)->addDay()->format('d.m.Y') : NULL }}
 															</p>
 														@endif
 													@endif
