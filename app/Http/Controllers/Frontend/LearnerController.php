@@ -916,6 +916,29 @@ class LearnerController extends Controller
                 Mail::to($toMail)->queue(new AssignmentSubmittedEmail($email_data));
             }
 
+            if ($assignment->parent === 'users' && $assignment->editor_id) {
+                $emailTemplate = AdminHelpers::emailTemplate('Personal Assignment Editor Notification');
+                $email_content = str_replace([
+                    '_learner_',
+                    '_assignment_'
+                ], [
+                    Auth::user()->full_name,
+                    $assignment->title
+                ], $emailTemplate->email_content);
+
+                $editor = User::find($assignment->editor_id);
+                $to = $editor->email;
+                $emailData = [
+                    'email_subject' => $emailTemplate->subject,
+                    'email_message' => $email_content,
+                    'from_name' => '',
+                    'from_email' => 'post@forfatterskolen.no',
+                    'attach_file' => NULL
+                ];
+                \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+
+            }
+
             // notify user
             $user_email = Auth::user()->email;
             $confirm_email['email_message'] = 'Oppgaven din er levert, har vi problemer med filen vil vi ta kontakt med med deg.';
