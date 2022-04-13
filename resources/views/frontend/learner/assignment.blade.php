@@ -81,7 +81,7 @@
 													<div class="card-header py-4">
 														<div class="row">
 															<div class="col-md-9">
-																<h2><i class="contract-sign"></i> {{ $assignment->title }}</h2>
+																<h2><i class="contract-sign"></i> {{ $assignment->title }}</h2>{{ $assignment->id }}
 															</div>
 															<div class="col-md-3">
 																<?php
@@ -323,7 +323,8 @@
 																			data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 																			data-show-group-question="{{ $assignment->show_join_group_question }}"
 																			data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
-																			@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
+																			@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))
+																			&& $assignment->parent !== 'users') disabled @endif>
 																		{{ trans('site.learner.upload-script') }}
 																	</button>
 																@else
@@ -332,7 +333,8 @@
 																			data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 																			data-show-group-question="{{ $assignment->show_join_group_question }}"
 																			data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
-																			@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
+																			@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))
+																			&& $assignment->parent !== 'users') disabled @endif>
 																		{{ trans('site.learner.upload-script') }}
 																	</button>
 																@endif

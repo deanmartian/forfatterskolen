@@ -762,18 +762,42 @@ class LearnerController extends Controller
         endforeach;
 
         foreach ($userAssignments as $assignment) {
+            $manuscript = $assignment->manuscripts->first();
+            $feedback = null;
+            if ($manuscript) {
+                $feedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $manuscript['id'])->first();
+            }
 
-            if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
+            if (!$feedback) {
                 $assignments[] = $assignment;
             }
+            /*
+             * old code
+             * if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
+                $assignments[] = $assignment;
+            }*/
 
         }
 
         foreach ($userExpiredAssignments as $assignment) {
-            if (\Carbon\Carbon::parse($assignment->submission_date)->lt(Carbon::now())) {
+            $manuscript = $assignment->manuscripts->first();
+            $feedback = null;
+            if ($manuscript) {
+                $feedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $manuscript['id'])->first();
+            }
+
+            if ($feedback) {
                 $expiredAssignments[] = $assignment;
             }
+            /*
+             * old code
+             * if (\Carbon\Carbon::parse($assignment->submission_date)->lt(Carbon::now())) {
+                $expiredAssignments[] = $assignment;
+            }*/
         }
+        // sort array by created_at
+        $expiredAssignmentCreated = array_column($expiredAssignments, 'created_at');
+        array_multisort($expiredAssignmentCreated, SORT_DESC, $expiredAssignments);
 
         $expiredAssignments = array_unique($expiredAssignments);
 
