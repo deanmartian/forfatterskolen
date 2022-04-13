@@ -360,6 +360,7 @@
 													<span>{{ \App\Http\FrontendHelpers::formatDateTimeNor($submission_date_formatted) }}</span>
 													@if( $manuscript )
 														<div class="mt-3">
+															Manus:
 															@if( end($extension) == 'pdf' || end($extension) == 'odt' )
 																<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">
 																	{{ basename($manuscript->filename) }}
@@ -391,6 +392,7 @@
 																<?php
                                                                 	$extension = $manuscript ? explode('.', basename($manuscript->letter_to_editor)) : '';
 																?>
+																Brev:
 																@if( end($extension) == 'pdf' || end($extension) == 'odt' )
 																	<a href="/js/ViewerJS/#../..{{ $manuscript->letter_to_editor }}">
 																		{{ basename($manuscript->letter_to_editor) }}
