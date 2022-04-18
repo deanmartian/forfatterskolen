@@ -70,6 +70,7 @@ Route::group([
         Route::post('/coaching-timer/checkout/{plan}', 'HomeController@coachingTimerCheckout')->name('front.coaching-timer-checkout'); // Coaching Timer Page
         Route::post('/coaching-timer', 'HomeController@coachingTimer')->name('front.coaching-timer'); // Coaching Timer Page
         Route::post('coaching-timer/{plan}/place-order', 'HomeController@coachingTimerPlaceOrder')->name('front.coaching-timer-place-order'); // Coaching Timer Page
+        Route::get('/vipps-order-status/{orderId}', 'HomeController@checkVippsOrderStatus');
 
         Route::group([
             'prefix' => 'coaching-time'

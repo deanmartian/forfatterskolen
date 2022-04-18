@@ -66,6 +66,8 @@ use App\Http\FikenInvoice;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+use App\Helpers\ApiException;
+use App\Helpers\ApiResponse;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
 include_once($_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php');
@@ -2180,6 +2182,31 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         $contract->save();
 
         return back()->with('success', 'Contract signed successfully');
+    }
+
+    public function checkVippsOrderStatus($order_id)
+    {
+        $repository = new VippsRepository();
+        $result = $repository->getAccessToken(); // get the access token
+
+        if ($result instanceof ApiException) {
+            return ApiResponse::error($result->getMessage(), $result->getData(), $result->getCode());
+        }
+
+        $access_token = $result['data']->access_token;
+        $url = "/ecomm/v2/payments/$order_id/details";
+
+        $header = array();
+        $header[] = 'Accept: application/json;charset=UTF-8';
+        $header[] = 'Authorization: '.$access_token;
+        $header[] = 'Merchant-Serial-Number: '.env('VIPPS_MSN');
+        $body = [];
+
+        $response = AdminHelpers::vippsAPI('GET', $url, $body, $header);
+        echo "<pre>";
+        print_r($response);
+        echo "</pre>";
+
     }
 
 }
