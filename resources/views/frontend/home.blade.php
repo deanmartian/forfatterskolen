@@ -179,7 +179,7 @@
                                                     </div>
                                                     <h2 class="font-montserrat-semibold mb-4">{{ $popular_course->title}}</h2>
                                                     <p class="font-montserrat-regular">
-                                                        {{ str_limit(strip_tags($popular_course->description), 300)}}
+                                                        {{ \Illuminate\Support\Str::limit(strip_tags($popular_course->description), 300)}}
                                                     </p>
                                                 </div>
                                             </div>
@@ -203,10 +203,10 @@
                                                     </div>
                                                     <div class="card-body">
                                                         <h3 class="font-montserrat-semibold" itemprop="headline">
-                                                            {{ str_limit(strip_tags($popular_course->title), 40)}}
+                                                            {{ \Illuminate\Support\Str::limit(strip_tags($popular_course->title), 40)}}
                                                         </h3>
                                                         <p class="font-montserrat-light mt-4"
-                                                           itemprop="about">{{ str_limit(strip_tags($popular_course->description), 130)}}</p>
+                                                           itemprop="about">{{ \Illuminate\Support\Str::limit(strip_tags($popular_course->description), 130)}}</p>
                                                         <a href="{{ route('front.course.show', $popular_course->id) }}"
                                                            class="site-btn-global rounded-0 mt-3 d-inline-block"
                                                            title="View course details" itemprop="url">

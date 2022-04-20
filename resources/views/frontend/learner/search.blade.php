@@ -19,7 +19,7 @@
 			@foreach($courses as $course)
 				<div class="mb-4">
 					<a href="{{route('learner.course')}}" class="font-20 font-barlow-regular">{{ $course->package->course->title }}</a>
-					<p>{!! str_limit($course->package->course->description, 120) !!}</p>
+					<p>{!! \Illuminate\Support\Str::limit($course->package->course->description, 120) !!}</p>
 				</div>
 			@endforeach
 
@@ -27,7 +27,7 @@
 				@foreach( $assignment->package->course->assignments as $assignment_i )
 					<div class="mb-4">
 						<a href="{{route('learner.assignment')}}" class="font-20 font-barlow-regular">{{ $assignment_i->title }}</a>
-						<p>{!! str_limit($assignment_i->description, 120) !!}</p>
+						<p>{!! \Illuminate\Support\Str::limit($assignment_i->description, 120) !!}</p>
 					</div>
 				@endforeach
 			@endforeach
@@ -36,7 +36,7 @@
 				@foreach( $webinar->package->course->webinars as $webinar_i )
 					<div class="mb-4">
 						<a href="{{route('learner.webinar')}}" class="font-20 font-barlow-regular">{{ $webinar_i->title }}</a>
-						<p>{!! str_limit($webinar_i->description, 120) !!}</p>
+						<p>{!! \Illuminate\Support\Str::limit($webinar_i->description, 120) !!}</p>
 					</div>
 				@endforeach
 			@endforeach
@@ -45,7 +45,7 @@
 			@foreach($workshops as $workshop)
 				<div class="mb-4">
 					<a href="{{route('learner.workshop')}}" class="font-20 font-barlow-regular">{{ $workshop->workshop->title }}</a>
-					<p>{!! str_limit($workshop->workshop->description, 120) !!}</p>
+					<p>{!! \Illuminate\Support\Str::limit($workshop->workshop->description, 120) !!}</p>
 				</div>
 			@endforeach
 		</div>

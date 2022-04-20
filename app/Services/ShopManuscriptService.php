@@ -162,7 +162,7 @@ class ShopManuscriptService {
                 "cart" => array(
                     "items" => array(
                         array(
-                            "name" => str_limit($shopManuscript->title, 35),
+                            "name" => \Illuminate\Support\Str::limit($shopManuscript->title, 35),
                             "quantity" => 100,
                             "unitPrice" => $calculatedPrice*100,
                             "unit" => "pc"

@@ -110,7 +110,7 @@ class GiftService {
                 "cart" => array(
                     "items" => array(
                         array(
-                            "name" => str_limit($merchantDataTitle, 35),
+                            "name" => \Illuminate\Support\Str::limit($merchantDataTitle, 35),
                             "quantity" => 100,
                             "unitPrice" => $discountedPrice*100,
                             "unit" => "pc"

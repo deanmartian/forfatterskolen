@@ -664,5 +664,9 @@ class PageController extends Controller
         //return ApiResponse::success('Image uploaded', $result);
 
     }
-    
+
+    public function translations()
+    {
+        return redirect()->to('/translations/view/site');
+    }
 }

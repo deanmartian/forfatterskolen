@@ -94,7 +94,7 @@
 										{{$courseTaken->package->course->title}}
 									</h3>
 									<p class="note-color">
-										{{str_limit(strip_tags($courseTaken->package->course->description), 200)}}
+										{!! \Illuminate\Support\Str::limit(strip_tags($courseTaken->package->course->description), 200) !!}
 									</p>
 								</div>
 								<div class="card-footer no-border p-0">
@@ -166,7 +166,7 @@
 										{{$courseTaken->package->course->title}}
 									</h3>
 									<p class="note-color">
-										{{str_limit(strip_tags($courseTaken->package->course->description), 200)}}
+										{{\Illuminate\Support\Str::limit(strip_tags($courseTaken->package->course->description), 200)}}
 									</p>
 								</div>
 							</div>

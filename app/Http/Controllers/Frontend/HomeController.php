@@ -2182,4 +2182,35 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         return back()->with('success', 'Contract signed successfully');
     }
 
+    public function formatMoney($number)
+    {
+        return response()->json(\App\Http\FrontendHelpers::currencyFormat($number));
+    }
+
+    public function checkNearlyExpiredCourse()
+    {
+        \App\Http\AdminHelpers::checkNearlyExpiredCourses();
+        return "done";
+    }
+
+    public function langJS()
+    {
+        $strings = \Cache::rememberForever('lang.js', function () {
+            $lang = config('app.locale');
+
+            $files   = glob(resource_path('lang/' . $lang . '/*.php'));
+            $strings = [];
+
+            foreach ($files as $file) {
+                $name           = basename($file, '.php');
+                $strings[$name] = require $file;
+            }
+
+            return $strings;
+        });
+
+        header('Content-Type: text/javascript');
+        echo('window.i18n = ' . json_encode($strings) . ';');
+        exit();
+    }
 }

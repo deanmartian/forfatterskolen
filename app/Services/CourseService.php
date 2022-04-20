@@ -196,7 +196,7 @@ class CourseService {
                 "cart" => array(
                     "items" => array(
                         array(
-                            "name" => str_limit($course->title, 35),
+                            "name" => \Illuminate\Support\Str::limit($course->title, 35),
                             "quantity" => 100,
                             "unitPrice" => $calculatedPrice*100,
                             "unit" => "pc"

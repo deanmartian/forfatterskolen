@@ -24,9 +24,7 @@ App::setLocale($locale);
  *
  *
  */
-Route::get('/easywrite', function () {
-    return view('frontend-easywrite.index');
-});
+Route::view('/easywrite', 'frontend-easywrite.index');
 Route::group([
     'domain' => $front,
 ], function(){
@@ -57,9 +55,7 @@ Route::group([
         Route::get('/free-webinar/{id}/thank-you', 'HomeController@freeWebinarThanks')->name('front.free-webinar-thanks'); // Support Article
         Route::get('/webinartakk', 'HomeController@webinarThanks')->name('front.webinar-thanks'); // Support Article
         Route::get('/children','HomeController@children')->name('front.children');
-        Route::get('/subscribe-success', function(){
-            return view('frontend.subscribe-success');
-        })->name('front.subscribe-success'); // Homepage
+        Route::view('/subscribe-success', 'frontend.subscribe-success')->name('front.subscribe-success'); // Homepage
         Route::get('/shop-manuscript', 'ShopManuscriptController@index')->name('front.shop-manuscript.index'); // Shop Manuscript Listing
         Route::get('/blog', 'HomeController@blog')->name('front.blog'); // Blog Page
         Route::get('/blog/{id}', 'HomeController@readBlog')->name('front.read-blog'); // Blog Page
@@ -261,9 +257,7 @@ Route::group([
         Route::post('/cart/remove', 'ShopController@remove_from_cart')->name('front.shop.remove_from_cart'); // Remove From Cart*/
 
 
-        Route::get('/format_money/{numeric}',function($number){
-            return response()->json(\App\Http\FrontendHelpers::currencyFormat($number));
-        });
+        Route::get('/format_money/{numeric}', 'HomeController@formatMoney');
 
         Route::get('/payment-plan-options/{id}', 'ShopController@getPaymentPlanOptions');
         Route::get('/payment-modes', 'ShopController@getPaymentModeOptions');
@@ -986,7 +980,7 @@ Route::group([
                 'destroy' => 'admin.webinar.webinar-presenter.destroy',
             ],
         ]);
-        
+
         // Webinar Editor Route
         Route::post('storeWebinarEditor/{webinar_id}', 'WebinarEditorController@store')->name('admin.webinar.webinar-editor.store');
         Route::post('updateWebinarEditor/{id}', 'WebinarEditorController@update')->name('admin.webinar.webinar-editor.update');
@@ -996,15 +990,15 @@ Route::group([
         Route::resource('/assignment', 'AssignmentController', [
             'except' => ['show', 'create', 'edit', 'store', 'update', 'destroy'],
             'names' => [
-                'index' => 'admin.assignment.index', 
+                'index' => 'admin.assignment.index',
             ],
         ]);
         Route::resource('course/{course_id}/assignment', 'AssignmentController', [
             'except' => ['index', 'create', 'edit'],
             'names' => [
-                'show' => 'admin.assignment.show', 
-                'store' => 'admin.assignment.store', 
-                'update' => 'admin.assignment.update', 
+                'show' => 'admin.assignment.show',
+                'store' => 'admin.assignment.store',
+                'update' => 'admin.assignment.update',
                 'destroy' => 'admin.assignment.destroy',
             ],
         ]);
@@ -1050,10 +1044,10 @@ Route::group([
         Route::resource('course/{course_id}/assignment/{assignment_id}/group', 'AssignmentGroupController', [
             'except' => ['index', 'create', 'edit'],
             'names' => [
-                'show' => 'admin.assignment-group.show', 
-                'store' => 'admin.assignment-group.store', 
-                'update' => 'admin.assignment-group.update', 
-                'destroy' => 'admin.assignment-group.destroy', 
+                'show' => 'admin.assignment-group.show',
+                'store' => 'admin.assignment-group.store',
+                'update' => 'admin.assignment-group.update',
+                'destroy' => 'admin.assignment-group.destroy',
             ],
         ]);
         Route::post('course/{course_id}/assignment/{assignment_id}/group/{id}/add_learner', 'AssignmentGroupController@add_learner')->name('assignment.group.add_learner');
@@ -1364,9 +1358,7 @@ Route::group([
             ],
         ]);
 
-        Route::get('cron-log', function(){
-            return view('backend.support.cron-log');
-        })->name('admin.cron-log.index');
+        Route::view('cron-log', 'backend.support.cron-log')->name('admin.cron-log.index');
 
         // Goto-webinar route
         Route::resource('/goto-webinar', 'GotoWebinarController', [
@@ -1526,13 +1518,9 @@ Route::group([
             ],
         ]);
 
-        Route::get('translations',function(){
-           return redirect()->to('/translations/view/site');
-        });
+        Route::get('translations','PageController@translations');
 
-        Route::get('translations/view',function(){
-            return redirect()->to('/translations/view/site');
-        });
+        Route::get('translations/view','PageController@translations');
 
         Route::prefix('zoom')->group(function () {
             Route::get('/', 'ZoomController@index');
@@ -1546,7 +1534,7 @@ Route::group([
             Route::delete('webinar/{webinar_id}/panelist/{panelist_id}', 'ZoomController@deletePanelist')->name('admin.zoom.webinar.panelist.delete');
         });
 
-        // head editor route 
+        // head editor route
         Route::post('personal_assignment/{id}/approve_feedback/{learner_id}', 'AssignmentController@approveFeedbackNoGroup')->name('head_editor.personal_assignment.feedbac_approve');
         Route::post('course_assignment/{id}/approve_feedback/{learner_id}/feedback/{feedback_id}', 'AssignmentGroupController@approveFeedbackCourse')->name('head_editor.course_assignment.feedback_approve');
         Route::post('shop-manuscript-taken/{id}/approve-feedback/{learner_id}/feedback/{feedback_id}', 'ShopManuscriptController@approveFeedback')->name('head_editor.shop-manuscript-taken-feedback.approve');
@@ -1565,10 +1553,10 @@ Route::group([
         Route::post('setHowManyManuscriptYouCanTake/{id}', 'EditorController@setHowManyManuscriptYouCanTake')->name('admin.setHowManyManuscriptYouCanTake');
         Route::post('sendRequestToEditor/{id}', 'LearnerController@sendRequestToEditor')->name('admin.send-request-to-editor');
         Route::post('headEditorToEditor/{editor_id}/{type}/{title}/{learner}', 'HeadEditorController@sendEmail')->name('admin.head-editor-to-editor');
-        
+
     });
 
-    
+
     // Authentication
     Route::group([
         'prefix' => 'auth',
@@ -1585,7 +1573,7 @@ Route::group([
 
 /**
  * Editor Routes
- * 
+ *
  */
 Route::group([
     'domain' => $editor,
@@ -1754,9 +1742,7 @@ Route::group([
     });
 });*/
 
-Route::get('/check-nearly-expired-course', function(){
-    \App\Http\AdminHelpers::checkNearlyExpiredCourses();
-});
+Route::get('/check-nearly-expired-course', 'HomeController@checkNearlyExpiredCourse');
 
 
 
