@@ -108,7 +108,7 @@
 
 										<button class="btn btn-primary btn-xs makeReplayBtn"
 										data-toggle="modal" data-target="#makeReplayModal"
-										data-action="{{ route('admin.webinar.make-replay', ['webinar_id' => $webinar->id]) }}"
+										data-action="{{ route('admin.webinar.make-replay', ['id' => $webinar->id]) }}"
 										data-replay="{{ $webinar->set_as_replay }}">
 											{{ trans('site.make-as-replay') }}
 										</button>

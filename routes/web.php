@@ -618,7 +618,7 @@ Route::group([
         Route::post('/course_taken/{id}/update_started_at', 'LearnerController@updateCourseTakenStartedAt')->name('admin.course_taken.updated_started_at');
         Route::post('/course_taken/{id}/set_availability', 'LearnerController@setCourseTakenAvailability')->name('admin.course_taken.set_availability'); // Shop Manuscript add learner
         Route::post('/course_taken/{id}/send-regret-form', 'LearnerController@sendRegretForm')->name('admin.course_taken.send_regret_form');
-        Route::post('/course_taken/{id}/allow_lesson_access/{lesson_id}', 'LearnerController@allow_lesson_access')->name('admin.course_taken.allow_lesson_access'); //allow_lesson_access
+        Route::post('/course_taken/{course_taken_id}/allow_lesson_access/{lesson_id}', 'LearnerController@allow_lesson_access')->name('admin.course_taken.allow_lesson_access'); //allow_lesson_access
         Route::post('/course_taken/{id}/default_lesson_access/{lesson_id}', 'LearnerController@default_lesson_access')->name('admin.course_taken.default_lesson_access'); //default_lesson_access
         Route::post('/course_taken/{id}/set-expiry-reminder', 'LearnerController@setCourseTakenExpiryReminder')
             ->name('admin.course_taken.set_expiry_reminder');
@@ -741,7 +741,7 @@ Route::group([
         ]);
 
         // Email Out Route
-        Route::resource('/course/{id}/email-out', 'EmailOutController', [
+        Route::resource('/course/{course_id}/email-out', 'EmailOutController', [
             'except' => 'show',
             'names' => [
                 'create' => 'admin.email-out.create',
@@ -803,7 +803,7 @@ Route::group([
 
 
         // Package Route
-        Route::resource('course/{id}/package', 'PackageController', [
+        Route::resource('course/{course_id}/package', 'PackageController', [
             'names' => [
                 'store' => 'admin.course.package.store',
                 'update' => 'admin.course.package.update',
@@ -872,7 +872,7 @@ Route::group([
 
 
         // Lessons Route
-        Route::resource('/course/{id}/lesson', 'LessonController', [
+        Route::resource('/course/{course_id}/lesson', 'LessonController', [
             'except' => 'show',
             'names' => [
                 'create' => 'admin.lesson.create',

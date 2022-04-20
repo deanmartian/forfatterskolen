@@ -108,7 +108,7 @@ class LessonController extends Controller
             }
         }
 
-        return redirect(route('admin.lesson.edit', ['course_id' => $lesson->id, 'id' => $course->id]));
+        return redirect(route('admin.lesson.edit', ['course_id' => $course->id, 'lesson' => $lesson->id]));
     }
 
 
@@ -169,7 +169,7 @@ class LessonController extends Controller
             }
         }
 
-        return redirect(route('admin.lesson.edit', ['course_id' => $lesson->id, 'id' => $course->id]));
+        return redirect(route('admin.lesson.edit', ['course_id' => $course->id, 'lesson' => $lesson->id]));
     }
 
     public function destroy($course_id, $id)

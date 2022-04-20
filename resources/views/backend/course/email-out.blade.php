@@ -45,13 +45,13 @@
                                     <td>
                                         <button class="btn btn-info btn-xs editEmailBtn" data-toggle="modal"
                                         data-target="#emailModal" data-fields="{{ json_encode($email) }}"
-                                        data-action="{{ route('admin.email-out.update', ['course_id' => $course->id, 'id' => $email->id]) }}"
+                                        data-action="{{ route('admin.email-out.update', ['course_id' => $course->id, 'email_out' => $email->id]) }}"
                                         data-filename="{{ \App\Http\AdminHelpers::extractFileName($email->attachment) }}"
                                         data-fileloc="{{ asset($email->attachment) }}">
                                             <i class="fa fa-pencil"></i>
                                         </button>
                                         <button class="btn btn-danger btn-xs deleteEmailBtn" data-toggle="modal" data-target="#deleteEmailModal"
-                                        data-action="{{ route('admin.email-out.destroy', ['course_id' => $course->id, 'id' => $email->id]) }}">
+                                        data-action="{{ route('admin.email-out.destroy', ['course_id' => $course->id, 'email_out' => $email->id]) }}">
                                             <i class="fa fa-trash"></i>
                                         </button>
                                     </td>

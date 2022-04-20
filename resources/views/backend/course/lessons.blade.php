@@ -37,7 +37,7 @@
 							<td>
 								<div style="display: flex;">
 								<i class="fa fa-reorder" style="margin-right: 10px; font-size: 18px"></i>
-								<a href="{{route('admin.lesson.edit', ['course_id' => $lesson->id, 'id' => $course->id])}}">{{$lesson->title}}</a>
+								<a href="{{route('admin.lesson.edit', ['course_id' => $course->id, 'lesson' => $lesson->id ])}}">{{$lesson->title}}</a>
 								</div>
 							</td>
 							<td>
