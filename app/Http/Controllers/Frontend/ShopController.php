@@ -733,19 +733,21 @@ class ShopController extends Controller
             $price = $price - ( (int)$discount*100 );
         }
 
+        $user = Auth::user();
+
         $invoice_fields = [
             'user_id' => Auth::user()->id,
-            'first_name' => $vippsCheckout['first_name'],
-            'last_name' => $vippsCheckout['last_name'],
+            'first_name' => $vippsCheckout['first_name'] ?: $user->first_name,
+            'last_name' => $vippsCheckout['last_name'] ?: $user->last_name,
             'netAmount' => $price,
             'dueDate' => $dueDate,
             'description' => 'Kursordrefaktura',
             'productID' => $product_ID,
-            'email' => $vippsCheckout['email'],
-            'telephone' => $vippsCheckout['phone'],
-            'address' => $vippsCheckout['street'],
-            'postalPlace' => $vippsCheckout['city'],
-            'postalCode' => $vippsCheckout['zip'],
+            'email' => $vippsCheckout['email'] ?: $user->email,
+            'telephone' => $vippsCheckout['phone'] ?: $user->address->phone,
+            'address' => $vippsCheckout['street'] ?: $user->address->street,
+            'postalPlace' => $vippsCheckout['city'] ?: $user->address->city,
+            'postalCode' => $vippsCheckout['zip'] ?: $user->address->zip,
             'comment' => $comment,
             'payment_mode'  => $paymentMode->mode,
         ];
