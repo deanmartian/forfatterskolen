@@ -109,7 +109,7 @@
                 {{-- check if the last lesson id before updating structure --}}
                 @if ($lesson['id'] <= 169)
                     <div class="form-group">
-                        <textarea id="ckeditor" name="content" placeholder="Content">{!! $lesson['content'] !!}</textarea>
+                        <textarea id="lesson-content" name="content" placeholder="Content">{!! $lesson['content'] !!}</textarea>
                     </div>
                     </form>
                 @else
