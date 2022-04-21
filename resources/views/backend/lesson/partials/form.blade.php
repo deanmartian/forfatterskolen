@@ -97,7 +97,7 @@
                 {!! $lesson['content'] !!}
             </div>--}}
             <div class="form-group">
-                <textarea id="ckeditor" class="tinymce" name="content" placeholder="Content">{!! $lesson['content'] !!}</textarea>
+                <textarea id="lesson-content-ct" class="tinymce" name="content" placeholder="Content">{!! $lesson['content'] !!}</textarea>
             </div>
             </form>
         </div>
