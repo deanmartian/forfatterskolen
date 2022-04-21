@@ -217,7 +217,7 @@
 									<tr>
 										<td>{{$assignment->id}}</td>
 										<td><a href="{{ route('admin.assignment.show',
-										['course_id' => $assignment->course->id, 'id' => $assignment->id]) }}">
+										['course_id' => $assignment->course->id, 'assignment' => $assignment->id]) }}">
 												{{$assignment->title}}
 											</a>
 										</td>

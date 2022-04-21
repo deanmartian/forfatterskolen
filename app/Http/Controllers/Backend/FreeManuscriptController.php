@@ -59,7 +59,7 @@ class FreeManuscriptController extends Controller
         /*appends is used to append the parameters and to not be ignored by pagination render link*/
         return view('backend.shop-manuscript.free-manuscripts',
             compact('freeManuscripts','emailTemplate', 'emailTemplateRoute', 'isUpdate'),
-            ['archiveManuscripts' => $archiveManuscripts->appends(Input::except('page'))]
+            ['archiveManuscripts' => $archiveManuscripts->appends($request->except('page'))]
         );
     }
 

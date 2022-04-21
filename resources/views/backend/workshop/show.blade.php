@@ -99,9 +99,20 @@
 								<div class="menu-thumb" style="background-image: url('{{ $menu->image  }}')"></div>
 								<div class="menu-meta">
 									<div class="pull-right">
-										<button class="btn btn-danger btn-xs deleteMenuBtn" data-toggle="modal" data-target="#deleteMenuModal" data-title="{{ $menu->title }}" data-action="{{ route('admin.course.workshop-menu.destroy', ['workshop_id' => $workshop->id, 'id' => $menu->id]) }}"><i class="fa fa-trash"></i></button>
+										<button class="btn btn-danger btn-xs deleteMenuBtn" data-toggle="modal"
+												data-target="#deleteMenuModal" data-title="{{ $menu->title }}"
+												data-action="{{ route('admin.course.workshop-menu.destroy',
+												 ['workshop_id' => $workshop->id, 'workshop_menu' => $menu->id]) }}">
+											<i class="fa fa-trash"></i>
+										</button>
 
-										<button class="btn btn-info btn-xs editMenuBtn" data-toggle="modal" data-target="#editMenuModal" data-image="{{$menu->image}}" data-title="{{$menu->title}}" data-description="{{$menu->description}}" data-action="{{ route('admin.course.workshop-menu.update', ['workshop_id' => $workshop->id, 'id' => $menu->id]) }}"><i class="fa fa-pencil"></i></button>
+										<button class="btn btn-info btn-xs editMenuBtn" data-toggle="modal"
+												data-target="#editMenuModal" data-image="{{$menu->image}}"
+												data-title="{{$menu->title}}" data-description="{{$menu->description}}"
+												data-action="{{ route('admin.course.workshop-menu.update',
+												['workshop_id' => $workshop->id, 'workshop_menu' => $menu->id]) }}">
+											<i class="fa fa-pencil"></i>
+										</button>
 									</div>
 									<h4 style="margin-bottom: 7px">{{ $menu->title }}</h4>
 									<p class="no-margin-bottom">{!! nl2br($menu->description) !!}</p>
