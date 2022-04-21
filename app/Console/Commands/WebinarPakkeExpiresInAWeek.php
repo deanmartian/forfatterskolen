@@ -117,6 +117,7 @@ class WebinarPakkeExpiresInAWeek extends Command {
                         }
 
                         $coursesTaken->started_at = Carbon::now();
+                        $coursesTaken->renewed_at = Carbon::now();
                         $coursesTaken->save();
                     }
                 }

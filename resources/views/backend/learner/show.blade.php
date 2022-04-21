@@ -862,7 +862,7 @@
                                                     echo " - <a href='".route('admin.assignment-group.show',
                                                             ['course_id' => $assignmentCourse->id,
                                                                 'assignment_id' => $assignment->id,
-																'id' => $assignment_group_id]
+																'group' => $assignment_group_id]
 														)."'>".$assignment_group['title']."</a>";
 												}
 											}
