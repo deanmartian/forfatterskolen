@@ -8,7 +8,7 @@
         <h4 class="modal-title">Delete <em>{{$lesson['title']}}</em></h4>
       </div>
       <div class="modal-body">
-        <form method="POST" action="{{route('admin.lesson.destroy', ['course_id' => $lesson['id'], 'id' => $course->id])}}">
+        <form method="POST" action="{{route('admin.lesson.destroy', ['course_id' => $course->id, 'lesson' => $lesson['id']])}}">
           {{csrf_field()}}
           {{ method_field('DELETE') }}
           <input type="hidden" name="variation_id">

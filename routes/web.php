@@ -880,7 +880,7 @@ Route::group([
 
 
         // Lessons Route
-        Route::resource('/course/{id}/lesson', 'LessonController', [
+        Route::resource('/course/{course_id}/lesson', 'LessonController', [
             'except' => 'show',
             'names' => [
                 'create' => 'admin.lesson.create',
