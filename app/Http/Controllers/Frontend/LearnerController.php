@@ -762,18 +762,44 @@ class LearnerController extends Controller
         endforeach;
 
         foreach ($userAssignments as $assignment) {
+            $manuscript = $assignment->manuscripts->first();
+            $feedback = null;
+            if ($manuscript) {
+                $feedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $manuscript['id'])->first();
+            }
 
-            if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
+            if (!$feedback) {
                 $assignments[] = $assignment;
             }
+            /*
+             * old code
+             * if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
+                $assignments[] = $assignment;
+            }*/
 
         }
 
         foreach ($userExpiredAssignments as $assignment) {
-            if (\Carbon\Carbon::parse($assignment->submission_date)->lt(Carbon::now())) {
+            $manuscript = $assignment->manuscripts->first();
+            $feedback = null;
+            if ($manuscript) {
+                $feedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $manuscript['id'])->first();
+            }
+
+            if ($feedback) {
                 $expiredAssignments[] = $assignment;
             }
+            /*
+             * old code
+             * if (\Carbon\Carbon::parse($assignment->submission_date)->lt(Carbon::now())) {
+                $expiredAssignments[] = $assignment;
+            }*/
         }
+        // sort array by created_at
+        $expiredAssignmentCreated = array_column($expiredAssignments, 'created_at');
+        array_multisort($expiredAssignmentCreated, SORT_DESC, $expiredAssignments);
+
+        $expiredAssignments = array_unique($expiredAssignments);
 
         return view('frontend.learner.assignment', compact('assignments', 'expiredAssignments', 'upcomingPersonalAssignments'));
     }
@@ -850,7 +876,7 @@ class LearnerController extends Controller
                 && $assignment->send_letter_to_editor) :
                 $destinationPathLetter = 'storage/letter-to-editor';
                 $extensionLetter = pathinfo($_FILES['letter_to_editor']['name'],PATHINFO_EXTENSION);
-                $actualNameLetter = pathinfo($_FILES['letter_to_editor']['name'],PATHINFO_FILENAME);
+                $actualNameLetter = time();//pathinfo($_FILES['letter_to_editor']['name'],PATHINFO_FILENAME);
                 $fileNameLetter = AdminHelpers::checkFileName($destinationPathLetter, $actualNameLetter, $extension);// rename document
                 $expFileNameLetter = explode("/",$fileNameLetter);
 
@@ -874,7 +900,7 @@ class LearnerController extends Controller
                 'manu_type' => $request->manu_type,
                 'join_group' => $join_group,
                 'letter_to_editor' => $letterToEditor,
-                'editor_id' => $assignment->editor_id
+                'editor_id' => $assignment->editor_id ? $assignment->editor_id : 0
             ]);
             Log::create([
                 'activity' => '<strong>'.Auth::user()->full_name.'</strong> submitted a manuscript for assignment '.$assignment->title
@@ -888,6 +914,29 @@ class LearnerController extends Controller
                 $email_data['email_message'] = $message;
                 // use queue to send email on background
                 Mail::to($toMail)->queue(new AssignmentSubmittedEmail($email_data));
+            }
+
+            if ($assignment->parent === 'users' && $assignment->editor_id) {
+                $emailTemplate = AdminHelpers::emailTemplate('Personal Assignment Editor Notification');
+                $email_content = str_replace([
+                    '_learner_',
+                    '_assignment_'
+                ], [
+                    Auth::user()->full_name,
+                    $assignment->title
+                ], $emailTemplate->email_content);
+
+                $editor = User::find($assignment->editor_id);
+                $to = $editor->email;
+                $emailData = [
+                    'email_subject' => $emailTemplate->subject,
+                    'email_message' => $email_content,
+                    'from_name' => '',
+                    'from_email' => 'post@forfatterskolen.no',
+                    'attach_file' => NULL
+                ];
+                \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+
             }
 
             // notify user
@@ -2115,6 +2164,7 @@ class LearnerController extends Controller
                         }
 
                         $coursesTaken->end_date = $addYear;
+                        $coursesTaken->renewed_at = Carbon::now();
                     }
 
                     //$coursesTaken->started_at = Carbon::now();
@@ -3000,6 +3050,43 @@ class LearnerController extends Controller
                 dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
                     $emailTemplate->from_email, null, null, 'assignment-manuscripts',
                     $assignmentManuscript->id));
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    public function replaceAssignmentLetter($id, Request $request)
+    {
+        $assignmentManuscript = AssignmentManuscript::find($id);
+
+        if ($assignmentManuscript) {
+            if ( $request->hasFile('filename') && $request->file('filename')->isValid() ) {
+                $oldManuscript = $assignmentManuscript->filename;
+
+                $destinationPath = 'storage/letter-to-editor'; // upload path
+                $extension = pathinfo($_FILES['filename']['name'],PATHINFO_EXTENSION); // getting document extension
+                $actual_name = time();
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+                $expFileName = explode('/', $fileName);
+
+                $extensions = ['doc', 'docx', 'odt', 'pdf'];
+                if( !in_array($extension, $extensions) ) :
+                    return redirect()->back()->withInput()->with(
+                        'manuscript_test_error', 'Invalid file format. Allowed formats are DOC, DOCX, ODT, PDF'
+                    );
+                endif;
+
+                $request->filename->move($destinationPath, end($expFileName));
+
+
+                // delete the old file from the server
+                if (File::exists(public_path($oldManuscript))) {
+                    File::delete(public_path($oldManuscript));
+                }
+
+                $assignmentManuscript->letter_to_editor = '/'.$fileName;
+                $assignmentManuscript->save();
             }
         }
 

@@ -95,6 +95,7 @@ class Course extends Model
                 // check if expired 2 months ago or the end date is not yet set
                 $query->where('submission_date','<', Carbon::now());
             })*/
+            ->whereNull('parent')
             ->orderBy('created_at', 'desc');
     }
 

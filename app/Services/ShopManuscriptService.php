@@ -222,7 +222,7 @@ class ShopManuscriptService {
     {
 
         $orderType = Order::MANUSCRIPT_TYPE;
-        $discount = $request->discount;
+        $discount = $request->has('totalDiscount') ? $request->totalDiscount : $request->discount;
         if ($request->has('order_type')) {
             $orderType = $request->order_type;
 

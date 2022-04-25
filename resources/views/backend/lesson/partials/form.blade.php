@@ -5,7 +5,7 @@
 	@else
 	@include('backend.lesson.partials.delete')
     @include('backend.lesson.partials.delete-document')
-	<form action="{{route('admin.lesson.update', ['course_id' => $lesson['id'], 'id' => $course->id])}}" method="post" id="lessonForm"
+	<form action="{{route('admin.lesson.update', ['course_id' => $course->id, 'lesson' => $lesson['id']])}}" method="post" id="lessonForm"
           enctype="multipart/form-data">
 	{{method_field('PUT')}}
 	@endif
@@ -97,7 +97,7 @@
                 {!! $lesson['content'] !!}
             </div>--}}
             <div class="form-group">
-                <textarea id="ckeditor" name="content" placeholder="Content">{!! $lesson['content'] !!}</textarea>
+                <textarea id="lesson-content-ct" class="tinymce" name="content" placeholder="Content">{!! $lesson['content'] !!}</textarea>
             </div>
             </form>
         </div>
@@ -109,7 +109,7 @@
                 {{-- check if the last lesson id before updating structure --}}
                 @if ($lesson['id'] <= 169)
                     <div class="form-group">
-                        <textarea id="ckeditor" name="content" placeholder="Content">{!! $lesson['content'] !!}</textarea>
+                        <textarea id="lesson-content" name="content" placeholder="Content">{!! $lesson['content'] !!}</textarea>
                     </div>
                     </form>
                 @else

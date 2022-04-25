@@ -375,13 +375,16 @@ class CourseService {
     {
 
         $course_status = 1;
+        $package = Package::find($package_id);
+        $course = $package->course;
+
+        $start_date = $course->type === 'Group' ? $package->course->start_date : Carbon::today();
 
         $courseTaken = CoursesTaken::firstOrNew(['user_id' => $user_id, 'package_id' => $package_id]);
         $courseTaken->is_active = $course_status;
         $courseTaken->is_welcome_email_sent = 0;
+        $courseTaken->end_date = Carbon::parse($start_date)->addYear();
         $courseTaken->save();
-
-        $package = Package::find($package_id);
 
         // Check for shop manuscripts
         if( $package->shop_manuscripts->count() > 0 ) :
@@ -396,6 +399,8 @@ class CourseService {
         endif;
 
         $add_to_automation = 0;
+        $user = $this->user->find($user_id);
+
         if ($package->included_courses->count() > 0) {
             foreach ($package->included_courses as $included_course) {
                 if ($included_course->included_package_id == 29) { // check if webinar-pakke is included
@@ -410,13 +415,20 @@ class CourseService {
                 $courseIncluded->is_active = $course_status;
                 $courseIncluded->save();
             }
+
+            // this means webinar-pakke is included
+            if ($add_to_automation) {
+                $userCoursesTaken = $user->coursesTaken;
+                foreach($userCoursesTaken as $userCourseTaken) {
+                    $userCourseTaken->end_date = Carbon::parse($start_date)->addYear();
+                    $userCourseTaken->save();
+                }
+            }
         }
 
         if ($package->course->id == 17) { //check if webinar-pakke
             $add_to_automation++;
         }
-
-        $user = $this->user->find($user_id);
 
         // add user to automation
         if ($add_to_automation > 0) {

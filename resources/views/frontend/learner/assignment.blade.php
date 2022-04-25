@@ -75,100 +75,102 @@
 									@foreach($expiredAssignments as $assignment)
                                         <?php $manuscript = $assignment->manuscripts->where('user_id', Auth::user()->id)->first(); ?>
                                         <?php $extension = $manuscript ? explode('.', basename($manuscript->filename)) : ''; ?>
-										<div class="col-md-6 mb-5 grid-item">
-											<div class="card">
-												<div class="card-header py-4">
-													<div class="row">
-														<div class="col-md-9">
-															<h2><i class="contract-sign"></i> {{ $assignment->title }}</h2>
-														</div>
-														<div class="col-md-3">
-                                                            <?php
-                                                            $submission_date_formatted = $assignment->submission_date;
-                                                            if (!\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
-                                                                $coursesTaken = Auth::user()->coursesTaken()->get()->toArray();
-                                                                $allowed_packages = $assignment->allowed_package ?
-                                                                    json_decode($assignment->allowed_package) : [];
+										@if($manuscript)
+											<div class="col-md-6 mb-5 grid-item">
+												<div class="card">
+													<div class="card-header py-4">
+														<div class="row">
+															<div class="col-md-9">
+																<h2><i class="contract-sign"></i> {{ $assignment->title }}</h2>{{ $assignment->id }}
+															</div>
+															<div class="col-md-3">
+																<?php
+																$submission_date_formatted = $assignment->submission_date;
+																if (!\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
+																	$coursesTaken = Auth::user()->coursesTaken()->get()->toArray();
+																	$allowed_packages = $assignment->allowed_package ?
+																		json_decode($assignment->allowed_package) : [];
 
-                                                                $courseStarted = '';
-                                                                foreach ($coursesTaken as $course) {
-                                                                    if (in_array($course['package_id'], $allowed_packages)) {
-                                                                        $courseStarted =  $course['started_at'];
-                                                                    }
-                                                                }
+																	$courseStarted = '';
+																	foreach ($coursesTaken as $course) {
+																		if (in_array($course['package_id'], $allowed_packages)) {
+																			$courseStarted =  $course['started_at'];
+																		}
+																	}
 
-                                                                $submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
-                                                                    ->addDays($assignment->submission_date);
-                                                            }
-                                                            ?>
-															@if (!$manuscript)
-																@if($assignment->for_editor)
-																	<button class="btn site-btn-global site-btn-global-sm w-100 submitEditorManuscriptBtn" data-toggle="modal"
-																			data-target="#submitEditorManuscriptModal"
-																			data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
-																			data-show-group-question="{{ $assignment->show_join_group_question }}"
-																			data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
-																			@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
-																		{{ trans('site.learner.upload-script') }}
-																	</button>
-																@else
-																	<button class="btn site-btn-global site-btn-global-sm w-100 submitManuscriptBtn" data-toggle="modal"
-																			data-target="#submitManuscriptModal"
-																			data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
-																			data-show-group-question="{{ $assignment->show_join_group_question }}"
-																			data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
-																			@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
-																		{{ trans('site.learner.upload-script') }}
-																	</button>
+																	$submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
+																		->addDays($assignment->submission_date);
+																}
+																?>
+																@if (!$manuscript)
+																	@if($assignment->for_editor)
+																		<button class="btn site-btn-global site-btn-global-sm w-100 submitEditorManuscriptBtn" data-toggle="modal"
+																				data-target="#submitEditorManuscriptModal"
+																				data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
+																				data-show-group-question="{{ $assignment->show_join_group_question }}"
+																				data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
+																				@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
+																			{{ trans('site.learner.upload-script') }}
+																		</button>
+																	@else
+																		<button class="btn site-btn-global site-btn-global-sm w-100 submitManuscriptBtn" data-toggle="modal"
+																				data-target="#submitManuscriptModal"
+																				data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
+																				data-show-group-question="{{ $assignment->show_join_group_question }}"
+																				data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
+																				@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
+																			{{ trans('site.learner.upload-script') }}
+																		</button>
+																	@endif
 																@endif
-															@endif
-														</div> <!-- end column -->
-													</div> <!-- end row-->
-												</div> <!-- end card-header -->
-												<div class="card-body">
-													<p>
-														{{ $assignment->description }}
-													</p>
+															</div> <!-- end column -->
+														</div> <!-- end row-->
+													</div> <!-- end card-header -->
+													<div class="card-body">
+														<p>
+															{{ $assignment->description }}
+														</p>
 
-													<span class="font-barlow-regular">{{ trans('site.deadline') }}:</span>
-													<span>{{--{{ \App\Http\FrontendHelpers::formatDateTimeNor2($assignment->submission_date) }}--}}</span>
-													@if( $manuscript )
-														<div class="mt-3">
-															@if( end($extension) == 'pdf' || end($extension) == 'odt' )
-																<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">
-																	{{ basename($manuscript->filename) }}
-																</a>
-															@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
-																<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">
-																	{{ basename($manuscript->filename) }}
-																</a>
-															@endif
+														<span class="font-barlow-regular">{{ trans('site.deadline') }}:</span>
+														<span>{{ \App\Http\FrontendHelpers::formatDateTimeNor($submission_date_formatted) }}</span>
+														@if( $manuscript )
+															<div class="mt-3">
+																@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+																	<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">
+																		{{ basename($manuscript->filename) }}
+																	</a>
+																@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
+																	<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">
+																		{{ basename($manuscript->filename) }}
+																	</a>
+																@endif
 
-															@if (!$manuscript->locked)
-																<div class="pull-right">
-																	<button type="button" class="btn btn-sm btn-info editManuscriptBtn"
-																			data-toggle="modal" data-target="#editManuscriptModal"
-																			data-action="{{ route('learner.assignment.replace_manuscript', $manuscript->id) }}">
-																		<i class="fa fa-pen"></i>
-																	</button>
-																	<button type="button" class="btn btn-sm btn-danger deleteManuscriptBtn"
-																			data-toggle="modal" data-target="#deleteManuscriptModal"
-																			data-action="{{ route('learner.assignment.delete_manuscript', $manuscript->id) }}">
-																		<i class="fa fa-trash"></i>
-																	</button>
-																</div>
-															@endif
-														</div>
+																@if (!$manuscript->locked)
+																	<div class="pull-right">
+																		<button type="button" class="btn btn-sm btn-info editManuscriptBtn"
+																				data-toggle="modal" data-target="#editManuscriptModal"
+																				data-action="{{ route('learner.assignment.replace_manuscript', $manuscript->id) }}">
+																			<i class="fa fa-pen"></i>
+																		</button>
+																		<button type="button" class="btn btn-sm btn-danger deleteManuscriptBtn"
+																				data-toggle="modal" data-target="#deleteManuscriptModal"
+																				data-action="{{ route('learner.assignment.delete_manuscript', $manuscript->id) }}">
+																			<i class="fa fa-trash"></i>
+																		</button>
+																	</div>
+																@endif
+															</div>
+														@endif
+													</div> <!-- end card-body -->
+													@if($assignment->course)
+														<div class="card-footer p-4">
+															<span class="font-barlow-regular">{{ trans('site.front.course-text') }}:</span>
+															<span>{{ $assignment->course->title }}</span>
+														</div> <!-- end card-footer -->
 													@endif
-												</div> <!-- end card-body -->
-												@if($assignment->course)
-													<div class="card-footer p-4">
-														<span class="font-barlow-regular">{{ trans('site.front.course-text') }}:</span>
-														<span>{{ $assignment->course->title }}</span>
-													</div> <!-- end card-footer -->
-												@endif
-											</div> <!-- end card -->
-										</div> <!-- end grid-item -->
+												</div> <!-- end card -->
+											</div> <!-- end grid-item -->
+										@endif
 									@endforeach
 								</div> <!-- end past-assignment section -->
 							@elseif( Request::input('tab') == 'feedback-from-editor' )
@@ -321,7 +323,8 @@
 																			data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 																			data-show-group-question="{{ $assignment->show_join_group_question }}"
 																			data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
-																			@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
+																			@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))
+																			&& $assignment->parent !== 'users') disabled @endif>
 																		{{ trans('site.learner.upload-script') }}
 																	</button>
 																@else
@@ -330,7 +333,8 @@
 																			data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 																			data-show-group-question="{{ $assignment->show_join_group_question }}"
 																			data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
-																			@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
+																			@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))
+																			&& $assignment->parent !== 'users') disabled @endif>
 																		{{ trans('site.learner.upload-script') }}
 																	</button>
 																@endif
@@ -358,6 +362,7 @@
 													<span>{{ \App\Http\FrontendHelpers::formatDateTimeNor($submission_date_formatted) }}</span>
 													@if( $manuscript )
 														<div class="mt-3">
+															Manus:
 															@if( end($extension) == 'pdf' || end($extension) == 'odt' )
 																<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">
 																	{{ basename($manuscript->filename) }}
@@ -384,10 +389,38 @@
 															@endif
 														</div>
 
+														@if($manuscript->letter_to_editor)
+															<div class="mt-3">
+																<?php
+                                                                	$extension = $manuscript ? explode('.', basename($manuscript->letter_to_editor)) : '';
+																?>
+																Brev:
+																@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+																	<a href="/js/ViewerJS/#../..{{ $manuscript->letter_to_editor }}">
+																		{{ basename($manuscript->letter_to_editor) }}
+																	</a>
+																@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
+																	<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->letter_to_editor}}">
+																		{{ basename($manuscript->letter_to_editor) }}
+																	</a>
+																@endif
+
+																	@if (!$manuscript->locked)
+																		<div class="pull-right">
+																			<button type="button" class="btn btn-sm btn-info editLetterBtn"
+																					data-toggle="modal" data-target="#editLetterModal"
+																					data-action="{{ route('learner.assignment.replace_letter', $manuscript->id) }}">
+																				<i class="fa fa-pen"></i>
+																			</button>
+																		</div>
+																	@endif
+															</div>
+														@endif
+
 														@if($assignment->parent === 'users')
 															<p class="mt-3">
 																{{ trans('site.expected-finish') }}:
-																{{ \Carbon\Carbon::parse($manuscript->expected_finish)->addDay()->format('d.m.Y') }}
+																{{ $manuscript->expected_finish ? \Carbon\Carbon::parse($manuscript->expected_finish)->addDay()->format('d.m.Y') : NULL }}
 															</p>
 														@endif
 													@endif
@@ -634,6 +667,36 @@
 	</div>
 </div>
 
+	<div id="editLetterModal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title">
+						{{ trans('site.learner.manuscript.replace-manuscript') }}
+					</h3>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
+						{{ csrf_field() }}
+						<div class="form-group">
+							<label>
+								{{ trans('site.letter-to-editor') }}
+							</label>
+							<input type="file" class="form-control" required name="filename"
+								   accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+							* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
+						</div>
+
+						<button type="submit" class="btn btn-primary pull-right">
+							{{ trans('site.front.submit') }}
+						</button>
+						<div class="clearfix"></div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 @if(Session::has('manuscript_test_error'))
 	<div id="manuscriptTestErrorModal" class="modal fade" role="dialog">
 		<div class="modal-dialog modal-sm">
@@ -725,6 +788,12 @@
         let action = $(this).data('action');
         form.attr('action', action)
     });
+
+    $(".editLetterBtn").click(function() {
+        let form = $('#editLetterModal').find('form');
+        let action = $(this).data('action');
+        form.attr('action', action)
+	});
 </script>
 @stop
 
