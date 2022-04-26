@@ -541,7 +541,6 @@ class LoginController extends Controller
             ['vipps_phone_number' => $decoded_response->phone_number]
         );
 
-        return $state;
         if ($state === 'checkout_state') {
             $vipps = \Session::get('vipps_checkout');
 
