@@ -479,6 +479,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                     formData.append(k, v);
                 });
 
+                this.isLoading = true;
                 console.log("vipps checkout here");
                 return axios.post(this.requestUrl+'/checkout/vipps', formData).then(response => {
                     console.log(response);

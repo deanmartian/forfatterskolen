@@ -161,26 +161,11 @@ class ShopManuscriptController extends Controller
 
         if (is_array($validatedOrder)) {
 
-            $orderRecord = $shopManuscriptService->createOrder($request);
-            if (!$request->has('order_type') ||
-                ($request->has('order_type') && $request->order_type === Order::MANUSCRIPT_TYPE)) {
-
-                OrderShopManuscript::create([
-                    'order_id' => $orderRecord->id,
-                    'genre' => $request->genre,
-                    'file' => "/".$validatedOrder['manuscript_file'],
-                    'words' => $validatedOrder['word_count'],
-                    'description' => $request->description,
-                    'synopsis' => $shopManuscriptService->uploadSynopsis($request),
-                    'coaching_time_later' => filter_var($request->coaching_time_later, FILTER_VALIDATE_BOOLEAN),
-                    'send_to_email' => filter_var($request->send_to_email, FILTER_VALIDATE_BOOLEAN)
-                ]);
-
-            }
-
             $request->merge([
                 'item_type' => 'shop-manuscript',
-                'order_id' => $orderRecord->id
+                'manuscript_file' => "/".$validatedOrder['manuscript_file'],
+                'word_count' => $validatedOrder['word_count'],
+                'synopsis_file' => $shopManuscriptService->uploadSynopsis($request)
             ]);
             $data = $request->except('_token', 'synopsis', 'manuscript');
 
@@ -195,17 +180,37 @@ class ShopManuscriptController extends Controller
         return $validatedOrder;
     }
 
-    public function processVipps()
+    public function processVipps(ShopManuscriptService $shopManuscriptService)
     {
         $vippsCheckout = \Session::get('vipps_checkout');
-        $order = Order::find($vippsCheckout['order_id']);
-        $price = $order->price - $order->discount;
+        $request = new \Illuminate\Http\Request();
+        $request->replace($vippsCheckout->toArray());
+
+        $orderRecord = $shopManuscriptService->createOrder($request);
+
+        if (!$request->has('order_type') ||
+            ($request->has('order_type') && $request->order_type === Order::MANUSCRIPT_TYPE)) {
+
+            OrderShopManuscript::create([
+                'order_id'              => $orderRecord->id,
+                'genre'                 => $request->genre,
+                'file'                  => "/".$vippsCheckout['manuscript_file'],
+                'words'                 => $vippsCheckout['word_count'],
+                'description'           => $request->description,
+                'synopsis'              => $shopManuscriptService->uploadSynopsis($request),
+                'coaching_time_later'   => filter_var($request->coaching_time_later, FILTER_VALIDATE_BOOLEAN),
+                'send_to_email'         => filter_var($request->send_to_email, FILTER_VALIDATE_BOOLEAN)
+            ]);
+
+        }
+
+        $price = $orderRecord->price - $orderRecord->discount;
         $user = Auth::user();
 
         $vippsData = [
             'amount' => $price,
-            'orderId' => $order->id."-".$user->id,
-            'transactionText' => $order->item,
+            'orderId' => $orderRecord->id."-".$user->id,
+            'transactionText' => $orderRecord->item,
             'is_ajax' => true,
             'vipps_phone_number' => $user->address->vipps_phone_number,
             'fallbackUrl' => 'testing fallback'
