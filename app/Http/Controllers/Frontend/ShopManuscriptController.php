@@ -163,7 +163,7 @@ class ShopManuscriptController extends Controller
 
             $request->merge([
                 'item_type' => 'shop-manuscript',
-                'manuscript_file' => "/".$validatedOrder['manuscript_file'],
+                'manuscript_file' => $validatedOrder['manuscript_file'],
                 'word_count' => $validatedOrder['word_count'],
                 'synopsis_file' => $shopManuscriptService->uploadSynopsis($request)
             ]);
