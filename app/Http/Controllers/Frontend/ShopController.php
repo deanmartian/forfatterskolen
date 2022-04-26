@@ -549,8 +549,8 @@ class ShopController extends Controller
                 if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
                     if ($courseTaken->package->course->is_free != 1) {
                         $hasPaidCourse = true;
+                        break;
                     }
-                    break;
                 endif;
             }
         endif;
@@ -653,8 +653,8 @@ class ShopController extends Controller
                 // check if course taken is not free
                 if ($courseTaken->package->course->is_free != 1) {
                     $hasPaidCourse = true;
+                    break;
                 }
-                break;
             endif;
         endforeach;
 
@@ -1255,8 +1255,8 @@ class ShopController extends Controller
                 // check if course taken is not free
                 if ($courseTaken->package->course->is_free != 1) {
                     $hasPaidCourse = true;
+                    break;
                 }
-                break;
             endif;
         endforeach;
 
@@ -2260,8 +2260,8 @@ class ShopController extends Controller
                     // check if course taken is not free
                     if ($courseTaken->package->course->is_free != 1) {
                         $hasPaidCourse = true;
+                        break;
                     }
-                    break;
                 endif;
             endforeach;
         }
