@@ -213,7 +213,7 @@ class ShopManuscriptController extends Controller
             'transactionText' => $orderRecord->item,
             'is_ajax' => true,
             'vipps_phone_number' => $user->address->vipps_phone_number,
-            'fallbackUrl' => 'testing fallback'
+            'fallbackUrl' => url('/shop-manuscript/' . $orderRecord->item_id .'/thankyou')
         ];
 
         return redirect()->to($this->vippsInitiatePayment($vippsData));

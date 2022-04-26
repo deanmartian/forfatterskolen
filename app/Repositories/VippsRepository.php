@@ -10,7 +10,7 @@ use App\Mail\SubjectBodyEmail;
 use App\Settings;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Log as Log;
 
 class VippsRepository extends BaseRepository {
 
@@ -183,6 +183,7 @@ class VippsRepository extends BaseRepository {
         $emailData['from_name'] = NULL;
         $emailData['from_email'] = NULL;
         $emailData['attach_file'] = NULL;
+        Log::info("VIPPS order id" . $orderId);
         Log::info("VIPPS inside capture payment before if captured");
         // notify admin once the payment is captured
         if ($transactionInfo->status == 'Captured') {
@@ -193,8 +194,8 @@ class VippsRepository extends BaseRepository {
             $invoice->save();
 
             //AdminHelpers::send_email($subject,$from, $to, $message);
-            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
-            \Mail::to('post@forfatterskolen.no')->queue(new SubjectBodyEmail($emailData));
+            /*\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+            \Mail::to('post@forfatterskolen.no')->queue(new SubjectBodyEmail($emailData));*/
             \Mail::to('elybutabara@gmail.com')->queue(new SubjectBodyEmail($emailData));
         }
 
