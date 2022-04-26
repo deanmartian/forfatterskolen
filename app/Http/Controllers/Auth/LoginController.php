@@ -402,7 +402,7 @@ class LoginController extends Controller
             'client_id' => config('services.vipps.client_id_test'),
             'response_type' => 'code',
             'state' => $state,
-            'redirect_uri' => 'https://dev.forfatterskolen.no/auth/vipps-login-redirect',//config('services.vipps.login_redirect_uri'),
+            'redirect_uri' => config('services.vipps.login_redirect_uri'),
             'scope' => config('services.vipps.login_scope_dev')
         ];
 
@@ -431,7 +431,7 @@ class LoginController extends Controller
         $long_url = config('services.vipps.login_token_link');
 
         $code = $request->code;
-        $redirect_url = 'https://dev.forfatterskolen.no/auth/vipps-login-redirect';//config('services.vipps.login_redirect_uri');
+        $redirect_url = config('services.vipps.login_redirect_uri');
 
         $body = [
             'grant_type'    => 'authorization_code',
