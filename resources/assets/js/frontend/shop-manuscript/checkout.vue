@@ -285,9 +285,18 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                     </wizard-button>
                 </div>
                 <div class="wizard-footer-right">
-                    <span v-if="props.activeTabIndex === 0" style="margin-right: 10px">
-                        {{ trans('site.front.checkout.note') }}
-                    </span>
+                    <template v-if="props.activeTabIndex === 0">
+                        <span style="margin-right: 10px">
+                            {{ trans('site.front.checkout.note') }}
+                        </span>
+
+                        <button type="button" class="vipps-btn" slot="custom-buttons-right" @click="vippsCheckout();"
+                                :disabled="isLoading">
+                            <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i>
+                            <img src="/images-new/betal-vipps.png" height="36" alt="vipps-buy-button"
+                                 :style="isLoading ? 'opacity: .8;' : ''">
+                        </button>
+                    </template>
 
                     <template v-if="!currentUser || (currentUser && currentUser.could_buy_course)">
                         <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab(); scrollTop()" class="wizard-footer-right"
@@ -459,6 +468,30 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
 
                     this.processError(error);
 
+                });
+            },
+
+            vippsCheckout() {
+                this.removeValidationError();
+
+                let formData = new FormData();
+                $.each(this.orderForm, function(k, v) {
+                    formData.append(k, v);
+                });
+
+                console.log("vipps checkout here");
+                return axios.post(this.requestUrl+'/checkout/vipps', formData).then(response => {
+                    console.log(response);
+
+                    if (response.data.redirect_link) {
+                        window.location.href = response.data.redirect_link;
+                        return;
+                    }
+
+                    this.isLoading = false;
+                }).catch(error => {
+                    this.processError(error);
+                    this.isLoading = false;
                 });
             },
 

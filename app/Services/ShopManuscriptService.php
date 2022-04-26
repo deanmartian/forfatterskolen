@@ -15,41 +15,64 @@ use Illuminate\Http\Request;
 
 class ShopManuscriptService {
 
-    /**
-     * @param Request $request
-     * @return int
-     */
-    public function countManuscriptWord( Request $request )
+    public function uploadManuscriptTest( Request $request )
     {
         $word_count = 0;
+        $filepath = '';
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) :
             $extension = pathinfo($_FILES['manuscript']['name'],PATHINFO_EXTENSION);
 
             $time = time();
             $destinationPath = 'storage/manuscript-tests/'; // upload path
             $fileName = $time.'.'.$extension; // rename document
-            $filePath = $destinationPath.$fileName;
+            $filepath = $destinationPath.$fileName;
             $request->manuscript->move($destinationPath, $fileName);
-
             if($extension == "pdf") :
-                $pdf  =  new \PdfToText ( $filePath ) ;
+                $pdf  =  new \PdfToText ( $destinationPath.$fileName ) ;
                 $pdf_content = $pdf->Text;
                 $word_count = FrontendHelpers::get_num_of_words($pdf_content);
             elseif($extension == "docx") :
-                $docObj = new \Docx2Text($filePath);
+                $docObj = new \Docx2Text($destinationPath.$fileName);
                 $docText= $docObj->convertToText();
                 $word_count = FrontendHelpers::get_num_of_words($docText);
             elseif($extension == "doc") :
-                $docText = FrontendHelpers::readWord($filePath);
+                $docText = FrontendHelpers::readWord($destinationPath.$fileName);
                 $word_count = FrontendHelpers::get_num_of_words($docText);
             elseif($extension == "odt") :
-                $doc = odt2text($filePath);
+                $doc = odt2text($destinationPath.$fileName);
                 $word_count = FrontendHelpers::get_num_of_words($doc);
             endif;
             $word_count = FrontendHelpers::wordCountByMargin((int) $word_count);
+            $word_to_deduct = $word_count * 0.02;
+            $word_count = ceil($word_count - $word_to_deduct);
         endif;
 
-        return $word_count;
+        return [
+            'manuscript_file' => $filepath,
+            'word_count' => $word_count
+        ];
+
+    }
+
+    public function uploadSynopsis( Request $request )
+    {
+        $extensions = ['pdf', 'doc' ,'docx', 'odt'];
+        $synopsis = NULL;
+        if ($request->hasFile('synopsis') && $request->file('synopsis')->isValid()) :
+            $extension = pathinfo($_FILES['synopsis']['name'],PATHINFO_EXTENSION);
+
+            if( !in_array($extension, $extensions) ) :
+                return redirect()->back();
+            endif;
+
+            $time = time();
+            $destinationPath = 'storage/shop-manuscripts-synopsis/';
+            $fileName = $time.'.'.$extension; // rename document
+            $request->synopsis->move($destinationPath, $fileName);
+            $synopsis = '/'.$destinationPath.$fileName;
+        endif;
+
+        return $synopsis;
     }
 
     /**

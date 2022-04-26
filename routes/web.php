@@ -129,6 +129,8 @@ Route::group([
             Route::post('/{id}/place_order', 'ShopManuscriptController@place_order')->name('front.shop-manuscript.place_order'); // Checkout Shop Manuscript
             Route::post('/{id}/checkout/validate-order', 'ShopManuscriptController@validateOrder')->name('front.shop-manuscript.validate-order');
             Route::post('/{id}/checkout/validate-form', 'ShopManuscriptController@validateForm')->name('front.shop-manuscript.validate-form');
+            Route::post('/{id}/checkout/vipps', 'ShopManuscriptController@vippsCheckout')->name('front.shop-manuscript.vipps');
+            Route::get('/{id}/checkout/process-vipps', 'ShopManuscriptController@processVipps')->name('front.shop-manuscript.checkout.process-vipps');
             Route::get('/{id}/thankyou', 'ShopManuscriptController@thankyou');
         });
 

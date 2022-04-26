@@ -619,7 +619,10 @@ class ShopController extends Controller
 
     public function vippsCheckout( $course_id, Request $request, CourseService $courseService, LoginController $loginController )
     {
-        $request->merge(['course_id' => $course_id]);
+        $request->merge([
+            'course_id' => $course_id,
+            'item_type' => 'course'
+        ]);
         $checkoutDetails = collect($request->except('_token'));
         \Session::put('vipps_checkout', $checkoutDetails);
         return response()->json(['redirect_link' => $loginController->vippsLogin('checkout_state')]);
