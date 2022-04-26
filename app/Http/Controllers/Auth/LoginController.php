@@ -399,11 +399,11 @@ class LoginController extends Controller
     {
         $query = [
             //'client_id' => config('services.vipps.client_id'),
-            'client_id' => config('services.vipps.client_id'),
+            'client_id' => config('services.vipps.client_id_test'),
             'response_type' => 'code',
             'state' => $state,
-            'redirect_uri' => config('services.vipps.login_redirect_uri'),
-            'scope' => config('services.vipps.login_scope')
+            'redirect_uri' => 'https://dev.forfatterskolen.no/auth/vipps-login-redirect',//config('services.vipps.login_redirect_uri'),
+            'scope' => config('services.vipps.login_scope_dev')
         ];
 
         $vipps_auth_url = config('services.vipps.login_auth_link');
@@ -425,13 +425,13 @@ class LoginController extends Controller
 
         /*$vipps_credentials = base64_encode(config('services.vipps.client_id') . ":"
             . config('services.vipps.client_secret'));*/
-        $vipps_credentials = base64_encode(config('services.vipps.client_id') . ":"
-            . config('services.vipps.client_secret'));
+        $vipps_credentials = base64_encode(config('services.vipps.client_id_test') . ":"
+            . config('services.vipps.client_secret_test'));
 
         $long_url = config('services.vipps.login_token_link');
 
         $code = $request->code;
-        $redirect_url = config('services.vipps.login_redirect_uri');
+        $redirect_url = 'https://dev.forfatterskolen.no/auth/vipps-login-redirect';//config('services.vipps.login_redirect_uri');
 
         $body = [
             'grant_type'    => 'authorization_code',
@@ -541,6 +541,7 @@ class LoginController extends Controller
             ['vipps_phone_number' => $decoded_response->phone_number]
         );
 
+        return $state;
         if ($state === 'checkout_state') {
             $vipps = \Session::get('vipps_checkout');
 
