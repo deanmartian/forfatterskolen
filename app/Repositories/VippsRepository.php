@@ -172,10 +172,10 @@ class VippsRepository extends BaseRepository {
         $data = $response['data'];
         $invoice = Invoice::where('invoice_number',$orderId)->first();
         $transactionInfo = $response['data']->transactionInfo;
-        $message = "<p>Payment Captured <br/><br> Invoice Number: ".$invoice->invoice_number." <br/> Amount:".$transactionInfo->amount." 
+        $message = "<p>Payment Captured <br/><br> Invoice Number: ".$orderId." <br/> Amount:".$transactionInfo->amount." 
 <br/> Transaction id: ".$transactionInfo->transactionId."</p>";
 
-        $subject = 'Payment Captured for Invoice #'.$invoice->invoice_number;
+        $subject = 'Payment Captured for Invoice #'.$orderId;
         $from = 'postmail@forfatterskolen.no';
         $to = 'support@forfatterskolen.no';
         $emailData['email_subject'] = $subject;
