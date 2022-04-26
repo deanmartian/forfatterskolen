@@ -403,7 +403,7 @@ class LoginController extends Controller
             'response_type' => 'code',
             'state' => $state,
             'redirect_uri' => config('services.vipps.login_redirect_uri'),
-            'scope' => config('services.vipps.login_scope_dev')
+            'scope' => config('services.vipps.login_scope')
         ];
 
         $vipps_auth_url = config('services.vipps.login_auth_link');
