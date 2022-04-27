@@ -183,15 +183,17 @@ class VippsRepository extends BaseRepository {
         $emailData['from_name'] = NULL;
         $emailData['from_email'] = NULL;
         $emailData['attach_file'] = NULL;
-        Log::info("VIPPS order id" . $orderId);
+        Log::info("VIPPS order id " . $orderId);
         Log::info("VIPPS inside capture payment before if captured");
         // notify admin once the payment is captured
         if ($transactionInfo->status == 'Captured') {
             Log::info("VIPPS inside capture payment inside captured");
             Log::info(json_encode($emailData));
             // mark the invoice as paid
-            $invoice->fiken_is_paid = 1;
-            $invoice->save();
+            if ($invoice) {
+                $invoice->fiken_is_paid = 1;
+                $invoice->save();
+            }
 
             //AdminHelpers::send_email($subject,$from, $to, $message);
             /*\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
