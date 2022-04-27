@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Address;
 use App\Http\AdminHelpers;
+use App\Http\FikenInvoice;
 use App\Http\FrontendHelpers;
 use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
@@ -11,6 +12,7 @@ use App\OrderShopManuscript;
 use App\ShopManuscript;
 use App\ShopManuscriptsTaken;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ShopManuscriptService {
@@ -411,5 +413,38 @@ class ShopManuscriptService {
 
         dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
             $emailTemplate->from_email, null, null, 'shop-manuscripts-taken', $shopManuscriptTaken->id));
+    }
+
+    public function createInvoiceFromOder( $order )
+    {
+        $user = $order->user;
+        $price = $order->price - $order->discount;
+        $shopManuscript = ShopManuscript::find($order->item_id);
+        $dueDate = date("Y-m-d");
+        $dueDate = Carbon::parse($dueDate);
+        $dueDate->addDays($shopManuscript->full_price_due_date)->format('Y-m-d');
+        $comment = '(Manuskript: ' . $shopManuscript->title . ', ';
+        $comment .= 'Betalingsmodus: Vipps, ';
+        $comment .= 'Betalingsplan: Hele beløpet)';
+
+        $invoice_fields = [
+            'user_id' => $user->id,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'netAmount' => $price,
+            'dueDate' => $dueDate,
+            'description' => 'Kursordrefaktura',
+            'productID' => $shopManuscript->fiken_product,
+            'email' => $user->email,
+            'telephone' => $user->address->phone,
+            'address' => $user->address->street,
+            'postalPlace' => $user->address->city,
+            'postalCode' => $user->address->zip,
+            'comment' => $comment,
+            'payment_mode'  => 5, // vipps
+        ];
+
+        $invoice = new FikenInvoice();
+        $invoice->create_invoice($invoice_fields);
     }
 }

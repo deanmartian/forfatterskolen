@@ -205,9 +205,13 @@ class VippsRepository extends BaseRepository {
                 // add shop manuscript to user
                 if (!$order->is_processed && $order->type === Order::MANUSCRIPT_TYPE) {
                     $shopManuscriptService = new ShopManuscriptService();
+                    $shopManuscriptService->createInvoiceFromOder($order);
                     $shopManuscriptTaken = $shopManuscriptService->addShopManuscriptToLearner($order);
                     //$shopManuscriptService->notifyAdmin($order);
                     $shopManuscriptService->notifyUser($order, $shopManuscriptTaken);
+
+                    $order->is_processed = 1;
+                    $order->save();
                 }
 
             }
