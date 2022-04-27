@@ -194,7 +194,7 @@ class VippsRepository extends BaseRepository {
                 $invoice->fiken_is_paid = 1;
                 $invoice->save();
             } else {
-                $expOrderId = explode($orderId, '-');
+                $expOrderId = explode('-', $orderId);
                 $order_id = $expOrderId[0];
                 $user_id = $expOrderId[1];
                 Log::info("VIPPS order id = " . $order_id . " and user id = " . $user_id);
