@@ -7,6 +7,8 @@ use App\Helpers\ApiResponse;
 use App\Http\AdminHelpers;
 use App\Invoice;
 use App\Mail\SubjectBodyEmail;
+use App\Order;
+use App\Services\ShopManuscriptService;
 use App\Settings;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -198,6 +200,16 @@ class VippsRepository extends BaseRepository {
                 $order_id = $expOrderId[0];
                 $user_id = $expOrderId[1];
                 Log::info("VIPPS order id = " . $order_id . " and user id = " . $user_id);
+
+                $order = Order::find($order_id);
+                // add shop manuscript to user
+                if (!$order->is_processed && $order->type === Order::MANUSCRIPT_TYPE) {
+                    $shopManuscriptService = new ShopManuscriptService();
+                    $shopManuscriptTaken = $shopManuscriptService->addShopManuscriptToLearner($order);
+                    //$shopManuscriptService->notifyAdmin($order);
+                    $shopManuscriptService->notifyUser($order, $shopManuscriptTaken);
+                }
+
             }
 
             //AdminHelpers::send_email($subject,$from, $to, $message);

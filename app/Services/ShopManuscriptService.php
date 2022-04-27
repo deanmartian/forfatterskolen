@@ -343,12 +343,19 @@ class ShopManuscriptService {
     public function addShopManuscriptToLearner( $order )
     {
         $shopManuscriptOrder = $order->shopManuscriptOrder;
+        $file = $shopManuscriptOrder->file;
+        if (strpos($shopManuscriptOrder->file, 'manuscript-tests') !== false) {
+            $destinationPath = '/storage/shop-manuscripts/'. basename($file);
+            \File::copy(public_path($file), public_path($destinationPath));
+            $file = $destinationPath;
+        }
+
         $shopManuscriptTaken                        = new ShopManuscriptsTaken();
         $shopManuscriptTaken->user_id               = $order->user_id;
         $shopManuscriptTaken->genre                 = $shopManuscriptOrder->genre;
         $shopManuscriptTaken->description           = $shopManuscriptOrder->description;
         $shopManuscriptTaken->shop_manuscript_id    = $order->item_id;
-        $shopManuscriptTaken->file                  = $shopManuscriptOrder->file;
+        $shopManuscriptTaken->file                  = $file;
         $shopManuscriptTaken->words                 = $shopManuscriptOrder->words;
         $shopManuscriptTaken->synopsis              = $shopManuscriptOrder->synopsis;
         $shopManuscriptTaken->is_active             = false;
