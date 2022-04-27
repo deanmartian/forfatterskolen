@@ -443,7 +443,7 @@ class ShopManuscriptService {
             'postalPlace' => $user->address->city,
             'postalCode' => $user->address->zip,
             'comment' => $comment,
-            'payment_mode'  => 5, // vipps
+            'payment_mode'  => 'Vipps',
         ];
         Log::info(json_encode($invoice_fields));
         $invoice = new FikenInvoice();
