@@ -99,7 +99,7 @@ class FikenInvoice
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
         curl_setopt($ch, CURLOPT_HEADER, 1);
         $data = curl_exec($ch);
-
+        Log::info(\GuzzleHttp\json_encode($data));
 		// get the http code response
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         Log::info("http code = " .$http_code);
