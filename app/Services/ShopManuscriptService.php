@@ -14,6 +14,7 @@ use App\ShopManuscriptsTaken;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ShopManuscriptService {
 
@@ -417,6 +418,7 @@ class ShopManuscriptService {
 
     public function createInvoiceFromOder( $order )
     {
+        Log::info('inside createInvoiceFromOder');
         $user = $order->user;
         $price = $order->price - $order->discount;
         $shopManuscript = ShopManuscript::find($order->item_id);
@@ -443,8 +445,9 @@ class ShopManuscriptService {
             'comment' => $comment,
             'payment_mode'  => 5, // vipps
         ];
-
+        Log::info(json_encode($invoice_fields));
         $invoice = new FikenInvoice();
         $invoice->create_invoice($invoice_fields);
+        Log::info("after create invoice");
     }
 }
