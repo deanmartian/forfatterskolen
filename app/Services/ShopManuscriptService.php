@@ -434,7 +434,7 @@ class ShopManuscriptService {
             'user_id' => $user->id,
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
-            'netAmount' => $price,
+            'netAmount' => $price * 100,
             'dueDate' => $dueDate,
             'description' => 'Kursordrefaktura',
             'productID' => $shopManuscript->fiken_product,
