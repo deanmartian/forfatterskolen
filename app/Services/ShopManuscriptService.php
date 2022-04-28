@@ -424,7 +424,8 @@ class ShopManuscriptService {
         $shopManuscript = ShopManuscript::find($order->item_id);
         $dueDate = date("Y-m-d");
         $dueDate = Carbon::parse($dueDate);
-        $dueDate->addDays($shopManuscript->full_price_due_date)->format('Y-m-d');
+        $dueDate->addDays($shopManuscript->full_price_due_date);
+        $dueDate = $dueDate->format('Y-m-d');
         $comment = '(Manuskript: ' . $shopManuscript->title . ', ';
         $comment .= 'Betalingsmodus: Vipps, ';
         $comment .= 'Betalingsplan: Hele beløpet)';
