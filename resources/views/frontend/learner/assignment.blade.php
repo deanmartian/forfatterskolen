@@ -18,6 +18,14 @@
 		.tab-content {
 			border-top: 1px solid #dee2e6;
 		}
+
+		.editor-feedback-table > tbody > tr > td {
+			padding: 1.5rem 1.5rem 0 1.5rem;
+		}
+
+		.editor-feedback-table > tbody > tr:last-child > td {
+			padding-bottom: 1.5rem;
+		}
 	</style>
 @stop
 
@@ -175,24 +183,83 @@
 								</div> <!-- end past-assignment section -->
 							@elseif( Request::input('tab') == 'feedback-from-editor' )
 								<div class="card mt-5">
-									<div class="card-header p-4">
+                                    <?php
+                                    $noGroupWithFeedback = \App\AssignmentFeedbackNoGroup::where('learner_id', Auth::user()->id)
+                                        ->orderBy('created_at', 'desc')
+                                        ->get();
+                                    ?>
+									<table class="editor-feedback-table">
+										<thead class="card-header">
+											<tr>
+												<th class="p-4">
+													<h2>
+														<i class="contract-sign"></i>
+														{{ trans('site.learner.editor-text') }}
+													</h2>
+												</th>
+												<th>Date Out</th>
+												<th width="200"></th>
+											</tr>
+										</thead>
+										<tbody>
+										@if($noGroupWithFeedback->count() > 0)
+											@foreach( $noGroupWithFeedback as $feedback )
+												@if( $feedback->is_active && (!$feedback->availability
+												||  date('Y-m-d') >= $feedback->availability)
+												&& $feedback->manuscript->status)
+													<tr>
+														<td>
+															<?php
+															$files = explode(',',$feedback->filename);
+															$title = $feedback->manuscript->assignment->course
+																? $feedback->manuscript->assignment->course->title
+																: $feedback->manuscript->assignment->title;
+															$titleLabel = $feedback->manuscript->assignment->course
+																? trans('site.front.course-text')
+																: trans('site.learner.assignment');
+
+															$filesDisplay =$feedback->manuscript->assignment->title
+																.' <br/> ' . $titleLabel . ': '. $title . '<br/> ';
+															echo $filesDisplay
+															?>
+
+															{!! $feedback->file_link !!}
+
+															@if( $feedback->is_admin ) - {{ trans('site.learner.admin-text') }} @endif
+														</td>
+														<td>
+															{{ \App\Http\FrontendHelpers::formatDate($feedback->availability) }}
+														</td>
+														<td>
+															<a href="{{route('learner.assignment.no-group-feedback.download', $feedback->id)}}"
+															   class="w-100 btn site-btn-global site-btn-global-sm">
+																{{ trans('site.learner.download-text') }}
+															</a>
+														</td>
+													</tr>
+											@endif
+											@endforeach
+										@endif
+										</tbody>
+									</table>
+									{{--<div class="card-header p-4">
 										<h2>
 											<i class="contract-sign"></i>
 											{{ trans('site.learner.editor-text') }}
 										</h2>
 									</div>
-									<div class="card-body p-4">
+									<div class="card-body p-4">--}}
                                         <?php
-                                        $noGroupWithFeedback = \App\AssignmentFeedbackNoGroup::where('learner_id', Auth::user()->id)
+                                        /*$noGroupWithFeedback = \App\AssignmentFeedbackNoGroup::where('learner_id', Auth::user()->id)
                                             ->orderBy('created_at', 'desc')
-                                            ->get();
+                                            ->get();*/
                                         ?>
-										@if($noGroupWithFeedback->count() > 0)
+										{{--@if($noGroupWithFeedback->count() > 0)
 											@foreach( $noGroupWithFeedback as $feedback )
 												@if( $feedback->is_active && (!$feedback->availability ||  date('Y-m-d') >= $feedback->availability) && $feedback->manuscript->status)
-													<div class="mb-4">
+													<div class="mb-4">--}}
                                                         <?php
-                                                        $files = explode(',',$feedback->filename);
+                                                       /* $files = explode(',',$feedback->filename);
                                                         $title = $feedback->manuscript->assignment->course
                                                             ? $feedback->manuscript->assignment->course->title
                                                             : $feedback->manuscript->assignment->title;
@@ -200,22 +267,22 @@
                                                             ? trans('site.front.course-text')
                                                             : trans('site.learner.assignment');
 
-                                                        $filesDisplay = $titleLabel . ': '. $title . '<br/> ';
-                                                        echo $filesDisplay
+                                                        $filesDisplay =$feedback->manuscript->assignment->title .' <br/> ' . $titleLabel . ': '. $title . '<br/> ';
+                                                        echo $filesDisplay*/
                                                         ?>
-														{!! $feedback->file_link !!}
+														{{--{!! $feedback->file_link !!}--}}
 
-														@if( $feedback->is_admin ) - {{ trans('site.learner.admin-text') }} @endif
+														{{--@if( $feedback->is_admin ) - {{ trans('site.learner.admin-text') }} @endif
 
 														<a href="{{route('learner.assignment.no-group-feedback.download', $feedback->id)}}"
 														   class="pull-right btn site-btn-global site-btn-global-sm" style="width: 20%">
 															{{ trans('site.learner.download-text') }}
-														</a>
-													</div>
+														</a>--}}
+													{{--</div>
 												@endif
 											@endforeach
 										@endif
-									</div>
+									</div>--}}
 								</div>
 							@elseif( Request::input('tab') == 'groups' )
                                 <?php $assignmentGroups = App\AssignmentGroupLearner::where('user_id', Auth::user()->id)->get(); ?>
