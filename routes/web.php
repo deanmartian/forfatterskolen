@@ -178,7 +178,7 @@ Route::group([
             ->name('front.goto-webinar.registration.email'); // GotoWebinar Registration through email
 
         Route::get('/vipps', 'VippsController@index');
-        //Route::post('/vipps/payment', 'HomeController@paymentCallback')->name('vipps.payment');
+        Route::post('/vipps/payment', 'HomeController@paymentCallback')->name('vipps.payment');
         Route::post('/vipps/payment/v2/payments/{orderId}', 'HomeController@paymentCallback');
         Route::get('/vipps/fallback', 'VippsController@fallback');
         Route::get('/vipps/payment/{orderId}/details', 'VippsController@getPaymentDetails');

@@ -40,6 +40,7 @@ class Controller extends BaseController
 
         if (isset($data['is_ajax'])) {
             \Illuminate\Support\Facades\Log::info("VIPPS inside is ajax");
+            \Illuminate\Support\Facades\Log::info(json_encode($initiatePaymentResult['data']));
             return $initiatePaymentResult['data']->url;
         }
 
