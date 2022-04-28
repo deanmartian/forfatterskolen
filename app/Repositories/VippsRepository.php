@@ -64,7 +64,6 @@ class VippsRepository extends BaseRepository {
 
             'merchantInfo' => [
                 'callbackPrefix' => route('vipps.payment'),//url('/vipps/payment'),
-                "consentRemovalPrefix" => "https://dev.forfatterskolen.no/cancelled-payment",
                 'fallBack' => $fallbackUrl,//url('/thankyou'),
                 'paymentType' => 'eComm Regular Payment',
                 'merchantSerialNumber' => env('VIPPS_MSN_TEST')//AdminHelpers::generateHash(6)
@@ -99,6 +98,8 @@ class VippsRepository extends BaseRepository {
     {
         $transactionInfo = $request['transactionInfo'];
 
+        Log::info("payment callback here");
+        Log::info(json_encode($transactionInfo));
         // check if the payment is done
         if ($transactionInfo['status'] == self::PAYMENT_RESERVED) {
             $this->capturePayment($orderId);

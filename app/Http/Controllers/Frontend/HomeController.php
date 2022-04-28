@@ -2193,7 +2193,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
             return ApiResponse::error($result->getMessage(), $result->getData(), $result->getCode());
         }
 
-        $access_token = $result['data']->access_token;
+        /*$access_token = $result['data']->access_token;
         $url = "/ecomm/v2/payments/$order_id/details";
 
         $header = array();
@@ -2203,6 +2203,9 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         $body = [];
 
         $response = AdminHelpers::vippsAPI('GET', $url, $body, $header);
+        */
+
+        $response = $repository->getPaymentDetails($order_id, $result['data']->access_token);
         echo "<pre>";
         print_r($response);
         echo "</pre>";
