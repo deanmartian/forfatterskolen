@@ -108,10 +108,13 @@ class VippsRepository extends BaseRepository {
         }
 
         if ($transactionInfo['status'] == self::PAYMENT_REJECTED) {
+            Log::info("inside rejected here");
             if (strpos($orderId, '-') !== false) {
+                Log::info("inside if");
                 $expOrder = explode('-', $orderId);
                 $order = Order::find($expOrder[0]);
                 if($order) {
+                    Log::info("inside if order");
                     $route = $order->type === Order::MANUSCRIPT_TYPE ? 'front.shop-manuscript.checkout' : 'front.course.checkout';
                     return redirect()->route($route, $order->item_id);
                 }
