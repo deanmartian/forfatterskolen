@@ -454,6 +454,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                 this.removeValidationError();
 
                 let formData = new FormData();
+                this.orderForm.payment_mode_id = 3; // Faktura
                 $.each(this.orderForm, function(k, v) {
                     formData.append(k, v);
                 });
@@ -475,6 +476,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                 this.removeValidationError();
 
                 let formData = new FormData();
+                this.orderForm.payment_mode_id = 5; // Vipps
                 $.each(this.orderForm, function(k, v) {
                     formData.append(k, v);
                 });
