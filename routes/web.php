@@ -131,7 +131,7 @@ Route::group([
             Route::post('/{id}/checkout/validate-form', 'ShopManuscriptController@validateForm')->name('front.shop-manuscript.validate-form');
             Route::post('/{id}/checkout/vipps', 'ShopManuscriptController@vippsCheckout')->name('front.shop-manuscript.vipps');
             Route::get('/{id}/checkout/process-vipps', 'ShopManuscriptController@processVipps')->name('front.shop-manuscript.checkout.process-vipps');
-            Route::get('/{id}/thankyou', 'ShopManuscriptController@thankyou');
+            Route::get('/{id}/thankyou', 'ShopManuscriptController@thankyou')->name('front.shop-manuscript.thankyou');
         });
 
         Route::get('/shop-manuscript/payment/paypal/{invoice_id}', 'ShopManuscriptController@paypalPayment')->name('front.shop-manuscript.paypal-payment'); // Paypal Payment
