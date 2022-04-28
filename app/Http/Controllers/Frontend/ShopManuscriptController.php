@@ -208,7 +208,7 @@ class ShopManuscriptController extends Controller
         $user = Auth::user();
 
         $vippsData = [
-            'amount' => $price,
+            'amount' => $price * 100,
             'orderId' => $orderRecord->id."-".$user->id,
             'transactionText' => $orderRecord->item,
             'is_ajax' => true,
