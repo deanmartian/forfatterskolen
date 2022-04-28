@@ -65,7 +65,7 @@ class VippsRepository extends BaseRepository {
 
             'merchantInfo' => [
                 'callbackPrefix' => route('vipps.payment'),//url('/vipps/payment'),
-                'fallBack' => $fallbackUrl,//url('/thankyou'),
+                'fallBack' => route('vipps.fallback',['t' => $data['orderId']]),//$fallbackUrl,//url('/thankyou'),
                 'paymentType' => 'eComm Regular Payment',
                 'merchantSerialNumber' => env('VIPPS_MSN_TEST')//AdminHelpers::generateHash(6)
             ],

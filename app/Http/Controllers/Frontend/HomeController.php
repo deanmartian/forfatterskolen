@@ -1864,6 +1864,17 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         $vippsRepository->paymentCallback($orderId, $request);
     }
 
+    public function vippsFallback( Request $request )
+    {
+        $expOrder = explode('-', $request->t);
+        $order = Order::find($expOrder[0]);
+        if($order) {
+            $route = $order->type === Order::MANUSCRIPT_TYPE ? 'front.shop-manuscript.checkout' : 'front.course.checkout';
+            return redirect()->route($route, $order->item_id);
+        }
+
+    }
+
     /**
      * Check if the file is saved
      * @param $hash
