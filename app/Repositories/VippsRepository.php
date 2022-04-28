@@ -100,6 +100,7 @@ class VippsRepository extends BaseRepository {
 
         Log::info("payment callback here");
         Log::info(json_encode($transactionInfo));
+        Log::info(json_encode($request->all()));
         // check if the payment is done
         if ($transactionInfo['status'] == self::PAYMENT_RESERVED) {
             $this->capturePayment($orderId);
