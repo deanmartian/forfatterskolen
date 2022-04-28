@@ -1877,6 +1877,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
             return redirect()->route($route, $order->item_id);
         }
 
+        return redirect()->route('front.thank-you');
     }
 
     /**
