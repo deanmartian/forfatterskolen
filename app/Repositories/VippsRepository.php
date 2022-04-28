@@ -18,6 +18,7 @@ class VippsRepository extends BaseRepository {
 
     const PAYMENT_RESERVED = 'RESERVED';
     const PAYMENT_CANCELLED = 'CANCELLED';
+    const PAYMENT_REJECTED = 'REJECTED';
     /**
      * Get the access token
      * @return ApiException|array
@@ -104,6 +105,17 @@ class VippsRepository extends BaseRepository {
         // check if the payment is done
         if ($transactionInfo['status'] == self::PAYMENT_RESERVED) {
             $this->capturePayment($orderId);
+        }
+
+        if ($transactionInfo['status'] == self::PAYMENT_REJECTED) {
+            if (strpos($orderId, '-') !== false) {
+                $expOrder = explode('-', $orderId);
+                $order = Order::find($expOrder[0]);
+                if($order) {
+                    $route = $order->type === Order::MANUSCRIPT_TYPE ? 'front.shop-manuscript.checkout' : 'front.course.checkout';
+                    return redirect()->route($route, $order->item_id);
+                }
+            }
         }
     }
 
