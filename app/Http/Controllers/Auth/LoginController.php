@@ -399,11 +399,11 @@ class LoginController extends Controller
     {
         $query = [
             //'client_id' => config('services.vipps.client_id'),
-            'client_id' => config('services.vipps.client_id_test'),
+            'client_id' => config('services.vipps.client_id'),
             'response_type' => 'code',
             'state' => $state,
             'redirect_uri' => config('services.vipps.login_redirect_uri'),
-            'scope' => config('services.vipps.login_scope_dev')
+            'scope' => config('services.vipps.login_scope')
         ];
 
         $vipps_auth_url = config('services.vipps.login_auth_link');
@@ -425,8 +425,8 @@ class LoginController extends Controller
 
         /*$vipps_credentials = base64_encode(config('services.vipps.client_id') . ":"
             . config('services.vipps.client_secret'));*/
-        $vipps_credentials = base64_encode(config('services.vipps.client_id_test') . ":"
-            . config('services.vipps.client_secret_test'));
+        $vipps_credentials = base64_encode(config('services.vipps.client_id') . ":"
+            . config('services.vipps.client_secret'));
 
         $long_url = config('services.vipps.login_token_link');
 
