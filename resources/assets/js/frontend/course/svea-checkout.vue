@@ -249,12 +249,12 @@
 
             </tab-content>
 
-            <button type="button" class="vipps-btn" slot="custom-buttons-right" slot-scope="props"
+            <!--<button type="button" class="vipps-btn" slot="custom-buttons-right" slot-scope="props"
                     v-if="props.activeTabIndex === 0" @click="vippsCheckout();" :disabled="isLoading">
                 <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i>
                 <img src="/images-new/betal-vipps.png" height="36" alt="vipps-buy-button"
                      :style="isLoading ? 'opacity: .8;' : ''">
-            </button>
+            </button>-->
             <button slot="finish" class="d-none">{{ trans('site.checkout.finish') }}</button>
         </form-wizard>
 
