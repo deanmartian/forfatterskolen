@@ -127,6 +127,7 @@ Route::group([
         ], function() {
             Route::get('/{id}/checkout', 'ShopManuscriptController@checkout')->name('front.shop-manuscript.checkout'); // Checkout Shop Manuscript
             Route::post('/{id}/place_order', 'ShopManuscriptController@place_order')->name('front.shop-manuscript.place_order'); // Checkout Shop Manuscript
+            Route::get('/{id}/cancelled-order', 'ShopManuscriptController@orderCancelled')->name('front.shop-manuscript.cancelled-order'); // Checkout
             Route::post('/{id}/checkout/validate-order', 'ShopManuscriptController@validateOrder')->name('front.shop-manuscript.validate-order');
             Route::post('/{id}/checkout/validate-form', 'ShopManuscriptController@validateForm')->name('front.shop-manuscript.validate-form');
             Route::post('/{id}/checkout/vipps', 'ShopManuscriptController@vippsCheckout')->name('front.shop-manuscript.vipps');
@@ -197,6 +198,7 @@ Route::group([
             Route::get('/{id}', 'CourseController@show')->name('front.course.show'); // Course Details
             Route::get('/{id}/checkout', 'ShopController@sveaCheckout')->name('front.course.checkout'); // Checkout
             Route::get('/{id}/fs_checkout', 'ShopController@checkout')->name('front.course.fs-checkout'); // Checkout
+            Route::get('/{id}/cancelled-order', 'ShopController@orderCancelled')->name('front.course.cancelled-order');
             Route::get('/{id}/checkout-svea', 'ShopController@sveaCheckout')->name('front.course.svea-checkout'); // Checkout
             Route::post('/{id}/checkout/process-order', 'ShopController@processOrder')->name('front.course.process_order'); // Place Order
             Route::get('/{id}/thank-you', 'CourseController@thankyou')->name('front.course.thank-you'); // Checkout

@@ -220,6 +220,11 @@ class ShopManuscriptController extends Controller
 
     }
 
+    public function orderCancelled($manuscript_id)
+    {
+        return view('frontend.shop-manuscript.cancelled-order', compact('manuscript_id'));
+    }
+
     /**
      * @param $id
      * @param Request $request

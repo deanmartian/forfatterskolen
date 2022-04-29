@@ -1867,13 +1867,19 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
     public function vippsFallback( Request $request )
     {
         $expOrder = explode('-', $request->t);
-        $order = Order::find($expOrder[0]);
-        if($order) {
-            if ($order->is_processed) {
+        $vippsOrder = $this->checkVippsOrderStatus($request->t);
+
+        // check for order status
+        if ($vippsOrder['data'] && $transactionHistory = $vippsOrder['data']->transactionLogHistory[0]
+                && $order = Order::find($expOrder[0])) {
+
+            $transactionHistory = $vippsOrder['data']->transactionLogHistory[0];
+            $route = $order->type === Order::MANUSCRIPT_TYPE ? 'front.shop-manuscript.checkout' : 'front.course.cancelled-order';
+            // check if capture and operation is success
+            if ($transactionHistory->operation === 'CAPTURE' && $transactionHistory->operationSuccess) {
                 $route = $order->type === Order::MANUSCRIPT_TYPE ? 'front.shop-manuscript.thankyou' : 'front.shop.thankyou';
-            } else {
-                $route = $order->type === Order::MANUSCRIPT_TYPE ? 'front.shop-manuscript.checkout' : 'front.course.checkout';
             }
+
             return redirect()->route($route, $order->item_id);
         }
 
@@ -2222,9 +2228,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         */
 
         $response = $repository->getPaymentDetails($order_id, $result['data']->access_token);
-        echo "<pre>";
-        print_r($response);
-        echo "</pre>";
+        return $response;
 
     }
 
