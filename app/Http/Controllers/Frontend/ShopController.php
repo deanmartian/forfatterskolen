@@ -631,9 +631,9 @@ class ShopController extends Controller
         ]);
         $checkoutDetails = collect($request->except('_token'));
         \Session::put('vipps_checkout', $checkoutDetails);
-        //return response()->json(['redirect_link' => $loginController->vippsLogin('checkout_state')]);
-        $vipps = \Session::get('vipps_checkout');
-        return response()->json(['redirect_link' => route('front.course.checkout.process-vipps',$vipps['course_id'])]);
+        return response()->json(['redirect_link' => $loginController->vippsLogin('checkout_state')]);
+        /*$vipps = \Session::get('vipps_checkout');
+        return response()->json(['redirect_link' => route('front.course.checkout.process-vipps',$vipps['course_id'])]);*/
     }
 
     public function processVipps(CourseService $courseService)
