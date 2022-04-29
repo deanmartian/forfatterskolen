@@ -9,9 +9,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-6 left-container">
-                    <h1>Cancelled Order</h1>
+                    <h1>
+                        {!! trans('site.cancelled-order.title') !!}
+                    </h1>
                     <p>
-                        The order is cancelled
+                        {!! trans('site.cancelled-order.description') !!}
                     </p>
 
                     <a href="{{ route('front.course.checkout', $course_id) }}" class="btn buy-btn">
