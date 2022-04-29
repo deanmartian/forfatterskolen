@@ -1338,6 +1338,7 @@ class ShopController extends Controller
         $newOrder['type']       = Order::COURSE_TYPE;
         $newOrder['package_id'] = $package->id;
         $newOrder['plan_id']    = $paymentPlan->id;
+        $newOrder['payment_mode_id'] = $paymentMode->id;
 
         $order = Order::create($newOrder);
 
