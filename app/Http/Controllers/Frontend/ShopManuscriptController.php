@@ -250,6 +250,9 @@ class ShopManuscriptController extends Controller
             $order->is_processed = 1;
             $order->save();
         }
+
+        \Session::remove('vipps_checkout');
+
         return view('frontend.shop-manuscript.thankyou');
     }
 

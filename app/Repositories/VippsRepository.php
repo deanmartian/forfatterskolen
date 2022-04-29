@@ -2,14 +2,17 @@
 
 namespace App\Repositories;
 
+use App\Course;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Http\AdminHelpers;
 use App\Invoice;
 use App\Mail\SubjectBodyEmail;
 use App\Order;
+use App\Services\CourseService;
 use App\Services\ShopManuscriptService;
 use App\Settings;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log as Log;
@@ -227,10 +230,20 @@ class VippsRepository extends BaseRepository {
                     $shopManuscriptTaken = $shopManuscriptService->addShopManuscriptToLearner($order);
                     //$shopManuscriptService->notifyAdmin($order);
                     $shopManuscriptService->notifyUser($order, $shopManuscriptTaken);
-
-                    $order->is_processed = 1;
-                    $order->save();
                 }
+
+                if (!$order->is_processed && $order->type === Order::COURSE_TYPE) {
+                    $course = new Course();
+                    $user = new User();
+                    $courseService = new CourseService($course, $user);
+                    $courseService->createInvoiceFromOder($order);
+                    $courseTaken = $courseService->addCourseToLearner($order->user_id, $order->package_id);
+                    //$courseService->notifyAdmin($order->user_id, $order->package_id);
+                    $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken);
+                }
+
+                $order->is_processed = 1;
+                $order->save();
 
             }
 

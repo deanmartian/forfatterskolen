@@ -9,6 +9,7 @@ use App\CoursesTaken;
 use App\Events\AddToCampaignList;
 use App\Helpers\SveaConfig;
 use App\Http\AdminHelpers;
+use App\Http\FikenInvoice;
 use App\Http\FrontendHelpers;
 use App\Jobs\CourseOrderJob;
 use App\Order;
@@ -576,6 +577,47 @@ class CourseService {
         dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
             'postmail@forfatterskolen.no', 'Forfatterskolen', null, 'courses-taken-upgrade',
             $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
+    }
+
+    public function createInvoiceFromOder( $order )
+    {
+        $user = $order->user;
+        $package = $order->package;
+        $product_ID = $package->full_price_product;
+
+        $dueDate = date("Y-m-d");
+        if ($package->issue_date && Carbon::parse($package->issue_date)->gt(Carbon::today())) {
+            $dueDate = $package->issue_date;
+        }
+        $dueDate = Carbon::parse($dueDate);
+        $dueDate->addDays($package->full_price_due_date);
+        $dueDate = $dueDate->format('Y-m-d');
+
+        $price = $order->price - $order->discount;
+
+        $comment = '(Kurs: ' . $package->course->title . ' ['.$package->variation.'], ';
+        $comment .= 'Betalingsmodus: Vipps, ';
+        $comment .= 'Betalingsplan: Hele beløpet)';
+
+        $invoice_fields = [
+            'user_id'       => $user->id,
+            'first_name'    => $user->first_name,
+            'last_name'     => $user->last_name,
+            'netAmount'     => $price * 100,
+            'dueDate'       => $dueDate,
+            'description'   => 'Kursordrefaktura',
+            'productID'     => $product_ID,
+            'email'         => $user->email,
+            'telephone'     => $user->address->phone,
+            'address'       => $user->address->street,
+            'postalPlace'   => $user->address->city,
+            'postalCode'    => $user->address->zip,
+            'comment'       => $comment,
+            'payment_mode'  => 'Vipps',
+        ];
+
+        $invoice = new FikenInvoice();
+        $invoice->create_invoice($invoice_fields);
     }
 
     /**
