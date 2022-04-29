@@ -619,13 +619,24 @@ class ShopController extends Controller
 
     public function vippsCheckout( $course_id, Request $request, CourseService $courseService, LoginController $loginController )
     {
-        $request->merge(['course_id' => $course_id]);
+        $package = Package::find($request->package_id);
+        $course =  $package->course;
+        $calculatedPrice = $courseService->calculatePrice($course, $package, $request);
+        $discount = $request->price - $calculatedPrice;
+
+        $request->merge([
+            'course_id' => $course_id,
+            'item_type' => 'course',
+            'discount' => $discount
+        ]);
         $checkoutDetails = collect($request->except('_token'));
         \Session::put('vipps_checkout', $checkoutDetails);
         return response()->json(['redirect_link' => $loginController->vippsLogin('checkout_state')]);
+        /*$vipps = \Session::get('vipps_checkout');
+        return response()->json(['redirect_link' => route('front.course.checkout.process-vipps',$vipps['course_id'])]);*/
     }
 
-    public function processVipps()
+    public function processVipps(CourseService $courseService)
     {
         $vippsCheckout = \Session::get('vipps_checkout');
         $package = Package::find($vippsCheckout['package_id']);
@@ -641,10 +652,6 @@ class ShopController extends Controller
             ];
         }
 
-        $paymentPlan = PaymentPlan::findOrFail($vippsCheckout['payment_plan_id']);
-        $paymentMode = PaymentMode::findOrFail(5); //vipps payment
-        $payment_mode = $paymentMode->mode;
-        $payment_plan = trim($paymentPlan->plan);
         $hasPaidCourse = false;
 
         // check if course bought is not expired yet
@@ -658,58 +665,7 @@ class ShopController extends Controller
             endif;
         endforeach;
 
-        /* check if there's an issue date set ir not then use today*/
-        $dueDate = date("Y-m-d");
-        if ($package->issue_date && Carbon::parse($package->issue_date)->gt(Carbon::today())) {
-            $dueDate = $package->issue_date;
-        }
-        $dueDate = Carbon::parse($dueDate);
-        $payment_plan = trim($payment_plan);
-
-        // this is use to check if the current date is within a sale date
-        // for the 3 plans/payments
-        $today 			= \Carbon\Carbon::today()->format('Y-m-d');
-        $fromFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
-        $toFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
-        $isBetweenFull 	= (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
-
-        $price = $isBetweenFull && $package->full_payment_sale_price
-            ? (int)$package->full_payment_sale_price*100
-            : (int)$package->full_payment_price*100;
-        $product_ID = $package->full_price_product;
-        $dueDate->addDays($package->full_price_due_date);
-        $dueDate = date_format(date_create($dueDate), 'Y-m-d');
-
-
-        $comment = '(Kurs: ' . $package->course->title . ' ['.$package->variation.'], ';
-        $comment .= 'Betalingsmodus: ' . $payment_mode . ', ';
-        $comment .= 'Betalingsplan: ' . $payment_plan . ')';
-
-        $discount = 0;
-
-        if ($vippsCheckout['coupon']) {
-            $discountCoupon = CourseDiscount::where('coupon', $vippsCheckout['coupon'])->where('course_id', $vippsCheckout['course_id'])->first();
-
-            if ($discountCoupon->valid_to) {
-                $valid_from = Carbon::parse($discountCoupon->valid_from)->format('Y-m-d');
-                $valid_to   = Carbon::parse($discountCoupon->valid_to)->format('Y-m-d');
-                $today      = Carbon::today()->format('Y-m-d');
-
-                if ( ($today >= $valid_from) && ($today <= $valid_to)) {
-                    //echo "valid date <br/>";
-                } else {
-                    return redirect()->back()->withInput()->with([
-                        'errors' => AdminHelpers::createMessageBag('Rabattkupongen er ugyldig eller utløpt.')
-                    ]);
-                }
-            }
-
-            if ($discountCoupon) {
-                $discount = ( (int) $discountCoupon->discount);
-                $price = $price - ( (int)$discount*100 );
-            }
-
-        }
+        $discount = $vippsCheckout['discount'];
 
         if( $hasPaidCourse && $package->course->type == 'Group' && $package->has_student_discount) {
             $groupDiscount = 1000;
@@ -717,9 +673,6 @@ class ShopController extends Controller
             if ($groupDiscount > $discount) {
                 $discount = $groupDiscount;
             }
-
-            $comment .= ' - Discount: Kr '.number_format($discount, 2,',','.');
-            $price = $price - ( (int)$discount*100 );
         }
 
         if( $hasPaidCourse && $package->course->type == 'Single' && $package->has_student_discount) {
@@ -728,163 +681,33 @@ class ShopController extends Controller
             if ($singleDiscount > $discount) {
                 $discount = $singleDiscount;
             }
-
-            $comment .= ' - Discount: Kr '.number_format($discount, 2,',','.');
-            $price = $price - ( (int)$discount*100 );
         }
 
-        $user = Auth::user();
+        $vippsCheckout['discount'] = $discount;
+        $request = new \Illuminate\Http\Request();
+        $request->replace($vippsCheckout->toArray());
 
-        $invoice_fields = [
-            'user_id' => Auth::user()->id,
-            'first_name' => $vippsCheckout['first_name'] ?: $user->first_name,
-            'last_name' => $vippsCheckout['last_name'] ?: $user->last_name,
-            'netAmount' => $price,
-            'dueDate' => $dueDate,
-            'description' => 'Kursordrefaktura',
-            'productID' => $product_ID,
-            'email' => $vippsCheckout['email'] ?: $user->email,
-            'telephone' => $vippsCheckout['phone'] ?: $user->address->phone,
-            'address' => $vippsCheckout['street'] ?: $user->address->street,
-            'postalPlace' => $vippsCheckout['city'] ?: $user->address->city,
-            'postalCode' => $vippsCheckout['zip'] ?: $user->address->zip,
-            'comment' => $comment,
-            'payment_mode'  => $paymentMode->mode,
-        ];
+        $orderRecord = $courseService->createOrder($request);
 
-        $invoice = new FikenInvoice();
-        $invoice->create_invoice($invoice_fields);
-
-        $add_to_automation = 0;
-
-        $course_status = $paymentMode->mode == "Vipps" || $paymentMode->mode == "Paypal" ? 1 : 0;
-        $start_date = $course->type === 'Group' ? $package->course->start_date : Carbon::today();
-        $courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
-        $courseTaken->is_active = $course_status;
-        $courseTaken->is_welcome_email_sent = 0;
-        $courseTaken->end_date = Carbon::parse($start_date)->addYear();
-        $courseTaken->save();
-
-        $newOrder['user_id']    = Auth::user()->id;
-        $newOrder['item_id']    = $vippsCheckout['course_id'];
-        $newOrder['type']       = Order::COURSE_TYPE;
-        $newOrder['package_id'] = $package->id;
-        $newOrder['plan_id']    = $paymentPlan->id;
-
-        Order::create($newOrder);
-
-        // Check for shop manuscripts
-        if( $package->shop_manuscripts->count() > 0 ) :
-            foreach( $package->shop_manuscripts as $shop_manuscript ) :
-                //$shopManuscriptTaken = ShopManuscriptsTaken::firstOrNew(['user_id' => Auth::user()->id, 'shop_manuscript_id' => $shop_manuscript->shop_manuscript_id]);
-                $shopManuscriptTaken = new ShopManuscriptsTaken();
-                $shopManuscriptTaken->user_id = Auth::user()->id;
-                $shopManuscriptTaken->shop_manuscript_id = $shop_manuscript->shop_manuscript_id;
-                $shopManuscriptTaken->is_active = false;
-                $shopManuscriptTaken->package_shop_manuscripts_id = $package->shop_manuscripts[0]->id;
-                $shopManuscriptTaken->save();
-            endforeach;
-        endif;
-
-
-        if ($package->included_courses->count() > 0) {
-            foreach ($package->included_courses as $included_course) {
-                if ($included_course->included_package_id == 29) { // check if webinar-pakke is included
-                    $add_to_automation++;
-                }
-
-                // add user to the included course
-                $courseIncluded = CoursesTaken::firstOrNew([
-                    'user_id' => Auth::user()->id,
-                    'package_id' => $included_course->included_package_id
-                ]);
-                $courseIncluded->is_active = $course_status;
-                $courseIncluded->save();
-            }
-
-            // this means webinar-pakke is included
-            if ($add_to_automation) {
-                $user = Auth::user();
-                $userCoursesTaken = $user->coursesTaken;
-                foreach($userCoursesTaken as $userCourseTaken) {
-                    $userCourseTaken->end_date = Carbon::parse($start_date)->addYear();
-                    $userCourseTaken->save();
-                }
-            }
-        }
-
-        if ($package->course->id == 17) { //check if webinar-pakke
-            $add_to_automation++;
-        }
-
-        if ($add_to_automation > 0) {
-            $user_email = Auth::user()->email;
-            $automation_id = 73;
-            $user_name = Auth::user()->first_name;
-
-            AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
-        }
-
-        // check if the course has activecampaign list then add the user
-        if ($package->course->auto_list_id > 0) {
-            $list_id = $package->course->auto_list_id;
-            $listData = [
-                'email' => Auth::user()->email,
-                'name' => Auth::user()->first_name,
-                'last_name' => Auth::user()->last_name
-            ];
-
-            AdminHelpers::addToActiveCampaignList($list_id, $listData);
-        }
-
-        // Email to support
-        $to = 'support@forfatterskolen.no'; //
-        $emailData = [
-            'email_subject' => 'New Course Order',
-            'email_message' => Auth::user()->first_name . ' has ordered the course ' . $package->course->title,
-            'from_name' => '',
-            'from_email' => 'post@forfatterskolen.no',
-            'attach_file' => NULL
-        ];
-        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
-
-        // Send course email
-        $user = Auth::user();
-
-        $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
-
-        $search_string = [
-            '[username]', '[password]'
-        ];
-        $replace_string = [
-            $courseTaken->user->email, $password
-        ];
-        $email_content = str_replace($search_string, $replace_string, $package->course->email);
-
-        $user_email = $user->email;
-
-        $encode_email = encrypt($user_email);
-        $redirectLink = encrypt(route('learner.course'));
-        $actionUrl = route('auth.login.emailRedirect',[$encode_email, $redirectLink]);
-        $actionText = 'Mine Kurs';
-        $attachments = [asset($this->generateDocx($user->id, $package->id)),
-            asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
-
-        dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
-            'postmail@forfatterskolen.no', 'Forfatterskolen', $attachments, 'courses-taken-order',
-            $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
-
-        $orderId = $invoice->invoice_number;
+        $orderId = $orderRecord->id . '-' . $orderRecord->user_id;
+        $price = $orderRecord->price - $orderRecord->discount;
         $transactionText = $package->course->title;
+        $user = Auth::user();
+
         $vippsData = [
-            'amount' => $price,
-            'orderId' => $orderId,
-            'transactionText' => $transactionText,
-            'is_ajax' => true,
-            'vipps_phone_number' => $user->address->vipps_phone_number
+            'amount'                => $price * 100,
+            'orderId'               => $orderId,
+            'transactionText'       => $transactionText,
+            'is_ajax'               => true,
+            'vipps_phone_number'    => $user->address->vipps_phone_number
         ];
 
         return redirect()->to($this->vippsInitiatePayment($vippsData));
+    }
+
+    public function orderCancelled($course_id)
+    {
+        return view('frontend.shop.cancelled-order', compact('course_id'));
     }
 
     public function checkoutTest($course_id)
@@ -1516,7 +1339,7 @@ class ShopController extends Controller
         $newOrder['package_id'] = $package->id;
         $newOrder['plan_id']    = $paymentPlan->id;
 
-        Order::create($newOrder);
+        $order = Order::create($newOrder);
 
         // Check for shop manuscripts
         if( $package->shop_manuscripts->count() > 0 ) :
@@ -1684,7 +1507,7 @@ class ShopController extends Controller
 
         // check if vipps payment mode and the current user id is 4
         if( $paymentMode->mode == "Vipps") :
-            $orderId = $invoice->invoice_number;
+            $orderId = $order->id."-".$user->id;
             $transactionText = $package->course->title;
             $vippsData = [
                 'amount' => $price,
@@ -2105,6 +1928,7 @@ class ShopController extends Controller
             $fiken->send_invoice($fikenInvoice);
         }
 
+        \Session::remove('vipps_checkout');
         return view('frontend.shop.thankyou');
     }
 

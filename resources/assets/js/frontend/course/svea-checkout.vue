@@ -330,7 +330,7 @@
                     price: 0,
                     payment_plan_id: 8,
                     coupon: this.passedCoupon,
-                    payment_mode_id: 1,
+                    payment_mode_id: 3,
                     mobile_number: "",
                     campaign_code: '',
                     campaign_months: 0,
@@ -517,6 +517,7 @@
             },
 
             validateForm() {
+                this.orderForm.payment_mode_id = 3; // Faktura
                 return axios.post(this.requestUrl+'/checkout/validate-form', this.orderForm).then(response => {
                     this.removeValidationError();
                     this.checkHasPaidCourse();
@@ -539,6 +540,7 @@
 
             vippsCheckout() {
                 this.isLoading = true;
+                this.orderForm.payment_mode_id = 5; // Vipps
                 console.log("vipps checkout");
                 return axios.post(this.requestUrl+'/checkout/vipps', this.orderForm).then(response => {
                     console.log(response);

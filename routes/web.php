@@ -127,9 +127,12 @@ Route::group([
         ], function() {
             Route::get('/{id}/checkout', 'ShopManuscriptController@checkout')->name('front.shop-manuscript.checkout'); // Checkout Shop Manuscript
             Route::post('/{id}/place_order', 'ShopManuscriptController@place_order')->name('front.shop-manuscript.place_order'); // Checkout Shop Manuscript
+            Route::get('/{id}/cancelled-order', 'ShopManuscriptController@orderCancelled')->name('front.shop-manuscript.cancelled-order'); // Checkout
             Route::post('/{id}/checkout/validate-order', 'ShopManuscriptController@validateOrder')->name('front.shop-manuscript.validate-order');
             Route::post('/{id}/checkout/validate-form', 'ShopManuscriptController@validateForm')->name('front.shop-manuscript.validate-form');
-            Route::get('/{id}/thankyou', 'ShopManuscriptController@thankyou');
+            Route::post('/{id}/checkout/vipps', 'ShopManuscriptController@vippsCheckout')->name('front.shop-manuscript.vipps');
+            Route::get('/{id}/checkout/process-vipps', 'ShopManuscriptController@processVipps')->name('front.shop-manuscript.checkout.process-vipps');
+            Route::get('/{id}/thankyou', 'ShopManuscriptController@thankyou')->name('front.shop-manuscript.thankyou');
         });
 
         Route::get('/shop-manuscript/payment/paypal/{invoice_id}', 'ShopManuscriptController@paypalPayment')->name('front.shop-manuscript.paypal-payment'); // Paypal Payment
@@ -176,9 +179,9 @@ Route::group([
             ->name('front.goto-webinar.registration.email'); // GotoWebinar Registration through email
 
         Route::get('/vipps', 'VippsController@index');
-        Route::post('/vipps/payment', 'HomeController@paymentCallback');
+        Route::post('/vipps/payment', 'HomeController@paymentCallback')->name('vipps.payment');
         Route::post('/vipps/payment/v2/payments/{orderId}', 'HomeController@paymentCallback');
-        Route::get('/vipps/fallback', 'VippsController@fallback');
+        Route::get('/vipps/fallback', 'HomeController@vippsFallback')->name('vipps.fallback');
         Route::get('/vipps/payment/{orderId}/details', 'VippsController@getPaymentDetails');
 
         Route::get('/file/{hash}', 'HomeController@checkFileFromDB');
@@ -195,6 +198,7 @@ Route::group([
             Route::get('/{id}', 'CourseController@show')->name('front.course.show'); // Course Details
             Route::get('/{id}/checkout', 'ShopController@sveaCheckout')->name('front.course.checkout'); // Checkout
             Route::get('/{id}/fs_checkout', 'ShopController@checkout')->name('front.course.fs-checkout'); // Checkout
+            Route::get('/{id}/cancelled-order', 'ShopController@orderCancelled')->name('front.course.cancelled-order');
             Route::get('/{id}/checkout-svea', 'ShopController@sveaCheckout')->name('front.course.svea-checkout'); // Checkout
             Route::post('/{id}/checkout/process-order', 'ShopController@processOrder')->name('front.course.process_order'); // Place Order
             Route::get('/{id}/thank-you', 'CourseController@thankyou')->name('front.course.thank-you'); // Checkout

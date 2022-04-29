@@ -1864,6 +1864,28 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         $vippsRepository->paymentCallback($orderId, $request);
     }
 
+    public function vippsFallback( Request $request )
+    {
+        $expOrder = explode('-', $request->t);
+        $vippsOrder = $this->checkVippsOrderStatus($request->t);
+
+        // check for order status
+        if ($vippsOrder['data'] && $transactionHistory = $vippsOrder['data']->transactionLogHistory[0]
+                && $order = Order::find($expOrder[0])) {
+
+            $transactionHistory = $vippsOrder['data']->transactionLogHistory[0];
+            $route = $order->type === Order::MANUSCRIPT_TYPE ? 'front.shop-manuscript.cancelled-order' : 'front.course.cancelled-order';
+            // check if capture and operation is success
+            if ($transactionHistory->operation === 'CAPTURE' && $transactionHistory->operationSuccess) {
+                $route = $order->type === Order::MANUSCRIPT_TYPE ? 'front.shop-manuscript.thankyou' : 'front.shop.thankyou';
+            }
+
+            return redirect()->route($route, $order->item_id);
+        }
+
+        return redirect()->route('front.thank-you');
+    }
+
     /**
      * Check if the file is saved
      * @param $hash
@@ -2193,7 +2215,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
             return ApiResponse::error($result->getMessage(), $result->getData(), $result->getCode());
         }
 
-        $access_token = $result['data']->access_token;
+        /*$access_token = $result['data']->access_token;
         $url = "/ecomm/v2/payments/$order_id/details";
 
         $header = array();
@@ -2203,9 +2225,10 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         $body = [];
 
         $response = AdminHelpers::vippsAPI('GET', $url, $body, $header);
-        echo "<pre>";
-        print_r($response);
-        echo "</pre>";
+        */
+
+        $response = $repository->getPaymentDetails($order_id, $result['data']->access_token);
+        return $response;
 
     }
 
