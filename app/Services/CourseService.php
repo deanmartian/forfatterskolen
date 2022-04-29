@@ -19,6 +19,7 @@ use App\ShopManuscriptsTaken;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpWord\SimpleType\DocProtect;
 use Svea\WebPay\WebPay;
 
@@ -260,13 +261,15 @@ class CourseService {
     {
         $hasPaidCourse = false;
 
-        foreach( \Auth::user()->coursesTakenNotOld as $courseTaken ) {
-            if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
-                if ($courseTaken->package->course->is_free != 1) {
-                    $hasPaidCourse = true;
-                }
-                break;
-            endif;
+        if(Auth::user()) {
+            foreach( \Auth::user()->coursesTakenNotOld as $courseTaken ) {
+                if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) :
+                    if ($courseTaken->package->course->is_free != 1) {
+                        $hasPaidCourse = true;
+                    }
+                    break;
+                endif;
+            }
         }
 
         $today 			= \Carbon\Carbon::today()->format('Y-m-d');
