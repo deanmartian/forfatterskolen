@@ -28,8 +28,8 @@ class VippsRepository extends BaseRepository {
      */
     public function getAccessToken()
     {
-        $client_id = env('VIPPS_CLIENT_ID_TEST');
-        $client_secret = env('VIPPS_CLIENT_SECRET_TEST');
+        $client_id = env('VIPPS_CLIENT_ID');
+        $client_secret = env('VIPPS_CLIENT_SECRET');
 
         $url = '/accesstoken/get';
         $method = "POST";
@@ -70,7 +70,7 @@ class VippsRepository extends BaseRepository {
                 'callbackPrefix' => route('vipps.payment'),//url('/vipps/payment'),
                 'fallBack' => route('vipps.fallback',['t' => $data['orderId']]),//$fallbackUrl,//url('/thankyou'),
                 'paymentType' => 'eComm Regular Payment',
-                'merchantSerialNumber' => env('VIPPS_MSN_TEST')//AdminHelpers::generateHash(6)
+                'merchantSerialNumber' => env('VIPPS_MSN')//AdminHelpers::generateHash(6)
             ],
 
             'transaction' => [
@@ -173,7 +173,7 @@ class VippsRepository extends BaseRepository {
 
         $body = array(
             'merchantInfo' => [
-                'merchantSerialNumber' => env('VIPPS_MSN_TEST')
+                'merchantSerialNumber' => env('VIPPS_MSN')
             ],
 
             'transaction' => [
@@ -228,7 +228,7 @@ class VippsRepository extends BaseRepository {
                     $shopManuscriptService = new ShopManuscriptService();
                     $shopManuscriptService->createInvoiceFromOder($order);
                     $shopManuscriptTaken = $shopManuscriptService->addShopManuscriptToLearner($order);
-                    //$shopManuscriptService->notifyAdmin($order);
+                    $shopManuscriptService->notifyAdmin($order);
                     $shopManuscriptService->notifyUser($order, $shopManuscriptTaken);
                 }
 
@@ -238,7 +238,7 @@ class VippsRepository extends BaseRepository {
                     $courseService = new CourseService($course, $user);
                     $courseService->createInvoiceFromOder($order);
                     $courseTaken = $courseService->addCourseToLearner($order->user_id, $order->package_id);
-                    //$courseService->notifyAdmin($order->user_id, $order->package_id);
+                    $courseService->notifyAdmin($order->user_id, $order->package_id);
                     $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken);
                 }
 
@@ -248,8 +248,8 @@ class VippsRepository extends BaseRepository {
             }
 
             //AdminHelpers::send_email($subject,$from, $to, $message);
-            /*\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
-            \Mail::to('post@forfatterskolen.no')->queue(new SubjectBodyEmail($emailData));*/
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+            \Mail::to('post@forfatterskolen.no')->queue(new SubjectBodyEmail($emailData));
             \Mail::to('elybutabara@gmail.com')->queue(new SubjectBodyEmail($emailData));
         }
 
