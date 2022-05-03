@@ -612,6 +612,12 @@ class ShopController extends Controller
             $this->courseService->evaluateUser($request->email, $request->password, $request->first_name, $request->last_name, $addressData);
         }
 
+        $user = \Auth::user();
+        $user->checkoutLogs()->firstOrCreate([
+            'parent' => 'course',
+            'parent_id' => $course_id
+        ]);
+
         //return response()->json();
 
         return response()->json($this->courseService->processCheckout($request));
@@ -1918,6 +1924,14 @@ class ShopController extends Controller
 
             $order->is_processed = 1;
             $order->save();
+
+            CheckoutLog::updateOrCreate([
+                'user_id' => \auth()->id(),
+                'parent' => 'course',
+                'parent_id' => $order->package->course_id
+            ], [
+                'is_ordered' => true
+            ]);
         }
 
         // check if fiken invoice url is set
