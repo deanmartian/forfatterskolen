@@ -372,6 +372,8 @@
 										<td>
 											@if( $shopManuscriptTaken->status == 'Finished' )
 												<span class="label label-success">Finished</span>
+                                            @elseif( $shopManuscriptTaken->status == 'Pending' )
+                                                <span class="label label-info">Pending</span>
 											@elseif( $shopManuscriptTaken->status == 'Started' )
 												<span class="label label-primary">Started</span>
 											@elseif( $shopManuscriptTaken->status == 'Not started' )

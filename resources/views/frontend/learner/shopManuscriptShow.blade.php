@@ -67,24 +67,26 @@
 							{{ trans('site.learner.feedbacks-text') }}
 						</h3>
 						<div class="row margin-top">
-							@foreach($shopManuscriptTaken->feedbacks as $feedback)
-								<div class="col-sm-12">
-									<div class="panel panel-default">
-										<div class="panel-body">
-											{{--<strong>{{ trans('site.learner.files-text') }}:</strong>
-											@foreach( $feedback->filename as $filename )<br />
-											<a href="{{ $filename }}" target="_blank">{{ basename($filename) }}</a>
-											@endforeach--}}
-											<a href="{{ route('learner.shop-manuscript.download-feedback', [$shopManuscriptTaken->id, $feedback->id]) }}">
-												{{ trans('site.learner.download-feedback') }}
-											</a>
-											<br />
-											<strong>{{ trans('site.learner.notes-text') }}:</strong> {{ $feedback->notes }} <br />
-											<strong>{{ trans('site.learner.submitted-on') }}:</strong> {{ \App\Http\FrontendHelpers::formatDateTimeNor($feedback->created_at) }} <br />
+							@if($shopManuscriptTaken->status == 'Finished')
+								@foreach($shopManuscriptTaken->feedbacks as $feedback)
+									<div class="col-sm-12">
+										<div class="panel panel-default">
+											<div class="panel-body">
+												{{--<strong>{{ trans('site.learner.files-text') }}:</strong>
+                                                @foreach( $feedback->filename as $filename )<br />
+                                                <a href="{{ $filename }}" target="_blank">{{ basename($filename) }}</a>
+                                                @endforeach--}}
+												<a href="{{ route('learner.shop-manuscript.download-feedback', [$shopManuscriptTaken->id, $feedback->id]) }}">
+													{{ trans('site.learner.download-feedback') }}
+												</a>
+												<br />
+												<strong>{{ trans('site.learner.notes-text') }}:</strong> {{ $feedback->notes }} <br />
+												<strong>{{ trans('site.learner.submitted-on') }}:</strong> {{ \App\Http\FrontendHelpers::formatDateTimeNor($feedback->created_at) }} <br />
+											</div>
 										</div>
 									</div>
-								</div>
-							@endforeach
+								@endforeach
+							@endif
 						</div>
 						<hr />
 						<h3 class="font-barlow-semi-bold font-weight-normal">
