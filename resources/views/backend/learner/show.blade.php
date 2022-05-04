@@ -311,7 +311,7 @@
 													<table class="table table-bordered no-margin-bottom">
 														@foreach( $courseTaken->package->course->lessons as $lesson )
 															<tr>
-																<td><a href="{{ route('admin.lesson.edit', ['course_id' => $courseTaken->package->course->id, 'lesson_id' => $lesson->id]) }}">{{ $lesson->title }}</a></td>
+																<td><a href="{{ route('admin.lesson.edit', ['course_id' => $courseTaken->package->course->id, 'lesson' => $lesson->id]) }}">{{ $lesson->title }}</a></td>
 																<td>
 																	@if( FrontendHelpers::hasLessonAccess($courseTaken, $lesson) )
 																		<button class="btn btn-primary btn-xs defaultAllowAccessBtn" data-toggle="modal" data-target="#lessonDefaultAccessModal" data-action="{{ route('admin.course_taken.default_lesson_access', ['course_taken_id' => $courseTaken->id, 'lesson_id' => $lesson->id]) }}">{{ trans('site.default-access') }}</button>
@@ -372,6 +372,8 @@
 										<td>
 											@if( $shopManuscriptTaken->status == 'Finished' )
 												<span class="label label-success">Finished</span>
+                                            @elseif( $shopManuscriptTaken->status == 'Pending' )
+                                                <span class="label label-info">Pending</span>
 											@elseif( $shopManuscriptTaken->status == 'Started' )
 												<span class="label label-primary">Started</span>
 											@elseif( $shopManuscriptTaken->status == 'Not started' )

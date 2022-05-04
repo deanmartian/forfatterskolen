@@ -33,6 +33,10 @@
 										<span class="label label-success">
 											{{ trans('site.learner.finished') }}
 										</span>
+									@elseif( $shopManuscriptTaken->status == 'Pending' )
+										<span class="label label-info">
+											{{ trans('site.learner.pending') }}
+										</span>
 									@elseif( $shopManuscriptTaken->status == 'Started' )
 										<span class="label label-primary">
 											{{ trans('site.learner.started') }}

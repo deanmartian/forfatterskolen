@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Frontend;
 
+use App\CheckoutLog;
 use App\Editor;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Auth\LoginController;
@@ -151,6 +152,12 @@ class ShopManuscriptController extends Controller
             $courseService->evaluateUser($request->email, $request->password, $request->first_name, $request->last_name, $addressData);
         }
 
+        $user = \Auth::user();
+        $user->checkoutLogs()->firstOrCreate([
+            'parent' => 'shop-manuscript',
+            'parent_id' => $shop_manuscript_id
+        ]);
+
         return response()->json($shopManuscriptService->processCheckout($request));
     }
 
@@ -249,6 +256,14 @@ class ShopManuscriptController extends Controller
 
             $order->is_processed = 1;
             $order->save();
+
+            CheckoutLog::updateOrCreate([
+                'user_id' => \auth()->id(),
+                'parent' => 'shop-manuscript',
+                'parent_id' => $id
+            ], [
+                'is_ordered' => true
+            ]);
         }
 
         \Session::remove('vipps_checkout');

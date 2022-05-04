@@ -2322,7 +2322,9 @@ class LearnerController extends Controller
      */
     public function getUpgradeCourse($courseTakenId, $package_id)
     {
-        $courseTaken    = CoursesTaken::find($courseTakenId);
+        $courseTaken    = CoursesTaken::where('id', $courseTakenId)
+            ->where('user_id', Auth::user()->id)
+            ->first();
         if (!$courseTaken) {
             return redirect()->route('learner.upgrade');
         }
@@ -2711,7 +2713,9 @@ class LearnerController extends Controller
      */
     public function getUpgradeManuscript($shopManuscriptTakenId)
     {
-        $shopManuscriptTaken = ShopManuscriptsTaken::find($shopManuscriptTakenId);
+        $shopManuscriptTaken = ShopManuscriptsTaken::where('id',$shopManuscriptTakenId)
+            ->where('user_id', Auth::user()->id)
+            ->first();
         if ($shopManuscriptTaken && $shopManuscriptTaken->status == 'Not started') {
             $shopManuscriptId = $shopManuscriptTaken->shop_manuscript->id;
             $shopManuscriptUpgrades = ShopManuscriptUpgrade::where('shop_manuscript_id', $shopManuscriptId)->get();

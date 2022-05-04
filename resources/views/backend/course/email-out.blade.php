@@ -43,15 +43,23 @@
                                         @endif
                                     </td>
                                     <td>
+                                        <button class="btn btn-success btn-xs sendEmailBtn" data-toggle="modal"
+                                                data-target="#sendEmailModal"
+                                                data-action="{{
+                                                 route('admin.email-out.send-email',
+                                                  ['course_id' => $course->id, 'email_out' => $email->id])
+                                                 }}">
+                                            <i class="fa fa-paper-plane"></i>
+                                        </button>
                                         <button class="btn btn-info btn-xs editEmailBtn" data-toggle="modal"
                                         data-target="#emailModal" data-fields="{{ json_encode($email) }}"
-                                        data-action="{{ route('admin.email-out.update', ['course_id' => $course->id, 'id' => $email->id]) }}"
+                                        data-action="{{ route('admin.email-out.update', ['course_id' => $course->id, 'email_out' => $email->id]) }}"
                                         data-filename="{{ \App\Http\AdminHelpers::extractFileName($email->attachment) }}"
                                         data-fileloc="{{ asset($email->attachment) }}">
                                             <i class="fa fa-pencil"></i>
                                         </button>
                                         <button class="btn btn-danger btn-xs deleteEmailBtn" data-toggle="modal" data-target="#deleteEmailModal"
-                                        data-action="{{ route('admin.email-out.destroy', ['course_id' => $course->id, 'id' => $email->id]) }}">
+                                        data-action="{{ route('admin.email-out.destroy', ['course_id' => $course->id, 'email_out' => $email->id]) }}">
                                             <i class="fa fa-trash"></i>
                                         </button>
                                     </td>
@@ -65,6 +73,28 @@
 
         <div class="clearfix"></div>
     </div> <!-- end course-container -->
+
+    <!-- send email to learners-->
+    <div id="sendEmailModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Send Email</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        <p>Do you want to send email to learners?</p>
+                        <button type="submit" class="btn btn-success pull-right margin-top">
+                            {{ trans('site.send') }}
+                        </button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Remove Learner Modal -->
     <div id="emailModal" class="modal fade" role="dialog">
@@ -209,6 +239,13 @@
             });
 
             $("[name=for_free_course]").attr('checked', false);
+        });
+
+        $(".sendEmailBtn").click(function(){
+            let action = $(this).data('action');
+            let modal = $("#sendEmailModal");
+            let form = modal.find('form');
+            form.attr('action', action);
         });
 
         $(".editEmailBtn").click(function(){
