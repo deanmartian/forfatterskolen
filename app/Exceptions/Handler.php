@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -45,6 +46,10 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         //return response()->view('errors.500');
+        if ($exception instanceof QueryException) {
+            return response()->view('errors.500');
+        }
+
         return parent::render($request, $exception);
     }
 

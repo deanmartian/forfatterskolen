@@ -69,7 +69,7 @@
 											</td>
 											<td>
 												@if ($assignedManuscript->letter_to_editor)
-													<a href="{{ route('assignment.manuscript.download_letter', $assignedManuscript->id) }}">
+													<a href="{{ route('editor.assignment.manuscript.download_letter', $assignedManuscript->id) }}">
 														<i class="fa fa-download" aria-hidden="true"></i>
 													</a>&nbsp;
 													{{ basename($assignedManuscript->letter_to_editor) }}

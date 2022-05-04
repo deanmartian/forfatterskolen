@@ -317,6 +317,16 @@ class AssignmentController extends Controller
             'alert_type' => 'success']);
     }
 
+    public function updateSubmissionDate( $assignment_id, Request $request )
+    {
+        $assignment = Assignment::find($assignment_id);
+        $assignment->submission_date = $request->submission_date;
+        $assignment->save();
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Submission date updated.'),
+            'alert_type' => 'success', 'not-former-courses' => true]);
+    }
+
     public function replaceManuscript($id, Request $request)
     {
         $assignmentManuscript = AssignmentManuscript::find($id);

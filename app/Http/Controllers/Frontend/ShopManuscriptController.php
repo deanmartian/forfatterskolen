@@ -1,12 +1,15 @@
 <?php
 namespace App\Http\Controllers\Frontend;
 
+use App\CheckoutLog;
 use App\Editor;
 use App\Http\AdminHelpers;
+use App\Http\Controllers\Auth\LoginController;
 use App\Invoice;
 use App\Jobs\SveaUpdateOrderDetailsJob;
 use App\Mail\SubjectBodyEmail;
 use App\Order;
+use App\OrderShopManuscript;
 use App\Paypal;
 use App\Services\CourseService;
 use App\Services\ShopManuscriptService;
@@ -84,8 +87,9 @@ class ShopManuscriptController extends Controller
             ]);
         }
 
+        $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest( $request );
         $shopManuscript = ShopManuscript::find($shop_manuscript_id);
-        $word_count =  $shopManuscriptService->countManuscriptWord( $request );
+        $word_count =  $uploadedManuscript['word_count'];
         $word_to_deduct = $word_count * 0.02;
         $new_word_count = ceil($word_count - $word_to_deduct);
 
@@ -101,6 +105,10 @@ class ShopManuscriptController extends Controller
             ], 400);
         }
 
+        $request->merge([
+           'manuscript_file' => $uploadedManuscript['manuscript_file'],
+           'word_count' => $uploadedManuscript['word_count']
+        ]);
         return $request->all();
     }
 
@@ -144,7 +152,84 @@ class ShopManuscriptController extends Controller
             $courseService->evaluateUser($request->email, $request->password, $request->first_name, $request->last_name, $addressData);
         }
 
+        $user = \Auth::user();
+        $user->checkoutLogs()->firstOrCreate([
+            'parent' => 'shop-manuscript',
+            'parent_id' => $shop_manuscript_id
+        ]);
+
         return response()->json($shopManuscriptService->processCheckout($request));
+    }
+
+    public function vippsCheckout($shop_manuscript_id, Request $request, ShopManuscriptService $shopManuscriptService,
+        LoginController $loginController)
+    {
+        $validatedOrder = $this->validateOrder($shop_manuscript_id, $request, $shopManuscriptService);
+
+        if (is_array($validatedOrder)) {
+
+            $request->merge([
+                'item_type' => 'shop-manuscript',
+                'manuscript_file' => $validatedOrder['manuscript_file'],
+                'word_count' => $validatedOrder['word_count'],
+                'synopsis_file' => $shopManuscriptService->uploadSynopsis($request)
+            ]);
+            $data = $request->except('_token', 'synopsis', 'manuscript');
+
+            $checkoutDetails = collect($data);
+            \Session::put('vipps_checkout', $checkoutDetails);
+
+            return response()->json(['redirect_link' => $loginController->vippsLogin('checkout_state')]);
+            /*$vipps = \Session::get('vipps_checkout');
+            return response()->json(['redirect_link' => route('front.shop-manuscript.checkout.process-vipps',$vipps['shop_manuscript_id'])]);*/
+        }
+
+        return $validatedOrder;
+    }
+
+    public function processVipps(ShopManuscriptService $shopManuscriptService)
+    {
+        $vippsCheckout = \Session::get('vipps_checkout');
+        $request = new \Illuminate\Http\Request();
+        $request->replace($vippsCheckout->toArray());
+
+        $orderRecord = $shopManuscriptService->createOrder($request);
+
+        if (!$request->has('order_type') ||
+            ($request->has('order_type') && $request->order_type === Order::MANUSCRIPT_TYPE)) {
+
+            OrderShopManuscript::create([
+                'order_id'              => $orderRecord->id,
+                'genre'                 => $request->genre,
+                'file'                  => "/".$vippsCheckout['manuscript_file'],
+                'words'                 => $vippsCheckout['word_count'],
+                'description'           => $request->description,
+                'synopsis'              => $shopManuscriptService->uploadSynopsis($request),
+                'coaching_time_later'   => filter_var($request->coaching_time_later, FILTER_VALIDATE_BOOLEAN),
+                'send_to_email'         => filter_var($request->send_to_email, FILTER_VALIDATE_BOOLEAN)
+            ]);
+
+        }
+
+        $price = $orderRecord->price - $orderRecord->discount;
+        $user = Auth::user();
+
+        $vippsData = [
+            'amount' => $price * 100,
+            'orderId' => $orderRecord->id."-".$user->id,
+            'transactionText' => $orderRecord->item,
+            'is_ajax' => true,
+            'vipps_phone_number' => $user->address->vipps_phone_number,
+            'fallbackUrl' => url('/shop-manuscript/' . $orderRecord->item_id .'/thankyou')
+        ];
+
+        return redirect()->to($this->vippsInitiatePayment($vippsData));
+
+    }
+
+    public function orderCancelled($manuscript_id)
+    {
+        return view('frontend.shop-manuscript.cancelled-order', compact('manuscript_id'));
     }
 
     /**
@@ -171,7 +256,18 @@ class ShopManuscriptController extends Controller
 
             $order->is_processed = 1;
             $order->save();
+
+            CheckoutLog::updateOrCreate([
+                'user_id' => \auth()->id(),
+                'parent' => 'shop-manuscript',
+                'parent_id' => $id
+            ], [
+                'is_ordered' => true
+            ]);
         }
+
+        \Session::remove('vipps_checkout');
+
         return view('frontend.shop-manuscript.thankyou');
     }
 

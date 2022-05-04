@@ -14,7 +14,7 @@
  	<ul class="nav nav-tabs margin-top">
 	    <li @if( Request::input('tab') != 'sold' && Request::input('tab') != 'manuscripts') class="active" @endif><a href="?tab=all">{{ trans_choice('site.shop-manuscripts', 2) }}</a></li>
 	    <li @if( Request::input('tab') == 'sold' ) class="active" @endif><a href="?tab=sold">{{ trans('site.sold-shop-manuscripts') }}</a></li>
-		<li @if( Request::input('tab') == 'manuscripts' ) class="active" @endif><a href="?tab=manuscripts">{{ trans_choice('site.manuscripts', 2) }}</a></li>
+		{{--<li @if( Request::input('tab') == 'manuscripts' ) class="active" @endif><a href="?tab=manuscripts">{{ trans_choice('site.manuscripts', 2) }}</a></li>--}}
   	</ul>
 	<div class="tab-content">
 	  	<div class="tab-pane fade in active">

@@ -66,6 +66,7 @@ Route::group([
         Route::post('/coaching-timer/checkout/{plan}', 'HomeController@coachingTimerCheckout')->name('front.coaching-timer-checkout'); // Coaching Timer Page
         Route::post('/coaching-timer', 'HomeController@coachingTimer')->name('front.coaching-timer'); // Coaching Timer Page
         Route::post('coaching-timer/{plan}/place-order', 'HomeController@coachingTimerPlaceOrder')->name('front.coaching-timer-place-order'); // Coaching Timer Page
+        Route::get('/vipps-order-status/{orderId}', 'HomeController@checkVippsOrderStatus');
 
         Route::group([
             'prefix' => 'coaching-time'
@@ -122,9 +123,12 @@ Route::group([
         ], function() {
             Route::get('/{id}/checkout', 'ShopManuscriptController@checkout')->name('front.shop-manuscript.checkout'); // Checkout Shop Manuscript
             Route::post('/{id}/place_order', 'ShopManuscriptController@place_order')->name('front.shop-manuscript.place_order'); // Checkout Shop Manuscript
+            Route::get('/{id}/cancelled-order', 'ShopManuscriptController@orderCancelled')->name('front.shop-manuscript.cancelled-order'); // Checkout
             Route::post('/{id}/checkout/validate-order', 'ShopManuscriptController@validateOrder')->name('front.shop-manuscript.validate-order');
             Route::post('/{id}/checkout/validate-form', 'ShopManuscriptController@validateForm')->name('front.shop-manuscript.validate-form');
-            Route::get('/{id}/thankyou', 'ShopManuscriptController@thankyou');
+            Route::post('/{id}/checkout/vipps', 'ShopManuscriptController@vippsCheckout')->name('front.shop-manuscript.vipps');
+            Route::get('/{id}/checkout/process-vipps', 'ShopManuscriptController@processVipps')->name('front.shop-manuscript.checkout.process-vipps');
+            Route::get('/{id}/thankyou', 'ShopManuscriptController@thankyou')->name('front.shop-manuscript.thankyou');
         });
 
         Route::get('/shop-manuscript/payment/paypal/{invoice_id}', 'ShopManuscriptController@paypalPayment')->name('front.shop-manuscript.paypal-payment'); // Paypal Payment
@@ -171,9 +175,9 @@ Route::group([
             ->name('front.goto-webinar.registration.email'); // GotoWebinar Registration through email
 
         Route::get('/vipps', 'VippsController@index');
-        Route::post('/vipps/payment', 'HomeController@paymentCallback');
+        Route::post('/vipps/payment', 'HomeController@paymentCallback')->name('vipps.payment');
         Route::post('/vipps/payment/v2/payments/{orderId}', 'HomeController@paymentCallback');
-        Route::get('/vipps/fallback', 'VippsController@fallback');
+        Route::get('/vipps/fallback', 'HomeController@vippsFallback')->name('vipps.fallback');
         Route::get('/vipps/payment/{orderId}/details', 'VippsController@getPaymentDetails');
 
         Route::get('/file/{hash}', 'HomeController@checkFileFromDB');
@@ -190,6 +194,7 @@ Route::group([
             Route::get('/{id}', 'CourseController@show')->name('front.course.show'); // Course Details
             Route::get('/{id}/checkout', 'ShopController@sveaCheckout')->name('front.course.checkout'); // Checkout
             Route::get('/{id}/fs_checkout', 'ShopController@checkout')->name('front.course.fs-checkout'); // Checkout
+            Route::get('/{id}/cancelled-order', 'ShopController@orderCancelled')->name('front.course.cancelled-order');
             Route::get('/{id}/checkout-svea', 'ShopController@sveaCheckout')->name('front.course.svea-checkout'); // Checkout
             Route::post('/{id}/checkout/process-order', 'ShopController@processOrder')->name('front.course.process_order'); // Place Order
             Route::get('/{id}/thank-you', 'CourseController@thankyou')->name('front.course.thank-you'); // Checkout
@@ -314,6 +319,7 @@ Route::group([
         Route::get('/assignment', 'LearnerController@assignment')->name('learner.assignment'); // Assignments Page
         Route::post('assignment/{id}/replace_manuscript', 'LearnerController@replaceAssignmentManuscript')->name('learner.assignment.replace_manuscript');
         Route::post('assignment/{id}/delete_manuscript', 'LearnerController@deleteAssignmentManuscript')->name('learner.assignment.delete_manuscript');
+        Route::post('assignment/{id}/replace_letter', 'LearnerController@replaceAssignmentLetter')->name('learner.assignment.replace_letter');
         Route::get('/assignment/group/{id}', 'LearnerController@group_show')->name('learner.assignment.group.show'); // Assignment show Page
         Route::get('/assignment/manuscript/{id}', 'LearnerController@downloadAssignmentGroupManuscript')->name('learner.assignment.manuscript.download'); // Assignment show Page
         Route::get('/assignment/feedback/{id}/download', 'LearnerController@downloadAssignmentGroupFeedback')->name('learner.assignment.feedback.download'); // Download assignment feedback
@@ -741,6 +747,8 @@ Route::group([
         ]);
 
         // Email Out Route
+        Route::post('/course/{course_id}/email-out/{email_out}/send-email', 'EmailOutController@sendEmailToLearners')
+            ->name('admin.email-out.send-email');
         Route::resource('/course/{course_id}/email-out', 'EmailOutController', [
             'except' => 'show',
             'names' => [
@@ -1006,6 +1014,7 @@ Route::group([
         Route::post('generate_assignment_group/{id}', 'AssignmentController@generateGroup')->name('assignment.generate_assignment_group');
         Route::post('assignment/{id}/uploadManuscript', 'AssignmentController@uploadManuscript')->name('assignment.group.upload_manuscript');
         Route::post('assignment/{id}/add-on-for-learner', 'AssignmentController@addOnForLearner')->name('assignment.add-on-for-learner');
+        Route::post('assignment/{id}/update-submission-date', 'AssignmentController@updateSubmissionDate')->name('assignment.update-submission-date');
         Route::post('assignment_manuscript/{id}/delete', 'AssignmentController@deleteManuscript')->name('assignment.group.delete_manuscript');
         Route::post('assignment_manuscript/{id}/move', 'AssignmentController@moveManuscript')->name('assignment.group.move_manuscript');
         Route::post('assignment_manuscript/{id}/set_grade', 'AssignmentController@setGrade')->name('assignment.group.set_grade');
@@ -1616,6 +1625,7 @@ Route::group([
         Route::get('acceptShopManuscriptRequest/{shop_manuscript_taken_id}/{accept}/{request_id}', 'ShopManuscriptController@editorAcceptRequest')->name('editor.acceptShopManuscriptRequest');
         Route::post('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}/comment', 'LearnerController@shopManuscriptTakenShowComment')->name('editor.shop_manuscript_taken_comment');
         Route::post('/update-expected-finish/{type}/{id}', 'PageController@updateExpectedFinish')->name('editor.personal-assignment.update-expected-finish');
+        Route::get('assignment-manuscript/{id}/download-letter', 'AssignmentController@downloadManuscriptLetter')->name('editor.assignment.manuscript.download_letter');
 
     });
 

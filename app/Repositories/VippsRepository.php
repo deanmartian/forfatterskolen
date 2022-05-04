@@ -2,20 +2,26 @@
 
 namespace App\Repositories;
 
+use App\Course;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Http\AdminHelpers;
 use App\Invoice;
 use App\Mail\SubjectBodyEmail;
+use App\Order;
+use App\Services\CourseService;
+use App\Services\ShopManuscriptService;
 use App\Settings;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Log as Log;
 
 class VippsRepository extends BaseRepository {
 
     const PAYMENT_RESERVED = 'RESERVED';
     const PAYMENT_CANCELLED = 'CANCELLED';
+    const PAYMENT_REJECTED = 'REJECTED';
     /**
      * Get the access token
      * @return ApiException|array
@@ -61,8 +67,8 @@ class VippsRepository extends BaseRepository {
             ],
 
             'merchantInfo' => [
-                'callbackPrefix' => 'https://www.forfatterskolen.no/vipps/payment',//url('/vipps/payment'),
-                'fallBack' => $fallbackUrl,//url('/thankyou'),
+                'callbackPrefix' => route('vipps.payment'),//url('/vipps/payment'),
+                'fallBack' => route('vipps.fallback',['t' => $data['orderId']]),//$fallbackUrl,//url('/thankyou'),
                 'paymentType' => 'eComm Regular Payment',
                 'merchantSerialNumber' => env('VIPPS_MSN')//AdminHelpers::generateHash(6)
             ],
@@ -96,9 +102,26 @@ class VippsRepository extends BaseRepository {
     {
         $transactionInfo = $request['transactionInfo'];
 
+        Log::info("payment callback here");
+        Log::info(json_encode($transactionInfo));
+        Log::info(json_encode($request->all()));
         // check if the payment is done
         if ($transactionInfo['status'] == self::PAYMENT_RESERVED) {
             $this->capturePayment($orderId);
+        }
+
+        if ($transactionInfo['status'] == self::PAYMENT_REJECTED) {
+            Log::info("inside rejected here");
+            if (strpos($orderId, '-') !== false) {
+                Log::info("inside if");
+                $expOrder = explode('-', $orderId);
+                $order = Order::find($expOrder[0]);
+                if($order) {
+                    Log::info("inside if order");
+                    $route = $order->type === Order::MANUSCRIPT_TYPE ? 'front.shop-manuscript.checkout' : 'front.course.checkout';
+                    return redirect()->route($route, $order->item_id);
+                }
+            }
         }
     }
 
@@ -172,10 +195,10 @@ class VippsRepository extends BaseRepository {
         $data = $response['data'];
         $invoice = Invoice::where('invoice_number',$orderId)->first();
         $transactionInfo = $response['data']->transactionInfo;
-        $message = "<p>Payment Captured <br/><br> Invoice Number: ".$invoice->invoice_number." <br/> Amount:".$transactionInfo->amount." 
+        $message = "<p>Payment Captured <br/><br> Invoice Number: ".$orderId." <br/> Amount:".$transactionInfo->amount." 
 <br/> Transaction id: ".$transactionInfo->transactionId."</p>";
 
-        $subject = 'Payment Captured for Invoice #'.$invoice->invoice_number;
+        $subject = 'Payment Captured for Invoice #'.$orderId;
         $from = 'postmail@forfatterskolen.no';
         $to = 'support@forfatterskolen.no';
         $emailData['email_subject'] = $subject;
@@ -183,14 +206,46 @@ class VippsRepository extends BaseRepository {
         $emailData['from_name'] = NULL;
         $emailData['from_email'] = NULL;
         $emailData['attach_file'] = NULL;
+        Log::info("VIPPS order id " . $orderId);
         Log::info("VIPPS inside capture payment before if captured");
         // notify admin once the payment is captured
         if ($transactionInfo->status == 'Captured') {
             Log::info("VIPPS inside capture payment inside captured");
             Log::info(json_encode($emailData));
             // mark the invoice as paid
-            $invoice->fiken_is_paid = 1;
-            $invoice->save();
+            if ($invoice) {
+                $invoice->fiken_is_paid = 1;
+                $invoice->save();
+            } else {
+                $expOrderId = explode('-', $orderId);
+                $order_id = $expOrderId[0];
+                $user_id = $expOrderId[1];
+                Log::info("VIPPS order id = " . $order_id . " and user id = " . $user_id);
+
+                $order = Order::find($order_id);
+                // add shop manuscript to user
+                if (!$order->is_processed && $order->type === Order::MANUSCRIPT_TYPE) {
+                    $shopManuscriptService = new ShopManuscriptService();
+                    $shopManuscriptService->createInvoiceFromOder($order);
+                    $shopManuscriptTaken = $shopManuscriptService->addShopManuscriptToLearner($order);
+                    $shopManuscriptService->notifyAdmin($order);
+                    $shopManuscriptService->notifyUser($order, $shopManuscriptTaken);
+                }
+
+                if (!$order->is_processed && $order->type === Order::COURSE_TYPE) {
+                    $course = new Course();
+                    $user = new User();
+                    $courseService = new CourseService($course, $user);
+                    $courseService->createInvoiceFromOder($order);
+                    $courseTaken = $courseService->addCourseToLearner($order->user_id, $order->package_id);
+                    $courseService->notifyAdmin($order->user_id, $order->package_id);
+                    $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken);
+                }
+
+                $order->is_processed = 1;
+                $order->save();
+
+            }
 
             //AdminHelpers::send_email($subject,$from, $to, $message);
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));

@@ -2,6 +2,7 @@
 namespace App\Http;
 use App\Invoice;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 set_time_limit(300);
 
@@ -65,7 +66,9 @@ class FikenInvoice
 
 	public function create_invoice($post_fields)
 	{
+	    Log::info("inside create invoice");
 		$customer = $this->customer($post_fields);
+		Log::info("after getting customer");
 
 		// if an issue date is set and not empty then use it else use today
         $fields = [
@@ -88,6 +91,7 @@ class FikenInvoice
         ];
 
         $field_string = json_encode($fields, true);
+        Log::info($field_string);
         $ch = curl_init($this->fiken_create_invoice_service);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -95,9 +99,10 @@ class FikenInvoice
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
         curl_setopt($ch, CURLOPT_HEADER, 1);
         $data = curl_exec($ch);
-
+        Log::info(\GuzzleHttp\json_encode($data));
 		// get the http code response
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        Log::info("http code = " .$http_code);
         if (!in_array($http_code, [200, 201])) { // 200 - get success, 201 - post success
             abort($http_code); // display error page instead of the Whoops page
         }

@@ -78,7 +78,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('courseexpirationreminder:command')
             ->dailyAt('08:30');
         $schedule->command('checkexpiredcourse:command')
-            ->dailyAt('07:30');
+            ->dailyAt('08:30');
         $schedule->command('autorenewreminder:command')
             ->dailyAt('07:00');
         $schedule->command('checksveaorder:command')

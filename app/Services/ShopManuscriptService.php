@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Address;
 use App\Http\AdminHelpers;
+use App\Http\FikenInvoice;
 use App\Http\FrontendHelpers;
 use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
@@ -11,45 +12,70 @@ use App\OrderShopManuscript;
 use App\ShopManuscript;
 use App\ShopManuscriptsTaken;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ShopManuscriptService {
 
-    /**
-     * @param Request $request
-     * @return int
-     */
-    public function countManuscriptWord( Request $request )
+    public function uploadManuscriptTest( Request $request )
     {
         $word_count = 0;
+        $filepath = '';
         if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) :
             $extension = pathinfo($_FILES['manuscript']['name'],PATHINFO_EXTENSION);
 
             $time = time();
             $destinationPath = 'storage/manuscript-tests/'; // upload path
             $fileName = $time.'.'.$extension; // rename document
-            $filePath = $destinationPath.$fileName;
+            $filepath = $destinationPath.$fileName;
             $request->manuscript->move($destinationPath, $fileName);
-
             if($extension == "pdf") :
-                $pdf  =  new \PdfToText ( $filePath ) ;
+                $pdf  =  new \PdfToText ( $destinationPath.$fileName ) ;
                 $pdf_content = $pdf->Text;
                 $word_count = FrontendHelpers::get_num_of_words($pdf_content);
             elseif($extension == "docx") :
-                $docObj = new \Docx2Text($filePath);
+                $docObj = new \Docx2Text($destinationPath.$fileName);
                 $docText= $docObj->convertToText();
                 $word_count = FrontendHelpers::get_num_of_words($docText);
             elseif($extension == "doc") :
-                $docText = FrontendHelpers::readWord($filePath);
+                $docText = FrontendHelpers::readWord($destinationPath.$fileName);
                 $word_count = FrontendHelpers::get_num_of_words($docText);
             elseif($extension == "odt") :
-                $doc = odt2text($filePath);
+                $doc = odt2text($destinationPath.$fileName);
                 $word_count = FrontendHelpers::get_num_of_words($doc);
             endif;
             $word_count = FrontendHelpers::wordCountByMargin((int) $word_count);
+            $word_to_deduct = $word_count * 0.02;
+            $word_count = ceil($word_count - $word_to_deduct);
         endif;
 
-        return $word_count;
+        return [
+            'manuscript_file' => $filepath,
+            'word_count' => $word_count
+        ];
+
+    }
+
+    public function uploadSynopsis( Request $request )
+    {
+        $extensions = ['pdf', 'doc' ,'docx', 'odt'];
+        $synopsis = NULL;
+        if ($request->hasFile('synopsis') && $request->file('synopsis')->isValid()) :
+            $extension = pathinfo($_FILES['synopsis']['name'],PATHINFO_EXTENSION);
+
+            if( !in_array($extension, $extensions) ) :
+                return redirect()->back();
+            endif;
+
+            $time = time();
+            $destinationPath = 'storage/shop-manuscripts-synopsis/';
+            $fileName = $time.'.'.$extension; // rename document
+            $request->synopsis->move($destinationPath, $fileName);
+            $synopsis = '/'.$destinationPath.$fileName;
+        endif;
+
+        return $synopsis;
     }
 
     /**
@@ -222,7 +248,7 @@ class ShopManuscriptService {
     {
 
         $orderType = Order::MANUSCRIPT_TYPE;
-        $discount = $request->discount;
+        $discount = $request->has('totalDiscount') ? $request->totalDiscount : $request->discount;
         if ($request->has('order_type')) {
             $orderType = $request->order_type;
 
@@ -320,12 +346,19 @@ class ShopManuscriptService {
     public function addShopManuscriptToLearner( $order )
     {
         $shopManuscriptOrder = $order->shopManuscriptOrder;
+        $file = $shopManuscriptOrder->file;
+        if (strpos($shopManuscriptOrder->file, 'manuscript-tests') !== false) {
+            $destinationPath = '/storage/shop-manuscripts/'. basename($file);
+            \File::copy(public_path($file), public_path($destinationPath));
+            $file = $destinationPath;
+        }
+
         $shopManuscriptTaken                        = new ShopManuscriptsTaken();
         $shopManuscriptTaken->user_id               = $order->user_id;
         $shopManuscriptTaken->genre                 = $shopManuscriptOrder->genre;
         $shopManuscriptTaken->description           = $shopManuscriptOrder->description;
         $shopManuscriptTaken->shop_manuscript_id    = $order->item_id;
-        $shopManuscriptTaken->file                  = $shopManuscriptOrder->file;
+        $shopManuscriptTaken->file                  = $file;
         $shopManuscriptTaken->words                 = $shopManuscriptOrder->words;
         $shopManuscriptTaken->synopsis              = $shopManuscriptOrder->synopsis;
         $shopManuscriptTaken->is_active             = false;
@@ -381,5 +414,41 @@ class ShopManuscriptService {
 
         dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
             $emailTemplate->from_email, null, null, 'shop-manuscripts-taken', $shopManuscriptTaken->id));
+    }
+
+    public function createInvoiceFromOder( $order )
+    {
+        Log::info('inside createInvoiceFromOder');
+        $user = $order->user;
+        $price = $order->price - $order->discount;
+        $shopManuscript = ShopManuscript::find($order->item_id);
+        $dueDate = date("Y-m-d");
+        $dueDate = Carbon::parse($dueDate);
+        $dueDate->addDays($shopManuscript->full_price_due_date);
+        $dueDate = $dueDate->format('Y-m-d');
+        $comment = '(Manuskript: ' . $shopManuscript->title . ', ';
+        $comment .= 'Betalingsmodus: Vipps, ';
+        $comment .= 'Betalingsplan: Hele beløpet)';
+
+        $invoice_fields = [
+            'user_id' => $user->id,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'netAmount' => $price * 100,
+            'dueDate' => $dueDate,
+            'description' => 'Kursordrefaktura',
+            'productID' => $shopManuscript->fiken_product,
+            'email' => $user->email,
+            'telephone' => $user->address->phone,
+            'address' => $user->address->street,
+            'postalPlace' => $user->address->city,
+            'postalCode' => $user->address->zip,
+            'comment' => $comment,
+            'payment_mode'  => 'Vipps',
+        ];
+        Log::info(json_encode($invoice_fields));
+        $invoice = new FikenInvoice();
+        $invoice->create_invoice($invoice_fields);
+        Log::info("after create invoice");
     }
 }

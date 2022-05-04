@@ -372,6 +372,8 @@
 										<td>
 											@if( $shopManuscriptTaken->status == 'Finished' )
 												<span class="label label-success">Finished</span>
+                                            @elseif( $shopManuscriptTaken->status == 'Pending' )
+                                                <span class="label label-info">Pending</span>
 											@elseif( $shopManuscriptTaken->status == 'Started' )
 												<span class="label label-primary">Started</span>
 											@elseif( $shopManuscriptTaken->status == 'Not started' )
@@ -951,6 +953,7 @@
 						<thead>
 						<tr>
 							<th>{{ trans_choice('site.assignments', 1) }}</th>
+							<th>{{ trans('site.submission-date') }}</th>
 							<th>{{ trans_choice('site.courses', 1) }}</th>
 							<th>Editor</th>
 							<th>{{ trans_choice('site.manuscripts', 1) }}</th>
@@ -968,6 +971,16 @@
 											[$assignment->parent_id, $assignment->id]) }}">
 											{{ $assignment->title }}
 										</a>
+									</td>
+									<td>
+										{{ $assignment->submission_date }}
+										<button class="btn btn-primary btn-xs editSubmissionDateBtn" data-toggle="modal"
+												data-target="#editSubmissionDateModal"
+												data-action="{{ route('assignment.update-submission-date', $assignment->id) }}"
+												data-submission_date="{{ $assignment->submission_date
+												? strftime('%Y-%m-%dT%H:%M:%S', strtotime($assignment->submission_date)) : NULL }}">
+											<i class="fa fa-edit"></i> Edit
+										</button>
 									</td>
 									<td>
 										@if($assignment->course)
@@ -2902,6 +2915,29 @@
 	</div>
 </div>
 
+<div id="editSubmissionDateModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Edit Submission Date</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans('site.submission-date') }}</label>
+						<input type="datetime-local" name="submission_date" class="form-control" required>
+					</div>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="assignEditorModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -4116,6 +4152,14 @@
         modal.find('p').text(notes);
 
     });
+
+    $(".editSubmissionDateBtn").click(function() {
+        let submission_date = $(this).data('submission_date');
+        let modal = $('#editSubmissionDateModal');
+        let action = $(this).data('action');
+        modal.find('form').attr('action', action);
+        modal.find('[name=submission_date]').val(submission_date);
+	});
 
 	function updateOtherServiceFields(type) {
 	    let modal = $("#addOtherServiceModal");

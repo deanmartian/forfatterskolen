@@ -36,10 +36,10 @@ return [
     ],
 
     'facebook' => [
-        'client_id_new' => '3002661156716042',
-        'client_secret_new' => '4c286c6c840db1d5304e4acccf2c5227',
-        'client_id' => '300010277156315',
-        'client_secret' => '39c7964cecb16b346c8df0ae2e21bcd4',
+        'client_id' => '3002661156716042',
+        'client_secret' => '4c286c6c840db1d5304e4acccf2c5227',
+        'client_id_old' => '300010277156315',
+        'client_secret_old' => '39c7964cecb16b346c8df0ae2e21bcd4',
         'redirect' => 'https://www.forfatterskolen.no/auth/login/facebook/callback',
     ],
 
@@ -106,8 +106,9 @@ return [
         'client_secret' => env('VIPPS_CLIENT_SECRET'),
         'client_id_test' => env('VIPPS_CLIENT_ID_TEST'),
         'client_secret_test' => env('VIPPS_CLIENT_SECRET_TEST'),
-        'login_scope' => 'openid name email address phoneNumber nin birthDate accountNumbers',
-        'login_redirect_uri' => 'https://www.forfatterskolen.no/auth/vipps-login-redirect',
+        'login_scope' => 'name email address phoneNumber birthDate',
+        'login_scope_dev' => 'openid name email address phoneNumber nin birthDate accountNumbers',
+        'login_redirect_uri' => 'https://dev.forfatterskolen.no/auth/vipps-login-redirect',
         'login_auth_link' => 'https://api.vipps.no/access-management-1.0/access/oauth2/auth',
         'login_token_link' => 'https://api.vipps.no/access-management-1.0/access/oauth2/token',
         'login_user_info_link' => 'https://api.vipps.no/vipps-userinfo-api/userinfo'

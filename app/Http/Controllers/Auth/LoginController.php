@@ -543,7 +543,15 @@ class LoginController extends Controller
 
         if ($state === 'checkout_state') {
             $vipps = \Session::get('vipps_checkout');
-            return redirect()->route('front.course.checkout.process-vipps',$vipps['course_id']);
+
+            if ($vipps['item_type'] === 'course') {
+                return redirect()->route('front.course.checkout.process-vipps',$vipps['course_id']);
+            }
+
+            if ($vipps['item_type'] === 'shop-manuscript') {
+                $vipps = \Session::get('vipps_checkout');
+                return redirect()->route('front.shop-manuscript.checkout.process-vipps',$vipps['shop_manuscript_id']);
+            }
         }
 
         return redirect(route('learner.dashboard'));

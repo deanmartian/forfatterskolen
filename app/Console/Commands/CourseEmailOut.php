@@ -50,10 +50,15 @@ class CourseEmailOut extends Command
         $today = Carbon::today()->format('Y-m-d');
         CronLog::create(['activity' => 'CourseEmailOut CRON running.']);
         $emailOutList = EmailOut::where('for_free_course', 0)->whereDate('delay', '=', $today)->get();
+
         foreach($emailOutList as $emailOut) {
             $packages = $emailOut->allowed_package ? json_decode($emailOut->allowed_package) :
                 $emailOut->course->packages->pluck('id')->toArray();
+            $emailRecipients = $emailOut->recipients->pluck('user_id')->toArray();
+
             $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
+                ->whereNull('renewed_at')
+                ->whereNotIn('user_id', $emailRecipients)
                 ->get();
 
             $emailAttachment = EmailAttachment::where('hash', $emailOut->attachment_hash)->first();
@@ -104,6 +109,10 @@ class CourseEmailOut extends Command
                 //\Mail::to($toMail)->queue(new SubjectBodyEmail($emailData));
                 dispatch(new AddMailToQueueJob($toMail, $emailOut->subject, $message.$attachmentText,
                     $emailOut->from_email, $emailOut->from_name, null, 'courses-taken', $courseTaken->id));
+
+                $emailOut->recipients()->updateOrCreate([
+                    'user_id' => $user->id
+                ]);
 
                 CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$toMail]);
             }
@@ -114,11 +123,15 @@ class CourseEmailOut extends Command
             $emailDate = Carbon::now()->subDays($emailOut->delay)->format('Y-m-d');
             $packages = $emailOut->allowed_package ? json_decode($emailOut->allowed_package) :
                 $emailOut->course->packages->pluck('id')->toArray();
+            $emailRecipients = $emailOut->recipients->pluck('user_id')->toArray();
+
             $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
                 ->where(function($query) use ($emailDate) {
                     $query->whereDate('started_at', '=', $emailDate);
                     $query->orWhereDate('start_date', '=', $emailDate);
                 })
+                ->whereNull('renewed_at')
+                ->whereNotIn('user_id', $emailRecipients)
                 ->get();
 
             $emailAttachment = EmailAttachment::where('hash', $emailOut->attachment_hash)->first();
@@ -169,6 +182,11 @@ class CourseEmailOut extends Command
                 //\Mail::to($toMail)->queue(new SubjectBodyEmail($emailData));
                 dispatch(new AddMailToQueueJob($toMail, $emailOut->subject, $message.$attachmentText,
                     $emailOut->from_email, $emailOut->from_name, null, 'courses-taken', $courseTaken->id));
+
+                $emailOut->recipients()->updateOrCreate([
+                    'user_id' => $user->id
+                ]);
+
                 CronLog::create(['activity' => 'CourseEmailOut added to email queue '.$toMail]);
             }
         }
