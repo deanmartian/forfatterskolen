@@ -753,7 +753,9 @@ Route::group([
         ]);
 
         // Email Out Route
-        Route::resource('/course/{id}/email-out', 'EmailOutController', [
+        Route::post('/course/{course_id}/email-out/{email_out}/send-email', 'EmailOutController@sendEmailToLearners')
+            ->name('admin.email-out.send-email');
+        Route::resource('/course/{course_id}/email-out', 'EmailOutController', [
             'except' => 'show',
             'names' => [
                 'create' => 'admin.email-out.create',

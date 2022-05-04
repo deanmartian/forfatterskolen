@@ -25,4 +25,9 @@ class EmailOut extends Model
     {
         return $this->belongsTo('App\Course');
     }
+
+    public function recipients()
+    {
+        return $this->hasMany('App\EmailOutRecipient');
+    }
 }
