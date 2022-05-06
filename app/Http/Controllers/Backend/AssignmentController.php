@@ -6,7 +6,9 @@ use App\AssignmentFeedbackNoGroup;
 use App\AssignmentTemplate;
 use App\CoursesTaken;
 use App\DelayedEmail;
+use App\Exports\AssignmentEmailListExport;
 use App\Exports\AssignmentLearnersExport;
+use App\Exports\GenericExport;
 use App\Helpers\DocumentParser;
 use App\Helpers\Html2Text;
 use App\Helpers\PdfParser;
@@ -488,15 +490,15 @@ class AssignmentController extends Controller
             foreach ($manuscripts as $manuscript) {
                 $emailList[] = [$manuscript->user->email];
             }
-
-            $excel->create($assignment->title.' Emails', function($excel) use ($emailList) {
+            return $excel->download(new AssignmentEmailListExport($emailList),$assignment->title.' Emails.xlsx');
+            /*$excel->create($assignment->title.' Emails', function($excel) use ($emailList) {
 
                 // Build the spreadsheet, passing in the payments array
                 $excel->sheet('sheet1', function($sheet) use ($emailList) {
                     // prevent inserting an empty first row
                     $sheet->fromArray($emailList, null, 'A1', false, false);
                 });
-            })->download('xlsx');
+            })->download('xlsx');*/
         }
 
         return redirect()->back();
@@ -913,7 +915,8 @@ class AssignmentController extends Controller
             $excel              = \App::make('excel');
             $manuscripts        = $assignment->manuscripts;
             $manuscriptList    = [];
-            $manuscriptList[]  = ['learner id', 'genre', 'where in manu']; // first row in excel
+            //$manuscriptList[]  = ['learner id', 'genre', 'where in manu']; // first row in excel
+            $headers = ['learner id', 'genre', 'where in manu'];
 
             // loop all the learners
             foreach ($manuscripts as $manuscript) {
@@ -921,14 +924,15 @@ class AssignmentController extends Controller
                     AdminHelpers::manuscriptType($manuscript->manu_type)];
             }
 
-            $excel->create($assignment->title.' Learners', function($excel) use ($manuscriptList) {
+            return $excel->download(new GenericExport($manuscriptList, $headers), $assignment->title.' Learners.xlsx');
+            /*$excel->create($assignment->title.' Learners', function($excel) use ($manuscriptList) {
 
                 // Build the spreadsheet, passing in the payments array
                 $excel->sheet('sheet1', function($sheet) use ($manuscriptList) {
                     // prevent inserting an empty first row
                     $sheet->fromArray($manuscriptList, null, 'A1', false, false);
                 });
-            })->download('xlsx');
+            })->download('xlsx');*/
         }
 
         return redirect()->back();
