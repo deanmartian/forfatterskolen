@@ -86,12 +86,12 @@
 			@if( $feedbacks->count() > 0 )
 			<br />
 			<h3>{{ trans_choice('site.feedbacks', 2) }}
-				<a href="{{ route('assignment.group.download_all', ['course_id' => $course->id, 'assignment_id' => $assignment->id, 'id' => $group->id]) }}" class="pull-right btn btn-primary btn-sm">
+				<a href="{{ route('assignment.group.download_all', ['course_id' => $course->id, 'assignment_id' => $assignment->id, 'group_id' => $group->id]) }}" class="pull-right btn btn-primary btn-sm">
 					{{ trans('site.download-all') }}
 				</a>
 				<button type="button" class="pull-right btn btn-info btn-sm margin-right-5 updateGroupAvailabilityBtn"
 						data-toggle="modal" data-target="#updateGroupAvailabilityModal" data-availability="{{ $group->availability }}"
-				data-action="{{ route('assignment.group.feedback-availability', ['course_id' => $course->id, 'assignment_id' => $assignment->id, 'id' => $group->id]) }}">
+				data-action="{{ route('assignment.group.feedback-availability', ['course_id' => $course->id, 'assignment_id' => $assignment->id, 'group_id' => $group->id]) }}">
 					{{ trans('site.availability') }}
 				</button>
 			</h3>

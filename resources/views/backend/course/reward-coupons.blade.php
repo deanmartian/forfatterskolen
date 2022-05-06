@@ -113,7 +113,7 @@
                 </div>
 
                 <div class="modal-body">
-                    <form method="POST" action="{{route('admin.reward-coupons.multiple-store', ['id' => $course->id])}}" onsubmit="disableSubmit(this)">
+                    <form method="POST" action="{{route('admin.reward-coupons.multiple-store', ['course_id' => $course->id])}}" onsubmit="disableSubmit(this)">
                         {{csrf_field()}}
 
                         <div class="form-group">
