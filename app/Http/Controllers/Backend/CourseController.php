@@ -7,6 +7,7 @@ use App\CoursesTaken;
 use App\EmailAttachment;
 use App\EmailOutLog;
 use App\Exports\CourseLearnerExport;
+use App\Exports\GenericExport;
 use App\Http\Controllers\Frontend\ShopController;
 use App\Http\FrontendHelpers;
 use App\Jobs\AddMailToQueueJob;
@@ -709,21 +710,21 @@ class CourseController extends Controller
                 ->get();
 
             $learnerList    = [];
-            $learnerList[]  = ['id', 'learner', 'email']; // first row in excel
+            $headers  = ['id', 'learner', 'email']; // first row in excel
 
             // loop all the learners that have the course (included from other course)
             foreach ($learnerWithCourse as $learner) {
                 $learnerList[] = [$learner->user->id, $learner->user->full_name, $learner->user->email];
             }
-
-            $excel->create($course->title.' Active Learners', function($excel) use ($learnerList) {
+            return $excel->download(new GenericExport($learnerList, $headers), $course->title.' Active Learners.xlsx');
+            /*$excel->create($course->title.' Active Learners', function($excel) use ($learnerList) {
 
                 // Build the spreadsheet, passing in the payments array
                 $excel->sheet('sheet1', function($sheet) use ($learnerList) {
                     // prevent inserting an empty first row
                     $sheet->fromArray($learnerList, null, 'A1', false, false);
                 });
-            })->download('xlsx');
+            })->download('xlsx');*/
         }
 
         return redirect()->back();

@@ -5,6 +5,7 @@ use App\Assignment;
 use App\AssignmentManuscript;
 use App\CoursesTaken;
 use App\CustomAction;
+use App\Exports\GenericExport;
 use App\Http\AdminHelpers;
 use App\Http\FikenInvoice;
 use App\PageMeta;
@@ -37,7 +38,7 @@ class AdminController extends Controller
         // middleware to check if admin have access to this page
         $this->middleware('checkPageAccess:11');
     }
-   
+
     public function index()
     {
         $admins = User::admins()->withTrashed()->orderBy('created_at', 'desc')->paginate(20);
@@ -45,7 +46,7 @@ class AdminController extends Controller
         $pageMetas = PageMeta::all();
         $staffs = Staff::all();
         $editorAssignmentPrices = EditorAssignmentPrices::all();
-        
+
         return view('backend.admin.index', compact('admins','customActions', 'pageMetas', 'staffs', 'editorAssignmentPrices'));
     }
 
@@ -98,7 +99,7 @@ class AdminController extends Controller
         $admin->first_name = $request->first_name;
         $admin->last_name = $request->last_name;
         $admin->email = $request->email;
-        
+
         if($request->has('minimal_access')){
             $admin->minimal_access = 1;
         }
@@ -164,12 +165,14 @@ class AdminController extends Controller
             }
         }
 
+        $headers = ['name', 'email', 'end date'];
         $excel = \App::make('excel');
-        $excel->create('Nearly Expired List', function($excel) use($userList) {
+        return $excel->download(new GenericExport($userList, $headers), 'Nearly Expired List.xlsx');
+        /*$excel->create('Nearly Expired List', function($excel) use($userList) {
             $excel->sheet('Sheetname', function($sheet) use($userList) {
                 $sheet->fromArray($userList);
             });
-        })->export('xls');
+        })->export('xls');*/
 
     }
 

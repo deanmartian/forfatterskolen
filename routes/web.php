@@ -898,6 +898,10 @@ Route::group([
         Route::post('/lesson-content/{id}/delete-lesson-content', 'LessonController@deleteLessonContent')->name('admin.lesson.delete_lesson_content'); // Save lesson order
 
         // Lessons Route
+        Route::get('/admin/export_nearly_expired_courses', 'AdminController@exportNearlyExpiredCourses')->name('admin.admin.export_nearly_expired_courses');
+        Route::post('/admin/{id}/page-access', 'AdminController@pageAccess')->name('admin.admin.page-access');
+        Route::post('/admin-status', 'AdminController@adminStatus')->name('admin.admin.status');
+        Route::get('/admin/clear/cache', 'AdminController@clearCache')->name('admin.clear.cache');
         Route::resource('/admin', 'AdminController', [
             'except' => ['create', 'edit'],
             'names' => [
@@ -908,10 +912,6 @@ Route::group([
                 'destroy' => 'admin.admin.destroy',
             ],
         ]);
-        Route::get('/admin/export_nearly_expired_courses', 'AdminController@exportNearlyExpiredCourses')->name('admin.admin.export_nearly_expired_courses');
-        Route::post('/admin/{id}/page-access', 'AdminController@pageAccess')->name('admin.admin.page-access');
-        Route::post('/admin-status', 'AdminController@adminStatus')->name('admin.admin.status');
-        Route::get('/admin/clear/cache', 'AdminController@clearCache')->name('admin.clear.cache');
         Route::post('/save-staff/{id?}', 'AdminController@saveStaff')->name('admin.staff.save');
         Route::delete('/delete-staff/{id?}', 'AdminController@deleteStaff')->name('admin.staff.delete');
         Route::get('/fiken-redirect', 'AdminController@fikenRedirect')->name('admin.fiken.redirect');
