@@ -31,7 +31,7 @@
 					<tbody>
 						@foreach( $course->assignments as $assignment )
 						<tr>
-							<td><a href="{{ route('admin.assignment.show', ['course_id' => $course->id, 'id' => $assignment->id]) }}">{{ $assignment->title }}</a></td>
+							<td><a href="{{ route('admin.assignment.show', ['course_id' => $course->id, 'assignment' => $assignment->id]) }}">{{ $assignment->title }}</a></td>
 							<td>{{ $assignment->manuscripts->count() }}</td>
 						</tr>
 						@endforeach

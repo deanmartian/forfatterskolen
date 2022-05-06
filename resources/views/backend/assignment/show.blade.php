@@ -103,13 +103,15 @@
 							<td> {{ $manuscript->words }} </td>
 							<td> {{ $manuscript->text_number }} </td>
 							<td>
-								<a href="{{ route('admin.assignment-group.show',
-								['course_id' => $course->id,
-								'assignment_id' => $assignment->id,
-								'id' => \App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['id']]
-								) }}">
-									{{ \App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['title'] }}
-								</a>
+								@if (\App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['id'])
+									<a href="{{ route('admin.assignment-group.show',
+									['course_id' => $course->id,
+									'assignment_id' => $assignment->id,
+									'group' => \App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['id']]
+									) }}">
+										{{ \App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['title'] }}
+									</a>
+								@endif
 							</td>
 							<td>
 								<a href="#" data-toggle="modal" data-target="#updateJoinGroupModal"
@@ -378,7 +380,7 @@
 					<tbody>
 						@foreach( $assignment->groups as $group )
 						<tr>
-							<td><a href="{{ route('admin.assignment-group.show', ['course_id' => $course->id, 'assignment_id' => $assignment->id, 'id' => $group->id]) }}">{{ $group->title }}</a></td>
+							<td><a href="{{ route('admin.assignment-group.show', ['course_id' => $course->id, 'assignment_id' => $assignment->id, 'group' => $group->id]) }}">{{ $group->title }}</a></td>
 							<td>{{ $group->learners->count() }}</td>
 						</tr>
 						@endforeach
@@ -559,7 +561,7 @@
 		    <h4 class="modal-title">{{ trans('site.create-group') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="{{route('admin.assignment-group.store', ['course_id' => $course->id, 'id' => $assignment->id])}}">
+		    <form method="POST" action="{{route('admin.assignment-group.store', ['course_id' => $course->id, 'assignment_id' => $assignment->id])}}">
 		      {{ csrf_field() }}
 		      <div class="form-group">
 		      	<label>{{ trans('site.group-name') }}</label>
@@ -621,7 +623,7 @@
 		    <h4 class="modal-title">{{ trans('site.delete-assignment') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="{{route('admin.assignment.destroy', ['course_id' => $course->id, 'id' => $assignment->id])}}">
+		    <form method="POST" action="{{route('admin.assignment.destroy', ['course_id' => $course->id, 'assignment' => $assignment->id])}}">
 		      {{ csrf_field() }}
 		      {{ method_field('DELETE') }}
 				{{ trans('site.delete-assignment-question') }}
@@ -642,7 +644,7 @@
 		    <h4 class="modal-title">{{ trans('site.edit-assignment') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="{{route('admin.assignment.update', ['course_id' => $course->id, 'id' => $assignment->id])}}">
+		    <form method="POST" action="{{route('admin.assignment.update', ['course_id' => $course->id, 'assignment' => $assignment->id])}}">
 		      {{ csrf_field() }}
 		      {{ method_field('PUT') }}
 		      <div class="form-group">

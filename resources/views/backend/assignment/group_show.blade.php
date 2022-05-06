@@ -19,7 +19,7 @@
 
 	<div class="col-sm-12 col-md-10 sub-right-content">
 		<div class="col-sm-12">
-			<a href="{{ route('admin.assignment.show', ['course_id' => $course->id, 'assignment_id' => $assignment->id]) }}" class="btn btn-sm btn-default margin-bottom" ><i class="fa fa-angle-left"></i> {{ $assignment->title }}</a>
+			<a href="{{ route('admin.assignment.show', ['course_id' => $course->id, 'assignment' => $assignment->id]) }}" class="btn btn-sm btn-default margin-bottom" ><i class="fa fa-angle-left"></i> {{ $assignment->title }}</a>
 
 			<div class="pull-right">
 				<button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#editGroupModal"><i class="fa fa-pencil"></i></button>
@@ -467,7 +467,7 @@ $manuscriptUsers = $assignment->manuscripts->whereNotIn('user_id', $groupLearner
 		    <h4 class="modal-title">{{ trans('site.delete-group') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="{{route('admin.assignment-group.destroy', ['course_id' => $course->id, 'assignment_id' => $assignment->id, 'id' => $group->id])}}">
+		    <form method="POST" action="{{route('admin.assignment-group.destroy', ['course_id' => $course->id, 'assignment_id' => $assignment->id, 'group' => $group->id])}}">
 		      {{ csrf_field() }}
 		      {{ method_field('DELETE') }}
 				{{ trans('site.delete-group-question') }}
@@ -489,7 +489,7 @@ $manuscriptUsers = $assignment->manuscripts->whereNotIn('user_id', $groupLearner
 		    <h4 class="modal-title">{{ trans('site.edit-group') }}</h4>
 		  </div>
 		  <div class="modal-body">
-		    <form method="POST" action="{{route('admin.assignment-group.update', ['course_id' => $course->id, 'assignment_id' => $assignment->id, 'id' => $group->id])}}">
+		    <form method="POST" action="{{route('admin.assignment-group.update', ['course_id' => $course->id, 'assignment_id' => $assignment->id, 'group' => $group->id])}}">
 		      {{ csrf_field() }}
 		      {{ method_field('PUT') }}
 		      <div class="form-group">

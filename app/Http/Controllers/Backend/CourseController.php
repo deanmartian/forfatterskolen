@@ -6,6 +6,7 @@ use App\CourseExpiryReminder;
 use App\CoursesTaken;
 use App\EmailAttachment;
 use App\EmailOutLog;
+use App\Exports\CourseLearnerExport;
 use App\Http\Controllers\Frontend\ShopController;
 use App\Http\FrontendHelpers;
 use App\Jobs\AddMailToQueueJob;
@@ -648,7 +649,9 @@ class CourseController extends Controller
         $course = Course::find($course_id);
         if ($course) {
             $excel          = \App::make('excel');
-            $learners       = $course->learners->get();
+            // for new version of excel
+            return $excel->download(new CourseLearnerExport($course_id, $type),$course->title.' Learners.xlsx');
+            /*$learners       = $course->learners->get();
             $learnerList    = [];
 
             if ($type === 'address') {
@@ -671,15 +674,14 @@ class CourseController extends Controller
                     $learnerList[] = [$learner->user->id, $learner->user->full_name, $street, $zip, $city];
                 }
             }
-
-            $excel->create($course->title.' Learners', function($excel) use ($learnerList) {
+            $excel->store($course->title.' Learners', function($excel) use ($learnerList) {
 
             // Build the spreadsheet, passing in the payments array
             $excel->sheet('sheet1', function($sheet) use ($learnerList) {
                 // prevent inserting an empty first row
                 $sheet->fromArray($learnerList, null, 'A1', false, false);
             });
-            })->download('xlsx');
+            })->download('xlsx');*/
         }
         return redirect()->back();
     }

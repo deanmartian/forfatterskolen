@@ -6,6 +6,7 @@ use App\AssignmentFeedbackNoGroup;
 use App\AssignmentTemplate;
 use App\CoursesTaken;
 use App\DelayedEmail;
+use App\Exports\AssignmentLearnersExport;
 use App\Helpers\DocumentParser;
 use App\Helpers\Html2Text;
 use App\Helpers\PdfParser;
@@ -108,13 +109,13 @@ class AssignmentController extends Controller
 
             $saved = array();
             $min = 1;
-            
+
             $learnedToGroupFiltered = $learnersToGroup->filter(function ($value, $key) use ($saved, $genre) {
                 return !(in_array($value->user_id,$saved)) && ($value->type == $genre['id']);
             });
 
             $groupCount = AssignmentGroup::where('assignment_id', $assignmentID)->count() + 1;
-            
+
             if($learnedToGroupFiltered->count() >= $min){
 
                 $count = 0;
@@ -189,7 +190,7 @@ class AssignmentController extends Controller
     {
     	$course = Course::findOrFail($course_id);
     	$assignment = Assignment::findOrFail($id);
-    	
+
     	if( $assignment->course->id == $course->id && $request->title ) :
     		$assignment->title = $request->title;
     		$assignment->description = $request->description;
@@ -214,7 +215,7 @@ class AssignmentController extends Controller
     {
     	$course = Course::findOrFail($course_id);
     	$assignment = Assignment::findOrFail($id);
-    	
+
     	if( $assignment->course->id == $course->id ) :
     		$assignment->forceDelete();
     	endif;
@@ -254,7 +255,7 @@ class AssignmentController extends Controller
         $assignment = Assignment::findOrFail($id);
         $learner = User::findOrFail($request->learner_id);
 
-        if ( $request->hasFile('filename') && 
+        if ( $request->hasFile('filename') &&
             $request->file('filename')->isValid() ) :
             $time = time();
             $destinationPath = 'storage/assignment-manuscripts/'; // upload path
@@ -534,21 +535,22 @@ class AssignmentController extends Controller
         if ($allLearners->count()) {
             $excel          = \App::make('excel');
             $learnerList    = [];
-            $learnerList[]  = ['Name', 'Email'];
+            //$learnerList[]  = ['Name', 'Email'];
 
             // loop all the learners
             foreach ($allLearners as $learner) {
                 $learnerList[] = [$learner->first_name . ' ' . $learner->last_name, $learner->email];
             }
 
-            $excel->create($assignment->title.' Learners', function($excel) use ($learnerList) {
+            return $excel->download(new AssignmentLearnersExport($learnerList),$assignment->title.' Learners.xlsx');
+            /*$excel->create($assignment->title.' Learners', function($excel) use ($learnerList) {
 
                 // Build the spreadsheet, passing in the payments array
                 $excel->sheet('sheet1', function($sheet) use ($learnerList) {
                     // prevent inserting an empty first row
                     $sheet->fromArray($learnerList, null, 'A1', false, false);
                 });
-            })->download('xlsx');
+            })->download('xlsx');*/
         }
 
         return redirect()->back();
@@ -943,9 +945,9 @@ class AssignmentController extends Controller
     {
 
         $filesWithPath = $this->getFiles($request, $learner_id);
-        
+
         if($request->feedback_id){ // update
-            
+
             $assignmentFeedbackNoGroup = AssignmentFeedbackNoGroup::find($request->feedback_id);
             if($filesWithPath){
                 // check if replace or add manuscript
@@ -1010,7 +1012,7 @@ class AssignmentController extends Controller
             endif;
 
         }
-        
+
     }
 
     public function getFiles($request, $learner_id){
@@ -1052,7 +1054,7 @@ class AssignmentController extends Controller
         $assignmentManuscript->status = 1;
         $assignmentManuscript->grade = $request->grade;
         $assignmentManuscript->save();
-        
+
         // send an email
         $email_content  = $request->message;
         $to             = $assignmentManuscript->user->email;
@@ -1077,11 +1079,11 @@ class AssignmentController extends Controller
                     $request->from_email, $assignmentManuscript->id);
             }
         }
-        
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback successfully sent'),
             'alert_type' => 'success']);
     }
-    
+
     public function manuscriptFeedbackNoGroupUpdate($feedback_id, Request $request)
     {
         $feedback = AssignmentFeedbackNoGroup::find($feedback_id);
@@ -1419,5 +1421,5 @@ class AssignmentController extends Controller
 return $string;
         return str_replace(array_keys($characters), $characters, $string);
     }
-    
+
 }
