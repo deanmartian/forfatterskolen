@@ -34,7 +34,7 @@
                             @foreach($course->emailOut as $email)
                                 <tr>
                                     <td>{{ $email->subject }}</td>
-                                    <td>{!! str_limit(strip_tags($email->message), 100) !!}</td>
+                                    <td>{!! \Illuminate\Support\Str::limit(strip_tags($email->message), 100) !!}</td>
                                     <td>
                                         @if(\App\Http\AdminHelpers::isDate($email->delay))
                                             {{date_format(date_create($email->delay), 'M d, Y')}}

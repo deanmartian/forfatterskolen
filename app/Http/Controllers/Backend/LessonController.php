@@ -108,7 +108,7 @@ class LessonController extends Controller
             }
         }
 
-        return redirect(route('admin.lesson.edit', ['course_id' => $lesson->id, 'id' => $course->id]));
+        return redirect(route('admin.lesson.edit', ['course_id' => $course->id, 'lesson' => $lesson->id]));
     }
 
 

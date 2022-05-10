@@ -35,7 +35,7 @@
                                                 {{$courseTaken->package->course->title}}
                                             </h3>
                                             <p>
-                                                {{str_limit(strip_tags($courseTaken->package->course->description), 200)}}
+                                                {{\Illuminate\Support\Str::limit(strip_tags($courseTaken->package->course->description), 200)}}
                                             </p>
                                         </div>
                                         <div class="col-md-3">

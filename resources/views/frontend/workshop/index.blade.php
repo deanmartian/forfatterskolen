@@ -31,7 +31,7 @@
                                         </div>
                                         <div class="card-body">
                                             <h2>{{ $workshop->title }}</h2>
-                                            <p>{{ str_limit(strip_tags($workshop->description), 180)}}</p>
+                                            <p>{{ \Illuminate\Support\Str::limit(strip_tags($workshop->description), 180)}}</p>
 
                                             <a href="{{ route('front.workshop.show', $workshop->id) }}" class="btn buy-btn">
                                                 {{ trans('site.front.view') }}
