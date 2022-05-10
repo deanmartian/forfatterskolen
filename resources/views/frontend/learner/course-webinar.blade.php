@@ -180,8 +180,9 @@
                                                 $img_web_link = \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id);
                                             } else {
                                                 $img_web_link = \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date_with_value))
-                                                    ? 'javascript:void(0)' :route('learner.webinar.register',
-                                                        [$webinar->link, $webinar->id]);
+                                                    ? 'javascript:void(0)' :url('/account/webinar/register/' . $webinar->link . '/' . $webinar->id);
+                                                /*route('learner.webinar.register',
+                                                        [$webinar->link, $webinar->id])*/
                                             }
                                         ?>
                                         @if($webinar->link)
