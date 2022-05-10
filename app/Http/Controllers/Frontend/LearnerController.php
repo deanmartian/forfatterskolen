@@ -4160,7 +4160,7 @@ class LearnerController extends Controller
         $token = JWT::encode([
             'sub'   => $user->id,
             'iat'   => Carbon::now()->timestamp,
-            'jti' => str_limit(md5(Carbon::now()->timestamp + $user->id), 16),
+            'jti' => \Illuminate\Support\Str::limit(md5(Carbon::now()->timestamp + $user->id), 16),
             'exp' => Carbon::now()->timestamp * 60
         ], config('services.jwt.secret'));
 

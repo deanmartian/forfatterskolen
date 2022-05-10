@@ -74,7 +74,7 @@ class AssignmentGroupController extends Controller
     	if( $assignment->course->id == $course->id ) :
     		$group->forceDelete();
     	endif;
-    	return redirect(route('admin.assignment.show', ['course_id' => $course->id, 'id' => $assignment->id]));
+    	return redirect(route('admin.assignment.show', ['course_id' => $course->id, 'assignment' => $assignment->id]));
     }
 
 

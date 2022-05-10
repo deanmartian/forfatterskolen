@@ -59,7 +59,7 @@ class AssignmentService
                 "cart" => array(
                     "items" => array(
                         array(
-                            "name" => str_limit($assignment->title, 35),
+                            "name" => \Illuminate\Support\Str::limit($assignment->title, 35),
                             "quantity" => 100,
                             "unitPrice" => $price*100,
                             "unit" => "pc"

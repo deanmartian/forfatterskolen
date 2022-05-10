@@ -48,7 +48,7 @@
 								<td>{{ $freeManuscript->name }}</td>
 								<td>{{ $freeManuscript->email }}</td>
 								<td>
-									{{ str_limit(strip_tags($freeManuscript->content), 120) }}<br>
+									{{ \Illuminate\Support\Str::limit(strip_tags($freeManuscript->content), 120) }}<br>
 									<a href="#editContentModal" data-toggle="modal" class="editContentBtn"
 									data-content="{{ $freeManuscript->content }}"
 									data-action="{{ route('admin.free-manuscript.edit-content', $freeManuscript->id) }}">
@@ -107,7 +107,7 @@
 							<tr>
 								<td>{{ $freeManuscript->name }}</td>
 								<td>{{ $freeManuscript->email }}</td>
-								<td>{{ str_limit(strip_tags($freeManuscript->content), 120) }}</td>
+								<td>{{ \Illuminate\Support\Str::limit(strip_tags($freeManuscript->content), 120) }}</td>
 								<td class="text-center">
 									{{ $freeManuscript->latestFeedbackHistory['date_sent'] }} <br>
 									@if($freeManuscript->latestFeedbackHistory['date_sent'])
