@@ -134,7 +134,7 @@
                                                     data-toggle="modal"
                                                     data-target="#addPresenterModal"
                                                     data-title="{{ $webinar->title }}"
-                                                    data-action="{{ route('admin.free-webinar.presenter.store', ['webinar_id' => $webinar->id]) }}">
+                                                    data-action="{{ route('admin.free-webinar.presenter.store', ['id' => $webinar->id]) }}">
                                                 {{ trans('site.add-presenter') }}</button>
                                             <strong style="font-size: 15px">{{ trans('site.presenters') }}</strong> <br />
                                             <div class="clearfix"></div>

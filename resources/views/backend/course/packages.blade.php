@@ -33,7 +33,7 @@
 		<div class="col-sm-12">
                 <button type="button" class="btn btn-primary margin-bottom btn-add-package" data-toggle="modal" data-target="#addPackageModal">+ {{ trans('site.add-package') }}</button>
                   <button type="button" class="btn btn-success margin-bottom btn-add-reward" data-toggle="modal" data-target="#rewardPackageModal"
-                  data-action="{{route('admin.course.package.store', ['id' => $course->id])}}"
+                  data-action="{{route('admin.course.package.store', ['course_id' => $course->id])}}"
                   data-title="Add Reward Package for {{$course->title}}">+ Add Reward Package</button>
 		</div>
 		@foreach($course->allPackages as $k => $package)
@@ -43,13 +43,13 @@
 					<div class="pull-right">
                         @if ($package->is_reward)
                         <button type="button" class="btn btn-info btn-xs btn-edit-reward" data-toggle="modal" data-target="#rewardPackageModal"
-                                data-action="{{route('admin.course.package.update', ['course_id' => $course->id, 'package_id' => $package->id])}}"
+                                data-action="{{route('admin.course.package.update', ['course_id' => $course->id, 'package' => $package->id])}}"
                                 data-title="Edit Reward Package for {{$course->title}}"
                         data-variation="{{ $package->variation }}" data-id="{{ $package->id }}"
                                 data-description="{{ $package->description }}" ><i class="fa fa-pencil"></i></button>
                         @else
 						<button type="button" data-target="#editPackageModal" data-toggle="modal" class="btn btn-info btn-xs btn-edit-package" 
-            data-action="{{route('admin.course.package.update', ['course_id' => $course->id, 'package_id' => $package->id])}}" 
+            data-action="{{route('admin.course.package.update', ['course_id' => $course->id, 'package' => $package->id])}}"
             data-variation="{{ $package->variation }}" 
             data-description="{{ $package->description }}" 
             data-manuscripts="{{ $package->manuscripts_count }}" 
@@ -104,7 +104,7 @@
                         data-validity_period="{{ $package->validity_period }}"><i class="fa fa-pencil"></i></button>
                         @endif
 
-						<button type="button" data-target="#deletePackageModal" data-toggle="modal" class="btn btn-danger btn-xs btn-delete-package" data-action="{{route('admin.course.package.destroy', ['course_id' => $course->id, 'package_id' => $package->id])}}" data-variation="{{$package->variation}}" data-id="{{$package->id}}"><i class="fa fa-trash"></i></button>
+						<button type="button" data-target="#deletePackageModal" data-toggle="modal" class="btn btn-danger btn-xs btn-delete-package" data-action="{{route('admin.course.package.destroy', ['course_id' => $course->id, 'package' => $package->id])}}" data-variation="{{$package->variation}}" data-id="{{$package->id}}"><i class="fa fa-trash"></i></button>
 					</div>
 
 					<h4>
@@ -329,7 +329,7 @@
         <h4 class="modal-title">{{ trans('site.add-package-to') }} {{$course->title}}</h4>
       </div>
       <div class="modal-body">
-      	<form method="POST" action="{{route('admin.course.package.store', ['id' => $course->id])}}">
+      	<form method="POST" action="{{route('admin.course.package.store', ['course_id' => $course->id])}}">
       		{{csrf_field()}}
           <input type="hidden" name="variation_id">
           <div class="row">

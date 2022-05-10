@@ -37,7 +37,7 @@
                             <td>{{ $optIn->name }}</td>
                             <td>{{ $optIn->slug }}</td>
                             <td>{{ $optIn->list_id }}</td>
-                            <td>{{ str_limit(strip_tags($optIn->description), 120) }}</td>
+                            <td>{{ \Illuminate\Support\Str::limit(strip_tags($optIn->description), 120) }}</td>
                             <td>
                                 {{ $optIn->pdf_file_name }}
                             </td>
