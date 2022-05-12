@@ -60,7 +60,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('bookreminder:send')
             ->dailyAt('06:00');
         $schedule->command('checkfikeninvoice:command')
-            ->dailyAt('07:00');
+            ->dailyAt('17:00');
         $schedule->command('dueinvoicecheck:command')
             ->dailyAt('08:00');
         /*$schedule->command('updateinvoice:command')
