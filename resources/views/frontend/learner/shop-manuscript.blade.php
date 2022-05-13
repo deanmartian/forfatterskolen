@@ -67,7 +67,7 @@
 										$shopManuscriptTaken->id) }}">
 											{{ trans('site.learner.see-manuscript') }}
 										</a>
-										@if (!$shopManuscriptTaken->is_manuscript_locked)
+										@if (!$shopManuscriptTaken->is_manuscript_locked && $shopManuscriptTaken->status != 'Finished')
 											<button class="btn btn-success updateManuscriptBtn" type="button" data-toggle="modal"
 													data-target="#updateUploadedManuscriptModal" data-fields="{{ json_encode($shopManuscriptTaken) }}"
 													data-action="{{ route('learner.shop-manuscript.update-uploaded-manuscript', $shopManuscriptTaken->id) }}"><i class="fa fa-pen"></i></button>
@@ -75,6 +75,16 @@
 													data-target="#deleteUploadedManuscriptModal"
 													data-action="{{ route('learner.shop-manuscript.delete-uploaded-manuscript', $shopManuscriptTaken->id) }}"><i class="fa fa-trash"></i></button>
 										@endif
+
+										@if( $shopManuscriptTaken->status == 'Finished' )
+											<?php
+												$feedback = $shopManuscriptTaken->feedbacks()->first();
+											?>
+											<a href="{{ route('learner.shop-manuscript.download-feedback', [$shopManuscriptTaken->id, $feedback->id]) }}" class="btn btn-info float-right">
+												{{ trans('site.download') }}
+											</a>
+										@endif
+
 									@endif
 								@else
 									<a class="btn btn-warning disabled" style="color: #fff">
