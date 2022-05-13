@@ -83,7 +83,7 @@
 												data-feedback_id = "{{ $assignedManuscript->noGroupFeedbacks->first()->id }}"
                                                 data-feedback_file = "{{$assignedManuscript->noGroupFeedbacks->first()->filename}}"
                                                 data-feedback_grade = "{{$assignedManuscript->grade}}"
-												data-availability="{{$assignedAssignment->noGroupFeedbacks->first()->availability}}"
+												data-availability="{{$assignedManuscript->noGroupFeedbacks->first()->availability}}"
                                                 data-action="{{ route('head_editor.personal_assignment.feedbac_approve',
 																['id' => $assignedManuscript->id,
 																'learner_id' => $assignedManuscript->user->id]) }}">
