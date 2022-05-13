@@ -949,13 +949,18 @@ class AssignmentController extends Controller
     {
 
         $filesWithPath = $this->getFiles($request, $learner_id);
+        $assignmentManuscript = AssignmentManuscript::find($manuscript_id);
+        $manuscriptFeedback = $assignmentManuscript->noGroupFeedbacks()->first();
+        if ($manuscriptFeedback) {
+            $request->merge(['feedback_id' => $manuscriptFeedback->id]);
+        }
 
         if($request->feedback_id){ // update
 
             $assignmentFeedbackNoGroup = AssignmentFeedbackNoGroup::find($request->feedback_id);
             if($filesWithPath){
                 // check if replace or add manuscript
-                if($request->replaceFiles){
+                if($request->replaceFiles || $manuscriptFeedback){
                     $assignmentFeedbackNoGroup->filename = $filesWithPath;
                 }else{
                     $assignmentFeedbackNoGroup->filename = $assignmentFeedbackNoGroup->filename.', '.$filesWithPath;
@@ -965,7 +970,6 @@ class AssignmentController extends Controller
             $assignmentFeedbackNoGroup->notes_to_head_editor = $request->notes_to_head_editor;
             $assignmentFeedbackNoGroup->save();
 
-            $assignmentManuscript = AssignmentManuscript::find($manuscript_id);
             if (is_numeric($request->grade)) {
                 $assignmentManuscript->grade = $request->grade;
             }
@@ -978,7 +982,6 @@ class AssignmentController extends Controller
 
             if ($request->hasFile('filename')) :
 
-                $assignmentManuscript = AssignmentManuscript::find($manuscript_id);
                 $assignmentManuscript->has_feedback = 1;
                 $assignmentManuscript->status = 0;
                 // set grade
@@ -995,7 +998,8 @@ class AssignmentController extends Controller
                     'is_admin' => true,
                     'is_active' => true,
                     'hours_worked' => $request->hours,
-                    'notes_to_head_editor' => $request->notes_to_head_editor
+                    'notes_to_head_editor' => $request->notes_to_head_editor,
+                    'availability' => $request->has('availability') ? $request->availability : NULL
                 ]);
 
                 // send email to head editor
