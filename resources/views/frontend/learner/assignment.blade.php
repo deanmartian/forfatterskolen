@@ -89,7 +89,7 @@
 													<div class="card-header py-4">
 														<div class="row">
 															<div class="col-md-9">
-																<h2><i class="contract-sign"></i> {{ $assignment->title }}</h2>{{ $assignment->id }}
+																<h2><i class="contract-sign"></i> {{ $assignment->title }}</h2>
 															</div>
 															<div class="col-md-3">
 																<?php
@@ -383,7 +383,8 @@
 															<h2><i class="contract-sign"></i> {{ $assignment->title }}</h2>
 														</div>
 														<div class="col-md-3">
-															@if (!$manuscript)
+															@if (!$manuscript && (is_null($assignment->parent) ||
+															($assignment->linkedAssignment && !$assignment->linkedAssignment->manuscripts()->where('user_id', Auth::user()->id)->first())))
 																@if($assignment->for_editor)
 																	<button class="btn site-btn-global site-btn-global-sm w-100 submitEditorManuscriptBtn" data-toggle="modal"
 																			data-target="#submitEditorManuscriptModal"

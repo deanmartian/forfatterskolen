@@ -18,10 +18,11 @@ class PageController extends Controller
     public function dashboard()
     {
         $assigned_shop_manuscripts = ShopManuscriptsTaken::where('feedback_user_id', Auth::user()->id)->get();
-        $assignedAssignments = AssignmentManuscript::where('editor_id', Auth::user()->id) // assigned masunscript group / course
+        $assignedAssignments = AssignmentManuscript::where('editor_id', Auth::user()->id) // assigned manuscript group / course
         ->where('status', 0)
         ->whereHas('assignment', function($query){
             $query->whereNull('parent');
+            $query->orWhere('parent', 'assignment');
         })
         ->get();
         $coachingTimers = Auth::user()->assignedCoachingTimers()->where('status',0)->get();
@@ -80,6 +81,7 @@ class PageController extends Controller
             ->where('status', 1)
             ->whereHas('assignment', function($query){
                 $query->whereNull('parent');
+                $query->orWhere('parent', 'assignment');
             })
             ->where('user_id', $request->search_my_assignments)
             ->orderBy('created_at', 'desc')
@@ -89,6 +91,7 @@ class PageController extends Controller
             ->where('status', 1)
             ->whereHas('assignment', function($query){
                 $query->whereNull('parent');
+                $query->orWhere('parent', 'assignment');
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10, ["*"], "assignedAssignments");
