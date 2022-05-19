@@ -351,6 +351,14 @@
 							@else
 								<div class="row">
 									@foreach($assignments as $assignment)
+										<?php
+											/**
+											 * Check first if not linked to any assignment or if assignment is linked
+											 * and there's no submitted file/manuscript yet
+											 */
+										?>
+										@if (is_null($assignment->parent) || $assignment->parent === 'users'
+										|| ($assignment->linkedAssignment && !$assignment->linkedAssignment->manuscripts()->where('user_id', Auth::user()->id)->first()))
 										<div class="col-md-6 mt-5">
 											<div class="card card-global">
                                                 <?php $manuscript = $assignment->manuscripts->where('user_id', Auth::user()->id)->first(); ?>
@@ -383,7 +391,7 @@
 															<h2><i class="contract-sign"></i> {{ $assignment->title }}</h2>
 														</div>
 														<div class="col-md-3">
-															@if (!$manuscript && (is_null($assignment->parent) ||
+															@if (!$manuscript && (is_null($assignment->parent) || $assignment->parent === 'users' ||
 															($assignment->linkedAssignment && !$assignment->linkedAssignment->manuscripts()->where('user_id', Auth::user()->id)->first())))
 																@if($assignment->for_editor)
 																	<button class="btn site-btn-global site-btn-global-sm w-100 submitEditorManuscriptBtn" data-toggle="modal"
@@ -501,6 +509,7 @@
 												@endif
 											</div> <!-- end card -->
 										</div> <!-- end col-md-6 -->
+										@endif
 									@endforeach
 								</div>
 							@endif
