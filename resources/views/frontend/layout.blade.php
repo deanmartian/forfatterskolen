@@ -33,56 +33,44 @@
 
         <?php
         $pageMeta = \App\PageMeta::where('url', url()->current())->first();
+
         $checkoutTitle = 'Forfatterskolen checkout page where the users could place orders';
         $checkoutDescription = 'The checkout page is displaying all the possible fields needed and payment options
              to choose from for the user and make it easier to order the item';
+        $genericTitle = 'Forfatterskolen page for author';
+        $genericDescription = 'This page belongs to forfatterskolen which would show some items useful for authors to
+        increase their knowledge';
+
+        $meta_title = $pageMeta ? $pageMeta->meta_title :
+            (strpos(url()->current(), 'checkout') !== false ? $checkoutTitle : $genericTitle);
+        $meta_description = $pageMeta ? $pageMeta->meta_description :
+            (strpos(url()->current(), 'checkout') !== false ? $checkoutDescription : $genericDescription);
         ?>
 
-        @if (strpos(url()->current(), 'checkout') !== false)
-            <meta property="og:title" content="{{ $checkoutTitle }}">
-            <meta property="og:description" content="{{ $checkoutDescription }}">
-            <meta name="description" content="{{ $checkoutDescription }}">
+        {{--@if ($pageMeta)--}}
+            <meta property="og:title" content="{{ $meta_title }}">
+            <meta property="og:description" content="{{ $meta_description }}">
+            <meta name="description" content="{{ $meta_description }}">
             <meta property="og:site_name" content="Forfatterskolen">
             <meta property="og:url" content="{{ url()->current() }}">
             <meta property="og:type" content="website" />
-
-            <meta property="twitter:title" content="{{ $checkoutTitle }}">
-            <meta property="twitter:description" content="{{ $checkoutDescription }}">
-            <meta name="twitter:site" content="@forfatterskolen" />
-            <meta name="twitter:card" content="summary" />
-            <meta name="twitter:title" content="{{ $checkoutTitle }}" />
-            <meta name="twitter:description" content="{{ $checkoutDescription }}" />
-            <meta property="fb:app_id" content="300010277156315" />
-
-            <title>
-                {{ $checkoutTitle }}
-            </title>
-        @endif
-
-        @if ($pageMeta)
-            <meta property="og:title" content="{{ $pageMeta->meta_title }}">
-            <meta property="og:description" content="{{ $pageMeta->meta_description }}">
-            <meta name="description" content="{{ $pageMeta->meta_description }}">
-            <meta property="og:site_name" content="Forfatterskolen">
-            <meta property="og:url" content="{{ url()->current() }}">
-            <meta property="og:type" content="website" />
-            @if ($pageMeta->meta_image)
+            @if ($pageMeta && $pageMeta->meta_image)
                 <meta property="og:image" content="{{ url($pageMeta->meta_image) }}">
                 <meta property="twitter:image" content="{{ url($pageMeta->meta_image) }}">
             @endif
 
-            <meta property="twitter:title" content="{{ $pageMeta->meta_title }}">
-            <meta property="twitter:description" content="{{ $pageMeta->meta_description }}">
+            <meta property="twitter:title" content="{{ $meta_title }}">
+            <meta property="twitter:description" content="{{ $meta_description }}">
             <meta name="twitter:site" content="@forfatterskolen" />
             <meta name="twitter:card" content="summary" />
-            <meta name="twitter:title" content="{{ $pageMeta->meta_title }}" />
-            <meta name="twitter:description" content="{{ $pageMeta->meta_description }}" />
+            <meta name="twitter:title" content="{{ $meta_title }}" />
+            <meta name="twitter:description" content="{{ $meta_description }}" />
             <meta property="fb:app_id" content="300010277156315" />
 
             <title>
-                {{ $pageMeta->meta_title }}
+                {{ $meta_title }}
             </title>
-        @endif
+        {{--@endif--}}
 
         <!-- use meta title first before the title on the actual page added-->
         @yield('title')
