@@ -53,6 +53,10 @@
             <meta name="twitter:title" content="{{ $checkoutTitle }}" />
             <meta name="twitter:description" content="{{ $checkoutDescription }}" />
             <meta property="fb:app_id" content="300010277156315" />
+
+            <title>
+                {{ $checkoutTitle }}
+            </title>
         @endif
 
         @if ($pageMeta)
