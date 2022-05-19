@@ -33,7 +33,27 @@
 
         <?php
             $pageMeta = \App\PageMeta::where('url', url()->current())->first();
+            $checkoutTitle = 'This is the checkout page for forfatterskolen';
+            $checkoutDescription = 'The checkout page is displaying all the possible fields needed and payment options
+             to choose from for the user and make it easier to order the item';
         ?>
+
+        @if (strpos(url()->current(), 'checkout') !== false)
+            <meta property="og:title" content="{{ $checkoutTitle }}">
+            <meta property="og:description" content="{{ $checkoutDescription }}">
+            <meta name="description" content="{{ $checkoutDescription }}">
+            <meta property="og:site_name" content="Forfatterskolen">
+            <meta property="og:url" content="{{ url()->current() }}">
+            <meta property="og:type" content="website" />
+
+            <meta property="twitter:title" content="{{ $checkoutTitle }}">
+            <meta property="twitter:description" content="{{ $checkoutDescription }}">
+            <meta name="twitter:site" content="@forfatterskolen" />
+            <meta name="twitter:card" content="summary" />
+            <meta name="twitter:title" content="{{ $checkoutTitle }}" />
+            <meta name="twitter:description" content="{{ $checkoutDescription }}" />
+            <meta property="fb:app_id" content="300010277156315" />
+        @endif
 
         @if ($pageMeta)
             <meta property="og:title" content="{{ $pageMeta->meta_title }}">
