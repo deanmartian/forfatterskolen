@@ -33,7 +33,7 @@
 
         <?php
         $pageMeta = \App\PageMeta::where('url', url()->current())->first();
-        $checkoutTitle = 'Forfatterskolen checkout page where the users could place their orders';
+        $checkoutTitle = 'Forfatterskolen checkout page where the users could place orders';
         $checkoutDescription = 'The checkout page is displaying all the possible fields needed and payment options
              to choose from for the user and make it easier to order the item';
         ?>
