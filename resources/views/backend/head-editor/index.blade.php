@@ -83,6 +83,7 @@
 												data-feedback_id = "{{ $assignedManuscript->noGroupFeedbacks->first()->id }}"
                                                 data-feedback_file = "{{$assignedManuscript->noGroupFeedbacks->first()->filename}}"
                                                 data-feedback_grade = "{{$assignedManuscript->grade}}"
+												data-availability="{{$assignedManuscript->noGroupFeedbacks->first()->availability}}"
                                                 data-action="{{ route('head_editor.personal_assignment.feedbac_approve',
 																['id' => $assignedManuscript->id,
 																'learner_id' => $assignedManuscript->user->id]) }}">
@@ -295,6 +296,7 @@
 															data-feedback_file = "'.$assignedAssignment->noGroupFeedbacks->first()->filename.'"
 															data-feedback_grade = "'.$assignedAssignment->grade.'"
 															data-feedback_id = "'.$assignedAssignment->noGroupFeedbacks->first()->id.'"
+															data-availability="'.$assignedAssignment->noGroupFeedbacks->first()->availability.'"
 															data-action="'. route('head_editor.personal_assignment.feedbac_approve',
 																			['id' => $assignedAssignment->id,
 																			'learner_id' => $assignedAssignment->user->id]) .'">
@@ -555,7 +557,8 @@
 			</div>
 			<div class="modal-body">
 
-                <form id="personalAssignmentApproveFeedback" method="POST" action=""  enctype="multipart/form-data">
+                <form id="personalAssignmentApproveFeedback" method="POST" action=""  enctype="multipart/form-data"
+					  onsubmit="disableSubmit(this)">
                     <?php
                     	$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Assignment Manuscript Feedback');
                     ?>
@@ -881,6 +884,7 @@
 		let modal = $('#personalAssignmentShowFeedbackModal');
         let action = $(this).data('action');
 		let feedback_id = $(this).data('feedback_id');
+		let availability = $(this).data('availability');
 		
 		var feedbackArray = feedbackFileName.split(",");
 		modal.find('#feedbackFileAppend').html('');
@@ -890,6 +894,7 @@
 
         modal.find('[name=grade]').val(feedbackGrade);
         modal.find('[name=feedback_id]').val(feedback_id);
+        modal.find('[name=availability]').val(availability);
         modal.find('form#personalAssignmentApproveFeedback').attr('action', action);
 	});
 	$('.courseAssignmentShowFeedbackBtn').click(function(){

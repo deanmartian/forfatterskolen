@@ -684,7 +684,8 @@
 				<h4 class="modal-title">{{ trans('site.submit-feedback-to') }} <em></em></h4>
 			</div>
 			<div class="modal-body">
-				<form id="submitFeedbackForm" method="POST" action=""  enctype="multipart/form-data">
+				<form id="submitFeedbackForm" method="POST" action=""  enctype="multipart/form-data"
+					  onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<input type="hidden" class="form-control" name="feedback_id">
 					<div id="dates"></div>
