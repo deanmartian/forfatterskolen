@@ -32,19 +32,19 @@
         <![endif]-->
 
         <?php
-        $pageMeta = \App\PageMeta::where('url', url()->current())->first();
+            $pageMeta = \App\PageMeta::where('url', url()->current())->first();
 
-        $checkoutTitle = 'Forfatterskolen checkout page where the users could place orders';
-        $checkoutDescription = 'The checkout page is displaying all the possible fields needed and payment options
-             to choose from for the user and make it easier to order the item';
-        $genericTitle = 'Forfatterskolen page for author';
-        $genericDescription = 'This page belongs to forfatterskolen which would show some items useful for authors to
-        increase their knowledge';
+            $checkoutTitle = 'Forfatterskolen checkout page where the users could place orders';
+            $checkoutDescription = 'The checkout page is displaying all the possible fields needed and payment options
+                 to choose from for the user and make it easier to order the item';
+            $genericTitle = 'Forfatterskolen page for author';
+            $genericDescription = 'This page belongs to forfatterskolen which would show some items useful for authors to
+            increase their knowledge';
 
-        $meta_title = $pageMeta ? $pageMeta->meta_title :
-            (strpos(url()->current(), 'checkout') !== false ? $checkoutTitle : $genericTitle);
-        $meta_description = $pageMeta ? $pageMeta->meta_description :
-            (strpos(url()->current(), 'checkout') !== false ? $checkoutDescription : $genericDescription);
+            $meta_title = $pageMeta ? $pageMeta->meta_title :
+                (strpos(url()->current(), 'checkout') !== false ? $checkoutTitle : $genericTitle);
+            $meta_description = $pageMeta ? $pageMeta->meta_description :
+                (strpos(url()->current(), 'checkout') !== false ? $checkoutDescription : $genericDescription);
         ?>
 
         {{--@if ($pageMeta)--}}

@@ -67,7 +67,12 @@ class Course extends Model
 
     public function assignments()
     {
-        return $this->hasMany('App\Assignment')->whereNull('parent')->orderBy('created_at', 'desc');
+        return $this->hasMany('App\Assignment')
+            ->where(function($query) {
+                $query->whereNull('parent');
+                $query->orWhere('parent', 'assignment');
+            })
+            ->orderBy('created_at', 'desc');
     }
 
     public function activeAssignments()
@@ -83,7 +88,10 @@ class Course extends Model
                 $query->where('available_date','<=', Carbon::now());
                 $query->orWhereNull('available_date');
             })
-            ->whereNull('parent')
+            ->where(function($query) {
+                $query->whereNull('parent');
+                $query->orWhere('parent', 'assignment');
+            })
             ->orderBy('created_at', 'desc');
     }
 
