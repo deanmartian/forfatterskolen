@@ -25,6 +25,7 @@
 					<thead>
 						<tr>
 							<th>{{ trans_choice('site.assignments', 1) }}</th>
+							<th>Linked Assignment</th>
 							<th>{{ trans_choice('site.manuscripts', 2) }}</th>
 						</tr>
 					</thead>
@@ -32,6 +33,14 @@
 						@foreach( $course->assignments as $assignment )
 						<tr>
 							<td><a href="{{ route('admin.assignment.show', ['course_id' => $course->id, 'assignment' => $assignment->id]) }}">{{ $assignment->title }}</a></td>
+							<td>
+								@if($assignment->parent === 'assignment')
+									<a href="{{ route('admin.assignment.show', ['course_id' => $course->id,
+									 'assignment' => $assignment->linkedAssignment->id]) }}">
+										{{ $assignment->linkedAssignment->title }}
+									</a>
+								@endif
+							</td>
 							<td>{{ $assignment->manuscripts->count() }}</td>
 						</tr>
 						@endforeach
@@ -109,6 +118,17 @@
 				<div class="form-group">
 					<label>{{ trans('site.editor-expected-finish') }}</label>
 					<input type="date" class="form-control" name="editor_expected_finish">
+				</div>
+				<div class="form-group">
+					<label>Linked Assignment</label>
+					<select name="linked_assignment" id="" class="form-control">
+						<option value="" disabled selected="">- Select Assignment -</option>
+						@foreach($course->assignments as $assignment)
+							<option value="{{ $assignment->id }}">
+								{{ $assignment->title }}
+							</option>
+						@endforeach
+					</select>
 				</div>
 				<div class="form-group">
 					<label>{{ trans('site.for-editor') }}</label> <br>

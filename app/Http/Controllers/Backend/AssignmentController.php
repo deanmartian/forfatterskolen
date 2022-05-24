@@ -166,7 +166,7 @@ class AssignmentController extends Controller
     {
     	$course = Course::findOrFail($course_id);
     	if( $request->title ) :
-    		Assignment::create([
+    		$assignment = Assignment::create([
     			'title' => $request->title,
     			'description' => $request->description,
     			'course_id' => $course->id,
@@ -179,8 +179,24 @@ class AssignmentController extends Controller
                 'editor_manu_generate_count' => $request->editor_manu_generate_count,
                 'show_join_group_question' => isset($request->show_join_group_question) ? 1 : 0,
                 'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0,
-                'editor_expected_finish' => $request->editor_expected_finish
+                'editor_expected_finish' => $request->editor_expected_finish,
+                'parent' => $request->linked_assignment ? 'assignment' : NULL,
+                'parent_id' => $request->linked_assignment,
     		]);
+
+    	if ($request->linked_assignment) {
+    	    $linkedAssignment = Assignment::find($request->linked_assignment);
+
+    	    if ($linkedAssignment->parent === 'assignment') {
+    	        $previouslyLinkedAssignment = Assignment::find($linkedAssignment->parent_id);
+    	        $previouslyLinkedAssignment->parent = NULL;
+    	        $previouslyLinkedAssignment->parent_id = NULL;
+    	        $previouslyLinkedAssignment->save();
+            }
+            $linkedAssignment->parent = 'assignment';
+            $linkedAssignment->parent_id = $assignment->id;
+            $linkedAssignment->save();
+        }
 
     	endif;
     	return redirect()->back();
@@ -192,6 +208,7 @@ class AssignmentController extends Controller
     {
     	$course = Course::findOrFail($course_id);
     	$assignment = Assignment::findOrFail($id);
+    	$previouslyLinkedAssignmentID = $assignment->parent_id;
 
     	if( $assignment->course->id == $course->id && $request->title ) :
     		$assignment->title = $request->title;
@@ -206,9 +223,32 @@ class AssignmentController extends Controller
             $assignment->show_join_group_question = isset($request->show_join_group_question) ? 1 : 0;
             $assignment->send_letter_to_editor = isset($request->send_letter_to_editor) ? 1 : 0;
             $assignment->editor_expected_finish = $request->editor_expected_finish;
-    		$assignment->save();
+
+
+            if ($request->linked_assignment) {
+                $linkedAssignment = Assignment::find($request->linked_assignment);
+
+                if (($linkedAssignment->parent === 'assignment' && !is_null($linkedAssignment->parent_id) && $linkedAssignment->parent_id != $assignment->id)
+                    || $previouslyLinkedAssignmentID && $previouslyLinkedAssignmentID != $request->linked_assignment) {
+
+                    $previouslyLinkedAssignment = Assignment::find($linkedAssignment->parent_id ? $linkedAssignment->parent_id : $previouslyLinkedAssignmentID);
+                    $previouslyLinkedAssignment->parent = NULL;
+                    $previouslyLinkedAssignment->parent_id = NULL;
+                    $previouslyLinkedAssignment->save();
+                }
+
+                $linkedAssignment->parent = 'assignment';
+                $linkedAssignment->parent_id = $assignment->id;
+                $linkedAssignment->save();
+            }
+
+            $assignment->parent = $request->linked_assignment ? 'assignment' : NULL;
+            $assignment->parent_id = $request->linked_assignment;
+            $assignment->save();
+
     	endif;
-    	return redirect()->back();
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Assignment updatd successfully.'),
+            'alert_type' => 'success']);
     }
 
 

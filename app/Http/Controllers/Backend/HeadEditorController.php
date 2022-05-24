@@ -30,6 +30,7 @@ class HeadEditorController extends Controller
         ->where('has_feedback', 1)
         ->whereHas('assignment', function($query){
             $query->whereNull('parent');
+            $query->orWhere('parent', 'assignment');
         })
         ->get();
         $corrections = CorrectionManuscript::where('status', 3)->get();

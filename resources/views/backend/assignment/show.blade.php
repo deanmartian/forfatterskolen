@@ -728,6 +728,18 @@
 					@if( $assignment->editor_expected_finish ) value="{{ strftime('%Y-%m-%d', strtotime($assignment->editor_expected_finish)) }}" @endif>
 				</div>
 				<div class="form-group">
+					<label>Linked Assignment</label>
+					<select name="linked_assignment" id="" class="form-control">
+						<option value="" disabled selected="">- Select Assignment -</option>
+						@foreach($course->assignments as $courseAssignment)
+							<option value="{{ $courseAssignment->id }}"
+									@if($courseAssignment->parent_id == $assignment->id) selected @endif>
+								{{ $courseAssignment->title }}
+							</option>
+						@endforeach
+					</select>
+				</div>
+				<div class="form-group">
 					<label>{{ trans('site.for-editor') }}</label> <br>
 					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small" name="for_editor"
 					@if ($assignment->for_editor) checked @endif>

@@ -97,4 +97,9 @@ class Assignment extends Model
     {
         return $this->belongsTo('App\User', 'editor_id', 'id');
     }
+
+    public function linkedAssignment()
+    {
+        return $this->belongsTo('App\Assignment', 'parent_id', 'id');
+    }
 }
