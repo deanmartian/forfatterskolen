@@ -784,6 +784,7 @@
 																	$q->where('genre_id', $pendingAssignment->type);
 																})
 																->whereNotIn('users.id', $hiddenEditorIds)
+																->where('is_active', 1)
 																->orderBy('id', 'desc')
 																->get();
 												if($genreEditors->count() < 1){

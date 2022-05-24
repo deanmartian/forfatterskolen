@@ -160,6 +160,7 @@
 											->whereHas('editorGenrePreferences', function($q) use ($manuscript){
 												$q->where('genre_id', $manuscript->type);
 											})
+											->where('is_active', 1)
 											->whereNotIn('users.id', $hiddenEditorIds)
 											->orderBy('id', 'desc')
 											->get();

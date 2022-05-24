@@ -41,7 +41,8 @@ class Editor
                 return response(view('editor.auth.editor_login'));
             endif;
         else :
-            if ($this->auth->user()->role != 3 && $this->auth->user()->admin_with_editor_access != 1) :
+            if (($this->auth->user()->role != 3 && $this->auth->user()->admin_with_editor_access != 1)
+                || $this->auth->user()->is_active != 1) :
                 $this->auth->logout();
                 echo "Forbidden <br />";
                 return redirect('/');

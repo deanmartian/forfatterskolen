@@ -105,6 +105,7 @@ class AdminController extends Controller
         }
         if($request->has('is_editor') && !$request->has('is_admin')){
             $admin->role = 3;
+            $admin->admin_with_editor_access = 0;
         }elseif($request->has('is_editor') && $request->has('is_admin')){
             $admin->role = 1;
             $admin->admin_with_editor_access = 1;
@@ -197,11 +198,8 @@ class AdminController extends Controller
     public function adminStatus(Request $request)
     {
         $user = User::where('id', $request->id)->withTrashed()->first();
-        if ($request->status) {
-            $user->restore();
-        } else {
-            $user->delete();
-        }
+        $user->is_active = $request->status;
+        $user->save();
         return response()->json([
             'data' => [
                 'success' => TRUE,

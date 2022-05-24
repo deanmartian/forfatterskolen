@@ -76,6 +76,7 @@ class AdminHelpers
             $query->whereIn('role', [1, 3])
                 ->orWhere('admin_with_editor_access', 1);
         })
+            ->where('is_active', 1)
             ->orderBy('id', 'desc')
             ->get();
     }

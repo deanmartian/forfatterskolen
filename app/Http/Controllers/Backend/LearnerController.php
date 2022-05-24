@@ -422,6 +422,7 @@ class LearnerController extends Controller
                 ->whereHas('editorGenrePreferences', function($q) use ($shopManuscriptTaken){
                     $q->where('genre_id', $shopManuscriptTaken->genre);
                 })
+                ->where('is_active', 1)
                 ->whereNotIn('users.id', $hiddenEditorIds)
                 ->orderBy('id', 'desc')
                 ->get();
@@ -1992,7 +1993,7 @@ class LearnerController extends Controller
             'user_id' => $learner_id,
             'assignment_id' => $assignment_id
         ])->first();
-        $editors = \App\User::whereIn('role', array(1,3))->get();
+        $editors = AdminHelpers::editorList();
 
         return view('backend.learner.assignment', compact('assignment', 'learner', 'editors', 'manuscript'));
     }

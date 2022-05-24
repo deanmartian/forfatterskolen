@@ -3494,7 +3494,7 @@
 							<option value="" selected disabled>
 								-- Select Editor --
 							</option>
-							@foreach( App\User::whereIn('role', array(1,3))->orderBy('id', 'desc')->get()  as $admin)
+							@foreach( \App\Http\AdminHelpers::editorList()  as $admin)
 								<option value="{{ $admin->id }}"
 										{{ $learner->preferredEditor && $learner->preferredEditor->editor_id === $admin->id
 										? 'selected' : '' }}>
