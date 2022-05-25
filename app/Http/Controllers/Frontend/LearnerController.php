@@ -844,6 +844,7 @@ class LearnerController extends Controller
             endif;
 
             // count words
+            $word_count = 0;
             if($extension == "pdf") :
               $pdf  =  new \PdfToText ( $destinationPath.end($expFileName) ) ;
               $pdf_content = $pdf->Text; 
@@ -860,9 +861,12 @@ class LearnerController extends Controller
               $word_count = FrontendHelpers::get_num_of_words($doc);
             endif;
 
+            $word_to_deduct = $word_count * 0.02;
+            $new_word_count = ceil($word_count - $word_to_deduct);
+
             // check if the assignment is for editor only and if it meets the max word
             /*$assignment->for_editor && */
-            if ($word_count > $assignment->max_words) {
+            if ($new_word_count > $assignment->max_words) {
                 return redirect()->back()->with(['errorMaxWord' => true, 'editorMaxWord' => $assignment->max_words]);
             }
 
