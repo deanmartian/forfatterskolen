@@ -73,7 +73,7 @@ class AdminHelpers
     public static function editorList()
     {
         return \App\User::where(function($query){
-            $query->whereIn('role', [1, 3])
+            $query->whereIn('role', [3])
                 ->orWhere('admin_with_editor_access', 1);
         })
             ->where('is_active', 1)
