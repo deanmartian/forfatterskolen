@@ -379,6 +379,65 @@
 				</div>
 			</div>
 
+			<!-- My free manuscript -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>Free Manuscript</h4></div>
+						<div class="panel-body">
+							<div class="table-users table-responsive margin-top">
+								<table class="table dt-table">
+									<thead>
+										<tr>
+											<th>{{ trans('site.name') }}</th>
+											<th width="500">{{ trans('site.content') }}</th>
+											<th>{{ trans('site.feedback-status') }}</th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach($freeManuscripts as $freeManuscript)
+											<tr>
+												<td>
+													{{ $freeManuscript->name }}
+												</td>
+												<td>
+													{{ \Illuminate\Support\Str::limit(strip_tags($freeManuscript->content), 120) }}<br>
+													<a href="#editContentModal" data-toggle="modal" class="editContentBtn"
+													   data-content="{{ $freeManuscript->content }}"
+													   data-action="{{ route('editor.free-manuscript.edit-content', $freeManuscript->id) }}">
+														Her kan du også nå putte in ekstra tekst
+													</a>
+												</td>
+												<td>
+													@if($freeManuscript->feedback_content)
+														<span class="label label-default">{{ trans('site.pending') }}</span>
+														<button class="btn btn-xs btn-success sendFMFeedbackBtn"
+																data-toggle="modal" data-target="#freeManuscriptFeedbackModal"
+																data-fields="{{ json_encode($freeManuscript) }}"
+																data-action="{{ route('editor.free-manuscript.send_feedback', $freeManuscript->id) }}"
+																data-email_template="{{ $freeManuscriptEmailTemplate ? $freeManuscriptEmailTemplate->email_content : '' }}">
+															<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+														</button>
+													@else
+														<button class="btn btn-xs btn-warning sendFMFeedbackBtn"
+																data-toggle="modal" data-target="#freeManuscriptFeedbackModal"
+																data-fields="{{ json_encode($freeManuscript) }}"
+																data-action="{{ route('editor.free-manuscript.send_feedback', $freeManuscript->id) }}"
+																data-email_template="{{ $freeManuscriptEmailTemplate ? $freeManuscriptEmailTemplate->email_content : '' }}">
+															+ {{ trans('site.add-feedback') }}
+														</button>
+													@endif
+												</td>
+											</tr>
+										@endforeach
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<!-- My coaching timer -->
 			<div class="row">
 				<div class="col-sm-12">
@@ -1183,6 +1242,55 @@
 		</div>
 	</div>
 </div>
+
+<div id="editContentModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.edit-content') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans('site.content') }}</label>
+						<textarea name="manu_content" cols="30" rows="10" class="form-control tinymce" id="editContentEditor" required>
+
+						</textarea>
+					</div>
+					<div class="clearfix"></div>
+					<button type="submit" class="btn btn-success pull-right margin-top">{{ trans('site.save') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="freeManuscriptFeedbackModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.send-feedback') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" id="sendFeedbackForm" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans('site.body') }}</label>
+						<textarea name="email_content" cols="30" rows="10" class="form-control tinymce" id="FMEmailContentEditor" required>
+						</textarea>
+					</div>
+					<div class="clearfix"></div>
+					<button type="submit" class="btn btn-primary pull-right margin-top" id="sendFeedbackEmail">{{ trans('site.submit') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -1205,6 +1313,15 @@
 		var action = $(this).data('action');
 		modal.find('form').attr('action', action);
 	});
+
+    $(".editContentBtn").click(function() {
+        let action = $(this).data('action');
+        let content = $(this).data('content');
+        let modal = $('#editContentModal');
+        modal.find('form').attr('action', action);
+
+        tinymce.get('editContentEditor').setContent(content);
+    });
 
 	$('#myAssignmentTable').on('click','.submitFeedbackBtn',function (){
 		
@@ -1606,6 +1723,17 @@
 		modal.find('.sub-title').text(title);
 		modal.find('.yesBtn').attr('href', action);
 	});
+
+    $(".sendFMFeedbackBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#freeManuscriptFeedbackModal');
+        modal.find('form').attr('action', action);
+        let fields = $(this).data('fields');
+        let email_template = $(this).data('email_template');
+        let content = fields.feedback_content ? fields.feedback_content : email_template;
+
+        tinymce.get('FMEmailContentEditor').setContent(content);
+    });
 
 </script>
 @stop

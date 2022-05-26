@@ -175,7 +175,7 @@ class FreeManuscriptController extends Controller
     }
 
     /**
-     * Send Feedback
+     * This would move the feedback to be approved by head editor
      * @param $id
      * @param Request $requests
      * @return \Illuminate\Http\RedirectResponse
@@ -186,27 +186,29 @@ class FreeManuscriptController extends Controller
 
         $freeManuscripts    = FreeManuscript::findOrFail($id);
 
+        //$freeManuscripts->is_feedback_sent = 1;
+        $freeManuscripts->feedback_content = $requests->email_content;
+        $freeManuscripts->save();
+        return redirect()->back();
+    }
+
+    public function approveFeedback( $id, Request $requests )
+    {
+        $url = 'https://forfatterskolen.api-us1.com';
+
+        $freeManuscripts    = FreeManuscript::findOrFail($id);
+
         $freeManuscripts->is_feedback_sent = 1;
         $freeManuscripts->feedback_content = $requests->email_content;
         $freeManuscripts->save();
 
-        $editor             = User::find($freeManuscripts->editor_id);
-        $to                 = $freeManuscripts->email;
-        //$from               = $editor->email;
+        $to = $freeManuscripts->email;
 
         $params = array(
             'api_key'      => 'ee9f1cb27fe33c7197d722f434493d4440cf5da6be8114933fd0fdae40fc03a197388b99',
 
             // this is the action that adds a contact
             'api_action'   => 'contact_add',
-
-            // define the type of output you wish to get back
-            // possible values:
-            // - 'xml'  :      you have to write your own XML parser
-            // - 'json' :      data is returned in JSON format and can be decoded with
-            //                 json_decode() function (included in PHP since 5.2.0)
-            // - 'serialize' : data is returned in a serialized format and can be decoded with
-            //                 a native unserialize() function
             'api_output'   => 'serialize',
         );
 
@@ -288,17 +290,12 @@ class FreeManuscriptController extends Controller
         $subject = $emailTemplate->subject;
         $from = "postmail@forfatterskolen.no";
 
-        //AdminHelpers::send_mail($to, $subject, $message, $from );
-        /*AdminHelpers::send_email($subject,
-            'postmail@forfatterskolen.no', $to, $message);*/
         $emailData['email_subject'] = $subject;
         $emailData['email_message'] = $message;
         $emailData['from_name'] = NULL;
         $emailData['from_email'] = $from;
         $emailData['attach_file'] = NULL;
 
-        //\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
-        //mail($to, 'Subject', $message, $headers);
         dispatch(new AddMailToQueueJob($to, $subject, $message, $from, null, null,
             'free-manuscripts', $id));
 

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Editor;
 
 use App\Assignment;
+use App\EmailTemplate;
+use App\FreeManuscript;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -39,9 +41,13 @@ class PageController extends Controller
             })
             ->get();
         $shopManuscriptRequests = Auth::user()->shopManuscriptRequests->where('answer', '')->where('answer_until', '>=', strftime('%Y-%m-%d', strtotime(Carbon::now())));
+        $freeManuscripts = FreeManuscript::where('is_feedback_sent', '=',0)
+            ->where('editor_id', Auth::user()->id)
+            ->orderBy('created_at', 'desc')->get();
+        $freeManuscriptEmailTemplate = EmailTemplate::where('page_name', 'Free Manuscript')->first();
 
         return view('editor.dashboard', compact('assigned_shop_manuscripts', 'assignedAssignments', 'coachingTimers',
-        'corrections', 'copyEditings', 'assignedAssignmentManuscripts', 'shopManuscriptRequests'));
+        'corrections', 'copyEditings', 'assignedAssignmentManuscripts', 'shopManuscriptRequests', 'freeManuscripts', 'freeManuscriptEmailTemplate'));
 
     }
 

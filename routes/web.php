@@ -1275,6 +1275,7 @@ Route::group([
         Route::post('/free-manuscript/{id}/send_feedback', 'FreeManuscriptController@sendFeedback')->name('admin.free-manuscript.send_feedback');
         Route::get('/free-manuscript/{id}/feedback-history', 'FreeManuscriptController@feedbackHistory')->name('admin.free-manuscript.feedback-history');
         Route::post('/free-manuscript/{id}/resend-feedback', 'FreeManuscriptController@resendFeedback')->name('admin.free-manuscript.resend-feedback');
+        Route::post('/free-manuscript/{id}/approve_feedback', 'FreeManuscriptController@approveFeedback')->name('head_editor.free-manuscript.feedback_approve');
 
         Route::resource('/other-service','OtherServiceController', [
             'except' => ['show'],
@@ -1626,6 +1627,8 @@ Route::group([
         Route::post('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}/comment', 'LearnerController@shopManuscriptTakenShowComment')->name('editor.shop_manuscript_taken_comment');
         Route::post('/update-expected-finish/{type}/{id}', 'PageController@updateExpectedFinish')->name('editor.personal-assignment.update-expected-finish');
         Route::get('assignment-manuscript/{id}/download-letter', 'AssignmentController@downloadManuscriptLetter')->name('editor.assignment.manuscript.download_letter');
+        Route::post('/free-manuscript/{id}/edit-content', 'FreeManuscriptController@editContent')->name('editor.free-manuscript.edit-content');
+        Route::post('/free-manuscript/{id}/send_feedback', 'FreeManuscriptController@sendFeedback')->name('editor.free-manuscript.send_feedback');
 
     });
 

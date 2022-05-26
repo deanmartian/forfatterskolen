@@ -330,6 +330,44 @@
 				</div>
 			</div>
 
+			<!-- Free Manuscript-->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>Free Manuscript</h4></div>
+						<table class="table">
+							<thead>
+							<tr>
+								<th>{{ trans('site.name') }}</th>
+								<th>{{ trans_choice('site.editors', 1) }}</th>
+								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
+								<th>{{ trans('site.feedback-status') }}</th>
+							</tr>
+							</thead>
+							<tbody>
+							@foreach($freeManuscripts as $freeManuscript)
+								<tr>
+									<td>{{ $freeManuscript->name }}</td>
+									<td>@if( $freeManuscript->editor ) {{ $freeManuscript->editor->full_name }} @endif</td>
+									<td>
+										<button class="btn btn-xs btn-success sendFMApproveFeedbackBtn"
+												data-toggle="modal" data-target="#freeManuscriptApproveFeedbackModal"
+												data-fields="{{ json_encode($freeManuscript) }}"
+												data-action="{{ route('head_editor.free-manuscript.feedback_approve', $freeManuscript->id) }}">
+											{{ trans('site.approve-feedback') }}
+										</button>
+									</td>
+									<td>
+										<span class="label label-default">{{ trans('site.pending') }}</span>
+									</td>
+								</tr>
+							@endforeach
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
             <!-- My Coaching Timer -->
 			<!-- <div class="row">
 				<div class="col-sm-12">
@@ -869,6 +907,30 @@
 	</div>
 </div>
 
+<div id="freeManuscriptApproveFeedbackModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.approve-feedback') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" id="sendFeedbackForm" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans('site.body') }}</label>
+						<textarea name="email_content" cols="30" rows="10" class="form-control tinymce" id="FMEmailContentEditor" required>
+						</textarea>
+					</div>
+					<div class="clearfix"></div>
+					<button type="submit" class="btn btn-primary pull-right margin-top" id="sendFeedbackEmail">{{ trans('site.approve-feedback') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -972,6 +1034,16 @@
 		modal.find('form').attr('action', action);
 
 	});
+
+    $(".sendFMApproveFeedbackBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#freeManuscriptApproveFeedbackModal');
+        modal.find('form').attr('action', action);
+        let fields = $(this).data('fields');
+        let content = fields.feedback_content;
+
+        tinymce.get('FMEmailContentEditor').setContent(content);
+    });
     function disableSubmit(t) {
         let submit_btn = $(t).find('[type=submit]');
         submit_btn.text('');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\backend;
 
+use App\FreeManuscript;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\AssignmentManuscript;
@@ -35,7 +36,11 @@ class HeadEditorController extends Controller
         ->get();
         $corrections = CorrectionManuscript::where('status', 3)->get();
         $copyEditings = CopyEditingManuscript::where('status', 3)->get();
-        return view('backend.head-editor.index', compact('assignedAssignmentManuscripts', 'assigned_shop_manuscripts', 'assignedAssignments','corrections', 'copyEditings'));
+        $freeManuscripts = FreeManuscript::where('is_feedback_sent', '=',0)
+            ->whereNotNull('feedback_content')
+            ->orderBy('created_at', 'desc')->get();
+        return view('backend.head-editor.index', compact('assignedAssignmentManuscripts',
+            'assigned_shop_manuscripts', 'assignedAssignments','corrections', 'copyEditings', 'freeManuscripts'));
     }
 
     public function sendEmail($editor_id, $type, $title, $learner, Request $request)
