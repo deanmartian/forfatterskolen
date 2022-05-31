@@ -272,9 +272,11 @@ class AdminController extends Controller
     {
         $editor = User::where(function($query){
             $query->where('role', 3)->orWhere('admin_with_editor_access', 1);
-        })->orderBy('first_name', 'ASC')->orderBy('last_name', 'ASC')->get();
+        })->where('is_active', 1)
+            ->orderBy('first_name', 'ASC')->orderBy('last_name', 'ASC')->get();
 
-        $assignmentManuscriptEditorCanTake = AssignmentManuscriptEditorCanTake::orderBy('assignment_manuscript_id', 'DESC')->get();
+        $assignmentManuscriptEditorCanTake = AssignmentManuscriptEditorCanTake::whereIn('editor_id', $editor->pluck('id'))
+            ->orderBy('assignment_manuscript_id', 'DESC')->get();
 
         $unfinishedAssignments = AssignmentManuscript::whereHas('assignment',  function($query) {
                 $query->where('for_editor', 0);
