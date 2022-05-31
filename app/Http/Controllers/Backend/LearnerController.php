@@ -430,6 +430,7 @@ class LearnerController extends Controller
             $editor = User::where(function($query){
                 $query->where('role', 3)->orWhere('admin_with_editor_access', 1);
             })
+            ->where('is_active', 1)
             ->whereNotIn('users.id', $hiddenEditorIds)
             ->orderBy('id', 'desc')
             ->get();
