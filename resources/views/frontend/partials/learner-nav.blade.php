@@ -111,6 +111,7 @@
                             <a href="{{route('learner.calendar')}}" class="dropdown-item">Kalender</a>
                             <a href="{{route('learner.profile')}}" class="dropdown-item">Profil</a>
                             <a href="{{route('learner.invoice')}}" class="dropdown-item">Fakturaer</a>
+                            <a href="{{url('/terms/all')}}" class="dropdown-item">Terms</a>
                             <a href="#" class="dropdown-item redirectForum">Forum</a>
                             <a href="#" class="dropdown-item pilotleser-link">Pilotleser</a>
 
