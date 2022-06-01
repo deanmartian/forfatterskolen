@@ -120,7 +120,7 @@
 						</div>
 
 						<?php
-							$other_tabs = ['course', 'manuscript', 'workshop', 'coaching'];
+							$other_tabs = ['course', 'manuscript', 'workshop', 'coaching', 'privacy-policy'];
 						?>
 
 						<div class="col-sm-12">
@@ -130,7 +130,7 @@
 										<li>
 											<a href="#nav-{{ $other_tab }}" data-toggle="tab">{{ ucwords($other_tab === 'coaching' ?
 											'Coaching Timer' :
-											($other_tab === 'manuscript' ? 'Manuscript/Språkvask/Korrektur' : $other_tab)) }}</a>
+											($other_tab === 'manuscript' ? 'Manuscript/Språkvask/Korrektur' : str_replace('-', ' ', $other_tab))) }}</a>
 										</li>
 									@endforeach
 								</ul>
