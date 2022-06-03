@@ -74,7 +74,8 @@
 
         <!-- use meta title first before the title on the actual page added-->
         @yield('title')
-        <meta name="keywords" content="forfatterskolen,forfatter,forfatter kurs,course,shop manuscript">
+        <meta name="keywords" content="forfatterskolen,forfatter,forfatter kurs, manusutvikling, manus, manuskript,
+         kikt, sakprosa, serieroman, krim, roman">
         <meta name="nosnippets">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=1.0, user-scalable=no">
         <meta name="csrf-token" content="{{ csrf_token() }}" />
