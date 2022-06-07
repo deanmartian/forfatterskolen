@@ -24,6 +24,26 @@
             gtag('config', 'AW-754620576');
         </script>
 
+        @if(in_array(Route::currentRouteName(), ['front.free-webinar']))
+            <!-- Event snippet for Webinar_pamelding conversion page In your html page, add the snippet and call
+             gtag_report_conversion when someone clicks on the chosen link or button. -->
+            <script>
+                function gtag_report_conversion(url) {
+                    var callback = function () {
+                        if (typeof(url) != 'undefined') {
+                            window.location = url;
+                        }
+                    };
+                    gtag('event', 'conversion', {
+                        'send_to': 'AW-754620576/3IacCOOq1sIDEKCx6ucC',
+                        'event_callback': callback
+                    });
+                    return false;
+                }
+            </script>
+        @endif
+
+
         <meta name="google-site-verification" content="PT1CQ7dxKhPpwvuFW6e2o_AVdp10XC-wUvvbHHuY0IE" />
         @include('frontend.partials.frontend-css')
 
