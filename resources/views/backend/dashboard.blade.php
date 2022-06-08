@@ -847,7 +847,7 @@
 							        </td>
 							        <td>{{ $assignment_feedback->user->full_name }}</td>
 							        <td>{{ $assignment_feedback->assignment_group_learner->user->full_name }}</td>
-							        <td><a href="{{ route('admin.assignment.show', ['course_id' => $assignment_feedback->assignment_group_learner->group->assignment->course->id, 'id' => $assignment_feedback->assignment_group_learner->group->assignment->id]) }}">{{ $assignment_feedback->assignment_group_learner->group->assignment->title }}</a></td>
+							        <td><a href="{{ route('admin.assignment.show', ['course_id' => $assignment_feedback->assignment_group_learner->group->assignment->course->id, 'assignment' => $assignment_feedback->assignment_group_learner->group->assignment->id]) }}">{{ $assignment_feedback->assignment_group_learner->group->assignment->title }}</a></td>
 							        <td>
 										<button type="button" class="btn btn-warning btn-xs approveFeedbackAdminBtn" data-toggle="modal" data-target="#approveFeedbackAdminModal" data-action="{{ route('admin.assignment.group.approve', $assignment_feedback->id) }}"><i class="fa fa-check"></i></button>
 										<button type="button" class="btn btn-xs btn-danger removeFeedbackAdminBtn" data-toggle="modal" data-target="#removeFeedbackAdminModal" data-action="{{ route('admin.assignment.group.remove_feedback', $assignment_feedback->id) }}"><i class="fa fa-trash"></i></button>
