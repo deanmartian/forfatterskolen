@@ -39,7 +39,7 @@ class User extends Authenticatable
     ];
 
     protected $with = ['preferredEditor'];
-    protected $appends = ['is_webinar_pakke_active', 'assigned_with_no_feedback', 'address'];
+    protected $appends = ['is_webinar_pakke_active', 'assigned_with_no_feedback', 'address', 'full_name'];
 
     // filter admins and exclude the user of Sven
     public function scopeAdmins($query)

@@ -31,6 +31,7 @@ use App\Mail\MultipleEmailConfirmation;
 use App\Mail\SubjectBodyEmail;
 use App\Notification;
 use App\Order;
+use App\OrderCompany;
 use App\OtherServiceFeedback;
 use App\Package;
 use App\PaymentMode;
@@ -1062,6 +1063,8 @@ class LearnerController extends Controller
 
         $giftPurchases = Auth::user()->giftPurchases;
 
+        $orderHistory = Auth::user()->orders;
+
         /*$ch = curl_init($this->fikenInvoices);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
@@ -1071,7 +1074,7 @@ class LearnerController extends Controller
         $data = json_decode($data);
         $fikenInvoices = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};*/
         return view('frontend.learner.invoice', compact('invoices', 'sveaOrders', 'user',
-            'orderAttachments', 'giftPurchases'));
+            'orderAttachments', 'giftPurchases', 'orderHistory'));
     }
 
 
@@ -1118,6 +1121,40 @@ class LearnerController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function downloadOrder( $order_id )
+    {
+        $order = Order::find($order_id);
+
+        $user = \Auth::user();
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        $pdf->loadHTML(view('frontend.pdf.order-receipt-new', compact('order', 'user')));
+
+        return $pdf->download($order->id . '.pdf');
+    }
+
+    public function saveCompany( $order_id, Request $request )
+    {
+        $this->validate($request,[
+            'customer_number' => 'required',
+            'company_name' => 'required',
+            'street_address' => 'required',
+            'post_number' => 'required',
+            'place' => 'required'
+        ]);
+
+        $orderCompany = OrderCompany::find($request->id) ? OrderCompany::find($request->id) : new OrderCompany;
+        $orderCompany->order_id = $request->order_id;
+        $orderCompany->customer_number = $request->customer_number;
+        $orderCompany->company_name = $request->company_name;
+        $orderCompany->street_address = $request->street_address;
+        $orderCompany->post_number = $request->post_number;
+        $orderCompany->place = $request->place;
+        $orderCompany->save();
+
+        return response()->json($orderCompany->order);
     }
 
     /**

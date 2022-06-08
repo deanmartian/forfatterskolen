@@ -22,7 +22,7 @@ class Order extends Model {
         'svea_street', 'svea_postal_code', 'svea_city', 'svea_country_code', 'gift_card', 'is_processed'];
     protected $appends = ['item', 'packageVariation', 'created_at_formatted', 'price_formatted', 'discount_formatted',
         'monthly_price_formatted', 'total_formatted'];
-    protected $with = ['paymentPlan', 'paymentMode'];
+    protected $with = ['paymentPlan', 'paymentMode', 'company'];
 
     public function paymentPlan()
     {
@@ -94,7 +94,7 @@ class Order extends Model {
     public function getPackageVariationAttribute()
     {
         $package = '';
-        if ($this->attributes['type'] === 1) {
+        if (in_array($this->attributes['type'], [1, 6])) {
             return $this->package->variation;
         }
 
@@ -131,5 +131,10 @@ class Order extends Model {
             $total = $total + $this->coachingTime->additional_price;
         }
         return FrontendHelpers::currencyFormat($total);
+    }
+
+    public function company()
+    {
+        return $this->hasOne('App\OrderCompany');
     }
 }

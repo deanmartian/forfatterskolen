@@ -8,6 +8,7 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
+window.swal = require("sweetalert2");
 
 // for localization
 Vue.prototype.trans = string => _.get(window.i18n, string);
@@ -49,6 +50,7 @@ Vue.component('course-upgrade', require('./frontend/upgrade/course.vue'));
 Vue.component('manuscript-upgrade', require('./frontend/upgrade/manuscript.vue'));
 Vue.component('assignment-upgrade', require('./frontend/upgrade/assignment.vue'));
 Vue.component('coaching-time-checkout', require('./frontend/coaching-time/checkout.vue'));
+Vue.component('order-history', require('./frontend/components/order-history.vue'));
 
 new Vue({
     el: '#app-container'

@@ -22,7 +22,7 @@
 @stop
 
 @section('content')
-	<div class="learner-container">
+	<div class="learner-container" id="app-container">
 		<div class="container">
 			<div class="row">
 				@include('frontend.partials.learner-search-new')
@@ -48,6 +48,10 @@
 							[
 								'name' => 'redeem',
 								'label' => 'Redeem Gift'
+							],
+							[
+								'name' => 'order-history',
+								'label' => 'Order History'
 							]
 						]
 					@endphp
@@ -213,6 +217,10 @@
 										</div>
 									</div>
 								</div>
+
+							@elseif(Request::input('tab') == 'order-history')
+								<order-history :order-history="{{ json_encode($orderHistory) }}"
+											   :user="{{ json_encode(Auth::user()) }}"></order-history>
 							@else
 
 								<div class="card global-card">
@@ -507,9 +515,26 @@
 		</div> <!-- view order modal -->
 	</div>
 
+	<div id="orderHistoryModal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">
+						Order History
+					</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+
+				</div>
+			</div>
+		</div>
+	</div>
+
 @stop
 
 @section('scripts')
+	<script type="text/javascript" src="{{ asset('js/app.js?v='.time()) }}"></script>
 	<script>
         $(".vippsFakturaBtn").click(function() {
             let action = $(this).data('action');

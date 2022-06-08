@@ -51,6 +51,11 @@ Vue.mixin({
                 });
             }
         },
+
+        updateRecordFromObject(obj, id, updatedData) {
+            const index = _.findIndex(obj, {id: id});
+            obj.splice(index, 1, updatedData);
+        },
     }
 
 
