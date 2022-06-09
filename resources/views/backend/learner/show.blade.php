@@ -659,7 +659,7 @@
 
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<h4>{{ trans('site.order-history') }}</h4>
+					<h4>{{ trans('site.order-history.title') }}</h4>
 				</div>
 				<div class="table-responsive" style="padding: 10px">
 					<table class="table" id="orders-table">
