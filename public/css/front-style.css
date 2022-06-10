@@ -1116,7 +1116,9 @@ start today section
 .blog-page .main-blog {
     height: 560px;
     background-repeat: no-repeat;
-    background-size: 100% 100%;
+    /*background-size: 100% 100%;*/
+    background-size: auto 100%;
+    background-position: right;
 }
 
 .blog-page .main-blog .details {
