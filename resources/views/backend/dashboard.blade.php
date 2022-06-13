@@ -829,13 +829,18 @@
 						        <th>{{ trans_choice('site.manuscripts', 1) }}</th>
 						        <th>{{ trans('site.submitted-by') }}</th>
 						        <th>{{ trans('site.submitted-to') }}</th>
+								  <th>Group</th>
 						        <th>{{ trans_choice('site.assignments', 1) }}</th>
 						        <th></th>
 						      </tr>
 						    </thead>
 						    <tbody>
 						    	@foreach( $pending_assignment_feedbacks as $assignment_feedback )
-						    	<?php $extension = explode('.', basename($assignment_feedback->filename)); ?>
+						    	<?php $extension = explode('.', basename($assignment_feedback->filename));
+                                	$assignmentGroupAssignment = $assignment_feedback->assignment_group_learner->group->assignment;
+						    		$assignmentGroup = $assignment_feedback->assignment_group_learner->group;
+						    		$assignmentGroupCourse = $assignment_feedback->assignment_group_learner->group->assignment->course;
+						    	?>
 						      	<tr>
 							        <td>
 							        	
@@ -847,6 +852,17 @@
 							        </td>
 							        <td>{{ $assignment_feedback->user->full_name }}</td>
 							        <td>{{ $assignment_feedback->assignment_group_learner->user->full_name }}</td>
+									<td>
+										@if ($assignment_feedback->assignment_group_learner->group)
+											<a href="{{ route('admin.assignment-group.show',
+												['course_id' => $assignmentGroupCourse->id,
+												'assignment_id' => $assignmentGroupAssignment->id,
+												'group' => $assignmentGroup->id]
+												) }}">
+												{{ $assignment_feedback->assignment_group_learner->group->title }}
+											</a>
+										@endif
+									</td>
 							        <td><a href="{{ route('admin.assignment.show', ['course_id' => $assignment_feedback->assignment_group_learner->group->assignment->course->id, 'assignment' => $assignment_feedback->assignment_group_learner->group->assignment->id]) }}">{{ $assignment_feedback->assignment_group_learner->group->assignment->title }}</a></td>
 							        <td>
 										<button type="button" class="btn btn-warning btn-xs approveFeedbackAdminBtn" data-toggle="modal" data-target="#approveFeedbackAdminModal" data-action="{{ route('admin.assignment.group.approve', $assignment_feedback->id) }}"><i class="fa fa-check"></i></button>
