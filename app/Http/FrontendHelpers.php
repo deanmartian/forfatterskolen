@@ -596,6 +596,7 @@ class FrontendHelpers
             array( 'id' => 13, 'option' => 'Sci-fi'),
             array( 'id' => 14, 'option' => 'Dystopi'),
             array( 'id' => 15, 'option' => 'Valgfri'),
+            array( 'id' => 16, 'option' => 'Feelgood'),
         );
 
         if ($id) {

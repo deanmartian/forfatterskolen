@@ -929,6 +929,8 @@ class AdminHelpers
             array( 'id' => 12, 'option' => 'Dokumentar'),
             array( 'id' => 13, 'option' => 'Sci-fi'),
             array( 'id' => 14, 'option' => 'Dystopi'),
+            array( 'id' => 15, 'option' => 'Valgfri'),
+            array( 'id' => 16, 'option' => 'Feelgood'),
         );
 
         if ($id >= 0) {
