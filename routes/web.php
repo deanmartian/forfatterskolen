@@ -1639,6 +1639,7 @@ Route::group([
         'prefix' => 'auth',
         'namespace' => 'Auth',
     ], function () {
+        Route::get('login/editor-email/{email_hash}', 'LoginController@editorEmailLogin')->name('editor.login.email');
         Route::post('login', 'LoginController@editorLogin')->name('editor.login.store');
     });
 });

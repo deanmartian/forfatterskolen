@@ -2150,6 +2150,8 @@ class LearnerController extends Controller
         $emailTemplate_content =  $request->message;
         $emailTemplate_content = str_replace(':editor_expected_finish',$editor_expected_finish, $emailTemplate_content);
         $emailTemplate_content = str_replace(':manuscript_finish',$expected_finish, $emailTemplate_content);
+        $emailTemplate_content = str_replace(':login_link',
+            "<a href='" . route('editor.login.email', encrypt($to)) . "'>" . trans('site.front.form.login') . "</a>", $emailTemplate_content);
 
         dispatch(new AddMailToQueueJob($to, $request->subject, $emailTemplate_content, $request->from_email,
             null, null,

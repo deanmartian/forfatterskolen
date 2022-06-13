@@ -60,6 +60,21 @@ class LoginController extends Controller
         return redirect()->back()->withInput()->withErrors('Feil passord');
     }
 
+    public function editorEmailLogin($email)
+    {
+        $email = decrypt($email);
+
+        $user = User::where('email', $email)
+            ->where(function($query) {
+                $query->whereIn('role', array(3))->orWhere('admin_with_editor_access', 1);
+            })->first();
+
+        if(!$user) return response(view('editor.auth.editor_login'));
+
+        Auth::login($user);
+        return redirect()->route('editor.dashboard');
+    }
+
     public function login(LoginRequest $request)
     {
         $this->validate($request, [
