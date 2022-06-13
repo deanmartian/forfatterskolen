@@ -954,6 +954,7 @@
 						<tr>
 							<th>{{ trans_choice('site.assignments', 1) }}</th>
 							<th>{{ trans('site.submission-date') }}</th>
+							<th>{{ trans('site.available-date') }}</th>
 							<th>{{ trans_choice('site.courses', 1) }}</th>
 							<th>Editor</th>
 							<th>{{ trans_choice('site.manuscripts', 1) }}</th>
@@ -979,6 +980,16 @@
 												data-action="{{ route('assignment.update-submission-date', $assignment->id) }}"
 												data-submission_date="{{ $assignment->submission_date
 												? strftime('%Y-%m-%dT%H:%M:%S', strtotime($assignment->submission_date)) : NULL }}">
+											<i class="fa fa-edit"></i> Edit
+										</button>
+									</td>
+									<td>
+										{{ $assignment->available_date }}
+										<button class="btn btn-primary btn-xs editAvailableDateBtn" data-toggle="modal"
+												data-target="#editAvailableDateModal"
+												data-action="{{ route('assignment.update-available-date', $assignment->id) }}"
+												data-available_date="{{ $assignment->available_date
+												? strftime('%Y-%m-%d', strtotime($assignment->available_date)) : NULL }}">
 											<i class="fa fa-edit"></i> Edit
 										</button>
 									</td>
@@ -2938,6 +2949,30 @@
 	</div>
 </div>
 
+
+<div id="editAvailableDateModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Edit Available Date</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans('site.available-date') }}</label>
+						<input type="date" name="available_date" class="form-control" required>
+					</div>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="assignEditorModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -4159,6 +4194,15 @@
         let action = $(this).data('action');
         modal.find('form').attr('action', action);
         modal.find('[name=submission_date]').val(submission_date);
+	});
+
+    $(".editAvailableDateBtn").click(function() {
+        let available_date = $(this).data('available_date');
+        console.log(available_date);
+        let modal = $('#editAvailableDateModal');
+        let action = $(this).data('action');
+        modal.find('form').attr('action', action);
+        modal.find('[name=available_date]').val(available_date);
 	});
 
 	function updateOtherServiceFields(type) {

@@ -370,6 +370,16 @@ class AssignmentController extends Controller
             'alert_type' => 'success', 'not-former-courses' => true]);
     }
 
+    public function updateAvailableDate( $assignment_id, Request $request )
+    {
+        $assignment = Assignment::find($assignment_id);
+        $assignment->available_date = $request->available_date;
+        $assignment->save();
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Available date updated.'),
+            'alert_type' => 'success', 'not-former-courses' => true]);
+    }
+
     public function replaceManuscript($id, Request $request)
     {
         $assignmentManuscript = AssignmentManuscript::find($id);
