@@ -5,6 +5,7 @@ use App\Assignment;
 use App\AssignmentAddon;
 use App\AssignmentGroupLearner;
 use App\AssignmentManuscript;
+use App\AssignmentTemplate;
 use App\CoachingTimerManuscript;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
@@ -143,6 +144,7 @@ class LearnerController extends Controller
         $registeredWebinarLists = $learner->registeredWebinars->pluck('id');
         $registeredWebinars = $learner->registeredWebinars()->latest()->get();
         $learnerGiftPurchases = $learner->giftPurchases->pluck('id');
+        $assignmentTemplates = AssignmentTemplate::get();
 
         $emailHistories = EmailHistory::where(function($query) use ($learnerAssignmentManuscripts){
                 $query->where('parent', 'LIKE', 'assignment-manuscripts%');
@@ -192,7 +194,7 @@ class LearnerController extends Controller
             ->get();
 
         return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories',
-            'registeredWebinars'));
+            'registeredWebinars', 'assignmentTemplates'));
     }
 
 

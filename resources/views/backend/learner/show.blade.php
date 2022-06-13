@@ -944,6 +944,11 @@
 
 			<div class="panel panel-default">
 				<div class="panel-body">
+					<button class="btn btn-primary pull-right btn-xs learnerAssignmentBtn" data-toggle="modal"
+							data-target="#learnerAssignmentModal"
+							data-action="{{ route('assignment.learner-assignment.save') }}">
+						Add Assignment
+					</button>
 					<h4>
 						Personal Assignments
 					</h4>
@@ -3608,6 +3613,116 @@
 	</div>
 </div>
 
+<div id="learnerAssignmentModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					Learner Assignment
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<input type="hidden" name="learner_id" value="{{ $learner->id }}">
+					<div class="form-group">
+						<label>
+							Assignment Template
+						</label>
+						<select class="form-control select2 assignment-template">
+							<option value="" selected disabled>- Search Template -</option>
+							@foreach($assignmentTemplates as $template)
+								<option value="{{$template->id}}" data-fields="{{ json_encode($template) }}">
+									{{$template->title}}
+								</option>
+							@endforeach
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.title') }}</label>
+						<input type="text" class="form-control" name="title"
+							   placeholder="{{ trans('site.title') }}" required>
+					</div>
+					<div class="form-group">
+						<label>{{ trans('site.description') }}</label>
+						<textarea class="form-control" name="description"
+								  placeholder="{{ trans('site.description') }}" rows="6"></textarea>
+					</div>
+					{{--<div class="form-group">
+                        <label>{{ trans('site.delay-type') }}</label>
+                        <select class="form-control assignment-delay-toggle">
+                            <option value="days">Days</option>
+                            <option value="date">Date</option>
+                        </select>
+                    </div>--}}
+					<div class="form-group">
+						<label>{{ trans('site.submission-date') }}</label>
+						{{--<input type="datetime-local" class="form-control" name="submission_date" required>--}}
+						<div class="input-group">
+							<input type="datetime-local" class="form-control assignment-delay" name="submission_date"
+								   required>
+							<span class="input-group-addon assignment-delay-text" id="basic-addon2">
+										days
+									</span>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.available-date') }}</label>
+						<input type="date" class="form-control" name="available_date">
+					</div>
+					<div class="form-group">
+						<label>{{ trans('site.editor-expected-finish') }}</label>
+						<input type="date" class="form-control" name="editor_expected_finish">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.max-words') }}</label>
+						<input type="number" class="form-control" name="max_words">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.send-letter-to-editor') }}</label> <br>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small"
+							   name="send_letter_to_editor">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans_choice('site.courses', 1) }}</label>
+						<select class="form-control select2" name="course_id">
+							<option value="" selected disabled>- Search Course -</option>
+							@foreach(\App\Http\AdminHelpers::courseList() as $course)
+								<option value="{{$course->id}}">
+									{{$course->title}}
+								</option>
+							@endforeach
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans_choice('site.editors', 1) }}</label>
+						<select class="form-control select2" name="editor_id">
+							<option value="" selected disabled>- Select Editor -</option>
+							@foreach(\App\Http\AdminHelpers::editorList() as $editor)
+								<option value="{{ $editor->id }}">
+									{{ $editor->first_name . " " . $editor->last_name }}
+								</option>
+							@endforeach
+						</select>
+					</div>
+
+					<button type="submit" class="btn btn-primary pull-right margin-top">
+						{{ trans('site.save') }}
+					</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="registeredWebinarEmailModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-md">
 		<div class="modal-content">
@@ -4175,6 +4290,31 @@
         tinymce.get('sendEmailEditor').setContent(fields.email_content);
         form.find('[name=from_email]').val(fields.from_email);
 	});
+
+    $("select.assignment-template").change(function(){
+        let template = $(this).children("option:selected");
+        let fields = template.data('fields');
+        let modal = $("#learnerAssignmentModal");
+        let form = modal.find('form');
+        form.find('[name=title]').val(fields.title);
+        form.find('[name=description]').val(fields.description);
+        form.find('[name=available_date]').val(fields.available_date);
+        form.find('[name=max_words]').val(fields.max_words);
+
+        if (fields.submission_is_date) {
+            $(".assignment-delay-toggle").val("date").trigger('change');
+        } else {
+            $(".assignment-delay-toggle").val("days").trigger('change');
+        }
+
+        form.find('[name=submission_date]').val(fields.submission_date);
+    });
+
+    $(".learnerAssignmentBtn").click(function() {
+        let action = $(this).data('action');
+        let modal = $('#learnerAssignmentModal');
+        modal.find('form').attr('action', action);
+    });
 
     $(".setVippsEFakturaBtn").click(function(){
         let vipps_phone_number = $(this).data('vipps-number');
