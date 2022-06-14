@@ -215,6 +215,13 @@ class ContractController extends Controller
         ]);
     }
 
+    public function downloadPDF( $id )
+    {
+        $contract = Contract::find($id);
+        $pdf = PDF::loadView('frontend.pdf.contract', compact('contract'));
+        return $pdf->download($contract->code . ".pdf");
+    }
+
     public function saveContractTemplate( $id = NULL, Request $request )
     {
         $this->validate($request, [

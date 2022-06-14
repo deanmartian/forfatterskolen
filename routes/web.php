@@ -924,6 +924,7 @@ Route::group([
         Route::delete('/contract/template/delete/{id?}', 'ContractController@deleteContractTemplate')->name('admin.contract-template.delete');
         Route::post('/contract/{id}/sign', 'ContractController@signContract')->name('admin.contract.sign');
         Route::post('/contract/{id}/status', 'ContractController@contractStatus')->name('admin.contract.status');
+        Route::get('/contract/{id}/download-pdf', 'ContractController@downloadPDF')->name('admin.contract.download-pdf');
         Route::resource('/contract','ContractController',[
             'names' => [
                 'index' => 'admin.contract.index',
