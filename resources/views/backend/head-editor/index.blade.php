@@ -258,35 +258,37 @@
 										$groupDetails = DB::SELECT("SELECT A.id as assignment_group_id, B.id AS assignment_group_learner_id FROM assignment_groups A JOIN assignment_group_learners B ON A.id = B.assignment_group_id AND B.user_id = $assignedAssignment->user_id WHERE A.assignment_id = $assignedAssignment->assignment_id");
 										if($groupDetails){ // Means the course assignment belongs to a group
 											$feedback = DB::SELECT("SELECT A.* FROM assignment_feedbacks A JOIN assignment_group_learners B ON A.assignment_group_learner_id = B.id WHERE B.user_id = $assignedAssignment->user_id AND A.assignment_group_learner_id = ".$groupDetails[0]->assignment_group_learner_id);
-											echo '<td>';
-											echo '<button class="btn btn-success btn-xs courseAssignmentShowFeedbackBtn"
+											if ($feedback) {
+                                                echo '<td>';
+                                                echo '<button class="btn btn-success btn-xs courseAssignmentShowFeedbackBtn"
 															data-target="#courseAssignmentShowFeedbackModal"
 															data-toggle="modal"
 															data-id = "'.$assignedAssignment->id.'"
 															data-feedback_file = "'.$feedback[0]->filename.'"
 															data-feedback_grade = "'.$assignedAssignment->grade.'"
 															data-action="'.route('head_editor.course_assignment.feedback_approve',
-																			['id' => $assignedAssignment->id,
-																			'learner_id' => $assignedAssignment->user->id,
-																			'feedback_id' => $feedback[0]->id]).'">
+                                                        ['id' => $assignedAssignment->id,
+                                                            'learner_id' => $assignedAssignment->user->id,
+                                                            'feedback_id' => $feedback[0]->id]).'">
 															'. trans('site.approve-feedback') .'
 													</button> &nbsp';
 
-													$files = explode(',',$feedback[0]->filename);
-													foreach($files as $file){
-														echo '<a href="'.$file.'" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp';
-													}
-											echo $feedback[0]->created_at;
-											echo '</td>';
-											echo '<td> <span class="label label-default">'.trans('site.pending').'</span> </td>';
-											echo '<td>';
-											if($feedback[0]->notes_to_head_editor){
-												echo '<a class="notes" data-target="#notesModal" data-toggle="modal" data-notes="'.$feedback[0]->notes_to_head_editor.'">
+                                                $files = explode(',',$feedback[0]->filename);
+                                                foreach($files as $file){
+                                                    echo '<a href="'.$file.'" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp';
+                                                }
+                                                echo $feedback[0]->created_at;
+                                                echo '</td>';
+                                                echo '<td> <span class="label label-default">'.trans('site.pending').'</span> </td>';
+                                                echo '<td>';
+                                                if($feedback[0]->notes_to_head_editor){
+                                                    echo '<a class="notes" data-target="#notesModal" data-toggle="modal" data-notes="'.$feedback[0]->notes_to_head_editor.'">
 												'.substr($feedback[0]->notes_to_head_editor, 0, 10).'
 												<i class="fa fa-file-text-o" aria-hidden="true"></i>
 											</a>';
+                                                }
+                                                echo '</td>';
 											}
-											echo '</td>';
 										}else{ //the course assignment does not belong to a group
 											echo '<td>';
 											echo '<button class="btn btn-success btn-xs personalAssignmentShowFeedbackBtn"
