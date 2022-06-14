@@ -1278,6 +1278,7 @@ Route::group([
         Route::post('/free-manuscript/{id}/assign_editor', 'FreeManuscriptController@assignEditor')->name('admin.free-manuscript.assign_editor');
         Route::post('/free-manuscript/{id}/send_feedback', 'FreeManuscriptController@sendFeedback')->name('admin.free-manuscript.send_feedback');
         Route::get('/free-manuscript/{id}/feedback-history', 'FreeManuscriptController@feedbackHistory')->name('admin.free-manuscript.feedback-history');
+        Route::get('/free-manuscript/{id}/download', 'FreeManuscriptController@downloadContent')->name('admin.free-manuscript.download');
         Route::post('/free-manuscript/{id}/resend-feedback', 'FreeManuscriptController@resendFeedback')->name('admin.free-manuscript.resend-feedback');
         Route::post('/free-manuscript/{id}/approve_feedback', 'FreeManuscriptController@approveFeedback')->name('head_editor.free-manuscript.feedback_approve');
 

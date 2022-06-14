@@ -315,7 +315,7 @@
 											if($assignedAssignment->has_feedback){
 												echo '<span class="label label-default">Pending</span> ';
 												if($groupDetails){
-													echo '<button type="button" class="btn btn-success btn-xs submitFeedbackBtn"
+													/*echo '<button type="button" class="btn btn-success btn-xs submitFeedbackBtn"
 															data-toggle="modal" data-target="#submitFeedbackModal"
 															data-manuscript = "'.$feedback[0]->filename.'"
 															data-created_at = "'.$feedback[0]->created_at.'"
@@ -329,7 +329,7 @@
 															['group_id' => $groupDetails[0]->assignment_group_id, 'id' => $groupDetails[0]->assignment_group_learner_id]).'"
 															data-manuscript_id="'.$assignedAssignment->id.'">
 															<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-															</button>';
+															</button>';*/
 												}else{
 													echo '<button type="button" class="btn btn-success btn-xs submitFeedbackBtn"
 															data-toggle="modal" data-target="#submitFeedbackModal"
@@ -391,7 +391,8 @@
 										<tr>
 											<th>{{ trans('site.name') }}</th>
 											<th width="500">{{ trans('site.content') }}</th>
-											<th>{{ trans('site.feedback-status') }}</th>
+											<th width="200">{{ trans('site.feedback-status') }}</th>
+											<th></th>
 										</tr>
 									</thead>
 									<tbody>
@@ -401,7 +402,7 @@
 													{{ $freeManuscript->name }}
 												</td>
 												<td>
-													{{ \Illuminate\Support\Str::limit(strip_tags($freeManuscript->content), 120) }}<br>
+													{!! \Illuminate\Support\Str::limit(strip_tags($freeManuscript->content), 120) !!}<br>
 													<a href="#editContentModal" data-toggle="modal" class="editContentBtn"
 													   data-content="{{ $freeManuscript->content }}"
 													   data-action="{{ route('editor.free-manuscript.edit-content', $freeManuscript->id) }}">
@@ -427,6 +428,13 @@
 															+ {{ trans('site.add-feedback') }}
 														</button>
 													@endif
+												</td>
+												<td>
+													<a href="{{ route('admin.free-manuscript.download', $freeManuscript->id) }}"
+													   class="btn btn-primary btn-xs">
+														<i class="fa fa-download"></i>
+														{{ trans('site.download') }}
+													</a>
 												</td>
 											</tr>
 										@endforeach

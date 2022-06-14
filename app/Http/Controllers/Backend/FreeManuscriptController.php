@@ -8,6 +8,7 @@ use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
 use App\Manuscript;
 use App\User;
+use Barryvdh\DomPDF\PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Mail\Mailer;
@@ -120,6 +121,14 @@ class FreeManuscriptController extends Controller
             return response()->json(['data' => 'No feedback history found', 'success' => false]);
         }
         return response()->json(['data' => $freeManuscriptFeedbackHistory, 'success' => true]);
+    }
+
+    public function downloadContent( $id )
+    {
+        $freeManuscript    = FreeManuscript::find($id);
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->loadHTML($freeManuscript->content);
+        return $pdf->download(time() . ".pdf");
     }
 
     /**
