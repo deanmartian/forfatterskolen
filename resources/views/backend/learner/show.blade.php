@@ -960,6 +960,7 @@
 							<th>{{ trans_choice('site.assignments', 1) }}</th>
 							<th>{{ trans('site.submission-date') }}</th>
 							<th>{{ trans('site.available-date') }}</th>
+							<th>{{ trans('site.max-words') }}</th>
 							<th>{{ trans_choice('site.courses', 1) }}</th>
 							<th>Editor</th>
 							<th>{{ trans_choice('site.manuscripts', 1) }}</th>
@@ -995,6 +996,15 @@
 												data-action="{{ route('assignment.update-available-date', $assignment->id) }}"
 												data-available_date="{{ $assignment->available_date
 												? strftime('%Y-%m-%d', strtotime($assignment->available_date)) : NULL }}">
+											<i class="fa fa-edit"></i> Edit
+										</button>
+									</td>
+									<td>
+										{{ $assignment->max_words }}
+										<button class="btn btn-primary btn-xs editMaxWordsBtn" data-toggle="modal"
+												data-target="#editMaxWordsModal"
+												data-action="{{ route('assignment.update-max-words', $assignment->id) }}"
+												data-max_words="{{ $assignment->max_words }}">
 											<i class="fa fa-edit"></i> Edit
 										</button>
 									</td>
@@ -2978,6 +2988,29 @@
 	</div>
 </div>
 
+<div id="editMaxWordsModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Edit Max Words</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans('site.max-words') }}</label>
+						<input type="number" name="max_words" class="form-control" required>
+					</div>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="assignEditorModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -4338,12 +4371,19 @@
 
     $(".editAvailableDateBtn").click(function() {
         let available_date = $(this).data('available_date');
-        console.log(available_date);
         let modal = $('#editAvailableDateModal');
         let action = $(this).data('action');
         modal.find('form').attr('action', action);
         modal.find('[name=available_date]').val(available_date);
 	});
+
+    $(".editMaxWordsBtn").click(function() {
+        let max_words = $(this).data('max_words');
+        let modal = $('#editMaxWordsModal');
+        let action = $(this).data('action');
+        modal.find('form').attr('action', action);
+        modal.find('[name=max_words]').val(max_words);
+    });
 
 	function updateOtherServiceFields(type) {
 	    let modal = $("#addOtherServiceModal");

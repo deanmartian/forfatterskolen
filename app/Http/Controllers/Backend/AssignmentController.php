@@ -380,6 +380,16 @@ class AssignmentController extends Controller
             'alert_type' => 'success', 'not-former-courses' => true]);
     }
 
+    public function updateMaxWords(  $assignment_id, Request $request )
+    {
+        $assignment = Assignment::find($assignment_id);
+        $assignment->max_words = $request->max_words;
+        $assignment->save();
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Max words updated.'),
+            'alert_type' => 'success', 'not-former-courses' => true]);
+    }
+
     public function replaceManuscript($id, Request $request)
     {
         $assignmentManuscript = AssignmentManuscript::find($id);

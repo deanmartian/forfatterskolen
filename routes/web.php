@@ -1019,6 +1019,7 @@ Route::group([
         Route::post('assignment/{id}/add-on-for-learner', 'AssignmentController@addOnForLearner')->name('assignment.add-on-for-learner');
         Route::post('assignment/{id}/update-submission-date', 'AssignmentController@updateSubmissionDate')->name('assignment.update-submission-date');
         Route::post('assignment/{id}/update-available-date', 'AssignmentController@updateAvailableDate')->name('assignment.update-available-date');
+        Route::post('assignment/{id}/update-max-words', 'AssignmentController@updateMaxWords')->name('assignment.update-max-words');
         Route::post('assignment_manuscript/{id}/delete', 'AssignmentController@deleteManuscript')->name('assignment.group.delete_manuscript');
         Route::post('assignment_manuscript/{id}/move', 'AssignmentController@moveManuscript')->name('assignment.group.move_manuscript');
         Route::post('assignment_manuscript/{id}/set_grade', 'AssignmentController@setGrade')->name('assignment.group.set_grade');
