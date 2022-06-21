@@ -430,7 +430,7 @@
 													@endif
 												</td>
 												<td>
-													<a href="{{ route('admin.free-manuscript.download', $freeManuscript->id) }}"
+													<a href="{{ route('editor.free-manuscript.download', $freeManuscript->id) }}"
 													   class="btn btn-primary btn-xs">
 														<i class="fa fa-download"></i>
 														{{ trans('site.download') }}

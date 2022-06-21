@@ -1635,6 +1635,7 @@ Route::group([
         Route::get('assignment-manuscript/{id}/download-letter', 'AssignmentController@downloadManuscriptLetter')->name('editor.assignment.manuscript.download_letter');
         Route::post('/free-manuscript/{id}/edit-content', 'FreeManuscriptController@editContent')->name('editor.free-manuscript.edit-content');
         Route::post('/free-manuscript/{id}/send_feedback', 'FreeManuscriptController@sendFeedback')->name('editor.free-manuscript.send_feedback');
+        Route::get('/free-manuscript/{id}/download', 'FreeManuscriptController@downloadContent')->name('editor.free-manuscript.download');
 
     });
 
