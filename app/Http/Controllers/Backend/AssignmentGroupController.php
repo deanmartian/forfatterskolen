@@ -233,7 +233,12 @@ class AssignmentGroupController extends Controller
 
         if ($request->has('send_email')) {
             if ($request->availability && Carbon::parse($request->availability)->gt(Carbon::today())) {
-                $redirect_link = route('learner.assignment', 'tab=feedback-from-editor');
+                $assignmentGroup = AdminHelpers::getLearnerAssignmentGroup($assignmentManuscript->assignment_id, $assignmentManuscript->user_id);
+                $redirect_link          = route('learner.assignment', 'tab=feedback-from-editor');
+                if ($assignmentGroup) {
+                    $redirect_link = route('learner.assignment.group.show', $assignmentGroup['id']);
+                }
+
                 $formattedMailContent = AdminHelpers::formatEmailContent($email_content, $to, $first_name,
                     $redirect_link);
 
@@ -260,7 +265,13 @@ class AssignmentGroupController extends Controller
 
     public function sendAssignmentFeedbackMail($email_content, $to, $first_name, $subject, $from_email, $manuscript_id)
     {
+        $assignmentManuscript = AssignmentManuscript::find($manuscript_id);
+        $assignmentGroup = AdminHelpers::getLearnerAssignmentGroup($assignmentManuscript->assignment_id, $assignmentManuscript->user_id);
         $redirect_link          = route('learner.assignment', 'tab=feedback-from-editor');
+        if ($assignmentGroup) {
+            $redirect_link = route('learner.assignment.group.show', $assignmentGroup['id']);
+        }
+
         $formattedMailContent   = AdminHelpers::formatEmailContent($email_content, $to, $first_name, $redirect_link);
         dispatch(new AddMailToQueueJob($to, $subject, $formattedMailContent, $from_email, null, null,
             'assignment-manuscripts', $manuscript_id));
