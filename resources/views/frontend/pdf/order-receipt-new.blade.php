@@ -20,7 +20,7 @@
             position: absolute;
         }
         .receipt-logo-container img{
-            height: 67px;
+            height: 100px; /*67*/
             object-fit: contain;
         }
         .receipt-pink-bg span{
@@ -83,7 +83,7 @@
     <div class="col-sm-12">
         <div class="w-50 float-left">
             <div class="receipt-logo-container">
-                <img src="{{ url('/images-new/logo2.png') }}" alt="Logo" style="width: 260px;">
+                <img src="{{ url('/images-new/logo-tagline.png') }}" alt="Logo" style="width: 260px;">
             </div>
         </div>
         <div class="w-50 float-right">
@@ -183,10 +183,12 @@
                 <td>
                     @if (in_array($order->type, [1, 6]))
                     <b><i>{{ $order->item }} - {{ $order->package->variation }}</i></b>
+                    @else
+                        {{ $order->item }}
                     @endif
                 </td>
                 <td>0%</td>
-                <td>1 styck</td>
+                <td>1 stk</td>
                 <td>{{ $order->price_formatted }}</td>
                 <td>{{ $order->total_formatted }}</td>
             </tr>

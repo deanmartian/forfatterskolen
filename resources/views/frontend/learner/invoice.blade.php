@@ -51,7 +51,7 @@
 							],
 							[
 								'name' => 'order-history',
-								'label' => 'Order History'
+								'label' => trans('site.order-history.title')
 							]
 						]
 					@endphp

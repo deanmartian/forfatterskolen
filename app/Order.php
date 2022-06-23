@@ -93,7 +93,7 @@ class Order extends Model {
 
     public function getPackageVariationAttribute()
     {
-        $package = '';
+        $package = $this->item;
         if (in_array($this->attributes['type'], [1, 6])) {
             return $this->package->variation;
         }

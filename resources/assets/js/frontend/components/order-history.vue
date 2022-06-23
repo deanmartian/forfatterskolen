@@ -51,7 +51,7 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="receipt-logo-container">
-                        <img src="/images-new/logo2.png" alt="Logo" class="w-100">
+                        <img src="/images-new/logo-tagline.png" alt="Logo" class="w-100">
                     </div>
                     <div class="receipt-papermoon-address">
                         <span style="font-weight: 600;">{{ trans('site.order-history.fs-name') }}</span> <br>
@@ -134,7 +134,7 @@
                 </div>
                 <div class="col-sm-2">
                     <span>{{ trans('site.order-history.quantity') }}</span><br>
-                    <span>1 styck</span>
+                    <span>1 stk</span>
                 </div>
                 <div class="col-sm-2">
                     <span>{{ trans('site.order-history.price') }}</span><br>
@@ -374,7 +374,7 @@
 
 <style>
     .receipt-logo-container img {
-        height: 67px;
+        height: 100px;/*64*/
         width: 260px;
         -o-object-fit: contain;
         object-fit: contain;
@@ -385,7 +385,7 @@
     }
 
     .receipt-papermoon-address {
-        padding-top: 70px;
+        padding-top: 37px; /*70*/
     }
 
     .customer-name-address{
