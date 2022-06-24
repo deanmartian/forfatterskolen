@@ -47,6 +47,7 @@
 	<a class="btn btn-success margin-top" href="{{ route('admin.checkout-log.index') }}">Checkout Logs</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.upcoming.index') }}">Upcoming Sections</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.news.index') }}">News</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.genre.index') }}">Genre</a>
 	@if(Auth::user()->isSuperUser())
 		<a class="btn btn-success margin-top" href="{{ route('admin.invoice.index') }}">Invoices</a>
 	@endif

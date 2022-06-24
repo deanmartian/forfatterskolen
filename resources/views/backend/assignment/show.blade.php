@@ -793,7 +793,7 @@
 						<select class="form-control" name="type" id="ass_type" required>
 							<option value="" disabled="disabled" selected>Select Type</option>
 							@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
-								<option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
+								<option value="{{ $type->id }}"> {{ $type->name }} </option>
 							@endforeach
 						</select>
 					</div>
@@ -875,7 +875,7 @@
 						<select class="form-control" name="type" id="ass_type" required>
 							<option value="" disabled="disabled" selected>Select Type</option>
 							@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
-								<option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
+								<option value="{{ $type->id }}"> {{ $type->name }} </option>
 							@endforeach
 						</select>
 					</div>

@@ -414,8 +414,8 @@
 					<select class="form-control" name="genre" required>
 						<option value="" disabled="disabled" selected>Select Genre</option>
 						@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
-							<option value="{{ $type['id'] }}"
-							@if ($shopManuscriptTaken->genre == $type['id']) selected @endif> {{ $type['option'] }} </option>
+							<option value="{{ $type->id }}"
+							@if ($shopManuscriptTaken->genre == $type->id) selected @endif> {{ $type->name }} </option>
 						@endforeach
 					</select>
 					<div class="text-right margin-top">

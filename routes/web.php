@@ -1474,6 +1474,18 @@ Route::group([
         Route::post('/settings/create/{name}', 'SettingsController@create')->name('admin.settings.create');
         Route::get('/news', 'SettingsController@news')->name('admin.news.index');
         Route::post('/news/save', 'SettingsController@saveNews')->name('admin.news.save');
+
+        Route::resource('/genre', 'GenreController', [
+            'except' => ['create', 'edit'],
+            'names' => [
+                'index' => 'admin.genre.index',
+                'show' => 'admin.genre.show',
+                'store' => 'admin.genre.store',
+                'update' => 'admin.genre.update',
+                'destroy' => 'admin.genre.destroy',
+            ],
+        ]);
+
         // Advisories
         Route::put('/advisory/{id}', 'AdvisoryController@update')->name('admin.advisory.update');
 

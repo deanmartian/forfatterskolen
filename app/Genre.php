@@ -20,6 +20,8 @@ class Genre extends Model
      */
     protected $fillable = ['name'];
 
+    public $timestamps = false; // disable the update of created/updated since field does not exist
+
     public function editorGenrePreferences(){
         return $this->hasMany('App\Models\EditorGenrePreferences', 'genre_id', 'id');
     }

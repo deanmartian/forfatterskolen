@@ -105,7 +105,7 @@ class AssignmentController extends Controller
 
         // group by 3 according to genre (prioritize grouping by genre)
         $assignmentType = FrontendHelpers::assignmentType();
-        $assignmentType[] = [ 'id' => '', 'option' => 'none'];
+        $assignmentType[] = [ 'id' => '', 'name' => 'none'];
 
         foreach ($assignmentType as $genre) {
 

@@ -639,7 +639,7 @@
                                     {{ trans('site.front.select-genre') }}
                                 </option>
                                 @foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
-                                    <option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
+                                    <option value="{{ $type->id }}"> {{ $type->name }} </option>
                                 @endforeach
                             </select>
                         </div>
@@ -688,7 +688,7 @@
                                     {{ trans('site.front.select-genre') }}
                                 </option>
                                 @foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
-                                    <option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
+                                    <option value="{{ $type->id }}"> {{ $type->name }} </option>
                                 @endforeach
                             </select>
                         </div>

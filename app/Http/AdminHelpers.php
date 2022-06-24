@@ -7,6 +7,7 @@ use App\Course;
 use App\CoursesTaken;
 use App\CronLog;
 use App\EmailTemplate;
+use App\Genre;
 use App\Mail\SubjectBodyEmail;
 use App\Notification;
 use App\Order;
@@ -914,7 +915,20 @@ class AdminHelpers
      */
     public static function assignmentType($id = NULL)
     {
-        $types = array(
+
+        $genre = Genre::all();
+
+        if ($id >= 0 && !is_null($id)) {
+            $genre = 'None';
+            $findGenre = Genre::find($id);
+
+            if ($id > 0 && $findGenre) {
+                $genre = $findGenre->name;
+            }
+        }
+
+        return $genre;
+        /*$types = array(
             array( 'id' => 1, 'option' => 'Barnebok'),
             array( 'id' => 2, 'option' => 'Fantasy'),
             array( 'id' => 3, 'option' => 'Skjønnlitterært'),
@@ -945,7 +959,7 @@ class AdminHelpers
             return "None";
         }
 
-        return $types;
+        return $types;*/
     }
 
     /**

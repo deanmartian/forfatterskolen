@@ -61,7 +61,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                                             v-html="trans('site.free-text-evaluation.choose-genre')">
                                     </option>
 
-                                    <option :value="type.id" v-for="type in assignmentTypes" v-text="type.option">
+                                    <option :value="type.id" v-for="type in assignmentTypes" v-text="type.name">
                                     </option>
                                 </select>
                             </div> <!-- end genre -->
