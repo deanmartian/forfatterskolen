@@ -34,6 +34,7 @@
 						<thead>
 						<tr>
 							<th>{{ trans('site.name') }}</th>
+							<th>{{ trans('site.genre') }}</th>
 							<th>{{ trans_choice('site.emails', 1) }}</th>
 							<th width="600">{{ trans('site.content') }}</th>
 							<th>{{ trans('site.date-received') }}</th>
@@ -46,6 +47,7 @@
 						@foreach( $freeManuscripts as $freeManuscript )
 							<tr>
 								<td>{{ $freeManuscript->name }}</td>
+								<td>{{ \App\Http\AdminHelpers::assignmentType($freeManuscript->genre) }}</td>
 								<td>{{ $freeManuscript->email }}</td>
 								<td>
 									{{ \Illuminate\Support\Str::limit(strip_tags($freeManuscript->content), 120) }}<br>

@@ -390,6 +390,7 @@
 									<thead>
 										<tr>
 											<th>{{ trans('site.name') }}</th>
+											<th>{{ trans('site.genre') }}</th>
 											<th width="500">{{ trans('site.content') }}</th>
 											<th width="200">{{ trans('site.feedback-status') }}</th>
 											<th></th>
@@ -401,6 +402,7 @@
 												<td>
 													{{ $freeManuscript->name }}
 												</td>
+												<td>{{ \App\Http\AdminHelpers::assignmentType($freeManuscript->genre) }}</td>
 												<td>
 													{!! \Illuminate\Support\Str::limit(strip_tags($freeManuscript->content), 120) !!}<br>
 													<a href="#editContentModal" data-toggle="modal" class="editContentBtn"

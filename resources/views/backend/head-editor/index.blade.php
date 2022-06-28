@@ -341,6 +341,7 @@
 							<thead>
 							<tr>
 								<th>{{ trans('site.name') }}</th>
+								<th>{{ trans('site.genre') }}</th>
 								<th>{{ trans_choice('site.editors', 1) }}</th>
 								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
 								<th>{{ trans('site.feedback-status') }}</th>
@@ -350,6 +351,7 @@
 							@foreach($freeManuscripts as $freeManuscript)
 								<tr>
 									<td>{{ $freeManuscript->name }}</td>
+									<td>{{ \App\Http\AdminHelpers::assignmentType($freeManuscript->genre) }}</td>
 									<td>@if( $freeManuscript->editor ) {{ $freeManuscript->editor->full_name }} @endif</td>
 									<td>
 										<button class="btn btn-xs btn-success sendFMApproveFeedbackBtn"
