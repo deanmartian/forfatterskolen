@@ -1200,7 +1200,8 @@ Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">po
                 'name' => $request->name,
                 'email' => $request->email,
                 'genre' => $request->genre,
-                'content' => $request->manuscript_content
+                'content' => $request->manuscript_content,
+                'deadline' => Carbon::today()->addDays(6)
             ]);
             /*AdminHelpers::send_email('Free Manuscript',
                 'post@forfatterskolen.no', 'post@forfatterskolen.no',

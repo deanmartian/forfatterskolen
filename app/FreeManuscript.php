@@ -1,6 +1,7 @@
 <?php
 namespace App;
 
+use App\Http\FrontendHelpers;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -12,7 +13,8 @@ class FreeManuscript extends Model
 {
     
     protected $table = 'free_manuscripts';
-    protected $fillable = ['name', 'email', 'content', 'editor_id', 'genre'];
+    protected $fillable = ['name', 'email', 'content', 'editor_id', 'genre', 'deadline'];
+    protected $appends = ['deadline_date'];
 
 
     public function editor()
@@ -28,6 +30,11 @@ class FreeManuscript extends Model
     public function feedbackHistory()
     {
         return $this->hasMany('App\FreeManuscriptFeedbackHistory');
+    }
+
+    public function getDeadlineDateAttribute()
+    {
+        return $this->attributes['deadline'] ? FrontendHelpers::formatDate($this->attributes['deadline']) : NULL;
     }
 
 }

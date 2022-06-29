@@ -37,6 +37,7 @@
 							<th>{{ trans('site.genre') }}</th>
 							<th>{{ trans_choice('site.emails', 1) }}</th>
 							<th width="600">{{ trans('site.content') }}</th>
+							<th>{{ trans('site.deadline') }}</th>
 							<th>{{ trans('site.date-received') }}</th>
 							<th>{{ trans_choice('site.editors', 1) }}</th>
 							<th></th>
@@ -57,6 +58,7 @@
 										Her kan du også nå putte in ekstra tekst
 									</a>
 								</td>
+								<td>{{ $freeManuscript->deadline_date }}</td>
 								<td>{{ \App\Http\FrontendHelpers::formatDate($freeManuscript->created_at) }}</td>
 								<td>@if( $freeManuscript->editor ) {{ $freeManuscript->editor->full_name }} @endif</td>
 								<td>
@@ -67,7 +69,7 @@
 									data-genre="{{ $freeManuscript->genre ? \App\Http\FrontendHelpers::assignmentType($freeManuscript->genre): '' }}"
 									data-content="{{ html_entity_decode($freeManuscript->content) }}">{{ trans('site.view') }}</button>
 									<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.free-manuscript.assign_editor', $freeManuscript->id) }}" data-editor="{{ $freeManuscript->editor_id }}">{{ trans('site.assign-editor') }}</button>
-									<button class="btn btn-xs btn-danger deleteManuscriptBtn" data-toggle="modal" data-target="#deleteManuscriptModal" data-fields="{{ json_encode($freeManuscript) }}" data-action="{{ route('admin.free-manuscript.delete', $freeManuscript->id) }}" style="margin-top: 5px">{{ trans('site.delete') }}</button>
+									<button class="btn btn-xs btn-danger deleteManuscriptBtn" data-toggle="modal" data-target="#deleteManuscriptModal" data-fields="{{ json_encode($freeManuscript) }}" data-action="{{ route('admin.free-manuscript.delete', $freeManuscript->id) }}">{{ trans('site.delete') }}</button>
 								</td>
 							</tr>
 						@endforeach

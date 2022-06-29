@@ -106,7 +106,21 @@ class FreeManuscriptController extends Controller
         $freeManuscripts = FreeManuscript::findOrFail($id);
         $freeManuscripts->editor_id = $request->editor_id;
         $freeManuscripts->save();
-        return redirect()->back();
+
+        $emailTemplate = EmailTemplate::where('page_name', 'Free Manuscript to Editor')->first();
+        $to = $freeManuscripts->editor->email;
+        $emailData = [
+            'email_subject' => $emailTemplate->subject,
+            'email_message' => $emailTemplate->email_content,
+            'from_name' => '',
+            'from_email' => $emailTemplate->from_email,
+            'attach_file' => NULL
+        ];
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Editor assigned successfully.'),
+            'alert_type' => 'success']);
     }
 
     /**
