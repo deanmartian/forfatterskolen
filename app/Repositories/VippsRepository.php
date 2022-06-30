@@ -87,6 +87,7 @@ class VippsRepository extends BaseRepository {
             Log::info("VIPPS inside not success on initiate payment");
             Log::info(json_encode($response));
             if (isset($response['data'][0])) {
+                Log::info(json_encode($response['data'][0]));
                 return new ApiException($response['data'][0]->errorMessage, null, $response['http_code']);
             }
 
