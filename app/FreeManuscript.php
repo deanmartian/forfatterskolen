@@ -34,7 +34,8 @@ class FreeManuscript extends Model
 
     public function getDeadlineDateAttribute()
     {
-        return $this->attributes['deadline'] ? FrontendHelpers::formatDate($this->attributes['deadline']) : NULL;
+        return $this->attributes['deadline'] ? FrontendHelpers::formatDate($this->attributes['deadline'])
+            : FrontendHelpers::formatDate($this->attributes['created_at']);
     }
 
 }
