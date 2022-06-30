@@ -2,6 +2,7 @@
 namespace App;
 
 use App\Http\FrontendHelpers;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -35,7 +36,7 @@ class FreeManuscript extends Model
     public function getDeadlineDateAttribute()
     {
         return $this->attributes['deadline'] ? FrontendHelpers::formatDate($this->attributes['deadline'])
-            : FrontendHelpers::formatDate($this->attributes['created_at']);
+            : FrontendHelpers::formatDate(Carbon::parse($this->attributes['created_at'])->addDays(6));
     }
 
 }

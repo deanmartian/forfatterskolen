@@ -393,7 +393,7 @@
 											<th>{{ trans('site.genre') }}</th>
 											<th width="500">{{ trans('site.content') }}</th>
 											<th width="200">{{ trans('site.feedback-status') }}</th>
-											{{--<th width="200">{{ trans('site.deadline') }}</th>--}}
+											<th width="200">{{ trans('site.deadline') }}</th>
 											<th></th>
 										</tr>
 									</thead>
@@ -432,9 +432,9 @@
 														</button>
 													@endif
 												</td>
-												{{--<td>
+												<td>
 													{{ $freeManuscript->deadline_date }}
-												</td>--}}
+												</td>
 												<td>
 													<a href="{{ route('editor.free-manuscript.download', $freeManuscript->id) }}"
 													   class="btn btn-primary btn-xs">
