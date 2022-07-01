@@ -354,7 +354,7 @@ class FikenInvoice
             if (property_exists($item, 'email')) {
                 $email = $item->email;
             } else {
-                $email = $item->contactPerson[0]['email'];
+                $email = $item->contactPerson[0]->email;
             }
 
             $updateData['email'] = $email;
