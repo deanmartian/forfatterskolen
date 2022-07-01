@@ -329,6 +329,7 @@ class FikenInvoice
 
 	public function get_customer($fields)
 	{
+        Log::info("inside get customer");
         $ch = curl_init($this->fiken_contacts.'?pageSize=1&email='.$fields['email']);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         /*curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
@@ -343,6 +344,7 @@ class FikenInvoice
         //$contacts = $data->_embedded->{'https://fiken.no/api/v1/rel/contacts'}; - this is for v1 of fiken
         $item = $data;
         if( $item ) :
+            Log::info("inside if in get customer");
             $item = $item[0];
 
             $updateData['name'] = $item->name;
@@ -365,6 +367,7 @@ class FikenInvoice
             $this->update_customer($item->contactId, $updateData);
             return $item;
         else :
+            Log::info("inside else in get customer");
             return $this->create_customer($fields);
         endif;
 
@@ -390,6 +393,8 @@ class FikenInvoice
         $data = curl_exec($ch);
         curl_close($ch);
         $data = json_decode($data);
+        Log::info("inside create customer");
+        Log::info(json_encode($data));
         return $this->get_customer($fields);
 	}
 
@@ -412,6 +417,8 @@ class FikenInvoice
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
         $data = curl_exec($ch);
         curl_close($ch);
+        Log::info("inside update customer");
+        Log::info(json_encode($data));
         return $data;
     }
 
