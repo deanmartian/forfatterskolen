@@ -343,9 +343,11 @@ class FikenInvoice
 
         //$contacts = $data->_embedded->{'https://fiken.no/api/v1/rel/contacts'}; - this is for v1 of fiken
         $item = $data;
+        Log::info(json_encode($item));
         if( $item ) :
             Log::info("inside if in get customer");
             $item = $item[0];
+            Log::info(json_encode($item));
 
             $updateData['name'] = $item->name;
             $updateData['email'] = $item->email;
