@@ -269,11 +269,18 @@ class FikenInvoice
 	{
         Log::info("inside send invoice");
         Log::info(json_encode($invoice));
+
+        if (property_exists($invoice->customer, 'email')) {
+            $email = $invoice->customer->email;
+        } else {
+            $email = $invoice->sale->customer->contactPerson[0]->email;
+        }
+
         $fields = [
             'invoiceId'         => $invoice->invoiceId,
             'method'            => ['email'],
             'includeDocumentAttachments' => true,
-            'recipientName'     => $invoice->customer->name,
+            'recipientName'     => $email, //$invoice->customer->name,
             'recipientEmail'    => $invoice->customer->email
         ];
         $field_string = json_encode($fields, true);
