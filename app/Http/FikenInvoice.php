@@ -267,6 +267,8 @@ class FikenInvoice
 
 	public function send_invoice($invoice)
 	{
+        Log::info("inside send invoice");
+        Log::info(json_encode($invoice));
         $fields = [
             'invoiceId'         => $invoice->invoiceId,
             'method'            => ['email'],
