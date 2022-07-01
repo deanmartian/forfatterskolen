@@ -364,7 +364,7 @@ class InvoiceController extends Controller
             ];
 
             $invoice = new FikenInvoice();
-            $invoice->create_invoice($invoice_fields);
+            return $invoice->create_invoice($invoice_fields);
         }
 
         return redirect()->back()->with([

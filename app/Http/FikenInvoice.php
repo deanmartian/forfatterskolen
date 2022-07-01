@@ -350,7 +350,14 @@ class FikenInvoice
             Log::info(json_encode($item));
 
             $updateData['name'] = $item->name;
-            $updateData['email'] = $item->email;
+
+            if (property_exists($item, 'email')) {
+                $email = $item->email;
+            } else {
+                $email = $item->contactPerson[0]['email'];
+            }
+
+            $updateData['email'] = $email;
             $updateData['address'] = [
                 'streetAddress' => $fields['address']['streetAddress'],
                 'city' => $fields['address']['city'],
