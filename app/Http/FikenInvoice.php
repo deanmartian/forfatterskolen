@@ -280,8 +280,8 @@ class FikenInvoice
             'invoiceId'         => $invoice->invoiceId,
             'method'            => ['email'],
             'includeDocumentAttachments' => true,
-            'recipientName'     => $email, //$invoice->customer->name,
-            'recipientEmail'    => $invoice->customer->email
+            'recipientName'     => $invoice->customer->name,
+            'recipientEmail'    => $email
         ];
         $field_string = json_encode($fields, true);
         $this->headers[] = 'Content-Type: Application/json';
