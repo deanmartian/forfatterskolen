@@ -113,6 +113,12 @@
 											{{ trans('site.make-as-replay') }}
 										</button>
 
+										<button class="btn btn-warning btn-xs viewRegistrantsBtn" data-toggle="modal"
+												data-target="#viewRegistrantModal"
+												data-registrants="{{ json_encode($webinar->registrants) }}">
+											View Registrants
+										</button>
+
 										@if (in_array($course->id, [17, 23]) || $course->is_free) {{-- check if webinar-pakke --}}
 											<?php
 												$webinarEmailOut = \App\Http\AdminHelpers::getWebinarEmailOut($webinar->id, $course->id);
@@ -230,6 +236,48 @@
 						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
 					</div>
 				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="viewRegistrantModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="no-margin">Registrants</h4>
+			</div>
+			<div class="modal-body">
+				<table class="table" id="registrantTable">
+					<thead>
+						<tr>
+							<th width="200">Learner</th>
+							<th>Join Url</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+					{{-- show data here --}}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="removeParticipantModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="no-margin">Remove Participant</h4>
+			</div>
+			<div class="modal-body">
+					<p>Are you sure you want to remove this participant?</p>
+
+					<div class="text-right">
+						<button class="btn btn-danger">{{ trans('site.delete') }}</button>
+					</div>
 			</div>
 		</div>
 	</div>
@@ -694,6 +742,8 @@
         });
     }
 
+    let deleteParticipantLink = "";
+
 	$(document).ready(function(){
 
 		$('.deletePresenterBtn').click(function(){
@@ -756,6 +806,21 @@
             modal.find('form').find('select').val(replay);
 		});
 
+		let registrantTable = $("#registrantTable").DataTable();
+
+		$(".viewRegistrantsBtn").click(function(){
+			let registrants = $(this).data('registrants');
+			$.each(registrants, function(k, v) {
+				registrantTable.row.add([
+						v.user.full_name,
+						v.join_url,
+						"<button class='btn btn-danger btn-xs removeParticipantBtn' data-toggle='modal' data-target='#removeParticipantModal'" +
+						" onclick='removeParticipant("+v.id+", this)' data-action='/webinar/registrant/" + v.id + "/delete'>Delete</button>"
+				]).draw(false);
+			});
+
+			console.log(registrants);
+		});
 
 		$('.editWebinarBtn').click(function(){
 			var form = $('#editWebinarModal form');
@@ -817,6 +882,32 @@
 
             form.attr('action', action);
 		});
+
+		$("#removeParticipantModal .btn-danger").click(function() {
+			$(this).attr("disabled", "disabled");
+			$.ajax({
+				type:'DELETE',
+				url: deleteParticipantLink,
+				headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+				success: function(data){
+					console.log(data);
+					registrantTable.row('.selected').remove().draw(false);
+					$("#removeParticipantModal .close").trigger("click");
+					$("#removeParticipantModal .btn-danger").removeAttr("disabled");
+				},
+				error: function(data) {
+					alert(data.responseJSON.message);
+					$("#removeParticipantModal .close").trigger("click");
+					$("#removeParticipantModal .btn-danger").removeAttr("disabled");
+				}
+			});
+		});
 	});
+
+	function removeParticipant(participant_id, self) {
+		$("#registrantTable").find("tbody").find("tr").removeClass("selected");
+		$(self).closest("tr").addClass("selected");
+		deleteParticipantLink = '/webinar/registrant/' + participant_id + '/delete';
+	}
 </script>
 @stop

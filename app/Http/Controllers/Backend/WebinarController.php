@@ -403,5 +403,37 @@ class WebinarController extends Controller
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Webinar scheduled successfully.'),
             'alert_type' => 'success']);
     }
+
+    public function removeRegistrant( $registrant_id )
+    {
+        $registrant = WebinarRegistrant::find($registrant_id);
+        $user = $registrant->user;
+        $webinar = $registrant->webinar;
+        $webinar_key = $webinar->link;
+
+        $data = [
+            'id'            => $webinar_key,
+            'email'         => $user->email,
+        ];
+
+        $url = config('services.big_marker.register_link');
+        $ch = curl_init();
+        $header[] = 'API-KEY: '.config('services.big_marker.api_key');
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        $response = curl_exec($ch);
+        $decoded_response = json_decode($response);
+
+        if (!empty($decoded_response)) {
+            return response()->json($decoded_response, 400);
+        }
+
+        $registrant->delete();
+
+        return response()->json($decoded_response);
+    }
     
 }

@@ -13,7 +13,10 @@ class Webinar extends Model
         return $this->belongsTo('App\Course');
     }
 
-
+    public function registrants()
+    {
+        return $this->hasMany('App\WebinarRegistrant');
+    }
 
     public function webinar_presenters()
     {
