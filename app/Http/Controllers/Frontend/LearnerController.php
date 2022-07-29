@@ -4101,6 +4101,29 @@ class LearnerController extends Controller
         return response()->download($filename);
     }
 
+    public function downloadCreditNote( $invoice_id )
+    {
+        $invoice = Invoice::find($invoice_id); // this is invoice id
+        $pdf_url = $invoice->credit_note_url;
+
+        $expFile = explode("/", $pdf_url);
+
+        $filename = 'fiken-invoice/'.end($expFile);
+
+        // write file on the server
+        $out = fopen($filename, 'wb');
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_FILE, $out);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+        curl_setopt($ch, CURLOPT_URL, $pdf_url);
+        curl_exec($ch);
+        curl_close($ch);
+        fclose($out);
+        return response()->download($filename);
+    }
+
     public function downloadInvoiceOrig($url)
     {
         $check_url = $url;

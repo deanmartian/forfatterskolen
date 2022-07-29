@@ -235,6 +235,7 @@
 												<th>{{ trans('site.learner.created') }}</th>
 												<th>{{ trans('site.learner.kid-number') }}</th>
 												<th>{{ trans('site.learner.account-number') }}</th>
+												<th>Credit Note</th>
 												<th></th>
 											</tr>
 											</thead>
@@ -278,6 +279,13 @@
 													<td>{{date_format(date_create($invoice->created_at), 'M d, Y H.i')}}</td>
 													<td> {{ $invoice->kid_number }} </td>
 													<td> 9015 18 00393 </td>
+													<td>
+														@if($invoice->credit_note_url)
+															<a href="{{ route('learner.download.credit-note', $invoice->id) }}">
+																Credit Note
+															</a>
+														@endif
+													</td>
 													<td>
 														<a href="{{route('learner.download.invoice', $invoice->id)}}">{{ trans('site.learner.download-invoice') }}</a>
 
