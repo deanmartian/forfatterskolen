@@ -1534,7 +1534,7 @@
 							<th>{{ trans_choice('site.webinars', 1) }}</th>
 							<th width="200">Join Url</th>
 							<th>Start Date</th>
-							<th></th>
+							<th width="200"></th>
 						</tr>
 						</thead>
 						<tbody>
@@ -1558,6 +1558,11 @@
 											data-action="{{ route('admin.learner.send-webinar-registrant-email',
 											[$learner->id, $registeredWebinar->id])}}">
 										{{ trans('site.send-email') }}
+									</button>
+									<button class="btn btn-danger btn-xs registeredWebinarRemoveBtn" data-toggle="modal"
+											data-target="#registeredWebinarRemoveModal"
+											data-action="{{ route('admin.webinar.remove-registrant', $registeredWebinar->id) }}">
+										Remove from Webinar
 									</button>
 								</td>
 							</tr>
@@ -3804,6 +3809,31 @@
 </div>
 <!--end email modal-->
 
+<div id="registeredWebinarRemoveModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Remove learner from webinar</h4>
+			</div>
+			<div class="modal-body">
+
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{csrf_field()}}
+					{{ method_field('DELETE') }}
+
+					<p>Are you sure you want to remove this learner from webinar?</p>
+
+					<div class="text-right">
+						<button type="submit" class="btn btn-danger">{{ trans('site.delete') }}</button>
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="setVippsEFakturaModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -4312,6 +4342,12 @@
         modal.find('form').attr('action', action);
 		modal.find('[name=join_url]').attr('value', joinUrl);
     });
+
+    $(".registeredWebinarRemoveBtn").click(function() {
+		let action = $(this).data('action');
+		let modal = $('#registeredWebinarRemoveModal');
+		modal.find('form').attr('action', action);
+	});
 
     $("select.template").change(function() {
         let template = $(this).children("option:selected");

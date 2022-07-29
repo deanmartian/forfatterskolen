@@ -404,7 +404,7 @@ class WebinarController extends Controller
             'alert_type' => 'success']);
     }
 
-    public function removeRegistrant( $registrant_id )
+    public function removeRegistrant( $registrant_id, Request $request )
     {
         $registrant = WebinarRegistrant::find($registrant_id);
         $user = $registrant->user;
@@ -433,7 +433,15 @@ class WebinarController extends Controller
 
         $registrant->delete();
 
-        return response()->json($decoded_response);
+        if ($request->ajax()) {
+            return response()->json($decoded_response);
+        } else {
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Learner removed from webinar successfully'),
+                'alert_type' => 'success',
+                'not-former-courses' => true
+            ]);
+        }
     }
     
 }

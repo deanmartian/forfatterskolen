@@ -981,7 +981,8 @@ Route::group([
         Route::post('webinar/{id}/course/{course_id}/email-out', 'WebinarController@webinarEmailOut')->name('admin.webinar.email-out');
         Route::post('webinar/{id}/course/{course_id}/auto-register-learners', 'WebinarController@autoRegisterLearnersToWebinar')
             ->name('admin.webinar.auto-register-learners');
-        Route::delete('/webinar/registrant/{id}/delete', 'WebinarController@removeRegistrant');
+        Route::delete('/webinar/registrant/{id}/delete', 'WebinarController@removeRegistrant')
+            ->name('admin.webinar.remove-registrant');
 
         // Webinar Presenter Route
         Route::resource('webinar/{webinar_id}/presenter', 'WebinarPresenterController', [
