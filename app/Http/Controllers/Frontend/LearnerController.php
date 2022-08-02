@@ -1035,7 +1035,7 @@ class LearnerController extends Controller
             ->get();
 
         $paid = Invoice::where('user_id', Auth::user()->id)
-            ->where('fiken_is_paid', 1)
+            ->whereIn('fiken_is_paid', [1,3])
             ->orderBy('fiken_dueDate', 'DESC')
             ->get();
 
