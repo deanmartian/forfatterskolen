@@ -85,6 +85,7 @@
 												<tr>
 													<th>Item</th>
 													<th>Package</th>
+													<th>Credit Note</th>
 													<th>Date</th>
 													<th width="150"></th>
 												</tr>
@@ -97,6 +98,14 @@
 														</td>
 														<td>
 															{{ $order->packageVariation }}
+														</td>
+														<td>
+															@if ($order->is_credited_amount)
+																<a href="{{ route('learner.order.download-credited', $order->id) }}"
+																   class="btn btn-sm btn-danger downloadCreditNote">
+																	<i class="fa fa-download"></i>
+																</a>
+															@endif
 														</td>
 														<td>
 															{{ $order->created_at_formatted }}

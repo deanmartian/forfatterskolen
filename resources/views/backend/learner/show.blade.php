@@ -691,6 +691,16 @@
 											data-fields="{{ json_encode($order) }}">
 										Receipt
 									</button>
+									<br>
+									@if ($order->svea_delivery_id && !$order->is_credited_amount)
+									<button class="btn btn-info btn-xs addSveaCreditNoteBtn" data-toggle="modal"
+											data-target="#addSveaCreditNoteModal"
+											data-action="{{ route("admin.learner.svea.create-credit-note",
+												$order->id) }}"
+											data-fields="{{ json_encode($order) }}" style="margin-top: 5px">
+										Credit Order
+									</button>
+									@endif
 								</td>
 							</tr>
 						@endforeach
@@ -2801,6 +2811,33 @@
 	</div> <!-- view order modal -->
 </div>
 
+<div id="addSveaCreditNoteModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					Credit Order
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+
+					<p>
+						Do you want to Credit this order?
+					</p>
+					<button class="btn btn-primary pull-right" type="submit">
+						{{ trans('site.submit') }}
+					</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
 <div id="deleteInvoiceModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -4048,6 +4085,16 @@
            e.preventDefault();
             $(this).attr('disabled','disabled');
             $("#deleteInvoiceModal").find('form').submit();
+		});
+
+		$(".addSveaCreditNoteBtn").click(function() {
+			let modal = $("#addSveaCreditNoteModal");
+			let action = $(this).data('action');
+			let fields = $(this).data('fields');
+
+			let form = modal.find('form');
+
+			form.attr('action', action);
 		});
 
         $(".deleteFromCourseBtn").click(function(){

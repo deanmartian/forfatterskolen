@@ -1135,6 +1135,18 @@ class LearnerController extends Controller
         return $pdf->download($order->id . '.pdf');
     }
 
+    public function downloadCreditedOrder( $order_id )
+    {
+        $order = Order::find($order_id);
+
+        $user = \Auth::user();
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        $pdf->loadHTML(view('frontend.pdf.svea-credit-note', compact('order', 'user')));
+
+        return $pdf->download($order->id . '-Kreditnota.pdf');
+    }
+
     public function saveCompany( $order_id, Request $request )
     {
         $this->validate($request,[

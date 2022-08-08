@@ -18,6 +18,7 @@ use App\Invoice;
 use App\Jobs\AddMailToQueueJob;
 use App\LearnerLogin;
 use App\Mail\SubjectBodyEmail;
+use App\Order;
 use App\PaymentMode;
 use App\PaymentPlan;
 use App\PrivateMessage;
@@ -2124,6 +2125,77 @@ class LearnerController extends Controller
             'not-former-courses'    => true
         ]);
     }
+
+    public function createSveaCreditNote( $order_id )
+    {
+        $order = Order::find($order_id);
+
+        $checkoutMerchantId = config('services.svea.checkoutid');
+        $checkoutSecret = config('services.svea.checkout_secret');
+
+        //set endpoint url. Eg. test or prod
+        $baseUrl = \Svea\Checkout\Transport\Connector::PROD_ADMIN_BASE_URL;
+
+        try {
+            /**
+             * Create Connector object
+             *
+             * Exception \Svea\Checkout\Exception\SveaConnectorException will be returned if
+             * some of fields $merchantId, $sharedSecret and $baseUrl is missing
+             *
+             *
+             * Credit Order Amount
+             *
+             * Possible Exceptions are:
+             * \Svea\Checkout\Exception\SveaInputValidationException
+             * \Svea\Checkout\Exception\SveaApiException
+             * \Exception - for any other error
+             */
+            $conn = \Svea\Checkout\Transport\Connector::init($checkoutMerchantId, $checkoutSecret, $baseUrl);
+            $checkoutClient = new \Svea\Checkout\CheckoutAdminClient($conn);
+
+            if ($order->svea_payment_type === 'Card') {
+                $data = array(
+                    "orderId" => (int)$order->svea_order_id, // required - Long  filed (Specified Checkout order for cancel amount)
+                    "deliveryId" => (int)$order->svea_delivery_id, // required - Int - Id of order delivery
+                    "creditedAmount" => (int)$order->total_price, // required - Int Amount to be credit minor currency,
+                );
+                $response = $checkoutClient->creditOrderAmount($data);
+            } else {
+                $data = array(
+                    "orderId" => (int)$order->svea_order_id, // required - Long  filed (Specified Checkout order for cancel amount)
+                    "deliveryId" => (int)$order->svea_delivery_id, // required - Long - Id of the specified delivery.
+                    "orderRowIds" => array(1), // required - Array - Ids of the delivered order rows that will be credited.
+                );
+                $response = $checkoutClient->creditOrderRows($data);
+            }
+
+            $order->is_credited_amount = 1;
+            $order->save();
+
+            return redirect()->back()->with([
+                'errors'                => AdminHelpers::createMessageBag('Order credited.'),
+                'alert_type'            => 'success',
+                'not-former-courses'    => true
+            ]);
+
+        }  catch (\Svea\Checkout\Exception\SveaApiException $ex) {
+            $error = $ex->getMessage();
+        } catch (\Svea\Checkout\Exception\SveaConnectorException $ex) {
+            $error = $ex->getMessage();
+        } catch (\Svea\Checkout\Exception\SveaInputValidationException $ex) {
+            $error = $ex->getMessage();
+        } catch (\Exception $ex) {
+            $error = $ex->getMessage();
+        }
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag($error),
+            'alert_type'            => 'danger',
+            'not-former-courses'    => true
+        ]);
+    }
+
     public function sendRequestToEditor($id, Request $request)
     {
         // set expected finish
