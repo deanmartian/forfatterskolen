@@ -707,6 +707,7 @@ Route::group([
         ]);
 
         // Courses Route
+        Route::get('course/get-all-learners', 'CourseController@getAllPaidLearners'); // get all learners that avail a paid course
         Route::resource('course', 'CourseController', [
             'names' => [
                 'index' => 'admin.course.index',
@@ -1489,6 +1490,17 @@ Route::group([
                 'store' => 'admin.genre.store',
                 'update' => 'admin.genre.update',
                 'destroy' => 'admin.genre.destroy',
+            ],
+        ]);
+
+        Route::resource('/self-publishing', 'SelfPublishingController', [
+            'except' => ['create', 'edit'],
+            'names' => [
+                'index' => 'admin.self-publishing.index',
+                'show' => 'admin.self-publishing.show',
+                'store' => 'admin.self-publishing.store',
+                'update' => 'admin.self-publishing.update',
+                'destroy' => 'admin.self-publishing.destroy',
             ],
         ]);
 

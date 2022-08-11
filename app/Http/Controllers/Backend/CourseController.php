@@ -957,4 +957,25 @@ class CourseController extends Controller
         $pdf->loadHTML($certificate->template);
         return $pdf->download($course->title . ' certificate.pdf');
     }
+
+    public function getAllPaidLearners()
+    {
+        $courses = Course::where('is_free', 0)->get()->pluck('id')->toArray();
+        $packages = Package::whereIn('course_id', $courses)->get()->pluck('id')->toArray();
+
+        $coursesTaken = CoursesTaken::whereYear('created_at', 2021)
+            //->where('is_free', 0)
+            ->whereIn('package_id', $packages)
+            ->get();
+
+        $learnerList    = [];
+        $headers  = ['learner', 'email', 'course']; // first row in excel
+
+        foreach ($coursesTaken as $courseTaken) {
+            $learnerList[] = [$courseTaken->user->full_name, $courseTaken->user->email, $courseTaken->package->course->title];
+        }
+
+        $excel = \App::make('excel');
+        return $excel->download(new GenericExport($learnerList, $headers), 'Course Buyers 2021.xlsx');
+    }
 }
