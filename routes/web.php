@@ -667,6 +667,7 @@ Route::group([
         Route::put('learner/{learner_id}/private-message/{id}', 'LearnerController@updatePrivateMessage')->name('admin.learner.update-private-message');
         Route::delete('learner/{learner_id}/private-message/{id}/delete', 'LearnerController@deletePrivateMessage')->name('admin.learner.delete-private-message');
         Route::post('learner/{learner_id}/set-preferred-editor', 'LearnerController@setPreferredEditor')->name('admin.learner.set-preferred-editor');
+        Route::post('learner/{learner_id}/add-self-publishing', 'LearnerController@addSelfPublishing')->name('admin.learner.add-self-publishing');
 
         Route::post('task/{id}/finish', 'TaskController@finishTask')->name('admin.task.finish');
         Route::resource('task', 'TaskController', [
@@ -1493,6 +1494,11 @@ Route::group([
             ],
         ]);
 
+        Route::delete('/self-publishing/remove-learner/{id}', 'SelfPublishingController@removeLearnerFromPublishing')
+            ->name('admin.learner.remove-self-publishing');
+        Route::get('/self-publishing/{id}/learners', 'SelfPublishingController@learners')->name('admin.self-publishing.learners');
+        Route::post('/self-publishing/{id}/add-learners', 'SelfPublishingController@addLearners')->name('admin.self-publishing.add-learners');
+        Route::delete('/self-publishing/delete-learner/{learner_id}', 'SelfPublishingController@deleteLearner')->name('admin.self-publishing.delete-learner');
         Route::resource('/self-publishing', 'SelfPublishingController', [
             'except' => ['create', 'edit'],
             'names' => [

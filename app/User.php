@@ -459,4 +459,9 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\GiftPurchase');
     }
+
+    public function selfPublishingList()
+    {
+        return $this->hasMany('App\SelfPublishingLearner');
+    }
 }

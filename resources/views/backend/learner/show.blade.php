@@ -478,6 +478,40 @@
 
 			<div class="panel panel-default">
 				<div class="panel-body">
+					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#selfPublishingModal">
+						+ Add to Self publishing
+					</button>
+					<h4>Self publishing</h4>
+				</div>
+
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+						<tr>
+							<th>Title</th>
+							<th width="150"></th>
+						</tr>
+						</thead>
+						<tbody>
+						@foreach($learnerSelfPublishingList as $selfPublishing)
+							<tr>
+								<td>{{ $selfPublishing->selfPublishing->title }}</td>
+								<td>
+									<button class="btn btn-danger btn-xs deleteSelfPublishingBtn" data-toggle="modal"
+											data-target="#deleteSelfPublishingModal"
+											data-action="{{ route('admin.learner.remove-self-publishing', $selfPublishing->id) }}">
+										<i class="fa fa-trash"></i>
+									</button>
+								</td>
+							</tr>
+						@endforeach
+						</tbody>
+					</table>
+				</div>
+			</div> <!-- end self publishing-->
+
+			<div class="panel panel-default">
+				<div class="panel-body">
 					<?php 
 					$courseWorkshops = 0;
 					$workshopTakenCount = 0;
@@ -2113,6 +2147,67 @@
 
 	</div>
 </div>
+
+<div id="selfPublishingModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Add To Self Publishing</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" enctype="multipart/form-data"
+                      action="{{ route('admin.learner.add-self-publishing', $learner->id) }}"
+					  onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+
+					<div class="form-group">
+						<label>Self Publishing</label>
+						<select name="self_publishing_id" class="form-control" required>
+							<option value="" disabled selected>- Select -</option>
+                            @foreach($selfPublishingList as $publishing)
+                                <option value="{{ $publishing->id }}">
+                                    {{ $publishing->title }}
+                                </option>
+                            @endforeach
+						</select>
+					</div>
+
+					<button type="submit" class="btn btn-success pull-right">Save</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="deleteSelfPublishingModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Delete Self Publishing</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action=""
+					  onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					{{ method_field('DELETE') }}
+
+					<p>
+						Are you sure you want to remove this learner from self-publishing?
+					</p>
+
+					<button type="submit" class="btn btn-danger pull-right">
+						{{ trans('site.delete') }}
+					</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 
 <div id="addInvoiceModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
@@ -4306,6 +4401,12 @@
         let action = $(this).data('action');
         let modal = $('#deleteTaskModal');
         modal.find('form').attr('action', action);
+	});
+
+	$(".deleteSelfPublishingBtn").click(function(){
+		let action = $(this).data('action');
+		let modal = $('#deleteSelfPublishingModal');
+		modal.find('form').attr('action', action);
 	});
 
     $('#orders-table, #course-order-attachments-table').dataTable( {

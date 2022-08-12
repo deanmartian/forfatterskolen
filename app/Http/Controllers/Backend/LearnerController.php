@@ -22,6 +22,8 @@ use App\Order;
 use App\PaymentMode;
 use App\PaymentPlan;
 use App\PrivateMessage;
+use App\SelfPublishing;
+use App\SelfPublishingLearner;
 use App\Services\CourseService;
 use App\UserAutoRegisterToCourseWebinar;
 use App\UserEmail;
@@ -146,6 +148,9 @@ class LearnerController extends Controller
         $registeredWebinars = $learner->registeredWebinars()->latest()->get();
         $learnerGiftPurchases = $learner->giftPurchases->pluck('id');
         $assignmentTemplates = AssignmentTemplate::get();
+        $learnerSelfPublishingList = $learner->selfPublishingList;
+        $selfPublishingList = SelfPublishing::whereNotIn('id',
+            $learner->selfPublishingList()->pluck('self_publishing_id')->toArray())->get();
 
         $emailHistories = EmailHistory::where(function($query) use ($learnerAssignmentManuscripts){
                 $query->where('parent', 'LIKE', 'assignment-manuscripts%');
@@ -195,7 +200,7 @@ class LearnerController extends Controller
             ->get();
 
         return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories',
-            'registeredWebinars', 'assignmentTemplates'));
+            'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList'));
     }
 
 
@@ -1976,6 +1981,20 @@ class LearnerController extends Controller
 
         return redirect()->back()->with([
             'errors'                => AdminHelpers::createMessageBag('Preferred Editor saved successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    public function addSelfPublishing( $learner_id, Request $request )
+    {
+        SelfPublishingLearner::create([
+            'user_id' => $learner_id,
+            'self_publishing_id' => $request->self_publishing_id
+        ]);
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Self Publishing added successfully.'),
             'alert_type'            => 'success',
             'not-former-courses'    => true
         ]);
