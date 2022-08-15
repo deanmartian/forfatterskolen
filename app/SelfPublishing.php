@@ -8,12 +8,17 @@ class SelfPublishing extends Model
 {
 
     protected $table = 'self_publishing';
-    protected $fillable = ['title', 'description', 'manuscript', 'word_count', 'price', 'editor_share'];
+    protected $fillable = ['title', 'description', 'manuscript', 'word_count', 'editor_id', 'price', 'editor_share'];
     protected $appends = ['file_link'];
 
     public function learners()
     {
         return $this->hasMany('App\SelfPublishingLearner');
+    }
+
+    public function editor()
+    {
+        return $this->belongsTo('App\User');
     }
 
     /**

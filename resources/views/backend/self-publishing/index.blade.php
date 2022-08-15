@@ -24,6 +24,7 @@
                     <th>{{ trans('site.title') }}</th>
                     <th>{{ trans('site.description') }}</th>
                     <th>File</th>
+                    <th>Editor</th>
                     <th>Price</th>
                     <th>Editor Share</th>
                     <th></th>
@@ -39,13 +40,16 @@
                             {{ $publishing->description }}
                         </td>
                         <td>
+                            {{ $publishing->editor ? $publishing->editor->full_name : '' }}
+                        </td>
+                        <td>
                             {!! $publishing->file_link !!}
                         </td>
                         <td>
-                            {{ \App\Http\FrontendHelpers::currencyFormat($publishing->price) }}
+                            {{ $publishing->price ? \App\Http\FrontendHelpers::currencyFormat($publishing->price) : '' }}
                         </td>
                         <td>
-                            {{ \App\Http\FrontendHelpers::currencyFormat($publishing->editor_share) }}
+                            {{ $publishing->editor_share ? \App\Http\FrontendHelpers::currencyFormat($publishing->editor_share) : '' }}
                         </td>
                         <td>
                             <a href="{{ route('admin.self-publishing.learners', $publishing->id) }}" class="btn btn-success btn-xs">
@@ -94,6 +98,31 @@
                             <label>Manuscript</label>
                             <input type="file" name="manuscript" class="form-control" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
 					    application/vnd.oasis.opendocument.text">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Editor</label>
+                            <select name="editor_id" class="form-control select2 template">
+                                <option value="" selected="" disabled>- Select Editor -</option>
+                                @foreach($editors as $editor)
+                                    <option value="{{ $editor->id }}">
+                                        {{$editor->full_name}}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="learner-list">
+                            <label>
+                                Learners
+                            </label>
+                            <select name="learners[]" class="form-control select2 template" multiple="multiple">
+                                @foreach($learners as $learner)
+                                    <option value="{{$learner->id}}">
+                                        {{$learner->full_name}}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <div class="form-group">
@@ -146,6 +175,7 @@
 
             modal.find('.modal-title').text('Add Self Publishing');
             form.find('[name=_method]').remove();
+            $("#learner-list").show();
 
             var action = $(this).data('action');
             form.attr('action', action);
@@ -153,6 +183,7 @@
             form.find('textarea[name=description]').val('');
             form.find('input[name=price]').val('');
             form.find('input[name=editor_share]').val('');
+            form.find('select[name=editor_id]').val('').trigger('change');
         });
 
         $(".editSelfPublishingBtn").click(function() {
@@ -162,11 +193,13 @@
             modal.find('.modal-title').text('Edit Self Publishing');
             form.find('[name=_method]').remove();
             form.prepend("<input type='hidden' name='_method' value='PUT'>");
+            $("#learner-list").hide();
 
             var action = $(this).data('action');
             form.attr('action', action);
             form.find('input[name=title]').val(fields.title);
             form.find('textarea[name=description]').val(fields.description);
+            form.find('select[name=editor_id]').val(fields.editor_id).trigger('change');
             form.find('input[name=price]').val(fields.price);
             form.find('input[name=editor_share]').val(fields.editor_share);
         });

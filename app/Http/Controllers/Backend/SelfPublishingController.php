@@ -23,7 +23,9 @@ class SelfPublishingController extends Controller
     public function index()
     {
         $publishingList = SelfPublishing::all();
-        return view('backend.self-publishing.index', compact('publishingList'));
+        $editors = AdminHelpers::editorList();
+        $learners = User::where('role', 2)->get();
+        return view('backend.self-publishing.index', compact('publishingList', 'editors', 'learners'));
     }
 
     /**
@@ -66,8 +68,6 @@ class SelfPublishingController extends Controller
             'title'         => 'required',
             'description'   => 'required',
             'file_path'     => 'mimes:pdf,doc,docx',
-            'price'         => 'numeric',
-            'editor_share'  => 'numeric'
         ]);
 
 
@@ -108,9 +108,18 @@ class SelfPublishingController extends Controller
             $publishing->word_count = $word_count;
         endif;
 
+        $publishing->editor_id = $request->editor_id;
         $publishing->price = $request->price;
         $publishing->editor_share = $request->editor_share;
         $publishing->save();
+
+        if ($request->learners) {
+            foreach($request->learners as $learner ) {
+                $publishing->learners()->create([
+                    'user_id' => $learner
+                ]);
+            }
+        }
     }
 
     /**
