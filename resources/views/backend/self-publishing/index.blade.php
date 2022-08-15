@@ -40,10 +40,10 @@
                             {{ $publishing->description }}
                         </td>
                         <td>
-                            {{ $publishing->editor ? $publishing->editor->full_name : '' }}
+                            {!! $publishing->file_link !!}
                         </td>
                         <td>
-                            {!! $publishing->file_link !!}
+                            {{ $publishing->editor ? $publishing->editor->full_name : '' }}
                         </td>
                         <td>
                             {{ $publishing->price ? \App\Http\FrontendHelpers::currencyFormat($publishing->price) : '' }}
