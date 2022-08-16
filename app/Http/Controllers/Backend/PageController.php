@@ -14,6 +14,7 @@ use App\Helpers\ApiResponse;
 use App\Helpers\DapulseRepository;
 use App\Http\AdminHelpers;
 use App\PageMeta;
+use App\SelfPublishing;
 use App\User;
 use App\UserTask;
 use Carbon\Carbon;
@@ -104,13 +105,17 @@ class PageController extends Controller
             ->where('status', 0)->get();
 
         $shopManuscriptTakenFeedback = ShopManuscriptTakenFeedback::with('shop_manuscript_taken')->where('approved', 0)->orderBy('created_at', 'desc')->paginate(10);
+        $selfPublishingList = SelfPublishing::all();
+        $editors = AdminHelpers::editorList();
+        $learners = User::where('role', 2)->get();
 
         return view('backend.dashboard', compact('pending_courses', 'pending_shop_manuscripts',
         'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts', 'assigned_free_manuscripts',
         'pending_assignment_feedbacks', 'logs', 'manuscripts','shopManuscripts',
         'nearlyExpiredCoursesCount', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
         'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments',
-        'pendingTasks', 'assignedAssignmentManuscripts','shopManuscriptTakenFeedback'));
+        'pendingTasks', 'assignedAssignmentManuscripts','shopManuscriptTakenFeedback', 'selfPublishingList', 'editors',
+            'learners'));
     }
 
     public function updateExpectedFinish( $type, $id, Request $request )

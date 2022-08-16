@@ -8,7 +8,8 @@ class SelfPublishing extends Model
 {
 
     protected $table = 'self_publishing';
-    protected $fillable = ['title', 'description', 'manuscript', 'word_count', 'editor_id', 'price', 'editor_share'];
+    protected $fillable = ['title', 'description', 'manuscript', 'word_count', 'editor_id', 'price', 'editor_share',
+        'expected_finish'];
     protected $appends = ['file_link'];
 
     public function learners()
@@ -28,16 +29,18 @@ class SelfPublishing extends Model
     public function getFileLinkAttribute()
     {
         $fileLink = '';
-        $filename = $this->attributes['manuscript'];
+        $files = explode(',', $this->attributes['manuscript']);
 
-        $extension = explode('.', basename($filename));
-        if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
-            $fileLink = '<a href="/js/ViewerJS/#../..'.$filename.'">'.basename($filename).'</a>';
-        } elseif( end($extension) == 'docx' || end($extension) == 'doc' ) {
-            $fileLink = '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').$filename.'">'
-                .basename($filename).'</a>';
+        foreach ($files as $file) {
+            $extension = explode('.', basename($file));
+
+            if (end($extension) == 'pdf' || end($extension) == 'odt') {
+                $fileLink .= '<a href="/js/ViewerJS/#../..'.trim($file).'">'.basename($file).'</a>, ';
+            } else {
+                $fileLink .= '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').trim($file).'">'.basename($file).'</a>, ';
+            }
         }
 
-        return $fileLink;
+        return trim($fileLink, ', ');
     }
 }

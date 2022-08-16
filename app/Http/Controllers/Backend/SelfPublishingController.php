@@ -70,47 +70,53 @@ class SelfPublishingController extends Controller
             'file_path'     => 'mimes:pdf,doc,docx',
         ]);
 
-
         $publishing = $id ? SelfPublishing::find($id) : new SelfPublishing();
         $publishing->title = $request->title;
         $publishing->description = $request->description;
 
-        if ( $request->hasFile('manuscript') &&
-            $request->file('manuscript')->isValid() ) :
+        if ( $request->hasFile('manuscript') ) :
 
+            $filesWithPath = '';
+            $word_count = 0;
             $destinationPath = 'storage/self-publishing-manuscript/'; // upload path
-            $extension = pathinfo($_FILES['manuscript']['name'],PATHINFO_EXTENSION); // getting document extension
-            $actual_name = pathinfo($request->manuscript->getClientOriginalName(),PATHINFO_FILENAME);
-            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
 
-            $expFileName = explode('/', $fileName);
-            $filePath = $destinationPath.end($expFileName);
-            $request->manuscript->move($destinationPath, end($expFileName));
+            foreach ($request->file('manuscript') as $k => $file) {
+                $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION); // getting document extension
+                $actual_name = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_FILENAME);
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
 
-            // count words
-            if($extension == "pdf") :
-                $pdf  =  new \PdfToText( $destinationPath.end($expFileName) ) ;
-                $pdf_content = $pdf->Text;
-                $word_count = FrontendHelpers::get_num_of_words($pdf_content);
-            elseif($extension == "docx") :
-                $docObj = new \Docx2Text($destinationPath.end($expFileName));
-                $docText= $docObj->convertToText();
-                $word_count = FrontendHelpers::get_num_of_words($docText);
-            elseif($extension == "doc") :
-                $docText = FrontendHelpers::readWord($destinationPath.end($expFileName));
-                $word_count = FrontendHelpers::get_num_of_words($docText);
-            elseif($extension == "odt") :
-                $doc = odt2text($destinationPath.end($expFileName));
-                $word_count = FrontendHelpers::get_num_of_words($doc);
-            endif;
+                $expFileName = explode('/', $fileName);
+                $filePath = $destinationPath.end($expFileName);
+                $file->move($destinationPath, end($expFileName));
 
-            $publishing->manuscript = $filePath;
+                $filesWithPath .= $filePath.", ";
+
+                // count words
+                if($extension == "pdf") :
+                    $pdf  =  new \PdfToText( $destinationPath.end($expFileName) ) ;
+                    $pdf_content = $pdf->Text;
+                    $word_count += FrontendHelpers::get_num_of_words($pdf_content);
+                elseif($extension == "docx") :
+                    $docObj = new \Docx2Text($destinationPath.end($expFileName));
+                    $docText= $docObj->convertToText();
+                    $word_count += FrontendHelpers::get_num_of_words($docText);
+                elseif($extension == "doc") :
+                    $docText = FrontendHelpers::readWord($destinationPath.end($expFileName));
+                    $word_count += FrontendHelpers::get_num_of_words($docText);
+                elseif($extension == "odt") :
+                    $doc = odt2text($destinationPath.end($expFileName));
+                    $word_count += FrontendHelpers::get_num_of_words($doc);
+                endif;
+            }
+
+            $publishing->manuscript = $filesWithPath = trim($filesWithPath,", ");
             $publishing->word_count = $word_count;
         endif;
 
         $publishing->editor_id = $request->editor_id;
         $publishing->price = $request->price;
         $publishing->editor_share = $request->editor_share;
+        $publishing->expected_finish = $request->expected_finish;
         $publishing->save();
 
         if ($request->learners) {

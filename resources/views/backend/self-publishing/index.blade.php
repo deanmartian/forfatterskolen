@@ -25,6 +25,7 @@
                     <th>{{ trans('site.description') }}</th>
                     <th>File</th>
                     <th>Editor</th>
+                    <th>{{ trans('site.expected-finish') }}</th>
                     <th>Price</th>
                     <th>Editor Share</th>
                     <th></th>
@@ -44,6 +45,9 @@
                         </td>
                         <td>
                             {{ $publishing->editor ? $publishing->editor->full_name : '' }}
+                        </td>
+                        <td>
+                            {{ $publishing->expected_finish }}
                         </td>
                         <td>
                             {{ $publishing->price ? \App\Http\FrontendHelpers::currencyFormat($publishing->price) : '' }}
@@ -85,23 +89,23 @@
                         {{ csrf_field() }}
 
                         <div class="form-group">
-                            <label>Title</label>
+                            <label>{{ trans('site.title') }}</label>
                             <input type="text" name="title" class="form-control">
                         </div>
 
                         <div class="form-group">
-                            <label>Description</label>
+                            <label>{{ trans('site.description') }}</label>
                             <textarea name="description"cols="30" rows="10" class="form-control"></textarea>
                         </div>
 
                         <div class="form-group">
-                            <label>Manuscript</label>
-                            <input type="file" name="manuscript" class="form-control" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
-					    application/vnd.oasis.opendocument.text">
+                            <label>{{ trans_choice('site.manuscripts', 1) }}</label>
+                            <input type="file" name="manuscript[]" class="form-control" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+					    application/vnd.oasis.opendocument.text" multiple>
                         </div>
 
                         <div class="form-group">
-                            <label>Editor</label>
+                            <label>{{ trans_choice('site.editors', 1) }}</label>
                             <select name="editor_id" class="form-control select2 template">
                                 <option value="" selected="" disabled>- Select Editor -</option>
                                 @foreach($editors as $editor)
@@ -114,7 +118,7 @@
 
                         <div class="form-group" id="learner-list">
                             <label>
-                                Learners
+                                {{ trans_choice('site.learners', 2) }}
                             </label>
                             <select name="learners[]" class="form-control select2 template" multiple="multiple">
                                 @foreach($learners as $learner)
@@ -123,6 +127,13 @@
                                     </option>
                                 @endforeach
                             </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                {{ trans('site.expected-finish') }}
+                            </label>
+                            <input type="date" class="form-control" name="expected_finish">
                         </div>
 
                         <div class="form-group">
@@ -181,6 +192,7 @@
             form.attr('action', action);
             form.find('input[name=title]').val('');
             form.find('textarea[name=description]').val('');
+            form.find('input[name=expected_finish]').val('');
             form.find('input[name=price]').val('');
             form.find('input[name=editor_share]').val('');
             form.find('select[name=editor_id]').val('').trigger('change');
@@ -200,6 +212,7 @@
             form.find('input[name=title]').val(fields.title);
             form.find('textarea[name=description]').val(fields.description);
             form.find('select[name=editor_id]').val(fields.editor_id).trigger('change');
+            form.find('input[name=expected_finish]').val(fields.expected_finish);
             form.find('input[name=price]').val(fields.price);
             form.find('input[name=editor_share]').val(fields.editor_share);
         });
