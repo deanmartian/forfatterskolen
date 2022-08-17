@@ -26,8 +26,10 @@
                     <th>File</th>
                     <th>Editor</th>
                     <th>{{ trans('site.expected-finish') }}</th>
-                    <th>Price</th>
-                    <th>Editor Share</th>
+                    @if (Auth::user()->isSuperUser())
+                        <th>Price</th>
+                        <th>Editor Share</th>
+                    @endif
                     <th></th>
                 </tr>
                 </thead>
@@ -49,12 +51,14 @@
                         <td>
                             {{ $publishing->expected_finish }}
                         </td>
-                        <td>
-                            {{ $publishing->price ? \App\Http\FrontendHelpers::currencyFormat($publishing->price) : '' }}
-                        </td>
-                        <td>
-                            {{ $publishing->editor_share ? \App\Http\FrontendHelpers::currencyFormat($publishing->editor_share) : '' }}
-                        </td>
+                        @if (Auth::user()->isSuperUser())
+                            <td>
+                                {{ $publishing->price ? \App\Http\FrontendHelpers::currencyFormat($publishing->price) : '' }}
+                            </td>
+                            <td>
+                                {{ $publishing->editor_share ? \App\Http\FrontendHelpers::currencyFormat($publishing->editor_share) : '' }}
+                            </td>
+                        @endif
                         <td>
                             <a href="{{ route('admin.self-publishing.learners', $publishing->id) }}" class="btn btn-success btn-xs">
                                 <i class="fa fa-user"></i>
@@ -136,15 +140,17 @@
                             <input type="date" class="form-control" name="expected_finish">
                         </div>
 
-                        <div class="form-group">
-                            <label>Price</label>
-                            <input type="number" name="price" class="form-control">
-                        </div>
+                        @if (Auth::user()->isSuperUser())
+                            <div class="form-group">
+                                <label>Price</label>
+                                <input type="number" name="price" class="form-control">
+                            </div>
 
-                        <div class="form-group">
-                            <label>Editor Share</label>
-                            <input type="number" name="editor_share" class="form-control">
-                        </div>
+                            <div class="form-group">
+                                <label>Editor Share</label>
+                                <input type="number" name="editor_share" class="form-control">
+                            </div>
+                        @endif
 
                         <button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
                         <div class="clearfix"></div>
