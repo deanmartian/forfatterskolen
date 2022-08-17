@@ -596,6 +596,8 @@ Route::group([
 
         // Learners Route
         Route::get('learner/list-notes', 'LearnerController@listNotes')->name('admin.learner.list_notes');
+        Route::get('learner/generate-password', 'LearnerController@generatePassword');
+        Route::post('learner/register', 'LearnerController@registerLearner')->name('admin.learner.register');
         Route::resource('learner', 'LearnerController', [
             'names' => [
                 'index' => 'admin.learner.index',
