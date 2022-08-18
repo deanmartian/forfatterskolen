@@ -2258,6 +2258,65 @@ class LearnerController extends Controller
         ]);
     }
 
+    public function deliverSveaOrder( $order_id )
+    {
+        $order = Order::find($order_id);
+
+        $checkoutMerchantId = config('services.svea.checkoutid');
+        $checkoutSecret = config('services.svea.checkout_secret');
+
+        //set endpoint url. Eg. test or prod
+        $baseUrl = \Svea\Checkout\Transport\Connector::PROD_ADMIN_BASE_URL;
+
+        try {
+            /**
+             * Create Connector object
+             *
+             * Exception \Svea\Checkout\Exception\SveaConnectorException will be returned if
+             * some of fields $merchantId, $sharedSecret and $baseUrl is missing
+             *
+             *
+             * Credit Order Amount
+             *
+             * Possible Exceptions are:
+             * \Svea\Checkout\Exception\SveaInputValidationException
+             * \Svea\Checkout\Exception\SveaApiException
+             * \Exception - for any other error
+             */
+            $conn = \Svea\Checkout\Transport\Connector::init($checkoutMerchantId, $checkoutSecret, $baseUrl);
+            $checkoutClient = new \Svea\Checkout\CheckoutAdminClient($conn);
+            $data = array(
+                "orderId" => (int)$order->svea_order_id,
+                /* To deliver whole order just send orderRowIds as empty array */
+                "orderRowIds" => array()
+            );
+            $response = $checkoutClient->deliverOrder($data);
+            $order->svea_delivery_id = $response['DeliveryId'];
+            $order->save();
+
+            return redirect()->back()->with([
+                'errors'                => AdminHelpers::createMessageBag('Order delivered successfully.'),
+                'alert_type'            => 'success',
+                'not-former-courses'    => true
+            ]);
+
+        }  catch (\Svea\Checkout\Exception\SveaApiException $ex) {
+            $error = $ex->getMessage();
+        } catch (\Svea\Checkout\Exception\SveaConnectorException $ex) {
+            $error = $ex->getMessage();
+        } catch (\Svea\Checkout\Exception\SveaInputValidationException $ex) {
+            $error = $ex->getMessage();
+        } catch (\Exception $ex) {
+            $error = $ex->getMessage();
+        }
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag($error),
+            'alert_type'            => 'danger',
+            'not-former-courses'    => true
+        ]);
+    }
+
     public function sendRequestToEditor($id, Request $request)
     {
         // set expected finish

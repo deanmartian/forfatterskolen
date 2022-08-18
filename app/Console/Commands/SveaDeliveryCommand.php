@@ -54,6 +54,7 @@ class SveaDeliveryCommand extends Command
                 CronLog::create(['activity' => 'SveaDelivery CRON updated order ' . $order->id .'.']);
             }
         }
+        echo "Done";
         CronLog::create(['activity' => 'SveaDelivery CRON done running.']);
     }
 }
