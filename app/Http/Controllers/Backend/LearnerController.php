@@ -2220,7 +2220,7 @@ class LearnerController extends Controller
                 $data = array(
                     "orderId" => (int)$order->svea_order_id, // required - Long  filed (Specified Checkout order for cancel amount)
                     "deliveryId" => (int)$order->svea_delivery_id, // required - Int - Id of order delivery
-                    "creditedAmount" => (int)$order->total_price, // required - Int Amount to be credit minor currency,
+                    "creditedAmount" => (int)$order->total_price * 100, // required - Int Amount to be credit minor currency,
                 );
                 $response = $checkoutClient->creditOrderAmount($data);
             } else {
