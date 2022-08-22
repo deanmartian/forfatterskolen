@@ -4,27 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SelfPublishing extends Model
+class SelfPublishingFeedback extends Model
 {
-
-    protected $table = 'self_publishing';
-    protected $fillable = ['title', 'description', 'manuscript', 'word_count', 'editor_id', 'price', 'editor_share',
-        'expected_finish'];
+    protected $fillable = ['self_publishing_id', 'manuscript', 'notes'];
     protected $appends = ['file_link'];
 
-    public function learners()
+    public function selfPublishing()
     {
-        return $this->hasMany('App\SelfPublishingLearner');
-    }
-
-    public function editor()
-    {
-        return $this->belongsTo('App\User');
-    }
-
-    public function feedback()
-    {
-        return $this->hasOne('App\SelfPublishingFeedback');
+        return $this->belongsTo('\App\SelfPublishing');
     }
 
     /**

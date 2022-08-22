@@ -507,6 +507,54 @@
 			</div>
 			<!-- end My coaching timer -->
 
+			<!-- self-publishing -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>Self Publishing</h4></div>
+						<div class="panel-body">
+							<div class="table-users table-responsive margin-top">
+								<table class="table dt-table" id="coachingTable">
+									<thead>
+									<tr>
+										<th>{{ trans('site.title') }}</th>
+										<th>{{ trans('site.learner.manuscript-text') }}</th>
+										<th>{{ trans('site.expected-finish') }}</th>
+										<th></th>
+									</tr>
+									</thead>
+									<tbody>
+									@foreach($selfPublishingList as $publishing)
+										<tr>
+											<td>
+												{{ $publishing->title }}
+											</td>
+											<td>
+												{!! $publishing->file_link !!}
+											</td>
+											<td>
+												{{ $publishing->expected_finish }}
+											</td>
+											<td>
+												<button class="btn btn-warning btn-xs d-block
+														selfPublishingFeedbackBtn"
+														data-target="#selfPublishingFeedbackModal"
+														data-toggle="modal"
+														data-action="{{ route('editor.self-publishing.feedback', $publishing->id) }}">
+													+ {{ trans('site.add-feedback') }}
+												</button>
+											</td>
+										</tr>
+									@endforeach
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- end self-publishing -->
+
 			<!-- My corrections -->
 			<div class="row">
 				<div class="col-sm-12">
@@ -1240,6 +1288,39 @@
 	</div>
 </div>
 
+<div id="selfPublishingFeedbackModal" class="modal fade" role="dialog" tabindex="-1">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					Add Feedback
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans_choice('site.manuscripts', 1) }}</label>
+						<input type="file" name="manuscript[]" class="form-control"
+							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+					    application/vnd.oasis.opendocument.text" multiple>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans_choice('site.notes', 1) }}</label>
+						<textarea name="notes" cols="30" rows="10" class="form-control"></textarea>
+					</div>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+
+		</div>
+	</div>
+</div>
+
 <div id="acceptRequest" class="modal fade" role="dialog" tabindex="-1">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -1748,6 +1829,12 @@
 
         tinymce.get('FMEmailContentEditor').setContent(content);
     });
+
+    $(".selfPublishingFeedbackBtn").click(function(){
+		let action = $(this).data('action');
+		let modal = $('#selfPublishingFeedbackModal');
+		modal.find('form').attr('action', action);
+	});
 
 </script>
 @stop

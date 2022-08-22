@@ -15,6 +15,7 @@ use App\Helpers\DapulseRepository;
 use App\Http\AdminHelpers;
 use App\PageMeta;
 use App\SelfPublishing;
+use App\SelfPublishingFeedback;
 use App\User;
 use App\UserTask;
 use Carbon\Carbon;
@@ -105,7 +106,8 @@ class PageController extends Controller
             ->where('status', 0)->get();
 
         $shopManuscriptTakenFeedback = ShopManuscriptTakenFeedback::with('shop_manuscript_taken')->where('approved', 0)->orderBy('created_at', 'desc')->paginate(10);
-        $selfPublishingList = SelfPublishing::all();
+        $selfPublishingApprovedFeedbacks = SelfPublishingFeedback::where('is_approved', 1)->pluck('self_publishing_id')->toArray();
+        $selfPublishingList = SelfPublishing::whereNotIn('id', $selfPublishingApprovedFeedbacks)->get();
         $editors = AdminHelpers::editorList();
         $learners = User::where('role', 2)->get();
 

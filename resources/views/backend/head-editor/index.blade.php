@@ -372,6 +372,59 @@
 				</div>
 			</div>
 
+			<!-- self publishing-->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>Self Publishing</h4></div>
+						<table class="table">
+							<thead>
+							<tr>
+								<th>{{ trans('site.title') }}</th>
+								<th>{{ trans_choice('site.manus', 2) }}</th>
+								<th>{{ trans_choice('site.editors', 1) }}</th>
+								<th>{{ trans('site.expected-finish') }}</th>
+								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
+								<th>{{ trans_choice('site.notes', 2) }}</th>
+								<th></th>
+							</tr>
+							</thead>
+							<tbody>
+							@foreach($selfPublishingList as $publishing)
+								<tr>
+									<td>
+										{{ $publishing->title }}
+									</td>
+									<td>
+										{!! $publishing->file_link !!}
+									</td>
+									<td>
+										{{ $publishing->editor ? $publishing->editor->full_name : '' }}
+									</td>
+									<td>
+										{{ $publishing->expected_finish }}
+									</td>
+									<td>
+										{!! $publishing->feedback->file_link !!}
+									</td>
+									<td>
+										{{ $publishing->feedback->notes}}
+									</td>
+									<td>
+										<button class="btn btn-xs btn-success selfPublishingApproveFeedbackBtn"
+												data-toggle="modal" data-target="#selfPublishingApproveFeedbackModal"
+												data-action="{{ route('head_editor.self-publishing-feedback.approve', $publishing->feedback->id) }}">
+											{{ trans('site.approve-feedback') }}
+										</button>
+									</td>
+								</tr>
+							@endforeach
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
             <!-- My Coaching Timer -->
 			<!-- <div class="row">
 				<div class="col-sm-12">
@@ -935,6 +988,28 @@
 	</div>
 </div>
 
+<div id="selfPublishingApproveFeedbackModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.approve-feedback') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<p>
+						Are you sure you want to approve this feedback?
+					</p>
+					<div class="clearfix"></div>
+					<button type="submit" class="btn btn-primary pull-right margin-top" id="sendFeedbackEmail">{{ trans('site.approve-feedback') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -1048,6 +1123,13 @@
 
         tinymce.get('FMEmailContentEditor').setContent(content);
     });
+
+    $(".selfPublishingApproveFeedbackBtn").click(function() {
+		let action = $(this).data('action');
+		let modal = $('#selfPublishingApproveFeedbackModal');
+		modal.find('form').attr('action', action);
+	});
+
     function disableSubmit(t) {
         let submit_btn = $(t).find('[type=submit]');
         submit_btn.text('');

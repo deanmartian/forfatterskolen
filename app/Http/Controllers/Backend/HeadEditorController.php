@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\backend;
 
 use App\FreeManuscript;
+use App\SelfPublishing;
+use App\SelfPublishingFeedback;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\AssignmentManuscript;
@@ -39,8 +41,13 @@ class HeadEditorController extends Controller
         $freeManuscripts = FreeManuscript::where('is_feedback_sent', '=',0)
             ->whereNotNull('feedback_content')
             ->orderBy('created_at', 'desc')->get();
+
+        $selfPublishingList = SelfPublishing::whereHas('feedback', function ($query) {
+            $query->where('is_approved', 0);
+        })->get();
+
         return view('backend.head-editor.index', compact('assignedAssignmentManuscripts',
-            'assigned_shop_manuscripts', 'assignedAssignments','corrections', 'copyEditings', 'freeManuscripts'));
+            'assigned_shop_manuscripts', 'assignedAssignments','corrections', 'copyEditings', 'freeManuscripts', 'selfPublishingList'));
     }
 
     public function sendEmail($editor_id, $type, $title, $learner, Request $request)
@@ -61,5 +68,14 @@ class HeadEditorController extends Controller
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Successfully sent.'),
             'alert_type' => 'success']);
 
+    }
+
+    public function approveSelfPublishingFeedback( $feedback_id )
+    {
+        $feedback = SelfPublishingFeedback::find($feedback_id);
+        $feedback->is_approved = 1;
+        $feedback->save();
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback approved successfully.'),
+            'alert_type' => 'success']);
     }
 }

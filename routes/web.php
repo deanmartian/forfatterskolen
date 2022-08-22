@@ -583,6 +583,7 @@ Route::group([
         Route::get('/tests', 'PageController@tests');
         Route::get('head-editor/dashboard', 'HeadEditorController@index')->name('admin.head-editor-dashboard')->middleware('headEditor');
         Route::post('/update-expected-finish/{type}/{id}', 'PageController@updateExpectedFinish')->name('backend.update-expected-finish');
+        Route::post('/self-publishing/feedback/{id}/approve', 'HeadEditorController@approveSelfPublishingFeedback')->name('head_editor.self-publishing-feedback.approve');
 
         Route::resource('page_meta','PageMetaController',[
             'except' => ['show', 'create', 'edit'],
@@ -1646,6 +1647,7 @@ Route::group([
         Route::post('manuscriptYouCanTake/{id}/delete', 'ManuscriptEditorCanTakeController@delete')->name('editor.manuscript-you-can-take.delete');
         Route::get('/yearly-calendar', 'PageController@yearlyCalendar')->name('editor.yearly-calendar.index');
         Route::get('/assigned-webinar', 'AssignedWebinarController@show')->name('editor.assigned-webinar');
+        Route::post('/self-publishing/{id}/feedback', 'PageController@selfPublishingFeedback')->name('editor.self-publishing.feedback');
     });
 
     Route::group([

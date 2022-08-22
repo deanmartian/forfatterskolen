@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Editor;
 use App\Assignment;
 use App\EmailTemplate;
 use App\FreeManuscript;
+use App\Http\AdminHelpers;
+use App\Http\FrontendHelpers;
+use App\SelfPublishing;
+use App\SelfPublishingFeedback;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -14,6 +18,10 @@ use App\Course;
 use App\CorrectionManuscript;
 use App\CopyEditingManuscript;
 use Carbon\Carbon;
+
+include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php');
 
 class PageController extends Controller
 {
@@ -45,9 +53,13 @@ class PageController extends Controller
             ->where('editor_id', Auth::user()->id)
             ->orderBy('created_at', 'desc')->get();
         $freeManuscriptEmailTemplate = EmailTemplate::where('page_name', 'Free Manuscript')->first();
+        $selfPublishingList = SelfPublishing::where('editor_id', Auth::user()->id)
+            ->whereDoesntHave('feedback')
+            ->get();
 
         return view('editor.dashboard', compact('assigned_shop_manuscripts', 'assignedAssignments', 'coachingTimers',
-        'corrections', 'copyEditings', 'assignedAssignmentManuscripts', 'shopManuscriptRequests', 'freeManuscripts', 'freeManuscriptEmailTemplate'));
+        'corrections', 'copyEditings', 'assignedAssignmentManuscripts', 'shopManuscriptRequests', 'freeManuscripts', 'freeManuscriptEmailTemplate',
+            'selfPublishingList'));
 
     }
 
@@ -175,6 +187,58 @@ class PageController extends Controller
     public function yearlyCalendar()
     {
         return view('editor.yearly-calendar');
+    }
+
+    public function selfPublishingFeedback( $publishing_id, Request $request )
+    {
+        $this->validate($request, [
+            'manuscript' => 'required'
+        ]);
+
+        $filesWithPath = '';
+        $word_count = 0;
+        $destinationPath = 'storage/self-publishing-feedback/'; // upload path
+
+        foreach ($request->file('manuscript') as $k => $file) {
+            $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION); // getting document extension
+            $actual_name = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_FILENAME);
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+
+            $expFileName = explode('/', $fileName);
+            $filePath = $destinationPath.end($expFileName);
+            $file->move($destinationPath, end($expFileName));
+
+            $filesWithPath .= $filePath.", ";
+
+            // count words
+            if($extension == "pdf") :
+                $pdf  =  new \PdfToText( $destinationPath.end($expFileName) ) ;
+                $pdf_content = $pdf->Text;
+                $word_count += FrontendHelpers::get_num_of_words($pdf_content);
+            elseif($extension == "docx") :
+                $docObj = new \Docx2Text($destinationPath.end($expFileName));
+                $docText= $docObj->convertToText();
+                $word_count += FrontendHelpers::get_num_of_words($docText);
+            elseif($extension == "doc") :
+                $docText = FrontendHelpers::readWord($destinationPath.end($expFileName));
+                $word_count += FrontendHelpers::get_num_of_words($docText);
+            elseif($extension == "odt") :
+                $doc = odt2text($destinationPath.end($expFileName));
+                $word_count += FrontendHelpers::get_num_of_words($doc);
+            endif;
+        }
+
+        $feedback = new SelfPublishingFeedback();
+        $feedback->self_publishing_id = $publishing_id;
+        $feedback->manuscript = $filesWithPath = trim($filesWithPath,", ");
+        $feedback->notes = $request->notes;
+        $feedback->save();
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Self publishing feedback saved successfully.'),
+            'alert_type' => 'success'
+        ]);
+
     }
 
 }
