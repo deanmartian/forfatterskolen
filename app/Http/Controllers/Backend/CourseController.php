@@ -266,8 +266,29 @@ class CourseController extends Controller
         return redirect()->back();
     }
 
+    public function sendWelcomeEmail( $id, Request $request )
+    {
+        $course = Course::find($id);
 
+        foreach ($request->learners as $learner_id) {
+            $user = User::find($learner_id);
+            $to = $user->email;
 
+            $emailData = [
+            'email_subject' => $course->title,
+            'email_message' => $course->email,
+            'from_name' => '',
+            'from_email' => 'post@forfatterskolen.no',
+            'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Email sent successfully.'),
+            'alert_type' => 'success'
+        ]);
+    }
 
     public function clone_course($id, Request $request)
     {

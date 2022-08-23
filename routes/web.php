@@ -725,6 +725,7 @@ Route::group([
             ],
         ]);
         Route::post('course/{id}/update/email', 'CourseController@update_email')->name('admin.course.update.email');
+        Route::post('course/{id}/welcome-email/send', 'CourseController@sendWelcomeEmail')->name('admin.course.welcome-email.send');
         Route::post('course/{id}/clone', 'CourseController@clone_course')->name('admin.course.clone');
         Route::post('course/{id}/add_similar_course', 'CourseController@add_similar_course')->name('admin.course.add_similar_course');
         Route::post('course/remove_similar_course/{similar_course_id}', 'CourseController@remove_similar_course')->name('admin.course.remove_similar_course');
@@ -1502,6 +1503,7 @@ Route::group([
             ->name('admin.learner.remove-self-publishing');
         Route::get('/self-publishing/{id}/learners', 'SelfPublishingController@learners')->name('admin.self-publishing.learners');
         Route::post('/self-publishing/{id}/add-learners', 'SelfPublishingController@addLearners')->name('admin.self-publishing.add-learners');
+        Route::post('/self-publishing/{id}/add-feedback', 'SelfPublishingController@addFeedback')->name('admin.self-publishing.add-feedback');
         Route::delete('/self-publishing/delete-learner/{learner_id}', 'SelfPublishingController@deleteLearner')->name('admin.self-publishing.delete-learner');
         Route::resource('/self-publishing', 'SelfPublishingController', [
             'except' => ['create', 'edit'],
