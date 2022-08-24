@@ -13,6 +13,7 @@ use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Helpers\DapulseRepository;
 use App\Http\AdminHelpers;
+use App\Order;
 use App\PageMeta;
 use App\SelfPublishing;
 use App\SelfPublishingFeedback;
@@ -675,5 +676,11 @@ class PageController extends Controller
     public function translations()
     {
         return redirect()->to('/translations/view/site');
+    }
+
+    public function sveaOrders()
+    {
+        $orders = Order::svea()->latest()->paginate(20);
+        return view('backend.svea-orders', compact('orders'));
     }
 }

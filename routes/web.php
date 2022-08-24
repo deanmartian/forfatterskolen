@@ -584,6 +584,7 @@ Route::group([
         Route::get('head-editor/dashboard', 'HeadEditorController@index')->name('admin.head-editor-dashboard')->middleware('headEditor');
         Route::post('/update-expected-finish/{type}/{id}', 'PageController@updateExpectedFinish')->name('backend.update-expected-finish');
         Route::post('/self-publishing/feedback/{id}/approve', 'HeadEditorController@approveSelfPublishingFeedback')->name('head_editor.self-publishing-feedback.approve');
+        Route::get('/svea-orders', 'PageController@sveaOrders')->name('admin.svea.orders');
 
         Route::resource('page_meta','PageMetaController',[
             'except' => ['show', 'create', 'edit'],
