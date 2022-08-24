@@ -230,6 +230,7 @@ class PageController extends Controller
 
         $feedback = new SelfPublishingFeedback();
         $feedback->self_publishing_id = $publishing_id;
+        $feedback->feedback_user_id = \Auth::user()->id;
         $feedback->manuscript = $filesWithPath = trim($filesWithPath,", ");
         $feedback->notes = $request->notes;
         $feedback->save();

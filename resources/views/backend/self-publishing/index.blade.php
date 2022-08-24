@@ -30,6 +30,7 @@
                         <th>Price</th>
                         <th>Editor Share</th>
                     @endif
+                    <th>Feedback</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -59,6 +60,29 @@
                                 {{ $publishing->editor_share ? \App\Http\FrontendHelpers::currencyFormat($publishing->editor_share) : '' }}
                             </td>
                         @endif
+                        <td>
+                            @if(!$publishing->feedback)
+                                <button class="btn btn-info btn-xs selfPublishingFeedbackBtn"
+                                        data-target="#selfPublishingFeedbackModal"
+                                        data-toggle="modal"
+                                        data-action="{{ route('admin.self-publishing.add-feedback', $publishing->id) }}">
+                                    + {{ trans('site.add-feedback') }}
+                                </button>
+                            @else
+                                @if($publishing->feedback->is_approved)
+                                    <button class="btn btn-primary btn-xs viewFeedbackBtn"
+                                            data-target="#viewFeedbackModal"
+                                            data-toggle="modal"
+                                            data-fields="{{ json_encode($publishing) }}">
+                                        View Feedback
+                                    </button>
+                                @else
+                                    <label class="label label-warning" style="margin-right: 5px;">
+                                        Pending
+                                    </label>
+                                @endif
+                            @endif
+                        </td>
                         <td>
                             <a href="{{ route('admin.self-publishing.learners', $publishing->id) }}" class="btn btn-success btn-xs">
                                 <i class="fa fa-user"></i>
@@ -161,6 +185,60 @@
         </div>
     </div>
 
+    <div id="selfPublishingFeedbackModal" class="modal fade" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        Add Feedback
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        <div class="form-group">
+                            <label>{{ trans_choice('site.manuscripts', 1) }}</label>
+                            <input type="file" name="manuscript[]" class="form-control"
+                                   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+					    application/vnd.oasis.opendocument.text" multiple>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ trans_choice('site.notes', 1) }}</label>
+                            <textarea name="notes" cols="30" rows="10" class="form-control"></textarea>
+                        </div>
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="viewFeedbackModal" class="modal fade" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>{{ trans_choice('site.manuscripts', 1) }}</label>
+                        <div id="manus-container"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>{{ trans_choice('site.notes', 1) }}</label>
+                        <div id="notes-container" style="white-space: pre;max-height: 500px;overflow: auto;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="deleteSelfPublishingModal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
@@ -221,6 +299,20 @@
             form.find('input[name=expected_finish]').val(fields.expected_finish);
             form.find('input[name=price]').val(fields.price);
             form.find('input[name=editor_share]').val(fields.editor_share);
+        });
+
+        $(".selfPublishingFeedbackBtn").click(function(){
+            let action = $(this).data('action');
+            let modal = $('#selfPublishingFeedbackModal');
+            modal.find('form').attr('action', action);
+        });
+
+        $(".viewFeedbackBtn").click(function(){
+            let modal = $("#viewFeedbackModal");
+            let fields = $(this).data('fields');
+            console.log(fields);
+            modal.find("#manus-container").html(fields.feedback.file_link);
+            modal.find("#notes-container").text(fields.feedback.notes);
         });
 
         $(".deleteSelfPublishingBtn").click(function() {

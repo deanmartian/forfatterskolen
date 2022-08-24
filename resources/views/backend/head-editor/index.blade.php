@@ -382,7 +382,7 @@
 							<tr>
 								<th>{{ trans('site.title') }}</th>
 								<th>{{ trans_choice('site.manus', 2) }}</th>
-								<th>{{ trans_choice('site.editors', 1) }}</th>
+								<th>Feedback User</th>
 								<th>{{ trans('site.expected-finish') }}</th>
 								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
 								<th>{{ trans_choice('site.notes', 2) }}</th>
@@ -399,7 +399,9 @@
 										{!! $publishing->file_link !!}
 									</td>
 									<td>
-										{{ $publishing->editor ? $publishing->editor->full_name : '' }}
+										{{ $publishing->editor ? $publishing->editor->full_name :
+										($publishing->feedback && $publishing->feedback->feedbackUser
+										? $publishing->feedback->feedbackUser->full_name : '') }}
 									</td>
 									<td>
 										{{ $publishing->expected_finish }}

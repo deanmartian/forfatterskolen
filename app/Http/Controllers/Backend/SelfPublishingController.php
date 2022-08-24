@@ -6,6 +6,7 @@ use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
 use App\SelfPublishing;
+use App\SelfPublishingFeedback;
 use App\SelfPublishingLearner;
 use App\User;
 use Illuminate\Http\Request;
@@ -192,6 +193,58 @@ class SelfPublishingController extends Controller
             'errors' => AdminHelpers::createMessageBag('Learners added from self-publishing successfully.'),
             'alert_type' => 'success',
             'not-former-courses' => true
+        ]);
+    }
+
+    public function addFeedback( $id, Request $request )
+    {
+        $this->validate($request, [
+            'manuscript' => 'required'
+        ]);
+
+        $filesWithPath = '';
+        $word_count = 0;
+        $destinationPath = 'storage/self-publishing-feedback/'; // upload path
+
+        foreach ($request->file('manuscript') as $k => $file) {
+            $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION); // getting document extension
+            $actual_name = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_FILENAME);
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+
+            $expFileName = explode('/', $fileName);
+            $filePath = $destinationPath.end($expFileName);
+            $file->move($destinationPath, end($expFileName));
+
+            $filesWithPath .= $filePath.", ";
+
+            // count words
+            if($extension == "pdf") :
+                $pdf  =  new \PdfToText( $destinationPath.end($expFileName) ) ;
+                $pdf_content = $pdf->Text;
+                $word_count += FrontendHelpers::get_num_of_words($pdf_content);
+            elseif($extension == "docx") :
+                $docObj = new \Docx2Text($destinationPath.end($expFileName));
+                $docText= $docObj->convertToText();
+                $word_count += FrontendHelpers::get_num_of_words($docText);
+            elseif($extension == "doc") :
+                $docText = FrontendHelpers::readWord($destinationPath.end($expFileName));
+                $word_count += FrontendHelpers::get_num_of_words($docText);
+            elseif($extension == "odt") :
+                $doc = odt2text($destinationPath.end($expFileName));
+                $word_count += FrontendHelpers::get_num_of_words($doc);
+            endif;
+        }
+
+        $feedback = new SelfPublishingFeedback();
+        $feedback->self_publishing_id = $id;
+        $feedback->feedback_user_id = \Auth::user()->id;
+        $feedback->manuscript = $filesWithPath = trim($filesWithPath,", ");
+        $feedback->notes = $request->notes;
+        $feedback->save();
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Self publishing feedback saved successfully.'),
+            'alert_type' => 'success'
         ]);
     }
 
