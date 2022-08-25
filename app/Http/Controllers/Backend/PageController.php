@@ -88,7 +88,8 @@ class PageController extends Controller
             ->where('is_free', 0)
             ->get()->pluck('id');
         //$singleCourses = [36, 37, 57, 48, 56, 50, 44, 49, 64];
-        $assignmentForCourse = Assignment::whereIn('course_id', $singleCourses)->get()->pluck('id')->toArray();
+        $assignmentForCourse = Assignment::whereIn('course_id', $singleCourses)
+            ->where('id', '!=', 527)->get()->pluck('id')->toArray();
         $assignmentForLearners = Assignment::where('parent', 'users')->get()->pluck('id')->toArray();
         $allAssignmentQuery = array_merge($assignmentForCourse, $assignmentForLearners);
         $pendingAssignments = AssignmentManuscript::where('editor_id', 0)
