@@ -79,7 +79,7 @@ class SelfPublishingController extends Controller
 
             $filesWithPath = '';
             $word_count = 0;
-            $destinationPath = 'storage/self-publishing-manuscript/'; // upload path
+            $destinationPath = '/storage/self-publishing-manuscript/'; // upload path
 
             foreach ($request->file('manuscript') as $k => $file) {
                 $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION); // getting document extension
@@ -204,7 +204,7 @@ class SelfPublishingController extends Controller
 
         $filesWithPath = '';
         $word_count = 0;
-        $destinationPath = 'storage/self-publishing-feedback/'; // upload path
+        $destinationPath = '/storage/self-publishing-feedback/'; // upload path
 
         foreach ($request->file('manuscript') as $k => $file) {
             $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION); // getting document extension

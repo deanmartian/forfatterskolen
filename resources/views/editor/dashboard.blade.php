@@ -530,9 +530,7 @@
 												{{ $publishing->title }}
 											</td>
 											<td>
-												<a href="{{ route('editor.self-publishing.download-manuscript', $publishing->id) }}">
-													<i class="fa fa-download" aria-hidden="true"></i>
-												</a> &nbsp; {!! $publishing->file_link !!}
+												 {!! $publishing->file_link !!}
 											</td>
 											<td>
 												{{ $publishing->expected_finish }}
