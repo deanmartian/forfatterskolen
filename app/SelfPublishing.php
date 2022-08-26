@@ -42,7 +42,7 @@ class SelfPublishing extends Model
             if (end($extension) == 'pdf' || end($extension) == 'odt') {
                 $fileLink .= '<a href="/js/ViewerJS/#../..'.trim($file).'">'.basename($file).'</a>, ';
             } else {
-                $fileLink .= '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('/').trim($file).'">'.basename($file).'</a>, ';
+                $fileLink .= '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').trim($file).'">'.basename($file).'</a>, ';
             }
         }
 
