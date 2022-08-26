@@ -242,4 +242,47 @@ class PageController extends Controller
 
     }
 
+    public function selfPublishingDownloadManuscript( $publishing_id )
+    {
+        $publishing = SelfPublishing::find($publishing_id);
+        $manuscripts = explode(', ', $publishing->manuscript);
+        if (count($manuscripts) > 1) {
+            $zipFileName    = $publishing->title.'.zip';
+            $public_dir     = public_path('storage');
+            $zip            = new \ZipArchive();
+
+            // open zip file connection and create the zip
+            if ($zip->open($public_dir . '/' . $zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== TRUE) {
+                die ("An error occurred creating your ZIP file.");
+            }
+
+            foreach($manuscripts as $feedFile) {
+                if (file_exists(public_path().'/'.trim($feedFile))) {
+
+                    //get the correct filename
+                    $expFileName = explode('/', $feedFile);
+                    $file = str_replace('\\', '/', public_path());
+
+                    // physical file location and name of the file
+                    $zip->addFile(trim($file.trim($feedFile)), end($expFileName));
+                }
+            }
+
+            $zip->close(); // close zip connection
+
+            $headers = array(
+                'Content-Type' => 'application/octet-stream',
+            );
+
+            $fileToPath = $public_dir.'/'.$zipFileName;
+
+            if(file_exists($fileToPath)){
+                return response()->download($fileToPath, $zipFileName, $headers)->deleteFileAfterSend(true);
+            }
+
+            return redirect()->back();
+        }
+        return response()->download(public_path($manuscripts[0]));
+    }
+
 }

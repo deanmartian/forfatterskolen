@@ -1504,6 +1504,8 @@ Route::group([
             ->name('admin.learner.remove-self-publishing');
         Route::get('/self-publishing/{id}/learners', 'SelfPublishingController@learners')->name('admin.self-publishing.learners');
         Route::post('/self-publishing/{id}/add-learners', 'SelfPublishingController@addLearners')->name('admin.self-publishing.add-learners');
+        Route::get('/self-publishing/{id}/download-manuscript', 'SelfPublishingController@selfPublishingDownloadManuscript')
+            ->name('admin.self-publishing.download-manuscript');
         Route::post('/self-publishing/{id}/add-feedback', 'SelfPublishingController@addFeedback')->name('admin.self-publishing.add-feedback');
         Route::delete('/self-publishing/delete-learner/{learner_id}', 'SelfPublishingController@deleteLearner')->name('admin.self-publishing.delete-learner');
         Route::resource('/self-publishing', 'SelfPublishingController', [
@@ -1651,7 +1653,7 @@ Route::group([
         Route::get('/yearly-calendar', 'PageController@yearlyCalendar')->name('editor.yearly-calendar.index');
         Route::get('/assigned-webinar', 'AssignedWebinarController@show')->name('editor.assigned-webinar');
         Route::post('/self-publishing/{id}/feedback', 'PageController@selfPublishingFeedback')->name('editor.self-publishing.feedback');
-        Route::post('/self-publishing/{id}/download-manuscript', 'PageController@selfPublishingDownloadManuscript')->name('editor.self-publishing.download-manuscript');
+        Route::get('/self-publishing/{id}/download-manuscript', 'PageController@selfPublishingDownloadManuscript')->name('editor.self-publishing.download-manuscript');
     });
 
     Route::group([
