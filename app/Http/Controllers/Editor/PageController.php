@@ -197,7 +197,7 @@ class PageController extends Controller
 
         $filesWithPath = '';
         $word_count = 0;
-        $destinationPath = '/storage/self-publishing-feedback/'; // upload path
+        $destinationPath = 'storage/self-publishing-feedback/'; // upload path
 
         foreach ($request->file('manuscript') as $k => $file) {
             $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION); // getting document extension
@@ -205,7 +205,7 @@ class PageController extends Controller
             $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
 
             $expFileName = explode('/', $fileName);
-            $filePath = $destinationPath.end($expFileName);
+            $filePath = "/".$destinationPath.end($expFileName);
             $file->move($destinationPath, end($expFileName));
 
             $filesWithPath .= $filePath.", ";
