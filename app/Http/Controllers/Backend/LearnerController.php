@@ -196,6 +196,9 @@ class LearnerController extends Controller
                 $query->where('parent', 'LIKE', 'gift-purchase');
                 $query->where('recipient', $learner->email);
             })
+            ->orWhere(function($query) use ($learner){
+                $query->where('recipient', $learner->email);
+            })
             ->latest()
             ->get();
 
@@ -266,8 +269,8 @@ class LearnerController extends Controller
                 endforeach;
             endif;
             // delete related email history
-            EmailHistory::where('parent', 'LIKE', '%courses-taken%')
-                ->where('parent_id', $courseTaken->id)->delete();
+            /*EmailHistory::where('parent', 'LIKE', '%courses-taken%')
+                ->where('parent_id', $courseTaken->id)->delete();*/
             $courseTaken->delete();
     	endif;
     	return redirect()->back();
@@ -385,8 +388,8 @@ class LearnerController extends Controller
     {
         $courseTaken = CoursesTaken::findOrFail($request->coursetaken_id);
         // delete related email history
-        EmailHistory::where('parent', 'LIKE', '%courses-taken%')
-            ->where('parent_id', $courseTaken->id)->delete();
+        /*EmailHistory::where('parent', 'LIKE', '%courses-taken%')
+            ->where('parent_id', $courseTaken->id)->delete();*/
         $courseTaken->delete();
         return redirect()->back();
     }
@@ -696,8 +699,8 @@ class LearnerController extends Controller
             }
 
             // delete related email history
-            EmailHistory::where('parent', 'LIKE', '%courses-taken%')
-            ->where('parent_id', $courseTaken->id)->delete();
+            /*EmailHistory::where('parent', 'LIKE', '%courses-taken%')
+            ->where('parent_id', $courseTaken->id)->delete();*/
             $courseTaken->delete();
 
             return redirect()->back()->with([
