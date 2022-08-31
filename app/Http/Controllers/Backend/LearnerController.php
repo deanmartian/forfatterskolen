@@ -200,6 +200,7 @@ class LearnerController extends Controller
                 $query->where('recipient', $learner->email);
             })
             ->latest()
+            ->withTrashed()
             ->get();
 
         return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories',
