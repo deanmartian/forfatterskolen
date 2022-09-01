@@ -84,7 +84,7 @@ class VippsRepository extends BaseRepository {
         $response = AdminHelpers::vippsAPI($method, $url, $body, $header);
 
         if ($response['http_code'] != ApiResponse::HTTPCODE_SUCCESS) {
-            Log::info("VIPPS inside not success on initiate payment");
+            Log::info("VIPPS inside not success on initiate payment orderId = " . $data['orderId']);
             Log::info(json_encode($response));
             if (isset($response['data'][0])) {
                 Log::info(json_encode($response['data'][0]));
