@@ -90,7 +90,7 @@
             </li>--}}
             <li class="nav-item">
                 <a href="https://selvpublisering.forfatterskolen.no" class="nav-link"
-                   title="Tjenester" target="_blank">Tjenester</a>
+                   title="Tjenester" target="_blank">{{ trans('site.front.nav.self-publishing') }}</a>
             </li>
             <li class="nav-item @if(Route::currentRouteName() == 'front.gift-cards') active @endif">
                 <a href="{{route('front.gift-cards')}}" class="nav-link">Gavekort</a>
