@@ -653,9 +653,10 @@ class ShopController extends Controller
         // check if the user is already on the course
         if($courseTaken) {
             $course_link = route('learner.course.show', $courseTaken->id);
-            return [
+            return redirect()->to($course_link);
+            /*return [
                 'course_link' => $course_link
-            ];
+            ];*/
         }
 
         $hasPaidCourse = false;
