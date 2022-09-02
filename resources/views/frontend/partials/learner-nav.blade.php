@@ -184,7 +184,7 @@
 
 <div class="portal-menu">
     <button class="navbar-toggler text-center w-100" type="button" data-toggle="collapse" data-target="#portalNav">
-        PORTAL MENU &nbsp;<i class="fa fa-chevron-down font-white"></i>
+        PORTAL MENY &nbsp;<i class="fa fa-chevron-down font-white"></i>
     </button>
 
     <div class="navbar-collapse collapse" id="portalNav">
