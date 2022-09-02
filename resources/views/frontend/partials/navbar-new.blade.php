@@ -80,25 +80,25 @@
                 <a href="{{ route('front.publishing') }}" class="nav-link"
                    title="View publishing">{{ trans('site.front.nav.publishing') }}</a>
             </li>
-            <li class="nav-item @if(Route::currentRouteName() == 'front.blog') active @endif">
+            {{--<li class="nav-item @if(Route::currentRouteName() == 'front.blog') active @endif">
                 <a href="{{ route('front.blog') }}" class="nav-link"
                    title="View blog">{{ trans('site.front.nav.blog') }}</a>
-            </li>
+            </li>--}}
             {{--<li class="nav-item @if(Route::currentRouteName() == 'front.workshop.index') active @endif">
                 <a href="{{route('front.workshop.index')}}" class="nav-link"
                    title="View workshops">{{ trans('site.front.nav.workshop') }}</a>
             </li>--}}
             <li class="nav-item">
                 <a href="https://pilotleser.no" class="nav-link"
-                   title="Pilotleser" target="_blank">Pilotleser</a>
+                   title="Pilotleser" target="_blank">Tjenester</a>
             </li>
             <li class="nav-item @if(Route::currentRouteName() == 'front.gift-cards') active @endif">
                 <a href="{{route('front.gift-cards')}}" class="nav-link">Gavekort</a>
             </li>
-            <li class="nav-item @if(Route::currentRouteName() == 'front.faq') active @endif">
+            {{--<li class="nav-item @if(Route::currentRouteName() == 'front.faq') active @endif">
                 <a href="{{route('front.faq')}}" class="nav-link"
                    title="View faqs">{{ trans('site.front.nav.faq') }}</a>
-            </li>
+            </li>--}}
             <li class="nav-item @if(Route::currentRouteName() == 'front.contact-us') active @endif">
                 <a href="{{route('front.contact-us')}}" class="nav-link"
                    title="View contact page">{{ trans('site.front.nav.contact-us') }}</a>
