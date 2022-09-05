@@ -54,6 +54,7 @@ use App\WebinarRegistrant;
 use App\Workshop;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -108,6 +109,13 @@ class HomeController extends Controller
         return view('frontend.home', compact('popular_courses', 'free_courses', 'free_webinars',
             'next_webinar', 'next_free_webinar', 'next_workshop','latest_blog', 'poems', 'testimonials', 'workshop',
             'upcomingSections'));
+    }
+
+    public function fbLeads( Response $request )
+    {
+        \Log::info('FACEBOOK LEADS HERE');
+        \Log::info($request->all());
+        \Log::info(json_encode($request->all()));
     }
 
     // set cookie for gdpr
