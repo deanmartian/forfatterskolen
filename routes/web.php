@@ -1084,12 +1084,16 @@ Route::group([
         Route::post('course/{course_id}/assignment/{assignment_id}/group/{group_id}/feedback-availability', 'AssignmentGroupController@setGroupFeedbackAvailability')->name('assignment.group.feedback-availability');
         Route::post('/group/{group_id}/learner/{id}/submit_feedback', 'AssignmentGroupController@submit_feedback')->name('admin.assignment.group.submit_feedback'); // Submit assignment feedback
         Route::post('/group/{group_id}/learner/{id}/submit_feedback_learner', 'AssignmentGroupController@submit_feedback_learner')->name('admin.assignment.group.submit_feedback_learner'); // Submit assignment feedback
+        Route::post('/assignment-group/{group_id}/set-feedback-to-other-learners/{group_learner_id}',
+            'AssignmentGroupController@setFeedbackToOtherLearner')->name('admin.assignment.group.learner.set-feedback-to-other');
         Route::post('/feedback/{id}/remove_feedback', 'AssignmentGroupController@remove_feedback')->name('admin.assignment.group.remove_feedback'); // Remove assignment feedback
         Route::post('/feedback/{id}/update_feedback', 'AssignmentGroupController@update_feedback')->name('admin.assignment.group.update_feedback'); // Update assignment feedback
         Route::post('/feedback/{id}/update_feedback_admin', 'AssignmentGroupController@update_feedback_admin')->name('admin.assignment.group.update_feedback_admin'); // Update assignment feedback admin
         Route::post('/feedback/{id}/approve', 'AssignmentGroupController@approve')->name('admin.assignment.group.approve'); // Approve assignment feedback admin
         Route::post('/feedback/lock-status', 'AssignmentGroupController@updateFeedbackLockStatus')->name('learner.assignment.group.lock-status'); // Courses For Sale Status
         Route::get('/feedback/{id}/download', 'AssignmentGroupController@downloadFeedback')->name('assignment.feedback.download_manuscript');
+        Route::get('/assignment-group/{group_id}/get-feedback-to-other-learners/{group_learner_id}', 'AssignmentGroupController@getFeedbackToOtherLearner')
+            ->name('learner.assignment.group.get-feedback-to-other-learners');
 
 
 

@@ -83,6 +83,7 @@
                                 <?php $feedback = App\AssignmentFeedback::where('assignment_group_learner_id',
 									$learner->id)->where('user_id', Auth::user()->id)->first(); ?>
 								@if( $feedback )
+									{{ $feedback->id }}
 									<button type="button" class="btn site-btn-global w-100 rounded-0 disabled">
 										@if( $feedback->is_active )
 											{{ trans('site.learner.feeback-provided') }}
@@ -104,13 +105,15 @@
 									@endif
 
 								@else
-									<button type="button" class="btn site-btn-global w-100 rounded-0 submitFeedbackBtn"
-											data-toggle="modal" data-target="#submitFeedbackModal"
-											data-name="Learner {{ $i }}"
-											data-action="{{ route('learner.assignment.group.submit_feedback',
-											['group_id' => $group->id, 'id' => $learner->id]) }}">
-										{{ trans('site.learner.give-feedback') }}
-									</button>
+									@if(in_array($learner->id, $could_send_feedback_to))
+										<button type="button" class="btn site-btn-global w-100 rounded-0 submitFeedbackBtn"
+												data-toggle="modal" data-target="#submitFeedbackModal"
+												data-name="Learner {{ $i }}"
+												data-action="{{ route('learner.assignment.group.submit_feedback',
+												['group_id' => $group->id, 'id' => $learner->id]) }}">
+											{{ trans('site.learner.give-feedback') }}
+										</button>
+									@endif
 								@endif
 							@endif
 						</div> <!-- end card-footer -->

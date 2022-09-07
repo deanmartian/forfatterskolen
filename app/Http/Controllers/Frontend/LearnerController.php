@@ -971,7 +971,13 @@ class LearnerController extends Controller
         $group = AssignmentGroup::where('id', $id)->whereHas('learners', function($query){
             $query->where('user_id', Auth::user()->id);
         })->firstOrFail();
-        return view('frontend.learner.groupShow', compact('group'));
+        $groupLearners = AssignmentGroupLearner::where('assignment_group_id', $id)
+            ->where('user_id', '!=', Auth::user()->id);
+        $groupLearner = AssignmentGroupLearner::where('assignment_group_id', $id)
+            ->where('user_id', '=', Auth::user()->id)->first();
+        $otherLearnersIdList = $groupLearners->pluck('id')->toArray();
+        $could_send_feedback_to = $groupLearner->could_send_feedback_to_id_list ?: $otherLearnersIdList;
+        return view('frontend.learner.groupShow', compact('group', 'otherLearnersIdList', 'could_send_feedback_to'));
     }
 
 

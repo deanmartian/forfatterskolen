@@ -463,6 +463,31 @@ class AssignmentGroupController extends Controller
         return redirect()->back();
     }
 
+    public function setFeedbackToOtherLearner( $group_id, $group_learner_id, Request $request )
+    {
+        $groupLearner = AssignmentGroupLearner::find($group_learner_id);
+        $groupLearner->could_send_feedback_to = implode(", ", $request->learners);
+        $groupLearner->save();
+        return redirect()->back()->with([
+            'alert_type' => 'success',
+            'errors'    => AdminHelpers::createMessageBag('Record saved.')
+        ]);
+    }
+
+    public function getFeedbackToOtherLearner( $group_id, $group_learner_id )
+    {
+        $groupLearner = AssignmentGroupLearner::find($group_learner_id);
+        $groupLearners = AssignmentGroupLearner::where('assignment_group_id', $group_id)
+            ->where('id', '!=', $group_learner_id);
+        $otherLearnersIdList = $groupLearners->pluck('id')->toArray();
+        $otherLearners = $groupLearners->with('user')->get();
+        $could_send_feedback_to = $groupLearner->could_send_feedback_to_id_list ?: $otherLearnersIdList;
+        return [
+            'could_send_feedback_to' => $could_send_feedback_to,
+            'other_learners' => $otherLearners
+        ];
+    }
+
     /**
      * Download all the manuscript in the group
      * @param $course_id

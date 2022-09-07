@@ -63,6 +63,13 @@
 							</p>
 
 								<button type="button" class="btn btn-primary btn-sm margin-top setGradeBtn" data-toggle="modal" data-target="#setGradeModal" data-action="{{ route('assignment.group.set_grade', $manuscript->id) }}" data-grade="{{ $manuscript->grade }}">{{ trans('site.set-grade') }}</button>
+								<button class="btn btn-success btn-sm margin-top setFeedbackLearnerBtn" data-toggle="modal" data-target="#setFeedbackLearnerModal"
+								data-action="{{ route('admin.assignment.group.learner.set-feedback-to-other',
+								['group_id' => $group->id, 'group_learner_id' => $learner->id]) }}"
+								data-get-learners="{{ route('learner.assignment.group.get-feedback-to-other-learners',
+								 ['group_id' => $group->id, 'group_learner_id' => $learner->id]) }}">
+									Allow Feedback to learners
+								</button>
 							<br>
 								<?php $feedback = App\AssignmentFeedback::where('assignment_group_learner_id', $learner->id)->where('user_id', Auth::user()->id)->where('is_admin', 1)->first(); ?>
 								@if( $feedback )
@@ -196,6 +203,28 @@
 						<input type="number" class="form-control" step="0.01" name="grade" required>
 					</div>
 					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="setFeedbackLearnerModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Set Feedback to Learners</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group" style="max-height: 300px; overflow-y: scroll; margin-top: 10px">
+						<label>Learners</label> <br>
+						<div class="learner-container"></div>
+					</div>
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.submit') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -589,6 +618,37 @@ $manuscriptUsers = $assignment->manuscripts->whereNotIn('user_id', $groupLearner
         var grade = $(this).data('grade');
         form.find('input[name=grade]').val(grade);
         form.attr('action', action)
+    });
+
+    $(".setFeedbackLearnerBtn").click(function(){
+        let form = $('#setFeedbackLearnerModal').find('form');
+        let action = $(this).data('action');
+        let getLearnersLink = $(this).data('get-learners');
+        form.attr('action', action);
+        form.find('.learner-container').empty();
+        $.ajax({
+            type: 'GET',
+            url: getLearnersLink,
+            headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'},
+            data: {},
+            success: function (data) {
+                let other_learners = data.other_learners;
+                let container = form.find('.learner-container');
+                let learnerList = '';
+                console.log(other_learners);
+                console.log(data.could_send_feedback_to);
+                $.each(other_learners, function(k, v){
+                    if (data.could_send_feedback_to.includes(v.id)) {
+                        learnerList += '<input type="checkbox" name="learners[]" value="'+ v.id +'" checked>';
+					} else {
+                        learnerList += '<input type="checkbox" name="learners[]" value="'+ v.id +'">';
+					}
+                    learnerList += ' <label>' + v.user.full_name + '</label> <br>';
+				});
+
+                container.append(learnerList);
+            }
+        });
     });
 
     $(".lock-toggle").change(function(){
