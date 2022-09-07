@@ -86,6 +86,7 @@ Route::group([
         Route::get('/correction', 'HomeController@correction')->name('front.correction'); // Correction Page
         Route::post('/correction', 'HomeController@correction')->name('front.correction'); // Correction Page
         Route::get('/gratis-tekstvurdering', 'ShopManuscriptController@freeManuscriptShow')->name('front.free-manuscript.index'); // Free Manuscript
+        Route::get('/gratistekstvurdering', 'ShopManuscriptController@freeManuscriptShowOther');
         Route::get('/gratis-tekstvurdering/success', 'ShopManuscriptController@freeManuscriptShowSuccess')->name('front.free-manuscript.success'); // Free Manuscript
         Route::post('/gratis-tekstvurdering/send', 'ShopManuscriptController@freeManuscriptSend')->name('front.free-manuscript.send'); // Free Manuscript Send
         Route::post('/free-manuscript/set-word-count', 'ShopManuscriptController@freeManuscriptWordCount')->name('front.free-manuscript.set-wordcount');

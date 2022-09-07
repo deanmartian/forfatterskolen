@@ -970,6 +970,13 @@ class ShopManuscriptController extends Controller
 
     public function freeManuscriptShow()
     {
+        $from = 'FS';
+        return view('frontend.shop-manuscript.free-manuscript');
+    }
+
+    public function freeManuscriptShowOther()
+    {
+        $from = 'Giutbok';
         return view('frontend.shop-manuscript.free-manuscript');
     }
 
