@@ -970,14 +970,14 @@ class ShopManuscriptController extends Controller
 
     public function freeManuscriptShow()
     {
-        $from = 'FS';
-        return view('frontend.shop-manuscript.free-manuscript');
+        $action = 'front.free-manuscript.send'; // default
+        return view('frontend.shop-manuscript.free-manuscript', compact('action'));
     }
 
     public function freeManuscriptShowOther()
     {
-        $from = 'Giutbok';
-        return view('frontend.shop-manuscript.free-manuscript');
+        $action = 'front.free-manuscript.send-other'; // from other site
+        return view('frontend.shop-manuscript.free-manuscript', compact('action'));
     }
 
 
@@ -1158,11 +1158,24 @@ class ShopManuscriptController extends Controller
         return response()->json(['data' => $request->wordcount]);
     }
 
-
     public function freeManuscriptSend( Request $request )
+    {
+        $request->merge(['from' => 'FS']);
+        return $this->processFreeManuscript($request);
+    }
+
+    public function freeManuscriptSendOther( Request $request )
+    {
+        $request->merge(['from' => 'Giutbok']);
+
+        return $this->processFreeManuscript($request);
+    }
+
+    public function processFreeManuscript( Request $request )
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            'last_name' => 'required',
             'email' => 'required|email',
             'genre' => 'required',
             'manuscript_content' => 'required',
@@ -1190,6 +1203,7 @@ Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">po
         endif;
 
         $name = $request->name;
+        $last_name = $request->last_name;
         $email = $request->email;
         $content = $request->manuscript_content;
         $word_count = FrontendHelpers::get_num_of_words($request->manuscript_content);
@@ -1205,8 +1219,10 @@ Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">po
             //mail('post@forfatterskolen.no', 'Free Manuscript', view('emails.free-manuscript', compact('name', 'email', 'content', 'word_count')), $headers);
             FreeManuscript::create([
                 'name' => $request->name,
+                'last_name' => $request->last_name,
                 'email' => $request->email,
                 'genre' => $request->genre,
+                'from' => $request->from,
                 'content' => $request->manuscript_content,
                 'deadline' => Carbon::today()->addDays(6)
             ]);
@@ -1216,7 +1232,7 @@ Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">po
             $to = 'post@forfatterskolen.no'; //
             $emailData = [
                 'email_subject' => 'Free Manuscript',
-                'email_message' => view('emails.free-manuscript', compact('name', 'email', 'content', 'word_count'))->render(),
+                'email_message' => view('emails.free-manuscript', compact('name','last_name', 'email', 'content', 'word_count'))->render(),
                 'from_name' => '',
                 'from_email' => 'post@forfatterskolen.no',
                 'attach_file' => NULL

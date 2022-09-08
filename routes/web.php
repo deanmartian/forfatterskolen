@@ -89,6 +89,7 @@ Route::group([
         Route::get('/gratistekstvurdering', 'ShopManuscriptController@freeManuscriptShowOther');
         Route::get('/gratis-tekstvurdering/success', 'ShopManuscriptController@freeManuscriptShowSuccess')->name('front.free-manuscript.success'); // Free Manuscript
         Route::post('/gratis-tekstvurdering/send', 'ShopManuscriptController@freeManuscriptSend')->name('front.free-manuscript.send'); // Free Manuscript Send
+        Route::post('/gratistekstvurdering/send', 'ShopManuscriptController@freeManuscriptSendOther')->name('front.free-manuscript.send-other'); // Free Manuscript Send
         Route::post('/free-manuscript/set-word-count', 'ShopManuscriptController@freeManuscriptWordCount')->name('front.free-manuscript.set-wordcount');
         Route::get('/personal-trainer/apply', 'HomeController@personalTrainer')->name('front.personal-trainer.apply');
         Route::post('/personal-trainer/send', 'HomeController@personalTrainerSend')->name('front.personal-trainer.send');

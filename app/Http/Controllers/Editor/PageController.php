@@ -53,13 +53,14 @@ class PageController extends Controller
             ->where('editor_id', Auth::user()->id)
             ->orderBy('created_at', 'desc')->get();
         $freeManuscriptEmailTemplate = EmailTemplate::where('page_name', 'Free Manuscript')->first();
+        $freeManuscriptEmailTemplate2 = EmailTemplate::where('page_name', 'Free Manuscript 2')->first();
         $selfPublishingList = SelfPublishing::where('editor_id', Auth::user()->id)
             ->whereDoesntHave('feedback')
             ->get();
 
         return view('editor.dashboard', compact('assigned_shop_manuscripts', 'assignedAssignments', 'coachingTimers',
         'corrections', 'copyEditings', 'assignedAssignmentManuscripts', 'shopManuscriptRequests', 'freeManuscripts', 'freeManuscriptEmailTemplate',
-            'selfPublishingList'));
+            'freeManuscriptEmailTemplate2', 'selfPublishingList'));
 
     }
 

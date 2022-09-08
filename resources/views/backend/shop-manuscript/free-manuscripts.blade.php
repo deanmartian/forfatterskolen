@@ -36,6 +36,7 @@
 							<th>{{ trans('site.name') }}</th>
 							<th>{{ trans('site.genre') }}</th>
 							<th>{{ trans_choice('site.emails', 1) }}</th>
+							<th>From</th>
 							<th width="600">{{ trans('site.content') }}</th>
 							<th>{{ trans('site.deadline') }}</th>
 							<th>{{ trans('site.date-received') }}</th>
@@ -51,6 +52,9 @@
 								<td>{{ \App\Http\AdminHelpers::assignmentType($freeManuscript->genre) }}</td>
 								<td>{{ $freeManuscript->email }}</td>
 								<td>
+									{{ $freeManuscript->from }}
+								</td>
+								<td>
 									{{ \Illuminate\Support\Str::limit(strip_tags($freeManuscript->content), 120) }}<br>
 									<a href="#editContentModal" data-toggle="modal" class="editContentBtn"
 									data-content="{{ $freeManuscript->content }}"
@@ -63,7 +67,12 @@
 								<td>@if( $freeManuscript->editor ) {{ $freeManuscript->editor->full_name }} @endif</td>
 								<td>
 									@if( $freeManuscript->editor )
-										<button class="btn btn-xs btn-success sendFeedbackBtn" data-toggle="modal" data-target="#feedbackModal" data-fields="{{ json_encode($freeManuscript) }}" data-action="{{ route('admin.free-manuscript.send_feedback', $freeManuscript->id) }}">{{ trans('site.send-back-feedback') }}</button>
+										<button class="btn btn-xs btn-success sendFeedbackBtn" data-toggle="modal" data-target="#feedbackModal"
+												data-fields="{{ json_encode($freeManuscript) }}"
+												data-action="{{ route('admin.free-manuscript.send_feedback', $freeManuscript->id) }}"
+												data-email_template="{{ $freeManuscript->from === 'Giutbok'
+																? $emailTemplate2->email_content
+																: $emailTemplate->email_content }}">{{ trans('site.send-back-feedback') }}</button>
 									@endif
 									<button class="btn btn-xs btn-primary viewManuscriptBtn" data-toggle="modal" data-target="#viewManuscriptModal" data-fields="{{ json_encode($freeManuscript) }}"
 									data-genre="{{ $freeManuscript->genre ? \App\Http\FrontendHelpers::assignmentType($freeManuscript->genre): '' }}"
@@ -99,6 +108,7 @@
 						<tr>
 							<th>{{ trans('site.name') }}</th>
 							<th>{{ trans_choice('site.emails', 1) }}</th>
+							<th>From</th>
 							<th width="500">{{ trans('site.content') }}</th>
 							<th>{{ trans('site.date-sent') }}</th>
 							<th>{{ trans_choice('site.editors', 1) }}</th>
@@ -111,6 +121,7 @@
 							<tr>
 								<td>{{ $freeManuscript->name }}</td>
 								<td>{{ $freeManuscript->email }}</td>
+								<td>{{ $freeManuscript->from ?: 'FS' }}</td>
 								<td>{{ \Illuminate\Support\Str::limit(strip_tags($freeManuscript->content), 120) }}</td>
 								<td class="text-center">
 									{{ $freeManuscript->latestFeedbackHistory['date_sent'] }} <br>
@@ -221,7 +232,7 @@
                     {{ csrf_field() }}
 					<div class="form-group">
 						<label>{{ trans('site.body') }}</label>
-						<textarea name="email_content" cols="30" rows="10" class="form-control tinymce" required><?php echo e($emailTemplate ? $emailTemplate->email_content : ''); ?></textarea>
+						<textarea name="email_content" cols="30" rows="10" class="form-control tinymce" id="FMEmailContentEditor" required></textarea>
 					</div>
                     <div class="clearfix"></div>
                     <button type="submit" class="btn btn-success pull-right margin-top" id="sendFeedbackEmail">{{ trans('site.send') }}</button>
@@ -382,6 +393,10 @@
         var action = $(this).data('action');
         var modal = $('#feedbackModal');
         modal.find('form').attr('action', action);
+        let email_template = $(this).data('email_template');
+        let fields = $(this).data('fields');
+        let content = fields.feedback_content ? fields.feedback_content : email_template;
+        tinymce.get('FMEmailContentEditor').setContent(content);
     });
 
 	$('.assignEditorBtn').click(function(){

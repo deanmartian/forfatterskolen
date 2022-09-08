@@ -50,6 +50,7 @@ class FreeManuscriptController extends Controller
             $archiveManuscripts = FreeManuscript::with('latestFeedbackHistory')->where('email', 'LIKE', '%' . $request->search  . '%')->where('is_feedback_sent', '=',1)->orderBy('created_at', 'desc')->paginate(20);
         endif;
         $emailTemplate = EmailTemplate::where('page_name', 'Free Manuscript')->first();
+        $emailTemplate2 = EmailTemplate::where('page_name', 'Free Manuscript 2')->first();
         $emailTemplateRoute = 'admin.manuscript.add_email_template';
         $isUpdate = 0;
         if ($emailTemplate->count()) {
@@ -59,7 +60,7 @@ class FreeManuscriptController extends Controller
 
         /*appends is used to append the parameters and to not be ignored by pagination render link*/
         return view('backend.shop-manuscript.free-manuscripts',
-            compact('freeManuscripts','emailTemplate', 'emailTemplateRoute', 'isUpdate'),
+            compact('freeManuscripts','emailTemplate', 'emailTemplate2', 'emailTemplateRoute', 'isUpdate'),
             ['archiveManuscripts' => $archiveManuscripts->appends($request->except('page'))]
         );
     }
@@ -227,7 +228,7 @@ class FreeManuscriptController extends Controller
 
         $to = $freeManuscripts->email;
 
-        $params = array(
+        /*$params = array(
             'api_key'      => 'ee9f1cb27fe33c7197d722f434493d4440cf5da6be8114933fd0fdae40fc03a197388b99',
 
             // this is the action that adds a contact
@@ -288,7 +289,7 @@ class FreeManuscriptController extends Controller
             die('Nothing was returned. Do you have a connection to Email Marketing server?');
         }
 
-        $result = unserialize($response);
+        $result = unserialize($response);*/
 
         $email_content = $requests->email_content;
 
@@ -300,7 +301,9 @@ class FreeManuscriptController extends Controller
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
         //$headers .= 'Reply-To: '. $from . "\r\n";
-        $emailTemplate = $this->emailTemplate('Free Manuscript');
+        $emailTemplate = $freeManuscripts->from === 'Giutbok' ? $this->emailTemplate('Free Manuscript 2')
+            : $this->emailTemplate('Free Manuscript');
+
         $search_string = [
             ':firstname'
         ];
@@ -311,7 +314,7 @@ class FreeManuscriptController extends Controller
         $message = str_replace($search_string, $replace_string, $message);
 
         $subject = $emailTemplate->subject;
-        $from = "postmail@forfatterskolen.no";
+        $from = $emailTemplate->from;//"postmail@forfatterskolen.no";
 
         $emailData['email_subject'] = $subject;
         $emailData['email_message'] = $message;

@@ -14,7 +14,7 @@ class FreeManuscript extends Model
 {
     
     protected $table = 'free_manuscripts';
-    protected $fillable = ['name', 'email', 'content', 'editor_id', 'genre', 'deadline'];
+    protected $fillable = ['name', 'last_name', 'email', 'content', 'editor_id', 'genre', 'from', 'deadline'];
     protected $appends = ['deadline_date'];
 
 

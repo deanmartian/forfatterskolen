@@ -419,7 +419,9 @@
 																data-toggle="modal" data-target="#freeManuscriptFeedbackModal"
 																data-fields="{{ json_encode($freeManuscript) }}"
 																data-action="{{ route('editor.free-manuscript.send_feedback', $freeManuscript->id) }}"
-																data-email_template="{{ $freeManuscriptEmailTemplate ? $freeManuscriptEmailTemplate->email_content : '' }}">
+																data-email_template="{{ $freeManuscript->from === 'Giutbok'
+																? $freeManuscriptEmailTemplate2->email_content
+																: $freeManuscriptEmailTemplate->email_content }}">
 															<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
 														</button>
 													@else
@@ -427,7 +429,9 @@
 																data-toggle="modal" data-target="#freeManuscriptFeedbackModal"
 																data-fields="{{ json_encode($freeManuscript) }}"
 																data-action="{{ route('editor.free-manuscript.send_feedback', $freeManuscript->id) }}"
-																data-email_template="{{ $freeManuscriptEmailTemplate ? $freeManuscriptEmailTemplate->email_content : '' }}">
+																data-email_template="{{ $freeManuscript->from === 'Giutbok'
+																? $freeManuscriptEmailTemplate2->email_content
+																: $freeManuscriptEmailTemplate->email_content }}">
 															+ {{ trans('site.add-feedback') }}
 														</button>
 													@endif
