@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\CheckoutLog;
 use App\Editor;
+use App\Events\AddToCampaignList;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Auth\LoginController;
 use App\Invoice;
@@ -1160,13 +1161,19 @@ class ShopManuscriptController extends Controller
 
     public function freeManuscriptSend( Request $request )
     {
-        $request->merge(['from' => 'FS']);
+        $request->merge([
+            'from' => 'FS',
+            'ac_list_id' => 199
+        ]);
         return $this->processFreeManuscript($request);
     }
 
     public function freeManuscriptSendOther( Request $request )
     {
-        $request->merge(['from' => 'Giutbok']);
+        $request->merge([
+            'from' => 'Giutbok',
+            'ac_list_id' => 200
+        ]);
 
         return $this->processFreeManuscript($request);
     }
@@ -1238,6 +1245,16 @@ Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">po
                 'attach_file' => NULL
             ];
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+            if ($request->from === 'Giutbok') {
+                \Mail::to('terje@giutbok.no')->queue(new SubjectBodyEmail($emailData));
+            }
+
+            $list_id = $request->ac_list_id;
+            $activeCampaign['email'] = $request->email;
+            $activeCampaign['name'] = $request->name;
+            $activeCampaign['last_name'] = $request->last_name;
+            event( new AddToCampaignList($list_id, $activeCampaign));
+            //AdminHelpers::addToActiveCampaignList($list_id, $activeCampaign);
 
             // forget the wordcount
             Session::forget('wordcount');

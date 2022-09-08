@@ -15,7 +15,12 @@
 @section('content')
 <div class="page-toolbar">
 	<h3><i class="fa fa-file-text-o"></i> {{ trans('site.free-manuscripts') }}</h3>
-	<a href="#" data-toggle="modal" data-target="#freeManuscriptEmailTemplate"> {{ trans('site.email-template') }}</a>
+	<a href="#" data-toggle="modal" class="freeManuscriptEmailTemplateBtn" data-target="#freeManuscriptEmailTemplate"
+	   data-fields="{{ json_encode($emailTemplate) }}" data-action="{{ route('admin.manuscript.edit_email_template', $emailTemplate->id) }}">
+		{{ trans('site.email-template') }}</a> |
+	<a href="#" data-toggle="modal" class="freeManuscriptEmailTemplateBtn" data-target="#freeManuscriptEmailTemplate"
+	   data-fields="{{ json_encode($emailTemplate2) }}" data-action="{{ route('admin.manuscript.edit_email_template', $emailTemplate2->id) }}">
+		{{ trans('site.email-template') }} 2</a>
 </div>
 
 <div class="col-md-12">
@@ -280,14 +285,14 @@
                     <?php if($isUpdate): ?>
 						<?php echo e(method_field('PUT')); ?>
 					<?php endif; ?>
-					<input type="hidden" name="from_email" value="post@forfatterskolen.no">
+					<input type="hidden" name="from_email" value="">
 					<div class="form-group">
 						<label>{{ trans('site.body') }}</label>
 						<textarea name="email_content" cols="30" rows="10" class="form-control tinymce" required
-						id="freeManuscriptEmailContent"><?php echo e($emailTemplate ? $emailTemplate->email_content : ''); ?></textarea>
+						id="freeManuscriptEmailContent"></textarea>
 					</div>
 
-					<input type="hidden" name="page_name" value="Free Manuscript">
+					<input type="hidden" name="page_name" value="">
 
 					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
 					<div class="clearfix"></div>
@@ -398,6 +403,18 @@
         let content = fields.feedback_content ? fields.feedback_content : email_template;
         tinymce.get('FMEmailContentEditor').setContent(content);
     });
+
+	$(".freeManuscriptEmailTemplateBtn").click(function() {
+	    let modal = $("#freeManuscriptEmailTemplate");
+        let action = $(this).data('action');
+        let fields = $(this).data('fields');
+
+        modal.find('form').attr('action', action);
+        modal.find('input[name=from_email]').val(fields.from_email);
+        modal.find('input[name=page_name]').val(fields.page_name);
+        let content = fields.email_content;
+        tinymce.get('freeManuscriptEmailContent').setContent(content);
+	});
 
 	$('.assignEditorBtn').click(function(){
 		var action = $(this).data('action');
