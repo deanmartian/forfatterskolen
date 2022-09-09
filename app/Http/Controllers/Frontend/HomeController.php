@@ -111,10 +111,9 @@ class HomeController extends Controller
             'upcomingSections'));
     }
 
-    public function fbLeads( Response $request )
+    public function fbLeads( Request $request )
     {
         \Log::info('FACEBOOK LEADS HERE');
-        \Log::info($request->all());
         \Log::info(json_encode($request->all()));
     }
 
