@@ -114,7 +114,36 @@ class HomeController extends Controller
     public function fbLeads( Request $request )
     {
         \Log::info('FACEBOOK LEADS HERE');
-        \Log::info(json_encode($request->all()));
+        $user_email = $request->email;
+        $user       = User::where('email', $user_email)->first();
+
+        if (!$user) {
+            \Log::info('add user ' . $user_email);
+            $user = User::create([
+                'email'             => $user_email,
+                'first_name'        => $request->first_name,
+                'last_name'         => $request->last_name,
+                'password'          => bcrypt('Z5C5E5M2jv'),
+                'default_password' => 'Z5C5E5M2jv',
+                'need_pass_update'  => 1
+            ]);
+
+            $encode_email = encrypt($user->email);
+
+            // Send welcome email
+            $actionText = 'Klikk her for å logge inn';
+            $actionUrl = route('auth.login.email', $encode_email);
+
+            $to = $user->email;
+            $emailData = [
+                'email_subject' => 'Velkommen til Forfatterskolen',
+                'email_message' => view('emails.registration', compact('actionText', 'actionUrl', 'user'))->render(),
+                'from_name' => '',
+                'from_email' => 'post@forfatterskolen.no',
+                'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        }
     }
 
     // set cookie for gdpr
