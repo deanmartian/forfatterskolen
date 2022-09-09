@@ -681,7 +681,7 @@ class PageController extends Controller
 
     public function sveaOrders()
     {
-        $orders = Order::svea()->latest()->paginate(20);
+        $orders = Order::svea()->where('is_processed', 1)->latest()->paginate(20);
         return view('backend.svea-orders', compact('orders'));
     }
 }
