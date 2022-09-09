@@ -26,6 +26,7 @@ class VerifyCsrfToken extends BaseVerifier
         '/vipps/*',
         '/vipps*',
         '/vipps/payment/v2/payments/*',
-        '/vipps/payment/v2/payments*'
+        '/vipps/payment/v2/payments*',
+        '/fb-leads'
     ];
 }
