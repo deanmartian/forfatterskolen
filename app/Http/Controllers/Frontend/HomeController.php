@@ -129,15 +129,27 @@ class HomeController extends Controller
             ]);
 
             $encode_email = encrypt($user->email);
+            $email_template = AdminHelpers::emailTemplate('Fb Leads Registration');
 
             // Send welcome email
-            $actionText = 'Klikk her for å logge inn';
             $actionUrl = route('auth.login.email', $encode_email);
+
+            $message = str_replace(
+                [
+                    ':login',
+                    ':end_login'
+                ],
+                [
+                    "<a href='" . $actionUrl . "' class='redirect-button' target='_blank'>",
+                    '</a>'
+                ],
+                $email_template->email_content
+            );
 
             $to = $user->email;
             $emailData = [
-                'email_subject' => 'Velkommen til Forfatterskolen',
-                'email_message' => view('emails.registration', compact('actionText', 'actionUrl', 'user'))->render(),
+                'email_subject' => $email_template->subject,
+                'email_message' => view('emails.fb-leads-registration', compact('message'))->render(),
                 'from_name' => '',
                 'from_email' => 'post@forfatterskolen.no',
                 'attach_file' => NULL
