@@ -7,7 +7,7 @@
         </a>
 
         <form-wizard color="#c12938" error-color="#ff4949"
-                     :nextButtonText="trans('site.paginate.next')" :backButtonText="trans('site.paginate.previous')"
+                     :nextButtonText="'Til betaling'" :backButtonText="trans('site.paginate.previous')"
                      :finishButtonText="trans('site.front.buy')" title="" subtitle="">
             <tab-content :title="'Bestillingsskjema'" icon="fa fa-clipboard-list">
                 <table class="table table-hover">
@@ -252,7 +252,8 @@
             <button type="button" class="vipps-btn" slot="custom-buttons-right" slot-scope="props"
                     v-if="props.activeTabIndex === 0" @click="vippsCheckout();" :disabled="isLoading">
                 <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i>
-                <img src="/images-new/betal-vipps.png" height="36" alt="vipps-buy-button"
+                <span>Hurtigutsjekk med</span>
+                <img src="/images-new/vipps.png" class="inline" alt="vipps-buy-button"
                      :style="isLoading ? 'opacity: .8;' : ''">
             </button>
             <button slot="finish" class="d-none">{{ trans('site.checkout.finish') }}</button>
@@ -280,8 +281,17 @@
 
     .vipps-btn {
         border: none;
-        background-color: transparent;
+        color: #fff;
+        background-color: #fe5b24;
+        font-weight: 600;
+        padding: 0.6180469716em 1.41575em;
         position: relative;
+    }
+
+    .vipps-btn img.inline {
+        height: 2ex;
+        display: inline;
+        vertical-align: text-bottom;
     }
 
     .vipps-btn i.fa {
