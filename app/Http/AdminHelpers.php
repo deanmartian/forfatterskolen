@@ -1045,6 +1045,25 @@ class AdminHelpers
         return $pages;
     }
 
+    public static function GAdminPageList($id = NULL)
+    {
+        $pages = array(
+            array( 'id' => 1, 'option' => 'Dashboard', 'route' => 'g-admin.dashboard', 'request_name' => 'dashboard'),
+            array( 'id' => 2, 'option' => 'Learners', 'route' => 'g-admin.learner.index', 'request_name' => 'learner'),
+            array( 'id' => 3, 'option' => 'Self Publishing', 'route' => 'g-admin.self-publishing.index', 'request_name' => 'self-publishing'),
+        );
+
+        if ($id > 0) {
+            foreach ($pages as $page) {
+                if ($page['id'] == $id) {
+                    return $page['option'];
+                }
+            }
+        }
+
+        return $pages;
+    }
+
     public static function courseType($id = NULL)
     {
         $types = array(

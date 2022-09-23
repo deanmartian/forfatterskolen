@@ -456,6 +456,7 @@
 					<div class="form-group">
 						<input type="checkbox" name="is_editor"> Is Editor? &nbsp;
 						<input type="checkbox" name="is_admin"> Is Admin? &nbsp; <br>
+						<input type="checkbox" name="is_giutbok_admin"> Is Giutbok Admin? &nbsp; <br>
 					</div>
 				</div>
 		      <button type="submit" class="btn btn-primary pull-right margin-top">Save</button>
@@ -850,6 +851,23 @@
 
 	let other_terms_tab = '{{ Session::has('terms_tab') ? Session::get('terms_tab'): 'course' }}';
 
+
+	$("[name=is_editor]").click(function() {
+	    let giutbok = $("[name=is_giutbok_admin]");
+        giutbok.attr('disabled', false);
+	    if($(this).is(':checked')) {
+            giutbok.attr('disabled', true);
+		}
+	});
+
+    $("[name=is_giutbok_admin]").click(function() {
+        let editor = $("[name=is_editor]");
+        editor.attr('disabled', false);
+        if($(this).is(':checked')) {
+            editor.attr('disabled', true);
+        }
+    });
+
 	$('.editAdminBtn').click(function(){
 		var form = $('#editAdminModal form');
 		var action = $(this).data('action');
@@ -868,11 +886,20 @@
 		form.find('input[name=with_head_editor_access]').attr('checked', false);
 
         if (fields.role == 3 && fields.admin_with_editor_access != 1) {
-            form.find('input[name=is_editor]').attr('checked', true);
+            form.find('input[name=is_editor]').attr('checked', true).attr('disabled', false);
+			form.find("input[name=is_giutbok_admin]").attr('disabled', true);
         }else if(fields.role == 1 && fields.admin_with_editor_access == 1){
 			form.find('input[name=is_editor]').attr('checked', true);
 			form.find('input[name=is_admin]').attr('checked', true);
-		}else if(fields.role == 1 && fields.admin_with_editor_access != 1){
+            form.find("input[name=is_giutbok_admin]").attr('disabled', true);
+		} else if(fields.role == 1 && fields.admin_with_giutbok_access == 1){
+            form.find('input[name=is_giutbok_admin]').attr('checked', true);
+            form.find('input[name=is_admin]').attr('checked', true);
+            form.find("input[name=is_editor]").attr('disabled', true);
+        }else if (fields.role == 4 && fields.admin_with_giutbok_access != 1) {
+            form.find('input[name=is_giutbok_admin]').attr('checked', true).attr('disabled', false);
+            form.find("input[name=is_editor]").attr('disabled', true);
+        } else if(fields.role == 1 && fields.admin_with_editor_access != 1){
 			form.find('input[name=is_admin]').attr('checked', true);
 		}
 

@@ -60,6 +60,29 @@ class LoginController extends Controller
         return redirect()->back()->withInput()->withErrors('Feil passord');
     }
 
+    public function giutbokLogin( LoginRequest $request )
+    {
+        $user = User::where('email', $request->email)
+            ->where(function($query) {
+                $query->whereIn('role', array(4))->orWhere('admin_with_giutbok_access', 1);
+            })->first();
+
+        if(!$user) return redirect()->back()->withErrors('Unknown email');
+
+        if ($user->is_active != 1) return redirect()->back()->withErrors('Invalid User');
+
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 4])) :
+            // Authentication passed...
+            return redirect()->back();
+        elseif (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'admin_with_giutbok_access' => 1])) :
+            // Authentication passed...
+            return redirect()->back();
+        endif;
+
+
+        return redirect()->back()->withInput()->withErrors('Feil passord');
+    }
+
     public function editorEmailLogin($email)
     {
         $email = decrypt($email);

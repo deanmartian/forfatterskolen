@@ -95,7 +95,7 @@ class AdminController extends Controller
             'last_name' => 'required|max:100',
             'email' => 'required|max:100',
         ]);
-        $admin = User::where('id', $id)->whereIn('role', array(1,3))->firstOrFail();
+        $admin = User::where('id', $id)->whereIn('role', array(1,3,4))->firstOrFail();
         $admin->first_name = $request->first_name;
         $admin->last_name = $request->last_name;
         $admin->email = $request->email;
@@ -103,7 +103,35 @@ class AdminController extends Controller
         if($request->has('minimal_access')){
             $admin->minimal_access = 1;
         }
-        if($request->has('is_editor') && !$request->has('is_admin')){
+
+        $admin->role = 1;
+        $admin->admin_with_editor_access = 0;
+        $admin->admin_with_giutbok_access = 0;
+
+        if($request->has('is_editor') || $request->has('is_giutbok_admin')){
+
+            if($request->has('is_editor') && !$request->has('is_admin')){
+                $admin->role = 3;
+                $admin->admin_with_editor_access = 0;
+            }
+
+            if($request->has('is_editor') && $request->has('is_admin')){
+                $admin->role = 1;
+                $admin->admin_with_editor_access = 1;
+            }
+
+            if($request->has('is_giutbok_admin') && !$request->has('is_admin')){
+                $admin->role = 4;
+                $admin->admin_with_giutbok_access = 0;
+            }
+
+            if($request->has('is_giutbok_admin') && $request->has('is_admin')){
+                $admin->role = 1;
+                $admin->admin_with_giutbok_access = 1;
+            }
+        }
+
+        /*if($request->has('is_editor') && !$request->has('is_admin')){
             $admin->role = 3;
             $admin->admin_with_editor_access = 0;
         }elseif($request->has('is_editor') && $request->has('is_admin')){
@@ -112,7 +140,7 @@ class AdminController extends Controller
         }else{
             $admin->role = 1;
             $admin->admin_with_editor_access = 0;
-        }
+        }*/
 
         if( $request->password ) :
             $admin->password =  bcrypt($request->password);
