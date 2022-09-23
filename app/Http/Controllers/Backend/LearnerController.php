@@ -2122,6 +2122,13 @@ class LearnerController extends Controller
         ]);
     }
 
+    public function isPublishingLearner( $user_id, Request $request )
+    {
+        $user = User::find($user_id);
+        $user->is_self_publishing_learner = $request->is_self_publishing_learner;
+        $user->save();
+    }
+
     /**
      * @param $user_id
      * @param Request $request

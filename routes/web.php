@@ -620,6 +620,7 @@ Route::group([
         Route::post('learner/{user_id}/auto-renew', 'LearnerController@setAutoRenewCourses')->name('admin.learner.update-auto-renew');
         Route::post('learner/{user_id}/could-buy-course', 'LearnerController@setCouldBuyCourse')->name('admin.learner.update-could-buy-course');
         Route::post('learner/{user_id}/webinar-auto-register-update', 'LearnerController@autoRegisterCourseWebinar')->name('admin.learner.webinar-auto-register-update');
+        Route::post('learner/{user_id}/update-is-publishing-learner', 'LearnerController@isPublishingLearner');
 
         Route::post('shop-manuscript/{id}/update_document', 'LearnerController@updateDocumentShopManuscriptTaken')->name('shop_manuscript_taken.update_document');
         Route::post('shop-manuscript/{id}/synopsis', 'LearnerController@saveSynopsis')->name('shop_manuscript_taken.save_synopsis');

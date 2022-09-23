@@ -16,6 +16,7 @@ Route::group([
         Route::get('/', 'PageController@dashboard')->name('g-admin.dashboard');
         Route::post('/change-password', 'PageController@changePassword')->name('editor.change-password');
 
+        Route::post('learner/register', 'LearnerController@registerLearner')->name('g-admin.learner.register');
         Route::group([
             'prefix' => 'learner'
         ], function() {
@@ -48,6 +49,8 @@ Route::group([
                 'destroy' => 'g-admin.self-publishing.destroy',
             ],
         ]);
+
+        Route::get('learner/generate-password', 'LearnerController@generatePassword');
     });
 
     // Authentication

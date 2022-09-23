@@ -5,6 +5,7 @@
 @stop
 
 @section('styles')
+	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 	<style>
 		.form-inline {
 			display: inline;
@@ -89,6 +90,7 @@
 					<th>{{ trans_choice('site.shop-manuscripts', 1) }}</th>
 			        <th>{{ trans_choice('site.courses', 2) }}</th>
 			        <th>{{ trans('site.date-joined') }}</th>
+					<th>Self Publishing</th>
 					<th>{{ trans('site.admin') }}</th>
 					<th>{{ trans('site.auto-renew') }}</th>
 			        <th></th>
@@ -107,6 +109,11 @@
 					<td>{{($learner->shopManuscriptsTaken->count())}}</td>
 					<td>{{count($learner->coursesTaken)}}</td>
 					<td>{{$learner->created_at}}</td>
+					<td>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes"
+							   class="is-publishing-learner-toggle" data-off="No" data-id="{{ $learner->id }}"
+							   name="is_self_publishing_learner" data-size="mini" @if($learner->is_self_publishing_learner) {{ 'checked' }} @endif>
+					</td>
 					<td>{{ $learner->is_admin ? 'Yes' : 'No' }}</td>
 					<td>{{ $learner->auto_renew_courses ? 'Yes' : 'No' }}</td>
 					<td><a href="{{route('admin.learner.show', $learner->id)}}" class="btn btn-xs btn-primary pull-right">{{ trans('site.view-learner') }}</a></td>
@@ -174,6 +181,7 @@
 @stop
 
 @section('scripts')
+	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 	<script>
 		$(".generatePassword").click(function() {
 			$.ajax({
@@ -186,5 +194,20 @@
 				}
 			});
 		});
+
+        $(".is-publishing-learner-toggle").change(function(){
+            let learner_id = $(this).attr('data-id');
+            let is_checked = $(this).prop('checked');
+            let check_val = is_checked ? 1 : 0;
+
+            $.ajax({
+                type:'POST',
+                url:'/learner/' + learner_id + '/update-is-publishing-learner',
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: { 'is_self_publishing_learner' : check_val },
+                success: function(data){
+                }
+            });
+        });
 	</script>
 @stop
