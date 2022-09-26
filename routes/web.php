@@ -288,6 +288,7 @@ Route::group([
         Route::get('/calendar', 'LearnerController@calendar')->name('learner.calendar'); // Calendar Page
         Route::get('/invoice', 'LearnerController@invoice')->name('learner.invoice'); // Invoice Listing Page
         Route::get('/invoice/{id}', 'LearnerController@invoiceShow')->name('learner.invoice.show'); // Invoice Single Page
+        Route::get('/change-portal/{portal}', 'LearnerController@changePortal')->name('learner.change-portal'); // Invoice Single Page
         Route::get('/invoice/{invoice_number}/vipps-payment', 'LearnerController@invoiceVippsPayment')->name('learner.invoice.vipps-payment'); // Invoice Single Page
         Route::get('/order/{id}/download-credited', 'LearnerController@downloadCreditedOrder')->name('learner.order.download-credited');
         Route::get('/order/{id}/download', 'LearnerController@downloadOrder');
@@ -493,8 +494,10 @@ Route::group([
         'middleware' => 'guest',
     ], function () {
         Route::get('login', 'LoginController@showFrontend')->name('auth.login.show');
+        Route::get('login/self-publishing', 'LoginController@showSelfPublishing')->name('auth.login.self-publishing-show');
 
         Route::post('login', 'LoginController@login')->name('frontend.login.store');
+        Route::post('login/self-publishing', 'LoginController@selfPublishingLogin')->name('frontend.login.self-publishing-store');
         Route::post('checkout/login', 'LoginController@checkoutLogin')->name('frontend.login.checkout.store');
         Route::post('register', 'RegisterController@store')->name('frontend.register.store');
         Route::post('passwordreset', 'ResetPasswordController@store')->name('frontend.passwordreset.store');

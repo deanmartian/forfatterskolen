@@ -135,7 +135,43 @@ class LoginController extends Controller
         return redirect()->route('auth.login.show')->withInput()->withErrors('Feil passord');
     }
 
+    public function selfPublishingLogin(LoginRequest $request)
+    {
+        $this->validate($request, [
+            'email' => 'required|email'
+        ]);
+        $user = User::where('email', $request->email)->where('role', 2)
+            ->where('is_self_publishing_learner', 1)->first();
+        $secondaryEmail = UserEmail::where('email', $request->email)->first();
 
+        if(!$user && !$secondaryEmail) return redirect()->back()->withErrors('Unknown email');
+        if ($secondaryEmail) {
+            $user = $secondaryEmail->users->first();
+        }
+
+        if (Auth::attempt(['email' => $user->email, 'password' => $request->password, 'role' => 2])) :
+            // Authentication passed...
+
+            $browser = new BrowserDetection();
+            $browserName     = $browser->getName();
+            $platformName    = $browser->getPlatformVersion();
+
+            $login = LearnerLogin::create([
+                'user_id'       => Auth::user()->id,
+                'ip'            => $request->ip(),
+                'country'       => 'Norway',//AdminHelpers::ip_info($request->ip(), "Country"),
+                'country_code'  => 'NO',//AdminHelpers::ip_info($request->ip(), "Country Code"),
+                'provider'      => $browserName,
+                'platform'      => $platformName
+            ]);
+
+            \Session::put('learner_login_id', $login->id);
+            \Session::put('current-portal', 'self-publishing');
+            return redirect(route('learner.dashboard'));
+        endif;
+
+        return redirect()->route('auth.login.show')->withInput()->withErrors('Feil passord');
+    }
 
     
 
@@ -259,6 +295,11 @@ class LoginController extends Controller
     public function showFrontend()
     {
         return view('frontend.auth.login');
+    }
+
+    public function showSelfPublishing()
+    {
+        return view('frontend.auth.self-publishing-login');
     }
 
     /**

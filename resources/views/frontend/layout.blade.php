@@ -205,7 +205,11 @@
 
         @if (in_array(Route::currentRouteName(),$loggedInPages))
             @if (Auth::user())
-                @include('frontend.partials.learner-nav')
+                @if (Session::get('current-portal') === 'self-publishing')
+                    @include('frontend.partials.self-publishing-nav')
+                @else
+                    @include('frontend.partials.learner-nav')
+                @endif
             @else
                 @include('frontend.partials.navbar-new')
             @endif

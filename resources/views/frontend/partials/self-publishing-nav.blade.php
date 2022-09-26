@@ -103,23 +103,14 @@
                             <a href="{{route('learner.dashboard')}}" class="dropdown-item">
                                 Kontrollpanel
                             </a>
-                            <a href="{{route('learner.course')}}" class="dropdown-item">Mine Kurs</a>
-                            <a href="{{route('learner.shop-manuscript')}}" class="dropdown-item">Manuskripter</a>
-                            <a href="{{route('learner.workshop')}}" class="dropdown-item">Workshops</a>
-                            <a href="{{route('learner.webinar')}}" class="dropdown-item">Webinars</a>
-                            <a href="{{route('learner.assignment')}}" class="dropdown-item">Oppgaver</a>
-                            <a href="{{route('learner.calendar')}}" class="dropdown-item">Kalender</a>
-                            <a href="{{route('learner.profile')}}" class="dropdown-item">Profil</a>
-                            <a href="{{route('learner.invoice')}}" class="dropdown-item">Fakturaer</a>
-                            <a href="{{url('/terms/all')}}" class="dropdown-item">Terms</a>
-                            <a href="#" class="dropdown-item redirectForum">Forum</a>
+
                             <a href="#" class="dropdown-item pilotleser-link">Pilotleser</a>
 
                             @if(Auth::user()->is_self_publishing_learner)
-                            <a href="{{ route('learner.change-portal', 'self-publishing') }}"
-                               class="dropdown-item d-inline-block w-auto mb-2 btn btn-circle">
-                                Selvpubliseringsportal
-                            </a>
+                                <a href="{{ route('learner.change-portal', 'learner') }}"
+                                   class="dropdown-item d-inline-block w-auto mb-2 btn btn-circle">
+                                    Kursportal
+                                </a>
                             @endif
 
                             <a href="{{ route('auth.logout-get') }}" class="dropdown-item d-inline-block w-auto mb-2">
@@ -136,7 +127,8 @@
     </div>
 
     <div class="container">
-        @include('frontend.partials.learner-menu-new')
+        {{-- learner menu here --}}
+        @include('frontend.partials.self-publishing-menu')
     </div>
 </div>
 

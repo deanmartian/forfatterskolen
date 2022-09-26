@@ -41,6 +41,8 @@ use App\PilotReaderReaderProfile;
 use App\Repositories\Services\CompetitionService;
 use App\Repositories\Services\PublishingService;
 use App\Repositories\Services\WritingGroupService;
+use App\SelfPublishing;
+use App\SelfPublishingLearner;
 use App\Services\AssignmentService;
 use App\Services\CourseService;
 use App\Services\ShopManuscriptService;
@@ -91,6 +93,7 @@ require app_path('/Http/PaypalIPN/PaypalIPN.php');
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\In;
 use PaypalIPN;
@@ -135,7 +138,15 @@ class LearnerController extends Controller
             ->get();
         $assignments = $this->dashboardAssignment();
 
-        return view('frontend.learner.dashboard', compact('surveys', 'assignments'));
+        $selfPublishingLearners = SelfPublishingLearner::where('user_id', Auth::user()->id)
+            ->pluck('self_publishing_id')->toArray();
+        $selfPublishingList = SelfPublishing::whereIn('id', $selfPublishingLearners)->get();
+
+        $view = Session::get('current-portal') === 'self-publishing'
+            ? 'frontend.learner.self-publishing.dashboard'
+            : 'frontend.learner.dashboard';
+
+        return view($view, compact('surveys', 'assignments', 'selfPublishingList'));
     }
 
 
@@ -1101,6 +1112,12 @@ class LearnerController extends Controller
             return view('frontend.learner.invoiceShow', compact('invoice', 'fikenInvoices'));
         endif;
             return abort('503');
+    }
+
+    public function changePortal( $portal )
+    {
+        \Session::put('current-portal', $portal);
+        return redirect()->route('learner.dashboard');
     }
 
     /**

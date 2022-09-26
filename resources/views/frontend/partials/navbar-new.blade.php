@@ -61,6 +61,12 @@
                     <span>Min Side</span>
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link login-link" href="{{route('auth.login.self-publishing-show')}}" title="View login page">
+                    <span>Selvpubliseringsportal</span>
+                </a>
+            </li>
         </ul>
     @endif
 </nav>
