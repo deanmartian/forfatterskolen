@@ -1686,6 +1686,13 @@
 					</div>
 
 					<div class="form-group">
+						<label>Add Files</label>
+						<input type="file" name="add_files[]" class="form-control"
+							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+					    application/vnd.oasis.opendocument.text" multiple>
+					</div>
+
+					<div class="form-group">
 						<label>{{ trans_choice('site.editors', 1) }}</label>
 						<select name="editor_id" class="form-control select2 template">
 							<option value="" selected="" disabled>- Select Editor -</option>
@@ -2001,14 +2008,14 @@
 	$(".editSelfPublishingBtn").click(function() {
 		let modal = $("#selfPublishingModal");
 		let form = modal.find('form');
-		var fields = $(this).data('fields');
+		let fields = $(this).data('fields');
 
 		modal.find('.modal-title').text('Edit Self Publishing');
 		form.find('[name=_method]').remove();
 		form.prepend("<input type='hidden' name='_method' value='PUT'>");
 		$("#learner-list").hide();
 
-		var action = $(this).data('action');
+        let action = $(this).data('action');
 		form.attr('action', action);
 		form.find('input[name=title]').val(fields.title);
 		form.find('textarea[name=description]').val(fields.description);

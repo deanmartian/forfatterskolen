@@ -132,6 +132,13 @@
 					    application/vnd.oasis.opendocument.text" multiple>
                         </div>
 
+                        <div class="form-group hide" id="add-files">
+                            <label>Add Files</label>
+                            <input type="file" name="add_files[]" class="form-control"
+                                   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+					    application/vnd.oasis.opendocument.text" multiple>
+                        </div>
+
                         <div class="form-group">
                             <label>{{ trans_choice('site.editors', 1) }}</label>
                             <select name="editor_id" class="form-control select2 template">
@@ -268,6 +275,8 @@
         $(".addSelfPublishingBtn").click(function() {
             let form = modal.find('form');
 
+            $("#add-files").addClass('hide');
+
             modal.find('.modal-title').text('Add Self Publishing');
             form.find('[name=_method]').remove();
             $("#learner-list").show();
@@ -285,6 +294,7 @@
         $(".editSelfPublishingBtn").click(function() {
             let form = modal.find('form');
             var fields = $(this).data('fields');
+            $("#add-files").removeClass('hide');
 
             modal.find('.modal-title').text('Edit Self Publishing');
             form.find('[name=_method]').remove();
