@@ -115,6 +115,13 @@
 						</a>
 					</div>
 
+					<div>
+						<b>Self Publishing Learner:</b>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes"
+							   class="is-publishing-learner-toggle" data-off="No" data-id="{{ $learner->id }}"
+							   name="is_self_publishing_learner" data-size="mini" @if($learner->is_self_publishing_learner) {{ 'checked' }} @endif>
+					</div>
+
 					<b>Preferred Editor:</b>
 					<span>{{ $learner->preferredEditor ? $learner->preferredEditor->editor->fullname : '' }}</span><br>
 					<b>Vipps Efaktura:</b>
@@ -4574,6 +4581,21 @@
         let action = $(this).data('action');
         let modal = $('#learnerAssignmentModal');
         modal.find('form').attr('action', action);
+    });
+
+    $(".is-publishing-learner-toggle").change(function(){
+        let learner_id = $(this).attr('data-id');
+        let is_checked = $(this).prop('checked');
+        let check_val = is_checked ? 1 : 0;
+
+        $.ajax({
+            type:'POST',
+            url:'/learner/' + learner_id + '/update-is-publishing-learner',
+            headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            data: { 'is_self_publishing_learner' : check_val },
+            success: function(data){
+            }
+        });
     });
 
     $(".setVippsEFakturaBtn").click(function(){
