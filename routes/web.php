@@ -1651,7 +1651,7 @@ Route::group([
     'domain' => $editor,
 ], function(){
     Route::group([
-        'middleware' => 'editor',
+        'middleware' => ['editor', 'logActivity'],
         'namespace' => 'Editor'
     ], function(){
 
