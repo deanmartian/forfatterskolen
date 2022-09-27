@@ -10,7 +10,7 @@ Route::group([
     'domain' => $domain,
 ], function(){
     Route::group([
-        'middleware' => ['giutbok'],
+        'middleware' => ['giutbok', 'logActivity'],
         'namespace' => 'Giutbok'
     ], function(){
         Route::get('/', 'PageController@dashboard')->name('g-admin.dashboard');
