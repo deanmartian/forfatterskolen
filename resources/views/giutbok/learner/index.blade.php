@@ -44,14 +44,14 @@
                     <th>{{ trans('site.date-joined') }}</th>
                     <th>{{ trans('site.admin') }}</th>
                     <th>{{ trans('site.auto-renew') }}</th>
-                    {{--<th></th>--}}
+                    <th></th>
                 </tr>
                 </thead>
 
                 <tbody>
                 @foreach($learners as $learner)
                     <tr>
-                        <td>{{--<a href="{{route('admin.learner.show', $learner->id)}}">--}}{{$learner->id}}{{--</a>--}}</td>
+                        <td><a href="{{route('g-admin.learner.show', $learner->id)}}">{{$learner->id}}</a></td>
                         <td>{{$learner->first_name}}</td>
                         <td>{{$learner->last_name}}</td>
                         <td>{{$learner->email}}</td>
@@ -62,12 +62,17 @@
                         <td>{{$learner->created_at}}</td>
                         <td>{{ $learner->is_admin ? 'Yes' : 'No' }}</td>
                         <td>{{ $learner->auto_renew_courses ? 'Yes' : 'No' }}</td>
-                        {{--<td><a href="{{route('admin.learner.show', $learner->id)}}" class="btn btn-xs btn-primary pull-right">{{ trans('site.view-learner') }}</a></td>--}}
+                        <td><a href="{{route('g-admin.learner.show', $learner->id)}}" class="btn btn-xs btn-primary pull-right">{{ trans('site.view-learner') }}</a></td>
                     </tr>
                 @endforeach
                 </tbody>
             </table>
         </div>
+
+        <div class="pull-right">
+            {{$learners->appends(Request::all())->render()}}
+        </div>
+        <div class="clearfix"></div>
     </div>
 
     <div id="addLearnerModal" class="modal fade" role="dialog">

@@ -1062,7 +1062,7 @@ class LearnerController extends Controller
         ]);
         $workshopTakenCount->workshop_count = $request->workshop_count;
         $workshopTakenCount->save();
-        return redirect()->route('admin.learner.show', $id);
+        return redirect()->back();
     }
 
     /**
