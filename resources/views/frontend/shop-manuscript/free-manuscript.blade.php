@@ -33,7 +33,7 @@
                                 {{ trans('site.front.free-manuscript.title') }}
                             </h2>
 
-                            <form class="margin-bottom" method="POST" action="{{ route('front.free-manuscript.send') }}">
+                            <form class="margin-bottom" method="POST" action="{{ route($action) }}">
                                 {{ csrf_field() }}
 
                                 <div class="input-group">
@@ -49,14 +49,22 @@
                                         <span class="input-group-text"><i class="fa user-icon"></i></span>
                                     </div>
                                     <input type="text" name="name" class="form-control no-border-left"
-                                           placeholder="{{ trans('site.front.form.full-name') }}" required value="{{old('name')}}">
+                                           placeholder="{{ trans('site.front.form.first-name') }}" required value="{{old('name')}}">
+                                </div>
+
+                                <div class="input-group mt-5">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa user-icon"></i></span>
+                                    </div>
+                                    <input type="text" name="last_name" class="form-control no-border-left"
+                                           placeholder="{{ trans('site.front.form.last-name') }}" required value="{{old('last_name')}}">
                                 </div>
 
                                 <div class="form-group mt-5">
                                     <select class="form-control" name="genre" required>
                                         <option value="" disabled="disabled" selected>{{ ucwords(trans('site.front.select-genre')) }}</option>
                                         @foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
-                                            <option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
+                                            <option value="{{ $type->id }}"> {{ $type->name }} </option>
                                         @endforeach
                                     </select>
                                 </div>

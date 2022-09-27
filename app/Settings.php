@@ -41,7 +41,8 @@ class Settings extends Model
 
     public static function getAllTerms()
     {
-        $termsList = ['terms', 'course-terms', 'manuscript-terms', 'workshop-terms', 'coaching-terms'];
+        $termsList = ['terms', 'course-terms', 'manuscript-terms', 'workshop-terms', 'coaching-terms',
+            'privacy-policy-terms'];
         return self::whereIn('setting_name', $termsList)->get();
     }
 

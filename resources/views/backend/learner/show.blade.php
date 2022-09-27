@@ -115,6 +115,13 @@
 						</a>
 					</div>
 
+					<div>
+						<b>Self Publishing Learner:</b>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes"
+							   class="is-publishing-learner-toggle" data-off="No" data-id="{{ $learner->id }}"
+							   name="is_self_publishing_learner" data-size="mini" @if($learner->is_self_publishing_learner) {{ 'checked' }} @endif>
+					</div>
+
 					<b>Preferred Editor:</b>
 					<span>{{ $learner->preferredEditor ? $learner->preferredEditor->editor->fullname : '' }}</span><br>
 					<b>Vipps Efaktura:</b>
@@ -478,6 +485,40 @@
 
 			<div class="panel panel-default">
 				<div class="panel-body">
+					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#selfPublishingModal">
+						+ Add to Self publishing
+					</button>
+					<h4>Self publishing</h4>
+				</div>
+
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+						<tr>
+							<th>Title</th>
+							<th width="150"></th>
+						</tr>
+						</thead>
+						<tbody>
+						@foreach($learnerSelfPublishingList as $selfPublishing)
+							<tr>
+								<td>{{ $selfPublishing->selfPublishing->title }}</td>
+								<td>
+									<button class="btn btn-danger btn-xs deleteSelfPublishingBtn" data-toggle="modal"
+											data-target="#deleteSelfPublishingModal"
+											data-action="{{ route('admin.learner.remove-self-publishing', $selfPublishing->id) }}">
+										<i class="fa fa-trash"></i>
+									</button>
+								</td>
+							</tr>
+						@endforeach
+						</tbody>
+					</table>
+				</div>
+			</div> <!-- end self publishing-->
+
+			<div class="panel panel-default">
+				<div class="panel-body">
 					<?php 
 					$courseWorkshops = 0;
 					$workshopTakenCount = 0;
@@ -659,7 +700,7 @@
 
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<h4>{{ trans('site.order-history') }}</h4>
+					<h4>{{ trans('site.order-history.title') }}</h4>
 				</div>
 				<div class="table-responsive" style="padding: 10px">
 					<table class="table" id="orders-table">
@@ -691,6 +732,25 @@
 											data-fields="{{ json_encode($order) }}">
 										Receipt
 									</button>
+									@if ($order->svea_delivery_id && !$order->is_credited_amount)
+										<br>
+										<button class="btn btn-info btn-xs addSveaCreditNoteBtn" data-toggle="modal"
+												data-target="#addSveaCreditNoteModal"
+												data-action="{{ route("admin.learner.svea.create-credit-note",
+													$order->id) }}"
+												data-fields="{{ json_encode($order) }}" style="margin-top: 5px">
+											Credit Order
+										</button>
+									@endif
+									@if($order->svea_order_id && !$order->svea_delivery_id)
+										<br>
+										<button class="btn btn-success btn-xs sveaDeliverBtn" data-toggle="modal"
+												data-target="#sveaDeliverModal"
+												data-action="{{ route("admin.learner.svea.deliver-order", $order->id) }}"
+												style="margin-top: 5px">
+											<i class="fa fa-truck"></i> Deliver
+										</button>
+									@endif
 								</td>
 							</tr>
 						@endforeach
@@ -944,6 +1004,11 @@
 
 			<div class="panel panel-default">
 				<div class="panel-body">
+					<button class="btn btn-primary pull-right btn-xs learnerAssignmentBtn" data-toggle="modal"
+							data-target="#learnerAssignmentModal"
+							data-action="{{ route('assignment.learner-assignment.save') }}">
+						Add Assignment
+					</button>
 					<h4>
 						Personal Assignments
 					</h4>
@@ -954,6 +1019,8 @@
 						<tr>
 							<th>{{ trans_choice('site.assignments', 1) }}</th>
 							<th>{{ trans('site.submission-date') }}</th>
+							<th>{{ trans('site.available-date') }}</th>
+							<th>{{ trans('site.max-words') }}</th>
 							<th>{{ trans_choice('site.courses', 1) }}</th>
 							<th>Editor</th>
 							<th>{{ trans_choice('site.manuscripts', 1) }}</th>
@@ -979,6 +1046,25 @@
 												data-action="{{ route('assignment.update-submission-date', $assignment->id) }}"
 												data-submission_date="{{ $assignment->submission_date
 												? strftime('%Y-%m-%dT%H:%M:%S', strtotime($assignment->submission_date)) : NULL }}">
+											<i class="fa fa-edit"></i> Edit
+										</button>
+									</td>
+									<td>
+										{{ $assignment->available_date }}
+										<button class="btn btn-primary btn-xs editAvailableDateBtn" data-toggle="modal"
+												data-target="#editAvailableDateModal"
+												data-action="{{ route('assignment.update-available-date', $assignment->id) }}"
+												data-available_date="{{ $assignment->available_date
+												? strftime('%Y-%m-%d', strtotime($assignment->available_date)) : NULL }}">
+											<i class="fa fa-edit"></i> Edit
+										</button>
+									</td>
+									<td>
+										{{ $assignment->max_words }}
+										<button class="btn btn-primary btn-xs editMaxWordsBtn" data-toggle="modal"
+												data-target="#editMaxWordsModal"
+												data-action="{{ route('assignment.update-max-words', $assignment->id) }}"
+												data-max_words="{{ $assignment->max_words }}">
 											<i class="fa fa-edit"></i> Edit
 										</button>
 									</td>
@@ -1508,7 +1594,7 @@
 							<th>{{ trans_choice('site.webinars', 1) }}</th>
 							<th width="200">Join Url</th>
 							<th>Start Date</th>
-							<th></th>
+							<th width="200"></th>
 						</tr>
 						</thead>
 						<tbody>
@@ -1532,6 +1618,11 @@
 											data-action="{{ route('admin.learner.send-webinar-registrant-email',
 											[$learner->id, $registeredWebinar->id])}}">
 										{{ trans('site.send-email') }}
+									</button>
+									<button class="btn btn-danger btn-xs registeredWebinarRemoveBtn" data-toggle="modal"
+											data-target="#registeredWebinarRemoveModal"
+											data-action="{{ route('admin.webinar.remove-registrant', $registeredWebinar->id) }}">
+										Remove from Webinar
 									</button>
 								</td>
 							</tr>
@@ -2072,6 +2163,67 @@
 
 	</div>
 </div>
+
+<div id="selfPublishingModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Add To Self Publishing</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" enctype="multipart/form-data"
+                      action="{{ route('admin.learner.add-self-publishing', $learner->id) }}"
+					  onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+
+					<div class="form-group">
+						<label>Self Publishing</label>
+						<select name="self_publishing_id" class="form-control" required>
+							<option value="" disabled selected>- Select -</option>
+                            @foreach($selfPublishingList as $publishing)
+                                <option value="{{ $publishing->id }}">
+                                    {{ $publishing->title }}
+                                </option>
+                            @endforeach
+						</select>
+					</div>
+
+					<button type="submit" class="btn btn-success pull-right">Save</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="deleteSelfPublishingModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Delete Self Publishing</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action=""
+					  onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					{{ method_field('DELETE') }}
+
+					<p>
+						Are you sure you want to remove this learner from self-publishing?
+					</p>
+
+					<button type="submit" class="btn btn-danger pull-right">
+						{{ trans('site.delete') }}
+					</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 
 <div id="addInvoiceModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
@@ -2770,6 +2922,59 @@
 	</div> <!-- view order modal -->
 </div>
 
+<div id="addSveaCreditNoteModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					Credit Order
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+
+					<p>
+						Do you want to Credit this order?
+					</p>
+					<button class="btn btn-primary pull-right" type="submit">
+						{{ trans('site.submit') }}
+					</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="sveaDeliverModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					Deliver Order
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+
+					<p>
+						Do you want to Deliver this order?
+					</p>
+					<button class="btn btn-primary pull-right" type="submit">
+						{{ trans('site.submit') }}
+					</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
 <div id="deleteInvoiceModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -2928,6 +3133,53 @@
 					<div class="form-group">
 						<label>{{ trans('site.submission-date') }}</label>
 						<input type="datetime-local" name="submission_date" class="form-control" required>
+					</div>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div id="editAvailableDateModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Edit Available Date</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans('site.available-date') }}</label>
+						<input type="date" name="available_date" class="form-control" required>
+					</div>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="editMaxWordsModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Edit Max Words</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans('site.max-words') }}</label>
+						<input type="number" name="max_words" class="form-control" required>
 					</div>
 					<div class="text-right">
 						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
@@ -3494,7 +3746,7 @@
 							<option value="" selected disabled>
 								-- Select Editor --
 							</option>
-							@foreach( App\User::whereIn('role', array(1,3))->orderBy('id', 'desc')->get()  as $admin)
+							@foreach( \App\Http\AdminHelpers::editorList()  as $admin)
 								<option value="{{ $admin->id }}"
 										{{ $learner->preferredEditor && $learner->preferredEditor->editor_id === $admin->id
 										? 'selected' : '' }}>
@@ -3573,6 +3825,116 @@
 	</div>
 </div>
 
+<div id="learnerAssignmentModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					Learner Assignment
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<input type="hidden" name="learner_id" value="{{ $learner->id }}">
+					<div class="form-group">
+						<label>
+							Assignment Template
+						</label>
+						<select class="form-control select2 assignment-template">
+							<option value="" selected disabled>- Search Template -</option>
+							@foreach($assignmentTemplates as $template)
+								<option value="{{$template->id}}" data-fields="{{ json_encode($template) }}">
+									{{$template->title}}
+								</option>
+							@endforeach
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.title') }}</label>
+						<input type="text" class="form-control" name="title"
+							   placeholder="{{ trans('site.title') }}" required>
+					</div>
+					<div class="form-group">
+						<label>{{ trans('site.description') }}</label>
+						<textarea class="form-control" name="description"
+								  placeholder="{{ trans('site.description') }}" rows="6"></textarea>
+					</div>
+					{{--<div class="form-group">
+                        <label>{{ trans('site.delay-type') }}</label>
+                        <select class="form-control assignment-delay-toggle">
+                            <option value="days">Days</option>
+                            <option value="date">Date</option>
+                        </select>
+                    </div>--}}
+					<div class="form-group">
+						<label>{{ trans('site.submission-date') }}</label>
+						{{--<input type="datetime-local" class="form-control" name="submission_date" required>--}}
+						<div class="input-group">
+							<input type="datetime-local" class="form-control assignment-delay" name="submission_date"
+								   required>
+							<span class="input-group-addon assignment-delay-text" id="basic-addon2">
+										days
+									</span>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.available-date') }}</label>
+						<input type="date" class="form-control" name="available_date">
+					</div>
+					<div class="form-group">
+						<label>{{ trans('site.editor-expected-finish') }}</label>
+						<input type="date" class="form-control" name="editor_expected_finish">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.max-words') }}</label>
+						<input type="number" class="form-control" name="max_words">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.send-letter-to-editor') }}</label> <br>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small"
+							   name="send_letter_to_editor">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans_choice('site.courses', 1) }}</label>
+						<select class="form-control select2" name="course_id">
+							<option value="" selected disabled>- Search Course -</option>
+							@foreach(\App\Http\AdminHelpers::courseList() as $course)
+								<option value="{{$course->id}}">
+									{{$course->title}}
+								</option>
+							@endforeach
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans_choice('site.editors', 1) }}</label>
+						<select class="form-control select2" name="editor_id">
+							<option value="" selected disabled>- Select Editor -</option>
+							@foreach(\App\Http\AdminHelpers::editorList() as $editor)
+								<option value="{{ $editor->id }}">
+									{{ $editor->first_name . " " . $editor->last_name }}
+								</option>
+							@endforeach
+						</select>
+					</div>
+
+					<button type="submit" class="btn btn-primary pull-right margin-top">
+						{{ trans('site.save') }}
+					</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="registeredWebinarEmailModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-md">
 		<div class="modal-content">
@@ -3620,6 +3982,31 @@
 	</div>
 </div>
 <!--end email modal-->
+
+<div id="registeredWebinarRemoveModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Remove learner from webinar</h4>
+			</div>
+			<div class="modal-body">
+
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{csrf_field()}}
+					{{ method_field('DELETE') }}
+
+					<p>Are you sure you want to remove this learner from webinar?</p>
+
+					<div class="text-right">
+						<button type="submit" class="btn btn-danger">{{ trans('site.delete') }}</button>
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div>
+</div>
 
 <div id="setVippsEFakturaModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
@@ -3837,6 +4224,24 @@
             $("#deleteInvoiceModal").find('form').submit();
 		});
 
+		$(".addSveaCreditNoteBtn").click(function() {
+			let modal = $("#addSveaCreditNoteModal");
+			let action = $(this).data('action');
+			let fields = $(this).data('fields');
+
+			let form = modal.find('form');
+
+			form.attr('action', action);
+		});
+
+		$(".sveaDeliverBtn").click(function(){
+			let modal = $("#sveaDeliverModal");
+			let action = $(this).data('action');
+			let form = modal.find('form');
+
+			form.attr('action', action);
+		});
+
         $(".deleteFromCourseBtn").click(function(){
             let action = $(this).data('action');
             let title = $(this).data('course-title');
@@ -4048,6 +4453,12 @@
         modal.find('form').attr('action', action);
 	});
 
+	$(".deleteSelfPublishingBtn").click(function(){
+		let action = $(this).data('action');
+		let modal = $('#deleteSelfPublishingModal');
+		modal.find('form').attr('action', action);
+	});
+
     $('#orders-table, #course-order-attachments-table').dataTable( {
         "ordering": false
     } );
@@ -4130,6 +4541,12 @@
 		modal.find('[name=join_url]').attr('value', joinUrl);
     });
 
+    $(".registeredWebinarRemoveBtn").click(function() {
+		let action = $(this).data('action');
+		let modal = $('#registeredWebinarRemoveModal');
+		modal.find('form').attr('action', action);
+	});
+
     $("select.template").change(function() {
         let template = $(this).children("option:selected");
         let fields = template.data('fields');
@@ -4140,6 +4557,46 @@
         tinymce.get('sendEmailEditor').setContent(fields.email_content);
         form.find('[name=from_email]').val(fields.from_email);
 	});
+
+    $("select.assignment-template").change(function(){
+        let template = $(this).children("option:selected");
+        let fields = template.data('fields');
+        let modal = $("#learnerAssignmentModal");
+        let form = modal.find('form');
+        form.find('[name=title]').val(fields.title);
+        form.find('[name=description]').val(fields.description);
+        form.find('[name=available_date]').val(fields.available_date);
+        form.find('[name=max_words]').val(fields.max_words);
+
+        if (fields.submission_is_date) {
+            $(".assignment-delay-toggle").val("date").trigger('change');
+        } else {
+            $(".assignment-delay-toggle").val("days").trigger('change');
+        }
+
+        form.find('[name=submission_date]').val(fields.submission_date);
+    });
+
+    $(".learnerAssignmentBtn").click(function() {
+        let action = $(this).data('action');
+        let modal = $('#learnerAssignmentModal');
+        modal.find('form').attr('action', action);
+    });
+
+    $(".is-publishing-learner-toggle").change(function(){
+        let learner_id = $(this).attr('data-id');
+        let is_checked = $(this).prop('checked');
+        let check_val = is_checked ? 1 : 0;
+
+        $.ajax({
+            type:'POST',
+            url:'/learner/' + learner_id + '/update-is-publishing-learner',
+            headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            data: { 'is_self_publishing_learner' : check_val },
+            success: function(data){
+            }
+        });
+    });
 
     $(".setVippsEFakturaBtn").click(function(){
         let vipps_phone_number = $(this).data('vipps-number');
@@ -4160,6 +4617,22 @@
         modal.find('form').attr('action', action);
         modal.find('[name=submission_date]').val(submission_date);
 	});
+
+    $(".editAvailableDateBtn").click(function() {
+        let available_date = $(this).data('available_date');
+        let modal = $('#editAvailableDateModal');
+        let action = $(this).data('action');
+        modal.find('form').attr('action', action);
+        modal.find('[name=available_date]').val(available_date);
+	});
+
+    $(".editMaxWordsBtn").click(function() {
+        let max_words = $(this).data('max_words');
+        let modal = $('#editMaxWordsModal');
+        let action = $(this).data('action');
+        modal.find('form').attr('action', action);
+        modal.find('[name=max_words]').val(max_words);
+    });
 
 	function updateOtherServiceFields(type) {
 	    let modal = $("#addOtherServiceModal");

@@ -41,7 +41,10 @@ class VippsRepository extends BaseRepository {
         $response = AdminHelpers::vippsAPI($method, $url, [], $header);
 
         if ($response['http_code'] != ApiResponse::HTTPCODE_SUCCESS) {
-            return new ApiException($response['data']->message, null, $response['http_code']);
+            Log::info('VIPPS GET ACCESS TOKEN ERROR');
+            Log::info(json_encode($response['data']));
+            return new ApiException(property_exists($response['data'], 'message')
+                ? $response['data']->message : $response['data']->error_description , null, $response['http_code']);
         }
 
         return $response;
@@ -84,7 +87,10 @@ class VippsRepository extends BaseRepository {
         $response = AdminHelpers::vippsAPI($method, $url, $body, $header);
 
         if ($response['http_code'] != ApiResponse::HTTPCODE_SUCCESS) {
+            Log::info("VIPPS inside not success on initiate payment orderId = " . $data['orderId']);
+            Log::info(json_encode($response));
             if (isset($response['data'][0])) {
+                Log::info(json_encode($response['data'][0]));
                 return new ApiException($response['data'][0]->errorMessage, null, $response['http_code']);
             }
 

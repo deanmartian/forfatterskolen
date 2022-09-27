@@ -123,6 +123,10 @@
                                                            class="status-toggle" data-id="{{ $contract->id }}"
                                                            @if ($contract->status === 1) checked @endif>
                                             @endif
+
+                                            @if ($contract->signature)
+                                                <a href="{{ route('admin.contract.download-pdf', $contract->id) }}" class="button btn btn-info btn-xs">Download PDF</a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

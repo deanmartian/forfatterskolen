@@ -95,7 +95,7 @@ class AdminController extends Controller
             'last_name' => 'required|max:100',
             'email' => 'required|max:100',
         ]);
-        $admin = User::where('id', $id)->whereIn('role', array(1,3))->firstOrFail();
+        $admin = User::where('id', $id)->whereIn('role', array(1,3,4))->firstOrFail();
         $admin->first_name = $request->first_name;
         $admin->last_name = $request->last_name;
         $admin->email = $request->email;
@@ -103,15 +103,44 @@ class AdminController extends Controller
         if($request->has('minimal_access')){
             $admin->minimal_access = 1;
         }
-        if($request->has('is_editor') && !$request->has('is_admin')){
+
+        $admin->role = 1;
+        $admin->admin_with_editor_access = 0;
+        $admin->admin_with_giutbok_access = 0;
+
+        if($request->has('is_editor') || $request->has('is_giutbok_admin')){
+
+            if($request->has('is_editor') && !$request->has('is_admin')){
+                $admin->role = 3;
+                $admin->admin_with_editor_access = 0;
+            }
+
+            if($request->has('is_editor') && $request->has('is_admin')){
+                $admin->role = 1;
+                $admin->admin_with_editor_access = 1;
+            }
+
+            if($request->has('is_giutbok_admin') && !$request->has('is_admin')){
+                $admin->role = 4;
+                $admin->admin_with_giutbok_access = 0;
+            }
+
+            if($request->has('is_giutbok_admin') && $request->has('is_admin')){
+                $admin->role = 1;
+                $admin->admin_with_giutbok_access = 1;
+            }
+        }
+
+        /*if($request->has('is_editor') && !$request->has('is_admin')){
             $admin->role = 3;
+            $admin->admin_with_editor_access = 0;
         }elseif($request->has('is_editor') && $request->has('is_admin')){
             $admin->role = 1;
             $admin->admin_with_editor_access = 1;
         }else{
             $admin->role = 1;
             $admin->admin_with_editor_access = 0;
-        }
+        }*/
 
         if( $request->password ) :
             $admin->password =  bcrypt($request->password);
@@ -197,11 +226,8 @@ class AdminController extends Controller
     public function adminStatus(Request $request)
     {
         $user = User::where('id', $request->id)->withTrashed()->first();
-        if ($request->status) {
-            $user->restore();
-        } else {
-            $user->delete();
-        }
+        $user->is_active = $request->status;
+        $user->save();
         return response()->json([
             'data' => [
                 'success' => TRUE,
@@ -274,9 +300,11 @@ class AdminController extends Controller
     {
         $editor = User::where(function($query){
             $query->where('role', 3)->orWhere('admin_with_editor_access', 1);
-        })->orderBy('first_name', 'ASC')->orderBy('last_name', 'ASC')->get();
+        })->where('is_active', 1)
+            ->orderBy('first_name', 'ASC')->orderBy('last_name', 'ASC')->get();
 
-        $assignmentManuscriptEditorCanTake = AssignmentManuscriptEditorCanTake::orderBy('assignment_manuscript_id', 'DESC')->get();
+        $assignmentManuscriptEditorCanTake = AssignmentManuscriptEditorCanTake::whereIn('editor_id', $editor->pluck('id'))
+            ->orderBy('assignment_manuscript_id', 'DESC')->get();
 
         $unfinishedAssignments = AssignmentManuscript::whereHas('assignment',  function($query) {
                 $query->where('for_editor', 0);

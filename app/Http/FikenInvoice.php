@@ -267,12 +267,21 @@ class FikenInvoice
 
 	public function send_invoice($invoice)
 	{
+        Log::info("inside send invoice");
+        Log::info(json_encode($invoice));
+
+        if (property_exists($invoice->customer, 'email')) {
+            $email = $invoice->customer->email;
+        } else {
+            $email = $invoice->sale->customer->contactPerson[0]->email;
+        }
+
         $fields = [
             'invoiceId'         => $invoice->invoiceId,
             'method'            => ['email'],
             'includeDocumentAttachments' => true,
             'recipientName'     => $invoice->customer->name,
-            'recipientEmail'    => $invoice->customer->email
+            'recipientEmail'    => $email
         ];
         $field_string = json_encode($fields, true);
         $this->headers[] = 'Content-Type: Application/json';
@@ -329,6 +338,7 @@ class FikenInvoice
 
 	public function get_customer($fields)
 	{
+        Log::info("inside get customer");
         $ch = curl_init($this->fiken_contacts.'?pageSize=1&email='.$fields['email']);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         /*curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
@@ -342,11 +352,21 @@ class FikenInvoice
 
         //$contacts = $data->_embedded->{'https://fiken.no/api/v1/rel/contacts'}; - this is for v1 of fiken
         $item = $data;
+        Log::info(json_encode($item));
         if( $item ) :
+            Log::info("inside if in get customer");
             $item = $item[0];
+            Log::info(json_encode($item));
 
             $updateData['name'] = $item->name;
-            $updateData['email'] = $item->email;
+
+            if (property_exists($item, 'email')) {
+                $email = $item->email;
+            } else {
+                $email = $item->contactPerson[0]->email;
+            }
+
+            $updateData['email'] = $email;
             $updateData['address'] = [
                 'streetAddress' => $fields['address']['streetAddress'],
                 'city' => $fields['address']['city'],
@@ -365,6 +385,7 @@ class FikenInvoice
             $this->update_customer($item->contactId, $updateData);
             return $item;
         else :
+            Log::info("inside else in get customer");
             return $this->create_customer($fields);
         endif;
 
@@ -390,6 +411,8 @@ class FikenInvoice
         $data = curl_exec($ch);
         curl_close($ch);
         $data = json_decode($data);
+        Log::info("inside create customer");
+        Log::info(json_encode($data));
         return $this->get_customer($fields);
 	}
 
@@ -412,6 +435,8 @@ class FikenInvoice
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
         $data = curl_exec($ch);
         curl_close($ch);
+        Log::info("inside update customer");
+        Log::info(json_encode($data));
         return $data;
     }
 

@@ -24,6 +24,26 @@
             gtag('config', 'AW-754620576');
         </script>
 
+        @if(in_array(Route::currentRouteName(), ['front.free-webinar']))
+            <!-- Event snippet for Webinar_pamelding conversion page In your html page, add the snippet and call
+             gtag_report_conversion when someone clicks on the chosen link or button. -->
+            <script>
+                function gtag_report_conversion(url) {
+                    var callback = function () {
+                        if (typeof(url) != 'undefined') {
+                            window.location = url;
+                        }
+                    };
+                    gtag('event', 'conversion', {
+                        'send_to': 'AW-754620576/3IacCOOq1sIDEKCx6ucC',
+                        'event_callback': callback
+                    });
+                    return false;
+                }
+            </script>
+        @endif
+
+
         <meta name="google-site-verification" content="PT1CQ7dxKhPpwvuFW6e2o_AVdp10XC-wUvvbHHuY0IE" />
         @include('frontend.partials.frontend-css')
 
@@ -74,7 +94,7 @@
 
         <!-- use meta title first before the title on the actual page added-->
         @yield('title')
-        <meta name="keywords" content="forfatterskolen,forfatter,forfatter kurs,course,shop manuscript">
+        <meta name="keywords" content="forfatterskolen, forfatter, kurs, manusutvikling, manus, manuskript, kikt, sakprosa, serieroman, krim, roman">
         <meta name="nosnippets">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0 maximum-scale=1.0, user-scalable=no">
         <meta name="csrf-token" content="{{ csrf_token() }}" />
@@ -185,7 +205,11 @@
 
         @if (in_array(Route::currentRouteName(),$loggedInPages))
             @if (Auth::user())
-                @include('frontend.partials.learner-nav')
+                @if (Session::get('current-portal') === 'self-publishing')
+                    @include('frontend.partials.self-publishing-nav')
+                @else
+                    @include('frontend.partials.learner-nav')
+                @endif
             @else
                 @include('frontend.partials.navbar-new')
             @endif
@@ -342,6 +366,7 @@
             'https://forfatterskolen.ladesk.com/scripts/track.js',
             function(e){ LiveAgent.createButton('bocb2pt7', e); });
     </script>--}}
+    @if (!in_array(Route::currentRouteName(),['front.course.checkout', 'front.shop-manuscript.checkout']))
     <script defer>!function(){window;var e,t=document;e=function(){var e=t.createElement("script");e.type="text/javascript",e.defer=!0,e.src="https://cdn.endorsal.io/widgets/widget.min.js";var n=t.getElementsByTagName("script")[0];n.parentNode.insertBefore(e,n),e.onload=function(){NDRSL.init("5de00781dd95d15fd33a275f")}},"interactive"===t.readyState||"complete"===t.readyState?e():t.addEventListener("DOMContentLoaded",e())}();</script>
     <!-- support chat  -->
     <script>
@@ -351,5 +376,6 @@
         }
     </script>
     <script src="https://cdn.helpwise.io/assets/js/livechat.js"></script>
+    @endif
     </body>
 </html>

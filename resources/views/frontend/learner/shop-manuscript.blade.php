@@ -268,7 +268,7 @@
 				<select class="form-control" name="genre" required>
 					<option value="" disabled="disabled" selected>{{ trans('site.front.select-genre') }}</option>
 					@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
-						<option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
+						<option value="{{ $type->id }}"> {{ $type->name }} </option>
 					@endforeach
 				</select>
 			</div>
@@ -308,7 +308,7 @@
 						<select class="form-control" name="genre" required>
 							<option value="" disabled="disabled" selected>{{ trans('site.front.select-genre') }}</option>
 							@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
-								<option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
+								<option value="{{ $type->id }}"> {{ $type->name }} </option>
 							@endforeach
 						</select>
 					</div>

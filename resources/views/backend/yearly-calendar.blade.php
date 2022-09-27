@@ -171,7 +171,7 @@
                                             <a href="{{ route('admin.assignment.show',
                                             [
                                                 'course_id' => $unfinishedAssignment->assignment->course_id ,
-                                                'id' => $unfinishedAssignment->assignment_id
+                                                'assignment' => $unfinishedAssignment->assignment_id
                                             ]) }}">
                                                 {{$unfinishedAssignment->assignment->title}}
                                             </a>

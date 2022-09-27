@@ -339,6 +339,13 @@
                                             <td>
                                                 @if ($coachingTimer->status === 1)
                                                     <span class="label label-success">Finished</span>
+                                                @else
+                                                    <button class="btn btn-xs btn-primary markAsFinishedBtn"
+                                                            data-toggle="modal"
+                                                            data-target="#markAsFinishedModal"
+                                                            data-action="{{ route('admin.other-service.coaching-timer.mark_as_finished', $coachingTimer->id) }}">
+                                                        Mark as finished
+                                                    </button>
                                                 @endif
                                             </td>
                                         </tr>
@@ -524,6 +531,28 @@
         </div>
     </div>
 
+    <div id="markAsFinishedModal" class="modal fade" role="dialog" data-backdrop="static">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Mark Coaching Time as finished</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        <p>
+                            Are you sure you want to mark this coaching time as finished?
+                        </p>
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">{{ trans('site.submit') }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="updateOtherServiceStatusModal" class="modal fade" role="dialog" data-backdrop="static">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
@@ -599,6 +628,12 @@
         $(".setReplayBtn").click(function(){
             let action = $(this).data('action');
             let modal = $('#setReplayModal');
+            modal.find('form').attr('action', action);
+        });
+
+        $(".markAsFinishedBtn").click(function() {
+            let action = $(this).data('action');
+            let modal = $('#markAsFinishedModal');
             modal.find('form').attr('action', action);
         });
 

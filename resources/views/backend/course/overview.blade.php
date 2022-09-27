@@ -166,6 +166,10 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<button class="pull-right btn btn-xs btn-primary" data-toggle="modal" data-target="#editEmailModal">{{ trans('site.edit') }}</button>
+						<button class="pull-right btn btn-xs btn-success" data-toggle="modal" data-target="#sendEmailModal"
+								style="margin-right: 10px">
+							Send Email
+						</button>
 						<h4>{{ trans_choice('site.emails', 1) }}</h4>
 					</div>
 					<div class="panel-body">
@@ -232,6 +236,37 @@
   </div>
 </div>
 
+<div id="sendEmailModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Send Email</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.course.welcome-email.send', $course->id) }}">
+					{{ csrf_field() }}
+					<div class="form-group" id="learner-list">
+						<label>
+							{{ trans_choice('site.learners', 2) }}
+						</label>
+
+						<select name="learners[]" class="form-control select2 template" multiple="multiple">
+							@foreach($course->learners->get() as $learner)
+								<option value="{{$learner->user->id}}">
+									{{$learner->user->full_name}}
+								</option>
+							@endforeach
+						</select>
+					</div>
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 
 <div id="addSimilarCourseModal" class="modal fade" role="dialog">
   <div class="modal-dialog modal-sm">

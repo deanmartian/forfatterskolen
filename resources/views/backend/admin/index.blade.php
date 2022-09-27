@@ -120,7 +120,7 @@
 						</div>
 
 						<?php
-							$other_tabs = ['course', 'manuscript', 'workshop', 'coaching'];
+							$other_tabs = ['course', 'manuscript', 'workshop', 'coaching', 'privacy-policy'];
 						?>
 
 						<div class="col-sm-12">
@@ -130,7 +130,7 @@
 										<li>
 											<a href="#nav-{{ $other_tab }}" data-toggle="tab">{{ ucwords($other_tab === 'coaching' ?
 											'Coaching Timer' :
-											($other_tab === 'manuscript' ? 'Manuscript/Språkvask/Korrektur' : $other_tab)) }}</a>
+											($other_tab === 'manuscript' ? 'Manuscript/Språkvask/Korrektur' : str_replace('-', ' ', $other_tab))) }}</a>
 										</li>
 									@endforeach
 								</ul>
@@ -362,7 +362,7 @@
 										@endif
 										<input type="checkbox" data-toggle="toggle" data-on="Active"
 											   class="status-toggle" data-off="Inactive"
-											   data-id="{{$admin->id}}" data-size="mini" @if(!$admin->deleted_at) {{ 'checked' }} @endif>
+											   data-id="{{$admin->id}}" data-size="mini" @if($admin->is_active) {{ 'checked' }} @endif>
 										<button class="btn btn-info btn-xs editAdminAccessPageBtn" data-action="{{ route('admin.admin.page-access', $admin->id) }}" data-toggle="modal" data-target="#editAdminAccessPageModal" data-fields="{{ json_encode($admin) }}"
 												data-pages="{{ json_encode($admin->pageAccess) }}"><i class="fa fa-clipboard"></i></button>
 										<button class="btn btn-primary btn-xs editAdminBtn" data-action="{{ route('admin.admin.update', $admin->id) }}" data-toggle="modal" data-target="#editAdminModal" data-fields="{{ json_encode($admin) }}"><i class="fa fa-pencil"></i></button>
@@ -456,6 +456,7 @@
 					<div class="form-group">
 						<input type="checkbox" name="is_editor"> Is Editor? &nbsp;
 						<input type="checkbox" name="is_admin"> Is Admin? &nbsp; <br>
+						<input type="checkbox" name="is_giutbok_admin"> Is Giutbok Admin? &nbsp; <br>
 					</div>
 				</div>
 		      <button type="submit" class="btn btn-primary pull-right margin-top">Save</button>
@@ -850,6 +851,23 @@
 
 	let other_terms_tab = '{{ Session::has('terms_tab') ? Session::get('terms_tab'): 'course' }}';
 
+
+	$("[name=is_editor]").click(function() {
+	    let giutbok = $("[name=is_giutbok_admin]");
+        giutbok.attr('disabled', false);
+	    if($(this).is(':checked')) {
+            giutbok.attr('disabled', true);
+		}
+	});
+
+    $("[name=is_giutbok_admin]").click(function() {
+        let editor = $("[name=is_editor]");
+        editor.attr('disabled', false);
+        if($(this).is(':checked')) {
+            editor.attr('disabled', true);
+        }
+    });
+
 	$('.editAdminBtn').click(function(){
 		var form = $('#editAdminModal form');
 		var action = $(this).data('action');
@@ -868,11 +886,20 @@
 		form.find('input[name=with_head_editor_access]').attr('checked', false);
 
         if (fields.role == 3 && fields.admin_with_editor_access != 1) {
-            form.find('input[name=is_editor]').attr('checked', true);
+            form.find('input[name=is_editor]').attr('checked', true).attr('disabled', false);
+			form.find("input[name=is_giutbok_admin]").attr('disabled', true);
         }else if(fields.role == 1 && fields.admin_with_editor_access == 1){
 			form.find('input[name=is_editor]').attr('checked', true);
 			form.find('input[name=is_admin]').attr('checked', true);
-		}else if(fields.role == 1 && fields.admin_with_editor_access != 1){
+            form.find("input[name=is_giutbok_admin]").attr('disabled', true);
+		} else if(fields.role == 1 && fields.admin_with_giutbok_access == 1){
+            form.find('input[name=is_giutbok_admin]').attr('checked', true);
+            form.find('input[name=is_admin]').attr('checked', true);
+            form.find("input[name=is_editor]").attr('disabled', true);
+        }else if (fields.role == 4 && fields.admin_with_giutbok_access != 1) {
+            form.find('input[name=is_giutbok_admin]').attr('checked', true).attr('disabled', false);
+            form.find("input[name=is_editor]").attr('disabled', true);
+        } else if(fields.role == 1 && fields.admin_with_editor_access != 1){
 			form.find('input[name=is_admin]').attr('checked', true);
 		}
 

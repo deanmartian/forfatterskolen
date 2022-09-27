@@ -1,6 +1,8 @@
 <?php
 namespace App;
 
+use App\Http\FrontendHelpers;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -12,7 +14,8 @@ class FreeManuscript extends Model
 {
     
     protected $table = 'free_manuscripts';
-    protected $fillable = ['name', 'email', 'content', 'editor_id', 'genre'];
+    protected $fillable = ['name', 'last_name', 'email', 'content', 'editor_id', 'genre', 'from', 'deadline'];
+    protected $appends = ['deadline_date'];
 
 
     public function editor()
@@ -28,6 +31,12 @@ class FreeManuscript extends Model
     public function feedbackHistory()
     {
         return $this->hasMany('App\FreeManuscriptFeedbackHistory');
+    }
+
+    public function getDeadlineDateAttribute()
+    {
+        return $this->attributes['deadline'] ? FrontendHelpers::formatDate($this->attributes['deadline'])
+            : FrontendHelpers::formatDate(Carbon::parse($this->attributes['created_at'])->addDays(6));
     }
 
 }

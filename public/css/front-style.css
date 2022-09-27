@@ -1116,7 +1116,9 @@ start today section
 .blog-page .main-blog {
     height: 560px;
     background-repeat: no-repeat;
-    background-size: 100% 100%;
+    /*background-size: 100% 100%;*/
+    background-size: auto 100%;
+    background-position: right;
 }
 
 .blog-page .main-blog .details {
@@ -2743,6 +2745,10 @@ margin-right: 5px;
     margin-bottom: 30px;
 }
 
+.faq-page .panel-title a {
+    color: #862736;
+}
+
 .faq-page .sub-header .panel {
     border: none;
     box-shadow: 1px 1px 15.36px 0.64px rgba(187, 187, 187, 0.27);
@@ -2795,7 +2801,7 @@ margin-right: 5px;
 }
 
 .faq-page .panel-group .panel .panel-body > p {
-    color: #686868;
+    color: #686868 !important;
     font-size: 17px;
 }
 

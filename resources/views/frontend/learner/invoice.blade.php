@@ -22,7 +22,7 @@
 @stop
 
 @section('content')
-	<div class="learner-container">
+	<div class="learner-container" id="app-container">
 		<div class="container">
 			<div class="row">
 				@include('frontend.partials.learner-search-new')
@@ -48,6 +48,10 @@
 							[
 								'name' => 'redeem',
 								'label' => 'Redeem Gift'
+							],
+							[
+								'name' => 'order-history',
+								'label' => trans('site.order-history.title')
 							]
 						]
 					@endphp
@@ -81,6 +85,7 @@
 												<tr>
 													<th>Item</th>
 													<th>Package</th>
+													<th>Credit Note</th>
 													<th>Date</th>
 													<th width="150"></th>
 												</tr>
@@ -93,6 +98,14 @@
 														</td>
 														<td>
 															{{ $order->packageVariation }}
+														</td>
+														<td>
+															@if ($order->is_credited_amount)
+																<a href="{{ route('learner.order.download-credited', $order->id) }}"
+																   class="btn btn-sm btn-danger downloadCreditNote">
+																	<i class="fa fa-download"></i>
+																</a>
+															@endif
 														</td>
 														<td>
 															{{ $order->created_at_formatted }}
@@ -213,6 +226,10 @@
 										</div>
 									</div>
 								</div>
+
+							@elseif(Request::input('tab') == 'order-history')
+								<order-history :order-history="{{ json_encode($orderHistory) }}"
+											   :user="{{ json_encode(Auth::user()) }}"></order-history>
 							@else
 
 								<div class="card global-card">
@@ -227,6 +244,7 @@
 												<th>{{ trans('site.learner.created') }}</th>
 												<th>{{ trans('site.learner.kid-number') }}</th>
 												<th>{{ trans('site.learner.account-number') }}</th>
+												<th>Credit Note</th>
 												<th></th>
 											</tr>
 											</thead>
@@ -270,6 +288,13 @@
 													<td>{{date_format(date_create($invoice->created_at), 'M d, Y H.i')}}</td>
 													<td> {{ $invoice->kid_number }} </td>
 													<td> 9015 18 00393 </td>
+													<td>
+														@if($invoice->credit_note_url)
+															<a href="{{ route('learner.download.credit-note', $invoice->id) }}">
+																Credit Note
+															</a>
+														@endif
+													</td>
 													<td>
 														<a href="{{route('learner.download.invoice', $invoice->id)}}">{{ trans('site.learner.download-invoice') }}</a>
 
@@ -507,9 +532,26 @@
 		</div> <!-- view order modal -->
 	</div>
 
+	<div id="orderHistoryModal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">
+						Order History
+					</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+
+				</div>
+			</div>
+		</div>
+	</div>
+
 @stop
 
 @section('scripts')
+	<script type="text/javascript" src="{{ asset('js/app.js?v='.time()) }}"></script>
 	<script>
         $(".vippsFakturaBtn").click(function() {
             let action = $(this).data('action');

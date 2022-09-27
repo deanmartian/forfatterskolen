@@ -19,13 +19,19 @@ class User extends Authenticatable
     use Notifiable;
     use SoftDeletes;
 
+    const AdminRole = 1;
+    const LearnerRole = 2;
+    const EditorRole = 3;
+    const GiutbokRole = 4;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'first_name', 'last_name', 'password', 'email', 'role', 'gender', 'birthday', 'profile_image', 'need_pass_update'
+        'first_name', 'last_name', 'password', 'email', 'role', 'gender', 'birthday', 'profile_image',
+        'default_password', 'need_pass_update', 'is_active', 'admin_with_giutbok_access', 'is_self_publishing_learner'
     ];
 
     /**
@@ -38,12 +44,12 @@ class User extends Authenticatable
     ];
 
     protected $with = ['preferredEditor'];
-    protected $appends = ['is_webinar_pakke_active', 'assigned_with_no_feedback', 'address'];
+    protected $appends = ['is_webinar_pakke_active', 'assigned_with_no_feedback', 'address', 'full_name'];
 
     // filter admins and exclude the user of Sven
     public function scopeAdmins($query)
     {
-        return $query->whereIn('role', array(1,3))
+        return $query->whereIn('role', array(1,3,4))
             ->where('id', '!=', 1376);// 1376 is the id of sven.inge@forfatterskolen.no
     }
 
@@ -457,5 +463,10 @@ class User extends Authenticatable
     public function giftPurchases()
     {
         return $this->hasMany('App\GiftPurchase');
+    }
+
+    public function selfPublishingList()
+    {
+        return $this->hasMany('App\SelfPublishingLearner');
     }
 }

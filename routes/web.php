@@ -35,6 +35,7 @@ Route::group([
         'middleware' => 'logActivity'
     ], function () {
         Route::get('/', 'HomeController@index')->name('front.home'); // Homepage
+        Route::post('/fb-leads', 'HomeController@fbLeads'); // Homepage
         Route::post('/agree-gdpr', 'HomeController@agreeGdpr')->name('front.agree-gdpr');
         Route::get('/testemail', 'HomeController@testEmail');
         Route::get('/bisnode', 'HomeController@bisnode');
@@ -85,8 +86,10 @@ Route::group([
         Route::get('/correction', 'HomeController@correction')->name('front.correction'); // Correction Page
         Route::post('/correction', 'HomeController@correction')->name('front.correction'); // Correction Page
         Route::get('/gratis-tekstvurdering', 'ShopManuscriptController@freeManuscriptShow')->name('front.free-manuscript.index'); // Free Manuscript
+        Route::get('/gratistekstvurdering', 'ShopManuscriptController@freeManuscriptShowOther');
         Route::get('/gratis-tekstvurdering/success', 'ShopManuscriptController@freeManuscriptShowSuccess')->name('front.free-manuscript.success'); // Free Manuscript
         Route::post('/gratis-tekstvurdering/send', 'ShopManuscriptController@freeManuscriptSend')->name('front.free-manuscript.send'); // Free Manuscript Send
+        Route::post('/gratistekstvurdering/send', 'ShopManuscriptController@freeManuscriptSendOther')->name('front.free-manuscript.send-other'); // Free Manuscript Send
         Route::post('/free-manuscript/set-word-count', 'ShopManuscriptController@freeManuscriptWordCount')->name('front.free-manuscript.set-wordcount');
         Route::get('/personal-trainer/apply', 'HomeController@personalTrainer')->name('front.personal-trainer.apply');
         Route::post('/personal-trainer/send', 'HomeController@personalTrainerSend')->name('front.personal-trainer.send');
@@ -285,7 +288,11 @@ Route::group([
         Route::get('/calendar', 'LearnerController@calendar')->name('learner.calendar'); // Calendar Page
         Route::get('/invoice', 'LearnerController@invoice')->name('learner.invoice'); // Invoice Listing Page
         Route::get('/invoice/{id}', 'LearnerController@invoiceShow')->name('learner.invoice.show'); // Invoice Single Page
+        Route::get('/change-portal/{portal}', 'LearnerController@changePortal')->name('learner.change-portal'); // Invoice Single Page
         Route::get('/invoice/{invoice_number}/vipps-payment', 'LearnerController@invoiceVippsPayment')->name('learner.invoice.vipps-payment'); // Invoice Single Page
+        Route::get('/order/{id}/download-credited', 'LearnerController@downloadCreditedOrder')->name('learner.order.download-credited');
+        Route::get('/order/{id}/download', 'LearnerController@downloadOrder');
+        Route::post('/order/{id}/save-company', 'LearnerController@saveCompany');
         Route::post('/redeem-gift', 'LearnerController@redeemGift')->name('learner.redeem-gift');
         Route::post('learner/invoice/{id}/e-faktura', 'LearnerController@vippsEFaktura')->name('learner.invoice.vipps-e-faktura');
         Route::post('learner/set-vipss-efaktura', 'LearnerController@setVippsEFaktura')->name('learner.set-vipps-e-faktura');
@@ -370,6 +377,7 @@ Route::group([
         Route::post('/shop-manuscript/{id}/upload-synopsis', 'ShopManuscriptController@upload_synopsis')->name('learner.shop-manuscript.upload_synopsis'); // Upload shop manuscript
         Route::post('/shop-manuscript/{id}/update-uploaded-manuscript', 'ShopManuscriptController@updateUploadedManuscript')->name('learner.shop-manuscript.update-uploaded-manuscript'); // update Uploade shop manuscript
         Route::post('/shop-manuscript/{id}/delete-uploaded-manuscript', 'ShopManuscriptController@deleteUploadedManuscript')->name('learner.shop-manuscript.delete-uploaded-manuscript'); // update Uploade shop manuscript
+        Route::get('/download/invoice/{id}/credit-note', 'LearnerController@downloadCreditNote')->name('learner.download.credit-note');
         Route::get('/download/invoice/{url}', 'LearnerController@downloadInvoice')->name('learner.download.invoice')
             ->where('url', '.*'); // to accept url as parameter
 
@@ -486,8 +494,10 @@ Route::group([
         'middleware' => 'guest',
     ], function () {
         Route::get('login', 'LoginController@showFrontend')->name('auth.login.show');
+        Route::get('login/self-publishing', 'LoginController@showSelfPublishing')->name('auth.login.self-publishing-show');
 
         Route::post('login', 'LoginController@login')->name('frontend.login.store');
+        Route::post('login/self-publishing', 'LoginController@selfPublishingLogin')->name('frontend.login.self-publishing-store');
         Route::post('checkout/login', 'LoginController@checkoutLogin')->name('frontend.login.checkout.store');
         Route::post('register', 'RegisterController@store')->name('frontend.register.store');
         Route::post('passwordreset', 'ResetPasswordController@store')->name('frontend.passwordreset.store');
@@ -579,6 +589,8 @@ Route::group([
         Route::get('/tests', 'PageController@tests');
         Route::get('head-editor/dashboard', 'HeadEditorController@index')->name('admin.head-editor-dashboard')->middleware('headEditor');
         Route::post('/update-expected-finish/{type}/{id}', 'PageController@updateExpectedFinish')->name('backend.update-expected-finish');
+        Route::post('/self-publishing/feedback/{id}/approve', 'HeadEditorController@approveSelfPublishingFeedback')->name('head_editor.self-publishing-feedback.approve');
+        Route::get('/svea-orders', 'PageController@sveaOrders')->name('admin.svea.orders');
 
         Route::resource('page_meta','PageMetaController',[
             'except' => ['show', 'create', 'edit'],
@@ -592,6 +604,8 @@ Route::group([
 
         // Learners Route
         Route::get('learner/list-notes', 'LearnerController@listNotes')->name('admin.learner.list_notes');
+        Route::get('learner/generate-password', 'LearnerController@generatePassword');
+        Route::post('learner/register', 'LearnerController@registerLearner')->name('admin.learner.register');
         Route::resource('learner', 'LearnerController', [
             'names' => [
                 'index' => 'admin.learner.index',
@@ -609,6 +623,7 @@ Route::group([
         Route::post('learner/{user_id}/auto-renew', 'LearnerController@setAutoRenewCourses')->name('admin.learner.update-auto-renew');
         Route::post('learner/{user_id}/could-buy-course', 'LearnerController@setCouldBuyCourse')->name('admin.learner.update-could-buy-course');
         Route::post('learner/{user_id}/webinar-auto-register-update', 'LearnerController@autoRegisterCourseWebinar')->name('admin.learner.webinar-auto-register-update');
+        Route::post('learner/{user_id}/update-is-publishing-learner', 'LearnerController@isPublishingLearner');
 
         Route::post('shop-manuscript/{id}/update_document', 'LearnerController@updateDocumentShopManuscriptTaken')->name('shop_manuscript_taken.update_document');
         Route::post('shop-manuscript/{id}/synopsis', 'LearnerController@saveSynopsis')->name('shop_manuscript_taken.save_synopsis');
@@ -649,6 +664,8 @@ Route::group([
             ->name('admin.learner.invoice.create-fiken-credit-note');
         Route::post('learner/invoice/{id}/e-faktura', 'LearnerController@vippsEFaktura')->name('admin.learner.invoice.vipps-e-faktura');
         Route::post('learner/{user_id}/set-vipss-efaktura', 'LearnerController@setVippsEFaktura')->name('admin.learner.set-vipps-e-faktura');
+        Route::post('learner/svea/{order_id}/create-credit-note', 'LearnerController@createSveaCreditNote')->name('admin.learner.svea.create-credit-note');
+        Route::post('learner/svea/{order_id}/deliver-order', 'LearnerController@deliverSveaOrder')->name('admin.learner.svea.deliver-order');
         Route::delete('learner/course/{course_taken_id}/delete', 'LearnerController@deleteFromCourse')->name('admin.learner.delete-from-course');
         Route::post('learner/{learner_id}/course/{course_taken_id}/renew', 'LearnerController@renewCourse')->name('admin.learner.renew-course');
         Route::post('learner/{learner_id}/send-email', 'LearnerController@sendLearnerEmail')->name('admin.learner.send-email');
@@ -662,6 +679,7 @@ Route::group([
         Route::put('learner/{learner_id}/private-message/{id}', 'LearnerController@updatePrivateMessage')->name('admin.learner.update-private-message');
         Route::delete('learner/{learner_id}/private-message/{id}/delete', 'LearnerController@deletePrivateMessage')->name('admin.learner.delete-private-message');
         Route::post('learner/{learner_id}/set-preferred-editor', 'LearnerController@setPreferredEditor')->name('admin.learner.set-preferred-editor');
+        Route::post('learner/{learner_id}/add-self-publishing', 'LearnerController@addSelfPublishing')->name('admin.learner.add-self-publishing');
 
         Route::post('task/{id}/finish', 'TaskController@finishTask')->name('admin.task.finish');
         Route::resource('task', 'TaskController', [
@@ -702,6 +720,7 @@ Route::group([
         ]);
 
         // Courses Route
+        Route::get('course/get-all-learners', 'CourseController@getAllPaidLearners'); // get all learners that avail a paid course
         Route::resource('course', 'CourseController', [
             'names' => [
                 'index' => 'admin.course.index',
@@ -714,6 +733,7 @@ Route::group([
             ],
         ]);
         Route::post('course/{id}/update/email', 'CourseController@update_email')->name('admin.course.update.email');
+        Route::post('course/{id}/welcome-email/send', 'CourseController@sendWelcomeEmail')->name('admin.course.welcome-email.send');
         Route::post('course/{id}/clone', 'CourseController@clone_course')->name('admin.course.clone');
         Route::post('course/{id}/add_similar_course', 'CourseController@add_similar_course')->name('admin.course.add_similar_course');
         Route::post('course/remove_similar_course/{similar_course_id}', 'CourseController@remove_similar_course')->name('admin.course.remove_similar_course');
@@ -922,6 +942,7 @@ Route::group([
         Route::delete('/contract/template/delete/{id?}', 'ContractController@deleteContractTemplate')->name('admin.contract-template.delete');
         Route::post('/contract/{id}/sign', 'ContractController@signContract')->name('admin.contract.sign');
         Route::post('/contract/{id}/status', 'ContractController@contractStatus')->name('admin.contract.status');
+        Route::get('/contract/{id}/download-pdf', 'ContractController@downloadPDF')->name('admin.contract.download-pdf');
         Route::resource('/contract','ContractController',[
             'names' => [
                 'index' => 'admin.contract.index',
@@ -978,6 +999,8 @@ Route::group([
         Route::post('webinar/{id}/course/{course_id}/email-out', 'WebinarController@webinarEmailOut')->name('admin.webinar.email-out');
         Route::post('webinar/{id}/course/{course_id}/auto-register-learners', 'WebinarController@autoRegisterLearnersToWebinar')
             ->name('admin.webinar.auto-register-learners');
+        Route::delete('/webinar/registrant/{id}/delete', 'WebinarController@removeRegistrant')
+            ->name('admin.webinar.remove-registrant');
 
         // Webinar Presenter Route
         Route::resource('webinar/{webinar_id}/presenter', 'WebinarPresenterController', [
@@ -1015,6 +1038,8 @@ Route::group([
         Route::post('assignment/{id}/uploadManuscript', 'AssignmentController@uploadManuscript')->name('assignment.group.upload_manuscript');
         Route::post('assignment/{id}/add-on-for-learner', 'AssignmentController@addOnForLearner')->name('assignment.add-on-for-learner');
         Route::post('assignment/{id}/update-submission-date', 'AssignmentController@updateSubmissionDate')->name('assignment.update-submission-date');
+        Route::post('assignment/{id}/update-available-date', 'AssignmentController@updateAvailableDate')->name('assignment.update-available-date');
+        Route::post('assignment/{id}/update-max-words', 'AssignmentController@updateMaxWords')->name('assignment.update-max-words');
         Route::post('assignment_manuscript/{id}/delete', 'AssignmentController@deleteManuscript')->name('assignment.group.delete_manuscript');
         Route::post('assignment_manuscript/{id}/move', 'AssignmentController@moveManuscript')->name('assignment.group.move_manuscript');
         Route::post('assignment_manuscript/{id}/set_grade', 'AssignmentController@setGrade')->name('assignment.group.set_grade');
@@ -1065,12 +1090,16 @@ Route::group([
         Route::post('course/{course_id}/assignment/{assignment_id}/group/{group_id}/feedback-availability', 'AssignmentGroupController@setGroupFeedbackAvailability')->name('assignment.group.feedback-availability');
         Route::post('/group/{group_id}/learner/{id}/submit_feedback', 'AssignmentGroupController@submit_feedback')->name('admin.assignment.group.submit_feedback'); // Submit assignment feedback
         Route::post('/group/{group_id}/learner/{id}/submit_feedback_learner', 'AssignmentGroupController@submit_feedback_learner')->name('admin.assignment.group.submit_feedback_learner'); // Submit assignment feedback
+        Route::post('/assignment-group/{group_id}/set-feedback-to-other-learners/{group_learner_id}',
+            'AssignmentGroupController@setFeedbackToOtherLearner')->name('admin.assignment.group.learner.set-feedback-to-other');
         Route::post('/feedback/{id}/remove_feedback', 'AssignmentGroupController@remove_feedback')->name('admin.assignment.group.remove_feedback'); // Remove assignment feedback
         Route::post('/feedback/{id}/update_feedback', 'AssignmentGroupController@update_feedback')->name('admin.assignment.group.update_feedback'); // Update assignment feedback
         Route::post('/feedback/{id}/update_feedback_admin', 'AssignmentGroupController@update_feedback_admin')->name('admin.assignment.group.update_feedback_admin'); // Update assignment feedback admin
         Route::post('/feedback/{id}/approve', 'AssignmentGroupController@approve')->name('admin.assignment.group.approve'); // Approve assignment feedback admin
         Route::post('/feedback/lock-status', 'AssignmentGroupController@updateFeedbackLockStatus')->name('learner.assignment.group.lock-status'); // Courses For Sale Status
         Route::get('/feedback/{id}/download', 'AssignmentGroupController@downloadFeedback')->name('assignment.feedback.download_manuscript');
+        Route::get('/assignment-group/{group_id}/get-feedback-to-other-learners/{group_learner_id}', 'AssignmentGroupController@getFeedbackToOtherLearner')
+            ->name('learner.assignment.group.get-feedback-to-other-learners');
 
 
 
@@ -1274,7 +1303,9 @@ Route::group([
         Route::post('/free-manuscript/{id}/assign_editor', 'FreeManuscriptController@assignEditor')->name('admin.free-manuscript.assign_editor');
         Route::post('/free-manuscript/{id}/send_feedback', 'FreeManuscriptController@sendFeedback')->name('admin.free-manuscript.send_feedback');
         Route::get('/free-manuscript/{id}/feedback-history', 'FreeManuscriptController@feedbackHistory')->name('admin.free-manuscript.feedback-history');
+        Route::get('/free-manuscript/{id}/download', 'FreeManuscriptController@downloadContent')->name('admin.free-manuscript.download');
         Route::post('/free-manuscript/{id}/resend-feedback', 'FreeManuscriptController@resendFeedback')->name('admin.free-manuscript.resend-feedback');
+        Route::post('/free-manuscript/{id}/approve_feedback', 'FreeManuscriptController@approveFeedback')->name('head_editor.free-manuscript.feedback_approve');
 
         Route::resource('/other-service','OtherServiceController', [
             'except' => ['show'],
@@ -1294,6 +1325,7 @@ Route::group([
         Route::post('/other-service/{id}/coaching-timer/suggest_date', 'OtherServiceController@suggestDate')->name('admin.other-service.coaching-timer.suggestDate');
         Route::post('/other-service/set-approved-date', 'OtherServiceController@setApprovedDate')->name('admin.other-service.coaching-timer.set-approved-date');
         Route::post('/other-service/{id}/coaching-timer/set_replay', 'OtherServiceController@setReplay')->name('admin.other-service.coaching-timer.set_replay');
+        Route::post('/other-service/{id}/coaching-timer/mark_as_finished', 'OtherServiceController@markAsFinished')->name('admin.other-service.coaching-timer.mark_as_finished');
         Route::post('/other-service/{id}/update-status/{type}', 'OtherServiceController@updateStatus')->name('admin.other-service.update-status');
         Route::post('/other-service/{id}/update-expected-finish/{type}', 'OtherServiceController@updateExpectedFinish')->name('admin.other-service.update-expected-finish');
         Route::get('/other-service/{id}/download/{type}', 'OtherServiceController@downloadOtherServiceDoc')->name('admin.other-service.download-doc'); // Download assignment feedback
@@ -1332,8 +1364,8 @@ Route::group([
             ],
         ]);
         Route::post('/invoice/{id}', 'InvoiceController@addTransaction')->name('admin.transaction.store'); // Store Transaction
-        Route::post('/invoice/{invoice_id}/transaction/{id}', 'InvoiceController@updateTransaction')->name('admin.transaction.update'); // Update Transaction
-        Route::post('/invoice/{invoice_id}/transaction/{id}/delete', 'InvoiceController@destroyTransaction')->name('admin.transaction.destroy'); // Delete Transaction
+        Route::post('/invoice/{invoice_id}/transaction/{transaction_id}', 'InvoiceController@updateTransaction')->name('admin.transaction.update'); // Update Transaction
+        Route::post('/invoice/{invoice_id}/transaction/{transaction_id}/delete', 'InvoiceController@destroyTransaction')->name('admin.transaction.destroy'); // Delete Transaction
         Route::get('/invoice/{id}/download-fiken', 'InvoiceController@downloadFikenPdf')->name('admin.invoice.download-fiken-pdf'); // Store Transaction
 
 
@@ -1467,6 +1499,37 @@ Route::group([
         Route::post('/settings/create/{name}', 'SettingsController@create')->name('admin.settings.create');
         Route::get('/news', 'SettingsController@news')->name('admin.news.index');
         Route::post('/news/save', 'SettingsController@saveNews')->name('admin.news.save');
+
+        Route::resource('/genre', 'GenreController', [
+            'except' => ['create', 'edit'],
+            'names' => [
+                'index' => 'admin.genre.index',
+                'show' => 'admin.genre.show',
+                'store' => 'admin.genre.store',
+                'update' => 'admin.genre.update',
+                'destroy' => 'admin.genre.destroy',
+            ],
+        ]);
+
+        Route::delete('/self-publishing/remove-learner/{id}', 'SelfPublishingController@removeLearnerFromPublishing')
+            ->name('admin.learner.remove-self-publishing');
+        Route::get('/self-publishing/{id}/learners', 'SelfPublishingController@learners')->name('admin.self-publishing.learners');
+        Route::post('/self-publishing/{id}/add-learners', 'SelfPublishingController@addLearners')->name('admin.self-publishing.add-learners');
+        Route::get('/self-publishing/{id}/download-manuscript', 'SelfPublishingController@selfPublishingDownloadManuscript')
+            ->name('admin.self-publishing.download-manuscript');
+        Route::post('/self-publishing/{id}/add-feedback', 'SelfPublishingController@addFeedback')->name('admin.self-publishing.add-feedback');
+        Route::delete('/self-publishing/delete-learner/{learner_id}', 'SelfPublishingController@deleteLearner')->name('admin.self-publishing.delete-learner');
+        Route::resource('/self-publishing', 'SelfPublishingController', [
+            'except' => ['create', 'edit'],
+            'names' => [
+                'index' => 'admin.self-publishing.index',
+                'show' => 'admin.self-publishing.show',
+                'store' => 'admin.self-publishing.store',
+                'update' => 'admin.self-publishing.update',
+                'destroy' => 'admin.self-publishing.destroy',
+            ],
+        ]);
+
         // Advisories
         Route::put('/advisory/{id}', 'AdvisoryController@update')->name('admin.advisory.update');
 
@@ -1600,6 +1663,8 @@ Route::group([
         Route::post('manuscriptYouCanTake/{id}/delete', 'ManuscriptEditorCanTakeController@delete')->name('editor.manuscript-you-can-take.delete');
         Route::get('/yearly-calendar', 'PageController@yearlyCalendar')->name('editor.yearly-calendar.index');
         Route::get('/assigned-webinar', 'AssignedWebinarController@show')->name('editor.assigned-webinar');
+        Route::post('/self-publishing/{id}/feedback', 'PageController@selfPublishingFeedback')->name('editor.self-publishing.feedback');
+        Route::get('/self-publishing/{id}/download-manuscript', 'PageController@selfPublishingDownloadManuscript')->name('editor.self-publishing.download-manuscript');
     });
 
     Route::group([
@@ -1626,6 +1691,9 @@ Route::group([
         Route::post('learner/{id}/shop-manuscript/{shop_manuscript_taken_id}/comment', 'LearnerController@shopManuscriptTakenShowComment')->name('editor.shop_manuscript_taken_comment');
         Route::post('/update-expected-finish/{type}/{id}', 'PageController@updateExpectedFinish')->name('editor.personal-assignment.update-expected-finish');
         Route::get('assignment-manuscript/{id}/download-letter', 'AssignmentController@downloadManuscriptLetter')->name('editor.assignment.manuscript.download_letter');
+        Route::post('/free-manuscript/{id}/edit-content', 'FreeManuscriptController@editContent')->name('editor.free-manuscript.edit-content');
+        Route::post('/free-manuscript/{id}/send_feedback', 'FreeManuscriptController@sendFeedback')->name('editor.free-manuscript.send_feedback');
+        Route::get('/free-manuscript/{id}/download', 'FreeManuscriptController@downloadContent')->name('editor.free-manuscript.download');
 
     });
 
@@ -1634,6 +1702,7 @@ Route::group([
         'prefix' => 'auth',
         'namespace' => 'Auth',
     ], function () {
+        Route::get('login/editor-email/{email_hash}', 'LoginController@editorEmailLogin')->name('editor.login.email');
         Route::post('login', 'LoginController@editorLogin')->name('editor.login.store');
     });
 });

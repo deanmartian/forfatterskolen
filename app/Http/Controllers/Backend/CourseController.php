@@ -266,8 +266,29 @@ class CourseController extends Controller
         return redirect()->back();
     }
 
+    public function sendWelcomeEmail( $id, Request $request )
+    {
+        $course = Course::find($id);
 
+        foreach ($request->learners as $learner_id) {
+            $user = User::find($learner_id);
+            $to = $user->email;
 
+            $emailData = [
+            'email_subject' => $course->title,
+            'email_message' => $course->email,
+            'from_name' => '',
+            'from_email' => 'post@forfatterskolen.no',
+            'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Email sent successfully.'),
+            'alert_type' => 'success'
+        ]);
+    }
 
     public function clone_course($id, Request $request)
     {
@@ -956,5 +977,26 @@ class CourseController extends Controller
         $pdf->setPaper('letter', 'landscape');
         $pdf->loadHTML($certificate->template);
         return $pdf->download($course->title . ' certificate.pdf');
+    }
+
+    public function getAllPaidLearners()
+    {
+        $courses = Course::where('is_free', 0)->get()->pluck('id')->toArray();
+        $packages = Package::whereIn('course_id', $courses)->get()->pluck('id')->toArray();
+
+        $coursesTaken = CoursesTaken::whereYear('created_at', 2021)
+            //->where('is_free', 0)
+            ->whereIn('package_id', $packages)
+            ->get();
+
+        $learnerList    = [];
+        $headers  = ['learner', 'email', 'course']; // first row in excel
+
+        foreach ($coursesTaken as $courseTaken) {
+            $learnerList[] = [$courseTaken->user->full_name, $courseTaken->user->email, $courseTaken->package->course->title];
+        }
+
+        $excel = \App::make('excel');
+        return $excel->download(new GenericExport($learnerList, $headers), 'Course Buyers 2021.xlsx');
     }
 }

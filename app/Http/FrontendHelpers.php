@@ -3,6 +3,7 @@
 namespace App\Http;
 use App\Advisory;
 use App\Course;
+use App\Genre;
 use App\PaymentMode;
 use App\PilotReaderBook;
 use App\PilotReaderBookChapter;
@@ -580,7 +581,18 @@ class FrontendHelpers
      */
     public static function assignmentType($id = NULL)
     {
-        $types = array(
+        $genre = Genre::all();
+
+        if ($id >= 0 && !is_null($id)) {
+            $genre = 'None';
+            $findGenre = Genre::find($id);
+            if ($id > 0 && $findGenre) {
+                $genre = $findGenre->name;
+            }
+        }
+
+        return $genre;
+        /*$types = array(
             array( 'id' => 1, 'option' => 'Barnebok'),
             array( 'id' => 2, 'option' => 'Fantasy'),
             array( 'id' => 3, 'option' => 'Skjønnlitterært'),
@@ -596,6 +608,7 @@ class FrontendHelpers
             array( 'id' => 13, 'option' => 'Sci-fi'),
             array( 'id' => 14, 'option' => 'Dystopi'),
             array( 'id' => 15, 'option' => 'Valgfri'),
+            array( 'id' => 16, 'option' => 'Feelgood'),
         );
 
         if ($id) {
@@ -606,7 +619,7 @@ class FrontendHelpers
             }
         }
 
-        return $types;
+        return $types;*/
 	}
 
     public static function formatAssignmentType($id)

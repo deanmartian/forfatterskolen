@@ -174,6 +174,17 @@ class OtherServiceController extends Controller
             'not-former-courses' => true]);
     }
 
+    public function markAsFinished(CoachingTimerManuscript $id)
+    {
+        $coachingManuscript = $id;
+        $coachingManuscript->status = 1;
+        $coachingManuscript->save();
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Coaching time marked as finished successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true]);
+    }
+
     public function editorSetReplay(CoachingTimerManuscript $id, Request $request)
     {
         $data = $request->except('_token');

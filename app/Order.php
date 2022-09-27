@@ -19,10 +19,11 @@ class Order extends Model {
 
     protected $fillable = ['user_id', 'item_id', 'type', 'package_id', 'plan_id', 'payment_mode_id', 'price', 'discount',
         'svea_order_id', 'svea_invoice_id', 'svea_payment_type', 'svea_payment_type_description', 'svea_fullname',
-        'svea_street', 'svea_postal_code', 'svea_city', 'svea_country_code', 'gift_card', 'is_processed'];
+        'svea_street', 'svea_postal_code', 'svea_city', 'svea_country_code', 'gift_card', 'svea_delivery_id', 'is_processed',
+        'is_credited_amount'];
     protected $appends = ['item', 'packageVariation', 'created_at_formatted', 'price_formatted', 'discount_formatted',
-        'monthly_price_formatted', 'total_formatted'];
-    protected $with = ['paymentPlan', 'paymentMode'];
+        'monthly_price_formatted', 'total_formatted', 'total_price'];
+    protected $with = ['paymentPlan', 'paymentMode', 'company'];
 
     public function paymentPlan()
     {
@@ -93,8 +94,8 @@ class Order extends Model {
 
     public function getPackageVariationAttribute()
     {
-        $package = '';
-        if ($this->attributes['type'] === 1) {
+        $package = $this->item;
+        if (in_array($this->attributes['type'], [1, 6])) {
             return $this->package->variation;
         }
 
@@ -131,5 +132,19 @@ class Order extends Model {
             $total = $total + $this->coachingTime->additional_price;
         }
         return FrontendHelpers::currencyFormat($total);
+    }
+
+    public function getTotalPriceAttribute()
+    {
+        $total = $this->attributes['price'] - $this->attributes['discount'];
+        if ($this->coachingTime) {
+            $total = $total + $this->coachingTime->additional_price;
+        }
+        return $total;
+    }
+
+    public function company()
+    {
+        return $this->hasOne('App\OrderCompany');
     }
 }

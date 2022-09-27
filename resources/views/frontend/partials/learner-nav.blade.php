@@ -111,8 +111,16 @@
                             <a href="{{route('learner.calendar')}}" class="dropdown-item">Kalender</a>
                             <a href="{{route('learner.profile')}}" class="dropdown-item">Profil</a>
                             <a href="{{route('learner.invoice')}}" class="dropdown-item">Fakturaer</a>
+                            <a href="{{url('/terms/all')}}" class="dropdown-item">Terms</a>
                             <a href="#" class="dropdown-item redirectForum">Forum</a>
                             <a href="#" class="dropdown-item pilotleser-link">Pilotleser</a>
+
+                            @if(Auth::user()->is_self_publishing_learner)
+                            <a href="{{ route('learner.change-portal', 'self-publishing') }}"
+                               class="dropdown-item d-inline-block w-auto mb-2 btn btn-circle">
+                                Selvpubliseringsportal
+                            </a>
+                            @endif
 
                             <a href="{{ route('auth.logout-get') }}" class="dropdown-item d-inline-block w-auto mb-2">
                                 <form method="POST" action="{{route('auth.logout')}}" class="form-logout">
@@ -183,7 +191,7 @@
 
 <div class="portal-menu">
     <button class="navbar-toggler text-center w-100" type="button" data-toggle="collapse" data-target="#portalNav">
-        PORTAL MENU &nbsp;<i class="fa fa-chevron-down font-white"></i>
+        PORTAL MENY &nbsp;<i class="fa fa-chevron-down font-white"></i>
     </button>
 
     <div class="navbar-collapse collapse" id="portalNav">

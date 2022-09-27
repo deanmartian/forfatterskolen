@@ -13,7 +13,10 @@ use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Helpers\DapulseRepository;
 use App\Http\AdminHelpers;
+use App\Order;
 use App\PageMeta;
+use App\SelfPublishing;
+use App\SelfPublishingFeedback;
 use App\User;
 use App\UserTask;
 use Carbon\Carbon;
@@ -85,7 +88,8 @@ class PageController extends Controller
             ->where('is_free', 0)
             ->get()->pluck('id');
         //$singleCourses = [36, 37, 57, 48, 56, 50, 44, 49, 64];
-        $assignmentForCourse = Assignment::whereIn('course_id', $singleCourses)->get()->pluck('id')->toArray();
+        $assignmentForCourse = Assignment::whereIn('course_id', $singleCourses)
+            ->where('id', '!=', 527)->get()->pluck('id')->toArray();
         $assignmentForLearners = Assignment::where('parent', 'users')->get()->pluck('id')->toArray();
         $allAssignmentQuery = array_merge($assignmentForCourse, $assignmentForLearners);
         $pendingAssignments = AssignmentManuscript::where('editor_id', 0)
@@ -104,13 +108,18 @@ class PageController extends Controller
             ->where('status', 0)->get();
 
         $shopManuscriptTakenFeedback = ShopManuscriptTakenFeedback::with('shop_manuscript_taken')->where('approved', 0)->orderBy('created_at', 'desc')->paginate(10);
+        $selfPublishingApprovedFeedbacks = SelfPublishingFeedback::where('is_approved', 1)->pluck('self_publishing_id')->toArray();
+        $selfPublishingList = SelfPublishing::whereNotIn('id', $selfPublishingApprovedFeedbacks)->get();
+        $editors = AdminHelpers::editorList();
+        $learners = User::where('role', 2)->get();
 
         return view('backend.dashboard', compact('pending_courses', 'pending_shop_manuscripts',
         'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts', 'assigned_free_manuscripts',
         'pending_assignment_feedbacks', 'logs', 'manuscripts','shopManuscripts',
         'nearlyExpiredCoursesCount', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
         'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments',
-        'pendingTasks', 'assignedAssignmentManuscripts','shopManuscriptTakenFeedback'));
+        'pendingTasks', 'assignedAssignmentManuscripts','shopManuscriptTakenFeedback', 'selfPublishingList', 'editors',
+            'learners'));
     }
 
     public function updateExpectedFinish( $type, $id, Request $request )
@@ -668,5 +677,11 @@ class PageController extends Controller
     public function translations()
     {
         return redirect()->to('/translations/view/site');
+    }
+
+    public function sveaOrders()
+    {
+        $orders = Order::svea()->where('is_processed', 1)->latest()->paginate(20);
+        return view('backend.svea-orders', compact('orders'));
     }
 }

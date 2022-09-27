@@ -160,6 +160,7 @@
 											->whereHas('editorGenrePreferences', function($q) use ($manuscript){
 												$q->where('genre_id', $manuscript->type);
 											})
+											->where('is_active', 1)
 											->whereNotIn('users.id', $hiddenEditorIds)
 											->orderBy('id', 'desc')
 											->get();
@@ -168,6 +169,7 @@
 										$genreEditors = \App\User::where(function($query){
 											$query->where('role', 3)->orWhere('admin_with_editor_access', 1);
 										})
+										->where('is_active', 1)
 										->whereNotIn('users.id', $hiddenEditorIds)
 										->orderBy('id', 'desc')
 										->get();
@@ -791,7 +793,7 @@
 						<select class="form-control" name="type" id="ass_type" required>
 							<option value="" disabled="disabled" selected>Select Type</option>
 							@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
-								<option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
+								<option value="{{ $type->id }}"> {{ $type->name }} </option>
 							@endforeach
 						</select>
 					</div>
@@ -873,7 +875,7 @@
 						<select class="form-control" name="type" id="ass_type" required>
 							<option value="" disabled="disabled" selected>Select Type</option>
 							@foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
-								<option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
+								<option value="{{ $type->id }}"> {{ $type->name }} </option>
 							@endforeach
 						</select>
 					</div>

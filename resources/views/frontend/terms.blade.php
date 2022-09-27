@@ -4,6 +4,16 @@
 	<title>Forfatterskolen &rsaquo; Terms</title>
 @stop
 
+@section('styles')
+	<style>
+		@media (min-width: 1200px) {
+			.container {
+				max-width: 1240px;
+			}
+		}
+	</style>
+@stop
+
 @section('content')
 	<div class="container terms-page">
 		@if ($slug == 'all')
@@ -25,6 +35,9 @@
                                             break;
                                         case 'coaching-terms';
                                             $termsTitle = 'Kjøpsvilkår coaching timer';
+                                            break;
+                                        case 'privacy-policy-terms';
+                                            $termsTitle = 'Privacy Policy';
                                             break;
 										default:
                                             $termsTitle = 'Vilkår';

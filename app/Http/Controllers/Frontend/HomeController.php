@@ -54,6 +54,7 @@ use App\WebinarRegistrant;
 use App\Workshop;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -108,6 +109,53 @@ class HomeController extends Controller
         return view('frontend.home', compact('popular_courses', 'free_courses', 'free_webinars',
             'next_webinar', 'next_free_webinar', 'next_workshop','latest_blog', 'poems', 'testimonials', 'workshop',
             'upcomingSections'));
+    }
+
+    public function fbLeads( Request $request )
+    {
+        \Log::info('FACEBOOK LEADS HERE');
+        $user_email = $request->email;
+        $user       = User::where('email', $user_email)->first();
+
+        if (!$user) {
+            \Log::info('add user ' . $user_email);
+            $user = User::create([
+                'email'             => $user_email,
+                'first_name'        => $request->first_name,
+                'last_name'         => $request->last_name,
+                'password'          => bcrypt('Z5C5E5M2jv'),
+                'default_password' => 'Z5C5E5M2jv',
+                'need_pass_update'  => 1
+            ]);
+
+            $encode_email = encrypt($user->email);
+            $email_template = AdminHelpers::emailTemplate('Fb Leads Registration');
+
+            // Send welcome email
+            $actionUrl = route('auth.login.email', $encode_email);
+
+            $message = str_replace(
+                [
+                    ':login',
+                    ':end_login'
+                ],
+                [
+                    "<a href='" . $actionUrl . "' class='redirect-button' target='_blank'>",
+                    '</a>'
+                ],
+                $email_template->email_content
+            );
+
+            $to = $user->email;
+            $emailData = [
+                'email_subject' => $email_template->subject,
+                'email_message' => view('emails.fb-leads-registration', compact('message'))->render(),
+                'from_name' => '',
+                'from_email' => 'post@forfatterskolen.no',
+                'attach_file' => NULL
+            ];
+            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        }
     }
 
     // set cookie for gdpr

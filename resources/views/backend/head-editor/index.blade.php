@@ -258,35 +258,37 @@
 										$groupDetails = DB::SELECT("SELECT A.id as assignment_group_id, B.id AS assignment_group_learner_id FROM assignment_groups A JOIN assignment_group_learners B ON A.id = B.assignment_group_id AND B.user_id = $assignedAssignment->user_id WHERE A.assignment_id = $assignedAssignment->assignment_id");
 										if($groupDetails){ // Means the course assignment belongs to a group
 											$feedback = DB::SELECT("SELECT A.* FROM assignment_feedbacks A JOIN assignment_group_learners B ON A.assignment_group_learner_id = B.id WHERE B.user_id = $assignedAssignment->user_id AND A.assignment_group_learner_id = ".$groupDetails[0]->assignment_group_learner_id);
-											echo '<td>';
-											echo '<button class="btn btn-success btn-xs courseAssignmentShowFeedbackBtn"
+											if ($feedback) {
+                                                echo '<td>';
+                                                echo '<button class="btn btn-success btn-xs courseAssignmentShowFeedbackBtn"
 															data-target="#courseAssignmentShowFeedbackModal"
 															data-toggle="modal"
 															data-id = "'.$assignedAssignment->id.'"
 															data-feedback_file = "'.$feedback[0]->filename.'"
 															data-feedback_grade = "'.$assignedAssignment->grade.'"
 															data-action="'.route('head_editor.course_assignment.feedback_approve',
-																			['id' => $assignedAssignment->id,
-																			'learner_id' => $assignedAssignment->user->id,
-																			'feedback_id' => $feedback[0]->id]).'">
+                                                        ['id' => $assignedAssignment->id,
+                                                            'learner_id' => $assignedAssignment->user->id,
+                                                            'feedback_id' => $feedback[0]->id]).'">
 															'. trans('site.approve-feedback') .'
 													</button> &nbsp';
 
-													$files = explode(',',$feedback[0]->filename);
-													foreach($files as $file){
-														echo '<a href="'.$file.'" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp';
-													}
-											echo $feedback[0]->created_at;
-											echo '</td>';
-											echo '<td> <span class="label label-default">'.trans('site.pending').'</span> </td>';
-											echo '<td>';
-											if($feedback[0]->notes_to_head_editor){
-												echo '<a class="notes" data-target="#notesModal" data-toggle="modal" data-notes="'.$feedback[0]->notes_to_head_editor.'">
+                                                $files = explode(',',$feedback[0]->filename);
+                                                foreach($files as $file){
+                                                    echo '<a href="'.$file.'" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp';
+                                                }
+                                                echo $feedback[0]->created_at;
+                                                echo '</td>';
+                                                echo '<td> <span class="label label-default">'.trans('site.pending').'</span> </td>';
+                                                echo '<td>';
+                                                if($feedback[0]->notes_to_head_editor){
+                                                    echo '<a class="notes" data-target="#notesModal" data-toggle="modal" data-notes="'.$feedback[0]->notes_to_head_editor.'">
 												'.substr($feedback[0]->notes_to_head_editor, 0, 10).'
 												<i class="fa fa-file-text-o" aria-hidden="true"></i>
 											</a>';
+                                                }
+                                                echo '</td>';
 											}
-											echo '</td>';
 										}else{ //the course assignment does not belong to a group
 											echo '<td>';
 											echo '<button class="btn btn-success btn-xs personalAssignmentShowFeedbackBtn"
@@ -322,6 +324,101 @@
 									?>
 									
 									
+								</tr>
+							@endforeach
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<!-- Free Manuscript-->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>Free Manuscript</h4></div>
+						<table class="table">
+							<thead>
+							<tr>
+								<th>{{ trans('site.name') }}</th>
+								<th>{{ trans('site.genre') }}</th>
+								<th>{{ trans_choice('site.editors', 1) }}</th>
+								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
+								<th>{{ trans('site.feedback-status') }}</th>
+							</tr>
+							</thead>
+							<tbody>
+							@foreach($freeManuscripts as $freeManuscript)
+								<tr>
+									<td>{{ $freeManuscript->name }}</td>
+									<td>{{ \App\Http\AdminHelpers::assignmentType($freeManuscript->genre) }}</td>
+									<td>@if( $freeManuscript->editor ) {{ $freeManuscript->editor->full_name }} @endif</td>
+									<td>
+										<button class="btn btn-xs btn-success sendFMApproveFeedbackBtn"
+												data-toggle="modal" data-target="#freeManuscriptApproveFeedbackModal"
+												data-fields="{{ json_encode($freeManuscript) }}"
+												data-action="{{ route('head_editor.free-manuscript.feedback_approve', $freeManuscript->id) }}">
+											{{ trans('site.approve-feedback') }}
+										</button>
+									</td>
+									<td>
+										<span class="label label-default">{{ trans('site.pending') }}</span>
+									</td>
+								</tr>
+							@endforeach
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<!-- self publishing-->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>Self Publishing</h4></div>
+						<table class="table">
+							<thead>
+							<tr>
+								<th>{{ trans('site.title') }}</th>
+								<th>{{ trans_choice('site.manus', 2) }}</th>
+								<th>Feedback User</th>
+								<th>{{ trans('site.expected-finish') }}</th>
+								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
+								<th>{{ trans_choice('site.notes', 2) }}</th>
+								<th></th>
+							</tr>
+							</thead>
+							<tbody>
+							@foreach($selfPublishingList as $publishing)
+								<tr>
+									<td>
+										{{ $publishing->title }}
+									</td>
+									<td>
+										{!! $publishing->file_link !!}
+									</td>
+									<td>
+										{{ $publishing->editor ? $publishing->editor->full_name :
+										($publishing->feedback && $publishing->feedback->feedbackUser
+										? $publishing->feedback->feedbackUser->full_name : '') }}
+									</td>
+									<td>
+										{{ $publishing->expected_finish }}
+									</td>
+									<td>
+										{!! $publishing->feedback->file_link !!}
+									</td>
+									<td>
+										{{ $publishing->feedback->notes}}
+									</td>
+									<td>
+										<button class="btn btn-xs btn-success selfPublishingApproveFeedbackBtn"
+												data-toggle="modal" data-target="#selfPublishingApproveFeedbackModal"
+												data-action="{{ route('head_editor.self-publishing-feedback.approve', $publishing->feedback->id) }}">
+											{{ trans('site.approve-feedback') }}
+										</button>
+									</td>
 								</tr>
 							@endforeach
 							</tbody>
@@ -869,6 +966,52 @@
 	</div>
 </div>
 
+<div id="freeManuscriptApproveFeedbackModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.approve-feedback') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" id="sendFeedbackForm" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans('site.body') }}</label>
+						<textarea name="email_content" cols="30" rows="10" class="form-control tinymce" id="FMEmailContentEditor" required>
+						</textarea>
+					</div>
+					<div class="clearfix"></div>
+					<button type="submit" class="btn btn-primary pull-right margin-top" id="sendFeedbackEmail">{{ trans('site.approve-feedback') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="selfPublishingApproveFeedbackModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.approve-feedback') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<p>
+						Are you sure you want to approve this feedback?
+					</p>
+					<div class="clearfix"></div>
+					<button type="submit" class="btn btn-primary pull-right margin-top" id="sendFeedbackEmail">{{ trans('site.approve-feedback') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -972,6 +1115,23 @@
 		modal.find('form').attr('action', action);
 
 	});
+
+    $(".sendFMApproveFeedbackBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#freeManuscriptApproveFeedbackModal');
+        modal.find('form').attr('action', action);
+        let fields = $(this).data('fields');
+        let content = fields.feedback_content;
+
+        tinymce.get('FMEmailContentEditor').setContent(content);
+    });
+
+    $(".selfPublishingApproveFeedbackBtn").click(function() {
+		let action = $(this).data('action');
+		let modal = $('#selfPublishingApproveFeedbackModal');
+		modal.find('form').attr('action', action);
+	});
+
     function disableSubmit(t) {
         let submit_btn = $(t).find('[type=submit]');
         submit_btn.text('');

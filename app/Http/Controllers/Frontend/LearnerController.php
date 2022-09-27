@@ -31,6 +31,7 @@ use App\Mail\MultipleEmailConfirmation;
 use App\Mail\SubjectBodyEmail;
 use App\Notification;
 use App\Order;
+use App\OrderCompany;
 use App\OtherServiceFeedback;
 use App\Package;
 use App\PaymentMode;
@@ -40,6 +41,8 @@ use App\PilotReaderReaderProfile;
 use App\Repositories\Services\CompetitionService;
 use App\Repositories\Services\PublishingService;
 use App\Repositories\Services\WritingGroupService;
+use App\SelfPublishing;
+use App\SelfPublishingLearner;
 use App\Services\AssignmentService;
 use App\Services\CourseService;
 use App\Services\ShopManuscriptService;
@@ -90,6 +93,7 @@ require app_path('/Http/PaypalIPN/PaypalIPN.php');
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\In;
 use PaypalIPN;
@@ -134,7 +138,15 @@ class LearnerController extends Controller
             ->get();
         $assignments = $this->dashboardAssignment();
 
-        return view('frontend.learner.dashboard', compact('surveys', 'assignments'));
+        $selfPublishingLearners = SelfPublishingLearner::where('user_id', Auth::user()->id)
+            ->pluck('self_publishing_id')->toArray();
+        $selfPublishingList = SelfPublishing::whereIn('id', $selfPublishingLearners)->get();
+
+        $view = Session::get('current-portal') === 'self-publishing'
+            ? 'frontend.learner.self-publishing.dashboard'
+            : 'frontend.learner.dashboard';
+
+        return view($view, compact('surveys', 'assignments', 'selfPublishingList'));
     }
 
 
@@ -844,6 +856,7 @@ class LearnerController extends Controller
             endif;
 
             // count words
+            $word_count = 0;
             if($extension == "pdf") :
               $pdf  =  new \PdfToText ( $destinationPath.end($expFileName) ) ;
               $pdf_content = $pdf->Text; 
@@ -860,9 +873,12 @@ class LearnerController extends Controller
               $word_count = FrontendHelpers::get_num_of_words($doc);
             endif;
 
+            $word_to_deduct = $word_count * 0.02;
+            $new_word_count = ceil($word_count - $word_to_deduct);
+
             // check if the assignment is for editor only and if it meets the max word
             /*$assignment->for_editor && */
-            if ($word_count > $assignment->max_words) {
+            if ($new_word_count > $assignment->max_words) {
                 return redirect()->back()->with(['errorMaxWord' => true, 'editorMaxWord' => $assignment->max_words]);
             }
 
@@ -966,7 +982,13 @@ class LearnerController extends Controller
         $group = AssignmentGroup::where('id', $id)->whereHas('learners', function($query){
             $query->where('user_id', Auth::user()->id);
         })->firstOrFail();
-        return view('frontend.learner.groupShow', compact('group'));
+        $groupLearners = AssignmentGroupLearner::where('assignment_group_id', $id)
+            ->where('user_id', '!=', Auth::user()->id);
+        $groupLearner = AssignmentGroupLearner::where('assignment_group_id', $id)
+            ->where('user_id', '=', Auth::user()->id)->first();
+        $otherLearnersIdList = $groupLearners->pluck('id')->toArray();
+        $could_send_feedback_to = $groupLearner->could_send_feedback_to_id_list ?: $otherLearnersIdList;
+        return view('frontend.learner.groupShow', compact('group', 'otherLearnersIdList', 'could_send_feedback_to'));
     }
 
 
@@ -1030,7 +1052,7 @@ class LearnerController extends Controller
             ->get();
 
         $paid = Invoice::where('user_id', Auth::user()->id)
-            ->where('fiken_is_paid', 1)
+            ->whereIn('fiken_is_paid', [1,3])
             ->orderBy('fiken_dueDate', 'DESC')
             ->get();
 
@@ -1058,6 +1080,8 @@ class LearnerController extends Controller
 
         $giftPurchases = Auth::user()->giftPurchases;
 
+        $orderHistory = Auth::user()->orders;
+
         /*$ch = curl_init($this->fikenInvoices);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
@@ -1067,7 +1091,7 @@ class LearnerController extends Controller
         $data = json_decode($data);
         $fikenInvoices = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};*/
         return view('frontend.learner.invoice', compact('invoices', 'sveaOrders', 'user',
-            'orderAttachments', 'giftPurchases'));
+            'orderAttachments', 'giftPurchases', 'orderHistory'));
     }
 
 
@@ -1088,6 +1112,12 @@ class LearnerController extends Controller
             return view('frontend.learner.invoiceShow', compact('invoice', 'fikenInvoices'));
         endif;
             return abort('503');
+    }
+
+    public function changePortal( $portal )
+    {
+        \Session::put('current-portal', $portal);
+        return redirect()->route('learner.dashboard');
     }
 
     /**
@@ -1114,6 +1144,52 @@ class LearnerController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function downloadOrder( $order_id )
+    {
+        $order = Order::find($order_id);
+
+        $user = \Auth::user();
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        $pdf->loadHTML(view('frontend.pdf.order-receipt-new', compact('order', 'user')));
+
+        return $pdf->download($order->id . '.pdf');
+    }
+
+    public function downloadCreditedOrder( $order_id )
+    {
+        $order = Order::find($order_id);
+
+        $user = \Auth::user();
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        $pdf->loadHTML(view('frontend.pdf.svea-credit-note', compact('order', 'user')));
+
+        return $pdf->download($order->id . '-Kreditnota.pdf');
+    }
+
+    public function saveCompany( $order_id, Request $request )
+    {
+        $this->validate($request,[
+            'customer_number' => 'required',
+            'company_name' => 'required',
+            'street_address' => 'required',
+            'post_number' => 'required',
+            'place' => 'required'
+        ]);
+
+        $orderCompany = OrderCompany::find($request->id) ? OrderCompany::find($request->id) : new OrderCompany;
+        $orderCompany->order_id = $request->order_id;
+        $orderCompany->customer_number = $request->customer_number;
+        $orderCompany->company_name = $request->company_name;
+        $orderCompany->street_address = $request->street_address;
+        $orderCompany->post_number = $request->post_number;
+        $orderCompany->place = $request->place;
+        $orderCompany->save();
+
+        return response()->json($orderCompany->order);
     }
 
     /**
@@ -4054,6 +4130,29 @@ class LearnerController extends Controller
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_URL, $pdf_url);
         curl_setopt($ch, CURLOPT_USERPWD, "$this->username:$this->password");
+        curl_exec($ch);
+        curl_close($ch);
+        fclose($out);
+        return response()->download($filename);
+    }
+
+    public function downloadCreditNote( $invoice_id )
+    {
+        $invoice = Invoice::find($invoice_id); // this is invoice id
+        $pdf_url = $invoice->credit_note_url;
+
+        $expFile = explode("/", $pdf_url);
+
+        $filename = 'fiken-invoice/'.end($expFile);
+
+        // write file on the server
+        $out = fopen($filename, 'wb');
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_FILE, $out);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+        curl_setopt($ch, CURLOPT_URL, $pdf_url);
         curl_exec($ch);
         curl_close($ch);
         fclose($out);

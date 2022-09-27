@@ -2,7 +2,7 @@
     <div class="card">
         <div id="scrollhere"></div>
         <form-wizard color="#c12938" error-color="#ff4949"
-                     :nextButtonText="trans('site.paginate.next')" :backButtonText="trans('site.paginate.previous')"
+                     :nextButtonText="'Til betaling'" :backButtonText="trans('site.paginate.previous')"
                      :finishButtonText="trans('site.front.buy')" title="" subtitle="">
 
             <tab-content :title="'Bestillingsskjema'" icon="fa fa-clipboard-list" :before-change="validateOrder">
@@ -61,7 +61,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                                             v-html="trans('site.free-text-evaluation.choose-genre')">
                                     </option>
 
-                                    <option :value="type.id" v-for="type in assignmentTypes" v-text="type.option">
+                                    <option :value="type.id" v-for="type in assignmentTypes" v-text="type.name">
                                     </option>
                                 </select>
                             </div> <!-- end genre -->
@@ -293,7 +293,8 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                         <button type="button" class="vipps-btn" slot="custom-buttons-right" @click="vippsCheckout();"
                                 :disabled="isLoading">
                             <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i>
-                            <img src="/images-new/betal-vipps.png" height="36" alt="vipps-buy-button"
+                            <span>Hurtigutsjekk med</span>
+                            <img src="/images-new/vipps.png" class="inline" alt="vipps-buy-button"
                                  :style="isLoading ? 'opacity: .8;' : ''">
                         </button>
                     </template>
@@ -301,7 +302,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                     <template v-if="!currentUser || (currentUser && currentUser.could_buy_course)">
                         <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab(); scrollTop()" class="wizard-footer-right"
                                        :style="props.fillButtonStyle" :disabled="!currentUser && !isNewCustomer && props.activeTabIndex > 0">
-                            {{ trans('site.learner.next-text') }}
+                            Til betaling
                         </wizard-button>
 
                         <!-- v-else before -->
@@ -576,6 +577,22 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
 <style>
     .custom-checkbox>[type=checkbox]:checked+label:before, .custom-checkbox>[type=checkbox]:not(:checked)+label:before {
         border: 1px solid;
+    }
+
+    .vipps-btn {
+        border: none;
+        color: #fff;
+        background-color: #fe5b24;
+        font-weight: 600;
+        margin-right: 10px;
+        padding: 0.5180469716em 1.41575em;
+        position: relative;
+    }
+
+    .vipps-btn img.inline {
+        height: 2ex;
+        display: inline;
+        vertical-align: text-bottom;
     }
 
 </style>

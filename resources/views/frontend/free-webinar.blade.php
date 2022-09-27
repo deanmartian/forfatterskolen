@@ -139,7 +139,7 @@
                                    class="form-control no-border-left" required value="{{old('last_name')}}">
                         </div>
 
-                        <button type="submit" class="btn site-btn-global w-100">
+                        <button type="submit" class="btn site-btn-global w-100" onclick="gtag_report_conversion()">
                             {{ trans('site.front.free-webinar.sign-me-in') }}
                         </button>
                     </form>

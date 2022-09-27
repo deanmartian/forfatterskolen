@@ -105,7 +105,7 @@ class AssignmentController extends Controller
 
         // group by 3 according to genre (prioritize grouping by genre)
         $assignmentType = FrontendHelpers::assignmentType();
-        $assignmentType[] = [ 'id' => '', 'option' => 'none'];
+        $assignmentType[] = [ 'id' => '', 'name' => 'none'];
 
         foreach ($assignmentType as $genre) {
 
@@ -367,6 +367,26 @@ class AssignmentController extends Controller
         $assignment->save();
 
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Submission date updated.'),
+            'alert_type' => 'success', 'not-former-courses' => true]);
+    }
+
+    public function updateAvailableDate( $assignment_id, Request $request )
+    {
+        $assignment = Assignment::find($assignment_id);
+        $assignment->available_date = $request->available_date;
+        $assignment->save();
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Available date updated.'),
+            'alert_type' => 'success', 'not-former-courses' => true]);
+    }
+
+    public function updateMaxWords(  $assignment_id, Request $request )
+    {
+        $assignment = Assignment::find($assignment_id);
+        $assignment->max_words = $request->max_words;
+        $assignment->save();
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Max words updated.'),
             'alert_type' => 'success', 'not-former-courses' => true]);
     }
 

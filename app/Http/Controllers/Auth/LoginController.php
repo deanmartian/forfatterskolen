@@ -39,9 +39,14 @@ class LoginController extends Controller
 
     public function editorLogin(LoginRequest $request)
     {
-        $user = User::where('email', $request->email)->whereIn('role', array(3))->orWhere('admin_with_editor_access', 1)->first();
+        $user = User::where('email', $request->email)
+            ->where(function($query) {
+                $query->whereIn('role', array(3))->orWhere('admin_with_editor_access', 1);
+            })->first();
 
         if(!$user) return redirect()->back()->withErrors('Unknown email');
+
+        if ($user->is_active != 1) return redirect()->back()->withErrors('Invalid User');
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 3])) :
             // Authentication passed...
@@ -53,6 +58,44 @@ class LoginController extends Controller
         
 
         return redirect()->back()->withInput()->withErrors('Feil passord');
+    }
+
+    public function giutbokLogin( LoginRequest $request )
+    {
+        $user = User::where('email', $request->email)
+            ->where(function($query) {
+                $query->whereIn('role', array(4))->orWhere('admin_with_giutbok_access', 1);
+            })->first();
+
+        if(!$user) return redirect()->back()->withErrors('Unknown email');
+
+        if ($user->is_active != 1) return redirect()->back()->withErrors('Invalid User');
+
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'role' => 4])) :
+            // Authentication passed...
+            return redirect()->back();
+        elseif (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'admin_with_giutbok_access' => 1])) :
+            // Authentication passed...
+            return redirect()->back();
+        endif;
+
+
+        return redirect()->back()->withInput()->withErrors('Feil passord');
+    }
+
+    public function editorEmailLogin($email)
+    {
+        $email = decrypt($email);
+
+        $user = User::where('email', $email)
+            ->where(function($query) {
+                $query->whereIn('role', array(3))->orWhere('admin_with_editor_access', 1);
+            })->first();
+
+        if(!$user) return response(view('editor.auth.editor_login'));
+
+        Auth::login($user);
+        return redirect()->route('editor.dashboard');
     }
 
     public function login(LoginRequest $request)
@@ -92,7 +135,43 @@ class LoginController extends Controller
         return redirect()->route('auth.login.show')->withInput()->withErrors('Feil passord');
     }
 
+    public function selfPublishingLogin(LoginRequest $request)
+    {
+        $this->validate($request, [
+            'email' => 'required|email'
+        ]);
+        $user = User::where('email', $request->email)->where('role', 2)
+            ->where('is_self_publishing_learner', 1)->first();
+        $secondaryEmail = UserEmail::where('email', $request->email)->first();
 
+        if(!$user && !$secondaryEmail) return redirect()->back()->withErrors('Unknown email');
+        if ($secondaryEmail) {
+            $user = $secondaryEmail->users->first();
+        }
+
+        if (Auth::attempt(['email' => $user->email, 'password' => $request->password, 'role' => 2])) :
+            // Authentication passed...
+
+            $browser = new BrowserDetection();
+            $browserName     = $browser->getName();
+            $platformName    = $browser->getPlatformVersion();
+
+            $login = LearnerLogin::create([
+                'user_id'       => Auth::user()->id,
+                'ip'            => $request->ip(),
+                'country'       => 'Norway',//AdminHelpers::ip_info($request->ip(), "Country"),
+                'country_code'  => 'NO',//AdminHelpers::ip_info($request->ip(), "Country Code"),
+                'provider'      => $browserName,
+                'platform'      => $platformName
+            ]);
+
+            \Session::put('learner_login_id', $login->id);
+            \Session::put('current-portal', 'self-publishing');
+            return redirect(route('learner.dashboard'));
+        endif;
+
+        return redirect()->route('auth.login.show')->withInput()->withErrors('Feil passord');
+    }
 
     
 
@@ -216,6 +295,11 @@ class LoginController extends Controller
     public function showFrontend()
     {
         return view('frontend.auth.login');
+    }
+
+    public function showSelfPublishing()
+    {
+        return view('frontend.auth.self-publishing-login');
     }
 
     /**

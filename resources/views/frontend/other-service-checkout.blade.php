@@ -103,7 +103,7 @@
                                         {{ trans('site.front.submit') }}
                                     </button>
                                     @if($data['price'])
-                                        <a href="{{ route('front.other-service-checkout', ['plan_id' => 1, 'has_data' => 0]) }}"
+                                        <a href="{{ route('front.other-service-checkout', ['plan' => 1, 'has_data' => 0]) }}"
                                            class="btn btn-default btn-common-padding">
                                             {{ trans('site.front.correction.fjem') }}
                                         </a>

@@ -35,7 +35,7 @@
 <body>
 <div>
     <h2>{{ trans('site.error-400') }}</h2>
-    <span>{{ trans('site.error-400-description') }}</span>
+    <span>{{ trans('site.error-400-description') }} : {{ $exception->getMessage()  }}</span>
 </div>
 
 </body>

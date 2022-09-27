@@ -35,7 +35,7 @@
                                                 {{$courseTaken->package->course->title}}
                                             </h3>
                                             <p>
-                                                {{\Illuminate\Support\Str::limit(strip_tags($courseTaken->package->course->description), 200)}}
+                                                {!! \Illuminate\Support\Str::limit(strip_tags($courseTaken->package->course->description), 200) !!}
                                             </p>
                                         </div>
                                         <div class="col-md-3">
@@ -639,7 +639,7 @@
                                     {{ trans('site.front.select-genre') }}
                                 </option>
                                 @foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
-                                    <option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
+                                    <option value="{{ $type->id }}"> {{ $type->name }} </option>
                                 @endforeach
                             </select>
                         </div>
@@ -688,7 +688,7 @@
                                     {{ trans('site.front.select-genre') }}
                                 </option>
                                 @foreach(\App\Http\FrontendHelpers::assignmentType() as $type)
-                                    <option value="{{ $type['id'] }}"> {{ $type['option'] }} </option>
+                                    <option value="{{ $type->id }}"> {{ $type->name }} </option>
                                 @endforeach
                             </select>
                         </div>

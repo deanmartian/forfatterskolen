@@ -74,7 +74,7 @@ $style = [
                             <table style="{{ $style['email-body_inner'] }}" align="left" width="570" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td style="{{ $fontFamily }} {{ $style['email-body_cell'] }}">
-                                        From: {{ $name }} <br />
+                                        From: {{ $name }} {{ $last_name }} <br />
                                         Email: {{ $email }} <br />
                                         Words: {{ $word_count }} <br /><br />
                                         <!-- Intro -->

@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\CheckoutLog;
 use App\Editor;
+use App\Events\AddToCampaignList;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Auth\LoginController;
 use App\Invoice;
@@ -970,7 +971,14 @@ class ShopManuscriptController extends Controller
 
     public function freeManuscriptShow()
     {
-        return view('frontend.shop-manuscript.free-manuscript');
+        $action = 'front.free-manuscript.send'; // default
+        return view('frontend.shop-manuscript.free-manuscript', compact('action'));
+    }
+
+    public function freeManuscriptShowOther()
+    {
+        $action = 'front.free-manuscript.send-other'; // from other site
+        return view('frontend.shop-manuscript.free-manuscript', compact('action'));
     }
 
 
@@ -1151,11 +1159,30 @@ class ShopManuscriptController extends Controller
         return response()->json(['data' => $request->wordcount]);
     }
 
-
     public function freeManuscriptSend( Request $request )
+    {
+        $request->merge([
+            'from' => 'FS',
+            'ac_list_id' => 199
+        ]);
+        return $this->processFreeManuscript($request);
+    }
+
+    public function freeManuscriptSendOther( Request $request )
+    {
+        $request->merge([
+            'from' => 'Giutbok',
+            'ac_list_id' => 200
+        ]);
+
+        return $this->processFreeManuscript($request);
+    }
+
+    public function processFreeManuscript( Request $request )
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            'last_name' => 'required',
             'email' => 'required|email',
             'genre' => 'required',
             'manuscript_content' => 'required',
@@ -1183,6 +1210,7 @@ Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">po
         endif;
 
         $name = $request->name;
+        $last_name = $request->last_name;
         $email = $request->email;
         $content = $request->manuscript_content;
         $word_count = FrontendHelpers::get_num_of_words($request->manuscript_content);
@@ -1198,9 +1226,12 @@ Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">po
             //mail('post@forfatterskolen.no', 'Free Manuscript', view('emails.free-manuscript', compact('name', 'email', 'content', 'word_count')), $headers);
             FreeManuscript::create([
                 'name' => $request->name,
+                'last_name' => $request->last_name,
                 'email' => $request->email,
                 'genre' => $request->genre,
-                'content' => $request->manuscript_content
+                'from' => $request->from,
+                'content' => $request->manuscript_content,
+                'deadline' => Carbon::today()->addDays(6)
             ]);
             /*AdminHelpers::send_email('Free Manuscript',
                 'post@forfatterskolen.no', 'post@forfatterskolen.no',
@@ -1208,12 +1239,22 @@ Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">po
             $to = 'post@forfatterskolen.no'; //
             $emailData = [
                 'email_subject' => 'Free Manuscript',
-                'email_message' => view('emails.free-manuscript', compact('name', 'email', 'content', 'word_count'))->render(),
+                'email_message' => view('emails.free-manuscript', compact('name','last_name', 'email', 'content', 'word_count'))->render(),
                 'from_name' => '',
                 'from_email' => 'post@forfatterskolen.no',
                 'attach_file' => NULL
             ];
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+            if ($request->from === 'Giutbok') {
+                \Mail::to('terje@giutbok.no')->queue(new SubjectBodyEmail($emailData));
+            }
+
+            $list_id = $request->ac_list_id;
+            $activeCampaign['email'] = $request->email;
+            $activeCampaign['name'] = $request->name;
+            $activeCampaign['last_name'] = $request->last_name;
+            event( new AddToCampaignList($list_id, $activeCampaign));
+            //AdminHelpers::addToActiveCampaignList($list_id, $activeCampaign);
 
             // forget the wordcount
             Session::forget('wordcount');

@@ -7,6 +7,7 @@ use App\Course;
 use App\CoursesTaken;
 use App\CronLog;
 use App\EmailTemplate;
+use App\Genre;
 use App\Mail\SubjectBodyEmail;
 use App\Notification;
 use App\Order;
@@ -73,9 +74,10 @@ class AdminHelpers
     public static function editorList()
     {
         return \App\User::where(function($query){
-            $query->whereIn('role', [1, 3])
+            $query->whereIn('role', [3])
                 ->orWhere('admin_with_editor_access', 1);
         })
+            ->where('is_active', 1)
             ->orderBy('id', 'desc')
             ->get();
     }
@@ -913,7 +915,20 @@ class AdminHelpers
      */
     public static function assignmentType($id = NULL)
     {
-        $types = array(
+
+        $genre = Genre::all();
+
+        if ($id >= 0 && !is_null($id)) {
+            $genre = 'None';
+            $findGenre = Genre::find($id);
+
+            if ($id > 0 && $findGenre) {
+                $genre = $findGenre->name;
+            }
+        }
+
+        return $genre;
+        /*$types = array(
             array( 'id' => 1, 'option' => 'Barnebok'),
             array( 'id' => 2, 'option' => 'Fantasy'),
             array( 'id' => 3, 'option' => 'Skjønnlitterært'),
@@ -928,6 +943,8 @@ class AdminHelpers
             array( 'id' => 12, 'option' => 'Dokumentar'),
             array( 'id' => 13, 'option' => 'Sci-fi'),
             array( 'id' => 14, 'option' => 'Dystopi'),
+            array( 'id' => 15, 'option' => 'Valgfri'),
+            array( 'id' => 16, 'option' => 'Feelgood'),
         );
 
         if ($id >= 0) {
@@ -942,7 +959,7 @@ class AdminHelpers
             return "None";
         }
 
-        return $types;
+        return $types;*/
     }
 
     /**
@@ -1015,6 +1032,25 @@ class AdminHelpers
             array( 'id' => 4, 'options' => 'Editor Settings', 'route' => 'editor.settings', 'request_name' => 'editor-settings'),
             array( 'id' => 5, 'options' => 'Assigned Webinar', 'route' => 'editor.assigned-webinar', 'request_name' => 'assigned-webinar'),
             array( 'id' => 8, 'option' => 'Årshjul', 'route' => 'editor.yearly-calendar.index', 'request_name' => 'yearly_calendar')
+        );
+
+        if ($id > 0) {
+            foreach ($pages as $page) {
+                if ($page['id'] == $id) {
+                    return $page['option'];
+                }
+            }
+        }
+
+        return $pages;
+    }
+
+    public static function GAdminPageList($id = NULL)
+    {
+        $pages = array(
+            array( 'id' => 1, 'option' => 'Dashboard', 'route' => 'g-admin.dashboard', 'request_name' => 'dashboard'),
+            array( 'id' => 2, 'option' => 'Learners', 'route' => 'g-admin.learner.index', 'request_name' => 'learner'),
+            array( 'id' => 3, 'option' => 'Self Publishing', 'route' => 'g-admin.self-publishing.index', 'request_name' => 'self-publishing'),
         );
 
         if ($id > 0) {

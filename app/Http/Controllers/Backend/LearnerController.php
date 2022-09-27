@@ -5,6 +5,7 @@ use App\Assignment;
 use App\AssignmentAddon;
 use App\AssignmentGroupLearner;
 use App\AssignmentManuscript;
+use App\AssignmentTemplate;
 use App\CoachingTimerManuscript;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
@@ -17,9 +18,12 @@ use App\Invoice;
 use App\Jobs\AddMailToQueueJob;
 use App\LearnerLogin;
 use App\Mail\SubjectBodyEmail;
+use App\Order;
 use App\PaymentMode;
 use App\PaymentPlan;
 use App\PrivateMessage;
+use App\SelfPublishing;
+use App\SelfPublishingLearner;
 use App\Services\CourseService;
 use App\UserAutoRegisterToCourseWebinar;
 use App\UserEmail;
@@ -143,6 +147,10 @@ class LearnerController extends Controller
         $registeredWebinarLists = $learner->registeredWebinars->pluck('id');
         $registeredWebinars = $learner->registeredWebinars()->latest()->get();
         $learnerGiftPurchases = $learner->giftPurchases->pluck('id');
+        $assignmentTemplates = AssignmentTemplate::get();
+        $learnerSelfPublishingList = $learner->selfPublishingList;
+        $selfPublishingList = SelfPublishing::whereNotIn('id',
+            $learner->selfPublishingList()->pluck('self_publishing_id')->toArray())->get();
 
         $emailHistories = EmailHistory::where(function($query) use ($learnerAssignmentManuscripts){
                 $query->where('parent', 'LIKE', 'assignment-manuscripts%');
@@ -188,11 +196,15 @@ class LearnerController extends Controller
                 $query->where('parent', 'LIKE', 'gift-purchase');
                 $query->where('recipient', $learner->email);
             })
+            ->orWhere(function($query) use ($learner){
+                $query->where('recipient', $learner->email);
+            })
             ->latest()
+            ->withTrashed()
             ->get();
 
         return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories',
-            'registeredWebinars'));
+            'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList'));
     }
 
 
@@ -258,8 +270,8 @@ class LearnerController extends Controller
                 endforeach;
             endif;
             // delete related email history
-            EmailHistory::where('parent', 'LIKE', '%courses-taken%')
-                ->where('parent_id', $courseTaken->id)->delete();
+            /*EmailHistory::where('parent', 'LIKE', '%courses-taken%')
+                ->where('parent_id', $courseTaken->id)->delete();*/
             $courseTaken->delete();
     	endif;
     	return redirect()->back();
@@ -377,8 +389,8 @@ class LearnerController extends Controller
     {
         $courseTaken = CoursesTaken::findOrFail($request->coursetaken_id);
         // delete related email history
-        EmailHistory::where('parent', 'LIKE', '%courses-taken%')
-            ->where('parent_id', $courseTaken->id)->delete();
+        /*EmailHistory::where('parent', 'LIKE', '%courses-taken%')
+            ->where('parent_id', $courseTaken->id)->delete();*/
         $courseTaken->delete();
         return redirect()->back();
     }
@@ -422,6 +434,7 @@ class LearnerController extends Controller
                 ->whereHas('editorGenrePreferences', function($q) use ($shopManuscriptTaken){
                     $q->where('genre_id', $shopManuscriptTaken->genre);
                 })
+                ->where('is_active', 1)
                 ->whereNotIn('users.id', $hiddenEditorIds)
                 ->orderBy('id', 'desc')
                 ->get();
@@ -429,6 +442,7 @@ class LearnerController extends Controller
             $editor = User::where(function($query){
                 $query->where('role', 3)->orWhere('admin_with_editor_access', 1);
             })
+            ->where('is_active', 1)
             ->whereNotIn('users.id', $hiddenEditorIds)
             ->orderBy('id', 'desc')
             ->get();
@@ -686,8 +700,8 @@ class LearnerController extends Controller
             }
 
             // delete related email history
-            EmailHistory::where('parent', 'LIKE', '%courses-taken%')
-            ->where('parent_id', $courseTaken->id)->delete();
+            /*EmailHistory::where('parent', 'LIKE', '%courses-taken%')
+            ->where('parent_id', $courseTaken->id)->delete();*/
             $courseTaken->delete();
 
             return redirect()->back()->with([
@@ -1048,7 +1062,7 @@ class LearnerController extends Controller
         ]);
         $workshopTakenCount->workshop_count = $request->workshop_count;
         $workshopTakenCount->save();
-        return redirect()->route('admin.learner.show', $id);
+        return redirect()->back();
     }
 
     /**
@@ -1244,6 +1258,49 @@ class LearnerController extends Controller
             ->paginate(25);
 
         return view('backend.learner.list_notes', compact('userNotes'));
+    }
+
+    public function generatePassword()
+    {
+        return AdminHelpers::generateHash(8);
+    }
+
+    public function registerLearner( Request $request )
+    {
+        $this->validate($request, [
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'password' => 'required|string',
+        ]);
+
+        $user = new User();
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->default_password = $request->password;
+        $user->need_pass_update = 1;
+        $user->save();
+
+        $encode_email = encrypt($user->email);
+
+        // Send welcome email
+        $actionText = 'Klikk her for å logge inn';
+        $actionUrl = route('auth.login.email', $encode_email);
+
+        $to = $user->email;
+        $emailData = [
+            'email_subject' => 'Velkommen til Forfatterskolen',
+            'email_message' => view('emails.registration', compact('actionText', 'actionUrl', 'user'))->render(),
+            'from_name' => '',
+            'from_email' => 'post@forfatterskolen.no',
+            'attach_file' => NULL
+        ];
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Learner created successfully.'),
+            'alert_type' => 'success', 'not-former-courses' => true]);
     }
 
     /**
@@ -1976,6 +2033,20 @@ class LearnerController extends Controller
         ]);
     }
 
+    public function addSelfPublishing( $learner_id, Request $request )
+    {
+        SelfPublishingLearner::create([
+            'user_id' => $learner_id,
+            'self_publishing_id' => $request->self_publishing_id
+        ]);
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Self Publishing added successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
     /**
      * @param $learner_id
      * @param $assignment_id
@@ -1992,7 +2063,7 @@ class LearnerController extends Controller
             'user_id' => $learner_id,
             'assignment_id' => $assignment_id
         ])->first();
-        $editors = \App\User::whereIn('role', array(1,3))->get();
+        $editors = AdminHelpers::editorList();
 
         return view('backend.learner.assignment', compact('assignment', 'learner', 'editors', 'manuscript'));
     }
@@ -2049,6 +2120,13 @@ class LearnerController extends Controller
             'alert_type'            => 'success',
             'not-former-courses'    => true
         ]);
+    }
+
+    public function isPublishingLearner( $user_id, Request $request )
+    {
+        $user = User::find($user_id);
+        $user->is_self_publishing_learner = $request->is_self_publishing_learner;
+        $user->save();
     }
 
     /**
@@ -2120,6 +2198,136 @@ class LearnerController extends Controller
             'not-former-courses'    => true
         ]);
     }
+
+    public function createSveaCreditNote( $order_id )
+    {
+        $order = Order::find($order_id);
+
+        $checkoutMerchantId = config('services.svea.checkoutid');
+        $checkoutSecret = config('services.svea.checkout_secret');
+
+        //set endpoint url. Eg. test or prod
+        $baseUrl = \Svea\Checkout\Transport\Connector::PROD_ADMIN_BASE_URL;
+
+        try {
+            /**
+             * Create Connector object
+             *
+             * Exception \Svea\Checkout\Exception\SveaConnectorException will be returned if
+             * some of fields $merchantId, $sharedSecret and $baseUrl is missing
+             *
+             *
+             * Credit Order Amount
+             *
+             * Possible Exceptions are:
+             * \Svea\Checkout\Exception\SveaInputValidationException
+             * \Svea\Checkout\Exception\SveaApiException
+             * \Exception - for any other error
+             */
+            $conn = \Svea\Checkout\Transport\Connector::init($checkoutMerchantId, $checkoutSecret, $baseUrl);
+            $checkoutClient = new \Svea\Checkout\CheckoutAdminClient($conn);
+
+            if ($order->svea_payment_type === 'Card') {
+                $data = array(
+                    "orderId" => (int)$order->svea_order_id, // required - Long  filed (Specified Checkout order for cancel amount)
+                    "deliveryId" => (int)$order->svea_delivery_id, // required - Int - Id of order delivery
+                    "creditedAmount" => (int)$order->total_price * 100, // required - Int Amount to be credit minor currency,
+                );
+                $response = $checkoutClient->creditOrderAmount($data);
+            } else {
+                $data = array(
+                    "orderId" => (int)$order->svea_order_id, // required - Long  filed (Specified Checkout order for cancel amount)
+                    "deliveryId" => (int)$order->svea_delivery_id, // required - Long - Id of the specified delivery.
+                    "orderRowIds" => array(1), // required - Array - Ids of the delivered order rows that will be credited.
+                );
+                $response = $checkoutClient->creditOrderRows($data);
+            }
+
+            $order->is_credited_amount = 1;
+            $order->save();
+
+            return redirect()->back()->with([
+                'errors'                => AdminHelpers::createMessageBag('Order credited.'),
+                'alert_type'            => 'success',
+                'not-former-courses'    => true
+            ]);
+
+        }  catch (\Svea\Checkout\Exception\SveaApiException $ex) {
+            $error = $ex->getMessage();
+        } catch (\Svea\Checkout\Exception\SveaConnectorException $ex) {
+            $error = $ex->getMessage();
+        } catch (\Svea\Checkout\Exception\SveaInputValidationException $ex) {
+            $error = $ex->getMessage();
+        } catch (\Exception $ex) {
+            $error = $ex->getMessage();
+        }
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag($error),
+            'alert_type'            => 'danger',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    public function deliverSveaOrder( $order_id )
+    {
+        $order = Order::find($order_id);
+
+        $checkoutMerchantId = config('services.svea.checkoutid');
+        $checkoutSecret = config('services.svea.checkout_secret');
+
+        //set endpoint url. Eg. test or prod
+        $baseUrl = \Svea\Checkout\Transport\Connector::PROD_ADMIN_BASE_URL;
+
+        try {
+            /**
+             * Create Connector object
+             *
+             * Exception \Svea\Checkout\Exception\SveaConnectorException will be returned if
+             * some of fields $merchantId, $sharedSecret and $baseUrl is missing
+             *
+             *
+             * Credit Order Amount
+             *
+             * Possible Exceptions are:
+             * \Svea\Checkout\Exception\SveaInputValidationException
+             * \Svea\Checkout\Exception\SveaApiException
+             * \Exception - for any other error
+             */
+            $conn = \Svea\Checkout\Transport\Connector::init($checkoutMerchantId, $checkoutSecret, $baseUrl);
+            $checkoutClient = new \Svea\Checkout\CheckoutAdminClient($conn);
+            $data = array(
+                "orderId" => (int)$order->svea_order_id,
+                /* To deliver whole order just send orderRowIds as empty array */
+                "orderRowIds" => array()
+            );
+            $response = $checkoutClient->deliverOrder($data);
+            $order->svea_delivery_id = $response['DeliveryId'];
+            $order->save();
+
+            return redirect()->back()->with([
+                'errors'                => AdminHelpers::createMessageBag('Order delivered successfully.'),
+                'alert_type'            => 'success',
+                'not-former-courses'    => true
+            ]);
+
+        }  catch (\Svea\Checkout\Exception\SveaApiException $ex) {
+            $error = $ex->getMessage();
+        } catch (\Svea\Checkout\Exception\SveaConnectorException $ex) {
+            $error = $ex->getMessage();
+        } catch (\Svea\Checkout\Exception\SveaInputValidationException $ex) {
+            $error = $ex->getMessage();
+        } catch (\Exception $ex) {
+            $error = $ex->getMessage();
+        }
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag($error),
+            'alert_type'            => 'danger',
+            'not-former-courses'    => true
+        ]);
+    }
+
     public function sendRequestToEditor($id, Request $request)
     {
         // set expected finish
@@ -2148,6 +2356,8 @@ class LearnerController extends Controller
         $emailTemplate_content =  $request->message;
         $emailTemplate_content = str_replace(':editor_expected_finish',$editor_expected_finish, $emailTemplate_content);
         $emailTemplate_content = str_replace(':manuscript_finish',$expected_finish, $emailTemplate_content);
+        $emailTemplate_content = str_replace(':login_link',
+            "<a href='" . route('editor.login.email', encrypt($to)) . "'>" . trans('site.front.form.login') . "</a>", $emailTemplate_content);
 
         dispatch(new AddMailToQueueJob($to, $request->subject, $emailTemplate_content, $request->from_email,
             null, null,

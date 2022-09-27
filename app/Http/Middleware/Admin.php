@@ -40,7 +40,8 @@ class Admin
                 return response(view('backend.auth.login'));
             endif;
         else :
-            if (!in_array($this->auth->user()->role, array(1))) :
+            // allow role 4 = giutbok admin to access some page
+            if (!in_array($this->auth->user()->role, array(1, 4))) :
                 $this->auth->logout();
                 echo "Forbidden <br />";
                 return redirect('/');

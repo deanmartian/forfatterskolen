@@ -98,7 +98,9 @@ return [
         'checkoutid' => env('SVEA_CHECKOUTID'),
         'checkout_secret' => env('SVEA_CHECKOUT_SECRET'),
         'checkoutid_test' => env('SVEA_CHECKOUTID_TEST'),
-        'checkout_secret_test' => env('SVEA_CHECKOUT_SECRET_TEST')
+        'checkout_secret_test' => env('SVEA_CHECKOUT_SECRET_TEST'),
+        'checkoutid_test2' => env('SVEA_CHECKOUTID_TEST2'),
+        'checkout_secret_test2' => env('SVEA_CHECKOUT_SECRET_TEST2')
     ],
 
     'vipps' => [

@@ -34,6 +34,7 @@ class Controller extends BaseController
         $initiatePaymentResult = $repository->initiatePayment($access_token, $data); // initiate the payment
 
         if ($initiatePaymentResult instanceof ApiException) {
+            abort($initiatePaymentResult->getCode(), $initiatePaymentResult->getMessage());
             return ApiResponse::error($initiatePaymentResult->getMessage(), $initiatePaymentResult->getData(),
                 $initiatePaymentResult->getCode());
         }
