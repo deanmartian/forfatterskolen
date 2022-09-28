@@ -280,6 +280,10 @@
 							<th>Name</th>
 							<th>Email</th>
 							<th>Total Worked</th>
+							<th>Ghostwriter</th>
+							<th>Språkvask</th>
+							<th>Korrektur</th>
+							<th>Coahing</th>
 							<th style="width: 250px;">{{ trans('site.editor-assigned-genre') }}</th>
 							<th></th>
 						</tr>
@@ -302,6 +306,26 @@
 									@if($admin->role == 3 || $admin ->admin_with_editor_access == 1)
 									<a href="{{ route('admin.total_editor_worked', $admin->id) }}" class="btn btn-primary btn-xs">Preview Editor Total Worked</a>
 									@endif
+								</td>
+								<td>
+									<input type="checkbox" data-toggle="toggle" data-on="Yes"
+										   class="admin-type-toggle" data-off="No" data-type="ghost-writer"
+										   data-id="{{$admin->id}}" data-size="mini" @if($admin->is_ghost_writer_admin) {{ 'checked' }} @endif>
+								</td>
+								<td>
+									<input type="checkbox" data-toggle="toggle" data-on="Yes"
+										   class="admin-type-toggle" data-off="No" data-type="copy-editing"
+										   data-id="{{$admin->id}}" data-size="mini" @if($admin->is_copy_editing_admin) {{ 'checked' }} @endif>
+								</td>
+								<td>
+									<input type="checkbox" data-toggle="toggle" data-on="Yes"
+										   class="admin-type-toggle" data-off="No" data-type="correction"
+										   data-id="{{$admin->id}}" data-size="mini" @if($admin->is_correction_admin) {{ 'checked' }} @endif>
+								</td>
+								<td>
+									<input type="checkbox" data-toggle="toggle" data-on="Yes"
+										   class="admin-type-toggle" data-off="No" data-type="coaching"
+										   data-id="{{$admin->id}}" data-size="mini" @if($admin->is_coaching_admin) {{ 'checked' }} @endif>
 								</td>
 								<td>
 									@if($admin->role == 3 || $admin ->admin_with_editor_access == 1)
@@ -993,6 +1017,22 @@
             }
         });
     });
+
+    $(".admin-type-toggle").change(function() {
+        let id = $(this).attr('data-id');
+        let type = $(this).data('type');
+        let is_checked = $(this).prop('checked');
+        let check_val = is_checked ? 1 : 0;
+
+        $.ajax({
+            type:'POST',
+            url:'/admin/type-change',
+            headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            data: { "id" : id, 'status' : check_val, "type" : type },
+            success: function(data){
+            }
+        });
+	});
 
     $("#createStaffBtn").click(function () {
 		let modal = $("#staffModal");

@@ -235,6 +235,32 @@ class AdminController extends Controller
         ]);
     }
 
+    public function adminTypeChange( Request $request )
+    {
+        $user = User::where('id', $request->id)->first();
+        switch ($request->type) {
+            case 'ghost-writer':
+                $user->is_ghost_writer_admin = $request->status;
+                break;
+            case 'copy-editing':
+                $user->is_copy_editing_admin = $request->status;
+                break;
+            case 'correction':
+                $user->is_correction_admin = $request->status;
+                break;
+            case 'coaching':
+                $user->is_coaching_admin = $request->status;
+                break;
+        }
+
+        $user->save();
+        return response()->json([
+            'data' => [
+                'success' => true,
+            ]
+        ]);
+    }
+
     public function clearCache()
     {
         \Artisan::call('cache:clear');
