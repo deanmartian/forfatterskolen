@@ -31,7 +31,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'first_name', 'last_name', 'password', 'email', 'role', 'gender', 'birthday', 'profile_image',
-        'default_password', 'need_pass_update', 'is_active', 'admin_with_giutbok_access', 'is_self_publishing_learner'
+        'default_password', 'need_pass_update', 'is_active', 'admin_with_giutbok_access', 'is_self_publishing_learner',
+        'is_ghost_writer_admin', 'is_copy_editing_admin', 'is_correction_admin', 'is_coaching_admin'
     ];
 
     /**

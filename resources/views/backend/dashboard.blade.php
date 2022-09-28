@@ -966,7 +966,10 @@
 										@if ($coachingTimer->editor_id)
 											{{ $coachingTimer->editor->full_name }}
 										@else
-											<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $coachingTimer->id, 'type' => 3]) }}">{{ trans('site.assign-editor') }}</button>
+											<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal"
+													data-target="#assignEditorModal"
+													data-editors="{{ json_encode($coachingEditors) }}"
+													data-action="{{ route('admin.other-service.assign-editor', ['id' => $coachingTimer->id, 'type' => 3]) }}">{{ trans('site.assign-editor') }}</button>
 										@endif
 									</td>
 									<td>
@@ -1014,7 +1017,11 @@
 										</a>
 									</td>
 									<td>
-										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.assign-editor') }}</button>
+										<button class="btn btn-xs btn-warning assignEditorBtn"
+												data-toggle="modal"
+												data-target="#assignEditorModal"
+												data-editors="{{ json_encode($correctionEditors) }}"
+												data-action="{{ route('admin.other-service.assign-editor', ['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.assign-editor') }}</button>
 									</td>
 								</tr>
 							@endforeach
@@ -1055,7 +1062,10 @@
 										</a>
 									</td>
 									<td>
-										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $copyEditing->id, 'type' => 1]) }}">{{ trans('site.assign-editor') }}</button>
+										<button class="btn btn-xs btn-warning assignEditorBtn"
+												data-toggle="modal" data-target="#assignEditorModal"
+												data-editors="{{ json_encode($copyEditingEditors) }}"
+												data-action="{{ route('admin.other-service.assign-editor', ['id' => $copyEditing->id, 'type' => 1]) }}">{{ trans('site.assign-editor') }}</button>
 									</td>
 								</tr>
 							@endforeach
@@ -1302,10 +1312,10 @@
 					<div class="form-group">
 						<label>{{ trans('site.assign-editor') }}</label>
 						<select name="editor_id" class="form-control select2" required>
-							<option value="" disabled="" selected>-- Select Editor --</option>
+							{{--<option value="" disabled="" selected>-- Select Editor --</option>
 							@foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
-							@endforeach
+							@endforeach--}}
 						</select>
 					</div>
 					<div class="text-right">
@@ -1846,7 +1856,15 @@
     $('.assignEditorBtn').click(function(){
         let action = $(this).data('action');
         let editor = $(this).data('editor');
+        let editors = $(this).data('editors');
         let modal = $('#assignEditorModal');
+        modal.find('select').empty();
+        let editorList = '<option value="" disabled="" selected>-- Select Editor --</option>';
+
+		$.each(editors, function (k, e) {
+            editorList += '<option value="' + e.id + '">' + e.full_name + '</option>';
+        });
+        modal.find('select').append(editorList);
         modal.find('select').val(editor);
         modal.find('form').attr('action', action);
     });

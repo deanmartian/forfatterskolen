@@ -921,6 +921,7 @@ Route::group([
         Route::get('/admin/export_nearly_expired_courses', 'AdminController@exportNearlyExpiredCourses')->name('admin.admin.export_nearly_expired_courses');
         Route::post('/admin/{id}/page-access', 'AdminController@pageAccess')->name('admin.admin.page-access');
         Route::post('/admin-status', 'AdminController@adminStatus')->name('admin.admin.status');
+        Route::post('/admin/type-change', 'AdminController@adminTypeChange');
         Route::get('/admin/clear/cache', 'AdminController@clearCache')->name('admin.clear.cache');
         Route::resource('/admin', 'AdminController', [
             'except' => ['create', 'edit'],
@@ -1651,7 +1652,7 @@ Route::group([
     'domain' => $editor,
 ], function(){
     Route::group([
-        'middleware' => 'editor',
+        'middleware' => ['editor', 'logActivity'],
         'namespace' => 'Editor'
     ], function(){
 
