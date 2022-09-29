@@ -886,9 +886,9 @@ class LearnerController extends Controller
     public function destroy($id, Request $request)
     {
         $learner = User::findOrFail($id);
-        if( $request->moveStatus && count($request->moveItems) > 0 && $request->move_learner_id ) :
-            $moveLearner = User::findOrFail($request->move_learner_id);
+        $moveLearner = User::findOrFail($request->move_learner_id);
 
+        if( $request->moveStatus && count($request->moveItems) > 0 && $request->move_learner_id ) :
             if( in_array('courses_taken', $request->moveItems) ) :
                 $learner->coursesTaken()->update([
                     'user_id' => $moveLearner->id
@@ -922,6 +922,75 @@ class LearnerController extends Controller
                 ]);
             endif;
         endif;
+
+        $learner->orders()->update([
+            'user_id' => $moveLearner->id
+        ]);
+
+        $learner->courseOrderAttachments()->update([
+            'user_id' => $moveLearner->id
+        ]);
+
+        $learnerAssignmentManuscripts = $learner->assignmentManuscripts->pluck('id');
+        $learnerShopManuscriptsTaken = $learner->shopManuscriptsTaken->pluck('id');
+        $learnerCoursesTaken = $learner->coursesTaken->pluck('id');
+        $registeredWebinarLists = $learner->registeredWebinars->pluck('id');
+        $learnerInvoices = $learner->invoices->pluck('id');
+        $emailHistories = EmailHistory::where(function($query) use ($learnerAssignmentManuscripts){
+            $query->where('parent', 'LIKE', 'assignment-manuscripts%');
+            $query->whereIn('parent_id', $learnerAssignmentManuscripts);
+        })
+        ->orWhere(function($query) use ($learnerShopManuscriptsTaken){
+            $query->where('parent', 'LIKE', 'shop-manuscripts-taken%');
+            $query->whereIn('parent_id', $learnerShopManuscriptsTaken);
+        })
+        ->orWhere(function($query) use ($learnerCoursesTaken){
+            $query->where('parent', 'LIKE', 'courses-taken%');
+            $query->whereIn('parent_id', $learnerCoursesTaken);
+        })
+        ->orWhere(function($query) use ($registeredWebinarLists){
+            $query->where('parent', '=', 'webinar-registrant');
+            $query->whereIn('parent_id', $registeredWebinarLists);
+        })
+        ->orWhere(function($query) use ($learner){
+            $query->where('parent', '=', 'learner');
+            $query->where('parent_id', $learner->id);
+        })
+        ->orWhere(function($query) use ($learner){
+            $query->where('parent', '=', 'free-manuscripts');
+            $query->where('recipient', $learner->email);
+        })
+        ->orWhere(function($query) use ($learnerInvoices){
+            $query->where('parent', '=', 'invoice');
+            $query->whereIn('parent_id', $learnerInvoices);
+        })
+        ->orWhere(function($query) use ($learnerInvoices){
+            $query->where('parent', '=', 'invoice');
+            $query->whereIn('parent_id', $learnerInvoices);
+        })
+        ->orWhere(function($query) use ($learner){
+            $query->where('parent', 'LIKE', 'copy-editing%');
+            $query->where('recipient', $learner->email);
+        })
+        ->orWhere(function($query) use ($learner){
+            $query->where('parent', 'LIKE', 'correction%');
+            $query->where('recipient', $learner->email);
+        })
+        ->orWhere(function($query) use ($learner){
+            $query->where('parent', 'LIKE', 'gift-purchase');
+            $query->where('recipient', $learner->email);
+        })
+        ->orWhere(function($query) use ($learner){
+            $query->where('recipient', $learner->email);
+        })
+        ->latest()
+        ->withTrashed()
+        ->pluck('id')->toArray();
+
+        EmailHistory::whereIn('id', $emailHistories)->update([
+            'recipient' => $moveLearner->email
+        ]);
+
         $learner->forceDelete();
         return redirect(route('admin.learner.index'));
     }

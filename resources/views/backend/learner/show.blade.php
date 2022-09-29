@@ -2552,7 +2552,7 @@
         <h4 class="modal-title">{{ trans('site.delete-learner') }}</h4>
       </div>
       <div class="modal-body">
-      	<form method="POST" action="{{ route('admin.learner.delete', $learner->id) }}">
+      	<form method="POST" action="{{ route('admin.learner.delete', $learner->id) }}" onsubmit="disableSubmit(this)">
       		{{ csrf_field() }}
       		{{ method_field('DELETE') }}
 			{!! trans('site.delete-learner-question') !!}
