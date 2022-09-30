@@ -998,11 +998,22 @@
 				<h4 class="modal-title">{{ trans('site.approve-feedback') }}</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="" onsubmit="disableSubmit(this)">
+				<form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
 					{{ csrf_field() }}
-					<p>
+
+					<p style="font-weight: bold">
 						Are you sure you want to approve this feedback?
 					</p>
+
+					<hr>
+
+					<div class="form-group">
+						<label name="manuscriptLabel">{{ trans('site.replace-feedback-file') }}</label>
+						<input type="file" class="form-control" multiple name="manuscript[]"
+							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                   application/pdf, application/vnd.oasis.opendocument.text">
+						{{ trans('site.docx-pdf-odt-text') }} <br>
+					</div>
 					<div class="clearfix"></div>
 					<button type="submit" class="btn btn-primary pull-right margin-top" id="sendFeedbackEmail">{{ trans('site.approve-feedback') }}</button>
 					<div class="clearfix"></div>
