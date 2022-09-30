@@ -70,10 +70,32 @@ class HeadEditorController extends Controller
 
     }
 
-    public function approveSelfPublishingFeedback( $feedback_id )
+    public function approveSelfPublishingFeedback( $feedback_id, Request $request )
     {
         $feedback = SelfPublishingFeedback::find($feedback_id);
         $feedback->is_approved = 1;
+
+        $filesWithPath = '';
+        $destinationPath = 'storage/self-publishing-feedback/'; // upload path
+
+        if ($request->hasFile('manuscript')) {
+
+            foreach ($request->file('manuscript') as $k => $file) {
+                $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION); // getting document extension
+                $actual_name = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_FILENAME);
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+
+                $expFileName = explode('/', $fileName);
+                $filePath = "/".$destinationPath.end($expFileName);
+                $file->move($destinationPath, end($expFileName));
+
+                $filesWithPath .= $filePath.", ";
+
+            }
+
+            $feedback->manuscript =  trim($filesWithPath,", ");
+        }
+
         $feedback->save();
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback approved successfully.'),
             'alert_type' => 'success']);
