@@ -113,9 +113,8 @@
 											{{ trans('site.make-as-replay') }}
 										</button>
 
-										<button class="btn btn-warning btn-xs viewRegistrantsBtn" data-toggle="modal"
-												data-target="#viewRegistrantModal"
-												data-registrants="{{ json_encode($webinar->registrants) }}">
+										<button class="btn btn-warning btn-xs viewRegistrantsBtn"
+												data-webinar-id="{{ $webinar->id }}">
 											View Registrants
 										</button>
 
@@ -809,8 +808,35 @@
 		let registrantTable = $("#registrantTable").DataTable();
 
 		$(".viewRegistrantsBtn").click(function(){
-			let registrants = $(this).data('registrants');
-			$.each(registrants, function(k, v) {
+			//let registrants = $(this).data('registrants');
+			let webinar_id = $(this).data('webinar-id');
+			let self = this;
+            self.disabled = true;
+
+            $.ajax({
+                type:'GET',
+                url: '/webinar/' + webinar_id + '/registrant/list',
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                success: function(data){
+                    $("#viewRegistrantModal").modal('show');
+                    $.each(data, function(k, v) {
+                        registrantTable.row.add([
+                            v.user.full_name,
+                            v.join_url,
+                            "<button class='btn btn-danger btn-xs removeParticipantBtn' data-toggle='modal' data-target='#removeParticipantModal'" +
+                            " onclick='removeParticipant("+v.id+", this)' data-action='/webinar/registrant/" + v.id + "/delete'>Delete</button>"
+                        ]).draw(false);
+                    });
+                    self.disabled = false;
+
+                },
+                error: function(data) {
+                    console.log("error");
+                    console.log(data);
+                }
+            });
+
+			/*$.each(registrants, function(k, v) {
 				registrantTable.row.add([
 						v.user.full_name,
 						v.join_url,
@@ -819,7 +845,7 @@
 				]).draw(false);
 			});
 
-			console.log(registrants);
+			console.log(registrants);*/
 		});
 
 		$('.editWebinarBtn').click(function(){
