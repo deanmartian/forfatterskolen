@@ -15,7 +15,7 @@ Vue.toasted.register('showSuccessMsg',
             return "Success";
         }
 
-        return "<i class='fas fa-check'></i> <span class='ml-1'>"+ payload.message+"</span>";
+        return "<i class='fa fa-check'></i> <span class='ml-1'>"+ payload.message+"</span>";
     },
     {
         type : 'success'
@@ -29,7 +29,7 @@ Vue.toasted.register('showErrorMsg',
             return "Opps... Something went wrong.";
         }
 
-        return "<i class='fas fa-exclamation-circle'></i> <span class='ml-1'>"+ payload.message+"</span>";
+        return "<i class='fa fa-exclamation-circle'></i> <span class='ml-1'>"+ payload.message+"</span>";
     },
     {
         type : 'error',

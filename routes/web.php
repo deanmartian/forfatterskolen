@@ -1035,6 +1035,19 @@ Route::group([
             ],
         ]);
 
+        Route::post('/project/activity/save', 'ProjectController@saveActivity');
+        Route::delete('/project/activity/{id}/delete', 'ProjectController@deleteActivity');
+        Route::resource('project', 'ProjectController', [
+            'except' => ['create', 'edit'],
+            'names' => [
+                'index' => 'admin.project.index',
+                'show' => 'admin.project.show',
+                'store' => 'admin.project.store',
+                'update' => 'admin.project.update',
+                'destroy' => 'admin.project.destroy',
+            ],
+        ]);
+
         Route::post('generate_assignment_group/{id}', 'AssignmentController@generateGroup')->name('assignment.generate_assignment_group');
         Route::post('assignment/{id}/uploadManuscript', 'AssignmentController@uploadManuscript')->name('assignment.group.upload_manuscript');
         Route::post('assignment/{id}/add-on-for-learner', 'AssignmentController@addOnForLearner')->name('assignment.add-on-for-learner');
@@ -1530,6 +1543,9 @@ Route::group([
                 'destroy' => 'admin.self-publishing.destroy',
             ],
         ]);
+
+        Route::post('/time-register/save', 'TimeRegisterController@save');
+        Route::delete('/time-register/{id}/delete', 'TimeRegisterController@destroy');
 
         // Advisories
         Route::put('/advisory/{id}', 'AdvisoryController@update')->name('admin.advisory.update');

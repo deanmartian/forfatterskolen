@@ -149,6 +149,7 @@ class LearnerController extends Controller
         $learnerGiftPurchases = $learner->giftPurchases->pluck('id');
         $assignmentTemplates = AssignmentTemplate::get();
         $learnerSelfPublishingList = $learner->selfPublishingList;
+        $timeRegisters = $learner->timeRegisters;
         $selfPublishingList = SelfPublishing::whereNotIn('id',
             $learner->selfPublishingList()->pluck('self_publishing_id')->toArray())->get();
 
@@ -204,7 +205,7 @@ class LearnerController extends Controller
             ->get();
 
         return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories',
-            'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList'));
+            'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList', 'timeRegisters'));
     }
 
 

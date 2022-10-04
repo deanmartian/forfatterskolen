@@ -27,11 +27,15 @@ import Vue2Filters from 'vue2-filters'
 import './global'
 import BootstrapVue from 'bootstrap-vue'
 import ToggleButton from 'vue-js-toggle-button'
+import VueMoment from 'vue-moment'
+import vSelect from 'vue-select'
+import 'vue-select/dist/vue-select.css';
 
 Vue.use(vueDebounce);
 Vue.use(Vue2Filters);
 Vue.use(BootstrapVue);
 Vue.use(ToggleButton);
+Vue.use(VueMoment)
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -51,6 +55,9 @@ Vue.component('manuscript-upgrade', require('./frontend/upgrade/manuscript.vue')
 Vue.component('assignment-upgrade', require('./frontend/upgrade/assignment.vue'));
 Vue.component('coaching-time-checkout', require('./frontend/coaching-time/checkout.vue'));
 Vue.component('order-history', require('./frontend/components/order-history.vue'));
+Vue.component('time-register', require('./backend/TimeRegister.vue'));
+Vue.component('project', require('./backend/Project.vue'));
+Vue.component('v-select', vSelect);
 
 new Vue({
     el: '#app-container'

@@ -415,6 +415,21 @@ class AdminHelpers
         return EmailTemplate::where('page_name', $page_name)->first();
     }
 
+    public static function isWebinarPakkeActive( $user_id )
+    {
+        $user = User::find($user_id);
+        $courseTaken = $user->coursesTaken->where('package_id', 29)->first();
+        if ($courseTaken) {
+            $end_date = $courseTaken->end_date ?: Carbon::parse($courseTaken->started_at)->addYear(1);
+
+            if (Carbon::parse($end_date)->gt(Carbon::today())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static function addToAutomation($email, $automation_id, $name)
     {
         $url = 'https://forfatterskolen.api-us1.com';
@@ -1012,6 +1027,7 @@ class AdminHelpers
             array( 'id' => 3, 'option' => 'Workshops', 'route' => 'admin.workshop.index', 'request_name' => 'workshop'),
             array( 'id' => 4, 'option' => 'Learners', 'route' => 'admin.learner.index', 'request_name' => 'learner'),
             array( 'id' => 5, 'option' => 'Assignments', 'route' => 'admin.assignment.index', 'request_name' => 'assignment'),
+            array( 'id' => 14, 'option' => 'Project', 'route' => 'admin.project.index', 'request_name' => 'project'),
             array( 'id' => 6, 'option' => 'Support', 'route' => 'admin.publishing.index', 'request_name' => 'publishing'),
             array( 'id' => 7, 'option' => 'Free Manuscripts', 'route' => 'admin.free-manuscript.index', 'request_name' => 'free-manuscript'),
             array( 'id' => 13, 'option' => 'Other Services', 'route' => 'admin.other-service.index', 'request_name' => 'other-service'),
