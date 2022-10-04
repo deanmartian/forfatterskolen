@@ -4,8 +4,8 @@ if(config('app.app_site') == 'no'){
     $domain = 'giutbok.forfatterskolen.no';
 }elseif(config('app.app_site') == 'localhost'){
     $domain = 'giutbok.forfatterskolen.local';
-} elseif(config('app.app_site') == 'localhost'){
-    $domain = 'giutbok.forfatterskolen.local';
+} elseif(config('app.app_site') == 'dev.no'){
+    $domain = 'giutbok.forfatterskolen.no';
 }
 
 Route::group([
