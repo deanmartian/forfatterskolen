@@ -1037,16 +1037,9 @@ Route::group([
 
         Route::post('/project/activity/save', 'ProjectController@saveActivity');
         Route::delete('/project/activity/{id}/delete', 'ProjectController@deleteActivity');
-        Route::resource('project', 'ProjectController', [
-            'except' => ['create', 'edit'],
-            'names' => [
-                'index' => 'admin.project.index',
-                'show' => 'admin.project.show',
-                'store' => 'admin.project.store',
-                'update' => 'admin.project.update',
-                'destroy' => 'admin.project.destroy',
-            ],
-        ]);
+        Route::get('/project', 'ProjectController@index')->name('admin.project.index');
+        Route::post('/project/save', 'ProjectController@saveProject');
+        Route::get('/project/{id}', 'ProjectController@show');
 
         Route::post('generate_assignment_group/{id}', 'AssignmentController@generateGroup')->name('assignment.generate_assignment_group');
         Route::post('assignment/{id}/uploadManuscript', 'AssignmentController@uploadManuscript')->name('assignment.group.upload_manuscript');

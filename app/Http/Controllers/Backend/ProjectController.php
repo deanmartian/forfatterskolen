@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
+use App\Project;
 use App\ProjectActivity;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,34 @@ class ProjectController extends Controller
     {
         $learners =  AdminHelpers::getLearnerList();
         $activities = ProjectActivity::all();
-        return view('backend.project.index', compact('learners', 'activities'));
+        $projects = Project::all();
+        return view('backend.project.index', compact('learners', 'activities', 'projects'));
+    }
+
+    public function show($id)
+    {
+        $project = Project::find($id);
+        return view('backend.project.show', compact('project'));
+    }
+
+    public function saveProject( Request $request )
+    {
+        $this->validate($request, [
+            'name' => 'required',
+            'number' => 'required|unique:projects,identifier'
+        ]);
+
+        $model = $request->id ? Project::find($request->id) : new Project();
+        $model->user_id = $request->user_id;
+        $model->name = $request->name;
+        $model->identifier = $request->number;
+        $model->activity_id = $request->activity_id;
+        $model->start_date = $request->start_date;
+        $model->end_date = $request->end_date;
+        $model->description = $request->description;
+        $model->is_finished = $request->is_finished;
+        $model->save();
+        return $model;
     }
 
     public function saveActivity( Request $request )

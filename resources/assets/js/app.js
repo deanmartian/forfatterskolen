@@ -56,7 +56,8 @@ Vue.component('assignment-upgrade', require('./frontend/upgrade/assignment.vue')
 Vue.component('coaching-time-checkout', require('./frontend/coaching-time/checkout.vue'));
 Vue.component('order-history', require('./frontend/components/order-history.vue'));
 Vue.component('time-register', require('./backend/TimeRegister.vue'));
-Vue.component('project', require('./backend/Project.vue'));
+Vue.component('project', require('./backend/project/list.vue'));
+Vue.component('project-details', require('./backend/project/details.vue'));
 Vue.component('v-select', vSelect);
 
 new Vue({

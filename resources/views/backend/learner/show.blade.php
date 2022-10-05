@@ -517,7 +517,8 @@
 				</div>
 			</div> <!-- end self publishing-->
 
-			<time-register :time-registers="{{ json_encode($timeRegisters) }}" :learner-id="{{ $learner->id }}"></time-register>
+			<time-register :time-registers="{{ json_encode($timeRegisters) }}" :learner-id="{{ $learner->id }}"
+						   :projects="{{ json_encode($projects) }}"></time-register>
 
 			<div class="panel panel-default">
 				<div class="panel-body">
