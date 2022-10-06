@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
+use App\User;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -15,7 +16,7 @@ class ProjectController extends Controller
 
     public function index()
     {
-        $learners =  AdminHelpers::getLearnerList();
+        $learners =  User::where('role', 2)->where('is_self_publishing_learner', 1)->get();
         $activities = ProjectActivity::all();
         $projects = Project::all();
         return view('backend.project.index', compact('learners', 'activities', 'projects'));
