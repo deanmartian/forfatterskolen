@@ -7,6 +7,7 @@ use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Project;
 use App\ProjectActivity;
+use App\ProjectBook;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -22,7 +23,7 @@ class ProjectController extends Controller
 
     public function show($id)
     {
-        $project = Project::find($id);
+        $project = Project::find($id)->load(['books', 'user']);
         return view('backend.project.show', compact('project'));
     }
 
@@ -69,4 +70,25 @@ class ProjectController extends Controller
         return response()->json();
     }
 
+    public function saveBook( $project_id, Request $request )
+    {
+        $this->validate($request, [
+            'book_name' => 'required'
+        ]);
+
+        $model = $request->id ? ProjectBook::find($request->id) : new ProjectBook();
+        $model->project_id = $project_id;
+        $model->user_id = $request->user_id;
+        $model->book_name = $request->book_name;
+        $model->isbn_hardcover_book = $request->isbn_hardcover_book;
+        $model->isbn_ebook = $request->isbn_ebook;
+        $model->save();
+        return $model;
+    }
+
+    public function deleteBook( $id )
+    {
+        ProjectBook::find($id)->delete();
+        return response()->json();
+    }
 }

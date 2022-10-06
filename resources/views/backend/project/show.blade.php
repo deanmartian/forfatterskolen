@@ -10,13 +10,8 @@
 
 @section('content')
 
-    <div class="page-toolbar">
-        <h3><i class="fa fa-file-text-o"></i> Project: {{ $project->name }}</h3>
-        <div class="clearfix"></div>
-    </div>
-
-    <div class="col-md-12" id="app-container">
-        <project-details></project-details>
+    <div id="app-container">
+        <project-details :current-project="{{ json_encode($project) }}"></project-details>
     </div>
 @stop
 

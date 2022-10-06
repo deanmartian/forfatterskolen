@@ -18,14 +18,14 @@ class TimeRegisterController extends Controller
 
         $model = $request->id ? TimeRegister::find($request->id) : new TimeRegister();
         $model->user_id = $request->learner_id;
-        $model->project = $request->project;
+        $model->project_id = $request->project_id;
         $model->date = $request->date;
         $model->time = $request->time;
         $model->time_used = $request->time_used;
         $model->description = $request->description;
         $model->save();
 
-        $time = TimeRegister::find($model->id);
+        $time = TimeRegister::find($model->id)->load('project');
         return response()->json($time);
     }
 

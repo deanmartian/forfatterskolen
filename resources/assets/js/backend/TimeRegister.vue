@@ -22,7 +22,9 @@
                     </thead>
                     <tbody>
                     <tr v-for="timeList in timeLists">
-                        <td></td>
+                        <td>
+                            {{ timeList.project_id ? timeList.project.name : '' }}
+                        </td>
                         <td>{{ timeList.date }}</td>
                         <td>{{ timeList.time }}</td>
                         <td>{{ timeList.time_used }}</td>
@@ -54,7 +56,8 @@
 
             <div class="form-group">
                 <label>Project</label>
-                <input type="text" name="project" class="form-control" v-model="timeForm.project" required>
+                <v-select :options="projects" label="name" v-model="selected_project" @input="setSelectedProject($event)"
+                          name="project"></v-select>
             </div>
 
             <div class="form-group">
@@ -69,6 +72,11 @@
                 <button type="button" class="btn btn-xs" @click="adjustTime(0.5)">+1/2</button>
                 <button type="button" class="btn btn-xs" @click="adjustTime(-0.5)">-1/2</button>
                 <button type="button" class="btn btn-xs" @click="adjustTime(-1)">-1</button>
+            </div>
+
+            <div class="form-group" v-if="timeForm.id">
+                <label>Time Used</label>
+                <input type="number" name="time_used" class="form-control" v-model="timeForm.time_used">
             </div>
             <div class="form-group">
                 <label>Description</label>
@@ -125,7 +133,7 @@
 <script>
     export default {
 
-        props: ['time-registers', 'learner-id'],
+        props: ['time-registers', 'learner-id', 'projects'],
 
         data() {
             return {
@@ -134,12 +142,13 @@
                 timeForm: {
                     id: '',
                     learner_id: this.learnerId,
-                    project: '',
+                    project_id: '',
                     date: '',
                     time: '',
                     time_used: 0,
                     description: '',
                 },
+                selected_project: '',
                 timeData: {},
                 timer: {
                     min: 10,
@@ -151,6 +160,10 @@
         },
 
         methods: {
+            setSelectedProject(value) {
+                this.timeForm.project_id = value ? value.id : "";
+            },
+
             showTimerModal(data) {
                 this.timeData = data;
                 this.$refs.timerModal.show();
@@ -161,11 +174,17 @@
                 if (data) {
                     this.modalTitle = 'Edit Time';
                     this.timeForm.id = data.id;
-                    this.timeForm.project = data.project;
+                    this.timeForm.project_id = data.project_id;
                     this.timeForm.date = data.date;
                     this.timeForm.time = data.time;
                     this.timeForm.time_used = data.time_used;
                     this.timeForm.description = data.description;
+
+                    const index = _.findIndex(this.projects, {id: data.project_id});
+                    if (index >= 0) {
+                        let project = this.projects[index];
+                        this.selected_project = project.name;
+                    }
                 }
                 this.$refs.timeFormModal.show();
             },
@@ -174,11 +193,12 @@
                 this.timeForm = {
                     id: '',
                     learner_id: this.learnerId,
-                    project: '',
+                    project_id: '',
                     date: '',
                     time: '',
                     description: '',
                 }
+                this.selected_project = '';
             },
 
             adjustTime(time) {
