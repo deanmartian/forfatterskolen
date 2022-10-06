@@ -43,7 +43,7 @@
 	<div class="clearfix"></div>
 </div>
 
-<div class="col-md-10 col-md-offset-1">
+<div class="col-md-10 col-md-offset-1" id="app-container">
 	<div class="row">
 		<div class="col-md-12">
 		<a href="{{route('admin.learner.index')}}" class="btn btn-default margin-bottom margin-top"><i class="fa fa-angle-left"></i> {{ trans('site.all-learners') }}</a>
@@ -516,6 +516,9 @@
 					</table>
 				</div>
 			</div> <!-- end self publishing-->
+
+			<time-register :time-registers="{{ json_encode($timeRegisters) }}" :learner-id="{{ $learner->id }}"
+						   :projects="{{ json_encode($projects) }}"></time-register>
 
 			<div class="panel panel-default">
 				<div class="panel-body">
@@ -4459,6 +4462,15 @@
 		modal.find('form').attr('action', action);
 	});
 
+	$(".adjustTime").click(function() {
+	    let time = parseFloat($(this).data('time'));
+	    let modal = $("#timeRegisterModal");
+	    let timeField = isNaN(parseFloat(modal.find('[name=time]').val())) ? 0 : parseFloat(modal.find('[name=time]').val());
+        modal.find('[name=time]').val( timeField + time);
+	    console.log(timeField);
+	    console.log(time);
+	});
+
     $('#orders-table, #course-order-attachments-table').dataTable( {
         "ordering": false
     } );
@@ -4685,4 +4697,5 @@
         }
     }
 </script>
+	<script type="text/javascript" src="{{ mix('js/app.js') }}"></script>
 @stop

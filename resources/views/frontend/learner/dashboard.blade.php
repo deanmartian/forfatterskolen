@@ -76,7 +76,7 @@
 
                 <div class="col-md-4 dashboard-calendar no-right-padding">
 
-                    @if(Auth::user()->is_webinar_pakke_active)
+                    @if(AdminHelpers::isWebinarPakkeActive(Auth::user()->id))
                         <div class="card global-card">
                             <div class="card-body">
                                 <div class="col-sm-12">

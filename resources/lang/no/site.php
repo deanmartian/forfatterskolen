@@ -25,6 +25,7 @@ return array (
     'editor-settings' => 'Redaktør innstillinger',
     'yearly_calendar' => 'Årshjul kalender',
     'assigned-webinar' => 'Tilordnede webinarer',
+    'projects' => 'Projects',
   ),
   'all-manuscripts' => 'All Manuscripts',
   'manuscripts' => '[0,1] Manus |[2,*] Manus',

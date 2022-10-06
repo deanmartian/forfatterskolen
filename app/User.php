@@ -45,7 +45,7 @@ class User extends Authenticatable
     ];
 
     protected $with = ['preferredEditor'];
-    protected $appends = ['is_webinar_pakke_active', 'assigned_with_no_feedback', 'address', 'full_name'];
+    protected $appends = ['address', 'full_name']; //'is_webinar_pakke_active', 'assigned_with_no_feedback',
 
     // filter admins and exclude the user of Sven
     public function scopeAdmins($query)
@@ -108,6 +108,10 @@ class User extends Authenticatable
         return $manuscripts;
     }
 
+    /**
+     * function is moved to AdminHelpers::isWebinarPakkeActive()
+     * @return bool
+     */
     public function getIsWebinarPakkeActiveAttribute()
     {
         $courseTaken = $this->coursesTaken->where('package_id', 29)->first();
@@ -469,5 +473,10 @@ class User extends Authenticatable
     public function selfPublishingList()
     {
         return $this->hasMany('App\SelfPublishingLearner');
+    }
+
+    public function timeRegisters()
+    {
+        return $this->hasMany('App\TimeRegister');
     }
 }

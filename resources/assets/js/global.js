@@ -33,7 +33,7 @@ Vue.mixin({
                     }
 
                     element.after("<small class='text-danger validation-err'>" +
-                        "<i class='fas fa-exclamation-circle'></i> " +
+                        "<i class='fa fa-exclamation-circle'></i> " +
                         "<span>" + v[0]+"</span></small>");
                 });
             } else {
@@ -46,7 +46,7 @@ Vue.mixin({
                     }
 
                     element.after("<small class='text-danger validation-err'>" +
-                        "<i class='fas fa-exclamation-circle'></i> " +
+                        "<i class='fa fa-exclamation-circle'></i> " +
                         "<span>" + v[0]+"</span></small>");
                 });
             }
@@ -55,6 +55,11 @@ Vue.mixin({
         updateRecordFromObject(obj, id, updatedData) {
             const index = _.findIndex(obj, {id: id});
             obj.splice(index, 1, updatedData);
+        },
+
+        deleteRecordFromObject(obj, id) {
+            const index = _.findIndex(obj, {id: id});
+            obj.splice(index, 1);
         },
     }
 

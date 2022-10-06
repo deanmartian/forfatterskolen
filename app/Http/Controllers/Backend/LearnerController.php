@@ -22,9 +22,11 @@ use App\Order;
 use App\PaymentMode;
 use App\PaymentPlan;
 use App\PrivateMessage;
+use App\Project;
 use App\SelfPublishing;
 use App\SelfPublishingLearner;
 use App\Services\CourseService;
+use App\TimeRegister;
 use App\UserAutoRegisterToCourseWebinar;
 use App\UserEmail;
 use App\UserPreferredEditor;
@@ -149,6 +151,7 @@ class LearnerController extends Controller
         $learnerGiftPurchases = $learner->giftPurchases->pluck('id');
         $assignmentTemplates = AssignmentTemplate::get();
         $learnerSelfPublishingList = $learner->selfPublishingList;
+        $timeRegisters = TimeRegister::where('user_id', $learner->id)->with('project')->get();
         $selfPublishingList = SelfPublishing::whereNotIn('id',
             $learner->selfPublishingList()->pluck('self_publishing_id')->toArray())->get();
 
@@ -202,9 +205,11 @@ class LearnerController extends Controller
             ->latest()
             ->withTrashed()
             ->get();
+        $projects = Project::where('user_id', $learner->id)->get();
 
         return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories',
-            'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList'));
+            'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList',
+            'timeRegisters', 'projects'));
     }
 
 

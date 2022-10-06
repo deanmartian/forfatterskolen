@@ -411,7 +411,7 @@
     </div> <!-- end card -->
 </template>
 
-<style>
+<style scoped="">
     .wizard-progress-with-circle {
         padding-left: 30px !important;
     }
