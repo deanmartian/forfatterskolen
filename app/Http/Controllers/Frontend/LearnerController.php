@@ -51,6 +51,7 @@ use App\ShopManuscriptTakenFeedback;
 use App\ShopManuscriptUpgrade;
 use App\Survey;
 use App\SurveyAnswer;
+use App\TimeRegister;
 use App\User;
 use App\UserAutoRegisterToCourseWebinar;
 use App\UserEmail;
@@ -1081,6 +1082,7 @@ class LearnerController extends Controller
         $giftPurchases = Auth::user()->giftPurchases;
 
         $orderHistory = Auth::user()->orders;
+        $timeRegisters = Auth::user()->timeRegisters->load('project');
 
         /*$ch = curl_init($this->fikenInvoices);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -1091,7 +1093,7 @@ class LearnerController extends Controller
         $data = json_decode($data);
         $fikenInvoices = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};*/
         return view('frontend.learner.invoice', compact('invoices', 'sveaOrders', 'user',
-            'orderAttachments', 'giftPurchases', 'orderHistory'));
+            'orderAttachments', 'giftPurchases', 'orderHistory' ,'timeRegisters'));
     }
 
 
@@ -1616,9 +1618,17 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
+    public function timeRegister()
+    {
+        $timeRegisters = Auth::user()->timeRegisters->load('project');
+        return view('frontend.learner.self-publishing.time-register', compact('timeRegisters'));
+    }
 
-
-
+    public function downloadTimeRegisterInvoice( $id )
+    {
+        $timeRegister = TimeRegister::find($id);
+        return response()->download($timeRegister->invoice_file);
+    }
 
     public function profile()
     {

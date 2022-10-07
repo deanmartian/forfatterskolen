@@ -303,6 +303,7 @@ Route::group([
         Route::put('/writing-group/{id}', 'LearnerController@writingGroup')->name('learner.update.writing-group'); // Writing Group Page
         Route::get('/competition', 'LearnerController@competition')->name('learner.competition'); // Competitions Page
         Route::get('/private-message', 'LearnerController@privateMessage')->name('learner.private-message'); // Private Message Page
+        Route::get('/time-register', 'LearnerController@timeRegister')->name('learner.time-register');
         Route::get('/profile', 'LearnerController@profile')->name('learner.profile'); // Profile Page
         Route::get('/terms', 'LearnerController@terms')->name('learner.terms'); // Terms Page
         Route::get('/course/{course_id}/lesson/{id}', 'LearnerController@lesson')->name('learner.course.lesson'); // Lesson Page
@@ -378,6 +379,7 @@ Route::group([
         Route::post('/shop-manuscript/{id}/update-uploaded-manuscript', 'ShopManuscriptController@updateUploadedManuscript')->name('learner.shop-manuscript.update-uploaded-manuscript'); // update Uploade shop manuscript
         Route::post('/shop-manuscript/{id}/delete-uploaded-manuscript', 'ShopManuscriptController@deleteUploadedManuscript')->name('learner.shop-manuscript.delete-uploaded-manuscript'); // update Uploade shop manuscript
         Route::get('/download/invoice/{id}/credit-note', 'LearnerController@downloadCreditNote')->name('learner.download.credit-note');
+        Route::get('/download/time-register-invoice/{id}', 'LearnerController@downloadTimeRegisterInvoice')->name('learner.download.time-register-invoice');
         Route::get('/download/invoice/{url}', 'LearnerController@downloadInvoice')->name('learner.download.invoice')
             ->where('url', '.*'); // to accept url as parameter
 
