@@ -41,13 +41,14 @@ class AdminController extends Controller
 
     public function index()
     {
-        $admins = User::admins()->withTrashed()->orderBy('created_at', 'desc')->paginate(20);
+        $admins = User::admins()->where('is_active', 1)->withTrashed()->orderBy('created_at', 'desc')->paginate(20);
+        $inactiveAdmins = User::admins()->where('is_active', 0)->withTrashed()->orderBy('created_at', 'desc')->paginate(20);
         $customActions = CustomAction::where('is_active',1)->get();
         $pageMetas = PageMeta::all();
         $staffs = Staff::all();
         $editorAssignmentPrices = EditorAssignmentPrices::all();
 
-        return view('backend.admin.index', compact('admins','customActions', 'pageMetas', 'staffs', 'editorAssignmentPrices'));
+        return view('backend.admin.index', compact('admins','customActions', 'pageMetas', 'staffs', 'editorAssignmentPrices', 'inactiveAdmins'));
     }
 
     public function show($userId)

@@ -46,6 +46,7 @@
 
 	<ul class="nav nav-tabs margin-top">
 		<li @if( Request::input('tab') == 'admin' || Request::input('tab') == '') class="active" @endif><a href="?tab=admin">Admin</a></li>
+		<li @if( Request::input('tab') == 'inactive' ) class="active" @endif><a href="?tab=inactive">Inactive Admin</a></li>
 		<li @if( Request::input('tab') == 'options' ) class="active" @endif><a href="?tab=options">Options</a></li>
 		<li @if( Request::input('tab') == 'terms' ) class="active" @endif><a href="?tab=terms">Terms</a></li>
 		<li @if( Request::input('tab') == 'advisory' ) class="active" @endif><a href="?tab=advisory">Advisory</a></li>
@@ -266,6 +267,131 @@
 									data-action="{{ route('editor_assignment_price.save') }}">
 									<i class="fa fa-pencil-square-o" aria-hidden="true"> Edit</i>
 									</button>
+								</td>
+							</tr>
+						@endforeach
+						</tbody>
+					</table>
+				</div>
+			@elseif( Request::input('tab') == 'inactive')
+				<div class="table-users table-responsive">
+					<table class="table">
+						<thead>
+						<tr>
+							<th>Name</th>
+							<th>Email</th>
+							<th>Total Worked</th>
+							<th>Ghostwriter</th>
+							<th>Språkvask</th>
+							<th>Korrektur</th>
+							<th>Coahing</th>
+							<th style="width: 250px;">{{ trans('site.editor-assigned-genre') }}</th>
+							<th></th>
+						</tr>
+						</thead>
+						<tbody>
+						@foreach($inactiveAdmins as $admin)
+							<tr>
+								<td>
+									@if (Auth::user()->isSuperUser())
+										<a href="{{ route('admin.admin.show', $admin->id)}}">
+											{{ $admin->full_name }}
+										</a>
+									@else
+										{{ $admin->full_name }}
+									@endif
+								</td>
+								<td>{{ $admin->email }}</td>
+								<td>
+									@if($admin->role == 3 || $admin ->admin_with_editor_access == 1)
+										<a href="{{ route('admin.total_editor_worked', $admin->id) }}" class="btn btn-primary btn-xs">Preview Editor Total Worked</a>
+									@endif
+								</td>
+								<td>
+									<input type="checkbox" data-toggle="toggle" data-on="Yes"
+										   class="admin-type-toggle" data-off="No" data-type="ghost-writer"
+										   data-id="{{$admin->id}}" data-size="mini" @if($admin->is_ghost_writer_admin) {{ 'checked' }} @endif>
+								</td>
+								<td>
+									<input type="checkbox" data-toggle="toggle" data-on="Yes"
+										   class="admin-type-toggle" data-off="No" data-type="copy-editing"
+										   data-id="{{$admin->id}}" data-size="mini" @if($admin->is_copy_editing_admin) {{ 'checked' }} @endif>
+								</td>
+								<td>
+									<input type="checkbox" data-toggle="toggle" data-on="Yes"
+										   class="admin-type-toggle" data-off="No" data-type="correction"
+										   data-id="{{$admin->id}}" data-size="mini" @if($admin->is_correction_admin) {{ 'checked' }} @endif>
+								</td>
+								<td>
+									<input type="checkbox" data-toggle="toggle" data-on="Yes"
+										   class="admin-type-toggle" data-off="No" data-type="coaching"
+										   data-id="{{$admin->id}}" data-size="mini" @if($admin->is_coaching_admin) {{ 'checked' }} @endif>
+								</td>
+								<td>
+									@if($admin->role == 3 || $admin ->admin_with_editor_access == 1)
+
+                                        <?php
+                                        $count = 0;
+                                        foreach($admin->editorGenrePreferences as $key){
+                                            $count++;
+                                            echo "<a class='hover-red deleteGenrePreferencesBtn'
+													data-toggle='modal'
+													data-target='#deleteGenrePreferences'
+													data-action='".route('admin.delete-genre-preferences', $key->id)."'>
+													<i class='fa fa-times' aria-hidden='true'></i> ".$key->genre->name."</a>";
+                                            if ($count!=$admin->editorGenrePreferences->count()){
+                                                echo ', ';
+                                            }
+                                        }
+
+                                        $genre = null;
+                                        $genreComma= null;
+                                        foreach($admin->editorGenrePreferences as $key){
+                                            $genre[] = $key->genre->name;
+                                        }
+                                        if ($genre){
+                                            $genreComma = implode(",", $genre);
+                                        }
+
+                                        $allGenre = \App\Genre::whereNotIn('id', function($query) use($admin){
+                                            $query->select('genre_id')->from('editor_genre_preferences')->where('editor_id', $admin->id);
+                                        })->get();
+
+                                        ?>
+
+										<button class="btn btn-success btn-xs genrePreferenceBtn"
+												data-toggle="modal"
+												data-target="#genrePreferenceModal"
+												data-genre_preferences = "{{ $genreComma }}"
+												data-all_genre = "{{ $allGenre }}"
+												data-all_genre_count = "{{ $allGenre->count() }}"
+												data-editor_id = "{{ $admin->id }}"
+												data-genre_preferences_count = "{{ $admin->editorGenrePreferences->count() }}">
+											<i class="fa fa-plus"></i>
+										</button>
+
+									@endif
+								</td>
+								<td>
+									<div class="pull-right">
+										@if($admin->head_editor)
+											<label class="label label-success" style="margin-right: 5px">
+												Head Editor
+											</label>
+										@endif
+										@if($admin->with_head_editor_access)
+											<label class="label label-info" style="margin-right: 5px">
+												with Head Editor access
+											</label>
+										@endif
+										<input type="checkbox" data-toggle="toggle" data-on="Active"
+											   class="status-toggle" data-off="Inactive"
+											   data-id="{{$admin->id}}" data-size="mini" @if($admin->is_active) {{ 'checked' }} @endif>
+										<button class="btn btn-info btn-xs editAdminAccessPageBtn" data-action="{{ route('admin.admin.page-access', $admin->id) }}" data-toggle="modal" data-target="#editAdminAccessPageModal" data-fields="{{ json_encode($admin) }}"
+												data-pages="{{ json_encode($admin->pageAccess) }}"><i class="fa fa-clipboard"></i></button>
+										<button class="btn btn-primary btn-xs editAdminBtn" data-action="{{ route('admin.admin.update', $admin->id) }}" data-toggle="modal" data-target="#editAdminModal" data-fields="{{ json_encode($admin) }}"><i class="fa fa-pencil"></i></button>
+										<button class="btn btn-danger btn-xs deleteAdminBtn" data-action="{{ route('admin.admin.destroy', $admin->id) }}" data-toggle="modal" data-target="#deleteAdminModal"><i class="fa fa-trash"></i></button>
+									</div>
 								</td>
 							</tr>
 						@endforeach
@@ -1013,7 +1139,8 @@
             headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
             data: { "id" : id, 'status' : check_val },
             success: function(data){
-
+                alert('Admin status updated, the page will reload.');
+                location.reload();
             }
         });
     });
