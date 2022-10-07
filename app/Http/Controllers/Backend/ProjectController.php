@@ -32,8 +32,13 @@ class ProjectController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
-            'number' => 'required|unique:projects,identifier'
         ]);
+
+        if (!$request->id) {
+            $this->validate($request, [
+                'number' => 'required|unique:projects,identifier'
+            ]);
+        }
 
         $model = $request->id ? Project::find($request->id) : new Project();
         $model->user_id = $request->user_id;
@@ -45,7 +50,26 @@ class ProjectController extends Controller
         $model->description = $request->description;
         $model->is_finished = $request->is_finished;
         $model->save();
+
+        if ($request->user_id) {
+            $model->books()->update([
+                'user_id' => $request->user_id
+            ]);
+        }
+
         return $model;
+    }
+
+    public function deleteProject( $project_id )
+    {
+        $project = Project::find($project_id);
+
+        $activity = ProjectActivity::where('project_id', $project_id)->update([
+            'project_id' => NULL
+        ]);
+
+        $project->delete();
+        return response()->json();
     }
 
     public function saveActivity( Request $request )

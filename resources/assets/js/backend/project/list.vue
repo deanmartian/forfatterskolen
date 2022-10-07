@@ -12,6 +12,7 @@
                     <th>Name</th>
                     <th>Description</th>
                     <th>Status</th>
+                    <td></td>
                 </tr>
                 </thead>
                 <tbody>
@@ -30,6 +31,14 @@
                     <td>
                         {{ project.start_date}} - {{ project.end_date }} <br>
                         <span class="small" v-if="project.is_finished">Finished</span>
+                    </td>
+                    <td>
+                        <button class="btn btn-xs btn-primary" @click="showFormModal(project)">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                        <button class="btn btn-xs btn-danger" @click="showDeleteModal(project)">
+                            <i class="fa fa-trash"></i>
+                        </button>
                     </td>
                 </tr>
                 </tbody>
@@ -57,7 +66,7 @@
 
             <div class="form-group">
                 <label>Learner</label>
-                <v-select :options="learners" label="full_name" v-model="selected_learner" @input="setSelectedLearner($event)"
+                <v-select :options="learnerList" label="full_name" v-model="selected_learner" @input="setSelectedLearner($event)"
                           name="learner_id"></v-select>
             </div>
 
@@ -182,6 +191,25 @@
                 </button>
             </div>
         </b-modal>
+
+        <b-modal
+                ref="deleteProjectModal"
+                title="Delete Project"
+                size="sm"
+                centered
+                no-close-on-backdrop
+        >
+
+            <p>
+                Are you sure you want to delete this record?
+            </p>
+
+            <div slot="modal-footer">
+                <button class="btn btn-sm btn-danger" @click="deleteProject()" :disabled="isLoading">
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Delete
+                </button>
+            </div>
+        </b-modal>
     </div>
 </template>
 
@@ -208,7 +236,9 @@
                 selected_project: '',
                 activityList: this.activities,
                 projectList: this.projects,
+                learnerList: this.learners,
                 activityModalTitle: 'Activity',
+                project: {},
                 activityForm: {
                     id: '',
                     activity: '',
@@ -247,6 +277,29 @@
                 this.projectModalTitle = 'Add Project';
                 this.projectForm.start_date = moment().format("YYYY-MM-DD");
                 if (data) {
+                    this.projectModalTitle = 'Edit Project';
+                    this.projectForm = {
+                        id: data.id,
+                        name: data.name,
+                        number: data.identifier,
+                        user_id: data.user_id,
+                        activity_id: data.activity_id,
+                        start_date: data.start_date,
+                        end_date: data.end_date,
+                        description: data.description,
+                        is_finished: data.is_finished ? true : false
+                    };
+
+                    const actIndex = _.findIndex(this.activityList, {id: data.activity_id});
+                    const learnerIndex = _.findIndex(this.learnerList, {id: data.user_id});
+                    if (actIndex >= 0) {
+                        this.currentActivity = this.activityList[actIndex];
+                        this.selected_activity = this.currentActivity.activity;
+                    }
+
+                    if (learnerIndex >= 0) {
+                        this.selected_learner = this.learnerList[learnerIndex].full_name;
+                    }
 
                 }
                 this.$refs.projectFormModal.show();
@@ -266,7 +319,13 @@
                 this.removeValidationError();
                 axios.post('/project/save', this.projectForm).then(response => {
                     this.isLoading = false;
-                    this.projectList.push(response.data);
+
+                    if (this.projectForm.id) {
+                        this.updateRecordFromObject(this.projectList, this.projectForm.id, response.data);
+                    } else {
+                        this.projectList.push(response.data);
+                    }
+
                     this.$refs.projectFormModal.hide();
 
                     this.$toasted.global.showSuccessMsg({
@@ -278,6 +337,23 @@
                     this.$toasted.global.showErrorMsg({
                         message : 'Error in form'
                     });
+                });
+            },
+
+            showDeleteModal(project) {
+                this.project = project;
+                this.$refs.deleteProjectModal.show();
+            },
+
+            deleteProject() {
+                this.isLoading = true;
+                axios.delete('/project/' + this.project.id + '/delete' ).then(response => {
+                    this.deleteRecordFromObject(this.projectList, this.project.id);
+                    this.isLoading = false;
+                    this.$toasted.global.showSuccessMsg({
+                        message : 'Project deleted'
+                    });
+                    this.$refs.deleteProjectModal.hide();
                 });
             },
 
