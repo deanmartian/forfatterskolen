@@ -10,10 +10,8 @@
 			margin-bottom: 5px;
 		}
 
-		@media screen and (max-width: 767px) {
-			.table-responsive {
-				overflow-y: scroll;
-			}
+		.table-responsive {
+			overflow-y: scroll;
 		}
 
 	</style>
