@@ -171,6 +171,18 @@
                             <input type="date" class="form-control" name="expected_finish">
                         </div>
 
+                        <div class="form-group">
+                            <label>
+                                Project
+                            </label>
+                            <select name="project_id" class="form-control select2">
+                                <option value="" selected disabled> - Select Project - </option>
+                                @foreach($projects as $project)
+                                    <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         @if (Auth::user()->isSuperUser())
                             <div class="form-group">
                                 <label>Price</label>
@@ -307,6 +319,7 @@
             form.find('textarea[name=description]').val(fields.description);
             form.find('select[name=editor_id]').val(fields.editor_id).trigger('change');
             form.find('input[name=expected_finish]').val(fields.expected_finish);
+            form.find('select[name=project_id]').val(fields.project_id).trigger('change');
             form.find('input[name=price]').val(fields.price);
             form.find('input[name=editor_share]').val(fields.editor_share);
         });

@@ -20,4 +20,8 @@ class Project extends Model
         return $this->hasMany('App\ProjectBook');
     }
 
+    public function selfPublishingList()
+    {
+        return $this->hasMany('App\SelfPublishing');
+    }
 }

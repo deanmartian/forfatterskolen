@@ -6,7 +6,7 @@
         </div>
 
         <div class="col-md-12">
-            <button class="btn btn-success margin-top" @click="showFormModal()">
+            <button class="btn btn-success margin-top" @click="showFormModal()" v-if="books.length === 0">
                 Add
             </button>
             <div class="table-users">

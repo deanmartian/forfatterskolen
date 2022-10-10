@@ -24,8 +24,10 @@ class ProjectController extends Controller
 
     public function show($id)
     {
-        $project = Project::find($id)->load(['books', 'user']);
-        return view('backend.project.show', compact('project'));
+        $project = Project::find($id)->load(['books', 'user', 'selfPublishingList']);
+        $editors = AdminHelpers::editorList();
+        $learners = User::where('role', 2)->where('is_self_publishing_learner', 1)->get();
+        return view('backend.project.show', compact('project', 'editors', 'learners'));
     }
 
     public function saveProject( Request $request )
