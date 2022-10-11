@@ -58,6 +58,12 @@
         >
 
             <div class="form-group">
+                <label>Author</label>
+                <v-select :options="learners" label="full_name" v-model="selected_learner" @input="setSelectedLearner($event)"
+                          name="learner_id"></v-select>
+            </div>
+
+            <div class="form-group">
                 <label>Name of book</label>
                 <input type="text" class="form-control" name="book_name" v-model="form.book_name">
             </div>
@@ -106,7 +112,7 @@
 <script>
     export default {
 
-        props: ['current-project'],
+        props: ['current-project', 'learners'],
 
         data() {
             return {
@@ -121,22 +127,33 @@
                     isbn_ebook: '',
                 },
                 book: {},
+                selected_learner: '',
                 isLoading: false,
             }
         },
 
         methods: {
+            setSelectedLearner(value) {
+                this.form.user_id = value ? value.id : "";
+            },
+
             showFormModal(data = null) {
                 this.modalTitle = 'Add Book';
                 if (data) {
                     this.modalTitle = 'Edit Book';
                     this.form = {
                         id: data.id,
-                        user_id: this.currentProject.user_id,
+                        user_id: this.project.user_id,
                         book_name: data.book_name,
                         isbn_hardcover_book: data.isbn_hardcover_book,
                         isbn_ebook: data.isbn_ebook,
-                    }
+                    };
+                }
+
+                const index = _.findIndex(this.learners, {id: this.project.user_id});
+                if (index >= 0) {
+                    let learner = this.learners[index];
+                    this.selected_learner = learner.full_name;
                 }
                 this.$refs.formModal.show();
             },
@@ -149,6 +166,7 @@
                     isbn_hardcover_book: '',
                     isbn_ebook: '',
                 }
+                this.selected_learner = '';
             },
 
             saveForm() {
@@ -156,13 +174,16 @@
                 axios.post('/project/' + this.project.id + '/book/save', this.form).then(response => {
                     this.isLoading = false;
                     let message = '';
+                    let data = response.data;
                     if (this.form.id) {
-                        this.updateRecordFromObject(this.books, this.form.id, response.data);
+                        this.updateRecordFromObject(this.books, this.form.id, data.book);
                         message = 'Book updated';
                     } else {
-                        this.books.push(response.data);
+                        this.books.push(data.book);
                         message = 'Book created';
                     }
+
+                    this.project = data.project;
 
                     this.$refs.formModal.hide();
                     this.$toasted.global.showSuccessMsg({
@@ -199,6 +220,7 @@
         mounted() {
             console.log("project details here");
             console.log(this.currentProject);
+            console.log(this.learners);
         }
 
     }

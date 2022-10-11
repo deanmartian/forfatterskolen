@@ -110,7 +110,17 @@ class ProjectController extends Controller
         $model->isbn_hardcover_book = $request->isbn_hardcover_book;
         $model->isbn_ebook = $request->isbn_ebook;
         $model->save();
-        return $model;
+
+        if ($request->user_id) {
+            Project::find($project_id)->update(['user_id' => $request->user_id]);
+        }
+
+        $project = Project::find($project_id)->load(['books', 'user', 'selfPublishingList']);
+
+        return response()->json([
+            'book' => $model,
+            'project' => $project
+        ]);
     }
 
     public function deleteBook( $id )

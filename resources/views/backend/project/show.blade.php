@@ -11,7 +11,7 @@
 @section('content')
 
     <div id="app-container">
-        <project-details :current-project="{{ json_encode($project) }}"></project-details>
+        <project-details :current-project="{{ json_encode($project) }}" :learners="{{ json_encode($learners) }}"></project-details>
 
         <div class="col-md-12">
             <button type="button" class="btn btn-success addSelfPublishingBtn" data-toggle="modal"
@@ -249,6 +249,28 @@
             </div>
         </div>
     </div>
+
+    <div id="deleteSelfPublishingModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">{{ trans('site.delete') }} <em></em></h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        {{ method_field('DELETE') }}
+                        Are you sure you want to delete this record?
+                        <div class="text-right margin-top">
+                            <button class="btn btn-danger" type="submit">{{ trans('site.delete') }}</button>
+                        </div>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('scripts')
@@ -275,6 +297,7 @@
         });
 
         $(".editSelfPublishingBtn").click(function() {
+            let modal = $("#selfPublishingModal");
             let form = modal.find('form');
             let fields = $(this).data('fields');
             $("#add-files").removeClass('hide');
@@ -292,6 +315,14 @@
             form.find('input[name=expected_finish]').val(fields.expected_finish);
             form.find('input[name=price]').val(fields.price);
             form.find('input[name=editor_share]').val(fields.editor_share);
+        });
+
+        $(".deleteSelfPublishingBtn").click(function() {
+            let action = $(this).data('action');
+            let modal = $("#deleteSelfPublishingModal");
+
+            let form = modal.find('form');
+            form.attr('action', action);
         });
 
         $(".selfPublishingFeedbackBtn").click(function(){
