@@ -2,6 +2,9 @@
     <div>
         <div class="page-toolbar">
             <h3><i class="fa fa-file-text-o"></i> Project: {{ project.name }}</h3>
+            <button class="btn btn-primary btn-sm" @click="showNotes()">
+                Notes
+            </button>
             <div class="clearfix"></div>
         </div>
 
@@ -106,6 +109,26 @@
             </div>
         </b-modal>
 
+        <b-modal
+                ref="notesModal"
+                title="Edit Note"
+                size="md"
+                centered
+                no-close-on-backdrop
+        >
+
+            <div class="form-group">
+                <label>Notes</label>
+                <textarea name="notes" v-model="noteForm.notes" cols="30" rows="10" class="form-control"></textarea>
+            </div>
+
+            <div slot="modal-footer">
+                <button class="btn btn-sm btn-primary" @click="saveNotes()" :disabled="isLoading">
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Save
+                </button>
+            </div>
+        </b-modal>
+
     </div>
 </template>
 
@@ -126,6 +149,10 @@
                     isbn_hardcover_book: '',
                     isbn_ebook: '',
                 },
+                noteForm: {
+                    id: '',
+                    notes: ''
+                },
                 book: {},
                 selected_learner: '',
                 isLoading: false,
@@ -135,6 +162,32 @@
         methods: {
             setSelectedLearner(value) {
                 this.form.user_id = value ? value.id : "";
+            },
+
+            showNotes() {
+                this.noteForm = {
+                    id: this.project.id,
+                    notes: this.project.notes
+                }
+                this.$refs.notesModal.show();
+            },
+
+            saveNotes() {
+                this.isLoading = true;
+                axios.post('/project/' + this.project.id + '/notes/save', this.noteForm).then(response => {
+                    this.isLoading = false;
+                    this.project.notes = response.data.notes;
+                    this.$toasted.global.showSuccessMsg({
+                        message : 'Notes saved'
+                    });
+                    this.$refs.notesModal.hide();
+                }).catch(error => {
+                    this.isLoading = false;
+                    this.processError(error);
+                    this.$toasted.global.showErrorMsg({
+                        message : 'Error in form'
+                    });
+                });
             },
 
             showFormModal(data = null) {

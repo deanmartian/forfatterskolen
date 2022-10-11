@@ -97,6 +97,15 @@ class ProjectController extends Controller
         return response()->json();
     }
 
+    public function saveNote( $project_id, Request $request )
+    {
+        $project = Project::find($project_id);
+        $project->notes = $request->notes;
+        $project->save();
+
+        return response()->json($project);
+    }
+
     public function saveBook( $project_id, Request $request )
     {
         $this->validate($request, [

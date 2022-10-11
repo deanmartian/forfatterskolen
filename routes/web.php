@@ -1040,6 +1040,7 @@ Route::group([
 
         Route::post('/project/activity/save', 'ProjectController@saveActivity');
         Route::delete('/project/activity/{id}/delete', 'ProjectController@deleteActivity');
+        Route::post('/project/{id}/notes/save', 'ProjectController@saveNote');
         Route::post('/project/{id}/book/save', 'ProjectController@saveBook');
         Route::delete('/project/book/{id}/delete', 'ProjectController@deleteBook');
         Route::get('/project', 'ProjectController@index')->name('admin.project.index');
