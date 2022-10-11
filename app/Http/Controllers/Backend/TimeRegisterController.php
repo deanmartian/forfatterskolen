@@ -41,7 +41,13 @@ class TimeRegisterController extends Controller
         $model->save();
 
         $time = TimeRegister::find($model->id)->load('project');
-        return response()->json($time);
+        $message = $request->id ? 'Time register updated' : 'Time register added';
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag($message),
+            'alert_type' => 'success',
+            'not-former-courses' => true
+        ]);
+        //return response()->json($time);
     }
 
     public function destroy( $id )
@@ -49,8 +55,12 @@ class TimeRegisterController extends Controller
 
         $timeRegister = TimeRegister::find($id);
         $timeRegister->delete();
-
-        return response()->json();
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Time Register deleted successfully'),
+            'alert_type' => 'success',
+            'not-former-courses' => true
+        ]);
+        /*return response()->json();*/
     }
 
 }

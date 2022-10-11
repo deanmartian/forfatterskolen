@@ -1544,7 +1544,7 @@ Route::group([
         ]);
 
         Route::post('/time-register/save', 'TimeRegisterController@save')->name('admin.time-register.save');
-        Route::delete('/time-register/{id}/delete', 'TimeRegisterController@destroy');
+        Route::delete('/time-register/{id}/delete', 'TimeRegisterController@destroy')->name('admin.time-register.delete');
 
         // Advisories
         Route::put('/advisory/{id}', 'AdvisoryController@update')->name('admin.advisory.update');

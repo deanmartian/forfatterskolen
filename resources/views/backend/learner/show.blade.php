@@ -522,6 +522,62 @@
 
 			<div class="panel panel-default">
 				<div class="panel-body">
+					<button class="btn btn-primary pull-right btn-xs addTimeRegisterBtn" data-toggle="modal"
+							data-target="#timeRegisterModal">
+						+ Add Time Register
+					</button>
+					<h4>Time Register</h4>
+				</div>
+
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+						<tr>
+							<th>Project</th>
+							<th>Date</th>
+							<th>Number of hours</th>
+							<th>Time Used</th>
+							<th>Invoice</th>
+							<th width="200">Description</th>
+							<th width="150"></th>
+						</tr>
+						</thead>
+						<tbody>
+						@foreach($timeRegisters as $timeList)
+							<tr v-for="timeList in timeLists">
+								<td>
+									{{ $timeList->project_id ? $timeList->project->name : '' }}
+								</td>
+								<td>{{ $timeList->date }}</td>
+								<td>{{ $timeList->time }}</td>
+								<td>{{ $timeList->time_used }}</td>
+								<td>
+									{!! $timeList->file_link !!}
+								</td>
+								<td>{{ $timeList->description }}</td>
+								<td>
+									<button class="btn btn-xs btn-primary editTimeRegisterBtn"
+											data-toggle="modal"
+											data-record="{{ json_encode($timeList) }}"
+											data-target="#timeRegisterModal">
+										<i class="fa fa-edit"></i>
+									</button>
+
+									<button class="btn btn-xs btn-danger deleteTimeRegisterBtn" data-toggle="modal"
+											data-target="#deleteTimeRegisterModal"
+											data-action="{{ route('admin.time-register.delete', $timeList->id) }}">
+										<i class="fa fa-trash"></i>
+									</button>
+								</td>
+							</tr>
+						@endforeach
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div class="panel panel-default">
+				<div class="panel-body">
 					<?php 
 					$courseWorkshops = 0;
 					$workshopTakenCount = 0;
@@ -2599,6 +2655,93 @@
   </div>
 </div>
 
+<div id="timeRegisterModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title"></h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.time-register.save') }}" enctype="multipart/form-data"
+					  onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<input type="hidden" name="id">
+					<input type="hidden" name="learner_id" value="{{ $learner->id }}">
+					<div class="form-group">
+						<label>Project</label>
+						<select class="form-control select2" name="project_id">
+							<option value="" selected disabled>- Search project -</option>
+							@foreach($projects as $project)
+								<option value="{{ $project->id }}">{{ $project->name }}</option>>
+							@endforeach
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label>Date</label>
+						<input type="date" name="date" class="form-control" required>
+					</div>
+
+					<div class="form-group">
+						<label>Number of hours</label>
+						<input type="text" name="time" class="form-control" required>
+
+						<button type="button" class="btn btn-xs adjustTime" data-time="1">+1</button>
+						<button type="button" class="btn btn-xs adjustTime" data-time="0.5">+1/2</button>
+						<button type="button" class="btn btn-xs adjustTime" data-time="-0.5">-1/2</button>
+						<button type="button" class="btn btn-xs adjustTime" data-time="-1">-1</button>
+					</div>
+
+					<div class="edit-container">
+						<div class="form-group">
+							<label>Time Used</label>
+							<input type="number" name="time_used" class="form-control">
+						</div>
+
+						<div class="form-group">
+							<label>Invoice file</label>
+							<input type="file" name="invoice_file" class="form-control" accept="application/pdf">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label>Description</label>
+						<textarea name="description"  cols="30" rows="10" class="form-control"></textarea>
+					</div>
+
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="deleteTimeRegisterModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Delete Time Register</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" enctype="multipart/form-data" action=""
+					  onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					{{ method_field('DELETE') }}
+
+					<p>Are you sure to delete this time register?</p>
+
+					<button type="submit" class="btn btn-danger pull-right">Delete</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
 <div id="addToWorkshopModal" class="modal fade" role="dialog">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -4462,13 +4605,39 @@
 		modal.find('form').attr('action', action);
 	});
 
+	$(".addTimeRegisterBtn").click(function() {
+        let modal = $("#timeRegisterModal");
+        let modal_title = 'Add Time';
+        modal.find('.modal-title').text(modal_title);
+        modal.find('[name=id]').val('');
+        modal.find('.edit-container').addClass('hide');
+	});
+
+	$(".editTimeRegisterBtn").click(function() {
+        let modal = $("#timeRegisterModal");
+        let modal_title = 'Edit Time';
+        let data = $(this).data('record');
+        modal.find('.modal-title').text(modal_title);
+        modal.find('[name=id]').val(data.id);
+        modal.find('[name=project_id]').val(data.project_id).trigger('change');
+        modal.find('[name=date]').val(data.date);
+        modal.find('[name=time]').val(data.time);
+        modal.find('[name=time_used]').val(data.time_used);
+        modal.find('[name=description]').val(data.description);
+        modal.find('.edit-container').removeClass('hide');
+	});
+
+	$(".deleteTimeRegisterBtn").click(function() {
+        let action = $(this).data('action');
+        let modal = $('#deleteTimeRegisterModal');
+        modal.find('form').attr('action', action);
+	});
+
 	$(".adjustTime").click(function() {
 	    let time = parseFloat($(this).data('time'));
 	    let modal = $("#timeRegisterModal");
 	    let timeField = isNaN(parseFloat(modal.find('[name=time]').val())) ? 0 : parseFloat(modal.find('[name=time]').val());
         modal.find('[name=time]').val( timeField + time);
-	    console.log(timeField);
-	    console.log(time);
 	});
 
     $('#orders-table, #course-order-attachments-table').dataTable( {
