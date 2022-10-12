@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\TimeRegister;
+use App\TimeRegisterUsed;
 use Illuminate\Http\Request;
 
 class TimeRegisterController extends Controller
@@ -61,6 +62,34 @@ class TimeRegisterController extends Controller
             'not-former-courses' => true
         ]);
         /*return response()->json();*/
+    }
+
+    public function timeUsedList( $time_register_id )
+    {
+        $timeUsed = TimeRegisterUsed::where('time_register_id', $time_register_id)->get();
+        return response()->json($timeUsed);
+    }
+
+    public function saveTimeUsed( $time_register_id, Request $request )
+    {
+        $model = $request->time_used_id ? TimeRegisterUsed::find($request->time_used_id) : new TimeRegisterUsed();
+        $model->time_register_id = $time_register_id;
+        $model->date = $request->date;
+        $model->time_used = $request->time_used;
+        $model->description = $request->description;
+        $model->save();
+
+        return $this->timeUsedList($time_register_id);
+    }
+
+    public function deleteTimeUsed( $time_used_id )
+    {
+        $timeUsed = TimeRegisterUsed::find($time_used_id)->delete();
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Time used deleted successfully'),
+            'alert_type' => 'success',
+            'not-former-courses' => true
+        ]);
     }
 
 }

@@ -20,6 +20,11 @@ class TimeRegister extends Model
         return $this->hasOne('App\Project', 'id', 'project_id');
     }
 
+    public function usedTimes()
+    {
+        return $this->hasMany('App\TimeRegisterUsed');
+    }
+
     public function getFileLinkAttribute()
     {
         $fileLink = '';
