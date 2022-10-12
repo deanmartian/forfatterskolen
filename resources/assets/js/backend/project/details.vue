@@ -8,6 +8,17 @@
             <div class="clearfix"></div>
         </div>
 
+        <div class="col-md-6 margin-top">
+            <div class="panel">
+                <div class="panel-header">
+                    <em><b>Notes</b></em>
+                </div>
+                <div class="panel-body">
+                    {{ project.notes }}
+                </div>
+            </div>
+        </div>
+
         <div class="col-md-12">
             <button class="btn btn-success margin-top" @click="showFormModal()" v-if="books.length === 0">
                 Add

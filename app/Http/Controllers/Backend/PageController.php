@@ -15,6 +15,7 @@ use App\Helpers\DapulseRepository;
 use App\Http\AdminHelpers;
 use App\Order;
 use App\PageMeta;
+use App\Project;
 use App\SelfPublishing;
 use App\SelfPublishingFeedback;
 use App\User;
@@ -116,6 +117,7 @@ class PageController extends Controller
         $coachingEditors = AdminHelpers::editorByAdminQuery('is_coaching_admin');
         $correctionEditors = AdminHelpers::editorByAdminQuery('is_correction_admin');
         $copyEditingEditors = AdminHelpers::editorByAdminQuery('is_copy_editing_admin');
+        $projects = Project::all();
 
         return view('backend.dashboard', compact('pending_courses', 'pending_shop_manuscripts',
         'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts', 'assigned_free_manuscripts',
@@ -123,7 +125,7 @@ class PageController extends Controller
         'nearlyExpiredCoursesCount', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
         'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments',
         'pendingTasks', 'assignedAssignmentManuscripts','shopManuscriptTakenFeedback', 'selfPublishingList', 'editors',
-            'learners', 'coachingEditors', 'correctionEditors', 'copyEditingEditors'));
+            'learners', 'coachingEditors', 'correctionEditors', 'copyEditingEditors', 'projects'));
     }
 
     public function updateExpectedFinish( $type, $id, Request $request )
