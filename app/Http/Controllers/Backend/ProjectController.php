@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
+use App\TimeRegister;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -27,7 +28,10 @@ class ProjectController extends Controller
         $project = Project::find($id)->load(['books', 'user', 'selfPublishingList']);
         $editors = AdminHelpers::editorList();
         $learners = User::where('role', 2)->where('is_self_publishing_learner', 1)->get();
-        return view('backend.project.show', compact('project', 'editors', 'learners'));
+        $timeRegisters = TimeRegister::where('user_id', $project->user_id)->whereNull('project_id')->with('project')->get();
+        $projectTimeRegisters = TimeRegister::where('project_id', $project->id)->with('project')->get();
+        return view('backend.project.show', compact('project', 'editors', 'learners', 'timeRegisters',
+            'projectTimeRegisters'));
     }
 
     public function saveProject( Request $request )

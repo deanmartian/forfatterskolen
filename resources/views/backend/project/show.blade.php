@@ -11,7 +11,9 @@
 @section('content')
 
     <div id="app-container">
-        <project-details :current-project="{{ json_encode($project) }}" :learners="{{ json_encode($learners) }}"></project-details>
+        <project-details :current-project="{{ json_encode($project) }}" :learners="{{ json_encode($learners) }}"
+                         :time-registers="{{ json_encode($timeRegisters) }}"
+                         :project-time-list="{{ json_encode($projectTimeRegisters) }}"></project-details>
 
         <div class="col-md-12">
             <button type="button" class="btn btn-success addSelfPublishingBtn" data-toggle="modal"

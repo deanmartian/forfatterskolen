@@ -4792,7 +4792,9 @@
                     tr += "<td>" + record.description + "</td>";
                     tr += "<td>" +
                         "<button class='btn btn-primary btn-xs editTimeUsedBtn' data-toggle='modal'" +
-                        " data-target='#timeUsedFormModal' onclick='editTimeUsed(" + JSON.stringify(record) + ")'><i class='fa fa-edit'></i></button>";
+                        " data-target='#timeUsedFormModal' onclick='editTimeUsed(" + JSON.stringify(record) + ")'><i class='fa fa-edit'></i></button>"+
+                        "<button class='btn btn-danger btn-xs' data-toggle='modal' data-target='#deleteTimeUsedModal'" +
+                        " onclick='deleteTimeUsed(" + JSON.stringify(record) + ")' style='margin-left:5px'><i class='fa fa-trash'></i></button>";
                     	"</td>";
                     tr += "</tr>";
                 });

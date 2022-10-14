@@ -43,24 +43,28 @@ class TimeRegisterController extends Controller
 
         $time = TimeRegister::find($model->id)->load('project');
         $message = $request->id ? 'Time register updated' : 'Time register added';
+        if ($request->ajax()) {
+            return response()->json($time);
+        }
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag($message),
             'alert_type' => 'success',
             'not-former-courses' => true
         ]);
-        //return response()->json($time);
     }
 
-    public function destroy( $id )
+    public function destroy( $id, Request $request )
     {
 
         $timeRegister = TimeRegister::find($id);
         $timeRegister->delete();
-        return redirect()->back()->with([
-            'errors' => AdminHelpers::createMessageBag('Time Register deleted successfully'),
-            'alert_type' => 'success',
-            'not-former-courses' => true
-        ]);
+        if (!$request->ajax()) {
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Time Register deleted successfully'),
+                'alert_type' => 'success',
+                'not-former-courses' => true
+            ]);
+        }
         /*return response()->json();*/
     }
 
@@ -72,6 +76,12 @@ class TimeRegisterController extends Controller
 
     public function saveTimeUsed( $time_register_id, Request $request )
     {
+
+        $this->validate($request, [
+            'date' => 'required',
+            'time_used' => 'required',
+        ]);
+
         $model = $request->time_used_id ? TimeRegisterUsed::find($request->time_used_id) : new TimeRegisterUsed();
         $model->time_register_id = $time_register_id;
         $model->date = $request->date;
@@ -82,14 +92,16 @@ class TimeRegisterController extends Controller
         return $this->timeUsedList($time_register_id);
     }
 
-    public function deleteTimeUsed( $time_used_id )
+    public function deleteTimeUsed( $time_used_id, Request $request )
     {
         $timeUsed = TimeRegisterUsed::find($time_used_id)->delete();
-        return redirect()->back()->with([
-            'errors' => AdminHelpers::createMessageBag('Time used deleted successfully'),
-            'alert_type' => 'success',
-            'not-former-courses' => true
-        ]);
+        if (!$request->ajax()) {
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Time used deleted successfully'),
+                'alert_type' => 'success',
+                'not-former-courses' => true
+            ]);
+        };
     }
 
 }
