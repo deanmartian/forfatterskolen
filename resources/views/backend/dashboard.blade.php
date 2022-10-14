@@ -1887,7 +1887,7 @@
         let preferred_editor = $(this).data('preferred-editor');
         let preferred_editor_name = $(this).data('preferred-editor-name');
         let modal = $('#pendingAssignmentEditorModal');
-        modal.find('select').val(preferred_editor).trigger('change');
+
         modal.find('form').attr('action', action);
 
 		let genreEditors = $(this).data('genre_editors');
@@ -1899,6 +1899,7 @@
 			modal.find('select[name=editor_id]').append('<option value="'+genreEditors[i]['id']+'">'+genreEditors[i]['first_name']+' '+genreEditors[i]['last_name']+'</option>');
 		}
 
+        modal.find('select').val(preferred_editor).trigger('change');
         if (preferred_editor) {
             modal.find('.select2').hide();
             modal.find('.hidden-container').show();
