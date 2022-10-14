@@ -107,6 +107,81 @@
                     </tbody>
                 </table>
             </div>
+        </div> <!-- end self publishing -->
+
+        <div class="col-md-12 margin-top">
+            <button type="button" class="btn btn-success addSelfPublishingBtn">
+                Legg til Språkvask
+            </button>
+            <div class="table-users table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>{{ trans_choice('site.manus', 2) }}</th>
+                        <th>{{ trans_choice('site.editors', 1) }}</th>
+                        <th>{{ trans('site.date-ordered') }}</th>
+                        <th>{{ trans('site.expected-finish') }}</th>
+                        <th>{{ trans('site.status') }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-12 margin-top">
+            <button type="button" class="btn btn-success">
+                Add Korrektur
+            </button>
+            <div class="table-users table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>{{ trans_choice('site.manus', 2) }}</th>
+                        <th>{{ trans_choice('site.editors', 1) }}</th>
+                        <th>{{ trans('site.date-ordered') }}</th>
+                        <th>{{ trans('site.expected-finish') }}</th>
+                        <th>{{ trans('site.status') }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-12 margin-top">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel">
+                        <div class="panel-header" style="padding: 10px;">
+                            <em><b>Book Cover</b></em>
+                        </div>
+                        <div class="panel-body">
+                        </div>
+
+                        <div class="panel-header" style="padding: 10px;">
+                            <em><b>Book Pictures</b></em>
+                        </div>
+                        <div class="panel-body">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="panel">
+                        <div class="panel-header" style="padding: 10px;">
+                            <em><b>Bok Brekking</b></em>
+                        </div>
+                        <div class="panel-body">
+                            <!-- This is a pdf. This is the last thing for the book before it gets printed -->
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

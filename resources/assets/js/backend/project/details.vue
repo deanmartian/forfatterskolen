@@ -5,6 +5,12 @@
             <button class="btn btn-primary btn-sm" @click="showNotes()">
                 Notes
             </button>
+            <button class="btn btn-primary btn-sm">
+                Page2
+            </button>
+            <button class="btn btn-primary btn-sm"> <!-- this should be the docx file of FS treadline saved -->
+                Checklist
+            </button>
             <div class="clearfix"></div>
         </div>
 
