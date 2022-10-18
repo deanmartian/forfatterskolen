@@ -29,4 +29,9 @@ class Project extends Model
     {
         return $this->hasMany('App\CopyEditingManuscript')->orderBy('created_at', 'desc');
     }
+
+    public function corrections()
+    {
+        return $this->hasMany('App\CorrectionManuscript')->orderBy('created_at', 'desc');
+    }
 }

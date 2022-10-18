@@ -2,14 +2,29 @@
     <div>
         <div class="page-toolbar">
             <h3><i class="fa fa-file-text-o"></i> Project: {{ project.name }}</h3>
-            <button class="btn btn-primary btn-sm" @click="showNotes()">
-                Notes
-            </button>
+            <a :href="'/project/' + project.id + '/graphic-work'" class="btn btn-primary btn-sm">
+                Graphic Work
+            </a>
+            <a :href="'/project/' + project.id + '/registration'" class="btn btn-primary btn-sm">
+                Registration
+            </a>
+            <a :href="'/project/' + project.id + '/marketing'" class="btn btn-primary btn-sm">
+                Marketing
+            </a>
             <button class="btn btn-primary btn-sm">
                 Page2
             </button>
             <button class="btn btn-primary btn-sm"> <!-- this should be the docx file of FS treadline saved -->
                 Checklist
+            </button>
+            <button class="btn btn-primary btn-sm">
+                Contract
+            </button>
+            <button class="btn btn-primary btn-sm">
+                Invoices
+            </button>
+            <button class="btn btn-primary btn-sm pull-right">
+                <i class="fa fa-edit"></i> Edit Project
             </button>
             <div class="clearfix"></div>
         </div>
@@ -19,6 +34,9 @@
                 <div class="panel">
                     <div class="panel-header" style="padding: 10px">
                         <em><b>Notes</b></em>
+                        <button class="btn btn-primary btn-sm pull-right" @click="showNotes()">
+                            Notes
+                        </button>
                     </div>
                     <div class="panel-body">
                         {{ project.notes }}
@@ -83,8 +101,6 @@
                     <tr>
                         <th>Author</th>
                         <th>Name of book</th>
-                        <th>ISBN number for hardcover book</th>
-                        <th>ISBN number for ebook</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -95,12 +111,6 @@
                         </td>
                         <td>
                             {{ book.book_name }}
-                        </td>
-                        <td>
-                            {{ book.isbn_hardcover_book }}
-                        </td>
-                        <td>
-                            {{ book.isbn_ebook }}
                         </td>
                         <td>
                             <button class="btn btn-xs btn-primary" @click="showFormModal(book)">
@@ -135,17 +145,6 @@
                 <label>Name of book</label>
                 <input type="text" class="form-control" name="book_name" v-model="form.book_name">
             </div>
-
-            <div class="form-group">
-                <label>ISBN number for hardcover book</label>
-                <input type="text" class="form-control" name="isbn_hardcover_book" v-model="form.isbn_hardcover_book">
-            </div>
-
-            <div class="form-group">
-                <label>ISBN number for ebook</label>
-                <input type="text" class="form-control" name="isbn_ebook" v-model="form.isbn_ebook">
-            </div>
-
 
             <div slot="modal-footer">
                 <button class="btn btn-sm btn-primary" @click="saveForm()" :disabled="isLoading">

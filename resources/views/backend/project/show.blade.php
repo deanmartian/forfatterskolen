@@ -205,6 +205,7 @@
                 </div>
             </div> <!-- end copy editing -->
 
+            <!-- correction -->
             <div class="col-md-12 margin-top">
                 <button type="button" class="btn btn-success">
                     Add Korrektur
@@ -225,19 +226,13 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div> <!-- end correction -->
 
         @endif
         <div class="col-md-12 margin-top">
             <div class="row">
                 <div class="col-md-6">
                     <div class="panel">
-                        <div class="panel-header" style="padding: 10px;">
-                            <em><b>Book Cover</b></em>
-                        </div>
-                        <div class="panel-body">
-                        </div>
-
                         <div class="panel-header" style="padding: 10px;">
                             <em><b>Book Pictures</b></em>
                         </div>

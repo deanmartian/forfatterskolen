@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 
 use App\CopyEditingManuscript;
+use App\CorrectionManuscript;
 use App\Helpers\FileToText;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
@@ -210,6 +211,14 @@ class ProjectController extends Controller
                         'payment_price' => $data['price'],
                         'editor_id'     => $request->exists('editor_id') ? $data['editor_id'] : NULL
                     ]);
+                } else {
+                    CorrectionManuscript::create([
+                        'user_id'       => $project->user_id,
+                        'project_id'    => $project_id,
+                        'file'          => $file,
+                        'payment_price' => $data['price'],
+                        'editor_id'     => $request->exists('editor_id') ? $data['editor_id'] : NULL
+                    ]);
                 }
 
                 return redirect()->back()->with([
@@ -222,5 +231,23 @@ class ProjectController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function graphicWork( $project_id )
+    {
+        $project = Project::find($project_id);
+        return view('backend.project.graphic-work', compact('project'));
+    }
+
+    public function registration( $project_id )
+    {
+        $project = Project::find($project_id);
+        return view('backend.project.registration', compact('project'));
+    }
+
+    public function marketing( $project_id )
+    {
+        $project = Project::find($project_id);
+        return view('backend.project.marketing', compact('project'));
     }
 }
