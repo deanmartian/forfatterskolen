@@ -109,50 +109,125 @@
             </div>
         </div> <!-- end self publishing -->
 
-        <div class="col-md-12 margin-top">
-            <button type="button" class="btn btn-success addSelfPublishingBtn">
-                Legg til Språkvask
-            </button>
-            <div class="table-users table-responsive">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>{{ trans_choice('site.manus', 2) }}</th>
-                        <th>{{ trans_choice('site.editors', 1) }}</th>
-                        <th>{{ trans('site.date-ordered') }}</th>
-                        <th>{{ trans('site.expected-finish') }}</th>
-                        <th>{{ trans('site.status') }}</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        @if($project->user_id)
 
-        <div class="col-md-12 margin-top">
-            <button type="button" class="btn btn-success">
-                Add Korrektur
-            </button>
-            <div class="table-users table-responsive">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>{{ trans_choice('site.manus', 2) }}</th>
-                        <th>{{ trans_choice('site.editors', 1) }}</th>
-                        <th>{{ trans('site.date-ordered') }}</th>
-                        <th>{{ trans('site.expected-finish') }}</th>
-                        <th>{{ trans('site.status') }}</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+            <!-- copy editing -->
+            <div class="col-md-12 margin-top">
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addOtherServiceModal"
+                        onclick="updateOtherServiceFields(1)">+ {{ trans('site.add-copy-editing') }}</button>
+                <div class="table-users table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>{{ trans_choice('site.manus', 2) }}</th>
+                            <th>{{ trans_choice('site.editors', 1) }}</th>
+                            <th>{{ trans('site.date-ordered') }}</th>
+                            <th>{{ trans('site.expected-finish') }}</th>
+                            <th>{{ trans('site.status') }}</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($project->copyEditings as $copy_editing)
+                            <?php $extension = explode('.', basename($copy_editing->file)); ?>
+                            <tr>
+                                <td>
+                                    @if( end($extension) == 'pdf' || end($extension) == 'odt' )
+                                        <a href="/js/ViewerJS/#../../{{ $copy_editing->file }}">{{ basename($copy_editing->file) }}</a>
+                                    @elseif( end($extension) == 'docx' )
+                                        <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copy_editing->file}}">{{ basename($copy_editing->file) }}</a>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if ($copy_editing->editor_id)
+                                        {{ $copy_editing->editor->full_name }}
+                                    @else
+                                        <button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal"
+                                                data-target="#assignEditorModal"
+                                                data-action="{{ route('admin.other-service.assign-editor', ['id' => $copy_editing->id, 'type' => 1]) }}">
+                                            {{ trans('site.assign-editor') }}
+                                        </button>
+                                    @endif
+                                </td>
+                                <td>
+                                    {{ \App\Http\FrontendHelpers::formatDate($copy_editing->created_at) }}
+                                </td>
+                                <td>
+                                    @if ($copy_editing->expected_finish)
+                                        {{ $copy_editing->expected_finish_formatted }}
+                                        <br>
+                                    @endif
 
+                                    @if ($copy_editing->status !== 2)
+                                        <a href="#setOtherServiceFinishDateModal" data-toggle="modal"
+                                           class="setOtherServiceFinishDateBtn"
+                                           data-action="{{ route('admin.other-service.update-expected-finish',
+                                               ['id' => $copy_editing->id, 'type' => 1]) }}"
+                                           data-finish="{{ $copy_editing->expected_finish ?
+                                            strftime('%Y-%m-%d', strtotime($copy_editing->expected_finish)) : '' }}">
+                                            {{ trans('site.set-date') }}
+                                        </a>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if( $copy_editing->status == 2 )
+                                        <span class="label label-success">Finished</span>
+                                    @elseif( $copy_editing->status == 1 )
+                                        <span class="label label-primary">Started</span>
+                                    @elseif( $copy_editing->status == 0 )
+                                        <span class="label label-warning">Not started</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <?php
+                                    $btnColor = $copy_editing->status == 1 ? 'primary' : 'warning';
+                                    ?>
+
+                                    @if ($copy_editing->status !== 2)
+                                        <button class="btn btn-{{ $btnColor }} btn-xs updateOtherServiceStatusBtn" type="button"
+                                                data-toggle="modal" data-target="#updateOtherServiceStatusModal"
+                                                data-service="1"
+                                                data-action="{{ route('admin.other-service.update-status', ['id' => $copy_editing->id, 'type' => 1]) }}">
+                                            <i class="fa fa-check"></i>
+                                        </button>
+                                    @endif
+
+                                    <button class="btn btn-danger btn-xs deleteOtherServiceBtn" type="button"
+                                            data-toggle="modal" data-target="#deleteOtherServiceModal"
+                                            data-action="{{ route('admin.other-service.delete', ['id' => $copy_editing->id, 'type' => 1]) }}">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div> <!-- end copy editing -->
+
+            <div class="col-md-12 margin-top">
+                <button type="button" class="btn btn-success">
+                    Add Korrektur
+                </button>
+                <div class="table-users table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>{{ trans_choice('site.manus', 2) }}</th>
+                            <th>{{ trans_choice('site.editors', 1) }}</th>
+                            <th>{{ trans('site.date-ordered') }}</th>
+                            <th>{{ trans('site.expected-finish') }}</th>
+                            <th>{{ trans('site.status') }}</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        @endif
         <div class="col-md-12 margin-top">
             <div class="row">
                 <div class="col-md-6">
@@ -348,6 +423,141 @@
             </div>
         </div>
     </div>
+
+    <div id="addOtherServiceModal" class="modal fade" role="dialog" data-backdrop="static">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" enctype="multipart/form-data"
+                          action="{{ route('admin.project.add-other-service', $project->id) }}"
+                          onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        <div class="form-group">
+                            <label>{{ trans_choice('site.manuscripts', 1) }}</label>
+                            <input type="file" class="form-control" name="manuscript"
+                                   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                   required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ trans('site.assign-to') }}</label>
+                            <select name="editor_id" class="form-control select2">
+                                <option value="" disabled="" selected>-- Select Editor --</option>
+                                @foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
+                                    <option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <input type="hidden" name="is_copy_editing">
+                        <button class="btn btn-success pull-right" type="submit">
+                            {{ trans('site.add') }}
+                        </button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="assignEditorModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        <div class="form-group">
+                            <label>Assign editor</label>
+                            <select name="editor_id" class="form-control select2" required>
+                                <option value="" disabled="" selected>-- Select Editor --</option>
+                                @foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
+                                    <option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="setOtherServiceFinishDateModal" class="modal fade" role="dialog" data-backdrop="static">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><span></span> Expected Finish</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        <div class="form-group">
+                            <label>Expected finish date</label>
+                            <input type="date" name="expected_finish" class="form-control" required>
+                        </div>
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="updateOtherServiceStatusModal" class="modal fade" role="dialog" data-backdrop="static">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Update <span></span> Status</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        <p>
+                            Are you sure to update the status of this record?
+                        </p>
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteOtherServiceModal" class="modal fade" role="dialog" data-backdrop="static">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        {{ trans('site.delete') }}
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action=""
+                          onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        <p>
+                            {{ trans('site.delete-item-question') }}
+                        </p>
+                        <button class="btn btn-danger pull-right" type="submit">
+                            {{ trans('site.delete') }}
+                        </button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('scripts')
@@ -414,6 +624,55 @@
             modal.find("#manus-container").html(fields.feedback.file_link);
             modal.find("#notes-container").text(fields.feedback.notes);
         });
+
+        $('.assignEditorBtn').click(function(){
+            let action = $(this).data('action');
+            let editor = $(this).data('editor');
+            let modal = $('#assignEditorModal');
+            modal.find('select').val(editor);
+            modal.find('form').attr('action', action);
+        });
+
+        $(".setOtherServiceFinishDateBtn").click(function(){
+            let action = $(this).data('action');
+            let modal = $('#setOtherServiceFinishDateModal');
+            let finish = $(this).data('finish');
+
+            modal.find('form').attr('action', action);
+            modal.find('form').find('[name=expected_finish]').val(finish);
+        });
+
+        $(".updateOtherServiceStatusBtn").click(function(){
+            let action = $(this).data('action');
+            let modal = $('#updateOtherServiceStatusModal');
+            let service = $(this).data('service');
+            let title = 'Korrektur';
+
+            if (service === 1) {
+                title = 'Språkvask';
+            }
+            modal.find('form').attr('action', action);
+            modal.find('.modal-title').find('span').text(title);
+        });
+
+        $(".deleteOtherServiceBtn").click(function(){
+            let action = $(this).data('action');
+            let modal = $('#deleteOtherServiceModal');
+            modal.find('form').attr('action', action);
+        });
+
+        function updateOtherServiceFields(type) {
+            let modal = $("#addOtherServiceModal");
+            let add_correction_text = "{{ trans('site.add-correction') }}";
+            let add_copy_editing_text = "{{ trans('site.add-copy-editing') }}";
+            let modal_title = add_correction_text;
+            if (type === 1) {
+                modal_title = add_copy_editing_text;
+            }
+
+            modal.find('.modal-title').text(modal_title);
+            modal.find('form').find('[name=is_copy_editing]').val(type);
+        }
     </script>
     <script type="text/javascript" src="{{asset('select2/dist/js/select2.min.js')}}"></script>
 @stop

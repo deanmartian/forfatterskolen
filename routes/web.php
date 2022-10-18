@@ -1047,6 +1047,7 @@ Route::group([
         Route::post('/project/save', 'ProjectController@saveProject');
         Route::get('/project/{id}', 'ProjectController@show');
         Route::delete('/project/{id}/delete', 'ProjectController@deleteProject');
+        Route::post('/project/{id}/add-other-service', 'ProjectController@addOtherService')->name('admin.project.add-other-service');
 
         Route::post('generate_assignment_group/{id}', 'AssignmentController@generateGroup')->name('assignment.generate_assignment_group');
         Route::post('assignment/{id}/uploadManuscript', 'AssignmentController@uploadManuscript')->name('assignment.group.upload_manuscript');

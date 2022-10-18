@@ -467,6 +467,11 @@
                     this.isLoading = false;
                     let message = '';
                     let data = response.data;
+
+                    if (!this.project.user_id && this.form.user_id) {
+                        location.reload();
+                    }
+
                     if (this.form.id) {
                         this.updateRecordFromObject(this.books, this.form.id, data.book);
                         message = 'Book updated';

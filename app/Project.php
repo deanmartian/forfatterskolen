@@ -24,4 +24,9 @@ class Project extends Model
     {
         return $this->hasMany('App\SelfPublishing');
     }
+
+    public function copyEditings()
+    {
+        return $this->hasMany('App\CopyEditingManuscript')->orderBy('created_at', 'desc');
+    }
 }

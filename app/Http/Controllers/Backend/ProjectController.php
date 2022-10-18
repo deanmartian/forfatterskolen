@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Backend;
 
 
+use App\CopyEditingManuscript;
+use App\Helpers\FileToText;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
+use App\Http\FrontendHelpers;
 use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
@@ -125,7 +128,11 @@ class ProjectController extends Controller
         $model->save();
 
         if ($request->user_id) {
-            Project::find($project_id)->update(['user_id' => $request->user_id]);
+            $project = Project::find($project_id);
+            $project->update(['user_id' => $request->user_id]);
+            $project->copyEditings()->update([
+                'user_id' => $request->user_id
+            ]);
         }
 
         $project = Project::find($project_id)->load(['books', 'user', 'selfPublishingList']);
@@ -140,5 +147,80 @@ class ProjectController extends Controller
     {
         ProjectBook::find($id)->delete();
         return response()->json();
+    }
+
+    /**
+     * Add to correction or copy editing
+     * @param $project_id
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function addOtherService($project_id, Request $request)
+    {
+        if ($project = Project::find($project_id)) {
+            $data = $request->except('_token');
+
+            $extensions = ['docx'];
+            if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) :
+                $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
+
+                if( !in_array($extension, $extensions) ) :
+                    return redirect()->back()->with([
+                        'alert_type' => 'danger',
+                        'errors' => AdminHelpers::createMessageBag('File type not allowed.'),
+                    ]);
+                endif;
+
+                $destinationPath = 'storage/correction-manuscripts/'; // upload path
+
+                if ($data['is_copy_editing'] == 1) {
+                    $destinationPath = 'storage/copy-editing-manuscripts/'; // upload path
+                }
+
+                $time = time();
+                $fileName = $time.'.'.$extension;//$original_filename; // rename document
+                $request->manuscript->move($destinationPath, $fileName);
+
+                $file = $destinationPath.$fileName;
+
+                $docObj = new FileToText($file);
+                // count characters with space
+                $word_count = strlen($docObj->convertToText()) - 2;
+
+                $word_per_price = 1000;
+                $price_per_word = 25;
+
+                if ($data['is_copy_editing'] == 1) {
+                    $word_per_price = 1000;
+                    $price_per_word = 30;
+                }
+
+                $rounded_word       = FrontendHelpers::roundUpToNearestMultiple($word_count);
+                $calculated_price   = ($rounded_word/$word_per_price) * $price_per_word;
+                $data['price']      = $calculated_price;
+
+
+                $manuType = 'Correction';
+                if ($data['is_copy_editing'] == 1) {
+                    $manuType = 'Copy Editing';
+                    CopyEditingManuscript::create([
+                        'user_id'       => $project->user_id,
+                        'project_id'    => $project_id,
+                        'file'          => $file,
+                        'payment_price' => $data['price'],
+                        'editor_id'     => $request->exists('editor_id') ? $data['editor_id'] : NULL
+                    ]);
+                }
+
+                return redirect()->back()->with([
+                    'errors' => AdminHelpers::createMessageBag($manuType.' Manuscript added successfully.'),
+                    'alert_type' => 'success',
+                    'not-former-courses' => true
+                ]);
+            endif;
+
+        }
+
+        return redirect()->back();
     }
 }

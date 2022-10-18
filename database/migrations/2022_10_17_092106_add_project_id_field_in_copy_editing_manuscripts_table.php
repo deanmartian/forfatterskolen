@@ -1,0 +1,34 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class AddProjectIdFieldInCopyEditingManuscriptsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('copy_editing_manuscripts', function (Blueprint $table) {
+            $table->unsignedInteger('user_id')->nullable()->change();
+            $table->unsignedInteger('project_id')->after('user_id')->nullable();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('copy_editing_manuscripts', function (Blueprint $table) {
+            $table->unsignedInteger('user_id')->change();
+            $table->dropColumn('project_id');
+        });
+    }
+}
