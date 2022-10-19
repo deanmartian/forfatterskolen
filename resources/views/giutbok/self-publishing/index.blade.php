@@ -68,6 +68,11 @@
                                             data-fields="{{ json_encode($publishing) }}">
                                         View Feedback
                                     </button>
+
+                                    <a href="{{ $publishing->feedback->manuscript }}"
+                                       class="btn btn-success btn-xs margin-top" download>
+                                        Download Feedback
+                                    </a>
                                 @else
                                     <label class="label label-warning" style="margin-right: 5px;">
                                         Pending
