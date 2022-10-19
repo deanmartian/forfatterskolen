@@ -330,6 +330,12 @@ class SelfPublishingController extends Controller
         ]);
     }
 
+    public function downloadFeedback( $feedback_id )
+    {
+        $feedback = SelfPublishingFeedback::find($feedback_id);
+        return response()->download(trim($feedback->manuscript, '/'));
+    }
+
     /**
      * @param $learner_id
      * @return \Illuminate\Http\RedirectResponse

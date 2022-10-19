@@ -77,8 +77,8 @@
                                         View Feedback
                                     </button>
 
-                                    <a href="{{ $publishing->feedback->manuscript }}"
-                                       class="btn btn-success btn-xs margin-top" download>
+                                    <a href="{{ route('admin.self-publishing.download-feedback', $publishing->feedback->id) }}"
+                                       class="btn btn-success btn-xs margin-top">
                                         Download Feedback
                                     </a>
                                 @else

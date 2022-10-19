@@ -1536,6 +1536,7 @@ Route::group([
         Route::get('/self-publishing/{id}/download-manuscript', 'SelfPublishingController@selfPublishingDownloadManuscript')
             ->name('admin.self-publishing.download-manuscript');
         Route::post('/self-publishing/{id}/add-feedback', 'SelfPublishingController@addFeedback')->name('admin.self-publishing.add-feedback');
+        Route::get('/self-publishing/feedback/{feedback_id}/download', 'SelfPublishingController@downloadFeedback')->name('admin.self-publishing.download-feedback');
         Route::delete('/self-publishing/delete-learner/{learner_id}', 'SelfPublishingController@deleteLearner')->name('admin.self-publishing.delete-learner');
         Route::resource('/self-publishing', 'SelfPublishingController', [
             'except' => ['create', 'edit'],
