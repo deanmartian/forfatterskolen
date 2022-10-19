@@ -407,7 +407,10 @@
 										{{ $publishing->expected_finish }}
 									</td>
 									<td>
-										{!! $publishing->feedback->file_link !!}
+										<a href="{{ $publishing->feedback->manuscript }}" download>
+											<i class="fa fa-download"></i>
+										</a>
+										{!! $publishing->feedback->file_link !!} <br>
 									</td>
 									<td>
 										{{ $publishing->feedback->notes}}
