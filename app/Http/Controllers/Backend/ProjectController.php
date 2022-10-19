@@ -9,9 +9,14 @@ use App\Helpers\FileToText;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
+use App\Http\Requests\ProjectActivityRequest;
+use App\Http\Requests\ProjectBookRequest;
+use App\Http\Requests\ProjectCopyEditingRequest;
+use App\Http\Requests\ProjectRequest;
 use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
+use App\Services\ProjectService;
 use App\TimeRegister;
 use App\User;
 use Illuminate\Http\Request;
@@ -32,42 +37,18 @@ class ProjectController extends Controller
         $project = Project::find($id)->load(['books', 'user', 'selfPublishingList']);
         $editors = AdminHelpers::editorList();
         $learners = User::where('role', 2)->where('is_self_publishing_learner', 1)->get();
+        $activities = ProjectActivity::all();
         $timeRegisters = TimeRegister::where('user_id', $project->user_id)->whereNull('project_id')->with('project')->get();
         $projectTimeRegisters = TimeRegister::where('project_id', $project->id)->with('project')->get();
-        return view('backend.project.show', compact('project', 'editors', 'learners', 'timeRegisters',
-            'projectTimeRegisters'));
+        $projects = Project::all();
+
+        return view('backend.project.show', compact('project', 'editors', 'learners', 'activities',
+            'timeRegisters', 'projectTimeRegisters', 'projects'));
     }
 
-    public function saveProject( Request $request )
+    public function saveProject( ProjectRequest $request, ProjectService $projectService )
     {
-        $this->validate($request, [
-            'name' => 'required',
-        ]);
-
-        if (!$request->id) {
-            $this->validate($request, [
-                'number' => 'required|unique:projects,identifier'
-            ]);
-        }
-
-        $model = $request->id ? Project::find($request->id) : new Project();
-        $model->user_id = $request->user_id;
-        $model->name = $request->name;
-        $model->identifier = $request->number;
-        $model->activity_id = $request->activity_id;
-        $model->start_date = $request->start_date;
-        $model->end_date = $request->end_date;
-        $model->description = $request->description;
-        $model->is_finished = $request->is_finished;
-        $model->save();
-
-        if ($request->user_id) {
-            $model->books()->update([
-                'user_id' => $request->user_id
-            ]);
-        }
-
-        return $model;
+        return $projectService->saveProject($request);
     }
 
     public function deleteProject( $project_id )
@@ -82,21 +63,9 @@ class ProjectController extends Controller
         return response()->json();
     }
 
-    public function saveActivity( Request $request )
+    public function saveActivity( ProjectActivityRequest $request, ProjectService $projectService )
     {
-        $this->validate($request, [
-            'activity' => 'required'
-        ]);
-
-        $model = $request->id ? ProjectActivity::find($request->id) : new ProjectActivity();
-        $model->activity = $request->activity;
-        $model->project_id = $request->project_id ?: NULL;
-        $model->description = $request->description;
-        $model->invoicing = $request->invoicing;
-        $model->hourly_rate = $request->hourly_rate;
-        $model->save();
-
-        return $model;
+        return $projectService->saveActivity($request);
     }
 
     public function deleteActivity( $id )
@@ -114,34 +83,12 @@ class ProjectController extends Controller
         return response()->json($project);
     }
 
-    public function saveBook( $project_id, Request $request )
+    public function saveBook( $project_id, ProjectBookRequest $request, ProjectService $projectService )
     {
-        $this->validate($request, [
-            'book_name' => 'required'
-        ]);
+        $request->merge(['project_id' => $project_id]);
+        $response = $projectService->saveBook($request);
 
-        $model = $request->id ? ProjectBook::find($request->id) : new ProjectBook();
-        $model->project_id = $project_id;
-        $model->user_id = $request->user_id;
-        $model->book_name = $request->book_name;
-        $model->isbn_hardcover_book = $request->isbn_hardcover_book;
-        $model->isbn_ebook = $request->isbn_ebook;
-        $model->save();
-
-        if ($request->user_id) {
-            $project = Project::find($project_id);
-            $project->update(['user_id' => $request->user_id]);
-            $project->copyEditings()->update([
-                'user_id' => $request->user_id
-            ]);
-        }
-
-        $project = Project::find($project_id)->load(['books', 'user', 'selfPublishingList']);
-
-        return response()->json([
-            'book' => $model,
-            'project' => $project
-        ]);
+        return response()->json($response);
     }
 
     public function deleteBook( $id )
@@ -156,77 +103,20 @@ class ProjectController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function addOtherService($project_id, Request $request)
+    public function addOtherService($project_id, ProjectCopyEditingRequest $request, ProjectService $projectService)
     {
         if ($project = Project::find($project_id)) {
-            $data = $request->except('_token');
 
-            $extensions = ['docx'];
-            if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) :
-                $extension = pathinfo($_FILES['manuscript']['name'], PATHINFO_EXTENSION);
+            $manuType =  $projectService->saveOtherService($request->merge([
+                'user_id' => $project->user_id,
+                'project_id' => $project_id
+            ]));
 
-                if( !in_array($extension, $extensions) ) :
-                    return redirect()->back()->with([
-                        'alert_type' => 'danger',
-                        'errors' => AdminHelpers::createMessageBag('File type not allowed.'),
-                    ]);
-                endif;
-
-                $destinationPath = 'storage/correction-manuscripts/'; // upload path
-
-                if ($data['is_copy_editing'] == 1) {
-                    $destinationPath = 'storage/copy-editing-manuscripts/'; // upload path
-                }
-
-                $time = time();
-                $fileName = $time.'.'.$extension;//$original_filename; // rename document
-                $request->manuscript->move($destinationPath, $fileName);
-
-                $file = $destinationPath.$fileName;
-
-                $docObj = new FileToText($file);
-                // count characters with space
-                $word_count = strlen($docObj->convertToText()) - 2;
-
-                $word_per_price = 1000;
-                $price_per_word = 25;
-
-                if ($data['is_copy_editing'] == 1) {
-                    $word_per_price = 1000;
-                    $price_per_word = 30;
-                }
-
-                $rounded_word       = FrontendHelpers::roundUpToNearestMultiple($word_count);
-                $calculated_price   = ($rounded_word/$word_per_price) * $price_per_word;
-                $data['price']      = $calculated_price;
-
-
-                $manuType = 'Correction';
-                if ($data['is_copy_editing'] == 1) {
-                    $manuType = 'Copy Editing';
-                    CopyEditingManuscript::create([
-                        'user_id'       => $project->user_id,
-                        'project_id'    => $project_id,
-                        'file'          => $file,
-                        'payment_price' => $data['price'],
-                        'editor_id'     => $request->exists('editor_id') ? $data['editor_id'] : NULL
-                    ]);
-                } else {
-                    CorrectionManuscript::create([
-                        'user_id'       => $project->user_id,
-                        'project_id'    => $project_id,
-                        'file'          => $file,
-                        'payment_price' => $data['price'],
-                        'editor_id'     => $request->exists('editor_id') ? $data['editor_id'] : NULL
-                    ]);
-                }
-
-                return redirect()->back()->with([
-                    'errors' => AdminHelpers::createMessageBag($manuType.' Manuscript added successfully.'),
-                    'alert_type' => 'success',
-                    'not-former-courses' => true
-                ]);
-            endif;
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag($manuType.' Manuscript added successfully.'),
+                'alert_type' => 'success',
+                'not-former-courses' => true
+            ]);
 
         }
 

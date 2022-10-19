@@ -12,8 +12,8 @@
 
     <div id="app-container">
         <project-details :current-project="{{ json_encode($project) }}" :learners="{{ json_encode($learners) }}"
-                         :time-registers="{{ json_encode($timeRegisters) }}"
-                         :project-time-list="{{ json_encode($projectTimeRegisters) }}"></project-details>
+                         :activities="{{ json_encode($activities) }}" :time-registers="{{ json_encode($timeRegisters) }}"
+                         :project-time-list="{{ json_encode($projectTimeRegisters) }}" :projects="{{ json_encode($projects) }}"></project-details>
 
         <div class="col-md-12">
             <button type="button" class="btn btn-success addSelfPublishingBtn" data-toggle="modal"
@@ -207,9 +207,8 @@
 
             <!-- correction -->
             <div class="col-md-12 margin-top">
-                <button type="button" class="btn btn-success">
-                    Add Korrektur
-                </button>
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addOtherServiceModal"
+                        onclick="updateOtherServiceFields(0)">+ {{ trans('site.add-correction') }}</button>
                 <div class="table-users table-responsive">
                     <table class="table">
                         <thead>
@@ -223,6 +222,70 @@
                         </tr>
                         </thead>
                         <tbody>
+                        @foreach($project->corrections as $correction)
+                            <?php $extension = explode('.', basename($correction->file)); ?>
+                            <tr>
+                                <td>
+                                    @if( end($extension) == 'pdf' || end($extension) == 'odt' )
+                                        <a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
+                                    @elseif( end($extension) == 'docx' )
+                                        <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if ($correction->editor_id)
+                                        {{ $correction->editor->full_name }}
+                                    @else
+                                        <button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal"
+                                                data-target="#assignEditorModal"
+                                                data-action="{{ route('admin.other-service.assign-editor', ['id' => $correction->id, 'type' => 2]) }}">
+                                            Assign Editor
+                                        </button>
+                                    @endif
+                                </td>
+                                <td>
+                                    {{ \App\Http\FrontendHelpers::formatDate($correction->created_at) }}
+                                </td>
+                                <td>
+                                    @if ($correction->expected_finish)
+                                        {{ $correction->expected_finish_formatted }}
+                                        <br>
+                                    @endif
+
+                                    @if ($correction->status !== 2)
+                                        <a href="#setOtherServiceFinishDateModal" data-toggle="modal"
+                                           class="setOtherServiceFinishDateBtn"
+                                           data-action="{{ route('admin.other-service.update-expected-finish',
+										   ['id' => $correction->id, 'type' => 2]) }}"
+                                           data-finish="{{ $correction->expected_finish ?
+										strftime('%Y-%m-%d', strtotime($correction->expected_finish)) : '' }}">
+                                            Set Date
+                                        </a>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if( $correction->status == 2 )
+                                        <span class="label label-success">Finished</span>
+                                    @elseif( $correction->status == 1 )
+                                        <span class="label label-primary">Started</span>
+                                    @elseif( $correction->status == 0 )
+                                        <span class="label label-warning">Not started</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <?php
+                                    $btnColor = $correction->status == 1 ? 'primary' : 'warning';
+                                    ?>
+
+                                    @if ($correction->status !== 2)
+                                        <button class="btn btn-{{ $btnColor }} btn-xs updateOtherServiceStatusBtn" type="button"
+                                                data-toggle="modal" data-target="#updateOtherServiceStatusModal"
+                                                data-service="2"
+                                                data-action="{{ route('admin.other-service.update-status', ['id' => $correction->id, 'type' => 2]) }}"><i class="fa fa-check"></i></button>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
                         </tbody>
                     </table>
                 </div>

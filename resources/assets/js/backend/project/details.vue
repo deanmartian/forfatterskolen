@@ -11,9 +11,6 @@
             <a :href="'/project/' + project.id + '/marketing'" class="btn btn-primary btn-sm">
                 Marketing
             </a>
-            <button class="btn btn-primary btn-sm">
-                Page2
-            </button>
             <button class="btn btn-primary btn-sm"> <!-- this should be the docx file of FS treadline saved -->
                 Checklist
             </button>
@@ -23,7 +20,7 @@
             <button class="btn btn-primary btn-sm">
                 Invoices
             </button>
-            <button class="btn btn-primary btn-sm pull-right">
+            <button class="btn btn-primary btn-sm pull-right" @click="showProjectFormModal()">
                 <i class="fa fa-edit"></i> Edit Project
             </button>
             <div class="clearfix"></div>
@@ -125,6 +122,152 @@
                 </table>
             </div>
         </div>
+
+        <b-modal
+                ref="projectFormModal"
+                :title="projectModalTitle"
+                size="md"
+                centered
+                no-close-on-backdrop
+        >
+
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" class="form-control" name="name" v-model="projectForm.name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Number</label>
+                <input type="number" class="form-control" name="number" v-model="projectForm.number" required>
+            </div>
+
+            <div class="form-group">
+                <label>Learner</label>
+                <v-select :options="learnerList" label="full_name" v-model="selected_learner" @input="setSelectedLearner($event)"
+                          name="learner_id"></v-select>
+            </div>
+
+            <div class="form-group">
+                <label>Standard Activity</label>
+                <v-select :options="activityList" label="activity" v-model="selected_activity" @input="setSelectedActivity($event)"
+                          name="activity" style="display: inline-block"
+                          :style="currentActivity ? 'width :87%' : 'width: 90%'"></v-select>
+                <button class="btn btn-default btn-sm" @click="showActivityModal(false)" v-if="currentActivity">
+                    <i class="fa fa-edit"></i>
+                </button>
+                <button class="btn btn-default btn-sm" @click="showActivityModal(true)">
+                    <i class="fa fa-plus" style="color: #009975"></i>
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label>Start date</label>
+                <input type="date" class="form-control" name="start_date" v-model="projectForm.start_date">
+            </div>
+
+            <div class="form-group">
+                <label>End date</label>
+                <input type="date" class="form-control" name="end_date" v-model="projectForm.end_date">
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" cols="30" rows="10" class="form-control" v-model="projectForm.description"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Finished</label> <br>
+                <toggle-button :color="'#337ab7'"
+                               :labels="{checked: 'Yes', unchecked: 'No'}"
+                               v-model="projectForm.is_finished"
+                               :width="60" :height="25" :font-size="14"/>
+            </div>
+
+            <div slot="modal-footer">
+                <button class="btn btn-sm btn-primary" @click="saveProject()" :disabled="isLoading">
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Save
+                </button>
+            </div>
+
+        </b-modal>
+
+        <b-modal
+                ref="activityFormModal"
+                :title="activityModalTitle"
+                size="md"
+                @hidden="closeActivityFormModal()"
+                centered
+                no-close-on-backdrop
+        >
+
+            <div class="form-group">
+                <label>Activity</label>
+                <input type="text" class="form-control" name="activity" v-model="activityForm.activity" required>
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" cols="30" rows="10" class="form-control" v-model="activityForm.description"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Invoicing</label>
+
+                <div class="btn-group" role="group" id="invoicing-option">
+                    <button type="button" class="btn btn-default" :class="{'active': activityForm.invoicing === 2}"
+                            @click="activityForm.invoicing = 2"> Always </button>
+                    <button type="button" class="btn btn-default" :class="{'active': activityForm.invoicing === 1}"
+                            @click="activityForm.invoicing = 1"> Sometimes </button>
+                    <button type="button" class="btn btn-default" :class="{'active': activityForm.invoicing === 0}"
+                            @click="activityForm.invoicing = 0"> Never </button>
+                </div>
+            </div>
+
+            <template v-if="activityForm.invoicing != 0">
+                <div class="form-group">
+                    <label>Project</label>
+                    <v-select :options="projectList" label="name" v-model="selected_project" @input="setSelectedProject($event)"
+                              name="project"></v-select>
+                </div>
+
+                <div class="form-group">
+                    <label>Hourly Rate</label>
+                    <input type="number" class="form-control" name="hourly_rate" v-model="activityForm.hourly_rate">
+                </div>
+            </template>
+
+            <div slot="modal-footer">
+                <button class="btn btn-sm btn-secondary" @click="$refs.activityFormModal.hide()">
+                    Cancel
+                </button>
+                <button class="btn btn-sm btn-primary" @click="saveActivity()" :disabled="isActivityLoading">
+                    <i class="fa fa-spinner fa-pulse" v-if="isActivityLoading"></i> Save
+                </button>
+                <button class="btn btn-sm btn-danger" @click="showDeleteActivityModal()" v-if="currentActivity && !isAdd">
+                    Delete
+                </button>
+            </div>
+
+        </b-modal>
+
+        <b-modal
+                ref="deleteActivityModal"
+                title="Delete Activity"
+                size="sm"
+                centered
+                no-close-on-backdrop
+        >
+
+            <p>
+                Are you sure you want to delete this record?
+            </p>
+
+            <div slot="modal-footer">
+                <button class="btn btn-sm btn-danger" @click="deleteActivity()" :disabled="isDeleting">
+                    <i class="fa fa-spinner fa-pulse" v-if="isDeleting"></i> Delete
+                </button>
+            </div>
+        </b-modal>
 
         <b-modal
                 ref="formModal"
@@ -354,7 +497,7 @@
 <script>
     export default {
 
-        props: ['current-project', 'learners', 'time-registers', 'project-time-list'],
+        props: ['current-project', 'learners', 'activities', 'time-registers', 'project-time-list', 'projects'],
 
         data() {
             return {
@@ -393,6 +536,36 @@
                     time_used: '',
                     description: ''
                 },
+                projectModalTitle: '',
+                projectForm: {
+                    id: '',
+                    name: '',
+                    number: '',
+                    user_id: '',
+                    activity_id: '',
+                    start_date: '',
+                    end_date: '',
+                    description: '',
+                    is_finished: false
+                },
+                activityList: this.activities,
+                learnerList: this.learners,
+                currentActivity: '',
+                selected_activity: '',
+                selected_project: '',
+                activityModalTitle: 'Activity',
+                activityForm: {
+                    id: '',
+                    activity: '',
+                    description: '',
+                    invoicing: 1, //0 - never, 1 - sometimes, 2-always
+                    project_id: '',
+                    hourly_rate: '',
+                },
+                projectList: this.projects,
+                isAdd: true,
+                isActivityLoading: false,
+                isDeleting: false,
                 isLoading: false,
             }
         },
@@ -400,13 +573,19 @@
         methods: {
             setSelectedLearner(value) {
                 this.form.user_id = value ? value.id : "";
+                this.projectForm.user_id = value ? value.id : "";
+            },
+
+            setSelectedActivity(value) {
+                this.projectForm.activity_id = value ? value.id : "";
+                this.currentActivity = value;
             },
 
             showNotes() {
                 this.noteForm = {
                     id: this.project.id,
                     notes: this.project.notes
-                }
+                },
                 this.$refs.notesModal.show();
             },
 
@@ -424,6 +603,131 @@
                     this.processError(error);
                     this.$toasted.global.showErrorMsg({
                         message : 'Error in form'
+                    });
+                });
+            },
+
+            showProjectFormModal() {
+                this.projectModalTitle = 'Edit Project';
+                let data = this.project;
+                this.projectForm = {
+                    id: data.id,
+                    name: data.name,
+                    number: data.identifier,
+                    user_id: data.user_id,
+                    activity_id: data.activity_id,
+                    start_date: data.start_date,
+                    end_date: data.end_date,
+                    description: data.description,
+                    is_finished: !!data.is_finished
+                };
+
+                const actIndex = _.findIndex(this.activityList, {id: data.activity_id});
+                const learnerIndex = _.findIndex(this.learnerList, {id: data.user_id});
+                if (actIndex >= 0) {
+                    this.currentActivity = this.activityList[actIndex];
+                    this.selected_activity = this.currentActivity.activity;
+                }
+
+                if (learnerIndex >= 0) {
+                    this.selected_learner = this.learnerList[learnerIndex].full_name;
+                }
+
+                this.$refs.projectFormModal.show();
+            },
+
+            saveProject() {
+                this.isLoading = true;
+                this.removeValidationError();
+                axios.post('/project/save', this.projectForm).then(response => {
+                    this.isLoading = false;
+
+                    this.project = response.data;
+                    this.$refs.projectFormModal.hide();
+
+                    this.$toasted.global.showSuccessMsg({
+                        message : 'Project added'
+                    });
+                }).catch(error => {
+                    this.isLoading = false;
+                    this.processError(error);
+                    this.$toasted.global.showErrorMsg({
+                        message : 'Error in form'
+                    });
+                });
+            },
+
+            showActivityModal(isAdd = false) {
+                this.$refs.activityFormModal.show();
+                this.isAdd = isAdd;
+                if (this.currentActivity && !isAdd) {
+                    let activity = this.currentActivity;
+                    this.activityForm = {
+                        id: activity.id,
+                        activity: activity.activity,
+                        description: activity.description,
+                        invoicing: activity.invoicing,
+                        project_id: activity.project_id,
+                        hourly_rate: activity.hourly_rate,
+                    };
+                    const index = _.findIndex(this.projectList, {id: activity.project_id});
+                    if (index >= 0) {
+                        this.currentProject = this.projectList[index];
+                        this.selected_project = this.currentProject.name;
+                    }
+                }
+            },
+
+            closeActivityFormModal() {
+                this.activityForm = {
+                    id: '',
+                    activity: '',
+                    description: '',
+                    invoicing: 1,
+                    project_id: '',
+                    hourly_rate: '',
+                };
+                this.selected_project = '';
+            },
+
+            saveActivity() {
+                this.isActivityLoading = true;
+                this.removeValidationError();
+                axios.post('/project/activity/save', this.activityForm).then(response => {
+                    this.isActivityLoading = false;
+                    if (this.activityForm.id) {
+                        this.updateRecordFromObject(this.activityList, this.activityForm.id, response.data);
+                        this.currentActivity = response.data;
+                        this.selected_activity = response.data.activity;
+                    } else {
+                        this.activityList.push(response.data);
+                        this.selected_activity = response.data.activity;
+                        this.projectForm.activity_id = response.data.id;
+                        this.currentActivity = response.data;
+                    }
+                    this.$refs.activityFormModal.hide();
+                }).catch(error => {
+                    this.isActivityLoading = false;
+                    this.processError(error);
+                })
+            },
+
+            showDeleteActivityModal() {
+                this.$refs.deleteActivityModal.show();
+            },
+
+            deleteActivity() {
+                this.isDeleting = true;
+                axios.delete('/project/activity/' + this.currentActivity.id + '/delete').then(response => {
+                    this.deleteRecordFromObject(this.activityList, this.currentActivity.id);
+                    this.isDeleting = false;
+                    this.currentActivity = '';
+                    this.selected_activity = '';
+                    this.projectForm.activity_id = '';
+                    this.$refs.deleteActivityModal.hide();
+                    this.$refs.activityFormModal.hide();
+                    this.$toasted.global.showSuccessMsg({
+                        message : 'Activity deleted'
                     });
                 });
             },
