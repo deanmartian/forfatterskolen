@@ -43,7 +43,7 @@
 						$tabWithLabel = [
 							[
 								'name' => 'waiting-for-feedback',
-								'label' => 'Waiting for feedback'
+								'label' => 'Venter på tilbakemelding'
 							],
 							[
 								'name' => 'finished',

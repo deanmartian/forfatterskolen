@@ -18,7 +18,7 @@ class ProjectService
 
     /**
      * @param Request $request
-     * @return $this
+     * @return $this|mixed
      */
     public function saveProject( Request $request )
     {

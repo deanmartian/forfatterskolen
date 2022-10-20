@@ -39,7 +39,9 @@ Route::group([
 
         Route::get('/self-publishing/{id}/download-manuscript', 'SelfPublishingController@selfPublishingDownloadManuscript')
             ->name('g-admin.self-publishing.download-manuscript');
+        Route::get('/self-publishing/{id}/learners', 'SelfPublishingController@learners')->name('g-admin.self-publishing.learners');
         Route::post('/self-publishing/{id}/add-feedback', 'SelfPublishingController@addFeedback')->name('g-admin.self-publishing.add-feedback');
+        Route::get('/self-publishing/feedback/{feedback_id}/download', 'SelfPublishingController@downloadFeedback')->name('g-admin.self-publishing.download-feedback');
         Route::post('/self-publishing/{id}/add-learners', 'SelfPublishingController@addLearners')->name('g-admin.self-publishing.add-learners');
         Route::delete('/self-publishing/delete-learner/{learner_id}', 'SelfPublishingController@deleteLearner')
             ->name('g-admin.self-publishing.delete-learner');
@@ -101,6 +103,20 @@ Route::group([
         Route::post('/other-service/{id}/coaching-timer/set_replay', 'OtherServiceController@setReplay')
             ->name('g-admin.other-service.coaching-timer.set_replay');
         Route::delete('/other-service/{id}/coaching-timer/delete', 'OtherServiceController@deleteCoaching')->name('g-admin.other-service.coaching-timer.delete');
+
+        Route::post('/project/activity/save', 'ProjectController@saveActivity');
+        Route::delete('/project/activity/{id}/delete', 'ProjectController@deleteActivity');
+        Route::post('/project/{id}/notes/save', 'ProjectController@saveNote');
+        Route::post('/project/{id}/book/save', 'ProjectController@saveBook');
+        Route::delete('/project/book/{id}/delete', 'ProjectController@deleteBook');
+        Route::post('/project/{id}/add-other-service', 'ProjectController@addOtherService')->name('g-admin.project.add-other-service');
+        Route::get('/project/{id}/graphic-work', 'ProjectController@graphicWork')->name('g-admin.project.graphic-work');
+        Route::get('/project/{id}/registration', 'ProjectController@registration')->name('g-admin.project.registration');
+        Route::get('/project/{id}/marketing', 'ProjectController@marketing')->name('g-admin.project.marketing');
+        Route::get('/project', 'ProjectController@index')->name('g-admin.project.index');
+        Route::post('/project/save', 'ProjectController@saveProject');
+        Route::get('/project/{id}', 'ProjectController@show');
+        Route::delete('/project/{id}/delete', 'ProjectController@deleteProject');
 
         Route::post('task/{id}/finish', 'TaskController@finishTask')->name('g-admin.task.finish');
         Route::resource('task', 'TaskController', [

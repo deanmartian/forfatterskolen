@@ -1078,6 +1078,7 @@ class AdminHelpers
         $pages = array(
             array( 'id' => 1, 'option' => 'Dashboard', 'route' => 'g-admin.dashboard', 'request_name' => 'dashboard'),
             array( 'id' => 2, 'option' => 'Learners', 'route' => 'g-admin.learner.index', 'request_name' => 'learner'),
+            array( 'id' => 14, 'option' => 'Project', 'route' => 'g-admin.project.index', 'request_name' => 'project'),
             array( 'id' => 3, 'option' => 'Self Publishing', 'route' => 'g-admin.self-publishing.index', 'request_name' => 'self-publishing'),
         );
 

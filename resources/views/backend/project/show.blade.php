@@ -1,4 +1,4 @@
-@extends('backend.layout')
+@extends($layout)
 
 @section('styles')
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
@@ -17,7 +17,7 @@
 
         <div class="col-md-12">
             <button type="button" class="btn btn-success addSelfPublishingBtn" data-toggle="modal"
-                    data-target="#selfPublishingModal" data-action="{{ route('admin.self-publishing.store') }}">
+                    data-target="#selfPublishingModal" data-action="{{ route($selfPublishingStoreRoute) }}">
                 Add Self Publishing
             </button>
 
@@ -69,7 +69,7 @@
                                     <button class="btn btn-info btn-xs selfPublishingFeedbackBtn"
                                             data-target="#selfPublishingFeedbackModal"
                                             data-toggle="modal"
-                                            data-action="{{ route('admin.self-publishing.add-feedback', $publishing->id) }}">
+                                            data-action="{{ route($selfPublishingAddFeedbackRoute, $publishing->id) }}">
                                         + {{ trans('site.add-feedback') }}
                                     </button>
                                 @else
@@ -81,7 +81,7 @@
                                             View Feedback
                                         </button>
 
-                                        <a href="{{ route('admin.self-publishing.download-feedback', $publishing->feedback->id) }}"
+                                        <a href="{{ route($selfPublishingDownloadFeedbackRoute, $publishing->feedback->id) }}"
                                            class="btn btn-success btn-xs margin-top">
                                             Download Feedback
                                         </a>
@@ -93,17 +93,17 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('admin.self-publishing.learners', $publishing->id) }}" class="btn btn-success btn-xs">
+                                <a href="{{ route($selfPublishingLearnersRoute, $publishing->id) }}" class="btn btn-success btn-xs">
                                     <i class="fa fa-user"></i>
                                 </a>
                                 <button class="btn btn-primary btn-xs editSelfPublishingBtn" data-toggle="modal"
                                         data-target="#selfPublishingModal" data-fields="{{ json_encode($publishing) }}"
-                                        data-action="{{ route('admin.self-publishing.update', $publishing->id) }}">
+                                        data-action="{{ route($selfPublishingUpdateRoute, $publishing->id) }}">
                                     <i class="fa fa-edit"></i>
                                 </button>
                                 <button class="btn btn-danger btn-xs deleteSelfPublishingBtn" data-toggle="modal"
                                         data-target="#deleteSelfPublishingModal"
-                                        data-action="{{ route('admin.self-publishing.destroy', $publishing->id) }}">
+                                        data-action="{{ route($selfPublishingDeleteRoute, $publishing->id) }}">
                                     <i class="fa fa-trash"></i>
                                 </button>
                             </td>
@@ -149,7 +149,7 @@
                                     @else
                                         <button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal"
                                                 data-target="#assignEditorModal"
-                                                data-action="{{ route('admin.other-service.assign-editor', ['id' => $copy_editing->id, 'type' => 1]) }}">
+                                                data-action="{{ route($assignEditorRoute, ['id' => $copy_editing->id, 'type' => 1]) }}">
                                             {{ trans('site.assign-editor') }}
                                         </button>
                                     @endif
@@ -166,7 +166,7 @@
                                     @if ($copy_editing->status !== 2)
                                         <a href="#setOtherServiceFinishDateModal" data-toggle="modal"
                                            class="setOtherServiceFinishDateBtn"
-                                           data-action="{{ route('admin.other-service.update-expected-finish',
+                                           data-action="{{ route($updateExpectedFinishRoute,
                                                ['id' => $copy_editing->id, 'type' => 1]) }}"
                                            data-finish="{{ $copy_editing->expected_finish ?
                                             strftime('%Y-%m-%d', strtotime($copy_editing->expected_finish)) : '' }}">
@@ -192,14 +192,14 @@
                                         <button class="btn btn-{{ $btnColor }} btn-xs updateOtherServiceStatusBtn" type="button"
                                                 data-toggle="modal" data-target="#updateOtherServiceStatusModal"
                                                 data-service="1"
-                                                data-action="{{ route('admin.other-service.update-status', ['id' => $copy_editing->id, 'type' => 1]) }}">
+                                                data-action="{{ route($updateStatusRoute, ['id' => $copy_editing->id, 'type' => 1]) }}">
                                             <i class="fa fa-check"></i>
                                         </button>
                                     @endif
 
                                     <button class="btn btn-danger btn-xs deleteOtherServiceBtn" type="button"
                                             data-toggle="modal" data-target="#deleteOtherServiceModal"
-                                            data-action="{{ route('admin.other-service.delete', ['id' => $copy_editing->id, 'type' => 1]) }}">
+                                            data-action="{{ route($otherServiceDeleteRoute, ['id' => $copy_editing->id, 'type' => 1]) }}">
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 </td>
@@ -243,7 +243,7 @@
                                     @else
                                         <button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal"
                                                 data-target="#assignEditorModal"
-                                                data-action="{{ route('admin.other-service.assign-editor', ['id' => $correction->id, 'type' => 2]) }}">
+                                                data-action="{{ route($assignEditorRoute, ['id' => $correction->id, 'type' => 2]) }}">
                                             Assign Editor
                                         </button>
                                     @endif
@@ -260,7 +260,7 @@
                                     @if ($correction->status !== 2)
                                         <a href="#setOtherServiceFinishDateModal" data-toggle="modal"
                                            class="setOtherServiceFinishDateBtn"
-                                           data-action="{{ route('admin.other-service.update-expected-finish',
+                                           data-action="{{ route($updateExpectedFinishRoute,
 										   ['id' => $correction->id, 'type' => 2]) }}"
                                            data-finish="{{ $correction->expected_finish ?
 										strftime('%Y-%m-%d', strtotime($correction->expected_finish)) : '' }}">
@@ -286,7 +286,7 @@
                                         <button class="btn btn-{{ $btnColor }} btn-xs updateOtherServiceStatusBtn" type="button"
                                                 data-toggle="modal" data-target="#updateOtherServiceStatusModal"
                                                 data-service="2"
-                                                data-action="{{ route('admin.other-service.update-status', ['id' => $correction->id, 'type' => 2]) }}"><i class="fa fa-check"></i></button>
+                                                data-action="{{ route($updateStatusRoute, ['id' => $correction->id, 'type' => 2]) }}"><i class="fa fa-check"></i></button>
                                     @endif
                                 </td>
                             </tr>
@@ -496,7 +496,7 @@
                 </div>
                 <div class="modal-body">
                     <form method="POST" enctype="multipart/form-data"
-                          action="{{ route('admin.project.add-other-service', $project->id) }}"
+                          action="{{ route($addOtherServiceRoute, $project->id) }}"
                           onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
                         <div class="form-group">

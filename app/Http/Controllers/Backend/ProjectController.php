@@ -29,7 +29,8 @@ class ProjectController extends Controller
         $learners =  User::where('role', 2)->where('is_self_publishing_learner', 1)->get();
         $activities = ProjectActivity::all();
         $projects = Project::all();
-        return view('backend.project.index', compact('learners', 'activities', 'projects'));
+        $layout = str_contains(request()->getHttpHost(), 'giutbok') ? 'giutbok.layout' : 'backend.layout';
+        return view('backend.project.index', compact('learners', 'activities', 'projects', 'layout'));
     }
 
     public function show($id)
@@ -42,8 +43,39 @@ class ProjectController extends Controller
         $projectTimeRegisters = TimeRegister::where('project_id', $project->id)->with('project')->get();
         $projects = Project::all();
 
+        $layout = 'backend.layout';
+        $addOtherServiceRoute = 'admin.project.add-other-service';
+        $selfPublishingStoreRoute = 'admin.self-publishing.store';
+        $selfPublishingUpdateRoute = 'admin.self-publishing.update';
+        $selfPublishingDeleteRoute = 'admin.self-publishing.destroy';
+        $selfPublishingAddFeedbackRoute = 'admin.self-publishing.add-feedback';
+        $selfPublishingDownloadFeedbackRoute = 'admin.self-publishing.download-feedback';
+        $selfPublishingLearnersRoute = 'admin.self-publishing.learners';
+        $assignEditorRoute = 'admin.other-service.assign-editor';
+        $updateExpectedFinishRoute = 'admin.other-service.update-expected-finish';
+        $updateStatusRoute = 'admin.other-service.update-status';
+        $otherServiceDeleteRoute = 'admin.other-service.delete';
+
+        if (str_contains(request()->getHttpHost(), 'giutbok')) {
+            $layout = 'giutbok.layout';
+            $addOtherServiceRoute = 'g-admin.project.add-other-service';
+            $selfPublishingStoreRoute = 'g-admin.self-publishing.store';
+            $selfPublishingUpdateRoute = 'g-admin.self-publishing.update';
+            $selfPublishingDeleteRoute = 'g-admin.self-publishing.destroy';
+            $selfPublishingAddFeedbackRoute = 'g-admin.self-publishing.add-feedback';
+            $selfPublishingDownloadFeedbackRoute = 'g-admin.self-publishing.download-feedback';
+            $selfPublishingLearnersRoute = 'g-admin.self-publishing.learners';
+            $assignEditorRoute = 'g-admin.other-service.assign-editor';
+            $updateExpectedFinishRoute = 'g-admin.other-service.update-expected-finish';
+            $updateStatusRoute = 'g-admin.other-service.update-status';
+            $otherServiceDeleteRoute = 'g-admin.other-service.delete';
+        }
+
         return view('backend.project.show', compact('project', 'editors', 'learners', 'activities',
-            'timeRegisters', 'projectTimeRegisters', 'projects'));
+            'timeRegisters', 'projectTimeRegisters', 'projects', 'layout', 'addOtherServiceRoute', 'selfPublishingStoreRoute',
+            'selfPublishingUpdateRoute', 'selfPublishingDeleteRoute', 'selfPublishingAddFeedbackRoute',
+            'selfPublishingDownloadFeedbackRoute', 'selfPublishingLearnersRoute', 'assignEditorRoute',
+            'updateExpectedFinishRoute', 'updateStatusRoute', 'otherServiceDeleteRoute'));
     }
 
     public function saveProject( ProjectRequest $request, ProjectService $projectService )
@@ -126,18 +158,30 @@ class ProjectController extends Controller
     public function graphicWork( $project_id )
     {
         $project = Project::find($project_id);
-        return view('backend.project.graphic-work', compact('project'));
+        $layout = 'backend.layout';
+        if (str_contains(request()->getHttpHost(), 'giutbok')) {
+            $layout = 'giutbok.layout';
+        }
+        return view('backend.project.graphic-work', compact('project', 'layout'));
     }
 
     public function registration( $project_id )
     {
+        $layout = 'backend.layout';
+        if (str_contains(request()->getHttpHost(), 'giutbok')) {
+            $layout = 'giutbok.layout';
+        }
         $project = Project::find($project_id);
-        return view('backend.project.registration', compact('project'));
+        return view('backend.project.registration', compact('project', 'layout'));
     }
 
     public function marketing( $project_id )
     {
+        $layout = 'backend.layout';
+        if (str_contains(request()->getHttpHost(), 'giutbok')) {
+            $layout = 'giutbok.layout';
+        }
         $project = Project::find($project_id);
-        return view('backend.project.marketing', compact('project'));
+        return view('backend.project.marketing', compact('project', 'layout'));
     }
 }

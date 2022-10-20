@@ -211,7 +211,17 @@ class SelfPublishingController extends Controller
         $learners = $selfPublishing->learners;
         $availableLearners = User::where('role', 2)->whereNotIn('id', $learners->pluck('user_id')->toArray())
             ->get();
-        return view('backend.self-publishing.learners', compact('selfPublishing','learners', 'availableLearners'));
+
+        $layout = 'backend.layout';
+        $selfPublishingIndexRoute = 'admin.self-publishing.index';
+
+        if (str_contains(request()->getHttpHost(), 'giutbok')) {
+            $layout = 'giutbok.layout';
+            $selfPublishingIndexRoute = 'g-admin.self-publishing.index';
+        }
+
+        return view('backend.self-publishing.learners', compact('selfPublishing','learners', 'availableLearners',
+            'layout', 'selfPublishingIndexRoute'));
     }
 
     /**
