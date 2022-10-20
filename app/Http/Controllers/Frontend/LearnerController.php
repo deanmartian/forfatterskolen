@@ -713,6 +713,7 @@ class LearnerController extends Controller
             ->where('available_date','>', Carbon::now())
             ->oldest('submission_date')
             ->get();
+        $waitingForResponse = [];
 
         foreach( $coursesTaken as $courseTaken ) :
             foreach( $courseTaken->package->course->activeAssignments as $assignment ) :
@@ -766,8 +767,24 @@ class LearnerController extends Controller
                             }
                         }
                     } else {
-                        if (\Carbon\Carbon::parse($assignment->submission_date)->lt(Carbon::now())) {
-                            $expiredAssignments[] = $assignment;
+                        if ($course->type == 'Group') {
+                            $assignmentManuscript = AssignmentManuscript::where('user_id', Auth::user()->id)
+                                ->where('assignment_id', $assignment->id)->first();
+                            // check if assignment manuscript has feedback
+                            if ($assignmentManuscript) {
+                                $assignmentFeedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $assignmentManuscript->id)->first();
+                                if ($assignmentFeedback) {
+                                    $expiredAssignments[] = $assignment;
+                                } else {
+                                    $waitingForResponse[] = $assignment;
+                                }
+                            } else {
+                                $expiredAssignments[] = $assignment;
+                            }
+                        } else {
+                            if (\Carbon\Carbon::parse($assignment->submission_date)->lt(Carbon::now())) {
+                                $expiredAssignments[] = $assignment;
+                            }
                         }
                     }
                 }
@@ -814,7 +831,8 @@ class LearnerController extends Controller
 
         $expiredAssignments = array_unique($expiredAssignments);
 
-        return view('frontend.learner.assignment', compact('assignments', 'expiredAssignments', 'upcomingPersonalAssignments'));
+        return view('frontend.learner.assignment', compact('assignments', 'expiredAssignments',
+            'upcomingPersonalAssignments', 'waitingForResponse'));
     }
 
 
