@@ -169,6 +169,31 @@
 																			<i class="fa fa-trash"></i>
 																		</button>
 																	</div>
+																@else
+																	<?php
+																		$submission_date_formatted = $assignment->submission_date;
+																		if (!\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
+																			$coursesTaken = Auth::user()->coursesTaken()->get()->toArray();
+																			$allowed_packages = $assignment->allowed_package ?
+																				json_decode($assignment->allowed_package) : [];
+
+																			$courseStarted = '';
+																			foreach ($coursesTaken as $course) {
+																				if (in_array($course['package_id'], $allowed_packages)) {
+																					$courseStarted =  $course['started_at'];
+																				}
+																			}
+
+																			$submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
+																				->addDays($assignment->submission_date);
+																		}
+																	?>
+																	@if($assignment->expected_finish && \Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted)))
+																		<div class="pull-right">
+																			<span>{{ trans('site.expected-finish') }}:
+																				{{ \App\Http\FrontendHelpers::formatDate($assignment->expected_finish) }}</span>
+																		</div>
+																	@endif
 																@endif
 															</div>
 														@endif

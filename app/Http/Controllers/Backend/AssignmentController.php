@@ -223,6 +223,7 @@ class AssignmentController extends Controller
             $assignment->show_join_group_question = isset($request->show_join_group_question) ? 1 : 0;
             $assignment->send_letter_to_editor = isset($request->send_letter_to_editor) ? 1 : 0;
             $assignment->editor_expected_finish = $request->editor_expected_finish;
+            $assignment->expected_finish = $request->expected_finish;
 
 
             if ($request->linked_assignment) {
