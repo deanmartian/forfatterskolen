@@ -192,7 +192,8 @@
 																	&& $assignment->expected_finish) || $manuscript->expected_finish)
 																		<div class="pull-right">
 																			<span>{{ trans('site.expected-finish') }}:
-																				{{ \App\Http\FrontendHelpers::formatDate($assignment->expected_finish) }}</span>
+																				{{ \App\Http\FrontendHelpers::formatDate($assignment->expected_finish
+																				? $assignment->expected_finish: $manuscript->expected_finish) }}</span>
 																		</div>
 																	@endif
 																@endif
