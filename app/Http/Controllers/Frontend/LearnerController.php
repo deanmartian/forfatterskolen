@@ -799,7 +799,11 @@ class LearnerController extends Controller
             }
 
             if (!$feedback) {
-                $assignments[] = $assignment;
+                if ($manuscript && $manuscript->locked) {
+                    $waitingForResponse[] = $assignment;
+                } else {
+                    $assignments[] = $assignment;
+                }
             }
             /*
              * old code
