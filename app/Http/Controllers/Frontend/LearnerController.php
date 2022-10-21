@@ -767,22 +767,22 @@ class LearnerController extends Controller
                             }
                         }
                     } else {
-                        if ($course->type == 'Group') {
-                            $assignmentManuscript = AssignmentManuscript::where('user_id', Auth::user()->id)
-                                ->where('assignment_id', $assignment->id)->first();
-                            // check if assignment manuscript has feedback
-                            if ($assignmentManuscript) {
-                                $assignmentFeedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $assignmentManuscript->id)->first();
-                                if ($assignmentFeedback) {
-                                    $expiredAssignments[] = $assignment;
+                        if (\Carbon\Carbon::parse($assignment->submission_date)->lt(Carbon::now())) {
+                            if ($course->type == 'Group') {
+                                $assignmentManuscript = AssignmentManuscript::where('user_id', Auth::user()->id)
+                                    ->where('assignment_id', $assignment->id)->first();
+                                // check if assignment manuscript has feedback
+                                if ($assignmentManuscript) {
+                                    $assignmentFeedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $assignmentManuscript->id)->first();
+                                    if ($assignmentFeedback) {
+                                        $expiredAssignments[] = $assignment;
+                                    } else {
+                                        $waitingForResponse[] = $assignment;
+                                    }
                                 } else {
-                                    $waitingForResponse[] = $assignment;
+                                    $expiredAssignments[] = $assignment;
                                 }
                             } else {
-                                $expiredAssignments[] = $assignment;
-                            }
-                        } else {
-                            if (\Carbon\Carbon::parse($assignment->submission_date)->lt(Carbon::now())) {
                                 $expiredAssignments[] = $assignment;
                             }
                         }
