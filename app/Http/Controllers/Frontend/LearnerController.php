@@ -774,7 +774,10 @@ class LearnerController extends Controller
                                 // check if assignment manuscript has feedback
                                 if ($assignmentManuscript) {
                                     $assignmentFeedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $assignmentManuscript->id)->first();
-                                    if ($assignmentFeedback) {
+                                    $assignmentGroups = AssignmentGroup::where('assignment_id', $assignment->id)->pluck('id')->toArray();
+                                    $userAssignmentGroupLearner = AssignmentGroupLearner::where('user_id', Auth::user()->id)
+                                        ->whereIn('assignment_group_id', $assignmentGroups)->first();
+                                    if ($assignmentFeedback || $userAssignmentGroupLearner) {
                                         $expiredAssignments[] = $assignment;
                                     } else {
                                         $waitingForResponse[] = $assignment;
