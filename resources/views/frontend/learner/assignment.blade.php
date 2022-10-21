@@ -188,7 +188,8 @@
 																				->addDays($assignment->submission_date);
 																		}
 																	?>
-																	@if($assignment->expected_finish && \Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted)))
+																	@if((\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))
+																	&& $assignment->expected_finish) || $manuscript->expected_finish)
 																		<div class="pull-right">
 																			<span>{{ trans('site.expected-finish') }}:
 																				{{ \App\Http\FrontendHelpers::formatDate($assignment->expected_finish) }}</span>
