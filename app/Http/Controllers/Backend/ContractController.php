@@ -45,7 +45,13 @@ class ContractController extends Controller
         $title = 'Create Contract';
         $templates = ContractTemplate::all();
         $backRoute = route('admin.contract.index');
-        return view('backend.contract.form', compact('route', 'action', 'contract', 'title', 'templates', 'backRoute'));
+        $layout = 'backend.layout';
+        if (AdminHelpers::isGiutbokPage()) {
+            $backRoute = route('admin.project.contract');
+            $layout = 'giutbok.layout';
+        }
+        return view('backend.contract.form', compact('route', 'action', 'contract', 'title', 'templates',
+            'backRoute', 'layout'));
     }
 
     /**

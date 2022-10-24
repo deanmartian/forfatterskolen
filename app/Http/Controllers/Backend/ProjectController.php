@@ -262,13 +262,25 @@ class ProjectController extends Controller
         $title = 'Create Contract';
         $templates = ContractTemplate::all();
         $backRoute = route('admin.project.contract', $project_id);
-        return view('backend.contract.form', compact('route', 'action', 'contract', 'title', 'templates', 'backRoute'));
+        $layout = 'backend.layout';
+        if (AdminHelpers::isGiutbokPage()) {
+            $backRoute = route('g-admin.project.contract', $project_id);
+            $layout = 'giutbok.layout';
+            $route = route('g-admin.project.contract-store', $project_id);
+        }
+        return view('backend.contract.form', compact('route', 'action', 'contract', 'title', 'templates', 'backRoute', 'layout'));
     }
 
     public function storeContract( $project_id, Request $request, ProjectService $projectService )
     {
         $contract = $projectService->saveContract( $request->merge(['project_id' => $project_id]) );
-        return redirect(route('admin.project.contract-edit', [$project_id, $contract->id]))
+
+        $route = 'admin.project.contract-edit';
+        if (AdminHelpers::isGiutbokPage()) {
+            $route = 'g-admin.project.contract-edit';
+        }
+
+        return redirect(route($route, [$project_id, $contract->id]))
             ->with(['errors' => AdminHelpers::createMessageBag('Contract saved successfully.'),
                 'alert_type' => 'success']);
     }
