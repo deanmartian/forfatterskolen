@@ -508,12 +508,15 @@
                                                             $courseStarted =  $course['started_at'];
                                                         }
                                                     }
+                                                    // original for submission date format is the one on else, should be outside of the condition
                                                     if ($assignment['course_taken_end_date']) {
 														$courseStarted = $assignment['course_taken_end_date'];
+														$submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
+														->addDays(0);
+													} else {
+														$submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
+														->addDays($assignment->submission_date);
 													}
-
-                                                    $submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
-                                                        ->addDays($assignment->submission_date);
                                                 }
                                                 ?>
 
