@@ -1047,6 +1047,15 @@ Route::group([
         Route::get('/project/{id}/graphic-work', 'ProjectController@graphicWork')->name('admin.project.graphic-work');
         Route::get('/project/{id}/registration', 'ProjectController@registration')->name('admin.project.registration');
         Route::get('/project/{id}/marketing', 'ProjectController@marketing')->name('admin.project.marketing');
+        Route::get('/project/{id}/contract', 'ProjectController@contract')->name('admin.project.contract');
+        Route::post('/project/{id}/contract', 'ProjectController@storeContract')->name('admin.project.contract-store');
+        Route::post('/project/{id}/contract/upload', 'ProjectController@uploadContract')->name('admin.project.contract-upload');
+        Route::post('/project/{id}/contract/{contract_id}/signed-upload', 'ProjectController@uploadSignedContract')
+            ->name('admin.project.contract-signed-upload');
+        Route::get('/project/{id}/contract/create', 'ProjectController@createContract')->name('admin.project.contract-create');
+        Route::get('/project/{id}/contract/{contract_id}/edit', 'ProjectController@editContract')->name('admin.project.contract-edit');
+        Route::put('/project/{id}/contract/{contract_id}/update', 'ProjectController@updateContract')->name('admin.project.contract-update');
+        Route::get('/project/{id}/contract/{contract_id}', 'ProjectController@showContract')->name('admin.project.contract-show');
         Route::get('/project', 'ProjectController@index')->name('admin.project.index');
         Route::post('/project/save', 'ProjectController@saveProject');
         Route::get('/project/{id}', 'ProjectController@show');

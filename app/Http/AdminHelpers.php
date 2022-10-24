@@ -1254,6 +1254,15 @@ class AdminHelpers
         return EmailTemplate::where('page_name', 'like', 'Send Email to Learner%')->get();
     }
 
+    public static function isGiutbokPage()
+    {
+        if (str_contains(request()->getHttpHost(), 'giutbok')) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Generate access token, used for every gt webinar request using oauth v2
      * @return mixed

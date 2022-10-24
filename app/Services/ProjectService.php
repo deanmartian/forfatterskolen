@@ -3,13 +3,16 @@
 namespace App\Services;
 
 
+use App\Contract;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\Helpers\FileToText;
+use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
 use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
+use Carbon\Carbon;
 use Illuminate\Http\Concerns\InteractsWithInput;
 use Illuminate\Http\Request;
 
@@ -179,5 +182,113 @@ class ProjectService
         ]);
 
         return $project;
+    }
+
+    /**
+     * @param Request $request
+     * @return $this|\Illuminate\Database\Eloquent\Model
+     */
+    public function uploadContract( Request $request )
+    {
+        $data = $request->except('_token');
+        if ($request->hasFile('sent_file')) :
+            $destinationPath = 'storage/contract-sent-file/'; // upload path
+
+            if (!\File::exists($destinationPath)) {
+                \File::makeDirectory($destinationPath);
+            }
+
+            $extension = pathinfo($_FILES['sent_file']['name'],PATHINFO_EXTENSION);
+            $original_filename = $request->sent_file->getClientOriginalName();
+            $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
+
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $request->sent_file->move($destinationPath, $fileName);
+            $data['sent_file'] = '/'.$fileName;
+        endif;
+
+        if ($request->hasFile('signed_file')) :
+            $destinationPath = 'storage/contract-signed-file/'; // upload path
+
+            if (!\File::exists($destinationPath)) {
+                \File::makeDirectory($destinationPath);
+            }
+
+            $extension = pathinfo($_FILES['signed_file']['name'],PATHINFO_EXTENSION);
+            $original_filename = $request->signed_file->getClientOriginalName();
+            $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
+
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $request->signed_file->move($destinationPath, $fileName);
+            $data['signed_file'] = '/'.$fileName;
+            $data['signed_date'] = Carbon::now();
+            $data['signature'] = 'Signed';
+        endif;
+
+        $data['is_file'] = 1;
+
+        if ($request->has('id')) {
+            $contract = Contract::find($request->id);
+            $contract->update($data);
+        } else {
+            $contract = Contract::create($data);
+        }
+
+        return $contract;
+    }
+
+    public function saveContract( Request $request, $id = null )
+    {
+        $data = $request->except('_token');
+
+        if ($request->hasFile('sent_file')) :
+            $destinationPath = 'storage/contract-sent-file/'; // upload path
+
+            if (!\File::exists($destinationPath)) {
+                \File::makeDirectory($destinationPath);
+            }
+
+            $extension = pathinfo($_FILES['sent_file']['name'],PATHINFO_EXTENSION);
+            $original_filename = $request->sent_file->getClientOriginalName();
+            $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
+
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $request->sent_file->move($destinationPath, $fileName);
+            $data['sent_file'] = '/'.$fileName;
+        endif;
+
+        if ($request->hasFile('signed_file')) :
+            $destinationPath = 'storage/contract-signed-file/'; // upload path
+
+            if (!\File::exists($destinationPath)) {
+                \File::makeDirectory($destinationPath);
+            }
+
+            $extension = pathinfo($_FILES['signed_file']['name'],PATHINFO_EXTENSION);
+            $original_filename = $request->signed_file->getClientOriginalName();
+            $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
+
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $request->signed_file->move($destinationPath, $fileName);
+            $data['signed_file'] = '/'.$fileName;
+        endif;
+
+        $data['status'] = 1;
+        $data['is_file'] = $request->has('is_file') && $request->is_file ? 1 : 0;
+        if($data['is_file']) {
+            $data['signature'] = $request->has('signature') ? 'Signed' : NULL;
+            if ($request->has('signature')) {
+                $data['signed_date'] = Carbon::now();
+            }
+        }
+
+        if ($id) {
+            $contract = Contract::find($id);
+            $contract->update($data);
+        } else {
+            $contract = Contract::create($data);
+        }
+
+        return $contract;
     }
 }

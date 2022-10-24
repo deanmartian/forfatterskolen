@@ -14,9 +14,9 @@
             <button class="btn btn-primary btn-sm"> <!-- this should be the docx file of FS treadline saved -->
                 Checklist
             </button>
-            <button class="btn btn-primary btn-sm">
+            <a :href="'/project/' + project.id + '/contract'" class="btn btn-primary btn-sm">
                 Contract
-            </button>
+            </a>
             <button class="btn btn-primary btn-sm">
                 Invoices
             </button>

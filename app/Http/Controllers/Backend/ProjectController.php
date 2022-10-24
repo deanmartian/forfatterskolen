@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Backend;
 
 
+use App\Contract;
+use App\ContractTemplate;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\Helpers\FileToText;
@@ -159,7 +161,7 @@ class ProjectController extends Controller
     {
         $project = Project::find($project_id);
         $layout = 'backend.layout';
-        if (str_contains(request()->getHttpHost(), 'giutbok')) {
+        if (AdminHelpers::isGiutbokPage()) {
             $layout = 'giutbok.layout';
         }
         return view('backend.project.graphic-work', compact('project', 'layout'));
@@ -168,7 +170,7 @@ class ProjectController extends Controller
     public function registration( $project_id )
     {
         $layout = 'backend.layout';
-        if (str_contains(request()->getHttpHost(), 'giutbok')) {
+        if (AdminHelpers::isGiutbokPage()) {
             $layout = 'giutbok.layout';
         }
         $project = Project::find($project_id);
@@ -178,10 +180,162 @@ class ProjectController extends Controller
     public function marketing( $project_id )
     {
         $layout = 'backend.layout';
-        if (str_contains(request()->getHttpHost(), 'giutbok')) {
+        if (AdminHelpers::isGiutbokPage()) {
             $layout = 'giutbok.layout';
         }
         $project = Project::find($project_id);
         return view('backend.project.marketing', compact('project', 'layout'));
+    }
+
+    /**
+     * @param $project_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function contract( $project_id )
+    {
+        $layout = 'backend.layout';
+        $uploadContractRoute = 'admin.project.contract-upload';
+        $createContractRoute = 'admin.project.contract-create';
+        $signedUploadRoute = 'admin.project.contract-signed-upload';
+        $contractShowRoute = 'admin.project.contract-show';
+        $contractEditRoute = 'admin.project.contract-edit';
+        if (AdminHelpers::isGiutbokPage()) {
+            $layout = 'giutbok.layout';
+            $uploadContractRoute = 'g-admin.project.contract-upload';
+            $createContractRoute = 'g-admin.project.contract-create';
+            $signedUploadRoute = 'g-admin.project.contract-signed-upload';
+            $contractShowRoute = 'g-admin.project.contract-show';
+            $contractEditRoute = 'g-admin.project.contract-edit';
+        }
+
+        $project = Project::find($project_id);
+        $contracts = Contract::whereNotNull('project_id')->paginate(10);
+
+        return view('backend.project.contract.index', compact('project', 'layout', 'contracts',
+            'uploadContractRoute', 'createContractRoute', 'signedUploadRoute', 'contractShowRoute', 'contractEditRoute'));
+    }
+
+    /**
+     * @param $project_id
+     * @param Request $request
+     * @param ProjectService $projectService
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function uploadContract( $project_id, Request $request, ProjectService $projectService )
+    {
+        $request->merge([
+            'project_id' => $project_id,
+            'title' => 'Contract'
+        ]);
+        $projectService->uploadContract($request);
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Contract uploaded successfully.'),
+                'alert_type' => 'success']);
+
+    }
+
+    public function uploadSignedContract( $project_id, $contract_id, Request $request, ProjectService $projectService )
+    {
+        $request->merge([
+            'id' => $contract_id
+        ]);
+        $projectService->uploadContract($request);
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Signed contract uploaded successfully.'),
+                'alert_type' => 'success']);
+    }
+
+    public function createContract( $project_id )
+    {
+        $route = route('admin.project.contract-store', $project_id);
+        $action = 'create';
+        $contract = [
+            'title' => '',
+            'details' => '',
+            'signature' => '',
+            'signature_label' => 'Signature',
+            'end_date' => null,
+            'is_file' => ''
+        ];
+        $title = 'Create Contract';
+        $templates = ContractTemplate::all();
+        $backRoute = route('admin.project.contract', $project_id);
+        return view('backend.contract.form', compact('route', 'action', 'contract', 'title', 'templates', 'backRoute'));
+    }
+
+    public function storeContract( $project_id, Request $request, ProjectService $projectService )
+    {
+        $contract = $projectService->saveContract( $request->merge(['project_id' => $project_id]) );
+        return redirect(route('admin.project.contract-edit', [$project_id, $contract->id]))
+            ->with(['errors' => AdminHelpers::createMessageBag('Contract saved successfully.'),
+                'alert_type' => 'success']);
+    }
+
+    /**
+     * @param $project_id
+     * @param $contract_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function editContract( $project_id, $contract_id )
+    {
+        $contract = Contract::findOrFail($contract_id)->toArray();
+
+        if ($contract['signature']) {
+            return redirect()->route('admin.project.contract-show', $contract['id']);
+        }
+
+        $action = 'edit';
+        $title = 'Edit ' . $contract['title'];
+        $backRoute = route('admin.project.contract', $project_id);
+        $route = route('admin.project.contract-update', [$project_id, $contract['id']]);
+        $layout = 'backend.layout';
+        if (AdminHelpers::isGiutbokPage()) {
+            $backRoute = route('g-admin.project.contract', $project_id);
+            $layout = 'giutbok.layout';
+            $route = route('g-admin.project.contract-update', [$project_id, $contract['id']]);
+        }
+        return view('backend.contract.form', compact('route', 'action', 'contract', 'title', 'backRoute',
+            'layout'));
+    }
+
+    /**
+     * @param $project_id
+     * @param $contract_id
+     * @param Request $request
+     * @param ProjectService $projectService
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function updateContract( $project_id, $contract_id, Request $request, ProjectService $projectService )
+    {
+        $projectService->saveContract( $request, $contract_id);
+        $route = 'admin.project.contract-edit';
+        if (AdminHelpers::isGiutbokPage()) {
+            $route = 'g-admin.project.contract-edit';
+        }
+
+        return redirect(route($route, [$project_id, $contract_id]))
+            ->with(['errors' => AdminHelpers::createMessageBag('Contract saved successfully.'),
+                'alert_type' => 'success']);
+    }
+
+    /**
+     * @param $project_id
+     * @param $contract_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function showContract( $project_id, $contract_id )
+    {
+        $contract = Contract::findOrFail($contract_id);
+        $backRoute = route('admin.project.contract', $project_id);
+
+        $layout = 'backend.layout';
+        if (AdminHelpers::isGiutbokPage()) {
+            $backRoute = route('g-admin.project.contract', $project_id);
+            $layout = 'giutbok.layout';
+        }
+
+        return view('backend.contract.show', compact('contract', 'backRoute', 'layout'));
     }
 }

@@ -1,4 +1,4 @@
-@extends('backend.layout')
+@extends($layout)
 
 @section('title')
     <title>{{ $title }} &rsaquo; Forfatterskolen Admin</title>
@@ -119,7 +119,7 @@
 
 @section('content')
     <div class="page-toolbar">
-        <a href="{{ route('admin.contract.index') }}" class="btn btn-default" style="margin-right: 10px">
+        <a href="{{ $backRoute }}" class="btn btn-default" style="margin-right: 10px">
             << {{ trans('site.back') }}
         </a>
 
@@ -173,18 +173,28 @@
 
                             @if ($action == 'create')
                                 <div class="form-group">
-                                    <label>
-                                        Template
-                                    </label>
-                                    <select class="form-control select2 template">
-                                        <option value="" selected disabled>- Search Template -</option>
-                                        @foreach($templates as $template)
-                                            <option value="{{$template->id}}" data-fields="{{ json_encode($template) }}">
-                                                {{$template->title}}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    <label></label>
+                                    <input type="checkbox" name="is_file" data-toggle="toggle" data-on="Upload Contract"
+                                           data-off="Use Editor" data-width="200" class="is-file-toggle"
+                                           @if ($contract['is_file']) checked @endif>
                                 </div>
+                                <div class="use-editor-container {{ $contract['is_file'] ? 'hide' : '' }}">
+                                    <div class="form-group">
+                                        <label>
+                                            Template
+                                        </label>
+                                        <select class="form-control select2 template">
+                                            <option value="" selected disabled>- Search Template -</option>
+                                            @foreach($templates as $template)
+                                                <option value="{{$template->id}}" data-fields="{{ json_encode($template) }}">
+                                                    {{$template->title}}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            @else
+                                <input type="hidden" name="is_file" value="{{ $contract['is_file'] }}">
                             @endif
                             
                             <div class="form-group">
@@ -193,51 +203,80 @@
                                        value="{{ $contract['title'] }}" required>
                             </div>
 
-                            <div class="form-group">
-                                <label>End Date</label>
-                                <input type="date" class="form-control" name="end_date"
-                                       value="{{ $contract['end_date'] }}" required>
+                            <div class="use-editor-container {{ $contract['is_file'] ? 'hide' : '' }}">
+                                <div class="form-group">
+                                    <label>End Date</label>
+                                    <input type="date" class="form-control" name="end_date"
+                                           value="{{ $contract['end_date'] }}">
+                                </div>
                             </div>
 
-                            <div class="form-group">
-                                <label>Image</label>
-                                <input type="file" class="form-control" name="image">
+                            <div class="upload-contract-container {{ $contract['is_file'] ? '' : 'hide' }}">
+                                <div class="form-group">
+                                    <label>Sent file</label>
+                                    <input type="file" class="form-control" name="sent_file" accept="application/pdf">
+                                    @if ($action != 'create')
+                                        {!! $contract['sent_file_link'] !!}
+                                    @endif
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Signed file</label>
+                                    <input type="file" class="form-control" name="signed_file" accept="application/pdf">
+                                    @if ($action != 'create')
+                                        {!! $contract['signed_file_link'] !!}
+                                    @endif
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Mark as signed</label> <br>
+                                    <input type="checkbox" name="signature" data-toggle="toggle" data-on="Yes"
+                                           data-off="No"
+                                           @if ($contract['signature']) checked @endif>
+                                </div>
                             </div>
 
-                            <div class="form-group">
-                                <label>{{ trans('site.details') }}</label>
-                                <textarea name="details" rows="12" id="editContentEditor"
-                                          class="form-control editor">{{ $contract['details'] }}</textarea>
-                            </div>
+                            <div class="use-editor-container {{ $contract['is_file'] ? 'hide' : '' }}">
+                                <div class="form-group">
+                                    <label>Image</label>
+                                    <input type="file" class="form-control" name="image">
+                                </div>
 
-                            <div class="form-group">
-                                <label>Signature Label</label>
-                                <input type="text" name="signature_label" value="{{ $contract['signature_label'] }}" class="form-control">
-                            </div>
+                                <div class="form-group">
+                                    <label>{{ trans('site.details') }}</label>
+                                    <textarea name="details" rows="12" id="editContentEditor"
+                                              class="form-control editor">{{ $contract['details'] }}</textarea>
+                                </div>
 
-                            @if ($action !== 'create')
-                                @if (!$contract['admin_signature'])
-                                    <div style="margin-top: 2px">Signatures will appear here once this document is signed.</div>
-                                    <div class="signature-wrapper">
-                                        <div class="signature">
-                                            <div class="signature-canvas">
-                                                <div class="signature-cta">
-                                                    <a class="button button-green signContractBtn"
-                                                       data-target="#signContractModal" data-toggle="modal">
-                                                        <div class="link-content">
-                                                            <i class="fa fa-arrow-right"></i><span>Sign here</span>
-                                                        </div>
-                                                    </a>
+                                <div class="form-group">
+                                    <label>Signature Label</label>
+                                    <input type="text" name="signature_label" value="{{ $contract['signature_label'] }}" class="form-control">
+                                </div>
+
+                                @if ($action !== 'create')
+                                    @if (!$contract['admin_signature'])
+                                        <div style="margin-top: 2px">Signatures will appear here once this document is signed.</div>
+                                        <div class="signature-wrapper">
+                                            <div class="signature">
+                                                <div class="signature-canvas">
+                                                    <div class="signature-cta">
+                                                        <a class="button button-green signContractBtn"
+                                                           data-target="#signContractModal" data-toggle="modal">
+                                                            <div class="link-content">
+                                                                <i class="fa fa-arrow-right"></i><span>Sign here</span>
+                                                            </div>
+                                                        </a>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                @else
-                                    <img src="{{ asset($contract['admin_signature']) }}" style="height: 100px"> <br>
-                                    <button class="btn btn-info btn-xs editSignContractBtn" type="button" data-toggle="modal"
-                                            data-target="#signContractModal" data-fields="{{ json_encode($contract) }}">Edit Signature</button>
+                                    @else
+                                        <img src="{{ asset($contract['admin_signature']) }}" style="height: 100px"> <br>
+                                        <button class="btn btn-info btn-xs editSignContractBtn" type="button" data-toggle="modal"
+                                                data-target="#signContractModal" data-fields="{{ json_encode($contract) }}">Edit Signature</button>
+                                    @endif
                                 @endif
-                            @endif
+                            </div>
 
                             <button type="submit" class="btn btn-primary btn-block margin-top">{{ trans('site.save') }}</button>
                         </div>
@@ -261,6 +300,7 @@
                         <form method="POST" action="{{route('admin.contract.destroy', $contract['id'])}}">
                             {{csrf_field()}}
                             {{ method_field('DELETE') }}
+                            <input type="hidden" name="redirectRoute" value="{{ $backRoute }}">
                             <p>
                                 {!! trans('site.delete-question') !!}
                             </p>
@@ -409,6 +449,20 @@
         $(".editSignContractBtn").click(function() {
             let fields = $(this).data('fields');
             $("#signContractModal").find("input[name=admin_name]").val(fields.admin_name);
+        });
+
+        $(".is-file-toggle").change(function(){
+            let is_checked = $(this).prop('checked');
+            let check_val = is_checked ? 1 : 0;
+            let upload_contract_container = $(".upload-contract-container");
+            let use_editor_container = $(".use-editor-container");
+
+            upload_contract_container.addClass('hide');
+            use_editor_container.removeClass('hide');
+            if (check_val) {
+                upload_contract_container.removeClass('hide');
+                use_editor_container.addClass('hide');
+            }
         });
     </script>
 @stop

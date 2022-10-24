@@ -125,7 +125,11 @@
                                             @endif
 
                                             @if ($contract->signature)
-                                                <a href="{{ route('admin.contract.download-pdf', $contract->id) }}" class="button btn btn-info btn-xs">Download PDF</a>
+                                                @if($contract->is_file)
+                                                    <a href="{{ $contract->signed_file }}" class="button btn btn-info btn-xs" download>Download PDF</a>
+                                                @else
+                                                    <a href="{{ route('admin.contract.download-pdf', $contract->id) }}" class="button btn btn-info btn-xs">Download PDF</a>
+                                                @endif
                                             @endif
                                         </td>
                                     </tr>
