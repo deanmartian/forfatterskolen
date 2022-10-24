@@ -11,6 +11,7 @@ class ContractTemplate extends Model
         'title',
         'details',
         'signature_label',
+        'show_in_project'
     ];
 
 }

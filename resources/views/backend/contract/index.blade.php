@@ -177,6 +177,11 @@
                             <div style="margin-top: 2px">Signatures will appear here once this document is signed.</div>
                         </div>
 
+                        <div class="form-group">
+                            <label>Show in Project?</label> <br>
+                            <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" name="show_in_project">
+                        </div>
+
                         <button type="submit" class="btn btn-success pull-right margin-top">
                             {{ trans('site.save') }}
                         </button>
@@ -244,6 +249,10 @@
                 let form = modal.find('form');
                 form.find('[name=title]').val(fields.title);
                 form.find('[name=signature_label]').val(fields.signature_label);
+                form.find('[name=show_in_project]').prop('checked', false).change();
+                if (fields.show_in_project) {
+                    form.find('[name=show_in_project]').prop('checked', true).change();
+                }
 
                 let content = '';
                 if (fields.details) {

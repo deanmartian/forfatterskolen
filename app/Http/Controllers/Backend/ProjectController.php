@@ -260,7 +260,7 @@ class ProjectController extends Controller
             'is_file' => ''
         ];
         $title = 'Create Contract';
-        $templates = ContractTemplate::all();
+        $templates = ContractTemplate::where('show_in_project', 1)->get();
         $backRoute = route('admin.project.contract', $project_id);
         $layout = 'backend.layout';
         if (AdminHelpers::isGiutbokPage()) {

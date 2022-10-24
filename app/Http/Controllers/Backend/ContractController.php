@@ -280,6 +280,7 @@ class ContractController extends Controller
         ]);
 
         $data = $request->except('_token');
+        $data['show_in_project'] = $request->has('show_in_project') && $request->show_in_project ? 1 : 0;
 
         if ($id) {
             $contract = ContractTemplate::find($id);
