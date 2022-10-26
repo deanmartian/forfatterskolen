@@ -20,7 +20,7 @@
                 <thead>
                 <tr>
                     <th>Cover</th>
-                    <th></th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -28,6 +28,9 @@
                     <tr>
                         <td>{!! $cover->image !!}</td>
                         <td>
+                            <a href="{{ $cover->value }}" class="btn btn-success btn-xs" download>
+                                <i class="fa fa-download"></i>
+                            </a>
                             <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
                                     data-target="#graphicWorkModal"
                                     data-type="cover" data-id="{{ $cover->id }}">
@@ -45,7 +48,6 @@
             </table>
         </div>
 
-        <!-- TODO: only one record per project -->
         @if(!$barCodes->count())
             <button type="button" class="btn btn-success graphicWorkBtn" data-toggle="modal" data-target="#graphicWorkModal"
                     data-type="barcode">+ Add Barcode</button>
@@ -55,7 +57,7 @@
                 <thead>
                 <tr>
                     <th>Barcode</th>
-                    <th></th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -63,6 +65,9 @@
                         <tr>
                             <td>{!! $barCode->image !!}</td>
                             <td>
+                                <a href="{{ $barCode->value }}" class="btn btn-success btn-xs" download>
+                                    <i class="fa fa-download"></i>
+                                </a>
                                 <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
                                         data-target="#graphicWorkModal"
                                         data-type="barcode" data-id="{{ $barCode->id }}">
@@ -87,7 +92,7 @@
                 <thead>
                 <tr>
                     <th>Rewrite script</th>
-                    <th></th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -95,6 +100,9 @@
                     <tr>
                         <td>{!! $rewriteScript->file_link !!}</td>
                         <td>
+                            <a href="{{ $rewriteScript->value }}" class="btn btn-success btn-xs" download>
+                                <i class="fa fa-download"></i>
+                            </a>
                             <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
                                     data-target="#graphicWorkModal"
                                     data-type="rewrite-script" data-id="{{ $rewriteScript->id }}">
@@ -119,7 +127,7 @@
                 <thead>
                 <tr>
                     <th>Trial pages</th>
-                    <th></th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -127,6 +135,9 @@
                     <tr>
                         <td>{!! $trialPage->image !!}</td>
                         <td>
+                            <a href="{{ $trialPage->value }}" class="btn btn-success btn-xs" download>
+                                <i class="fa fa-download"></i>
+                            </a>
                             <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
                                     data-target="#graphicWorkModal"
                                     data-type="trial-page" data-id="{{ $trialPage->id }}">
@@ -151,7 +162,7 @@
                 <thead>
                 <tr>
                     <th>Sample book/PDF</th>
-                    <th></th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -159,6 +170,9 @@
                     <tr>
                         <td>{!! $sampleBookPDF->file_link !!}</td>
                         <td>
+                            <a href="{{ $sampleBookPDF->value }}" class="btn btn-success btn-xs" download>
+                                <i class="fa fa-download"></i>
+                            </a>
                             <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
                                     data-target="#graphicWorkModal"
                                     data-type="sample-book-pdf" data-id="{{ $sampleBookPDF->id }}">
