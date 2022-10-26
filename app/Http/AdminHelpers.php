@@ -1512,6 +1512,13 @@ class AdminHelpers
         return substr(md5(microtime()), 0, $length);
     }
 
+    public static function createDirectory($name)
+    {
+        if (!\File::exists($name)) {
+            \File::makeDirectory($name);
+        }
+    }
+
     /**
      * Curl for vipps
      * @param $method

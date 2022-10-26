@@ -111,6 +111,8 @@ Route::group([
         Route::delete('/project/book/{id}/delete', 'ProjectController@deleteBook');
         Route::post('/project/{id}/add-other-service', 'ProjectController@addOtherService')->name('g-admin.project.add-other-service');
         Route::get('/project/{id}/graphic-work', 'ProjectController@graphicWork')->name('g-admin.project.graphic-work');
+        Route::post('/project/{id}/graphic-work/save', 'ProjectController@saveGraphicWork')->name('g-admin.project.save-graphic-work');
+        Route::delete('/project/{id}/graphic-work/{graphic_work_id}/delete', 'ProjectController@deleteGraphicWork')->name('g-admin.project.delete-graphic-work');
         Route::get('/project/{id}/registration', 'ProjectController@registration')->name('g-admin.project.registration');
         Route::get('/project/{id}/marketing', 'ProjectController@marketing')->name('g-admin.project.marketing');
         Route::get('/project/{id}/contract', 'ProjectController@contract')->name('g-admin.project.contract');

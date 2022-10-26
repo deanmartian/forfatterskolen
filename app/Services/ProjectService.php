@@ -12,6 +12,7 @@ use App\Http\FrontendHelpers;
 use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
+use App\ProjectGraphicWork;
 use Carbon\Carbon;
 use Illuminate\Http\Concerns\InteractsWithInput;
 use Illuminate\Http\Request;
@@ -182,6 +183,83 @@ class ProjectService
         ]);
 
         return $project;
+    }
+
+    /**
+     * @param Request $request
+     * @return $this|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]
+     */
+    public function saveGraphicWorks( Request $request )
+    {
+        $data = $request->except('_token');
+
+        switch ($request->type) {
+            case 'cover':
+                $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'cover');
+                break;
+
+            case 'barcode':
+                $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'barcode');
+                break;
+
+            case 'rewrite-script':
+                $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'rewrite_script');
+                break;
+
+            case 'trial-page':
+                $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'trial_page');
+                break;
+
+            case 'sample-book-pdf':
+                $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'sample_book_pdf');
+                break;
+        }
+
+        if ($request->id) {
+            $graphicWork = ProjectGraphicWork::find($request->id);
+            $graphicWork->update($data);
+        } else {
+            $graphicWork = ProjectGraphicWork::create($data);
+        }
+
+        return $graphicWork;
+    }
+
+    /**
+     * @param Request $request
+     * @param $fieldName
+     * @return null|string
+     */
+    public function saveGraphicWorkFileOrImage( Request $request, $fieldName)
+    {
+        $filePath = NULL;
+
+        if ($request->hasFile($fieldName)) :
+            $destinationPath = 'storage/project-graphic-work/' . $fieldName; // upload path
+
+            AdminHelpers::createDirectory($destinationPath);
+            $filePath = $this->saveFileOrImage($destinationPath, $fieldName);
+
+        endif;
+
+        return $filePath;
+    }
+
+    /**
+     * @param $destinationPath
+     * @param $requestFile
+     * @return string
+     */
+    public function saveFileOrImage( $destinationPath, $requestFilename )
+    {
+        $requestFile = \request()->file($requestFilename);
+        $extension = $requestFile->getClientOriginalExtension();
+        $original_filename = $requestFile->getClientOriginalName();
+        $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
+
+        $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+        $requestFile->move($destinationPath, $fileName);
+        return '/'.$fileName;
     }
 
     /**

@@ -18,6 +18,7 @@ use App\Http\Requests\ProjectRequest;
 use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
+use App\ProjectGraphicWork;
 use App\Services\ProjectService;
 use App\TimeRegister;
 use App\User;
@@ -161,10 +162,68 @@ class ProjectController extends Controller
     {
         $project = Project::find($project_id);
         $layout = 'backend.layout';
+        $saveGraphicRoute = 'admin.project.save-graphic-work';
+        $deleteGraphicRoute = 'admin.project.delete-graphic-work';
         if (AdminHelpers::isGiutbokPage()) {
             $layout = 'giutbok.layout';
+            $saveGraphicRoute = 'g-admin.project.save-graphic-work';
+            $deleteGraphicRoute = 'g-admin.project.delete-graphic-work';
         }
-        return view('backend.project.graphic-work', compact('project', 'layout'));
+        $covers = ProjectGraphicWork::cover()->where('project_id', $project_id)->get();
+        $barCodes = ProjectGraphicWork::barcode()->where('project_id', $project_id)->get();
+        $rewriteScripts = ProjectGraphicWork::rewriteScripts()->where('project_id', $project_id)->get();
+        $trialPages = ProjectGraphicWork::trialPage()->where('project_id', $project_id)->get();
+        $sampleBookPDFs = ProjectGraphicWork::sampleBookPdf()->where('project_id', $project_id)->get();
+
+        return view('backend.project.graphic-work', compact('project', 'layout', 'saveGraphicRoute',
+            'deleteGraphicRoute', 'covers', 'barCodes', 'rewriteScripts', 'trialPages', 'sampleBookPDFs'));
+    }
+
+    public function saveGraphicWork( $project_id, Request $request, ProjectService $projectService )
+    {
+        $request->merge(['project_id' => $project_id]);
+
+        // create graphic work folder first
+        AdminHelpers::createDirectory('storage/project-graphic-work');
+
+        switch ($request->type) {
+            case 'cover':
+                $this->validate($request, ['cover' => 'required|mimes:jpeg,jpg,png,gif']);
+                break;
+
+            case 'barcode':
+                $this->validate($request, ['barcode' => 'required|mimes:jpeg,jpg,png,gif']);
+                break;
+
+            case 'rewrite-script':
+                $this->validate($request, ['rewrite_script' => 'required|mimes:pdf']);
+                break;
+
+            case 'trial-page':
+                $this->validate($request, ['trial_page' => 'required|mimes:jpeg,jpg,png,gif']);
+                break;
+
+            case 'sample-book-pdf':
+                $this->validate($request, ['sample_book_pdf' => 'required|mimes:pdf']);
+                break;
+        }
+
+        $projectService->saveGraphicWorks($request);
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace('-',' ', $request->type)) . ' saved successfully.'),
+                'alert_type' => 'success']);
+    }
+
+    public function deleteGraphicWork( $project_id, $graphic_work_id )
+    {
+        $graphicWork = ProjectGraphicWork::find($graphic_work_id);
+        $type = $graphicWork->type;
+        $graphicWork->delete();
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace('-',' ', $type)) . ' delete successfully.'),
+                'alert_type' => 'success']);
     }
 
     public function registration( $project_id )
