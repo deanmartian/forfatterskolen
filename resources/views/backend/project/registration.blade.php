@@ -11,58 +11,294 @@
 @section('content')
     <div class="page-toolbar">
         <h3><i class="fa fa-file-text-o"></i> Registration</h3>
+        <a href="{{ route($backRoute, $project->id) }}" class="btn btn-default">
+            <i class="fa fa-arrow-left"></i> Back
+        </a>
     </div>
     <div class="col-sm-12 margin-top">
-        <button type="button" class="btn btn-success">+ Add ISBN</button>
+        <button type="button" class="btn btn-success registrationBtn" data-toggle="modal" data-target="#registrationModal"
+                data-type="isbn">+ Add ISBN</button>
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
                     <th>ISBN</th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
+                @foreach($isbns as $isbn)
+                    <tr>
+                        <td>{!! $isbn->value !!}</td>
+                        <td>
+                            <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
+                                    data-target="#registrationModal" data-record="{{ json_encode($isbn) }}"
+                                    data-type="isbn" data-id="{{ $isbn->id }}">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs deleteRegistrationBtn" data-toggle="modal"
+                                    data-target="#deleteRegistrationModal" data-type="isbn"
+                                    data-action="{{ route($deleteRegistrationRoute, [$isbn->project_id, $isbn->id]) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>
 
-        <button type="button" class="btn btn-success">+ Add Central distribution</button>
+        <button type="button" class="btn btn-success registrationBtn" data-toggle="modal" data-target="#registrationModal"
+                data-type="central-distribution">+ Add Central distribution</button>
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
                     <th>Central distribution</th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
+                @foreach($centralDistributions as $centralDistribution)
+                    <tr>
+                        <td>{!! $centralDistribution->value !!}</td>
+                        <td>
+                            <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
+                                    data-target="#registrationModal" data-record="{{ json_encode($centralDistribution) }}"
+                                    data-type="central-distribution" data-id="{{ $centralDistribution->id }}">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs deleteRegistrationBtn" data-toggle="modal"
+                                    data-target="#deleteRegistrationModal" data-type="central-distribution"
+                                    data-action="{{ route($deleteRegistrationRoute, [$centralDistribution->project_id, $centralDistribution->id]) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>
 
-        <button type="button" class="btn btn-success">+ Add Mentor book base</button>
+        <button type="button" class="btn btn-success registrationBtn" data-toggle="modal" data-target="#registrationModal"
+                data-type="mentor-book-base">+ Add Mentor book base</button>
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
                     <th>Mentor book base</th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
+                @foreach($mentorBookBases as $mentorBookBase)
+                    <tr>
+                        <td>{!! $mentorBookBase->value !!}</td>
+                        <td>
+                            <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
+                                    data-target="#registrationModal" data-record="{{ json_encode($mentorBookBase) }}"
+                                    data-type="mentor-book-base" data-id="{{ $mentorBookBase->id }}">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs deleteRegistrationBtn" data-toggle="modal"
+                                    data-target="#deleteRegistrationModal" data-type="mentor-book-base"
+                                    data-action="{{ route($deleteRegistrationRoute, [$mentorBookBase->project_id, $mentorBookBase->id]) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>
 
-        <button type="button" class="btn btn-success">+ Add Upload files to mentor book base</button>
+        <button type="button" class="btn btn-success registrationBtn" data-toggle="modal" data-target="#registrationModal"
+                data-type="upload-files-to-mentor-book-base">+ Add Upload files to mentor book base</button>
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
                     <th>Upload files to mentor book base</th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
+                @foreach($uploadFilesToMentorBookBases as $uploadFilesToMentorBookBase)
+                    <tr>
+                        <td>{!! $uploadFilesToMentorBookBase->value !!}</td>
+                        <td>
+                            <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
+                                    data-target="#registrationModal" data-record="{{ json_encode($uploadFilesToMentorBookBase) }}"
+                                    data-type="upload-files-to-mentor-book-base" data-id="{{ $uploadFilesToMentorBookBase->id }}">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs deleteRegistrationBtn" data-toggle="modal"
+                                    data-target="#deleteRegistrationModal" data-type="upload-files-to-mentor-book-base"
+                                    data-action="{{ route($deleteRegistrationRoute, [$uploadFilesToMentorBookBase->project_id, $uploadFilesToMentorBookBase->id]) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>
     </div>
+
+    <div id="registrationModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route($saveRegistrationRoute, $project->id) }}"
+                          onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="id">
+                        <input type="hidden" name="type">
+
+                        <div class="form-group isbn-container">
+                            <label>ISBN</label>
+                            <input type="text" class="form-control" name="isbn">
+                        </div>
+
+                        <div class="form-group central-distribution-container">
+                            <label>Central Distribution</label>
+                            <input type="number" class="form-control" name="central_distribution">
+                        </div>
+
+                        <div class="form-group mentor-book-base-container">
+                            <label>Mentor Book Base</label>
+                            <textarea name="mentor_book_base" class="form-control" cols="30" rows="10"></textarea>
+                        </div>
+
+                        <div class="form-group upload-files-to-mentor-book-base-container">
+                            <label>Upload files to Mentor Book Base</label>
+                            <input type="date" class="form-control" name="upload_files_to_mentor_book_base">
+                        </div>
+
+                        <button type="submit" class="btn btn-success pull-right margin-top">
+                            {{ trans('site.save') }}
+                        </button>
+
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteRegistrationModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        {{ method_field('DELETE') }}
+
+                        <p>Are you sure you want to delete this record?</p>
+
+                        <button type="submit" class="btn btn-danger pull-right margin-top">
+                            {{ trans('site.delete') }}
+                        </button>
+
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@stop
+
+@section('scripts')
+    <script>
+        $(".registrationBtn").click(function() {
+            let id = $(this).data('id');
+            let type = $(this).data('type');
+            let record = $(this).data('record');
+            let modal = $("#registrationModal");
+            let form = modal.find("form");
+
+            let isbnContainer = $(".isbn-container");
+            let centralDistributionContainer = $(".central-distribution-container");
+            let mentorBookBaseContainer = $(".mentor-book-base-container");
+            let uploadFilesToMentorBookBaseContainer = $(".upload-files-to-mentor-book-base-container");
+
+            isbnContainer.addClass('hide');
+            centralDistributionContainer.addClass('hide');
+            mentorBookBaseContainer.addClass('hide');
+            uploadFilesToMentorBookBaseContainer.addClass('hide');
+
+            switch (type) {
+                case 'isbn':
+                    modal.find('.modal-title').text('ISBN');
+                    isbnContainer.removeClass('hide');
+                    break;
+
+                case 'central-distribution':
+                    modal.find('.modal-title').text('Central Distribution');
+                    centralDistributionContainer.removeClass('hide');
+                    break;
+
+                case 'mentor-book-base':
+                    modal.find('.modal-title').text('Mentor Book Base');
+                    mentorBookBaseContainer.removeClass('hide');
+                    break;
+
+                case 'upload-files-to-mentor-book-base':
+                    modal.find('.modal-title').text('Upload files to Mentor Book Base');
+                    uploadFilesToMentorBookBaseContainer.removeClass('hide');
+                    break;
+            }
+
+            form.find('[name=type]').val(type);
+            if (id) {
+                form.find('[name=id]').val(id);
+            }
+
+            if (record) {
+                form.find('[name=isbn]').val(record.value);
+                form.find('[name=central_distribution]').val(record.value);
+                form.find('[name=mentor_book_base]').val(record.value);
+                form.find('[name=upload_files_to_mentor_book_base]').val(record.value);
+            }
+        });
+
+        $(".deleteRegistrationBtn").click(function() {
+            let type = $(this).data('type');
+            let modal = $("#deleteRegistrationModal");
+            let form = modal.find("form");
+            let action = $(this).data('action');
+            let pageTitle = '';
+
+            switch (type) {
+                case 'isbn':
+                    pageTitle = 'Isbn';
+                    break;
+
+                case 'central-distribution':
+                    pageTitle = 'Central Distribution';
+                    break;
+
+                case 'mentor-book-base':
+                    pageTitle = 'Mentor Book Base';
+                    break;
+
+                case 'upload-files-to-mentor-book-base':
+                    pageTitle = 'Upload Files to Mentor Book Base';
+                    break;
+            }
+
+            modal.find('.modal-title').text('Delete ' + pageTitle);
+            form.attr('action', action);
+        });
+    </script>
 @stop

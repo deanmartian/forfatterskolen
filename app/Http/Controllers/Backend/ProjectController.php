@@ -19,6 +19,7 @@ use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
 use App\ProjectGraphicWork;
+use App\ProjectRegistration;
 use App\Services\ProjectService;
 use App\TimeRegister;
 use App\User;
@@ -162,10 +163,13 @@ class ProjectController extends Controller
     {
         $project = Project::find($project_id);
         $layout = 'backend.layout';
+        $backRoute = 'admin.project.show';
         $saveGraphicRoute = 'admin.project.save-graphic-work';
         $deleteGraphicRoute = 'admin.project.delete-graphic-work';
+
         if (AdminHelpers::isGiutbokPage()) {
             $layout = 'giutbok.layout';
+            $backRoute = 'g-admin.project.show';
             $saveGraphicRoute = 'g-admin.project.save-graphic-work';
             $deleteGraphicRoute = 'g-admin.project.delete-graphic-work';
         }
@@ -175,7 +179,7 @@ class ProjectController extends Controller
         $trialPages = ProjectGraphicWork::trialPage()->where('project_id', $project_id)->get();
         $sampleBookPDFs = ProjectGraphicWork::sampleBookPdf()->where('project_id', $project_id)->get();
 
-        return view('backend.project.graphic-work', compact('project', 'layout', 'saveGraphicRoute',
+        return view('backend.project.graphic-work', compact('project', 'layout', 'backRoute', 'saveGraphicRoute',
             'deleteGraphicRoute', 'covers', 'barCodes', 'rewriteScripts', 'trialPages', 'sampleBookPDFs'));
     }
 
@@ -228,12 +232,75 @@ class ProjectController extends Controller
 
     public function registration( $project_id )
     {
+        $project = Project::find($project_id);
         $layout = 'backend.layout';
+        $backRoute = 'admin.project.show';
+        $saveRegistrationRoute = 'admin.project.save-registration';
+        $deleteRegistrationRoute = 'admin.project.delete-registration';
         if (AdminHelpers::isGiutbokPage()) {
             $layout = 'giutbok.layout';
+            $backRoute = 'g-admin.project.show';
+            $saveRegistrationRoute = 'g-admin.project.save-registration';
+            $deleteRegistrationRoute = 'g-admin.project.delete-registration';
         }
-        $project = Project::find($project_id);
-        return view('backend.project.registration', compact('project', 'layout'));
+
+        $isbns = ProjectRegistration::isbns()->where('project_id', $project_id)->get();
+        $centralDistributions = ProjectRegistration::centralDistributions()->where('project_id', $project_id)->get();
+        $mentorBookBases = ProjectRegistration::mentorBookBase()->where('project_id', $project_id)->get();
+        $uploadFilesToMentorBookBases = ProjectRegistration::uploadFilesToMentorBookBase()
+            ->where('project_id', $project_id)->get();
+
+        return view('backend.project.registration', compact('project', 'layout', 'saveRegistrationRoute',
+            'deleteRegistrationRoute', 'isbns', 'centralDistributions', 'mentorBookBases', 'uploadFilesToMentorBookBases',
+            'backRoute'));
+    }
+
+    public function saveRegistration( $project_id, Request $request )
+    {
+        $data = $request->merge(['project_id' => $project_id])->except('_token');
+        switch ($request->type) {
+            case 'isbn':
+                $this->validate($request, ['isbn' => 'required']);
+                $data['value'] = $request->isbn;
+                break;
+
+            case 'central-distribution':
+                $this->validate($request, ['central_distribution' => 'required|numeric']);
+                $data['value'] = $request->central_distribution;
+                break;
+
+            case 'mentor-book-base':
+                $this->validate($request, ['mentor_book_base' => 'required']);
+                $data['value'] = $request->mentor_book_base;
+                break;
+
+            case 'upload-files-to-mentor-book-base':
+                $this->validate($request, ['upload_files_to_mentor_book_base' => 'required|date']);
+                $data['value'] = $request->upload_files_to_mentor_book_base;
+                break;
+        }
+
+        if ($request->id) {
+            $registration = ProjectRegistration::find($request->id);
+            $registration->update($data);
+        } else {
+            $registration = ProjectRegistration::create($data);
+        }
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace('-',' ', $request->type)) . ' saved successfully.'),
+                'alert_type' => 'success']);
+    }
+
+    public function deleteRegistration($project_id, $registration_id )
+    {
+        $registration = ProjectRegistration::find($registration_id);
+        $type = $registration->type;
+        $registration->delete();
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace('-',' ', $type)) . ' delete successfully.'),
+                'alert_type' => 'success']);
     }
 
     public function marketing( $project_id )

@@ -11,6 +11,9 @@
 @section('content')
     <div class="page-toolbar">
         <h3><i class="fa fa-file-text-o"></i> Graphic Work</h3>
+        <a href="{{ route($backRoute, $project->id) }}" class="btn btn-default">
+            <i class="fa fa-arrow-left"></i> Back
+        </a>
     </div>
     <div class="col-sm-12 margin-top">
         <button type="button" class="btn btn-success graphicWorkBtn" data-toggle="modal" data-target="#graphicWorkModal"

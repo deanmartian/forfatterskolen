@@ -114,6 +114,8 @@ Route::group([
         Route::post('/project/{id}/graphic-work/save', 'ProjectController@saveGraphicWork')->name('g-admin.project.save-graphic-work');
         Route::delete('/project/{id}/graphic-work/{graphic_work_id}/delete', 'ProjectController@deleteGraphicWork')->name('g-admin.project.delete-graphic-work');
         Route::get('/project/{id}/registration', 'ProjectController@registration')->name('g-admin.project.registration');
+        Route::post('/project/{id}/registration/save', 'ProjectController@saveRegistration')->name('g-admin.project.save-registration');
+        Route::delete('/project/{id}/registration/{registration_id}/delete', 'ProjectController@deleteRegistration')->name('g-admin.project.delete-registration');
         Route::get('/project/{id}/marketing', 'ProjectController@marketing')->name('g-admin.project.marketing');
         Route::get('/project/{id}/contract', 'ProjectController@contract')->name('g-admin.project.contract');
         Route::post('/project/{id}/contract', 'ProjectController@storeContract')->name('g-admin.project.contract-store');
@@ -126,7 +128,7 @@ Route::group([
         Route::get('/project/{id}/contract/{contract_id}', 'ProjectController@showContract')->name('g-admin.project.contract-show');
         Route::get('/project', 'ProjectController@index')->name('g-admin.project.index');
         Route::post('/project/save', 'ProjectController@saveProject');
-        Route::get('/project/{id}', 'ProjectController@show');
+        Route::get('/project/{id}', 'ProjectController@show')->name('g-admin.project.show');
         Route::delete('/project/{id}/delete', 'ProjectController@deleteProject');
 
         Route::post('task/{id}/finish', 'TaskController@finishTask')->name('g-admin.task.finish');
