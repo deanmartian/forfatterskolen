@@ -3736,7 +3736,7 @@ class LearnerController extends Controller
         $certificate = CourseCertificate::findOrFail($course_id);
         $course = $certificate->course;
 
-        $courseLearner = Auth::user()->coursesTaken()->whereIn('package_id', $course->packages()->pluck('id'))
+        $courseLearner = Auth::user()->coursesTaken()->withTrashed()->whereIn('package_id', $course->packages()->pluck('id'))
             ->get();
         // check if not learner of the course
         if (!$courseLearner->count()) {
