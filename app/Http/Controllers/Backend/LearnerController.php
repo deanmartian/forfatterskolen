@@ -9,6 +9,7 @@ use App\AssignmentTemplate;
 use App\CoachingTimerManuscript;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
+use App\CourseCertificate;
 use App\Diploma;
 use App\EmailHistory;
 use App\EmailTemplate;
@@ -207,9 +208,21 @@ class LearnerController extends Controller
             ->get();
         $projects = Project::where('user_id', $learner->id)->get();
 
+        // get course certificates based on users course taken
+        $certificates = \DB::table('course_certificates')
+            ->leftJoin('courses', 'course_certificates.course_id','=','courses.id')
+            ->leftJoin('packages','packages.course_id','=','courses.id')
+            ->leftJoin('courses_taken','courses_taken.package_id', '=','packages.id')
+            ->select('course_certificates.*', 'courses.title as course_title')
+            ->whereNotNull('courses.completed_date')
+            ->whereNotNull('courses.issue_date')
+            ->where('courses_taken.user_id', $id)
+            ->groupBy('course_certificates.id')
+            ->get();
+
         return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories',
             'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList',
-            'timeRegisters', 'projects'));
+            'timeRegisters', 'projects', 'certificates'));
     }
 
 
@@ -2201,6 +2214,44 @@ class LearnerController extends Controller
         $user = User::find($user_id);
         $user->is_self_publishing_learner = $request->is_self_publishing_learner;
         $user->save();
+    }
+
+    public function downloadCourseCertificate( $user_id, $certificate_id )
+    {
+        $certificate = CourseCertificate::findOrFail($certificate_id);
+        $course = $certificate->course;
+
+        $user = User::find($user_id);
+
+        $courseLearner = $user->coursesTaken()->withTrashed()->whereIn('package_id', $course->packages()->pluck('id'))
+            ->get();
+        // check if not learner of the course
+        if (!$courseLearner->count()) {
+            return redirect()->back();
+        }
+
+        $issueDate = Carbon::parse($course->issue_date);
+        $template = str_replace([
+            '{LEARNERNAME}',
+            '{COURSENAME}',
+            '{COMPLETEDDATE}',
+            '{ISSUEDDATE}'
+        ],
+            [
+                $user->full_name,
+                $course->title,
+                $course->completed_date,
+                $issueDate->format('d') . '. ' . FrontendHelpers::convertMonthLanguage($issueDate->format('n')) . ' ' . $issueDate->format('Y')
+            ],
+            $certificate->template
+        );
+
+
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        $pdf->setPaper('letter', 'landscape');
+        $pdf->loadHTML($template);
+        return $pdf->download($course->title . ' certificate.pdf');
     }
 
     /**

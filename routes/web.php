@@ -626,6 +626,7 @@ Route::group([
         Route::post('learner/{user_id}/could-buy-course', 'LearnerController@setCouldBuyCourse')->name('admin.learner.update-could-buy-course');
         Route::post('learner/{user_id}/webinar-auto-register-update', 'LearnerController@autoRegisterCourseWebinar')->name('admin.learner.webinar-auto-register-update');
         Route::post('learner/{user_id}/update-is-publishing-learner', 'LearnerController@isPublishingLearner');
+        Route::get('learner/{user_id}/course-certificate/{certificate_id}/download', 'LearnerController@downloadCourseCertificate')->name('admin.learner.download-course-certificate');
 
         Route::post('shop-manuscript/{id}/update_document', 'LearnerController@updateDocumentShopManuscriptTaken')->name('shop_manuscript_taken.update_document');
         Route::post('shop-manuscript/{id}/synopsis', 'LearnerController@saveSynopsis')->name('shop_manuscript_taken.save_synopsis');
@@ -1051,6 +1052,8 @@ Route::group([
         Route::post('/project/{id}/registration/save', 'ProjectController@saveRegistration')->name('admin.project.save-registration');
         Route::delete('/project/{id}/registration/{registration_id}/delete', 'ProjectController@deleteRegistration')->name('admin.project.delete-registration');
         Route::get('/project/{id}/marketing', 'ProjectController@marketing')->name('admin.project.marketing');
+        Route::post('/project/{id}/marketing/save', 'ProjectController@saveMarketing')->name('admin.project.save-marketing');
+        Route::delete('/project/{id}/marketing/{marketing_id}/delete', 'ProjectController@deleteMarketing')->name('admin.project.delete-marketing');
         Route::get('/project/{id}/contract', 'ProjectController@contract')->name('admin.project.contract');
         Route::post('/project/{id}/contract', 'ProjectController@storeContract')->name('admin.project.contract-store');
         Route::post('/project/{id}/contract/upload', 'ProjectController@uploadContract')->name('admin.project.contract-upload');

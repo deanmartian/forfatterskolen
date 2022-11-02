@@ -1793,7 +1793,39 @@
 						</tbody>
                     </table>
                 </div>
-            </div>
+            </div> <!-- end diploma -->
+
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<h4>Course Certificate</h4>
+				</div>
+
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+						<tr>
+							<th>{{ trans_choice('site.courses', 1) }}</th>
+							<th></th>
+						</tr>
+						</thead>
+						<tbody>
+						@foreach($certificates as $certificate)
+							<tr>
+								<td>
+									<a href="{{ route('admin.course.show', $certificate->course_id) }}">
+										{{ $certificate->course_title }}
+									</a>
+								</td>
+								<td>
+									<a href="{{ route('admin.learner.download-course-certificate', [$learner->id, $certificate->id]) }}"
+									   class="btn btn-success btn-sm">{{ trans('site.learner.download-text') }}</a>
+								</td>
+							</tr>
+						@endforeach
+						</tbody>
+					</table>
+				</div>
+			</div> <!-- end course certificate -->
 
 			<!-- words written -->
 			<div class="panel panel-default">
