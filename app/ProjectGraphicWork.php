@@ -10,7 +10,7 @@ class ProjectGraphicWork extends Model
     protected $fillable = ['project_id', 'type', 'value'];
     protected $appends = ['image', 'file_link'];
 
-    protected static function boot() {
+    /*protected static function boot() {
         parent::boot();
 
         static::deleting(function($graphicWork) { // before delete() method call this
@@ -19,7 +19,7 @@ class ProjectGraphicWork extends Model
                 \File::delete($file);
             }
         });
-    }
+    }*/
 
     public function scopeCover( $query )
     {

@@ -13,6 +13,7 @@ use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
 use App\ProjectGraphicWork;
+use App\ProjectMarketing;
 use Carbon\Carbon;
 use Illuminate\Http\Concerns\InteractsWithInput;
 use Illuminate\Http\Request;
@@ -236,6 +237,31 @@ class ProjectService
 
         if ($request->hasFile($fieldName)) :
             $destinationPath = 'storage/project-graphic-work/' . $fieldName; // upload path
+
+            AdminHelpers::createDirectory($destinationPath);
+            $filePath = $this->saveFileOrImage($destinationPath, $fieldName);
+
+        endif;
+
+        return $filePath;
+    }
+
+    /**
+     * @param Request $request
+     * @param $fieldName
+     * @return null|string
+     */
+    public function saveMarketingFileOrImage( Request $request, $fieldName)
+    {
+        $filePath = NULL;
+
+        if ($request->has('id') && $request->id) {
+            $marketing = ProjectMarketing::find($request->id);
+            $filePath = $marketing->value;
+        }
+
+        if ($request->hasFile($fieldName)) :
+            $destinationPath = 'storage/project-marketing/' . $fieldName; // upload path
 
             AdminHelpers::createDirectory($destinationPath);
             $filePath = $this->saveFileOrImage($destinationPath, $fieldName);

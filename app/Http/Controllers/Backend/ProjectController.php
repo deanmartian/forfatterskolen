@@ -19,6 +19,7 @@ use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
 use App\ProjectGraphicWork;
+use App\ProjectMarketing;
 use App\ProjectRegistration;
 use App\Services\ProjectService;
 use App\TimeRegister;
@@ -306,11 +307,109 @@ class ProjectController extends Controller
     public function marketing( $project_id )
     {
         $layout = 'backend.layout';
+        $backRoute = 'admin.project.show';
+        $saveMarketingRoute = 'admin.project.save-marketing';
+        $deleteMarketingRoute = 'admin.project.delete-marketing';
         if (AdminHelpers::isGiutbokPage()) {
             $layout = 'giutbok.layout';
+            $backRoute = 'g-admin.project.show';
+            $saveMarketingRoute = 'g-admin.project.save-marketing';
+            $deleteMarketingRoute = 'g-admin.project.delete-marketing';
         }
         $project = Project::find($project_id);
-        return view('backend.project.marketing', compact('project', 'layout'));
+        $culturalCouncils = ProjectMarketing::culturalCouncils()->where('project_id', $project_id)->get();
+        $freeWords = ProjectMarketing::freeWords()->where('project_id', $project_id)->get();
+        $printEBooks = ProjectMarketing::printEbooks()->where('project_id', $project_id)->get();
+        $sampleBookApproved = ProjectMarketing::sampleBookApproved()->where('project_id', $project_id)->get();
+        $pdfPrintIsApproved = ProjectMarketing::pdfPrintIsApproved()->where('project_id', $project_id)->get();
+        $numberOfAuthorBooks = ProjectMarketing::numberOfAuthorBooks()->where('project_id', $project_id)->get();
+
+        return view('backend.project.marketing', compact('project', 'layout', 'backRoute', 'saveMarketingRoute',
+            'deleteMarketingRoute', 'culturalCouncils', 'freeWords', 'printEBooks', 'sampleBookApproved',
+            'pdfPrintIsApproved', 'numberOfAuthorBooks'));
+    }
+
+    public function saveMarketing( $project_id, Request $request, ProjectService $projectService )
+    {
+        $data = $request->merge(['project_id' => $project_id])->except('_token');
+
+        // create graphic work folder first
+        AdminHelpers::createDirectory('storage/project-marketing');
+        $is_finished_field = 'is_finished';
+
+        switch ($request->type) {
+            case 'cultural-council':
+                if (!$request->id) {
+                    $this->validate($request, ['cultural_council' => 'required']);
+                }
+                $data['value'] = $projectService->saveMarketingFileOrImage($request, 'cultural_council');
+                $is_finished_field = 'is_finished_cultural_council';
+                break;
+
+            case 'application-free-word':
+                if (!$request->id) {
+                    $this->validate($request, ['free_word' => 'required']);
+                }
+                $data['value'] = $projectService->saveMarketingFileOrImage($request, 'free_word');
+                $is_finished_field = 'is_finished_free_word';
+                break;
+
+            case 'print-ebook':
+                if (!$request->id) {
+                    $this->validate($request, ['print_ebook' => 'required']);
+                }
+                $data['value'] = $projectService->saveMarketingFileOrImage($request, 'print_ebook');
+                $is_finished_field = 'is_finished_print_ebook';
+                break;
+
+            case 'sample-book-approved':
+                if (!$request->id) {
+                    $this->validate($request, ['sample_book_approved' => 'required']);
+                }
+                $data['value'] = $projectService->saveMarketingFileOrImage($request, 'sample_book_approved');
+                $is_finished_field = 'is_finished_sample_book_approved';
+                break;
+
+            case 'pdf-print-is-approved':
+                if (!$request->id) {
+                    $this->validate($request, ['pdf_print_is_approved' => 'required|mimes:pdf']);
+                }
+                $data['value'] = $projectService->saveMarketingFileOrImage($request, 'pdf_print_is_approved');
+                $is_finished_field = 'is_finished_pdf_print_is_approved';
+                break;
+
+            case 'number-of-author-books':
+                if (!$request->id) {
+                    $this->validate($request, ['number_of_author_books' => 'required|numeric']);
+                }
+                $data['value'] = $request->number_of_author_books;
+                $is_finished_field = 'is_finished_number_of_author_books';
+                break;
+        }
+
+        $data['is_finished'] = $request->has($is_finished_field) && $request[$is_finished_field] ? 1 : 0;
+
+        if ($request->id) {
+            $marketing = ProjectMarketing::find($request->id);
+            $marketing->update($data);
+        } else {
+            $marketing = ProjectMarketing::create($data);
+        }
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace('-',' ', $request->type)) . ' saved successfully.'),
+                'alert_type' => 'success']);
+    }
+
+    public function deleteMarketing($project_id, $marketing_id )
+    {
+        $marketing = ProjectMarketing::find($marketing_id);
+        $type = $marketing->type;
+        $marketing->delete();
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace('-',' ', $type)) . ' delete successfully.'),
+                'alert_type' => 'success']);
     }
 
     /**
