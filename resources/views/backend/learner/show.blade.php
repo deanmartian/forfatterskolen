@@ -152,6 +152,11 @@
 					@foreach($learner->formerCourses as $formerCourse)
 						<li>
 							{{ $formerCourse->package->course->title }} ({{ $formerCourse->package->variation }})
+							<span class="text-danger">{{ \Carbon\Carbon::parse($formerCourse->end_date)->format('M d, Y') }}</span>
+							<button class="btn btn-success btn-xs restoreCourseBtn" data-toggle="modal" data-target="#restoreCourseModal"
+									data-action="{{ route('admin.learner.restore-course', [$learner->id, $formerCourse->id]) }}">
+								Restore
+							</button>
 						</li>
 							<ul>
 								@foreach( $formerCourse->package->shop_manuscripts as $shop_manuscripts )
@@ -4292,6 +4297,32 @@
 	</div>
 </div>
 
+<div id="restoreCourseModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					Restore Course
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+
+					<div class="form-group">
+						<label>{!! trans('site.end-date') !!}</label>
+						<input type="date" class="form-control" name="end_date" required>
+					</div>
+
+					<button type="submit" class="btn btn-primary pull-right">Restore</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="scriptNotesModal" class="modal fade" role="dialog" data-backdrop="static">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -4981,6 +5012,12 @@
     $(".setVippsEFakturaBtn").click(function(){
         let vipps_phone_number = $(this).data('vipps-number');
         $("#setVippsEFakturaModal").find('input[name=mobile_number]').val(vipps_phone_number);
+    });
+
+    $(".restoreCourseBtn").click(function(){
+        let modal = $('#restoreCourseModal');
+        let action = $(this).data('action');
+        modal.find('form').attr('action', action);
     });
 
     $('.notes').click(function(){

@@ -13,6 +13,7 @@ use App\CourseCertificate;
 use App\Diploma;
 use App\EmailHistory;
 use App\EmailTemplate;
+use App\FormerCourse;
 use App\Helpers\FileToText;
 use App\Http\FikenInvoice;
 use App\Invoice;
@@ -2319,6 +2320,42 @@ class LearnerController extends Controller
 
         return redirect()->back()->with([
             'errors'                => AdminHelpers::createMessageBag('Record saved.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    public function restoreCourse( $user_id, $former_course_id, Request $request )
+    {
+        $formerCourse = FormerCourse::find($former_course_id);
+        $courseTaken = CoursesTaken::where('user_id', $user_id)
+            ->where('package_id', $formerCourse->package_id)
+            ->withTrashed()
+            ->first();
+        if ($courseTaken) {
+            $courseTaken->end_date = $request->end_date;
+            $courseTaken->deleted_at = NULL;
+            $courseTaken->save();
+        } else {
+            CoursesTaken::create([
+                'user_id' => $formerCourse->user_id,
+                'package_id' => $formerCourse->package_id,
+                'is_active' => 1,
+                'started_at' => $formerCourse->started_at,
+                'start_date' => $formerCourse->start_date,
+                'end_date' => $request->end_date,
+                'access_lessons' => $formerCourse->access_lessons,
+                'years' => 1,
+                'sent_renew_email' => $formerCourse->sent_renew_email,
+                'is_free' => $formerCourse->is_free,
+                'created_at' => $formerCourse->created_at,
+                'updated_at' => $formerCourse->updated_at,
+            ]);
+        }
+
+        $formerCourse->delete();
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Course restored successfully.'),
             'alert_type'            => 'success',
             'not-former-courses'    => true
         ]);
