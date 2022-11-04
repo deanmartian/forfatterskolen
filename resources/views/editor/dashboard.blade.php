@@ -88,11 +88,11 @@
 											<td>
 												{{ $assignedManuscript->expected_finish }}
 												@if(!$assignedManuscript->expected_finish)
-													<button class="btn btn-primary btn-xs editExpectedFinishBtn" data-toggle="modal"
+													<button class="btn btn-primary btn-xs" data-toggle="modal"
 															data-target="#editExpectedFinishModal"
 															data-action="{{ route('editor.personal-assignment.update-expected-finish', ['assignment', $assignedManuscript->id]) }}"
 															data-expected_finish="{{ $assignedManuscript->expected_finish
-												? strftime('%Y-%m-%d', strtotime($assignedManuscript->expected_finish)) : NULL }}">
+												? strftime('%Y-%m-%d', strtotime($assignedManuscript->expected_finish)) : NULL }}" onclick="editExpectedFinish(this)">
 														<i class="fa fa-edit"></i> Edit
 													</button>
 												@endif
@@ -1841,6 +1841,14 @@
 		let modal = $('#selfPublishingFeedbackModal');
 		modal.find('form').attr('action', action);
 	});
+
+    function editExpectedFinish(self) {
+        let expected_finish = $(self).data('expected_finish');
+        let modal = $('#editExpectedFinishModal');
+        let action = $(self).data('action');
+        modal.find('form').attr('action', action);
+        modal.find('[name=expected_finish]').val(expected_finish);
+	}
 
 </script>
 @stop
