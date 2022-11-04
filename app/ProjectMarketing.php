@@ -11,6 +11,26 @@ class ProjectMarketing extends Model
     protected $fillable = ['project_id', 'type', 'value', 'is_finished'];
     protected $appends = ['is_finished_text', 'file_link'];
 
+    public function scopeReviewCopiesSent( $query )
+    {
+        $query->where('type', 'review-copies-sent');
+    }
+
+    public function scopeSetupOnlineStore( $query )
+    {
+        $query->where('type', 'setup-online-store');
+    }
+
+    public function scopeSetupFacebook( $query )
+    {
+        $query->where('type', 'setup-facebook');
+    }
+
+    public function scopeManuscriptSentToPrint( $query )
+    {
+        $query->where('type', 'manuscripts-sent-to-print');
+    }
+
     public function scopeCulturalCouncils( $query )
     {
         $query->where('type', 'cultural-council');
@@ -39,6 +59,21 @@ class ProjectMarketing extends Model
     public function scopeNumberOfAuthorBooks( $query )
     {
         $query->where('type', 'number-of-author-books');
+    }
+
+    public function scopeUpdateTheBookBase( $query )
+    {
+        $query->where('type', 'update-the-book-base');
+    }
+
+    public function scopeEbookOrdered( $query )
+    {
+        $query->where('type', 'ebook-ordered');
+    }
+
+    public function scopeEbookReceived( $query )
+    {
+        $query->where('type', 'ebook-received');
     }
 
     public function getIsFinishedTextAttribute()

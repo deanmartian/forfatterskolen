@@ -58,41 +58,108 @@
             </table>
         </div>
 
-        <button type="button" class="btn btn-success">+ Add Review copies are sent</button>
+        @if($reviewCopiesSent->count() === 0)
+        <button type="button" class="btn btn-success marketingBtn" data-toggle="modal" data-target="#marketingModal"
+                data-type="review-copies-sent">+ Add Review copies are sent</button>
+        @endif
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
                     <th>Review copies are sent</th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
+                @foreach($reviewCopiesSent as $reviewCopies)
+                    <tr>
+                        <th>{{ $reviewCopies->is_finished_text }}</th>
+                        <td>
+                            <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
+                                    data-target="#marketingModal" data-record="{{ json_encode($reviewCopies) }}"
+                                    data-type="review-copies-sent" data-id="{{ $reviewCopies->id }}">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs deleteMarketingBtn" data-toggle="modal"
+                                    data-target="#deleteMarketingModal" data-type="review-copies-sent"
+                                    data-action="{{ route($deleteMarketingRoute, [$reviewCopies->project_id, $reviewCopies->id]) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>
 
-        <button type="button" class="btn btn-success">+ Add Set up online store</button>
+        @if($setupOnlineStore->count() === 0)
+        <button type="button" class="btn btn-success marketingBtn" data-toggle="modal" data-target="#marketingModal"
+                data-type="setup-online-store">+ Add Set up online store</button>
+        @endif
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
                     <th>Set up online store</th>
+                    <th>Link Address</th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
+                @foreach($setupOnlineStore as $setupStore)
+                    <tr>
+                        <th>{{ $setupStore->is_finished_text }}</th>
+                        <th><a href="{{ $setupStore->value }}">{{ $setupStore->value }}</a></th>
+                        <td>
+                            <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
+                                    data-target="#marketingModal" data-record="{{ json_encode($setupStore) }}"
+                                    data-type="setup-online-store" data-id="{{ $setupStore->id }}">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs deleteMarketingBtn" data-toggle="modal"
+                                    data-target="#deleteMarketingModal" data-type="setup-online-store"
+                                    data-action="{{ route($deleteMarketingRoute, [$setupStore->project_id, $setupStore->id]) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>
 
-        <button type="button" class="btn btn-success">+ Add Set up Facebook</button>
+        @if($setupFacebook->count() === 0)
+        <button type="button" class="btn btn-success marketingBtn" data-toggle="modal" data-target="#marketingModal"
+                data-type="setup-facebook">+ Add Set up Facebook</button>
+        @endif
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
                     <th>Set up Facebook</th>
+                    <th>Link Address</th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
+                @foreach($setupFacebook as $setupFB)
+                    <tr>
+                        <th>{{ $setupFB->is_finished_text }}</th>
+                        <th><a href="{{ $setupFB->value }}">{{ $setupFB->value }}</a></th>
+                        <td>
+                            <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
+                                    data-target="#marketingModal" data-record="{{ json_encode($setupFB) }}"
+                                    data-type="setup-facebook" data-id="{{ $setupFB->id }}">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs deleteMarketingBtn" data-toggle="modal"
+                                    data-target="#deleteMarketingModal" data-type="setup-facebook"
+                                    data-action="{{ route($deleteMarketingRoute, [$setupFB->project_id, $setupFB->id]) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>
@@ -257,15 +324,36 @@
             </table>
         </div>
 
-        <button type="button" class="btn btn-success">+ Add Manuscripts are sent to print</button>
+        @if($manuscriptSentToPrint->count() === 0)
+        <button type="button" class="btn btn-success marketingBtn" data-toggle="modal" data-target="#marketingModal"
+                data-type="manuscripts-sent-to-print">+ Add Manuscripts are sent to print</button>
+        @endif
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
                     <th>Manuscripts are sent to print</th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
+                @foreach($manuscriptSentToPrint as $manuscriptSent)
+                    <tr>
+                        <th>{{ $manuscriptSent->is_finished_text }}</th>
+                        <td>
+                            <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
+                                    data-target="#marketingModal" data-record="{{ json_encode($manuscriptSent) }}"
+                                    data-type="manuscripts-sent-to-print" data-id="{{ $manuscriptSent->id }}">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs deleteMarketingBtn" data-toggle="modal"
+                                    data-target="#deleteMarketingModal" data-type="manuscripts-sent-to-print"
+                                    data-action="{{ route($deleteMarketingRoute, [$manuscriptSent->project_id, $manuscriptSent->id]) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>
@@ -341,41 +429,104 @@
             </table>
         </div>
 
-        <button type="button" class="btn btn-success">+ Add Update the book base</button>
+        @if ($updateTheBookBase->count() === 0)
+        <button type="button" class="btn btn-success marketingBtn" data-toggle="modal" data-target="#marketingModal"
+                data-type="update-the-book-base">+ Add Update the book base</button>
+        @endif
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
                     <th>Update the book base</th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
+                @foreach($updateTheBookBase as $updateBookBase)
+                    <tr>
+                        <th>{{ $updateBookBase->is_finished_text }}</th>
+                        <td>
+                            <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
+                                    data-target="#marketingModal" data-record="{{ json_encode($updateBookBase) }}"
+                                    data-type="update-the-book-base" data-id="{{ $updateBookBase->id }}">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs deleteMarketingBtn" data-toggle="modal"
+                                    data-target="#deleteMarketingModal" data-type="update-the-book-base"
+                                    data-action="{{ route($deleteMarketingRoute, [$updateBookBase->project_id, $updateBookBase->id]) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>
 
-        <button type="button" class="btn btn-success">+ Add E-book ordered</button>
+        @if ($ebookOrdered->count() === 0)
+        <button type="button" class="btn btn-success marketingBtn" data-toggle="modal" data-target="#marketingModal"
+                data-type="ebook-ordered">+ Add E-book ordered</button>
+        @endif
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
                     <th>E-book ordered</th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
+                @foreach($ebookOrdered as $ebookOrder)
+                    <tr>
+                        <th>{{ $ebookOrder->is_finished_text }}</th>
+                        <td>
+                            <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
+                                    data-target="#marketingModal" data-record="{{ json_encode($ebookOrder) }}"
+                                    data-type="ebook-ordered" data-id="{{ $ebookOrder->id }}">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs deleteMarketingBtn" data-toggle="modal"
+                                    data-target="#deleteMarketingModal" data-type="ebook-ordered"
+                                    data-action="{{ route($deleteMarketingRoute, [$ebookOrder->project_id, $ebookOrder->id]) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>
 
-        <button type="button" class="btn btn-success">+ Add E-book received and registered</button>
+        @if ($ebookReceived->count() === 0)
+        <button type="button" class="btn btn-success marketingBtn" data-toggle="modal" data-target="#marketingModal"
+                data-type="ebook-received">+ Add E-book received and registered</button>
+        @endif
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
                     <th>E-book received and registered</th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
+                @foreach($ebookReceived as $ebookReceive)
+                    <tr>
+                        <th>{{ $ebookReceive->is_finished_text }}</th>
+                        <td>
+                            <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
+                                    data-target="#marketingModal" data-record="{{ json_encode($ebookReceive) }}"
+                                    data-type="ebook-received" data-id="{{ $ebookReceive->id }}">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs deleteMarketingBtn" data-toggle="modal"
+                                    data-target="#deleteMarketingModal" data-type="ebook-received"
+                                    data-action="{{ route($deleteMarketingRoute, [$ebookReceive->project_id, $ebookReceive->id]) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>
@@ -396,6 +547,48 @@
                         {{ csrf_field() }}
                         <input type="hidden" name="id">
                         <input type="hidden" name="type">
+
+                        <div class="review-copies-sent-container">
+                            <div class="form-group">
+                                <label>Review copies sent</label> <br>
+                                <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                                       name="is_finished_review_copies_sent" data-width="84">
+                            </div>
+                        </div>
+
+                        <div class="setup-online-store-container">
+                            <div class="form-group">
+                                <label>Link Address</label>
+                                <input type="url" class="form-control" name="link_address">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Setup online store</label> <br>
+                                <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                                       name="is_finished_setup_online_store" data-width="84">
+                            </div>
+                        </div>
+
+                        <div class="setup-facebook-container">
+                            <div class="form-group">
+                                <label>Link Address</label>
+                                <input type="url" class="form-control" name="link_address">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Setup facebook</label> <br>
+                                <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                                       name="is_finished_setup_facebook" data-width="84">
+                            </div>
+                        </div>
+
+                        <div class="manuscripts-sent-to-print-container">
+                            <div class="form-group">
+                                <label>Manuscripts are sent to print</label> <br>
+                                <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                                       name="is_finished_manuscripts_sent_to_print" data-width="84">
+                            </div>
+                        </div>
 
                         <div class="cultural-council-container">
                             <div class="form-group">
@@ -486,6 +679,30 @@
                             </div>
                         </div>
 
+                        <div class="update-the-book-base-container">
+                            <div class="form-group">
+                                <label>Update the book base</label> <br>
+                                <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                                       name="is_finished_update_the_book_base" data-width="84">
+                            </div>
+                        </div>
+
+                        <div class="ebook-ordered-container">
+                            <div class="form-group">
+                                <label>Ebook Ordered</label> <br>
+                                <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                                       name="is_finished_ebook_ordered" data-width="84">
+                            </div>
+                        </div>
+
+                        <div class="ebook-received-container">
+                            <div class="form-group">
+                                <label>Ebook Received</label> <br>
+                                <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                                       name="is_finished_ebook_received" data-width="84">
+                            </div>
+                        </div>
+
                         <button type="submit" class="btn btn-success pull-right margin-top">
                             {{ trans('site.save') }}
                         </button>
@@ -534,22 +751,63 @@
             let modal = $("#marketingModal");
             let form = modal.find("form");
             let is_finished_field = '';
+            let value_field = '';
 
+            let reviewCopiesSentContainer = $(".review-copies-sent-container");
+            let setupOnlineStoreContainer = $(".setup-online-store-container");
+            let setupFacebookContainer = $(".setup-facebook-container");
+            let manuscriptsSentToPrintContainer = $(".manuscripts-sent-to-print-container");
             let culturalCouncilContainer = $(".cultural-council-container");
             let applicationFreeWordContainer = $(".application-free-word-container");
             let printEBookContainer = $(".print-ebook-container");
             let sampleBookApprovedContainer = $(".sample-book-approved-container");
             let pdfPrintIsApprovedContainer = $(".pdf-print-is-approved-container");
             let numberOfAuthorBooksContainer = $(".number-of-author-books-container");
+            let updateTheBookBaseContainer = $(".update-the-book-base-container");
+            let ebookOrderedContainer = $(".ebook-ordered-container");
+            let ebookReceivedContainer = $(".ebook-received-container");
 
+            reviewCopiesSentContainer.addClass('hide');
+            setupOnlineStoreContainer.addClass('hide');
+            setupFacebookContainer.addClass('hide');
+            manuscriptsSentToPrintContainer.addClass('hide');
             culturalCouncilContainer.addClass('hide');
             applicationFreeWordContainer.addClass('hide');
             printEBookContainer.addClass('hide');
             sampleBookApprovedContainer.addClass('hide');
             pdfPrintIsApprovedContainer.addClass('hide');
             numberOfAuthorBooksContainer.addClass('hide');
+            updateTheBookBaseContainer.addClass('hide');
+            ebookOrderedContainer.addClass('hide');
+            ebookReceivedContainer.addClass('hide');
 
             switch (type) {
+                case 'review-copies-sent':
+                    modal.find('.modal-title').text('Review copies sent');
+                    reviewCopiesSentContainer.removeClass('hide');
+                    is_finished_field = 'is_finished_review_copies_sent';
+                    break;
+
+                case 'setup-online-store':
+                    modal.find('.modal-title').text('Setup online store');
+                    setupOnlineStoreContainer.removeClass('hide');
+                    is_finished_field = 'is_finished_setup_online_store';
+                    value_field = 'link_address';
+                    break;
+
+                case 'setup-facebook':
+                    modal.find('.modal-title').text('Setup facebook');
+                    setupFacebookContainer.removeClass('hide');
+                    is_finished_field = 'is_finished_setup_facebook';
+                    value_field = 'link_address';
+                    break;
+
+                case 'manuscripts-sent-to-print':
+                    modal.find('.modal-title').text('Manuscripts sent to print');
+                    manuscriptsSentToPrintContainer.removeClass('hide');
+                    is_finished_field = 'is_finished_manuscripts_sent_to_print';
+                    break;
+
                 case 'cultural-council':
                     modal.find('.modal-title').text('Cultural Council');
                     culturalCouncilContainer.removeClass('hide');
@@ -584,6 +842,25 @@
                     modal.find('.modal-title').text('Number of author books');
                     numberOfAuthorBooksContainer.removeClass('hide');
                     is_finished_field = 'is_finished_number_of_author_books';
+                    value_field = 'number_of_author_books';
+                    break;
+
+                case 'update-the-book-base':
+                    modal.find('.modal-title').text('Update the book base');
+                    updateTheBookBaseContainer.removeClass('hide');
+                    is_finished_field = 'is_finished_update_the_book_base';
+                    break;
+
+                case 'ebook-ordered':
+                    modal.find('.modal-title').text('Ebook Ordered');
+                    ebookOrderedContainer.removeClass('hide');
+                    is_finished_field = 'is_finished_ebook_ordered';
+                    break;
+
+                case 'ebook-received':
+                    modal.find('.modal-title').text('Ebook Received');
+                    ebookReceivedContainer.removeClass('hide');
+                    is_finished_field = 'is_finished_ebook_received';
                     break;
             }
 
@@ -591,8 +868,8 @@
             if (id) {
                 form.find('[name=id]').val(id);
                 form.find('[name='+ is_finished_field +']').prop('checked', false).change();
-                if (type === 'number-of-author-books') {
-                    form.find('[name=number_of_author_books]').val(record.value);
+                if (['number-of-author-books', 'setup-online-store', 'setup-facebook'].includes(type)) {
+                    form.find('[name=' + value_field + ']').val(record.value);
                 }
                 if (record.is_finished) {
                     form.find('[name='+ is_finished_field +']').prop('checked', true).change();
@@ -608,6 +885,22 @@
             let pageTitle = '';
 
             switch (type) {
+                case 'review-copies-sent':
+                    pageTitle = 'Review copies sent';
+                    break;
+
+                case 'setup-online-store':
+                    pageTitle = 'Setup online store';
+                    break;
+
+                case 'setup-facebook':
+                    pageTitle = 'Setup facebook';
+                    break;
+
+                case 'manuscripts-sent-to-print':
+                    pageTitle = 'Review copies sent';
+                    break;
+
                 case 'cultural-council':
                     pageTitle = 'Cultural Council';
                     break;
@@ -631,6 +924,19 @@
                 case 'number-of-author-books':
                     pageTitle = 'Number of books by author';
                     break;
+
+                case 'update-the-book-base':
+                    pageTitle = 'Update the book base';
+                    break;
+
+                case 'ebook-ordered':
+                    pageTitle = 'Ebook Ordered';
+                    break;
+
+                case 'ebook-received':
+                    pageTitle = 'Ebook Received';
+                    break;
+
             }
 
             modal.find('.modal-title').text('Delete ' + pageTitle);

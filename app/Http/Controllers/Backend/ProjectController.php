@@ -317,16 +317,24 @@ class ProjectController extends Controller
             $deleteMarketingRoute = 'g-admin.project.delete-marketing';
         }
         $project = Project::find($project_id);
+        $reviewCopiesSent = ProjectMarketing::reviewCopiesSent()->where('project_id', $project_id)->get();
+        $setupOnlineStore = ProjectMarketing::setupOnlineStore()->where('project_id', $project_id)->get();
+        $setupFacebook = ProjectMarketing::setupFacebook()->where('project_id', $project_id)->get();
+        $manuscriptSentToPrint = ProjectMarketing::manuscriptSentToPrint()->where('project_id', $project_id)->get();
         $culturalCouncils = ProjectMarketing::culturalCouncils()->where('project_id', $project_id)->get();
         $freeWords = ProjectMarketing::freeWords()->where('project_id', $project_id)->get();
         $printEBooks = ProjectMarketing::printEbooks()->where('project_id', $project_id)->get();
         $sampleBookApproved = ProjectMarketing::sampleBookApproved()->where('project_id', $project_id)->get();
         $pdfPrintIsApproved = ProjectMarketing::pdfPrintIsApproved()->where('project_id', $project_id)->get();
         $numberOfAuthorBooks = ProjectMarketing::numberOfAuthorBooks()->where('project_id', $project_id)->get();
+        $updateTheBookBase = ProjectMarketing::updateTheBookBase()->where('project_id', $project_id)->get();
+        $ebookOrdered = ProjectMarketing::ebookOrdered()->where('project_id', $project_id)->get();
+        $ebookReceived = ProjectMarketing::ebookReceived()->where('project_id', $project_id)->get();
 
         return view('backend.project.marketing', compact('project', 'layout', 'backRoute', 'saveMarketingRoute',
-            'deleteMarketingRoute', 'culturalCouncils', 'freeWords', 'printEBooks', 'sampleBookApproved',
-            'pdfPrintIsApproved', 'numberOfAuthorBooks'));
+            'deleteMarketingRoute', 'reviewCopiesSent', 'setupOnlineStore', 'setupFacebook', 'manuscriptSentToPrint', 'culturalCouncils',
+            'freeWords', 'printEBooks', 'sampleBookApproved', 'pdfPrintIsApproved', 'numberOfAuthorBooks', 'updateTheBookBase',
+            'ebookOrdered', 'ebookReceived'));
     }
 
     public function saveMarketing( $project_id, Request $request, ProjectService $projectService )
@@ -338,6 +346,24 @@ class ProjectController extends Controller
         $is_finished_field = 'is_finished';
 
         switch ($request->type) {
+            case 'review-copies-sent':
+                $is_finished_field = 'is_finished_review_copies_sent';
+                break;
+
+            case 'setup-online-store':
+                $data['value'] = $request->link_address;
+                $is_finished_field = 'is_finished_setup_online_store';
+                break;
+
+            case 'setup-facebook':
+                $data['value'] = $request->link_address;
+                $is_finished_field = 'is_finished_setup_facebook';
+                break;
+
+            case 'manuscripts-sent-to-print':
+                $is_finished_field = 'is_finished_manuscripts_sent_to_print';
+                break;
+
             case 'cultural-council':
                 if (!$request->id) {
                     $this->validate($request, ['cultural_council' => 'required']);
@@ -384,6 +410,18 @@ class ProjectController extends Controller
                 }
                 $data['value'] = $request->number_of_author_books;
                 $is_finished_field = 'is_finished_number_of_author_books';
+                break;
+
+            case 'update-the-book-base':
+                $is_finished_field = 'is_finished_update_the_book_base';
+                break;
+
+            case 'ebook-ordered':
+                $is_finished_field = 'is_finished_ebook_ordered';
+                break;
+
+            case 'ebook-received':
+                $is_finished_field = 'is_finished_ebook_received';
                 break;
         }
 
