@@ -8,8 +8,23 @@ class ProjectMarketing extends Model
 {
 
     protected $table = 'project_marketing';
-    protected $fillable = ['project_id', 'type', 'value', 'is_finished'];
+    protected $fillable = ['project_id', 'type', 'value', 'details', 'date', 'is_finished'];
     protected $appends = ['is_finished_text', 'file_link'];
+
+    public function scopeEmailBookstores( $query )
+    {
+        $query->where('type', 'email-bookstore');
+    }
+
+    public function scopeEmailLibraries( $query )
+    {
+        $query->where('type', 'email-library');
+    }
+
+    public function scopeEmailPress( $query )
+    {
+        $query->where('type', 'email-press');
+    }
 
     public function scopeReviewCopiesSent( $query )
     {
@@ -24,6 +39,11 @@ class ProjectMarketing extends Model
     public function scopeSetupFacebook( $query )
     {
         $query->where('type', 'setup-facebook');
+    }
+
+    public function scopeAdvertisementFacebook( $query )
+    {
+        $query->where('type', 'advertisement-facebook');
     }
 
     public function scopeManuscriptSentToPrint( $query )

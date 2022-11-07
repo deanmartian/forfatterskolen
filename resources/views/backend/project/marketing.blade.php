@@ -16,44 +16,113 @@
         </a>
     </div>
     <div class="col-sm-12 margin-top">
-        <button type="button" class="btn btn-success">+ Add E-mail bookstore</button>
+        <button type="button" class="btn btn-success marketingBtn" data-toggle="modal" data-target="#marketingModal"
+                data-type="email-bookstore">+ Add E-mail bookstore</button>
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
                     <th>File</th>
                     <th>Date</th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
+                @foreach($emailBookstores as $emailBookstore)
+                    <tr>
+                        <td>{!! $emailBookstore->file_link !!}</td>
+                        <td>{{ $emailBookstore->date }}</td>
+                        <td>
+                            <a href="{{ $emailBookstore->value }}" class="btn btn-success btn-xs" download>
+                                <i class="fa fa-download"></i>
+                            </a>
+                            <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
+                                    data-target="#marketingModal" data-record="{{ json_encode($emailBookstore) }}"
+                                    data-type="email-bookstore" data-id="{{ $emailBookstore->id }}">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs deleteMarketingBtn" data-toggle="modal"
+                                    data-target="#deleteMarketingModal" data-type="email-bookstore"
+                                    data-action="{{ route($deleteMarketingRoute, [$emailBookstore->project_id, $emailBookstore->id]) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>
 
-        <button type="button" class="btn btn-success">+ Add E-mail library</button>
+        <button type="button" class="btn btn-success marketingBtn" data-toggle="modal" data-target="#marketingModal"
+                data-type="email-library">+ Add E-mail library</button>
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
                     <th>File</th>
                     <th>Date</th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
+                @foreach($emailLibraries as $emailLibrary)
+                    <tr>
+                        <td>{!! $emailLibrary->file_link !!}</td>
+                        <td>{{ $emailLibrary->date }}</td>
+                        <td>
+                            <a href="{{ $emailLibrary->value }}" class="btn btn-success btn-xs" download>
+                                <i class="fa fa-download"></i>
+                            </a>
+                            <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
+                                    data-target="#marketingModal" data-record="{{ json_encode($emailLibrary) }}"
+                                    data-type="email-library" data-id="{{ $emailLibrary->id }}">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs deleteMarketingBtn" data-toggle="modal"
+                                    data-target="#deleteMarketingModal" data-type="email-library"
+                                    data-action="{{ route($deleteMarketingRoute, [$emailLibrary->project_id, $emailLibrary->id]) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>
 
-        <button type="button" class="btn btn-success">+ Add E-mail press</button>
+        <button type="button" class="btn btn-success marketingBtn" data-toggle="modal" data-target="#marketingModal"
+                data-type="email-press">+ Add E-mail press</button>
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
                     <th>File</th>
                     <th>Date</th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
+                @foreach($emailPresses as $emailPress)
+                    <tr>
+                        <td>{!! $emailPress->file_link !!}</td>
+                        <td>{{ $emailPress->date }}</td>
+                        <td>
+                            <a href="{{ $emailPress->value }}" class="btn btn-success btn-xs" download>
+                                <i class="fa fa-download"></i>
+                            </a>
+                            <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
+                                    data-target="#marketingModal" data-record="{{ json_encode($emailPress) }}"
+                                    data-type="email-press" data-id="{{ $emailPress->id }}">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs deleteMarketingBtn" data-toggle="modal"
+                                    data-target="#deleteMarketingModal" data-type="email-press"
+                                    data-action="{{ route($deleteMarketingRoute, [$emailPress->project_id, $emailPress->id]) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>
@@ -73,7 +142,7 @@
                 <tbody>
                 @foreach($reviewCopiesSent as $reviewCopies)
                     <tr>
-                        <th>{{ $reviewCopies->is_finished_text }}</th>
+                        <td>{{ $reviewCopies->is_finished_text }}</td>
                         <td>
                             <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
                                     data-target="#marketingModal" data-record="{{ json_encode($reviewCopies) }}"
@@ -108,8 +177,8 @@
                 <tbody>
                 @foreach($setupOnlineStore as $setupStore)
                     <tr>
-                        <th>{{ $setupStore->is_finished_text }}</th>
-                        <th><a href="{{ $setupStore->value }}">{{ $setupStore->value }}</a></th>
+                        <td>{{ $setupStore->is_finished_text }}</td>
+                        <td><a href="{{ $setupStore->value }}">{{ $setupStore->value }}</a></td>
                         <td>
                             <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
                                     data-target="#marketingModal" data-record="{{ json_encode($setupStore) }}"
@@ -144,8 +213,8 @@
                 <tbody>
                 @foreach($setupFacebook as $setupFB)
                     <tr>
-                        <th>{{ $setupFB->is_finished_text }}</th>
-                        <th><a href="{{ $setupFB->value }}">{{ $setupFB->value }}</a></th>
+                        <td>{{ $setupFB->is_finished_text }}</td>
+                        <td><a href="{{ $setupFB->value }}">{{ $setupFB->value }}</a></td>
                         <td>
                             <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
                                     data-target="#marketingModal" data-record="{{ json_encode($setupFB) }}"
@@ -155,6 +224,42 @@
                             <button class="btn btn-danger btn-xs deleteMarketingBtn" data-toggle="modal"
                                     data-target="#deleteMarketingModal" data-type="setup-facebook"
                                     data-action="{{ route($deleteMarketingRoute, [$setupFB->project_id, $setupFB->id]) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        <button type="button" class="btn btn-success marketingBtn" data-toggle="modal" data-target="#marketingModal"
+                data-type="advertisement-facebook">+ Advertisement Facebook</button>
+        <div class="table-responsive margin-top">
+            <table class="table table-side-bordered table-white">
+                <thead>
+                <tr>
+                    <th>File</th>
+                    <th width="500">Details</th>
+                    <th>Is finished</th>
+                    <th width="300"></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($advertisementFacebook as $advertisementFB)
+                    <tr>
+                        <td>{!! $advertisementFB->file_link !!}</td>
+                        <td>{{ $advertisementFB->details }}</td>
+                        <td>{{ $advertisementFB->is_finished_text }}</td>
+                        <td>
+                            <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
+                                    data-target="#marketingModal" data-record="{{ json_encode($advertisementFB) }}"
+                                    data-type="advertisement-facebook" data-id="{{ $advertisementFB->id }}">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs deleteMarketingBtn" data-toggle="modal"
+                                    data-target="#deleteMarketingModal" data-type="advertisement-facebook"
+                                    data-action="{{ route($deleteMarketingRoute, [$advertisementFB->project_id, $advertisementFB->id]) }}">
                                 <i class="fa fa-trash"></i>
                             </button>
                         </td>
@@ -179,7 +284,7 @@
                 @foreach($culturalCouncils as $culturalCouncil)
                     <tr>
                         <td>{!! $culturalCouncil->file_link !!}</td>
-                        <th>{{ $culturalCouncil->is_finished_text }}</th>
+                        <td>{{ $culturalCouncil->is_finished_text }}</td>
                         <td>
                             <a href="{{ $culturalCouncil->value }}" class="btn btn-success btn-xs" download>
                                 <i class="fa fa-download"></i>
@@ -216,7 +321,7 @@
                 @foreach($freeWords as $freeWord)
                     <tr>
                         <td>{!! $freeWord->file_link !!}</td>
-                        <th>{{ $freeWord->is_finished_text }}</th>
+                        <td>{{ $freeWord->is_finished_text }}</td>
                         <td>
                             <a href="{{ $freeWord->value }}" class="btn btn-success btn-xs" download>
                                 <i class="fa fa-download"></i>
@@ -265,7 +370,7 @@
                 @foreach($printEBooks as $printEBook)
                     <tr>
                         <td>{!! $printEBook->file_link !!}</td>
-                        <th>{{ $printEBook->is_finished_text }}</th>
+                        <td>{{ $printEBook->is_finished_text }}</td>
                         <td>
                             <a href="{{ $printEBook->value }}" class="btn btn-success btn-xs" download>
                                 <i class="fa fa-download"></i>
@@ -302,7 +407,7 @@
                 @foreach($sampleBookApproved as $sampleBook)
                     <tr>
                         <td>{!! $sampleBook->file_link !!}</td>
-                        <th>{{ $sampleBook->is_finished_text }}</th>
+                        <td>{{ $sampleBook->is_finished_text }}</td>
                         <td>
                             <a href="{{ $sampleBook->value }}" class="btn btn-success btn-xs" download>
                                 <i class="fa fa-download"></i>
@@ -339,7 +444,7 @@
                 <tbody>
                 @foreach($manuscriptSentToPrint as $manuscriptSent)
                     <tr>
-                        <th>{{ $manuscriptSent->is_finished_text }}</th>
+                        <td>{{ $manuscriptSent->is_finished_text }}</td>
                         <td>
                             <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
                                     data-target="#marketingModal" data-record="{{ json_encode($manuscriptSent) }}"
@@ -373,7 +478,7 @@
                 @foreach($pdfPrintIsApproved as $pdfPrint)
                     <tr>
                         <td>{!! $pdfPrint->file_link !!}</td>
-                        <th>{{ $pdfPrint->is_finished_text }}</th>
+                        <td>{{ $pdfPrint->is_finished_text }}</td>
                         <td>
                             <a href="{{ $pdfPrint->value }}" class="btn btn-success btn-xs" download>
                                 <i class="fa fa-download"></i>
@@ -410,7 +515,7 @@
                 @foreach($numberOfAuthorBooks as $numberOfAuthorBook)
                     <tr>
                         <td>{!! $numberOfAuthorBook->value !!}</td>
-                        <th>{{ $numberOfAuthorBook->is_finished_text }}</th>
+                        <td>{{ $numberOfAuthorBook->is_finished_text }}</td>
                         <td>
                             <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
                                     data-target="#marketingModal" data-record="{{ json_encode($numberOfAuthorBook) }}"
@@ -444,7 +549,7 @@
                 <tbody>
                 @foreach($updateTheBookBase as $updateBookBase)
                     <tr>
-                        <th>{{ $updateBookBase->is_finished_text }}</th>
+                        <td>{{ $updateBookBase->is_finished_text }}</td>
                         <td>
                             <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
                                     data-target="#marketingModal" data-record="{{ json_encode($updateBookBase) }}"
@@ -478,7 +583,7 @@
                 <tbody>
                 @foreach($ebookOrdered as $ebookOrder)
                     <tr>
-                        <th>{{ $ebookOrder->is_finished_text }}</th>
+                        <td>{{ $ebookOrder->is_finished_text }}</td>
                         <td>
                             <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
                                     data-target="#marketingModal" data-record="{{ json_encode($ebookOrder) }}"
@@ -512,7 +617,7 @@
                 <tbody>
                 @foreach($ebookReceived as $ebookReceive)
                     <tr>
-                        <th>{{ $ebookReceive->is_finished_text }}</th>
+                        <td>{{ $ebookReceive->is_finished_text }}</td>
                         <td>
                             <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
                                     data-target="#marketingModal" data-record="{{ json_encode($ebookReceive) }}"
@@ -548,6 +653,48 @@
                         <input type="hidden" name="id">
                         <input type="hidden" name="type">
 
+                        <div class="email-bookstore-container">
+                            <div class="form-group">
+                                <label>Email Bookstore</label> <br>
+                                <input type="file" class="form-control" name="email_bookstore"
+                                       accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+					    application/vnd.oasis.opendocument.text">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" class="form-control" name="date">
+                            </div>
+                        </div>
+
+                        <div class="email-library-container">
+                            <div class="form-group">
+                                <label>Email Library</label> <br>
+                                <input type="file" class="form-control" name="email_library"
+                                       accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+					    application/vnd.oasis.opendocument.text">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" class="form-control" name="date">
+                            </div>
+                        </div>
+
+                        <div class="email-press-container">
+                            <div class="form-group">
+                                <label>Email Press</label> <br>
+                                <input type="file" class="form-control" name="email_press"
+                                       accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+					    application/vnd.oasis.opendocument.text">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" class="form-control" name="date">
+                            </div>
+                        </div>
+
                         <div class="review-copies-sent-container">
                             <div class="form-group">
                                 <label>Review copies sent</label> <br>
@@ -579,6 +726,26 @@
                                 <label>Setup facebook</label> <br>
                                 <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
                                        name="is_finished_setup_facebook" data-width="84">
+                            </div>
+                        </div>
+
+                        <div class="advertisement-facebook-container">
+                            <div class="form-group">
+                                <label>File</label>
+                                <input type="file" class="form-control" name="advertisement_facebook"
+                                       accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+					    application/vnd.oasis.opendocument.text">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Details</label>
+                                <textarea name="details" cols="30" rows="10" class="form-control"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Is finished</label> <br>
+                                <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                                       name="is_finished_advertisement_facebook" data-width="84">
                             </div>
                         </div>
 
@@ -753,9 +920,13 @@
             let is_finished_field = '';
             let value_field = '';
 
+            let emailBookstoreContainer = $(".email-bookstore-container");
+            let emailLibraryContainer = $(".email-library-container");
+            let emailPressContainer = $(".email-press-container");
             let reviewCopiesSentContainer = $(".review-copies-sent-container");
             let setupOnlineStoreContainer = $(".setup-online-store-container");
             let setupFacebookContainer = $(".setup-facebook-container");
+            let advertisementFacebookContainer = $(".advertisement-facebook-container");
             let manuscriptsSentToPrintContainer = $(".manuscripts-sent-to-print-container");
             let culturalCouncilContainer = $(".cultural-council-container");
             let applicationFreeWordContainer = $(".application-free-word-container");
@@ -767,9 +938,13 @@
             let ebookOrderedContainer = $(".ebook-ordered-container");
             let ebookReceivedContainer = $(".ebook-received-container");
 
+            emailBookstoreContainer.addClass('hide');
+            emailLibraryContainer.addClass('hide');
+            emailPressContainer.addClass('hide');
             reviewCopiesSentContainer.addClass('hide');
             setupOnlineStoreContainer.addClass('hide');
             setupFacebookContainer.addClass('hide');
+            advertisementFacebookContainer.addClass('hide');
             manuscriptsSentToPrintContainer.addClass('hide');
             culturalCouncilContainer.addClass('hide');
             applicationFreeWordContainer.addClass('hide');
@@ -782,6 +957,24 @@
             ebookReceivedContainer.addClass('hide');
 
             switch (type) {
+                case 'email-bookstore':
+                    modal.find('.modal-title').text('Email Bookstore');
+                    emailBookstoreContainer.removeClass('hide');
+                    is_finished_field = 'is_finished';
+                    break;
+
+                case 'email-library':
+                    modal.find('.modal-title').text('Email Library');
+                    emailLibraryContainer.removeClass('hide');
+                    is_finished_field = 'is_finished';
+                    break;
+
+                case 'email-press':
+                    modal.find('.modal-title').text('Email Press');
+                    emailPressContainer.removeClass('hide');
+                    is_finished_field = 'is_finished';
+                    break;
+
                 case 'review-copies-sent':
                     modal.find('.modal-title').text('Review copies sent');
                     reviewCopiesSentContainer.removeClass('hide');
@@ -800,6 +993,12 @@
                     setupFacebookContainer.removeClass('hide');
                     is_finished_field = 'is_finished_setup_facebook';
                     value_field = 'link_address';
+                    break;
+
+                case 'advertisement-facebook':
+                    modal.find('.modal-title').text('Advertisement facebook');
+                    advertisementFacebookContainer.removeClass('hide');
+                    is_finished_field = 'is_finished_advertisement_facebook';
                     break;
 
                 case 'manuscripts-sent-to-print':
@@ -867,13 +1066,30 @@
             form.find('[name=type]').val(type);
             if (id) {
                 form.find('[name=id]').val(id);
-                form.find('[name='+ is_finished_field +']').prop('checked', false).change();
+                if (is_finished_field) {
+                    form.find('[name='+ is_finished_field +']').prop('checked', false).change();
+                }
                 if (['number-of-author-books', 'setup-online-store', 'setup-facebook'].includes(type)) {
                     form.find('[name=' + value_field + ']').val(record.value);
                 }
+
+                if (['email-bookstore', 'email-library', 'email-press'].includes(type)) {
+                    form.find('[name=date]').val(record.date);
+                }
+
+                if (type === 'advertisement-facebook') {
+                    form.find('[name=details]').val(record.details);
+                }
+
                 if (record.is_finished) {
                     form.find('[name='+ is_finished_field +']').prop('checked', true).change();
                 }
+            } else {
+                form.find('[name=id]').val('');
+                if (is_finished_field) {
+                    form.find('[name='+ is_finished_field +']').prop('checked', false).change();
+                }
+                form.find('[name=date]').val('');
             }
         });
 
@@ -885,6 +1101,18 @@
             let pageTitle = '';
 
             switch (type) {
+                case 'email-bookstore':
+                    pageTitle = 'Email Bookstore';
+                    break;
+
+                case 'email-library':
+                    pageTitle = 'Email Library';
+                    break;
+
+                case 'email-press':
+                    pageTitle = 'Email Press';
+                    break;
+
                 case 'review-copies-sent':
                     pageTitle = 'Review copies sent';
                     break;
@@ -895,6 +1123,10 @@
 
                 case 'setup-facebook':
                     pageTitle = 'Setup facebook';
+                    break;
+
+                case 'advertisement-facebook':
+                    pageTitle = 'Advertisement facebook';
                     break;
 
                 case 'manuscripts-sent-to-print':

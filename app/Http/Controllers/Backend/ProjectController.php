@@ -317,9 +317,13 @@ class ProjectController extends Controller
             $deleteMarketingRoute = 'g-admin.project.delete-marketing';
         }
         $project = Project::find($project_id);
+        $emailBookstores = ProjectMarketing::emailBookstores()->where('project_id', $project_id)->get();
+        $emailLibraries = ProjectMarketing::emailLibraries()->where('project_id', $project_id)->get();
+        $emailPresses = ProjectMarketing::emailPress()->where('project_id', $project_id)->get();
         $reviewCopiesSent = ProjectMarketing::reviewCopiesSent()->where('project_id', $project_id)->get();
         $setupOnlineStore = ProjectMarketing::setupOnlineStore()->where('project_id', $project_id)->get();
         $setupFacebook = ProjectMarketing::setupFacebook()->where('project_id', $project_id)->get();
+        $advertisementFacebook = ProjectMarketing::advertisementFacebook()->where('project_id', $project_id)->get();
         $manuscriptSentToPrint = ProjectMarketing::manuscriptSentToPrint()->where('project_id', $project_id)->get();
         $culturalCouncils = ProjectMarketing::culturalCouncils()->where('project_id', $project_id)->get();
         $freeWords = ProjectMarketing::freeWords()->where('project_id', $project_id)->get();
@@ -332,9 +336,10 @@ class ProjectController extends Controller
         $ebookReceived = ProjectMarketing::ebookReceived()->where('project_id', $project_id)->get();
 
         return view('backend.project.marketing', compact('project', 'layout', 'backRoute', 'saveMarketingRoute',
-            'deleteMarketingRoute', 'reviewCopiesSent', 'setupOnlineStore', 'setupFacebook', 'manuscriptSentToPrint', 'culturalCouncils',
-            'freeWords', 'printEBooks', 'sampleBookApproved', 'pdfPrintIsApproved', 'numberOfAuthorBooks', 'updateTheBookBase',
-            'ebookOrdered', 'ebookReceived'));
+            'deleteMarketingRoute', 'emailBookstores', 'emailLibraries', 'emailPresses', 'reviewCopiesSent',
+            'setupOnlineStore', 'setupFacebook', 'advertisementFacebook', 'manuscriptSentToPrint', 'culturalCouncils',
+            'freeWords', 'printEBooks', 'sampleBookApproved', 'pdfPrintIsApproved', 'numberOfAuthorBooks',
+            'updateTheBookBase', 'ebookOrdered', 'ebookReceived'));
     }
 
     public function saveMarketing( $project_id, Request $request, ProjectService $projectService )
@@ -346,6 +351,27 @@ class ProjectController extends Controller
         $is_finished_field = 'is_finished';
 
         switch ($request->type) {
+            case 'email-bookstore':
+                if (!$request->id) {
+                    $this->validate($request, ['email_bookstore' => 'required']);
+                }
+                $data['value'] = $projectService->saveMarketingFileOrImage($request, 'email_bookstore');
+                break;
+
+            case 'email-library':
+                if (!$request->id) {
+                    $this->validate($request, ['email_library' => 'required']);
+                }
+                $data['value'] = $projectService->saveMarketingFileOrImage($request, 'email_library');
+                break;
+
+            case 'email-press':
+                if (!$request->id) {
+                    $this->validate($request, ['email_press' => 'required']);
+                }
+                $data['value'] = $projectService->saveMarketingFileOrImage($request, 'email_press');
+                break;
+
             case 'review-copies-sent':
                 $is_finished_field = 'is_finished_review_copies_sent';
                 break;
@@ -358,6 +384,13 @@ class ProjectController extends Controller
             case 'setup-facebook':
                 $data['value'] = $request->link_address;
                 $is_finished_field = 'is_finished_setup_facebook';
+                break;
+
+            case 'advertisement-facebook':
+                if ($request->has('advertisement_facebook')) {
+                    $data['value'] = $projectService->saveMarketingFileOrImage($request, 'advertisement_facebook');
+                }
+                $is_finished_field = 'is_finished_advertisement_facebook';
                 break;
 
             case 'manuscripts-sent-to-print':
