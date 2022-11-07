@@ -303,6 +303,7 @@ Route::group([
         Route::put('/writing-group/{id}', 'LearnerController@writingGroup')->name('learner.update.writing-group'); // Writing Group Page
         Route::get('/competition', 'LearnerController@competition')->name('learner.competition'); // Competitions Page
         Route::get('/private-message', 'LearnerController@privateMessage')->name('learner.private-message'); // Private Message Page
+        Route::get('/time-register', 'LearnerController@timeRegister')->name('learner.time-register');
         Route::get('/profile', 'LearnerController@profile')->name('learner.profile'); // Profile Page
         Route::get('/terms', 'LearnerController@terms')->name('learner.terms'); // Terms Page
         Route::get('/course/{course_id}/lesson/{id}', 'LearnerController@lesson')->name('learner.course.lesson'); // Lesson Page
@@ -378,6 +379,7 @@ Route::group([
         Route::post('/shop-manuscript/{id}/update-uploaded-manuscript', 'ShopManuscriptController@updateUploadedManuscript')->name('learner.shop-manuscript.update-uploaded-manuscript'); // update Uploade shop manuscript
         Route::post('/shop-manuscript/{id}/delete-uploaded-manuscript', 'ShopManuscriptController@deleteUploadedManuscript')->name('learner.shop-manuscript.delete-uploaded-manuscript'); // update Uploade shop manuscript
         Route::get('/download/invoice/{id}/credit-note', 'LearnerController@downloadCreditNote')->name('learner.download.credit-note');
+        Route::get('/download/time-register-invoice/{id}', 'LearnerController@downloadTimeRegisterInvoice')->name('learner.download.time-register-invoice');
         Route::get('/download/invoice/{url}', 'LearnerController@downloadInvoice')->name('learner.download.invoice')
             ->where('url', '.*'); // to accept url as parameter
 
@@ -624,6 +626,7 @@ Route::group([
         Route::post('learner/{user_id}/could-buy-course', 'LearnerController@setCouldBuyCourse')->name('admin.learner.update-could-buy-course');
         Route::post('learner/{user_id}/webinar-auto-register-update', 'LearnerController@autoRegisterCourseWebinar')->name('admin.learner.webinar-auto-register-update');
         Route::post('learner/{user_id}/update-is-publishing-learner', 'LearnerController@isPublishingLearner');
+        Route::get('learner/{user_id}/course-certificate/{certificate_id}/download', 'LearnerController@downloadCourseCertificate')->name('admin.learner.download-course-certificate');
 
         Route::post('shop-manuscript/{id}/update_document', 'LearnerController@updateDocumentShopManuscriptTaken')->name('shop_manuscript_taken.update_document');
         Route::post('shop-manuscript/{id}/synopsis', 'LearnerController@saveSynopsis')->name('shop_manuscript_taken.save_synopsis');
@@ -664,6 +667,7 @@ Route::group([
             ->name('admin.learner.invoice.create-fiken-credit-note');
         Route::post('learner/invoice/{id}/e-faktura', 'LearnerController@vippsEFaktura')->name('admin.learner.invoice.vipps-e-faktura');
         Route::post('learner/{user_id}/set-vipss-efaktura', 'LearnerController@setVippsEFaktura')->name('admin.learner.set-vipps-e-faktura');
+        Route::post('learner/{user_id}/restore-course/{former_course_id}', 'LearnerController@restoreCourse')->name('admin.learner.restore-course');
         Route::post('learner/svea/{order_id}/create-credit-note', 'LearnerController@createSveaCreditNote')->name('admin.learner.svea.create-credit-note');
         Route::post('learner/svea/{order_id}/deliver-order', 'LearnerController@deliverSveaOrder')->name('admin.learner.svea.deliver-order');
         Route::delete('learner/course/{course_taken_id}/delete', 'LearnerController@deleteFromCourse')->name('admin.learner.delete-from-course');
@@ -1000,6 +1004,7 @@ Route::group([
         Route::post('webinar/{id}/course/{course_id}/email-out', 'WebinarController@webinarEmailOut')->name('admin.webinar.email-out');
         Route::post('webinar/{id}/course/{course_id}/auto-register-learners', 'WebinarController@autoRegisterLearnersToWebinar')
             ->name('admin.webinar.auto-register-learners');
+        Route::get('/webinar/{id}/registrant/list', 'WebinarController@registrantList');
         Route::delete('/webinar/registrant/{id}/delete', 'WebinarController@removeRegistrant')
             ->name('admin.webinar.remove-registrant');
 
@@ -1037,11 +1042,32 @@ Route::group([
 
         Route::post('/project/activity/save', 'ProjectController@saveActivity');
         Route::delete('/project/activity/{id}/delete', 'ProjectController@deleteActivity');
+        Route::post('/project/{id}/notes/save', 'ProjectController@saveNote');
         Route::post('/project/{id}/book/save', 'ProjectController@saveBook');
         Route::delete('/project/book/{id}/delete', 'ProjectController@deleteBook');
+        Route::post('/project/{id}/add-other-service', 'ProjectController@addOtherService')->name('admin.project.add-other-service');
+        Route::get('/project/{id}/graphic-work', 'ProjectController@graphicWork')->name('admin.project.graphic-work');
+        Route::post('/project/{id}/graphic-work/save', 'ProjectController@saveGraphicWork')->name('admin.project.save-graphic-work');
+        Route::delete('/project/{id}/graphic-work/{graphic_work_id}/delete', 'ProjectController@deleteGraphicWork')->name('admin.project.delete-graphic-work');
+        Route::get('/project/{id}/registration', 'ProjectController@registration')->name('admin.project.registration');
+        Route::post('/project/{id}/registration/save', 'ProjectController@saveRegistration')->name('admin.project.save-registration');
+        Route::delete('/project/{id}/registration/{registration_id}/delete', 'ProjectController@deleteRegistration')->name('admin.project.delete-registration');
+        Route::get('/project/{id}/marketing', 'ProjectController@marketing')->name('admin.project.marketing');
+        Route::post('/project/{id}/marketing/save', 'ProjectController@saveMarketing')->name('admin.project.save-marketing');
+        Route::delete('/project/{id}/marketing/{marketing_id}/delete', 'ProjectController@deleteMarketing')->name('admin.project.delete-marketing');
+        Route::get('/project/{id}/contract', 'ProjectController@contract')->name('admin.project.contract');
+        Route::post('/project/{id}/contract', 'ProjectController@storeContract')->name('admin.project.contract-store');
+        Route::post('/project/{id}/contract/upload', 'ProjectController@uploadContract')->name('admin.project.contract-upload');
+        Route::post('/project/{id}/contract/{contract_id}/signed-upload', 'ProjectController@uploadSignedContract')
+            ->name('admin.project.contract-signed-upload');
+        Route::get('/project/{id}/contract/create', 'ProjectController@createContract')->name('admin.project.contract-create');
+        Route::get('/project/{id}/contract/{contract_id}/edit', 'ProjectController@editContract')->name('admin.project.contract-edit');
+        Route::put('/project/{id}/contract/{contract_id}/update', 'ProjectController@updateContract')->name('admin.project.contract-update');
+        Route::get('/project/{id}/contract/{contract_id}', 'ProjectController@showContract')->name('admin.project.contract-show');
         Route::get('/project', 'ProjectController@index')->name('admin.project.index');
         Route::post('/project/save', 'ProjectController@saveProject');
-        Route::get('/project/{id}', 'ProjectController@show');
+        Route::get('/project/{id}', 'ProjectController@show')->name('admin.project.show');
+        Route::delete('/project/{id}/delete', 'ProjectController@deleteProject');
 
         Route::post('generate_assignment_group/{id}', 'AssignmentController@generateGroup')->name('assignment.generate_assignment_group');
         Route::post('assignment/{id}/uploadManuscript', 'AssignmentController@uploadManuscript')->name('assignment.group.upload_manuscript');
@@ -1527,6 +1553,7 @@ Route::group([
         Route::get('/self-publishing/{id}/download-manuscript', 'SelfPublishingController@selfPublishingDownloadManuscript')
             ->name('admin.self-publishing.download-manuscript');
         Route::post('/self-publishing/{id}/add-feedback', 'SelfPublishingController@addFeedback')->name('admin.self-publishing.add-feedback');
+        Route::get('/self-publishing/feedback/{feedback_id}/download', 'SelfPublishingController@downloadFeedback')->name('admin.self-publishing.download-feedback');
         Route::delete('/self-publishing/delete-learner/{learner_id}', 'SelfPublishingController@deleteLearner')->name('admin.self-publishing.delete-learner');
         Route::resource('/self-publishing', 'SelfPublishingController', [
             'except' => ['create', 'edit'],
@@ -1539,8 +1566,11 @@ Route::group([
             ],
         ]);
 
-        Route::post('/time-register/save', 'TimeRegisterController@save');
-        Route::delete('/time-register/{id}/delete', 'TimeRegisterController@destroy');
+        Route::post('/time-register/save', 'TimeRegisterController@save')->name('admin.time-register.save');
+        Route::delete('/time-register/{id}/delete', 'TimeRegisterController@destroy')->name('admin.time-register.delete');
+        Route::get('/time-register/{id}/time-used-list', 'TimeRegisterController@timeUsedList');
+        Route::post('/time-register/{id}/save-time-used', 'TimeRegisterController@saveTimeUsed');
+        Route::delete('/time-register/time-used/{id}/delete', 'TimeRegisterController@deleteTimeUsed');
 
         // Advisories
         Route::put('/advisory/{id}', 'AdvisoryController@update')->name('admin.advisory.update');

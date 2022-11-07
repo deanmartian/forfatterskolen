@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 use App\Http\AdminHelpers;
 use App\Http\FikenInvoice;
 use App\Mail\SubjectBodyEmail;
+use App\Order;
 use App\Package;
 use Carbon\Carbon;
 use Closure;
@@ -72,6 +73,18 @@ class CheckAutoRenewCourses
                             $coursesTaken->started_at = Carbon::now();
                             $coursesTaken->save();
                         }
+
+                        // create order record
+                        $newOrder['user_id']    = $courseTaken->user->id;
+                        $newOrder['item_id']    = $package->course_id;
+                        $newOrder['type']       = Order::COURSE_TYPE;
+                        $newOrder['package_id'] = $package->id;
+                        $newOrder['plan_id']    = 8; // Full payment
+                        $newOrder['price']      = $price / 100;
+                        $newOrder['discount']   = 0;
+                        $newOrder['payment_mode_id']   = 3; // Faktura
+                        $newOrder['is_processed'] = 1;
+                        $order = Order::create($newOrder);
 
                         // add to automation
                         $user_email     = \Auth::user()->email;

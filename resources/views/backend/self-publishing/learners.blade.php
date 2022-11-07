@@ -1,4 +1,4 @@
-@extends('backend.layout')
+@extends($layout)
 
 @section('title')
     <title>Publishing &rsaquo; Forfatterskolen Admin</title>
@@ -8,7 +8,8 @@
     <div class="page-toolbar">
         <h3><i class="fa fa-users"></i> {{ $selfPublishing->title }} learners</h3>
 
-        <a href="{{ route('admin.self-publishing.index') }}" class="btn btn-default" style="margin-left: 10px">
+        {{ $selfPublishingIndexRoute }}
+        <a href="{{ route($selfPublishingIndexRoute) }}" class="btn btn-default" style="margin-left: 10px">
             Back
         </a>
         <div class="clearfix"></div>

@@ -42,6 +42,10 @@
 					@php
 						$tabWithLabel = [
 							[
+								'name' => 'waiting-for-feedback',
+								'label' => 'Venter på tilbakemelding'
+							],
+							[
 								'name' => 'finished',
 								'label' => trans('site.finished')
 							],
@@ -78,7 +82,135 @@
 
 					<div class="tab-content">
 						<div class="tab-pane fade in active">
-							@if( Request::input('tab') == 'finished' )
+							@if( Request::input('tab') == 'waiting-for-feedback' )
+								<div class="row waiting-for-response grid mt-5">
+									@foreach($waitingForResponse as $assignment)
+                                        <?php $manuscript = $assignment->manuscripts->where('user_id', Auth::user()->id)->first(); ?>
+                                        <?php $extension = $manuscript ? explode('.', basename($manuscript->filename)) : ''; ?>
+											<div class="col-md-6 mb-5 grid-item">
+												<div class="card">
+													<div class="card-header py-4">
+														<div class="row">
+															<div class="col-md-9">
+																<h2><i class="contract-sign"></i> {{ $assignment->title }}</h2>
+															</div>
+															<div class="col-md-3">
+                                                                <?php
+                                                                $submission_date_formatted = $assignment->submission_date;
+                                                                if (!\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
+                                                                    $coursesTaken = Auth::user()->coursesTaken()->get()->toArray();
+                                                                    $allowed_packages = $assignment->allowed_package ?
+                                                                        json_decode($assignment->allowed_package) : [];
+
+                                                                    $courseStarted = '';
+                                                                    foreach ($coursesTaken as $course) {
+                                                                        if (in_array($course['package_id'], $allowed_packages)) {
+                                                                            $courseStarted =  $course['started_at'];
+                                                                        }
+                                                                    }
+
+                                                                    $submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
+                                                                        ->addDays($assignment->submission_date);
+                                                                }
+                                                                ?>
+																@if (!$manuscript)
+																	@if($assignment->for_editor)
+																		<button class="btn site-btn-global site-btn-global-sm w-100 submitEditorManuscriptBtn" data-toggle="modal"
+																				data-target="#submitEditorManuscriptModal"
+																				data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
+																				data-show-group-question="{{ $assignment->show_join_group_question }}"
+																				data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
+																				@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
+																			{{ trans('site.learner.upload-script') }}
+																		</button>
+																	@else
+																		<button class="btn site-btn-global site-btn-global-sm w-100 submitManuscriptBtn" data-toggle="modal"
+																				data-target="#submitManuscriptModal"
+																				data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
+																				data-show-group-question="{{ $assignment->show_join_group_question }}"
+																				data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
+																				@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))) disabled @endif>
+																			{{ trans('site.learner.upload-script') }}
+																		</button>
+																	@endif
+																@endif
+															</div> <!-- end column -->
+														</div> <!-- end row-->
+													</div> <!-- end card-header -->
+													<div class="card-body">
+														<p>
+															{{ $assignment->description }}
+														</p>
+
+														<span class="font-barlow-regular">{{ trans('site.deadline') }}:</span>
+														<span>{{ \App\Http\FrontendHelpers::formatDateTimeNor($submission_date_formatted) }}</span>
+														@if( $manuscript )
+															<div class="mt-3">
+																@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+																	<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">
+																		{{ basename($manuscript->filename) }}
+																	</a>
+																@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
+																	<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">
+																		{{ basename($manuscript->filename) }}
+																	</a>
+																@endif
+
+																@if (!$manuscript->locked)
+																	<div class="pull-right">
+																		<button type="button" class="btn btn-sm btn-info editManuscriptBtn"
+																				data-toggle="modal" data-target="#editManuscriptModal"
+																				data-action="{{ route('learner.assignment.replace_manuscript', $manuscript->id) }}">
+																			<i class="fa fa-pen"></i>
+																		</button>
+																		<button type="button" class="btn btn-sm btn-danger deleteManuscriptBtn"
+																				data-toggle="modal" data-target="#deleteManuscriptModal"
+																				data-action="{{ route('learner.assignment.delete_manuscript', $manuscript->id) }}">
+																			<i class="fa fa-trash"></i>
+																		</button>
+																	</div>
+																@else
+																	<?php
+																		$submission_date_formatted = $assignment->submission_date;
+																		if (!\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
+																			$coursesTaken = Auth::user()->coursesTaken()->get()->toArray();
+																			$allowed_packages = $assignment->allowed_package ?
+																				json_decode($assignment->allowed_package) : [];
+
+																			$courseStarted = '';
+																			foreach ($coursesTaken as $course) {
+																				if (in_array($course['package_id'], $allowed_packages)) {
+																					$courseStarted =  $course['started_at'];
+																				}
+																			}
+
+																			$submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
+																				->addDays($assignment->submission_date);
+																		}
+																	?>
+																	@if((\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))
+																	&& $assignment->expected_finish) || $manuscript->expected_finish)
+																		<div class="pull-right">
+																			<span>{{ trans('site.expected-finish') }}:
+																				{{ \App\Http\FrontendHelpers::formatDate($assignment->expected_finish
+																				? $assignment->expected_finish: $manuscript->expected_finish) }}</span>
+																		</div>
+																	@endif
+																@endif
+															</div>
+														@endif
+													</div> <!-- end card-body -->
+													@if($assignment->course)
+														<div class="card-footer p-4">
+															<span class="font-barlow-regular">{{ trans('site.front.course-text') }}:</span>
+															<span>{{ $assignment->course->title }}</span>
+														</div> <!-- end card-footer -->
+													@endif
+												</div> <!-- end card -->
+											</div> <!-- end grid-item -->
+									@endforeach
+								</div>
+							@elseif( Request::input('tab') == 'finished' )
 								<div class="row past-assignment grid mt-5">
 									@foreach($expiredAssignments as $assignment)
                                         <?php $manuscript = $assignment->manuscripts->where('user_id', Auth::user()->id)->first(); ?>
@@ -376,12 +508,15 @@
                                                             $courseStarted =  $course['started_at'];
                                                         }
                                                     }
+                                                    // original for submission date format is the one on else, should be outside of the condition
                                                     if ($assignment['course_taken_end_date']) {
 														$courseStarted = $assignment['course_taken_end_date'];
+														$submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
+														->addDays(0);
+													} else {
+														$submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
+														->addDays($assignment->submission_date);
 													}
-
-                                                    $submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
-                                                        ->addDays($assignment->submission_date);
                                                 }
                                                 ?>
 

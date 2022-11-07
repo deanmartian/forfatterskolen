@@ -12,6 +12,7 @@ class Contract extends Model
 
     protected $fillable = [
         'code',
+        'project_id',
         'title',
         'image',
         'details',
@@ -20,10 +21,15 @@ class Contract extends Model
         'admin_signed_date',
         'signature_label',
         'signature',
+        'sent_file',
+        'signed_file',
         'end_date',
         'signed_date',
+        'is_file',
         'status'
     ];
+
+    protected $appends = ['sent_file_link', 'signed_file_link'];
 
     protected static function boot()
     {
@@ -38,6 +44,46 @@ class Contract extends Model
     public function scopeAdminOnly($query)
     {
         return $query->where('status', 1);
+    }
+
+    /**
+     * Accessor field
+     * @return string
+     */
+    public function getSentFileLinkAttribute()
+    {
+        $fileLink = '';
+        $filename = $this->attributes['sent_file'];
+
+        $extension = explode('.', basename($filename));
+        if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
+            $fileLink = '<a href="/js/ViewerJS/#../..'.$filename.'">'.basename($filename).'</a>';
+        } elseif( end($extension) == 'docx' || end($extension) == 'doc' ) {
+            $fileLink = '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').$filename.'">'
+                .basename($filename).'</a>';
+        }
+
+        return $fileLink;
+    }
+
+    /**
+     * Accessor field
+     * @return string
+     */
+    public function getSignedFileLinkAttribute()
+    {
+        $fileLink = '';
+        $filename = $this->attributes['signed_file'];
+
+        $extension = explode('.', basename($filename));
+        if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
+            $fileLink = '<a href="/js/ViewerJS/#../..'.$filename.'">'.basename($filename).'</a>';
+        } elseif( end($extension) == 'docx' || end($extension) == 'doc' ) {
+            $fileLink = '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').$filename.'">'
+                .basename($filename).'</a>';
+        }
+
+        return $fileLink;
     }
 
 }

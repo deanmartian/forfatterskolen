@@ -407,7 +407,10 @@
 										{{ $publishing->expected_finish }}
 									</td>
 									<td>
-										{!! $publishing->feedback->file_link !!}
+										<a href="{{ $publishing->feedback->manuscript }}" download>
+											<i class="fa fa-download"></i>
+										</a>
+										{!! $publishing->feedback->file_link !!} <br>
 									</td>
 									<td>
 										{{ $publishing->feedback->notes}}
@@ -725,7 +728,8 @@
 			</div>
 			<div class="modal-body">
 
-                <form id="shopManuscriptTakenApproveFeedback" method="POST" action="" enctype="multipart/form-data">
+                <form id="shopManuscriptTakenApproveFeedback" method="POST" action="" enctype="multipart/form-data"
+					  onsubmit="disableSubmit(this)">
 					<?php
 						$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Shop Manuscript Feedback');
 					?>
@@ -762,17 +766,55 @@
 								  required>{!! $emailTemplate->email_content !!}</textarea>
 					</div>
 
-						<div class="form-group">
-							<label>
-								Send Email
-							</label>
-							<br>
-							<input type="checkbox" data-toggle="toggle" data-on="Yes"
-								   class="for-sale-toggle" data-off="No"
-								   name="send_email" data-width="84" checked>
-						</div>
+					<div class="form-group">
+						<label>
+							Send Email
+						</label>
+						<br>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes"
+							   class="for-sale-toggle" data-off="No"
+							   name="send_email" data-width="84" checked>
+					</div>
 
 					{{ trans('site.add-feedback-note') }}
+
+					<hr class="margin-top">
+					<div class="form-group">
+						<label>
+							Follow Up Email
+						</label>
+						<br>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+							   class="follow-up-email-toggle" name="follow_up_email" data-width="84">
+					</div>
+
+					<div class="follow-up-container hide">
+						<?php
+							$followUpEmailTemplate = \App\Http\AdminHelpers::emailTemplate('Shop Manuscript Follow-up Email');
+						?>
+						<div class="form-group">
+							<label>Send Date</label>
+							<input type="date" class="form-control" name="send_date"
+								   value="{{ \Carbon\Carbon::today()->addDay(1)->format('Y-m-d') }}">
+						</div>
+
+						<div class="form-group">
+							<label>{{ trans('site.subject') }}</label>
+							<input type="text" class="form-control" name="follow_up_subject" value="{{ $followUpEmailTemplate->subject }}"
+								   required>
+						</div>
+						<div class="form-group">
+							<label>{{ trans('site.from') }}</label>
+							<input type="text" class="form-control" name="follow_up_from_email"
+								   value="{{ $followUpEmailTemplate->from_email }}" required>
+						</div>
+						<div class="form-group">
+							<label>{{ trans('site.message') }}</label>
+							<textarea class="form-control tinymce" name="follow_up_message" rows="6"
+									  required>{!! $followUpEmailTemplate->email_content !!}</textarea>
+						</div>
+					</div>
+
 					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.approve-feedback') }}</button>
 					<div class="clearfix"></div>
 				</form>
@@ -1088,6 +1130,16 @@
         modal.find('[name=notes]').val(feedbackNotes);
         modal.find('form#shopManuscriptTakenApproveFeedback').attr('action', action);
 	});
+
+    $(".follow-up-email-toggle").change(function() {
+        let is_checked = $(this).prop('checked');
+        let container = $(".follow-up-container");
+        container.addClass('hide');
+        if (is_checked) {
+            container.removeClass('hide');
+		}
+	});
+
 	$('.approveOtherServiceFeedbackBtn').click(function(){
 		
 		$("#approveOtherServiceFeedback").trigger("reset");

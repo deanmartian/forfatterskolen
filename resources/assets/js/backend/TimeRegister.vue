@@ -16,6 +16,7 @@
                         <th>Date</th>
                         <th>Number of hours</th>
                         <th>Time Used</th>
+                        <th>Invoice</th>
                         <th width="200">Description</th>
                         <th width="150"></th>
                     </tr>
@@ -28,6 +29,7 @@
                         <td>{{ timeList.date }}</td>
                         <td>{{ timeList.time }}</td>
                         <td>{{ timeList.time_used }}</td>
+                        <td v-html="timeList.file_link"></td>
                         <td>{{ timeList.description }}</td>
                         <td>
                             <button class="btn btn-xs btn-primary" @click="showTimeFormModal(timeList)">
@@ -74,10 +76,21 @@
                 <button type="button" class="btn btn-xs" @click="adjustTime(-1)">-1</button>
             </div>
 
-            <div class="form-group" v-if="timeForm.id">
-                <label>Time Used</label>
-                <input type="number" name="time_used" class="form-control" v-model="timeForm.time_used">
-            </div>
+            <template v-if="timeForm.id">
+                <div class="form-group">
+                    <label>Time Used</label>
+                    <input type="number" name="time_used" class="form-control" v-model="timeForm.time_used">
+                </div>
+
+                <div class="form-group">
+                    <label>Invoice file</label>
+                    <input type="file" name="invoice_file" class="form-control"
+                           @change="onFileChange"
+                           id="manuscript"
+                           accept="application/pdf">
+                </div>
+            </template>
+
             <div class="form-group">
                 <label>Description</label>
                 <textarea name="description"  cols="30" rows="10" v-model="timeForm.description" class="form-control"></textarea>
@@ -146,9 +159,11 @@
                     date: '',
                     time: '',
                     time_used: 0,
+                    invoice_file: '',
                     description: '',
                 },
                 selected_project: '',
+                invoiceFilename: '',
                 timeData: {},
                 timer: {
                     min: 10,
@@ -206,11 +221,32 @@
                 this.timeForm.time =  timeField + parseFloat(time);
             },
 
+            onFileChange(e) {
+                let files = e.target.files;
+
+                if (!files.length)
+                {
+                    this.invoiceFilename = i18n.site['learner.files-text'];
+                    this.timeForm.invoice_file = [];
+                    return;
+                }
+
+                this.invoiceFilename = files[0].name;
+                this.timeForm.invoice_file = files[0];
+
+                $(".validation-err").remove();
+            },
+
             saveTime() {
-                this.isLoading = true
-                axios.post('/time-register/save', this.timeForm).then(response => {
+                this.isLoading = true;
+
+                let formData = new FormData();
+                $.each(this.timeForm, function(k, v) {
+                    formData.append(k, v);
+                });
+
+                axios.post('/time-register/save', formData).then(response => {
                     this.isLoading = false;
-                    console.log(response);
                     if (this.timeForm.id) {
                         this.updateRecordFromObject(this.timeLists, response.data.id, response.data);
                     } else {

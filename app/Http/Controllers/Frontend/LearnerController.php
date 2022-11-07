@@ -51,6 +51,7 @@ use App\ShopManuscriptTakenFeedback;
 use App\ShopManuscriptUpgrade;
 use App\Survey;
 use App\SurveyAnswer;
+use App\TimeRegister;
 use App\User;
 use App\UserAutoRegisterToCourseWebinar;
 use App\UserEmail;
@@ -712,6 +713,7 @@ class LearnerController extends Controller
             ->where('available_date','>', Carbon::now())
             ->oldest('submission_date')
             ->get();
+        $waitingForResponse = [];
 
         foreach( $coursesTaken as $courseTaken ) :
             foreach( $courseTaken->package->course->activeAssignments as $assignment ) :
@@ -766,7 +768,26 @@ class LearnerController extends Controller
                         }
                     } else {
                         if (\Carbon\Carbon::parse($assignment->submission_date)->lt(Carbon::now())) {
-                            $expiredAssignments[] = $assignment;
+                            if ($course->type == 'Group') {
+                                $assignmentManuscript = AssignmentManuscript::where('user_id', Auth::user()->id)
+                                    ->where('assignment_id', $assignment->id)->first();
+                                // check if assignment manuscript has feedback
+                                if ($assignmentManuscript) {
+                                    $assignmentFeedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $assignmentManuscript->id)->first();
+                                    $assignmentGroups = AssignmentGroup::where('assignment_id', $assignment->id)->pluck('id')->toArray();
+                                    $userAssignmentGroupLearner = AssignmentGroupLearner::where('user_id', Auth::user()->id)
+                                        ->whereIn('assignment_group_id', $assignmentGroups)->first();
+                                    if ($assignmentFeedback || $userAssignmentGroupLearner) {
+                                        $expiredAssignments[] = $assignment;
+                                    } else {
+                                        $waitingForResponse[] = $assignment;
+                                    }
+                                } else {
+                                    $expiredAssignments[] = $assignment;
+                                }
+                            } else {
+                                $expiredAssignments[] = $assignment;
+                            }
                         }
                     }
                 }
@@ -781,7 +802,11 @@ class LearnerController extends Controller
             }
 
             if (!$feedback) {
-                $assignments[] = $assignment;
+                if ($manuscript && $manuscript->locked) {
+                    $waitingForResponse[] = $assignment;
+                } else {
+                    $assignments[] = $assignment;
+                }
             }
             /*
              * old code
@@ -813,7 +838,8 @@ class LearnerController extends Controller
 
         $expiredAssignments = array_unique($expiredAssignments);
 
-        return view('frontend.learner.assignment', compact('assignments', 'expiredAssignments', 'upcomingPersonalAssignments'));
+        return view('frontend.learner.assignment', compact('assignments', 'expiredAssignments',
+            'upcomingPersonalAssignments', 'waitingForResponse'));
     }
 
 
@@ -1081,6 +1107,7 @@ class LearnerController extends Controller
         $giftPurchases = Auth::user()->giftPurchases;
 
         $orderHistory = Auth::user()->orders;
+        $timeRegisters = Auth::user()->timeRegisters->load('project');
 
         /*$ch = curl_init($this->fikenInvoices);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -1091,7 +1118,7 @@ class LearnerController extends Controller
         $data = json_decode($data);
         $fikenInvoices = $data->_embedded->{'https://fiken.no/api/v1/rel/invoices'};*/
         return view('frontend.learner.invoice', compact('invoices', 'sveaOrders', 'user',
-            'orderAttachments', 'giftPurchases', 'orderHistory'));
+            'orderAttachments', 'giftPurchases', 'orderHistory' ,'timeRegisters'));
     }
 
 
@@ -1616,9 +1643,17 @@ class LearnerController extends Controller
         return redirect()->back();
     }
 
+    public function timeRegister()
+    {
+        $timeRegisters = Auth::user()->timeRegisters->load('project');
+        return view('frontend.learner.self-publishing.time-register', compact('timeRegisters'));
+    }
 
-
-
+    public function downloadTimeRegisterInvoice( $id )
+    {
+        $timeRegister = TimeRegister::find($id);
+        return response()->download($timeRegister->invoice_file);
+    }
 
     public function profile()
     {
@@ -2249,6 +2284,18 @@ class LearnerController extends Controller
                 }
             }
 
+            // create order record
+            $newOrder['user_id']    = $courseTaken->user->id;
+            $newOrder['item_id']    = $package->course_id;
+            $newOrder['type']       = Order::COURSE_TYPE;
+            $newOrder['package_id'] = $package->id;
+            $newOrder['plan_id']    = 8; // Full payment
+            $newOrder['price']      = $price / 100;
+            $newOrder['discount']   = 0;
+            $newOrder['payment_mode_id']   = 3; // Faktura
+            $newOrder['is_processed'] = 1;
+            $order = Order::create($newOrder);
+
             // Email to support
             $from = 'post@forfatterskolen.no';
             $to = 'support@forfatterskolen.no';
@@ -2352,6 +2399,18 @@ class LearnerController extends Controller
                             $coursesTaken->save();
                         }
                     }
+
+                    // create order record
+                    $newOrder['user_id']    = $courseTaken->user->id;
+                    $newOrder['item_id']    = $package->course_id;
+                    $newOrder['type']       = Order::COURSE_TYPE;
+                    $newOrder['package_id'] = $package->id;
+                    $newOrder['plan_id']    = 8; // Full payment
+                    $newOrder['price']      = $price / 100;
+                    $newOrder['discount']   = 0;
+                    $newOrder['payment_mode_id']   = 3; // Faktura
+                    $newOrder['is_processed'] = 1;
+                    $order = Order::create($newOrder);
 
                     // add to automation
                     $user_email     = Auth::user()->email;
@@ -3701,7 +3760,7 @@ class LearnerController extends Controller
         $certificate = CourseCertificate::findOrFail($course_id);
         $course = $certificate->course;
 
-        $courseLearner = Auth::user()->coursesTaken()->whereIn('package_id', $course->packages()->pluck('id'))
+        $courseLearner = Auth::user()->coursesTaken()->withTrashed()->whereIn('package_id', $course->packages()->pluck('id'))
             ->get();
         // check if not learner of the course
         if (!$courseLearner->count()) {

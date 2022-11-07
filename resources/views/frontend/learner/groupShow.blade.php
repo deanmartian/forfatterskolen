@@ -83,7 +83,6 @@
                                 <?php $feedback = App\AssignmentFeedback::where('assignment_group_learner_id',
 									$learner->id)->where('user_id', Auth::user()->id)->first(); ?>
 								@if( $feedback )
-									{{ $feedback->id }}
 									<button type="button" class="btn site-btn-global w-100 rounded-0 disabled">
 										@if( $feedback->is_active )
 											{{ trans('site.learner.feeback-provided') }}

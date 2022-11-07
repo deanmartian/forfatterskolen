@@ -729,6 +729,11 @@
 					@if( $assignment->editor_expected_finish ) value="{{ strftime('%Y-%m-%d', strtotime($assignment->editor_expected_finish)) }}" @endif>
 				</div>
 				<div class="form-group">
+					<label>{{ trans('site.expected-finish') }}</label>
+					<input type="date" class="form-control" name="expected_finish"
+						   @if( $assignment->expected_finish ) value="{{ strftime('%Y-%m-%d', strtotime($assignment->expected_finish)) }}" @endif>
+				</div>
+				<div class="form-group">
 					<label>Linked Assignment</label>
 					<select name="linked_assignment" id="" class="form-control">
 						<option value="" disabled selected="">- Select Assignment -</option>

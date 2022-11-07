@@ -19,7 +19,7 @@ class CopyEditingManuscript extends Model {
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'file', 'payment_price', 'editor_id'];
+    protected $fillable = ['user_id', 'project_id', 'file', 'payment_price', 'editor_id'];
 
     public function user()
     {

@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\DelayedEmail;
 use App\EmailTemplate;
 use App\Http\AdminHelpers;
 use App\Jobs\AddMailToQueueJob;
@@ -288,6 +289,21 @@ class ShopManuscriptController extends Controller
             dispatch(new AddMailToQueueJob($to, $request->subject, $format_content, $request->from_email,
                 null, null,
                 'shop-manuscripts-taken-admin-feedback', $id));
+        }
+
+        if ($request->has('follow_up_email')) {
+            $first_name = $shopManuscriptTakenFeedback->shop_manuscript_taken->user->first_name;
+            $formattedMailContent = AdminHelpers::formatEmailContent($request->follow_up_message, $to, $first_name,
+                '');
+            DelayedEmail::create([
+                'subject' => $request->follow_up_subject,
+                'message' => $formattedMailContent,
+                'from_email' => $request->follow_up_from_email,
+                'recipient' => $to,
+                'send_date' => $request->send_date,
+                'parent' => 'shop-manuscripts-taken-feedback',
+                'parent_id' => $shopManuscriptTakenFeedback->id
+            ]);
         }
 
         return redirect()->back()->with([

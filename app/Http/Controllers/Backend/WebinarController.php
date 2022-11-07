@@ -404,6 +404,12 @@ class WebinarController extends Controller
             'alert_type' => 'success']);
     }
 
+    public function registrantList( $webinar_id )
+    {
+        $registrants = WebinarRegistrant::where('webinar_id', $webinar_id)->get();
+        return response()->json($registrants);
+    }
+
     public function removeRegistrant( $registrant_id, Request $request )
     {
         $registrant = WebinarRegistrant::find($registrant_id);

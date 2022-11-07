@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
+use App\Project;
 use App\SelfPublishing;
 use App\SelfPublishingFeedback;
 use App\SelfPublishingLearner;
@@ -26,7 +27,8 @@ class SelfPublishingController extends Controller
         $publishingList = SelfPublishing::all();
         $editors = AdminHelpers::editorList();
         $learners = User::where('role', 2)->get();
-        return view('backend.self-publishing.index', compact('publishingList', 'editors', 'learners'));
+        $projects = Project::all();
+        return view('backend.self-publishing.index', compact('publishingList', 'editors', 'learners', 'projects'));
     }
 
     /**
@@ -151,6 +153,7 @@ class SelfPublishingController extends Controller
         endif;
 
         $publishing->editor_id = $request->editor_id;
+        $publishing->project_id = $request->project_id;
         $publishing->price = $request->price;
         $publishing->editor_share = $request->editor_share;
         $publishing->expected_finish = $request->expected_finish;
@@ -208,7 +211,17 @@ class SelfPublishingController extends Controller
         $learners = $selfPublishing->learners;
         $availableLearners = User::where('role', 2)->whereNotIn('id', $learners->pluck('user_id')->toArray())
             ->get();
-        return view('backend.self-publishing.learners', compact('selfPublishing','learners', 'availableLearners'));
+
+        $layout = 'backend.layout';
+        $selfPublishingIndexRoute = 'admin.self-publishing.index';
+
+        if (str_contains(request()->getHttpHost(), 'giutbok')) {
+            $layout = 'giutbok.layout';
+            $selfPublishingIndexRoute = 'g-admin.self-publishing.index';
+        }
+
+        return view('backend.self-publishing.learners', compact('selfPublishing','learners', 'availableLearners',
+            'layout', 'selfPublishingIndexRoute'));
     }
 
     /**
@@ -325,6 +338,12 @@ class SelfPublishingController extends Controller
             'errors' => AdminHelpers::createMessageBag('Self publishing feedback saved successfully.'),
             'alert_type' => 'success'
         ]);
+    }
+
+    public function downloadFeedback( $feedback_id )
+    {
+        $feedback = SelfPublishingFeedback::find($feedback_id);
+        return response()->download(trim($feedback->manuscript, '/'));
     }
 
     /**

@@ -52,6 +52,10 @@
 							[
 								'name' => 'order-history',
 								'label' => trans('site.order-history.title')
+							],
+							[
+								'name' => 'time-register',
+								'label' => 'Time Register'
 							]
 						]
 					@endphp
@@ -230,6 +234,39 @@
 							@elseif(Request::input('tab') == 'order-history')
 								<order-history :order-history="{{ json_encode($orderHistory) }}"
 											   :user="{{ json_encode(Auth::user()) }}"></order-history>
+							@elseif( Request::input('tab') == 'time-register' )
+								<div class="card global-card">
+									<div class="card-body py-0">
+										<table class="table table-global">
+											<thead>
+												<tr>
+													<th>Project</th>
+													<th>{{ trans('site.date') }}</th>
+													<th></th>
+												</tr>
+											</thead>
+											<tbody>
+											@foreach($timeRegisters as $timeRegister)
+												<tr>
+													<td>
+														{{ $timeRegister->project ? $timeRegister->project->name : '' }}
+													</td>
+													<td>
+														{{ $timeRegister->date }}
+													</td>
+													<td>
+														@if($timeRegister->invoice_file)
+															<a href="{{route('learner.download.time-register-invoice', $timeRegister->id)}}">
+																{{ trans('site.learner.download-invoice') }}
+															</a>
+														@endif
+													</td>
+												</tr>
+											@endforeach
+											</tbody>
+										</table>
+									</div>
+								</div>
 							@else
 
 								<div class="card global-card">

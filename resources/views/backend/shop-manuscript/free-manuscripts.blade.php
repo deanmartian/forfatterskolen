@@ -9,6 +9,11 @@
 		.btn-xs {
 			margin-bottom: 5px;
 		}
+
+		.table-responsive {
+			overflow-y: scroll;
+		}
+
 	</style>
 @stop
 

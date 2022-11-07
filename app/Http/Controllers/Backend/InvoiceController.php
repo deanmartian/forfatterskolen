@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
+use App\Log;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -157,6 +158,8 @@ class InvoiceController extends Controller
         // get the http code response
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if (!in_array($http_code, [200, 201])) { // 200 - get success, 201 - post success
+            \Illuminate\Support\Facades\Log::info('inside not success in invoice controller');
+            \Illuminate\Support\Facades\Log::info(json_encode($response));
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag($response->error_description),
                 'not-former-courses'    => true

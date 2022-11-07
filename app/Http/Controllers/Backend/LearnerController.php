@@ -9,9 +9,11 @@ use App\AssignmentTemplate;
 use App\CoachingTimerManuscript;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
+use App\CourseCertificate;
 use App\Diploma;
 use App\EmailHistory;
 use App\EmailTemplate;
+use App\FormerCourse;
 use App\Helpers\FileToText;
 use App\Http\FikenInvoice;
 use App\Invoice;
@@ -207,9 +209,21 @@ class LearnerController extends Controller
             ->get();
         $projects = Project::where('user_id', $learner->id)->get();
 
+        // get course certificates based on users course taken
+        $certificates = \DB::table('course_certificates')
+            ->leftJoin('courses', 'course_certificates.course_id','=','courses.id')
+            ->leftJoin('packages','packages.course_id','=','courses.id')
+            ->leftJoin('courses_taken','courses_taken.package_id', '=','packages.id')
+            ->select('course_certificates.*', 'courses.title as course_title')
+            ->whereNotNull('courses.completed_date')
+            ->whereNotNull('courses.issue_date')
+            ->where('courses_taken.user_id', $id)
+            ->groupBy('course_certificates.id')
+            ->get();
+
         return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories',
             'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList',
-            'timeRegisters', 'projects'));
+            'timeRegisters', 'projects', 'certificates'));
     }
 
 
@@ -891,9 +905,9 @@ class LearnerController extends Controller
     public function destroy($id, Request $request)
     {
         $learner = User::findOrFail($id);
-        if( $request->moveStatus && count($request->moveItems) > 0 && $request->move_learner_id ) :
-            $moveLearner = User::findOrFail($request->move_learner_id);
+        $moveLearner = User::findOrFail($request->move_learner_id);
 
+        if( $request->moveStatus && count($request->moveItems) > 0 && $request->move_learner_id ) :
             if( in_array('courses_taken', $request->moveItems) ) :
                 $learner->coursesTaken()->update([
                     'user_id' => $moveLearner->id
@@ -927,6 +941,75 @@ class LearnerController extends Controller
                 ]);
             endif;
         endif;
+
+        $learner->orders()->update([
+            'user_id' => $moveLearner->id
+        ]);
+
+        $learner->courseOrderAttachments()->update([
+            'user_id' => $moveLearner->id
+        ]);
+
+        $learnerAssignmentManuscripts = $learner->assignmentManuscripts->pluck('id');
+        $learnerShopManuscriptsTaken = $learner->shopManuscriptsTaken->pluck('id');
+        $learnerCoursesTaken = $learner->coursesTaken->pluck('id');
+        $registeredWebinarLists = $learner->registeredWebinars->pluck('id');
+        $learnerInvoices = $learner->invoices->pluck('id');
+        $emailHistories = EmailHistory::where(function($query) use ($learnerAssignmentManuscripts){
+            $query->where('parent', 'LIKE', 'assignment-manuscripts%');
+            $query->whereIn('parent_id', $learnerAssignmentManuscripts);
+        })
+        ->orWhere(function($query) use ($learnerShopManuscriptsTaken){
+            $query->where('parent', 'LIKE', 'shop-manuscripts-taken%');
+            $query->whereIn('parent_id', $learnerShopManuscriptsTaken);
+        })
+        ->orWhere(function($query) use ($learnerCoursesTaken){
+            $query->where('parent', 'LIKE', 'courses-taken%');
+            $query->whereIn('parent_id', $learnerCoursesTaken);
+        })
+        ->orWhere(function($query) use ($registeredWebinarLists){
+            $query->where('parent', '=', 'webinar-registrant');
+            $query->whereIn('parent_id', $registeredWebinarLists);
+        })
+        ->orWhere(function($query) use ($learner){
+            $query->where('parent', '=', 'learner');
+            $query->where('parent_id', $learner->id);
+        })
+        ->orWhere(function($query) use ($learner){
+            $query->where('parent', '=', 'free-manuscripts');
+            $query->where('recipient', $learner->email);
+        })
+        ->orWhere(function($query) use ($learnerInvoices){
+            $query->where('parent', '=', 'invoice');
+            $query->whereIn('parent_id', $learnerInvoices);
+        })
+        ->orWhere(function($query) use ($learnerInvoices){
+            $query->where('parent', '=', 'invoice');
+            $query->whereIn('parent_id', $learnerInvoices);
+        })
+        ->orWhere(function($query) use ($learner){
+            $query->where('parent', 'LIKE', 'copy-editing%');
+            $query->where('recipient', $learner->email);
+        })
+        ->orWhere(function($query) use ($learner){
+            $query->where('parent', 'LIKE', 'correction%');
+            $query->where('recipient', $learner->email);
+        })
+        ->orWhere(function($query) use ($learner){
+            $query->where('parent', 'LIKE', 'gift-purchase');
+            $query->where('recipient', $learner->email);
+        })
+        ->orWhere(function($query) use ($learner){
+            $query->where('recipient', $learner->email);
+        })
+        ->latest()
+        ->withTrashed()
+        ->pluck('id')->toArray();
+
+        EmailHistory::whereIn('id', $emailHistories)->update([
+            'recipient' => $moveLearner->email
+        ]);
+
         $learner->forceDelete();
         return redirect(route('admin.learner.index'));
     }
@@ -2134,6 +2217,44 @@ class LearnerController extends Controller
         $user->save();
     }
 
+    public function downloadCourseCertificate( $user_id, $certificate_id )
+    {
+        $certificate = CourseCertificate::findOrFail($certificate_id);
+        $course = $certificate->course;
+
+        $user = User::find($user_id);
+
+        $courseLearner = $user->coursesTaken()->withTrashed()->whereIn('package_id', $course->packages()->pluck('id'))
+            ->get();
+        // check if not learner of the course
+        if (!$courseLearner->count()) {
+            return redirect()->back();
+        }
+
+        $issueDate = Carbon::parse($course->issue_date);
+        $template = str_replace([
+            '{LEARNERNAME}',
+            '{COURSENAME}',
+            '{COMPLETEDDATE}',
+            '{ISSUEDDATE}'
+        ],
+            [
+                $user->full_name,
+                $course->title,
+                $course->completed_date,
+                $issueDate->format('d') . '. ' . FrontendHelpers::convertMonthLanguage($issueDate->format('n')) . ' ' . $issueDate->format('Y')
+            ],
+            $certificate->template
+        );
+
+
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        $pdf->setPaper('letter', 'landscape');
+        $pdf->loadHTML($template);
+        return $pdf->download($course->title . ' certificate.pdf');
+    }
+
     /**
      * @param $user_id
      * @param Request $request
@@ -2199,6 +2320,42 @@ class LearnerController extends Controller
 
         return redirect()->back()->with([
             'errors'                => AdminHelpers::createMessageBag('Record saved.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    public function restoreCourse( $user_id, $former_course_id, Request $request )
+    {
+        $formerCourse = FormerCourse::find($former_course_id);
+        $courseTaken = CoursesTaken::where('user_id', $user_id)
+            ->where('package_id', $formerCourse->package_id)
+            ->withTrashed()
+            ->first();
+        if ($courseTaken) {
+            $courseTaken->end_date = $request->end_date;
+            $courseTaken->deleted_at = NULL;
+            $courseTaken->save();
+        } else {
+            CoursesTaken::create([
+                'user_id' => $formerCourse->user_id,
+                'package_id' => $formerCourse->package_id,
+                'is_active' => 1,
+                'started_at' => $formerCourse->started_at,
+                'start_date' => $formerCourse->start_date,
+                'end_date' => $request->end_date,
+                'access_lessons' => $formerCourse->access_lessons,
+                'years' => 1,
+                'sent_renew_email' => $formerCourse->sent_renew_email,
+                'is_free' => $formerCourse->is_free,
+                'created_at' => $formerCourse->created_at,
+                'updated_at' => $formerCourse->updated_at,
+            ]);
+        }
+
+        $formerCourse->delete();
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Course restored successfully.'),
             'alert_type'            => 'success',
             'not-former-courses'    => true
         ]);

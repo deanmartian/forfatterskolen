@@ -19,7 +19,7 @@ class ContractController extends Controller
      */
     public function index()
     {
-        $contracts = Contract::paginate(10);
+        $contracts = Contract::whereNull('project_id')->paginate(10);
         if (!\Auth::user()->isSuperUser()) {
             $contracts = Contract::adminOnly()->paginate(10);
         }
@@ -37,12 +37,21 @@ class ContractController extends Controller
         $contract = [
             'title' => '',
             'details' => '',
+            'signature' => '',
             'signature_label' => 'Signature',
-            'end_date' => null
+            'end_date' => null,
+            'is_file' => ''
         ];
         $title = 'Create Contract';
         $templates = ContractTemplate::all();
-        return view('backend.contract.form', compact('route', 'action', 'contract', 'title', 'templates'));
+        $backRoute = route('admin.contract.index');
+        $layout = 'backend.layout';
+        if (AdminHelpers::isGiutbokPage()) {
+            $backRoute = route('admin.project.contract');
+            $layout = 'giutbok.layout';
+        }
+        return view('backend.contract.form', compact('route', 'action', 'contract', 'title', 'templates',
+            'backRoute', 'layout'));
     }
 
     /**
@@ -68,7 +77,9 @@ class ContractController extends Controller
         $route = route('admin.contract.update', $contract['id']);
         $action = 'edit';
         $title = 'Edit ' . $contract['title'];
-        return view('backend.contract.form', compact('route', 'action', 'contract', 'title'));
+        $backRoute = route('admin.contract.index');
+        $layout = 'backend.layout';
+        return view('backend.contract.form', compact('route', 'action', 'contract', 'title', 'backRoute', 'layout'));
     }
 
     public function show( $id )
@@ -82,7 +93,9 @@ class ContractController extends Controller
             }
         }
 
-        return view('backend.contract.show', compact('contract'));
+        $backRoute = route('admin.contract.index');
+        $layout = 'backend.layout';
+        return view('backend.contract.show', compact('contract', 'backRoute', 'layout'));
     }
 
     /**\
@@ -104,8 +117,7 @@ class ContractController extends Controller
     public function processSave( Request $request, $id = null )
     {
         $this->validate($request, [
-            'title' => 'required',
-            'end_date' => 'required'
+            'title' => 'required'
         ]);
 
         $data = $request->except('_token');
@@ -121,7 +133,46 @@ class ContractController extends Controller
             $data['image'] = '/'.$destinationPath.$fileName;
         endif;
 
+        if ($request->hasFile('sent_file')) :
+            $destinationPath = 'storage/contract-sent-file/'; // upload path
+
+            if (!\File::exists($destinationPath)) {
+                \File::makeDirectory($destinationPath);
+            }
+
+            $extension = pathinfo($_FILES['sent_file']['name'],PATHINFO_EXTENSION);
+            $original_filename = $request->sent_file->getClientOriginalName();
+            $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
+
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $request->sent_file->move($destinationPath, $fileName);
+            $data['sent_file'] = '/'.$fileName;
+        endif;
+
+        if ($request->hasFile('signed_file')) :
+            $destinationPath = 'storage/contract-signed-file/'; // upload path
+
+            if (!\File::exists($destinationPath)) {
+                \File::makeDirectory($destinationPath);
+            }
+
+            $extension = pathinfo($_FILES['signed_file']['name'],PATHINFO_EXTENSION);
+            $original_filename = $request->signed_file->getClientOriginalName();
+            $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
+
+            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $request->signed_file->move($destinationPath, $fileName);
+            $data['signed_file'] = '/'.$fileName;
+        endif;
+
         $data['status'] = 1;
+        $data['is_file'] = $request->has('is_file') && $request->is_file ? 1 : 0;
+        if($data['is_file']) {
+            $data['signature'] = $request->has('signature') ? 'Signed' : NULL;
+            if ($request->has('signature')) {
+                $data['signed_date'] = Carbon::now();
+            }
+        }
 
         if ($id) {
             $contract = Contract::find($id);
@@ -139,14 +190,14 @@ class ContractController extends Controller
      * @param $id
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function destroy($id){
+    public function destroy($id, Request $request){
         $contract = Contract::findOrFail($id);
         $image = substr($contract->image, 1);
         if( \File::exists($image) ) :
             \File::delete($image);
         endif;
         $contract->forceDelete();
-        return redirect(route('admin.contract.index'));
+        return redirect($request->redirectRoute);
     }
 
     public function sendContract( $id, Request $request )
@@ -229,6 +280,7 @@ class ContractController extends Controller
         ]);
 
         $data = $request->except('_token');
+        $data['show_in_project'] = $request->has('show_in_project') && $request->show_in_project ? 1 : 0;
 
         if ($id) {
             $contract = ContractTemplate::find($id);
