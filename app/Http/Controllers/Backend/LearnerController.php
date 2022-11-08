@@ -1611,6 +1611,11 @@ class LearnerController extends Controller
                 $copyEditing->delete();
             }
 
+            if ($service_type == 2) {
+                $correction = CorrectionManuscript::find($service_id);
+                $correction->delete();
+            }
+
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('Record deleted successfully.'),
                 'alert_type' => 'success',

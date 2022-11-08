@@ -102,6 +102,7 @@ Route::group([
             ->name('g-admin.other-service.coaching-timer.set-coaching-approve-date');
         Route::post('/other-service/{id}/coaching-timer/set_replay', 'OtherServiceController@setReplay')
             ->name('g-admin.other-service.coaching-timer.set_replay');
+        Route::post('/other-service/{id}/add-feedback/{type}', 'OtherServiceController@addFeedback')->name('g-admin.other-service.add-feedback');
         Route::delete('/other-service/{id}/coaching-timer/delete', 'OtherServiceController@deleteCoaching')->name('g-admin.other-service.coaching-timer.delete');
 
         Route::post('/project/activity/save', 'ProjectController@saveActivity');

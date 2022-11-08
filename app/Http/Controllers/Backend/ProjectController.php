@@ -47,6 +47,8 @@ class ProjectController extends Controller
         $timeRegisters = TimeRegister::where('user_id', $project->user_id)->whereNull('project_id')->with('project')->get();
         $projectTimeRegisters = TimeRegister::where('project_id', $project->id)->with('project')->get();
         $projects = Project::all();
+        $correctionFeedbackTemplate = AdminHelpers::emailTemplate('Correction Feedback');
+        $copyEditingFeedbackTemplate = AdminHelpers::emailTemplate('Copy Editing Feedback');
 
         $layout = 'backend.layout';
         $addOtherServiceRoute = 'admin.project.add-other-service';
@@ -60,6 +62,7 @@ class ProjectController extends Controller
         $updateExpectedFinishRoute = 'admin.other-service.update-expected-finish';
         $updateStatusRoute = 'admin.other-service.update-status';
         $otherServiceDeleteRoute = 'admin.other-service.delete';
+        $otherServiceFeedbackRoute = 'admin.other-service.add-feedback';
 
         if (str_contains(request()->getHttpHost(), 'giutbok')) {
             $layout = 'giutbok.layout';
@@ -74,13 +77,15 @@ class ProjectController extends Controller
             $updateExpectedFinishRoute = 'g-admin.other-service.update-expected-finish';
             $updateStatusRoute = 'g-admin.other-service.update-status';
             $otherServiceDeleteRoute = 'g-admin.other-service.delete';
+            $otherServiceFeedbackRoute = 'g-admin.other-service.add-feedback';
         }
 
         return view('backend.project.show', compact('project', 'editors', 'learners', 'activities',
             'timeRegisters', 'projectTimeRegisters', 'projects', 'layout', 'addOtherServiceRoute', 'selfPublishingStoreRoute',
             'selfPublishingUpdateRoute', 'selfPublishingDeleteRoute', 'selfPublishingAddFeedbackRoute',
             'selfPublishingDownloadFeedbackRoute', 'selfPublishingLearnersRoute', 'assignEditorRoute',
-            'updateExpectedFinishRoute', 'updateStatusRoute', 'otherServiceDeleteRoute'));
+            'updateExpectedFinishRoute', 'updateStatusRoute', 'otherServiceDeleteRoute', 'correctionFeedbackTemplate',
+            'copyEditingFeedbackTemplate', 'otherServiceFeedbackRoute'));
     }
 
     public function saveProject( ProjectRequest $request, ProjectService $projectService )

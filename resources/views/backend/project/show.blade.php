@@ -128,6 +128,7 @@
                             <th>{{ trans_choice('site.editors', 1) }}</th>
                             <th>{{ trans('site.date-ordered') }}</th>
                             <th>{{ trans('site.expected-finish') }}</th>
+                            <th></th>
                             <th>{{ trans('site.status') }}</th>
                             <th></th>
                         </tr>
@@ -172,6 +173,16 @@
                                             strftime('%Y-%m-%d', strtotime($copy_editing->expected_finish)) : '' }}">
                                             {{ trans('site.set-date') }}
                                         </a>
+                                    @endif
+                                </td>
+                                <td>
+                                    <!-- show only if no feedback is given yet for this copyEditing -->
+                                    @if (!$copy_editing->feedback)
+                                        <a href="#addOtherServiceFeedbackModal" data-toggle="modal" style="color:#dc3545"
+                                           class="addOtherServiceFeedbackBtn" data-service="1"
+                                           data-action="{{ route($otherServiceFeedbackRoute,
+                                                        ['id' => $copy_editing->id, 'type' => 1]) }}"
+                                           data-email-template="{{ json_encode($copyEditingFeedbackTemplate) }}">+ {{ trans('site.add-feedback') }}</a>
                                     @endif
                                 </td>
                                 <td>
@@ -222,6 +233,7 @@
                             <th>{{ trans_choice('site.editors', 1) }}</th>
                             <th>{{ trans('site.date-ordered') }}</th>
                             <th>{{ trans('site.expected-finish') }}</th>
+                            <th></th>
                             <th>{{ trans('site.status') }}</th>
                             <th></th>
                         </tr>
@@ -269,6 +281,16 @@
                                     @endif
                                 </td>
                                 <td>
+                                    <!-- show only if no feedback is given yet for this copyEditing -->
+                                    @if (!$correction->feedback)
+                                        <a href="#addOtherServiceFeedbackModal" data-toggle="modal" style="color:#dc3545"
+                                           class="addOtherServiceFeedbackBtn" data-service="2"
+                                           data-action="{{ route($otherServiceFeedbackRoute,
+                                                    ['id' => $correction->id, 'type' => 2]) }}"
+                                           data-email-template="{{ json_encode($correctionFeedbackTemplate) }}">+ {{ trans('site.add-feedback') }}</a>
+                                    @endif
+                                </td>
+                                <td>
                                     @if( $correction->status == 2 )
                                         <span class="label label-success">Finished</span>
                                     @elseif( $correction->status == 1 )
@@ -288,6 +310,12 @@
                                                 data-service="2"
                                                 data-action="{{ route($updateStatusRoute, ['id' => $correction->id, 'type' => 2]) }}"><i class="fa fa-check"></i></button>
                                     @endif
+
+                                        <button class="btn btn-danger btn-xs deleteOtherServiceBtn" type="button"
+                                                data-toggle="modal" data-target="#deleteOtherServiceModal"
+                                                data-action="{{ route($otherServiceDeleteRoute, ['id' => $correction->id, 'type' => 2]) }}">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
                                 </td>
                             </tr>
                         @endforeach
@@ -574,6 +602,45 @@
         </div>
     </div>
 
+    <!-- Feedback Modal  -->
+    <div id="addOtherServiceFeedbackModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><span></span> {{ trans('site.add-feedback') }}</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
+                        {{csrf_field()}}
+                        <div class="form-group">
+                            <label>{{ trans_choice('site.manuscripts', 1) }}</label>
+                            <input type="file" class="form-control" name="manuscript[]" multiple
+                                   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf" required>
+                        </div>
+                        <div class="form-group">
+                            <label>{{ trans('site.subject') }}</label>
+                            <input type="text" class="form-control" name="subject" value=""
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label>{{ trans('site.from') }}</label>
+                            <input type="text" class="form-control" name="from_email"
+                                   value="" required>
+                        </div>
+                        <div class="form-group">
+                            <label>{{ trans('site.message') }}</label>
+                            <textarea class="form-control tinymce" name="message" rows="6"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary pull-right">{{ trans('site.add-feedback') }}</button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <div id="updateOtherServiceStatusModal" class="modal fade" role="dialog" data-backdrop="static">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
@@ -703,6 +770,23 @@
 
             modal.find('form').attr('action', action);
             modal.find('form').find('[name=expected_finish]').val(finish);
+        });
+
+        $(".addOtherServiceFeedbackBtn").click(function(){
+            let action = $(this).data('action');
+            let modal = $('#addOtherServiceFeedbackModal');
+            let service = $(this).data('service');
+            let emailTemplate = $(this).data('email-template');
+            let title = 'Korrektur';
+
+            if (service === 1) {
+                title = 'Språkvask';
+            }
+            modal.find('form').attr('action', action);
+            modal.find('.modal-title').find('span').text(title);
+            modal.find('.modal-body').find('[name=subject]').val(emailTemplate.subject);
+            modal.find('.modal-body').find('[name=from_email]').val(emailTemplate.from_email);
+            tinyMCE.activeEditor.setContent(emailTemplate.email_content);
         });
 
         $(".updateOtherServiceStatusBtn").click(function(){
