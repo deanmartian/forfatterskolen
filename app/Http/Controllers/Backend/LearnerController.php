@@ -805,6 +805,18 @@ class LearnerController extends Controller
             $courseTaken->started_at = Carbon::now();
             $courseTaken->save();
 
+            // create order record
+            $newOrder['user_id']    = $user->id;
+            $newOrder['item_id']    = $package->course_id;
+            $newOrder['type']       = Order::COURSE_TYPE;
+            $newOrder['package_id'] = $package->id;
+            $newOrder['plan_id']    = 8; // Full payment
+            $newOrder['price']      = $price / 100;
+            $newOrder['discount']   = 0;
+            $newOrder['payment_mode_id']   = 3; // Faktura
+            $newOrder['is_processed'] = 1;
+            $order = Order::create($newOrder);
+
             // add to automation
             $user_email     = $user->email;
             $automation_id  = 73;
@@ -812,7 +824,7 @@ class LearnerController extends Controller
 
             AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Webinar-pakke renewed'),
-            'alert_type' => 'success']);
+            'alert_type' => 'success', 'not-former-courses' => true]);
 
         }
         return redirect()->back();
