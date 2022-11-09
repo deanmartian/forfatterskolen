@@ -361,6 +361,7 @@
 								<th>{{ trans('site.status') }}</th>
 								<th>{{ trans_choice('site.notes', 2) }}</th>
 								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
+								<th>Feedback Date</th>
 								<th></th>
 							</tr>
 						</thead>
@@ -408,10 +409,27 @@
 										<td>
 											@if($manuscriptFeedback)
 												@foreach( $manuscriptFeedback->filename as $filename )
-													<a href="{{ $filename }}" class="d-block" download>
-														{{ basename($filename) }}
+													<?php
+														$fileLink = '';
+
+														$extension = explode('.', basename($filename));
+														if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
+															$fileLink = '<a href="/js/ViewerJS/#../..'.$filename.'" class="d-block">'.basename($filename).'</a>';
+														} elseif( end($extension) == 'docx' || end($extension) == 'doc' ) {
+															$fileLink = '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').$filename.'" class="d-block">'
+																.basename($filename).'</a>';
+														}
+													?>
+													{!! $fileLink !!}
+													<a href="{{ $filename }}" class="btn btn-success btn-xs" download>
+														<i class="fa fa-download"></i>
 													</a>
 												@endforeach
+											@endif
+										</td>
+										<td>
+											@if ($manuscriptFeedback)
+												{{ $manuscriptFeedback->created_at }}
 											@endif
 										</td>
 										<td class="text-right">
