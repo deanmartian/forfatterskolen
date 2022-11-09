@@ -18,9 +18,11 @@ use App\Http\Requests\ProjectRequest;
 use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
+use App\ProjectBookPicture;
 use App\ProjectGraphicWork;
 use App\ProjectMarketing;
 use App\ProjectRegistration;
+use App\ProjectWholeBook;
 use App\Services\ProjectService;
 use App\TimeRegister;
 use App\User;
@@ -49,6 +51,8 @@ class ProjectController extends Controller
         $projects = Project::all();
         $correctionFeedbackTemplate = AdminHelpers::emailTemplate('Correction Feedback');
         $copyEditingFeedbackTemplate = AdminHelpers::emailTemplate('Copy Editing Feedback');
+        $bookPictures = ProjectBookPicture::where('project_id', $id)->get();
+        $wholeBooks = ProjectWholeBook::where('project_id', $id)->get();
 
         $layout = 'backend.layout';
         $addOtherServiceRoute = 'admin.project.add-other-service';
@@ -63,6 +67,8 @@ class ProjectController extends Controller
         $updateStatusRoute = 'admin.other-service.update-status';
         $otherServiceDeleteRoute = 'admin.other-service.delete';
         $otherServiceFeedbackRoute = 'admin.other-service.add-feedback';
+        $saveBookPicturesRoute = 'admin.project.save-picture';
+        $deleteBookPicturesRoute = 'admin.project.delete-picture';
 
         if (str_contains(request()->getHttpHost(), 'giutbok')) {
             $layout = 'giutbok.layout';
@@ -78,6 +84,8 @@ class ProjectController extends Controller
             $updateStatusRoute = 'g-admin.other-service.update-status';
             $otherServiceDeleteRoute = 'g-admin.other-service.delete';
             $otherServiceFeedbackRoute = 'g-admin.other-service.add-feedback';
+            $saveBookPicturesRoute = 'g-admin.project.save-picture';
+            $deleteBookPicturesRoute = 'g-admin.project.delete-picture';
         }
 
         return view('backend.project.show', compact('project', 'editors', 'learners', 'activities',
@@ -85,7 +93,8 @@ class ProjectController extends Controller
             'selfPublishingUpdateRoute', 'selfPublishingDeleteRoute', 'selfPublishingAddFeedbackRoute',
             'selfPublishingDownloadFeedbackRoute', 'selfPublishingLearnersRoute', 'assignEditorRoute',
             'updateExpectedFinishRoute', 'updateStatusRoute', 'otherServiceDeleteRoute', 'correctionFeedbackTemplate',
-            'copyEditingFeedbackTemplate', 'otherServiceFeedbackRoute'));
+            'copyEditingFeedbackTemplate', 'otherServiceFeedbackRoute', 'saveBookPicturesRoute', 'bookPictures',
+            'deleteBookPicturesRoute', 'wholeBooks'));
     }
 
     public function saveProject( ProjectRequest $request, ProjectService $projectService )
@@ -125,6 +134,43 @@ class ProjectController extends Controller
         return response()->json($project);
     }
 
+    /**
+     * @param $project_id
+     * @param Request $request
+     * @param ProjectService $projectService
+     * @return ProjectWholeBook|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]
+     */
+    public function saveWholeBook( $project_id, Request $request, ProjectService $projectService )
+    {
+
+        $request->merge(['project_id' => $project_id]);
+        if (filter_var($request->is_file, FILTER_VALIDATE_BOOLEAN)) {
+            $this->validate($request, ['book_file' => 'required']);
+            $request->book_content = $projectService->uploadWholeBook( $request );
+        } else {
+            $this->validate($request, ['book_content' => 'required']);
+        }
+
+        $wholeBook = $request->id ? ProjectWholeBook::find($request->id) : new ProjectWholeBook();
+        $wholeBook->project_id = $project_id;
+        $wholeBook->book_content = $request->book_content;
+        $wholeBook->is_file = filter_var($request->is_file, FILTER_VALIDATE_BOOLEAN);
+        $wholeBook->save();
+
+        return $wholeBook;
+
+    }
+
+    /**
+     * @param $whole_book_id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteWholeBook( $whole_book_id )
+    {
+        ProjectWholeBook::find($whole_book_id)->delete();
+        return response()->json();
+    }
+
     public function saveBook( $project_id, ProjectBookRequest $request, ProjectService $projectService )
     {
         $request->merge(['project_id' => $project_id]);
@@ -137,6 +183,51 @@ class ProjectController extends Controller
     {
         ProjectBook::find($id)->delete();
         return response()->json();
+    }
+
+    /**
+     * @param $project_id
+     * @param Request $request
+     * @param ProjectService $projectService
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function saveBookPicture( $project_id, Request $request, ProjectService $projectService )
+    {
+        $this->validate($request, ['images' => 'required']);
+
+        if ($request->id && count($request->file('images')) > 1) {
+            return redirect()->back()->with([
+                'errors'                => AdminHelpers::createMessageBag('only one image is allowed in update'),
+                'alert_type'            => 'danger',
+                'not-former-courses'    => true
+            ]);
+        }
+
+        $request->merge(['project_id' => $project_id]);
+        $projectService->saveBookPicture($request);
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book picture saved successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+
+    }
+
+    /**
+     * @param $id
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function deleteBookPicture( $id )
+    {
+        $bookPicture = ProjectBookPicture::find($id);
+        $bookPicture->delete();
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book picture deleted successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
     }
 
     /**

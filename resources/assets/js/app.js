@@ -30,6 +30,11 @@ import ToggleButton from 'vue-js-toggle-button'
 import VueMoment from 'vue-moment'
 import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css';
+import VueQuillEditor from 'vue-quill-editor'
+
+import 'quill/dist/quill.core.css' // import styles
+import 'quill/dist/quill.snow.css' // for snow theme
+import 'quill/dist/quill.bubble.css' // for bubble theme
 
 Vue.use(vueDebounce);
 Vue.use(Vue2Filters);
@@ -59,6 +64,7 @@ Vue.component('time-register', require('./backend/TimeRegister.vue'));
 Vue.component('project', require('./backend/project/list.vue'));
 Vue.component('project-details', require('./backend/project/details.vue'));
 Vue.component('v-select', vSelect);
+Vue.use(VueQuillEditor);
 
 new Vue({
     el: '#app-container'

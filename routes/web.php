@@ -1043,8 +1043,12 @@ Route::group([
         Route::post('/project/activity/save', 'ProjectController@saveActivity');
         Route::delete('/project/activity/{id}/delete', 'ProjectController@deleteActivity');
         Route::post('/project/{id}/notes/save', 'ProjectController@saveNote');
+        Route::post('/project/{id}/whole-book/save', 'ProjectController@saveWholeBook');
+        Route::delete('/project/whole-book/{id}/delete', 'ProjectController@deleteWholeBook');
         Route::post('/project/{id}/book/save', 'ProjectController@saveBook');
         Route::delete('/project/book/{id}/delete', 'ProjectController@deleteBook');
+        Route::post('/project/{id}/book-pictures/save', 'ProjectController@saveBookPicture')->name('admin.project.save-picture');
+        Route::delete('/project/book-pictures/{id}/delete', 'ProjectController@deleteBookPicture')->name('admin.project.delete-picture');
         Route::post('/project/{id}/add-other-service', 'ProjectController@addOtherService')->name('admin.project.add-other-service');
         Route::get('/project/{id}/graphic-work', 'ProjectController@graphicWork')->name('admin.project.graphic-work');
         Route::post('/project/{id}/graphic-work/save', 'ProjectController@saveGraphicWork')->name('admin.project.save-graphic-work');

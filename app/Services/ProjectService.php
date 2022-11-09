@@ -12,6 +12,7 @@ use App\Http\FrontendHelpers;
 use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
+use App\ProjectBookPicture;
 use App\ProjectGraphicWork;
 use App\ProjectMarketing;
 use Carbon\Carbon;
@@ -92,6 +93,29 @@ class ProjectService
             'book' => $model,
             'project' => $project
         ];
+    }
+
+    public function saveBookPicture( Request $request )
+    {
+        if ($request->hasFile('images')) :
+            $destinationPath = 'storage/project-book-pictures'; // upload path
+
+            AdminHelpers::createDirectory($destinationPath);
+            $filePath = $this->saveMultipleFileOrImage($destinationPath, 'images');
+
+            if ($request->id) {
+                $bookPicture = ProjectBookPicture::find($request->id);
+                $bookPicture->image = $filePath;
+                $bookPicture->save();
+            } else {
+                foreach (explode(', ', $filePath) as $picture) {
+                    ProjectBookPicture::create([
+                        'project_id' => $request->project_id,
+                        'image' => $picture
+                    ]);
+                }
+            }
+        endif;
     }
 
     /**
@@ -246,6 +270,21 @@ class ProjectService
         return $filePath;
     }
 
+    public function uploadWholeBook( Request $request )
+    {
+        $filePath = NULL;
+
+        if ($request->hasFile('book_file')) :
+            $destinationPath = 'storage/project-books'; // upload path
+
+            AdminHelpers::createDirectory($destinationPath);
+            $filePath = $this->saveFileOrImage($destinationPath, 'book_file');
+
+        endif;
+
+        return $filePath;
+    }
+
     /**
      * @param Request $request
      * @param $fieldName
@@ -286,6 +325,27 @@ class ProjectService
         $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
         $requestFile->move($destinationPath, $fileName);
         return '/'.$fileName;
+    }
+
+    /**
+     * @param $destinationPath
+     * @param $requestFile
+     * @return string
+     */
+    public function saveMultipleFileOrImage( $destinationPath, $requestFilename )
+    {
+        $filesWithPath = '';
+        foreach (\request()->file($requestFilename) as $k => $file) {
+            $extension = pathinfo($_FILES[$requestFilename]['name'][$k],PATHINFO_EXTENSION);
+            $original_filename = $file->getClientOriginalName();
+            $filename = pathinfo($original_filename, PATHINFO_FILENAME);
+            $fileName = AdminHelpers::checkFileName($destinationPath, $filename, $extension);
+            $filesWithPath .= "/".AdminHelpers::checkFileName($destinationPath, $filename, $extension).", ";
+
+            $file->move($destinationPath, $fileName);
+        }
+
+        return $filesWithPath = trim($filesWithPath,", ");
     }
 
     /**

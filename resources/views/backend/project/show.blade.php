@@ -13,7 +13,8 @@
     <div id="app-container">
         <project-details :current-project="{{ json_encode($project) }}" :learners="{{ json_encode($learners) }}"
                          :activities="{{ json_encode($activities) }}" :time-registers="{{ json_encode($timeRegisters) }}"
-                         :project-time-list="{{ json_encode($projectTimeRegisters) }}" :projects="{{ json_encode($projects) }}"></project-details>
+                         :project-time-list="{{ json_encode($projectTimeRegisters) }}" :projects="{{ json_encode($projects) }}"
+                         :whole-book-list="{{ json_encode($wholeBooks) }}"></project-details>
 
         <div class="col-md-12">
             <button type="button" class="btn btn-success addSelfPublishingBtn" data-toggle="modal"
@@ -331,8 +332,49 @@
                     <div class="panel">
                         <div class="panel-header" style="padding: 10px;">
                             <em><b>Book Pictures</b></em>
+                            <button class="btn btn-success btn-xs pull-right saveBookPictureBtn" data-toggle="modal"
+                                    data-target="#bookPicturesModal"
+                                    data-action="{{ route($saveBookPicturesRoute, $project->id) }}">
+                                Add
+                            </button>
                         </div>
                         <div class="panel-body">
+
+                            <div class="table-users table-responsive">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($bookPictures as $bookPicture)
+                                        <tr>
+                                            <td>
+                                                <a href="{{ asset( $bookPicture->image ) }}">
+                                                    <img src="{{ asset( $bookPicture->image ) }}" width="100" height="100">
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm saveBookPictureBtn" data-toggle="modal"
+                                                        data-target="#bookPicturesModal"
+                                                        data-record="{{ json_encode($bookPicture) }}"
+                                                        data-action="{{ route($saveBookPicturesRoute, $project->id) }}">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-danger btn-sm deleteBookPictureBtn" data-toggle="modal"
+                                                        data-target="#deleteBookPicturesModal"
+                                                        data-action="{{ route($deleteBookPicturesRoute, $bookPicture->id) }}">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -688,6 +730,57 @@
             </div>
         </div>
     </div>
+
+    <div id="bookPicturesModal" class="modal fade" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        Book Picture
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="id">
+                        <div class="form-group">
+                            <label>Images</label>
+                            <input type="file" name="images[]" class="form-control"
+                                   accept="image/*" multiple>
+                        </div>
+
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteBookPicturesModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">{{ trans('site.delete') }} <em></em></h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        {{ method_field('DELETE') }}
+                        Are you sure you want to delete this record?
+                        <div class="text-right margin-top">
+                            <button class="btn btn-danger" type="submit">{{ trans('site.delete') }}</button>
+                        </div>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('scripts')
@@ -805,6 +898,23 @@
         $(".deleteOtherServiceBtn").click(function(){
             let action = $(this).data('action');
             let modal = $('#deleteOtherServiceModal');
+            modal.find('form').attr('action', action);
+        });
+
+        $(".saveBookPictureBtn").click(function() {
+            let action = $(this).data('action');
+            let record = $(this).data('record');
+            let modal = $('#bookPicturesModal');
+            modal.find('form').attr('action', action);
+
+            if (record) {
+                modal.find('[name=id]').val(record.id);
+            }
+        });
+
+        $(".deleteBookPictureBtn").click(function(){
+            let action = $(this).data('action');
+            let modal = $('#deleteBookPicturesModal');
             modal.find('form').attr('action', action);
         });
 
