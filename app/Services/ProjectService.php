@@ -106,12 +106,14 @@ class ProjectService
             if ($request->id) {
                 $bookPicture = ProjectBookPicture::find($request->id);
                 $bookPicture->image = $filePath;
+                $bookPicture->description = $request->description;
                 $bookPicture->save();
             } else {
                 foreach (explode(', ', $filePath) as $picture) {
                     ProjectBookPicture::create([
                         'project_id' => $request->project_id,
-                        'image' => $picture
+                        'image' => $picture,
+                        'description' => $request->description
                     ]);
                 }
             }

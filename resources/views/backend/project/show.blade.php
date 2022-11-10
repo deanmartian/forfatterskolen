@@ -361,6 +361,7 @@
                                     <thead>
                                     <tr>
                                         <th>Image</th>
+                                        <th>Description</th>
                                         <th></th>
                                     </tr>
                                     </thead>
@@ -371,6 +372,9 @@
                                                 <a href="{{ asset( $bookPicture->image ) }}">
                                                     <img src="{{ asset( $bookPicture->image ) }}" width="100" height="100">
                                                 </a>
+                                            </td>
+                                            <td>
+                                                {!! $bookPicture->description !!}
                                             </td>
                                             <td>
                                                 <button class="btn btn-primary btn-sm saveBookPictureBtn" data-toggle="modal"
@@ -764,6 +768,11 @@
                             <label>Images</label>
                             <input type="file" name="images[]" class="form-control"
                                    accept="image/*" multiple>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
                         </div>
 
                         <div class="text-right">
