@@ -23,6 +23,8 @@
                 <thead>
                 <tr>
                     <th>Cover</th>
+                    <th width="500">Description</th>
+                    <th>Approved Final</th>
                     <th width="300"></th>
                 </tr>
                 </thead>
@@ -30,13 +32,16 @@
                 @foreach($covers as $cover)
                     <tr>
                         <td>{!! $cover->image !!}</td>
+                        <td>{{ $cover->description }}</td>
+                        <th>{{ $cover->is_checked ? 'Yes' : 'No' }}</th>
                         <td>
                             <a href="{{ $cover->value }}" class="btn btn-success btn-xs" download>
                                 <i class="fa fa-download"></i>
                             </a>
                             <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
                                     data-target="#graphicWorkModal"
-                                    data-type="cover" data-id="{{ $cover->id }}">
+                                    data-type="cover" data-id="{{ $cover->id }}"
+                                    data-record="{{ json_encode($cover) }}">
                                 <i class="fa fa-edit"></i>
                             </button>
                             <button class="btn btn-danger btn-xs deleteGraphicWorkBtn" data-toggle="modal"
@@ -60,6 +65,8 @@
                 <thead>
                 <tr>
                     <th>Barcode</th>
+                    <th>Is Sent</th>
+                    <th>Date</th>
                     <th width="300"></th>
                 </tr>
                 </thead>
@@ -68,12 +75,19 @@
                         <tr>
                             <td>{!! $barCode->image !!}</td>
                             <td>
+                                {{ $barCode->is_checked ? 'Yes' : 'No' }}
+                            </td>
+                            <td>
+                                {{ $barCode->date }}
+                            </td>
+                            <td>
                                 <a href="{{ $barCode->value }}" class="btn btn-success btn-xs" download>
                                     <i class="fa fa-download"></i>
                                 </a>
                                 <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
                                         data-target="#graphicWorkModal"
-                                        data-type="barcode" data-id="{{ $barCode->id }}">
+                                        data-type="barcode" data-id="{{ $barCode->id }}"
+                                        data-record="{{ json_encode($barCode) }}">
                                     <i class="fa fa-edit"></i>
                                 </button>
                                 <button class="btn btn-danger btn-xs deleteGraphicWorkBtn" data-toggle="modal"
@@ -209,14 +223,35 @@
                         <input type="hidden" name="id">
                         <input type="hidden" name="type">
 
-                        <div class="form-group cover-container">
-                            <label>Cover</label>
-                            <input type="file" class="form-control" name="cover" accept="image/*">
+                        <div class="cover-container">
+                            <div class="form-group">
+                                <label>Cover</label>
+                                <input type="file" class="form-control" name="cover" accept="image/*">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Approved Final</label> <br>
+                                <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                                       name="is_approved" data-width="84">
+                            </div>
                         </div>
 
-                        <div class="form-group barcode-container">
-                            <label>Barcode</label>
-                            <input type="file" class="form-control" name="barcode" accept="image/*">
+                        <div class="barcode-container">
+                            <div class="form-group">
+                                <label>Sent In</label> <br>
+                                <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                                       name="is_sent" data-width="84">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Barcode</label>
+                                <input type="file" class="form-control" name="barcode" accept="image/*">
+                            </div>
                         </div>
 
                         <div class="form-group rewrite-script-container">
@@ -273,12 +308,15 @@
 @stop
 
 @section('scripts')
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script>
         $(".graphicWorkBtn").click(function() {
             let id = $(this).data('id');
             let type = $(this).data('type');
+            let record = $(this).data('record');
             let modal = $("#graphicWorkModal");
             let form = modal.find("form");
+            let checkbox = '';
 
             let coverContainer = $(".cover-container");
             let barcodeContainer = $(".barcode-container");
@@ -296,10 +334,13 @@
                 case 'cover':
                     modal.find('.modal-title').text('Cover');
                     coverContainer.removeClass('hide');
+                    checkbox = 'is_approved';
                     break;
+
                 case 'barcode':
                     modal.find('.modal-title').text('Barcode');
                     barcodeContainer.removeClass('hide');
+                    checkbox = 'is_sent';
                     break;
 
                 case 'trial-page':
@@ -319,6 +360,14 @@
             form.find('[name=type]').val(type);
             if (id) {
                 form.find('[name=id]').val(id);
+
+                if (['cover', 'barcode'].includes(type)) {
+                    form.find('[name=' + checkbox + ']').prop('checked', false).change();
+                    if (record.is_checked) {
+                        form.find('[name=' + checkbox + ']').prop('checked', true).change();
+                    }
+                }
+
             }
         });
 

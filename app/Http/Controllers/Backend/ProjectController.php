@@ -314,26 +314,28 @@ class ProjectController extends Controller
         // create graphic work folder first
         AdminHelpers::createDirectory('storage/project-graphic-work');
 
-        switch ($request->type) {
-            case 'cover':
-                $this->validate($request, ['cover' => 'required|mimes:jpeg,jpg,png,gif']);
-                break;
+        if (!$request->id){
+            switch ($request->type) {
+                case 'cover':
+                    $this->validate($request, ['cover' => 'required|mimes:jpeg,jpg,png,gif']);
+                    break;
 
-            case 'barcode':
-                $this->validate($request, ['barcode' => 'required|mimes:jpeg,jpg,png,gif']);
-                break;
+                /*case 'barcode':
+                    $this->validate($request, ['barcode' => 'required|mimes:jpeg,jpg,png,gif']);
+                    break;*/
 
-            case 'rewrite-script':
-                $this->validate($request, ['rewrite_script' => 'required|mimes:pdf']);
-                break;
+                case 'rewrite-script':
+                    $this->validate($request, ['rewrite_script' => 'required|mimes:pdf']);
+                    break;
 
-            case 'trial-page':
-                $this->validate($request, ['trial_page' => 'required|mimes:jpeg,jpg,png,gif']);
-                break;
+                case 'trial-page':
+                    $this->validate($request, ['trial_page' => 'required|mimes:jpeg,jpg,png,gif']);
+                    break;
 
-            case 'sample-book-pdf':
-                $this->validate($request, ['sample_book_pdf' => 'required|mimes:pdf']);
-                break;
+                case 'sample-book-pdf':
+                    $this->validate($request, ['sample_book_pdf' => 'required|mimes:pdf']);
+                    break;
+            }
         }
 
         $projectService->saveGraphicWorks($request);

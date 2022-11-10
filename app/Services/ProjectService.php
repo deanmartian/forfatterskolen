@@ -223,10 +223,14 @@ class ProjectService
         switch ($request->type) {
             case 'cover':
                 $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'cover');
+                $data['description'] = $request->description;
+                $data['is_checked'] = $request->has('is_approved') && $request->is_approved ? 1 : 0;
                 break;
 
             case 'barcode':
                 $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'barcode');
+                $data['date'] = Carbon::today();
+                $data['is_checked'] = $request->has('is_sent') && $request->is_sent ? 1 : 0;
                 break;
 
             case 'rewrite-script':
@@ -260,6 +264,11 @@ class ProjectService
     public function saveGraphicWorkFileOrImage( Request $request, $fieldName)
     {
         $filePath = NULL;
+
+        if ($request->id) {
+            $graphicWork = ProjectGraphicWork::find($request->id);
+            $filePath = $graphicWork->value;
+        }
 
         if ($request->hasFile($fieldName)) :
             $destinationPath = 'storage/project-graphic-work/' . $fieldName; // upload path
