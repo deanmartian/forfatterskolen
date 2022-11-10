@@ -403,6 +403,9 @@
                     <div class="panel">
                         <div class="panel-header" style="padding: 10px;">
                             <em><b>Bok Brekking</b></em>
+                            <button class="btn btn-success btn-xs pull-right" data-toggle="modal">
+                                Add
+                            </button>
                         </div>
                         <div class="panel-body">
                             <!-- This is a pdf. This is the last thing for the book before it gets printed -->
