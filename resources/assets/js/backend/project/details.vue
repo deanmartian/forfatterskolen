@@ -58,6 +58,11 @@
                                 <a href="javascript:;" @click="showManuscript(wholeBook)" >{{ formattedContent(wholeBook) }}</a>
                             </td>
                             <td>
+                                <a class="btn btn-xs btn-success"
+                                   :href="'/project/' + project.id + '/whole-book/' + wholeBook.id + '/download'">
+                                    <i class="fa fa-download"></i>
+                                </a>
+
                                 <button class="btn btn-xs btn-primary" @click="showWholeBookFormModal(wholeBook)">
                                     <i class="fa fa-edit"></i>
                                 </button>

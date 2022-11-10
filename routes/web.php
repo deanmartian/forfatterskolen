@@ -1045,6 +1045,7 @@ Route::group([
         Route::post('/project/{id}/notes/save', 'ProjectController@saveNote');
         Route::post('/project/{id}/whole-book/save', 'ProjectController@saveWholeBook');
         Route::delete('/project/whole-book/{id}/delete', 'ProjectController@deleteWholeBook');
+        Route::get('/project/{id}/whole-book/{whole_book}/download', 'ProjectController@downloadWholeBook');
         Route::post('/project/{id}/book/save', 'ProjectController@saveBook');
         Route::delete('/project/book/{id}/delete', 'ProjectController@deleteBook');
         Route::post('/project/{id}/book-pictures/save', 'ProjectController@saveBookPicture')->name('admin.project.save-picture');

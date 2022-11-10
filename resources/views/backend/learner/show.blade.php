@@ -1034,6 +1034,10 @@
 											@elseif( end($extension) == 'docx' )
 											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">{{ basename($manuscript->filename) }}</a>
 											@endif
+
+												<a href="{{ $manuscript->filename }}" download>
+													<i class="fa fa-download"></i>
+												</a>
 										@endif
 									</td>
 									<td>
@@ -1047,7 +1051,8 @@
                                         			$files = explode(',',$groupFeedback->filename);
                                         			foreach($files as $file) {
 														echo "<a href='" . $file . "' class='d-block' download>"
-														. basename($file) . "</a>";
+														. basename($file) . "</a>
+														<a href='" . $file . "' download><i class='fa fa-download'></i></a>";
 													}
 												}
 											} else {
@@ -1056,7 +1061,8 @@
 													->where('assignment_manuscript_id', $manuscript->id)->first();
                                         			if ($feedback) {
 														echo "<a href='" . $feedback->filename . "' class='d-block' download>"
-														. basename($feedback->filename) . "</a>";
+														. basename($feedback->filename) . "</a>
+														<a href='" . $feedback->filename . "' download><i class='fa fa-download'></i></a>";
 													}
 												}
 											}
@@ -1167,7 +1173,7 @@
 									</td>
 									<td>
 										@if ($manuscript)
-											{!! $manuscript->file_link !!}
+											{!! $manuscript->file_link_with_download !!}
 										@endif
 									</td>
 									<td>
@@ -1177,7 +1183,7 @@
 												->where('assignment_manuscript_id', $manuscript->id)->first();
 												if ($feedback) {
 													echo "<a href='" . $feedback->filename . "' class='d-block' download>"
-													. basename($feedback->filename) . "</a>";
+													. basename($feedback->filename) . "</a> <a href='" . $feedback->filename . "' download><i class='fa fa-download'></i></a>";
 												}
 											}
 										@endphp

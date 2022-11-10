@@ -504,8 +504,9 @@
 									><i class="fa fa-paper-plane" aria-hidden="true"></i>&nbsp;{{ trans('site.send-email') }}</button>
 									</td>
 									<td>
+										@if($correction->feedback)
 										<a href="#approveOtherServiceFeedbackModal" data-toggle="modal"
-											class="btn btn-success btn-xs approveOtherServiceFeedbackBtn " 
+											class="btn btn-success btn-xs approveOtherServiceFeedbackBtn "
 											data-service="2"
 											data-feedback_id = "{{ $correction->feedback->id }}"
 											data-feedback_file = "{{ $correction->feedback->manuscript }}"
@@ -516,6 +517,7 @@
 												<a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
 											@endforeach
 											{{ $correction->feedback->created_at }}
+										@endif
 									</td>
 									<td>
 										@if( $correction->status == 2 )
@@ -529,7 +531,7 @@
 										@endif
 									</td>
 									<td>
-										@if($correction->feedback->notes_to_head_editor)
+										@if($correction->feedback && $correction->feedback->notes_to_head_editor)
 											<a class="notes" data-target="#notesModal" data-toggle="modal" data-notes="{{ $correction->feedback->notes_to_head_editor }}">
 												{{ substr($correction->feedback->notes_to_head_editor, 0, 10) }}
 												<i class="fa fa-file-text-o" aria-hidden="true"></i>
@@ -604,17 +606,19 @@
 									><i class="fa fa-paper-plane" aria-hidden="true"></i>&nbsp;{{ trans('site.send-email') }}</button>
 									</td>
 									<td>
-										<a href="#approveOtherServiceFeedbackModal" data-toggle="modal"
-											class="btn btn-success btn-xs approveOtherServiceFeedbackBtn" 
-											data-service="2"
-											data-feedback_file = "{{ $copyEditing->feedback->manuscript }}"
-											data-action="{{ route('head_editor.other-service.approve-feedback',
-											['id' => $copyEditing->id, 'type' => 1]) }}"> {{ trans('site.approve-feedback') }}</a> &nbsp;
-										<?php $files = explode(',',$copyEditing->feedback->manuscript); ?>
-										@foreach($files as $file)
-											<a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
-										@endforeach
-										{{ $copyEditing->feedback->created_at }}
+										@if($copyEditing->feedback)
+											<a href="#approveOtherServiceFeedbackModal" data-toggle="modal"
+												class="btn btn-success btn-xs approveOtherServiceFeedbackBtn"
+												data-service="2"
+												data-feedback_file = "{{ $copyEditing->feedback->manuscript }}"
+												data-action="{{ route('head_editor.other-service.approve-feedback',
+												['id' => $copyEditing->id, 'type' => 1]) }}"> {{ trans('site.approve-feedback') }}</a> &nbsp;
+											<?php $files = explode(',',$copyEditing->feedback->manuscript); ?>
+											@foreach($files as $file)
+												<a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
+											@endforeach
+											{{ $copyEditing->feedback->created_at }}
+										@endif
 									</td>
 									<td>
 										@if( $copyEditing->status == 2 )
@@ -628,7 +632,7 @@
 										@endif
 									</td>
 									<td>
-										@if($copyEditing->feedback->notes_to_head_editor)
+										@if($copyEditing->feedback && $copyEditing->feedback->notes_to_head_editor)
 											<a class="notes" data-target="#notesModal" data-toggle="modal" data-notes="{{ $copyEditing->feedback->notes_to_head_editor }}">
 												{{ substr($copyEditing->feedback->notes_to_head_editor, 0, 10) }}
 												<i class="fa fa-file-text-o" aria-hidden="true"></i>

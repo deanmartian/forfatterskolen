@@ -27,6 +27,7 @@ use App\Services\ProjectService;
 use App\TimeRegister;
 use App\User;
 use Illuminate\Http\Request;
+use PhpOffice\PhpWord\PhpWord;
 
 class ProjectController extends Controller
 {
@@ -69,6 +70,7 @@ class ProjectController extends Controller
         $otherServiceFeedbackRoute = 'admin.other-service.add-feedback';
         $saveBookPicturesRoute = 'admin.project.save-picture';
         $deleteBookPicturesRoute = 'admin.project.delete-picture';
+        $downloadOtherService = 'editor.other-service.download-doc';
 
         if (str_contains(request()->getHttpHost(), 'giutbok')) {
             $layout = 'giutbok.layout';
@@ -86,6 +88,7 @@ class ProjectController extends Controller
             $otherServiceFeedbackRoute = 'g-admin.other-service.add-feedback';
             $saveBookPicturesRoute = 'g-admin.project.save-picture';
             $deleteBookPicturesRoute = 'g-admin.project.delete-picture';
+            $downloadOtherService = 'g-admin.other-service.download-doc';
         }
 
         return view('backend.project.show', compact('project', 'editors', 'learners', 'activities',
@@ -94,7 +97,7 @@ class ProjectController extends Controller
             'selfPublishingDownloadFeedbackRoute', 'selfPublishingLearnersRoute', 'assignEditorRoute',
             'updateExpectedFinishRoute', 'updateStatusRoute', 'otherServiceDeleteRoute', 'correctionFeedbackTemplate',
             'copyEditingFeedbackTemplate', 'otherServiceFeedbackRoute', 'saveBookPicturesRoute', 'bookPictures',
-            'deleteBookPicturesRoute', 'wholeBooks'));
+            'deleteBookPicturesRoute', 'wholeBooks', 'downloadOtherService'));
     }
 
     public function saveProject( ProjectRequest $request, ProjectService $projectService )
@@ -169,6 +172,30 @@ class ProjectController extends Controller
     {
         ProjectWholeBook::find($whole_book_id)->delete();
         return response()->json();
+    }
+
+    public function downloadWholeBook( $project_id, $whole_book_id )
+    {
+        $wholeBook = ProjectWholeBook::find($whole_book_id);
+        $project = Project::find($project_id);
+
+        if ($wholeBook->is_file) {
+            $pathinfo = pathinfo($wholeBook->book_content);
+            $extension = $pathinfo['extension'];
+            $filename = $pathinfo['filename'];
+            return response()->download(public_path($wholeBook->book_content),$filename.'.'.$extension);
+        } else {
+            $phpWord = new PhpWord();
+
+            $section = $phpWord->addSection();
+            $content = view('docx.generic', compact('wholeBook'));
+            \PhpOffice\PhpWord\Shared\Html::addHtml($section,$content,true);
+            header('Content-Type: application/.docx');
+            header('Content-Disposition: attachment;filename="'.$wholeBook->id.'.docx"');
+            $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+            $objWriter->save('php://output');
+            exit(); // added to prevent corrupt file
+        }
     }
 
     public function saveBook( $project_id, ProjectBookRequest $request, ProjectService $projectService )

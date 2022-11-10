@@ -49,7 +49,7 @@
                                 {{ $publishing->description }}
                             </td>
                             <td>
-                                {!! $publishing->file_link !!}
+                                {!! $publishing->file_link_with_download !!}
                             </td>
                             <td>
                                 {{ $publishing->editor ? $publishing->editor->full_name : '' }}
@@ -129,7 +129,7 @@
                             <th>{{ trans_choice('site.editors', 1) }}</th>
                             <th>{{ trans('site.date-ordered') }}</th>
                             <th>{{ trans('site.expected-finish') }}</th>
-                            <th></th>
+                            <th>{{ trans_choice('site.feedbacks', 1) }}</th>
                             <th>{{ trans('site.status') }}</th>
                             <th></th>
                         </tr>
@@ -139,6 +139,10 @@
                             <?php $extension = explode('.', basename($copy_editing->file)); ?>
                             <tr>
                                 <td>
+                                    <a href="{{ route($downloadOtherService, ['id' => $copy_editing->id, 'type' => 1]) }}"
+                                       download>
+                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                    </a>&nbsp;
                                     @if( end($extension) == 'pdf' || end($extension) == 'odt' )
                                         <a href="/js/ViewerJS/#../../{{ $copy_editing->file }}">{{ basename($copy_editing->file) }}</a>
                                     @elseif( end($extension) == 'docx' )
@@ -184,6 +188,11 @@
                                            data-action="{{ route($otherServiceFeedbackRoute,
                                                         ['id' => $copy_editing->id, 'type' => 1]) }}"
                                            data-email-template="{{ json_encode($copyEditingFeedbackTemplate) }}">+ {{ trans('site.add-feedback') }}</a>
+                                    @else
+                                        <?php $files = explode(',',$copy_editing->feedback->manuscript); ?>
+                                        @foreach($files as $file)
+                                            <a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
+                                        @endforeach
                                     @endif
                                 </td>
                                 <td>
@@ -234,7 +243,7 @@
                             <th>{{ trans_choice('site.editors', 1) }}</th>
                             <th>{{ trans('site.date-ordered') }}</th>
                             <th>{{ trans('site.expected-finish') }}</th>
-                            <th></th>
+                            <th>{{ trans_choice('site.feedbacks', 1) }}</th>
                             <th>{{ trans('site.status') }}</th>
                             <th></th>
                         </tr>
@@ -244,6 +253,9 @@
                             <?php $extension = explode('.', basename($correction->file)); ?>
                             <tr>
                                 <td>
+                                    <a href="{{ route($downloadOtherService, ['id' => $correction->id, 'type' => 2]) }}" download>
+                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                    </a>&nbsp;
                                     @if( end($extension) == 'pdf' || end($extension) == 'odt' )
                                         <a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
                                     @elseif( end($extension) == 'docx' )
@@ -289,6 +301,10 @@
                                            data-action="{{ route($otherServiceFeedbackRoute,
                                                     ['id' => $correction->id, 'type' => 2]) }}"
                                            data-email-template="{{ json_encode($correctionFeedbackTemplate) }}">+ {{ trans('site.add-feedback') }}</a>
+                                    @else
+                                        @foreach($files as $file)
+                                            <a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
+                                        @endforeach
                                     @endif
                                 </td>
                                 <td>
@@ -784,7 +800,7 @@
 @stop
 
 @section('scripts')
-    <script src="{{ mix('/js/app.js') }}"></script>
+    <script src="{{ asset('js/app.js?v='.time()) }}"></script>
     <script>
         $(".addSelfPublishingBtn").click(function() {
             let modal = $("#selfPublishingModal");
