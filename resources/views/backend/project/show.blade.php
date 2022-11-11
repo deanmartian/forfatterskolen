@@ -384,7 +384,7 @@
                                                     <i class="fa fa-edit"></i>
                                                 </button>
                                                 <button class="btn btn-danger btn-sm deleteBookPictureBtn" data-toggle="modal"
-                                                        data-target="#deleteBookPicturesModal"
+                                                        data-target="#deleteModal"
                                                         data-action="{{ route($deleteBookPicturesRoute, $bookPicture->id) }}">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
@@ -403,11 +403,48 @@
                     <div class="panel">
                         <div class="panel-header" style="padding: 10px;">
                             <em><b>Bok Brekking</b></em>
-                            <button class="btn btn-success btn-xs pull-right" data-toggle="modal">
+                            <button class="btn btn-success btn-xs pull-right bookFormattingBtn" data-toggle="modal"
+                                    data-target="#bookFormattingModal"
+                                    data-action="{{ route($saveBookFormattingRoute, $project->id) }}">
                                 Add
                             </button>
                         </div>
                         <div class="panel-body">
+                            <div class="table-users table-responsive">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>File</th>
+                                        <th width="300"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($bookFormattingList as $bookFormatting)
+                                        <tr>
+                                            <td>
+                                                {!! $bookFormatting->file_link !!}
+                                            </td>
+                                            <td>
+                                                <a href="{{ $bookFormatting->file }}" class="btn btn-sm btn-success" download>
+                                                    <i class="fa fa-download"></i>
+                                                </a>
+                                                <button class="btn btn-primary btn-sm bookFormattingBtn" data-toggle="modal"
+                                                        data-target="#bookFormattingModal"
+                                                        data-record="{{ json_encode($bookFormatting) }}"
+                                                        data-action="{{ route($saveBookFormattingRoute, $project->id) }}">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-danger btn-sm deleteBtn" data-toggle="modal"
+                                                        data-target="#deleteModal"
+                                                        data-action="{{ route($deleteBookFormattingRoute, $bookFormatting->id) }}">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                             <!-- This is a pdf. This is the last thing for the book before it gets printed -->
                         </div>
                     </div>
@@ -788,7 +825,7 @@
         </div>
     </div>
 
-    <div id="deleteBookPicturesModal" class="modal fade" role="dialog">
+    <div id="deleteModal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
@@ -806,6 +843,35 @@
                         <div class="clearfix"></div>
                     </form>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="bookFormattingModal" class="modal fade" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        Book Formatting
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="id">
+                        <div class="form-group">
+                            <label>File</label>
+                            <input type="file" name="file" class="form-control"
+                                   accept="application/pdf">
+                        </div>
+
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+                        </div>
+                    </form>
+                </div>
+
             </div>
         </div>
     </div>
@@ -942,7 +1008,24 @@
 
         $(".deleteBookPictureBtn").click(function(){
             let action = $(this).data('action');
-            let modal = $('#deleteBookPicturesModal');
+            let modal = $('#deleteModal');
+            modal.find('form').attr('action', action);
+        });
+
+        $(".bookFormattingBtn").click(function(){
+            let action = $(this).data('action');
+            let record = $(this).data('record');
+            let modal = $('#bookFormattingModal');
+            modal.find('form').attr('action', action);
+
+            if (record) {
+                modal.find('[name=id]').val(record.id);
+            }
+        });
+
+        $(".deleteBtn").click(function(){
+            let action = $(this).data('action');
+            let modal = $('#deleteModal');
             modal.find('form').attr('action', action);
         });
 

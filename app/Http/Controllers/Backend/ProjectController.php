@@ -18,6 +18,7 @@ use App\Http\Requests\ProjectRequest;
 use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
+use App\ProjectBookFormatting;
 use App\ProjectBookPicture;
 use App\ProjectGraphicWork;
 use App\ProjectMarketing;
@@ -54,6 +55,7 @@ class ProjectController extends Controller
         $copyEditingFeedbackTemplate = AdminHelpers::emailTemplate('Copy Editing Feedback');
         $bookPictures = ProjectBookPicture::where('project_id', $id)->get();
         $wholeBooks = ProjectWholeBook::where('project_id', $id)->get();
+        $bookFormattingList = ProjectBookFormatting::where('project_id', $id)->get();
 
         $layout = 'backend.layout';
         $addOtherServiceRoute = 'admin.project.add-other-service';
@@ -71,6 +73,8 @@ class ProjectController extends Controller
         $saveBookPicturesRoute = 'admin.project.save-picture';
         $deleteBookPicturesRoute = 'admin.project.delete-picture';
         $downloadOtherService = 'editor.other-service.download-doc';
+        $saveBookFormattingRoute = 'admin.project.save-book-formatting';
+        $deleteBookFormattingRoute = 'admin.project.delete-book-formatting';
 
         if (str_contains(request()->getHttpHost(), 'giutbok')) {
             $layout = 'giutbok.layout';
@@ -89,6 +93,8 @@ class ProjectController extends Controller
             $saveBookPicturesRoute = 'g-admin.project.save-picture';
             $deleteBookPicturesRoute = 'g-admin.project.delete-picture';
             $downloadOtherService = 'g-admin.other-service.download-doc';
+            $saveBookFormattingRoute = 'g-admin.project.save-book-formatting';
+            $deleteBookFormattingRoute = 'g-admin.project.delete-book-formatting';
         }
 
         return view('backend.project.show', compact('project', 'editors', 'learners', 'activities',
@@ -97,7 +103,8 @@ class ProjectController extends Controller
             'selfPublishingDownloadFeedbackRoute', 'selfPublishingLearnersRoute', 'assignEditorRoute',
             'updateExpectedFinishRoute', 'updateStatusRoute', 'otherServiceDeleteRoute', 'correctionFeedbackTemplate',
             'copyEditingFeedbackTemplate', 'otherServiceFeedbackRoute', 'saveBookPicturesRoute', 'bookPictures',
-            'deleteBookPicturesRoute', 'wholeBooks', 'downloadOtherService'));
+            'deleteBookPicturesRoute', 'wholeBooks', 'downloadOtherService', 'saveBookFormattingRoute', 'bookFormattingList',
+            'deleteBookFormattingRoute'));
     }
 
     public function saveProject( ProjectRequest $request, ProjectService $projectService )
@@ -252,6 +259,41 @@ class ProjectController extends Controller
 
         return redirect()->back()->with([
             'errors'                => AdminHelpers::createMessageBag('Book picture deleted successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    /**
+     * @param $project_id
+     * @param Request $request
+     * @param ProjectService $projectService
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function saveBookFormatting( $project_id, Request $request, ProjectService $projectService )
+    {
+        $this->validate($request, ['file' => 'required|mimes:pdf']);
+        $request->merge(['project_id' => $project_id]);
+        $projectService->saveBookFormatting($request);
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book formatting saved successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    /**
+     * @param $id
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function deleteBookFormatting( $id )
+    {
+        $bookFormatting = ProjectBookFormatting::find($id);
+        $bookFormatting->delete();
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book formatting deleted successfully.'),
             'alert_type'            => 'success',
             'not-former-courses'    => true
         ]);

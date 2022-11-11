@@ -12,6 +12,7 @@ use App\Http\FrontendHelpers;
 use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
+use App\ProjectBookFormatting;
 use App\ProjectBookPicture;
 use App\ProjectGraphicWork;
 use App\ProjectMarketing;
@@ -118,6 +119,35 @@ class ProjectService
                 }
             }
         endif;
+    }
+
+    public function saveBookFormatting( Request $request )
+    {
+
+        $filePath = NULL;
+
+        if ($request->hasFile('file')) :
+            $destinationPath = 'storage/project-book-formatting'; // upload path
+
+            AdminHelpers::createDirectory($destinationPath);
+            $filePath = $this->saveFileOrImage($destinationPath, 'file');
+        endif;
+
+        if ($request->id) {
+
+            $bookPicture = ProjectBookFormatting::find($request->id);
+            $bookPicture->file = $filePath;
+            $bookPicture->save();
+
+        } else {
+
+            ProjectBookFormatting::create([
+                'project_id' => $request->project_id,
+                'file' => $filePath
+            ]);
+
+        }
+
     }
 
     /**
