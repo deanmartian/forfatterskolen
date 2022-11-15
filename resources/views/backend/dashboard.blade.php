@@ -83,13 +83,17 @@
 									</td>
 									<td>
 										{{ $assignedManuscript->expected_finish }}
-										<button class="btn btn-primary btn-xs editExpectedFinishBtn" data-toggle="modal"
-												data-target="#editExpectedFinishModal"
-												data-action="{{ route('backend.update-expected-finish', ['assignment', $assignedManuscript->id]) }}"
+										<button class="btn btn-primary btn-xs editAssignmentDateBtn" data-toggle="modal"
+												data-target="#editAssignmentDateModal"
+												data-action="{{ route('backend.assignment.edit-dates', $assignedManuscript->id) }}"
 												data-expected_finish="{{ $assignedManuscript->expected_finish
-												? strftime('%Y-%m-%d', strtotime($assignedManuscript->expected_finish)) : NULL }}">
+												? strftime('%Y-%m-%d', strtotime($assignedManuscript->expected_finish)) : NULL }}"
+												data-editor_expected_finish="{{ $assignedManuscript->editor_expected_finish
+												? strftime('%Y-%m-%d', strtotime($assignedManuscript->editor_expected_finish)) : NULL }}">
 											<i class="fa fa-edit"></i> Edit
 										</button>
+
+										{{ $assignedManuscript->editor_expected_finish }}
 									</td>
 									<td>
 										<a href="{{ $assignedManuscript->filename }}" class="btn btn-primary btn-xs"
@@ -1594,6 +1598,33 @@
 	</div>
 </div>
 
+<div id="editAssignmentDateModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Edit Expected Finish</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>{{ trans('site.learner-expected-finish') }}</label>
+						<input type="date" class="form-control" name="expected_finish">
+					</div>
+					<div class="form-group">
+						<label>{{ trans('site.editor-expected-finish') }}</label>
+						<input type="date" class="form-control" name="editor_expected_finish">
+					</div>
+					<div class="text-right">
+						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="submitPersonalAssignmentFeedbackModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -1823,6 +1854,16 @@
         let action = $(this).data('action');
         modal.find('form').attr('action', action);
         modal.find('[name=expected_finish]').val(expected_finish);
+	});
+
+	$(".editAssignmentDateBtn").click(function() {
+        let expected_finish = $(this).data('expected_finish');
+        let editor_expected_finish = $(this).data('editor_expected_finish');
+        let modal = $('#editAssignmentDateModal');
+        let action = $(this).data('action');
+        modal.find('form').attr('action', action);
+        modal.find('[name=expected_finish]').val(expected_finish);
+        modal.find('[name=editor_expected_finish]').val(editor_expected_finish);
 	});
 
 	$('.viewManuscriptBtn').click(function(){
