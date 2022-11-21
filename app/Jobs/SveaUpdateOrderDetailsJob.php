@@ -9,6 +9,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Facades\Log;
 
 class SveaUpdateOrderDetailsJob implements ShouldQueue
 {
@@ -33,6 +34,7 @@ class SveaUpdateOrderDetailsJob implements ShouldQueue
      */
     public function handle() {
 
+        Log::info('inside SVEA update order details job');
         $order = Order::find($this->order_id);
         $sveaOrderDetails = FrontendHelpers::sveaOrderDetails($order->svea_order_id);
 

@@ -12,6 +12,7 @@ use App\Http\AdminHelpers;
 use App\Http\FikenInvoice;
 use App\Http\FrontendHelpers;
 use App\Jobs\CourseOrderJob;
+use Illuminate\Support\Facades\Log;
 use App\Order;
 use App\Package;
 use App\PaymentPlan;
@@ -161,6 +162,7 @@ class CourseService {
 
         $orderRecord = $this->createOrder($request);
 
+        Log::info('inside generate SVEA checkout');
         $checkoutMerchantId = env('SVEA_CHECKOUTID');
         $checkoutSecret = env('SVEA_CHECKOUT_SECRET');
 
