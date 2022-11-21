@@ -1014,7 +1014,12 @@ class LearnerController extends Controller
             ->where('user_id', '=', Auth::user()->id)->first();
         $otherLearnersIdList = $groupLearners->pluck('id')->toArray();
         $could_send_feedback_to = $groupLearner->could_send_feedback_to_id_list ?: $otherLearnersIdList;
-        return view('frontend.learner.groupShow', compact('group', 'otherLearnersIdList', 'could_send_feedback_to'));
+
+        array_push($could_send_feedback_to, $groupLearner->id);
+        $groupLearnerList = AssignmentGroupLearner::where('assignment_group_id', $id)
+            ->whereIn('id', $could_send_feedback_to)->orderBy('created_at', 'desc')->get();
+        return view('frontend.learner.groupShow', compact('group', 'otherLearnersIdList', 'could_send_feedback_to',
+            'groupLearnerList'));
     }
 
 
