@@ -2,13 +2,14 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class ProjectWholeBook extends Model
 {
 
-    protected $fillable = ['project_id', 'book_content', 'is_file'];
-    protected $appends = ['file_link', 'filename'];
+    protected $fillable = ['project_id', 'book_content', 'description', 'is_file'];
+    protected $appends = ['file_link', 'filename', 'date_uploaded'];
 
     public function getFilenameAttribute()
     {
@@ -31,6 +32,11 @@ class ProjectWholeBook extends Model
         }
 
         return $fileLink;
+    }
+
+    public function getDateUploadedAttribute()
+    {
+        return Carbon::parse($this->attributes['created_at'])->format('d.m.Y');
     }
 
 }

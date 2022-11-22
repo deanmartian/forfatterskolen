@@ -11,9 +11,9 @@
             <a :href="'/project/' + project.id + '/marketing'" class="btn btn-primary btn-sm">
                 Marketing
             </a>
-            <button class="btn btn-primary btn-sm"> <!-- this should be the docx file of FS treadline saved -->
-                Checklist
-            </button>
+            <a :href="'/project/' + project.id + '/marketing-plan'" class="btn btn-primary btn-sm">
+                Marketing Plans
+            </a>
             <a :href="'/project/' + project.id + '/contract'" class="btn btn-primary btn-sm">
                 Contract
             </a>
@@ -49,6 +49,8 @@
                         <thead>
                         <tr>
                             <th>Book</th>
+                            <th>Description</th>
+                            <th>Date Uploaded</th>
                             <th width="300"></th>
                         </tr>
                         </thead>
@@ -56,6 +58,12 @@
                         <tr v-for="wholeBook in wholeBooks">
                             <td>
                                 <a href="javascript:;" @click="showManuscript(wholeBook)" >{{ formattedContent(wholeBook) }}</a>
+                            </td>
+                            <td>
+                                {{ wholeBook.description }}
+                            </td>
+                            <td>
+                                {{ wholeBook.date_uploaded }}
                             </td>
                             <td>
                                 <a class="btn btn-xs btn-success"
@@ -334,6 +342,13 @@
                 <quill-editor ref="wholeBookEditor" :content="wholeBookForm.book_content"
                               @change="onEditorChange($event)"></quill-editor>
                 <input type="hidden" name="book_content">
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Description
+                </label>
+                <textarea name="description" cols="30" rows="10" class="form-control" v-model="wholeBookForm.description"></textarea>
             </div>
 
             <div slot="modal-footer">
@@ -627,6 +642,7 @@
                     id: '',
                     book_content: '',
                     book_file: [],
+                    description: '',
                     is_file: true
                 },
                 wholeBookFilename: '',
@@ -860,7 +876,8 @@
                     this.wholeBookForm = {
                         id: data.id,
                         is_file: !!data.is_file,
-                        book_content: data.book_content
+                        book_content: data.book_content,
+                        description: data.description
                     };
                 }
 
@@ -872,6 +889,7 @@
                     id: '',
                     book_content: '',
                     book_file: [],
+                    description: '',
                     is_file: true
                 }
             },

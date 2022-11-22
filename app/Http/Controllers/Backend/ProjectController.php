@@ -15,6 +15,7 @@ use App\Http\Requests\ProjectActivityRequest;
 use App\Http\Requests\ProjectBookRequest;
 use App\Http\Requests\ProjectCopyEditingRequest;
 use App\Http\Requests\ProjectRequest;
+use App\MarketingPlan;
 use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
@@ -164,6 +165,7 @@ class ProjectController extends Controller
         $wholeBook = $request->id ? ProjectWholeBook::find($request->id) : new ProjectWholeBook();
         $wholeBook->project_id = $project_id;
         $wholeBook->book_content = $request->book_content;
+        $wholeBook->description = $request->description;
         $wholeBook->is_file = filter_var($request->is_file, FILTER_VALIDATE_BOOLEAN);
         $wholeBook->save();
 
@@ -648,6 +650,21 @@ class ProjectController extends Controller
         return redirect()->back()
             ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace('-',' ', $type)) . ' delete successfully.'),
                 'alert_type' => 'success']);
+    }
+
+    public function marketingPlan( $project_id )
+    {
+        $project = Project::find($project_id);
+        $marketingPlans = MarketingPlan::all();
+        $layout = 'backend.layout';
+        $backRoute = 'admin.project.show';
+
+        if (AdminHelpers::isGiutbokPage()) {
+            $layout = 'giutbok.layout';
+            $backRoute = 'g-admin.project.show';
+        }
+
+        return view('backend.project.marketing-plan', compact('layout', 'backRoute', 'project', 'marketingPlans'));
     }
 
     /**
