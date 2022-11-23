@@ -26,6 +26,7 @@ use App\ProjectMarketing;
 use App\ProjectRegistration;
 use App\ProjectWholeBook;
 use App\Services\ProjectService;
+use App\Settings;
 use App\TimeRegister;
 use App\User;
 use Illuminate\Http\Request;
@@ -39,8 +40,10 @@ class ProjectController extends Controller
         $learners =  User::where('role', 2)->where('is_self_publishing_learner', 1)->get();
         $activities = ProjectActivity::all();
         $projects = Project::all();
+        $projectNotes = Settings::getByName('project-notes');
         $layout = str_contains(request()->getHttpHost(), 'giutbok') ? 'giutbok.layout' : 'backend.layout';
-        return view('backend.project.index', compact('learners', 'activities', 'projects', 'layout'));
+        return view('backend.project.index', compact('learners', 'activities', 'projects', 'layout',
+            'projectNotes'));
     }
 
     public function show($id)
