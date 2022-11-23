@@ -37,7 +37,7 @@
                                     @if($question->sub_question_decoded)
                                         <ul>
                                             @foreach($question->sub_question_decoded as $subQuestion)
-                                                <li>{{ $subQuestion }} - test answer</li>
+                                                <li>{{ $subQuestion }}</li>
                                             @endforeach
                                         </ul>
                                     @endif
