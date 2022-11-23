@@ -1062,6 +1062,7 @@ Route::group([
         Route::get('/project/{id}/marketing', 'ProjectController@marketing')->name('admin.project.marketing');
         Route::post('/project/{id}/marketing/save', 'ProjectController@saveMarketing')->name('admin.project.save-marketing');
         Route::delete('/project/{id}/marketing/{marketing_id}/delete', 'ProjectController@deleteMarketing')->name('admin.project.delete-marketing');
+        Route::get('/project/{id}/marketing-plan', 'ProjectController@marketingPlan')->name('admin.project.marketing-plan');
         Route::get('/project/{id}/contract', 'ProjectController@contract')->name('admin.project.contract');
         Route::post('/project/{id}/contract', 'ProjectController@storeContract')->name('admin.project.contract-store');
         Route::post('/project/{id}/contract/upload', 'ProjectController@uploadContract')->name('admin.project.contract-upload');
@@ -1571,6 +1572,17 @@ Route::group([
                 'store' => 'admin.self-publishing.store',
                 'update' => 'admin.self-publishing.update',
                 'destroy' => 'admin.self-publishing.destroy',
+            ],
+        ]);
+
+        Route::resource('/marketing-plan', 'MarketingPlanController', [
+            'except' => ['create', 'edit'],
+            'names' => [
+                'index' => 'admin.marketing-plan.index',
+                'show' => 'admin.marketing-plan.show',
+                'store' => 'admin.marketing-plan.store',
+                'update' => 'admin.marketing-plan.update',
+                'destroy' => 'admin.marketing-plan.destroy',
             ],
         ]);
 
