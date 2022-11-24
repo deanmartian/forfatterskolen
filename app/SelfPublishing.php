@@ -27,6 +27,11 @@ class SelfPublishing extends Model
         return $this->hasOne('App\SelfPublishingFeedback');
     }
 
+    public function project()
+    {
+        return $this->belongsTo('App\Project');
+    }
+
     /**
      * Accessor field
      * @return string

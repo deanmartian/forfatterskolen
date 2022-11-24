@@ -128,7 +128,7 @@
         	$feedbacks = App\AssignmentFeedback::where('assignment_group_learner_id', $groupLearner->id)->orderBy('created_at', 'desc')->get();
         ?>
 
-		@if( $feedbacks->count() > 0 )
+		@if( $feedbacks->count() > 0 && $assignmentManuscript->status)
 			<div class="row mt-5">
 				<div class="col-md-6">
 					<div class="card">

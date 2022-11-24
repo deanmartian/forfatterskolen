@@ -139,6 +139,7 @@
 									<th>{{ trans('site.title') }}</th>
 									<th>{{ trans('site.description') }}</th>
 									<th>File</th>
+									<th>Project</th>
 									<th>Editor</th>
 									<th>{{ trans('site.expected-finish') }}</th>
 									<th width="90"></th>
@@ -157,6 +158,13 @@
 											<a href="{{ route('admin.self-publishing.download-manuscript', $publishing->id) }}">
 												<i class="fa fa-download" aria-hidden="true"></i>
 											</a> &nbsp;{!! $publishing->file_link !!}
+										</td>
+										<td>
+											@if($publishing->project)
+												<a href="{{ route('admin.project.show', $publishing->project->id) }}">
+													{{ $publishing->project->name }}
+												</a>
+											@endif
 										</td>
 										<td>
 											{{ $publishing->editor ? $publishing->editor->full_name : '' }}
