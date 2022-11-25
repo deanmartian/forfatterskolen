@@ -499,6 +499,7 @@ class ProjectController extends Controller
         $manuscriptSentToPrint = ProjectMarketing::manuscriptSentToPrint()->where('project_id', $project_id)->get();
         $culturalCouncils = ProjectMarketing::culturalCouncils()->where('project_id', $project_id)->get();
         $freeWords = ProjectMarketing::freeWords()->where('project_id', $project_id)->get();
+        $agreementOnTimeRegistration = ProjectMarketing::agreementOnTimeRegistration()->where('project_id', $project_id)->get();
         $printEBooks = ProjectMarketing::printEbooks()->where('project_id', $project_id)->get();
         $sampleBookApproved = ProjectMarketing::sampleBookApproved()->where('project_id', $project_id)->get();
         $pdfPrintIsApproved = ProjectMarketing::pdfPrintIsApproved()->where('project_id', $project_id)->get();
@@ -511,7 +512,7 @@ class ProjectController extends Controller
             'deleteMarketingRoute', 'emailBookstores', 'emailLibraries', 'emailPresses', 'reviewCopiesSent',
             'setupOnlineStore', 'setupFacebook', 'advertisementFacebook', 'manuscriptSentToPrint', 'culturalCouncils',
             'freeWords', 'printEBooks', 'sampleBookApproved', 'pdfPrintIsApproved', 'numberOfAuthorBooks',
-            'updateTheBookBase', 'ebookOrdered', 'ebookReceived'));
+            'updateTheBookBase', 'ebookOrdered', 'ebookReceived', 'agreementOnTimeRegistration'));
     }
 
     public function saveMarketing( $project_id, Request $request, ProjectService $projectService )
@@ -583,6 +584,10 @@ class ProjectController extends Controller
                 }
                 $data['value'] = $projectService->saveMarketingFileOrImage($request, 'free_word');
                 $is_finished_field = 'is_finished_free_word';
+                break;
+
+            case 'agreement-on-time-registration':
+                $is_finished_field = 'is_finished_agreement_on_time_registration';
                 break;
 
             case 'print-ebook':
