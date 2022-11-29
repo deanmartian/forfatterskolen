@@ -251,7 +251,7 @@ class OtherServiceController extends Controller
 
             if ($service_type == 2){
                 $correction = CorrectionManuscript::find($service_id);
-                $currentStatus = $correction->status > 2 ? 1 : $copyEditing->status;
+                $currentStatus = $correction->status > 2 ? 1 : $correction->status;
                 $correction->status = $currentStatus+1;
                 $correction->save();
                 $service = 'Korrektur';
