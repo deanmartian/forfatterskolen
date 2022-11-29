@@ -16,6 +16,7 @@ use App\ProjectBookFormatting;
 use App\ProjectBookPicture;
 use App\ProjectGraphicWork;
 use App\ProjectMarketing;
+use App\ProjectWholeBook;
 use Carbon\Carbon;
 use Illuminate\Http\Concerns\InteractsWithInput;
 use Illuminate\Http\Request;
@@ -314,6 +315,11 @@ class ProjectService
     public function uploadWholeBook( Request $request )
     {
         $filePath = NULL;
+
+        if ($request->id) {
+            $wholeBook = ProjectWholeBook::find($request->id);
+            $filePath = $wholeBook->book_content;
+        }
 
         if ($request->hasFile('book_file')) :
             $destinationPath = 'storage/project-books'; // upload path

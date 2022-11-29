@@ -159,7 +159,9 @@ class ProjectController extends Controller
 
         $request->merge(['project_id' => $project_id]);
         if (filter_var($request->is_file, FILTER_VALIDATE_BOOLEAN)) {
-            $this->validate($request, ['book_file' => 'required']);
+            if (!$request->id) {
+                $this->validate($request, ['book_file' => 'required']);
+            }
             $request->book_content = $projectService->uploadWholeBook( $request );
         } else {
             $this->validate($request, ['book_content' => 'required']);
