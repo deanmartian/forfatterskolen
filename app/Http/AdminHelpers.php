@@ -401,7 +401,7 @@ class AdminHelpers
             case 8:
                 $assignment = Assignment::find(($order->item_id));
                 $orderDetails = "<a href='".route('admin.assignment.show',
-                        ['course_id' => $assignment->course->id, 'id' => $assignment->id])."'>"
+                        ['course_id' => $assignment->course->id, 'assignment' => $assignment->id])."'>"
                     .$assignment->title."</a>";
 
                 break;
