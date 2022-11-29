@@ -83,7 +83,7 @@
                                         </button>
 
                                         <a href="{{ route($selfPublishingDownloadFeedbackRoute, $publishing->feedback->id) }}"
-                                           class="btn btn-success btn-xs margin-top">
+                                           class="btn btn-success btn-xs">
                                             Download Feedback
                                         </a>
                                     @else

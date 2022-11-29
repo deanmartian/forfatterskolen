@@ -38,6 +38,7 @@ use App\PaymentMode;
 use App\PaymentPlan;
 use App\Paypal;
 use App\PilotReaderReaderProfile;
+use App\Project;
 use App\Repositories\Services\CompetitionService;
 use App\Repositories\Services\PublishingService;
 use App\Repositories\Services\WritingGroupService;
@@ -1654,6 +1655,70 @@ class LearnerController extends Controller
     {
         $timeRegisters = Auth::user()->timeRegisters->load('project');
         return view('frontend.learner.self-publishing.time-register', compact('timeRegisters'));
+    }
+
+    public function project()
+    {
+        $projects = Project::where('user_id', Auth::user()->id)->get();
+        return view('frontend.learner.self-publishing.project.index', compact('projects'));
+    }
+
+    public function showProject( $project_id )
+    {
+        $project = Project::where('user_id', Auth::user()->id)->where('id', $project_id)->firstOrFail();
+        return view('frontend.learner.self-publishing.project.show', compact('project'));
+    }
+
+    public function uploadSelfPublishingManuscript( $id, Request $request )
+    {
+        $this->validate($request, ['manuscript' => 'required']);
+
+        $publishing = SelfPublishing::find($id);
+
+        $destinationPath = 'storage/self-publishing-manuscript/'; // upload path
+
+        if ( $request->hasFile('manuscript') ) :
+
+            $filesWithPath = '';
+            $word_count = 0;
+            foreach ($request->file('manuscript') as $k => $file) {
+                $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION); // getting document extension
+                $actual_name = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_FILENAME);
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+
+                $expFileName = explode('/', $fileName);
+                $filePath = "/".$destinationPath.end($expFileName);
+                $file->move($destinationPath, end($expFileName));
+
+                $filesWithPath .= $filePath.", ";
+
+                // count words
+                if($extension == "pdf") :
+                    $pdf  =  new \PdfToText( $destinationPath.end($expFileName) ) ;
+                    $pdf_content = $pdf->Text;
+                    $word_count += FrontendHelpers::get_num_of_words($pdf_content);
+                elseif($extension == "docx") :
+                    $docObj = new \Docx2Text($destinationPath.end($expFileName));
+                    $docText= $docObj->convertToText();
+                    $word_count += FrontendHelpers::get_num_of_words($docText);
+                elseif($extension == "doc") :
+                    $docText = FrontendHelpers::readWord($destinationPath.end($expFileName));
+                    $word_count += FrontendHelpers::get_num_of_words($docText);
+                elseif($extension == "odt") :
+                    $doc = odt2text($destinationPath.end($expFileName));
+                    $word_count += FrontendHelpers::get_num_of_words($doc);
+                endif;
+            }
+
+            $publishing->manuscript = $filesWithPath = trim($filesWithPath,", ");
+            $publishing->word_count = $word_count;
+        endif;
+        $publishing->save();
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag(trans('site.learner.upload-manuscript-success')),
+            'alert_type' => 'success'
+        ]);
     }
 
     public function downloadTimeRegisterInvoice( $id )

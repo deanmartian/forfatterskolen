@@ -1540,4 +1540,5 @@ Rektor Kristine',
     'title' => 'Kanselert ordre',
     'description' => 'Bestillingen din er kansellert.',
   ),
+  'self-publishing-text' => 'Self Publishing',
 );
