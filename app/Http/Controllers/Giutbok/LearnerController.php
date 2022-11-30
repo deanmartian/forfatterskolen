@@ -8,6 +8,7 @@ use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Mail\SubjectBodyEmail;
 use App\SelfPublishing;
+use App\Services\LearnerService;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -142,7 +143,7 @@ class LearnerController extends Controller
             'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList'));
     }
 
-    public function registerLearner( Request $request )
+    public function registerLearner( Request $request, LearnerService $learnerService )
     {
         $this->validate($request, [
             'first_name' => 'required|string|max:255',
@@ -151,31 +152,7 @@ class LearnerController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = new User();
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
-        $user->email = $request->email;
-        $user->password = bcrypt($request->password);
-        $user->default_password = $request->password;
-        $user->need_pass_update = 1;
-        $user->is_self_publishing_learner = 1;
-        $user->save();
-
-        $encode_email = encrypt($user->email);
-
-        // Send welcome email
-        $actionText = 'Klikk her for å logge inn';
-        $actionUrl = route('auth.login.email', $encode_email);
-
-        $to = $user->email;
-        $emailData = [
-            'email_subject' => 'Velkommen til Forfatterskolen',
-            'email_message' => view('emails.registration', compact('actionText', 'actionUrl', 'user'))->render(),
-            'from_name' => '',
-            'from_email' => 'post@forfatterskolen.no',
-            'attach_file' => NULL
-        ];
-        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        $learnerService->registerLearner($request, true);
 
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Learner created successfully.'),
             'alert_type' => 'success', 'not-former-courses' => true]);

@@ -28,6 +28,7 @@ use App\Project;
 use App\SelfPublishing;
 use App\SelfPublishingLearner;
 use App\Services\CourseService;
+use App\Services\LearnerService;
 use App\TimeRegister;
 use App\UserAutoRegisterToCourseWebinar;
 use App\UserEmail;
@@ -1365,7 +1366,7 @@ class LearnerController extends Controller
         return AdminHelpers::generateHash(8);
     }
 
-    public function registerLearner( Request $request )
+    public function registerLearner( Request $request, LearnerService $learnerService )
     {
         $this->validate($request, [
             'first_name' => 'required|string|max:255',
@@ -1374,30 +1375,7 @@ class LearnerController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = new User();
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
-        $user->email = $request->email;
-        $user->password = bcrypt($request->password);
-        $user->default_password = $request->password;
-        $user->need_pass_update = 1;
-        $user->save();
-
-        $encode_email = encrypt($user->email);
-
-        // Send welcome email
-        $actionText = 'Klikk her for å logge inn';
-        $actionUrl = route('auth.login.email', $encode_email);
-
-        $to = $user->email;
-        $emailData = [
-            'email_subject' => 'Velkommen til Forfatterskolen',
-            'email_message' => view('emails.registration', compact('actionText', 'actionUrl', 'user'))->render(),
-            'from_name' => '',
-            'from_email' => 'post@forfatterskolen.no',
-            'attach_file' => NULL
-        ];
-        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        $learnerService->registerLearner($request);
 
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Learner created successfully.'),
             'alert_type' => 'success', 'not-former-courses' => true]);

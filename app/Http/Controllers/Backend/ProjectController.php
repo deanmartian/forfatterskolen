@@ -25,6 +25,7 @@ use App\ProjectGraphicWork;
 use App\ProjectMarketing;
 use App\ProjectRegistration;
 use App\ProjectWholeBook;
+use App\Services\LearnerService;
 use App\Services\ProjectService;
 use App\Settings;
 use App\TimeRegister;
@@ -146,6 +147,27 @@ class ProjectController extends Controller
         $project->save();
 
         return response()->json($project);
+    }
+
+    public function addLearner( $project_id, Request $request, LearnerService $learnerService )
+    {
+        $this->validate($request, [
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'password' => 'required|string',
+        ]);
+
+        $user = $learnerService->registerLearner($request, true);
+
+        $project = Project::find($project_id);
+        $project->user_id = $user->id;
+        $project->save();
+
+        return response()->json([
+            'user' => $user,
+            'project' => $project
+        ]);
     }
 
     /**

@@ -11,6 +11,8 @@ if(config('app.app_site') == 'no'){
 Route::group([
     'domain' => $domain,
 ], function(){
+    Route::get('learner/generate-password', '\Backend\LearnerController@generatePassword');
+
     Route::group([
         'middleware' => ['giutbok', 'logActivity'],
         'namespace' => 'Giutbok'

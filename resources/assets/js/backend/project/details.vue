@@ -20,9 +20,15 @@
             <button class="btn btn-primary btn-sm">
                 Invoices
             </button>
-            <button class="btn btn-primary btn-sm pull-right" @click="showProjectFormModal()">
-                <i class="fa fa-edit"></i> Edit Project
-            </button>
+            <div class="pull-right">
+                <button class="btn btn-success btn-sm" @click="showLearnerFormModal()">
+                    <i class="fa fa-user"></i> Add Learner
+                </button>
+
+                <button class="btn btn-primary btn-sm" @click="showProjectFormModal()">
+                    <i class="fa fa-edit"></i> Edit Project
+                </button>
+            </div>
             <div class="clearfix"></div>
         </div>
 
@@ -166,6 +172,46 @@
                 </table>
             </div>
         </div>
+
+        <b-modal
+                ref="learnerFormModal"
+                :title="'Add Learner'"
+                size="md"
+                @hidden="closeLearnerFormModal()"
+                centered
+                no-close-on-backdrop
+        >
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="text" class="form-control" name="name" v-model="learnerForm.email" required>
+            </div>
+
+            <div class="form-group">
+                <label>Firstname</label>
+                <input type="text" name="first_name" class="form-control no-border-left" v-model="learnerForm.first_name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Lastname</label>
+                <input type="text" name="last_name" class="form-control no-border-left" v-model="learnerForm.last_name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="text" name="password" class="form-control no-border-left" v-model="learnerForm.password" required>
+                <button class="btn btn-success btn-sm margin-top" type="button" @click="generatePassword()">
+                    Generate
+                </button>
+            </div>
+
+            <div slot="modal-footer">
+                <button class="btn btn-sm btn-primary" @click="saveLearner()" :disabled="isLoading">
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Save
+                </button>
+            </div>
+
+        </b-modal>
 
         <b-modal
                 ref="projectFormModal"
@@ -696,6 +742,13 @@
                     hourly_rate: '',
                 },
                 projectList: this.projects,
+                learnerForm: {
+                    project_id: this.currentProject.id,
+                    email: '',
+                    first_name: '',
+                    last_name: '',
+                    password: ''
+                },
                 isAdd: true,
                 isActivityLoading: false,
                 isDeleting: false,
@@ -735,6 +788,49 @@
                         message : 'Notes saved'
                     });
                     this.$refs.notesModal.hide();
+                }).catch(error => {
+                    this.isLoading = false;
+                    this.processError(error);
+                    this.$toasted.global.showErrorMsg({
+                        message : 'Error in form'
+                    });
+                });
+            },
+
+            showLearnerFormModal() {
+                this.$refs.learnerFormModal.show();
+            },
+
+            closeLearnerFormModal() {
+                this.learnerForm = {
+                    project_id: this.project.id,
+                    email: '',
+                    first_name: '',
+                    last_name: '',
+                    password: ''
+                }
+            },
+
+            generatePassword() {
+                axios.get('/learner/generate-password').then(response => {
+                    console.log(response);
+                    this.learnerForm.password = response.data;
+                });
+            },
+
+            saveLearner() {
+                this.isLoading = true;
+                this.removeValidationError();
+                axios.post('/project/' + this.project.id + '/learner/add', this.learnerForm).then(response => {
+                    this.isLoading = false;
+                    this.learnerList.push(response.data.user);
+                    this.project = response.data.project;
+                    this.$refs.learnerFormModal.hide();
+
+                    this.$toasted.global.showSuccessMsg({
+                        message : 'Learner added'
+                    });
+
                 }).catch(error => {
                     this.isLoading = false;
                     this.processError(error);
