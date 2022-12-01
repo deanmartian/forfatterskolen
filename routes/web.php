@@ -309,6 +309,8 @@ Route::group([
         Route::get('/project/{id}', 'LearnerController@showProject')->name('learner.project.show');
         Route::post('/project/self-publishing/{id}/upload-manuscript', 'LearnerController@uploadSelfPublishingManuscript')
             ->name('learner.project.self-publishing.upload-manuscript');
+        Route::post('/project/other-service/{id}/upload-manuscript/{type}', 'LearnerController@uploadOtherServiceManuscript')
+            ->name('learner.project.other-service.upload-manuscript');
 
         Route::get('/profile', 'LearnerController@profile')->name('learner.profile'); // Profile Page
         Route::get('/terms', 'LearnerController@terms')->name('learner.terms'); // Terms Page
@@ -1378,6 +1380,7 @@ Route::group([
         Route::post('/other-service/{id}/coaching-timer/set_replay', 'OtherServiceController@setReplay')->name('admin.other-service.coaching-timer.set_replay');
         Route::post('/other-service/{id}/coaching-timer/mark_as_finished', 'OtherServiceController@markAsFinished')->name('admin.other-service.coaching-timer.mark_as_finished');
         Route::post('/other-service/{id}/update-status/{type}', 'OtherServiceController@updateStatus')->name('admin.other-service.update-status');
+        Route::post('/other-service/{id}/lock-status/{type}', 'OtherServiceController@updateLocked')->name('admin.other-service.update-locked');
         Route::post('/other-service/{id}/update-expected-finish/{type}', 'OtherServiceController@updateExpectedFinish')->name('admin.other-service.update-expected-finish');
         Route::get('/other-service/{id}/download/{type}', 'OtherServiceController@downloadOtherServiceDoc')->name('admin.other-service.download-doc'); // Download assignment feedback
         Route::post('/other-service/{id}/add-feedback/{type}', 'OtherServiceController@addFeedback')->name('admin.other-service.add-feedback');

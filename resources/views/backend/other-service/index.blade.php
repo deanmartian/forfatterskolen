@@ -118,7 +118,7 @@
                         </div>
 
                         <div class="pull-right margin-top">
-                            {{ $corrections->render() }}
+                            {{ $corrections->appends(Request::all())->render() }}
                         </div>
                     </div>
                 @elseif( Request::input('tab') == 'copy-editing' )
@@ -220,7 +220,7 @@
                         </div>
 
                         <div class="pull-right margin-top">
-                            {{ $copyEditing->render() }}
+                            {{ $copyEditing->appends(Request::all())->render() }}
                         </div>
                     </div>
                 @else
@@ -356,7 +356,7 @@
                         </div>
 
                         <div class="pull-right margin-top">
-                            {{ $coachingTimers->render() }}
+                            {{ $coachingTimers->appends(Request::all())->render() }}
                         </div>
                     </div>
                 @endif

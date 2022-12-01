@@ -209,6 +209,13 @@
                                     $btnColor = $copy_editing->status == 1 ? 'primary' : 'warning';
                                     ?>
 
+                                        <input type="checkbox" data-toggle="toggle" data-on="Locked"
+                                               class="lock-toggle" data-off="Unlocked"
+                                               data-type="copy-editing" onchange="lockToggle(this)"
+                                               data-id="{{$copy_editing->id}}" data-size="mini" @if($copy_editing->is_locked)
+                                            {{ 'checked' }}
+                                                @endif>
+
                                     @if ($copy_editing->status !== 2)
                                         <button class="btn btn-{{ $btnColor }} btn-xs updateOtherServiceStatusBtn" type="button"
                                                 data-toggle="modal" data-target="#updateOtherServiceStatusModal"
@@ -320,6 +327,13 @@
                                     <?php
                                     $btnColor = $correction->status == 1 ? 'primary' : 'warning';
                                     ?>
+
+                                        <input type="checkbox" data-toggle="toggle" data-on="Locked"
+                                               class="lock-toggle" data-off="Unlocked"
+                                               data-type="correction" onchange="lockToggle(this)"
+                                               data-id="{{$correction->id}}" data-size="mini" @if($correction->is_locked)
+                                            {{ 'checked' }}
+                                                @endif>
 
                                     @if ($correction->status !== 2)
                                         <button class="btn btn-{{ $btnColor }} btn-xs updateOtherServiceStatusBtn" type="button"
@@ -878,6 +892,7 @@
 @stop
 
 @section('scripts')
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script src="{{ asset('js/app.js?v='.time()) }}"></script>
     <script>
         $(".addSelfPublishingBtn").click(function() {
@@ -1040,6 +1055,22 @@
 
             modal.find('.modal-title').text(modal_title);
             modal.find('form').find('[name=is_copy_editing]').val(type);
+        }
+
+        function lockToggle(self) {
+            let id = $(self).attr('data-id');
+            let type = $(self).attr('data-type');
+            let is_checked = $(self).prop('checked');
+            let check_val = is_checked ? 1 : 0;
+            $.ajax({
+                type:'POST',
+                url:'/other-service/' + id + '/lock-status/' + type,
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: { 'is_locked' : check_val },
+                success: function(data){
+                    console.log(data);
+                }
+            });
         }
     </script>
     <script type="text/javascript" src="{{asset('select2/dist/js/select2.min.js')}}"></script>

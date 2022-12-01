@@ -192,7 +192,7 @@ class ProjectService
         $extension = $request->manuscript->extension();
         $destinationPath = 'storage/correction-manuscripts/'; // upload path
 
-        if ($request->is_copy_editing == 1) {
+        if ($request->type == 1) {
             $destinationPath = 'storage/copy-editing-manuscripts/'; // upload path
         }
 

@@ -46,6 +46,7 @@ use App\SelfPublishing;
 use App\SelfPublishingLearner;
 use App\Services\AssignmentService;
 use App\Services\CourseService;
+use App\Services\ProjectService;
 use App\Services\ShopManuscriptService;
 use App\Settings;
 use App\ShopManuscriptTakenFeedback;
@@ -1714,6 +1715,31 @@ class LearnerController extends Controller
             $publishing->word_count = $word_count;
         endif;
         $publishing->save();
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag(trans('site.learner.upload-manuscript-success')),
+            'alert_type' => 'success'
+        ]);
+    }
+
+    /**
+     * @param $id
+     * @param $type
+     * @param Request $request
+     * @param ProjectService $projectService
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function uploadOtherServiceManuscript( $id, $type, Request $request, ProjectService $projectService )
+    {
+        $this->validate($request, ['manuscript' => 'required']);
+
+        if (in_array($type, [1, 2])) {
+            $data = $type == 1 ? CopyEditingManuscript::find($id) : CorrectionManuscript::find($id);
+            $request->merge(['type' => $type]);
+            $file = $projectService->saveFile($request);
+            $data->file = $file;
+            $data->save();
+        }
 
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag(trans('site.learner.upload-manuscript-success')),

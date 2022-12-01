@@ -97,6 +97,7 @@ Route::group([
 
         Route::post('/other-service/{id}/update-expected-finish/{type}', 'OtherServiceController@updateExpectedFinish')->name('g-admin.other-service.update-expected-finish');
         Route::post('/other-service/{id}/update-status/{type}', 'OtherServiceController@updateStatus')->name('g-admin.other-service.update-status');
+        Route::post('/other-service/{id}/lock-status/{type}', 'OtherServiceController@updateLocked')->name('g-admin.other-service.update-locked');
         Route::post('other-service/{id}/assign-editor/{type}', 'LearnerController@otherServiceAssignEditor')->name('g-admin.other-service.assign-editor');
         Route::post('other-service/{id}/delete/{type}', 'LearnerController@deleteOtherService')->name('g-admin.other-service.delete');
         Route::post('/other-service/set-approved-date', 'OtherServiceController@setApprovedDate')->name('g-admin.other-service.coaching-timer.set-approved-date');

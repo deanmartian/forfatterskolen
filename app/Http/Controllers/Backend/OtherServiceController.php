@@ -267,6 +267,15 @@ class OtherServiceController extends Controller
         return redirect()->back();
     }
 
+    public function updateLocked( $service_id, $service_type, Request $request )
+    {
+        if (in_array($service_type, ['copy-editing','correction'])) {
+            $data = $service_type === 'copy-editing' ? CopyEditingManuscript::find($service_id) : CorrectionManuscript::find($service_id);
+            $data->is_locked = $request->is_locked;
+            $data->save();
+        }
+    }
+
     /**
      * Update the expected finish date
      * @param $service_id int Id of the service
