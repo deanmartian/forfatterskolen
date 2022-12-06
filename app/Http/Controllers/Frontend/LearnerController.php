@@ -29,6 +29,8 @@ use App\Mail\AssignmentSubmittedEmail;
 use App\Mail\CoachingSuggestionDateEmail;
 use App\Mail\MultipleEmailConfirmation;
 use App\Mail\SubjectBodyEmail;
+use App\MarketingPlan;
+use App\MarketingPlanQuestionAnswer;
 use App\Notification;
 use App\Order;
 use App\OrderCompany;
@@ -1668,6 +1670,44 @@ class LearnerController extends Controller
     {
         $project = Project::where('user_id', Auth::user()->id)->where('id', $project_id)->firstOrFail();
         return view('frontend.learner.self-publishing.project.show', compact('project'));
+    }
+
+    /**
+     * @param $project_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function projectMarketingPlan( $project_id )
+    {
+        $project = Project::where('user_id', Auth::user()->id)->where('id', $project_id)->firstOrFail();
+        $marketingPlans = MarketingPlan::with(['questions.answers' => function($query) use ($project_id) {
+            $query->where('marketing_plan_question_answers.project_id', $project_id);
+        }])->get();
+        return view('frontend.learner.self-publishing.project.marketing-plan', compact('project', 'marketingPlans'));
+    }
+
+    /**
+     * @param $project_id
+     * @param Request $request
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function saveMarketingPlanQA( $project_id, Request $request )
+    {
+        foreach ($request->arr as $input) {
+            $answer = MarketingPlanQuestionAnswer::firstOrNew([
+                'project_id' => $project_id,
+                'question_id' => $input['main_question_id']
+            ]);
+            $answer->main_answer = $input['main_answer'];
+            $answer->sub_answer = isset($input['sub_answer'])
+                ? json_encode($input['sub_answer'], JSON_UNESCAPED_UNICODE )
+                : NULL;
+            $answer->save();
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Answer saved.'),
+            'alert_type' => 'success'
+        ]);
     }
 
     public function uploadSelfPublishingManuscript( $id, Request $request )

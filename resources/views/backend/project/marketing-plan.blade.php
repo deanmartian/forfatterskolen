@@ -24,6 +24,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Questions</th>
+                        <th>Answers</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -44,6 +45,29 @@
                                         @endif
                                     @endforeach
                                 </ul>
+                            </td>
+                            <td>
+                                @foreach($marketingPlan->questions as $question)
+                                    <?php
+                                    $answer = isset($question->answers[0]) ? $question->answers[0] : NULL;
+                                    ?>
+                                    @if($answer)
+                                        <ul style="list-style: square; margin-bottom: 0">
+                                            <li>{{ $answer ? $question->answers[0]->main_answer : '' }} </li>
+
+                                            @if($question->sub_question_decoded)
+                                                <ul>
+                                                    @foreach($question->sub_question_decoded as $k => $subQuestion)
+                                                        <li>
+                                                            {{ $answer && isset($answer->sub_answer_decoded[$k])
+                                                            ? $question->answers[0]->sub_answer_decoded[$k] : '' }}
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            @endif
+                                        </ul>
+                                    @endif
+                                @endforeach
                             </td>
                         </tr>
                     @endforeach

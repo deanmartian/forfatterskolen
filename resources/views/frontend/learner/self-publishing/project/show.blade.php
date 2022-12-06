@@ -21,6 +21,10 @@
     <div class="learner-container">
         <div class="container">
             <div class="row">
+                <a href="{{ route('learner.project.marketing-plan', $project->id) }}"
+                   class="btn mb-3 site-btn-global">
+                    Marketing Plan
+                </a>
                 <div class="col-md-12 dashboard-course no-left-padding">
                     <div class="card global-card">
                         <div class="card-header">

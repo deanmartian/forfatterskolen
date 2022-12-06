@@ -306,11 +306,18 @@ Route::group([
         Route::get('/time-register', 'LearnerController@timeRegister')->name('learner.time-register');
 
         Route::get('/project', 'LearnerController@project')->name('learner.project');
-        Route::get('/project/{id}', 'LearnerController@showProject')->name('learner.project.show');
         Route::post('/project/self-publishing/{id}/upload-manuscript', 'LearnerController@uploadSelfPublishingManuscript')
             ->name('learner.project.self-publishing.upload-manuscript');
         Route::post('/project/other-service/{id}/upload-manuscript/{type}', 'LearnerController@uploadOtherServiceManuscript')
             ->name('learner.project.other-service.upload-manuscript');
+
+        Route::group([
+            'prefix' => 'project/{id}'
+        ], function() {
+            Route::get('/', 'LearnerController@showProject')->name('learner.project.show');
+            Route::get('/marketing-plan', 'LearnerController@projectMarketingPlan')->name('learner.project.marketing-plan');
+            Route::post('/save-answer', 'LearnerController@saveMarketingPlanQA')->name('learner.project.save-marketing-qa');
+        });
 
         Route::get('/profile', 'LearnerController@profile')->name('learner.profile'); // Profile Page
         Route::get('/terms', 'LearnerController@terms')->name('learner.terms'); // Terms Page

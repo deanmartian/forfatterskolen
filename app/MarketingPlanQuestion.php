@@ -15,4 +15,9 @@ class MarketingPlanQuestion extends Model
         return json_decode($this->attributes['sub_question']);
     }
 
+    public function answers()
+    {
+        return $this->hasMany('App\MarketingPlanQuestionAnswer', 'question_id');
+    }
+
 }

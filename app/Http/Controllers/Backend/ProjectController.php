@@ -687,7 +687,9 @@ class ProjectController extends Controller
     public function marketingPlan( $project_id )
     {
         $project = Project::find($project_id);
-        $marketingPlans = MarketingPlan::all();
+        $marketingPlans = MarketingPlan::with(['questions.answers' => function($query) use ($project_id) {
+            $query->where('marketing_plan_question_answers.project_id', $project_id);
+        }])->get();
         $layout = 'backend.layout';
         $backRoute = 'admin.project.show';
 
