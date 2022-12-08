@@ -11,6 +11,9 @@
 @section('content')
     <div class="page-toolbar">
         <h3><i class="fa fa-handshake-o"></i> Contract</h3>
+        <a href="{{ $backRoute }}" class="btn btn-default" style="margin-right: 10px">
+            << {{ trans('site.back') }}
+        </a>
         <div class="clearfix"></div>
     </div>
 

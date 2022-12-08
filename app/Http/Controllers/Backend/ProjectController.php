@@ -125,6 +125,10 @@ class ProjectController extends Controller
             'project_id' => NULL
         ]);
 
+        Contract::where('project_id', $project_id)->update([
+            'project_id' => NULL
+        ]);
+
         $project->delete();
         return response()->json();
     }
@@ -713,6 +717,7 @@ class ProjectController extends Controller
         $signedUploadRoute = 'admin.project.contract-signed-upload';
         $contractShowRoute = 'admin.project.contract-show';
         $contractEditRoute = 'admin.project.contract-edit';
+        $backRoute = route('admin.project.show', $project_id);
         if (AdminHelpers::isGiutbokPage()) {
             $layout = 'giutbok.layout';
             $uploadContractRoute = 'g-admin.project.contract-upload';
@@ -720,13 +725,15 @@ class ProjectController extends Controller
             $signedUploadRoute = 'g-admin.project.contract-signed-upload';
             $contractShowRoute = 'g-admin.project.contract-show';
             $contractEditRoute = 'g-admin.project.contract-edit';
+            $backRoute = route('g-admin.project.show', $project_id);
         }
 
         $project = Project::find($project_id);
-        $contracts = Contract::whereNotNull('project_id')->paginate(10);
+        $contracts = Contract::where('project_id', $project_id)->paginate(10);
 
         return view('backend.project.contract.index', compact('project', 'layout', 'contracts',
-            'uploadContractRoute', 'createContractRoute', 'signedUploadRoute', 'contractShowRoute', 'contractEditRoute'));
+            'uploadContractRoute', 'createContractRoute', 'signedUploadRoute', 'contractShowRoute', 'contractEditRoute',
+            'backRoute'));
     }
 
     /**
