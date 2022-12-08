@@ -1925,6 +1925,10 @@ class LearnerController extends Controller
 
         $lesson_content = $lesson->lessonContent;
 
+        if (!FrontendHelpers::checkIfLearnerHasAccessToLesson(Auth::user()->id, $course_id, $id)) {
+            abort(404);
+        }
+
         if ($request->exists('search_replay') && $lesson->id == 191) {
             $lesson_content = LessonContent::where('title', 'like', '%'.$request->search_replay.'%')
                 ->get();
@@ -1944,12 +1948,16 @@ class LearnerController extends Controller
      * Download lesson as pdf file
      * @param $course_id
      * @param $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse | mixed
      */
     public function downloadLesson($course_id, $id)
     {
         $course = Course::findOrFail($course_id);
         $lesson = Lesson::findOrFail($id);
+
+        if (!FrontendHelpers::checkIfLearnerHasAccessToLesson(Auth::user()->id, $course_id, $id)) {
+            abort(404);
+        }
 
         $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course->packages->pluck('id')->toArray())->first();
 

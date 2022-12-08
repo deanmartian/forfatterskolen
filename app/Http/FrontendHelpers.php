@@ -4,12 +4,14 @@ namespace App\Http;
 use App\Advisory;
 use App\Course;
 use App\Genre;
+use App\Lesson;
 use App\PaymentMode;
 use App\PilotReaderBook;
 use App\PilotReaderBookChapter;
 use App\PilotReaderBookReading;
 use App\PrivateGroupMember;
 use App\Staff;
+use App\User;
 use App\WebinarRegistrant;
 use Carbon\Carbon;
 
@@ -947,6 +949,17 @@ class FrontendHelpers
 
     public static function getNews() {
         return \App\Settings::where('setting_name', 'news')->first();
+    }
+
+    public static function checkIfLearnerHasAccessToLesson( $user_id, $course_id, $lesson_id )
+    {
+        $user = User::find($user_id);
+        $course = Course::find($course_id);
+        $lesson = Lesson::findOrFail($lesson_id);
+
+        $courseTaken = $user->coursesTaken()->whereIn('package_id', $course->packages()->pluck('id'))->first();
+        return \App\Http\FrontendHelpers::isLessonAvailable($courseTaken->started_at, $lesson->delay, $lesson->period) ||
+            \App\Http\FrontendHelpers::hasLessonAccess($courseTaken, $lesson);
     }
 
     /**
