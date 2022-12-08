@@ -9,7 +9,7 @@ class GiftPurchase extends Model
 
     protected $table = 'gift_purchases';
     // user_id is the buyer id
-    protected $fillable = ['user_id', 'parent', 'parent_id', 'redeem_code', 'is_redeemed'];
+    protected $fillable = ['user_id', 'parent', 'parent_id', 'redeem_code', 'is_redeemed', 'expired_at'];
 
     public function buyer()
     {
