@@ -252,6 +252,7 @@ class LessonController extends Controller
     {
         if ($lesson = Lesson::find($lesson_id)) {
             $titles = $request->title;
+            $tags = $request->tags;
             $videos = $request->lesson_video;
             $idList = $request->content_id;
 
@@ -262,6 +263,7 @@ class LessonController extends Controller
                 if ($title) {
                     $insertContent = [
                         'title' => $title,
+                        'tags' => $tags[$k],
                         'lesson_content' => $videos[$k]
                     ];
 

@@ -415,6 +415,7 @@ class LearnerController extends Controller
 
         if ($request->exists('search_replay') && $webinarsRepriser) {
             $searchResult = LessonContent::where('title', 'like', '%'.$request->search_replay.'%')
+                ->orWhere('tags', 'like', '%'.$request->search_replay.'%')
                 ->get();
             $isPost = 1;
             $isReplay = 1;

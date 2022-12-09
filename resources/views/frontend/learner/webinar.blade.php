@@ -404,6 +404,11 @@
                                         </div>
                                         <div class="card-body">
                                             <h2>{{ $result->title }}</h2>
+                                            @if($result->tags)
+                                            <span class="mt-4">
+                                                <i class="fa fa-tags"></i> {{ $result->tags }}
+                                            </span>
+                                            @endif
                                         </div>
                                     </div> <!-- end card -->
                                 </div> <!-- end col-sm-12 col-md-4 -->

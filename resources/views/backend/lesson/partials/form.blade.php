@@ -236,7 +236,7 @@ const methods = {
         this.createContent();
     },
 
-    createContent: function(title = '', content = '', content_id = '') {
+    createContent: function(title = '', tags = '', content = '', content_id = '') {
         let title_text = $(".title-text").text();
         let video_text = $(".video-text").text();
         let id = this.uniqueId()+'_editor';
@@ -246,6 +246,12 @@ const methods = {
                             <div class="col-xs-6">
                                 <label>${ title_text }</label>
                                 <input class="form-control" type="text" name="title[]" value="${ title }">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-xs-6">
+                                <label>Tags</label>
+                                <input class="form-control" type="text" name="tags[]" value="${ tags }">
                             </div>
                         </div>
                         <div class="newStructureFormContainer">
@@ -299,7 +305,7 @@ const methods = {
         $.get(url).then(function (response) {
            let contents = response.data;
            $.each(contents, function(key, content){
-              self.createContent(content.title, content.lesson_content, content.id);
+              self.createContent(content.title, content.tags ? content.tags : '', content.lesson_content, content.id);
            });
         });
     },

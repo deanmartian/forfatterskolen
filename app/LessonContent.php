@@ -19,7 +19,7 @@ class LessonContent extends Model
      *
      * @var array
      */
-    protected $fillable = ['lesson_id', 'title', 'lesson_content'];
+    protected $fillable = ['lesson_id', 'title', 'lesson_content', 'tags'];
 
     public function lesson()
     {
