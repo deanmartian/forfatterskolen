@@ -41,8 +41,7 @@
                             Notes
                         </button>
                     </div>
-                    <div class="panel-body">
-                        {{ project.notes }}
+                    <div class="panel-body" v-html="formattedNotes">
                     </div>
                 </div>
 
@@ -756,11 +755,21 @@
             }
         },
 
+        computed: {
+            formattedNotes() {
+                return this.nl2br(this.project.short_notes);
+            }
+        },
+
         components: {
             quillEditor
         },
 
         methods: {
+            nl2br(str) {
+                return str.replace(/\n/g, '<br>');
+            },
+
             setSelectedLearner(value) {
                 this.form.user_id = value ? value.id : "";
                 this.projectForm.user_id = value ? value.id : "";
@@ -783,7 +792,7 @@
                 this.isLoading = true;
                 axios.post('/project/' + this.project.id + '/notes/save', this.noteForm).then(response => {
                     this.isLoading = false;
-                    this.project.notes = response.data.notes;
+                    this.project = response.data;
                     this.$toasted.global.showSuccessMsg({
                         message : 'Notes saved'
                     });
@@ -1337,6 +1346,7 @@
             console.log("project details here");
             console.log(this.currentProject);
             console.log(this.learners);
+            console.log(this.project);
         }
 
     }
@@ -1354,5 +1364,10 @@
 
     .whole-book-container p {
         margin-bottom: 0;
+    }
+
+    .see-more {
+        color: #862736;
+        font-weight: bold;
     }
 </style>

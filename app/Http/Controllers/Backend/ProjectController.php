@@ -871,4 +871,18 @@ class ProjectController extends Controller
 
         return view('backend.contract.show', compact('contract', 'backRoute', 'layout'));
     }
+
+    public function showNotes( $project_id )
+    {
+        $project = Project::find($project_id);
+        $backRoute = route('admin.project.show', $project_id);
+
+        $layout = 'backend.layout';
+        if (AdminHelpers::isGiutbokPage()) {
+            $backRoute = route('g-admin.project.show', $project_id);
+            $layout = 'giutbok.layout';
+        }
+
+        return view('backend.project.notes', compact('project', 'backRoute', 'layout'));
+    }
 }
