@@ -119,6 +119,7 @@
   					{!! nl2br($package->description) !!}
             <div><em>{{ trans('site.maximum-manuscripts') }}: {{$package->manuscripts_count}}</em></div>
             <div><em>{{ trans_choice('site.workshops', 2) }}: {{$package->workshops}}</em></div>
+            <div><em>Package ID: <b>{{$package->id}}</b></em></div>
   					<div class="package-price">
               <div>
                 <strong>{{ trans('site.full-payment') }}</strong><br />
