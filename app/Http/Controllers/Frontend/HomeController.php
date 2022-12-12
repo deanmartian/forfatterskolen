@@ -111,7 +111,7 @@ class HomeController extends Controller
             'upcomingSections'));
     }
 
-    public function fbLeads( Request $request )
+    public function fbLeads( Request $request, CourseService $courseService)
     {
         \Log::info('FACEBOOK LEADS HERE');
         $user_email = $request->email;
@@ -137,11 +137,17 @@ class HomeController extends Controller
             $message = str_replace(
                 [
                     ':login',
-                    ':end_login'
+                    ':end_login',
+                    ':firstname',
+                    ':lastname',
+                    ':password',
                 ],
                 [
                     "<a href='" . $actionUrl . "' class='redirect-button' target='_blank'>",
-                    '</a>'
+                    '</a>',
+                    $request->first_name,
+                    $request->last_name,
+                    'Z5C5E5M2jv'
                 ],
                 $email_template->email_content
             );
@@ -155,6 +161,13 @@ class HomeController extends Controller
                 'attach_file' => NULL
             ];
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        }
+
+        if ($request->has('package_id')) {
+            $user_id = $user->id;
+            $package_id = $request->package_id;
+            $courseTaken = $courseService->addCourseToLearner($user_id, $package_id);
+            $courseService->notifyUser($user_id, $package_id, $courseTaken);
         }
     }
 
