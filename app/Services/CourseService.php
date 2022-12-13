@@ -377,7 +377,7 @@ class CourseService {
      * @param $package_id
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function addCourseToLearner( $user_id, $package_id )
+    public function addCourseToLearner( $user_id, $package_id, $start_course = false )
     {
 
         $course_status = 1;
@@ -387,6 +387,9 @@ class CourseService {
         $start_date = $course->type === 'Group' ? $package->course->start_date : Carbon::today();
 
         $courseTaken = CoursesTaken::firstOrNew(['user_id' => $user_id, 'package_id' => $package_id]);
+        if ($start_course) {
+            $courseTaken->started_at = $start_date;
+        }
         $courseTaken->is_active = $course_status;
         $courseTaken->is_welcome_email_sent = 0;
         $courseTaken->end_date = Carbon::parse($start_date)->addYear();
