@@ -34,6 +34,7 @@ class WorkshopController extends Controller
 
     public function show($id)
     {
+        abort(404);
         $workshop = Workshop::findOrFail($id);
         return view('frontend.workshop.show', compact('workshop'));
     }
@@ -42,6 +43,7 @@ class WorkshopController extends Controller
 
     public function checkout($id)
     {
+        abort(404);
         $workshop = Workshop::findOrFail($id);
         if( !Auth::guest() ) :
             $userWorkshops = Auth::user()->workshopsTaken()->get()->pluck('workshop_id')->toArray();
