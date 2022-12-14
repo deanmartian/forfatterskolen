@@ -39,6 +39,7 @@ class ProjectService
         $model->end_date = $request->end_date;
         $model->description = $request->description;
         $model->is_finished = $request->is_finished;
+        $model->notes = NULL;
         $model->save();
 
         if ($request->user_id) {

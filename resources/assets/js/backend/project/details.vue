@@ -757,7 +757,7 @@
 
         computed: {
             formattedNotes() {
-                return this.nl2br(this.project.short_notes);
+                return this.project.short_notes ? this.nl2br(this.project.short_notes) : null;
             }
         },
 
