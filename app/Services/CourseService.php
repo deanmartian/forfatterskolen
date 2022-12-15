@@ -392,6 +392,7 @@ class CourseService {
         }
         $courseTaken->is_active = $course_status;
         $courseTaken->is_welcome_email_sent = 0;
+        $courseTaken->is_free = $course->is_free;
         $courseTaken->end_date = Carbon::parse($start_date)->addYear();
         $courseTaken->save();
 
