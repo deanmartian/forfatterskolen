@@ -114,6 +114,7 @@ class HomeController extends Controller
     public function fbLeads( Request $request, CourseService $courseService)
     {
         \Log::info('FACEBOOK LEADS HERE');
+        \Log::info(json_encode($request->all()));
         $user_email = $request->email;
         $user       = User::where('email', $user_email)->first();
 
