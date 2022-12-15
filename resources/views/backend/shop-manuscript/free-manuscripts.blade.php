@@ -47,6 +47,7 @@
 							<th>{{ trans('site.genre') }}</th>
 							<th>{{ trans_choice('site.emails', 1) }}</th>
 							<th>From</th>
+							<th>Has Paid Course</th>
 							<th width="600">{{ trans('site.content') }}</th>
 							<th>{{ trans('site.deadline') }}</th>
 							<th>{{ trans('site.date-received') }}</th>
@@ -64,6 +65,7 @@
 								<td>
 									{{ $freeManuscript->from }}
 								</td>
+								<td>{{ $freeManuscript->hasPaidCourse ? 'Yes' : 'No' }}</td>
 								<td>
 									{{ \Illuminate\Support\Str::limit(strip_tags($freeManuscript->content), 120) }}<br>
 									<a href="#editContentModal" data-toggle="modal" class="editContentBtn"
