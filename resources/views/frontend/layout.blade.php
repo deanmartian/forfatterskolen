@@ -188,7 +188,8 @@
             'learner.calendar', 'learner.invoice', 'learner.upgrade', 'learner.get-upgrade-manuscript',
             'learner.get-upgrade-assignment', 'learner.get-upgrade-course', 'learner.competition', 'learner.profile',
             'learner.survey', 'learner.private-message', 'learner.time-register', 'learner.project', 'learner.project.show',
-            'learner.project.marketing-plan'];
+            'learner.project.marketing-plan', 'learner.project.graphic-work', 'learner.project.registration',
+            'learner.project.marketing'];
         ?>
         {{--@if(!in_array(Route::currentRouteName(), $newDesignPages) && !in_array(Route::currentRouteName(), $loggedInPages))
             @include('frontend.partials.navbar')

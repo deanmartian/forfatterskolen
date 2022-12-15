@@ -41,6 +41,9 @@ use App\PaymentPlan;
 use App\Paypal;
 use App\PilotReaderReaderProfile;
 use App\Project;
+use App\ProjectGraphicWork;
+use App\ProjectMarketing;
+use App\ProjectRegistration;
 use App\Repositories\Services\CompetitionService;
 use App\Repositories\Services\PublishingService;
 use App\Repositories\Services\WritingGroupService;
@@ -1678,13 +1681,65 @@ class LearnerController extends Controller
         return view('frontend.learner.self-publishing.project.show', compact('project'));
     }
 
+    public function projectGraphicWork( $project_id )
+    {
+        $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
+        $covers = ProjectGraphicWork::cover()->where('project_id', $project_id)->get();
+        $barCodes = ProjectGraphicWork::barcode()->where('project_id', $project_id)->get();
+        $rewriteScripts = ProjectGraphicWork::rewriteScripts()->where('project_id', $project_id)->get();
+        $trialPages = ProjectGraphicWork::trialPage()->where('project_id', $project_id)->get();
+        $sampleBookPDFs = ProjectGraphicWork::sampleBookPdf()->where('project_id', $project_id)->get();
+        return view('frontend.learner.self-publishing.project.graphic-work', compact('project', 'covers',
+            'barCodes', 'rewriteScripts', 'trialPages', 'sampleBookPDFs'));
+    }
+
+    public function projectRegistration( $project_id )
+    {
+        $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
+        $isbns = ProjectRegistration::isbns()->where('project_id', $project_id)->get();
+        $centralDistributions = ProjectRegistration::centralDistributions()->where('project_id', $project_id)->get();
+        $mentorBookBases = ProjectRegistration::mentorBookBase()->where('project_id', $project_id)->get();
+        $uploadFilesToMentorBookBases = ProjectRegistration::uploadFilesToMentorBookBase()
+            ->where('project_id', $project_id)->get();
+        return view('frontend.learner.self-publishing.project.registration', compact('project', 'isbns',
+            'centralDistributions', 'mentorBookBases', 'uploadFilesToMentorBookBases'));
+    }
+
+    public function projectMarketing( $project_id )
+    {
+        $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
+        $emailBookstores = ProjectMarketing::emailBookstores()->where('project_id', $project_id)->get();
+        $emailLibraries = ProjectMarketing::emailLibraries()->where('project_id', $project_id)->get();
+        $emailPresses = ProjectMarketing::emailPress()->where('project_id', $project_id)->get();
+        $reviewCopiesSent = ProjectMarketing::reviewCopiesSent()->where('project_id', $project_id)->get();
+        $setupOnlineStore = ProjectMarketing::setupOnlineStore()->where('project_id', $project_id)->get();
+        $setupFacebook = ProjectMarketing::setupFacebook()->where('project_id', $project_id)->get();
+        $advertisementFacebook = ProjectMarketing::advertisementFacebook()->where('project_id', $project_id)->get();
+        $manuscriptSentToPrint = ProjectMarketing::manuscriptSentToPrint()->where('project_id', $project_id)->get();
+        $culturalCouncils = ProjectMarketing::culturalCouncils()->where('project_id', $project_id)->get();
+        $freeWords = ProjectMarketing::freeWords()->where('project_id', $project_id)->get();
+        $agreementOnTimeRegistration = ProjectMarketing::agreementOnTimeRegistration()->where('project_id', $project_id)->get();
+        $printEBooks = ProjectMarketing::printEbooks()->where('project_id', $project_id)->get();
+        $sampleBookApproved = ProjectMarketing::sampleBookApproved()->where('project_id', $project_id)->get();
+        $pdfPrintIsApproved = ProjectMarketing::pdfPrintIsApproved()->where('project_id', $project_id)->get();
+        $numberOfAuthorBooks = ProjectMarketing::numberOfAuthorBooks()->where('project_id', $project_id)->get();
+        $updateTheBookBase = ProjectMarketing::updateTheBookBase()->where('project_id', $project_id)->get();
+        $ebookOrdered = ProjectMarketing::ebookOrdered()->where('project_id', $project_id)->get();
+        $ebookReceived = ProjectMarketing::ebookReceived()->where('project_id', $project_id)->get();
+        return view('frontend.learner.self-publishing.project.marketing', compact('project', 'emailBookstores',
+            'emailLibraries', 'emailPresses', 'reviewCopiesSent', 'setupOnlineStore', 'setupFacebook', 'advertisementFacebook',
+            'manuscriptSentToPrint', 'culturalCouncils', 'freeWords', 'agreementOnTimeRegistration', 'printEBooks',
+            'sampleBookApproved', 'pdfPrintIsApproved', 'numberOfAuthorBooks', 'updateTheBookBase', 'ebookOrdered',
+            'ebookReceived'));
+    }
+
     /**
      * @param $project_id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function projectMarketingPlan( $project_id )
     {
-        $project = Project::where('user_id', Auth::user()->id)->where('id', $project_id)->firstOrFail();
+        $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
         $marketingPlans = MarketingPlan::with(['questions.answers' => function($query) use ($project_id) {
             $query->where('marketing_plan_question_answers.project_id', $project_id);
         }])->get();

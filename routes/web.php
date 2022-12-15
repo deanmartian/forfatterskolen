@@ -315,6 +315,9 @@ Route::group([
             'prefix' => 'project/{id}'
         ], function() {
             Route::get('/', 'LearnerController@showProject')->name('learner.project.show');
+            Route::get('/graphic-work', 'LearnerController@projectGraphicWork')->name('learner.project.graphic-work');
+            Route::get('/registration', 'LearnerController@projectRegistration')->name('learner.project.registration');
+            Route::get('/marketing', 'LearnerController@projectMarketing')->name('learner.project.marketing');
             Route::get('/marketing-plan', 'LearnerController@projectMarketingPlan')->name('learner.project.marketing-plan');
             Route::post('/save-answer', 'LearnerController@saveMarketingPlanQA')->name('learner.project.save-marketing-qa');
         });

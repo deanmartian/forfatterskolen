@@ -10,6 +10,7 @@ use App\PilotReaderBook;
 use App\PilotReaderBookChapter;
 use App\PilotReaderBookReading;
 use App\PrivateGroupMember;
+use App\Project;
 use App\Staff;
 use App\User;
 use App\WebinarRegistrant;
@@ -949,6 +950,11 @@ class FrontendHelpers
 
     public static function getNews() {
         return \App\Settings::where('setting_name', 'news')->first();
+    }
+
+    public static function userProject( $user_id, $project_id )
+    {
+        return Project::where('user_id', $user_id)->where('id', $project_id)->firstOrFail();
     }
 
     public static function checkIfLearnerHasAccessToLesson( $user_id, $course_id, $lesson_id )
