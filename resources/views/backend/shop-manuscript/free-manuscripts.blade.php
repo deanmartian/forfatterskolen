@@ -119,6 +119,7 @@
 							<th>{{ trans('site.name') }}</th>
 							<th>{{ trans_choice('site.emails', 1) }}</th>
 							<th>From</th>
+							<th>Has Paid Course</th>
 							<th width="500">{{ trans('site.content') }}</th>
 							<th>{{ trans('site.date-sent') }}</th>
 							<th>{{ trans_choice('site.editors', 1) }}</th>
@@ -132,6 +133,7 @@
 								<td>{{ $freeManuscript->name }}</td>
 								<td>{{ $freeManuscript->email }}</td>
 								<td>{{ $freeManuscript->from ?: 'FS' }}</td>
+								<td>{{ $freeManuscript->hasPaidCourse ? 'Yes' : 'No' }}</td>
 								<td>{{ \Illuminate\Support\Str::limit(strip_tags($freeManuscript->content), 120) }}</td>
 								<td class="text-center">
 									{{ $freeManuscript->latestFeedbackHistory['date_sent'] }} <br>
@@ -144,6 +146,13 @@
 								</td>
 								<td>@if( $freeManuscript->editor ) {{ $freeManuscript->editor->full_name }} @endif</td>
 								<td>
+									@if($freeManuscript->followUpEmail)
+										<button class="btn btn-xs btn-success viewFollowUpBtn" data-toggle="modal"
+												data-target="#viewFollowUpModal"
+												data-fields="{{ json_encode($freeManuscript->followUpEmail) }}">
+											View Follow up email
+										</button>
+									@endif
 									<button class="btn btn-xs btn-success viewFeedbackBtn" data-toggle="modal" data-target="#viewFeedbackModal" data-fields="{{ json_encode($freeManuscript) }}">{{ trans('site.view-feedback') }}</button>
 									<button class="btn btn-xs btn-primary viewManuscriptBtn" data-toggle="modal" data-target="#viewManuscriptModal" data-fields="{{ json_encode($freeManuscript) }}"
 											data-genre="{{ $freeManuscript->genre ? \App\Http\FrontendHelpers::assignmentType($freeManuscript->genre): '' }}"
@@ -251,6 +260,19 @@
             </div>
         </div>
     </div>
+</div>
+
+<div id="viewFollowUpModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">View Follow up Email</h4>
+			</div>
+			<div class="modal-body">
+			</div>
+		</div>
+	</div>
 </div>
 
 <div id="viewFeedbackModal" class="modal fade" role="dialog">
@@ -434,6 +456,13 @@
         $(this).text('Please wait...');
         $("#sendFeedbackForm").submit();
 	});
+
+    $(".viewFollowUpBtn").click(function(){
+        let fields = $(this).data('fields');
+        let modal = $('#viewFollowUpModal');
+        modal.find('.modal-body').empty();
+        modal.find('.modal-body').append(fields.message);
+    });
 
 	$(".viewFeedbackBtn").click(function(){
         var fields = $(this).data('fields');

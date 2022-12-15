@@ -1027,6 +1027,44 @@
 						<textarea name="email_content" cols="30" rows="10" class="form-control tinymce" id="FMEmailContentEditor" required>
 						</textarea>
 					</div>
+
+					<hr class="margin-top">
+					<div class="form-group">
+						<label>
+							Follow Up Email
+						</label>
+						<br>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+							   class="follow-up-email-toggle" name="follow_up_email" data-width="84">
+					</div>
+
+					<div class="follow-up-container hide">
+                        <?php
+                        $followUpEmailTemplate = \App\Http\AdminHelpers::emailTemplate('Free Manuscript Follow-up Email');
+                        ?>
+						<div class="form-group">
+							<label>Send Date</label>
+							<input type="date" class="form-control" name="send_date"
+								   value="{{ \Carbon\Carbon::today()->addDay(1)->format('Y-m-d') }}">
+						</div>
+
+						<div class="form-group">
+							<label>{{ trans('site.subject') }}</label>
+							<input type="text" class="form-control" name="follow_up_subject" value="{{ $followUpEmailTemplate->subject }}"
+								   required>
+						</div>
+						<div class="form-group">
+							<label>{{ trans('site.from') }}</label>
+							<input type="text" class="form-control" name="follow_up_from_email"
+								   value="{{ $followUpEmailTemplate->from_email }}" required>
+						</div>
+						<div class="form-group">
+							<label>{{ trans('site.message') }}</label>
+							<textarea class="form-control tinymce" name="follow_up_message" rows="6"
+									  required>{!! $followUpEmailTemplate->email_content !!}</textarea>
+						</div>
+					</div>
+
 					<div class="clearfix"></div>
 					<button type="submit" class="btn btn-primary pull-right margin-top" id="sendFeedbackEmail">{{ trans('site.approve-feedback') }}</button>
 					<div class="clearfix"></div>
@@ -1122,6 +1160,7 @@
 
         var feedbackFileName =  $(this).data('feedback_file');
         var feedbackNotes =  $(this).data('feedback_notes');
+        $(".follow-up-container").addClass('hide');
 		let modal = $('#shopManuscriptShowFeedbackModal');
         let action = $(this).data('action');
 
@@ -1185,6 +1224,7 @@
 
     $(".sendFMApproveFeedbackBtn").click(function(){
         let action = $(this).data('action');
+        $(".follow-up-container").addClass('hide');
         let modal = $('#freeManuscriptApproveFeedbackModal');
         modal.find('form').attr('action', action);
         let fields = $(this).data('fields');
