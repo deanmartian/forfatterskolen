@@ -37,8 +37,13 @@
                 </a>
 
                 <a href="{{ route('learner.project.marketing-plan', $project->id) }}"
-                   class="btn mb-3 site-btn-global">
+                   class="btn mb-3 site-btn-global mr-2">
                     Marketing Plan
+                </a>
+
+                <a href="{{ route('learner.project.contract', $project->id) }}"
+                   class="btn mb-3 site-btn-global">
+                    Contract
                 </a>
                 <div class="col-md-12 dashboard-course no-left-padding">
                     <div class="card global-card">

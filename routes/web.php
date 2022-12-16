@@ -320,6 +320,7 @@ Route::group([
             Route::get('/marketing', 'LearnerController@projectMarketing')->name('learner.project.marketing');
             Route::get('/marketing-plan', 'LearnerController@projectMarketingPlan')->name('learner.project.marketing-plan');
             Route::post('/save-answer', 'LearnerController@saveMarketingPlanQA')->name('learner.project.save-marketing-qa');
+            Route::get('/contract', 'LearnerController@projectContract')->name('learner.project.contract');
         });
 
         Route::get('/profile', 'LearnerController@profile')->name('learner.profile'); // Profile Page

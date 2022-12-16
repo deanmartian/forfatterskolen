@@ -7,6 +7,7 @@ use App\AssignmentGroupLearner;
 use App\CalendarNote;
 use App\CoachingTimerManuscript;
 use App\CoachingTimerTaken;
+use App\Contract;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\CourseCertificate;
@@ -1769,6 +1770,13 @@ class LearnerController extends Controller
             'errors' => AdminHelpers::createMessageBag('Answer saved.'),
             'alert_type' => 'success'
         ]);
+    }
+
+    public function projectContract( $project_id )
+    {
+        $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
+        $contracts = Contract::where('project_id', $project_id)->paginate(10);
+        return view('frontend.learner.self-publishing.project.contract', compact('project', 'contracts'));
     }
 
     public function uploadSelfPublishingManuscript( $id, Request $request )
