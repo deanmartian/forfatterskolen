@@ -541,7 +541,7 @@ class CourseService {
      * @param $package_id
      * @param $courseTaken
      */
-    public function notifyUser( $user_id, $package_id, $courseTaken )
+    public function notifyUser( $user_id, $package_id, $courseTaken, $hasRegretForm = true )
     {
         $user = $this->user->find($user_id);
         $package = Package::find($package_id);
@@ -562,8 +562,11 @@ class CourseService {
         $redirectLink = encrypt(route('learner.course'));
         $actionUrl = route('auth.login.emailRedirect',[$encode_email, $redirectLink]);
         $actionText = 'Mine Kurs';
-        $attachments = [asset($this->generateDocx($user->id, $package->id)),
-            asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
+        $attachments = NULL;
+        if ($hasRegretForm) {
+            $attachments = [asset($this->generateDocx($user->id, $package->id)),
+                asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
+        }
 
         dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
             'postmail@forfatterskolen.no', 'Forfatterskolen', $attachments, 'courses-taken-order',
