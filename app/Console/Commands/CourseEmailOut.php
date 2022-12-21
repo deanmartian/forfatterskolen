@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Course;
 use App\CoursesTaken;
 use App\CronLog;
 use App\EmailAttachment;
@@ -49,7 +50,9 @@ class CourseEmailOut extends Command
     {
         $today = Carbon::today()->format('Y-m-d');
         CronLog::create(['activity' => 'CourseEmailOut CRON running.']);
-        $emailOutList = EmailOut::where('for_free_course', 0)->whereDate('delay', '=', $today)->get();
+        $courses = Course::all()->pluck('id');
+        $emailOutList = EmailOut::where('for_free_course', 0)->whereDate('delay', '=', $today)
+            ->whereIn('course_id', $courses)->get();
         $emailOutListSent = [];
 
         foreach($emailOutList as $emailOut) {
@@ -121,7 +124,7 @@ class CourseEmailOut extends Command
             array_push($emailOutListSent, $emailOut->id);
         }
 
-        $emailOutListDay = EmailOut::where('for_free_course', 0)->where('delay', 'NOT LIKE', '%-%')->get();
+        $emailOutListDay = EmailOut::where('for_free_course', 0)->where('delay', 'NOT LIKE', '%-%')->whereIn('course_id', $courses)->get();
         $emailOutListDaySent = [];
         foreach ($emailOutListDay as $emailOut) {
             if (!in_array($emailOut->id, $emailOutListDaySent)) {
