@@ -28,7 +28,10 @@ class SaleService {
      */
     public function queryCoursesTaken( $is_archive = 0 )
     {
-        return $this->coursesTaken->with(['package.course', 'user', 'receivedWelcomeEmail', 'receivedFollowUpEmail'])
+        return $this->coursesTaken->with(['user', 'receivedWelcomeEmail', 'receivedFollowUpEmail'])
+            ->whereHas('package.course', function($query) {
+                $query->where('is_free', 0);
+            })
             ->where('is_welcome_email_sent', '=', $is_archive)
             ->orderBy('created_at', 'desc')
             ->paginate(25);
