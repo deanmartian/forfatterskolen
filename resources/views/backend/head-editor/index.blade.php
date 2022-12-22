@@ -396,6 +396,9 @@
 										{{ $publishing->title }}
 									</td>
 									<td>
+										<a href="{{ route('admin.self-publishing.download-manuscript', $publishing->id) }}">
+											<i class="fa fa-download" aria-hidden="true"></i>
+										</a>
 										{!! $publishing->file_link !!}
 									</td>
 									<td>
