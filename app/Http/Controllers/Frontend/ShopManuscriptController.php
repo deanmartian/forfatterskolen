@@ -1249,6 +1249,19 @@ Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">po
                 \Mail::to('terje@giutbok.no')->queue(new SubjectBodyEmail($emailData));
             }
 
+            $userEmail = $request->email;
+            $emailTemplate = AdminHelpers::emailTemplate('Free Manuscript Received');
+            $emailContent = AdminHelpers::formatEmailContent($emailTemplate->email_content, $userEmail,
+                $request->name, '');
+            $userEmailData = [
+                'email_subject' => $emailTemplate->subject,
+                'email_message' => $emailContent,
+                'from_name' => '',
+                'from_email' => $emailTemplate->from_email,
+                'attach_file' => NULL
+            ];
+            \Mail::to($userEmail)->queue(new SubjectBodyEmail($userEmailData));
+
             $list_id = $request->ac_list_id;
             $activeCampaign['email'] = $request->email;
             $activeCampaign['name'] = $request->name;
