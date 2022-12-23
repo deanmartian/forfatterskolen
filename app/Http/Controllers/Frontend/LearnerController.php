@@ -43,6 +43,7 @@ use App\Paypal;
 use App\PilotReaderReaderProfile;
 use App\Project;
 use App\ProjectGraphicWork;
+use App\ProjectInvoice;
 use App\ProjectMarketing;
 use App\ProjectRegistration;
 use App\Repositories\Services\CompetitionService;
@@ -1777,6 +1778,13 @@ class LearnerController extends Controller
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
         $contracts = Contract::where('project_id', $project_id)->paginate(10);
         return view('frontend.learner.self-publishing.project.contract', compact('project', 'contracts'));
+    }
+
+    public function projectInvoice( $project_id )
+    {
+        $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
+        $invoices = ProjectInvoice::where('project_id', $project_id)->get();
+        return view('frontend.learner.self-publishing.project.invoice', compact('project', 'invoices'));
     }
 
     public function uploadSelfPublishingManuscript( $id, Request $request )

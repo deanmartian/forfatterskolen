@@ -141,6 +141,9 @@ Route::group([
         Route::get('/project/{id}/contract/{contract_id}/edit', 'ProjectController@editContract')->name('g-admin.project.contract-edit');
         Route::put('/project/{id}/contract/{contract_id}/update', 'ProjectController@updateContract')->name('g-admin.project.contract-update');
         Route::get('/project/{id}/contract/{contract_id}', 'ProjectController@showContract')->name('g-admin.project.contract-show');
+        Route::get('/project/{id}/invoice', 'ProjectController@invoice')->name('g-admin.project.invoice');
+        Route::post('/project/{id}/invoice/save', 'ProjectController@saveInvoice')->name('g-admin.project.invoice.save');
+        Route::delete('/project/{id}/invoice/{invoice_id}/delete', 'ProjectController@deleteInvoice')->name('g-admin.project.invoice.delete');
         Route::get('/project', 'ProjectController@index')->name('g-admin.project.index');
         Route::post('/project/save', 'ProjectController@saveProject');
         Route::get('/project/{id}', 'ProjectController@show')->name('g-admin.project.show');

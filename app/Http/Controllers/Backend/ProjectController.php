@@ -22,6 +22,7 @@ use App\ProjectBook;
 use App\ProjectBookFormatting;
 use App\ProjectBookPicture;
 use App\ProjectGraphicWork;
+use App\ProjectInvoice;
 use App\ProjectMarketing;
 use App\ProjectRegistration;
 use App\ProjectWholeBook;
@@ -870,6 +871,77 @@ class ProjectController extends Controller
         }
 
         return view('backend.contract.show', compact('contract', 'backRoute', 'layout'));
+    }
+
+    /**
+     * @param $project_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function invoice( $project_id )
+    {
+        $layout = 'backend.layout';
+        $backRoute = route('admin.project.show', $project_id);
+        $saveInvoiceRoute = 'admin.project.invoice.save';
+        $deleteInvoiceRoute = 'admin.project.invoice.delete';
+        if (AdminHelpers::isGiutbokPage()) {
+            $layout = 'giutbok.layout';
+            $backRoute = route('g-admin.project.show', $project_id);
+            $saveInvoiceRoute = 'g-admin.project.invoice.save';
+            $deleteInvoiceRoute = 'g-admin.project.invoice.delete';
+        }
+
+        $project = Project::find($project_id);
+        $invoices = ProjectInvoice::where('project_id', $project_id)->get();
+
+        return view('backend.project.invoice', compact('project', 'backRoute', 'layout', 'saveInvoiceRoute',
+            'invoices', 'deleteInvoiceRoute'));
+    }
+
+    /**
+     * @param $project_id
+     * @param Request $request
+     * @param ProjectService $projectService
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function saveInvoice( $project_id, Request $request, ProjectService $projectService )
+    {
+
+        // create graphic work folder first
+        AdminHelpers::createDirectory('storage/project-invoice');
+        $invoice = $request->id ? ProjectInvoice::find($request->id) : new ProjectInvoice();
+
+        if (!$request->id) {
+            $this->validate($request, [
+                'invoice' => 'required|mimes:pdf'
+            ]);
+        }
+
+        if ($request->hasFile('invoice')) {
+            $invoice->invoice_file = $projectService->saveFileOrImage('storage/project-invoice', 'invoice');
+        }
+
+        $invoice->project_id = $project_id;
+        $invoice->notes = $request->notes;
+        $invoice->save();
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Invoice saved successfully.'),
+                'alert_type' => 'success']);
+    }
+
+    /**
+     * @param $project_id
+     * @param $invoice_id
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function deleteInvoice( $project_id, $invoice_id )
+    {
+        $invoice = ProjectInvoice::find($invoice_id);
+        $invoice->delete();
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Invoice deleted successfully.'),
+                'alert_type' => 'success']);
     }
 
     public function showNotes( $project_id )

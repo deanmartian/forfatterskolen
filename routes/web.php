@@ -321,6 +321,7 @@ Route::group([
             Route::get('/marketing-plan', 'LearnerController@projectMarketingPlan')->name('learner.project.marketing-plan');
             Route::post('/save-answer', 'LearnerController@saveMarketingPlanQA')->name('learner.project.save-marketing-qa');
             Route::get('/contract', 'LearnerController@projectContract')->name('learner.project.contract');
+            Route::get('/invoice', 'LearnerController@projectInvoice')->name('learner.project.invoice');
         });
 
         Route::get('/profile', 'LearnerController@profile')->name('learner.profile'); // Profile Page
@@ -1092,6 +1093,9 @@ Route::group([
         Route::get('/project/{id}/contract/{contract_id}/edit', 'ProjectController@editContract')->name('admin.project.contract-edit');
         Route::put('/project/{id}/contract/{contract_id}/update', 'ProjectController@updateContract')->name('admin.project.contract-update');
         Route::get('/project/{id}/contract/{contract_id}', 'ProjectController@showContract')->name('admin.project.contract-show');
+        Route::get('/project/{id}/invoice', 'ProjectController@invoice')->name('admin.project.invoice');
+        Route::post('/project/{id}/invoice/save', 'ProjectController@saveInvoice')->name('admin.project.invoice.save');
+        Route::delete('/project/{id}/invoice/{invoice_id}/delete', 'ProjectController@deleteInvoice')->name('admin.project.invoice.delete');
         Route::get('/project/{id}/notes', 'ProjectController@showNotes')->name('admin.project.notes');
         Route::get('/project', 'ProjectController@index')->name('admin.project.index');
         Route::post('/project/save', 'ProjectController@saveProject');

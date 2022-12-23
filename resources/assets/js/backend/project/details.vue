@@ -17,9 +17,9 @@
             <a :href="'/project/' + project.id + '/contract'" class="btn btn-primary btn-sm">
                 Contract
             </a>
-            <button class="btn btn-primary btn-sm">
+            <a :href="'/project/' + project.id + '/invoice'" class="btn btn-primary btn-sm">
                 Invoices
-            </button>
+            </a>
             <div class="pull-right">
                 <button class="btn btn-success btn-sm" @click="showLearnerFormModal()">
                     <i class="fa fa-user"></i> Add Learner
