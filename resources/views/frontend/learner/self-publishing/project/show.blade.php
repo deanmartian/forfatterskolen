@@ -46,10 +46,10 @@
                     Contract
                 </a>
 
-                <a href="{{ route('learner.project.invoice', $project->id) }}"
+                {{--<a href="{{ route('learner.project.invoice', $project->id) }}"
                    class="btn mb-3 site-btn-global">
                     Invoice
-                </a>
+                </a>--}}
                 <div class="col-md-12 dashboard-course no-left-padding">
                     <div class="card global-card">
                         <div class="card-header">
