@@ -23,6 +23,7 @@ use App\ProjectBookFormatting;
 use App\ProjectBookPicture;
 use App\ProjectGraphicWork;
 use App\ProjectInvoice;
+use App\ProjectManualInvoice;
 use App\ProjectMarketing;
 use App\ProjectRegistration;
 use App\ProjectWholeBook;
@@ -883,18 +884,23 @@ class ProjectController extends Controller
         $backRoute = route('admin.project.show', $project_id);
         $saveInvoiceRoute = 'admin.project.invoice.save';
         $deleteInvoiceRoute = 'admin.project.invoice.delete';
+        $saveManualInvoiceRoute = 'admin.project.manual-invoice.save';
+        $deleteManualInvoiceRoute = 'admin.project.manual-invoice.delete';
         if (AdminHelpers::isGiutbokPage()) {
             $layout = 'giutbok.layout';
             $backRoute = route('g-admin.project.show', $project_id);
             $saveInvoiceRoute = 'g-admin.project.invoice.save';
             $deleteInvoiceRoute = 'g-admin.project.invoice.delete';
+            $saveManualInvoiceRoute = 'g-admin.project.manual-invoice.save';
+            $deleteManualInvoiceRoute = 'g-admin.project.manual-invoice.delete';
         }
 
         $project = Project::find($project_id);
         $invoices = ProjectInvoice::where('project_id', $project_id)->get();
+        $manualInvoices = ProjectManualInvoice::where('project_id', $project_id)->get();
 
         return view('backend.project.invoice', compact('project', 'backRoute', 'layout', 'saveInvoiceRoute',
-            'invoices', 'deleteInvoiceRoute'));
+            'invoices', 'deleteInvoiceRoute', 'saveManualInvoiceRoute', 'manualInvoices', 'deleteManualInvoiceRoute'));
     }
 
     /**
@@ -937,6 +943,36 @@ class ProjectController extends Controller
     public function deleteInvoice( $project_id, $invoice_id )
     {
         $invoice = ProjectInvoice::find($invoice_id);
+        $invoice->delete();
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Invoice deleted successfully.'),
+                'alert_type' => 'success']);
+    }
+
+    public function saveManualInvoice( $project_id, Request $request )
+    {
+        $this->validate($request, [
+            'invoice' => 'required'
+        ]);
+
+        $invoice = ProjectManualInvoice::firstOrNew(['id' => $request->id]);
+        $invoice->project_id = $project_id;
+        $invoice->invoice = $request->invoice;
+        $invoice->amount = $request->amount;
+        $invoice->assigned_to = $request->assigned_to;
+        $invoice->date = $request->date;
+        $invoice->note = $request->note;
+        $invoice->save();
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Invoice saved successfully.'),
+                'alert_type' => 'success']);
+    }
+
+    public function deleteManualInvoice( $project_id, $invoice_id )
+    {
+        $invoice = ProjectManualInvoice::find($invoice_id);
         $invoice->delete();
 
         return redirect()->back()
