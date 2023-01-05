@@ -31,6 +31,7 @@ use App\Services\CourseService;
 use App\Services\LearnerService;
 use App\TimeRegister;
 use App\UserAutoRegisterToCourseWebinar;
+use App\UserBookForSale;
 use App\UserEmail;
 use App\UserPreferredEditor;
 use App\Workshop;
@@ -586,7 +587,7 @@ class LearnerController extends Controller
 
             $invoice->fiken_dueDate = $request->due_date;
             $invoice->save();
-            return redirect()->back()->with([
+            return redirect()->route('admin.learner.show', $invoice->user_id)->with([
                 'errors' => AdminHelpers::createMessageBag('Due date updated'),
                 'alert_type' => 'success',
                 'not-former-courses' => true
@@ -2015,6 +2016,30 @@ class LearnerController extends Controller
         ]);
     }
 
+    public function saveForSaleBooks( $user_id, Request $request )
+    {
+        $request->merge(['user_id' => $user_id]);
+
+        UserBookForSale::updateOrCreate([
+            'id' => $request->id
+        ], $request->except('id'));
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book for sale saved successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    public function deleteForSaleBooks( $user_id, $id )
+    {
+        UserBookForSale::find($id)->delete();
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book for sale deleted successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
     /**
      * Create private message
      * @param $learner_id
