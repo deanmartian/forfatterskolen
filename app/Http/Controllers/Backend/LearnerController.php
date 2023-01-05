@@ -587,7 +587,7 @@ class LearnerController extends Controller
 
             $invoice->fiken_dueDate = $request->due_date;
             $invoice->save();
-            return redirect()->route('admin.learner.show', $invoice->user_id)->with([
+            return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('Due date updated'),
                 'alert_type' => 'success',
                 'not-former-courses' => true
