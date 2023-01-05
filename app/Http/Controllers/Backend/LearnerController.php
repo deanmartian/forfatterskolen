@@ -50,6 +50,7 @@ use App\CoursesTaken;
 use App\ShopManuscriptsTaken;
 use App\ShopManuscriptComment;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 use Validator;
 use App\ShopManuscript;
 use App\Lesson;
@@ -577,7 +578,8 @@ class LearnerController extends Controller
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
             curl_setopt($ch, CURLOPT_POSTFIELDS, $field_string);
             $data = curl_exec($ch);
-
+            Log::info("update due invoice after curl request");
+            Log::info(json_encode($data));
             $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             if (!in_array($http_code, [200, 201])) { // 200 - get success, 201 - post success
                 abort($http_code); // display error page instead of the Whoops page
