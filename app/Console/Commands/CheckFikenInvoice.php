@@ -105,6 +105,7 @@ class CheckFikenInvoice extends Command
                     $invoice->kid_number        = $kid;
                     $invoice->fiken_issueDate   = $fikenIssueDate;
                     $invoice->gross             = $gross;
+                    $invoice->fiken_invoice_id  = $fikenInvoice->invoiceId;
                     $invoice->save();
                     CronLog::create(['activity' => 'CheckFikenInvoice CRON updated an invoice with kid_number '.$kid]);
                 }
