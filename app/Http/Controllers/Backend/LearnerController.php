@@ -32,6 +32,7 @@ use App\Services\LearnerService;
 use App\TimeRegister;
 use App\UserAutoRegisterToCourseWebinar;
 use App\UserBookForSale;
+use App\UserBookSale;
 use App\UserEmail;
 use App\UserPreferredEditor;
 use App\Workshop;
@@ -2042,6 +2043,32 @@ class LearnerController extends Controller
             'not-former-courses'    => true
         ]);
     }
+
+    public function saveBookSales( $user_id, Request $request )
+    {
+        $request->merge(['user_id' => $user_id, 'user_book_for_sale_id' => $request->book_id]);
+
+        UserBookSale::updateOrCreate([
+            'id' => $request->id
+        ], $request->except('id', 'book_id'));
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book sale saved successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    public function deleteBookSales( $user_id, $id )
+    {
+        UserBookSale::find($id)->delete();
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book sale deleted successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
     /**
      * Create private message
      * @param $learner_id

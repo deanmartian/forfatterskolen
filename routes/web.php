@@ -304,6 +304,10 @@ Route::group([
         Route::get('/competition', 'LearnerController@competition')->name('learner.competition'); // Competitions Page
         Route::get('/private-message', 'LearnerController@privateMessage')->name('learner.private-message'); // Private Message Page
         Route::get('/time-register', 'LearnerController@timeRegister')->name('learner.time-register');
+        Route::get('/book-sale', 'LearnerController@bookSale')->name('learner.book-sale');
+        Route::get('/book-sale/list-by-month', 'LearnerController@bookSaleByMonth');
+        Route::post('/for-sale-books/save', 'LearnerController@saveForSaleBooks')->name('learner.save-for-sale-books');
+        Route::delete('/for-sale-books/{id}/delete', 'LearnerController@deleteForSaleBooks')->name('learner.delete-for-sale-books');
 
         Route::get('/project', 'LearnerController@project')->name('learner.project');
         Route::post('/project/self-publishing/{id}/upload-manuscript', 'LearnerController@uploadSelfPublishingManuscript')
@@ -696,6 +700,10 @@ Route::group([
         Route::post('learner/{learner_id}/add-email', 'LearnerController@addSecondaryEmail')->name('admin.learner.add-email');
         Route::post('learner/{email_id}/set-primary-email', 'LearnerController@setPrimaryEmail')->name('admin.learner.set-primary-email');
         Route::delete('learner/{email_id}/delete-secondary-email', 'LearnerController@removeSecondaryEmail')->name('admin.learner.remove-secondary-email');
+        Route::post('learner/{learner_id}/save-for-sale-books', 'LearnerController@saveForSaleBooks')->name('admin.learner.save-for-sale-books');
+        Route::delete('learner/{learner_id}/for-sale-books/{id}/delete', 'LearnerController@deleteForSaleBooks')->name('admin.learner.delete-for-sale-books');
+        Route::post('learner/{learner_id}/save-book-sales', 'LearnerController@saveBookSales')->name('admin.learner.save-book-sales');
+        Route::delete('learner/{learner_id}/book-sales/{id}/delete', 'LearnerController@deleteBookSales')->name('admin.learner.delete-book-sales');
         Route::post('learner/{learner_id}/webinar-registrant/{registrant_id}/send-email', 'LearnerController@sendWebinarRegistrantEmail')
             ->name('admin.learner.send-webinar-registrant-email');
 

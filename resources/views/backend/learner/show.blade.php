@@ -1672,6 +1672,117 @@
 				</div>
 			</div> <!-- end email history section -->
 
+			@if($learner->is_self_publishing_learner)
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<button class="btn btn-primary pull-right btn-xs booksForSaleBtn" data-toggle="modal"
+								data-action=""
+								data-target="#booksForSaleModal">
+							+ Add Books for Sale
+						</button>
+						<h4>
+							Books for sale
+						</h4>
+					</div>
+					<div class="table-responsive" style="padding: 10px">
+						<table class="table dt-table">
+							<thead>
+							<tr>
+								<th>Title</th>
+								<th>Description</th>
+								<th>Price</th>
+								<th></th>
+							</tr>
+							</thead>
+							<tbody>
+							@foreach($learner->booksForSale as $bookForSale)
+								<tr>
+									<td>{{ $bookForSale->title }}</td>
+									<td>{{ $bookForSale->description }}</td>
+									<td>{{ $bookForSale->price_formatted }}</td>
+									<td>
+										<button class="btn btn-primary btn-xs booksForSaleBtn" data-toggle="modal"
+												data-record="{{ json_encode($bookForSale) }}"
+												data-target="#booksForSaleModal">
+											<i class="fa fa-edit"></i>
+										</button>
+
+										<button class="btn btn-danger btn-xs deleteRecordBtn" data-toggle="modal"
+												data-target="#deleteRecordModal"
+												data-title="Delete Books for Sale"
+												data-action="{{ route('admin.learner.delete-for-sale-books',
+												 [$bookForSale->user_id, $bookForSale->id]) }}">
+											<i class="fa fa-trash"></i>
+										</button>
+									</td>
+								</tr>
+							@endforeach
+							</tbody>
+						</table>
+					</div>
+				</div> <!-- books for sale -->
+
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<button class="btn btn-primary pull-right btn-xs bookSalesBtn" data-toggle="modal"
+								data-books="{{ json_encode($learner->booksForSale) }}"
+								data-target="#bookSalesModal">
+							+ Book Sales
+						</button>
+						<h4>
+							Books sales
+						</h4>
+					</div>
+					<div class="table-responsive" style="padding: 10px">
+						<table class="table dt-table">
+							<thead>
+							<tr>
+								<th>Book</th>
+								<th>Quantity</th>
+								<th>Amount</th>
+								<th>Date</th>
+								<th></th>
+							</tr>
+							</thead>
+							<tbody>
+							@foreach($learner->bookSales as $bookSale)
+								<tr>
+									<td>
+										{{ $bookSale->book->title }}
+									</td>
+									<td>
+										{{ $bookSale->quantity }}
+									</td>
+									<td>
+										{{ $bookSale->amount_formatted }}
+									</td>
+									<td>
+										{{ $bookSale->date }}
+									</td>
+									<td>
+										<button class="btn btn-primary btn-xs bookSalesBtn" data-toggle="modal"
+												data-record="{{ json_encode($bookSale) }}"
+												data-books="{{ json_encode($learner->booksForSale) }}"
+												data-target="#bookSalesModal">
+											<i class="fa fa-edit"></i>
+										</button>
+
+										<button class="btn btn-danger btn-xs deleteRecordBtn" data-toggle="modal"
+												data-target="#deleteRecordModal"
+												data-title="Delete Book Sale"
+												data-action="{{ route('admin.learner.delete-book-sales',
+												 [$bookSale->user_id, $bookSale->id]) }}">
+											<i class="fa fa-trash"></i>
+										</button>
+									</td>
+								</tr>
+							@endforeach
+							</tbody>
+						</table>
+					</div>
+				</div>
+			@endif
+
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<h4>
@@ -3057,6 +3168,111 @@
 
 			</div>
 		</div>
+	</div>
+</div>
+
+<div id="booksForSaleModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Books for sale</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.learner.save-for-sale-books', $learner->id) }}" onsubmit="disableSubmit(this)">
+				{{ csrf_field() }}
+					<input type="hidden" name="id">
+
+					<div class="form-group">
+						<label>Title</label>
+						<input type="text" class="form-control" name="title" required>
+					</div>
+
+					<div class="form-group">
+						<label>Description</label>
+						<textarea class="form-control" name="description" rows="10" cols="30"></textarea>
+					</div>
+
+					<div class="form-group">
+						<label>Price</label>
+						<input type="number" class="form-control" name="price" required>
+					</div>
+
+					<button class="btn btn-primary pull-right" type="submit">
+						{{ trans('site.save') }}
+					</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="bookSalesModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Book sales</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.learner.save-book-sales', $learner->id) }}" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<input type="hidden" name="id">
+
+					<div class="form-group">
+						<label>Book</label>
+						<select name="book_id" class="form-control" required></select>
+					</div>
+
+					<div class="form-group">
+						<label>Quantity</label>
+						<input type="number" class="form-control" name="quantity" required>
+					</div>
+
+					<div class="form-group">
+						<label>Amount</label>
+						<input type="number" class="form-control" name="amount" required>
+					</div>
+
+					<div class="form-group">
+						<label>Date</label>
+						<input type="date" class="form-control" name="date" required>
+					</div>
+
+					<button class="btn btn-primary pull-right" type="submit">
+						{{ trans('site.save') }}
+					</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="deleteRecordModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title"></h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					{{ method_field('DELETE') }}
+
+					<p>{{ trans('site.delete-item-question') }}</p>
+
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-danger">{{ trans('site.delete') }}</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.cancel') }}</button>
+					</div>
+				</form>
+			</div>
+
+		</div>
+
 	</div>
 </div>
 
@@ -4669,6 +4885,52 @@
     $(".deleteCoachingBtn").click(function() {
         let action = $(this).data('action');
         let modal = $('#deleteCoachingModal');
+        modal.find('form').attr('action', action);
+	});
+
+    $(".booksForSaleBtn").click(function() {
+        let record = $(this).data('record');
+        let modal = $('#booksForSaleModal');
+        modal.find('[name=id]').val('');
+
+        if (record) {
+            modal.find('[name=id]').val(record.id);
+            modal.find('[name=title]').val(record.title);
+            modal.find('[name=description]').text(record.description);
+            modal.find('[name=price]').val(record.price);
+		}
+	});
+
+    $(".bookSalesBtn").click(function() {
+        let modal = $("#bookSalesModal");
+        let books = $(this).data('books');
+        let record = $(this).data('record');
+        modal.find('[name=id]').val('');
+
+        let bookContainer = modal.find("[name=book_id]");
+        bookContainer.empty();
+        let generateBooks = "<option value='' selected disabled>- Select Book -</option>";
+
+        $.each(books, function(k, book) {
+            generateBooks += "<option value='" + book.id + "'>" + book.title + "</option>";
+		});
+
+        bookContainer.append(generateBooks);
+
+        if (record) {
+            modal.find('[name=id]').val(record.id);
+            modal.find('[name=book_id]').val(record.user_book_for_sale_id);
+            modal.find('[name=quantity]').val(record.quantity);
+            modal.find('[name=amount]').val(record.amount);
+            modal.find('[name=date]').val(record.date);
+        }
+    });
+
+    $(".deleteRecordBtn").click(function() {
+        let modal = $("#deleteRecordModal");
+        let action = $(this).data('action');
+        let title = $(this).data('title');
+        modal.find('.modal-title').text(title);
         modal.find('form').attr('action', action);
 	});
 

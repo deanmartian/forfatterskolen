@@ -187,7 +187,7 @@
             'learner.webinar', 'learner.course-webinar', 'learner.assignment', 'learner.assignment.group.show',
             'learner.calendar', 'learner.invoice', 'learner.upgrade', 'learner.get-upgrade-manuscript',
             'learner.get-upgrade-assignment', 'learner.get-upgrade-course', 'learner.competition', 'learner.profile',
-            'learner.survey', 'learner.private-message', 'learner.time-register', 'learner.project', 'learner.project.show',
+            'learner.survey', 'learner.private-message', 'learner.time-register', 'learner.book-sale', 'learner.project', 'learner.project.show',
             'learner.project.marketing-plan', 'learner.project.graphic-work', 'learner.project.registration',
             'learner.project.marketing', 'learner.project.contract', 'learner.project.invoice'];
         ?>

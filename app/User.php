@@ -479,4 +479,14 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\TimeRegister');
     }
+
+    public function booksForSale()
+    {
+        return $this->hasMany('App\UserBookForSale');
+    }
+
+    public function bookSales()
+    {
+        return $this->hasMany('App\UserBookSale');
+    }
 }

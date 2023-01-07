@@ -33,6 +33,7 @@ use App\Settings;
 use App\TimeRegister;
 use App\User;
 use Illuminate\Http\Request;
+use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Time;
 use PhpOffice\PhpWord\PhpWord;
 
 class ProjectController extends Controller
@@ -128,6 +129,10 @@ class ProjectController extends Controller
         ]);
 
         Contract::where('project_id', $project_id)->update([
+            'project_id' => NULL
+        ]);
+
+        TimeRegister::where('project_id', $project_id)->update([
             'project_id' => NULL
         ]);
 

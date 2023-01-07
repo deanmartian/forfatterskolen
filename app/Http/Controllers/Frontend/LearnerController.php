@@ -63,6 +63,8 @@ use App\SurveyAnswer;
 use App\TimeRegister;
 use App\User;
 use App\UserAutoRegisterToCourseWebinar;
+use App\UserBookForSale;
+use App\UserBookSale;
 use App\UserEmail;
 use App\UserRenewedCourse;
 use App\UserSocial;
@@ -1669,6 +1671,63 @@ class LearnerController extends Controller
     {
         $timeRegisters = Auth::user()->timeRegisters->load('project');
         return view('frontend.learner.self-publishing.time-register', compact('timeRegisters'));
+    }
+
+    public function bookSale()
+    {
+        $bookSales = Auth::user()->bookSales;
+        $learner = Auth::user();
+        return view('frontend.learner.self-publishing.sales', compact('bookSales', 'learner'));
+    }
+
+    public function bookSaleByMonth()
+    {
+        $sales =  UserBookSale::select(
+            DB::raw('sum(quantity) as total_quantity'),
+            DB::raw("DATE_FORMAT(date,'%m') as month")
+        )
+            ->whereYear('date', date('Y'))
+            ->where('user_id', Auth::user()->id)
+            ->groupBy('month')
+            ->orderBy('month', 'ASC')
+            ->get();
+
+        $data = array_fill(0, 12, 0);
+
+        foreach($sales as $order){
+            $data[$order->month-1] = $order->total_quantity;
+        }
+
+        return $data;
+    }
+
+    public function saveForSaleBooks( Request $request )
+    {
+        $this->validate($request, [
+            'title' => 'required',
+            'price' => 'required|numeric'
+        ]);
+        $request->merge(['user_id' => Auth::user()->id]);
+
+        UserBookForSale::updateOrCreate([
+            'id' => $request->id
+        ], $request->except('id'));
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book for sale saved successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    public function deleteForSaleBooks( $id )
+    {
+        UserBookForSale::find($id)->delete();
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book for sale deleted successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
     }
 
     public function project()
