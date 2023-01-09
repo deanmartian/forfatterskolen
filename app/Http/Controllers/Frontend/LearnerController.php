@@ -1695,7 +1695,7 @@ class LearnerController extends Controller
         $data = array_fill(0, 12, 0);
 
         foreach($sales as $order){
-            $data[$order->month-1] = $order->total_quantity;
+            $data[$order->month-1] = (int) $order->total_quantity;
         }
 
         return $data;

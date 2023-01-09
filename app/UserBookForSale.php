@@ -9,7 +9,7 @@ class UserBookForSale extends Model
 {
 
     protected $table = 'user_books_for_sale';
-    protected $fillable = ['user_id', 'title', 'description', 'price'];
+    protected $fillable = ['user_id', 'isbn', 'title', 'description', 'price'];
     protected $appends = ['price_formatted'];
 
     public function user()

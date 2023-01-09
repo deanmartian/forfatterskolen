@@ -9,7 +9,7 @@ class UserBookSale extends Model
 {
 
     protected $fillable = ['user_id', 'user_book_for_sale_id', 'quantity', 'amount', 'date'];
-    protected $appends = ['amount_formatted'];
+    protected $appends = ['amount_formatted', 'total_amount','total_amount_formatted'];
 
     public function user()
     {
@@ -24,6 +24,18 @@ class UserBookSale extends Model
     public function getAmountFormattedAttribute()
     {
         return isset($this->attributes['amount']) ? FrontendHelpers::currencyFormat($this->attributes['amount']) : null;
+    }
+
+    public function getTotalAmountAttribute()
+    {
+        return isset($this->attributes['amount']) && $this->attributes['amount']
+            ? $this->attributes['amount']
+            : $this->book->price * $this->attributes['quantity'];
+    }
+
+    public function getTotalAmountFormattedAttribute()
+    {
+        return FrontendHelpers::currencyFormat($this->getAttributeValue('total_amount'));
     }
 
 }

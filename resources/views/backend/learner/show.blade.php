@@ -1688,6 +1688,7 @@
 						<table class="table dt-table">
 							<thead>
 							<tr>
+								<th>ISBN</th>
 								<th>Title</th>
 								<th>Description</th>
 								<th>Price</th>
@@ -1697,6 +1698,7 @@
 							<tbody>
 							@foreach($learner->booksForSale as $bookForSale)
 								<tr>
+									<td>{{ $bookForSale->isbn }}</td>
 									<td>{{ $bookForSale->title }}</td>
 									<td>{{ $bookForSale->description }}</td>
 									<td>{{ $bookForSale->price_formatted }}</td>
@@ -1754,7 +1756,7 @@
 										{{ $bookSale->quantity }}
 									</td>
 									<td>
-										{{ $bookSale->amount_formatted }}
+										{{ $bookSale->total_amount_formatted }}
 									</td>
 									<td>
 										{{ $bookSale->date }}
@@ -3184,6 +3186,11 @@
 					<input type="hidden" name="id">
 
 					<div class="form-group">
+						<label>ISBN</label>
+						<input type="text" class="form-control" name="isbn" required>
+					</div>
+
+					<div class="form-group">
 						<label>Title</label>
 						<input type="text" class="form-control" name="title" required>
 					</div>
@@ -3232,7 +3239,7 @@
 
 					<div class="form-group">
 						<label>Amount</label>
-						<input type="number" class="form-control" name="amount" required>
+						<input type="number" class="form-control" name="amount">
 					</div>
 
 					<div class="form-group">
@@ -4895,6 +4902,7 @@
 
         if (record) {
             modal.find('[name=id]').val(record.id);
+            modal.find('[name=isbn]').val(record.isbn);
             modal.find('[name=title]').val(record.title);
             modal.find('[name=description]').text(record.description);
             modal.find('[name=price]').val(record.price);

@@ -194,7 +194,16 @@
                         }
                     }]
                 },
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                tooltips: {
+                    enabled: true,
+                    mode: 'single',
+                    callbacks: {
+                        label: function(tooltipItems, data) {
+                            return 'Sales: ' + tooltipItems.yLabel;
+                        }
+                    }
+                }
             };
 
             let myLineChart = new Chart(ctx, {
@@ -203,7 +212,7 @@
                     labels: monthAbbreviations,
                     datasets: [{
                         data: [],
-                        label: 'Sales',
+                        label: 'Total Sales: ', // label on top, this is being changed on ajax_chart
                         borderColor: "#862736",
                         backgroundColor:'#862736',
                         fill: false
@@ -242,9 +251,9 @@
             let data = {};
 
             $.getJSON(url, data).done(function(response) {
-                console.log("ajax chart");
-                console.log(response);
+                const totalSales = response.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
                 chart.data.datasets[0].data = response; // or you can iterate for multiple datasets
+                chart.data.datasets[0].label = 'Total Sales: ' + totalSales;
                 chart.update(); // finally update our chart
             });
         }
