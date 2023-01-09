@@ -2229,9 +2229,9 @@ class LearnerController extends Controller
             if($headEditor) {
                 AdminHelpers::queue_mail($headEditor->email, $emailTemplate->subject, $email_content, $emailTemplate->from_email);
             }
-            if($editor){
+            /*if($editor){
                 AdminHelpers::queue_mail($editor->email, $emailTemplate->subject, $email_content, $emailTemplate->from_email);
-            }
+            }*/
 
             return redirect()->back();
         else :
