@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\CronLog;
+use App\Package;
 use App\UserAutoRegisterToCourseWebinar;
 use App\WebinarRegistrant;
 use App\WebinarScheduledRegistration;
@@ -49,6 +50,7 @@ class WebinarScheduledRegistrationCommand extends Command
 
         $header[] = 'API-KEY: '.config('services.big_marker.api_key');
         $counter = 1;
+        $isWebinarPakke = false;
 
         foreach ( $schedules as $schedule ) {
 
@@ -58,13 +60,15 @@ class WebinarScheduledRegistrationCommand extends Command
                 if ($webinar->course->isWebinarPakke) {
                     $learners = UserAutoRegisterToCourseWebinar::where('course_id', $schedule->webinar->course->id)
                         ->get();
+                    $isWebinarPakke = true;
                 } else {
                     $learners = $webinar->course->learners->get();
                 }
 
                 foreach ( $learners as $learner ) {
                     $user = $learner->user;
-                    if ($user) {
+                    
+                    if ($user && !$isWebinarPakke || ($user && $isWebinarPakke && $user->coursesTakenNotOld2->count() > 0)) {
                         $data = [
                             'id'            => $webinar->link,
                             'email'         => $user->email,
@@ -92,7 +96,7 @@ class WebinarScheduledRegistrationCommand extends Command
                             CronLog::create(['activity' => 'WebinarScheduledRegistration added ' . $user->email .
                                 ' to bigmarker webinar ' . $webinar->link . '.']);
                         }
-                    }
+                    } 
                 }
             }
 
