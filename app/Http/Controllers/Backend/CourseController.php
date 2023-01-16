@@ -929,6 +929,22 @@ class CourseController extends Controller
 
     }
 
+    public function exportHiddenWebinars( $course_id )
+    {
+        $course = Course::find($course_id);
+        if ($course) {
+            $headers = ['title', 'webinar id'];
+            $webinars = [];
+
+            foreach ($course->webinars()->where('status', 0)->get() as $webinar) {
+                $webinars[] = [$webinar->title, $webinar->link];
+            }
+            $excel          = \App::make('excel');
+            return $excel->download(new GenericExport($webinars, $headers), 'Hidden Webinars.xlsx');
+        }
+        return redirect()->back();
+    }
+
     public function canReceiveEmailUpdate( $course_taken_id, Request $request )
     {
         $courseTaken = CoursesTaken::find($course_taken_id);
