@@ -1,6 +1,9 @@
 /node_modules
 /public/hot
 /public/storage
+/public/fiken-invoice
+/public/files
+/public/*
 /storage/*.key
 /vendor
 /.idea
@@ -13,3 +16,4 @@ npm-debug.log
 .env-live
 .env-local
 service-worker.js
+node_modules
