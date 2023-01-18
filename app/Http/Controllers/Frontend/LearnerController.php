@@ -96,6 +96,7 @@ use App\Assignment;
 use App\AssignmentManuscript;
 use App\AssignmentGroup;
 use App\AssignmentFeedback;
+use App\CourseDiscount;
 use App\Log;
 use Hash;
 use File;
@@ -428,7 +429,14 @@ class LearnerController extends Controller
             $isReplay = 1;
         }
 
-        return view('frontend.learner.webinar', compact('searchResult', 'isPost', 'isReplay'));
+        $replayWebinars = DB::table('lesson_contents')->select('lesson_contents.*')
+                            ->leftJoin('lessons', 'lesson_contents.lesson_id', '=', 'lessons.id')
+                            ->leftJoin('courses', 'lessons.course_id', '=', 'courses.id')
+                            ->where('courses.id', '=', 17)
+                            ->latest('lesson_contents.id')
+                            ->paginate(25);
+
+        return view('frontend.learner.webinar', compact('searchResult', 'isPost', 'isReplay', 'replayWebinars'));
     }
 
     /**

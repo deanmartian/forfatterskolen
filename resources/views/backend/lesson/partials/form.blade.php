@@ -236,7 +236,7 @@ const methods = {
         this.createContent();
     },
 
-    createContent: function(title = '', tags = '', content = '', content_id = '') {
+    createContent: function(title = '', tags = '', date = '', description = '', content = '', content_id = '') {
         let title_text = $(".title-text").text();
         let video_text = $(".video-text").text();
         let id = this.uniqueId()+'_editor';
@@ -252,6 +252,18 @@ const methods = {
                             <div class="col-xs-6">
                                 <label>Tags</label>
                                 <input class="form-control" type="text" name="tags[]" value="${ tags }">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-xs-6">
+                                <label>Date</label>
+                                <input class="form-control" type="date" name="date[]" value="${ date }">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-xs-6">
+                                <label>Description</label>
+                                <textarea class="form-control" name="description[]" rows="10" cols="10">${ description }</textarea>
                             </div>
                         </div>
                         <div class="newStructureFormContainer">
@@ -305,7 +317,8 @@ const methods = {
         $.get(url).then(function (response) {
            let contents = response.data;
            $.each(contents, function(key, content){
-              self.createContent(content.title, content.tags ? content.tags : '', content.lesson_content, content.id);
+              self.createContent(content.title, content.tags ? content.tags : '', content.date ? content.date : '',
+               content.description ? content.description : '', content.lesson_content, content.id);
            });
         });
     },
