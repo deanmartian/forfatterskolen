@@ -33,7 +33,7 @@
                     $tabWithLabel = [
                         [
                             'name' => 'replay',
-                            'label' => 'Rerise'
+                            'label' => trans('site.replay')
                         ]
                     ]
                 @endphp
