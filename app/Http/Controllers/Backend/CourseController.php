@@ -933,11 +933,11 @@ class CourseController extends Controller
     {
         $course = Course::find($course_id);
         if ($course) {
-            $headers = ['title', 'description', 'webinar id'];
+            $headers = ['title', 'description', 'date', 'webinar id'];
             $webinars = [];
 
             foreach ($course->webinars()->where('status', 0)->get() as $webinar) {
-                $webinars[] = [$webinar->title, $webinar->description, $webinar->link];
+                $webinars[] = [$webinar->title, $webinar->description, $webinar->start_date, $webinar->link];
             }
             $excel          = \App::make('excel');
             return $excel->download(new GenericExport($webinars, $headers), 'Hidden Webinars.xlsx');
