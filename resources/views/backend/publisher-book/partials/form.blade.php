@@ -1,5 +1,5 @@
 <form method="POST" action="@if(Request::is('publisher-book/*/edit')){{route('admin.publisher-book.update', $book['id'])}}@else{{route('admin.publisher-book.store')}}@endif"
-enctype="multipart/form-data">
+enctype="multipart/form-data" onsubmit="disableSubmit(this)">
     {{ csrf_field() }}
     @if(Request::is('publisher-book/*/edit'))
         {{ method_field('PUT') }}
