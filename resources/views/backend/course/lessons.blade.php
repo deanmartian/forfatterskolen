@@ -82,7 +82,7 @@ $( function() {
 	       $('#lesson_order').val(data);
 	       $('#save_order').prop('disabled', false);
 	    }
-	}).disableSelection();
+	});
 } );
 </script>
 @stop
