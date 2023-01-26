@@ -95,7 +95,7 @@
                    title="View workshops">{{ trans('site.front.nav.workshop') }}</a>
             </li>--}}
             <li class="nav-item">
-                <a href="https://bok.forfatterskolen.no" class="nav-link"
+                <a href="https://kurs.forfatterskolen.no" class="nav-link"
                    title="Årskurs" target="_blank">Årskurs</a>
             </li>
             <li class="nav-item @if(Route::currentRouteName() == 'front.gift-cards') active @endif">
