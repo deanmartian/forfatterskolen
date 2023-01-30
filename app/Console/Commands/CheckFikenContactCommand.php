@@ -63,8 +63,6 @@ class CheckFikenContactCommand extends Command
             $user->fill([
                 'fiken_contact_id' => $fikenContacts[0]->contactId
             ])->save();
-
-            break;
         }
 
         echo "Done";
