@@ -39,11 +39,11 @@ class CheckFikenContactCommand extends Command
      */
     public function handle()
     {
-        $users = User::all();
+        $users = User::whereNull('fiken_contact_id')->get();
         $company = 'forfatterskolen-as';
 
         foreach($users as $user){
-            $fikenUrl = "https://api.fiken.no/api/v2/companies/" . $company . "/contacts?email=" . 'elybutabara@gmail.com';
+            $fikenUrl = "https://api.fiken.no/api/v2/companies/" . $company . "/contacts?email=" . $user->email;
             $headers = [
                 'Accept: application/json',
                 'Authorization: Bearer '.config('services.fiken.personal_api_key'),
@@ -60,9 +60,13 @@ class CheckFikenContactCommand extends Command
             $body = substr($response, $header_size);
             $fikenContacts = json_decode($body);
 
-            print_r($fikenContacts);
+            $user->fill([
+                'fiken_contact_id' => $fikenContacts[0]->contactId
+            ])->save();
 
             break;
         }
+
+        echo "Done";
     }
 }
