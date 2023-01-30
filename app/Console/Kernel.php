@@ -41,7 +41,8 @@ class Kernel extends ConsoleKernel
         Commands\DelayedEmailCommand::class,
         Commands\WebinarScheduledRegistrationCommand::class,
         Commands\InvoiceVippsEfakturaCommand::class,
-        Commands\SveaDeliveryCommand::class
+        Commands\SveaDeliveryCommand::class,
+        Commands\CheckFikenContactCommand::class
     ];
 
     /**
