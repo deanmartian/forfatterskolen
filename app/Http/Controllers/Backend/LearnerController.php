@@ -58,6 +58,7 @@ use App\Lesson;
 use App\Http\AdminHelpers;
 use File;
 use App\Http\FrontendHelpers;
+use App\Jobs\UpdateFikenContactDetailsJob;
 use App\RequestToEditor;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
@@ -238,7 +239,6 @@ class LearnerController extends Controller
     {
         $learner = User::findOrFail($id);
 
-
         switch( $request->field ) :
             case 'password' :
                 $validator = Validator::make($request->all(), [
@@ -266,6 +266,11 @@ class LearnerController extends Controller
                 $address->zip = $request->zip;
                 $address->city = $request->city;
                 $address->save();
+
+                if ($learner->fiken_contact_id) {
+                    dispatch(new UpdateFikenContactDetailsJob($learner));
+                }
+
                 return redirect()->back()->with(['profile_success' => 'Contact Info updated successfully.']);
                 break;
         endswitch;
