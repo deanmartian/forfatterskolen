@@ -101,6 +101,7 @@ use App\Log;
 use Hash;
 use File;
 use App\Http\FrontendHelpers;
+use App\Jobs\UpdateFikenContactDetailsJob;
 
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
 
@@ -1999,6 +2000,11 @@ class LearnerController extends Controller
         $address->zip = $request->zip;
         $address->phone = $request->phone;
         $address->save();
+        
+        $learner = Auth::user();
+        if ($learner->fiken_contact_id) {
+            dispatch(new UpdateFikenContactDetailsJob($learner));
+        }
 
         // User Social
         $social = UserSocial::firstOrNew(['user_id' => Auth::user()->id]);

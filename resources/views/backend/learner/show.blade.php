@@ -2736,7 +2736,7 @@
         <h4 class="modal-title">{{ trans('site.edit-contact-info') }}</h4>
       </div>
       <div class="modal-body">
-      	<form method="POST" action="{{ route('admin.learner.update', $learner->id) }}">
+      	<form method="POST" action="{{ route('admin.learner.update', $learner->id) }}" onsubmit="disableSubmit(this)">
       		{{ csrf_field() }}
       		{{ method_field('PUT') }}
       		<input type="hidden" name="field" value="contact">
