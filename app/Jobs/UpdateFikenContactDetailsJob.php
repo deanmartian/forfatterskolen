@@ -46,7 +46,7 @@ class UpdateFikenContactDetailsJob implements ShouldQueue
                 'streetAddress' => $address->street,
                 'city'          => $address->city,
                 'postCode'      => $address->zip,
-                'country'       => 'Norway'
+                'country'       => 'Norge'
             ]
         ];
 
