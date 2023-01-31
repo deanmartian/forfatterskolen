@@ -13,7 +13,7 @@ class CheckFikenContactCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'checkfikencontaact:command';
+    protected $signature = 'checkfikencontact:command';
 
     /**
      * The console command description.
@@ -60,9 +60,12 @@ class CheckFikenContactCommand extends Command
             $body = substr($response, $header_size);
             $fikenContacts = json_decode($body);
 
-            $user->fill([
-                'fiken_contact_id' => $fikenContacts[0]->contactId
-            ])->save();
+            if($fikenContacts) {
+                $user->fill([
+                    'fiken_contact_id' => $fikenContacts[0]->contactId
+                ])->save();
+            }
+
         }
 
         echo "Done";
