@@ -37,13 +37,15 @@ class UpdateFikenContactDetailsJob implements ShouldQueue
     public function handle()
     {
         $address = $this->learner->address;
-        Log::info(json_encode($address));
+        Log::info("------------------------- Update fiken contact details job here -------------------------");
 
         $fields = [
+            'name' => $this->learner->full_name,
+            'email' => $this->learner->email,
             'address' => [
                 'streetAddress' => $address->street,
                 'city'          => $address->city,
-                'postcode'      => $address->zip,
+                'postCode'      => $address->zip,
                 'country'       => 'Norway'
             ]
         ];
@@ -53,13 +55,11 @@ class UpdateFikenContactDetailsJob implements ShouldQueue
         $fikenUrl = 'https://api.fiken.no/api/v2/companies/forfatterskolen-as/contacts/' . $this->learner->fiken_contact_id;
         $ch = curl_init($fikenUrl);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
         curl_setopt($ch, CURLOPT_POSTFIELDS, $field_string);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
         $data = curl_exec($ch);
         Log::info("after request");
-        Log::info($fikenUrl);
         Log::info($data);
 
         // get the http code response
