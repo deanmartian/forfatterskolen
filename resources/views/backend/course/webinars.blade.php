@@ -118,7 +118,7 @@
 											View Registrants
 										</button>
 
-										@if (in_array($course->id, [17, 23]) || $course->is_free) {{-- check if webinar-pakke --}}
+										@if (in_array($course->id, [17, 23, 89]) || $course->is_free) {{-- check if webinar-pakke --}}
 											<?php
 												$webinarEmailOut = \App\Http\AdminHelpers::getWebinarEmailOut($webinar->id, $course->id);
 											?>
