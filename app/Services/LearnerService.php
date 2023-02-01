@@ -36,7 +36,7 @@ class LearnerService
         $actionText = 'Klikk her for å logge inn';
         $actionUrl = route('auth.login.email', $encode_email);
 
-        $to = 'elybutabara@gmail.com';//;$user->email;
+        $to = $user->email;
         $emailData = [
             'email_subject' => 'Velkommen til Forfatterskolen',
             'email_message' => view('emails.registration', compact('actionText', 'actionUrl', 'user'))->render(),
