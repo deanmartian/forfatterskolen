@@ -104,7 +104,12 @@ class SettingsController extends Controller
 
     public function create( $name, Request $request )
     {
-        Settings::updateOrCreate(['setting_name' => $name], ['setting_value' => $request->setting_value]);
+        $settings = Settings::updateOrCreate(['setting_name' => $name], ['setting_value' => $request->setting_value]);
+
+        if ($request->ajax()) {
+            return response()->json($settings);
+        }
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record updated successfully.'),
             'alert_type' => 'success']);
     }

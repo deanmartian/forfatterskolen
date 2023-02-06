@@ -12,6 +12,7 @@ use App\Http\AdminHelpers;
 use App\Http\FikenInvoice;
 use App\Http\FrontendHelpers;
 use App\Jobs\CourseOrderJob;
+use Illuminate\Support\Facades\Log;
 use App\Order;
 use App\Package;
 use App\PaymentPlan;
@@ -161,6 +162,7 @@ class CourseService {
 
         $orderRecord = $this->createOrder($request);
 
+        Log::info('inside generate SVEA checkout');
         $checkoutMerchantId = env('SVEA_CHECKOUTID');
         $checkoutSecret = env('SVEA_CHECKOUT_SECRET');
 
@@ -375,7 +377,7 @@ class CourseService {
      * @param $package_id
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function addCourseToLearner( $user_id, $package_id )
+    public function addCourseToLearner( $user_id, $package_id, $start_course = false )
     {
 
         $course_status = 1;
@@ -385,8 +387,12 @@ class CourseService {
         $start_date = $course->type === 'Group' ? $package->course->start_date : Carbon::today();
 
         $courseTaken = CoursesTaken::firstOrNew(['user_id' => $user_id, 'package_id' => $package_id]);
+        if ($start_course) {
+            $courseTaken->started_at = $start_date;
+        }
         $courseTaken->is_active = $course_status;
         $courseTaken->is_welcome_email_sent = 0;
+        $courseTaken->is_free = $course->is_free;
         $courseTaken->end_date = Carbon::parse($start_date)->addYear();
         $courseTaken->save();
 
@@ -535,7 +541,7 @@ class CourseService {
      * @param $package_id
      * @param $courseTaken
      */
-    public function notifyUser( $user_id, $package_id, $courseTaken )
+    public function notifyUser( $user_id, $package_id, $courseTaken, $hasRegretForm = true )
     {
         $user = $this->user->find($user_id);
         $package = Package::find($package_id);
@@ -556,8 +562,11 @@ class CourseService {
         $redirectLink = encrypt(route('learner.course'));
         $actionUrl = route('auth.login.emailRedirect',[$encode_email, $redirectLink]);
         $actionText = 'Mine Kurs';
-        $attachments = [asset($this->generateDocx($user->id, $package->id)),
-            asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
+        $attachments = NULL;
+        if ($hasRegretForm) {
+            $attachments = [asset($this->generateDocx($user->id, $package->id)),
+                asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
+        }
 
         dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
             'postmail@forfatterskolen.no', 'Forfatterskolen', $attachments, 'courses-taken-order',

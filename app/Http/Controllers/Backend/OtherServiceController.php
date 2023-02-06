@@ -243,14 +243,16 @@ class OtherServiceController extends Controller
             $service = '';
             if ($service_type == 1) {
                 $copyEditing = CopyEditingManuscript::find($service_id);
-                $copyEditing->status = $copyEditing->status+1;
+                $currentStatus = $copyEditing->status > 2 ? 1 : $copyEditing->status;
+                $copyEditing->status = $currentStatus+1;
                 $copyEditing->save();
                 $service = 'Språkvask';
             }
 
             if ($service_type == 2){
                 $correction = CorrectionManuscript::find($service_id);
-                $correction->status = $correction->status+1;
+                $currentStatus = $correction->status > 2 ? 1 : $correction->status;
+                $correction->status = $currentStatus+1;
                 $correction->save();
                 $service = 'Korrektur';
             }
@@ -263,6 +265,15 @@ class OtherServiceController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function updateLocked( $service_id, $service_type, Request $request )
+    {
+        if (in_array($service_type, ['copy-editing','correction'])) {
+            $data = $service_type === 'copy-editing' ? CopyEditingManuscript::find($service_id) : CorrectionManuscript::find($service_id);
+            $data->is_locked = $request->is_locked;
+            $data->save();
+        }
     }
 
     /**

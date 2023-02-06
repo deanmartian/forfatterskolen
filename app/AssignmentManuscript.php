@@ -10,7 +10,7 @@ class AssignmentManuscript extends Model
     protected $table = 'assignment_manuscripts';
     protected $fillable = ['assignment_id', 'user_id', 'filename', 'words', 'grade', 'type', 'manu_type', 'editor_id',
         'join_group', 'letter_to_editor', 'expected_finish', 'editor_expected_finish'];
-    protected $appends = ['file_link', 'assignment_type', 'where_in_script'];
+    protected $appends = ['file_link', 'file_link_with_download', 'assignment_type', 'where_in_script'];
 
 
     public function assignment()
@@ -58,6 +58,40 @@ class AssignmentManuscript extends Model
         }
 
         return $fileLink;
+    }
+
+    /**
+     * Accessor field
+     * @return string
+     */
+    public function getFileLinkWithDownloadAttribute()
+    {
+        $fileLink = '';
+        $files = explode(',', $this->attributes['filename']);
+
+        foreach ($files as $file) {
+            $extension = explode('.', basename($file));
+
+            if (end($extension) == 'pdf' || end($extension) == 'odt') {
+                $fileLink .= '<a href="/js/ViewerJS/#../..'.trim($file).'">'.basename($file).'</a>';
+
+                if ($file) {
+                    $fileLink .= ' <a href="'.$file.'" download><i class="fa fa-download" aria-hidden="true"></i></a>';
+                }
+
+                $fileLink .= ', ';
+            } else {
+                $fileLink .= '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').trim($file).'">'.basename($file).'</a>';
+
+                if ($file) {
+                    $fileLink .= ' <a href="'.$file.'" download><i class="fa fa-download" aria-hidden="true"></i></a>';
+                }
+
+                $fileLink .= ', ';
+            }
+        }
+
+        return trim($fileLink, ', ');
     }
 
     public function getExpectedFinishAttribute($value) {

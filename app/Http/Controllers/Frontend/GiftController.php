@@ -127,22 +127,7 @@ class GiftController extends Controller
      */
     public function validateCheckoutForm( $course_id, Request $request, CourseService $courseService, GiftService $giftService )
     {
-
-        $validation = [
-            'email'         => 'required|email',
-            'first_name'    => 'required',
-            'last_name'     => 'required',
-            'street'        => 'required',
-            'zip'           => 'required',
-            'city'          => 'required',
-            'phone'         => 'required',
-        ];
-
-        if (!\Auth::check()) {
-            $validation['password'] = 'required|min:3';
-        }
-
-        $validator = \Validator::make($request->all(), $validation);
+        $validator = $this->getValidator($request);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -164,6 +149,25 @@ class GiftController extends Controller
         }
 
         return response()->json($giftService->processCheckout($request, $itemType));
+    }
+
+    public function getValidator(Request $request)
+    {
+        $validation = [
+            'email'         => 'required|email',
+            'first_name'    => 'required',
+            'last_name'     => 'required',
+            'street'        => 'required',
+            'zip'           => 'required',
+            'city'          => 'required',
+            'phone'         => 'required',
+        ];
+
+        if (!\Auth::check()) {
+            $validation['password'] = 'required|min:3';
+        }
+
+        return \Validator::make($request->all(), $validation);
     }
 
     /**

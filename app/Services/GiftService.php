@@ -361,7 +361,8 @@ class GiftService {
             'user_id' => $user_id,
             'parent' => $parent,
             'parent_id' => $parent_id,
-            'redeem_code' => $redeemCode
+            'redeem_code' => $redeemCode,
+            'expired_at' => Carbon::now()->addYear(3)
         ]);
 
     }

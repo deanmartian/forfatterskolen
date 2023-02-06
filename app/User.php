@@ -32,7 +32,7 @@ class User extends Authenticatable
     protected $fillable = [
         'first_name', 'last_name', 'password', 'email', 'role', 'gender', 'birthday', 'profile_image',
         'default_password', 'need_pass_update', 'is_active', 'admin_with_giutbok_access', 'is_self_publishing_learner',
-        'is_ghost_writer_admin', 'is_copy_editing_admin', 'is_correction_admin', 'is_coaching_admin'
+        'is_ghost_writer_admin', 'is_copy_editing_admin', 'is_correction_admin', 'is_coaching_admin', 'fiken_contact_id'
     ];
 
     /**
@@ -478,5 +478,15 @@ class User extends Authenticatable
     public function timeRegisters()
     {
         return $this->hasMany('App\TimeRegister');
+    }
+
+    public function booksForSale()
+    {
+        return $this->hasMany('App\UserBookForSale');
+    }
+
+    public function bookSales()
+    {
+        return $this->hasMany('App\UserBookSale');
     }
 }

@@ -155,6 +155,8 @@
 @stop
 
 @section('scripts')
+	<script src="https://fast.wistia.com/embed/medias/68ni4qzcad.jsonp" async></script>
+	<script src="https://fast.wistia.com/assets/external/E-v1.js" async></script>
 	<script>
         $(document).ready(function () {
             $(window).scroll(function () {

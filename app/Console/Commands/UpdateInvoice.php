@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Invoice;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class UpdateInvoice extends Command
 {
@@ -41,7 +42,7 @@ class UpdateInvoice extends Command
         $pageCount = 1;
         // LIVE:forfatterskolen-as DEMO: fiken-demo-glede-og-bil-as2
         $company = 'forfatterskolen-as';
-
+        Log::info("updateinvoice:command running");
         for($page = 0; $page <= $pageCount; $page++) {
             $fikenInvoiceUrl = "https://api.fiken.no/api/v2/companies/" . $company . "/invoices?page=" . $page
                 . "&pageSize=100";
@@ -83,6 +84,7 @@ class UpdateInvoice extends Command
                 $invoice = Invoice::where('invoice_number', $fikenInvoice->invoiceNumber)->first();
 
                 if ($invoice) {
+                    Log::info("updated invoice id = " . $invoice->id);
                     $invoice->fiken_invoice_id  = $fikenInvoice->invoiceId;
                     $invoice->save();
                 }
@@ -91,6 +93,7 @@ class UpdateInvoice extends Command
         }
 
         echo "done update invoice";
+        Log::info("updateinvoice:command done running");
         return;
     }
 

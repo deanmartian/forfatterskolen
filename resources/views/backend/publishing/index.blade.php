@@ -50,6 +50,7 @@
 	<a class="btn btn-success margin-top" href="{{ route('admin.genre.index') }}">Genre</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.self-publishing.index') }}">Self Publishing</a>
 	<a class="btn btn-success margin-top" href="{{ route('admin.svea.orders') }}">Svea Orders</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.marketing-plan.index') }}">Marketing Plan</a>
 	@if(Auth::user()->isSuperUser())
 		<a class="btn btn-success margin-top" href="{{ route('admin.invoice.index') }}">Invoices</a>
 	@endif

@@ -406,17 +406,20 @@
 												<td>{{ \App\Http\AdminHelpers::assignmentType($freeManuscript->genre) }}</td>
 												<td>
 													{!! \Illuminate\Support\Str::limit(strip_tags($freeManuscript->content), 120) !!}<br>
-													<a href="#editContentModal" data-toggle="modal" class="editContentBtn"
+													{{-- class="editContentBtn"--}}
+													<a href="#editContentModal" data-toggle="modal"
 													   data-content="{{ $freeManuscript->content }}"
-													   data-action="{{ route('editor.free-manuscript.edit-content', $freeManuscript->id) }}">
+													   data-action="{{ route('editor.free-manuscript.edit-content', $freeManuscript->id) }}"
+													onclick="editFMContent(this)">
 														Her kan du også nå putte in ekstra tekst
 													</a>
 												</td>
 												<td>
 													@if($freeManuscript->feedback_content)
 														<span class="label label-default">{{ trans('site.pending') }}</span>
-														<button class="btn btn-xs btn-success sendFMFeedbackBtn"
+														<button class="btn btn-xs btn-success"
 																data-toggle="modal" data-target="#freeManuscriptFeedbackModal"
+																onclick="sendFMFeedback(this)"
 																data-fields="{{ json_encode($freeManuscript) }}"
 																data-action="{{ route('editor.free-manuscript.send_feedback', $freeManuscript->id) }}"
 																data-email_template="{{ $freeManuscript->from === 'Giutbok'
@@ -425,8 +428,9 @@
 															<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
 														</button>
 													@else
-														<button class="btn btn-xs btn-warning sendFMFeedbackBtn"
+														<button class="btn btn-xs btn-warning"
 																data-toggle="modal" data-target="#freeManuscriptFeedbackModal"
+																onclick="sendFMFeedback(this)"
 																data-fields="{{ json_encode($freeManuscript) }}"
 																data-action="{{ route('editor.free-manuscript.send_feedback', $freeManuscript->id) }}"
 																data-email_template="{{ $freeManuscript->from === 'Giutbok'
@@ -1850,5 +1854,23 @@
         modal.find('[name=expected_finish]').val(expected_finish);
 	}
 
+	function editFMContent(self) {
+        let action = $(self).data('action');
+        let content = $(self).data('content');
+        let modal = $('#editContentModal');
+        modal.find('form').attr('action', action);
+        tinymce.get('editContentEditor').setContent(content);
+	}
+
+	function sendFMFeedback(self) {
+        let action = $(self).data('action');
+        let modal = $('#freeManuscriptFeedbackModal');
+        modal.find('form').attr('action', action);
+        let fields = $(self).data('fields');
+        let email_template = $(self).data('email_template');
+        let content = fields.feedback_content ? fields.feedback_content : email_template;
+
+        tinymce.get('FMEmailContentEditor').setContent(content);
+	}
 </script>
 @stop

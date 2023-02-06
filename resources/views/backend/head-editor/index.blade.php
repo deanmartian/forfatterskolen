@@ -257,7 +257,7 @@
 										// echo $assignedAssignment->user_id.' '.
 										$groupDetails = DB::SELECT("SELECT A.id as assignment_group_id, B.id AS assignment_group_learner_id FROM assignment_groups A JOIN assignment_group_learners B ON A.id = B.assignment_group_id AND B.user_id = $assignedAssignment->user_id WHERE A.assignment_id = $assignedAssignment->assignment_id");
 										if($groupDetails){ // Means the course assignment belongs to a group
-											$feedback = DB::SELECT("SELECT A.* FROM assignment_feedbacks A JOIN assignment_group_learners B ON A.assignment_group_learner_id = B.id WHERE B.user_id = $assignedAssignment->user_id AND A.assignment_group_learner_id = ".$groupDetails[0]->assignment_group_learner_id);
+											$feedback = DB::SELECT("SELECT A.* FROM assignment_feedbacks A JOIN assignment_group_learners B ON A.assignment_group_learner_id = B.id WHERE B.user_id = $assignedAssignment->user_id AND A.assignment_group_learner_id = ".$groupDetails[0]->assignment_group_learner_id . " AND A.is_admin = 1");
 											if ($feedback) {
                                                 echo '<td>';
                                                 echo '<button class="btn btn-success btn-xs courseAssignmentShowFeedbackBtn"
@@ -396,6 +396,9 @@
 										{{ $publishing->title }}
 									</td>
 									<td>
+										<a href="{{ route('admin.self-publishing.download-manuscript', $publishing->id) }}">
+											<i class="fa fa-download" aria-hidden="true"></i>
+										</a>
 										{!! $publishing->file_link !!}
 									</td>
 									<td>
@@ -504,8 +507,9 @@
 									><i class="fa fa-paper-plane" aria-hidden="true"></i>&nbsp;{{ trans('site.send-email') }}</button>
 									</td>
 									<td>
+										@if($correction->feedback)
 										<a href="#approveOtherServiceFeedbackModal" data-toggle="modal"
-											class="btn btn-success btn-xs approveOtherServiceFeedbackBtn " 
+											class="btn btn-success btn-xs approveOtherServiceFeedbackBtn "
 											data-service="2"
 											data-feedback_id = "{{ $correction->feedback->id }}"
 											data-feedback_file = "{{ $correction->feedback->manuscript }}"
@@ -516,6 +520,7 @@
 												<a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
 											@endforeach
 											{{ $correction->feedback->created_at }}
+										@endif
 									</td>
 									<td>
 										@if( $correction->status == 2 )
@@ -529,7 +534,7 @@
 										@endif
 									</td>
 									<td>
-										@if($correction->feedback->notes_to_head_editor)
+										@if($correction->feedback && $correction->feedback->notes_to_head_editor)
 											<a class="notes" data-target="#notesModal" data-toggle="modal" data-notes="{{ $correction->feedback->notes_to_head_editor }}">
 												{{ substr($correction->feedback->notes_to_head_editor, 0, 10) }}
 												<i class="fa fa-file-text-o" aria-hidden="true"></i>
@@ -604,17 +609,19 @@
 									><i class="fa fa-paper-plane" aria-hidden="true"></i>&nbsp;{{ trans('site.send-email') }}</button>
 									</td>
 									<td>
-										<a href="#approveOtherServiceFeedbackModal" data-toggle="modal"
-											class="btn btn-success btn-xs approveOtherServiceFeedbackBtn" 
-											data-service="2"
-											data-feedback_file = "{{ $copyEditing->feedback->manuscript }}"
-											data-action="{{ route('head_editor.other-service.approve-feedback',
-											['id' => $copyEditing->id, 'type' => 1]) }}"> {{ trans('site.approve-feedback') }}</a> &nbsp;
-										<?php $files = explode(',',$copyEditing->feedback->manuscript); ?>
-										@foreach($files as $file)
-											<a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
-										@endforeach
-										{{ $copyEditing->feedback->created_at }}
+										@if($copyEditing->feedback)
+											<a href="#approveOtherServiceFeedbackModal" data-toggle="modal"
+												class="btn btn-success btn-xs approveOtherServiceFeedbackBtn"
+												data-service="2"
+												data-feedback_file = "{{ $copyEditing->feedback->manuscript }}"
+												data-action="{{ route('head_editor.other-service.approve-feedback',
+												['id' => $copyEditing->id, 'type' => 1]) }}"> {{ trans('site.approve-feedback') }}</a> &nbsp;
+											<?php $files = explode(',',$copyEditing->feedback->manuscript); ?>
+											@foreach($files as $file)
+												<a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
+											@endforeach
+											{{ $copyEditing->feedback->created_at }}
+										@endif
 									</td>
 									<td>
 										@if( $copyEditing->status == 2 )
@@ -628,7 +635,7 @@
 										@endif
 									</td>
 									<td>
-										@if($copyEditing->feedback->notes_to_head_editor)
+										@if($copyEditing->feedback && $copyEditing->feedback->notes_to_head_editor)
 											<a class="notes" data-target="#notesModal" data-toggle="modal" data-notes="{{ $copyEditing->feedback->notes_to_head_editor }}">
 												{{ substr($copyEditing->feedback->notes_to_head_editor, 0, 10) }}
 												<i class="fa fa-file-text-o" aria-hidden="true"></i>
@@ -1023,6 +1030,44 @@
 						<textarea name="email_content" cols="30" rows="10" class="form-control tinymce" id="FMEmailContentEditor" required>
 						</textarea>
 					</div>
+
+					<hr class="margin-top">
+					<div class="form-group">
+						<label>
+							Follow Up Email
+						</label>
+						<br>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+							   class="follow-up-email-toggle" name="follow_up_email" data-width="84">
+					</div>
+
+					<div class="follow-up-container hide">
+                        <?php
+                        $followUpEmailTemplate = \App\Http\AdminHelpers::emailTemplate('Free Manuscript Follow-up Email');
+                        ?>
+						<div class="form-group">
+							<label>Send Date</label>
+							<input type="date" class="form-control" name="send_date"
+								   value="{{ \Carbon\Carbon::today()->addDay(1)->format('Y-m-d') }}">
+						</div>
+
+						<div class="form-group">
+							<label>{{ trans('site.subject') }}</label>
+							<input type="text" class="form-control" name="follow_up_subject" value="{{ $followUpEmailTemplate->subject }}"
+								   required>
+						</div>
+						<div class="form-group">
+							<label>{{ trans('site.from') }}</label>
+							<input type="text" class="form-control" name="follow_up_from_email"
+								   value="{{ $followUpEmailTemplate->from_email }}" required>
+						</div>
+						<div class="form-group">
+							<label>{{ trans('site.message') }}</label>
+							<textarea class="form-control tinymce" name="follow_up_message" rows="6"
+									  required>{!! $followUpEmailTemplate->email_content !!}</textarea>
+						</div>
+					</div>
+
 					<div class="clearfix"></div>
 					<button type="submit" class="btn btn-primary pull-right margin-top" id="sendFeedbackEmail">{{ trans('site.approve-feedback') }}</button>
 					<div class="clearfix"></div>
@@ -1118,6 +1163,7 @@
 
         var feedbackFileName =  $(this).data('feedback_file');
         var feedbackNotes =  $(this).data('feedback_notes');
+        $(".follow-up-container").addClass('hide');
 		let modal = $('#shopManuscriptShowFeedbackModal');
         let action = $(this).data('action');
 
@@ -1181,6 +1227,7 @@
 
     $(".sendFMApproveFeedbackBtn").click(function(){
         let action = $(this).data('action');
+        $(".follow-up-container").addClass('hide');
         let modal = $('#freeManuscriptApproveFeedbackModal');
         modal.find('form').attr('action', action);
         let fields = $(this).data('fields');

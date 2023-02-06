@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\CronLog;
+use App\Package;
 use App\UserAutoRegisterToCourseWebinar;
 use App\WebinarRegistrant;
 use App\WebinarScheduledRegistration;
@@ -49,47 +50,53 @@ class WebinarScheduledRegistrationCommand extends Command
 
         $header[] = 'API-KEY: '.config('services.big_marker.api_key');
         $counter = 1;
+        $isWebinarPakke = false;
 
         foreach ( $schedules as $schedule ) {
 
             $webinar = $schedule->webinar;
 
-            if ($webinar->course->isWebinarPakke) {
-                $learners = UserAutoRegisterToCourseWebinar::where('course_id', $schedule->webinar->course->id)
-                    ->get();
-            } else {
-                $learners = $webinar->course->learners->get();
-            }
+            if ($webinar) {
+                if ($webinar->course->isWebinarPakke) {
+                    $learners = UserAutoRegisterToCourseWebinar::where('course_id', $schedule->webinar->course->id)
+                        ->get();
+                    $isWebinarPakke = true;
+                } else {
+                    $learners = $webinar->course->learners->get();
+                }
 
-            foreach ( $learners as $learner ) {
-                $user = $learner->user;
+                foreach ( $learners as $learner ) {
+                    $user = $learner->user;
+                    
+                    if ($user && !$isWebinarPakke || ($user && $isWebinarPakke && $user->coursesTakenNotOld2->count() > 0)) {
+                        $data = [
+                            'id'            => $webinar->link,
+                            'email'         => $user->email,
+                            'first_name'    => $user->first_name,
+                            'last_name'     => $user->last_name,
+                        ];
+                        $ch = curl_init();
+                        $url = config('services.big_marker.register_link');
 
-                $data = [
-                    'id'            => $webinar->link,
-                    'email'         => $user->email,
-                    'first_name'    => $user->first_name,
-                    'last_name'     => $user->last_name,
-                ];
-                $ch = curl_init();
-                $url = config('services.big_marker.register_link');
+                        curl_setopt($ch, CURLOPT_URL, $url);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+                        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+                        $response = curl_exec($ch);
+                        $decoded_response = json_decode($response);
 
-                curl_setopt($ch, CURLOPT_URL, $url);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-                curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-                $response = curl_exec($ch);
-                $decoded_response = json_decode($response);
+                        if (array_key_exists('conference_url', $decoded_response)) {
+                            $registrant['user_id'] = $user->id;
+                            $registrant['webinar_id'] = $webinar->id;
+                            $webRegister = WebinarRegistrant::firstOrNew($registrant);
+                            $webRegister->join_url = $decoded_response->conference_url;
+                            $webRegister->save();
 
-                if (array_key_exists('conference_url', $decoded_response)) {
-                    $registrant['user_id'] = $user->id;
-                    $registrant['webinar_id'] = $webinar->id;
-                    $webRegister = WebinarRegistrant::firstOrNew($registrant);
-                    $webRegister->join_url = $decoded_response->conference_url;
-                    $webRegister->save();
-
-                    CronLog::create(['activity' => 'WebinarScheduledRegistration added ' . $user->email .
-                        ' to bigmarker webinar ' . $webinar->link . '.']);
+                            CronLog::create(['activity' => 'WebinarScheduledRegistration added ' . $user->email .
+                                ' to bigmarker webinar ' . $webinar->link . '.']);
+                        }
+                    } 
                 }
             }
 

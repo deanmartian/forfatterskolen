@@ -108,10 +108,13 @@ class CourseController extends Controller
 
     public function store(CourseCreateRequest $request)
     {
+        $requestData = $request->toArray();
+        $requestData['display_order'] = $requestData['display_order'] ? $requestData['display_order'] : 0;
+
         $course = new Course();
         $course->title = $request->title;
         $course->description = $request->description;
-        $course->display_order = is_numeric($request->display_order) ? $request->display_order : 0;
+        $course->display_order = $requestData['display_order'];
 
         if ($request->hasFile('course_image')) :
             $destinationPath = 'storage/course-images/'; // upload path
@@ -160,6 +163,9 @@ class CourseController extends Controller
         $course->meta_description   = $request->meta_description;
         $course->save();
 
+        $display_order = $requestData['display_order'];
+        $this->updateDisplayOrder($display_order, $course->id);
+
         return redirect(route('admin.course.show', $course->id));
     }
 
@@ -178,12 +184,15 @@ class CourseController extends Controller
 
     public function update($id, CourseUpdateRequest $request)
     {
+        $requestData = $request->toArray();
+        $requestData['display_order'] = $requestData['display_order'] ? $requestData['display_order'] : 0;
+
         $course = Course::findOrFail($id);
         $course->title = $request->title;
         $course->description = $request->description;
         $course->course_plan = $request->course_plan;
         $course->course_plan_data = $request->course_plan_data;
-        $course->display_order = is_numeric($request->display_order) ? $request->display_order : 0;
+        $course->display_order = $requestData['display_order'];
 
         if ($request->hasFile('course_image') && $request->file('course_image')->isValid()) :
             $checkImageExistCount = Course::where('course_image', 'LIKE', '%'.$course->course_image.'%')
@@ -237,10 +246,31 @@ class CourseController extends Controller
         $course->meta_title         = $request->meta_title;
         $course->meta_description   = $request->meta_description;
         $course->save();
+
+        $display_order = $requestData['display_order'];
+        $this->updateDisplayOrder($display_order, $id);
         return redirect(route('admin.course.show', $course->id));
     }
 
+    public function updateDisplayOrder($display_order, $id)
+    {
+        while($course = Course::where('display_order', $display_order)->where('id', '!=', $id)->first()) {
+            $lastCourse = Course::orderBy('display_order', 'DESC')->first();
+            if ($course && $course->id !== $lastCourse->id) {
+                $course->display_order = $display_order+1;
+                $course->save();
+            } else {
+                $lastDisplay = Course::where('display_order', $display_order)->get();
+                // check if last display order is more than 1
+                if ($lastDisplay->count() > 1) {
+                    $lastCourse->display_order = $lastCourse->display_order + 1;
+                    $lastCourse->save();
+                }
+            }
 
+            $display_order++;
+        }
+    }
 
 
 
@@ -927,6 +957,22 @@ class CourseController extends Controller
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Certificate saved successfully.'),
             'alert_type' => 'success']);
 
+    }
+
+    public function exportHiddenWebinars( $course_id )
+    {
+        $course = Course::find($course_id);
+        if ($course) {
+            $headers = ['title', 'description', 'date', 'webinar id'];
+            $webinars = [];
+
+            foreach ($course->webinars()->where('status', 0)->get() as $webinar) {
+                $webinars[] = [$webinar->title, $webinar->description, $webinar->start_date, $webinar->link];
+            }
+            $excel          = \App::make('excel');
+            return $excel->download(new GenericExport($webinars, $headers), 'Hidden Webinars.xlsx');
+        }
+        return redirect()->back();
     }
 
     public function canReceiveEmailUpdate( $course_taken_id, Request $request )

@@ -30,6 +30,7 @@ class FikenInvoice
 	public $fikenUrl;
 	protected $mobile_number;
 	protected $fiken_invoice_id;
+    protected $fiken_bank_account_code;
 
 	public function __construct()
 	{

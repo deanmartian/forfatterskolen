@@ -4,6 +4,10 @@
             Add Project
         </button>
 
+        <button class="btn btn-sm btn-success margin-top" @click="showNotesModal()">
+            Notes
+        </button>
+
         <div class="table-users">
             <table class="table table-responsive">
                 <thead>
@@ -210,13 +214,34 @@
                 </button>
             </div>
         </b-modal>
+
+        <b-modal
+                ref="notesModal"
+                :title="'Notes'"
+                size="md"
+                @hidden="closeNotesModal()"
+                centered
+                no-close-on-backdrop
+        >
+
+            <div class="form-group">
+                <label>Notes</label>
+                <textarea name="notes" id="" cols="30" rows="10" class="form-control" v-model="notesForm.notes"></textarea>
+            </div>
+
+            <div slot="modal-footer">
+                <button class="btn btn-sm btn-primary" @click="saveNotes()" :disabled="isLoading">
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Save
+                </button>
+            </div>
+        </b-modal>
     </div>
 </template>
 
 <script>
     import moment from 'moment';
     export default {
-        props: ['learners', 'activities', 'projects'],
+        props: ['learners', 'activities', 'projects', 'project-notes'],
         data() {
             return {
                 projectForm: {
@@ -246,6 +271,10 @@
                     invoicing: 1, //0 - never, 1 - sometimes, 2-always
                     project_id: '',
                     hourly_rate: '',
+                },
+                notes: this.projectNotes,
+                notesForm: {
+                    notes: this.projectNotes
                 },
                 isAdd: true,
                 currentActivity: '',
@@ -434,7 +463,37 @@
                         message : 'Activity deleted'
                     });
                 });
+            },
+
+            closeNotesModal() {
+                this.notesForm.notes = this.notes;
+            },
+
+            showNotesModal() {
+                this.$refs.notesModal.show();
+            },
+
+            saveNotes() {
+                let data = {
+                    setting_value: this.notesForm.notes
+                };
+
+                this.isLoading = true;
+                axios.post('/settings/create/project-notes', data).then(response => {
+                    this.notes = response.data.setting_value;
+                    this.isLoading = false;
+
+                    this.$refs.notesModal.hide();
+
+                    this.$toasted.global.showSuccessMsg({
+                        message : 'Notes saved successfully'
+                    });
+                })
             }
+        },
+
+        mounted() {
+            console.log(this.projectNotes);
         }
     }
 </script>

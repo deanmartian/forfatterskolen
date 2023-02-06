@@ -11,6 +11,8 @@ if(config('app.app_site') == 'no'){
 Route::group([
     'domain' => $domain,
 ], function(){
+    Route::get('learner/generate-password', '\Backend\LearnerController@generatePassword');
+
     Route::group([
         'middleware' => ['giutbok', 'logActivity'],
         'namespace' => 'Giutbok'
@@ -95,6 +97,7 @@ Route::group([
 
         Route::post('/other-service/{id}/update-expected-finish/{type}', 'OtherServiceController@updateExpectedFinish')->name('g-admin.other-service.update-expected-finish');
         Route::post('/other-service/{id}/update-status/{type}', 'OtherServiceController@updateStatus')->name('g-admin.other-service.update-status');
+        Route::post('/other-service/{id}/lock-status/{type}', 'OtherServiceController@updateLocked')->name('g-admin.other-service.update-locked');
         Route::post('other-service/{id}/assign-editor/{type}', 'LearnerController@otherServiceAssignEditor')->name('g-admin.other-service.assign-editor');
         Route::post('other-service/{id}/delete/{type}', 'LearnerController@deleteOtherService')->name('g-admin.other-service.delete');
         Route::post('/other-service/set-approved-date', 'OtherServiceController@setApprovedDate')->name('g-admin.other-service.coaching-timer.set-approved-date');
@@ -102,13 +105,22 @@ Route::group([
             ->name('g-admin.other-service.coaching-timer.set-coaching-approve-date');
         Route::post('/other-service/{id}/coaching-timer/set_replay', 'OtherServiceController@setReplay')
             ->name('g-admin.other-service.coaching-timer.set_replay');
+        Route::post('/other-service/{id}/add-feedback/{type}', 'OtherServiceController@addFeedback')->name('g-admin.other-service.add-feedback');
+        Route::get('/other-service/{id}/download/{type}', 'OtherServiceController@downloadOtherServiceDoc')->name('g-admin.other-service.download-doc'); // Download assignment feedback
         Route::delete('/other-service/{id}/coaching-timer/delete', 'OtherServiceController@deleteCoaching')->name('g-admin.other-service.coaching-timer.delete');
 
         Route::post('/project/activity/save', 'ProjectController@saveActivity');
         Route::delete('/project/activity/{id}/delete', 'ProjectController@deleteActivity');
         Route::post('/project/{id}/notes/save', 'ProjectController@saveNote');
+        Route::post('/project/{id}/learner/add', 'ProjectController@addLearner');
+        Route::post('/project/{id}/whole-book/save', 'ProjectController@saveWholeBook');
+        Route::delete('/project/whole-book/{id}/delete', 'ProjectController@deleteWholeBook');
         Route::post('/project/{id}/book/save', 'ProjectController@saveBook');
         Route::delete('/project/book/{id}/delete', 'ProjectController@deleteBook');
+        Route::post('/project/{id}/book-pictures/save', 'ProjectController@saveBookPicture')->name('g-admin.project.save-picture');
+        Route::delete('/project/book-pictures/{id}/delete', 'ProjectController@deleteBookPicture')->name('g-admin.project.delete-picture');
+        Route::post('/project/{id}/book-formatting/save', 'ProjectController@saveBookFormatting')->name('g-admin.project.save-book-formatting');
+        Route::delete('/project/book-formatting/{id}/delete', 'ProjectController@deleteBookFormatting')->name('g-admin.project.delete-book-formatting');
         Route::post('/project/{id}/add-other-service', 'ProjectController@addOtherService')->name('g-admin.project.add-other-service');
         Route::get('/project/{id}/graphic-work', 'ProjectController@graphicWork')->name('g-admin.project.graphic-work');
         Route::post('/project/{id}/graphic-work/save', 'ProjectController@saveGraphicWork')->name('g-admin.project.save-graphic-work');
@@ -119,6 +131,7 @@ Route::group([
         Route::get('/project/{id}/marketing', 'ProjectController@marketing')->name('g-admin.project.marketing');
         Route::post('/project/{id}/marketing/save', 'ProjectController@saveMarketing')->name('g-admin.project.save-marketing');
         Route::delete('/project/{id}/marketing/{marketing_id}/delete', 'ProjectController@deleteMarketing')->name('g-admin.project.delete-marketing');
+        Route::get('/project/{id}/marketing-plan', 'ProjectController@marketingPlan')->name('g-admin.project.marketing-plan');
         Route::get('/project/{id}/contract', 'ProjectController@contract')->name('g-admin.project.contract');
         Route::post('/project/{id}/contract', 'ProjectController@storeContract')->name('g-admin.project.contract-store');
         Route::post('/project/{id}/contract/upload', 'ProjectController@uploadContract')->name('g-admin.project.contract-upload');
@@ -128,6 +141,11 @@ Route::group([
         Route::get('/project/{id}/contract/{contract_id}/edit', 'ProjectController@editContract')->name('g-admin.project.contract-edit');
         Route::put('/project/{id}/contract/{contract_id}/update', 'ProjectController@updateContract')->name('g-admin.project.contract-update');
         Route::get('/project/{id}/contract/{contract_id}', 'ProjectController@showContract')->name('g-admin.project.contract-show');
+        Route::get('/project/{id}/invoice', 'ProjectController@invoice')->name('g-admin.project.invoice');
+        Route::post('/project/{id}/invoice/save', 'ProjectController@saveInvoice')->name('g-admin.project.invoice.save');
+        Route::delete('/project/{id}/invoice/{invoice_id}/delete', 'ProjectController@deleteInvoice')->name('g-admin.project.invoice.delete');
+        Route::post('/project/{id}/manual-invoice/save', 'ProjectController@saveManualInvoice')->name('g-admin.project.manual-invoice.save');
+        Route::delete('/project/{id}/manual-invoice/{invoice_id}/delete', 'ProjectController@deleteManualInvoice')->name('g-admin.project.manual-invoice.delete');
         Route::get('/project', 'ProjectController@index')->name('g-admin.project.index');
         Route::post('/project/save', 'ProjectController@saveProject');
         Route::get('/project/{id}', 'ProjectController@show')->name('g-admin.project.show');

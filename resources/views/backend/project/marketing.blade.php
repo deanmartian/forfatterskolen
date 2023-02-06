@@ -343,15 +343,36 @@
             </table>
         </div>
 
-        <button type="button" class="btn btn-success">+ Add Agreement on time registration</button>
+        @if ($agreementOnTimeRegistration->count() === 0)
+        <button type="button" class="btn btn-success marketingBtn" data-toggle="modal" data-target="#marketingModal"
+                data-type="agreement-on-time-registration">+ Add Agreement on time registration</button>
+        @endif
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
                     <th>Agreement on time registration</th>
+                    <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
+                @foreach($agreementOnTimeRegistration as $agreementOnTime)
+                    <tr>
+                        <td>{{ $agreementOnTime->is_finished_text }}</td>
+                        <td>
+                            <button class="btn btn-primary btn-xs marketingBtn" data-toggle="modal"
+                                    data-target="#marketingModal" data-record="{{ json_encode($agreementOnTime) }}"
+                                    data-type="agreement-on-time-registration" data-id="{{ $agreementOnTime->id }}">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs deleteMarketingBtn" data-toggle="modal"
+                                    data-target="#deleteMarketingModal" data-type="agreement-on-time-registration"
+                                    data-action="{{ route($deleteMarketingRoute, [$agreementOnTime->project_id, $agreementOnTime->id]) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
                 </tbody>
             </table>
         </div>
@@ -788,6 +809,14 @@
                             </div>
                         </div>
 
+                        <div class="agreement-on-time-registration-container">
+                            <div class="form-group">
+                                <label>Is Finished</label> <br>
+                                <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                                       name="is_finished_agreement_on_time_registration" data-width="84">
+                            </div>
+                        </div>
+
                         <div class="print-ebook-container">
                             <div class="form-group">
                                 <label>Print EBook</label>
@@ -930,6 +959,7 @@
             let manuscriptsSentToPrintContainer = $(".manuscripts-sent-to-print-container");
             let culturalCouncilContainer = $(".cultural-council-container");
             let applicationFreeWordContainer = $(".application-free-word-container");
+            let agreementRegistrationContainer = $(".agreement-on-time-registration-container");
             let printEBookContainer = $(".print-ebook-container");
             let sampleBookApprovedContainer = $(".sample-book-approved-container");
             let pdfPrintIsApprovedContainer = $(".pdf-print-is-approved-container");
@@ -948,6 +978,7 @@
             manuscriptsSentToPrintContainer.addClass('hide');
             culturalCouncilContainer.addClass('hide');
             applicationFreeWordContainer.addClass('hide');
+            agreementRegistrationContainer.addClass('hide');
             printEBookContainer.addClass('hide');
             sampleBookApprovedContainer.addClass('hide');
             pdfPrintIsApprovedContainer.addClass('hide');
@@ -1017,6 +1048,12 @@
                     modal.find('.modal-title').text('Application Free Word');
                     applicationFreeWordContainer.removeClass('hide');
                     is_finished_field = 'is_finished_free_word';
+                    break;
+
+                case 'agreement-on-time-registration':
+                    modal.find('.modal-title').text('Agreement on time registration');
+                    agreementRegistrationContainer.removeClass('hide');
+                    is_finished_field = 'is_finished_agreement_on_time_registration';
                     break;
 
                 case 'print-ebook':
@@ -1139,6 +1176,10 @@
 
                 case 'application-free-word':
                     pageTitle = 'Application Free Word';
+                    break;
+
+                case 'agreement-on-time-registration':
+                    pageTitle = 'Agreement on time registration';
                     break;
 
                 case 'print-ebook':

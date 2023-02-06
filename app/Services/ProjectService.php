@@ -12,8 +12,11 @@ use App\Http\FrontendHelpers;
 use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
+use App\ProjectBookFormatting;
+use App\ProjectBookPicture;
 use App\ProjectGraphicWork;
 use App\ProjectMarketing;
+use App\ProjectWholeBook;
 use Carbon\Carbon;
 use Illuminate\Http\Concerns\InteractsWithInput;
 use Illuminate\Http\Request;
@@ -36,6 +39,7 @@ class ProjectService
         $model->end_date = $request->end_date;
         $model->description = $request->description;
         $model->is_finished = $request->is_finished;
+        $model->notes = NULL;
         $model->save();
 
         if ($request->user_id) {
@@ -94,6 +98,60 @@ class ProjectService
         ];
     }
 
+    public function saveBookPicture( Request $request )
+    {
+        if ($request->hasFile('images')) :
+            $destinationPath = 'storage/project-book-pictures'; // upload path
+
+            AdminHelpers::createDirectory($destinationPath);
+            $filePath = $this->saveMultipleFileOrImage($destinationPath, 'images');
+
+            if ($request->id) {
+                $bookPicture = ProjectBookPicture::find($request->id);
+                $bookPicture->image = $filePath;
+                $bookPicture->description = $request->description;
+                $bookPicture->save();
+            } else {
+                foreach (explode(', ', $filePath) as $picture) {
+                    ProjectBookPicture::create([
+                        'project_id' => $request->project_id,
+                        'image' => $picture,
+                        'description' => $request->description
+                    ]);
+                }
+            }
+        endif;
+    }
+
+    public function saveBookFormatting( Request $request )
+    {
+
+        $filePath = NULL;
+
+        if ($request->hasFile('file')) :
+            $destinationPath = 'storage/project-book-formatting'; // upload path
+
+            AdminHelpers::createDirectory($destinationPath);
+            $filePath = $this->saveFileOrImage($destinationPath, 'file');
+        endif;
+
+        if ($request->id) {
+
+            $bookPicture = ProjectBookFormatting::find($request->id);
+            $bookPicture->file = $filePath;
+            $bookPicture->save();
+
+        } else {
+
+            ProjectBookFormatting::create([
+                'project_id' => $request->project_id,
+                'file' => $filePath
+            ]);
+
+        }
+
+    }
+
     /**
      * @param Request $request
      * @return string
@@ -135,7 +193,7 @@ class ProjectService
         $extension = $request->manuscript->extension();
         $destinationPath = 'storage/correction-manuscripts/'; // upload path
 
-        if ($request->is_copy_editing == 1) {
+        if ($request->type == 1) {
             $destinationPath = 'storage/copy-editing-manuscripts/'; // upload path
         }
 
@@ -197,10 +255,14 @@ class ProjectService
         switch ($request->type) {
             case 'cover':
                 $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'cover');
+                $data['description'] = $request->description;
+                $data['is_checked'] = $request->has('is_approved') && $request->is_approved ? 1 : 0;
                 break;
 
             case 'barcode':
                 $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'barcode');
+                $data['date'] = Carbon::today();
+                $data['is_checked'] = $request->has('is_sent') && $request->is_sent ? 1 : 0;
                 break;
 
             case 'rewrite-script':
@@ -235,11 +297,36 @@ class ProjectService
     {
         $filePath = NULL;
 
+        if ($request->id) {
+            $graphicWork = ProjectGraphicWork::find($request->id);
+            $filePath = $graphicWork->value;
+        }
+
         if ($request->hasFile($fieldName)) :
             $destinationPath = 'storage/project-graphic-work/' . $fieldName; // upload path
 
             AdminHelpers::createDirectory($destinationPath);
             $filePath = $this->saveFileOrImage($destinationPath, $fieldName);
+
+        endif;
+
+        return $filePath;
+    }
+
+    public function uploadWholeBook( Request $request )
+    {
+        $filePath = NULL;
+
+        if ($request->id) {
+            $wholeBook = ProjectWholeBook::find($request->id);
+            $filePath = $wholeBook->book_content;
+        }
+
+        if ($request->hasFile('book_file')) :
+            $destinationPath = 'storage/project-books'; // upload path
+
+            AdminHelpers::createDirectory($destinationPath);
+            $filePath = $this->saveFileOrImage($destinationPath, 'book_file');
 
         endif;
 
@@ -286,6 +373,27 @@ class ProjectService
         $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
         $requestFile->move($destinationPath, $fileName);
         return '/'.$fileName;
+    }
+
+    /**
+     * @param $destinationPath
+     * @param $requestFile
+     * @return string
+     */
+    public function saveMultipleFileOrImage( $destinationPath, $requestFilename )
+    {
+        $filesWithPath = '';
+        foreach (\request()->file($requestFilename) as $k => $file) {
+            $extension = pathinfo($_FILES[$requestFilename]['name'][$k],PATHINFO_EXTENSION);
+            $original_filename = $file->getClientOriginalName();
+            $filename = pathinfo($original_filename, PATHINFO_FILENAME);
+            $fileName = AdminHelpers::checkFileName($destinationPath, $filename, $extension);
+            $filesWithPath .= "/".AdminHelpers::checkFileName($destinationPath, $filename, $extension).", ";
+
+            $file->move($destinationPath, $fileName);
+        }
+
+        return $filesWithPath = trim($filesWithPath,", ");
     }
 
     /**

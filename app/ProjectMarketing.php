@@ -86,6 +86,11 @@ class ProjectMarketing extends Model
         $query->where('type', 'update-the-book-base');
     }
 
+    public function scopeAgreementOnTimeRegistration( $query )
+    {
+        $query->where('type', 'agreement-on-time-registration');
+    }
+
     public function scopeEbookOrdered( $query )
     {
         $query->where('type', 'ebook-ordered');

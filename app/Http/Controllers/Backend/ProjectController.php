@@ -15,16 +15,26 @@ use App\Http\Requests\ProjectActivityRequest;
 use App\Http\Requests\ProjectBookRequest;
 use App\Http\Requests\ProjectCopyEditingRequest;
 use App\Http\Requests\ProjectRequest;
+use App\MarketingPlan;
 use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
+use App\ProjectBookFormatting;
+use App\ProjectBookPicture;
 use App\ProjectGraphicWork;
+use App\ProjectInvoice;
+use App\ProjectManualInvoice;
 use App\ProjectMarketing;
 use App\ProjectRegistration;
+use App\ProjectWholeBook;
+use App\Services\LearnerService;
 use App\Services\ProjectService;
+use App\Settings;
 use App\TimeRegister;
 use App\User;
 use Illuminate\Http\Request;
+use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Time;
+use PhpOffice\PhpWord\PhpWord;
 
 class ProjectController extends Controller
 {
@@ -34,8 +44,10 @@ class ProjectController extends Controller
         $learners =  User::where('role', 2)->where('is_self_publishing_learner', 1)->get();
         $activities = ProjectActivity::all();
         $projects = Project::all();
+        $projectNotes = Settings::getByName('project-notes');
         $layout = str_contains(request()->getHttpHost(), 'giutbok') ? 'giutbok.layout' : 'backend.layout';
-        return view('backend.project.index', compact('learners', 'activities', 'projects', 'layout'));
+        return view('backend.project.index', compact('learners', 'activities', 'projects', 'layout',
+            'projectNotes'));
     }
 
     public function show($id)
@@ -47,6 +59,11 @@ class ProjectController extends Controller
         $timeRegisters = TimeRegister::where('user_id', $project->user_id)->whereNull('project_id')->with('project')->get();
         $projectTimeRegisters = TimeRegister::where('project_id', $project->id)->with('project')->get();
         $projects = Project::all();
+        $correctionFeedbackTemplate = AdminHelpers::emailTemplate('Correction Feedback');
+        $copyEditingFeedbackTemplate = AdminHelpers::emailTemplate('Copy Editing Feedback');
+        $bookPictures = ProjectBookPicture::where('project_id', $id)->get();
+        $wholeBooks = ProjectWholeBook::where('project_id', $id)->get();
+        $bookFormattingList = ProjectBookFormatting::where('project_id', $id)->get();
 
         $layout = 'backend.layout';
         $addOtherServiceRoute = 'admin.project.add-other-service';
@@ -60,6 +77,12 @@ class ProjectController extends Controller
         $updateExpectedFinishRoute = 'admin.other-service.update-expected-finish';
         $updateStatusRoute = 'admin.other-service.update-status';
         $otherServiceDeleteRoute = 'admin.other-service.delete';
+        $otherServiceFeedbackRoute = 'admin.other-service.add-feedback';
+        $saveBookPicturesRoute = 'admin.project.save-picture';
+        $deleteBookPicturesRoute = 'admin.project.delete-picture';
+        $downloadOtherService = 'editor.other-service.download-doc';
+        $saveBookFormattingRoute = 'admin.project.save-book-formatting';
+        $deleteBookFormattingRoute = 'admin.project.delete-book-formatting';
 
         if (str_contains(request()->getHttpHost(), 'giutbok')) {
             $layout = 'giutbok.layout';
@@ -74,13 +97,22 @@ class ProjectController extends Controller
             $updateExpectedFinishRoute = 'g-admin.other-service.update-expected-finish';
             $updateStatusRoute = 'g-admin.other-service.update-status';
             $otherServiceDeleteRoute = 'g-admin.other-service.delete';
+            $otherServiceFeedbackRoute = 'g-admin.other-service.add-feedback';
+            $saveBookPicturesRoute = 'g-admin.project.save-picture';
+            $deleteBookPicturesRoute = 'g-admin.project.delete-picture';
+            $downloadOtherService = 'g-admin.other-service.download-doc';
+            $saveBookFormattingRoute = 'g-admin.project.save-book-formatting';
+            $deleteBookFormattingRoute = 'g-admin.project.delete-book-formatting';
         }
 
         return view('backend.project.show', compact('project', 'editors', 'learners', 'activities',
             'timeRegisters', 'projectTimeRegisters', 'projects', 'layout', 'addOtherServiceRoute', 'selfPublishingStoreRoute',
             'selfPublishingUpdateRoute', 'selfPublishingDeleteRoute', 'selfPublishingAddFeedbackRoute',
             'selfPublishingDownloadFeedbackRoute', 'selfPublishingLearnersRoute', 'assignEditorRoute',
-            'updateExpectedFinishRoute', 'updateStatusRoute', 'otherServiceDeleteRoute'));
+            'updateExpectedFinishRoute', 'updateStatusRoute', 'otherServiceDeleteRoute', 'correctionFeedbackTemplate',
+            'copyEditingFeedbackTemplate', 'otherServiceFeedbackRoute', 'saveBookPicturesRoute', 'bookPictures',
+            'deleteBookPicturesRoute', 'wholeBooks', 'downloadOtherService', 'saveBookFormattingRoute', 'bookFormattingList',
+            'deleteBookFormattingRoute'));
     }
 
     public function saveProject( ProjectRequest $request, ProjectService $projectService )
@@ -93,6 +125,14 @@ class ProjectController extends Controller
         $project = Project::find($project_id);
 
         $activity = ProjectActivity::where('project_id', $project_id)->update([
+            'project_id' => NULL
+        ]);
+
+        Contract::where('project_id', $project_id)->update([
+            'project_id' => NULL
+        ]);
+
+        TimeRegister::where('project_id', $project_id)->update([
             'project_id' => NULL
         ]);
 
@@ -120,6 +160,91 @@ class ProjectController extends Controller
         return response()->json($project);
     }
 
+    public function addLearner( $project_id, Request $request, LearnerService $learnerService )
+    {
+        $this->validate($request, [
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'password' => 'required|string',
+        ]);
+
+        $user = $learnerService->registerLearner($request, true);
+
+        $project = Project::find($project_id);
+        $project->user_id = $user->id;
+        $project->save();
+
+        return response()->json([
+            'user' => $user,
+            'project' => $project
+        ]);
+    }
+
+    /**
+     * @param $project_id
+     * @param Request $request
+     * @param ProjectService $projectService
+     * @return ProjectWholeBook|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]
+     */
+    public function saveWholeBook( $project_id, Request $request, ProjectService $projectService )
+    {
+
+        $request->merge(['project_id' => $project_id]);
+        if (filter_var($request->is_file, FILTER_VALIDATE_BOOLEAN)) {
+            if (!$request->id) {
+                $this->validate($request, ['book_file' => 'required']);
+            }
+            $request->book_content = $projectService->uploadWholeBook( $request );
+        } else {
+            $this->validate($request, ['book_content' => 'required']);
+        }
+
+        $wholeBook = $request->id ? ProjectWholeBook::find($request->id) : new ProjectWholeBook();
+        $wholeBook->project_id = $project_id;
+        $wholeBook->book_content = $request->book_content;
+        $wholeBook->description = $request->description;
+        $wholeBook->is_file = filter_var($request->is_file, FILTER_VALIDATE_BOOLEAN);
+        $wholeBook->save();
+
+        return $wholeBook;
+
+    }
+
+    /**
+     * @param $whole_book_id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteWholeBook( $whole_book_id )
+    {
+        ProjectWholeBook::find($whole_book_id)->delete();
+        return response()->json();
+    }
+
+    public function downloadWholeBook( $project_id, $whole_book_id )
+    {
+        $wholeBook = ProjectWholeBook::find($whole_book_id);
+        $project = Project::find($project_id);
+
+        if ($wholeBook->is_file) {
+            $pathinfo = pathinfo($wholeBook->book_content);
+            $extension = $pathinfo['extension'];
+            $filename = $pathinfo['filename'];
+            return response()->download(public_path($wholeBook->book_content),$filename.'.'.$extension);
+        } else {
+            $phpWord = new PhpWord();
+
+            $section = $phpWord->addSection();
+            $content = view('docx.generic', compact('wholeBook'));
+            \PhpOffice\PhpWord\Shared\Html::addHtml($section,$content,true);
+            header('Content-Type: application/.docx');
+            header('Content-Disposition: attachment;filename="'.$wholeBook->id.'.docx"');
+            $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+            $objWriter->save('php://output');
+            exit(); // added to prevent corrupt file
+        }
+    }
+
     public function saveBook( $project_id, ProjectBookRequest $request, ProjectService $projectService )
     {
         $request->merge(['project_id' => $project_id]);
@@ -132,6 +257,86 @@ class ProjectController extends Controller
     {
         ProjectBook::find($id)->delete();
         return response()->json();
+    }
+
+    /**
+     * @param $project_id
+     * @param Request $request
+     * @param ProjectService $projectService
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function saveBookPicture( $project_id, Request $request, ProjectService $projectService )
+    {
+        $this->validate($request, ['images' => 'required']);
+
+        if ($request->id && count($request->file('images')) > 1) {
+            return redirect()->back()->with([
+                'errors'                => AdminHelpers::createMessageBag('only one image is allowed in update'),
+                'alert_type'            => 'danger',
+                'not-former-courses'    => true
+            ]);
+        }
+
+        $request->merge(['project_id' => $project_id]);
+        $projectService->saveBookPicture($request);
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book picture saved successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+
+    }
+
+    /**
+     * @param $id
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function deleteBookPicture( $id )
+    {
+        $bookPicture = ProjectBookPicture::find($id);
+        $bookPicture->delete();
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book picture deleted successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    /**
+     * @param $project_id
+     * @param Request $request
+     * @param ProjectService $projectService
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function saveBookFormatting( $project_id, Request $request, ProjectService $projectService )
+    {
+        $this->validate($request, ['file' => 'required|mimes:pdf']);
+        $request->merge(['project_id' => $project_id]);
+        $projectService->saveBookFormatting($request);
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book formatting saved successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    /**
+     * @param $id
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function deleteBookFormatting( $id )
+    {
+        $bookFormatting = ProjectBookFormatting::find($id);
+        $bookFormatting->delete();
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book formatting deleted successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
     }
 
     /**
@@ -191,26 +396,28 @@ class ProjectController extends Controller
         // create graphic work folder first
         AdminHelpers::createDirectory('storage/project-graphic-work');
 
-        switch ($request->type) {
-            case 'cover':
-                $this->validate($request, ['cover' => 'required|mimes:jpeg,jpg,png,gif']);
-                break;
+        if (!$request->id){
+            switch ($request->type) {
+                case 'cover':
+                    $this->validate($request, ['cover' => 'required|mimes:jpeg,jpg,png,gif']);
+                    break;
 
-            case 'barcode':
-                $this->validate($request, ['barcode' => 'required|mimes:jpeg,jpg,png,gif']);
-                break;
+                /*case 'barcode':
+                    $this->validate($request, ['barcode' => 'required|mimes:jpeg,jpg,png,gif']);
+                    break;*/
 
-            case 'rewrite-script':
-                $this->validate($request, ['rewrite_script' => 'required|mimes:pdf']);
-                break;
+                case 'rewrite-script':
+                    $this->validate($request, ['rewrite_script' => 'required|mimes:pdf']);
+                    break;
 
-            case 'trial-page':
-                $this->validate($request, ['trial_page' => 'required|mimes:jpeg,jpg,png,gif']);
-                break;
+                case 'trial-page':
+                    $this->validate($request, ['trial_page' => 'required|mimes:jpeg,jpg,png,gif']);
+                    break;
 
-            case 'sample-book-pdf':
-                $this->validate($request, ['sample_book_pdf' => 'required|mimes:pdf']);
-                break;
+                case 'sample-book-pdf':
+                    $this->validate($request, ['sample_book_pdf' => 'required|mimes:pdf']);
+                    break;
+            }
         }
 
         $projectService->saveGraphicWorks($request);
@@ -327,6 +534,7 @@ class ProjectController extends Controller
         $manuscriptSentToPrint = ProjectMarketing::manuscriptSentToPrint()->where('project_id', $project_id)->get();
         $culturalCouncils = ProjectMarketing::culturalCouncils()->where('project_id', $project_id)->get();
         $freeWords = ProjectMarketing::freeWords()->where('project_id', $project_id)->get();
+        $agreementOnTimeRegistration = ProjectMarketing::agreementOnTimeRegistration()->where('project_id', $project_id)->get();
         $printEBooks = ProjectMarketing::printEbooks()->where('project_id', $project_id)->get();
         $sampleBookApproved = ProjectMarketing::sampleBookApproved()->where('project_id', $project_id)->get();
         $pdfPrintIsApproved = ProjectMarketing::pdfPrintIsApproved()->where('project_id', $project_id)->get();
@@ -339,7 +547,7 @@ class ProjectController extends Controller
             'deleteMarketingRoute', 'emailBookstores', 'emailLibraries', 'emailPresses', 'reviewCopiesSent',
             'setupOnlineStore', 'setupFacebook', 'advertisementFacebook', 'manuscriptSentToPrint', 'culturalCouncils',
             'freeWords', 'printEBooks', 'sampleBookApproved', 'pdfPrintIsApproved', 'numberOfAuthorBooks',
-            'updateTheBookBase', 'ebookOrdered', 'ebookReceived'));
+            'updateTheBookBase', 'ebookOrdered', 'ebookReceived', 'agreementOnTimeRegistration'));
     }
 
     public function saveMarketing( $project_id, Request $request, ProjectService $projectService )
@@ -413,6 +621,10 @@ class ProjectController extends Controller
                 $is_finished_field = 'is_finished_free_word';
                 break;
 
+            case 'agreement-on-time-registration':
+                $is_finished_field = 'is_finished_agreement_on_time_registration';
+                break;
+
             case 'print-ebook':
                 if (!$request->id) {
                     $this->validate($request, ['print_ebook' => 'required']);
@@ -483,6 +695,23 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
+    public function marketingPlan( $project_id )
+    {
+        $project = Project::find($project_id);
+        $marketingPlans = MarketingPlan::with(['questions.answers' => function($query) use ($project_id) {
+            $query->where('marketing_plan_question_answers.project_id', $project_id);
+        }])->get();
+        $layout = 'backend.layout';
+        $backRoute = 'admin.project.show';
+
+        if (AdminHelpers::isGiutbokPage()) {
+            $layout = 'giutbok.layout';
+            $backRoute = 'g-admin.project.show';
+        }
+
+        return view('backend.project.marketing-plan', compact('layout', 'backRoute', 'project', 'marketingPlans'));
+    }
+
     /**
      * @param $project_id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
@@ -495,6 +724,7 @@ class ProjectController extends Controller
         $signedUploadRoute = 'admin.project.contract-signed-upload';
         $contractShowRoute = 'admin.project.contract-show';
         $contractEditRoute = 'admin.project.contract-edit';
+        $backRoute = route('admin.project.show', $project_id);
         if (AdminHelpers::isGiutbokPage()) {
             $layout = 'giutbok.layout';
             $uploadContractRoute = 'g-admin.project.contract-upload';
@@ -502,13 +732,15 @@ class ProjectController extends Controller
             $signedUploadRoute = 'g-admin.project.contract-signed-upload';
             $contractShowRoute = 'g-admin.project.contract-show';
             $contractEditRoute = 'g-admin.project.contract-edit';
+            $backRoute = route('g-admin.project.show', $project_id);
         }
 
         $project = Project::find($project_id);
-        $contracts = Contract::whereNotNull('project_id')->paginate(10);
+        $contracts = Contract::where('project_id', $project_id)->paginate(10);
 
         return view('backend.project.contract.index', compact('project', 'layout', 'contracts',
-            'uploadContractRoute', 'createContractRoute', 'signedUploadRoute', 'contractShowRoute', 'contractEditRoute'));
+            'uploadContractRoute', 'createContractRoute', 'signedUploadRoute', 'contractShowRoute', 'contractEditRoute',
+            'backRoute'));
     }
 
     /**
@@ -645,5 +877,125 @@ class ProjectController extends Controller
         }
 
         return view('backend.contract.show', compact('contract', 'backRoute', 'layout'));
+    }
+
+    /**
+     * @param $project_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function invoice( $project_id )
+    {
+        $layout = 'backend.layout';
+        $backRoute = route('admin.project.show', $project_id);
+        $saveInvoiceRoute = 'admin.project.invoice.save';
+        $deleteInvoiceRoute = 'admin.project.invoice.delete';
+        $saveManualInvoiceRoute = 'admin.project.manual-invoice.save';
+        $deleteManualInvoiceRoute = 'admin.project.manual-invoice.delete';
+        if (AdminHelpers::isGiutbokPage()) {
+            $layout = 'giutbok.layout';
+            $backRoute = route('g-admin.project.show', $project_id);
+            $saveInvoiceRoute = 'g-admin.project.invoice.save';
+            $deleteInvoiceRoute = 'g-admin.project.invoice.delete';
+            $saveManualInvoiceRoute = 'g-admin.project.manual-invoice.save';
+            $deleteManualInvoiceRoute = 'g-admin.project.manual-invoice.delete';
+        }
+
+        $project = Project::find($project_id);
+        $invoices = ProjectInvoice::where('project_id', $project_id)->get();
+        $manualInvoices = ProjectManualInvoice::where('project_id', $project_id)->get();
+
+        return view('backend.project.invoice', compact('project', 'backRoute', 'layout', 'saveInvoiceRoute',
+            'invoices', 'deleteInvoiceRoute', 'saveManualInvoiceRoute', 'manualInvoices', 'deleteManualInvoiceRoute'));
+    }
+
+    /**
+     * @param $project_id
+     * @param Request $request
+     * @param ProjectService $projectService
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function saveInvoice( $project_id, Request $request, ProjectService $projectService )
+    {
+
+        // create graphic work folder first
+        AdminHelpers::createDirectory('storage/project-invoice');
+        $invoice = $request->id ? ProjectInvoice::find($request->id) : new ProjectInvoice();
+
+        if (!$request->id) {
+            $this->validate($request, [
+                'invoice' => 'required|mimes:pdf'
+            ]);
+        }
+
+        if ($request->hasFile('invoice')) {
+            $invoice->invoice_file = $projectService->saveFileOrImage('storage/project-invoice', 'invoice');
+        }
+
+        $invoice->project_id = $project_id;
+        $invoice->notes = $request->notes;
+        $invoice->save();
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Invoice saved successfully.'),
+                'alert_type' => 'success']);
+    }
+
+    /**
+     * @param $project_id
+     * @param $invoice_id
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function deleteInvoice( $project_id, $invoice_id )
+    {
+        $invoice = ProjectInvoice::find($invoice_id);
+        $invoice->delete();
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Invoice deleted successfully.'),
+                'alert_type' => 'success']);
+    }
+
+    public function saveManualInvoice( $project_id, Request $request )
+    {
+        $this->validate($request, [
+            'invoice' => 'required'
+        ]);
+
+        $invoice = ProjectManualInvoice::firstOrNew(['id' => $request->id]);
+        $invoice->project_id = $project_id;
+        $invoice->invoice = $request->invoice;
+        $invoice->amount = $request->amount;
+        $invoice->assigned_to = $request->assigned_to;
+        $invoice->date = $request->date;
+        $invoice->note = $request->note;
+        $invoice->save();
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Invoice saved successfully.'),
+                'alert_type' => 'success']);
+    }
+
+    public function deleteManualInvoice( $project_id, $invoice_id )
+    {
+        $invoice = ProjectManualInvoice::find($invoice_id);
+        $invoice->delete();
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Invoice deleted successfully.'),
+                'alert_type' => 'success']);
+    }
+
+    public function showNotes( $project_id )
+    {
+        $project = Project::find($project_id);
+        $backRoute = route('admin.project.show', $project_id);
+
+        $layout = 'backend.layout';
+        if (AdminHelpers::isGiutbokPage()) {
+            $backRoute = route('g-admin.project.show', $project_id);
+            $layout = 'giutbok.layout';
+        }
+
+        return view('backend.project.notes', compact('project', 'backRoute', 'layout'));
     }
 }

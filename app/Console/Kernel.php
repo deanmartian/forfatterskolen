@@ -41,7 +41,8 @@ class Kernel extends ConsoleKernel
         Commands\DelayedEmailCommand::class,
         Commands\WebinarScheduledRegistrationCommand::class,
         Commands\InvoiceVippsEfakturaCommand::class,
-        Commands\SveaDeliveryCommand::class
+        Commands\SveaDeliveryCommand::class,
+        Commands\CheckFikenContactCommand::class
     ];
 
     /**
@@ -88,6 +89,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('autorenewreminder:command')
             ->dailyAt('07:00');
         $schedule->command('checksveaorder:command')
+            ->dailyAt('07:30');
+        $schedule->command('checkfikencontact:command')
             ->dailyAt('07:30');
         $schedule->command('invoiceduereminder:command')
             ->dailyAt('08:00');

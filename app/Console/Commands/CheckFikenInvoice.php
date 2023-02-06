@@ -10,6 +10,7 @@ use App\PilotReaderBookReading;
 use App\PilotReaderBookSettings;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class CheckFikenInvoice extends Command
 {
@@ -45,6 +46,7 @@ class CheckFikenInvoice extends Command
     public function handle()
     {
         CronLog::create(['activity' => 'CheckFikenInvoice CRON running.']);
+        Log::info("checkfikeninvoice:command running");
         $pageCount = 1;
         // LIVE:forfatterskolen-as DEMO: fiken-demo-glede-og-bil-as2
         $company = 'forfatterskolen-as';
@@ -99,12 +101,14 @@ class CheckFikenInvoice extends Command
                     ->whereIn('fiken_is_paid',[0])->first();
 
                 if ($invoice) {
+                    Log::info("updated invoice id = " . $invoice->id);
                     $invoice->fiken_is_paid     = $fikenInvoice->associatedCreditNotes ? 3 : $status;
                     $invoice->fiken_balance     = $fiken_balance;
                     $invoice->fiken_dueDate     = $fikenDueDate;
                     $invoice->kid_number        = $kid;
                     $invoice->fiken_issueDate   = $fikenIssueDate;
                     $invoice->gross             = $gross;
+                    $invoice->fiken_invoice_id  = $fikenInvoice->invoiceId;
                     $invoice->save();
                     CronLog::create(['activity' => 'CheckFikenInvoice CRON updated an invoice with kid_number '.$kid]);
                 }
@@ -114,6 +118,7 @@ class CheckFikenInvoice extends Command
 
         CronLog::create(['activity' => 'CheckFikenInvoice CRON done running.']);
         echo "done checking fiken";
+        Log::info("checkfikeninvoice:command done running");
         return;
 
     }

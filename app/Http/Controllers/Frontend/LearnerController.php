@@ -7,6 +7,7 @@ use App\AssignmentGroupLearner;
 use App\CalendarNote;
 use App\CoachingTimerManuscript;
 use App\CoachingTimerTaken;
+use App\Contract;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
 use App\CourseCertificate;
@@ -29,6 +30,8 @@ use App\Mail\AssignmentSubmittedEmail;
 use App\Mail\CoachingSuggestionDateEmail;
 use App\Mail\MultipleEmailConfirmation;
 use App\Mail\SubjectBodyEmail;
+use App\MarketingPlan;
+use App\MarketingPlanQuestionAnswer;
 use App\Notification;
 use App\Order;
 use App\OrderCompany;
@@ -38,6 +41,11 @@ use App\PaymentMode;
 use App\PaymentPlan;
 use App\Paypal;
 use App\PilotReaderReaderProfile;
+use App\Project;
+use App\ProjectGraphicWork;
+use App\ProjectInvoice;
+use App\ProjectMarketing;
+use App\ProjectRegistration;
 use App\Repositories\Services\CompetitionService;
 use App\Repositories\Services\PublishingService;
 use App\Repositories\Services\WritingGroupService;
@@ -45,6 +53,7 @@ use App\SelfPublishing;
 use App\SelfPublishingLearner;
 use App\Services\AssignmentService;
 use App\Services\CourseService;
+use App\Services\ProjectService;
 use App\Services\ShopManuscriptService;
 use App\Settings;
 use App\ShopManuscriptTakenFeedback;
@@ -54,6 +63,8 @@ use App\SurveyAnswer;
 use App\TimeRegister;
 use App\User;
 use App\UserAutoRegisterToCourseWebinar;
+use App\UserBookForSale;
+use App\UserBookSale;
 use App\UserEmail;
 use App\UserRenewedCourse;
 use App\UserSocial;
@@ -85,10 +96,12 @@ use App\Assignment;
 use App\AssignmentManuscript;
 use App\AssignmentGroup;
 use App\AssignmentFeedback;
+use App\CourseDiscount;
 use App\Log;
 use Hash;
 use File;
 use App\Http\FrontendHelpers;
+use App\Jobs\UpdateFikenContactDetailsJob;
 
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
 
@@ -411,12 +424,20 @@ class LearnerController extends Controller
 
         if ($request->exists('search_replay') && $webinarsRepriser) {
             $searchResult = LessonContent::where('title', 'like', '%'.$request->search_replay.'%')
+                ->orWhere('tags', 'like', '%'.$request->search_replay.'%')
                 ->get();
             $isPost = 1;
             $isReplay = 1;
         }
 
-        return view('frontend.learner.webinar', compact('searchResult', 'isPost', 'isReplay'));
+        $replayWebinars = DB::table('lesson_contents')->select('lesson_contents.*')
+                            ->leftJoin('lessons', 'lesson_contents.lesson_id', '=', 'lessons.id')
+                            ->leftJoin('courses', 'lessons.course_id', '=', 'courses.id')
+                            ->where('courses.id', '=', 17)
+                            ->latest('lesson_contents.id')
+                            ->paginate(25);
+
+        return view('frontend.learner.webinar', compact('searchResult', 'isPost', 'isReplay', 'replayWebinars'));
     }
 
     /**
@@ -1014,7 +1035,14 @@ class LearnerController extends Controller
             ->where('user_id', '=', Auth::user()->id)->first();
         $otherLearnersIdList = $groupLearners->pluck('id')->toArray();
         $could_send_feedback_to = $groupLearner->could_send_feedback_to_id_list ?: $otherLearnersIdList;
-        return view('frontend.learner.groupShow', compact('group', 'otherLearnersIdList', 'could_send_feedback_to'));
+        $assignmentManuscript = AssignmentManuscript::where('assignment_id', $group->assignment_id)
+            ->where('user_id', Auth::user()->id)->first();
+
+        array_push($could_send_feedback_to, $groupLearner->id);
+        $groupLearnerList = AssignmentGroupLearner::where('assignment_group_id', $id)
+            ->whereIn('id', $could_send_feedback_to)->orderBy('created_at', 'desc')->get();
+        return view('frontend.learner.groupShow', compact('group', 'otherLearnersIdList', 'could_send_feedback_to',
+            'groupLearnerList', 'assignmentManuscript'));
     }
 
 
@@ -1229,7 +1257,8 @@ class LearnerController extends Controller
 
         $giftPurchase = GiftPurchase::where('redeem_code', $request->redeem_code)->first();
 
-        if (!$giftPurchase || $giftPurchase->is_redeemed || $giftPurchase->user_id === Auth::user()->id) {
+        if (!$giftPurchase || $giftPurchase->is_redeemed || $giftPurchase->user_id === Auth::user()->id
+            || ($giftPurchase->expired_at && Carbon::now()->gt($giftPurchase->expired_at))) {
 
             $errorMessage = '';
             if (!$giftPurchase) {
@@ -1242,6 +1271,10 @@ class LearnerController extends Controller
 
             if ($giftPurchase && $giftPurchase->user_id === Auth::user()->id) {
                 $errorMessage = AdminHelpers::createMessageBag('Buyer cannot claim the gift.');
+            }
+
+            if ($giftPurchase->expired_at && Carbon::now()->gt($giftPurchase->expired_at)) {
+                $errorMessage = AdminHelpers::createMessageBag('Gift card expired.');
             }
 
             return redirect()->back()->with([
@@ -1649,6 +1682,256 @@ class LearnerController extends Controller
         return view('frontend.learner.self-publishing.time-register', compact('timeRegisters'));
     }
 
+    public function bookSale()
+    {
+        $bookSales = Auth::user()->bookSales;
+        $learner = Auth::user();
+        return view('frontend.learner.self-publishing.sales', compact('bookSales', 'learner'));
+    }
+
+    public function bookSaleByMonth()
+    {
+        $sales =  UserBookSale::select(
+            DB::raw('sum(quantity) as total_quantity'),
+            DB::raw("DATE_FORMAT(date,'%m') as month")
+        )
+            ->whereYear('date', date('Y'))
+            ->where('user_id', Auth::user()->id)
+            ->groupBy('month')
+            ->orderBy('month', 'ASC')
+            ->get();
+
+        $data = array_fill(0, 12, 0);
+
+        foreach($sales as $order){
+            $data[$order->month-1] = (int) $order->total_quantity;
+        }
+
+        return $data;
+    }
+
+    public function saveForSaleBooks( Request $request )
+    {
+        $this->validate($request, [
+            'title' => 'required',
+            'price' => 'required|numeric'
+        ]);
+        $request->merge(['user_id' => Auth::user()->id]);
+
+        UserBookForSale::updateOrCreate([
+            'id' => $request->id
+        ], $request->except('id'));
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book for sale saved successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    public function deleteForSaleBooks( $id )
+    {
+        UserBookForSale::find($id)->delete();
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book for sale deleted successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    public function project()
+    {
+        $projects = Project::where('user_id', Auth::user()->id)->get();
+        return view('frontend.learner.self-publishing.project.index', compact('projects'));
+    }
+
+    public function showProject( $project_id )
+    {
+        $project = Project::where('user_id', Auth::user()->id)->where('id', $project_id)->firstOrFail();
+        return view('frontend.learner.self-publishing.project.show', compact('project'));
+    }
+
+    public function projectGraphicWork( $project_id )
+    {
+        $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
+        $covers = ProjectGraphicWork::cover()->where('project_id', $project_id)->get();
+        $barCodes = ProjectGraphicWork::barcode()->where('project_id', $project_id)->get();
+        $rewriteScripts = ProjectGraphicWork::rewriteScripts()->where('project_id', $project_id)->get();
+        $trialPages = ProjectGraphicWork::trialPage()->where('project_id', $project_id)->get();
+        $sampleBookPDFs = ProjectGraphicWork::sampleBookPdf()->where('project_id', $project_id)->get();
+        return view('frontend.learner.self-publishing.project.graphic-work', compact('project', 'covers',
+            'barCodes', 'rewriteScripts', 'trialPages', 'sampleBookPDFs'));
+    }
+
+    public function projectRegistration( $project_id )
+    {
+        $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
+        $isbns = ProjectRegistration::isbns()->where('project_id', $project_id)->get();
+        $centralDistributions = ProjectRegistration::centralDistributions()->where('project_id', $project_id)->get();
+        $mentorBookBases = ProjectRegistration::mentorBookBase()->where('project_id', $project_id)->get();
+        $uploadFilesToMentorBookBases = ProjectRegistration::uploadFilesToMentorBookBase()
+            ->where('project_id', $project_id)->get();
+        return view('frontend.learner.self-publishing.project.registration', compact('project', 'isbns',
+            'centralDistributions', 'mentorBookBases', 'uploadFilesToMentorBookBases'));
+    }
+
+    public function projectMarketing( $project_id )
+    {
+        $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
+        $emailBookstores = ProjectMarketing::emailBookstores()->where('project_id', $project_id)->get();
+        $emailLibraries = ProjectMarketing::emailLibraries()->where('project_id', $project_id)->get();
+        $emailPresses = ProjectMarketing::emailPress()->where('project_id', $project_id)->get();
+        $reviewCopiesSent = ProjectMarketing::reviewCopiesSent()->where('project_id', $project_id)->get();
+        $setupOnlineStore = ProjectMarketing::setupOnlineStore()->where('project_id', $project_id)->get();
+        $setupFacebook = ProjectMarketing::setupFacebook()->where('project_id', $project_id)->get();
+        $advertisementFacebook = ProjectMarketing::advertisementFacebook()->where('project_id', $project_id)->get();
+        $manuscriptSentToPrint = ProjectMarketing::manuscriptSentToPrint()->where('project_id', $project_id)->get();
+        $culturalCouncils = ProjectMarketing::culturalCouncils()->where('project_id', $project_id)->get();
+        $freeWords = ProjectMarketing::freeWords()->where('project_id', $project_id)->get();
+        $agreementOnTimeRegistration = ProjectMarketing::agreementOnTimeRegistration()->where('project_id', $project_id)->get();
+        $printEBooks = ProjectMarketing::printEbooks()->where('project_id', $project_id)->get();
+        $sampleBookApproved = ProjectMarketing::sampleBookApproved()->where('project_id', $project_id)->get();
+        $pdfPrintIsApproved = ProjectMarketing::pdfPrintIsApproved()->where('project_id', $project_id)->get();
+        $numberOfAuthorBooks = ProjectMarketing::numberOfAuthorBooks()->where('project_id', $project_id)->get();
+        $updateTheBookBase = ProjectMarketing::updateTheBookBase()->where('project_id', $project_id)->get();
+        $ebookOrdered = ProjectMarketing::ebookOrdered()->where('project_id', $project_id)->get();
+        $ebookReceived = ProjectMarketing::ebookReceived()->where('project_id', $project_id)->get();
+        return view('frontend.learner.self-publishing.project.marketing', compact('project', 'emailBookstores',
+            'emailLibraries', 'emailPresses', 'reviewCopiesSent', 'setupOnlineStore', 'setupFacebook', 'advertisementFacebook',
+            'manuscriptSentToPrint', 'culturalCouncils', 'freeWords', 'agreementOnTimeRegistration', 'printEBooks',
+            'sampleBookApproved', 'pdfPrintIsApproved', 'numberOfAuthorBooks', 'updateTheBookBase', 'ebookOrdered',
+            'ebookReceived'));
+    }
+
+    /**
+     * @param $project_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function projectMarketingPlan( $project_id )
+    {
+        $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
+        $marketingPlans = MarketingPlan::with(['questions.answers' => function($query) use ($project_id) {
+            $query->where('marketing_plan_question_answers.project_id', $project_id);
+        }])->get();
+        return view('frontend.learner.self-publishing.project.marketing-plan', compact('project', 'marketingPlans'));
+    }
+
+    /**
+     * @param $project_id
+     * @param Request $request
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function saveMarketingPlanQA( $project_id, Request $request )
+    {
+        foreach ($request->arr as $input) {
+            $answer = MarketingPlanQuestionAnswer::firstOrNew([
+                'project_id' => $project_id,
+                'question_id' => $input['main_question_id']
+            ]);
+            $answer->main_answer = $input['main_answer'];
+            $answer->sub_answer = isset($input['sub_answer'])
+                ? json_encode($input['sub_answer'], JSON_UNESCAPED_UNICODE )
+                : NULL;
+            $answer->save();
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Answer saved.'),
+            'alert_type' => 'success'
+        ]);
+    }
+
+    public function projectContract( $project_id )
+    {
+        $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
+        $contracts = Contract::where('project_id', $project_id)->paginate(10);
+        return view('frontend.learner.self-publishing.project.contract', compact('project', 'contracts'));
+    }
+
+    public function projectInvoice( $project_id )
+    {
+        $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
+        $invoices = ProjectInvoice::where('project_id', $project_id)->get();
+        return view('frontend.learner.self-publishing.project.invoice', compact('project', 'invoices'));
+    }
+
+    public function uploadSelfPublishingManuscript( $id, Request $request )
+    {
+        $this->validate($request, ['manuscript' => 'required']);
+
+        $publishing = SelfPublishing::find($id);
+
+        $destinationPath = 'storage/self-publishing-manuscript/'; // upload path
+
+        if ( $request->hasFile('manuscript') ) :
+
+            $filesWithPath = '';
+            $word_count = 0;
+            foreach ($request->file('manuscript') as $k => $file) {
+                $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION); // getting document extension
+                $actual_name = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_FILENAME);
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+
+                $expFileName = explode('/', $fileName);
+                $filePath = "/".$destinationPath.end($expFileName);
+                $file->move($destinationPath, end($expFileName));
+
+                $filesWithPath .= $filePath.", ";
+
+                // count words
+                if($extension == "pdf") :
+                    $pdf  =  new \PdfToText( $destinationPath.end($expFileName) ) ;
+                    $pdf_content = $pdf->Text;
+                    $word_count += FrontendHelpers::get_num_of_words($pdf_content);
+                elseif($extension == "docx") :
+                    $docObj = new \Docx2Text($destinationPath.end($expFileName));
+                    $docText= $docObj->convertToText();
+                    $word_count += FrontendHelpers::get_num_of_words($docText);
+                elseif($extension == "doc") :
+                    $docText = FrontendHelpers::readWord($destinationPath.end($expFileName));
+                    $word_count += FrontendHelpers::get_num_of_words($docText);
+                elseif($extension == "odt") :
+                    $doc = odt2text($destinationPath.end($expFileName));
+                    $word_count += FrontendHelpers::get_num_of_words($doc);
+                endif;
+            }
+
+            $publishing->manuscript = $filesWithPath = trim($filesWithPath,", ");
+            $publishing->word_count = $word_count;
+        endif;
+        $publishing->save();
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag(trans('site.learner.upload-manuscript-success')),
+            'alert_type' => 'success'
+        ]);
+    }
+
+    /**
+     * @param $id
+     * @param $type
+     * @param Request $request
+     * @param ProjectService $projectService
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function uploadOtherServiceManuscript( $id, $type, Request $request, ProjectService $projectService )
+    {
+        $this->validate($request, ['manuscript' => 'required']);
+
+        if (in_array($type, [1, 2])) {
+            $data = $type == 1 ? CopyEditingManuscript::find($id) : CorrectionManuscript::find($id);
+            $request->merge(['type' => $type]);
+            $file = $projectService->saveFile($request);
+            $data->file = $file;
+            $data->save();
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag(trans('site.learner.upload-manuscript-success')),
+            'alert_type' => 'success'
+        ]);
+    }
+
     public function downloadTimeRegisterInvoice( $id )
     {
         $timeRegister = TimeRegister::find($id);
@@ -1717,6 +2000,11 @@ class LearnerController extends Controller
         $address->zip = $request->zip;
         $address->phone = $request->phone;
         $address->save();
+        
+        $learner = Auth::user();
+        if ($learner->fiken_contact_id) {
+            dispatch(new UpdateFikenContactDetailsJob($learner));
+        }
 
         // User Social
         $social = UserSocial::firstOrNew(['user_id' => Auth::user()->id]);
@@ -1782,6 +2070,10 @@ class LearnerController extends Controller
 
         $lesson_content = $lesson->lessonContent;
 
+        if (!FrontendHelpers::checkIfLearnerHasAccessToLesson(Auth::user()->id, $course_id, $id)) {
+            abort(404);
+        }
+
         if ($request->exists('search_replay') && $lesson->id == 191) {
             $lesson_content = LessonContent::where('title', 'like', '%'.$request->search_replay.'%')
                 ->get();
@@ -1801,12 +2093,16 @@ class LearnerController extends Controller
      * Download lesson as pdf file
      * @param $course_id
      * @param $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse | mixed
      */
     public function downloadLesson($course_id, $id)
     {
         $course = Course::findOrFail($course_id);
         $lesson = Lesson::findOrFail($id);
+
+        if (!FrontendHelpers::checkIfLearnerHasAccessToLesson(Auth::user()->id, $course_id, $id)) {
+            abort(404);
+        }
 
         $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course->packages->pluck('id')->toArray())->first();
 
@@ -1947,9 +2243,9 @@ class LearnerController extends Controller
             if($headEditor) {
                 AdminHelpers::queue_mail($headEditor->email, $emailTemplate->subject, $email_content, $emailTemplate->from_email);
             }
-            if($editor){
+            /*if($editor){
                 AdminHelpers::queue_mail($editor->email, $emailTemplate->subject, $email_content, $emailTemplate->from_email);
-            }
+            }*/
 
             return redirect()->back();
         else :

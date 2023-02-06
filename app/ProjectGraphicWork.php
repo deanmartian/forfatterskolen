@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProjectGraphicWork extends Model
 {
 
-    protected $fillable = ['project_id', 'type', 'value'];
+    protected $fillable = ['project_id', 'type', 'value', 'description', 'date', 'is_checked'];
     protected $appends = ['image', 'file_link'];
 
     /*protected static function boot() {

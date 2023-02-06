@@ -28,8 +28,11 @@ use App\Project;
 use App\SelfPublishing;
 use App\SelfPublishingLearner;
 use App\Services\CourseService;
+use App\Services\LearnerService;
 use App\TimeRegister;
 use App\UserAutoRegisterToCourseWebinar;
+use App\UserBookForSale;
+use App\UserBookSale;
 use App\UserEmail;
 use App\UserPreferredEditor;
 use App\Workshop;
@@ -48,12 +51,14 @@ use App\CoursesTaken;
 use App\ShopManuscriptsTaken;
 use App\ShopManuscriptComment;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 use Validator;
 use App\ShopManuscript;
 use App\Lesson;
 use App\Http\AdminHelpers;
 use File;
 use App\Http\FrontendHelpers;
+use App\Jobs\UpdateFikenContactDetailsJob;
 use App\RequestToEditor;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
@@ -234,7 +239,6 @@ class LearnerController extends Controller
     {
         $learner = User::findOrFail($id);
 
-
         switch( $request->field ) :
             case 'password' :
                 $validator = Validator::make($request->all(), [
@@ -262,6 +266,11 @@ class LearnerController extends Controller
                 $address->zip = $request->zip;
                 $address->city = $request->city;
                 $address->save();
+
+                if ($learner->fiken_contact_id) {
+                    dispatch(new UpdateFikenContactDetailsJob($learner));
+                }
+
                 return redirect()->back()->with(['profile_success' => 'Contact Info updated successfully.']);
                 break;
         endswitch;
@@ -575,7 +584,8 @@ class LearnerController extends Controller
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
             curl_setopt($ch, CURLOPT_POSTFIELDS, $field_string);
             $data = curl_exec($ch);
-
+            Log::info("update due invoice after curl request");
+            Log::info(json_encode($data));
             $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             if (!in_array($http_code, [200, 201])) { // 200 - get success, 201 - post success
                 abort($http_code); // display error page instead of the Whoops page
@@ -805,6 +815,18 @@ class LearnerController extends Controller
             $courseTaken->started_at = Carbon::now();
             $courseTaken->save();
 
+            // create order record
+            $newOrder['user_id']    = $user->id;
+            $newOrder['item_id']    = $package->course_id;
+            $newOrder['type']       = Order::COURSE_TYPE;
+            $newOrder['package_id'] = $package->id;
+            $newOrder['plan_id']    = 8; // Full payment
+            $newOrder['price']      = $price / 100;
+            $newOrder['discount']   = 0;
+            $newOrder['payment_mode_id']   = 3; // Faktura
+            $newOrder['is_processed'] = 1;
+            $order = Order::create($newOrder);
+
             // add to automation
             $user_email     = $user->email;
             $automation_id  = 73;
@@ -812,7 +834,7 @@ class LearnerController extends Controller
 
             AdminHelpers::addToAutomation($user_email,$automation_id,$user_name);
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Webinar-pakke renewed'),
-            'alert_type' => 'success']);
+            'alert_type' => 'success', 'not-former-courses' => true]);
 
         }
         return redirect()->back();
@@ -905,110 +927,113 @@ class LearnerController extends Controller
     public function destroy($id, Request $request)
     {
         $learner = User::findOrFail($id);
-        $moveLearner = User::findOrFail($request->move_learner_id);
 
-        if( $request->moveStatus && count($request->moveItems) > 0 && $request->move_learner_id ) :
-            if( in_array('courses_taken', $request->moveItems) ) :
-                $learner->coursesTaken()->update([
-                    'user_id' => $moveLearner->id
-                ]);
+        if ($request->has('move_learner_id')) {
+            $moveLearner = User::findOrFail($request->move_learner_id);
+
+            if( $request->moveStatus && count($request->moveItems) > 0 && $request->move_learner_id ) :
+                if( in_array('courses_taken', $request->moveItems) ) :
+                    $learner->coursesTaken()->update([
+                        'user_id' => $moveLearner->id
+                    ]);
+                endif;
+
+                if( in_array('shop_manuscripts', $request->moveItems) ) :
+                    $learner->shopManuscriptsTaken()->update([
+                        'user_id' => $moveLearner->id
+                    ]);
+                endif;
+
+                if( in_array('invoices', $request->moveItems) ) :
+                    $learner->invoices()->update([
+                        'user_id' => $moveLearner->id
+                    ]);
+                endif;
+
+                if( in_array('assignments', $request->moveItems) ) :
+                    AssignmentGroupLearner::where('user_id', $id)->update([
+                        'user_id' => $moveLearner->id
+                    ]);
+                    $learner->assignmentManuscripts()->update([
+                        'user_id' => $moveLearner->id
+                    ]);
+                endif;
+
+                if( in_array('diplomas', $request->moveItems) ) :
+                    $learner->diplomas()->update([
+                        'user_id' => $moveLearner->id
+                    ]);
+                endif;
             endif;
-        
-            if( in_array('shop_manuscripts', $request->moveItems) ) :
-                $learner->shopManuscriptsTaken()->update([
-                    'user_id' => $moveLearner->id
-                ]);
-            endif;
 
-            if( in_array('invoices', $request->moveItems) ) :
-                $learner->invoices()->update([
-                    'user_id' => $moveLearner->id
-                ]);
-            endif;
+            $learner->orders()->update([
+                'user_id' => $moveLearner->id
+            ]);
 
-            if( in_array('assignments', $request->moveItems) ) :
-                AssignmentGroupLearner::where('user_id', $id)->update([
-                    'user_id' => $moveLearner->id
-                ]);
-                $learner->assignmentManuscripts()->update([
-                    'user_id' => $moveLearner->id
-                ]);
-            endif;
+            $learner->courseOrderAttachments()->update([
+                'user_id' => $moveLearner->id
+            ]);
 
-            if( in_array('diplomas', $request->moveItems) ) :
-                $learner->diplomas()->update([
-                    'user_id' => $moveLearner->id
-                ]);
-            endif;
-        endif;
+            $learnerAssignmentManuscripts = $learner->assignmentManuscripts->pluck('id');
+            $learnerShopManuscriptsTaken = $learner->shopManuscriptsTaken->pluck('id');
+            $learnerCoursesTaken = $learner->coursesTaken->pluck('id');
+            $registeredWebinarLists = $learner->registeredWebinars->pluck('id');
+            $learnerInvoices = $learner->invoices->pluck('id');
+            $emailHistories = EmailHistory::where(function($query) use ($learnerAssignmentManuscripts){
+                $query->where('parent', 'LIKE', 'assignment-manuscripts%');
+                $query->whereIn('parent_id', $learnerAssignmentManuscripts);
+            })
+                ->orWhere(function($query) use ($learnerShopManuscriptsTaken){
+                    $query->where('parent', 'LIKE', 'shop-manuscripts-taken%');
+                    $query->whereIn('parent_id', $learnerShopManuscriptsTaken);
+                })
+                ->orWhere(function($query) use ($learnerCoursesTaken){
+                    $query->where('parent', 'LIKE', 'courses-taken%');
+                    $query->whereIn('parent_id', $learnerCoursesTaken);
+                })
+                ->orWhere(function($query) use ($registeredWebinarLists){
+                    $query->where('parent', '=', 'webinar-registrant');
+                    $query->whereIn('parent_id', $registeredWebinarLists);
+                })
+                ->orWhere(function($query) use ($learner){
+                    $query->where('parent', '=', 'learner');
+                    $query->where('parent_id', $learner->id);
+                })
+                ->orWhere(function($query) use ($learner){
+                    $query->where('parent', '=', 'free-manuscripts');
+                    $query->where('recipient', $learner->email);
+                })
+                ->orWhere(function($query) use ($learnerInvoices){
+                    $query->where('parent', '=', 'invoice');
+                    $query->whereIn('parent_id', $learnerInvoices);
+                })
+                ->orWhere(function($query) use ($learnerInvoices){
+                    $query->where('parent', '=', 'invoice');
+                    $query->whereIn('parent_id', $learnerInvoices);
+                })
+                ->orWhere(function($query) use ($learner){
+                    $query->where('parent', 'LIKE', 'copy-editing%');
+                    $query->where('recipient', $learner->email);
+                })
+                ->orWhere(function($query) use ($learner){
+                    $query->where('parent', 'LIKE', 'correction%');
+                    $query->where('recipient', $learner->email);
+                })
+                ->orWhere(function($query) use ($learner){
+                    $query->where('parent', 'LIKE', 'gift-purchase');
+                    $query->where('recipient', $learner->email);
+                })
+                ->orWhere(function($query) use ($learner){
+                    $query->where('recipient', $learner->email);
+                })
+                ->latest()
+                ->withTrashed()
+                ->pluck('id')->toArray();
 
-        $learner->orders()->update([
-            'user_id' => $moveLearner->id
-        ]);
-
-        $learner->courseOrderAttachments()->update([
-            'user_id' => $moveLearner->id
-        ]);
-
-        $learnerAssignmentManuscripts = $learner->assignmentManuscripts->pluck('id');
-        $learnerShopManuscriptsTaken = $learner->shopManuscriptsTaken->pluck('id');
-        $learnerCoursesTaken = $learner->coursesTaken->pluck('id');
-        $registeredWebinarLists = $learner->registeredWebinars->pluck('id');
-        $learnerInvoices = $learner->invoices->pluck('id');
-        $emailHistories = EmailHistory::where(function($query) use ($learnerAssignmentManuscripts){
-            $query->where('parent', 'LIKE', 'assignment-manuscripts%');
-            $query->whereIn('parent_id', $learnerAssignmentManuscripts);
-        })
-        ->orWhere(function($query) use ($learnerShopManuscriptsTaken){
-            $query->where('parent', 'LIKE', 'shop-manuscripts-taken%');
-            $query->whereIn('parent_id', $learnerShopManuscriptsTaken);
-        })
-        ->orWhere(function($query) use ($learnerCoursesTaken){
-            $query->where('parent', 'LIKE', 'courses-taken%');
-            $query->whereIn('parent_id', $learnerCoursesTaken);
-        })
-        ->orWhere(function($query) use ($registeredWebinarLists){
-            $query->where('parent', '=', 'webinar-registrant');
-            $query->whereIn('parent_id', $registeredWebinarLists);
-        })
-        ->orWhere(function($query) use ($learner){
-            $query->where('parent', '=', 'learner');
-            $query->where('parent_id', $learner->id);
-        })
-        ->orWhere(function($query) use ($learner){
-            $query->where('parent', '=', 'free-manuscripts');
-            $query->where('recipient', $learner->email);
-        })
-        ->orWhere(function($query) use ($learnerInvoices){
-            $query->where('parent', '=', 'invoice');
-            $query->whereIn('parent_id', $learnerInvoices);
-        })
-        ->orWhere(function($query) use ($learnerInvoices){
-            $query->where('parent', '=', 'invoice');
-            $query->whereIn('parent_id', $learnerInvoices);
-        })
-        ->orWhere(function($query) use ($learner){
-            $query->where('parent', 'LIKE', 'copy-editing%');
-            $query->where('recipient', $learner->email);
-        })
-        ->orWhere(function($query) use ($learner){
-            $query->where('parent', 'LIKE', 'correction%');
-            $query->where('recipient', $learner->email);
-        })
-        ->orWhere(function($query) use ($learner){
-            $query->where('parent', 'LIKE', 'gift-purchase');
-            $query->where('recipient', $learner->email);
-        })
-        ->orWhere(function($query) use ($learner){
-            $query->where('recipient', $learner->email);
-        })
-        ->latest()
-        ->withTrashed()
-        ->pluck('id')->toArray();
-
-        EmailHistory::whereIn('id', $emailHistories)->update([
-            'recipient' => $moveLearner->email
-        ]);
+            EmailHistory::whereIn('id', $emailHistories)->update([
+                'recipient' => $moveLearner->email
+            ]);
+        }
 
         $learner->forceDelete();
         return redirect(route('admin.learner.index'));
@@ -1353,7 +1378,7 @@ class LearnerController extends Controller
         return AdminHelpers::generateHash(8);
     }
 
-    public function registerLearner( Request $request )
+    public function registerLearner( Request $request, LearnerService $learnerService )
     {
         $this->validate($request, [
             'first_name' => 'required|string|max:255',
@@ -1362,30 +1387,7 @@ class LearnerController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = new User();
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
-        $user->email = $request->email;
-        $user->password = bcrypt($request->password);
-        $user->default_password = $request->password;
-        $user->need_pass_update = 1;
-        $user->save();
-
-        $encode_email = encrypt($user->email);
-
-        // Send welcome email
-        $actionText = 'Klikk her for å logge inn';
-        $actionUrl = route('auth.login.email', $encode_email);
-
-        $to = $user->email;
-        $emailData = [
-            'email_subject' => 'Velkommen til Forfatterskolen',
-            'email_message' => view('emails.registration', compact('actionText', 'actionUrl', 'user'))->render(),
-            'from_name' => '',
-            'from_email' => 'post@forfatterskolen.no',
-            'attach_file' => NULL
-        ];
-        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        $learnerService->registerLearner($request);
 
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Learner created successfully.'),
             'alert_type' => 'success', 'not-former-courses' => true]);
@@ -1597,6 +1599,11 @@ class LearnerController extends Controller
             if ($service_type == 1) {
                 $copyEditing = CopyEditingManuscript::find($service_id);
                 $copyEditing->delete();
+            }
+
+            if ($service_type == 2) {
+                $correction = CorrectionManuscript::find($service_id);
+                $correction->delete();
             }
 
             return redirect()->back()->with([
@@ -2012,6 +2019,56 @@ class LearnerController extends Controller
         $userEmail->delete();
         return redirect()->back()->with([
             'errors'                => AdminHelpers::createMessageBag('Secondary email removed successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    public function saveForSaleBooks( $user_id, Request $request )
+    {
+        $request->merge(['user_id' => $user_id]);
+
+        UserBookForSale::updateOrCreate([
+            'id' => $request->id
+        ], $request->except('id'));
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book for sale saved successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    public function deleteForSaleBooks( $user_id, $id )
+    {
+        UserBookForSale::find($id)->delete();
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book for sale deleted successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    public function saveBookSales( $user_id, Request $request )
+    {
+        $request->merge(['user_id' => $user_id, 'user_book_for_sale_id' => $request->book_id]);
+
+        UserBookSale::updateOrCreate([
+            'id' => $request->id
+        ], $request->except('id', 'book_id'));
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book sale saved successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    public function deleteBookSales( $user_id, $id )
+    {
+        UserBookSale::find($id)->delete();
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book sale deleted successfully.'),
             'alert_type'            => 'success',
             'not-former-courses'    => true
         ]);

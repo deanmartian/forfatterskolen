@@ -118,7 +118,7 @@
                         </div>
 
                         <div class="pull-right margin-top">
-                            {{ $corrections->render() }}
+                            {{ $corrections->appends(Request::all())->render() }}
                         </div>
                     </div>
                 @elseif( Request::input('tab') == 'copy-editing' )
@@ -220,7 +220,7 @@
                         </div>
 
                         <div class="pull-right margin-top">
-                            {{ $copyEditing->render() }}
+                            {{ $copyEditing->appends(Request::all())->render() }}
                         </div>
                     </div>
                 @else
@@ -356,7 +356,7 @@
                         </div>
 
                         <div class="pull-right margin-top">
-                            {{ $coachingTimers->render() }}
+                            {{ $coachingTimers->appends(Request::all())->render() }}
                         </div>
                     </div>
                 @endif
@@ -445,7 +445,7 @@
                         ?>
                         <div class="form-group">
                             <label>{{ trans_choice('site.manuscripts', 1) }}</label>
-                            <input type="file" class="form-control" name="manuscript" multiple accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf" required>
+                            <input type="file" class="form-control" name="manuscript[]" multiple accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf" required>
                         </div>
                         <div class="form-group">
                             <label>{{ trans('site.subject') }}</label>
@@ -459,8 +459,7 @@
                         </div>
                         <div class="form-group">
                             <label>{{ trans('site.message') }}</label>
-                            <textarea class="form-control tinymce" name="message" rows="6"
-                                    required></textarea>
+                            <textarea class="form-control tinymce" name="message" rows="6"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary pull-right">{{ trans('site.add-feedback') }}</button>
                         <div class="clearfix"></div>

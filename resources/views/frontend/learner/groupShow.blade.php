@@ -25,7 +25,7 @@
 
 		<div class="row">
             <?php $i = 1; ?>
-			@foreach( $group->learners as $learner )
+			@foreach( $groupLearnerList as $learner )
 				<div class="col-md-4 mt-5">
 					<div class="card card-global">
 						<div class="card-header">
@@ -104,7 +104,8 @@
 									@endif
 
 								@else
-									@if(in_array($learner->id, $could_send_feedback_to))
+									{{-- if is included when used is $group->learners --}}
+									{{--@if(in_array($learner->id, $could_send_feedback_to))--}}
 										<button type="button" class="btn site-btn-global w-100 rounded-0 submitFeedbackBtn"
 												data-toggle="modal" data-target="#submitFeedbackModal"
 												data-name="Learner {{ $i }}"
@@ -112,7 +113,7 @@
 												['group_id' => $group->id, 'id' => $learner->id]) }}">
 											{{ trans('site.learner.give-feedback') }}
 										</button>
-									@endif
+									{{--@endif--}}
 								@endif
 							@endif
 						</div> <!-- end card-footer -->
@@ -127,7 +128,7 @@
         	$feedbacks = App\AssignmentFeedback::where('assignment_group_learner_id', $groupLearner->id)->orderBy('created_at', 'desc')->get();
         ?>
 
-		@if( $feedbacks->count() > 0 )
+		@if( $feedbacks->count() > 0 && $assignmentManuscript->status)
 			<div class="row mt-5">
 				<div class="col-md-6">
 					<div class="card">

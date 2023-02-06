@@ -98,7 +98,6 @@
 									<th>{{ trans('site.front.coaching-timer.help-with-text') }}</th>
 									{{--<th>{{ trans('site.learner.admin-proposed-dates') }}</th>--}}
 									<th>{{ trans('site.learner.agreed-date-time') }}</th>
-									<th>{{ trans('site.learner.reprise-text') }}</th>
 									<th></th>
 								</tr>
 								</thead>
@@ -172,30 +171,6 @@
 											{{ $coachingTimer->approved_date ?
 											\App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
 											 : ''}}
-										</td>
-										<td>
-											@if ($coachingTimer->replay_link)
-												<a href="{{ $coachingTimer->replay_link }}" target="_blank">
-													{{ trans('site.learner.view-replay') }}
-												</a>
-											@endif
-
-											@if ($coachingTimer->comment)
-												<p>
-													{{ $coachingTimer->comment }}
-												</p>
-											@endif
-
-											@if ($coachingTimer->document)
-												<?php $extension = explode('.', basename($coachingTimer->document)); ?>
-												@if( end($extension) == 'pdf' || end($extension) == 'odt' )
-													<a href="/js/ViewerJS/#../../{{ $coachingTimer->document }}">{{ basename($coachingTimer->document) }}</a>
-												@elseif( end($extension) == 'docx')
-													<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$coachingTimer->document}}">{{ basename($coachingTimer->document) }}</a>
-												@elseif( end($extension) == 'doc')
-													<a href="{{ asset($coachingTimer->document) }}">{{ basename($coachingTimer->document) }}</a>
-												@endif
-											@endif
 										</td>
 										<td id="coaching-time-{{ $coachingTimer->id }}">
 											@if ($coachingTimer->status === 1)

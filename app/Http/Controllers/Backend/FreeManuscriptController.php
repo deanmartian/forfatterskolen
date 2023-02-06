@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\DelayedEmail;
 use App\EmailTemplate;
 use App\FreeManuscriptFeedbackHistory;
 use App\Http\AdminHelpers;
@@ -329,6 +330,21 @@ class FreeManuscriptController extends Controller
         $newFeedbackHistory->free_manuscript_id = $id;
         $newFeedbackHistory->date_sent = Carbon::now();
         $newFeedbackHistory->save();
+
+        if ($requests->has('follow_up_email')) {
+            $first_name = $freeManuscripts->name;
+            $formattedMailContent = AdminHelpers::formatEmailContent($requests->follow_up_message, $to, $first_name,
+                '');
+            DelayedEmail::create([
+                'subject' => $requests->follow_up_subject,
+                'message' => $formattedMailContent,
+                'from_email' => $requests->follow_up_from_email,
+                'recipient' => $to,
+                'send_date' => $requests->send_date,
+                'parent' => 'free-manuscript-follow-up',
+                'parent_id' => $freeManuscripts->id
+            ]);
+        }
 
         return redirect()->back();
     }

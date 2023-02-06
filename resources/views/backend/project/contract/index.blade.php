@@ -11,6 +11,9 @@
 @section('content')
     <div class="page-toolbar">
         <h3><i class="fa fa-handshake-o"></i> Contract</h3>
+        <a href="{{ $backRoute }}" class="btn btn-default" style="margin-right: 10px">
+            << {{ trans('site.back') }}
+        </a>
         <div class="clearfix"></div>
     </div>
 
@@ -61,7 +64,11 @@
                                 @endif--}}
 
                                 @if ($contract->signature)
-                                    <a href="{{ $contract->signed_file }}" class="button btn btn-info btn-xs" download>Download PDF</a>
+                                        @if($contract->is_file)
+                                            <a href="{{ $contract->signed_file }}" class="button btn btn-info btn-xs" download>Download PDF</a>
+                                        @else
+                                            <a href="{{ route('admin.contract.download-pdf', $contract->id) }}" class="button btn btn-info btn-xs">Download PDF</a>
+                                        @endif
                                 @else
                                     @if($contract->is_file)
                                         <button class="btn btn-primary btn-xs uploadSignedContractBtn" data-toggle="modal"

@@ -13,7 +13,8 @@
     <div id="app-container">
         <project-details :current-project="{{ json_encode($project) }}" :learners="{{ json_encode($learners) }}"
                          :activities="{{ json_encode($activities) }}" :time-registers="{{ json_encode($timeRegisters) }}"
-                         :project-time-list="{{ json_encode($projectTimeRegisters) }}" :projects="{{ json_encode($projects) }}"></project-details>
+                         :project-time-list="{{ json_encode($projectTimeRegisters) }}" :projects="{{ json_encode($projects) }}"
+                         :whole-book-list="{{ json_encode($wholeBooks) }}"></project-details>
 
         <div class="col-md-12">
             <button type="button" class="btn btn-success addSelfPublishingBtn" data-toggle="modal"
@@ -48,7 +49,7 @@
                                 {{ $publishing->description }}
                             </td>
                             <td>
-                                {!! $publishing->file_link !!}
+                                {!! $publishing->file_link_with_download !!}
                             </td>
                             <td>
                                 {{ $publishing->editor ? $publishing->editor->full_name : '' }}
@@ -82,7 +83,7 @@
                                         </button>
 
                                         <a href="{{ route($selfPublishingDownloadFeedbackRoute, $publishing->feedback->id) }}"
-                                           class="btn btn-success btn-xs margin-top">
+                                           class="btn btn-success btn-xs">
                                             Download Feedback
                                         </a>
                                     @else
@@ -128,6 +129,7 @@
                             <th>{{ trans_choice('site.editors', 1) }}</th>
                             <th>{{ trans('site.date-ordered') }}</th>
                             <th>{{ trans('site.expected-finish') }}</th>
+                            <th>{{ trans_choice('site.feedbacks', 1) }}</th>
                             <th>{{ trans('site.status') }}</th>
                             <th></th>
                         </tr>
@@ -137,6 +139,10 @@
                             <?php $extension = explode('.', basename($copy_editing->file)); ?>
                             <tr>
                                 <td>
+                                    <a href="{{ route($downloadOtherService, ['id' => $copy_editing->id, 'type' => 1]) }}"
+                                       download>
+                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                    </a>&nbsp;
                                     @if( end($extension) == 'pdf' || end($extension) == 'odt' )
                                         <a href="/js/ViewerJS/#../../{{ $copy_editing->file }}">{{ basename($copy_editing->file) }}</a>
                                     @elseif( end($extension) == 'docx' )
@@ -175,6 +181,21 @@
                                     @endif
                                 </td>
                                 <td>
+                                    <!-- show only if no feedback is given yet for this copyEditing -->
+                                    @if (!$copy_editing->feedback)
+                                        <a href="#addOtherServiceFeedbackModal" data-toggle="modal" style="color:#dc3545"
+                                           class="addOtherServiceFeedbackBtn" data-service="1"
+                                           data-action="{{ route($otherServiceFeedbackRoute,
+                                                        ['id' => $copy_editing->id, 'type' => 1]) }}"
+                                           data-email-template="{{ json_encode($copyEditingFeedbackTemplate) }}">+ {{ trans('site.add-feedback') }}</a>
+                                    @else
+                                        <?php $files = explode(',',$copy_editing->feedback->manuscript); ?>
+                                        @foreach($files as $file)
+                                            <a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
+                                        @endforeach
+                                    @endif
+                                </td>
+                                <td>
                                     @if( $copy_editing->status == 2 )
                                         <span class="label label-success">Finished</span>
                                     @elseif( $copy_editing->status == 1 )
@@ -187,6 +208,13 @@
                                     <?php
                                     $btnColor = $copy_editing->status == 1 ? 'primary' : 'warning';
                                     ?>
+
+                                        <input type="checkbox" data-toggle="toggle" data-on="Locked"
+                                               class="lock-toggle" data-off="Unlocked"
+                                               data-type="copy-editing" onchange="lockToggle(this)"
+                                               data-id="{{$copy_editing->id}}" data-size="mini" @if($copy_editing->is_locked)
+                                            {{ 'checked' }}
+                                                @endif>
 
                                     @if ($copy_editing->status !== 2)
                                         <button class="btn btn-{{ $btnColor }} btn-xs updateOtherServiceStatusBtn" type="button"
@@ -222,6 +250,7 @@
                             <th>{{ trans_choice('site.editors', 1) }}</th>
                             <th>{{ trans('site.date-ordered') }}</th>
                             <th>{{ trans('site.expected-finish') }}</th>
+                            <th>{{ trans_choice('site.feedbacks', 1) }}</th>
                             <th>{{ trans('site.status') }}</th>
                             <th></th>
                         </tr>
@@ -231,6 +260,9 @@
                             <?php $extension = explode('.', basename($correction->file)); ?>
                             <tr>
                                 <td>
+                                    <a href="{{ route($downloadOtherService, ['id' => $correction->id, 'type' => 2]) }}" download>
+                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                    </a>&nbsp;
                                     @if( end($extension) == 'pdf' || end($extension) == 'odt' )
                                         <a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
                                     @elseif( end($extension) == 'docx' )
@@ -269,6 +301,20 @@
                                     @endif
                                 </td>
                                 <td>
+                                    <!-- show only if no feedback is given yet for this copyEditing -->
+                                    @if (!$correction->feedback)
+                                        <a href="#addOtherServiceFeedbackModal" data-toggle="modal" style="color:#dc3545"
+                                           class="addOtherServiceFeedbackBtn" data-service="2"
+                                           data-action="{{ route($otherServiceFeedbackRoute,
+                                                    ['id' => $correction->id, 'type' => 2]) }}"
+                                           data-email-template="{{ json_encode($correctionFeedbackTemplate) }}">+ {{ trans('site.add-feedback') }}</a>
+                                    @else
+                                        @foreach($files as $file)
+                                            <a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
+                                        @endforeach
+                                    @endif
+                                </td>
+                                <td>
                                     @if( $correction->status == 2 )
                                         <span class="label label-success">Finished</span>
                                     @elseif( $correction->status == 1 )
@@ -282,12 +328,25 @@
                                     $btnColor = $correction->status == 1 ? 'primary' : 'warning';
                                     ?>
 
+                                        <input type="checkbox" data-toggle="toggle" data-on="Locked"
+                                               class="lock-toggle" data-off="Unlocked"
+                                               data-type="correction" onchange="lockToggle(this)"
+                                               data-id="{{$correction->id}}" data-size="mini" @if($correction->is_locked)
+                                            {{ 'checked' }}
+                                                @endif>
+
                                     @if ($correction->status !== 2)
                                         <button class="btn btn-{{ $btnColor }} btn-xs updateOtherServiceStatusBtn" type="button"
                                                 data-toggle="modal" data-target="#updateOtherServiceStatusModal"
                                                 data-service="2"
                                                 data-action="{{ route($updateStatusRoute, ['id' => $correction->id, 'type' => 2]) }}"><i class="fa fa-check"></i></button>
                                     @endif
+
+                                        <button class="btn btn-danger btn-xs deleteOtherServiceBtn" type="button"
+                                                data-toggle="modal" data-target="#deleteOtherServiceModal"
+                                                data-action="{{ route($otherServiceDeleteRoute, ['id' => $correction->id, 'type' => 2]) }}">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
                                 </td>
                             </tr>
                         @endforeach
@@ -303,8 +362,53 @@
                     <div class="panel">
                         <div class="panel-header" style="padding: 10px;">
                             <em><b>Book Pictures</b></em>
+                            <button class="btn btn-success btn-xs pull-right saveBookPictureBtn" data-toggle="modal"
+                                    data-target="#bookPicturesModal"
+                                    data-action="{{ route($saveBookPicturesRoute, $project->id) }}">
+                                Add
+                            </button>
                         </div>
                         <div class="panel-body">
+
+                            <div class="table-users table-responsive">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Description</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($bookPictures as $bookPicture)
+                                        <tr>
+                                            <td>
+                                                <a href="{{ asset( $bookPicture->image ) }}">
+                                                    <img src="{{ asset( $bookPicture->image ) }}" width="100" height="100">
+                                                </a>
+                                            </td>
+                                            <td>
+                                                {!! $bookPicture->description !!}
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm saveBookPictureBtn" data-toggle="modal"
+                                                        data-target="#bookPicturesModal"
+                                                        data-record="{{ json_encode($bookPicture) }}"
+                                                        data-action="{{ route($saveBookPicturesRoute, $project->id) }}">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-danger btn-sm deleteBookPictureBtn" data-toggle="modal"
+                                                        data-target="#deleteModal"
+                                                        data-action="{{ route($deleteBookPicturesRoute, $bookPicture->id) }}">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -313,8 +417,48 @@
                     <div class="panel">
                         <div class="panel-header" style="padding: 10px;">
                             <em><b>Bok Brekking</b></em>
+                            <button class="btn btn-success btn-xs pull-right bookFormattingBtn" data-toggle="modal"
+                                    data-target="#bookFormattingModal"
+                                    data-action="{{ route($saveBookFormattingRoute, $project->id) }}">
+                                Add
+                            </button>
                         </div>
                         <div class="panel-body">
+                            <div class="table-users table-responsive">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>File</th>
+                                        <th width="300"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($bookFormattingList as $bookFormatting)
+                                        <tr>
+                                            <td>
+                                                {!! $bookFormatting->file_link !!}
+                                            </td>
+                                            <td>
+                                                <a href="{{ $bookFormatting->file }}" class="btn btn-sm btn-success" download>
+                                                    <i class="fa fa-download"></i>
+                                                </a>
+                                                <button class="btn btn-primary btn-sm bookFormattingBtn" data-toggle="modal"
+                                                        data-target="#bookFormattingModal"
+                                                        data-record="{{ json_encode($bookFormatting) }}"
+                                                        data-action="{{ route($saveBookFormattingRoute, $project->id) }}">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-danger btn-sm deleteBtn" data-toggle="modal"
+                                                        data-target="#deleteModal"
+                                                        data-action="{{ route($deleteBookFormattingRoute, $bookFormatting->id) }}">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                             <!-- This is a pdf. This is the last thing for the book before it gets printed -->
                         </div>
                     </div>
@@ -574,6 +718,45 @@
         </div>
     </div>
 
+    <!-- Feedback Modal  -->
+    <div id="addOtherServiceFeedbackModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title"><span></span> {{ trans('site.add-feedback') }}</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
+                        {{csrf_field()}}
+                        <div class="form-group">
+                            <label>{{ trans_choice('site.manuscripts', 1) }}</label>
+                            <input type="file" class="form-control" name="manuscript[]" multiple
+                                   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf" required>
+                        </div>
+                        <div class="form-group">
+                            <label>{{ trans('site.subject') }}</label>
+                            <input type="text" class="form-control" name="subject" value=""
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label>{{ trans('site.from') }}</label>
+                            <input type="text" class="form-control" name="from_email"
+                                   value="" required>
+                        </div>
+                        <div class="form-group">
+                            <label>{{ trans('site.message') }}</label>
+                            <textarea class="form-control tinymce" name="message" rows="6"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary pull-right">{{ trans('site.add-feedback') }}</button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <div id="updateOtherServiceStatusModal" class="modal fade" role="dialog" data-backdrop="static">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
@@ -621,10 +804,96 @@
             </div>
         </div>
     </div>
+
+    <div id="bookPicturesModal" class="modal fade" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        Book Picture
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="id">
+                        <div class="form-group">
+                            <label>Images</label>
+                            <input type="file" name="images[]" class="form-control"
+                                   accept="image/*" multiple>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
+                        </div>
+
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">{{ trans('site.delete') }} <em></em></h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        {{ method_field('DELETE') }}
+                        Are you sure you want to delete this record?
+                        <div class="text-right margin-top">
+                            <button class="btn btn-danger" type="submit">{{ trans('site.delete') }}</button>
+                        </div>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="bookFormattingModal" class="modal fade" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        Book Formatting
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="id">
+                        <div class="form-group">
+                            <label>File</label>
+                            <input type="file" name="file" class="form-control"
+                                   accept="application/pdf">
+                        </div>
+
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('scripts')
-    <script src="{{ mix('/js/app.js') }}"></script>
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <script src="{{ asset('js/app.js?v='.time()) }}"></script>
     <script>
         $(".addSelfPublishingBtn").click(function() {
             let modal = $("#selfPublishingModal");
@@ -705,6 +974,23 @@
             modal.find('form').find('[name=expected_finish]').val(finish);
         });
 
+        $(".addOtherServiceFeedbackBtn").click(function(){
+            let action = $(this).data('action');
+            let modal = $('#addOtherServiceFeedbackModal');
+            let service = $(this).data('service');
+            let emailTemplate = $(this).data('email-template');
+            let title = 'Korrektur';
+
+            if (service === 1) {
+                title = 'Språkvask';
+            }
+            modal.find('form').attr('action', action);
+            modal.find('.modal-title').find('span').text(title);
+            modal.find('.modal-body').find('[name=subject]').val(emailTemplate.subject);
+            modal.find('.modal-body').find('[name=from_email]').val(emailTemplate.from_email);
+            tinyMCE.activeEditor.setContent(emailTemplate.email_content);
+        });
+
         $(".updateOtherServiceStatusBtn").click(function(){
             let action = $(this).data('action');
             let modal = $('#updateOtherServiceStatusModal');
@@ -724,6 +1010,40 @@
             modal.find('form').attr('action', action);
         });
 
+        $(".saveBookPictureBtn").click(function() {
+            let action = $(this).data('action');
+            let record = $(this).data('record');
+            let modal = $('#bookPicturesModal');
+            modal.find('form').attr('action', action);
+
+            if (record) {
+                modal.find('[name=id]').val(record.id);
+            }
+        });
+
+        $(".deleteBookPictureBtn").click(function(){
+            let action = $(this).data('action');
+            let modal = $('#deleteModal');
+            modal.find('form').attr('action', action);
+        });
+
+        $(".bookFormattingBtn").click(function(){
+            let action = $(this).data('action');
+            let record = $(this).data('record');
+            let modal = $('#bookFormattingModal');
+            modal.find('form').attr('action', action);
+
+            if (record) {
+                modal.find('[name=id]').val(record.id);
+            }
+        });
+
+        $(".deleteBtn").click(function(){
+            let action = $(this).data('action');
+            let modal = $('#deleteModal');
+            modal.find('form').attr('action', action);
+        });
+
         function updateOtherServiceFields(type) {
             let modal = $("#addOtherServiceModal");
             let add_correction_text = "{{ trans('site.add-correction') }}";
@@ -735,6 +1055,22 @@
 
             modal.find('.modal-title').text(modal_title);
             modal.find('form').find('[name=is_copy_editing]').val(type);
+        }
+
+        function lockToggle(self) {
+            let id = $(self).attr('data-id');
+            let type = $(self).attr('data-type');
+            let is_checked = $(self).prop('checked');
+            let check_val = is_checked ? 1 : 0;
+            $.ajax({
+                type:'POST',
+                url:'/other-service/' + id + '/lock-status/' + type,
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: { 'is_locked' : check_val },
+                success: function(data){
+                    console.log(data);
+                }
+            });
         }
     </script>
     <script type="text/javascript" src="{{asset('select2/dist/js/select2.min.js')}}"></script>

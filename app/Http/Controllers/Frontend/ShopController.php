@@ -38,6 +38,8 @@ use App\CoursesTaken;
 use App\ShopManuscriptsTaken;
 use App\WorkshopsTaken;
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
+
+use Illuminate\Support\Facades\Log;
 use PaypalIPN;
 use Carbon\Carbon;
 use PhpOffice\PhpWord\SimpleType\DocProtect;
@@ -1907,6 +1909,7 @@ class ShopController extends Controller
             $order_id = $request->get('svea_ord');
             $order = Order::find($order_id);
 
+            Log::info('inside has SVEA order');
             SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
 
             // add course to user

@@ -29,7 +29,7 @@ class Contract extends Model
         'status'
     ];
 
-    protected $appends = ['sent_file_link', 'signed_file_link'];
+    protected $appends = ['sent_file_link', 'signed_file_link', 'learner_download_link', 'signature_text'];
 
     protected static function boot()
     {
@@ -84,6 +84,24 @@ class Contract extends Model
         }
 
         return $fileLink;
+    }
+
+    public function getLearnerDownloadLinkAttribute()
+    {
+        $link = route('front.contract.download', $this->attributes['code']);
+        if ($this->attributes['is_file']) {
+            $link = $this->attributes['signed_file'];
+        }
+        return $link;
+    }
+
+    public function getSignatureTextAttribute()
+    {
+        $label = '<label class="label label-warning">Unsigned</label>';
+        if ($this->attributes['signature']) {
+            $label = '<label class="label label-success">Signed</label>';
+        }
+        return $label;
     }
 
 }

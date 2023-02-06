@@ -30,6 +30,7 @@
                                         <th>{{ trans('site.title') }}</th>
                                         <th>{{ trans('site.description') }}</th>
                                         <th>File</th>
+                                        <th>Project</th>
                                         <th>{{ trans('site.expected-finish') }}</th>
                                         <th width="90"></th>
                                     </tr>
@@ -47,6 +48,13 @@
                                                 <a href="{{ route('g-admin.self-publishing.download-manuscript', $publishing->id) }}">
                                                     <i class="fa fa-download" aria-hidden="true"></i>
                                                 </a> &nbsp;{!! $publishing->file_link !!}
+                                            </td>
+                                            <td>
+                                                @if($publishing->project)
+                                                    <a href="{{ route('g-admin.project.show', $publishing->project->id) }}">
+                                                        {{ $publishing->project->name }}
+                                                    </a>
+                                                @endif
                                             </td>
                                             <td>
                                                 {{ $publishing->expected_finish }}
@@ -176,6 +184,18 @@
                         </div>
 
                         <div class="form-group">
+                            <label>
+                                Project
+                            </label>
+                            <select name="project_id" class="form-control select2">
+                                <option value="" selected disabled> - Select Project - </option>
+                                @foreach($projects as $project)
+                                    <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group">
                             <label>Price</label>
                             <input type="number" name="price" class="form-control">
                         </div>
@@ -234,6 +254,7 @@
             form.find('textarea[name=description]').val(fields.description);
             form.find('select[name=editor_id]').val(fields.editor_id).trigger('change');
             form.find('input[name=expected_finish]').val(fields.expected_finish);
+            form.find('select[name=project_id]').val(fields.project_id).trigger('change');
             form.find('input[name=price]').val(fields.price);
             form.find('input[name=editor_share]').val(fields.editor_share);
         });

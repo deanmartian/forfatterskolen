@@ -894,6 +894,26 @@ class AssignmentController extends Controller
         ]);
     }
 
+    public function assignManuscriptEditDates( $assignment_manuscript_id, Request $request )
+    {
+        $assignmentManuscript = AssignmentManuscript::findOrFail($assignment_manuscript_id);
+
+        if ($request->has('expected_finish')) {
+            $assignmentManuscript->expected_finish = $request->expected_finish;
+        }
+
+        if ($request->has('editor_expected_finish')) {
+            $assignmentManuscript->editor_expected_finish = $request->editor_expected_finish;
+        }
+
+        $assignmentManuscript->save();
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Expected finish date updated successfully.'),
+            'alert_type'            => 'success',
+        ]);
+    }
+
     public function removeEditor( $id )
     {
         $assignment = Assignment::find($id);
