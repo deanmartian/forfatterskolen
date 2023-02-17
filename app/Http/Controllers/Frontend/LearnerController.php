@@ -4058,13 +4058,9 @@ class LearnerController extends Controller
         $course = $certificate->course;
 
         $courseLearner = Auth::user()->coursesTaken()->withTrashed()->whereIn('package_id', $course->packages()->pluck('id'))
-            ->get();
-        // check if not learner of the course
-        if (!$courseLearner->count()) {
-            return redirect()->back();
-        }
+            ->firstOrFail();
 
-        $issueDate = Carbon::parse($course->issue_date);
+        $issueDate = Carbon::parse($course->type === 'Single' ? Carbon::parse($courseLearner->started_at)->addDays(80) : $course->issue_date);
         $template = str_replace([
             '{LEARNERNAME}',
             '{COURSENAME}',
