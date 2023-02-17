@@ -223,6 +223,7 @@ class LearnerController extends Controller
             ->whereNotNull('courses.completed_date')
             ->whereNotNull('courses.issue_date')
             ->where('courses_taken.user_id', $id)
+            ->whereNull('courses_taken.deleted_at')
             ->groupBy('course_certificates.id')
             ->get();
 
