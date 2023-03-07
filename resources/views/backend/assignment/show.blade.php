@@ -103,7 +103,7 @@
 							<td> {{ $manuscript->words }} </td>
 							<td> {{ $manuscript->text_number }} </td>
 							<td>
-								@if (\App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['id'])
+								@if (isset(\App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['id']))
 									<a href="{{ route('admin.assignment-group.show',
 									['course_id' => $course->id,
 									'assignment_id' => $assignment->id,

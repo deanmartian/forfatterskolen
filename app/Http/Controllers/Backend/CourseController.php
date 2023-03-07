@@ -691,6 +691,16 @@ class CourseController extends Controller
         return redirect()->back();
     }
 
+    public function setCourseTakenEndDate ($courseId, Request $request)
+    {
+        $learners = Course::find($courseId)->learners;
+        $learners->update([
+            'end_date' => $request->date
+        ]);
+
+        return redirect()->back();
+    }
+
     /**
      * Export the learners to excel
      * @param $course_id

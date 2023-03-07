@@ -93,6 +93,9 @@
 				@if ($course->is_free)
 					<button type="button" class="btn btn-info margin-bottom" data-toggle="modal"
 							data-target="#reminderEmailModal">Send Reminder</button>
+
+					<button type="button" class="btn btn-primary margin-bottom" data-toggle="modal"
+							data-target="#setEndDateModal">Set Course Taken End Date</button>
 				@endif
 			@endif
 
@@ -410,6 +413,32 @@
 	</div>
 </div>
 <!-- end reminder email modal -->
+
+<div id="setEndDateModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Set Course Taken End Date</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('learner.course.set-end-date', $course->id) }}"
+					  onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+					{{csrf_field()}}
+
+					<div class="form-group">
+						<label>{{ trans('site.date') }}</label>
+						<input type="date" class="form-control" name="date" required>
+					</div>
+
+					<div class="text-right">
+						<input type="submit" class="btn btn-primary" value="{{ trans('site.save') }}">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 
 <div id="reminderEmailTemplateModal" class="modal fade" role="dialog">
 	<div class="modal-dialog">
