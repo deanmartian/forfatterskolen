@@ -190,7 +190,7 @@
 														   data-action="{{ route('admin.webinar.webinar-editor.delete', $webinar_editor->id) }}">
 															<i class="fa fa-trash"></i></a>
 													</div>
-													<div class="webinar-presenter">
+													<div class="webinar-presenter" style="overflow: auto">
 														<div class="presenter-thumb" style="background-image: url('{{ $webinar_editor->editor->profile_image  }}')"></div>
 														{{ $webinar_editor->editor->first_name }} {{ $webinar_editor->editor->last_name }} <br />
 														{{ $webinar_editor->editor->email }} <br>
