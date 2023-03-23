@@ -691,6 +691,7 @@ Route::group([
             ->name('admin.learner.invoice.create-fiken-credit-note');
         Route::post('learner/invoice/{id}/e-faktura', 'LearnerController@vippsEFaktura')->name('admin.learner.invoice.vipps-e-faktura');
         Route::post('learner/{user_id}/set-vipss-efaktura', 'LearnerController@setVippsEFaktura')->name('admin.learner.set-vipps-e-faktura');
+        Route::post('learner/{user_id}/send-username-and-password', 'LearnerController@sendUsernameAndPassword')->name('admin.learner.send-username-and-password');
         Route::post('learner/{user_id}/restore-course/{former_course_id}', 'LearnerController@restoreCourse')->name('admin.learner.restore-course');
         Route::post('learner/svea/{order_id}/create-credit-note', 'LearnerController@createSveaCreditNote')->name('admin.learner.svea.create-credit-note');
         Route::post('learner/svea/{order_id}/deliver-order', 'LearnerController@deliverSveaOrder')->name('admin.learner.svea.deliver-order');

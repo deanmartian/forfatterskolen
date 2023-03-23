@@ -2381,6 +2381,42 @@ class LearnerController extends Controller
         ]);
     }
 
+    public function sendUsernameAndPassword($userId, Request $request)
+    {
+        $this->validate($request, [
+            'subject' => 'required',
+            'message' => 'required'
+        ]);
+
+        $user = User::findOrFail($userId);
+        $loginLink = route('auth.login.emailRedirect', [encrypt($user->email), encrypt(route('learner.profile'))]);
+        $searchString = [
+            ':firstname',
+            '_username_',
+            ':login_link',
+            ' :end_login_link'
+        ];
+
+        $replaceString = [
+            $user->first_name,
+            $user->email,
+            "<a href='$loginLink'>",
+            "</a>"
+        ];
+
+        $message = str_replace($searchString, $replaceString, $request->message);
+        $toMail = $user->email;
+        // add email to queue
+        dispatch(new AddMailToQueueJob($toMail, $request->subject, $message,
+        $request->from_email, null, null, 'learner', $user->id));
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Email sent.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
     public function restoreCourse( $user_id, $former_course_id, Request $request )
     {
         $formerCourse = FormerCourse::find($former_course_id);

@@ -144,6 +144,9 @@
 				Login as user
 			</a>
 
+			<button type="button" class="margin-top btn btn-primary" data-toggle="modal" data-target="#sendUsernameAndPasswordModal">
+				Send Username and Password
+			</button>
 			<div class="former-course-container">
 				<h4>{{ trans('site.former-courses') }}</h4>
 				<ul>
@@ -4537,6 +4540,49 @@
 					</div>
 
 					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="sendUsernameAndPasswordModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					Send Username and Password
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.learner.send-username-and-password', $learner->id) }}" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+
+					<?php
+                    	$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Send Username and Password');
+                    ?>
+
+					<div class="form-group">
+						<label>{{ trans('site.subject') }}</label>
+						<input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}"
+							required>
+					</div>
+
+					<div class="form-group">
+						<label>From</label>
+						<input type="email" class="form-control" placeholder="Email" name="from_email"
+							value="{{ $emailTemplate->from_email }}">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.message') }}</label>
+						<textarea name="message" cols="30" rows="10"
+								class="form-control tinymce">{!! $emailTemplate->email_content !!}</textarea>
+					</div>
+
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.send') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
