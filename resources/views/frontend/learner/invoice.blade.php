@@ -355,7 +355,7 @@
 																</form>
 															</div>
 
-															<a href="{{ route('learner.invoice.vipps-payment', $invoice->invoice_number) }}" class="mt-3">
+															<a href="{{ route('learner.invoice.vipps-payment', $invoice->fiken_invoice_id) }}" class="mt-3">
 																<img src="{{ asset('images-new/betal-vipps.png') }}" class="w-75 mt-3">
 															</a>
 														@endif

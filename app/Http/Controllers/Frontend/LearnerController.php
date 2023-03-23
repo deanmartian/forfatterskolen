@@ -1177,15 +1177,15 @@ class LearnerController extends Controller
 
     /**
      *
-     * @param $invoice_number
+     * @param $fiken_invoice_id
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function invoiceVippsPayment($invoice_number)
+    public function invoiceVippsPayment($fiken_invoice_id)
     {
-        $invoice = Invoice::where('invoice_number', $invoice_number)->first();
+        $invoice = Invoice::where('fiken_invoice_id', $fiken_invoice_id)->first();
 
         if ($invoice) {
-            $orderId = $invoice->invoice_number;
+            $orderId = $invoice->fiken_invoice_id;
             $price = $invoice->fiken_balance * 100;
             $transactionText = 'Betaling for fakturanummer'.$orderId;
             $vippsData = [
@@ -3124,7 +3124,8 @@ class LearnerController extends Controller
 
         // check if vipps payment mode and the current user id is 4
         if( $paymentMode->mode == "Vipps") :
-            $orderId = $invoice->invoice_number;
+            //$orderId = $invoice->invoice_number;
+            $orderId = $invoice->fiken_invoice_id;
             $transactionText = $package->course->title;
             $vippsData = [
                 'amount' => $price,
@@ -3274,7 +3275,8 @@ class LearnerController extends Controller
 
 
             if( $paymentMode->mode == "Vipps") :
-                $orderId = $invoice->invoice_number;
+                //$orderId = $invoice->invoice_number;
+                $orderId = $invoice->fiken_invoice_id;
                 $transactionText = $shopManuscript->title;
                 $vippsData = [
                     'amount' => $price,

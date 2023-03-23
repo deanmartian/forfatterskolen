@@ -385,7 +385,7 @@ class ShopController extends Controller
         $newOrder['package_id'] = $package->id;
         $newOrder['plan_id']    = $paymentPlan->id;
 
-        Order::create($newOrder);
+        $order = Order::create($newOrder);
 
         // update the created log to mark it as ordered
         CheckoutLog::updateOrCreate([
@@ -523,7 +523,8 @@ class ShopController extends Controller
 
         // check if vipps payment mode and the current user id is 4
         if( $paymentMode->mode == "Vipps") :
-            $orderId = $invoice->invoice_number;
+            //$orderId = $invoice->invoice_number;
+            $orderId = $order->id."-".$user->id;
             $transactionText = $package->course->title;
             $vippsData = [
                 'amount' => $price,

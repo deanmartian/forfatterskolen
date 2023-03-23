@@ -199,7 +199,7 @@ class VippsRepository extends BaseRepository {
         }
         Log::info("VIPPS inside capture payment after IF");
         $data = $response['data'];
-        $invoice = Invoice::where('invoice_number',$orderId)->first();
+        $invoice = Invoice::where('fiken_invoice_id',$orderId)->first(); //invoice_number
         $transactionInfo = $response['data']->transactionInfo;
         $message = "<p>Payment Captured <br/><br> Invoice Number: ".$orderId." <br/> Amount:".$transactionInfo->amount." 
 <br/> Transaction id: ".$transactionInfo->transactionId."</p>";

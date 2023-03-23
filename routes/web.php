@@ -289,7 +289,7 @@ Route::group([
         Route::get('/invoice', 'LearnerController@invoice')->name('learner.invoice'); // Invoice Listing Page
         Route::get('/invoice/{id}', 'LearnerController@invoiceShow')->name('learner.invoice.show'); // Invoice Single Page
         Route::get('/change-portal/{portal}', 'LearnerController@changePortal')->name('learner.change-portal'); // Invoice Single Page
-        Route::get('/invoice/{invoice_number}/vipps-payment', 'LearnerController@invoiceVippsPayment')->name('learner.invoice.vipps-payment'); // Invoice Single Page
+        Route::get('/invoice/{fiken_invoice_id}/vipps-payment', 'LearnerController@invoiceVippsPayment')->name('learner.invoice.vipps-payment'); // Invoice Single Page
         Route::get('/order/{id}/download-credited', 'LearnerController@downloadCreditedOrder')->name('learner.order.download-credited');
         Route::get('/order/{id}/download', 'LearnerController@downloadOrder');
         Route::post('/order/{id}/save-company', 'LearnerController@saveCompany');

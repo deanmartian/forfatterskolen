@@ -469,7 +469,7 @@ class ShopManuscriptController extends Controller
         $newOrder['type']       = Order::MANUSCRIPT_TYPE;
         $newOrder['plan_id']    = $paymentPlan->id;
 
-        Order::create($newOrder);
+        $order = Order::create($newOrder);
 
         // Send Email
         $user_email = Auth::user()->email;
@@ -509,7 +509,8 @@ class ShopManuscriptController extends Controller
         endif;
 
         if( $paymentMode->mode == "Vipps" ) :
-            $orderId = $invoice->invoice_number;
+            //$orderId = $invoice->invoice_number;
+            $orderId = $order->id."-". Auth::user()->id;
             $transactionText = $shopManuscript->title;
             $vippsData = [
                 'amount' => $price,
