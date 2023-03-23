@@ -692,6 +692,7 @@
 						<thead>
 							<tr>
 								<th>{{ trans_choice('site.invoices', 1) }} #</th>
+								<th>Fiken Invoice ID</th>
 								<th>{{ trans('site.status') }}</th>
 								<th>{{ trans('site.created-at') }}</th>
 								<th>{{ trans('site.due-date') }}</th>
@@ -720,6 +721,9 @@
 		    					<td>
 		    						<a href="{{route('admin.invoice.show', $invoice->id)}}">{{ $invoice->invoice_number }}</a>
 		    					</td>
+								<td>
+									{{ $invoice->fiken_invoice_id }}
+								</td>
 								<td>
 									@if($invoice->fiken_is_paid === 1)
 										<span class="label label-success">BETALT</span>
