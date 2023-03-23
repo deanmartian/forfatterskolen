@@ -964,6 +964,10 @@ class FrontendHelpers
         $lesson = Lesson::findOrFail($lesson_id);
 
         $courseTaken = $user->coursesTaken()->whereIn('package_id', $course->packages()->pluck('id'))->first();
+        if (!$courseTaken) {
+            return false;
+        }
+        
         return \App\Http\FrontendHelpers::isLessonAvailable($courseTaken->started_at, $lesson->delay, $lesson->period) ||
             \App\Http\FrontendHelpers::hasLessonAccess($courseTaken, $lesson);
     }
