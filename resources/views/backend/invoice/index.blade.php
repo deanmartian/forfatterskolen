@@ -47,6 +47,7 @@
 			<thead>
 		    	<tr>
 			        <th>{{ trans('site.invoice-nr') }}</th>
+			        <th>Fiken Invoice Id</th>
 			        <th>{{ trans_choice('site.learners', 1) }}</th>
 			        <th>{{ trans('site.status') }}</th>
 			        <th>{{ trans('site.pdf-url') }}</th>
@@ -62,6 +63,9 @@
 		    		<td>
 						<a href="{{route('admin.invoice.show', $invoice->id)}}">{{$invoice->invoice_number}}</a>
 		    		</td>
+					<td>
+						{{ $invoice->fiken_invoice_id }}
+					</td>
 					<td><a href="{{route('admin.learner.show', $invoice->user->id)}}">{{$invoice->user->fullname}}</a></td>
 		    		<td>
 						@if($invoice->fiken_is_paid)
