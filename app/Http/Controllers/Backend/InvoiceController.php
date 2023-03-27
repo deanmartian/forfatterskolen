@@ -52,7 +52,7 @@ class InvoiceController extends Controller
     public function index( Request $request )
     {
 
-        if (!Auth::user()->isSuperUser() || !in_array(Auth::id(), ['4464'])) {
+        if (!Auth::user()->isSuperUser() || !in_array(Auth::id(), [4464])) {
             return redirect()->route('backend.dashboard');
         }
 
