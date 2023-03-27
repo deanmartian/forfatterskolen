@@ -29,6 +29,19 @@
 		<div class="navbar-form navbar-right">
 			<div class="form-group">
 				<form role="search" method="GET">
+					<div style="background: #fff; cursor: pointer; padding: 8px 10px;
+					border: 1px solid #ccc; width: 100%; display: inline; margin-right: 5px">
+						<i class="fa fa-file"></i>&nbsp;
+						<input type="text" name="fiken_invoice_id" style="border: none; width: 180px" 
+						placeholder="Search fiken invoice id" value="{{ Request::has('fiken_invoice_id') ? Request::get('fiken_invoice_id') : '' }}"/>
+					</div>
+
+					<button class="btn btn-default" type="submit" style="margin-right: 10px"><i class="fa fa-search"></i></button>
+				</form>
+			</div>
+
+			<div class="form-group">
+				<form role="search" method="GET">
 					<div id="reportrange" style="background: #fff; cursor: pointer; padding: 8px 10px;
 					border: 1px solid #ccc; width: 100%; display: inline; margin-right: 5px">
 						<i class="fa fa-calendar"></i>&nbsp;
