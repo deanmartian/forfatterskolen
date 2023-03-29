@@ -64,6 +64,7 @@ Vue.component('time-register', require('./backend/TimeRegister.vue'));
 Vue.component('project', require('./backend/project/list.vue'));
 Vue.component('project-details', require('./backend/project/details.vue'));
 Vue.component('project-notes', require('./backend/project/notes.vue'));
+Vue.component('chat', require('./frontend/chat/index.vue'));
 Vue.component('v-select', vSelect);
 Vue.use(VueQuillEditor);
 
