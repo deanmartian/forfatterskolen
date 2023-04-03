@@ -98,7 +98,7 @@
                             $created_at = Carbon\Carbon::parse($feedbackFirst->created_at);
                             $diff = $created_at->diffInDays();
                             ?>
-							@if( $diff <= 7 )
+							{{-- @if( $diff <= 7 )
 								<form method="POST" class="mt-4" action="{{ route('learner.shop-manuscript.post-comment', $shopManuscriptTaken->id) }}">
 									{{ csrf_field() }}
 									<input type="text" placeholder="{{ trans('site.learner.comment') }}" name="comment"
@@ -109,7 +109,7 @@
 										</button>
 									</div>
 								</form>
-							@else
+							@else --}}
 								<div class="mt-4">
 									<input type="text" placeholder="{{ trans('site.learner.comment') }}" name="comment"
 										   class="form-control" required disabled>
@@ -119,7 +119,7 @@
 										</button>
 									</div>
 								</div>
-							@endif
+							{{-- @endif --}}
 						@else
 							<form method="POST" class="mt-4" action="{{ route('learner.shop-manuscript.post-comment', $shopManuscriptTaken->id) }}">
 								{{ csrf_field() }}
