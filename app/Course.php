@@ -92,7 +92,8 @@ class Course extends Model
                 $query->whereNull('parent');
                 $query->orWhere('parent', 'assignment');
             })
-            ->orderBy('created_at', 'desc');
+            ->oldest('submission_date');
+            //->orderBy('created_at', 'desc');
     }
 
     public function expiredAssignments()
