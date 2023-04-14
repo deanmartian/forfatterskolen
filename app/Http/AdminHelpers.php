@@ -82,6 +82,17 @@ class AdminHelpers
             ->get();
     }
 
+    public static function editorAndAdminList()
+    {
+        return \App\User::where(function($query){
+            $query->whereIn('role', [1,3])
+                ->orWhere('admin_with_editor_access', 1);
+        })
+            ->where('is_active', 1)
+            ->orderBy('id', 'desc')
+            ->get();
+    }
+
     public static function editorByAdminQuery($field)
     {
         return \App\User::where(function($query){

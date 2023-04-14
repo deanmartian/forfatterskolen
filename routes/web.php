@@ -1627,6 +1627,9 @@ Route::group([
             ],
         ]);
 
+        Route::post('/task/save', 'ProjectController@saveTask')->name('admin.project-task.save');
+        Route::post('/project/task/{id}/finish', 'ProjectController@finishTask');
+        Route::delete('/project/task/{id}/delete', 'ProjectController@deleteTask');
         Route::post('/time-register/save', 'TimeRegisterController@save')->name('admin.time-register.save');
         Route::delete('/time-register/{id}/delete', 'TimeRegisterController@destroy')->name('admin.time-register.delete');
         Route::get('/time-register/{id}/time-used-list', 'TimeRegisterController@timeUsedList');

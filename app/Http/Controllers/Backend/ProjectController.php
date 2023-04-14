@@ -26,6 +26,7 @@ use App\ProjectInvoice;
 use App\ProjectManualInvoice;
 use App\ProjectMarketing;
 use App\ProjectRegistration;
+use App\ProjectTask;
 use App\ProjectWholeBook;
 use App\Services\LearnerService;
 use App\Services\ProjectService;
@@ -60,6 +61,7 @@ class ProjectController extends Controller
     {
         $project = Project::find($id)->load(['books', 'user', 'selfPublishingList']);
         $editors = AdminHelpers::editorList();
+        $editorAndAdminList = AdminHelpers::editorAndAdminList();
         $learners = User::where('role', 2)->where('is_self_publishing_learner', 1)->get();
         $activities = ProjectActivity::all();
         $timeRegisters = TimeRegister::where('user_id', $project->user_id)->whereNull('project_id')->with('project')->get();
@@ -70,6 +72,8 @@ class ProjectController extends Controller
         $bookPictures = ProjectBookPicture::where('project_id', $id)->get();
         $wholeBooks = ProjectWholeBook::where('project_id', $id)->get();
         $bookFormattingList = ProjectBookFormatting::where('project_id', $id)->get();
+        $tasks = ProjectTask::with('editor')->where('project_id', $id)->where('status', 0)->get();
+
 
         $layout = 'backend.layout';
         $addOtherServiceRoute = 'admin.project.add-other-service';
@@ -118,7 +122,30 @@ class ProjectController extends Controller
             'updateExpectedFinishRoute', 'updateStatusRoute', 'otherServiceDeleteRoute', 'correctionFeedbackTemplate',
             'copyEditingFeedbackTemplate', 'otherServiceFeedbackRoute', 'saveBookPicturesRoute', 'bookPictures',
             'deleteBookPicturesRoute', 'wholeBooks', 'downloadOtherService', 'saveBookFormattingRoute', 'bookFormattingList',
-            'deleteBookFormattingRoute'));
+            'deleteBookFormattingRoute', 'editorAndAdminList', 'tasks'));
+    }
+
+    public function saveTask(Request $request)
+    {
+        $model = $request->id ? ProjectTask::find($request->id) : new ProjectTask();
+        $model->fill($request->all());
+        $model->save();
+
+        return $model->load('editor');
+    }
+
+    public function finishTask($id)
+    {
+        $task = ProjectTask::find($id);
+        $task->status = 1;
+        $task->save();
+        return response()->json();
+    }
+
+    public function deleteTask($id)
+    {
+        ProjectTask::find($id)->delete();
+        return response()->json();
     }
 
     public function saveProject( ProjectRequest $request, ProjectService $projectService )

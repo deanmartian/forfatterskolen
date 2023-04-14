@@ -14,7 +14,8 @@
         <project-details :current-project="{{ json_encode($project) }}" :learners="{{ json_encode($learners) }}"
                          :activities="{{ json_encode($activities) }}" :time-registers="{{ json_encode($timeRegisters) }}"
                          :project-time-list="{{ json_encode($projectTimeRegisters) }}" :projects="{{ json_encode($projects) }}"
-                         :whole-book-list="{{ json_encode($wholeBooks) }}"></project-details>
+                         :whole-book-list="{{ json_encode($wholeBooks) }}" :editor-and-admin-list="{{ json_encode($editorAndAdminList) }}"
+                         :task-list="{{ json_encode($tasks) }}"></project-details>
 
         <div class="col-md-12">
             <button type="button" class="btn btn-success addSelfPublishingBtn" data-toggle="modal"
