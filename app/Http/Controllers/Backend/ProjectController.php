@@ -32,6 +32,7 @@ use App\Services\ProjectService;
 use App\Settings;
 use App\TimeRegister;
 use App\User;
+use DB;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Time;
 use PhpOffice\PhpWord\PhpWord;
@@ -44,10 +45,15 @@ class ProjectController extends Controller
         $learners =  User::where('role', 2)->where('is_self_publishing_learner', 1)->get();
         $activities = ProjectActivity::all();
         $projects = Project::all();
+        $nextProjectNumber = DB::table('projects')
+            ->select(DB::raw('CAST(identifier AS UNSIGNED) as identifier_numeric'))
+            ->orderByRaw('identifier_numeric DESC')
+            ->value('identifier') + 1;
+        
         $projectNotes = Settings::getByName('project-notes');
         $layout = str_contains(request()->getHttpHost(), 'giutbok') ? 'giutbok.layout' : 'backend.layout';
         return view('backend.project.index', compact('learners', 'activities', 'projects', 'layout',
-            'projectNotes'));
+            'projectNotes', 'nextProjectNumber'));
     }
 
     public function show($id)
@@ -117,7 +123,16 @@ class ProjectController extends Controller
 
     public function saveProject( ProjectRequest $request, ProjectService $projectService )
     {
-        return $projectService->saveProject($request);
+        $project = $projectService->saveProject($request);
+        $nextProjectNumber = DB::table('projects')
+            ->select(DB::raw('CAST(identifier AS UNSIGNED) as identifier_numeric'))
+            ->orderByRaw('identifier_numeric DESC')
+            ->value('identifier') + 1;
+
+        return response()->json([
+            'nextProjectNumber' => $nextProjectNumber,
+            'project' => $project
+        ]);
     }
 
     public function deleteProject( $project_id )

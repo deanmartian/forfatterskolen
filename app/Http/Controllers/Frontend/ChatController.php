@@ -16,6 +16,7 @@ class ChatController extends Controller
 
     public function sendMessage(Request $request)
     {
+        
         // Get the user's message from the request
         $message = $request->input('message');
 
@@ -30,19 +31,26 @@ class ChatController extends Controller
         ];
 
         $data = [
-            'prompt' => $message,
+            //'model' => 'text-davinci-002',
+            //'prompt' => $message,
+            'model' => 'gpt-3.5-turbo',
+            'messages' =>  [
+                ["role"=> "system", "content"=> "You are a helpful assistant for https://www.forfatterskolen.no website."],
+                ['role' => 'user', 'content' => $message],
+            ],
             'temperature' => 0.5,
             'max_tokens' => 50,
         ];
 
-        $response = $client->post('engines/davinci-codex/completions', [
+        $response = $client->post('chat/completions', [
             'headers' => $headers,
             'json' => $data,
         ]);
 
         $responseData = json_decode($response->getBody(), true);
 
-        $answer = $responseData['choices'][0]['text'];
+        //$answer = $responseData['choices'][0]['text'];
+        $answer = $responseData['choices'];
 
         // Return the ChatGPT response to the user
         return response()->json([

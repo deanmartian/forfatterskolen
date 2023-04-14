@@ -14,13 +14,14 @@
                 <tr>
                     <th>Project Number</th>
                     <th>Name</th>
-                    <th>Description</th>
+                    <th>Status</th>
+                    <th width="800">Description</th>
                     <th>Status</th>
                     <td></td>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="project in projectList">
+                <tr v-for="project in projectList" :key="project.id">
                     <td>
                         {{ project.identifier}}
                     </td>
@@ -28,6 +29,9 @@
                         <a :href="'/project/' + project.id">
                             {{ project.name }}
                         </a>
+                    </td>
+                    <td>
+                        {{ capitalize(project.status) }}
                     </td>
                     <td>
                         {{ project.description }}
@@ -103,12 +107,20 @@
             </div>
 
             <div class="form-group">
+                <label>Status</label>
+                <select name="status" class="form-control" v-model="projectForm.status">
+                    <option value="active">Active</option>
+                    <option value="lead">Lead</option>
+                    <option value="finished">Finished</option>
+                </select>
+            </div>
+            <!-- <div class="form-group">
                 <label>Finished</label> <br>
                 <toggle-button :color="'#337ab7'"
                                :labels="{checked: 'Yes', unchecked: 'No'}"
                                v-model="projectForm.is_finished"
                                :width="60" :height="25" :font-size="14"/>
-            </div>
+            </div> -->
 
             <div slot="modal-footer">
                 <button class="btn btn-sm btn-primary" @click="saveProject()" :disabled="isLoading">
@@ -241,7 +253,7 @@
 <script>
     import moment from 'moment';
     export default {
-        props: ['learners', 'activities', 'projects', 'project-notes'],
+        props: ['learners', 'activities', 'projects', 'project-notes', 'next-project-number'],
         data() {
             return {
                 projectForm: {
@@ -253,8 +265,9 @@
                     start_date: '',
                     end_date: '',
                     description: '',
-                    is_finished: false
+                    status: 'active'
                 },
+                projectNumber: this.nextProjectNumber,
                 projectModalTitle: '',
                 selected_learner: '',
                 selected_activity: '',
@@ -285,6 +298,10 @@
         },
 
         methods: {
+            capitalize(str) {
+                return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+            },
+
             closeProjectFormModal() {
                 this.selected_learner = '';
                 this.selected_activity = '';
@@ -298,13 +315,14 @@
                     start_date: '',
                     end_date: '',
                     description: '',
-                    is_finished: false
+                    status: 'active'
                 }
             },
 
             showFormModal(data = null) {
                 this.projectModalTitle = 'Add Project';
                 this.projectForm.start_date = moment().format("YYYY-MM-DD");
+                this.projectForm.number = this.projectNumber;
                 if (data) {
                     this.projectModalTitle = 'Edit Project';
                     this.projectForm = {
@@ -316,7 +334,7 @@
                         start_date: data.start_date,
                         end_date: data.end_date,
                         description: data.description,
-                        is_finished: data.is_finished ? true : false
+                        status: data.status
                     };
 
                     const actIndex = _.findIndex(this.activityList, {id: data.activity_id});
@@ -348,11 +366,13 @@
                 this.removeValidationError();
                 axios.post('/project/save', this.projectForm).then(response => {
                     this.isLoading = false;
+                    let project = response.data.project;
+                    this.projectNumber = response.data.nextProjectNumber;
 
                     if (this.projectForm.id) {
-                        this.updateRecordFromObject(this.projectList, this.projectForm.id, response.data);
+                        this.updateRecordFromObject(this.projectList, this.projectForm.id, project);
                     } else {
-                        this.projectList.push(response.data);
+                        this.projectList.push(project);
                     }
 
                     this.$refs.projectFormModal.hide();
