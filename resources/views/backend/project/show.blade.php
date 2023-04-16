@@ -15,7 +15,7 @@
                          :activities="{{ json_encode($activities) }}" :time-registers="{{ json_encode($timeRegisters) }}"
                          :project-time-list="{{ json_encode($projectTimeRegisters) }}" :projects="{{ json_encode($projects) }}"
                          :whole-book-list="{{ json_encode($wholeBooks) }}" :editor-and-admin-list="{{ json_encode($editorAndAdminList) }}"
-                         :task-list="{{ json_encode($tasks) }}"></project-details>
+                         :task-list="{{ json_encode($tasks) }}" :book-critique-list="{{ json_encode($bookCritiques) }}"></project-details>
 
         <div class="col-md-12">
             <button type="button" class="btn btn-success addSelfPublishingBtn" data-toggle="modal"

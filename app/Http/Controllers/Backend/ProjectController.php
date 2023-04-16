@@ -19,6 +19,7 @@ use App\MarketingPlan;
 use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
+use App\ProjectBookCritique;
 use App\ProjectBookFormatting;
 use App\ProjectBookPicture;
 use App\ProjectGraphicWork;
@@ -73,6 +74,7 @@ class ProjectController extends Controller
         $wholeBooks = ProjectWholeBook::where('project_id', $id)->get();
         $bookFormattingList = ProjectBookFormatting::where('project_id', $id)->get();
         $tasks = ProjectTask::with('editor')->where('project_id', $id)->where('status', 0)->get();
+        $bookCritiques = ProjectBookCritique::where('project_id', $id)->get();
 
 
         $layout = 'backend.layout';
@@ -122,7 +124,7 @@ class ProjectController extends Controller
             'updateExpectedFinishRoute', 'updateStatusRoute', 'otherServiceDeleteRoute', 'correctionFeedbackTemplate',
             'copyEditingFeedbackTemplate', 'otherServiceFeedbackRoute', 'saveBookPicturesRoute', 'bookPictures',
             'deleteBookPicturesRoute', 'wholeBooks', 'downloadOtherService', 'saveBookFormattingRoute', 'bookFormattingList',
-            'deleteBookFormattingRoute', 'editorAndAdminList', 'tasks'));
+            'deleteBookFormattingRoute', 'editorAndAdminList', 'tasks', 'bookCritiques'));
     }
 
     public function saveTask(Request $request)
@@ -243,6 +245,10 @@ class ProjectController extends Controller
         }
 
         $wholeBook = $request->id ? ProjectWholeBook::find($request->id) : new ProjectWholeBook();
+        if ($request->has('is_book_critique')) {
+            $wholeBook = $request->id ? ProjectBookCritique::find($request->id) : new ProjectBookCritique();
+        }
+
         $wholeBook->project_id = $project_id;
         $wholeBook->book_content = $request->book_content;
         $wholeBook->description = $request->description;

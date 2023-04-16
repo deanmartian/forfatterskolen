@@ -60,7 +60,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="wholeBook in wholeBooks">
+                        <tr v-for="wholeBook in wholeBooks" :key="wholeBook.id">
                             <td>
                                 <a href="javascript:;" @click="showManuscript(wholeBook)" >{{ formattedContent(wholeBook) }}</a>
                             </td>
@@ -85,6 +85,50 @@
                                 </button>
                             </td>
                         </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <button class="btn btn-success margin-top" @click="showBookCritiqueFormModal()">
+                    Add Book Critique
+                </button>
+
+                <div class="table-users">
+                    <table class="table table-responsive">
+                        <thead>
+                        <tr>
+                            <th>Book</th>
+                            <th>Description</th>
+                            <th>Date Uploaded</th>
+                            <th width="300"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="bookCritique in bookCritiques" :key="bookCritique.id">
+                                <td>
+                                    <a href="javascript:;" @click="showManuscript(bookCritique)" >{{ formattedContent(bookCritique) }}</a>
+                                </td>
+                                <td>
+                                    {{ bookCritique.description }}
+                                </td>
+                                <td>
+                                    {{ bookCritique.date_uploaded }}
+                                </td>
+                                <td>
+                                    <a class="btn btn-xs btn-success"
+                                    :href="'/project/' + project.id + '/whole-book/' + bookCritique.id + '/download'">
+                                        <i class="fa fa-download"></i>
+                                    </a>
+
+                                    <button class="btn btn-xs btn-primary" @click="showWholeBookFormModal(bookCritique)">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+
+                                    <button class="btn btn-xs btn-danger" @click="showDeleteBookFormModal(bookCritique)">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -451,6 +495,52 @@
         </b-modal>
 
         <b-modal
+                ref="bookCritiqueFormModal"
+                :title="modalTitle"
+                size="md"
+                @hidden="closeBookCritiqueFormModal()"
+                centered
+                no-close-on-backdrop
+        >
+
+            <div class="form-group">
+                <toggle-button :color="'#337ab7'"
+                               :labels="{checked: 'File Upload', unchecked: 'Write Book'}"
+                               v-model="bookCritiqueForm.is_file"
+                               :width="150" :height="30" :font-size="16" @change="removeValidationError()"/>
+            </div>
+
+            <div class="form-group" v-if="bookCritiqueForm.is_file">
+                <label>Upload Book</label>
+                <input type="file" name="book_file" class="form-control"
+                       @change="onBookCritiqueFileChange"
+                       accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+					    application/vnd.oasis.opendocument.text">
+            </div>
+
+            <div class="form-group" v-if="!bookCritiqueForm.is_file">
+                <label>Write Book</label>
+                <quill-editor ref="wholeBookEditor" :content="bookCritiqueForm.book_content"
+                              @change="onBookCritiqueEditorChange($event)"></quill-editor>
+                <input type="hidden" name="book_content">
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Description
+                </label>
+                <textarea name="description" cols="30" rows="10" class="form-control" v-model="bookCritiqueForm.description"></textarea>
+            </div>
+
+            <div slot="modal-footer">
+                <button class="btn btn-sm btn-primary" @click="saveBookCritique()" :disabled="isLoading">
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Save
+                </button>
+            </div>
+
+        </b-modal>
+
+        <b-modal
                 ref="wholeBookContentModal"
                 :title="''"
                 size="md"
@@ -783,7 +873,7 @@
     export default {
 
         props: ['current-project', 'learners', 'activities', 'time-registers', 'project-time-list', 'projects',
-            'whole-book-list', 'editor-and-admin-list', 'task-list'],
+            'whole-book-list', 'editor-and-admin-list', 'task-list', 'book-critique-list'],
 
         data() {
             return {
@@ -808,6 +898,16 @@
                     is_file: true
                 },
                 wholeBookFilename: '',
+                bookCritiqueForm: {
+                    id: '',
+                    book_content: '',
+                    book_file: [],
+                    description: '',
+                    is_file: true,
+                    is_book_critique: true,
+                },
+                bookCritiqueFilename: '',
+                bookCritiques: this.bookCritiqueList,
                 noteForm: {
                     id: '',
                     notes: ''
@@ -1222,6 +1322,84 @@
                         message : 'Record deleted'
                     });
                 });
+            },
+
+            showBookCritiqueFormModal(data) {
+                this.modalTitle = 'Add Book Critique';
+                if (data) {
+                    this.modalTitle = 'Edit Book Critique';
+                    this.bookCritiqueForm = {
+                        id: data.id,
+                        is_file: !!data.is_file,
+                        book_content: data.book_content,
+                        description: data.description
+                    };
+                }
+
+                this.$refs.bookCritiqueFormModal.show();
+            },
+
+            closeBookCritiqueFormModal() {
+                this.bookCritiqueForm = {
+                    id: '',
+                    book_content: '',
+                    book_file: [],
+                    description: '',
+                    is_file: true,
+                    is_book_critique: true
+                }
+            },
+
+            onBookCritiqueFileChange(e) {
+                let files = e.target.files;
+
+                if (!files.length)
+                {
+                    this.bookCritiqueFilename = i18n.site['learner.files-text'];
+                    this.bookCritiqueForm.book_file = [];
+                    return;
+                }
+
+                this.bookCritiqueFilename = files[0].name;
+                this.bookCritiqueForm.book_file = files[0];
+
+                $(".validation-err").remove();
+            },
+
+            onBookCritiqueEditorChange({ html, text }) {
+                this.bookCritiqueForm.book_content = html;
+            },
+
+            saveBookCritique() {
+                this.isLoading = true;
+                this.removeValidationError();
+
+                let formData = new FormData();
+                $.each(this.bookCritiqueForm, function(k, v) {
+                    formData.append(k, v);
+                });
+
+                axios.post('/project/' + this.project.id + '/whole-book/save', formData).then(response => {
+                    this.isLoading = false;
+                    this.$refs.bookCritiqueFormModal.hide();
+                    console.log(response);
+
+                    if (this.bookCritiqueForm.id) {
+                        this.updateRecordFromObject(this.bookCritiques, response.data.id, response.data);
+                    } else {
+                        this.bookCritiques.push(response.data);
+                    }
+
+                    this.$toasted.global.showSuccessMsg({
+                        message : 'Book saved'
+                    });
+                }).catch(error => {
+                    this.isLoading = false;
+                    this.processError(error);
+                    this.$toasted.global.showErrorMsg({
+                        message : 'Error in form'
+                    });
+                })
             },
 
             showFormModal(data = null) {

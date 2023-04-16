@@ -325,6 +325,10 @@ class ProjectService
         if ($request->hasFile('book_file')) :
             $destinationPath = 'storage/project-books'; // upload path
 
+            if ($request->has('is_book_critique')) {
+                $destinationPath = 'storage/project-book-critique'; // upload path
+            }
+
             AdminHelpers::createDirectory($destinationPath);
             $filePath = $this->saveFileOrImage($destinationPath, 'book_file');
 
