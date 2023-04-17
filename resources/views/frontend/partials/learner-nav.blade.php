@@ -116,10 +116,14 @@
                             <a href="#" class="dropdown-item pilotleser-link">Pilotleser</a>
 
                             @if(Auth::user()->is_self_publishing_learner)
-                            <a href="{{ route('learner.change-portal', 'self-publishing') }}"
-                               class="dropdown-item d-inline-block w-auto mb-2 btn btn-circle">
-                                Selvpubliseringsportal
-                            </a>
+                                <a href="{{ route('learner.change-portal', 'self-publishing') }}"
+                                class="dropdown-item d-inline-block w-auto mb-2 btn btn-circle">
+                                    Selvpubliseringsportal
+                                </a>
+                            @else
+                                <a href="#" class="dropdown-item d-inline-block w-auto mb-2 btn btn-circle">
+                                    Get access
+                                </a>
                             @endif
 
                             <a href="{{ route('auth.logout-get') }}" class="dropdown-item d-inline-block w-auto mb-2">
