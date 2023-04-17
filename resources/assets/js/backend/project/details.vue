@@ -80,7 +80,7 @@
                                     <i class="fa fa-edit"></i>
                                 </button>
 
-                                <button class="btn btn-xs btn-danger" @click="showDeleteBookFormModal(wholeBook)">
+                                <button class="btn btn-xs btn-danger" @click="showDeleteBookCritiqueFormModal(wholeBook)">
                                     <i class="fa fa-trash"></i>
                                 </button>
                             </td>
@@ -100,6 +100,7 @@
                             <th>Book</th>
                             <th>Description</th>
                             <th>Date Uploaded</th>
+                            <th>Feedback</th>
                             <th width="300"></th>
                         </tr>
                         </thead>
@@ -115,12 +116,21 @@
                                     {{ bookCritique.date_uploaded }}
                                 </td>
                                 <td>
+                                    <button class="btn btn-success btn-xs" v-if="!bookCritique.feedback"
+                                     @click="showBookCritiqueFeedbackModal(bookCritique)">
+                                        Add Feedback
+                                    </button>
+                                    <div v-else v-html="bookCritique.feedback_file">
+                                        
+                                    </div>
+                                </td>
+                                <td>
                                     <a class="btn btn-xs btn-success"
                                     :href="'/project/' + project.id + '/whole-book/' + bookCritique.id + '/download'">
                                         <i class="fa fa-download"></i>
                                     </a>
 
-                                    <button class="btn btn-xs btn-primary" @click="showWholeBookFormModal(bookCritique)">
+                                    <button class="btn btn-xs btn-primary" @click="showBookCritiqueFormModal(bookCritique)">
                                         <i class="fa fa-edit"></i>
                                     </button>
 
@@ -541,6 +551,49 @@
         </b-modal>
 
         <b-modal
+            ref="bookCritiqueFeedbackModal"
+            :title="'Feedback'"
+            size="md"
+            @hidden="closeBookCritiqueFormModal()"
+            centered
+            no-close-on-backdrop
+        >
+
+            <div class="form-group">
+                <label>Feedback</label>
+                <input type="file" name="feedback" class="form-control"
+                        @change="onBookCritiqueFeedbackChange"
+                        accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+                        application/vnd.oasis.opendocument.text">
+            </div>
+
+            <div slot="modal-footer">
+                <button class="btn btn-sm btn-primary" @click="saveBookCritiqueFeedback()" :disabled="isLoading">
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Save
+                </button>
+            </div>
+
+        </b-modal>
+
+        <b-modal
+                ref="deleteBookCritiqueFormModal"
+                title="Delete Book"
+                size="sm"
+                centered
+        >
+
+            <p>
+                Are you sure you want to delete this record?
+            </p>
+
+            <div slot="modal-footer">
+                <button class="btn btn-sm btn-danger" @click="deleteBookCritique()" :disabled="isLoading">
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Delete
+                </button>
+            </div>
+        </b-modal>
+
+        <b-modal
                 ref="wholeBookContentModal"
                 :title="''"
                 size="md"
@@ -907,6 +960,7 @@
                     is_book_critique: true,
                 },
                 bookCritiqueFilename: '',
+                bookCritiqueFeedbackFilename: '',
                 bookCritiques: this.bookCritiqueList,
                 noteForm: {
                     id: '',
@@ -1324,6 +1378,11 @@
                 });
             },
 
+            showBookCritiqueFeedbackModal(data) {
+                this.bookCritiqueForm.id = data.id;
+                this.$refs.bookCritiqueFeedbackModal.show();
+            },
+
             showBookCritiqueFormModal(data) {
                 this.modalTitle = 'Add Book Critique';
                 if (data) {
@@ -1346,7 +1405,8 @@
                     book_file: [],
                     description: '',
                     is_file: true,
-                    is_book_critique: true
+                    is_book_critique: true,
+                    feedback: []
                 }
             },
 
@@ -1366,8 +1426,45 @@
                 $(".validation-err").remove();
             },
 
+            onBookCritiqueFeedbackChange(e) {
+                let files = e.target.files;
+
+                if (!files.length)
+                {
+                    this.bookCritiqueFeedbackFilename = i18n.site['learner.files-text'];
+                    this.bookCritiqueForm.feedback = [];
+                    return;
+                }
+
+                this.bookCritiqueFeedbackFilename = files[0].name;
+                this.bookCritiqueForm.feedback = files[0];
+
+                $(".validation-err").remove();
+            },
+
             onBookCritiqueEditorChange({ html, text }) {
                 this.bookCritiqueForm.book_content = html;
+            },
+
+            saveBookCritiqueFeedback() {
+                this.isLoading = true;
+                this.removeValidationError();
+
+                let formData = new FormData();
+                $.each(this.bookCritiqueForm, function(k, v) {
+                    formData.append(k, v);
+                });
+
+                axios.post('/project/book-critique/' + this.bookCritiqueForm.id + '/feedback', formData).then(response => {
+                    this.isLoading = false;
+                    this.$refs.bookCritiqueFeedbackModal.hide();
+
+                    this.updateRecordFromObject(this.bookCritiques, response.data.id, response.data);
+
+                    this.$toasted.global.showSuccessMsg({
+                        message : 'Feedback saved'
+                    });
+                });
             },
 
             saveBookCritique() {
@@ -1400,6 +1497,23 @@
                         message : 'Error in form'
                     });
                 })
+            },
+
+            showDeleteBookFormModal(book) {
+                this.bookCritiqueForm.id = book.id;
+                this.$refs.deleteBookCritiqueFormModal.show();
+            },
+
+            deleteBookCritique() {
+                this.isLoading = true;
+                axios.delete('/project/book-critique/' + this.bookCritiqueForm.id + '/delete').then(response => {
+                    this.isLoading = false;
+                    this.deleteRecordFromObject(this.bookCritiques, this.bookCritiqueForm.id);
+                    this.$refs.deleteBookCritiqueFormModal.hide();
+                    this.$toasted.global.showSuccessMsg({
+                        message : 'Record deleted'
+                    });
+                });
             },
 
             showFormModal(data = null) {

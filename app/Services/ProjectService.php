@@ -337,6 +337,15 @@ class ProjectService
         return $filePath;
     }
 
+    public function uploadFeedback(Request $request)
+    {
+        $filePath = NULL;
+        $destinationPath = 'storage/project-book-critiques'; // upload path
+        AdminHelpers::createDirectory($destinationPath);
+        $filePath = $this->saveFileOrImage($destinationPath, 'feedback');
+        return $filePath;
+    }
+
     /**
      * @param Request $request
      * @param $fieldName

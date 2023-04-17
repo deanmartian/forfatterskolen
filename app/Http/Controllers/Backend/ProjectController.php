@@ -269,6 +269,24 @@ class ProjectController extends Controller
         return response()->json();
     }
 
+    public function deleteBookCritique( $whole_book_id )
+    {
+        ProjectBookCritique::find($whole_book_id)->delete();
+        return response()->json();
+    }
+
+    public function saveBookCritiqueFeedback($id, Request $request, ProjectService $projectService)
+    {
+        $request->merge(['project_id' => $id]);
+        $this->validate($request, ['feedback' => 'required']);
+        $record = ProjectBookCritique::find($id);
+        $record->feedback = $projectService->uploadFeedback( $request );
+        $record->save();
+
+        return $record;
+
+    }
+
     public function downloadWholeBook( $project_id, $whole_book_id )
     {
         $wholeBook = ProjectWholeBook::find($whole_book_id);
