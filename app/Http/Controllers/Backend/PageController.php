@@ -32,6 +32,7 @@ use App\AssignmentFeedback;
 use App\Log;
 use App\ShopManuscriptsTaken;
 use App\FreeManuscript;
+use App\SelfPublishingPortalRequest;
 use Artisan;
 use Illuminate\Support\MessageBag;
 use App\ShopManuscriptTakenFeedback;
@@ -118,6 +119,7 @@ class PageController extends Controller
         $correctionEditors = AdminHelpers::editorByAdminQuery('is_correction_admin');
         $copyEditingEditors = AdminHelpers::editorByAdminQuery('is_copy_editing_admin');
         $projects = Project::all();
+        $selfPublishingPortalRequests = SelfPublishingPortalRequest::all();
 
         return view('backend.dashboard', compact('pending_courses', 'pending_shop_manuscripts',
         'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts', 'assigned_free_manuscripts',
@@ -125,7 +127,7 @@ class PageController extends Controller
         'nearlyExpiredCoursesCount', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
         'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments',
         'pendingTasks', 'assignedAssignmentManuscripts','shopManuscriptTakenFeedback', 'selfPublishingList', 'editors',
-            'learners', 'coachingEditors', 'correctionEditors', 'copyEditingEditors', 'projects'));
+            'learners', 'coachingEditors', 'correctionEditors', 'copyEditingEditors', 'projects', 'selfPublishingPortalRequests'));
     }
 
     public function updateExpectedFinish( $type, $id, Request $request )
@@ -689,5 +691,30 @@ class PageController extends Controller
     {
         $orders = Order::svea()->where('is_processed', 1)->latest()->paginate(20);
         return view('backend.svea-orders', compact('orders'));
+    }
+
+    public function approveSelfPublishingRequest($id)
+    {
+        $request = SelfPublishingPortalRequest::findOrFail($id);
+        $user = User::findOrFail($request->user_id);
+        $user->is_self_publishing_learner = 1;
+        $user->save();
+
+        $request->delete();
+        return redirect()->back()->with([
+            'alert_type' => 'success',
+            'errors'    => AdminHelpers::createMessageBag('Self publishing portal request approved.')
+        ]);
+    }
+
+    public function deleteSelfPublishingRequest($id)
+    {
+        $request = SelfPublishingPortalRequest::findOrFail($id);
+        $request->delete();
+
+        return redirect()->back()->with([
+            'alert_type' => 'success',
+            'errors'    => AdminHelpers::createMessageBag('Self publishing portal request deleted.')
+        ]);
     }
 }

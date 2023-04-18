@@ -123,7 +123,7 @@
                             @else
                                 @if(!FrontendHelpers::checkSelfPublishingPortalRequest(Auth::id()))
                                     <a href="{{ route('learner.request-self-publishing-portal') }}" class="dropdown-item d-inline-block w-auto mb-1">
-                                        <form method="POST" action="{{route('auth.logout')}}" class="form-logout">
+                                        <form method="POST" action="{{route('learner.request-self-publishing-portal')}}" class="form-logout">
                                             {{csrf_field()}}
                                             <button type="submit" class="btn btn-circle">Get access</button>
                                         </form>

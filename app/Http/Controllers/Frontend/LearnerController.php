@@ -102,6 +102,7 @@ use Hash;
 use File;
 use App\Http\FrontendHelpers;
 use App\Jobs\UpdateFikenContactDetailsJob;
+use App\SelfPublishingPortalRequest;
 
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
 
@@ -1741,7 +1742,12 @@ class LearnerController extends Controller
 
     public function requestSelfPublishingPortal()
     {
-        return Auth::id();
+        SelfPublishingPortalRequest::firstOrCreate(['user_id' => Auth::id()]);
+        return back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Request submitted to admin.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
     }
 
     public function project()

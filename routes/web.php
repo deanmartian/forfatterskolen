@@ -621,6 +621,8 @@ Route::group([
         Route::post('/update-expected-finish/{type}/{id}', 'PageController@updateExpectedFinish')->name('backend.update-expected-finish');
         Route::post('/self-publishing/feedback/{id}/approve', 'HeadEditorController@approveSelfPublishingFeedback')->name('head_editor.self-publishing-feedback.approve');
         Route::get('/svea-orders', 'PageController@sveaOrders')->name('admin.svea.orders');
+        Route::post('/self-publishing-request/{id}/approve', 'PageController@approveSelfPublishingRequest')->name('admin.self-publishing-portal-request.approve');
+        Route::delete('/self-publishing-request/{id}/delete', 'PageController@deleteSelfPublishingRequest')->name('admin.self-publishing-portal-request.destroy');
 
         Route::resource('page_meta','PageMetaController',[
             'except' => ['show', 'create', 'edit'],
