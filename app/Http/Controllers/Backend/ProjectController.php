@@ -46,7 +46,7 @@ class ProjectController extends Controller
     {
         $learners =  User::where('role', 2)->where('is_self_publishing_learner', 1)->get();
         $activities = ProjectActivity::all();
-        $projects = Project::all();
+        $projects = Project::orderByRaw("CASE WHEN status='active' THEN 1 WHEN status='lead' THEN 2 WHEN status='finish' THEN 3 ELSE 4 END, status IS NULL ,status")->get();
         $nextProjectNumber = DB::table('projects')
             ->select(DB::raw('CAST(identifier AS UNSIGNED) as identifier_numeric'))
             ->orderByRaw('identifier_numeric DESC')
