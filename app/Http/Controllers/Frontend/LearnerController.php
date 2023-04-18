@@ -1739,6 +1739,11 @@ class LearnerController extends Controller
         ]);
     }
 
+    public function requestSelfPublishingPortal()
+    {
+        return Auth::id();
+    }
+
     public function project()
     {
         $projects = Project::where('user_id', Auth::user()->id)->get();

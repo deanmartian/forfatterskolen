@@ -311,6 +311,8 @@ Route::group([
         Route::post('/for-sale-books/save', 'LearnerController@saveForSaleBooks')->name('learner.save-for-sale-books');
         Route::delete('/for-sale-books/{id}/delete', 'LearnerController@deleteForSaleBooks')->name('learner.delete-for-sale-books');
 
+        Route::post('/self-publishing-portal/request', 'LearnerController@requestSelfPublishingPortal')
+            ->name('learner.request-self-publishing-portal');
         Route::get('/project', 'LearnerController@project')->name('learner.project');
         Route::post('/project/self-publishing/{id}/upload-manuscript', 'LearnerController@uploadSelfPublishingManuscript')
             ->name('learner.project.self-publishing.upload-manuscript');

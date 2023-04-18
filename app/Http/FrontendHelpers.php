@@ -11,6 +11,7 @@ use App\PilotReaderBookChapter;
 use App\PilotReaderBookReading;
 use App\PrivateGroupMember;
 use App\Project;
+use App\SelfPublishingPortalRequest;
 use App\Staff;
 use App\User;
 use App\WebinarRegistrant;
@@ -970,6 +971,11 @@ class FrontendHelpers
         
         return \App\Http\FrontendHelpers::isLessonAvailable($courseTaken->started_at, $lesson->delay, $lesson->period) ||
             \App\Http\FrontendHelpers::hasLessonAccess($courseTaken, $lesson);
+    }
+
+    public static function checkSelfPublishingPortalRequest($user_id)
+    {
+        return SelfPublishingPortalRequest::where('user_id', $user_id)->first();
     }
 
     /**
