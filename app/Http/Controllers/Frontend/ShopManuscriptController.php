@@ -1182,11 +1182,11 @@ class ShopManuscriptController extends Controller
     public function processFreeManuscript( Request $request )
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'last_name' => 'required',
+            'name' => 'required|alpha_spaces',
+            'last_name' => 'required|alpha_spaces',
             'email' => 'required|email',
             'genre' => 'required',
-            'manuscript_content' => 'required',
+            'manuscript_content' => 'required|no_links',
         ]);
 
         $wordcount = Session::get('wordcount');

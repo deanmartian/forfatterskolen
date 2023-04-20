@@ -30,6 +30,12 @@ class AppServiceProvider extends ServiceProvider
             return preg_match('/^[\pL\s-]+$/u', $value);
         });
 
+        Validator::extend('no_links', function ($attribute, $value) {
+            // This will only accept alpha and spaces.
+            // If you want to accept hyphens use: /^[\pL\s-]+$/u.
+            return !preg_match('/\bhttps?:\/\/\S+/', $value);
+        });
+
         // Enable pagination on collection
         if (!Collection::hasMacro('paginate')) {
 
