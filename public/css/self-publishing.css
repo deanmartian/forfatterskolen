@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+@font-face {
+    font-family: 'Myriad-regular';
+    src: url('/fonts/Myriad-pro/MYRIADPRO-REGULAR.woff');
+}
+
+* {
+    font-family: 'Roboto';
+}
+
+.text-gray {
+    color: #595959;
+}
+
+.navbar, body {
+    background-color: #e1e4ed;
+}
+
+.modal-backdrop.in {
+    opacity: .5;
+}
+
+.modal.in .modal-dialog {
+    -webkit-transform: translate(0,0);
+    transform: translate(0,0);
+}
+
+header>.navbar {
+    padding: 2rem 1rem;
+}
+
+header .navbar-brand img {
+    height: 80px;
+    width: 80px;
+}
+
+.self-publishing-header .dropdown-menu {
+    min-width: 20rem;
+    padding: .5rem 0;
+    width: auto;
+}
+
+.self-publishing-header .dropdown-item {
+    display: block;
+    font-family: 'Roboto';
+    font-size: 14px;
+    font-weight: 400;
+    width: 100%;
+    padding: 0.25rem 1.5rem;
+    clear: both;
+    color: #212529;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+}
+
+.self-publishing-header .dropdown-item:hover {
+    color: #16181b !important;
+    text-decoration: none;
+    background-color: #e9ecef;
+}
+
+/* remove the red triangle color to the top */
+.self-publishing-header .dropdown-menu:after {
+    border-bottom-color: transparent;
+}
+
+.self-publishing-learner-container {
+    margin-top: 50px;
+}
+
+.self-publishing-learner-container .learner-container {
+    background-color: #e1e4ed;
+    padding-top: 0;
+}
+
+.self-publishing-learner-container .learner-menu {
+    background-color: transparent;
+    margin-top: 0;
+}
+
+.self-publishing-learner-container .learner-menu .list-group-item {
+    border: none;
+    background-color: transparent;
+    padding: 15px 20px 15px 70px;
+}
+
+.self-publishing-learner-container .learner-menu .list-group-item .fa,
+.self-publishing-learner-container .learner-menu .list-group-item a {
+    color: #000;
+    margin-right: 10px;
+}
+
+.self-publishing-learner-container .learner-menu .list-group-item a {
+    text-decoration: none;
+    color: #000;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.self-publishing-learner-container .list-group-item.active {
+    border-left: 10px solid #e80707;
+    padding-left: 60px;
+}
+
+.self-publishing-learner-container .learner-menu .list-group-item.active a {
+    color: #e80707;
+}
+
+footer {
+    background-color: #262626;
+    color: #fff;
+    margin-top: 100px;
+    padding: 50px;
+}
+
+footer img {
+    width: 100px;
+}
+
+footer a {
+    color: #fff;
+    font-family: 'Myriad-regular';
+    font-size: 17px;
+}
+
+@media (min-width: 768px) {
+    .navbar-light .navbar-brand {
+        left: 9%;
+    }
+}

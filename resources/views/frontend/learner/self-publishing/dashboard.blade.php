@@ -1,4 +1,4 @@
-@extends('frontend.layout')
+@extends('frontend.learner.self-publishing.layout')
 
 @section('title')
 <title>Dashboard &rsaquo; Forfatterskolen</title>
@@ -6,6 +6,15 @@
 
 @section('styles')
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <style>
+        .fa-home-red:before {
+            content: "\f015";
+        }
+
+        .fa-home-red {
+            color: #e80707 !important;
+        }
+    </style>
 @stop
 
 @section('content')
@@ -19,8 +28,8 @@
                                 Self Publishing
                             </h1>
                         </div>
-                        <div class="card-body">
-                            <table class="table">
+                        <div class="card-body" style="padding: 0">
+                            <table class="table" style="margin-bottom: 0">
                                 <thead>
                                 <tr>
                                     <th>{{ trans('site.title') }}</th>
