@@ -8,6 +8,10 @@
             Notes
         </button>
 
+        <a href="/services" class="btn btn-sm btn-success margin-top">
+            Publishing Services
+        </a>
+
         <div class="table-users">
             <table class="table table-responsive">
                 <thead>

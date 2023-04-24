@@ -1756,6 +1756,31 @@ class LearnerController extends Controller
         return view('frontend.learner.self-publishing.project.index', compact('projects'));
     }
 
+    public function saveProject(Request $request, ProjectService $projectService)
+    {
+        $this->validate($request, [
+            'name' => 'required|no_links'
+        ]);
+
+        $nextProjectNumber = DB::table('projects')
+            ->select(DB::raw('CAST(identifier AS UNSIGNED) as identifier_numeric'))
+            ->orderByRaw('identifier_numeric DESC')
+            ->value('identifier') + 1;
+
+        $request->merge([
+            'user_id' => Auth::id(),
+            'number' => $nextProjectNumber,
+            'status' => 'active'
+        ]);
+
+        $projectService->saveProject($request);
+
+        return back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Project created.'),
+            'alert_type'            => 'success'
+        ]);
+    }
+
     public function showProject( $project_id )
     {
         $project = Project::where('user_id', Auth::user()->id)->where('id', $project_id)->firstOrFail();

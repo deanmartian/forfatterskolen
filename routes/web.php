@@ -314,6 +314,7 @@ Route::group([
         Route::post('/self-publishing-portal/request', 'LearnerController@requestSelfPublishingPortal')
             ->name('learner.request-self-publishing-portal');
         Route::get('/project', 'LearnerController@project')->name('learner.project');
+        Route::post('/project', 'LearnerController@saveProject')->name('learner.save-project');
         Route::post('/project/self-publishing/{id}/upload-manuscript', 'LearnerController@uploadSelfPublishingManuscript')
             ->name('learner.project.self-publishing.upload-manuscript');
         Route::post('/project/other-service/{id}/upload-manuscript/{type}', 'LearnerController@uploadOtherServiceManuscript')
@@ -1641,6 +1642,8 @@ Route::group([
         Route::get('/time-register/{id}/time-used-list', 'TimeRegisterController@timeUsedList');
         Route::post('/time-register/{id}/save-time-used', 'TimeRegisterController@saveTimeUsed');
         Route::delete('/time-register/time-used/{id}/delete', 'TimeRegisterController@deleteTimeUsed');
+
+        Route::get('/services', 'PublishingPackageController@services')->name('admin.service.index');
 
         // Advisories
         Route::put('/advisory/{id}', 'AdvisoryController@update')->name('admin.advisory.update');
