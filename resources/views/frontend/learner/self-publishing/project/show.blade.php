@@ -53,9 +53,14 @@
                 <div class="col-md-12 dashboard-course no-left-padding">
                     <div class="card global-card">
                         <div class="card-header">
-                            <h1>
-                                {{ trans('site.self-publishing-text') }}
+                            <h1 class="d-inline-block">
+                                {{-- {{ trans('site.self-publishing-text') }} --}}
+                                Redaktør
                             </h1>
+
+                            <button class="btn btn-primary float-right">
+                                Order
+                            </button>
                         </div>
                         <div class="card-body">
                             <table class="table">
@@ -111,9 +116,13 @@
 
                     <div class="card global-card mt-5">
                         <div class="card-header">
-                            <h1>
+                            <h1 class="d-inline-block">
                                 {{ trans('site.learner.copy-editing') }}
                             </h1>
+
+                            <button class="btn btn-primary float-right">
+                                Order
+                            </button>
                         </div>
                         <div class="card-body py-0">
                             <table class="table table-global">
@@ -194,9 +203,13 @@
 
                     <div class="card global-card mt-5">
                         <div class="card-header">
-                            <h1>
+                            <h1 class="d-inline-block">
                                 {{ trans('site.front.correction.title') }}
                             </h1>
+
+                            <button class="btn btn-primary float-right">
+                                Order
+                            </button>
                         </div>
                         <div class="card-body py-0">
                             <table class="table table-global">

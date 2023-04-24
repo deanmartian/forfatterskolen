@@ -25,7 +25,7 @@
                     <div class="card global-card">
                         <div class="card-header">
                             <h1>
-                                Projects
+                                Bokprosjekt
                             </h1>
                         </div>
                         <div class="card-body">

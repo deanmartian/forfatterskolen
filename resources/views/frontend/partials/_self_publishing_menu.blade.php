@@ -19,7 +19,7 @@
 
     <li class="list-group-item @if(Request::is('account/project')) active @endif">
         <a href=" {{ route('learner.project') }} ">
-            <i class="fa fa-file"></i> Projects
+            <i class="fa fa-file"></i> Bokprosjekt
         </a>
     </li>
 </ul>

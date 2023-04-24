@@ -25,7 +25,7 @@
                     <div class="card global-card">
                         <div class="card-header">
                             <h1>
-                                Redaktør
+                                Redaktør {{-- Self Publishing --}}
                             </h1>
                         </div>
                         <div class="card-body" style="padding: 0">

@@ -365,11 +365,12 @@
             </div>
 
             <div class="form-group">
-                <label>Finished</label> <br>
-                <toggle-button :color="'#337ab7'"
-                               :labels="{checked: 'Yes', unchecked: 'No'}"
-                               v-model="projectForm.is_finished"
-                               :width="60" :height="25" :font-size="14"/>
+                <label>Status</label>
+                <select name="status" class="form-control" v-model="projectForm.status">
+                    <option value="active">Active</option>
+                    <option value="lead">Lead</option>
+                    <option value="finished">Finished</option>
+                </select>
             </div>
 
             <div slot="modal-footer">
@@ -995,7 +996,7 @@
                     start_date: '',
                     end_date: '',
                     description: '',
-                    is_finished: false
+                    status: 'active'
                 },
                 activityList: this.activities,
                 learnerList: this.learners,
@@ -1139,7 +1140,7 @@
                     start_date: data.start_date,
                     end_date: data.end_date,
                     description: data.description,
-                    is_finished: !!data.is_finished
+                    status: data.status
                 };
 
                 const actIndex = _.findIndex(this.activityList, {id: data.activity_id});
@@ -1162,7 +1163,7 @@
                 axios.post('/project/save', this.projectForm).then(response => {
                     this.isLoading = false;
 
-                    this.project = response.data;
+                    this.project = response.data.project;
                     this.$refs.projectFormModal.hide();
 
                     this.$toasted.global.showSuccessMsg({
