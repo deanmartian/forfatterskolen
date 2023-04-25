@@ -1648,6 +1648,11 @@ Route::group([
         Route::post('/service/{id}/update-field', 'PublishingPackageController@updateServiceField');
         Route::post('/save-service', 'PublishingPackageController@saveService');
 
+        Route::get('/assemble-book-packages/all-options', 'AssembleBookController@getOptions');
+        Route::post('/assemble-book-packages/save-cover-or-color', 'AssembleBookController@saveCoverOrColor');
+        Route::post('/assemble-book-packages/save-count-or-help', 'AssembleBookController@saveCountOrHelp');
+        Route::view('/assemble-book-packages', 'backend.assemble-books.list');
+
         // Advisories
         Route::put('/advisory/{id}', 'AdvisoryController@update')->name('admin.advisory.update');
 

@@ -12,6 +12,10 @@
             Publishing Services
         </a>
 
+        <a href="/assemble-book-packages" class="btn btn-sm btn-success margin-top">
+            Assemble Book Package Options
+        </a>
+
         <div class="table-users">
             <table class="table table-responsive">
                 <thead>

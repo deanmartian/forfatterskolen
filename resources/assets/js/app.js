@@ -67,6 +67,7 @@ Vue.component('project', require('./backend/project/list.vue'));
 Vue.component('project-details', require('./backend/project/details.vue'));
 Vue.component('project-notes', require('./backend/project/notes.vue'));
 Vue.component('publishing-services', require('./backend/publishing-package/services.vue'));
+Vue.component('assemble-book', require('./backend/assemble-books/list.vue'));
 Vue.component('chat', require('./frontend/chat/index.vue'));
 Vue.component('v-select', vSelect);
 Vue.use(VueQuillEditor);
