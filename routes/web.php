@@ -1644,6 +1644,9 @@ Route::group([
         Route::delete('/time-register/time-used/{id}/delete', 'TimeRegisterController@deleteTimeUsed');
 
         Route::get('/services', 'PublishingPackageController@services')->name('admin.service.index');
+        Route::get('/all-services', 'PublishingPackageController@getAllServices');
+        Route::post('/service/{id}/update-field', 'PublishingPackageController@updateServiceField');
+        Route::post('/save-service', 'PublishingPackageController@saveService');
 
         // Advisories
         Route::put('/advisory/{id}', 'AdvisoryController@update')->name('admin.advisory.update');

@@ -31,6 +31,7 @@ import VueMoment from 'vue-moment'
 import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css';
 import VueQuillEditor from 'vue-quill-editor'
+import VuePaginate from 'vue-paginate';
 
 import 'quill/dist/quill.core.css' // import styles
 import 'quill/dist/quill.snow.css' // for snow theme
@@ -41,6 +42,7 @@ Vue.use(Vue2Filters);
 Vue.use(BootstrapVue);
 Vue.use(ToggleButton);
 Vue.use(VueMoment)
+Vue.use(VuePaginate)
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
