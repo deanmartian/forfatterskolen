@@ -2,6 +2,7 @@
 
 namespace App;
 
+use FrontendHelpers;
 use Illuminate\Database\Eloquent\Model;
 use Str;
 

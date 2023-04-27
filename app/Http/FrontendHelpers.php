@@ -4,6 +4,7 @@ namespace App\Http;
 use App\Advisory;
 use App\Course;
 use App\Genre;
+use App\Helpers\FileToText;
 use App\Lesson;
 use App\PaymentMode;
 use App\PilotReaderBook;
@@ -976,6 +977,41 @@ class FrontendHelpers
     public static function checkSelfPublishingPortalRequest($user_id)
     {
         return SelfPublishingPortalRequest::where('user_id', $user_id)->first();
+    }
+
+    public static function countFileWords($type, $request)
+    {
+        $extensions = ['docx'];
+
+        $extension = pathinfo($_FILES['manuscript']['name'],PATHINFO_EXTENSION);
+        $original_filename = $request->manuscript->getClientOriginalName();
+
+        if( !in_array($extension, $extensions) ) :
+            return redirect()->back();
+        endif;
+
+        $time = time();
+
+        $destinationPath = 'uploads/manuscript-compute/'; // upload path
+        if (!\File::exists($destinationPath)) {
+            \File::makeDirectory($destinationPath, 0777, true, true);
+        }
+
+        $fileName = $original_filename;//$time.'.'.$extension; // rename document
+        $request->manuscript->move($destinationPath, $fileName);
+
+        $file = $destinationPath.$fileName;
+
+        $docObj = new FileToText($file);
+        // count characters with space
+        $char_count = strlen($docObj->convertToText()) - 2;
+        $word_count = str_word_count($docObj->convertToText());
+        return [
+            'char_count' => $char_count,
+            'word_count' => $word_count,
+            'file' => $file,
+            'original_filename' => $original_filename
+        ];
     }
 
     /**

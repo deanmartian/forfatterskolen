@@ -324,6 +324,7 @@ Route::group([
             'prefix' => 'project/{id}'
         ], function() {
             Route::get('/', 'LearnerController@showProject')->name('learner.project.show');
+            Route::get('/service/{service_id}/order', 'LearnerController@orderService')->name('learner.service.order');
             Route::get('/graphic-work', 'LearnerController@projectGraphicWork')->name('learner.project.graphic-work');
             Route::get('/registration', 'LearnerController@projectRegistration')->name('learner.project.registration');
             Route::get('/marketing', 'LearnerController@projectMarketing')->name('learner.project.marketing');
@@ -332,6 +333,8 @@ Route::group([
             Route::get('/contract', 'LearnerController@projectContract')->name('learner.project.contract');
             Route::get('/invoice', 'LearnerController@projectInvoice')->name('learner.project.invoice');
         });
+
+        Route::post('/file/count-characters', 'LearnerController@countFileCharacters');
 
         Route::get('/profile', 'LearnerController@profile')->name('learner.profile'); // Profile Page
         Route::get('/terms', 'LearnerController@terms')->name('learner.terms'); // Terms Page

@@ -102,6 +102,7 @@ use Hash;
 use File;
 use App\Http\FrontendHelpers;
 use App\Jobs\UpdateFikenContactDetailsJob;
+use App\PublishingService as AppPublishingService;
 use App\SelfPublishingPortalRequest;
 
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
@@ -1787,6 +1788,12 @@ class LearnerController extends Controller
         return view('frontend.learner.self-publishing.project.show', compact('project'));
     }
 
+    public function orderService($projectId, $serviceId)
+    {
+        $service = AppPublishingService::findOrFail($serviceId);
+        return view('frontend.learner.self-publishing.project.service-order', compact('service', 'projectId'));
+    }
+
     public function projectGraphicWork( $project_id )
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
@@ -1889,6 +1896,15 @@ class LearnerController extends Controller
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
         $invoices = ProjectInvoice::where('project_id', $project_id)->get();
         return view('frontend.learner.self-publishing.project.invoice', compact('project', 'invoices'));
+    }
+
+    public function countFileCharacters(Request $request)
+    {
+        $compute = null;
+        if( $request->hasFile('manuscript') &&  $request->file('manuscript')->isValid() ) :
+            $compute = FrontendHelpers::countFileWords(0, $request);
+        endif;
+        return $compute;
     }
 
     public function uploadSelfPublishingManuscript( $id, Request $request )

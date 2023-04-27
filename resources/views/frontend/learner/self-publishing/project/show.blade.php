@@ -1,7 +1,7 @@
 @extends('frontend.learner.self-publishing.layout')
 
 @section('title')
-    <title>Time Register &rsaquo; Forfatterskolen</title>
+    <title>Project &rsaquo; Forfatterskolen</title>
 @stop
 
 @section('styles')
@@ -58,9 +58,9 @@
                                 Redaktør
                             </h1>
 
-                            <button class="btn btn-primary float-right">
+                            <a href="{{ route('learner.service.order', [$project->id, 3]) }}" class="btn btn-primary float-right">
                                 Order
-                            </button>
+                            </a>
                         </div>
                         <div class="card-body">
                             <table class="table">
@@ -120,9 +120,9 @@
                                 {{ trans('site.learner.copy-editing') }}
                             </h1>
 
-                            <button class="btn btn-primary float-right">
+                            <a href="{{ route('learner.service.order', [$project->id, 1]) }}" class="btn btn-primary float-right">
                                 Order
-                            </button>
+                            </a>
                         </div>
                         <div class="card-body py-0">
                             <table class="table table-global">
@@ -207,9 +207,9 @@
                                 {{ trans('site.front.correction.title') }}
                             </h1>
 
-                            <button class="btn btn-primary float-right">
+                            <a href="{{ route('learner.service.order', [$project->id, 2]) }}" class="btn btn-primary float-right">
                                 Order
-                            </button>
+                            </a>
                         </div>
                         <div class="card-body py-0">
                             <table class="table table-global">
