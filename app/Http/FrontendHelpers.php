@@ -12,11 +12,13 @@ use App\PilotReaderBookChapter;
 use App\PilotReaderBookReading;
 use App\PrivateGroupMember;
 use App\Project;
+use App\SelfPublishingOrder;
 use App\SelfPublishingPortalRequest;
 use App\Staff;
 use App\User;
 use App\WebinarRegistrant;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class FrontendHelpers
 {
@@ -1012,6 +1014,50 @@ class FrontendHelpers
             'file' => $file,
             'original_filename' => $original_filename
         ];
+    }
+
+    public static function saveFile(Request $request, $folder, $fieldName)
+    {
+        $filePath = NULL;
+
+        if ($request->hasFile($fieldName)) :
+            $destinationPath = 'storage/' . $folder; // upload path
+
+            self::createDirectory($destinationPath);
+
+            $requestFile = \request()->file($fieldName);
+            $extension = $requestFile->getClientOriginalExtension();
+            $original_filename = $requestFile->getClientOriginalName();
+            $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
+
+            $fileName = self::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $requestFile->move($destinationPath, $fileName);
+            return '/'.$fileName;
+
+        endif;
+
+        return $filePath;
+    }
+
+    public static function createDirectory($name)
+    {
+        if (!\Illuminate\Support\Facades\File::exists($name)) {
+            \Illuminate\Support\Facades\File::makeDirectory($name);
+        }
+    }
+
+    public static function checkFileName($path, $filename, $extension)
+    {
+        $i = 1;
+
+        // check first if the filename without the increment exists
+        if (file_exists("$path/$filename.$extension")) {
+            while(file_exists("$path/$filename ($i).$extension")) $i++;
+            $newName = "$path/$filename ($i).$extension";
+        } else {
+            $newName = "$path/$filename.$extension";
+        }
+        return $newName;
     }
 
     /**

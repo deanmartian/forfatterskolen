@@ -22,4 +22,10 @@
             <i class="fa fa-file"></i> Bokprosjekt
         </a>
     </li>
+
+    <li class="list-group-item @if(Request::is('account/self-publishing/order')) active @endif">
+        <a href=" {{ route('learner.self-publishing.order') }} ">
+            <i class="fa fa-shopping-cart"></i> Orders
+        </a>
+    </li>
 </ul>

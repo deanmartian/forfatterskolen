@@ -240,6 +240,48 @@ label.custom-file-label:after {
     content: "\f046";
 }
 
+/* order page */
+
+.order-container .nav-tabs > li:first-child {
+    background-color: #e0dcdc;
+    z-index: 2;
+}
+
+.order-container .nav-tabs > li:nth-child(2) {
+    background-color: #ebeef3;
+    z-index: 1;
+}
+
+.order-container .nav-tabs > li:last-child {
+    background-color: #d0d9e7;
+}
+
+.order-container .nav-tabs > li {
+    border-top-right-radius: 27px;
+    margin-right: -22px;
+    position: relative;
+}
+
+.order-container .nav-tabs > li.active {
+    background-color: #fff;
+}
+
+.order-container .nav-tabs > li a {
+    color: #000;
+    font-weight: bolder;
+    margin-right: 0;
+    padding: 5px 50px;
+}
+
+.order-container .tab-content {
+    background-color: #fff;
+    padding: 30px;
+    min-height: 60vh;
+    border-bottom-right-radius: 50px;
+}
+
+/* end order page */
+
 footer {
     background-color: #262626;
     color: #fff;

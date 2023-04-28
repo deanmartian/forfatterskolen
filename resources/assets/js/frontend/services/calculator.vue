@@ -80,7 +80,8 @@
         <hr>
 
         <div class="send-inquiry pull-right">
-            <button @click="showInquiryModal()" class="button-red">
+            <button @click="addToCart()" class="button-red" :disabled="isLoading">
+                <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i>
                 Send forespørsel <i class="fa fa-long-arrow-right"></i>
             </button>
         </div>
@@ -89,7 +90,7 @@
 
 <script>
 export default {
-    props: ['active-service'],
+    props: ['active-service', 'project-id'],
 
     data() {
         return {
@@ -98,12 +99,20 @@ export default {
                 word_count: 100
             },
             order: {
+                project_id: this.projectId,
+                parent: 'publishing_services',
+                parent_id: this.activeService.id,
+                file: null,
+                totalWords: 0,
+                totalCharacters: 0,
+                totalPrice: 0,
                 char_count: 0,
                 word_count: 10000,
             },
             service: this.activeService,
             chooseFileText: 'Velg fil du vil beregne',
             manuscriptName: this.chooseFileText,
+            isLoading: false
         }
     },
 
@@ -169,6 +178,7 @@ export default {
             });
             if (this.uploadManuscript.manuscript) {
                 axios.post('/account/file/count-characters', formData).then(response => {
+                    console.log(response.data);
                     scope.order.word_count = response.data.word_count;
                     scope.order.char_count = response.data.char_count;
                     scope.$refs.wordCountSlider.setValue(response.data.word_count);
@@ -182,6 +192,37 @@ export default {
         roundCount(count, min){
             return Math.ceil(parseFloat(count) / parseFloat(min)) * parseFloat(min)
         },
+
+        addToCart() {
+            let scope = this;
+            //scope.isLoading = true;
+            scope.removeValidationError();
+            let formData = new FormData();
+
+            scope.order.file = scope.uploadManuscript.manuscript;
+
+            scope.order.totalWords = Math.round(scope.uploadManuscript.word_count).toLocaleString();
+            scope.order.totalCharacters = Math.round(scope.uploadManuscript.char_count).toLocaleString();
+            scope.order.totalPrice = Number(scope.total).toFixed(2).toLocaleString();
+
+            $.each(scope.order, function(k, v) {
+                formData.append(k, v);
+            });
+            
+            axios.post('/account/self-publishing/add-to-cart', formData).then(response => {
+                window.location.href = '/account/self-publishing/order';
+                //scope.isLoading = false;
+                /* this.$toasted.global.showSuccessMsg({
+                    message : 'Enquiry Sent'
+                }); */
+            }).catch(error => {
+                scope.isLoading = false;
+                this.processError(error);
+                /* this.$toasted.global.showErrorMsg({
+                    message : i18n.site.form['error-message']
+                }); */
+            });
+        }
     },
 
     mounted() {

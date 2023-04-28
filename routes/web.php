@@ -319,6 +319,9 @@ Route::group([
             ->name('learner.project.self-publishing.upload-manuscript');
         Route::post('/project/other-service/{id}/upload-manuscript/{type}', 'LearnerController@uploadOtherServiceManuscript')
             ->name('learner.project.other-service.upload-manuscript');
+        Route::get('/self-publishing/order', 'SelfPublishingController@selfPublishingOrder')->name('learner.self-publishing.order');
+        Route::post('/self-publishing/add-to-cart', 'SelfPublishingController@addToCart')->name('learner.self-publishing.add-to-cart');
+        Route::delete('/self-publishing/order/{id}/delete', 'SelfPublishingController@deleteOrder')->name('learner.self-publishing.delete-order');
 
         Route::group([
             'prefix' => 'project/{id}'

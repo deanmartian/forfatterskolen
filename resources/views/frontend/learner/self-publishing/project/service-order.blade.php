@@ -12,7 +12,7 @@
             style="margin-bottom: 15px">
                 <i class="fa fa-angle-double-left"></i> Back
             </a>
-            <service-calculator :active-service="{{ json_encode($service) }}"></service-calculator>
+            <service-calculator :active-service="{{ json_encode($service) }}" :project-id="{{ $projectId }}"></service-calculator>
         </div>
     </div>
 </div>

@@ -96,6 +96,24 @@
             @include('frontend.partials._self_publishing_footer')
         </footer>
 
+        @if($errors->count())
+            <?php
+            $alert_type = session('alert_type');
+            if(!Session::has('alert_type')) {
+                $alert_type = 'danger';
+            }
+            ?>
+            <div class="alert alert-{{ $alert_type }} global-alert-box" style="z-index: 9; min-width: 300px"
+                 id="fixed_to_bottom_alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                <ul>
+                    @foreach($errors->all() as $error)
+                        <li>{!! $error !!}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         @include('frontend.partials.scripts')
         <script src="https://Forfatterskolen.cdn.vooplayer.com/assets/vooplayer.js" defer></script>
         <script src="/js/lang.js"></script>
