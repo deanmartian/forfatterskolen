@@ -30,9 +30,19 @@ class SelfPublishingOrder extends Model
         $query->where('status', 'paid');
     }
 
+    public function scopeQuote($query)
+    {
+        $query->where('status', 'quote');
+    }
+
     public function service()
     {
         return $this->belongsTo('App\PublishingService', 'parent_id', 'id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User');
     }
 
     public function getServiceNameAttribute() 

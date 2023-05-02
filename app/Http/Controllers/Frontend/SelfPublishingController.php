@@ -21,8 +21,10 @@ class SelfPublishingController extends Controller
         $orderHistory = $orderHistoryQuery->get();
         $orderHistoryTotal = $orderHistoryQuery->sum('price');
 
+        $savedQuotes = SelfPublishingOrder::quote()->where('user_id', Auth::id())->get();
+
         return view('frontend.learner.self-publishing.order.index', compact('currentOrders', 'currentOrderTotal', 'orderHistory',
-            'orderHistoryTotal'));
+            'orderHistoryTotal', 'savedQuotes'));
     }
 
     public function addToCart(Request $request)
@@ -44,6 +46,30 @@ class SelfPublishingController extends Controller
             'status' => 'active'
         ]);
         return $request->all();
+    }
+
+    public function saveQuote($id)
+    {
+        $order = SelfPublishingOrder::findOrFail($id);
+        $order->status = 'quote';
+        $order->save();
+
+        return back()->with([
+            'errors' => AdminHelpers::createMessageBag('Order moved to saved quotes.'),
+            'alert_type' => 'success'
+        ]);
+    }
+
+    public function moveToOrder($id)
+    {
+        $order = SelfPublishingOrder::findOrFail($id);
+        $order->status = 'active';
+        $order->save();
+
+        return back()->with([
+            'errors' => AdminHelpers::createMessageBag('Saved quote moved to order.'),
+            'alert_type' => 'success'
+        ]);
     }
 
     public function deleteOrder($id)

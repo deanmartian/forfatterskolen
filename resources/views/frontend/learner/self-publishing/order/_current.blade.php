@@ -21,6 +21,11 @@
                     {{ FrontendHelpers::currencyFormat($order->price) }}
                 </td>
                 <td>
+                    <button class="btn btn-success btn-xs saveQuoteBtn" data-toggle="modal" data-target="#saveQuoteModal"
+                    data-action="{{ route('learner.self-publishing.save-quote', $order->id) }}">
+                        Save Quote
+                    </button>
+
                     <button class="btn btn-danger btn-xs deleteOrderBtn" data-toggle="modal" 
                     data-target="#deleteOrderModal" data-action="{{ route('learner.self-publishing.delete-order', $order->id) }}">
                         Delete
@@ -42,3 +47,9 @@
         </tr>
     </tbody>
 </table>
+
+<a href="#" class="btn btn-dark pull-right" style="margin-top: 20px">
+    Proceed Checkout
+</a>
+
+<div class="clearfix"></div>

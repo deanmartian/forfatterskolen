@@ -16,6 +16,7 @@ class Order extends Model {
     const MANUSCRIPT_UPGRADE_TYPE = 7;
     const ASSIGNMENT_UPGRADE_TYPE = 8;
     const COACHING_TIME_TYPE = 9;
+    const EDITING_SERVICES = 10;
 
     protected $fillable = ['user_id', 'item_id', 'type', 'package_id', 'plan_id', 'payment_mode_id', 'price', 'discount',
         'svea_order_id', 'svea_invoice_id', 'svea_payment_type', 'svea_payment_type_description', 'svea_fullname',

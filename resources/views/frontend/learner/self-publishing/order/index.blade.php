@@ -40,9 +40,10 @@
                     ])
                 </div>
                 <div class="tab-pane" id="tab3">
-                    <p>
-                        Saved Quotes
-                    </p>
+                    @include('frontend.learner.self-publishing.order._quote' ,
+                    [
+                        'orders' => $savedQuotes
+                    ])
                 </div>
             </div>
         </div>
@@ -74,6 +75,58 @@
             </div>
         </div>
     </div>
+
+    <div id="saveQuoteModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        Save Quote
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        
+                        <p>
+                            Are you sure you want to save this quote?
+                        </p>
+
+                        <div class="text-right">
+                            <button class="btn btn-success" type="submit">{{ trans('site.submit') }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="moveOrderModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        Move Order
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        
+                        <p>
+                            Are you sure you want to move this order?
+                        </p>
+
+                        <div class="text-right">
+                            <button class="btn btn-success" type="submit">{{ trans('site.submit') }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('scripts')
@@ -82,6 +135,18 @@
         let action = $(this).data('action');
 
         $("#deleteOrderModal").find("form").attr('action', action);
+    });
+
+    $(".saveQuoteBtn").click(function(){
+        let action = $(this).data('action');
+
+        $("#saveQuoteModal").find("form").attr('action', action);
+    });
+
+    $(".moveOrderBtn").click(function(){
+        let action = $(this).data('action');
+
+        $("#moveOrderModal").find("form").attr('action', action);
     });
 </script>
 @stop

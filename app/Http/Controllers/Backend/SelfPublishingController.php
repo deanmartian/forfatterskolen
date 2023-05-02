@@ -9,6 +9,7 @@ use App\Project;
 use App\SelfPublishing;
 use App\SelfPublishingFeedback;
 use App\SelfPublishingLearner;
+use App\SelfPublishingOrder;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -360,5 +361,14 @@ class SelfPublishingController extends Controller
             'alert_type' => 'success',
             'not-former-courses' => true
         ]);
+    }
+
+    public function orders()
+    {
+        $currentOrders = SelfPublishingOrder::active()->get();
+        $orderHistory = SelfPublishingOrder::paid()->get();
+        $savedQuotes = SelfPublishingOrder::quote()->get();
+
+        return view('backend.self-publishing.orders', compact('currentOrders', 'orderHistory', 'savedQuotes'));
     }
 }

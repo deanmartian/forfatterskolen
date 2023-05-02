@@ -321,6 +321,8 @@ Route::group([
             ->name('learner.project.other-service.upload-manuscript');
         Route::get('/self-publishing/order', 'SelfPublishingController@selfPublishingOrder')->name('learner.self-publishing.order');
         Route::post('/self-publishing/add-to-cart', 'SelfPublishingController@addToCart')->name('learner.self-publishing.add-to-cart');
+        Route::post('/self-publishing/order/{id}/save-quote', 'SelfPublishingController@saveQuote')->name('learner.self-publishing.save-quote');
+        Route::post('/self-publishing/order/{id}/move-to-order', 'SelfPublishingController@moveToOrder')->name('learner.self-publishing.move-to-order');
         Route::delete('/self-publishing/order/{id}/delete', 'SelfPublishingController@deleteOrder')->name('learner.self-publishing.delete-order');
 
         Route::group([
@@ -1618,6 +1620,7 @@ Route::group([
         Route::post('/self-publishing/{id}/add-feedback', 'SelfPublishingController@addFeedback')->name('admin.self-publishing.add-feedback');
         Route::get('/self-publishing/feedback/{feedback_id}/download', 'SelfPublishingController@downloadFeedback')->name('admin.self-publishing.download-feedback');
         Route::delete('/self-publishing/delete-learner/{learner_id}', 'SelfPublishingController@deleteLearner')->name('admin.self-publishing.delete-learner');
+        Route::get('/self-publishing/orders', 'SelfPublishingController@orders')->name('admin.self-publishing.orders');
         Route::resource('/self-publishing', 'SelfPublishingController', [
             'except' => ['create', 'edit'],
             'names' => [

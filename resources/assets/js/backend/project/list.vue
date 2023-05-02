@@ -16,6 +16,10 @@
             Assemble Book Package Options
         </a>
 
+        <a href="/self-publishing/orders" class="btn btn-sm btn-success margin-top">
+            Orders
+        </a>
+
         <div class="table-users">
             <table class="table table-responsive">
                 <thead>
