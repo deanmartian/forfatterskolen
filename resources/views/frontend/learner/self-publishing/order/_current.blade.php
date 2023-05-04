@@ -25,7 +25,7 @@
                     data-action="{{ route('learner.self-publishing.save-quote', $order->id) }}">
                         Save Quote
                     </button>
-
+                    
                     <button class="btn btn-danger btn-xs deleteOrderBtn" data-toggle="modal" 
                     data-target="#deleteOrderModal" data-action="{{ route('learner.self-publishing.delete-order', $order->id) }}">
                         Delete
@@ -33,23 +33,27 @@
                 </td>
             </tr>
         @endforeach
-        <tr>
-            <td></td>
-            <td class="text-right">
-                <b>
-                    Total:
-                </b>
-            </td>
-            <td>
-                {{ FrontendHelpers::currencyFormat($currentOrderTotal) }}
-            </td>
-            <td></td>
-        </tr>
+        @if($orders->count())
+            <tr>
+                <td></td>
+                <td class="text-right">
+                    <b>
+                        Total:
+                    </b>
+                </td>
+                <td>
+                    {{ FrontendHelpers::currencyFormat($currentOrderTotal) }}
+                </td>
+                <td></td>
+            </tr>
+        @endif
     </tbody>
 </table>
 
-<a href="#" class="btn btn-dark pull-right" style="margin-top: 20px">
-    Proceed Checkout
-</a>
+@if($orders->count())
+    <a href="{{ route('learner.self-publishing.checkout') }}" class="btn btn-dark pull-right" style="margin-top: 20px">
+        Proceed Checkout
+    </a>
+@endif
 
 <div class="clearfix"></div>

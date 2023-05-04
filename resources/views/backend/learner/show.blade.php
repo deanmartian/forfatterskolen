@@ -3376,7 +3376,7 @@
 				</div>
 
 				<div class="col-sm-12 mt-4">
-					<table class="table no-border">
+					<table class="table no-border" id="order-list-table">
 						<tbody>
 						<tr>
 							<td>
@@ -3397,6 +3397,7 @@
 						</tr>
 						</tbody>
 					</table>
+					<div id="editing-services-container" class="hidden"></div>
 				</div>
 
 				<div class="col-sm-5 col-sm-offset-7">
@@ -4780,6 +4781,24 @@
         $(".viewOrderBtn").click(function(){
             let fields = $(this).data('fields');
             let modal = $("#viewOrderModal");
+			let orderListTable = modal.find("#order-list-table");
+			let editingServiceContainer = modal.find("#editing-services-container");
+
+			orderListTable.removeClass('hidden');
+			editingServiceContainer.addClass('hidden');
+
+			if (fields.type === 10) {
+				orderListTable.addClass('hidden');
+				editingServiceContainer.removeClass('hidden');
+
+				$.ajax({
+					type: "GET",
+					url: "/learner/order/" + fields.id + "/editing-services",
+					success: function(data) {
+						editingServiceContainer.html(data);
+					}
+				})
+			}
 
             modal.find("#displayDate").text(fields.created_at_formatted);
             modal.find(".package-variation").text(fields.payment_mode_id === 1 ? fields.packageVariation : fields.item);

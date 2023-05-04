@@ -60,6 +60,7 @@ use File;
 use App\Http\FrontendHelpers;
 use App\Jobs\UpdateFikenContactDetailsJob;
 use App\RequestToEditor;
+use App\SelfPublishingOrder;
 use DB;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
@@ -2309,6 +2310,12 @@ class LearnerController extends Controller
         $pdf->setPaper('letter', 'landscape');
         $pdf->loadHTML($template);
         return $pdf->download($course->title . ' certificate.pdf');
+    }
+
+    public function selfPublishingOrders($orderId)
+    {
+        $orders = SelfPublishingOrder::where('order_id', $orderId)->get();
+        return view('backend.learner._self-publishing-orders', compact('orders'));
     }
 
     /**

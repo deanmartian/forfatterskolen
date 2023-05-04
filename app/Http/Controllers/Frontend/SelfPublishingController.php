@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use AdminHelpers;
 use App\Http\Controllers\Controller;
+use App\Order;
 use App\SelfPublishingOrder;
 use Auth;
 use FrontendHelpers;
@@ -78,6 +79,39 @@ class SelfPublishingController extends Controller
         $order->delete();
         return back()->with([
             'errors' => AdminHelpers::createMessageBag('Order deleted.'),
+            'alert_type' => 'success'
+        ]);
+    }
+
+    public function checkoutOrder()
+    {
+        return view('frontend.learner.self-publishing.order.checkout');
+    }
+
+    public function processCheckoutOrder()
+    {
+        $currentOrderQuery = SelfPublishingOrder::active()->where('user_id', Auth::id());
+        $currentOrders = $currentOrderQuery->get();
+        $currentOrderTotal = $currentOrderQuery->sum('price');
+
+        $order = Order::create([
+            'user_id' => Auth::id(),
+            'item_id' => $currentOrders[0]->id,
+            'type' => Order::EDITING_SERVICES,
+            'plan_id' => 8,
+            'price' => $currentOrderTotal,
+            'discount' => 0,
+            'is_processed' => 1
+        ]);
+
+        SelfPublishingOrder::whereIn('id', $currentOrders->pluck('id'))
+        ->update([
+            'order_id' => $order->id,
+            'status' => 'paid'
+        ]);
+
+        return redirect()->route('learner.self-publishing.order')->with([
+            'errors' => AdminHelpers::createMessageBag('Order processed.'),
             'alert_type' => 'success'
         ]);
     }

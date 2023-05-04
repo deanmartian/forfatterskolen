@@ -321,6 +321,9 @@ Route::group([
             ->name('learner.project.other-service.upload-manuscript');
         Route::get('/self-publishing/order', 'SelfPublishingController@selfPublishingOrder')->name('learner.self-publishing.order');
         Route::post('/self-publishing/add-to-cart', 'SelfPublishingController@addToCart')->name('learner.self-publishing.add-to-cart');
+        Route::get('/self-publishing/order/checkout', 'SelfPublishingController@checkoutOrder')->name('learner.self-publishing.checkout');
+        Route::get('/self-publishing/order/process-checkout', 'SelfPublishingController@processCheckoutOrder')
+        ->name('learner.self-publishing.process-checkout');
         Route::post('/self-publishing/order/{id}/save-quote', 'SelfPublishingController@saveQuote')->name('learner.self-publishing.save-quote');
         Route::post('/self-publishing/order/{id}/move-to-order', 'SelfPublishingController@moveToOrder')->name('learner.self-publishing.move-to-order');
         Route::delete('/self-publishing/order/{id}/delete', 'SelfPublishingController@deleteOrder')->name('learner.self-publishing.delete-order');
@@ -666,6 +669,7 @@ Route::group([
         Route::post('learner/{user_id}/webinar-auto-register-update', 'LearnerController@autoRegisterCourseWebinar')->name('admin.learner.webinar-auto-register-update');
         Route::post('learner/{user_id}/update-is-publishing-learner', 'LearnerController@isPublishingLearner');
         Route::get('learner/{user_id}/course-certificate/{certificate_id}/download', 'LearnerController@downloadCourseCertificate')->name('admin.learner.download-course-certificate');
+        Route::get('learner/order/{order_id}/editing-services', 'LearnerController@selfPublishingOrders');
 
         Route::post('shop-manuscript/{id}/update_document', 'LearnerController@updateDocumentShopManuscriptTaken')->name('shop_manuscript_taken.update_document');
         Route::post('shop-manuscript/{id}/synopsis', 'LearnerController@saveSynopsis')->name('shop_manuscript_taken.save_synopsis');

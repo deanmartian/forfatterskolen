@@ -90,6 +90,10 @@ class Order extends Model {
             return Workshop::find($this->attributes['item_id'])->title;
         }
 
+        if ($this->attributes['type'] === static::EDITING_SERVICES) {
+            return "Editing Service";
+        }
+
         return Course::find($this->attributes['item_id'])->title;
     }
 
