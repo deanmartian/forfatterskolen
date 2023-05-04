@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Assignment;
+use App\AssignmentFeedback;
 use App\Course;
 use App\CoursesTaken;
 use App\CronLog;
@@ -355,11 +356,20 @@ class AdminHelpers
             $groupLearner = \App\AssignmentGroupLearner::whereIn('assignment_group_id', $assignmentGroups)
                 ->where('user_id', $learner_id)->first();
             if ($groupLearner) {
-                return [ 'id' => $groupLearner->group->id, 'title' => $groupLearner->group->title];
+                return [ 'id' => $groupLearner->group->id, 'title' => $groupLearner->group->title,
+                 'group_learner_id' => $groupLearner->id];
             }
         }
 
         return NULL;
+    }
+
+    public static function getAssignmentFeedbackByGroupLearnerIdAndEditorId($groupLearnerId, $editorId)
+    {
+        return AssignmentFeedback::where([
+            'assignment_group_learner_id' => $groupLearnerId,
+            'user_id' => $editorId
+        ])->first();
     }
 
     /**

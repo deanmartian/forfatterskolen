@@ -140,6 +140,17 @@
 											{{ \App\Http\FrontendHelpers::formatDate($noGroupHaveFeedback[0]->availability) }}
 										@endif
 									@endif
+
+									@if (isset(\App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['id']))
+										@php
+											$groupLearnerId = \App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['group_learner_id'];
+											$editorFeedback = \App\Http\AdminHelpers::getAssignmentFeedbackByGroupLearnerIdAndEditorId($groupLearnerId, $manuscript->editor_id);
+										@endphp
+
+										@if($editorFeedback)
+											{{ \App\Http\FrontendHelpers::formatDate($editorFeedback->availability) }}
+										@endif
+									@endif
 							</td>
 							<td>
 								<?php 

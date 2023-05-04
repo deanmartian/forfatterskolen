@@ -183,6 +183,7 @@ class AssignmentGroupController extends Controller
                     'is_admin' => true,
                     'is_active' => true,
                     'hours_worked' => $request->hours,
+                    'availability' => $request->filled('availability') ? $request->availability : Carbon::today(),
                     'notes_to_head_editor' => $request->notes_to_head_editor
                 ]);
 
