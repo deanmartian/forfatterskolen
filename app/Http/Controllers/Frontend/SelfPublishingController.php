@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Frontend;
 
 use AdminHelpers;
+use App\CopyEditingManuscript;
+use App\CorrectionManuscript;
 use App\Http\Controllers\Controller;
 use App\Order;
+use App\PublishingService;
 use App\SelfPublishingOrder;
 use Auth;
 use FrontendHelpers;
@@ -109,6 +112,32 @@ class SelfPublishingController extends Controller
             'order_id' => $order->id,
             'status' => 'paid'
         ]);
+
+        foreach( $currentOrders as $currentOrder ) {
+            $publishingService = PublishingService::find($currentOrder->parent_id);
+            
+            if ($publishingService->slug === 'sprakvask') {
+                CopyEditingManuscript::create([
+                    'user_id' => Auth::id(),
+                    'project_id' => $currentOrder->project_id,
+                    'file' => $currentOrder->file,
+                    'payment_price' => $currentOrder->price,
+                    'status' => 0,
+                    'is_locked' => 0
+                ]);
+            }
+
+            if ($publishingService->slug === 'korrektur') {
+                CorrectionManuscript::create([
+                    'user_id' => Auth::id(),
+                    'project_id' => $currentOrder->project_id,
+                    'file' => $currentOrder->file,
+                    'payment_price' => $currentOrder->price,
+                    'status' => 0,
+                    'is_locked' => 0
+                ]);
+            }
+        }
 
         return redirect()->route('learner.self-publishing.order')->with([
             'errors' => AdminHelpers::createMessageBag('Order processed.'),

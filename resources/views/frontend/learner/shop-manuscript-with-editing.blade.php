@@ -97,6 +97,152 @@
 				@endforeach
 			</div>
 		@endforeach
+
+		<div class="row mt-5">
+			<div class="col-md-12">
+				<div class="card global-card">
+					<div class="card-header">
+						<h1>
+							{{ trans('site.learner.copy-editing') }}
+						</h1>
+					</div>
+					<div class="card-body py-0">
+						<table class="table table-global">
+							<thead>
+								<tr>
+									<th>
+										{{ trans('site.learner.script') }}
+									</th>
+									<th>
+										{{ trans('site.learner.date-ordered') }}
+									</th>
+									<th>
+										{{ trans('site.learner.status') }}
+									</th>
+									<th>
+										{{ trans('site.learner.expected-finish') }}
+									</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+							@foreach(Auth::user()->copyEditings as $editing)
+                                <?php $extension = explode('.', basename($editing->file)); ?>
+								<tr>
+									<td>
+										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+											<a href="/js/ViewerJS/#../../{{ $editing->file }}">{{ basename($editing->file) }}</a>
+										@elseif( end($extension) == 'docx' )
+											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$editing->file}}">{{ basename($editing->file) }}</a>
+										@endif
+									</td>
+									<td>
+										{{ \App\Http\FrontendHelpers::formatDate($editing->created_at) }}
+									</td>
+									<td>
+										@if( $editing->status == 2 )
+											<span class="label label-success">{{ trans('site.learner.finished') }}</span>
+										@elseif( $editing->status == 1 )
+											<span class="label label-primary">{{ trans('site.learner.started') }}</span>
+										@elseif( $editing->status == 0 )
+											<span class="label label-warning">{{ trans('site.learner.not-started') }}</span>
+										@endif
+									</td>
+									<td>
+										@if ($editing->expected_finish)
+											{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($editing->expected_finish) }}
+											<br>
+										@endif
+									</td>
+									<td>
+										<a href="{{ route('learner.other-service.download-doc',
+										   ['id' => $editing->id, 'type' => 1]) }}">{{ trans('site.learner.download-original-script') }}</a>
+
+										@if ($editing->feedback)
+											<br>
+											<a href="{{ route('learner.other-service.download-feedback', $editing->feedback->id) }}"
+											   style="color:#eea236">
+												{{ trans('site.learner.download-feedback') }}
+											</a>
+										@endif
+									</td>
+								</tr>
+							@endforeach
+							</tbody>
+						</table>
+					</div>
+				</div> <!-- end global-card -->
+			</div> <!-- end col-md-12 -->
+		</div> <!-- end row -->
+
+		<div class="row mt-5">
+			<div class="col-md-12">
+				<div class="card global-card">
+					<div class="card-header">
+						<h1>
+							{{ trans('site.front.correction.title') }}
+						</h1>
+					</div>
+					<div class="card-body py-0">
+						<table class="table table-global">
+							<thead>
+							<tr>
+								<th>{{ trans('site.learner.script') }}</th>
+								<th>{{ trans('site.learner.date-ordered') }}</th>
+								<th>{{ trans('site.learner.status') }}</th>
+								<th>{{ trans('site.learner.expected-finish') }}</th>
+								<th></th>
+							</tr>
+							</thead>
+							<tbody>
+							@foreach(Auth::user()->corrections as $correction)
+                                <?php $extension = explode('.', basename($correction->file)); ?>
+								<tr>
+									<td>
+										@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+											<a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
+										@elseif( end($extension) == 'docx' )
+											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+										@endif
+									</td>
+									<td>
+										{{ \App\Http\FrontendHelpers::formatDate($correction->created_at) }}
+									</td>
+									<td>
+										@if( $correction->status == 2 )
+											<span class="label label-success">{{ trans('site.learner.finished') }}</span>
+										@elseif( $correction->status == 1 )
+											<span class="label label-primary">{{ trans('site.learner.started') }}</span>
+										@elseif( $correction->status == 0 )
+											<span class="label label-warning">{{ trans('site.learner.not-started') }}</span>
+										@endif
+									</td>
+									<td>
+										@if ($correction->expected_finish)
+											{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($correction->expected_finish) }}
+											<br>
+										@endif
+									</td>
+									<td>
+										<a href="{{ route('learner.other-service.download-doc',
+										   ['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.learner.download-original-script') }}</a>
+
+										@if ($correction->feedback)
+											<br>
+											<a href="{{ route('learner.other-service.download-feedback', $correction->feedback->id) }}"
+											   style="color:#eea236">
+												{{ trans('site.learner.download-feedback') }}
+											</a>
+										@endif
+									</td>
+								</tr>
+							@endforeach
+							</tbody>
+						</table>
+					</div>
+				</div> <!-- end global-card -->
+			</div> <!-- end col-md-12 -->
+		</div> <!-- end row -->
 	</div>
 </div>
 

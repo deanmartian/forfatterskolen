@@ -183,8 +183,10 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <a href="{{ route('learner.other-service.download-doc',
-                                               ['id' => $editing->id, 'type' => 1]) }}">{{ trans('site.learner.download-original-script') }}</a>
+                                                @if ($editing->file)
+                                                    <a href="{{ route('learner.other-service.download-doc',
+                                                    ['id' => $editing->id, 'type' => 1]) }}">{{ trans('site.learner.download-original-script') }}</a>
+                                                @endif
 
                                                 @if ($editing->feedback)
                                                     <br>
@@ -262,8 +264,10 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <a href="{{ route('learner.other-service.download-doc',
-										   ['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.learner.download-original-script') }}</a>
+                                            @if ($correction->file)
+                                                <a href="{{ route('learner.other-service.download-doc',
+                                                ['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.learner.download-original-script') }}</a>
+                                            @endif
 
                                             @if ($correction->feedback)
                                                 <br>

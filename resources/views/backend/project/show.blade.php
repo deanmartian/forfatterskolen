@@ -140,14 +140,16 @@
                             <?php $extension = explode('.', basename($copy_editing->file)); ?>
                             <tr>
                                 <td>
-                                    <a href="{{ route($downloadOtherService, ['id' => $copy_editing->id, 'type' => 1]) }}"
-                                       download>
-                                        <i class="fa fa-download" aria-hidden="true"></i>
-                                    </a>&nbsp;
-                                    @if( end($extension) == 'pdf' || end($extension) == 'odt' )
-                                        <a href="/js/ViewerJS/#../../{{ $copy_editing->file }}">{{ basename($copy_editing->file) }}</a>
-                                    @elseif( end($extension) == 'docx' )
-                                        <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copy_editing->file}}">{{ basename($copy_editing->file) }}</a>
+                                    @if ($copy_editing->file)
+                                        <a href="{{ route($downloadOtherService, ['id' => $copy_editing->id, 'type' => 1]) }}"
+                                            download>
+                                            <i class="fa fa-download" aria-hidden="true"></i>
+                                        </a>&nbsp;
+                                        @if( end($extension) == 'pdf' || end($extension) == 'odt' )
+                                            <a href="/js/ViewerJS/#../../{{ $copy_editing->file }}">{{ basename($copy_editing->file) }}</a>
+                                        @elseif( end($extension) == 'docx' )
+                                            <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copy_editing->file}}">{{ basename($copy_editing->file) }}</a>
+                                        @endif
                                     @endif
                                 </td>
                                 <td>
@@ -261,13 +263,15 @@
                             <?php $extension = explode('.', basename($correction->file)); ?>
                             <tr>
                                 <td>
-                                    <a href="{{ route($downloadOtherService, ['id' => $correction->id, 'type' => 2]) }}" download>
-                                        <i class="fa fa-download" aria-hidden="true"></i>
-                                    </a>&nbsp;
-                                    @if( end($extension) == 'pdf' || end($extension) == 'odt' )
-                                        <a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
-                                    @elseif( end($extension) == 'docx' )
-                                        <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+                                    @if ($correction->file)
+                                        <a href="{{ route($downloadOtherService, ['id' => $correction->id, 'type' => 2]) }}" download>
+                                            <i class="fa fa-download" aria-hidden="true"></i>
+                                        </a>&nbsp;
+                                        @if( end($extension) == 'pdf' || end($extension) == 'odt' )
+                                            <a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
+                                        @elseif( end($extension) == 'docx' )
+                                            <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+                                        @endif
                                     @endif
                                 </td>
                                 <td>
