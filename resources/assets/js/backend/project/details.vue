@@ -147,6 +147,17 @@
             <div class="col-md-6">
                 <div class="panel">
                     <div class="panel-header" style="padding: 10px">
+                        <em><b>Learner</b></em>
+                    </div>
+                    <div class="panel-body">
+                        <a :href="'/learner/' + project.user_id" v-if="project.user">
+                            {{ project.user.full_name }}
+                        </a>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header" style="padding: 10px">
                         <em><b>Tasks</b></em>
                     </div>
                     <div class="panel-body">
@@ -251,7 +262,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="book in books">
+                    <tr v-for="book in books" :key="book.id">
                         <td>
                             {{ project.user ? project.user.full_name : '' }}
                         </td>
