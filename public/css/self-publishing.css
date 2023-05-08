@@ -232,6 +232,10 @@ label.custom-file-label:after {
     border: none;
 }
 
+.button-red:disabled {
+    background-color: #d96c76;
+}
+
 .button-red .fa {
     color: #fff;
 }

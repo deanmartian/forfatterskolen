@@ -52,6 +52,18 @@ Vue.mixin({
             }
         },
 
+        customFieldError(element_name, message) {
+            let element = $("[name="+element_name+"]");
+
+            if (element.closest('.input-group').length) {
+                element = element.closest('.input-group');
+            }
+
+            element.after("<small class='text-danger validation-err'>" +
+                "<i class='fa fa-exclamation-circle'></i> " +
+                "<span>" + message +"</span></small>");
+        },
+
         updateRecordFromObject(obj, id, updatedData) {
             const index = _.findIndex(obj, {id: id});
             obj.splice(index, 1, updatedData);

@@ -45,6 +45,19 @@
                 </div>
             </div>
 
+            <div v-if="service.id === 3">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" class="form-control" name="title" v-model="order.title">
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" id="" cols="30" rows="10" class="form-control"
+                     v-model="order.description"></textarea>
+                </div>
+            </div>
+
             <h2 class="services-included text-red">TJENESTER INKLUDERT</h2><br>
             <div class="row">
                 <div class="col-md-12">
@@ -102,6 +115,8 @@ export default {
                 project_id: this.projectId,
                 parent: 'publishing_services',
                 parent_id: this.activeService.id,
+                title: null,
+                description: null,
                 file: null,
                 totalWords: 0,
                 totalCharacters: 0,
@@ -198,6 +213,31 @@ export default {
             //scope.isLoading = true;
             scope.removeValidationError();
             let formData = new FormData();
+            this.isLoading = true;
+
+            if (scope.service.id === 3) {
+                if (!scope.order.title) {
+                    this.customFieldError('title', 'Title field is required');
+
+                    this.$toasted.global.showErrorMsg({
+                        message : 'Error in form'
+                    });
+
+                    this.isLoading = false;
+                    return;
+                }
+
+                if (!scope.order.description) {
+                    this.customFieldError('description', 'Description field is required');
+
+                    this.$toasted.global.showErrorMsg({
+                        message : 'Error in form'
+                    });
+
+                    this.isLoading = false;
+                    return;
+                }
+            }
 
             scope.order.file = scope.uploadManuscript.manuscript;
 

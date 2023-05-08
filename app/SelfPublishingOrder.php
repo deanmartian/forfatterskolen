@@ -13,6 +13,8 @@ class SelfPublishingOrder extends Model
         'project_id',
         'parent',
         'parent_id',
+        'title',
+        'description',
         'file',
         'price',
         'word_count',

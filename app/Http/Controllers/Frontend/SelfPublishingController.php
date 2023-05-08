@@ -8,6 +8,7 @@ use App\CorrectionManuscript;
 use App\Http\Controllers\Controller;
 use App\Order;
 use App\PublishingService;
+use App\SelfPublishing;
 use App\SelfPublishingOrder;
 use Auth;
 use FrontendHelpers;
@@ -39,11 +40,16 @@ class SelfPublishingController extends Controller
             $file = FrontendHelpers::saveFile($request, 'self_publishing_order', 'file');
         }
 
+        $title = $request->title === "null" ? NULL : $request->title;
+        $description = $request->description === "null" ? NULL : $request->description;
+
         SelfPublishingOrder::create([
             'user_id' => Auth::id(),
             'project_id' => $request->project_id,
             'parent' => $request->parent,
             'parent_id' => $request->parent_id,
+            'title' => $title,
+            'description' => $description,
             'file' => $file,
             'price' => floatval($request->totalPrice),
             'word_count' => $request->word_count,
@@ -135,6 +141,19 @@ class SelfPublishingController extends Controller
                     'payment_price' => $currentOrder->price,
                     'status' => 0,
                     'is_locked' => 0
+                ]);
+            }
+
+            // redaktor
+            if ($publishingService->id === 3) {
+                SelfPublishing::create([
+                    'title' => $currentOrder->title,
+                    'description' => $currentOrder->description,
+                    'user_id' => Auth::id(),
+                    'project_id' => $currentOrder->project_id,
+                    'manuscript' => $currentOrder->file,
+                    'word_count' => $currentOrder->word_count,
+                    'price' => $currentOrder->price,
                 ]);
             }
         }
