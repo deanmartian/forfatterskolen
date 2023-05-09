@@ -115,7 +115,12 @@
                             <a href="#" class="dropdown-item redirectForum">Forum</a>
                             <a href="#" class="dropdown-item pilotleser-link">Pilotleser</a>
 
-                            @if(Auth::user()->is_self_publishing_learner)
+                            <a href="{{ route('learner.change-portal', 'self-publishing') }}"
+                                class="dropdown-item d-inline-block w-auto mb-2 btn btn-circle">
+                                Selvpubliseringsportal
+                            </a>
+
+                            {{-- @if(Auth::user()->is_self_publishing_learner)
                                 <a href="{{ route('learner.change-portal', 'self-publishing') }}"
                                 class="dropdown-item d-inline-block w-auto mb-2 btn btn-circle">
                                     Selvpubliseringsportal
@@ -133,7 +138,7 @@
                                         Pending Request
                                     </a>
                                 @endif
-                            @endif
+                            @endif --}}
 
                             <a href="{{ route('auth.logout-get') }}" class="dropdown-item d-inline-block w-auto mb-2">
                                 <form method="POST" action="{{route('auth.logout')}}" class="form-logout">
