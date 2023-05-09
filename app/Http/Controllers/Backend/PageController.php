@@ -29,6 +29,7 @@ use App\CoursesTaken;
 use App\WorkshopsTaken;
 use App\Manuscript;
 use App\AssignmentFeedback;
+use App\Exports\GenericExport;
 use App\Log;
 use App\ShopManuscriptsTaken;
 use App\FreeManuscript;
@@ -716,5 +717,28 @@ class PageController extends Controller
             'alert_type' => 'success',
             'errors'    => AdminHelpers::createMessageBag('Self publishing portal request deleted.')
         ]);
+    }
+
+    public function learnerNotStartedManu()
+    {
+        $usersWithCourse = CoursesTaken::groupBy('user_id')->get()->pluck('user_id')->toArray();
+        $users = User::leftJoin('shop_manuscripts_taken as manus', 'users.id', '=', 'manus.user_id')
+            ->select('users.*')
+            ->whereNull('manus.file')
+            ->whereNotIn('users.id', $usersWithCourse)
+            ->get();
+        $userList = array();
+
+        foreach( $users as $user ) {
+            $userList[] = array(
+                'id' => $user->id,
+                'name' => $user->full_name,
+                'email' => $user->email
+            );
+        }
+
+        $headers = ['id', 'name', 'email'];
+        $excel = \App::make('excel');
+        return $excel->download(new GenericExport($userList, $headers), 'Not Avail Anything List.xlsx');
     }
 }

@@ -220,6 +220,12 @@ Route::group([
             Route::post('/share/{share_hash}/checkout', 'ShopController@shareCourseCheckout')->name('front.course.share.checkout');
         });
 
+        Route::group([
+            'prefix' => 'publishing-service'
+        ], function(){
+            Route::get('/{id}', 'PublishingServiceController@show');
+        });
+
 
         // Workshop
         Route::group([
@@ -635,6 +641,7 @@ Route::group([
         Route::get('/svea-orders', 'PageController@sveaOrders')->name('admin.svea.orders');
         Route::post('/self-publishing-request/{id}/approve', 'PageController@approveSelfPublishingRequest')->name('admin.self-publishing-portal-request.approve');
         Route::delete('/self-publishing-request/{id}/delete', 'PageController@deleteSelfPublishingRequest')->name('admin.self-publishing-portal-request.destroy');
+        Route::get('/learner-not-started-manu', 'PageController@learnerNotStartedManu');
 
         Route::resource('page_meta','PageMetaController',[
             'except' => ['show', 'create', 'edit'],
