@@ -205,7 +205,8 @@ export default {
         },
 
         roundCount(count, min){
-            return Math.ceil(parseFloat(count) / parseFloat(min)) * parseFloat(min)
+            return (parseFloat(count) / parseFloat(min)) * parseFloat(min)
+            //return Math.ceil(parseFloat(count) / parseFloat(min)) * parseFloat(min)
         },
 
         addToCart() {
