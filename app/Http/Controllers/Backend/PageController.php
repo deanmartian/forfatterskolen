@@ -722,10 +722,12 @@ class PageController extends Controller
     public function learnerNotStartedManu()
     {
         $usersWithCourse = CoursesTaken::groupBy('user_id')->get()->pluck('user_id')->toArray();
-        $users = User::leftJoin('shop_manuscripts_taken as manus', 'users.id', '=', 'manus.user_id')
+        $users = User::join('shop_manuscripts_taken', 'users.id', '=', 'shop_manuscripts_taken.user_id')
             ->select('users.*')
-            ->whereNull('manus.file')
+            ->whereNull('shop_manuscripts_taken.file')
             ->whereNotIn('users.id', $usersWithCourse)
+            ->where('users.role', 2)
+            ->oldest('users.id')
             ->get();
         $userList = array();
 
