@@ -19,7 +19,9 @@ class EmailOut extends Model
      * @var array
      */
     protected $fillable = ['course_id', 'subject', 'message', 'delay', 'from_name', 'from_email', 'allowed_package',
-        'attachment', 'attachment_hash', 'for_free_course'];
+        'attachment', 'attachment_hash', 'for_free_course', 'send_immediately'];
+
+    protected $appends = ['send_immediately_text'];
 
     public function course()
     {
@@ -29,5 +31,10 @@ class EmailOut extends Model
     public function recipients()
     {
         return $this->hasMany('App\EmailOutRecipient');
+    }
+
+    public function getSendImmediatelyTextAttribute()
+    {
+        return $this->attributes['send_immediately'] ? 'Yes' : 'No';
     }
 }

@@ -52,7 +52,8 @@ class CourseEmailOut extends Command
         CronLog::create(['activity' => 'CourseEmailOut CRON running.']);
         $courses = Course::all()->pluck('id');
         $emailOutList = EmailOut::where('for_free_course', 0)->whereDate('delay', '=', $today)
-            ->whereIn('course_id', $courses)->get();
+            ->whereIn('course_id', $courses)
+            ->where('send_immediately', 0)->get();
         $emailOutListSent = [];
 
         foreach($emailOutList as $emailOut) {
@@ -124,7 +125,10 @@ class CourseEmailOut extends Command
             array_push($emailOutListSent, $emailOut->id);
         }
 
-        $emailOutListDay = EmailOut::where('for_free_course', 0)->where('delay', 'NOT LIKE', '%-%')->whereIn('course_id', $courses)->get();
+        $emailOutListDay = EmailOut::where('for_free_course', 0)->where('delay', 'NOT LIKE', '%-%')
+        ->whereIn('course_id', $courses)
+        ->where('send_immediately', 0)
+        ->get();
         $emailOutListDaySent = [];
         foreach ($emailOutListDay as $emailOut) {
             if (!in_array($emailOut->id, $emailOutListDaySent)) {

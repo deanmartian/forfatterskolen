@@ -6,11 +6,13 @@ use App\Course;
 use App\CourseDiscount;
 use App\CourseOrderAttachment;
 use App\CoursesTaken;
+use App\EmailOut;
 use App\Events\AddToCampaignList;
 use App\Helpers\SveaConfig;
 use App\Http\AdminHelpers;
 use App\Http\FikenInvoice;
 use App\Http\FrontendHelpers;
+use App\Jobs\AddMailToQueueJob;
 use App\Jobs\CourseOrderJob;
 use Illuminate\Support\Facades\Log;
 use App\Order;
@@ -541,7 +543,7 @@ class CourseService {
      * @param $package_id
      * @param $courseTaken
      */
-    public function notifyUser( $user_id, $package_id, $courseTaken, $hasRegretForm = true )
+    public function notifyUser( $user_id, $package_id, $courseTaken, $hasRegretForm = true, $isEmailOut = false )
     {
         $user = $this->user->find($user_id);
         $package = Package::find($package_id);
@@ -550,27 +552,38 @@ class CourseService {
 
         $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
 
-        $search_string = [
-            '[username]', '[password]'
-        ];
-        $replace_string = [
-            $user->email, $password
-        ];
-        $email_content = str_replace($search_string, $replace_string, $package->course->email);
-
         $encode_email = encrypt($user_email);
         $redirectLink = encrypt(route('learner.course'));
         $actionUrl = route('auth.login.emailRedirect',[$encode_email, $redirectLink]);
         $actionText = 'Mine Kurs';
         $attachments = NULL;
+
+        if ($isEmailOut) {
+            $email_content = $this->getEmailOutWelcomeEmail($package->course_id, $encode_email, $user);
+        } else {
+            $search_string = [
+                '[username]', '[password]'
+            ];
+            $replace_string = [
+                $user->email, $password
+            ];
+            $email_content = str_replace($search_string, $replace_string, $package->course->email);
+        }
+
         if ($hasRegretForm) {
             $attachments = [asset($this->generateDocx($user->id, $package->id)),
                 asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
         }
 
-        dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
+        if ($isEmailOut) {
+            dispatch(new AddMailToQueueJob($user_email, $package->course->title, $email_content,
+            'postmail@forfatterskolen.no', 'Forfatterskolen', $attachments,
+                    'courses-taken-order', $courseTaken->id));
+        } else {
+            dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
             'postmail@forfatterskolen.no', 'Forfatterskolen', $attachments, 'courses-taken-order',
             $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
+        }
     }
 
     /**
@@ -589,6 +602,30 @@ class CourseService {
         dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
             'postmail@forfatterskolen.no', 'Forfatterskolen', null, 'courses-taken-upgrade',
             $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
+    }
+
+    public function getEmailOutWelcomeEmail($course_id, $encode_email, $user)
+    {
+        $emailOut = EmailOut::where('course_id', $course_id)->where('send_immediately', 1)->first();
+        $extractLink        = FrontendHelpers::getTextBetween($emailOut->message, "[redirect]", "[/redirect]");
+        $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
+        $redirectLabel      =  FrontendHelpers::getTextBetween($emailOut->message, "[redirect_label]", "[/redirect_label]");
+        $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
+
+        $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
+
+        $search_string = [
+            '[username]', '[password]', '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]'
+        ];
+        $replace_string = [
+            $user->email, $password, $redirectLink, ''
+        ];
+        $message = str_replace($search_string, $replace_string, $emailOut->message);
+
+        $emailOut->recipients()->updateOrCreate([
+            'user_id' => $user->id
+        ]);
+        return $message;
     }
 
     public function createInvoiceFromOder( $order )

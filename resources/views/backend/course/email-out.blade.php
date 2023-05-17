@@ -2,6 +2,7 @@
 
 @section('styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 @stop
 
 @section('title')
@@ -27,6 +28,7 @@
                             <th>{{ trans('site.subject') }}</th>
                             <th width="500">{{ trans('site.message') }}</th>
                             <th>{{ trans('site.availability') }}</th>
+                            <th>Send Immediately</th>
                             <th></th>
                         </tr>
                         </thead>
@@ -41,6 +43,9 @@
                                         @else
                                             {{$email->delay}} {{ trans('site.days-delay') }}
                                         @endif
+                                    </td>
+                                    <td>
+                                        {{ $email->send_immediately_text }}
                                     </td>
                                     <td>
                                         <button class="btn btn-success btn-xs sendEmailBtn" data-toggle="modal"
@@ -163,6 +168,13 @@
                         </div>
 
                         <div class="form-group">
+                            <label>Welcome Email</label> <br>
+                            <input type="checkbox" data-toggle="toggle" data-on="Yes"
+                                   data-off="No"
+                                   name="send_immediately" data-width="84">
+                        </div>
+
+                        <div class="form-group">
                             <label>{{ trans('site.allowed-package') }}</label>
                             @foreach($course->packages as $package)
                                 <div class="form-check">
@@ -211,6 +223,7 @@
 @stop
 
 @section('scripts')
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script>
         let translations = {
             add_email: '{{ trans('site.add-email') }}',
@@ -293,6 +306,13 @@
                     if (value === 1) {
                         emailModalForm.find('[name='+field+']').attr('checked', true);
                     }
+               }
+
+               if (field === 'send_immediately') {
+                    emailModalForm.find('[name='+field+']').bootstrapToggle('off');
+                if (value) {
+                    emailModalForm.find('[name='+field+']').bootstrapToggle('on');
+                }
                }
             });
         });

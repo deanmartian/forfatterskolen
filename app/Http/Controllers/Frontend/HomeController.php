@@ -168,7 +168,7 @@ class HomeController extends Controller
             $user_id = $user->id;
             $package_id = $request->package_id;
             $courseTaken = $courseService->addCourseToLearner($user_id, $package_id, true);
-            $courseService->notifyUser($user_id, $package_id, $courseTaken, false);
+            $courseService->notifyUser($user_id, $package_id, $courseTaken, false, true);
         }
     }
 
