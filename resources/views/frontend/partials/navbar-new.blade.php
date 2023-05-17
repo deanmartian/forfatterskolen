@@ -98,8 +98,9 @@
                 <a href="https://kurs.forfatterskolen.no" class="nav-link"
                    title="Årskurs" target="_blank">Årskurs</a>
             </li>
-            <li class="nav-item @if(Route::currentRouteName() == 'front.gift-cards') active @endif">
-                <a href="{{route('front.gift-cards')}}" class="nav-link">Gavekort</a>
+            <li class="nav-item">
+                <a href="https://blog.forfatterskolen.no" class="nav-link">
+                    Blogg</a>
             </li>
             {{--<li class="nav-item @if(Route::currentRouteName() == 'front.faq') active @endif">
                 <a href="{{route('front.faq')}}" class="nav-link"
