@@ -191,6 +191,7 @@ Route::group([
         Route::get('/bambora/paymentComplete', 'HomeController@bamboraPaymentComplete');
         Route::get('/has-paid-course', 'ShopController@hasPaidCourse');
         Route::get('/current-user', 'LearnerController@currentUser');
+        Route::post('/file/count-characters', 'LearnerController@countFileCharacters');
         // Course
         Route::group([
             'prefix' => 'course'
@@ -223,7 +224,9 @@ Route::group([
         Route::group([
             'prefix' => 'publishing-service'
         ], function(){
+            Route::get('/thank-you', 'PublishingServiceController@thankyou')->name('publishing-service.thank-you');
             Route::get('/{id}', 'PublishingServiceController@show');
+            Route::post('/checkout/validate-form', 'PublishingServiceController@validateForm');
         });
 
 
@@ -334,6 +337,11 @@ Route::group([
         Route::post('/self-publishing/order/{id}/move-to-order', 'SelfPublishingController@moveToOrder')->name('learner.self-publishing.move-to-order');
         Route::delete('/self-publishing/order/{id}/delete', 'SelfPublishingController@deleteOrder')->name('learner.self-publishing.delete-order');
 
+        // self publishing records not connected to project
+        Route::get('/self-publishing/list', 'SelfPublishingController@listSelfPublishing')->name('learner.self-publishing.list');
+        Route::get('/self-publishing/copy-editing', 'SelfPublishingController@copyEditing')->name('learner.self-publishing.copy-editing');
+        Route::get('/self-publishing/correction', 'SelfPublishingController@correction')->name('learner.self-publishing.correction');
+
         Route::group([
             'prefix' => 'project/{id}'
         ], function() {
@@ -347,8 +355,6 @@ Route::group([
             Route::get('/contract', 'LearnerController@projectContract')->name('learner.project.contract');
             Route::get('/invoice', 'LearnerController@projectInvoice')->name('learner.project.invoice');
         });
-
-        Route::post('/file/count-characters', 'LearnerController@countFileCharacters');
 
         Route::get('/profile', 'LearnerController@profile')->name('learner.profile'); // Profile Page
         Route::get('/terms', 'LearnerController@terms')->name('learner.terms'); // Terms Page
@@ -642,6 +648,7 @@ Route::group([
         Route::post('/self-publishing-request/{id}/approve', 'PageController@approveSelfPublishingRequest')->name('admin.self-publishing-portal-request.approve');
         Route::delete('/self-publishing-request/{id}/delete', 'PageController@deleteSelfPublishingRequest')->name('admin.self-publishing-portal-request.destroy');
         Route::get('/learner-not-started-manu', 'PageController@learnerNotStartedManu');
+        Route::get('/learner-avail-course/{year}', 'PageController@learnerAvailedCourseYear');
 
         Route::resource('page_meta','PageMetaController',[
             'except' => ['show', 'create', 'edit'],

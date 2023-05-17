@@ -73,6 +73,11 @@ Vue.mixin({
             const index = _.findIndex(obj, {id: id});
             obj.splice(index, 1);
         },
+
+        roundCount(count, min){
+            return (parseFloat(count) / parseFloat(min)) * parseFloat(min)
+            //return Math.ceil(parseFloat(count) / parseFloat(min)) * parseFloat(min)
+        },
     }
 
 

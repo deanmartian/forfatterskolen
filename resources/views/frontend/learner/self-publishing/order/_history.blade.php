@@ -4,7 +4,6 @@
             <th>Service</th>
             <th>Word Count</th>
             <th>Amount</th>
-            <th></th>
         </tr>
     </thead>
 
@@ -22,17 +21,11 @@
                 </td>
             </tr>
         @endforeach
-        <tr>
-            <td></td>
-            <td class="text-right">
-                <b>
-                    Total:
-                </b>
-            </td>
-            <td>
-                {{ FrontendHelpers::currencyFormat($orderHistoryTotal) }}
-            </td>
-            <td></td>
-        </tr>
     </tbody>
 </table>
+
+<div class="float-right">
+    {{ $orders->appends(request()->except('page')) }}
+</div>
+
+<div class="clearfix"></div>

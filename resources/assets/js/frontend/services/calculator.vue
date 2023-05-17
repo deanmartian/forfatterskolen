@@ -192,7 +192,7 @@ export default {
                 formData.append(k, v);
             });
             if (this.uploadManuscript.manuscript) {
-                axios.post('/account/file/count-characters', formData).then(response => {
+                axios.post('/file/count-characters', formData).then(response => {
                     console.log(response.data);
                     scope.order.word_count = response.data.word_count;
                     scope.order.char_count = response.data.char_count;

@@ -23,7 +23,7 @@ class SelfPublishingController extends Controller
         $currentOrderTotal = $currentOrderQuery->sum('price');
 
         $orderHistoryQuery = SelfPublishingOrder::paid()->where('user_id', Auth::id());
-        $orderHistory = $orderHistoryQuery->get();
+        $orderHistory = $orderHistoryQuery->paginate(20);
         $orderHistoryTotal = $orderHistoryQuery->sum('price');
 
         $savedQuotes = SelfPublishingOrder::quote()->where('user_id', Auth::id())->get();
@@ -162,6 +162,30 @@ class SelfPublishingController extends Controller
             'errors' => AdminHelpers::createMessageBag('Order processed.'),
             'alert_type' => 'success'
         ]);
+    }
+
+    public function listSelfPublishing()
+    {
+        $selfPublishingList = SelfPublishing::join('self_publishing_learners', 
+        'self_publishing.id', '=', 'self_publishing_learners.self_publishing_id')
+        ->select('self_publishing.*')
+        ->where('user_id', Auth::id())
+        ->whereNull('project_id')
+        ->get();
+
+        return view('frontend.learner.self-publishing.self-publishing-list', compact('selfPublishingList'));
+    }
+
+    public function copyEditing()
+    {
+        $copyEditings = Auth::user()->copyEditings()->whereNull('project_id')->get();
+        return view('frontend.learner.self-publishing.copy-editing', compact('copyEditings'));
+    }
+
+    public function correction()
+    {
+        $corrections = Auth::user()->corrections()->whereNull('project_id')->get();
+        return view('frontend.learner.self-publishing.correction', compact('corrections'));
     }
 
 }

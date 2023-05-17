@@ -87,6 +87,20 @@ header .navbar-brand img {
     padding: 15px 20px 15px 70px;
 }
 
+.self-publishing-learner-container .learner-menu .list-group-item ul {
+    list-style-type: none;
+    background-color: #ccc;
+    border-radius: 5px;
+}
+
+.self-publishing-learner-container .learner-menu .list-group-item ul li.active a {
+    color: #e80707;
+}
+
+.self-publishing-learner-container .learner-menu .list-group-item ul a {
+    font-size: 14px;
+}
+
 .self-publishing-learner-container .learner-menu .list-group-item .fa,
 .self-publishing-learner-container .learner-menu .list-group-item a {
     color: #000;
@@ -285,6 +299,53 @@ label.custom-file-label:after {
 }
 
 /* end order page */
+
+/* main css styles */
+body.main, .main .navbar {
+    background-color: #fff;
+}
+
+.main .nav a, .main .fa, .main .navbar-light .navbar-nav .nav-link {
+    color: #000000;
+}
+
+.main .nav li a:hover {
+    background-color: transparent;
+}
+
+.main .dropdown-toggle::after, .main .dropdown-menu:after {
+    display: none;
+}
+
+.main .dropdown-menu {
+    border: none;
+    width: auto;
+}
+
+.main .dropdown-menu a {
+    font-weight: bold;
+}
+
+.main .dropdown-trigger {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.main .dropdown-trigger svg {
+    height: 15px;
+    width: 15px;
+}
+
+.main .dropdown-item {
+    padding: 2px 15px;
+}
+
+.main .dropdown-item:hover {
+    color: #000000 !important;
+}
 
 footer {
     background-color: #262626;

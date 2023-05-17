@@ -37,6 +37,7 @@ use App\SelfPublishingPortalRequest;
 use Artisan;
 use Illuminate\Support\MessageBag;
 use App\ShopManuscriptTakenFeedback;
+use DB;
 
 require app_path('/Http/BackupDB/MySQLDump.php');
 
@@ -742,5 +743,32 @@ class PageController extends Controller
         $headers = ['id', 'name', 'email'];
         $excel = \App::make('excel');
         return $excel->download(new GenericExport($userList, $headers), 'Not Avail Anything List.xlsx');
+    }
+
+    public function learnerAvailedCourseYear($year)
+    {
+        $users = DB::table('courses_taken')
+            ->select('users.*', 'courses.title as course_title','user_id')
+            ->leftJoin('users', 'courses_taken.user_id', '=', 'users.id')
+            ->leftJoin('packages', 'courses_taken.package_id', '=', 'packages.id')
+            ->leftJoin('courses', 'packages.course_id', '=', 'courses.id')
+            ->whereYear('courses_taken.created_at', $year)
+            ->where('courses_taken.is_free', 0)
+            ->orderBy('user_id', 'asc')
+            ->get();
+        $userList = array();
+        
+        foreach( $users as $user ) {
+            $userList[] = array(
+                'id' => $user->id,
+                'name' => $user->first_name . " " . $user->last_name,
+                'email' => $user->email,
+                'course' => $user->course_title
+            );
+        }
+
+        $headers = ['id', 'name', 'email', 'course'];
+        $excel = \App::make('excel');
+        return $excel->download(new GenericExport($userList, $headers), $year . ' Course Buyers.xlsx');
     }
 }
