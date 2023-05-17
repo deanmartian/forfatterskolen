@@ -54,6 +54,8 @@
                 @endforeach
                 </tbody>
             </table>
+
+            <div class="pull-right">{!! $blogList->render() !!}</div>
         </div>
     </div>
 
