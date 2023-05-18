@@ -129,14 +129,14 @@ class CoachingTimeService
         $suggested_dates = explode(",", $request->suggested_date);
 
         // format the sent suggested dates
-        foreach ($suggested_dates as $k => $suggested_date) {
+        /* foreach ($suggested_dates as $k => $suggested_date) {
             $suggested_dates[$k] = Carbon::parse($suggested_date)->format('Y-m-d H:i:s');
-        }
+        } */
 
         $order->coachingTime()->create([
             'additional_price'  => $request->additional_price,
             'file'              => $request->fileLocation,
-            'suggested_date'    => json_encode($suggested_dates),
+            'suggested_date'    => NULL,//json_encode($suggested_dates),
             'help_with'         => $request->help_with
         ]);
 
