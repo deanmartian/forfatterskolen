@@ -1921,7 +1921,7 @@ class ShopController extends Controller
                     $courseService->notifyUserForUpgrade($order, $courseTaken);
                 } else {
                     $courseTaken = $courseService->addCourseToLearner($order->user_id, $order->package_id);
-                    $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken);
+                    $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken, true, true);
                 }
 
                 $courseService->notifyAdmin($order->user_id, $order->package_id);

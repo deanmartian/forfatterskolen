@@ -607,25 +607,29 @@ class CourseService {
     public function getEmailOutWelcomeEmail($course_id, $encode_email, $user)
     {
         $emailOut = EmailOut::where('course_id', $course_id)->where('send_immediately', 1)->first();
-        $extractLink        = FrontendHelpers::getTextBetween($emailOut->message, "[redirect]", "[/redirect]");
-        $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
-        $redirectLabel      =  FrontendHelpers::getTextBetween($emailOut->message, "[redirect_label]", "[/redirect_label]");
-        $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
-
-        $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
-
-        $search_string = [
-            '[username]', '[password]', '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]'
-        ];
-        $replace_string = [
-            $user->email, $password, $redirectLink, ''
-        ];
-        $message = str_replace($search_string, $replace_string, $emailOut->message);
-
-        $emailOut->recipients()->updateOrCreate([
-            'user_id' => $user->id
-        ]);
-        return $message;
+        if ($emailOut) {
+            $extractLink        = FrontendHelpers::getTextBetween($emailOut->message, "[redirect]", "[/redirect]");
+            $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
+            $redirectLabel      =  FrontendHelpers::getTextBetween($emailOut->message, "[redirect_label]", "[/redirect_label]");
+            $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
+    
+            $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
+    
+            $search_string = [
+                '[username]', '[password]', '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]'
+            ];
+            $replace_string = [
+                $user->email, $password, $redirectLink, ''
+            ];
+            $message = str_replace($search_string, $replace_string, $emailOut->message);
+    
+            $emailOut->recipients()->updateOrCreate([
+                'user_id' => $user->id
+            ]);
+            return $message;
+        }
+        
+        return "";
     }
 
     public function createInvoiceFromOder( $order )
