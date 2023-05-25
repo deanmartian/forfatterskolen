@@ -43,7 +43,7 @@ class FreeManuscript extends Model
     {
         $hasCourse = false;
         $user = User::where('email', $this->attributes['email'])->first();
-        if ($user && $user->has('coursesTakenNoFree')) {
+        if ($user && $user->coursesTakenNoFree->count()) {
             $hasCourse = true;
         }
 
