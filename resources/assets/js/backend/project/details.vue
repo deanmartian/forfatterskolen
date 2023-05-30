@@ -20,6 +20,9 @@
             <a :href="'/project/' + project.id + '/invoice'" class="btn btn-primary btn-sm">
                 Invoices
             </a>
+            <a :href="'/project/' + project.id + '/storage'" class="btn btn-primary btn-sm">
+                Storage
+            </a>
             <div class="pull-right">
                 <button class="btn btn-success btn-sm" @click="showLearnerFormModal()">
                     <i class="fa fa-user"></i> Add Learner
