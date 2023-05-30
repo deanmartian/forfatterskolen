@@ -65,6 +65,7 @@
 							<th>{{ trans('site.text-nr') }}</th>
 							<th>{{ trans_choice('site.groups', 1) }}</th>
 							<th>Join Group</th>
+							<th>Editor Expected Finish</th>
 							<th>{{ trans('site.feedback-out') }}</th>
 							<th>{{ trans_choice('site.editors', 1) }}</th>
 							<th width="250"></th>
@@ -120,6 +121,18 @@
 								   data-answer="{{ $manuscript->join_group }}">
 									{{ $manuscript->join_group ? 'Yes' : 'No' }}
 								</a>
+							</td>
+							<td>
+								{{ $manuscript->editor_expected_finish 
+								? \App\Http\FrontendHelpers::formatDate($manuscript->editor_expected_finish)
+								: '' }} <br>
+								<button class="btn btn-xs btn-primary editEditorExpectedFinishBtn" data-toggle="modal" 
+								data-target="#editEditorExpectedFinishModal" 
+								data-action="{{ route('backend.assignment.edit-dates', $manuscript->id) }}"
+								data-editor_expected_finish="{{ $manuscript->editor_expected_finish
+									? strftime('%Y-%m-%d', strtotime($manuscript->editor_expected_finish)) : NULL }}">
+									Edit
+								</button>
 							</td>
 							<td>
 
@@ -511,6 +524,29 @@
 							</label>
 							<a href="javascript:void(0)" onclick="enableSelect('assignEditorModal')">Edit</a>
 						</div>
+					</div>
+
+					<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="editEditorExpectedFinishModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Editor Expected Finish</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>Editor Expected Finish</label>
+						<input type="date" class="form-control" name="editor_expected_finish" required>
 					</div>
 
 					<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
@@ -1191,6 +1227,15 @@
 		modal.find('form').attr('action', action);
 		modal.find('select').val(answer);
     });
+
+	$(".editEditorExpectedFinishBtn").click(function(){
+		let modal = $("#editEditorExpectedFinishModal");
+		let action = $(this).data('action');
+		let editor_expected_finish = $(this).data('editor_expected_finish');
+
+		modal.find('form').attr('action', action);
+		modal.find('[name=editor_expected_finish]').val(editor_expected_finish);
+	});
 
     $('.updateAvailabilityBtn').click(function(){
         console.log("adsfadsf");
