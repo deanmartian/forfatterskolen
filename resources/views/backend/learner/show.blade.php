@@ -115,12 +115,12 @@
 						</a>
 					</div>
 
-					<div>
+					{{-- <div>
 						<b>Self Publishing Learner:</b>
 						<input type="checkbox" data-toggle="toggle" data-on="Yes"
 							   class="is-publishing-learner-toggle" data-off="No" data-id="{{ $learner->id }}"
 							   name="is_self_publishing_learner" data-size="mini" @if($learner->is_self_publishing_learner) {{ 'checked' }} @endif>
-					</div>
+					</div> --}}
 
 					<b>Preferred Editor:</b>
 					<span>{{ $learner->preferredEditor ? $learner->preferredEditor->editor->fullname : '' }}</span><br>
@@ -1679,7 +1679,7 @@
 				</div>
 			</div> <!-- end email history section -->
 
-			@if($learner->is_self_publishing_learner)
+			{{-- @if($learner->is_self_publishing_learner) --}}
 				<div class="panel panel-default">
 					<div class="panel-body">
 						<button class="btn btn-primary pull-right btn-xs booksForSaleBtn" data-toggle="modal"
@@ -1695,6 +1695,7 @@
 						<table class="table dt-table">
 							<thead>
 							<tr>
+								<th>Project</th>
 								<th>ISBN</th>
 								<th>Title</th>
 								<th>Description</th>
@@ -1705,6 +1706,13 @@
 							<tbody>
 							@foreach($learner->booksForSale as $bookForSale)
 								<tr>
+									<td>
+										@if ($bookForSale->project)
+											<a href="/project/{{ $bookForSale->project_id }}">
+												{{ $bookForSale->project->name }}
+											</a>
+										@endif
+									</td>
 									<td>{{ $bookForSale->isbn }}</td>
 									<td>{{ $bookForSale->title }}</td>
 									<td>{{ $bookForSale->description }}</td>
@@ -1790,7 +1798,7 @@
 						</table>
 					</div>
 				</div>
-			@endif
+			{{-- @endif --}}
 
 			<div class="panel panel-default">
 				<div class="panel-body">
@@ -3191,6 +3199,18 @@
 				<form method="POST" action="{{ route('admin.learner.save-for-sale-books', $learner->id) }}" onsubmit="disableSubmit(this)">
 				{{ csrf_field() }}
 					<input type="hidden" name="id">
+
+					<div class="form-group">
+						<label>Project</label>
+						<select name="project_id" class="form-control">
+							<option value="">- Select Project -</option>
+							@foreach ($projects as $project)
+								<option value="{{ $project->id }}">
+									{{ $project->name }}
+								</option>
+							@endforeach
+						</select>
+					</div>
 
 					<div class="form-group">
 						<label>ISBN</label>
@@ -4968,9 +4988,15 @@
         let record = $(this).data('record');
         let modal = $('#booksForSaleModal');
         modal.find('[name=id]').val('');
+		modal.find('[name=project_id]').val('');
+		modal.find('[name=isbn]').val('');
+		modal.find('[name=title]').val('');
+		modal.find('[name=description]').text('');
+		modal.find('[name=price]').val('');
 
         if (record) {
             modal.find('[name=id]').val(record.id);
+			modal.find('[name=project_id]').val(record.project_id);
             modal.find('[name=isbn]').val(record.isbn);
             modal.find('[name=title]').val(record.title);
             modal.find('[name=description]').text(record.description);

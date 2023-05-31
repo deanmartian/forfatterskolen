@@ -229,9 +229,11 @@ class LearnerController extends Controller
             ->groupBy('course_certificates.id')
             ->get();
 
+        $projects = Project::where('user_id', $learner->id)->get();
+
         return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories',
             'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList',
-            'timeRegisters', 'projects', 'certificates'));
+            'timeRegisters', 'projects', 'certificates', 'projects'));
     }
 
 
