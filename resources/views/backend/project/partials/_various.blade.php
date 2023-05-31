@@ -13,7 +13,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="publisher" 
-                            value="{{ $book->various->publisher ?? '' }}" required disabled>
+                            value="{{ $book->various->publisher ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -27,7 +27,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="minimum_stock"
-                            value="{{ $book->various->minimum_stock ?? '' }}" required disabled>
+                            value="{{ $book->various->minimum_stock ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -41,7 +41,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="weight"
-                            value="{{ $book->various->weight ?? '' }}" required disabled>
+                            value="{{ $book->various->weight ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="height"
-                            value="{{ $book->various->height ?? '' }}" required disabled>
+                            value="{{ $book->various->height ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="width"
-                            value="{{ $book->various->width ?? '' }}" required disabled>
+                            value="{{ $book->various->width ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -83,7 +83,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="thickness"
-                            value="{{ $book->various->thickness ?? '' }}" required disabled>
+                            value="{{ $book->various->thickness ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -97,7 +97,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="cost"
-                            value="{{ $book->various->cost ?? '' }}" required disabled>
+                            value="{{ $book->various->cost ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="material_cost"
-                            value="{{ $book->various->material_cost ?? '' }}" required disabled>
+                            value="{{ $book->various->material_cost ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>

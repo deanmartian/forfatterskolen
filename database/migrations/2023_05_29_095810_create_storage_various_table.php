@@ -16,14 +16,14 @@ class CreateStorageVariousTable extends Migration
         Schema::create('storage_various', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('storage_book_id');
-            $table->string('publisher');
-            $table->string('minimum_stock');
-            $table->string('weight');
-            $table->string('height');
-            $table->string('width');
-            $table->string('thickness');
-            $table->string('cost');
-            $table->string('material_cost');
+            $table->string('publisher')->nullable();
+            $table->string('minimum_stock')->nullable();
+            $table->string('weight')->nullable();
+            $table->string('height')->nullable();
+            $table->string('width')->nullable();
+            $table->string('thickness')->nullable();
+            $table->string('cost')->nullable();
+            $table->string('material_cost')->nullable();
             $table->timestamps();
 
             $table->foreign('storage_book_id')->references('id')->on('storage_books')->onDelete('cascade');

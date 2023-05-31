@@ -20,6 +20,7 @@ class StorageDetail extends Model
         'edition_on_sale',
         'edition_total',
         'release_date',
+        'release_date_for_media',
         'price_vat',
         'registered_with_council',
     ];

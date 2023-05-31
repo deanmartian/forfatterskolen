@@ -1088,22 +1088,6 @@ class ProjectController extends Controller
 
     public function saveStorageBookDetails($book_id, Request $request)
     {
-        $this->validate($request, [
-            'subtitle'                  => 'required',
-            'author'                    => 'required',
-            'editor'                    => 'required',
-            'publisher'                 => 'required',
-            'book_group'                => 'required',
-            'item_number'               => 'required',
-            'isbn'                      => 'required',
-            'isbn_ebook'                => 'required',
-            'edition_on_sale'           => 'required',
-            'edition_total'             => 'required',
-            'release_date'              => 'required',
-            'price_vat'                 => 'required',
-            'registered_with_council'   => 'required',
-        ]);
-
         StorageDetail::updateOrCreate([
                 'storage_book_id' => $book_id
             ], [
@@ -1118,6 +1102,7 @@ class ProjectController extends Controller
                 'edition_on_sale'           => $request->edition_on_sale,
                 'edition_total'             => $request->edition_total,
                 'release_date'              => $request->release_date,
+                'release_date_for_media'    => $request->release_date_for_media,
                 'price_vat'                 => $request->price_vat,
                 'registered_with_council'   => $request->registered_with_council,
             ]);
@@ -1129,16 +1114,6 @@ class ProjectController extends Controller
 
     public function saveStorageVarious($book_id, Request $request)
     {
-        $this->validate($request, [
-            'publisher' => 'required',
-            'minimum_stock' => 'required',
-            'weight' => 'required',
-            'height' => 'required',
-            'width' => 'required',
-            'thickness' => 'required',
-            'cost' => 'required',
-            'material_cost' => 'required'
-        ]);
 
         StorageVarious::updateOrCreate([
             'storage_book_id' => $book_id

@@ -16,20 +16,21 @@ class CreateStorageDetailsTable extends Migration
         Schema::create('storage_details', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('storage_book_id');
-            $table->string('subtitle');
+            $table->string('subtitle')->nullable();
             $table->string('original_title')->nullable();
-            $table->string('author');
-            $table->string('editor');
-            $table->string('publisher');
-            $table->string('book_group');
-            $table->string('item_number');
-            $table->string('isbn');
-            $table->string('isbn_ebook');
-            $table->integer('edition_on_sale');
-            $table->integer('edition_total');
-            $table->date('release_date');
-            $table->integer('price_vat');
-            $table->string('registered_with_council');
+            $table->string('author')->nullable();
+            $table->string('editor')->nullable();
+            $table->string('publisher')->nullable();
+            $table->string('book_group')->nullable();
+            $table->string('item_number')->nullable();
+            $table->string('isbn')->nullable();
+            $table->string('isbn_ebook')->nullable();
+            $table->integer('edition_on_sale')->nullable();
+            $table->integer('edition_total')->nullable();
+            $table->date('release_date')->nullable();
+            $table->date('release_date_for_media')->nullable();
+            $table->integer('price_vat')->nullable();
+            $table->string('registered_with_council')->nullable();
             $table->timestamps();
 
             $table->foreign('storage_book_id')->references('id')->on('storage_books')->onDelete('cascade');

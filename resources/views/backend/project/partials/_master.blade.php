@@ -175,12 +175,13 @@
                 <div class="row">
                     <div class="col-xs-3">
                         <div class="form-group">
-                            <label class="control-label">Release Date</label>
+                            <label class="control-label">Release Date For Media</label>
                         </div>
                     </div>
                     <div class="col-xs-9">
                         <div class="form-group">
-                            <input type="text" class="form-control" disabled>
+                            <input type="date" class="form-control" name="release_date_for_media"
+                            value="{{ $book->detail->release_date_for_media ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
