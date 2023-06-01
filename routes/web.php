@@ -1065,6 +1065,7 @@ Route::group([
             ],
         ]);
         Route::put('webinar/{id}/make-replay', 'WebinarController@makeReplay')->name('admin.webinar.make-replay');
+        Route::post('webinar/{id}/set-schedule', 'WebinarController@setSchedule')->name('admin.webinar.schedule');
         Route::post('webinar/{id}/update-field', 'WebinarController@updateField')->name('admin.webinar.update-field');
         Route::post('webinar/{id}/course/{course_id}/email-out', 'WebinarController@webinarEmailOut')->name('admin.webinar.email-out');
         Route::post('webinar/{id}/course/{course_id}/auto-register-learners', 'WebinarController@autoRegisterLearnersToWebinar')

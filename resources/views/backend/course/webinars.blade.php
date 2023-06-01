@@ -5,6 +5,7 @@
 @stop
 
 @section('styles')
+	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="{{ asset('css/cropper.min.css') }}">
 	<style>
 		.image_container, .image_container_edit {
@@ -116,6 +117,15 @@
 										<button class="btn btn-warning btn-xs viewRegistrantsBtn"
 												data-webinar-id="{{ $webinar->id }}">
 											View Registrants
+										</button>
+
+										<button class="btn btn-info btn-xs scheduleWebinarBtn" data-toggle="modal"
+										data-target="#scheduleWebinarModal" 
+										data-action="{{ route('admin.webinar.schedule', $webinar->id) }}"
+										data-date="{{ $webinar->schedule
+											? strftime('%Y-%m-%d', strtotime($webinar->schedule->date))
+											: '' }}">
+											Schedule
 										</button>
 
 										@if (in_array($course->id, [17, 23, 89]) || $course->is_free) {{-- check if webinar-pakke --}}
@@ -233,6 +243,42 @@
 					</div>
 					<div class="text-right">
 						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="scheduleWebinarModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Schedule Webinar</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action=""
+					  onsubmit="disableSubmit(this)">
+					{{csrf_field()}}
+
+					<div class="form-group">
+						<label>Date</label>
+						<input type="date" name="date" class="form-control" required>
+					</div>
+
+					<div class="form-group">
+						<label>
+							Run the cron after save?
+						</label>
+						<br>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes"
+							   class="for-sale-toggle" data-off="No"
+							   name="run_cron" data-width="84">
+					</div>
+
+					<div class="text-right">
+						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
 					</div>
 				</form>
 			</div>
@@ -634,6 +680,7 @@
 @stop
 
 @section('scripts')
+	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.0.0/cropper.js"></script>
 <script>
 
@@ -846,6 +893,15 @@
 			});
 
 			console.log(registrants);*/
+		});
+
+		$(".scheduleWebinarBtn").click(function(){
+			let action = $(this).data('action');
+			let date = $(this).data('date');
+			let modal = $("#scheduleWebinarModal");
+
+			modal.find('form').attr('action', action);
+			modal.find("[name=date]").val(date);
 		});
 
 		$('.editWebinarBtn').click(function(){

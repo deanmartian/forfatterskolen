@@ -14,6 +14,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddWebinarRequest;
 use App\Course;
+use App\Jobs\WebinarScheduleRegistrationJob;
 use App\Webinar;
 use File; 
 
@@ -282,6 +283,26 @@ class WebinarController extends Controller
             return redirect()->back();
         }
         return redirect()->route('admin.course.index');
+    }
+
+    public function setSchedule($webinar_id, Request $request)
+    {
+
+        $scheduledRegistration = WebinarScheduledRegistration::firstOrCreate([
+            'webinar_id' => $webinar_id
+         ]);
+ 
+         $scheduledRegistration->date = $request->date;
+         $scheduledRegistration->save();
+        
+         if ($request->has('run_cron')) {
+            dispatch(new WebinarScheduleRegistrationJob($scheduledRegistration));
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Webinar scheduled successfully.'),
+            'alert_type' => 'success'
+        ]);
     }
 
     /**
