@@ -15,7 +15,7 @@ class CreateStorageVariousTable extends Migration
     {
         Schema::create('storage_various', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('storage_book_id');
+            $table->unsignedInteger('user_book_for_sale_id');
             $table->string('publisher')->nullable();
             $table->string('minimum_stock')->nullable();
             $table->string('weight')->nullable();
@@ -26,7 +26,7 @@ class CreateStorageVariousTable extends Migration
             $table->string('material_cost')->nullable();
             $table->timestamps();
 
-            $table->foreign('storage_book_id')->references('id')->on('storage_books')->onDelete('cascade');
+            $table->foreign('user_book_for_sale_id')->references('id')->on('user_books_for_sale')->onDelete('cascade');
         });
     }
 

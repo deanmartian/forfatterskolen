@@ -15,7 +15,7 @@ class CreateStorageDetailsTable extends Migration
     {
         Schema::create('storage_details', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('storage_book_id');
+            $table->unsignedInteger('user_book_for_sale_id');
             $table->string('subtitle')->nullable();
             $table->string('original_title')->nullable();
             $table->string('author')->nullable();
@@ -33,7 +33,7 @@ class CreateStorageDetailsTable extends Migration
             $table->string('registered_with_council')->nullable();
             $table->timestamps();
 
-            $table->foreign('storage_book_id')->references('id')->on('storage_books')->onDelete('cascade');
+            $table->foreign('user_book_for_sale_id')->references('id')->on('user_books_for_sale')->onDelete('cascade');
         });
     }
 
