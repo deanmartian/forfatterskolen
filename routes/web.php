@@ -649,6 +649,7 @@ Route::group([
         Route::delete('/self-publishing-request/{id}/delete', 'PageController@deleteSelfPublishingRequest')->name('admin.self-publishing-portal-request.destroy');
         Route::get('/learner-not-started-manu', 'PageController@learnerNotStartedManu');
         Route::get('/learner-avail-course/{year}', 'PageController@learnerAvailedCourseYear');
+        Route::post('/send-email-to-queue', 'PageController@sendEmailToQueue')->name('admin.send-email-to-queue');
 
         Route::resource('page_meta','PageMetaController',[
             'except' => ['show', 'create', 'edit'],

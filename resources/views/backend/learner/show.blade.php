@@ -1670,7 +1670,14 @@
 									<td class="text-center">
 										<button class="btn btn-info btn-xs" data-toggle="modal"
 												data-target="#showEmailModal"
-												data-message="{{ $emailHistory->message }}" onclick="showEmailMessage(this)">Show Message</button>
+												data-message="{{ $emailHistory->message }}" onclick="showEmailMessage(this)">
+												Show Message
+											</button>
+										<button class="btn btn-success btn-xs resendEmailHistoryBtn" data-toggle="modal" 
+											data-target="#resendEmailHistoryModal" data-record="{{ json_encode($emailHistory) }}"
+											style="margin-top: 5px;">
+											Resend Email
+										</button>
 									</td>
 								</tr>
 							@endforeach
@@ -3183,6 +3190,46 @@
 			</div>
 			<div class="modal-body">
 
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="resendEmailHistoryModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Resend Email</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.send-email-to-queue') }}" onsubmit="disableSubmit(this)">
+					{{csrf_field()}}
+					<input type="hidden" name="parent">
+					<input type="hidden" name="parent_id">
+					<input type="hidden" name="recipient">
+
+					<div class="form-group">
+						<label>{{ trans('site.subject') }}</label>
+						<input type="text" class="form-control" name="subject" required>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.message') }}</label>
+						<textarea name="message" cols="30" rows="10"
+								  class="form-control tinymce" id="sendEmailHistoryEditor"></textarea>
+					</div>
+
+					<div class="form-group">
+						<label>From</label>
+						<input type="email" class="form-control" placeholder="Email"
+							   name="from_email">
+					</div>
+
+					<div class="text-right">
+						<input type="submit" class="btn btn-primary" value="{{ trans('site.send') }}" id="send_email_btn">
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -4982,6 +5029,27 @@
         let action = $(this).data('action');
         let modal = $('#deleteCoachingModal');
         modal.find('form').attr('action', action);
+	});
+
+	$(".resendEmailHistoryBtn").click(function(){
+		let record = $(this).data('record');
+		let modal = $("#resendEmailHistoryModal");
+
+		modal.find("[name=parent]").val(record.parent);
+		modal.find("[name=parent_id]").val(record.parent_id);
+		//modal.find("[name=message]").innerHTML(record.message);
+		modal.find("[name=subject]").val(record.subject);
+		modal.find("[name=from_email]").val(record.from_email);
+		modal.find("[name=recipient]").val(record.recipient_email);
+
+console.log(record.recipient_email);
+console.log(record);
+		tinymce.get('sendEmailHistoryEditor').execCommand('mceRefresh');
+		setTimeout(function(){
+			console.log("inside set timeout");
+			console.log(record.message);
+            tinymce.activeEditor.setContent(record.message);
+		}, 200);
 	});
 
     $(".booksForSaleBtn").click(function() {

@@ -12,7 +12,7 @@ class EmailHistory extends Model
     protected $fillable = [ 'subject', 'from_email', 'token', 'message', 'parent', 'parent_id', 'recipient',
         'track_code', 'date_open' ];
     protected $table = 'email_history';
-    protected $appends = ['recipient', 'recipient_id'];
+    protected $appends = ['recipient', 'recipient_id', 'recipient_email'];
 
     public function getCreatedAtAttribute($value)
     {
@@ -32,6 +32,11 @@ class EmailHistory extends Model
     public function getRecipientIdAttribute()
     {
         return $this->recipientQuery()['learner_id'];
+    }
+
+    public function getRecipientEmailAttribute()
+    {
+        return $this->attributes['recipient'];
     }
 
     public function recipientQuery()

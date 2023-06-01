@@ -33,6 +33,7 @@ use App\Exports\GenericExport;
 use App\Log;
 use App\ShopManuscriptsTaken;
 use App\FreeManuscript;
+use App\Jobs\AddMailToQueueJob;
 use App\SelfPublishingPortalRequest;
 use Artisan;
 use Illuminate\Support\MessageBag;
@@ -770,5 +771,27 @@ class PageController extends Controller
         $headers = ['id', 'name', 'email', 'course'];
         $excel = \App::make('excel');
         return $excel->download(new GenericExport($userList, $headers), $year . ' Course Buyers.xlsx');
+    }
+
+    public function sendEmailToQueue(Request $request)
+    {
+        $subject = $request->subject;
+        $message = $request->message;
+        $from = $request->from_email;
+
+        $emailData['email_subject'] = $request->subject;
+        $emailData['email_message'] = $message;
+        $emailData['from_name'] = NULL;
+        $emailData['from_email'] = $from;
+        $emailData['attach_file'] = NULL;
+
+        $to = $request->recipient;
+        dispatch(new AddMailToQueueJob($to, $subject, $message, $from, null, null,
+            $request->parent, $request->parent_id));
+
+        return redirect()->back()->with([
+            'alert_type' => 'success',
+            'errors'    => AdminHelpers::createMessageBag('Email Sent.')
+        ]);
     }
 }
