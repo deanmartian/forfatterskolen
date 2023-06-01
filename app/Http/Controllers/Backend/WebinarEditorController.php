@@ -24,6 +24,7 @@ class WebinarEditorController extends Controller
         $webinarEditor->webinar_id = $webinar->id;
         $webinarEditor->presenter_url = $request->presenter_url;
         $webinarEditor->editor_id = $request->editor_id;
+        $webinarEditor->name = $request->name;
         $webinarEditor->save();
 
         return redirect()->back();
@@ -41,6 +42,7 @@ class WebinarEditorController extends Controller
         $webinarEditor = WebinarEditor::findOrFail($id);
         $webinarEditor->presenter_url = $request->presenter_url;
         $webinarEditor->editor_id = $request->editor_id;
+        $webinarEditor->name = $request->name;
         $webinarEditor->save();
 
         return redirect()->back();

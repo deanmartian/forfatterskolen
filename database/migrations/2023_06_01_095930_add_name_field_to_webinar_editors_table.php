@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class AddNameFieldToWebinarEditorsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('webinar_editors', function (Blueprint $table) {
+            $table->unsignedInteger('editor_id')->nullable()->change();
+            $table->string('name')->after('editor_id')->nullable();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('webinar_editors', function (Blueprint $table) {
+            $table->dropColumn('name');
+        });
+    }
+}
