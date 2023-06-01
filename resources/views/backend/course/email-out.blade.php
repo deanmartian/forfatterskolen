@@ -33,7 +33,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                            @foreach($course->emailOut as $email)
+                            @foreach($course->emailOut()->oldest('delay')->get() as $email)
                                 <tr>
                                     <td>{{ $email->subject }}</td>
                                     <td>{!! \Illuminate\Support\Str::limit(strip_tags($email->message), 100) !!}</td>
