@@ -18,6 +18,11 @@ class Project extends Model
         return $this->belongsTo('App\User');
     }
 
+    public function userBookForSale()
+    {
+        return $this->hasOne('App\UserBookForSale');
+    }
+
     public function books()
     {
         return $this->hasMany('App\ProjectBook');

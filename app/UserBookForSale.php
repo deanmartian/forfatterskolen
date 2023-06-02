@@ -34,6 +34,16 @@ class UserBookForSale extends Model
         return $this->hasMany('\App\UserBookSale', 'id', 'user_book_for_sale_id');
     }
 
+    public function detail()
+    {
+        return $this->hasOne('\App\StorageDetail');
+    }
+
+    public function various()
+    {
+        return $this->hasOne('\App\StorageVarious');
+    }
+
     public function getPriceFormattedAttribute()
     {
         return FrontendHelpers::currencyFormat($this->attributes['price']);

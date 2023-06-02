@@ -27,11 +27,11 @@
                             </b>
                         </em>
 
-                        @if(!$book)
+                        @if(!$projectUserBook)
                             <button class="btn btn-primary btn-sm pull-right bookBtn" data-toggle="modal" 
                             data-target="#bookModal" data-action="{{ route('admin.project.storage.save-book', $projectId) }}"
-                            data-title="Add Book">
-                                Add Book
+                            data-title="Select Book">
+                                Select Book
                             </button>
                         @endif
                     </div>
@@ -46,15 +46,15 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if ($book)
+                                @if ($projectUserBook)
                                     <tr>
                                         <td>
-                                            {{ $book->name }}
+                                            {{ $projectUserBook->title }}
                                         </td>
                                         <td>
                                             <button class="btn btn-xs btn-primary bookBtn" data-toggle="modal" 
                                             data-target="#bookModal" data-title="Edit Book" 
-                                            data-record="{{ json_encode ($book)}}"
+                                            data-record="{{ json_encode ($projectUserBook)}}"
                                             data-action="{{ route('admin.project.storage.save-book', $projectId) }}">
                                                 <i class="fa fa-edit"></i>
                                             </button>
@@ -74,7 +74,7 @@
             </div>
         </div>
         
-        @if($book)
+        @if($projectUserBook)
             <ul class="nav nav-tabs margin-top">
                 <li @if( Request::input('tab') == 'master' || Request::input('tab') == '') class="active" @endif>
                     <a href="?tab=master">Master Data</a>
@@ -116,7 +116,14 @@
                         @csrf
                         <div class="form-group">
                             <label>Book</label>
-                            <input type="text" name="name" class="form-control" required>
+                            <select name="user_book_for_sale_id" class="form-control" required>
+                                <option value="">- Select Book -</option>
+                                @foreach ($userBooksForSale as $book)
+                                    <option value="{{ $book->id }}">
+                                        {{ $book->title }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                         <button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
                         <div class="clearfix"></div>
@@ -160,10 +167,10 @@
 
         modal.find('.modal-title').text(title);
         modal.find('form').attr('action', action);
-        modal.find('[name=name]').val('');
+        modal.find('[name=user_book_for_sale_id]').val('');
 
         if (record) {
-            modal.find('[name=name]').val(record.name);
+            modal.find('[name=user_book_for_sale_id]').val(record.id);
         }
     })
 

@@ -37,6 +37,7 @@ use App\StorageDetail;
 use App\StorageVarious;
 use App\TimeRegister;
 use App\User;
+use App\UserBookForSale;
 use DB;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Time;
@@ -1058,38 +1059,58 @@ class ProjectController extends Controller
     {
         $layout = 'backend.layout';
         $backRoute = route('admin.project.show', $projectId);
-        $book = StorageBook::where('project_id', $projectId)->first();
-        return view('backend.project.storage', compact('backRoute', 'layout', 'projectId', 'book'));
+        $project = Project::find($projectId);
+        $projectUserBook = $project->userBookForSale;
+        $projectUserBookId = $project->userBookForSale ? $project->userBookForSale->id : '';
+        $userBooksForSale = UserBookForSale::where('user_id', $project->user_id)
+        ->where(function($query) use ($projectUserBookId){
+            $query->whereNull('project_id')
+            ->orWhere('id', $projectUserBookId);
+        })
+        ->get();
+        
+        return view('backend.project.storage', compact('backRoute', 'layout', 'projectId', 'project', 
+        'projectUserBook', 'userBooksForSale'));
     }
 
     public function saveStorageBook($projectId, Request $request)
     {
-        $book = StorageBook::firstOrNew([
-            'project_id' => $projectId
+        $currentProjectBookForSale = UserBookForSale::where('project_id', $projectId)->update([
+            'project_id' => NULL
         ]);
 
-        $book->name = $request->name;
-        $book->save();
-
+        $userBookForSale = UserBookForSale::find($request->user_book_for_sale_id);
+        $userBookForSale->project_id = $projectId;
+        $userBookForSale->save();
 
         return back()
             ->with(['errors' => AdminHelpers::createMessageBag('Storage Book saved successfully.'),
-                'alert_type' => 'success']);
+                'alert_type' => 'success']); 
     }
 
     public function deleteStorageBook($projectId)
     {
-        StorageBook::where('project_id', $projectId)->delete();
+        $userBookForSale = UserBookForSale::where('project_id', $projectId)->first();
+        $userBookForSale->project_id = NULL;
+        $userBookForSale->save();
+
+        if ($userBookForSale->detail) {
+            $userBookForSale->detail->delete();
+        }
+
+        if ($userBookForSale->various) {
+            $userBookForSale->various->delete();
+        }
 
         return back()
-            ->with(['errors' => AdminHelpers::createMessageBag('Storage Book deleted successfully.'),
+            ->with(['errors' => AdminHelpers::createMessageBag('Book removed from project successfully.'),
                 'alert_type' => 'success']);
     }
 
     public function saveStorageBookDetails($book_id, Request $request)
     {
         StorageDetail::updateOrCreate([
-                'storage_book_id' => $book_id
+                'user_book_for_sale_id' => $book_id
             ], [
                 'subtitle'                  => $request->subtitle,
                 'author'                    => $request->author,
@@ -1107,6 +1128,12 @@ class ProjectController extends Controller
                 'registered_with_council'   => $request->registered_with_council,
             ]);
 
+        if ($request->isbn) {
+            $bookForSale = UserBookForSale::find($book_id);
+            $bookForSale->isbn = $request->isbn;
+            $bookForSale->save();
+        }
+
         return back()
             ->with(['errors' => AdminHelpers::createMessageBag('Storage details saved successfully.'),
                 'alert_type' => 'success']);
@@ -1116,7 +1143,7 @@ class ProjectController extends Controller
     {
 
         StorageVarious::updateOrCreate([
-            'storage_book_id' => $book_id
+            'user_book_for_sale_id' => $book_id
         ], [
             'publisher' => $request->publisher,
             'minimum_stock' => $request->minimum_stock,

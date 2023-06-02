@@ -1,7 +1,7 @@
-<div class="panel" id="master-panel" data-record="{{ json_encode($book->detail) }}">
+<div class="panel" id="master-panel" data-record="{{ json_encode($projectUserBook->detail) }}">
     <div class="panel-body">
         <div class="col-md-6">
-            <form method="POST" action="{{ route('admin.project.storage.save-details', $book->id) }}"
+            <form method="POST" action="{{ route('admin.project.storage.save-details', $projectUserBook->id) }}"
                 onsubmit="disableSubmit(this)">
                 @csrf
                 <div class="row">
@@ -13,7 +13,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="subtitle" 
-                            value="{{ $book->detail->subtitle ?? '' }}" disabled>
+                            value="{{ $projectUserBook->detail->subtitle ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -27,7 +27,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="original_title"
-                            value="{{ $book->detail->original_title ?? '' }}" disabled>
+                            value="{{ $projectUserBook->detail->original_title ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -41,7 +41,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="author"
-                            value="{{ $book->detail->author ?? '' }}" disabled>
+                            value="{{ $projectUserBook->detail->author ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="editor"
-                            value="{{ $book->detail->editor ?? '' }}" disabled>
+                            value="{{ $projectUserBook->detail->editor ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="publisher"
-                            value="{{ $book->detail->publisher ?? '' }}" disabled>
+                            value="{{ $projectUserBook->detail->publisher ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -83,7 +83,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="book_group"
-                            value="{{ $book->detail->book_group ?? '' }}" disabled>
+                            value="{{ $projectUserBook->detail->book_group ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -97,7 +97,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="item_number"
-                            value="{{ $book->detail->item_number ?? '' }}" disabled>
+                            value="{{ $projectUserBook->detail->item_number ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -111,7 +111,8 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="isbn"
-                            value="{{ $book->detail->isbn ?? '' }}" disabled>
+                            value="{{ $projectUserBook->isbn ? $projectUserBook->isbn 
+                            : ($projectUserBook->detail->isbn ?? '') }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -125,7 +126,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="isbn_ebook"
-                            value="{{ $book->detail->isbn_ebook ?? '' }}" disabled>
+                            value="{{ $projectUserBook->detail->isbn_ebook ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -139,7 +140,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="number" class="form-control" name="edition_on_sale"
-                            value="{{ $book->detail->edition_on_sale ?? '' }}" disabled>
+                            value="{{ $projectUserBook->detail->edition_on_sale ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -153,7 +154,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="number" class="form-control" name="edition_total"
-                            value="{{ $book->detail->edition_total ?? '' }}" disabled>
+                            value="{{ $projectUserBook->detail->edition_total ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -167,7 +168,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="date" class="form-control" name="release_date"
-                            value="{{ $book->detail->release_date ?? '' }}" disabled>
+                            value="{{ $projectUserBook->detail->release_date ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -181,7 +182,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="date" class="form-control" name="release_date_for_media"
-                            value="{{ $book->detail->release_date_for_media ?? '' }}" disabled>
+                            value="{{ $projectUserBook->detail->release_date_for_media ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -195,7 +196,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="number" class="form-control" name="price_vat"
-                            value="{{ $book->detail->price_vat ?? '' }}" disabled>
+                            value="{{ $projectUserBook->detail->price_vat ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -211,7 +212,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="registered_with_council"
-                            value="{{ $book->detail->registered_with_council ?? '' }}" disabled>
+                            value="{{ $projectUserBook->detail->registered_with_council ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class StorageDetail extends Model
 {
     protected $fillable = [
-        'storage_book_id',
+        'user_book_for_sale_id',
         'subtitle',
         'original_title',
         'author',

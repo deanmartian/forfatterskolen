@@ -61,6 +61,7 @@ use App\Http\FrontendHelpers;
 use App\Jobs\UpdateFikenContactDetailsJob;
 use App\RequestToEditor;
 use App\SelfPublishingOrder;
+use App\StorageDetail;
 use DB;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
@@ -2036,6 +2037,13 @@ class LearnerController extends Controller
         UserBookForSale::updateOrCreate([
             'id' => $request->id
         ], $request->except('id'));
+
+        if ($request->isbn) {
+            StorageDetail::where('user_book_for_sale_id', $request->id)
+            ->update([
+                'isbn' => $request->isbn
+            ]);
+        }
 
         return redirect()->back()->with([
             'errors'                => AdminHelpers::createMessageBag('Book for sale saved successfully.'),

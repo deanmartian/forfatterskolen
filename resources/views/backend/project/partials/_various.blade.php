@@ -1,7 +1,7 @@
-<div class="panel" id="various-panel" data-record="{{ json_encode($book->various) }}">
+<div class="panel" id="various-panel" data-record="{{ json_encode($projectUserBook->varuous) }}">
     <div class="panel-body">
         <div class="col-md-6">
-            <form method="POST" action="{{ route('admin.project.storage.save-various', $book->id) }}"
+            <form method="POST" action="{{ route('admin.project.storage.save-various', $projectUserBook->id) }}"
                 onsubmit="disableSubmit(this)">
                 @csrf
                 <div class="row">
@@ -13,7 +13,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="publisher" 
-                            value="{{ $book->various->publisher ?? '' }}" disabled>
+                            value="{{ $projectUserBook->various->publisher ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -27,7 +27,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="minimum_stock"
-                            value="{{ $book->various->minimum_stock ?? '' }}" disabled>
+                            value="{{ $projectUserBook->various->minimum_stock ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -41,7 +41,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="weight"
-                            value="{{ $book->various->weight ?? '' }}" disabled>
+                            value="{{ $projectUserBook->various->weight ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="height"
-                            value="{{ $book->various->height ?? '' }}" disabled>
+                            value="{{ $projectUserBook->various->height ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="width"
-                            value="{{ $book->various->width ?? '' }}" disabled>
+                            value="{{ $projectUserBook->various->width ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -83,7 +83,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="thickness"
-                            value="{{ $book->various->thickness ?? '' }}" disabled>
+                            value="{{ $projectUserBook->various->thickness ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -97,7 +97,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="cost"
-                            value="{{ $book->various->cost ?? '' }}" disabled>
+                            value="{{ $projectUserBook->various->cost ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
                     <div class="col-xs-9">
                         <div class="form-group">
                             <input type="text" class="form-control" name="material_cost"
-                            value="{{ $book->various->material_cost ?? '' }}" disabled>
+                            value="{{ $projectUserBook->various->material_cost ?? '' }}" disabled>
                         </div>
                     </div>
                 </div>
