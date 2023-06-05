@@ -3207,7 +3207,7 @@
 					{{csrf_field()}}
 					<input type="hidden" name="parent">
 					<input type="hidden" name="parent_id">
-					<input type="hidden" name="recipient">
+					<input type="hidden" name="recipient" value="{{ $learner->email }}">
 
 					<div class="form-group">
 						<label>{{ trans('site.subject') }}</label>
@@ -5040,9 +5040,8 @@
 		//modal.find("[name=message]").innerHTML(record.message);
 		modal.find("[name=subject]").val(record.subject);
 		modal.find("[name=from_email]").val(record.from_email);
-		modal.find("[name=recipient]").val(record.recipient_email);
+		//modal.find("[name=recipient]").val(record.recipient_email);
 
-console.log(record.recipient_email);
 console.log(record);
 		tinymce.get('sendEmailHistoryEditor').execCommand('mceRefresh');
 		setTimeout(function(){
