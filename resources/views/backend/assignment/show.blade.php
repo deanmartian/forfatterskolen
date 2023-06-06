@@ -125,7 +125,7 @@
 							<td>
 								{{ $manuscript->editor_expected_finish 
 								? \App\Http\FrontendHelpers::formatDate($manuscript->editor_expected_finish)
-								: '' }} <br>
+								: ($assignment->editor_expected_finish ? $assignment->editor_expected_finish : '') }} <br>
 								<button class="btn btn-xs btn-primary editEditorExpectedFinishBtn" data-toggle="modal" 
 								data-target="#editEditorExpectedFinishModal" 
 								data-action="{{ route('backend.assignment.edit-dates', $manuscript->id) }}"
