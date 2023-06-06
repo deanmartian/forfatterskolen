@@ -143,6 +143,12 @@ class Course extends Model
         return $this->hasMany('App\EmailOut');
     }
 
+    public function emailOutOrdered()
+    {
+        return $this->hasMany('App\EmailOut')->orderByRaw("delay + 0 ASC")
+        ->orderBy('delay', 'asc');
+    }
+
     public function emailOutLog()
     {
         return $this->hasMany('App\EmailOutLog');
