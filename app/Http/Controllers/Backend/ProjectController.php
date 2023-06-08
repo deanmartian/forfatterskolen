@@ -1068,9 +1068,17 @@ class ProjectController extends Controller
             ->orWhere('id', $projectUserBookId);
         })
         ->get();
+
+        $totalBookSold = 0;
+        $totalBookSale = 0;
+
+        if ($projectUserBook) {
+            $totalBookSold = $projectUserBook->sales()->sum('quantity');
+            $totalBookSale = $projectUserBook->sales()->sum('amount');
+        }
         
         return view('backend.project.storage', compact('backRoute', 'layout', 'projectId', 'project', 
-        'projectUserBook', 'userBooksForSale'));
+        'projectUserBook', 'userBooksForSale', 'totalBookSold', 'totalBookSale'));
     }
 
     public function saveStorageBook($projectId, Request $request)

@@ -1668,6 +1668,20 @@ Route::group([
             ],
         ]);
 
+        Route::post('/book-for-sale/{book_for_sale_id}/save-inventory', 'BookForSaleController@saveInventory')
+        ->name('admin.book-for-sale.save-inventory');
+        Route::post('/book-for-sale/{book_for_sale_id}/save-sales', 'BookForSaleController@saveSales')
+        ->name('admin.book-for-sale.save-sales');
+        Route::get('/book-for-sale/{book_for_sale_id}/details', 'BookForSaleController@saleDetails');
+        
+        Route::resource('/book-for-sale', 'BookForSaleController', [
+            'except' => ['create', 'edit'],
+            'names' => [
+                'index' => 'admin.book-for-sale.index',
+                'show' => 'admin.book-for-sale.show',
+            ],
+        ]);
+
         Route::post('/task/save', 'ProjectController@saveTask')->name('admin.project-task.save');
         Route::post('/project/task/{id}/finish', 'ProjectController@finishTask');
         Route::delete('/project/task/{id}/delete', 'ProjectController@deleteTask');

@@ -2,6 +2,14 @@
 
 @section('styles')
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <style>
+        .label-cell {
+          font-weight: bold;
+          vertical-align: middle;
+          text-align: right;
+          width: 100px;
+        }
+      </style>
 @stop
 
 @section('title')

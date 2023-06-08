@@ -48,11 +48,21 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>
+                                    {{ $book->inventory->total ?? '' }}
+                                </td>
+                                <td>
+                                    {{ $book->inventory->delivered ?? '' }}
+                                </td>
+                                <td>
+                                    {{ $book->inventory->physical_items ?? '' }}
+                                </td>
+                                <td>
+                                    {{ $book->inventory->returns ?? '' }}
+                                </td>
+                                <td>
+                                    {{ $book->inventory->balance ?? '' }}
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -68,7 +78,7 @@
                 <div class="col-xs-9">
                     <div class="form-group">
                         <input type="text" class="form-control"
-                        value="" disabled>
+                        value="{{ $book->inventory->order ?? '' }}" disabled>
                     </div>
                 </div>
             </div>
@@ -82,9 +92,15 @@
                 <div class="col-xs-9">
                     <div class="form-group">
                         <input type="text" class="form-control"
-                        value="" disabled>
+                        value="{{ $book->inventory->reservations ?? '' }}" disabled>
                     </div>
                 </div>
+            </div>
+
+            <div class="pull-right">
+                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#inventoryModal">
+                    Edit
+                </button>
             </div>
         </div>
     </div>

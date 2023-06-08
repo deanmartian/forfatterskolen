@@ -54,6 +54,9 @@
 	@if(Auth::user()->isSuperUser())
 		<a class="btn btn-success margin-top" href="{{ route('admin.invoice.index') }}">Invoices</a>
 	@endif
+	<a class="btn btn-success margin-top" href="{{ route('admin.book-for-sale.index') }}">
+		Books For Sale
+	</a>
 
 	<div class="table-users table-responsive">
 		<table class="table">

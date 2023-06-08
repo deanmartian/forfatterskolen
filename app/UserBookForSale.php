@@ -31,7 +31,7 @@ class UserBookForSale extends Model
 
     public function sales()
     {
-        return $this->hasMany('\App\UserBookSale', 'id', 'user_book_for_sale_id');
+        return $this->hasMany('\App\UserBookSale', 'user_book_for_sale_id', 'id');
     }
 
     public function detail()
@@ -42,6 +42,11 @@ class UserBookForSale extends Model
     public function various()
     {
         return $this->hasOne('\App\StorageVarious');
+    }
+
+    public function inventory()
+    {
+        return $this->hasOne('\App\StorageInventory');
     }
 
     public function getPriceFormattedAttribute()
