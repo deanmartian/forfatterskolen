@@ -25,7 +25,19 @@ class BookForSaleController extends Controller
         $totalBookSold = $book->sales()->sum('quantity');
         $totalBookSale = $book->sales()->sum('amount');
 
-        return view('backend.book-for-sale.show', compact('book', 'totalBookSold', 'totalBookSale'));
+        $quantitySoldCount = $this->salesReportCounter($id, 'quantity-sold');
+        $turnedOverCount = $this->salesReportCounter($id, 'turned-over');
+        $freeCount = $this->salesReportCounter($id, 'free');
+        $commissionCount = $this->salesReportCounter($id, 'commission');
+        $shreddedCount = $this->salesReportCounter($id, 'shredded');
+        $defectiveCount = $this->salesReportCounter($id, 'defective');
+        $correctionsCount = $this->salesReportCounter($id, 'corrections');
+        $countsCount = $this->salesReportCounter($id, 'counts');
+        $returnsCount = $this->salesReportCounter($id, 'returns');
+
+        return view('backend.book-for-sale.show', compact('book', 'totalBookSold', 'totalBookSale',
+            'quantitySoldCount', 'turnedOverCount', 'freeCount', 'commissionCount', 'shreddedCount',
+            'defectiveCount', 'correctionsCount', 'countsCount', 'returnsCount'));
     }
 
     public function saveInventory($book_for_sale_id, Request $request) 
@@ -62,6 +74,12 @@ class BookForSaleController extends Controller
         return response()->json([
             'details' => $details
         ]);
+    }
+
+    private function salesReportCounter($book_for_sale_id, $type) {
+        return StorageSale::where('user_book_for_sale_id', $book_for_sale_id)
+        ->where('type', $type)
+        ->sum('value');
     }
 
 }

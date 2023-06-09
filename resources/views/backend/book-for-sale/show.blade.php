@@ -11,6 +11,10 @@
         border-top-right-radius: 4px !important;
         border-bottom-right-radius: 4px !important;
     }
+
+    #sales-details-table {
+        width: 100% !important;
+    }
 </style>
 @stop
 
@@ -180,27 +184,77 @@
 @section('scripts')
 <script>
 
-    function showDetails(type, book_for_sale_id, isEdit = false) {
+    $(document).ready(function(){
+        $(".salesReportBtn").click(function() {
+            let type = $("[name=hidden_type]").val();
+
+            fillSalesReportModalFields(type);
+        });
+    });
+
+    function showDetails(type, book_for_sale_id, record = null) {
+        fillSalesReportModalFields(type, record);
+
+        $("#sales-report-details").removeClass('hidden');
+        $("#sales-report-details").find('.report-title').text(formatText(type));
+        $("[name=hidden_type]").val(type);
+        $("[name=hidden_book_id]").val(book_for_sale_id);
+
+        if (!record) {
+            getDetails(type, book_for_sale_id);
+        }
+    }
+
+    function fillSalesReportModalFields(type, record) {
         let modal = $("#salesReportModal");
 
         modal.find(".modal-title").text('Add ' + formatText(type));
+        modal.find("[name=id]").val('');
         modal.find("[name=type]").val(type);
-        $("#sales-report-details").removeClass('hidden');
-        console.log("show details here");
+        modal.find("[name=value]").val('');
+        modal.find("[name=date]").val('');
 
+        if (record) {
+            modal.find(".modal-title").text('Edit ' + formatText(type));
+            modal.find("[name=id]").val(record.id);
+            modal.find("[name=value]").val(record.value);
+            modal.find("[name=date]").val(record.date);
+        }
+    }
+
+    let salesDetailsTable = $("#sales-details-table").DataTable({
+                    columnDefs: [
+                        {
+                            targets: [0], // Index of the hidden column
+                            visible: false, // Hide the column
+                            orderable: true, // Enable sorting on the column
+                            render: function(data, type, row) {
+                                return data; // Return the hidden data for sorting
+                            },
+                            type: 'numeric', // Specify the sorting type (e.g., 'string', 'numeric', 'date')
+                        }
+                    ]
+                });
+
+    function getDetails(type, book_for_sale_id) {
         $.ajax({
             type:'GET',
             url:'/book-for-sale/' + book_for_sale_id + '/details',
             data: { "type" : type},
             success: function(data){
-                let table = $("#sales-details-table");
+
+                salesDetailsTable.clear().draw();
 
                 $.each(data.details, function(k, record) {
-                    let tr = "<tr>";
-                          tr += "<td>" + record.id + "</td>";  
-                        tr += "</tr>";
-
-                    table.find('tbody').append(tr);
+                    salesDetailsTable.row.add([
+                            record.id,
+                            record.value,
+                            record.date,
+                            "<button class='btn btn-primary btn-xs' data-toggle='modal' data-target='#salesReportModal' onclick='showDetails(\"" + type + "\", " 
+                                + book_for_sale_id + ", "+JSON.stringify(record)+")'>"
+                                + "<i class='fa fa-edit'></i>"
+                            + "</button>"
+                        ]).draw(false);
                 });
 
             }

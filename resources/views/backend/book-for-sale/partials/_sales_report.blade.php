@@ -10,7 +10,7 @@
                 <div class="col-xs-9">
                     <div class="form-group">
                         <div class="input-group">
-                            <input type="text" class="form-control" value="" disabled>
+                            <input type="text" class="form-control" value="{{ $quantitySoldCount }}" disabled>
                             <span class="input-group-btn">
                                 <button class="btn btn-primary btn-xs" onclick="showDetails('quantity-sold', {{ $book->id }})">
                                     <i class="fa fa-edit"></i>
@@ -29,8 +29,14 @@
                 </div>
                 <div class="col-xs-9">
                     <div class="form-group">
-                        <input type="text" class="form-control"
-                        value="" disabled>
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="{{ $turnedOverCount }}" disabled>
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary btn-xs" onclick="showDetails('turned-over', {{ $book->id }})">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -43,8 +49,14 @@
                 </div>
                 <div class="col-xs-9">
                     <div class="form-group">
-                        <input type="text" class="form-control"
-                        value="" disabled>
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="{{ $freeCount }}" disabled>
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary btn-xs" onclick="showDetails('free', {{ $book->id }})">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -57,8 +69,14 @@
                 </div>
                 <div class="col-xs-9">
                     <div class="form-group">
-                        <input type="text" class="form-control"
-                        value="" disabled>
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="{{ $commissionCount }}" disabled>
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary btn-xs" onclick="showDetails('commission', {{ $book->id }})">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -71,8 +89,14 @@
                 </div>
                 <div class="col-xs-9">
                     <div class="form-group">
-                        <input type="text" class="form-control"
-                        value="" disabled>
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="{{ $shreddedCount }}" disabled>
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary btn-xs" onclick="showDetails('shredded', {{ $book->id }})">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -85,8 +109,14 @@
                 </div>
                 <div class="col-xs-9">
                     <div class="form-group">
-                        <input type="text" class="form-control"
-                        value="" disabled>
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="{{ $defectiveCount }}" disabled>
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary btn-xs" onclick="showDetails('defective', {{ $book->id }})">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -99,8 +129,14 @@
                 </div>
                 <div class="col-xs-9">
                     <div class="form-group">
-                        <input type="text" class="form-control"
-                        value="" disabled>
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="{{ $correctionsCount }}" disabled>
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary btn-xs" onclick="showDetails('corrections', {{ $book->id }})">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -113,8 +149,14 @@
                 </div>
                 <div class="col-xs-9">
                     <div class="form-group">
-                        <input type="text" class="form-control"
-                        value="" disabled>
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="{{ $countsCount }}" disabled>
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary btn-xs" onclick="showDetails('counts', {{ $book->id }})">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -127,24 +169,34 @@
                 </div>
                 <div class="col-xs-9">
                     <div class="form-group">
-                        <input type="text" class="form-control"
-                        value="" disabled>
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="{{ $returnsCount }}" disabled>
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary btn-xs" onclick="showDetails('returns', {{ $book->id }})">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div> <!-- end col-md-6 -->
 
         <div class="col-md-6 hidden" id="sales-report-details">
-            <button class="btn btn-success btn-sm margin-bottom pull-right" data-toggle="modal" 
+            <h3 style="display: inline" class="report-title"></h3>
+            <button class="btn btn-success btn-sm margin-bottom pull-right salesReportBtn" data-toggle="modal" 
             data-target="#salesReportModal">
                 Add
             </button>
+            <input type="hidden" name="hidden_type">
+            <input type="hidden" name="hidden_book_id">
 
             <div class="clearfix"></div>
 
             <table class="table" id="sales-details-table">
                 <thead>
                     <tr>
+                        <th>#</th>
                         <th>Value</th>
                         <th>Date</th>
                         <th></th>

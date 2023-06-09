@@ -1673,6 +1673,8 @@ Route::group([
         Route::post('/book-for-sale/{book_for_sale_id}/save-sales', 'BookForSaleController@saveSales')
         ->name('admin.book-for-sale.save-sales');
         Route::get('/book-for-sale/{book_for_sale_id}/details', 'BookForSaleController@saleDetails');
+        Route::get('/book-for-sale/{book_for_sale_id}/details', 'BookForSaleController@saleDetails');
+        Route::delete('/book-for-sale/sales-report/{sale_id}/delete', 'BookForSaleController@deleteSales');
         
         Route::resource('/book-for-sale', 'BookForSaleController', [
             'except' => ['create', 'edit'],
