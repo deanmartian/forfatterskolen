@@ -69,8 +69,11 @@
         <li @if( Request::input('tab') == 'inventory' || Request::input('tab') == '') class="active" @endif>
             <a href="?tab=inventory">Inventory</a>
         </li>
-        <li @if( Request::input('tab') == 'sales') class="active" @endif>
-            <a href="?tab=sales">Sales Report</a>
+        <li @if( Request::input('tab') == 'sales-report') class="active" @endif>
+            <a href="?tab=sales-report">Sales Report</a>
+        </li>
+        <li @if( Request::input('tab') == 'book-sales') class="active" @endif>
+            <a href="?tab=book-sales">Book Sales</a>
         </li>
     </ul>
 
@@ -78,8 +81,10 @@
         <div class="tab-pane fade in active">
             @if( Request::input('tab') == 'inventory' || Request::input('tab') == '')
                 @include('backend.book-for-sale.partials._inventory')
-            @elseif (Request::input('tab') == 'sales')
+            @elseif (Request::input('tab') == 'sales-report')
                 @include('backend.book-for-sale.partials._sales_report')
+            @elseif (Request::input('tab') == 'book-sales')
+                @include('backend.book-for-sale.partials._book_sales')
             @endif
         </div>
     </div>
@@ -179,6 +184,73 @@
     </div>
 </div> <!-- end salesReportModal -->
 
+<div id="bookSalesModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Book sales</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.learner.save-book-sales', $book->user_id) }}" 
+                    onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<input type="hidden" name="id">
+
+					<div class="form-group">
+						<label>Book</label>
+						<input type="text" class="form-control" value="{{ $book->title }}" disabled>
+                        <input type="hidden" name="book_id" value="{{ $book->id }}">
+					</div>
+
+					<div class="form-group">
+						<label>Quantity</label>
+						<input type="number" class="form-control" name="quantity" required>
+					</div>
+
+					<div class="form-group">
+						<label>Amount</label>
+						<input type="number" class="form-control" name="amount">
+					</div>
+
+					<div class="form-group">
+						<label>Date</label>
+						<input type="date" class="form-control" name="date" required>
+					</div>
+
+					<button class="btn btn-primary pull-right" type="submit">
+						{{ trans('site.save') }}
+					</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div> <!-- end bookSalesModal -->
+
+<div id="deleteModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Delete Record</h4>
+            </div>
+            <div class="modal-body">
+                <form method="POST" onsubmit="disableSubmit(this)">
+                    @csrf
+                    @method('DELETE')
+                    <p>
+                        Are you sure you want to delete this record?
+                    </p>
+
+                    <button type="submit" class="btn btn-danger pull-right">{{ trans('site.delete') }}</button>
+                    <div class="clearfix"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @stop
 
 @section('scripts')
@@ -189,6 +261,28 @@
             let type = $("[name=hidden_type]").val();
 
             fillSalesReportModalFields(type);
+        });
+
+        $(".bookSalesBtn").click(function() {
+            let modal = $("#bookSalesModal");
+            let record = $(this).data('record');
+            modal.find('[name=id]').val('');
+
+            if (record) {
+                modal.find('[name=id]').val(record.id);
+                modal.find('[name=book_id]').val(record.user_book_for_sale_id);
+                modal.find('[name=quantity]').val(record.quantity);
+                modal.find('[name=amount]').val(record.amount);
+                modal.find('[name=date]').val(record.date);
+            }
+        });
+
+        $(".deleteRecordBtn").click(function() {
+            let modal = $("#deleteModal");
+            let action = $(this).data('action');
+            let title = $(this).data('title');
+            modal.find('.modal-title').text(title);
+            modal.find('form').attr('action', action);
         });
     });
 
@@ -203,6 +297,12 @@
         if (!record) {
             getDetails(type, book_for_sale_id);
         }
+    }
+
+    function showDeleteModal(id) {
+        let modal = $("#deleteModal");
+        let action = '/book-for-sale/sales-report/' + id + "/delete";
+        modal.find("form").attr('action', action);
     }
 
     function fillSalesReportModalFields(type, record) {
@@ -254,6 +354,10 @@
                                 + book_for_sale_id + ", "+JSON.stringify(record)+")'>"
                                 + "<i class='fa fa-edit'></i>"
                             + "</button>"
+                            + "<button class='btn btn-danger btn-xs' data-toggle='modal' data-target='#deleteModal' onclick='showDeleteModal(\"" + record.id + "\")' "
+                            + "style='margin-left: 5px'>"
+                                +"<i class='fa fa-trash'></i>"
+                                +"</button>"
                         ]).draw(false);
                 });
 

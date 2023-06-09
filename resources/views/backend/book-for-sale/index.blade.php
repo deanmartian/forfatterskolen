@@ -16,6 +16,7 @@
 			<thead>
 		    	<tr>
 			        <th>Project</th>
+                    <th>Sales</th>
                     <th>Learner</th>
                     <th>ISBN</th>
                     <th>Title</th>
@@ -33,6 +34,9 @@
                                     {{ $bookForSale->project->name }}
                                 </a>
                             @endif
+                        </td>
+                        <td>
+                            {{ FrontendHelpers::currencyFormat($bookForSale->sales()->sum('amount')) }}
                         </td>
                         <td>
                             <a href="{{ route('admin.learner.show', $bookForSale->user_id) }}">

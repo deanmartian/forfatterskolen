@@ -76,6 +76,16 @@ class BookForSaleController extends Controller
         ]);
     }
 
+    public function deleteSales($storage_sales_id)
+    {
+        StorageSale::find($storage_sales_id)->delete();
+
+        return back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Sales report deleted successfully.'),
+            'alert_type'            => 'success'
+        ]);
+    }
+
     private function salesReportCounter($book_for_sale_id, $type) {
         return StorageSale::where('user_book_for_sale_id', $book_for_sale_id)
         ->where('type', $type)
