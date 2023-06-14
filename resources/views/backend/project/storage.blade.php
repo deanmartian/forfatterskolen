@@ -209,6 +209,11 @@
         toggleFields('various', 'disabled', true);
     });
 
+    $(".inventory-selector").change(function() {
+        var form = document.getElementById('inventory-form');
+        form.submit();
+    })
+
     function toggleButtons(identifier) {
 
         $("#edit" + capitalizeFirstLetter(identifier) + "Btn").toggleClass('hidden');

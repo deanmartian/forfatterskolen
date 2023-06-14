@@ -34,10 +34,12 @@ use App\Services\ProjectService;
 use App\Settings;
 use App\StorageBook;
 use App\StorageDetail;
+use App\StorageSale;
 use App\StorageVarious;
 use App\TimeRegister;
 use App\User;
 use App\UserBookForSale;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Time;
@@ -1071,14 +1073,59 @@ class ProjectController extends Controller
 
         $totalBookSold = 0;
         $totalBookSale = 0;
+        $currentYear = Carbon::now()->format('Y');
+        $years = [];
+        $quantitySoldList = [];
+        $turnedOverList = [];
 
         if ($projectUserBook) {
             $totalBookSold = $projectUserBook->sales()->sum('quantity');
             $totalBookSale = $projectUserBook->sales()->sum('amount');
+
+            $years = range($currentYear, $currentYear - 1);
         }
-        
+
+        $yearlyData = [
+            [
+                'name' => 'Quantity Sold',
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'quantity-sold') : 0
+            ],
+            [
+                'name' => 'Turned Over',
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'turned-over') : 0
+            ],
+            [
+                'name' => 'Free',
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'free') : 0
+            ],
+            [
+                'name' => 'Commission',
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'commission') : 0
+            ],
+            [
+                'name' => 'Shredded',
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'shredded') : 0
+            ],
+            [
+                'name' => 'Defective',
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'defective') : 0
+            ],
+            [
+                'name' => 'Corrections',
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'corrections') : 0
+            ],
+            [
+                'name' => 'Counts',
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'counts') : 0
+            ],
+            [
+                'name' => 'Returns',
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'returns') : 0
+            ]
+        ];
+
         return view('backend.project.storage', compact('backRoute', 'layout', 'projectId', 'project', 
-        'projectUserBook', 'userBooksForSale', 'totalBookSold', 'totalBookSale'));
+        'projectUserBook', 'userBooksForSale', 'totalBookSold', 'totalBookSale', 'years', 'yearlyData'));
     }
 
     public function saveStorageBook($projectId, Request $request)
@@ -1180,5 +1227,36 @@ class ProjectController extends Controller
         }
 
         return view('backend.project.notes', compact('project', 'backRoute', 'layout'));
+    }
+
+    private function storageSalesByType($user_book_for_sale_id, $type) {
+        return StorageSale::where('user_book_for_sale_id', $user_book_for_sale_id)
+        ->where('type', $type)
+        ->when(request()->filled('year') && request('year') != 'all', function ($query) {
+            $query->whereYear('date', request('year'));
+        })
+        ->when(request()->filled('month') && request('month') != 'all', function ($query) {
+            $query->whereMonth('date', request('month'));
+        })->sum('value');
+    }
+
+    private function storageYearSalesByType($user_book_for_sale_id, $type) {
+        $yearsData = DB::table('storage_sales')
+        ->select(DB::raw('YEAR(date) AS year'), DB::raw('SUM(value) AS sum_value'))
+        ->where('date', '>=', Carbon::now()->subYears(4))
+        ->where('user_book_for_sale_id', $user_book_for_sale_id)
+        ->where('type', $type)
+        ->groupBy('year')
+        ->pluck('sum_value', 'year')
+        ->toArray();
+
+        $years = range(Carbon::now()->subYears(4)->format('Y'), Carbon::now()->format('Y'));
+
+        // Assign a sum of 0 to years with no records
+        $yearsData = array_replace(array_fill_keys($years, 0), $yearsData);
+
+        krsort($yearsData);
+
+        return $yearsData;
     }
 }

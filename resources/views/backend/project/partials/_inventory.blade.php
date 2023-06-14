@@ -86,6 +86,60 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <form action="{{ request()->url() }}" id="inventory-form" method="GET">
+                    <input type="hidden" name="tab" value="inventory">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Year</label>
+                            <select name="year" id="inventory-year-selector" class="form-control inventory-selector">
+                                <option value="all">All</option>
+                                @foreach ($years as $year)
+                                    <option value="{{ $year }}" 
+                                    {{ request('year') == $year ? 'selected' : '' }}>
+                                        {{ $year }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Month</label>
+                            <select name="month" id="inventory-month-selector" class="form-control inventory-selector">
+                                <option value="all">All</option>
+                                @for ($month = 1; $month <= 12; $month++)
+                                    <option value="{{ $month }}"
+                                    {{ request('month') == $month ? 'selected' : '' }}>
+                                        {{ \Carbon\Carbon::createFromFormat('!m', $month)->format('F') }}
+                                    </option>
+                                @endfor
+                            </select>
+                        </div>
+                    </div>
+                </form>
+                
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td>Total</td>
+                        </tr>
+
+                        @foreach ($yearlyData as $yearly)
+                            <tr>
+                                <td>
+                                    {{ $yearly['name'] }}
+                                </td>
+                                <td>
+                                    {{ $yearly['value'] }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
