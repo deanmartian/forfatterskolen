@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use AdminHelpers;
 use App\Http\Controllers\Controller;
+use App\StorageDistributionCost;
 use App\StorageInventory;
 use App\StorageSale;
 use App\UserBookForSale;
@@ -82,6 +83,19 @@ class BookForSaleController extends Controller
 
         return back()->with([
             'errors'                => AdminHelpers::createMessageBag('Sales report deleted successfully.'),
+            'alert_type'            => 'success'
+        ]);
+    }
+
+    public function saveDistributionCost($book_for_sale_id, Request $request)
+    {
+        StorageDistributionCost::updateOrCreate([
+            'id' => $request->id,
+            'user_book_for_sale_id' => $book_for_sale_id
+        ], $request->except('id'));
+        
+        return back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Distribution Cost saved successfully.'),
             'alert_type'            => 'success'
         ]);
     }

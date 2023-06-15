@@ -75,6 +75,9 @@
         <li @if( Request::input('tab') == 'book-sales') class="active" @endif>
             <a href="?tab=book-sales">Book Sales</a>
         </li>
+        <li @if( Request::input('tab') == 'distribution') class="active" @endif>
+            <a href="?tab=distribution">Distribution</a>
+        </li>
     </ul>
 
     <div class="tab-content">
@@ -85,6 +88,8 @@
                 @include('backend.book-for-sale.partials._sales_report')
             @elseif (Request::input('tab') == 'book-sales')
                 @include('backend.book-for-sale.partials._book_sales')
+            @elseif (Request::input('tab') == 'distribution')
+                @include('backend.book-for-sale.partials._distributions')
             @endif
         </div>
     </div>
@@ -249,6 +254,50 @@
             </div>
         </div>
     </div>
+</div> <!-- end deleteModal -->
+
+<div id="distributionsModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Distribution Cost</h4>
+			</div>
+			<div class="modal-body">
+                <form method="POST" action="{{ route('admin.learner.save-distribution-cost', $book->id) }}" 
+                    onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<input type="hidden" name="id">
+
+                    <div class="form-group">
+                        <label>Nr</label>
+                        <input type="text" class="form-control" name="nr" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Service</label>
+                        <input type="text" class="form-control" name="service" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Number</label>
+                        <input type="number" class="form-control" name="number" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="number" class="form-control" name="amount" required>
+                    </div>
+
+                    <button class="btn btn-primary pull-right" type="submit">
+						{{ trans('site.save') }}
+					</button>
+
+                    <div class="clearfix"></div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 @stop
@@ -267,6 +316,10 @@
             let modal = $("#bookSalesModal");
             let record = $(this).data('record');
             modal.find('[name=id]').val('');
+            modal.find('[name=book_id]').val('');
+            modal.find('[name=quantity]').val('');
+            modal.find('[name=amount]').val('');
+            modal.find('[name=date]').val('');
 
             if (record) {
                 modal.find('[name=id]').val(record.id);

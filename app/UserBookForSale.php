@@ -49,6 +49,15 @@ class UserBookForSale extends Model
         return $this->hasOne('\App\StorageInventory');
     }
 
+    public function distributionCosts()
+    {
+        return $this->hasMany('\App\StorageDistributionCost', 'user_book_for_sale_id', 'id');
+    }
+
+    public function totalDistributionCost() {
+        return $this->distributionCosts()->sum('amount');
+    }
+
     public function getPriceFormattedAttribute()
     {
         return FrontendHelpers::currencyFormat($this->attributes['price']);
