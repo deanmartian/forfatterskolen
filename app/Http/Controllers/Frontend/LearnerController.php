@@ -800,7 +800,9 @@ class LearnerController extends Controller
                                     $assignmentGroups = AssignmentGroup::where('assignment_id', $assignment->id)->pluck('id')->toArray();
                                     $userAssignmentGroupLearner = AssignmentGroupLearner::where('user_id', Auth::user()->id)
                                         ->whereIn('assignment_group_id', $assignmentGroups)->first();
-                                    if ($assignmentFeedback || $userAssignmentGroupLearner) {
+                                    
+                                    // for assignment no group check if there's a feedback and the manuscript status is not 0
+                                    if (($assignmentFeedback && $assignmentManuscript->status > 0) || $userAssignmentGroupLearner) {
                                         $expiredAssignments[] = $assignment;
                                     } else {
                                         $waitingForResponse[] = $assignment;
