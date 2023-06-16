@@ -13,6 +13,7 @@ class UserBookForSale extends Model
         'user_id', 
         'project_id',
         'isbn', 
+        'ebook_isbn', 
         'title', 
         'description', 
         'price'

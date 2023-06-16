@@ -1704,6 +1704,7 @@
 							<tr>
 								<th>Project</th>
 								<th>ISBN</th>
+								<th>Ebook ISBN</th>
 								<th>Title</th>
 								<th>Description</th>
 								<th>Price</th>
@@ -1721,6 +1722,7 @@
 										@endif
 									</td>
 									<td>{{ $bookForSale->isbn }}</td>
+									<td>{{ $bookForSale->ebook_isbn }}</td>
 									<td>{{ $bookForSale->title }}</td>
 									<td>{{ $bookForSale->description }}</td>
 									<td>{{ $bookForSale->price_formatted }}</td>
@@ -3262,6 +3264,11 @@
 					<div class="form-group">
 						<label>ISBN</label>
 						<input type="text" class="form-control" name="isbn" required>
+					</div>
+
+					<div class="form-group">
+						<label>Ebook ISBN</label>
+						<input type="text" class="form-control" name="ebook_isbn">
 					</div>
 
 					<div class="form-group">
@@ -5057,6 +5064,7 @@ console.log(record);
         modal.find('[name=id]').val('');
 		modal.find('[name=project_id]').val('');
 		modal.find('[name=isbn]').val('');
+		modal.find('[name=ebook_isbn]').val('');
 		modal.find('[name=title]').val('');
 		modal.find('[name=description]').text('');
 		modal.find('[name=price]').val('');
@@ -5065,6 +5073,7 @@ console.log(record);
             modal.find('[name=id]').val(record.id);
 			modal.find('[name=project_id]').val(record.project_id);
             modal.find('[name=isbn]').val(record.isbn);
+            modal.find('[name=ebook_isbn]').val(record.ebook_isbn);
             modal.find('[name=title]').val(record.title);
             modal.find('[name=description]').text(record.description);
             modal.find('[name=price]').val(record.price);

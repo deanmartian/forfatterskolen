@@ -19,6 +19,7 @@
                     <th>Sales</th>
                     <th>Learner</th>
                     <th>ISBN</th>
+                    <th>Ebook ISBN</th>
                     <th>Title</th>
                     <th>Description</th>
                     <th>Price</th>
@@ -44,12 +45,13 @@
                             </a>
                         </td>
                         <td>{{ $bookForSale->isbn }}</td>
+                        <td>{{ $bookForSale->ebook_isbn }}</td>
                         <td>{{ $bookForSale->title }}</td>
                         <td>{{ $bookForSale->description }}</td>
                         <td>{{ $bookForSale->price_formatted }}</td>
                         <td>
                             <a href="{{ route('admin.book-for-sale.show', $bookForSale->id) }}" 
-                                class="btn btn-primary btn-xs">
+                                class="btn btn-info btn-xs">
                                 <i class="fa fa-eye"></i>
                             </a>
                         </td>
