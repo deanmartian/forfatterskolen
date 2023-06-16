@@ -264,7 +264,7 @@
 				<h4 class="modal-title">Distribution Cost</h4>
 			</div>
 			<div class="modal-body">
-                <form method="POST" action="{{ route('admin.learner.save-distribution-cost', $book->id) }}" 
+                <form method="POST" action="{{ route('admin.book-for-sale.save-distribution-cost', $book->id) }}" 
                     onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<input type="hidden" name="id">
@@ -336,6 +336,24 @@
             let title = $(this).data('title');
             modal.find('.modal-title').text(title);
             modal.find('form').attr('action', action);
+        });
+
+        $(".distributionsBtn").click(function() {
+            let modal = $("#distributionsModal");
+            let record = $(this).data('record');
+            modal.find('[name=id]').val('');
+            modal.find('[name=nr]').val('');
+            modal.find('[name=service]').val('');
+            modal.find('[name=number]').val('');
+            modal.find('[name=amount]').val('');
+
+            if (record) {
+                modal.find('[name=id]').val(record.id);
+                modal.find('[name=nr]').val(record.nr);
+                modal.find('[name=service]').val(record.service);
+                modal.find('[name=number]').val(record.number);
+                modal.find('[name=amount]').val(record.amount);
+            }
         });
     });
 

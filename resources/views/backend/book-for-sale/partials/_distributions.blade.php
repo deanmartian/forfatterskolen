@@ -40,7 +40,9 @@
                                     <i class="fa fa-edit"></i>
                                 </button>
 
-                                <button class="btn btn-danger btn-xs">
+                                <button class="btn btn-danger btn-xs deleteRecordBtn" data-toggle="modal"
+                                data-target="#deleteModal" 
+                                data-action="{{ route('admin.book-for-sale.delete-distribution-cost', $distributionCost->id) }}">
                                     <i class="fa fa-trash"></i>
                                 </button>
                             </td>
@@ -48,14 +50,14 @@
                     @endforeach
 
                     @if ($book->distributionCosts()->count())
-                    <tr>
-                        <td colspan="3" style="font-weight: bold">
-                            Total
-                        </td>
-                        <td colspan="2">
-                            {{ FrontendHelpers::currencyFormat($book->totalDistributionCost()) }}
-                        </td>
-                    </tr>
+                        <tr>
+                            <td colspan="3" style="font-weight: bold">
+                                Total
+                            </td>
+                            <td colspan="2">
+                                {{ FrontendHelpers::currencyFormat($book->totalDistributionCost()) }}
+                            </td>
+                        </tr>
                     @endif
                 </tbody>
             </table>

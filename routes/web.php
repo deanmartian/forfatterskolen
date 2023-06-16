@@ -1677,7 +1677,9 @@ Route::group([
         Route::get('/book-for-sale/{book_for_sale_id}/details', 'BookForSaleController@saleDetails');
         Route::delete('/book-for-sale/sales-report/{sale_id}/delete', 'BookForSaleController@deleteSales');
         Route::post('/book-for-sale/{book_for_sale_id}/save-distribution-cost', 'BookForSaleController@saveDistributionCost')
-        ->name('admin.learner.save-distribution-cost');
+        ->name('admin.book-for-sale.save-distribution-cost');
+        Route::delete('/book-for-sale/distribution-cost/{dist_id}/delete', 'BookForSaleController@deleteDistributionCost')
+        ->name('admin.book-for-sale.delete-distribution-cost');
         
         Route::resource('/book-for-sale', 'BookForSaleController', [
             'except' => ['create', 'edit'],

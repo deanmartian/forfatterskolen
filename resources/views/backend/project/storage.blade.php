@@ -104,6 +104,7 @@
                     @elseif( Request::input('tab') == 'inventory')
                         @include('backend.project.partials._inventory')
                     @elseif( Request::input('tab') == 'distribution')
+                    @include('backend.project.partials._distributions')
                     @else
                         @include('backend.project.partials._master')
                     @endif

@@ -100,6 +100,16 @@ class BookForSaleController extends Controller
         ]);
     }
 
+    public function deleteDistributionCost($distribution_cost_id)
+    {
+        StorageDistributionCost::find($distribution_cost_id)->delete();
+
+        return back()->with([
+            'errors'      => AdminHelpers::createMessageBag('Distribution cost deleted successfully.'),
+            'alert_type'  => 'success'
+        ]);
+    }
+
     private function salesReportCounter($book_for_sale_id, $type) {
         return StorageSale::where('user_book_for_sale_id', $book_for_sale_id)
         ->where('type', $type)
