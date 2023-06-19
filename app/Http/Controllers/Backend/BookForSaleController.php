@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\StorageDistributionCost;
 use App\StorageInventory;
 use App\StorageSale;
+use App\User;
 use App\UserBookForSale;
 use Illuminate\Http\Request;
 
@@ -16,8 +17,8 @@ class BookForSaleController extends Controller
     public function index()
     {
         $books = UserBookForSale::paginate(25);
-
-        return view('backend.book-for-sale.index', compact('books'));
+        $learners = User::where('role', 2)->with('projects')->get();
+        return view('backend.book-for-sale.index', compact('books', 'learners'));
     }
 
     public function show($id)

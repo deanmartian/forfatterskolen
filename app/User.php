@@ -259,6 +259,11 @@ class User extends Authenticatable
         return $this->hasMany('App\WordWrittenGoal');
     }
 
+    public function projects()
+    {
+        return $this->hasMany('App\Project');
+    }
+
     public function getProfileImageAttribute($value)
     {
         $image = substr($this->attributes['profile_image'], 1);
