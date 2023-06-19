@@ -35,7 +35,7 @@
                                             <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
                                         @endif
 
-                                        @if(!$correction->is_locked)
+                                        @if(!$correction->is_locked && $correction->status !=2)
                                             <br>
                                             <button class="btn btn-primary btn-xs uploadOtherServiceManuscriptBtn" data-toggle="modal"
                                                     data-target="#uploadOtherServiceManuscriptModal"

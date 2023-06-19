@@ -38,13 +38,14 @@
                                 <?php $extension = explode('.', basename($editing->file)); ?>
                                 <tr>
                                     <td>
+                                        {{ $editing->id }}
                                         @if( end($extension) == 'pdf' || end($extension) == 'odt' )
                                             <a href="/js/ViewerJS/#../../{{ $editing->file }}">{{ basename($editing->file) }}</a>
                                         @elseif( end($extension) == 'docx' )
                                             <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$editing->file}}">{{ basename($editing->file) }}</a>
                                         @endif
 
-                                        @if(!$editing->is_locked)
+                                        @if(!$editing->is_locked && $editing->status !=2)
                                                 <br>
                                             <button class="btn btn-primary btn-xs uploadOtherServiceManuscriptBtn" data-toggle="modal"
                                                     data-target="#uploadOtherServiceManuscriptModal"
