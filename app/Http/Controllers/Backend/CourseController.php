@@ -387,7 +387,7 @@ class CourseController extends Controller
                 $clone_email_out->attachment = $newAttachment;
                 $clone_email_out->attachment_hash = $emailAttachment->hash;
             }
-
+            $clone_email_out->allowed_package = NULL;
             $clone_email_out->course_id = $clone_course->id;
             $clone_email_out->push();
         endforeach;
