@@ -68,7 +68,11 @@
                                 <tbody>
                                 @foreach(Auth::user()->booksForSale as $bookForSale)
                                     <tr>
-                                        <td>{{ $bookForSale->title }}</td>
+                                        <td>
+                                            <a href="{{ route('learner.book-for-sale', $bookForSale->id) }}">
+                                                {{ $bookForSale->title }}
+                                            </a>
+                                        </td>
                                         <td>{{ $bookForSale->description }}</td>
                                         <td>{{ $bookForSale->price_formatted }}</td>
                                         <td>

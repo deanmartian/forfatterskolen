@@ -104,6 +104,7 @@ use App\Http\FrontendHelpers;
 use App\Jobs\UpdateFikenContactDetailsJob;
 use App\PublishingService as AppPublishingService;
 use App\SelfPublishingPortalRequest;
+use App\StorageSale;
 
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
 
@@ -1691,6 +1692,31 @@ class LearnerController extends Controller
         $bookSales = Auth::user()->bookSales;
         $learner = Auth::user();
         return view('frontend.learner.self-publishing.sales', compact('bookSales', 'learner'));
+    }
+
+    public function bookForSale($id)
+    {
+        $userBookForSaleList = Auth::user()->booksForSale()->pluck('id')->toArray();
+        
+        if (!in_array($id, $userBookForSaleList)) return redirect()->route('learner.book-sale');
+
+        $book = UserBookForSale::find($id);
+        $totalBookSold = $book->sales()->sum('quantity');
+        $totalBookSale = $book->sales()->sum('amount');
+
+        $quantitySoldCount = $this->salesReportCounter($id, 'quantity-sold');
+        $turnedOverCount = $this->salesReportCounter($id, 'turned-over');
+        $freeCount = $this->salesReportCounter($id, 'free');
+        $commissionCount = $this->salesReportCounter($id, 'commission');
+        $shreddedCount = $this->salesReportCounter($id, 'shredded');
+        $defectiveCount = $this->salesReportCounter($id, 'defective');
+        $correctionsCount = $this->salesReportCounter($id, 'corrections');
+        $countsCount = $this->salesReportCounter($id, 'counts');
+        $returnsCount = $this->salesReportCounter($id, 'returns');
+
+        return view('frontend.learner.self-publishing.book-for-sale', compact('book','totalBookSold', 'totalBookSale', 
+        'quantitySoldCount', 'turnedOverCount', 'freeCount', 'commissionCount', 'shreddedCount',
+        'defectiveCount', 'correctionsCount', 'countsCount', 'returnsCount',));
     }
 
     public function bookSaleByMonth()
@@ -4738,5 +4764,11 @@ class LearnerController extends Controller
         $user = Auth::user();
         $user['address'] = $user->address;
         return $user;
+    }
+
+    private function salesReportCounter($book_for_sale_id, $type) {
+        return StorageSale::where('user_book_for_sale_id', $book_for_sale_id)
+        ->where('type', $type)
+        ->sum('value');
     }
 }

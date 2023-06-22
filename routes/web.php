@@ -316,6 +316,7 @@ Route::group([
         Route::get('/private-message', 'LearnerController@privateMessage')->name('learner.private-message'); // Private Message Page
         Route::get('/time-register', 'LearnerController@timeRegister')->name('learner.time-register');
         Route::get('/book-sale', 'LearnerController@bookSale')->name('learner.book-sale');
+        Route::get('/book-for-sale/{id}', 'LearnerController@bookForSale')->name('learner.book-for-sale');
         Route::get('/book-sale/list-by-month', 'LearnerController@bookSaleByMonth');
         Route::post('/for-sale-books/save', 'LearnerController@saveForSaleBooks')->name('learner.save-for-sale-books');
         Route::delete('/for-sale-books/{id}/delete', 'LearnerController@deleteForSaleBooks')->name('learner.delete-for-sale-books');
