@@ -9,6 +9,7 @@ use App\StorageInventory;
 use App\StorageSale;
 use App\User;
 use App\UserBookForSale;
+use App\UserBookSale;
 use Illuminate\Http\Request;
 
 class BookForSaleController extends Controller
@@ -37,9 +38,12 @@ class BookForSaleController extends Controller
         $countsCount = $this->salesReportCounter($id, 'counts');
         $returnsCount = $this->salesReportCounter($id, 'returns');
 
+        $bookSale = new UserBookSale();
+        $bookSaleTypes = $bookSale->saleTypes();
+
         return view('backend.book-for-sale.show', compact('book', 'totalBookSold', 'totalBookSale',
             'quantitySoldCount', 'turnedOverCount', 'freeCount', 'commissionCount', 'shreddedCount',
-            'defectiveCount', 'correctionsCount', 'countsCount', 'returnsCount'));
+            'defectiveCount', 'correctionsCount', 'countsCount', 'returnsCount', 'bookSaleTypes'));
     }
 
     public function saveInventory($book_for_sale_id, Request $request) 

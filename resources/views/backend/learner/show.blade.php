@@ -1764,6 +1764,7 @@
 							<thead>
 							<tr>
 								<th>Book</th>
+								<th>Type</th>
 								<th>Quantity</th>
 								<th>Amount</th>
 								<th>Date</th>
@@ -1775,6 +1776,9 @@
 								<tr>
 									<td>
 										{{ $bookSale->book->title }}
+									</td>
+									<td>
+										{{ $bookSale->sale_type_text }}
 									</td>
 									<td>
 										{{ $bookSale->quantity }}
@@ -3311,6 +3315,20 @@
 					<div class="form-group">
 						<label>Book</label>
 						<select name="book_id" class="form-control" required></select>
+					</div>
+
+					<div class="form-group">
+						<label>Sale Type</label>
+						<select name="sale_type" class="form-control" required>
+							<option value="" disabled selected>
+								- Select Sale Type-
+							</option>
+							@foreach ($bookSaleTypes as $key => $saleType)
+								<option value="{{ $key }}">
+									{{ $saleType }}
+								</option>
+							@endforeach
+						</select>
 					</div>
 
 					<div class="form-group">
@@ -5099,6 +5117,7 @@ console.log(record);
         if (record) {
             modal.find('[name=id]').val(record.id);
             modal.find('[name=book_id]').val(record.user_book_for_sale_id);
+            modal.find('[name=sale_type]').val(record.sale_type);
             modal.find('[name=quantity]').val(record.quantity);
             modal.find('[name=amount]').val(record.amount);
             modal.find('[name=date]').val(record.date);

@@ -231,10 +231,12 @@ class LearnerController extends Controller
             ->get();
 
         $projects = Project::where('user_id', $learner->id)->get();
+        $bookSale = new UserBookSale();
+        $bookSaleTypes = $bookSale->saleTypes();
 
         return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories',
             'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList',
-            'timeRegisters', 'projects', 'certificates', 'projects'));
+            'timeRegisters', 'projects', 'certificates', 'projects', 'bookSaleTypes'));
     }
 
 

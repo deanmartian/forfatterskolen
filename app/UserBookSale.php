@@ -8,8 +8,27 @@ use Illuminate\Database\Eloquent\Model;
 class UserBookSale extends Model
 {
 
-    protected $fillable = ['user_id', 'user_book_for_sale_id', 'quantity', 'amount', 'date'];
-    protected $appends = ['amount_formatted', 'total_amount','total_amount_formatted'];
+    protected $fillable = [
+        'user_id', 
+        'user_book_for_sale_id', 
+        'sale_type',
+        'quantity', 
+        'amount', 
+        'date'
+    ];
+
+    protected $appends = [
+        'amount_formatted', 
+        'total_amount',
+        'total_amount_formatted',
+        'sale_type_text'
+    ];
+
+    protected $saleTypes = [
+        'physical' => 'Physical',
+        'ebook' => 'Ebook',
+        'sound_book' => 'Sound Book',
+    ];
 
     public function user()
     {
@@ -19,6 +38,11 @@ class UserBookSale extends Model
     public function book()
     {
         return $this->belongsTo('\App\UserBookForSale', 'user_book_for_sale_id', 'id');
+    }
+
+    public function saleTypes()
+    {
+        return $this->saleTypes;
     }
 
     public function getAmountFormattedAttribute()
@@ -36,6 +60,11 @@ class UserBookSale extends Model
     public function getTotalAmountFormattedAttribute()
     {
         return FrontendHelpers::currencyFormat($this->getAttributeValue('total_amount'));
+    }
+
+    public function getSaleTypeTextAttribute()
+    {
+        return $this->saleTypes[$this->attributes['sale_type']];
     }
 
 }

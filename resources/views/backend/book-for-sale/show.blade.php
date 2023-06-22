@@ -208,6 +208,20 @@
                         <input type="hidden" name="book_id" value="{{ $book->id }}">
 					</div>
 
+                    <div class="form-group">
+						<label>Sale Type</label>
+						<select name="sale_type" class="form-control" required>
+							<option value="" disabled selected>
+								- Select Sale Type-
+							</option>
+							@foreach ($bookSaleTypes as $key => $saleType)
+								<option value="{{ $key }}">
+									{{ $saleType }}
+								</option>
+							@endforeach
+						</select>
+					</div>
+
 					<div class="form-group">
 						<label>Quantity</label>
 						<input type="number" class="form-control" name="quantity" required>
@@ -305,6 +319,8 @@
 @section('scripts')
 <script>
 
+    let book_id = "{{ $book->id }}";
+
     $(document).ready(function(){
         $(".salesReportBtn").click(function() {
             let type = $("[name=hidden_type]").val();
@@ -316,7 +332,8 @@
             let modal = $("#bookSalesModal");
             let record = $(this).data('record');
             modal.find('[name=id]').val('');
-            modal.find('[name=book_id]').val('');
+            modal.find('[name=book_id]').val(book_id);
+            modal.find('[name=sale_type]').val('');
             modal.find('[name=quantity]').val('');
             modal.find('[name=amount]').val('');
             modal.find('[name=date]').val('');
@@ -324,6 +341,7 @@
             if (record) {
                 modal.find('[name=id]').val(record.id);
                 modal.find('[name=book_id]').val(record.user_book_for_sale_id);
+                modal.find('[name=sale_type]').val(record.sale_type);
                 modal.find('[name=quantity]').val(record.quantity);
                 modal.find('[name=amount]').val(record.amount);
                 modal.find('[name=date]').val(record.date);

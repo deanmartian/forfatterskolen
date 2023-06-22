@@ -16,6 +16,7 @@
                     <thead>
                     <tr>
                         <th>Book</th>
+                        <th>Type</th>
                         <th>Quantity</th>
                         <th>Amount</th>
                         <th>Date</th>
@@ -27,6 +28,9 @@
                             <tr>
                                 <td>
                                     {{ $bookSale->book->title }}
+                                </td>
+                                <td>
+                                    {{ $bookSale->sale_type_text }}
                                 </td>
                                 <td>
                                     {{ $bookSale->quantity }}
