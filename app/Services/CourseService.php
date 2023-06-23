@@ -13,6 +13,7 @@ use App\Http\AdminHelpers;
 use App\Http\FikenInvoice;
 use App\Http\FrontendHelpers;
 use App\Jobs\AddMailToQueueJob;
+use App\Jobs\AddToListJob;
 use App\Jobs\CourseOrderJob;
 use Illuminate\Support\Facades\Log;
 use App\Order;
@@ -381,7 +382,7 @@ class CourseService {
      */
     public function addCourseToLearner( $user_id, $package_id, $start_course = false )
     {
-
+        Log::info("inside addCourseToLearner user = " . $user_id . ", package_id = " . $package_id);
         $course_status = 1;
         $package = Package::find($package_id);
         $course = $package->course;
@@ -444,6 +445,7 @@ class CourseService {
 
         // add user to automation
         if ($add_to_automation > 0) {
+            Log::info("inside addCourseToLearner add_to_automation.");
             $user_email = $user->email;
             $automation_id = 73;
             $user_name = $user->first_name;
@@ -453,6 +455,7 @@ class CourseService {
 
         // check if the course has activecampaign list then add the user
         if ($package->course->auto_list_id > 0) {
+            Log::info("inside addCourseToLearner checking of auto_list_id.");
             $list_id = $package->course->auto_list_id;
             $listData = [
                 'email' => $user->email,
@@ -463,6 +466,18 @@ class CourseService {
             event( new AddToCampaignList($list_id, $listData));
         }
 
+        /* use this instead of the AddToCampaignList if zagomail would be used
+        if ($package->course->auto_list_id) {
+            $list_id = $package->course->auto_list_id;
+            $listData = [
+                'email' => $user->email,
+                'fname' => $user->first_name,
+                'lname' => $user->last_name
+            ];
+
+            dispatch(new AddToListJob($list_id, $listData));
+        } */
+        Log::info("inside addCourseToLearner after all of the saving.");
         return $courseTaken;
 
     }

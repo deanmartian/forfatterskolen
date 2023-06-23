@@ -1910,7 +1910,7 @@ class ShopController extends Controller
             $order_id = $request->get('svea_ord');
             $order = Order::find($order_id);
 
-            Log::info('inside has SVEA order');
+            Log::info('inside has SVEA order ' . $order_id);
             SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
 
             // add course to user
