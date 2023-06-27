@@ -21,6 +21,7 @@ class PublishingServiceController extends Controller
     public function show($id)
     {
         $service = PublishingService::findOrFail($id);
+        abort(404);
         return view('frontend.publising-service.checkout', compact('service'));
     }
 
@@ -163,6 +164,12 @@ class PublishingServiceController extends Controller
                 ]);
             }
         }
+    }
+
+    public function serviceCalculator()
+    {
+        $serviceList = PublishingService::where('is_active', 1)->orderBy('service_type', 'ASC')->get();
+        return view('frontend.publising-service.service-calculator', compact('serviceList'));
     }
 
 }

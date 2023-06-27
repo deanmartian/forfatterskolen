@@ -33,7 +33,8 @@ import 'vue-select/dist/vue-select.css';
 import VueQuillEditor from 'vue-quill-editor'
 import VuePaginate from 'vue-paginate';
 import VueSlider from 'vue-slider-component'
-import 'vue-slider-component/theme/default.css'
+import 'vue-slider-component/theme/default.css';
+import PrettyCheckbox from 'pretty-checkbox-vue';
 
 import 'quill/dist/quill.core.css' // import styles
 import 'quill/dist/quill.snow.css' // for snow theme
@@ -43,8 +44,9 @@ Vue.use(vueDebounce);
 Vue.use(Vue2Filters);
 Vue.use(BootstrapVue);
 Vue.use(ToggleButton);
-Vue.use(VueMoment)
-Vue.use(VuePaginate)
+Vue.use(VueMoment);
+Vue.use(VuePaginate);
+Vue.use(PrettyCheckbox);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -57,6 +59,7 @@ Vue.component('example', require('./components/Example.vue'));
 Vue.component('take-survey', require('./components/TakeSurvey.vue'));
 Vue.component('svea-checkout', require('./frontend/course/svea-checkout.vue'));
 Vue.component('publishing-service-checkout', require('./frontend/publishing-service/checkout.vue'));
+Vue.component('service-calculator', require('./frontend/publishing-service/service-calculator.vue'));
 Vue.component('course-checkout', require('./frontend/course/checkout.vue'));
 Vue.component('gift-course-checkout', require('./frontend/gift/course-checkout.vue'));
 Vue.component('gift-shop-manuscript-checkout', require('./frontend/gift/shop-manuscript-checkout.vue'));
@@ -72,7 +75,7 @@ Vue.component('project-details', require('./backend/project/details.vue'));
 Vue.component('project-notes', require('./backend/project/notes.vue'));
 Vue.component('publishing-services', require('./backend/publishing-package/services.vue'));
 Vue.component('assemble-book', require('./backend/assemble-books/list.vue'));
-Vue.component('service-calculator', require('./frontend/services/calculator.vue'));
+Vue.component('service-order-calculator', require('./frontend/services/calculator.vue'));
 Vue.component('chat', require('./frontend/chat/index.vue'));
 Vue.component('v-select', vSelect);
 Vue.use(VueQuillEditor);
