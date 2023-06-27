@@ -123,6 +123,7 @@ Route::group([
         Route::get('/contract/{code}/download', 'HomeController@contractDownload')->name('front.contract.download');
         Route::post('/contract/{code}/sign', 'HomeController@contractSign')->name('front.contract.sign');
 
+
         Route::group([
             'prefix' => 'shop-manuscript'
         ], function() {
@@ -224,6 +225,7 @@ Route::group([
         Route::group([
             'prefix' => 'publishing-service'
         ], function(){
+            Route::get('/calculator', 'PublishingServiceController@serviceCalculator')->name('front.service-calculator');
             Route::get('/thank-you', 'PublishingServiceController@thankyou')->name('publishing-service.thank-you');
             Route::get('/{id}', 'PublishingServiceController@show');
             Route::post('/checkout/validate-form', 'PublishingServiceController@validateForm');
@@ -1065,6 +1067,7 @@ Route::group([
                 'destroy' => 'admin.webinar.destroy',
             ],
         ]);
+        Route::post('webinar/{id}/delete', 'WebinarController@destroy')->name('admin.webinar.delete');
         Route::put('webinar/{id}/make-replay', 'WebinarController@makeReplay')->name('admin.webinar.make-replay');
         Route::post('webinar/{id}/set-schedule', 'WebinarController@setSchedule')->name('admin.webinar.schedule');
         Route::post('webinar/{id}/update-field', 'WebinarController@updateField')->name('admin.webinar.update-field');

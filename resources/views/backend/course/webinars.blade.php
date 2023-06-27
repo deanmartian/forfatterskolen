@@ -81,7 +81,7 @@
 											<a class="btn btn-xs btn-danger deleteWebinarBtn"
 											   data-toggle="modal"
 											   data-target="#deleteWebinarModal"
-											   data-action="{{ route('admin.webinar.destroy', $webinar->id) }}"
+											   data-action="{{ route('admin.webinar.delete', $webinar->id) }}"
 											   data-title="{{ $webinar->title }}"
 											><i class="fa fa-trash"></i></a>
 											<a class="btn btn-xs btn-warning hideWebinarBtn"
@@ -560,9 +560,8 @@
         <h4 class="modal-title">{{ trans('site.delete-webinar') }} <em></em></h4>
       </div>
       <div class="modal-body">
-        <form method="POST" action="" enctype="multipart/form-data">
+        <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
           {{ csrf_field() }}
-          {{ method_field('DELETE') }}
           <p>{{ trans('site.delete-webinar-question') }}</p>
           <div class="text-right">
           	<button type="submit" class="btn btn-danger">{{ trans('site.delete-webinar') }}</button>
