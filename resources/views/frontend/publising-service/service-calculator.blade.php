@@ -14,6 +14,13 @@
     .navbar {
         background-color: #f8f8f8;
     }
+
+    @media (min-width: 768px) {
+        .navbar-light .navbar-brand {
+            left: 50%;
+        }
+    }
+        
     /* .coaching-timer-page::before {
         position: relative;
     } */
