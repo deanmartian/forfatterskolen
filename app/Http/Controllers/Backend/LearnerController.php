@@ -1043,7 +1043,8 @@ class LearnerController extends Controller
             ]);
         }
 
-        $learner->forceDelete();
+        //$learner->forceDelete();
+        $learner->delete();
         return redirect(route('admin.learner.index'));
     }
 
