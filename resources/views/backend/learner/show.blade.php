@@ -3651,7 +3651,8 @@
 					<p>
 						{{--{!! trans('site.delete-from-webinar-pakke-question') !!}--}}
 					</p>
-					<button class="btn btn-danger pull-right" id="submitDeleteFromCourse">{{ trans('site.delete') }}</button>
+					<button class="btn btn-danger pull-right" 
+					onclick="checkFormAction(this)" type="button">{{ trans('site.delete') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -4952,11 +4953,11 @@
             $("#renewCourseModal").find('form').attr('action', action);
         });
 
-        $("#submitDeleteFromCourse").click(function(e){
+        /* $("#submitDeleteFromCourse").click(function(e){
             e.preventDefault();
             $(this).attr('disabled','disabled');
             $("#deleteFromCourseModal").find('form').submit();
-		});
+		}); */
 
         $(".setApprovedDateBtn").click(function(){
             let course_taken_id = $(this).data('course_taken_id');
