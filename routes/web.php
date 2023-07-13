@@ -122,6 +122,7 @@ Route::group([
         Route::get('/contract/{code}', 'HomeController@contract')->name('front.contract-view');
         Route::get('/contract/{code}/download', 'HomeController@contractDownload')->name('front.contract.download');
         Route::post('/contract/{code}/sign', 'HomeController@contractSign')->name('front.contract.sign');
+        Route::get('/generate-image', 'HomeController@generateImage');
 
 
         Route::group([
@@ -1100,6 +1101,12 @@ Route::group([
                 'index' => 'admin.assignment.index',
             ],
         ]);
+
+        Route::get('/course/{course_id}/assignment/{assignment_id}/list-manuscripts-without-editor', 
+        'AssignmentController@listManuscriptsWithoutEditor');
+        Route::post('/course/{course_id}/assignment/{assignment_id}/assign-editor-to-manuscripts', 
+        'AssignmentController@assignEditorToManuscripts')->name('admin.assignment.assign-editor-to-manuscripts');
+
         Route::resource('course/{course_id}/assignment', 'AssignmentController', [
             'except' => ['index', 'create', 'edit'],
             'names' => [

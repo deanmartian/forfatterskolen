@@ -34,8 +34,14 @@
 			</p>
 			
 			<div class="table-responsive">
-				<button type="button" class="pull-right btn btn-primary btn-sm margin-bottom" data-toggle="modal" data-target="#addManuscriptModal">{{ trans('site.add-manuscript') }}</button>
-				<a type="button" class="pull-right btn btn-warning btn-sm margin-bottom margin-right-5" data-toggle="modal" data-target="#addAssignmentToLearnerModal">
+				<button type="button" class="pull-right btn btn-success btn-sm margin-bottom assignMultipleManuscriptsBtn"
+				data-toggle="modal" data-target="#assignMultipleManuscriptsModal">
+					Assign Multiple Manuscripts
+				</button>
+				<button type="button" class="pull-right btn btn-primary btn-sm margin-bottom margin-right-5" data-toggle="modal"
+				 data-target="#addManuscriptModal">{{ trans('site.add-manuscript') }}</button>
+				<a type="button" class="pull-right btn btn-warning btn-sm margin-bottom margin-right-5" data-toggle="modal"
+				 data-target="#addAssignmentToLearnerModal">
 					Add-on for Learner
 				</a>
 				<a href="{{ route('assignment.export-all-learners-include-add-on-learners', $assignment->id) }}" class="pull-right btn btn-secondary btn-sm margin-bottom margin-right-5"
@@ -416,6 +422,44 @@
 		</div>
 	</div>
 	<div class="clearfix"></div>
+</div>
+
+<div id="assignMultipleManuscriptsModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal">&times;</button>
+		    <h4 class="modal-title">
+				Assign Multiple Manuscripts
+			</h4>
+		  </div>
+		  <div class="modal-body">
+		    <form method="POST" action="{{ route('admin.assignment.assign-editor-to-manuscripts', [$course->id, $assignment->id]) }}"
+				onsubmit="disableSubmit(this)">
+		      	{{ csrf_field() }}
+				
+				<div class="form-group">
+					<label>{{ trans_choice('site.editors', 1) }}</label>
+					<select class="form-control select2" name="editor_id" required>
+						<option value="" disabled selected>- Select Editor -</option>
+						@foreach( $editors as $editor )
+							<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
+						@endforeach
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label>{{ trans_choice('site.learners', 1) }}</label>
+					<select class="form-control select2 leaner-list" name="learner_id[]" multiple required>
+					</select>
+				</div>
+
+		      	<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
+		      	<div class="clearfix"></div>
+		    </form>
+		  </div>
+		</div>
+	</div>
 </div>
 
 <div id="addManuscriptModal" class="modal fade" role="dialog">
@@ -1150,6 +1194,28 @@
             }
         });
     });
+
+	$(".assignMultipleManuscriptsBtn").click(function(){
+		let url = "{{ request()->url() }}/list-manuscripts-without-editor";
+		
+		$.ajax({
+            type:'GET',
+            url: url,
+            headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            success: function(data){
+				let modal = $("#assignMultipleManuscriptsModal");
+				let select = modal.find(".leaner-list");
+				let options = "";
+
+				select.empty();
+				$.each(data, function(k, v) {
+					options += "<option value=" + v.user_id + ">" + v.user.full_name + "</option>";
+				});
+
+				select.append(options);
+            }
+        });
+	});
 
     $('.updateTypeBtn').click(function(){
         var form = $('#updateTypeModal form');

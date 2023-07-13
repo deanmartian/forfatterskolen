@@ -81,6 +81,39 @@ class AssignmentController extends Controller
     	return abort('404');
     }
 
+    public function listManuscriptsWithoutEditor($course_id, $assignment_id)
+    {
+        $course = Course::findOrFail($course_id);
+    	$assignment = Assignment::findOrFail($assignment_id);
+
+        if( $assignment->course->id == $course->id ) {
+            $manuscripts = AssignmentManuscript::with('user')->where('assignment_id', $assignment_id)
+                ->where('editor_id', 0)->get();
+
+            return response()->json($manuscripts);
+        }
+
+        return abort('404');
+    }
+
+    public function assignEditorToManuscripts($course_id, $assignment_id, Request $request)
+    {
+        foreach($request->learner_id as $learner_id) {
+            $manuscript = AssignmentManuscript::where('user_id', $learner_id)
+            ->where('assignment_id', $assignment_id)->first();
+
+            if ($manuscript) {
+                $manuscript->editor_id = $request->editor_id;
+                $manuscript->save();
+            }
+        }
+        
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Editor assigned to manuscripts successfully.'),
+            'alert_type' => 'success'
+        ]);
+    }
+
 
     public function setGrade($id, Request $request)
     {
