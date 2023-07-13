@@ -78,7 +78,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						@foreach( $assignment->manuscripts as $manuscript )
+						@foreach( $assignmentManuscripts as $manuscript )
 						<?php $extension = explode('.', basename($manuscript->filename)); ?>
 						<tr>
 							<td>

@@ -75,8 +75,12 @@ class AssignmentController extends Controller
 
     	$section = 'assignments';
     	if( $assignment->course->id == $course->id ) :
+            $assignmentManuscripts = $assignment->manuscripts()
+                ->orderByRaw("editor_id = 0 DESC")
+                ->orderByRaw("editor_expected_finish IS NULL, editor_expected_finish ASC")
+                ->get();
     		return view('backend.assignment.show', compact('course','editors','assignment', 'section',
-                'assignments'));
+                'assignments', 'assignmentManuscripts'));
     	endif;
     	return abort('404');
     }
