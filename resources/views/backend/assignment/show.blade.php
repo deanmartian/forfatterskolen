@@ -454,6 +454,11 @@
 					</select>
 				</div>
 
+				<div class="form-group">
+					<label>Editor Expected Finish</label>
+					<input type="date" name="editor_expected_finish" class="form-control">
+				</div>
+
 		      	<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
 		      	<div class="clearfix"></div>
 		    </form>

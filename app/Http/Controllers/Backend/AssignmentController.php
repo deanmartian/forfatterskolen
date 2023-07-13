@@ -71,7 +71,7 @@ class AssignmentController extends Controller
     	$course = Course::findOrFail($course_id);
     	$assignment = Assignment::findOrFail($id);
     	$assignments = Assignment::where('id', '!=', $id)->get();
-        $editors = \App\User::whereIn('role', array(1,3))->get();
+        $editors = \App\User::whereIn('role', array(1,3))->where('is_active', 1)->get();
 
     	$section = 'assignments';
     	if( $assignment->course->id == $course->id ) :
@@ -108,6 +108,7 @@ class AssignmentController extends Controller
 
             if ($manuscript) {
                 $manuscript->editor_id = $request->editor_id;
+                $manuscript->editor_expected_finish = $request->editor_expected_finish;
                 $manuscript->save();
             }
         }
