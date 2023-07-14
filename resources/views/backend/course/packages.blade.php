@@ -330,7 +330,8 @@
         <h4 class="modal-title">{{ trans('site.add-package-to') }} {{$course->title}}</h4>
       </div>
       <div class="modal-body">
-      	<form method="POST" action="{{route('admin.course.package.store', ['course_id' => $course->id])}}">
+      	<form method="POST" action="{{route('admin.course.package.store', ['course_id' => $course->id])}}" 
+          onsubmit="disableSubmit(this)">
       		{{csrf_field()}}
           <input type="hidden" name="variation_id">
           <div class="row">
@@ -446,7 +447,7 @@
                   <h4>3 {{ trans('site.months') }} {{ trans('site.payment-price') }}</h4>
                   <div class="form-group">
                     <label>{{ trans('site.price') }}</label>
-                    <input type="number" step="0.01" name="months_3_price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
+                    <input type="number" step="0.01" name="months_3_price" placeholder="{{ trans('site.price') }}" min="0" class="form-control">
                   </div>
                     <div class="form-group">
                         <label>{{ trans('site.sale-price') }}</label>
@@ -464,11 +465,11 @@
                     </div>
                   <div class="form-group">
                     <label>Fiken Product ID</label>
-                    <input type="text" name="months_3_product" placeholder="Fiken Product ID" required class="form-control">
+                    <input type="text" name="months_3_product" placeholder="Fiken Product ID" class="form-control">
                   </div>
                   <div class="form-group">
                     <label>{{ trans('site.due-date-in-days') }}</label>
-                    <input type="number" name="months_3_due_date" placeholder="{{ trans('site.due-date') }}" min="0" required class="form-control">
+                    <input type="number" name="months_3_due_date" placeholder="{{ trans('site.due-date') }}" min="0" class="form-control">
                   </div>
                   <div class="form-group upgrade-price-container">
                     <label>Upgrade Price <span class="label-basic"></span></label>
@@ -482,14 +483,14 @@
                     <label>{{ trans('site.display-plan') }}</label> <br>
                     <input type="checkbox" data-toggle="toggle" data-on="Yes"
                            class="for-sale-toggle" data-off="No"
-                           name="months_3_enable" data-width="84" checked>
+                           name="months_3_enable" data-width="84">
                   </div>
                 </div>
                 <div id="6months" class="tab-pane fade">
                   <h4>6 {{ trans('site.months') }} {{ trans('site.payment-price') }}</h4>
                   <div class="form-group">
                     <label>{{ trans('site.price') }}</label>
-                    <input type="number" step="0.01" name="months_6_price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
+                    <input type="number" step="0.01" name="months_6_price" placeholder="{{ trans('site.price') }}" min="0" class="form-control">
                   </div>
                     <div class="form-group">
                         <label>{{ trans('site.sale-price') }}</label>
@@ -507,11 +508,11 @@
                     </div>
                   <div class="form-group">
                     <label>Fiken Product ID</label>
-                    <input type="text" name="months_6_product" placeholder="Fiken Product ID" required class="form-control">
+                    <input type="text" name="months_6_product" placeholder="Fiken Product ID" class="form-control">
                   </div>
                   <div class="form-group">
                     <label>{{ trans('site.due-date-in-days') }}</label>
-                    <input type="number" name="months_6_due_date" placeholder="{{ trans('site.due-date') }}" min="0" required class="form-control">
+                    <input type="number" name="months_6_due_date" placeholder="{{ trans('site.due-date') }}" min="0" class="form-control">
                   </div>
                   <div class="form-group upgrade-price-container">
                     <label>Upgrade Price <span class="label-basic"></span></label>
@@ -525,14 +526,14 @@
                     <label>{{ trans('site.display-plan') }}</label> <br>
                     <input type="checkbox" data-toggle="toggle" data-on="Yes"
                            class="for-sale-toggle" data-off="No"
-                           name="months_6_enable" data-width="84" checked>
+                           name="months_6_enable" data-width="84">
                   </div>
                 </div>
                 <div id="12months" class="tab-pane fade">
                   <h4>12 {{ trans('site.months') }} {{ trans('site.payment-price') }}</h4>
                   <div class="form-group">
                     <label>{{ trans('site.price') }}</label>
-                    <input type="number" step="0.01" name="months_12_price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
+                    <input type="number" step="0.01" name="months_12_price" placeholder="{{ trans('site.price') }}" min="0" class="form-control">
                   </div>
                   <div class="form-group">
                     <label>{{ trans('site.sale-price') }}</label>
@@ -550,11 +551,11 @@
                   </div>
                   <div class="form-group">
                     <label>Fiken Product ID</label>
-                    <input type="text" name="months_12_product" placeholder="Fiken Product ID" required class="form-control">
+                    <input type="text" name="months_12_product" placeholder="Fiken Product ID" class="form-control">
                   </div>
                   <div class="form-group">
                     <label>{{ trans('site.due-date-in-days') }}</label>
-                    <input type="number" name="months_12_due_date" placeholder="{{ trans('site.due-date') }}" min="0" required class="form-control">
+                    <input type="number" name="months_12_due_date" placeholder="{{ trans('site.due-date') }}" min="0" class="form-control">
                   </div>
                   <div class="form-group upgrade-price-container">
                     <label>Upgrade Price <span class="label-basic"></span></label>
@@ -568,7 +569,7 @@
                     <label>{{ trans('site.display-plan') }}</label> <br>
                     <input type="checkbox" data-toggle="toggle" data-on="Yes"
                            class="for-sale-toggle" data-off="No"
-                           name="months_12_enable" data-width="84" checked>
+                           name="months_12_enable" data-width="84">
                   </div>
                 </div>
               </div>
