@@ -648,7 +648,7 @@
         <h4 class="modal-title">{{ trans('site.edit-package') }} <span></span></h4>
       </div>
       <div class="modal-body">
-      	<form method="POST" action="">
+      	<form method="POST" action="" onsubmit="disableSubmit(this)">
       		{{csrf_field()}}
       		{{ method_field('PUT') }}
       		<input type="hidden" name="variation_id">
@@ -778,7 +778,7 @@
                   <h4>3 {{ trans('site.months') }} {{ trans('site.payment-price') }}</h4>
                   <div class="form-group">
                     <label>{{ trans('site.price') }}</label>
-                    <input type="number" step="0.01" name="months_3_price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
+                    <input type="number" step="0.01" name="months_3_price" placeholder="{{ trans('site.price') }}" min="0" class="form-control">
                   </div>
                   <div class="form-group">
                     <label>{{ trans('site.sale-price') }}</label>
@@ -796,11 +796,11 @@
                   </div>
                   <div class="form-group">
                     <label>Fiken Product ID</label>
-                    <input type="text" name="months_3_product" placeholder="Fiken Product ID" required class="form-control">
+                    <input type="text" name="months_3_product" placeholder="Fiken Product ID" class="form-control">
                   </div>
                   <div class="form-group">
                     <label>{{ trans('site.due-date-in-days') }}</label>
-                    <input type="number" name="months_3_due_date" placeholder="{{ trans('site.due-date') }}" min="0" required class="form-control">
+                    <input type="number" name="months_3_due_date" placeholder="{{ trans('site.due-date') }}" min="0" class="form-control">
                   </div>
                   <div class="form-group upgrade-price-container">
                     <label>Upgrade Price <span class="label-basic"></span></label>
@@ -821,7 +821,7 @@
                   <h4>6 {{ trans('site.months') }} {{ trans('site.payment-price') }}</h4>
                   <div class="form-group">
                     <label>{{ trans('site.price') }}</label>
-                    <input type="number" step="0.01" name="months_6_price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
+                    <input type="number" step="0.01" name="months_6_price" placeholder="{{ trans('site.price') }}" min="0" class="form-control">
                   </div>
                   <div class="form-group">
                     <label>{{ trans('site.sale-price') }}</label>
@@ -839,11 +839,11 @@
                   </div>
                   <div class="form-group">
                     <label>Fiken Product ID</label>
-                    <input type="text" name="months_6_product" placeholder="Fiken Product ID" required class="form-control">
+                    <input type="text" name="months_6_product" placeholder="Fiken Product ID" class="form-control">
                   </div>
                   <div class="form-group">
                     <label>{{ trans('site.due-date-in-days') }}</label>
-                    <input type="number" name="months_6_due_date" placeholder="{{ trans('site.due-date') }}" min="0" required class="form-control">
+                    <input type="number" name="months_6_due_date" placeholder="{{ trans('site.due-date') }}" min="0" class="form-control">
                   </div>
                   <div class="form-group upgrade-price-container">
                     <label>Upgrade Price <span class="label-basic"></span></label>
@@ -864,7 +864,7 @@
                   <h4>12 {{ trans('site.months') }} {{ trans('site.payment-price') }}</h4>
                   <div class="form-group">
                     <label>{{ trans('site.price') }}</label>
-                    <input type="number" step="0.01" name="months_12_price" placeholder="{{ trans('site.price') }}" min="0" required class="form-control">
+                    <input type="number" step="0.01" name="months_12_price" placeholder="{{ trans('site.price') }}" min="0" class="form-control">
                   </div>
                   <div class="form-group">
                     <label>{{ trans('site.sale-price') }}</label>
@@ -882,11 +882,11 @@
                   </div>
                   <div class="form-group">
                     <label>Fiken Product ID</label>
-                    <input type="text" name="months_12_product" placeholder="Fiken Product ID" required class="form-control">
+                    <input type="text" name="months_12_product" placeholder="Fiken Product ID" class="form-control">
                   </div>
                   <div class="form-group">
                     <label>{{ trans('site.due-date-in-days') }}</label>
-                    <input type="number" name="months_12_due_date" placeholder="{{ trans('site.due-date') }}" min="0" required class="form-control">
+                    <input type="number" name="months_12_due_date" placeholder="{{ trans('site.due-date') }}" min="0" class="form-control">
                   </div>
                   <div class="form-group upgrade-price-container">
                     <label>Upgrade Price <span class="label-basic"></span></label>
