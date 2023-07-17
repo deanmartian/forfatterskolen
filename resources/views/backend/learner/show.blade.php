@@ -528,7 +528,11 @@
 						<tbody>
 						@foreach($learnerSelfPublishingList as $selfPublishing)
 							<tr>
-								<td>{{ $selfPublishing->selfPublishing->title }}</td>
+								<td>
+									<a href="{{ route('admin.self-publishing.index') }}">
+										{{ $selfPublishing->selfPublishing->title }}
+									</a>
+								</td>
 								<td>
 									<button class="btn btn-danger btn-xs deleteSelfPublishingBtn" data-toggle="modal"
 											data-target="#deleteSelfPublishingModal"
