@@ -114,7 +114,7 @@
         <div class="card card-global">
             <div class="card-body" style="padding: 50px">
                 <h1 class="title text-center">
-                    Service Calculator
+                    {{ trans('site.publishing-service-calculator.title') }}
                 </h1>
                 
                 <service-calculator :service-list="{{ json_encode($serviceList) }}"></service-calculator>

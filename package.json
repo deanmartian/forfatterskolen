@@ -23,6 +23,7 @@
     "@tinymce/tinymce-vue": "^3.2.8",
     "autoprefixer": "^9.8.6",
     "bootstrap-vue": "^2.21.2",
+    "pretty-checkbox-vue": "^1.1.9",
     "sw-precache-webpack-plugin": "^0.11.5",
     "sweetalert2": "^11.4.17",
     "vue-debounce": "^2.6.0",

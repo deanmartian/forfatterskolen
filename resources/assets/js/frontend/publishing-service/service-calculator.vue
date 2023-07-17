@@ -2,11 +2,13 @@
     <div class="package-content">
         <div id="basic-service">
             <h2 class="text-center" style="margin-top: 20px; margin-bottom: 20px;">
-                HV OR MYE KOSTER REDAKØRTJENESTENE FOR DIN BOK?
+                {{ trans('site.publishing-service-calculator.sub-title') }}
             </h2>
 
             <div class="form-group">
-                <h2>Hvor langt er manuset ditt?</h2>
+                <h2>
+                    {{ trans('site.publishing-service-calculator.script-length') }}
+                </h2>
                 <vue-slider v-model="order.word_count"
                             ref="wordCountSlider"
                             :min="10000"
@@ -23,7 +25,7 @@
 
                 <div class="character-words">
                     <span>
-                        Ord:
+                        {{ trans('site.learner.words-text') }}:
                     </span>
                     <span>
                         <input type="text" name="words" v-model="order.word_count">
@@ -32,7 +34,7 @@
             </div> <!-- end form-group -->
 
             <h2>
-                Du kan også laste opp boken din så regner kalkulatoren hva prisen blir.
+                {{ trans('site.publishing-service-calculator.upload-your-book') }}
             </h2><br>
             <div class="input-group package-select-file">
                 <div class="custom-file">
@@ -42,7 +44,7 @@
             </div>
 
             <h2 class="services-included">
-                Services Included
+                {{ trans('site.publishing-service-calculator.services-included') }}
             </h2><br>
             <div class="row">
                 <div class="col-md-4" v-for="(service, index) in activeServicesComputed" :key="index">
@@ -61,13 +63,17 @@
         </div> <!-- end basic-service -->
 
         <hr>
-        <div class="total"><span>Total</span></div>
+        <div class="total">
+            <span>
+                {{ trans('site.total') }}
+            </span>
+        </div>
         <div class="character-words">
-            <span>Words: </span>
+            <span>{{ trans('site.learner.words-text') }}: </span>
             <span>{{ Math.round(order.word_count).toLocaleString() }}</span>
         </div>
         <div class="price-">
-            <span>Pris (kr): </span>
+            <span>{{ trans('site.front.price') }}: </span>
             <span>{{ Number(total).toFixed(2).toLocaleString() }} {{ trans('site.publishing.price-unit') }}</span>
         </div>
     </div>
