@@ -20,6 +20,16 @@
             Orders
         </a>
 
+        <div class="form-group margin-top" style="width: 100px">
+            <label>Filter</label>
+            <select name="filter" class="form-control" v-model="filter">
+                <option value="">All</option>
+                <option value="active">Active</option>
+                <option value="lead">Lead</option>
+                <option value="finished">Finished</option>
+            </select>
+        </div>
+
         <div class="table-users">
             <table class="table table-responsive">
                 <thead>
@@ -33,7 +43,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="project in projectList" :key="project.id">
+                <tr v-for="project in filteredProjects" :key="project.id">
                     <td>
                         {{ project.identifier}}
                     </td>
@@ -306,7 +316,17 @@
                 isLoading: false,
                 isActivityLoading: false,
                 isDeleting: false,
+                filter: 'active'
             }
+        },
+
+        computed: {
+            
+            filteredProjects() {
+                return this.projects.filter(project => {
+                    return !this.filter || (project.status && project.status.toLowerCase().indexOf(this.filter) > -1);
+                });
+            } 
         },
 
         methods: {
