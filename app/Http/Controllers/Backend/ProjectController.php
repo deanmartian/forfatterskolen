@@ -50,7 +50,7 @@ class ProjectController extends Controller
 
     public function index()
     {
-        $learners =  User::where('role', 2)->where('is_self_publishing_learner', 1)->get();
+        $learners =  User::where('role', 2)->get(); //->where('is_self_publishing_learner', 1)
         $activities = ProjectActivity::all();
         $projects = Project::orderByRaw("CASE WHEN status='active' THEN 1 WHEN status='lead' THEN 2 WHEN status='finish' THEN 3 ELSE 4 END, status IS NULL ,status")->get();
         $nextProjectNumber = DB::table('projects')
@@ -69,7 +69,7 @@ class ProjectController extends Controller
         $project = Project::find($id)->load(['books', 'user', 'selfPublishingList']);
         $editors = AdminHelpers::editorList();
         $editorAndAdminList = AdminHelpers::editorAndAdminList();
-        $learners = User::where('role', 2)->where('is_self_publishing_learner', 1)->get();
+        $learners = User::where('role', 2)->get(); //->where('is_self_publishing_learner', 1)
         $activities = ProjectActivity::all();
         $timeRegisters = TimeRegister::where('user_id', $project->user_id)->whereNull('project_id')->with('project')->get();
         $projectTimeRegisters = TimeRegister::where('project_id', $project->id)->with('project')->get();
