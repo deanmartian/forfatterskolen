@@ -355,6 +355,7 @@
                 totalDiscount: 0,
                 studentDiscount: 0,
                 couponDiscount: 0,
+                couponDiscountType: 1, // 0 = additional, 1 = total
                 couponDiscountFormatted: 0,
                 totalPrice: 0,
                 totalPriceFormatted: 0,
@@ -432,7 +433,12 @@
                 }
 
                 this.saleDiscount = this.coursePackage.sale_discount;
-                this.totalDiscount = this.couponDiscount + this.saleDiscount;
+
+                this.totalDiscount = this.orderForm.coupon 
+                ? (this.couponDiscountType === 0 ? this.couponDiscount + this.saleDiscount : this.couponDiscount) 
+                : this.saleDiscount;
+
+                
                 this.origPrice = parseFloat(this.coursePackage.full_payment_price);
                 this.orderForm.price = this.coursePackage.full_payment_price;
 
@@ -455,6 +461,7 @@
                     axios.get('/course/'+this.course.id+'/check_coupon_discount/'+val).then(response => {
 
                         this.couponDiscount = response.data.discountCoupon.discount;
+                        this.couponDiscountType = response.data.discountCoupon.type;
                         this.packageChanged();
 
                     }).catch(error => {

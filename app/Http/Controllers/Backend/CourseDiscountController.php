@@ -23,10 +23,12 @@ class CourseDiscountController extends Controller
         if (!$course) {
             abort(404);
         }
+        
+        $typeList = (new CourseDiscount())->typeList();
 
         $discounts = $course->discounts()->paginate(15);
 
-        return view('backend.course-discount.index', compact('course', 'discounts'));
+        return view('backend.course-discount.index', compact('course', 'discounts', 'typeList'));
     }
 
     /**
@@ -48,7 +50,8 @@ class CourseDiscountController extends Controller
             'coupon'        => $request->coupon,
             'discount'      => $request->discount,
             'valid_from'    => $request->valid_from,
-            'valid_to'      => $request->valid_to
+            'valid_to'      => $request->valid_to,
+            'type'          => $request->type
         ]);
 
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Discount added successfully.'),
@@ -67,6 +70,7 @@ class CourseDiscountController extends Controller
         $discount->discount = $request->discount;
         $discount->valid_from = $request->valid_from;
         $discount->valid_to = $request->valid_to;
+        $discount->type = $request->type;
 
         if ($discount->save()) {
             return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Discount updated successfully.'),

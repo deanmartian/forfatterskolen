@@ -316,7 +316,17 @@ class CourseService {
                 }
 
                 $discount = ( (int) $discountCoupon->discount);
-                $price = $price - ( (int)$discount );
+
+                $packageDiscount = ($isBetweenFull && $package->full_payment_sale_price) 
+                ? (int)$package->full_payment_price - (int)$package->full_payment_sale_price : 0;
+
+                if ($discountCoupon->type === 1) {
+                    $price -= $discount - $packageDiscount;
+                }
+
+                if ($discountCoupon->type === 0) {
+                    $price -= $discount;
+                }
             }
 
         }

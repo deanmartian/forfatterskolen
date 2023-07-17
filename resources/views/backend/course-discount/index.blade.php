@@ -26,6 +26,7 @@
                     <th>{{ trans_choice('site.discounts', 1) }}</th>
                     <th>Valid From</th>
                     <th>Valid To</th>
+                    <th>Type</th>
                     <th width="200"></th>
                 </tr>
                 </thead>
@@ -38,6 +39,9 @@
                         <td> {{ $discount->discount }} </td>
                         <td> {{ $discount->valid_from ? \App\Http\FrontendHelpers::formatDate($discount->valid_from) : ''}} </td>
                         <td> {{ $discount->valid_to ? \App\Http\FrontendHelpers::formatDate($discount->valid_to) : ''}} </td>
+                        <td>
+                            {{ $typeList[$discount->type] }}
+                        </td>
                         <td>
                             <?php
                                 $discountUrl = env('APP_LIVE_URL')."/course/".$discount->course_id
@@ -89,6 +93,18 @@
                             <label>Valid To</label>
                             <input type="date" name="valid_to" class="form-control">
                         </div>
+                        
+                        <div class="form-grou">
+                            <label>Type</label>
+                            <select name="type" class="form-control">
+                                @foreach ($typeList as $k => $type)
+                                    <option value="{{ $k }}">
+                                        {{ $type }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         <button type="submit" class="btn btn-primary pull-right margin-top"></button>
                         <div class="clearfix"></div>
                     </form>
@@ -185,6 +201,7 @@
                 form.find('input[name=discount]').val(fields.discount);
                 form.find('input[name=valid_from]').val(fields.valid_from);
                 form.find('input[name=valid_to]').val(fields.valid_to);
+                form.find('[name=type]').val(fields.type);
                 form.attr('action', action);
                 form.prepend('<input type="hidden" name="_method" value="PUT">');
                 form.find('[type=submit]').text(edit_text);

@@ -48,6 +48,7 @@ use App\Address;
 use App\Package;
 use App\Course;
 use App\CoursesTaken;
+use App\Exports\GenericExport;
 use App\ShopManuscriptsTaken;
 use App\ShopManuscriptComment;
 use App\Http\Controllers\Controller;
@@ -2399,6 +2400,24 @@ class LearnerController extends Controller
             'alert_type'            => 'success',
             'not-former-courses'    => true
         ]);
+    }
+
+    public function exportLearnerWithVipps()
+    {
+        $address = Address::with('user')->whereNotNull('vipps_phone_number')->get();
+        $userList = [];
+
+        foreach($address as $addr) {
+            $userList[] = [
+                'name' => $addr->user->full_name,
+                'email' => $addr->user->email,
+                'phone' => $addr->vipps_phone_number
+            ];
+        }
+        
+        $headers = ['name', 'email', 'phone'];
+        $excel = \App::make('excel');
+        return $excel->download(new GenericExport($userList, $headers), 'Learner with vipps.xlsx');
     }
 
     public function sendUsernameAndPassword($userId, Request $request)
