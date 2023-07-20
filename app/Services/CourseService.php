@@ -141,7 +141,32 @@ class CourseService {
             ];
         }
 
+        if ($request->is_pay_later) {
+            return $this->processPayLaterOrder($request);
+        }
+        
         return $this->generateSveaCheckout($request);
+    }
+
+    public function processPayLaterOrder( Request $request )
+    {
+        $package = Package::find($request->package_id);
+        $course =  $package->course;
+        $calculatedPrice = $this->calculatePrice($course, $package, $request);
+
+        // check if upgrade course
+        if ($request->has('order_type') && $request->order_type === 6) {
+            $calculatedPrice = $request->price;
+        }
+
+        $discount = $request->price - $calculatedPrice;
+        $request->merge(['discount' => $discount]);
+
+        $orderRecord = $this->createOrder($request);
+
+        return [
+            'redirect_url' => url('/thankyou?pl_ord='.$orderRecord->id)
+        ];
     }
 
     /**
@@ -370,6 +395,7 @@ class CourseService {
         $newOrder['discount']   = $discount;
         $newOrder['payment_mode_id']   = $request->payment_mode_id;
         $newOrder['is_processed'] = 0;
+        $newOrder['is_pay_later'] = $request->is_pay_later;
 
         $order = Order::create($newOrder);
 

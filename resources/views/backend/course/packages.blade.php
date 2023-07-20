@@ -88,6 +88,7 @@
                         data-has_student_discount="{{ $package->has_student_discount }}"
                                 data-is_show="{{ $package->is_show }}"
                                 data-is_upgradeable="{{ $package->is_upgradeable }}"
+                                data-is_pay_later_allowed="{{ $package->is_pay_later_allowed }}"
                                 data-full_payment_upgrade_price="{{ $package->full_payment_upgrade_price }}"
                                 data-months_3_upgrade_price="{{ $package->months_3_upgrade_price }}"
                                 data-months_6_upgrade_price="{{ $package->months_6_upgrade_price }}"
@@ -120,6 +121,7 @@
             <div><em>{{ trans('site.maximum-manuscripts') }}: {{$package->manuscripts_count}}</em></div>
             <div><em>{{ trans_choice('site.workshops', 2) }}: {{$package->workshops}}</em></div>
             <div><em>Package ID: <b>{{$package->id}}</b></em></div>
+            <div><em>Pay Later Allowed: <b>{{ $package->is_pay_later_allowed ? 'Yes' : 'No' }}</b></em></div>
   					<div class="package-price">
               <div>
                 <strong>{{ trans('site.full-payment') }}</strong><br />
@@ -391,6 +393,11 @@
                 <label>Allow Upgrade</label> <br>
                 <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
                        name="is_upgradeable" data-width="84" checked>
+              </div>
+              <div class="form-group">
+                <label>Allow Pay Later</label> <br>
+                <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                       name="is_pay_later_allowed" data-width="84">
               </div>
             </div>
 
@@ -711,6 +718,12 @@
                 <label>Allow Upgrade</label> <br>
                 <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
                        name="is_upgradeable" data-width="84">
+              </div>
+
+              <div class="form-group">
+                <label>Allow Pay Later</label> <br>
+                <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                       name="is_pay_later_allowed" data-width="84">
               </div>
 
               <div class="form-group sale-link-container">
@@ -1265,7 +1278,7 @@ $(document).ready(function(){
       var course_type = $(this).data('course-type');
       let is_show = $(this).data('is_show');
       let is_upgradeable = $(this).data("is_upgradeable");
-      console.log(is_upgradeable);
+      let is_pay_later_allowed = $(this).data("is_pay_later_allowed");
 
       let issue_date = $(this).data('issue_date');
       let validity_period = $(this).data('validity_period');
@@ -1323,6 +1336,10 @@ $(document).ready(function(){
 
       if (is_upgradeable) {
           $("#editPackageModal").find("input[name=is_upgradeable]").bootstrapToggle('on');
+      }
+
+      if (is_pay_later_allowed) {
+          $("#editPackageModal").find("input[name=is_pay_later_allowed]").bootstrapToggle('on');
       }
 
       if (months_3_enable) {

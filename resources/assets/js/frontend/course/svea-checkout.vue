@@ -8,7 +8,7 @@
 
         <form-wizard color="#c12938" error-color="#ff4949"
                      :nextButtonText="'Til betaling'" :backButtonText="trans('site.paginate.previous')"
-                     :finishButtonText="trans('site.front.buy')" title="" subtitle="">
+                     :finishButtonText="trans('site.front.buy')" title="" subtitle="" ref="wizard">
             <tab-content :title="'Bestillingsskjema'" icon="fa fa-clipboard-list">
                 <table class="table table-hover">
                     <tbody>
@@ -249,13 +249,53 @@
 
             </tab-content>
 
-            <button type="button" class="vipps-btn" slot="custom-buttons-right" slot-scope="props"
-                    v-if="props.activeTabIndex === 0" @click="vippsCheckout();" :disabled="isLoading">
-                <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i>
-                <span>Hurtigutsjekk med</span>
-                <img src="/images-new/vipps.png" class="inline" alt="vipps-buy-button"
-                     :style="isLoading ? 'opacity: .8;' : ''">
-            </button>
+            <!-- <div style="display: inline;" slot="custom-buttons-right" slot-scope="props"
+             v-if="props.activeTabIndex === 0">
+                <button type="button" class="wizard-btn" v-if="coursePackage.is_pay_later_allowed" 
+                @click="payLaterClicked()" style="background-color: rgb(193, 41, 56);
+                    border-color: rgb(193, 41, 56); color: white;">
+                    Bestill kurs, betal senere
+                </button>
+
+                <button type="button" class="vipps-btn" @click="vippsCheckout();" :disabled="isLoading">
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i>
+                    <span>Hurtigutsjekk med</span>
+                    <img src="/images-new/vipps.png" class="inline" alt="vipps-buy-button"
+                        :style="isLoading ? 'opacity: .8;' : ''">
+                </button>
+            </div> -->
+            
+            <template slot="footer" slot-scope="props">
+                <div class=wizard-footer-left>
+                    <!--&& !props.isLastStep add this if don't want to show the previous button on last page/step-->
+                    <wizard-button  v-if="props.activeTabIndex > 0"
+                        :style="props.fillButtonStyle" @click.native="props.prevTab();">
+                        Back
+                    </wizard-button>
+                </div>
+                <div class="wizard-footer-right">
+                    <wizard-button v-if="!props.isLastStep" @click.native="nextTab()"
+                        class="wizard-footer-right" :style="props.fillButtonStyle">
+                        Til betaling
+                    </wizard-button>
+
+                    <wizard-button v-if="props.activeTabIndex === 0" @click="vippsCheckout()"
+                        class="wizard-footer-right vipps-btn" :style="props.fillButtonStyle"
+                        :disabled="isLoading">
+                        <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i>
+                        <span>Hurtigutsjekk med</span>
+                        <img src="/images-new/vipps.png" class="inline" alt="vipps-buy-button"
+                            :style="isLoading ? 'opacity: .8;' : ''">
+                    </wizard-button>
+
+                    <wizard-button v-if="props.activeTabIndex === 0 && coursePackage.is_pay_later_allowed"
+                     @click.native="payLaterClicked()"
+                        class="wizard-footer-right" :style="props.fillButtonStyle" style="margin-right: 10px">
+                        Bestill kurs, betal senere
+                    </wizard-button>
+                </div>
+            </template>
+            
             <button slot="finish" class="d-none">{{ trans('site.checkout.finish') }}</button>
         </form-wizard>
 
@@ -280,11 +320,11 @@
     }
 
     .vipps-btn {
-        border: none;
+        border: none !important;
         color: #fff;
-        background-color: #fe5b24;
-        font-weight: 600;
-        padding: 0.6180469716em 1.41575em;
+        background-color: #fe5b24 !important;
+        font-weight: 600 !important;
+        padding: 0.6180469716em 1.41575em !important;
         position: relative;
     }
 
@@ -346,6 +386,7 @@
                     campaign_months: 0,
                     campaign_initial_fee: 0,
                     campaign_admin_fee: 0,
+                    is_pay_later: 0
                 },
                 singleCourseDiscount: 500,
                 groupCourseDiscount: 1000,
@@ -545,6 +586,10 @@
                         window.location.href = response.data.course_link;
                     }
 
+                    if (response.data.redirect_url) {
+                        window.location.href = response.data.redirect_url;
+                    }
+
                     $("#checkout-display").html(response.data);
                     return true;
 
@@ -553,6 +598,20 @@
                     this.processError(error);
 
                 });
+            },
+
+            nextTab() {
+                // check if from first tab
+                if (this.$refs.wizard.activeTabIndex === 0) {
+                    this.orderForm.is_pay_later = 0;
+                }
+
+                this.$refs.wizard.nextTab();
+            },
+
+            payLaterClicked() {
+                this.orderForm.is_pay_later = 1;
+                this.$refs.wizard.nextTab();
             },
 
             vippsCheckout() {

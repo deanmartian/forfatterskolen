@@ -251,6 +251,11 @@
 								: ($courseTaken->started_at ? \Carbon\Carbon::parse($courseTaken->started_at)->addYear(1)->format('M d, Y') : '') }}
 												{{--@endif--}}
 
+												@if ($courseTaken->package->course->id != 17)
+													<br>
+													Is Pay Later: {{ $courseTaken->is_pay_later ? 'Yes' : 'No' }}
+												@endif
+
 												@if ($courseTaken->package->course->id == 17)
 													<br>
 													<label>Send Expiry Reminder:</label>
@@ -775,6 +780,12 @@
 												data-vipps-number="{{ $learner->address ? $learner->address->vipps_phone_number : NULL}}">
 											{!! trans('site.vipps-efaktura') !!}
 										</button>
+										{{-- <button class="btn btn-success btn-xs sendEfakturaBtn" style="margin-top: 5px"
+												data-toggle="modal"
+											data-target="#sendEfakturaModal"
+												data-action="{{ route('admin.learner.invoice.send-efaktura', $invoice->id) }}">
+											Send efaktura
+										</button> --}}
 									@endif
 
 									@if($invoice->fiken_is_paid === 0)

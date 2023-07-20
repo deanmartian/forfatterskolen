@@ -1906,13 +1906,16 @@ class ShopController extends Controller
     {
 
         // check if from svea payment
-        if ($request->has('svea_ord')) {
-            $order_id = $request->get('svea_ord');
+        if ($request->has('svea_ord') || $request->has('pl_ord')) {
+
+            $order_id = $request->input('svea_ord') ?? $request->input('pl_ord');
             $order = Order::find($order_id);
 
-            Log::info('inside has SVEA order ' . $order_id);
-            SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
-
+            if ($request->has('svea_ord')) {
+                Log::info('inside has SVEA order ' . $order_id);
+                SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
+            }
+            
             // add course to user
             if (!$order->is_processed) {
 
@@ -1921,6 +1924,10 @@ class ShopController extends Controller
                     $courseService->notifyUserForUpgrade($order, $courseTaken);
                 } else {
                     $courseTaken = $courseService->addCourseToLearner($order->user_id, $order->package_id);
+                    $courseTaken->is_pay_later = $order->is_pay_later;
+                    $courseTaken->is_active = $order->is_pay_later ? 0 : 1;
+                    $courseTaken->save();
+
                     $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken, true, true);
                 }
 
