@@ -2355,11 +2355,12 @@ class LearnerController extends Controller
     public function vippsEFaktura( $invoice_id, Request $request)
     {
         $invoice = Invoice::find($invoice_id);
+        $user = $invoice->user;
         $fikenInvoice = new FikenInvoice();
         $fikenInvoice->setMobileNumber($request->mobile_number);
         $fikenInvoice->setFikenInvoiceId($invoice->fiken_invoice_id);
 
-        $response = $fikenInvoice->vippsEFaktura();
+        $response = $fikenInvoice->vippsEFaktura($user);
         $alert_type = 'success';
         $message = 'Invoice sent.';
 

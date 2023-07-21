@@ -458,13 +458,15 @@ class FikenInvoice
         $this->fiken_invoice_id = $fiken_invoice_id;
     }
 
-    public function vippsEFaktura()
+    public function vippsEFaktura($user)
     {
 
         $fields = [
-            'method' => ['vipps'],
+            'method' => ['efaktura'], //vipps
             "includeDocumentAttachments" => false,
-            "mobileNumber" => $this->mobile_number,
+            //"mobileNumber" => $this->mobile_number,
+            "recipientName" => $user->full_name,
+            "recipientEmail" => $user->email,
             "invoiceId" => $this->fiken_invoice_id
         ];
 
