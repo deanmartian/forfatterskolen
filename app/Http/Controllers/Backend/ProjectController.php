@@ -525,20 +525,22 @@ class ProjectController extends Controller
         }
 
         $isbns = ProjectRegistration::isbns()->where('project_id', $project_id)->get();
+        $isbnTypes = (new ProjectRegistration())->isbnTypes();
+        
         $centralDistributions = ProjectRegistration::centralDistributions()->where('project_id', $project_id)->get();
         $mentorBookBases = ProjectRegistration::mentorBookBase()->where('project_id', $project_id)->get();
         $uploadFilesToMentorBookBases = ProjectRegistration::uploadFilesToMentorBookBase()
             ->where('project_id', $project_id)->get();
 
         return view('backend.project.registration', compact('project', 'layout', 'saveRegistrationRoute',
-            'deleteRegistrationRoute', 'isbns', 'centralDistributions', 'mentorBookBases', 'uploadFilesToMentorBookBases',
-            'backRoute'));
+            'deleteRegistrationRoute', 'isbns', 'isbnTypes', 'centralDistributions', 'mentorBookBases', 
+            'uploadFilesToMentorBookBases', 'backRoute'));
     }
 
     public function saveRegistration( $project_id, Request $request )
     {
         $data = $request->merge(['project_id' => $project_id])->except('_token');
-        switch ($request->type) {
+        switch ($request->field) {
             case 'isbn':
                 $this->validate($request, ['isbn' => 'required']);
                 $data['value'] = $request->isbn;

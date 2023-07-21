@@ -7,25 +7,46 @@ use Illuminate\Database\Eloquent\Model;
 class ProjectRegistration extends Model
 {
 
-    protected $fillable = ['project_id', 'type', 'value'];
+    protected $fillable = ['project_id', 'field', 'value', 'type'];
+
+    protected $appends = ['isbn_type'];
+
+    protected $isbnTypes = [
+        1 => 'Trykt, innbundet (hard perm/hardcover)',
+        2 => 'Trykt, heftet (myk perm/softcover)',
+        3 => 'E-bok (ePub)',
+        4 => 'E-bok (PDF)',
+        5 => 'Lydbok (digital)',
+        6 => 'Lydbok (CD)',
+    ];
 
     public function scopeIsbns( $query )
     {
-        $query->where('type', 'isbn');
+        $query->where('field', 'isbn');
     }
 
     public function scopeCentralDistributions( $query )
     {
-        $query->where('type', 'central-distribution');
+        $query->where('field', 'central-distribution');
     }
 
     public function scopeMentorBookBase( $query )
     {
-        $query->where('type', 'mentor-book-base');
+        $query->where('field', 'mentor-book-base');
     }
 
     public function scopeUploadFilesToMentorBookBase( $query )
     {
-        $query->where('type', 'upload-files-to-mentor-book-base');
+        $query->where('field', 'upload-files-to-mentor-book-base');
+    }
+
+    public function isbnTypes()
+    {
+        return $this->isbnTypes;
+    }
+
+    public function getIsbnTypeAttribute()
+    {
+        return $this->isbnTypes()[$this->attributes['type']] ?? NULL;
     }
 }
