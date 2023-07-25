@@ -100,7 +100,7 @@
                           name="learner_id"></v-select>
             </div>
 
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label>Standard Activity</label>
                 <v-select :options="activityList" label="activity" v-model="selected_activity" @input="setSelectedActivity($event)"
                           name="activity" style="display: inline-block"
@@ -111,7 +111,7 @@
                 <button class="btn btn-default btn-sm" @click="showActivityModal(true)">
                     <i class="fa fa-plus" style="color: #009975"></i>
                 </button>
-            </div>
+            </div> -->
 
             <div class="form-group">
                 <label>Start date</label>

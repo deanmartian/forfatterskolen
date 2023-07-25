@@ -18,7 +18,9 @@ class BookForSaleController extends Controller
     public function index()
     {
         $books = UserBookForSale::paginate(25);
-        $learners = User::where('role', 2)->with('projects')->get();
+        $learners = User::where('role', 2)->with(['projects.registrations' => function ($query) {
+            $query->where('field', 'isbn');
+        }])->get();
         return view('backend.book-for-sale.index', compact('books', 'learners'));
     }
 

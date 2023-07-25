@@ -1719,7 +1719,7 @@
 							<tr>
 								<th>Project</th>
 								<th>ISBN</th>
-								<th>Ebook ISBN</th>
+								{{-- <th>Ebook ISBN</th> --}}
 								<th>Title</th>
 								<th>Description</th>
 								<th>Price</th>
@@ -1736,9 +1736,22 @@
 											</a>
 										@endif
 									</td>
-									<td>{{ $bookForSale->isbn }}</td>
-									<td>{{ $bookForSale->ebook_isbn }}</td>
-									<td>{{ $bookForSale->title }}</td>
+									{{-- <td>{{ $bookForSale->isbn }}</td>
+									<td>{{ $bookForSale->ebook_isbn }}</td> --}}
+									<td>
+										@if ($bookForSale->project)
+											<ul>
+												@foreach ($bookForSale->project->registrations as $registration)
+													@if ($registration->field === 'isbn')
+														<li>{{ $registration->value }}</li>
+													@endif
+												@endforeach
+											</ul>
+										@endif
+									</td>
+									<td>
+										{{ $bookForSale->project ? $bookForSale->project->book_name : '' }}
+									</td>
 									<td>{{ $bookForSale->description }}</td>
 									<td>{{ $bookForSale->price_formatted }}</td>
 									<td>
@@ -3270,10 +3283,11 @@
 
 					<div class="form-group">
 						<label>Project</label>
-						<select name="project_id" class="form-control">
+						<select name="project_id" class="form-control" onchange="projectChanged(this)">
 							<option value="">- Select Project -</option>
 							@foreach ($projects as $project)
-								<option value="{{ $project->id }}">
+								<option value="{{ $project->id }}" data-registrations="{{ json_encode($project->registrations) }}"
+									data-book_name="{{ $project->book_name }}">
 									{{ $project->name }}
 								</option>
 							@endforeach
@@ -3282,17 +3296,17 @@
 
 					<div class="form-group">
 						<label>ISBN</label>
-						<input type="text" class="form-control" name="isbn" required>
+						<div class="isbn-container"></div>
 					</div>
 
-					<div class="form-group">
+					{{-- <div class="form-group">
 						<label>Ebook ISBN</label>
 						<input type="text" class="form-control" name="ebook_isbn">
-					</div>
+					</div> --}}
 
 					<div class="form-group">
 						<label>Title</label>
-						<input type="text" class="form-control" name="title" required>
+						<input type="text" class="form-control" name="title" disabled>
 					</div>
 
 					<div class="form-group">
@@ -5096,19 +5110,19 @@ console.log(record);
         let record = $(this).data('record');
         let modal = $('#booksForSaleModal');
         modal.find('[name=id]').val('');
-		modal.find('[name=project_id]').val('');
-		modal.find('[name=isbn]').val('');
+		modal.find('[name=project_id]').val('').trigger('change');
+		/* modal.find('[name=isbn]').val('');
 		modal.find('[name=ebook_isbn]').val('');
-		modal.find('[name=title]').val('');
+		modal.find('[name=title]').val(''); */
 		modal.find('[name=description]').text('');
 		modal.find('[name=price]').val('');
 
         if (record) {
             modal.find('[name=id]').val(record.id);
-			modal.find('[name=project_id]').val(record.project_id);
-            modal.find('[name=isbn]').val(record.isbn);
+			modal.find('[name=project_id]').val(record.project_id).trigger('change');
+            /* modal.find('[name=isbn]').val(record.isbn);
             modal.find('[name=ebook_isbn]').val(record.ebook_isbn);
-            modal.find('[name=title]').val(record.title);
+            modal.find('[name=title]').val(record.title); */
             modal.find('[name=description]').text(record.description);
             modal.find('[name=price]').val(record.price);
 		}
@@ -5615,6 +5629,32 @@ console.log(record);
 	    let modal = $("#deleteTimeUsedModal");
         modal.find('form').attr('action', '/time-register/time-used/' + record.id + '/delete' );
 	}
+
+	function projectChanged(selectElement) {
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+
+        // Get the value and data-info attribute of the selected option
+        const selectedValue = selectedOption.value;
+        const selectedDataRegistrations = selectedOption.getAttribute('data-registrations');
+        const selectedDataBookname = selectedOption.getAttribute('data-book_name');
+
+        let isbnContainer = $(".isbn-container");
+        let bookTitleContainer = $("#booksForSaleModal").find("[name=title]");
+        let list = "<ul>";
+            
+        isbnContainer.empty();
+        bookTitleContainer.val(selectedDataBookname);
+
+        $.each(JSON.parse(selectedDataRegistrations), function(k, registration) {
+			if (registration.field === 'isbn') {
+				list += "<li>" + registration.value + "</li>";
+			}
+        });
+
+        list += "</ul>";
+        isbnContainer.append(list);
+
+    }
 </script>
 	{{--<script type="text/javascript" src="{{ mix('js/app.js') }}"></script>--}}
 @stop

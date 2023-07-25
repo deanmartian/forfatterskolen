@@ -70,7 +70,7 @@
                                     <tr>
                                         <td>
                                             <a href="{{ route('learner.book-for-sale', $bookForSale->id) }}">
-                                                {{ $bookForSale->title }}
+                                                {{ $bookForSale->project ? $bookForSale->project->book_name : '' }}
                                             </a>
                                         </td>
                                         <td>{{ $bookForSale->description }}</td>

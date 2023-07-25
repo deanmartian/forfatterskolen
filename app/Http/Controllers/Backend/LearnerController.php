@@ -216,7 +216,10 @@ class LearnerController extends Controller
             ->latest()
             ->withTrashed()
             ->get();
-        $projects = Project::where('user_id', $learner->id)->get();
+        $projects = Project::with(['registrations' => function ($query) {
+            $query->where('field', 'isbn');
+        }])->where('user_id', $learner->id)->get();
+        
 
         // get course certificates based on users course taken
         $certificates = \DB::table('course_certificates')
@@ -2036,6 +2039,9 @@ class LearnerController extends Controller
 
     public function saveForSaleBooks( $user_id, Request $request )
     {
+        $this->validate($request, [
+            'project_id' => 'required'
+        ]);
         $request->merge(['user_id' => $user_id]);
 
         UserBookForSale::updateOrCreate([

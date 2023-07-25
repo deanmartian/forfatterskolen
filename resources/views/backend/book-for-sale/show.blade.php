@@ -49,9 +49,19 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>{{ $book->isbn }}</td>
                                 <td>
-                                    {{ $book->title }}
+                                    @if ($book->project)
+                                        <ul>
+                                            @foreach ($book->project->registrations as $registration)
+                                                @if ($registration->field === 'isbn')
+                                                    <li>{{ $registration->value }}</li>
+                                                @endif
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                </td>
+                                <td>
+                                    {{ $book->project ? $book->project->book_name : '' }}
                                 </td>
                                 <td>
                                     {{ $book->description }}

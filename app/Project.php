@@ -11,7 +11,7 @@ class Project extends Model
 
     protected $fillable = ['user_id', 'name', 'identifier', 'activity_id', 'start_date', 'end_date', 'description',
         'notes', 'is_finished'];
-    protected $appends = ['short_notes', 'notes_formatted'];
+    protected $appends = ['short_notes', 'notes_formatted', 'book_name'];
 
     public function user()
     {
@@ -26,6 +26,11 @@ class Project extends Model
     public function books()
     {
         return $this->hasMany('App\ProjectBook');
+    }
+
+    public function book()
+    {
+        return $this->hasOne('App\ProjectBook');
     }
 
     public function selfPublishingList()
@@ -43,6 +48,11 @@ class Project extends Model
         return $this->hasMany('App\CorrectionManuscript')->orderBy('created_at', 'desc');
     }
 
+    public function registrations()
+    {
+        return $this->hasMany('App\ProjectRegistration');
+    }
+
     public function getShortNotesAttribute()
     {
         return Str::words($this->attributes['notes'], 250,
@@ -52,5 +62,10 @@ class Project extends Model
     public function getNotesFormattedAttribute()
     {
         return nl2br($this->attributes['notes']);
+    }
+
+    public function getBookNameAttribute()
+    {
+        return $this->book ? $this->book->book_name : '';
     }
 }

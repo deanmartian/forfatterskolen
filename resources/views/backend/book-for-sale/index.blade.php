@@ -24,8 +24,8 @@
 			        <th>Project</th>
                     <th>Sales</th>
                     <th>Learner</th>
-                    <th>ISBN</th>
-                    <th>Ebook ISBN</th>
+                    {{-- <th>ISBN</th>
+                    <th>Ebook ISBN</th> --}}
                     <th>Title</th>
                     <th>Description</th>
                     <th>Price</th>
@@ -50,9 +50,9 @@
                                 {{ $bookForSale->user->full_name }}
                             </a>
                         </td>
-                        <td>{{ $bookForSale->isbn }}</td>
-                        <td>{{ $bookForSale->ebook_isbn }}</td>
-                        <td>{{ $bookForSale->title }}</td>
+                        {{-- <td>{{ $bookForSale->isbn }}</td>
+                        <td>{{ $bookForSale->ebook_isbn }}</td> --}}
+                        <td>{{ $bookForSale->project ? $bookForSale->project->book_name : '' }}</td>
                         <td>{{ $bookForSale->description }}</td>
                         <td>{{ $bookForSale->price_formatted }}</td>
                         <td>
@@ -110,17 +110,22 @@
 
 					<div class="form-group">
 						<label>Project</label>
-						<select name="project_id" class="form-control">
+						<select name="project_id" class="form-control" required onchange="projectChanged(this)">
                             <option value="">- Select Project -</option>
 						</select>
 					</div>
 
 					<div class="form-group">
 						<label>ISBN</label>
-						<input type="text" class="form-control" name="isbn">
+						<div class="isbn-container"></div>
 					</div>
 
-					<div class="form-group">
+                    <div class="form-group">
+						<label>Title</label>
+						<input value='' class='form-control book-title-container' disabled>
+					</div>
+
+					{{-- <div class="form-group">
 						<label>Ebook ISBN</label>
 						<input type="text" class="form-control" name="ebook_isbn">
 					</div>
@@ -128,7 +133,7 @@
 					<div class="form-group">
 						<label>Title</label>
 						<input type="text" class="form-control" name="title" required>
-					</div>
+					</div> --}}
 
 					<div class="form-group">
 						<label>Description</label>
@@ -199,7 +204,9 @@
 
         if (projects) {
             $.each(projects, function(key, data) {
-                option += "<option value='" + data.id + "'>" + data.name + "</option>";
+                let registrations = JSON.stringify(data.registrations);
+                option += "<option value='" + data.id + "' data-registrations='" + registrations + "' data-book_name='" + data.book_name + "'>" 
+                    + data.name + "</option>";
             });
 
             project_selector.append(option);
@@ -237,5 +244,29 @@
         let action = $(this).data('action');
         modal.find('form').attr('action', action);
 	});
+
+    function projectChanged(selectElement) {
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+
+        // Get the value and data-info attribute of the selected option
+        const selectedValue = selectedOption.value;
+        const selectedDataRegistrations = selectedOption.getAttribute('data-registrations');
+        const selectedDataBookname = selectedOption.getAttribute('data-book_name');
+
+        let isbnContainer = $(".isbn-container");
+        let bookTitleContainer = $(".book-title-container");
+        let list = "<ul>";
+            
+        isbnContainer.empty();
+        bookTitleContainer.val(selectedDataBookname);
+
+        $.each(JSON.parse(selectedDataRegistrations), function(k, registration) {
+            list += "<li>" + registration.value + "</li>";
+        });
+
+        list += "</ul>";
+        isbnContainer.append(list);
+
+    }
 </script>
 @stop
