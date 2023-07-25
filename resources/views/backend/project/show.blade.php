@@ -121,7 +121,9 @@
             <!-- copy editing -->
             <div class="col-md-12 margin-top">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addOtherServiceModal"
-                        onclick="updateOtherServiceFields(1)">+ {{ trans('site.add-copy-editing') }}</button>
+                        onclick="updateOtherServiceFields(1, this)" data-editors="{{ json_encode($copyEditingEditors) }}">
+                        + {{ trans('site.add-copy-editing') }}
+                    </button>
                 <div class="table-users table-responsive">
                     <table class="table">
                         <thead>
@@ -244,7 +246,9 @@
             <!-- correction -->
             <div class="col-md-12 margin-top">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addOtherServiceModal"
-                        onclick="updateOtherServiceFields(0)">+ {{ trans('site.add-correction') }}</button>
+                        onclick="updateOtherServiceFields(0, this)" data-editors="{{ json_encode($correctionEditors) }}">
+                        + {{ trans('site.add-correction') }}
+                    </button>
                 <div class="table-users table-responsive">
                     <table class="table">
                         <thead>
@@ -658,10 +662,6 @@
                         <div class="form-group">
                             <label>{{ trans('site.assign-to') }}</label>
                             <select name="editor_id" class="form-control select2">
-                                <option value="" disabled="" selected>-- Select Editor --</option>
-                                @foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
-                                    <option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
-                                @endforeach
                             </select>
                         </div>
 
@@ -1049,7 +1049,8 @@
             modal.find('form').attr('action', action);
         });
 
-        function updateOtherServiceFields(type) {
+        function updateOtherServiceFields(type, self) {
+            let editors = $(self).data('editors');
             let modal = $("#addOtherServiceModal");
             let add_correction_text = "{{ trans('site.add-correction') }}";
             let add_copy_editing_text = "{{ trans('site.add-copy-editing') }}";
@@ -1057,6 +1058,17 @@
             if (type === 1) {
                 modal_title = add_copy_editing_text;
             }
+
+            let editorContainer = modal.find('[name=editor_id]');
+            editorContainer.empty();
+
+            let editorOptions = '<option value="" disabled="" selected>-- Select Editor --</option>';
+
+            $.each(editors, function(k, editor) {
+                editorOptions += "<option value='" + editor.id + "'>" + editor.full_name + "</option>";
+            });
+
+            editorContainer.append(editorOptions);
 
             modal.find('.modal-title').text(modal_title);
             modal.find('form').find('[name=is_copy_editing]').val(type);

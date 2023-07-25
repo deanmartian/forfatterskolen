@@ -68,6 +68,8 @@ class ProjectController extends Controller
     {
         $project = Project::find($id)->load(['books', 'user', 'selfPublishingList']);
         $editors = AdminHelpers::editorList();
+        $copyEditingEditors = AdminHelpers::copyEditingEditors();
+        $correctionEditors = AdminHelpers::correctionEditors();
         $editorAndAdminList = AdminHelpers::editorAndAdminList();
         $learners = User::where('role', 2)->get(); //->where('is_self_publishing_learner', 1)
         $activities = ProjectActivity::all();
@@ -123,9 +125,10 @@ class ProjectController extends Controller
             $deleteBookFormattingRoute = 'g-admin.project.delete-book-formatting';
         }
 
-        return view('backend.project.show', compact('project', 'editors', 'learners', 'activities',
-            'timeRegisters', 'projectTimeRegisters', 'projects', 'layout', 'addOtherServiceRoute', 'selfPublishingStoreRoute',
-            'selfPublishingUpdateRoute', 'selfPublishingDeleteRoute', 'selfPublishingAddFeedbackRoute',
+        return view('backend.project.show', compact('project', 'editors', 'copyEditingEditors', 'correctionEditors', 
+            'learners', 'activities', 'timeRegisters', 'projectTimeRegisters', 'projects', 'layout',
+            'addOtherServiceRoute', 'selfPublishingStoreRoute', 'selfPublishingUpdateRoute', 
+            'selfPublishingDeleteRoute', 'selfPublishingAddFeedbackRoute',
             'selfPublishingDownloadFeedbackRoute', 'selfPublishingLearnersRoute', 'assignEditorRoute',
             'updateExpectedFinishRoute', 'updateStatusRoute', 'otherServiceDeleteRoute', 'correctionFeedbackTemplate',
             'copyEditingFeedbackTemplate', 'otherServiceFeedbackRoute', 'saveBookPicturesRoute', 'bookPictures',

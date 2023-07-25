@@ -20,6 +20,7 @@ use App\WebinarEmailOut;
 use App\Workshop;
 use Carbon\Carbon;
 use Illuminate\Support\MessageBag;
+use Log;
 use Swift_Mailer;
 use Swift_Message;
 use Swift_Transport;
@@ -78,6 +79,30 @@ class AdminHelpers
             $query->whereIn('role', [3])
                 ->orWhere('admin_with_editor_access', 1);
         })
+            ->where('is_active', 1)
+            ->orderBy('id', 'desc')
+            ->get();
+    }
+
+    public static function copyEditingEditors()
+    {
+        return \App\User::where(function($query){
+            $query->whereIn('role', [3])
+                ->orWhere('admin_with_editor_access', 1);
+        })
+            ->where('is_copy_editing_admin', 1)
+            ->where('is_active', 1)
+            ->orderBy('id', 'desc')
+            ->get();
+    }
+
+    public static function correctionEditors()
+    {
+        return \App\User::where(function($query){
+            $query->whereIn('role', [3])
+                ->orWhere('admin_with_editor_access', 1);
+        })
+            ->where('is_correction_admin', 1)
             ->where('is_active', 1)
             ->orderBy('id', 'desc')
             ->get();
@@ -590,6 +615,45 @@ class AdminHelpers
             return true;
         }
 	}
+
+    public static function addToZagomailList($list_id, $data)
+    {
+        $curl = curl_init();
+        $data['publicKey'] = '2e4e9e238d2d08a31827c0e930b4294a01887b0a';
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.zagomail.com/lists/subscriber-create?list_uid=' . $list_id,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $data,
+        ));
+
+        $response = curl_exec($curl);
+
+        // Check for cURL errors
+        if (curl_errno($curl)) {
+            $error = curl_error($curl);
+            Log::info( "cURL Error: " . $error);
+        }
+        
+        curl_close($curl);
+        
+        $decoded_response = json_decode($response);
+
+        if ($decoded_response->status === 'success') {
+            Log::info("Email " . $data['email'] . ' is added to zagolist = ' . $list_id);
+        } else {
+            Log::info("----------- error for zagolist ------------");
+            Log::info("Email " . $data['email'] . ' is not added to zagolist = ' . $list_id);
+            Log::info($response);
+        }
+        
+    }
 
     public static function addToActiveCampaignListTest($list_id, $data)
     {
