@@ -1646,7 +1646,7 @@ class LearnerController extends Controller
                 $suggested_dates[$k] = Carbon::parse($suggested_date)->format('Y-m-d H:i:s');
             }*/
 
-            $extensions = ['docx'];
+            $extensions = ['doc', 'docx', 'odt', 'pdf'];
             $file   = NULL;
 
             if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) :
