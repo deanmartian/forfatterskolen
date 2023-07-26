@@ -250,7 +250,7 @@
 											@endif
                                         </td>
                                         <td>
-                                            {{ $unfinishedAssignment->words }}
+                                            {{ $unfinishedShopManuscript->words }}
                                         </td>
                                     </tr>
                                 @endforeach
