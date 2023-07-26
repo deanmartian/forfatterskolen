@@ -1540,7 +1540,10 @@
 									</button>
 								</td>
 								<td>
-									@if ($coachingTimer->editor_id)
+									@php
+										$activeEditors = AdminHelpers::editorList()->pluck('id')->toArray();
+									@endphp
+									@if ($coachingTimer->editor_id && in_array($coachingTimer->editor_id, $activeEditors))
 										{{ $coachingTimer->editor->full_name }}
 									@else
 										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $coachingTimer->id, 'type' => 3]) }}">{{ trans('site.assign-editor') }}</button>

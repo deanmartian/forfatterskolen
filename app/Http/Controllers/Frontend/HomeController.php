@@ -830,9 +830,9 @@ class HomeController extends Controller
 
     public function coachingTimeCalculate( Request $request )
     {
-        $this->validate($request, [
+        /* $this->validate($request, [
             'manuscript' => 'mimes:docx'
-        ]);
+        ]); */
 
         $data = [
             'file_name' => '',
@@ -842,6 +842,16 @@ class HomeController extends Controller
 
         if( $request->hasFile('manuscript') &&  $request->file('manuscript')->isValid() ) :
             $original_filename = $request->manuscript->getClientOriginalName();
+            $extension = $request->manuscript->getClientOriginalExtension();
+            $extensions = ['doc', 'docx', 'odt', 'pdf'];
+
+            if( !in_array($extension, $extensions) ) {
+                return response()->json([
+                    'errors' => [
+                        'manuscript' => [' The manuscript must be a file of type: doc, docx, odt, pdf.']
+                    ]
+                ], 422);
+            }
 
             $destinationPath = 'storage/manuscript-tests/'; // upload path
             $fileName = $original_filename; // rename document
