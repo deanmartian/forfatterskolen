@@ -36,8 +36,9 @@
                 <tr>
                     <th>Project Number</th>
                     <th>Name</th>
+                    <th>Learner</th>
                     <th>Status</th>
-                    <th width="800">Description</th>
+                    <th width="700">Description</th>
                     <th>Status</th>
                     <td></td>
                 </tr>
@@ -50,6 +51,11 @@
                     <td>
                         <a :href="'/project/' + project.id">
                             {{ project.name }}
+                        </a>
+                    </td>
+                    <td>
+                        <a :href="'/learner/' + project.user_id" v-if="project.user">
+                            {{ project.user.full_name }}
                         </a>
                     </td>
                     <td>
@@ -545,7 +551,7 @@
         },
 
         mounted() {
-            console.log(this.projectNotes);
+            console.log(this.projects);
         }
     }
 </script>
