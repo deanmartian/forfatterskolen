@@ -1670,6 +1670,8 @@ Route::group([
             ],
         ]);
 
+        Route::get('/book-publisher/calculator', 'BookPublisherController@calculator')->name('admin.book-publisher.calculator');
+
         Route::resource('/marketing-plan', 'MarketingPlanController', [
             'except' => ['create', 'edit'],
             'names' => [

@@ -20,6 +20,10 @@
             Orders
         </a>
 
+        <a href="/book-publisher/calculator" class="btn btn-sm btn-success margin-top">
+            Book Publisher
+        </a>
+
         <div class="form-group margin-top" style="width: 100px">
             <label>Filter</label>
             <select name="filter" class="form-control" v-model="filter">
