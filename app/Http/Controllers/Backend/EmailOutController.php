@@ -250,7 +250,7 @@ class EmailOutController extends Controller {
         $packages = $emailOut->allowed_package ? json_decode($emailOut->allowed_package) :
             $emailOut->course->packages->pluck('id')->toArray();
         $emailRecipients = $emailOut->recipients->pluck('user_id')->toArray();
-        $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
+        $coursesTaken = CoursesTaken::whereHas('user')->whereIn('package_id', $packages)
             ->whereNull('renewed_at')
             ->whereNotIn('user_id', $emailRecipients)
             ->get();
