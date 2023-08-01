@@ -212,7 +212,7 @@ class Course extends Model
     public function getLearnersAttribute()
     {
         $packageIds = $this->packages()->pluck('id')->toArray();
-        return CoursesTaken::whereIn('package_id', $packageIds)
+        return CoursesTaken::whereHas('user')->whereIn('package_id', $packageIds)
             ->where('is_active', true)
             ->orderBy('updated_at', 'desc');
     }
