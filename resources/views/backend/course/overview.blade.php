@@ -253,9 +253,11 @@
 
 						<select name="learners[]" class="form-control select2 template" multiple="multiple">
 							@foreach($course->learners->get() as $learner)
-								<option value="{{$learner->user->id}}">
-									{{$learner->user->full_name}}
-								</option>
+								@if ($learner->user)
+									<option value="{{$learner->user->id}}">
+										{{$learner->user->full_name}}
+									</option>
+								@endif
 							@endforeach
 						</select>
 					</div>
