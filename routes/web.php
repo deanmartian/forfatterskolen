@@ -1208,7 +1208,9 @@ Route::group([
         Route::post('assignment/learner-assignment/save/{id?}', 'AssignmentController@learnerAssignment')->name('assignment.learner-assignment.save');
         Route::delete('assignment/learner-assignment/{id}/delete', 'AssignmentController@deleteLearnerAssignment')->name('assignment.learner-assignment.delete');
         Route::post('assignment/multiple-learner-assignment/save', 'AssignmentController@multipleLearnerAssignment')->name('assignment.multiple-learner-assignment.save');
-
+        Route::get('/assignment/{assignment_id}/course/{course_id}/assignment-with-course-learners', 
+        'AssignmentController@assignmentWithCourseLearner');
+        Route::post('/assignment/{id}/disable-learner', 'AssignmentController@disableLearner');
 
 
         // Assignment Groups Route

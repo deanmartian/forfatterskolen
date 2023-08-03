@@ -743,28 +743,31 @@ class LearnerController extends Controller
             foreach( $courseTaken->package->course->activeAssignments as $assignment ) :
 
                 $allowed_package = json_decode($assignment->allowed_package);
+                $assignmentDisabledLearners = $assignment->disabledLearners()->pluck('user_id')->toArray();
                 $package_id = $courseTaken->package->id;
                 $course = $courseTaken->package->course;
                 // check if the assignment is allowed on the learners package or there's no set package allowed
                 if ((!is_null($allowed_package) && in_array($package_id,$allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)) {
-                    // added the condition because of the update for submission date
-                    // the original is the else
-                    if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
-                        if ($course->type == 'Single' && $assignment->submission_date == '365') {
-                            if(\Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
-                                $includeAssignment = $assignment;
-                                $includeAssignment->course_taken_end_date = $courseTaken->end_date; // for displaying submit button
-                                $assignments[] = $includeAssignment;
+                    if (!in_array($courseTaken->user_id, $assignmentDisabledLearners)) {
+                        // added the condition because of the update for submission date
+                        // the original is the else
+                        if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
+                            if ($course->type == 'Single' && $assignment->submission_date == '365') {
+                                if(\Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
+                                    $includeAssignment = $assignment;
+                                    $includeAssignment->course_taken_end_date = $courseTaken->end_date; // for displaying submit button
+                                    $assignments[] = $includeAssignment;
+                                }
+                            } else {
+                                if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)
+                                    ->gt(Carbon::now())) {
+                                    $assignments[] = $assignment;
+                                }
                             }
                         } else {
-                            if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)
-                                ->gt(Carbon::now())) {
+                            if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
                                 $assignments[] = $assignment;
                             }
-                        }
-                    } else {
-                        if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
-                            $assignments[] = $assignment;
                         }
                     }
                 }

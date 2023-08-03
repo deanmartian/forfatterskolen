@@ -102,4 +102,9 @@ class Assignment extends Model
     {
         return $this->belongsTo('App\Assignment', 'parent_id', 'id');
     }
+
+    public function disabledLearners()
+    {
+        return $this->hasMany('App\AssignmentDisabledLearner');
+    }
 }

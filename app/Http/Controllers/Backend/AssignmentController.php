@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Course;
 use App\Assignment;
+use App\AssignmentDisabledLearner;
 use App\AssignmentManuscript;
 use App\AssignmentLearner;
 use App\User;
@@ -1434,6 +1435,30 @@ class AssignmentController extends Controller
         return redirect()->to('/assignment?tab=learner')
             ->with(['errors' => AdminHelpers::createMessageBag('Record deleted successfully.'),
             'alert_type' => 'success']);
+    }
+
+    public function assignmentWithCourseLearner($assignmentId, $courseId)
+    {
+        $assignment = Assignment::findOrFail($assignmentId);
+        $disabledLearners = $assignment->disabledLearners()->pluck('user_id')->toArray();
+
+        $course = Course::findOrFail($courseId);
+        $courseLearners = $course->learners->get();
+        return view('backend.assignment._disable_learners', compact('disabledLearners', 'courseLearners'));
+    }
+
+    public function disableLearner($assignmentId, Request $request)
+    {
+        $disabledLearner = AssignmentDisabledLearner::where([
+            'assignment_id' => $assignmentId,
+            'user_id' => $request->user_id,
+        ])->first();
+        
+        filter_var($request->isChecked, FILTER_VALIDATE_BOOLEAN)
+            ? AssignmentDisabledLearner::create(['assignment_id' => $assignmentId, 'user_id' => $request->user_id])
+            : optional($disabledLearner)->delete();
+
+        return $request->all();
     }
 
     /**
