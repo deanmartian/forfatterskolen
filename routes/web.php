@@ -1207,7 +1207,7 @@ Route::group([
         Route::delete('assignment/template/delete/{id}', 'AssignmentController@deleteAssignmentTemplate')->name('assignment.template.delete');
         Route::post('assignment/learner-assignment/save/{id?}', 'AssignmentController@learnerAssignment')->name('assignment.learner-assignment.save');
         Route::post('assignment/{id}/disabled-learner-assignment/save', 'AssignmentController@disabledLearnerAssignment')
-        ->name('assignment.learner-assignment.save');
+        ->name('assignment.disable-learner-assignment.save');
         Route::delete('assignment/learner-assignment/{id}/delete', 'AssignmentController@deleteLearnerAssignment')->name('assignment.learner-assignment.delete');
         Route::post('assignment/multiple-learner-assignment/save', 'AssignmentController@multipleLearnerAssignment')->name('assignment.multiple-learner-assignment.save');
         Route::get('/assignment/{assignment_id}/course/{course_id}/assignment-with-course-learners', 
