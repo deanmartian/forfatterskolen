@@ -107,4 +107,10 @@ class Assignment extends Model
     {
         return $this->hasMany('App\AssignmentDisabledLearner');
     }
+
+    public function getLinkedPersonalAssignment($user_id)
+    {
+        $disabledLearner = $this->disabledLearners()->where('user_id', $user_id)->first();
+        return $disabledLearner ? $this->find($disabledLearner->personal_assignment_id) : null;
+    }
 }

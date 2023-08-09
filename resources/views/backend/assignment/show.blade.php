@@ -1489,7 +1489,7 @@
 	});
 
 	function personalAssignment(user_id) {
-		let action = "{{ route('assignment.learner-assignment.save') }}";
+		let action = "/assignment/{{ $assignment->id }}/disabled-learner-assignment/save";
 		let modal = $("#personalAssignmentModal");
 		modal.find('form').attr('action', action);
 		modal.find("[name=learner_id]").val(user_id);

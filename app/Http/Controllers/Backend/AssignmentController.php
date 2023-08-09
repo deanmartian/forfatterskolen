@@ -1400,6 +1400,36 @@ class AssignmentController extends Controller
             'alert_type' => 'success']);
     }
 
+    public function disabledLearnerAssignment($assignment_id, Request $request)
+    {
+        $data = [
+            'title' => $request->title,
+            'description' => $request->description,
+            'submission_date' => $request->submission_date,
+            'available_date' => $request->available_date,
+            'max_words' => (int) $request->max_words,
+            'show_join_group_question' => 0,
+            'course_id' => $request->course_id,
+            'parent_id' => $request->learner_id,
+            'parent' => 'users',
+            'editor_id' => $request->editor_id,
+            'editor_expected_finish' => $request->editor_expected_finish,
+            'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0
+        ];
+
+        $assignment = Assignment::create($data);
+
+        AssignmentDisabledLearner::updateOrCreate([
+            'assignment_id' => $assignment_id,
+            'user_id' => $request->learner_id
+        ], [
+            'personal_assignment_id' => $assignment->id
+        ]);
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record saved successfully.'),
+            'alert_type' => 'success']);
+    }
+
     public function multipleLearnerAssignment( Request $request )
     {
 
@@ -1444,7 +1474,7 @@ class AssignmentController extends Controller
 
         $course = Course::findOrFail($courseId);
         $courseLearners = $course->learners->get();
-        return view('backend.assignment._disable_learners', compact('disabledLearners', 'courseLearners'));
+        return view('backend.assignment._disable_learners', compact('assignment', 'disabledLearners', 'courseLearners'));
     }
 
     public function disableLearner($assignmentId, Request $request)
