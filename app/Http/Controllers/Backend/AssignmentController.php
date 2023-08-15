@@ -1231,7 +1231,7 @@ class AssignmentController extends Controller
             if ( $request->hasFile('filename')) :
                 $time = time();
                 $destinationPath = 'storage/assignment-feedbacks'; // upload path
-                $extensions = ['pdf', 'docx', 'odt'];
+                $extensions = ['pdf', 'docx', 'odt', 'doc'];
                 $filesWithPath = '';
                 // loop through all the uploaded files
                 foreach ($request->file('filename') as $k => $file) {

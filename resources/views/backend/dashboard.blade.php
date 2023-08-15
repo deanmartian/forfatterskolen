@@ -1265,7 +1265,9 @@
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>{{ trans_choice('site.manuscripts', 1) }}</label>
-						<input type="file" class="form-control" required multiple name="filename[]" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+						<input type="file" class="form-control" required multiple name="filename[]" 
+						accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, 
+						application/vnd.oasis.opendocument.text, application/msword">
 						{{ trans('site.docx-pdf-odt-text') }}
 					</div>
 					<div class="form-group">
@@ -1302,7 +1304,7 @@
 						<label>{{ trans_choice('site.files', 2) }}</label>
 						<input type="file" class="form-control" name="files[]" multiple
 							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-							   application/pdf, application/vnd.oasis.opendocument.text" required>
+							   application/pdf, application/vnd.oasis.opendocument.text, application/msword" required>
 							   {{ trans('site.docx-pdf-odt-text') }}
 					</div>
 					<div class="form-group">
@@ -1474,7 +1476,9 @@
 					?>
                     <div class="form-group">
                         <label>{{ trans_choice('site.manuscripts', 1) }}</label>
-                        <input type="file" class="form-control" name="manuscript" multiple accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf" required>
+                        <input type="file" class="form-control" name="manuscript" multiple 
+						accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+						 application/pdf, application/msword" required>
                     </div>
 					<div class="form-group">
 						<label>{{ trans('site.subject') }}</label>
@@ -1715,7 +1719,7 @@
                         <label>{{ trans_choice('site.manuscripts', 1) }}</label>
                         <input type="file" class="form-control" required multiple name="filename[]"
                                accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-                                   application/pdf, application/vnd.oasis.opendocument.text">
+                                   application/pdf, application/vnd.oasis.opendocument.text, application/msword">
 						{{ trans('site.docx-pdf-odt-text') }}
                     </div>
                     <div class="form-group">
@@ -1794,15 +1798,16 @@
 
 					<div class="form-group">
 						<label>{{ trans_choice('site.manuscripts', 1) }}</label>
-						<input type="file" name="manuscript[]" class="form-control" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
-					    application/vnd.oasis.opendocument.text" multiple>
+						<input type="file" name="manuscript[]" class="form-control" 
+						accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+					    application/vnd.oasis.opendocument.text, application/msword" multiple>
 					</div>
 
 					<div class="form-group">
 						<label>Add Files</label>
 						<input type="file" name="add_files[]" class="form-control"
 							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
-					    application/vnd.oasis.opendocument.text" multiple>
+					    application/vnd.oasis.opendocument.text, application/msword" multiple>
 					</div>
 
 					<div class="form-group">
