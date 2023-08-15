@@ -658,6 +658,11 @@
 										</td>
 								        <td>{{ $pending_course->created_at }}</td>
 								        <td>
+											<button class="btn btn-success btn-xs sendPayLaterEmailBtn" data-toggle="modal" 
+											data-target="#sendPayLaterEmailModal" 
+											data-action="{{ route('admin.learner.send-email', $pending_course->user_id) }}">
+												Send Email
+											</button>
 								        	<form method="POST" action="{{ route('activate_course_taken') }}" class="inline-block">
 												{{ csrf_field() }}
 												<input type="hidden" name="coursetaken_id" value="{{ $pending_course->id }}">
@@ -1603,6 +1608,40 @@
 	</div>
 </div>
 
+<div id="sendPayLaterEmailModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.send-email') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{csrf_field()}}
+					@php
+						$emailTemplate = AdminHelpers::emailTemplate('Pay Later');
+					@endphp
+
+					<div class="form-group">
+						<label>{{ trans('site.subject') }}</label>
+						<input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}" required>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.message') }}</label>
+						<textarea name="message" id="" cols="30" rows="10" 
+						class="form-control tinymce" required>{!! $emailTemplate->email_content !!}</textarea>
+					</div>
+					<div class="text-right">
+						<input type="submit" class="btn btn-primary" value="{{ trans('site.send') }}" id="send_email_btn">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!--end email modal-->
+
 <div id="deleteSPPRequestModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -2125,6 +2164,13 @@
             }
         });
     });
+
+	$(".sendPayLaterEmailBtn").click(function(){
+		let modal = $("#sendPayLaterEmailModal");
+		let action = $(this).data('action');
+
+		modal.find('form').attr('action', action);
+	});
 
 	$(".deleteSPPRequestBtn").click(function(){
         let action = $(this).data('action');
