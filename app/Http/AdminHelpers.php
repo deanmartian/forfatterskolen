@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Assignment;
+use App\AssignmentDisabledLearner;
 use App\AssignmentFeedback;
 use App\Course;
 use App\CoursesTaken;
@@ -1347,6 +1348,14 @@ class AdminHelpers
         }
 
         return false;
+    }
+
+    public static function assignmentDisabledForLearner($assignment_id, $user_id)
+    {
+        return AssignmentDisabledLearner::where([
+            'assignment_id' => $assignment_id,
+            'user_id' => $user_id
+        ])->first();
     }
 
     /**

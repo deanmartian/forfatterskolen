@@ -18,6 +18,10 @@
 		#viewOrderModal table.no-border td, #viewOrderModal table.no-border tr {
 			border: none;
 		}
+
+		.d-none {
+			display: none;
+		}
 	</style>
 @stop
 
@@ -960,6 +964,8 @@
 						<thead>
 							<tr>
 								<th>{{ trans_choice('site.assignments', 1) }}</th>
+								<th>Is Disabled</th>
+								<th>Personal Assignment</th>
 								<th>{{ trans_choice('site.courses', 1) }}</th>
 								<th>Editor</th>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
@@ -1038,6 +1044,41 @@
 										}
 
 										?>
+									</td>
+									<td>
+										@php
+											$disabledAssignment = AdminHelpers::assignmentDisabledForLearner($assignment->id, $learner->id);
+											$personalAssignment = $assignment->getLinkedPersonalAssignment($learner->id);
+											$disabledLearners = $assignment->disabledLearners()->pluck('user_id')->toArray();
+										@endphp
+
+										@if (!$personalAssignment)
+											<input type="checkbox" data-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
+													class="disable-learner-toggle" data-off="{{ trans('site.front.no') }}"
+													data-id="{{ $learner->id }}" data-size="small" 
+													data-assignment-id="{{ $assignment->id }}"
+													@if ($disabledAssignment)
+														checked
+													@endif>
+										@else
+											{{ trans('site.front.yes') }}
+										@endif
+									</td>
+									<td>
+										@if (!$personalAssignment)
+											<button class="btn btn-primary btn-sm personalAssignmentBtn 
+											assignment-{{ $assignment->id }} 
+												{{ in_array($learner->id, $disabledLearners) ? '' : 'd-none'  }}"
+												data-toggle="modal" data-target="#personalAssignmentModal" type="button"
+												onclick="personalAssignment({{ $learner->id }}, {{ $assignment }})">
+												Assign as Personal Assignment
+											</button>
+										@else
+											<a href="{{ route('admin.learner.assignment',
+											[$personalAssignment->parent_id, $personalAssignment->id]) }}">
+												{{ $personalAssignment->title }}
+											</a>
+										@endif
 									</td>
 									<td>
 										<a href="{{ route('admin.course.show', $assignment->course->id) }}">
@@ -4762,6 +4803,84 @@
 		</div>
 	</div>
 </div>
+
+<div id="personalAssignmentModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Personal Assignment Modal</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<input type="hidden" name="course_id" value="">
+					<input type="hidden" name="learner_id">
+
+					<div class="form-group">
+						<label>{{ trans('site.title') }}</label>
+						<input type="text" class="form-control" name="title" placeholder="{{ trans('site.title') }}"
+						 required value="">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.description') }}</label>
+						<textarea class="form-control" name="description"
+						 placeholder="{{ trans('site.description') }}" rows="6"></textarea>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.submission-date') }}</label>
+						<div class="input-group submission-date-group">
+							
+						</div>
+					</div>
+	  
+					<div class="form-group">
+						<label>{{ trans('site.available-date') }}</label>
+						<input type="date" class="form-control" name="available_date">
+					</div>
+	  
+					<div class="form-group">
+						<label>{{ trans('site.editor-expected-finish') }}</label>
+						<input type="date" class="form-control" name="editor_expected_finish">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.expected-finish') }}</label>
+						<input type="date" class="form-control" name="expected_finish">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.max-words') }}</label>
+						<input type="number" class="form-control" name="max_words">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.send-letter-to-editor') }}</label> <br>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small"
+							   name="send_letter_to_editor">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans_choice('site.editors', 1) }}</label>
+						<select class="form-control select2" name="editor_id">
+							<option value="" selected disabled>- Select Editor -</option>
+							@foreach(\App\Http\AdminHelpers::editorList() as $editor)
+								<option value="{{ $editor->id }}">
+									{{ $editor->first_name . " " . $editor->last_name }}
+								</option>
+							@endforeach
+						</select>
+					</div>
+	  
+					<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.save') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -5568,6 +5687,95 @@ console.log(record);
         modal.find('form').attr('action', action);
         modal.find('[name=max_words]').val(max_words);
     });
+
+
+	$(document).on("change", ".disable-learner-toggle", function() {
+		let userId = $(this).data("id");
+		let isChecked = $(this).prop("checked");
+		let assignmentId = $(this).data("assignment-id");
+
+		$.ajax({
+			method: "POST",
+			url: "/assignment/" + assignmentId + "/disable-learner",
+			data: {isChecked: isChecked, user_id: userId},
+			success: function(data) {
+				$(".assignment-" + assignmentId).toggleClass('d-none');
+			}
+		})
+	});
+
+	function personalAssignment(user_id, assignment) {
+		console.log(assignment);
+		let action = "/assignment/" + assignment.id + "/disabled-learner-assignment/save";
+		let modal = $("#personalAssignmentModal");
+		let submissionGroup = modal.find('.submission-date-group');
+		modal.find('form').attr('action', action);
+		modal.find("[name=course_id]").val(assignment.course_id);
+		modal.find("[name=learner_id]").val(user_id);		
+		modal.find("[name=title]").val(assignment.title);		
+		modal.find("[name=description]").text(assignment.description);		
+
+		submissionGroup.empty();
+		let submissionDate = '';
+		let submissionDateText = '';
+		if(hasLetter(assignment.submission_date)) {
+			submissionDate = "<input type='datetime-local' class='form-control' " +
+			" name='submission_date' min='0' required value='" + formatSubmissionDate(assignment.submission_date) + "'>";
+			submissionDateText = 'date';
+		} else {
+			submissionDate = "<input type='number' class='form-control' " +
+			" name='submission_date' min='0' required value='" + assignment.submission_date + "'>";
+			submissionDateText = 'days';
+		}
+
+		submissionGroup.append(submissionDate 
+		+ '<span class="input-group-addon assignment-delay-text" id="basic-addon2">' + submissionDateText + '</span>');
+
+		modal.find("[name=available_date]").val(formatDate(assignment.available_date));
+		modal.find("[name=editor_expected_finish]").val(formatDate(assignment.editor_expected_finish));
+		modal.find("[name=expected_finish]").val(formatDate(assignment.expected_finish));
+		modal.find("[name=max_words]").val(assignment.max_words);
+
+		modal.find("[name=send_letter_to_editor]").bootstrapToggle('off');
+		if (assignment.send_letter_to_editor) {
+			modal.find("[name=send_letter_to_editor]").bootstrapToggle('on');
+		}
+
+		modal.find("[name=editor_id]").val(assignment.editor_id);
+	}
+
+	function hasLetter(str) {
+		return /[a-zA-Z]/.test(str);
+	}
+
+	function formatSubmissionDate(dateString) {
+		if (!dateString) {
+			return '';
+		}
+
+		const date = new Date(dateString);
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const day = String(date.getDate()).padStart(2, '0');
+		const hours = String(date.getHours()).padStart(2, '0');
+		const minutes = String(date.getMinutes()).padStart(2, '0');
+		const seconds = String(date.getSeconds()).padStart(2, '0');
+
+		return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+	}
+
+	function formatDate(dateString) {
+		if (!dateString) {
+			return '';
+		}
+
+		const date = new Date(dateString);
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const day = String(date.getDate()).padStart(2, '0');
+
+		return `${year}-${month}-${day}`;
+	}
 
 	function updateOtherServiceFields(type) {
 	    let modal = $("#addOtherServiceModal");
