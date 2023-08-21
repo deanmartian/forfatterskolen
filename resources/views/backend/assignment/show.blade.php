@@ -1200,7 +1200,7 @@
 
 					<div class="form-group">
 						<label>{{ trans('site.max-words') }}</label>
-						<input type="number" class="form-control" name="max_words">
+						<input type="number" class="form-control" name="max_words" value="{{ $assignment->max_words }}">
 					</div>
 
 					<div class="form-group">
