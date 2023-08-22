@@ -1006,6 +1006,11 @@ kvittering.',
       'title' => 'Takk for betalingen!',
       'description' => 'Din betaling ble gjennomført suksessfullt.',
     ),
+    'pay-later' => 
+    array (
+      'title' => 'Pay later thankyou',
+      'description' => 'Vi gleder oss til å samarbeide med deg! Vi vil behandle din bestilling så snart som mulig og du vil få tilsendt faktura(er) til din registrerte e-postadresse.',
+    ),
   ),
   'learner' => 
   array (

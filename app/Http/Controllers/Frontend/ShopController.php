@@ -1956,6 +1956,10 @@ class ShopController extends Controller
         }
 
         \Session::remove('vipps_checkout');
+
+        if ($request->has('pl_ord')) {
+            return view('frontend.shop.pay_later_thankyou');
+        }
         return view('frontend.shop.thankyou');
     }
 

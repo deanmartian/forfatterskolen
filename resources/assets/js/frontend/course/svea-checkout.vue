@@ -276,7 +276,7 @@
                 <div class="wizard-footer-right">
                     <wizard-button v-if="!props.isLastStep" @click.native="nextTab()"
                         class="wizard-footer-right" :style="props.fillButtonStyle">
-                        Til betaling
+                        {{ orderForm.is_pay_later && props.activeTabIndex != 0 ? 'Bestill kurs, betal senere' :'Til betaling' }}
                     </wizard-button>
 
                     <wizard-button v-if="props.activeTabIndex === 0" @click="vippsCheckout()"
