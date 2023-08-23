@@ -4,7 +4,7 @@
     </button>
 
     <a class="navbar-brand mx-auto" href="{{url('')}}" title="View front page">
-        <img src="{{ asset('images-new/logo-tagline.png') }}" alt="logo with tagline">
+        <img src="{{ asset('images-new/logo_new.png') }}" alt="logo with tagline">
         {{--asset('images-new/logo-tagline.png')--}}
     </a>
 
