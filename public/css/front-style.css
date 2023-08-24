@@ -12997,7 +12997,7 @@ footer {
 }
 
 footer .logo {
-    width: 60%;
+    width: 50%;
 }
 
 footer .text-uppercase {
@@ -13035,6 +13035,29 @@ footer .copyright {
     margin-top: 30px;
 }
 
+#home-footer-new {
+    padding: 50px 0;
+}
+
+#home-footer-new ul {
+    padding: 0;
+    list-style-type: none;
+}
+
+#home-footer-new a {
+    color: #fff;
+    padding-left: 0;
+}
+
+#home-footer-new a:hover {
+    text-decoration: underline;
+}
+
+#home-footer-new .site-btn-global {
+    font-size: 20px;
+    border-radius: 30px;
+    padding: 10px 50px;
+}
 /*footer .right-container:before {
     content: "";
     background: url(../images-new/home/cta.png) no-repeat center / cover;

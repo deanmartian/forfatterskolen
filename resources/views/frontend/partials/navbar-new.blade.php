@@ -4,7 +4,7 @@
     </button>
 
     <a class="navbar-brand mx-auto" href="{{url('')}}" title="View front page">
-        <img src="{{ asset('images-new/logo_new.png') }}" alt="logo with tagline" style="height: auto; margin-top: 20px">
+        <img src="https://www.forfatterskolen.no/{{'images-new/logo_new_black.png'}}" alt="logo with tagline" style="height: auto; margin-top: 20px">
         {{--asset('images-new/logo-tagline.png')--}}
     </a>
 
