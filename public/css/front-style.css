@@ -12979,6 +12979,27 @@ textarea.form-control {
     color: #fff;
 }
 
+.professional-feedback-wrapper {
+    background-color: #F2F2F2;
+    padding: 93px 0;
+}
+
+.professional-feedback-wrapper h2 {
+    font-size: 37px;
+    font-weight: 700;
+    line-height: 44px;
+    margin-top: 0;
+}
+
+.professional-feedback-wrapper .site-btn-global {
+    background-color: #E93746;
+    border-radius: 30px;
+}
+
+.professional-feedback-wrapper .site-btn-global:hover {
+    text-decoration: underline;
+}
+
 footer {
     background-color: #303030;
     color: #fff;

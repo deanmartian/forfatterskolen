@@ -255,6 +255,26 @@
                 </div> <!-- end row -->
             </div> <!-- end container -->
         </div> <!-- end poem-wrapper -->
+
+        <div class="professional-feedback-wrapper">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-5 text-center">
+                        <img src="{{ asset('/images-new/front-page/illustration-computer.png') }}" 
+                        alt="illustration-computer">
+                    </div>
+                    <div class="col-md-7">
+                        <h2>
+                            Vil du ha profesjonell tilbakemelding på en smakebit av din personlige tekst, helt gratis?
+                        </h2>
+
+                        <a href="{{ route('front.free-manuscript.index') }}" class="btn site-btn-global mt-5">
+                            Ja, dette vil jeg ha!
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     @if(!isset($_COOKIE['_gdpr']))
