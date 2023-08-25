@@ -260,7 +260,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-5 text-center">
-                        <img src="{{ asset('/images-new/front-page/illustration-computer.png') }}" 
+                        <img src="https://www.forfatterskolen.no/{{ '/images-new/illustrationcomputer.png' }}" 
                         alt="illustration-computer">
                     </div>
                     <div class="col-md-7">
