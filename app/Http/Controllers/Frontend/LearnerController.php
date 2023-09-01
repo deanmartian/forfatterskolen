@@ -1406,7 +1406,7 @@ class LearnerController extends Controller
         $fikenInvoice->setMobileNumber($request->mobile_number);
         $fikenInvoice->setFikenInvoiceId($invoice->fiken_invoice_id);
 
-        $response = $fikenInvoice->vippsEFaktura();
+        $response = $fikenInvoice->vippsEFaktura(Auth::user());
         $alert_type = 'success';
         $message = 'Invoice sent.';
 

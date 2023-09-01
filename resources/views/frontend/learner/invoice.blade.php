@@ -340,7 +340,7 @@
 																	data-toggle="modal"
 																	data-target="#vippsFakturaModal"
 																	data-action="{{ route('learner.invoice.vipps-e-faktura', $invoice->id) }}">
-																VIPPS eFaktura
+																	Send som Efaktura
 															</button>
 														@endif
 
