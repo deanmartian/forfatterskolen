@@ -149,6 +149,27 @@ class Course extends Model
         ->orderBy('delay', 'asc');
     }
 
+    public function emailOutActive()
+    {
+        $today = now()->toDateString();
+        return $this->hasMany('App\EmailOut')
+        ->where(function ($query) use ($today) {
+            $query->where('delay', '>=', $today)
+                  ->orWhereRaw('delay REGEXP "^[0-9]+$"');
+        })
+        ->orderByRaw("delay + 0 ASC")
+        ->orderBy('delay', 'asc');
+    }
+
+    public function emailOutArchive()
+    {
+        $today = now()->toDateString();
+        return $this->hasMany('App\EmailOut')
+        ->where('delay', '<', $today)
+        ->orderByRaw("delay + 0 ASC")
+        ->orderBy('delay', 'asc');
+    }
+
     public function emailOutLog()
     {
         return $this->hasMany('App\EmailOutLog');

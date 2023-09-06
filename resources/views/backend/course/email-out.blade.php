@@ -11,68 +11,36 @@
 
 @section('content')
     @include('backend.course.partials.toolbar')
+    <?php 
+        $currentEmails = $course->emailOutActive()->get();
+        $archives = $course->emailOutArchive()->get();
+    ?>
 
     <div class="course-container">
         @include('backend.partials.course_submenu')
         <div class="col-sm-12 col-md-10 sub-right-content">
             <div class="col-sm-12 col-md-12">
 
-                <button class="btn btn-primary margin-bottom addEmailBtn" data-target="#emailModal" data-toggle="modal"
-                data-action="{{ route('admin.email-out.store', $course->id) }}">
-                    + {{ trans('site.add-email') }}
-                </button>
-                <div class="table-responsive">
-                    <table class="table table-side-bordered table-white">
-                        <thead>
-                        <tr>
-                            <th>{{ trans('site.subject') }}</th>
-                            <th width="500">{{ trans('site.message') }}</th>
-                            <th>{{ trans('site.availability') }}</th>
-                            <th>Send Immediately</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($course->emailOutOrdered()->get() as $email)
-                                <tr>
-                                    <td>{{ $email->subject }}</td>
-                                    <td>{!! \Illuminate\Support\Str::limit(strip_tags($email->message), 100) !!}</td>
-                                    <td>
-                                        @if(\App\Http\AdminHelpers::isDate($email->delay))
-                                            {{date_format(date_create($email->delay), 'M d, Y')}}
-                                        @else
-                                            {{$email->delay}} {{ trans('site.days-delay') }}
-                                        @endif
-                                    </td>
-                                    <td>
-                                        {{ $email->send_immediately_text }}
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-success btn-xs sendEmailBtn" data-toggle="modal"
-                                                data-target="#sendEmailModal"
-                                                data-action="{{
-                                                 route('admin.email-out.send-email',
-                                                  ['course_id' => $course->id, 'email_out' => $email->id])
-                                                 }}">
-                                            <i class="fa fa-paper-plane"></i>
-                                        </button>
-                                        <button class="btn btn-info btn-xs editEmailBtn" data-toggle="modal"
-                                        data-target="#emailModal" data-fields="{{ json_encode($email) }}"
-                                        data-action="{{ route('admin.email-out.update', ['course_id' => $course->id, 'email_out' => $email->id]) }}"
-                                        data-filename="{{ \App\Http\AdminHelpers::extractFileName($email->attachment) }}"
-                                        data-fileloc="{{ asset($email->attachment) }}">
-                                            <i class="fa fa-pencil"></i>
-                                        </button>
-                                        <button class="btn btn-danger btn-xs deleteEmailBtn" data-toggle="modal" data-target="#deleteEmailModal"
-                                        data-action="{{ route('admin.email-out.destroy', ['course_id' => $course->id, 'email_out' => $email->id]) }}">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                <ul class="nav nav-tabs margin-top">
+                    <li class="active"><a href="#current" data-toggle="tab">Active</a></li>
+                    <li><a href="#archive" data-toggle="tab">Archive</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade in active margin-top" id="current" role="tabpanel">
+                        <button class="btn btn-primary margin-bottom addEmailBtn" data-target="#emailModal" data-toggle="modal"
+                        data-action="{{ route('admin.email-out.store', $course->id) }}">
+                            + {{ trans('site.add-email') }}
+                        </button>
+                        
+                        @include('backend.course.partials.email-out-table', with(['emails' => $currentEmails]))
+                    </div> <!-- end tab-pane -->
+
+                    <div class="tab-pane fade margin-top" id="archive" role="tabpanel">
+                        @include('backend.course.partials.email-out-table', with(['emails' => $archives]))
+                    </div>
                 </div>
+
             </div> <!-- col-sm-12 col-md-12 -->
         </div> <!-- end col-sm-12 col-md-10 sub-right-content -->
 
