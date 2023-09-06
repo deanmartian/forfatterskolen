@@ -157,6 +157,7 @@ class Course extends Model
             $query->where('delay', '>=', $today)
                   ->orWhereRaw('delay REGEXP "^[0-9]+$"');
         })
+        ->orWhere('send_immediately', 1)
         ->orderByRaw("delay + 0 ASC")
         ->orderBy('delay', 'asc');
     }
