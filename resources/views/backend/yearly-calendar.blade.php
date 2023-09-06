@@ -8,7 +8,7 @@
 <div class="col-md-12">
     <ul class="nav nav-tabs margin-top">
         <li @if( Request::input('tab') == 'howManyManuscriptEditorCanTake' || Request::input('tab') == '') class="active" @endif><a href="?tab=howManyManuscriptEditorCanTake">How Many Manuscript You Can Take</a></li>
-        <li @if( Request::input('tab') == 'yearlyCalendar' ) class="active" @endif><a href="?tab=yearlyCalendar">Yearly Calendar</a></li>
+        {{-- <li @if( Request::input('tab') == 'yearlyCalendar' ) class="active" @endif><a href="?tab=yearlyCalendar">Yearly Calendar</a></li> --}}
         <li @if( Request::input('tab') == 'howManyAssignmentsEditorCanTake' ) class="active" @endif><a href="?tab=howManyAssignmentsEditorCanTake">{{ trans('site.how-many-manuscript-assignments-editor-can-take') }}</a></li>
         <li @if( Request::input('tab') == 'editorsAvailability' ) class="active" @endif><a href="?tab=editorsAvailability">{{ trans('site.editors-availability') }}</a></li>
         <li @if( Request::input('tab') == 'unfinished-manuscript' ) class="active" @endif><a href="?tab=unfinished-manuscript">{{ trans('site.unfinished-manuscript') }}</a></li>
@@ -158,6 +158,8 @@
                                     <th>{{ trans_choice('site.assignments', 1) }}</th>
                                     <th>{{ trans_choice('site.manuscripts', 1) }}</th>
                                     <th>{{ trans_choice('site.learners', 1) }}</th>
+                                    <th>Expected Finish</th>
+                                    <th>Expected Editor Finish</th>
                                     <th>{{ trans_choice('site.editors', 1) }}</th>
                                     <th>{{ trans('site.type') }}</th>
                                     <th>{{ trans('site.where') }}</th>
@@ -181,6 +183,12 @@
                                         </td>
                                         <td>
                                             <a href="{{route('admin.learner.show', $unfinishedAssignment->user->id)}}">{{ $unfinishedAssignment->user->full_name }}</a>
+                                        </td>
+                                        <td>
+                                            {{ $unfinishedAssignment->expected_finish }}
+                                        </td>
+                                        <td>
+                                            {{ $unfinishedAssignment->editor_expected_finish }}
                                         </td>
                                         <td>
                                             @if( $unfinishedAssignment->editor )
