@@ -1639,6 +1639,7 @@ Route::group([
         Route::post('/settings/update/gt_reminder_email_template', 'SettingsController@gtReminderEmail')->name('admin.settings.update.gt_reminder_email_template');
         Route::post('/settings/update/course_not_started_reminder', 'SettingsController@courseNotStartedReminder')->name('admin.settings.update.course_not_started_reminder');
         Route::post('/settings/update/head-editor', 'SettingsController@headEditor')->name('admin.settings.update.head-editor');
+        Route::post('/settings/update/editors-note', 'SettingsController@updateEditorsNote')->name('admin.settings.update.editors-note'); // Store Terms
         Route::post('/settings/create/{name}', 'SettingsController@create')->name('admin.settings.create');
         Route::get('/news', 'SettingsController@news')->name('admin.news.index');
         Route::post('/news/save', 'SettingsController@saveNews')->name('admin.news.save');

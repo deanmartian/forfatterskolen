@@ -102,6 +102,13 @@ class SettingsController extends Controller
             'alert_type' => 'success']);
     }
 
+    public function updateEditorsNote(Request $request)
+    {
+        Settings::updateOrCreate(['setting_name' => 'editors-note'], ['setting_value' => $request->editors_note]);
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Editor\'s note updated successfully.'),
+            'alert_type' => 'success']);
+    }
+
     public function create( $name, Request $request )
     {
         $settings = Settings::updateOrCreate(['setting_name' => $name], ['setting_value' => $request->setting_value]);

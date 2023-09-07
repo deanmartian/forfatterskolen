@@ -1003,6 +1003,24 @@ class CourseController extends Controller
         ]);
     }
 
+    public function inFacebookGroupUpdate( $course_taken_id, Request $request )
+    {
+        $courseTaken = CoursesTaken::find($course_taken_id);
+        $success = false;
+
+        if ($courseTaken) {
+            $courseTaken->in_facebook_group = $request->in_facebook_group;
+            $courseTaken->save();
+            $success = TRUE;
+        }
+
+        return response()->json([
+            'data' => [
+                'success' => $success,
+            ]
+        ]);
+    }
+
     /**
      * @param $course_id
      * @return \Illuminate\Http\JsonResponse
