@@ -828,6 +828,7 @@ Route::group([
         Route::post('course/{id}/save-certificate-template', 'CourseController@saveCertificateTemplate')->name('admin.course.save-certificate-template');
         Route::get('/course/{id}/export-hidden-webinars', 'CourseController@exportHiddenWebinars');
         Route::post('course-taken/{id}/update-can-receive-email', 'CourseController@canReceiveEmailUpdate');
+        Route::post('course-taken/{id}/update-in-facebook-group', 'CourseController@inFacebookGroupUpdate');
 
         Route::get('/shareable-course/get-package/{course_id}', 'ShareableCourseController@getCoursePackage');
         Route::resource('shareable-course', 'ShareableCourseController', [

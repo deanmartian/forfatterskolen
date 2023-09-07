@@ -126,6 +126,7 @@
 								<th>{{ trans_choice('site.packages', 1) }}</th>
 								<th>Preferred Editor</th>
 								<th>Include in email list</th>
+								<th>Facebook Group</th>
 								<th></th>
 							</tr>
 							</thead>
@@ -149,6 +150,11 @@
 											<input type="checkbox" data-toggle="toggle" data-on="Yes"
 												   class="receive-email-toggle" data-off="No" data-id="{{ $learner->id }}"
 												   name="can_receive_email" data-size="mini" @if($learner->can_receive_email) {{ 'checked' }} @endif>
+										</td>
+										<td>
+											<input type="checkbox" data-toggle="toggle" data-on="Yes"
+												   class="facebook-group-toggle" data-off="No" data-id="{{ $learner->id }}"
+												   name="in_facebook_group" data-size="mini" @if($learner->in_facebook_group) {{ 'checked' }} @endif>
 										</td>
 										<td>
 											<button type="submit" data-toggle="modal" data-target="#removeLearnerModal" class="btn btn-danger btn-xs pull-right btn-remove-learner"
@@ -356,11 +362,14 @@
 					</div>
 
 					<label>Learners</label> <br>
-					<input type="checkbox" name="check_all"> <label for="">Check/Uncheck All</label>
+					<input type="checkbox" name="check_all"> <label for="">Check/Uncheck All</label> <br>
+					<input type="checkbox" name="not_facebook_group" value="not-fb-group"> 
+					<label for="not_facebook">Not In Facebook Group</label>
 					<div class="form-group" style="max-height: 300px; overflow-y: scroll; margin-top: 10px">
 						@if(count($course->learners->get()) > 0)
 							@foreach( $course->learners->get() as $learner)
-								<input type="checkbox" name="learners[]" value="{{ $learner->user->id }}">
+								<input type="checkbox" name="learners[]" value="{{ $learner->user->id }}" 
+								class="{{ !$learner->in_facebook_group ? 'not-in-facebook-group' : '' }}">
 								<label>{{ $learner->user->full_name }}</label> <br>
 							@endforeach
 						@endif
@@ -608,12 +617,21 @@
             send_email.val('Sending....').attr('disabled', true);
 		}
 
-		$("[name=check_all]").click(function(){
-		   if ($(this).prop('checked')) {
-		    	$("[type=checkbox]").prop('checked', true);
-        	} else {
-               $("[type=checkbox]").prop('checked', false);
-		   }
+		$("[name=check_all]").click(function() {
+			if ($(this).prop('checked')) {
+				$("[type=checkbox][name!=not_facebook_group]").prop('checked', true);
+				$("[name=not_facebook_group]").prop('checked', false);
+			} else {
+				$("[type=checkbox]").prop('checked', false);
+			}
+		});
+
+		$("[name=not_facebook_group]").click(function(){
+			// uncheck all at first
+			$("[type=checkbox][name!=not_facebook_group]").prop('checked', false);
+			if ($(this).prop('checked')) {
+				$(".not-in-facebook-group").prop('checked', true);
+			}
 		});
 
         $(".receive-email-toggle").change(function(){
@@ -625,6 +643,20 @@
                 url:'/course-taken/' + learner_id + '/update-can-receive-email',
                 headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 data: { 'can_receive_email' : check_val },
+                success: function(data){
+                }
+            });
+        });
+
+		$(".facebook-group-toggle").change(function(){
+            let learner_id = $(this).attr('data-id');
+            let is_checked = $(this).prop('checked');
+            let check_val = is_checked ? 1 : 0;
+            $.ajax({
+                type:'POST',
+                url:'/course-taken/' + learner_id + '/update-in-facebook-group',
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: { 'in_facebook_group' : check_val },
                 success: function(data){
                 }
             });
