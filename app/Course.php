@@ -155,9 +155,9 @@ class Course extends Model
         return $this->hasMany('App\EmailOut')
         ->where(function ($query) use ($today) {
             $query->where('delay', '>=', $today)
-                  ->orWhereRaw('delay REGEXP "^[0-9]+$"');
+                  ->orWhereRaw('delay REGEXP "^[0-9]+$"')
+                  ->orWhere('send_immediately', 1);
         })
-        ->orWhere('send_immediately', 1)
         ->orderByRaw("delay + 0 ASC")
         ->orderBy('delay', 'asc');
     }
@@ -167,6 +167,7 @@ class Course extends Model
         $today = now()->toDateString();
         return $this->hasMany('App\EmailOut')
         ->where('delay', '<', $today)
+        ->whereRaw('delay REGEXP "[0-9]{4}-[0-9]{2}-[0-9]{2}"')
         ->orderByRaw("delay + 0 ASC")
         ->orderBy('delay', 'asc');
     }
