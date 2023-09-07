@@ -1147,6 +1147,7 @@ class AdminHelpers
             array( 'id' => 4, 'options' => 'Editor Settings', 'route' => 'editor.settings', 'request_name' => 'editor-settings'),
             array( 'id' => 5, 'options' => 'Assigned Webinar', 'route' => 'editor.assigned-webinar', 'request_name' => 'assigned-webinar'),
             //array( 'id' => 8, 'option' => 'Årshjul', 'route' => 'editor.yearly-calendar.index', 'request_name' => 'yearly_calendar')
+            array( 'id' => 15, 'option' => 'Redaktørinnstruks', 'route' => 'editor.editors-note', 'request_name' => 'editors-note')
         );
 
         if ($id > 0) {
