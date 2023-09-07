@@ -1860,6 +1860,7 @@ Route::group([
         Route::post('manuscriptYouCanTake/save', 'ManuscriptEditorCanTakeController@save')->name('editor.manuscript-you-can-take-save');
         Route::post('manuscriptYouCanTake/{id}/delete', 'ManuscriptEditorCanTakeController@delete')->name('editor.manuscript-you-can-take.delete');
         Route::get('/yearly-calendar', 'PageController@yearlyCalendar')->name('editor.yearly-calendar.index');
+        Route::get('/editors-note', 'PageController@editorsNote')->name('editor.editors-note');
         Route::get('/assigned-webinar', 'AssignedWebinarController@show')->name('editor.assigned-webinar');
         Route::post('/self-publishing/{id}/feedback', 'PageController@selfPublishingFeedback')->name('editor.self-publishing.feedback');
         Route::get('/self-publishing/{id}/download-manuscript', 'PageController@selfPublishingDownloadManuscript')->name('editor.self-publishing.download-manuscript');

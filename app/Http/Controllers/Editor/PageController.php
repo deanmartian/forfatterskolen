@@ -17,6 +17,7 @@ use App\AssignmentManuscript;
 use App\Course;
 use App\CorrectionManuscript;
 use App\CopyEditingManuscript;
+use App\Settings;
 use Carbon\Carbon;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
@@ -188,6 +189,12 @@ class PageController extends Controller
     public function yearlyCalendar()
     {
         return view('editor.yearly-calendar');
+    }
+
+    public function editorsNote()
+    {
+        $note = Settings::editorsNote();
+        return view('editor.editors-note', compact('note'));
     }
 
     public function selfPublishingFeedback( $publishing_id, Request $request )
