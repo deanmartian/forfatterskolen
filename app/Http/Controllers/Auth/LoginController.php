@@ -140,8 +140,8 @@ class LoginController extends Controller
         $this->validate($request, [
             'email' => 'required|email'
         ]);
-        $user = User::where('email', $request->email)->where('role', 2)
-            ->where('is_self_publishing_learner', 1)->first();
+        /* ->where('is_self_publishing_learner', 1) */
+        $user = User::where('email', $request->email)->where('role', 2)->first();
         $secondaryEmail = UserEmail::where('email', $request->email)->first();
 
         if(!$user && !$secondaryEmail) return redirect()->back()->withErrors('Unknown email');

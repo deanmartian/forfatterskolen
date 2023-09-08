@@ -58,15 +58,16 @@
         <ul class="navbar-nav login-nav">
             <li class="nav-item">
                 <a class="nav-link login-link" href="{{route('auth.login.show')}}" title="View login page">
-                    <span>Min Side</span>
+                    {{-- <span>Min Side</span> --}}
+                    <span>{{ trans('site.front.form.login') }}</span>
                 </a>
             </li>
 
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link login-link" href="{{route('auth.login.self-publishing-show')}}" title="View login page">
                     <span>Selvpubliseringsportal</span>
                 </a>
-            </li>
+            </li> --}}
         </ul>
     @endif
 </nav>
