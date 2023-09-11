@@ -829,6 +829,7 @@ Route::group([
         Route::get('/course/{id}/export-hidden-webinars', 'CourseController@exportHiddenWebinars');
         Route::post('course-taken/{id}/update-can-receive-email', 'CourseController@canReceiveEmailUpdate');
         Route::post('course-taken/{id}/update-in-facebook-group', 'CourseController@inFacebookGroupUpdate');
+        Route::post('course-taken/{id}/exclude-in-registration', 'CourseController@excludeInScheduledRegistration');
 
         Route::get('/shareable-course/get-package/{course_id}', 'ShareableCourseController@getCoursePackage');
         Route::resource('shareable-course', 'ShareableCourseController', [

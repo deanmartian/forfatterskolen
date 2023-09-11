@@ -1021,6 +1021,24 @@ class CourseController extends Controller
         ]);
     }
 
+    public function excludeInScheduledRegistration($course_taken_id, Request $request)
+    {
+        $courseTaken = CoursesTaken::find($course_taken_id);
+        $success = false;
+
+        if ($courseTaken) {
+            $courseTaken->exclude_in_scheduled_registration = $request->exclude_in_scheduled_registration;
+            $courseTaken->save();
+            $success = TRUE;
+        }
+
+        return response()->json([
+            'data' => [
+                'success' => $success,
+            ]
+        ]);
+    }
+
     /**
      * @param $course_id
      * @return \Illuminate\Http\JsonResponse

@@ -126,6 +126,7 @@
 								<th>{{ trans_choice('site.packages', 1) }}</th>
 								<th>Preferred Editor</th>
 								<th>Include in email list</th>
+								<th>Exclude in Scheduled Registration</th>
 								<th>Facebook Group</th>
 								<th></th>
 							</tr>
@@ -150,6 +151,12 @@
 											<input type="checkbox" data-toggle="toggle" data-on="Yes"
 												   class="receive-email-toggle" data-off="No" data-id="{{ $learner->id }}"
 												   name="can_receive_email" data-size="mini" @if($learner->can_receive_email) {{ 'checked' }} @endif>
+										</td>
+										<td>
+											<input type="checkbox" data-toggle="toggle" data-on="Yes"
+												   class="exclude-in-registration-toggle" data-off="No" data-id="{{ $learner->id }}"
+												   name="exclude_in_scheduled_registration" data-size="mini" 
+												   @if($learner->exclude_in_scheduled_registration) {{ 'checked' }} @endif>
 										</td>
 										<td>
 											<input type="checkbox" data-toggle="toggle" data-on="Yes"
@@ -643,6 +650,20 @@
                 url:'/course-taken/' + learner_id + '/update-can-receive-email',
                 headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 data: { 'can_receive_email' : check_val },
+                success: function(data){
+                }
+            });
+        });
+
+		$(".exclude-in-registration-toggle").change(function(){
+            let learner_id = $(this).attr('data-id');
+            let is_checked = $(this).prop('checked');
+            let check_val = is_checked ? 1 : 0;
+            $.ajax({
+                type:'POST',
+                url:'/course-taken/' + learner_id + '/exclude-in-registration',
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: { 'exclude_in_scheduled_registration' : check_val },
                 success: function(data){
                 }
             });

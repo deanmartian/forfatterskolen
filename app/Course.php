@@ -240,6 +240,15 @@ class Course extends Model
             ->orderBy('updated_at', 'desc');
     }
 
+    public function getwebinarLearnersAttribute()
+    {
+        $packageIds = $this->packages()->pluck('id')->toArray();
+        return CoursesTaken::whereHas('user')->whereIn('package_id', $packageIds)
+            ->where('is_active', true)
+            ->where('exclude_in_scheduled_registration', 0)
+            ->orderBy('updated_at', 'desc');
+    }
+
     public function getCreatedAtAttribute($value)
     {
         return date_format(date_create($value), 'M d, Y h:i a');
