@@ -1,3 +1,72 @@
+<div id="writingPlanModal" class="modal fade no-header-modal" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body main-form" style="padding: 30px">
+
+                <div class="form-container">
+
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa user-icon"></i></span>
+                        </div>
+                        <input type="text" name="name" class="form-control no-border-left"
+                               placeholder="Fornavn" required value="{{old('name')}}">
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa email-icon"></i></span>
+                        </div>
+                        <input type="email" name="email" placeholder="Epost"
+                               class="form-control no-border-left" required>
+                    </div>
+
+                    <div class="row options-row">
+                        <div class="col-md-6">
+                            <div class="custom-checkbox">
+                                <input type="checkbox" name="terms" id="terms" required>
+                                <?php
+                                $search_string = [
+                                    '[start_link]', '[end_link]'
+                                ];
+                                $replace_string = [
+                                    '<a href="'.route('front.opt-in-terms').'" title="View front page terms">','</a>'
+                                ];
+                                $terms_link = str_replace($search_string, $replace_string, trans('site.front.accept-terms'))
+                                ?>
+                                <label for="terms">{!! $terms_link !!}</label>
+                            </div>
+
+                            <small class="font-montserrat-light">{{ trans('site.front.main-form.note') }}</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::renderJS() !!}
+                            {!! \Anhskohbo\NoCaptcha\Facades\NoCaptcha::display(['data-callback' => 'captchaCB']) !!}
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="captcha" value="">
+
+                    <div class="btn-container text-right" style="margin-top: 20px">
+                        <button type="button" class="btn font-montserrat-light" onclick="submitWritingPlan(this)">
+                            {{ trans('site.front.main-form.submit-text') }}
+                        </button>
+                    </div>
+
+                    <div class="alert alert-danger no-bottom-margin mt-3 d-none">
+                        <ul>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
 <footer id="home-footer-new">
     <div class="container">
         <div class="row mb-5">

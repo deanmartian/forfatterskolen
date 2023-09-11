@@ -230,7 +230,8 @@
         @if (Route::currentRouteName() == 'front.home')
             @include('frontend.partials.home-footer-new')
         @else
-            @include('frontend.partials.footer-new')
+            {{-- @include('frontend.partials.footer-new') --}}
+            @include('frontend.partials.home-footer-new')
         @endif
 
         @if($errors->count())
