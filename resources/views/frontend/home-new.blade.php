@@ -36,7 +36,7 @@
                     </button>
                 </div>
                 <div class="col-md-6">
-                    <img class="w-100" src="{{asset('images-new/home/kristine.png')}}" alt="kristine">
+                    <img class="w-100" data-src="https://www.forfatterskolen.no/images-new/home/kristine.png" alt="kristine">
                 </div>
             </div>
         </div> <!-- end container -->
