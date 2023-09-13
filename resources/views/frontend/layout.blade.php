@@ -213,10 +213,10 @@
                     @include('frontend.partials.learner-nav')
                 @endif
             @else
-                @include('frontend.partials.navbar-new')
+                @include('frontend.partials._navbar-latest')
             @endif
         @else
-            @include('frontend.partials.navbar-new')
+            @include('frontend.partials._navbar-latest')
         @endif
 
         @yield('content')

@@ -106,7 +106,7 @@ class HomeController extends Controller
 
         $upcomingSections = UpcomingSection::all();
 
-        return view('frontend.home', compact('popular_courses', 'free_courses', 'free_webinars',
+        return view('frontend.home-new', compact('popular_courses', 'free_courses', 'free_webinars',
             'next_webinar', 'next_free_webinar', 'next_workshop','latest_blog', 'poems', 'testimonials', 'workshop',
             'upcomingSections'));
     }

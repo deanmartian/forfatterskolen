@@ -246,6 +246,32 @@ a {
     height: 110px;
 }
 
+#navbar-latest {
+    padding: 2rem 0;
+}
+
+#navbar-latest .navbar-brand img {
+    height: auto;
+}
+
+#navbar-latest .navbar-nav .nav-link {
+    color: #000000;
+    margin-right: 15px;
+}
+
+#navbar-latest .navbar-nav .nav-link:hover {
+    color: #862736;
+}
+
+#navbar-latest .nav-item .login-link {
+    padding-top: 10px;
+}
+
+#navbar-latest .nav-item .login-link > span {
+    border-radius: 30px;
+    padding: 10px 25px;
+}
+
 #learnerNav .navbar-brand img {
     height: auto;
     margin-right: 30px;
@@ -6742,6 +6768,201 @@ textarea.form-control {
 }
 
 /* end personal trainer */
+
+/* newest front page 09/2023 */
+.front-page-new {
+    background-image: url('../images-new/home/home-right-bg.png');
+    background-repeat: no-repeat;
+    background-position: 100% 125px;
+}
+
+.front-page-new .header-new {
+    padding: 70px 0 60px;
+}
+.front-page-new .header-new .container {
+    padding: 0 70px;
+}
+
+.front-page-new .header-new h1 {
+    font-size: 70px;
+    font-weight: 500;
+    margin-top: 30px;
+}
+
+.front-page-new .header-new p {
+    font-size: 20px;
+    margin-top: 40px;
+    margin-bottom: 30px;
+}
+
+.btn-red {
+    background-color: #E93746;
+    color: #ffffff;
+    border-radius: 30px;
+    padding: 7px 25px;
+}
+
+.btn-outline-red {
+    border: 2px solid #E93746;
+    color: #E93746;
+    border-radius: 30px;
+    padding: 7px 25px;
+}
+
+.btn-outline-maroon {
+    border: 2px solid #862836;
+    color: #862836;
+    border-radius: 30px;
+    padding: 7px 25px;
+}
+
+.btn-outline-maroon:hover {
+    background-color: #862836;
+    color: #ffffff !important;
+}
+
+.front-page-new .first-row {
+    background-color: #862836;
+    border-radius: 20px;
+    color: #ffffff;
+    text-align: center;
+    padding: 40px 0;
+}
+
+.front-page-new .first-row h2 {
+    font-size: 70px;
+    font-weight: 500;
+}
+
+.front-page-new .second-row {
+    margin: 100px 0;
+}
+
+.front-page-new .second-row h2 {
+    font-size: 50px;
+    margin-bottom: 50px;
+}
+
+.front-page-new .second-row .content-container {
+    background-color: #F2F2F2;
+    border-radius: 5px;
+    padding: 30px;
+    height: 100%;
+}
+
+.front-page-new .second-row .content-container .title {
+    background-color: #862836;
+    border-radius: 30px;
+    color: #ffffff;
+    display: inline;
+    margin-bottom: 40px;
+    padding: 5px 25px;
+}
+
+.front-page-new .second-row .content-container h3 {
+    font-size: 25px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+}
+
+.front-page-new .second-row .content-container .date-time-cont {
+    position: absolute;
+    border-top: 1px solid #862836;
+    bottom: 28px;
+    padding-top: 3px;
+    width: 75%;
+}
+
+.front-page-new .popular-courses-row {
+    background-color: #F2F2F2;
+    padding: 100px 0;
+}
+
+.front-page-new .popular-courses-row h2 {
+    font-size: 50px;
+    font-weight: 500;
+}
+
+.front-page-new .popular-courses-row .course-container .image-container {
+    margin-bottom: 30px;
+}
+
+.front-page-new .popular-courses-row .course-container .image-container img {
+    height: 177px;
+    width: 100%;
+}
+
+.front-page-new .popular-courses-row .course-container .image-container span {
+    position: absolute;
+    background-color: #E93746;
+    border-radius: 30px;
+    color: #ffffff;
+    padding: 3px 17px;
+    right: 20px;
+    top: 173px;
+}
+
+.front-page-new .online-courses-row {
+    background-color: #5E1C26;
+    color: #ffffff;
+    padding: 100px 0;
+}
+
+.front-page-new .online-courses-row .top-container {
+    position: relative;
+}
+
+.front-page-new .online-courses-row .top-container .details {
+    background-color: #862836;
+    padding: 20px;
+    border-radius: 10px;
+    position: absolute;
+    width: 375px;
+    right: 0;
+    top: 85px;
+}
+
+.front-page-new .online-courses-row .top-container .details h2,
+.front-page-new .online-courses-row .bottom-container h2 {
+    font-size: 30px;
+}
+
+.front-page-new .online-courses-row .top-container .details p {
+    margin: 17px 0;
+}
+
+.front-page-new .online-courses-row .top-container .details ul {
+    padding: 0;
+    list-style-type: none;
+}
+
+.front-page-new .online-courses-row .top-container .details li:not(:last-child) {
+    margin-bottom: 5px;
+}
+
+.front-page-new .online-courses-row .top-container .details li img {
+    margin-right: 10px;
+}
+
+.front-page-new .online-courses-row .bottom-container {
+    margin-top: 100px;
+}
+
+.front-page-new .online-courses-row .bottom-container p {
+    margin: 20px 0;
+    line-height: 26px;
+}
+
+.front-page-new .testimonials-row {
+    padding: 100px 0 10px;
+}
+
+.front-page-new .testimonials-row h2 {
+    font-size: 40px;
+    margin-bottom: 50px;
+}
+
+/* end newest front page */
 
 /**
  media query
