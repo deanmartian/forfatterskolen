@@ -83,7 +83,10 @@
                     <div class="col-md-4">
                         <div class="content-container">
                             <div class="title">
-                                {{ $hasNextWebinar ? trans('site.front.next-webinar') : $upcomingSection->name }}
+                                <a href="{{ url($hasNextWebinar ? '/course/17?show_kursplan=1' : $upcomingSection->link) }}" 
+                                    style="color: inherit">
+                                    {{ $hasNextWebinar ? trans('site.front.next-webinar') : $upcomingSection->name }}
+                                </a>
                             </div>
                             <h3>
                                 {{ $hasNextWebinar ? $next_webinar->title : $upcomingSection->title }}
