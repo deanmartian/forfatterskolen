@@ -1,7 +1,7 @@
 <nav id="navbar-latest" class="navbar navbar-expand-md">
     <div class="container">
         <!-- Logo or Brand -->
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="{{ route('front.home') }}">
             <img src="{{asset('images-new/logo2.png')}}" alt="Your Logo">
         </a>
 
