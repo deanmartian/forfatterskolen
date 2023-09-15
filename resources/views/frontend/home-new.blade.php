@@ -151,7 +151,7 @@
     <div class="online-courses-row d-none">
         <div class="container">
             <div class="top-container">
-                <img src="{{ asset('/images-new/home/online-course.png') }}" alt="online-course">
+                <img data-src="https://www.forfatterskolen.no/images-new/home/online-course.png" alt="online-course">
                 <div class="details">
                     <h2>Hva er fordelene ved nettkurs?</h2>
                     <p>
@@ -160,15 +160,15 @@
                     </p>
                     <ul>
                         <li>
-                            <img src="{{ asset('/images-new/home/arrow.svg') }}" alt="arrow">
+                            <img data-src="https://www.forfatterskolen.no/images-new/home/arrow.svg" alt="arrow">
                             Her kommer det en fordel
                         </li>
                         <li>
-                            <img src="{{ asset('/images-new/home/arrow.svg') }}" alt="arrow">
+                            <img data-src="https://www.forfatterskolen.no/images-new/home/arrow.svg" alt="arrow">
                             Her kommer det en fordel
                         </li>
                         <li>
-                            <img src="{{ asset('/images-new/home/arrow.svg') }}" alt="arrow">
+                            <img data-src="https://www.forfatterskolen.no/images-new/home/arrow.svg" alt="arrow">
                             Her kommer det en fordel
                         </li>
                     </ul>
