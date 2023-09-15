@@ -823,7 +823,7 @@ Route::group([
         Route::post('/course/{id}/add-learners-to-webinars', 'CourseController@addLearnersToWebinars')->name('admin.course.add-learners-to-webinars');
         Route::post('/course/{id}/certificate-dates', 'CourseController@updateCertificateDates')->name('admin.course.update-certificate-dates');
         Route::get('course/resend-welcome-email/{package_id}/{user_id}/{course_taken_id}', 'CourseController@resendWelcomeEmailToUser');
-        Route::get('course/{id}/certificate', 'CourseController@certificate')->name('admin.course.certificate');
+        //Route::get('course/{id}/certificate', 'CourseController@certificate')->name('admin.course.certificate');
         Route::get('course/{id}/download-certificate', 'CourseController@downloadCertificate')->name('admin.course.download-certificate-template');
         Route::post('course/{id}/save-certificate-template', 'CourseController@saveCertificateTemplate')->name('admin.course.save-certificate-template');
         Route::get('/course/{id}/export-hidden-webinars', 'CourseController@exportHiddenWebinars');
@@ -867,6 +867,13 @@ Route::group([
                 'destroy' => 'admin.reward-coupons.destroy',
             ],
         ]);
+
+        Route::get('/course/{course_id}/package/{package_id}/certificate', 'CourseController@certificate')
+        ->name('admin.package.certificate');
+        Route::get('/course/{course_id}/package/{package_id}/download-certificate', 'CourseController@downloadPackageCertificate')
+        ->name('admin.package.download-certificate-template');
+        Route::post('/course/{course_id}/package/{package_id}/save-certificate-template', 'CourseController@savePackageCertificateTemplate')
+        ->name('admin.package.save-certificate-template');
 
         Route::post('/course/{course_id}/reward-coupons/multiple-store', 'CourseRewardCouponController@multipleStore')
             ->name('admin.reward-coupons.multiple-store');

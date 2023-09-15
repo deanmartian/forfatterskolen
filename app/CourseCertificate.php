@@ -18,7 +18,7 @@ class CourseCertificate extends Model
      *
      * @var array
      */
-    protected $fillable = ['course_id', 'template'];
+    protected $fillable = ['course_id', 'package_id', 'template'];
 
     public function course()
     {

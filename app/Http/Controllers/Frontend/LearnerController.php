@@ -2031,6 +2031,7 @@ class LearnerController extends Controller
             ->select('course_certificates.*', 'courses.title as course_title')
             ->whereNotNull('courses.completed_date')
             ->whereNotNull('courses.issue_date')
+            ->whereNotNull('course_certificates.package_id')
             ->where('courses_taken.user_id', \Auth::user()->id)
             ->whereNull('courses_taken.deleted_at')
             ->groupBy('course_certificates.id')

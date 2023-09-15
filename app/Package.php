@@ -46,6 +46,11 @@ class Package extends Model
         return $this->hasMany('App\PackageCourse', 'package_id')->orderBy('created_at', 'desc');
     }
 
+    public function certificate()
+    {
+        return $this->hasOne('App\CourseCertificate');
+    }
+
     public function getDescriptionFormattedAttribute()
     {
         return nl2br($this->attributes['description']);
