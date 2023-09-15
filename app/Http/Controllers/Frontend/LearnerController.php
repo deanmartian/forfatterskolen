@@ -2026,7 +2026,7 @@ class LearnerController extends Controller
         // get course certificates based on users course taken
         $certificates = DB::table('course_certificates')
             ->leftJoin('courses', 'course_certificates.course_id','=','courses.id')
-            ->leftJoin('packages','packages.course_id','=','courses.id')
+            ->leftJoin('packages','packages.id','=','course_certificates.package_id')
             ->leftJoin('courses_taken','courses_taken.package_id', '=','packages.id')
             ->select('course_certificates.*', 'courses.title as course_title')
             ->whereNotNull('courses.completed_date')
