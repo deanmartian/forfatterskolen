@@ -238,13 +238,15 @@
 											@endif
 										</td>
 										<td>
-											<button class="btn btn-xs btn-success previewRequestsSentBtn"
-													data-toggle="modal"
-													data-target="#previewRequestsSent"
-													data-requests="{{ $shopManuscript->requests }}"
-													>
-												{{ trans('site.learner.preview-text') }}
-											</button>
+											@if ($shopManuscript->requests->count())
+												<button class="btn btn-xs btn-success previewRequestsSentBtn"
+														data-toggle="modal"
+														data-target="#previewRequestsSent"
+														data-requests="{{ $shopManuscript->requests }}"
+														>
+													{{ trans('site.learner.preview-text') }}
+												</button>
+											@endif
 										</td>
 										<td>
 											@if( $shopManuscript->admin )
