@@ -200,6 +200,11 @@
 							<?php
 								$selected = '';
 
+
+							if ($shopManuscriptTaken->feedback_user_id === $admin->id) {
+								$selected = 'selected';
+							}
+
 							if ($shopManuscriptTaken->user->preferredEditor
 								&& $shopManuscriptTaken->user->preferredEditor->editor_id === $admin->id) {
 								$selected = 'selected';
@@ -226,11 +231,14 @@
 			</div>
           	<div class="form-group">
             	<label>{{ trans('site.expected-finish') }}</label>
-            	<input type="date" class="form-control" name="expected_finish" value="{{ $shopManuscriptTaken->expected_finish }}">
+            	<input type="date" class="form-control" name="expected_finish" 
+				value="{{ strftime('%Y-%m-%d', strtotime($shopManuscriptTaken->expected_finish)) }}">
           	</div>
 			  <div class="form-group">
             	<label>{{ trans('site.editor-expected-finish') }}</label>
-            	<input type="date" class="form-control" name="editor_expected_finish" value="{{ $shopManuscriptTaken->editor_expected_finish }}">
+            	<input type="date" class="form-control" name="editor_expected_finish" 
+				value="{{ $shopManuscriptTaken->editor_expected_finish 
+				? strftime('%Y-%m-%d', strtotime($shopManuscriptTaken->editor_expected_finish)) : '' }}">
           	</div>
   			<button type="submit" class="btn btn-primary pull-right">{{ trans('site.update') }}</button>
   			<div class="clearfix"></div>

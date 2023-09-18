@@ -62,7 +62,7 @@ class WebinarScheduledRegistrationCommand extends Command
                         ->get();
                     $isWebinarPakke = true;
                 } else {
-                    $learners = $webinar->course->learners->get();
+                    $learners = $webinar->course->webinarLearners->get();
                 }
 
                 foreach ( $learners as $learner ) {

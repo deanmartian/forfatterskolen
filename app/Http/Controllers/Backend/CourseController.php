@@ -387,7 +387,7 @@ class CourseController extends Controller
                 $clone_email_out->attachment = $newAttachment;
                 $clone_email_out->attachment_hash = $emailAttachment->hash;
             }
-
+            $clone_email_out->allowed_package = NULL;
             $clone_email_out->course_id = $clone_course->id;
             $clone_email_out->push();
         endforeach;
@@ -691,6 +691,16 @@ class CourseController extends Controller
         return redirect()->back();
     }
 
+    public function setCourseTakenEndDate ($courseId, Request $request)
+    {
+        $learners = Course::find($courseId)->learners;
+        $learners->update([
+            'end_date' => $request->date
+        ]);
+
+        return redirect()->back();
+    }
+
     /**
      * Export the learners to excel
      * @param $course_id
@@ -959,6 +969,20 @@ class CourseController extends Controller
 
     }
 
+    public function savePackageCertificateTemplate( $course_id, $package_id, Request $request )
+    {
+        
+        CourseCertificate::updateOrCreate([
+            'course_id' => $course_id,
+            'package_id' => $package_id
+        ], [
+            'template' => $request->template
+        ]);
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Certificate saved successfully.'),
+            'alert_type' => 'success']);
+    }
+
     public function exportHiddenWebinars( $course_id )
     {
         $course = Course::find($course_id);
@@ -993,21 +1017,62 @@ class CourseController extends Controller
         ]);
     }
 
+    public function inFacebookGroupUpdate( $course_taken_id, Request $request )
+    {
+        $courseTaken = CoursesTaken::find($course_taken_id);
+        $success = false;
+
+        if ($courseTaken) {
+            $courseTaken->in_facebook_group = $request->in_facebook_group;
+            $courseTaken->save();
+            $success = TRUE;
+        }
+
+        return response()->json([
+            'data' => [
+                'success' => $success,
+            ]
+        ]);
+    }
+
+    public function excludeInScheduledRegistration($course_taken_id, Request $request)
+    {
+        $courseTaken = CoursesTaken::find($course_taken_id);
+        $success = false;
+
+        if ($courseTaken) {
+            $courseTaken->exclude_in_scheduled_registration = $request->exclude_in_scheduled_registration;
+            $courseTaken->save();
+            $success = TRUE;
+        }
+
+        return response()->json([
+            'data' => [
+                'success' => $success,
+            ]
+        ]);
+    }
+
     /**
      * @param $course_id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function certificate( $course_id )
+    public function certificate( $course_id, $package_id )
     {
-        $certificate = CourseCertificate::where('course_id', $course_id)->first();
+        $course = Course::find($course_id);
+        $package = Package::find($package_id);
+        $section = 'certificate';
+        $certificate = CourseCertificate::where('course_id', $course_id)
+        ->where('package_id', $package_id)->first();
 
         if (!$certificate) {
-            $certificate = (object)[
-                'template' => view('backend.course.partials.certificate-template')->render()
-            ];
+            $certificate = view('backend.course.partials.certificate-template')->render();
+        } else {
+            $certificate = $certificate->template;
         }
 
-        return response()->json($certificate);
+        return view('backend.course.certificate.form', compact('course', 'package', 'section', 'certificate'));
+        //return response()->json($certificate);
     }
 
     /**
@@ -1018,6 +1083,21 @@ class CourseController extends Controller
     {
         $course = Course::find($course_id);
         $certificate = $course->certificate;
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        $pdf->setPaper('letter', 'landscape');
+        $pdf->loadHTML($certificate->template);
+        return $pdf->download($course->title . ' certificate.pdf');
+    }
+
+    public function downloadPackageCertificate($course_id, $package_id)
+    {
+        $course = Course::find($course_id);
+        $certificate = CourseCertificate::where([
+            'course_id' => $course_id,
+            'package_id' => $package_id,
+        ])->first();
+
         $pdf = \App::make('dompdf.wrapper');
         $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
         $pdf->setPaper('letter', 'landscape');

@@ -115,12 +115,30 @@
                             <a href="#" class="dropdown-item redirectForum">Forum</a>
                             <a href="#" class="dropdown-item pilotleser-link">Pilotleser</a>
 
-                            @if(Auth::user()->is_self_publishing_learner)
                             <a href="{{ route('learner.change-portal', 'self-publishing') }}"
-                               class="dropdown-item d-inline-block w-auto mb-2 btn btn-circle">
+                                class="dropdown-item d-inline-block w-auto mb-2 btn btn-circle">
                                 Selvpubliseringsportal
                             </a>
-                            @endif
+
+                            {{-- @if(Auth::user()->is_self_publishing_learner)
+                                <a href="{{ route('learner.change-portal', 'self-publishing') }}"
+                                class="dropdown-item d-inline-block w-auto mb-2 btn btn-circle">
+                                    Selvpubliseringsportal
+                                </a>
+                            @else
+                                @if(!FrontendHelpers::checkSelfPublishingPortalRequest(Auth::id()))
+                                    <a href="{{ route('learner.request-self-publishing-portal') }}" class="dropdown-item d-inline-block w-auto mb-1">
+                                        <form method="POST" action="{{route('learner.request-self-publishing-portal')}}" class="form-logout">
+                                            {{csrf_field()}}
+                                            <button type="submit" class="btn btn-circle">Get access</button>
+                                        </form>
+                                    </a>
+                                @else
+                                    <a href="#" class="dropdown-item d-inline-block w-auto mb-2 btn btn-circle">
+                                        Pending Request
+                                    </a>
+                                @endif
+                            @endif --}}
 
                             <a href="{{ route('auth.logout-get') }}" class="dropdown-item d-inline-block w-auto mb-2">
                                 <form method="POST" action="{{route('auth.logout')}}" class="form-logout">

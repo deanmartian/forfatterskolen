@@ -20,6 +20,9 @@
             <a :href="'/project/' + project.id + '/invoice'" class="btn btn-primary btn-sm">
                 Invoices
             </a>
+            <a :href="'/project/' + project.id + '/storage'" class="btn btn-primary btn-sm">
+                Storage
+            </a>
             <div class="pull-right">
                 <button class="btn btn-success btn-sm" @click="showLearnerFormModal()">
                     <i class="fa fa-user"></i> Add Learner
@@ -60,7 +63,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="wholeBook in wholeBooks">
+                        <tr v-for="wholeBook in wholeBooks" :key="wholeBook.id">
                             <td>
                                 <a href="javascript:;" @click="showManuscript(wholeBook)" >{{ formattedContent(wholeBook) }}</a>
                             </td>
@@ -80,7 +83,7 @@
                                     <i class="fa fa-edit"></i>
                                 </button>
 
-                                <button class="btn btn-xs btn-danger" @click="showDeleteBookFormModal(wholeBook)">
+                                <button class="btn btn-xs btn-danger" @click="showDeleteBookCritiqueFormModal(wholeBook)">
                                     <i class="fa fa-trash"></i>
                                 </button>
                             </td>
@@ -88,10 +91,121 @@
                         </tbody>
                     </table>
                 </div>
+
+                <button class="btn btn-success margin-top" @click="showBookCritiqueFormModal()">
+                    Add Book Critique
+                </button>
+
+                <div class="table-users">
+                    <table class="table table-responsive">
+                        <thead>
+                        <tr>
+                            <th>Book</th>
+                            <th>Description</th>
+                            <th>Date Uploaded</th>
+                            <th>Feedback</th>
+                            <th width="300"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="bookCritique in bookCritiques" :key="bookCritique.id">
+                                <td>
+                                    <a href="javascript:;" @click="showManuscript(bookCritique)" >{{ formattedContent(bookCritique) }}</a>
+                                </td>
+                                <td>
+                                    {{ bookCritique.description }}
+                                </td>
+                                <td>
+                                    {{ bookCritique.date_uploaded }}
+                                </td>
+                                <td>
+                                    <button class="btn btn-success btn-xs" v-if="!bookCritique.feedback"
+                                     @click="showBookCritiqueFeedbackModal(bookCritique)">
+                                        Add Feedback
+                                    </button>
+                                    <div v-else v-html="bookCritique.feedback_file">
+                                        
+                                    </div>
+                                </td>
+                                <td>
+                                    <a class="btn btn-xs btn-success"
+                                    :href="'/project/' + project.id + '/whole-book/' + bookCritique.id + '/download'">
+                                        <i class="fa fa-download"></i>
+                                    </a>
+
+                                    <button class="btn btn-xs btn-primary" @click="showBookCritiqueFormModal(bookCritique)">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+
+                                    <button class="btn btn-xs btn-danger" @click="showDeleteBookFormModal(bookCritique)">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <div class="col-md-6" v-if="project.user_id">
+            <div class="col-md-6">
                 <div class="panel">
+                    <div class="panel-header" style="padding: 10px">
+                        <em><b>Learner</b></em>
+                    </div>
+                    <div class="panel-body">
+                        <a :href="'/learner/' + project.user_id" v-if="project.user">
+                            {{ project.user.full_name }}
+                        </a>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header" style="padding: 10px">
+                        <em><b>Tasks</b></em>
+                    </div>
+                    <div class="panel-body">
+                        <button class="btn btn-success btn-sm pull-right" @click="showTaskFormModal()">
+                            + Add Task
+                        </button>
+                        <div class="clearfix"></div>
+                        <div class="table-users">
+                            <table class="table table-responsive">
+                                <thead>
+                                <tr>
+                                    <th>Task</th>
+                                    <th>Assigned To</th>
+                                    <th width="150"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="task in tasks" :key="task.id">
+                                        <td>
+                                            {{ task.task }}
+                                        </td>
+                                        <td>
+                                            {{ task.editor.full_name }}
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-success btn-xs" @click="showFinishTaskModal(task)">
+                                                <i class="fa fa-check"></i>
+                                            </button>
+
+                                            <button class="btn btn-primary btn-xs" @click="showTaskFormModal(task)">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+
+                                            <button class="btn btn-danger btn-xs" @click="showDeleteTaskModal(task)">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel" v-if="project.user_id">
                     <div class="panel-header" style="padding: 10px">
                         <em><b>Time Register</b></em>
                     </div>
@@ -151,7 +265,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="book in books">
+                    <tr v-for="book in books" :key="book.id">
                         <td>
                             {{ project.user ? project.user.full_name : '' }}
                         </td>
@@ -236,7 +350,7 @@
                           name="learner_id"></v-select>
             </div>
 
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label>Standard Activity</label>
                 <v-select :options="activityList" label="activity" v-model="selected_activity" @input="setSelectedActivity($event)"
                           name="activity" style="display: inline-block"
@@ -247,7 +361,7 @@
                 <button class="btn btn-default btn-sm" @click="showActivityModal(true)">
                     <i class="fa fa-plus" style="color: #009975"></i>
                 </button>
-            </div>
+            </div> -->
 
             <div class="form-group">
                 <label>Start date</label>
@@ -265,11 +379,12 @@
             </div>
 
             <div class="form-group">
-                <label>Finished</label> <br>
-                <toggle-button :color="'#337ab7'"
-                               :labels="{checked: 'Yes', unchecked: 'No'}"
-                               v-model="projectForm.is_finished"
-                               :width="60" :height="25" :font-size="14"/>
+                <label>Status</label>
+                <select name="status" class="form-control" v-model="projectForm.status">
+                    <option value="active">Active</option>
+                    <option value="lead">Lead</option>
+                    <option value="finished">Finished</option>
+                </select>
             </div>
 
             <div slot="modal-footer">
@@ -405,6 +520,95 @@
         </b-modal>
 
         <b-modal
+                ref="bookCritiqueFormModal"
+                :title="modalTitle"
+                size="md"
+                @hidden="closeBookCritiqueFormModal()"
+                centered
+                no-close-on-backdrop
+        >
+
+            <div class="form-group">
+                <toggle-button :color="'#337ab7'"
+                               :labels="{checked: 'File Upload', unchecked: 'Write Book'}"
+                               v-model="bookCritiqueForm.is_file"
+                               :width="150" :height="30" :font-size="16" @change="removeValidationError()"/>
+            </div>
+
+            <div class="form-group" v-if="bookCritiqueForm.is_file">
+                <label>Upload Book</label>
+                <input type="file" name="book_file" class="form-control"
+                       @change="onBookCritiqueFileChange"
+                       accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+					    application/vnd.oasis.opendocument.text">
+            </div>
+
+            <div class="form-group" v-if="!bookCritiqueForm.is_file">
+                <label>Write Book</label>
+                <quill-editor ref="wholeBookEditor" :content="bookCritiqueForm.book_content"
+                              @change="onBookCritiqueEditorChange($event)"></quill-editor>
+                <input type="hidden" name="book_content">
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Description
+                </label>
+                <textarea name="description" cols="30" rows="10" class="form-control" v-model="bookCritiqueForm.description"></textarea>
+            </div>
+
+            <div slot="modal-footer">
+                <button class="btn btn-sm btn-primary" @click="saveBookCritique()" :disabled="isLoading">
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Save
+                </button>
+            </div>
+
+        </b-modal>
+
+        <b-modal
+            ref="bookCritiqueFeedbackModal"
+            :title="'Feedback'"
+            size="md"
+            @hidden="closeBookCritiqueFormModal()"
+            centered
+            no-close-on-backdrop
+        >
+
+            <div class="form-group">
+                <label>Feedback</label>
+                <input type="file" name="feedback" class="form-control"
+                        @change="onBookCritiqueFeedbackChange"
+                        accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+                        application/vnd.oasis.opendocument.text">
+            </div>
+
+            <div slot="modal-footer">
+                <button class="btn btn-sm btn-primary" @click="saveBookCritiqueFeedback()" :disabled="isLoading">
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Save
+                </button>
+            </div>
+
+        </b-modal>
+
+        <b-modal
+                ref="deleteBookCritiqueFormModal"
+                title="Delete Book"
+                size="sm"
+                centered
+        >
+
+            <p>
+                Are you sure you want to delete this record?
+            </p>
+
+            <div slot="modal-footer">
+                <button class="btn btn-sm btn-danger" @click="deleteBookCritique()" :disabled="isLoading">
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Delete
+                </button>
+            </div>
+        </b-modal>
+
+        <b-modal
                 ref="wholeBookContentModal"
                 :title="''"
                 size="md"
@@ -501,6 +705,77 @@
                 </button>
             </div>
         </b-modal>
+
+        <b-modal
+            ref="taskFormModal"
+            size="md"
+            @hidden="closeTaskFormModal()"
+            centered
+        >
+            <div slot="modal-title">
+                <h4 class="modal-title">{{ modalTitle }}</h4>
+            </div>
+
+            <div class="form-group">
+                <label>Task</label>
+                <textarea name="task" cols="30" rows="10" class="form-control" v-model="taskForm.task" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Assign to</label>
+                <select name="assign_to" class="form-control" v-model="taskForm.assigned_to" required>
+                    <option value="" disabled selected>Select Editor</option>
+                    <option :value="editor.id" v-for="editor in editorAndAdminList" :key="editor.id">
+                        {{ editor.full_name }}
+                    </option>
+                </select>
+            </div>
+
+            <div slot="modal-footer">
+                <button class="btn btn-sm btn-primary" @click="saveTask()" :disabled="isLoading">
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Save
+                </button>
+            </div>
+        </b-modal>
+
+        <b-modal
+            ref="finishTaskModal"
+            title="Finish Task"
+            size="sm"
+            centered
+            no-close-on-backdrop
+        >
+
+            <p>
+                Are you sure you want to finish this task?
+            </p>
+
+            <div slot="modal-footer">
+                <button class="btn btn-sm btn-success" @click="finishTask()" :disabled="isLoading">
+                    <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Finish
+                </button>
+            </div>
+        </b-modal>
+
+        <b-modal
+                ref="deleteTaskModal"
+                title="Delete Task"
+                size="sm"
+                centered
+                no-close-on-backdrop
+        >
+
+            <p>
+                Are you sure you want to delete this record?
+            </p>
+
+            <div slot="modal-footer">
+                <button class="btn btn-sm btn-danger" @click="deleteTask()" :disabled="isDeleting">
+                    <i class="fa fa-spinner fa-pulse" v-if="isDeleting"></i> Delete
+                </button>
+            </div>
+        </b-modal>
+
 
         <b-modal
                 ref="timeFormModal"
@@ -666,7 +941,7 @@
     export default {
 
         props: ['current-project', 'learners', 'activities', 'time-registers', 'project-time-list', 'projects',
-            'whole-book-list'],
+            'whole-book-list', 'editor-and-admin-list', 'task-list', 'book-critique-list'],
 
         data() {
             return {
@@ -691,6 +966,17 @@
                     is_file: true
                 },
                 wholeBookFilename: '',
+                bookCritiqueForm: {
+                    id: '',
+                    book_content: '',
+                    book_file: [],
+                    description: '',
+                    is_file: true,
+                    is_book_critique: true,
+                },
+                bookCritiqueFilename: '',
+                bookCritiqueFeedbackFilename: '',
+                bookCritiques: this.bookCritiqueList,
                 noteForm: {
                     id: '',
                     notes: ''
@@ -724,7 +1010,7 @@
                     start_date: '',
                     end_date: '',
                     description: '',
-                    is_finished: false
+                    status: 'active'
                 },
                 activityList: this.activities,
                 learnerList: this.learners,
@@ -748,6 +1034,13 @@
                     last_name: '',
                     password: ''
                 },
+                taskForm: {
+                    id: '',
+                    project_id: '',
+                    assigned_to: '',
+                    task: ''
+                },
+                tasks: this.taskList,
                 isAdd: true,
                 isActivityLoading: false,
                 isDeleting: false,
@@ -861,7 +1154,7 @@
                     start_date: data.start_date,
                     end_date: data.end_date,
                     description: data.description,
-                    is_finished: !!data.is_finished
+                    status: data.status
                 };
 
                 const actIndex = _.findIndex(this.activityList, {id: data.activity_id});
@@ -884,7 +1177,7 @@
                 axios.post('/project/save', this.projectForm).then(response => {
                     this.isLoading = false;
 
-                    this.project = response.data;
+                    this.project = response.data.project;
                     this.$refs.projectFormModal.hide();
 
                     this.$toasted.global.showSuccessMsg({
@@ -1100,6 +1393,144 @@
                 });
             },
 
+            showBookCritiqueFeedbackModal(data) {
+                this.bookCritiqueForm.id = data.id;
+                this.$refs.bookCritiqueFeedbackModal.show();
+            },
+
+            showBookCritiqueFormModal(data) {
+                this.modalTitle = 'Add Book Critique';
+                if (data) {
+                    this.modalTitle = 'Edit Book Critique';
+                    this.bookCritiqueForm = {
+                        id: data.id,
+                        is_file: !!data.is_file,
+                        book_content: data.book_content,
+                        description: data.description
+                    };
+                }
+
+                this.$refs.bookCritiqueFormModal.show();
+            },
+
+            closeBookCritiqueFormModal() {
+                this.bookCritiqueForm = {
+                    id: '',
+                    book_content: '',
+                    book_file: [],
+                    description: '',
+                    is_file: true,
+                    is_book_critique: true,
+                    feedback: []
+                }
+            },
+
+            onBookCritiqueFileChange(e) {
+                let files = e.target.files;
+
+                if (!files.length)
+                {
+                    this.bookCritiqueFilename = i18n.site['learner.files-text'];
+                    this.bookCritiqueForm.book_file = [];
+                    return;
+                }
+
+                this.bookCritiqueFilename = files[0].name;
+                this.bookCritiqueForm.book_file = files[0];
+
+                $(".validation-err").remove();
+            },
+
+            onBookCritiqueFeedbackChange(e) {
+                let files = e.target.files;
+
+                if (!files.length)
+                {
+                    this.bookCritiqueFeedbackFilename = i18n.site['learner.files-text'];
+                    this.bookCritiqueForm.feedback = [];
+                    return;
+                }
+
+                this.bookCritiqueFeedbackFilename = files[0].name;
+                this.bookCritiqueForm.feedback = files[0];
+
+                $(".validation-err").remove();
+            },
+
+            onBookCritiqueEditorChange({ html, text }) {
+                this.bookCritiqueForm.book_content = html;
+            },
+
+            saveBookCritiqueFeedback() {
+                this.isLoading = true;
+                this.removeValidationError();
+
+                let formData = new FormData();
+                $.each(this.bookCritiqueForm, function(k, v) {
+                    formData.append(k, v);
+                });
+
+                axios.post('/project/book-critique/' + this.bookCritiqueForm.id + '/feedback', formData).then(response => {
+                    this.isLoading = false;
+                    this.$refs.bookCritiqueFeedbackModal.hide();
+
+                    this.updateRecordFromObject(this.bookCritiques, response.data.id, response.data);
+
+                    this.$toasted.global.showSuccessMsg({
+                        message : 'Feedback saved'
+                    });
+                });
+            },
+
+            saveBookCritique() {
+                this.isLoading = true;
+                this.removeValidationError();
+
+                let formData = new FormData();
+                $.each(this.bookCritiqueForm, function(k, v) {
+                    formData.append(k, v);
+                });
+
+                axios.post('/project/' + this.project.id + '/whole-book/save', formData).then(response => {
+                    this.isLoading = false;
+                    this.$refs.bookCritiqueFormModal.hide();
+                    console.log(response);
+
+                    if (this.bookCritiqueForm.id) {
+                        this.updateRecordFromObject(this.bookCritiques, response.data.id, response.data);
+                    } else {
+                        this.bookCritiques.push(response.data);
+                    }
+
+                    this.$toasted.global.showSuccessMsg({
+                        message : 'Book saved'
+                    });
+                }).catch(error => {
+                    this.isLoading = false;
+                    this.processError(error);
+                    this.$toasted.global.showErrorMsg({
+                        message : 'Error in form'
+                    });
+                })
+            },
+
+            showDeleteBookFormModal(book) {
+                this.bookCritiqueForm.id = book.id;
+                this.$refs.deleteBookCritiqueFormModal.show();
+            },
+
+            deleteBookCritique() {
+                this.isLoading = true;
+                axios.delete('/project/book-critique/' + this.bookCritiqueForm.id + '/delete').then(response => {
+                    this.isLoading = false;
+                    this.deleteRecordFromObject(this.bookCritiques, this.bookCritiqueForm.id);
+                    this.$refs.deleteBookCritiqueFormModal.hide();
+                    this.$toasted.global.showSuccessMsg({
+                        message : 'Record deleted'
+                    });
+                });
+            },
+
             showFormModal(data = null) {
                 this.modalTitle = 'Add Book';
                 if (data) {
@@ -1181,6 +1612,83 @@
                         message : 'Book deleted'
                     });
                     this.$refs.deleteModal.hide();
+                });
+            },
+
+            showTaskFormModal(data) {
+                this.modalTitle = 'Add Task';
+                this.taskForm.project_id = this.project.id;
+
+                if (data) {
+                    this.taskForm.id = data.id;
+                    this.taskForm.assigned_to = data.assigned_to;
+                    this.taskForm.task = data.task;
+                }
+
+                this.$refs.taskFormModal.show();
+            },
+
+            saveTask() {
+                this.isLoading = true;
+                
+                axios.post('/task/save', this.taskForm).then(response => {
+                    this.isLoading = false;
+                    if (this.taskForm.id) {
+                        this.updateRecordFromObject(this.tasks, response.data.id, response.data);
+                    } else {
+                        this.tasks.push(response.data);
+                    }
+
+                    this.$toasted.global.showSuccessMsg({
+                        message : 'Record saved'
+                    });
+                    this.$refs.taskFormModal.hide();
+                }).catch(error => {
+                    this.isLoading = false;
+                    this.processError(error);
+                });
+            },
+
+            closeTaskFormModal() {
+                this.taskForm = {
+                    id: '',
+                    project_id: this.currentProject.id,
+                    assigned_to: '',
+                    task: '',
+                };
+            },
+
+            showFinishTaskModal(data) {
+                this.taskForm.id = data.id;
+                this.$refs.finishTaskModal.show();
+            },
+
+            finishTask() {
+                this.isLoading = true;
+                axios.post('/project/task/' + this.taskForm.id + '/finish').then(response => {
+                    this.isLoading = false;
+                    this.deleteRecordFromObject(this.tasks, this.taskForm.id);
+                    this.$refs.finishTaskModal.hide();
+                    this.$toasted.global.showSuccessMsg({
+                        message : 'Record finished'
+                    });
+                });
+            },
+
+            showDeleteTaskModal(data) {
+                this.taskForm.id = data.id;
+                this.$refs.deleteTaskModal.show();
+            },
+
+            deleteTask() {
+                this.isDeleting = true;
+                axios.delete('/project/task/' + this.taskForm.id + '/delete').then(response => {
+                    this.isDeleting = false;
+                    this.deleteRecordFromObject(this.tasks, this.taskForm.id);
+                    this.$refs.deleteTaskModal.hide();
+                    this.$toasted.global.showSuccessMsg({
+                        message : 'Record deleted'
+                    });
                 });
             },
 

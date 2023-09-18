@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Course;
 use App\Assignment;
+use App\AssignmentDisabledLearner;
 use App\AssignmentManuscript;
 use App\AssignmentLearner;
 use App\User;
@@ -71,14 +72,52 @@ class AssignmentController extends Controller
     	$course = Course::findOrFail($course_id);
     	$assignment = Assignment::findOrFail($id);
     	$assignments = Assignment::where('id', '!=', $id)->get();
-        $editors = \App\User::whereIn('role', array(1,3))->get();
+        $editors = \App\User::whereIn('role', array(1,3))->where('is_active', 1)->get();
 
     	$section = 'assignments';
     	if( $assignment->course->id == $course->id ) :
+            $assignmentManuscripts = $assignment->manuscripts()
+                ->orderByRaw("editor_id = 0 DESC")
+                ->orderByRaw("editor_expected_finish IS NULL, editor_expected_finish ASC")
+                ->get();
     		return view('backend.assignment.show', compact('course','editors','assignment', 'section',
-                'assignments'));
+                'assignments', 'assignmentManuscripts'));
     	endif;
     	return abort('404');
+    }
+
+    public function listManuscriptsWithoutEditor($course_id, $assignment_id)
+    {
+        $course = Course::findOrFail($course_id);
+    	$assignment = Assignment::findOrFail($assignment_id);
+
+        if( $assignment->course->id == $course->id ) {
+            $manuscripts = AssignmentManuscript::with('user')->where('assignment_id', $assignment_id)
+                ->where('editor_id', 0)->get();
+
+            return response()->json($manuscripts);
+        }
+
+        return abort('404');
+    }
+
+    public function assignEditorToManuscripts($course_id, $assignment_id, Request $request)
+    {
+        foreach($request->learner_id as $learner_id) {
+            $manuscript = AssignmentManuscript::where('user_id', $learner_id)
+            ->where('assignment_id', $assignment_id)->first();
+
+            if ($manuscript) {
+                $manuscript->editor_id = $request->editor_id;
+                $manuscript->editor_expected_finish = $request->editor_expected_finish;
+                $manuscript->save();
+            }
+        }
+        
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Editor assigned to manuscripts successfully.'),
+            'alert_type' => 'success'
+        ]);
     }
 
 
@@ -1109,7 +1148,7 @@ class AssignmentController extends Controller
             $filesWithPath = '';
             $time = time();
             $destinationPath = 'storage/assignment-feedbacks'; // upload path
-            $extensions = ['pdf', 'docx', 'odt'];
+            $extensions = ['pdf', 'docx', 'odt', 'doc'];
             // loop through all the uploaded files
             foreach ($request->file('filename') as $k => $file) {
                 $extension = pathinfo($_FILES['filename']['name'][$k],PATHINFO_EXTENSION);
@@ -1192,7 +1231,7 @@ class AssignmentController extends Controller
             if ( $request->hasFile('filename')) :
                 $time = time();
                 $destinationPath = 'storage/assignment-feedbacks'; // upload path
-                $extensions = ['pdf', 'docx', 'odt'];
+                $extensions = ['pdf', 'docx', 'odt', 'doc'];
                 $filesWithPath = '';
                 // loop through all the uploaded files
                 foreach ($request->file('filename') as $k => $file) {
@@ -1361,6 +1400,36 @@ class AssignmentController extends Controller
             'alert_type' => 'success']);
     }
 
+    public function disabledLearnerAssignment($assignment_id, Request $request)
+    {
+        $data = [
+            'title' => $request->title,
+            'description' => $request->description,
+            'submission_date' => $request->submission_date,
+            'available_date' => $request->available_date,
+            'max_words' => (int) $request->max_words,
+            'show_join_group_question' => 0,
+            'course_id' => $request->course_id,
+            'parent_id' => $request->learner_id,
+            'parent' => 'users',
+            'editor_id' => $request->editor_id,
+            'editor_expected_finish' => $request->editor_expected_finish,
+            'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0
+        ];
+
+        $assignment = Assignment::create($data);
+
+        AssignmentDisabledLearner::updateOrCreate([
+            'assignment_id' => $assignment_id,
+            'user_id' => $request->learner_id
+        ], [
+            'personal_assignment_id' => $assignment->id
+        ]);
+
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record saved successfully.'),
+            'alert_type' => 'success']);
+    }
+
     public function multipleLearnerAssignment( Request $request )
     {
 
@@ -1396,6 +1465,30 @@ class AssignmentController extends Controller
         return redirect()->to('/assignment?tab=learner')
             ->with(['errors' => AdminHelpers::createMessageBag('Record deleted successfully.'),
             'alert_type' => 'success']);
+    }
+
+    public function assignmentWithCourseLearner($assignmentId, $courseId)
+    {
+        $assignment = Assignment::findOrFail($assignmentId);
+        $disabledLearners = $assignment->disabledLearners()->pluck('user_id')->toArray();
+
+        $course = Course::findOrFail($courseId);
+        $courseLearners = $course->learners->get();
+        return view('backend.assignment._disable_learners', compact('assignment', 'disabledLearners', 'courseLearners'));
+    }
+
+    public function disableLearner($assignmentId, Request $request)
+    {
+        $disabledLearner = AssignmentDisabledLearner::where([
+            'assignment_id' => $assignmentId,
+            'user_id' => $request->user_id,
+        ])->first();
+        
+        filter_var($request->isChecked, FILTER_VALIDATE_BOOLEAN)
+            ? AssignmentDisabledLearner::create(['assignment_id' => $assignmentId, 'user_id' => $request->user_id])
+            : optional($disabledLearner)->delete();
+
+        return $request->all();
     }
 
     /**

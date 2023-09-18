@@ -259,6 +259,11 @@ class User extends Authenticatable
         return $this->hasMany('App\WordWrittenGoal');
     }
 
+    public function projects()
+    {
+        return $this->hasMany('App\Project');
+    }
+
     public function getProfileImageAttribute($value)
     {
         $image = substr($this->attributes['profile_image'], 1);
@@ -356,7 +361,7 @@ class User extends Authenticatable
 
     public function isSuperUser()
     {
-        $ids = [1376, 1070];
+        $ids = [1376, 1070, 4464];
         return in_array($this->attributes['id'], $ids) ? true : false;
     }
 

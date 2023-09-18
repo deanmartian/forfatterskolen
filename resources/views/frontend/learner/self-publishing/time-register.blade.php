@@ -1,4 +1,4 @@
-@extends('frontend.layout')
+@extends('frontend.learner.self-publishing.layout')
 
 @section('title')
     <title>Time Register &rsaquo; Forfatterskolen</title>
@@ -30,29 +30,38 @@
                                 Time Register
                             </h1>
                         </div>
-                        <div class="card-body">
-                            <table class="table">
+                        <div class="card-body" style="padding: 0">
+                            <table class="table" style="margin-bottom: 0">
                                 <thead>
                                 <tr>
                                     <th>Project</th>
                                     <th>{{ trans('site.date') }}</th>
                                     <th>Number of hours</th>
                                     <th>Time used</th>
-                                    <th>{{ trans('site.description') }}</th>
+                                    {{-- <th>{{ trans('site.description') }}</th> --}}
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($timeRegisters as $timeRegister)
-                                    <tr>
-                                        <td>
-                                            {{ $timeRegister->project ? $timeRegister->project->name : '' }}
-                                        </td>
-                                        <td>{{ $timeRegister->date }}</td>
-                                        <td>{{ $timeRegister->time }}</td>
-                                        <td>{{ $timeRegister->time_used }}</td>
-                                        <td>{{ $timeRegister->description }}</td>
-                                    </tr>
-                                @endforeach
+                                    @foreach($timeRegisters as $timeRegister)
+                                        <tr>
+                                            <td>
+                                                {{ $timeRegister->project ? $timeRegister->project->name : '' }}
+                                            </td>
+                                            <td>{{ $timeRegister->date }}</td>
+                                            <td>{{ $timeRegister->time }}</td>
+                                            <td>
+                                                <a href="#" data-toggle="modal" data-target="#timeUsedModal" class="timeUsedBtn"
+                                                data-time-used-list="{{ json_encode($timeRegister->usedTimes) }}">
+                                                    {{ 
+                                                        $timeRegister->usedTimesDurationSum && isset($timeRegister->usedTimesDurationSum[0])
+                                                        ? $timeRegister->usedTimesDurationSum[0]->total_duration 
+                                                        : '' 
+                                                    }}
+                                                </a>
+                                            </td>
+                                            {{-- <td>{{ $timeRegister->description }}</td> --}}
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -61,4 +70,54 @@
             </div>
         </div>
     </div>
+
+    <div id="timeUsedModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">
+                        Time Used
+                    </h3>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive margin-top">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Time Used</th>
+                                <th>Description</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@stop
+
+@section('scripts')
+<script>
+    $(".timeUsedBtn").click(function(){
+        let timeUsedList = $(this).data('time-used-list');
+        let modal = $("#timeUsedModal");
+
+        modal.find('tbody').empty();
+        let tr = "";
+        $.each(timeUsedList, function(k, record) {
+            console.log(record);
+            tr += "<tr>";
+                tr += "<td>" + record.date + "</td>";
+                tr += "<td>" + record.time_used + "</td>";
+                tr += "<td>" + record.description + "</td>";
+            tr += "</tr>";
+        });
+
+        modal.find('tbody').append(tr);
+    });
+</script>
 @stop

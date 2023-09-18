@@ -18,6 +18,10 @@
 		#viewOrderModal table.no-border td, #viewOrderModal table.no-border tr {
 			border: none;
 		}
+
+		.d-none {
+			display: none;
+		}
 	</style>
 @stop
 
@@ -115,12 +119,12 @@
 						</a>
 					</div>
 
-					<div>
+					{{-- <div>
 						<b>Self Publishing Learner:</b>
 						<input type="checkbox" data-toggle="toggle" data-on="Yes"
 							   class="is-publishing-learner-toggle" data-off="No" data-id="{{ $learner->id }}"
 							   name="is_self_publishing_learner" data-size="mini" @if($learner->is_self_publishing_learner) {{ 'checked' }} @endif>
-					</div>
+					</div> --}}
 
 					<b>Preferred Editor:</b>
 					<span>{{ $learner->preferredEditor ? $learner->preferredEditor->editor->fullname : '' }}</span><br>
@@ -144,6 +148,9 @@
 				Login as user
 			</a>
 
+			<button type="button" class="margin-top btn btn-primary" data-toggle="modal" data-target="#sendUsernameAndPasswordModal">
+				Send Username and Password
+			</button>
 			<div class="former-course-container">
 				<h4>{{ trans('site.former-courses') }}</h4>
 				<ul>
@@ -247,6 +254,11 @@
 												{{ ucfirst(strtolower(trans('site.end-date'))) }}: {{ $courseTaken->end_date ? $courseTaken->end_date
 								: ($courseTaken->started_at ? \Carbon\Carbon::parse($courseTaken->started_at)->addYear(1)->format('M d, Y') : '') }}
 												{{--@endif--}}
+
+												@if ($courseTaken->package->course->id != 17)
+													<br>
+													Is Pay Later: {{ $courseTaken->is_pay_later ? 'Yes' : 'No' }}
+												@endif
 
 												@if ($courseTaken->package->course->id == 17)
 													<br>
@@ -525,7 +537,11 @@
 						<tbody>
 						@foreach($learnerSelfPublishingList as $selfPublishing)
 							<tr>
-								<td>{{ $selfPublishing->selfPublishing->title }}</td>
+								<td>
+									<a href="{{ route('admin.self-publishing.index') }}">
+										{{ $selfPublishing->selfPublishing->title }}
+									</a>
+								</td>
 								<td>
 									<button class="btn btn-danger btn-xs deleteSelfPublishingBtn" data-toggle="modal"
 											data-target="#deleteSelfPublishingModal"
@@ -689,6 +705,7 @@
 						<thead>
 							<tr>
 								<th>{{ trans_choice('site.invoices', 1) }} #</th>
+								<th>Fiken Invoice ID</th>
 								<th>{{ trans('site.status') }}</th>
 								<th>{{ trans('site.created-at') }}</th>
 								<th>{{ trans('site.due-date') }}</th>
@@ -717,6 +734,9 @@
 		    					<td>
 		    						<a href="{{route('admin.invoice.show', $invoice->id)}}">{{ $invoice->invoice_number }}</a>
 		    					</td>
+								<td>
+									{{ $invoice->fiken_invoice_id }}
+								</td>
 								<td>
 									@if($invoice->fiken_is_paid === 1)
 										<span class="label label-success">BETALT</span>
@@ -764,6 +784,12 @@
 												data-vipps-number="{{ $learner->address ? $learner->address->vipps_phone_number : NULL}}">
 											{!! trans('site.vipps-efaktura') !!}
 										</button>
+										{{-- <button class="btn btn-success btn-xs sendEfakturaBtn" style="margin-top: 5px"
+												data-toggle="modal"
+											data-target="#sendEfakturaModal"
+												data-action="{{ route('admin.learner.invoice.send-efaktura', $invoice->id) }}">
+											Send efaktura
+										</button> --}}
 									@endif
 
 									@if($invoice->fiken_is_paid === 0)
@@ -938,6 +964,8 @@
 						<thead>
 							<tr>
 								<th>{{ trans_choice('site.assignments', 1) }}</th>
+								<th>Is Disabled</th>
+								<th>Personal Assignment</th>
 								<th>{{ trans_choice('site.courses', 1) }}</th>
 								<th>Editor</th>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
@@ -1016,6 +1044,41 @@
 										}
 
 										?>
+									</td>
+									<td>
+										@php
+											$disabledAssignment = AdminHelpers::assignmentDisabledForLearner($assignment->id, $learner->id);
+											$personalAssignment = $assignment->getLinkedPersonalAssignment($learner->id);
+											$disabledLearners = $assignment->disabledLearners()->pluck('user_id')->toArray();
+										@endphp
+
+										@if (!$personalAssignment)
+											<input type="checkbox" data-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
+													class="disable-learner-toggle" data-off="{{ trans('site.front.no') }}"
+													data-id="{{ $learner->id }}" data-size="small" 
+													data-assignment-id="{{ $assignment->id }}"
+													@if ($disabledAssignment)
+														checked
+													@endif>
+										@else
+											{{ trans('site.front.yes') }}
+										@endif
+									</td>
+									<td>
+										@if (!$personalAssignment)
+											<button class="btn btn-primary btn-sm personalAssignmentBtn 
+											assignment-{{ $assignment->id }} 
+												{{ in_array($learner->id, $disabledLearners) ? '' : 'd-none'  }}"
+												data-toggle="modal" data-target="#personalAssignmentModal" type="button"
+												onclick="personalAssignment({{ $learner->id }}, {{ $assignment }})">
+												Assign as Personal Assignment
+											</button>
+										@else
+											<a href="{{ route('admin.learner.assignment',
+											[$personalAssignment->parent_id, $personalAssignment->id]) }}">
+												{{ $personalAssignment->title }}
+											</a>
+										@endif
 									</td>
 									<td>
 										<a href="{{ route('admin.course.show', $assignment->course->id) }}">
@@ -1518,7 +1581,10 @@
 									</button>
 								</td>
 								<td>
-									@if ($coachingTimer->editor_id)
+									@php
+										$activeEditors = AdminHelpers::editorList()->pluck('id')->toArray();
+									@endphp
+									@if ($coachingTimer->editor_id && in_array($coachingTimer->editor_id, $activeEditors))
 										{{ $coachingTimer->editor->full_name }}
 									@else
 										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $coachingTimer->id, 'type' => 3]) }}">{{ trans('site.assign-editor') }}</button>
@@ -1663,7 +1729,14 @@
 									<td class="text-center">
 										<button class="btn btn-info btn-xs" data-toggle="modal"
 												data-target="#showEmailModal"
-												data-message="{{ $emailHistory->message }}" onclick="showEmailMessage(this)">Show Message</button>
+												data-message="{{ $emailHistory->message }}" onclick="showEmailMessage(this)">
+												Show Message
+											</button>
+										<button class="btn btn-success btn-xs resendEmailHistoryBtn" data-toggle="modal" 
+											data-target="#resendEmailHistoryModal" data-record="{{ json_encode($emailHistory) }}"
+											style="margin-top: 5px;">
+											Resend Email
+										</button>
 									</td>
 								</tr>
 							@endforeach
@@ -1672,7 +1745,7 @@
 				</div>
 			</div> <!-- end email history section -->
 
-			@if($learner->is_self_publishing_learner)
+			{{-- @if($learner->is_self_publishing_learner) --}}
 				<div class="panel panel-default">
 					<div class="panel-body">
 						<button class="btn btn-primary pull-right btn-xs booksForSaleBtn" data-toggle="modal"
@@ -1688,7 +1761,9 @@
 						<table class="table dt-table">
 							<thead>
 							<tr>
+								<th>Project</th>
 								<th>ISBN</th>
+								{{-- <th>Ebook ISBN</th> --}}
 								<th>Title</th>
 								<th>Description</th>
 								<th>Price</th>
@@ -1698,8 +1773,29 @@
 							<tbody>
 							@foreach($learner->booksForSale as $bookForSale)
 								<tr>
-									<td>{{ $bookForSale->isbn }}</td>
-									<td>{{ $bookForSale->title }}</td>
+									<td>
+										@if ($bookForSale->project)
+											<a href="/project/{{ $bookForSale->project_id }}">
+												{{ $bookForSale->project->name }}
+											</a>
+										@endif
+									</td>
+									{{-- <td>{{ $bookForSale->isbn }}</td>
+									<td>{{ $bookForSale->ebook_isbn }}</td> --}}
+									<td>
+										@if ($bookForSale->project)
+											<ul>
+												@foreach ($bookForSale->project->registrations as $registration)
+													@if ($registration->field === 'isbn')
+														<li>{{ $registration->value }}</li>
+													@endif
+												@endforeach
+											</ul>
+										@endif
+									</td>
+									<td>
+										{{ $bookForSale->project ? $bookForSale->project->book_name : '' }}
+									</td>
 									<td>{{ $bookForSale->description }}</td>
 									<td>{{ $bookForSale->price_formatted }}</td>
 									<td>
@@ -1740,6 +1836,7 @@
 							<thead>
 							<tr>
 								<th>Book</th>
+								<th>Type</th>
 								<th>Quantity</th>
 								<th>Amount</th>
 								<th>Date</th>
@@ -1751,6 +1848,9 @@
 								<tr>
 									<td>
 										{{ $bookSale->book->title }}
+									</td>
+									<td>
+										{{ $bookSale->sale_type_text }}
 									</td>
 									<td>
 										{{ $bookSale->quantity }}
@@ -1783,7 +1883,7 @@
 						</table>
 					</div>
 				</div>
-			@endif
+			{{-- @endif --}}
 
 			<div class="panel panel-default">
 				<div class="panel-body">
@@ -3173,6 +3273,46 @@
 	</div>
 </div>
 
+<div id="resendEmailHistoryModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Resend Email</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.send-email-to-queue') }}" onsubmit="disableSubmit(this)">
+					{{csrf_field()}}
+					<input type="hidden" name="parent">
+					<input type="hidden" name="parent_id">
+					<input type="hidden" name="recipient" value="{{ $learner->email }}">
+
+					<div class="form-group">
+						<label>{{ trans('site.subject') }}</label>
+						<input type="text" class="form-control" name="subject" required>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.message') }}</label>
+						<textarea name="message" cols="30" rows="10"
+								  class="form-control tinymce" id="sendEmailHistoryEditor"></textarea>
+					</div>
+
+					<div class="form-group">
+						<label>From</label>
+						<input type="email" class="form-control" placeholder="Email"
+							   name="from_email">
+					</div>
+
+					<div class="text-right">
+						<input type="submit" class="btn btn-primary" value="{{ trans('site.send') }}" id="send_email_btn">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="booksForSaleModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-md">
 		<div class="modal-content">
@@ -3186,13 +3326,31 @@
 					<input type="hidden" name="id">
 
 					<div class="form-group">
-						<label>ISBN</label>
-						<input type="text" class="form-control" name="isbn" required>
+						<label>Project</label>
+						<select name="project_id" class="form-control" onchange="projectChanged(this)">
+							<option value="">- Select Project -</option>
+							@foreach ($projects as $project)
+								<option value="{{ $project->id }}" data-registrations="{{ json_encode($project->registrations) }}"
+									data-book_name="{{ $project->book_name }}">
+									{{ $project->name }}
+								</option>
+							@endforeach
+						</select>
 					</div>
 
 					<div class="form-group">
+						<label>ISBN</label>
+						<div class="isbn-container"></div>
+					</div>
+
+					{{-- <div class="form-group">
+						<label>Ebook ISBN</label>
+						<input type="text" class="form-control" name="ebook_isbn">
+					</div> --}}
+
+					<div class="form-group">
 						<label>Title</label>
-						<input type="text" class="form-control" name="title" required>
+						<input type="text" class="form-control" name="title" disabled>
 					</div>
 
 					<div class="form-group">
@@ -3230,6 +3388,20 @@
 					<div class="form-group">
 						<label>Book</label>
 						<select name="book_id" class="form-control" required></select>
+					</div>
+
+					<div class="form-group">
+						<label>Sale Type</label>
+						<select name="sale_type" class="form-control" required>
+							<option value="" disabled selected>
+								- Select Sale Type-
+							</option>
+							@foreach ($bookSaleTypes as $key => $saleType)
+								<option value="{{ $key }}">
+									{{ $saleType }}
+								</option>
+							@endforeach
+						</select>
 					</div>
 
 					<div class="form-group">
@@ -3369,7 +3541,7 @@
 				</div>
 
 				<div class="col-sm-12 mt-4">
-					<table class="table no-border">
+					<table class="table no-border" id="order-list-table">
 						<tbody>
 						<tr>
 							<td>
@@ -3390,6 +3562,7 @@
 						</tr>
 						</tbody>
 					</table>
+					<div id="editing-services-container" class="hidden"></div>
 				</div>
 
 				<div class="col-sm-5 col-sm-offset-7">
@@ -3551,7 +3724,8 @@
 					<p>
 						{{--{!! trans('site.delete-from-webinar-pakke-question') !!}--}}
 					</p>
-					<button class="btn btn-danger pull-right" id="submitDeleteFromCourse">{{ trans('site.delete') }}</button>
+					<button class="btn btn-danger pull-right" 
+					onclick="checkFormAction(this)" type="button">{{ trans('site.delete') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -3710,7 +3884,7 @@
 						<label>Assign editor</label>
 						<select name="editor_id" class="form-control select2" required>
 							<option value="" disabled="" selected>-- Select Editor --</option>
-							@foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
+							@foreach( AdminHelpers::editorList() as $editor )
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 							@endforeach
 						</select>
@@ -3909,7 +4083,8 @@
 					<div class="form-group">
 						<label>{{ trans_choice('site.manuscripts', 1) }}</label>
 						<input type="file" class="form-control" name="manuscript"
-							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, 
+							   application/pdf, application/vnd.oasis.opendocument.text">
 					</div>
 					
 					<div class="form-group">
@@ -3925,7 +4100,7 @@
 						<label>{{ ucwords(trans('site.assign-to')) }}</label>
 						<select name="editor_id" class="form-control select2">
 							<option value="" disabled="" selected>-- Select Editor --</option>
-							@foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
+							@foreach( AdminHelpers::editorList() as $editor )
 								<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
 							@endforeach
 						</select>
@@ -4544,6 +4719,49 @@
 	</div>
 </div>
 
+<div id="sendUsernameAndPasswordModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					Send Username and Password
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.learner.send-username-and-password', $learner->id) }}" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+
+					<?php
+                    	$emailTemplate = \App\Http\AdminHelpers::emailTemplate('Send Username and Password');
+                    ?>
+
+					<div class="form-group">
+						<label>{{ trans('site.subject') }}</label>
+						<input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}"
+							required>
+					</div>
+
+					<div class="form-group">
+						<label>From</label>
+						<input type="email" class="form-control" placeholder="Email" name="from_email"
+							value="{{ $emailTemplate->from_email }}">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.message') }}</label>
+						<textarea name="message" cols="30" rows="10"
+								class="form-control tinymce">{!! $emailTemplate->email_content !!}</textarea>
+					</div>
+
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.send') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="restoreCourseModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -4581,6 +4799,84 @@
 
 				<p></p>
 
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="personalAssignmentModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Personal Assignment Modal</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<input type="hidden" name="course_id" value="">
+					<input type="hidden" name="learner_id">
+
+					<div class="form-group">
+						<label>{{ trans('site.title') }}</label>
+						<input type="text" class="form-control" name="title" placeholder="{{ trans('site.title') }}"
+						 required value="">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.description') }}</label>
+						<textarea class="form-control" name="description"
+						 placeholder="{{ trans('site.description') }}" rows="6"></textarea>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.submission-date') }}</label>
+						<div class="input-group submission-date-group">
+							
+						</div>
+					</div>
+	  
+					<div class="form-group">
+						<label>{{ trans('site.available-date') }}</label>
+						<input type="date" class="form-control" name="available_date">
+					</div>
+	  
+					<div class="form-group">
+						<label>{{ trans('site.editor-expected-finish') }}</label>
+						<input type="date" class="form-control" name="editor_expected_finish">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.expected-finish') }}</label>
+						<input type="date" class="form-control" name="expected_finish">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.max-words') }}</label>
+						<input type="number" class="form-control" name="max_words">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.send-letter-to-editor') }}</label> <br>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small"
+							   name="send_letter_to_editor">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans_choice('site.editors', 1) }}</label>
+						<select class="form-control select2" name="editor_id">
+							<option value="" selected disabled>- Select Editor -</option>
+							@foreach(\App\Http\AdminHelpers::editorList() as $editor)
+								<option value="{{ $editor->id }}">
+									{{ $editor->first_name . " " . $editor->last_name }}
+								</option>
+							@endforeach
+						</select>
+					</div>
+	  
+					<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.save') }}</button>
+					<div class="clearfix"></div>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -4730,6 +5026,24 @@
         $(".viewOrderBtn").click(function(){
             let fields = $(this).data('fields');
             let modal = $("#viewOrderModal");
+			let orderListTable = modal.find("#order-list-table");
+			let editingServiceContainer = modal.find("#editing-services-container");
+
+			orderListTable.removeClass('hidden');
+			editingServiceContainer.addClass('hidden');
+
+			if (fields.type === 10) {
+				orderListTable.addClass('hidden');
+				editingServiceContainer.removeClass('hidden');
+
+				$.ajax({
+					type: "GET",
+					url: "/learner/order/" + fields.id + "/editing-services",
+					success: function(data) {
+						editingServiceContainer.html(data);
+					}
+				})
+			}
 
             modal.find("#displayDate").text(fields.created_at_formatted);
             modal.find(".package-variation").text(fields.payment_mode_id === 1 ? fields.packageVariation : fields.item);
@@ -4791,11 +5105,11 @@
             $("#renewCourseModal").find('form').attr('action', action);
         });
 
-        $("#submitDeleteFromCourse").click(function(e){
+        /* $("#submitDeleteFromCourse").click(function(e){
             e.preventDefault();
             $(this).attr('disabled','disabled');
             $("#deleteFromCourseModal").find('form').submit();
-		});
+		}); */
 
         $(".setApprovedDateBtn").click(function(){
             let course_taken_id = $(this).data('course_taken_id');
@@ -4895,15 +5209,43 @@
         modal.find('form').attr('action', action);
 	});
 
+	$(".resendEmailHistoryBtn").click(function(){
+		let record = $(this).data('record');
+		let modal = $("#resendEmailHistoryModal");
+
+		modal.find("[name=parent]").val(record.parent);
+		modal.find("[name=parent_id]").val(record.parent_id);
+		//modal.find("[name=message]").innerHTML(record.message);
+		modal.find("[name=subject]").val(record.subject);
+		modal.find("[name=from_email]").val(record.from_email);
+		//modal.find("[name=recipient]").val(record.recipient_email);
+
+console.log(record);
+		tinymce.get('sendEmailHistoryEditor').execCommand('mceRefresh');
+		setTimeout(function(){
+			console.log("inside set timeout");
+			console.log(record.message);
+            tinymce.activeEditor.setContent(record.message);
+		}, 200);
+	});
+
     $(".booksForSaleBtn").click(function() {
         let record = $(this).data('record');
         let modal = $('#booksForSaleModal');
         modal.find('[name=id]').val('');
+		modal.find('[name=project_id]').val('').trigger('change');
+		/* modal.find('[name=isbn]').val('');
+		modal.find('[name=ebook_isbn]').val('');
+		modal.find('[name=title]').val(''); */
+		modal.find('[name=description]').text('');
+		modal.find('[name=price]').val('');
 
         if (record) {
             modal.find('[name=id]').val(record.id);
-            modal.find('[name=isbn]').val(record.isbn);
-            modal.find('[name=title]').val(record.title);
+			modal.find('[name=project_id]').val(record.project_id).trigger('change');
+            /* modal.find('[name=isbn]').val(record.isbn);
+            modal.find('[name=ebook_isbn]').val(record.ebook_isbn);
+            modal.find('[name=title]').val(record.title); */
             modal.find('[name=description]').text(record.description);
             modal.find('[name=price]').val(record.price);
 		}
@@ -4928,6 +5270,7 @@
         if (record) {
             modal.find('[name=id]').val(record.id);
             modal.find('[name=book_id]').val(record.user_book_for_sale_id);
+            modal.find('[name=sale_type]').val(record.sale_type);
             modal.find('[name=quantity]').val(record.quantity);
             modal.find('[name=amount]').val(record.amount);
             modal.find('[name=date]').val(record.date);
@@ -5345,6 +5688,95 @@
         modal.find('[name=max_words]').val(max_words);
     });
 
+
+	$(document).on("change", ".disable-learner-toggle", function() {
+		let userId = $(this).data("id");
+		let isChecked = $(this).prop("checked");
+		let assignmentId = $(this).data("assignment-id");
+
+		$.ajax({
+			method: "POST",
+			url: "/assignment/" + assignmentId + "/disable-learner",
+			data: {isChecked: isChecked, user_id: userId},
+			success: function(data) {
+				$(".assignment-" + assignmentId).toggleClass('d-none');
+			}
+		})
+	});
+
+	function personalAssignment(user_id, assignment) {
+		console.log(assignment);
+		let action = "/assignment/" + assignment.id + "/disabled-learner-assignment/save";
+		let modal = $("#personalAssignmentModal");
+		let submissionGroup = modal.find('.submission-date-group');
+		modal.find('form').attr('action', action);
+		modal.find("[name=course_id]").val(assignment.course_id);
+		modal.find("[name=learner_id]").val(user_id);		
+		modal.find("[name=title]").val(assignment.title);		
+		modal.find("[name=description]").text(assignment.description);		
+
+		submissionGroup.empty();
+		let submissionDate = '';
+		let submissionDateText = '';
+		if(hasLetter(assignment.submission_date)) {
+			submissionDate = "<input type='datetime-local' class='form-control' " +
+			" name='submission_date' min='0' required value='" + formatSubmissionDate(assignment.submission_date) + "'>";
+			submissionDateText = 'date';
+		} else {
+			submissionDate = "<input type='number' class='form-control' " +
+			" name='submission_date' min='0' required value='" + assignment.submission_date + "'>";
+			submissionDateText = 'days';
+		}
+
+		submissionGroup.append(submissionDate 
+		+ '<span class="input-group-addon assignment-delay-text" id="basic-addon2">' + submissionDateText + '</span>');
+
+		modal.find("[name=available_date]").val(formatDate(assignment.available_date));
+		modal.find("[name=editor_expected_finish]").val(formatDate(assignment.editor_expected_finish));
+		modal.find("[name=expected_finish]").val(formatDate(assignment.expected_finish));
+		modal.find("[name=max_words]").val(assignment.max_words);
+
+		modal.find("[name=send_letter_to_editor]").bootstrapToggle('off');
+		if (assignment.send_letter_to_editor) {
+			modal.find("[name=send_letter_to_editor]").bootstrapToggle('on');
+		}
+
+		modal.find("[name=editor_id]").val(assignment.editor_id);
+	}
+
+	function hasLetter(str) {
+		return /[a-zA-Z]/.test(str);
+	}
+
+	function formatSubmissionDate(dateString) {
+		if (!dateString) {
+			return '';
+		}
+
+		const date = new Date(dateString);
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const day = String(date.getDate()).padStart(2, '0');
+		const hours = String(date.getHours()).padStart(2, '0');
+		const minutes = String(date.getMinutes()).padStart(2, '0');
+		const seconds = String(date.getSeconds()).padStart(2, '0');
+
+		return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+	}
+
+	function formatDate(dateString) {
+		if (!dateString) {
+			return '';
+		}
+
+		const date = new Date(dateString);
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const day = String(date.getDate()).padStart(2, '0');
+
+		return `${year}-${month}-${day}`;
+	}
+
 	function updateOtherServiceFields(type) {
 	    let modal = $("#addOtherServiceModal");
 	    let add_correction_text = "{{ trans('site.add-correction') }}";
@@ -5409,6 +5841,32 @@
 	    let modal = $("#deleteTimeUsedModal");
         modal.find('form').attr('action', '/time-register/time-used/' + record.id + '/delete' );
 	}
+
+	function projectChanged(selectElement) {
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+
+        // Get the value and data-info attribute of the selected option
+        const selectedValue = selectedOption.value;
+        const selectedDataRegistrations = selectedOption.getAttribute('data-registrations');
+        const selectedDataBookname = selectedOption.getAttribute('data-book_name');
+
+        let isbnContainer = $(".isbn-container");
+        let bookTitleContainer = $("#booksForSaleModal").find("[name=title]");
+        let list = "<ul>";
+            
+        isbnContainer.empty();
+        bookTitleContainer.val(selectedDataBookname);
+
+        $.each(JSON.parse(selectedDataRegistrations), function(k, registration) {
+			if (registration.field === 'isbn') {
+				list += "<li>" + registration.value + "</li>";
+			}
+        });
+
+        list += "</ul>";
+        isbnContainer.append(list);
+
+    }
 </script>
 	{{--<script type="text/javascript" src="{{ mix('js/app.js') }}"></script>--}}
 @stop

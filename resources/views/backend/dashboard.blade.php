@@ -238,13 +238,15 @@
 											@endif
 										</td>
 										<td>
-											<button class="btn btn-xs btn-success previewRequestsSentBtn"
-													data-toggle="modal"
-													data-target="#previewRequestsSent"
-													data-requests="{{ $shopManuscript->requests }}"
-													>
-												{{ trans('site.learner.preview-text') }}
-											</button>
+											@if ($shopManuscript->requests->count())
+												<button class="btn btn-xs btn-success previewRequestsSentBtn"
+														data-toggle="modal"
+														data-target="#previewRequestsSent"
+														data-requests="{{ $shopManuscript->requests }}"
+														>
+													{{ trans('site.learner.preview-text') }}
+												</button>
+											@endif
 										</td>
 										<td>
 											@if( $shopManuscript->admin )
@@ -658,6 +660,11 @@
 										</td>
 								        <td>{{ $pending_course->created_at }}</td>
 								        <td>
+											<button class="btn btn-success btn-xs sendPayLaterEmailBtn" data-toggle="modal" 
+											data-target="#sendPayLaterEmailModal" 
+											data-action="{{ route('admin.learner.send-email', $pending_course->user_id) }}">
+												Send Email
+											</button>
 								        	<form method="POST" action="{{ route('activate_course_taken') }}" class="inline-block">
 												{{ csrf_field() }}
 												<input type="hidden" name="coursetaken_id" value="{{ $pending_course->id }}">
@@ -728,6 +735,46 @@
 				</div>
 			</div>
 				
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>Pending Self Publishing Portal Request</h4></div>
+						<table class="table">
+						    <thead>
+								<tr>
+									<th>User</th>
+								  	<th>Request Date</th>
+						        	<th></th>
+								</tr>
+						    </thead>
+						    <tbody>
+								@foreach ( $selfPublishingPortalRequests as $selfPublishingPortalRequest)
+									<tr>
+										<td>
+											<a href="{{ route('admin.learner.show', $selfPublishingPortalRequest->user_id) }}">
+												{{ $selfPublishingPortalRequest->user->full_name }}
+											</a>
+										</td>
+										<td>{{ $selfPublishingPortalRequest->created_at_formatted }}</td>
+										<td>
+											<form method="POST" action="{{ route('admin.self-publishing-portal-request.approve', $selfPublishingPortalRequest->id) }}" class="inline-block">
+												{{ csrf_field() }}
+												<button class="btn btn-warning btn-xs" type="submit"><i class="fa fa-check"></i></button>
+											</form>
+											<button class="btn btn-danger btn-xs deleteSPPRequestBtn" data-toggle="modal"
+													data-target="#deleteSPPRequestModal"
+													data-action="{{ route('admin.self-publishing-portal-request.destroy', $selfPublishingPortalRequest->id) }}">
+												<i class="fa fa-trash"></i>
+											</button>
+										</td>
+									</tr>
+								@endforeach
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div> <!-- end pending self publishing portal request -->
+
 			<!-- Pending Workshops -->
 			<div class="row">
 				<div class="col-sm-12">
@@ -1225,7 +1272,9 @@
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>{{ trans_choice('site.manuscripts', 1) }}</label>
-						<input type="file" class="form-control" required multiple name="filename[]" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+						<input type="file" class="form-control" required multiple name="filename[]" 
+						accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, 
+						application/vnd.oasis.opendocument.text, application/msword">
 						{{ trans('site.docx-pdf-odt-text') }}
 					</div>
 					<div class="form-group">
@@ -1262,7 +1311,7 @@
 						<label>{{ trans_choice('site.files', 2) }}</label>
 						<input type="file" class="form-control" name="files[]" multiple
 							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-							   application/pdf, application/vnd.oasis.opendocument.text" required>
+							   application/pdf, application/vnd.oasis.opendocument.text, application/msword" required>
 							   {{ trans('site.docx-pdf-odt-text') }}
 					</div>
 					<div class="form-group">
@@ -1434,7 +1483,9 @@
 					?>
                     <div class="form-group">
                         <label>{{ trans_choice('site.manuscripts', 1) }}</label>
-                        <input type="file" class="form-control" name="manuscript" multiple accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf" required>
+                        <input type="file" class="form-control" name="manuscript" multiple 
+						accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+						 application/pdf, application/msword" required>
                     </div>
 					<div class="form-group">
 						<label>{{ trans('site.subject') }}</label>
@@ -1559,6 +1610,64 @@
 	</div>
 </div>
 
+<div id="sendPayLaterEmailModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.send-email') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{csrf_field()}}
+					@php
+						$emailTemplate = AdminHelpers::emailTemplate('Pay Later');
+					@endphp
+
+					<div class="form-group">
+						<label>{{ trans('site.subject') }}</label>
+						<input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}" required>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.message') }}</label>
+						<textarea name="message" id="" cols="30" rows="10" 
+						class="form-control tinymce" required>{!! $emailTemplate->email_content !!}</textarea>
+					</div>
+					<div class="text-right">
+						<input type="submit" class="btn btn-primary" value="{{ trans('site.send') }}" id="send_email_btn">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!--end email modal-->
+
+<div id="deleteSPPRequestModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Delete Request</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" enctype="multipart/form-data" action=""
+					  onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					{{ method_field('DELETE') }}
+
+					<p>Are you sure to delete this request?</p>
+
+					<button type="submit" class="btn btn-danger pull-right">Delete</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
 <div id="deleteTaskModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -1651,7 +1760,7 @@
                         <label>{{ trans_choice('site.manuscripts', 1) }}</label>
                         <input type="file" class="form-control" required multiple name="filename[]"
                                accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-                                   application/pdf, application/vnd.oasis.opendocument.text">
+                                   application/pdf, application/vnd.oasis.opendocument.text, application/msword">
 						{{ trans('site.docx-pdf-odt-text') }}
                     </div>
                     <div class="form-group">
@@ -1730,15 +1839,16 @@
 
 					<div class="form-group">
 						<label>{{ trans_choice('site.manuscripts', 1) }}</label>
-						<input type="file" name="manuscript[]" class="form-control" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
-					    application/vnd.oasis.opendocument.text" multiple>
+						<input type="file" name="manuscript[]" class="form-control" 
+						accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
+					    application/vnd.oasis.opendocument.text, application/msword" multiple>
 					</div>
 
 					<div class="form-group">
 						<label>Add Files</label>
 						<input type="file" name="add_files[]" class="form-control"
 							   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf,
-					    application/vnd.oasis.opendocument.text" multiple>
+					    application/vnd.oasis.opendocument.text, application/msword" multiple>
 					</div>
 
 					<div class="form-group">
@@ -2055,6 +2165,19 @@
             success: function(data){
             }
         });
+    });
+
+	$(".sendPayLaterEmailBtn").click(function(){
+		let modal = $("#sendPayLaterEmailModal");
+		let action = $(this).data('action');
+
+		modal.find('form').attr('action', action);
+	});
+
+	$(".deleteSPPRequestBtn").click(function(){
+        let action = $(this).data('action');
+        let modal = $('#deleteSPPRequestModal');
+        modal.find('form').attr('action', action);
     });
 
     $(".deleteTaskBtn").click(function(){

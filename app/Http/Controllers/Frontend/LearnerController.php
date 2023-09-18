@@ -102,6 +102,9 @@ use Hash;
 use File;
 use App\Http\FrontendHelpers;
 use App\Jobs\UpdateFikenContactDetailsJob;
+use App\PublishingService as AppPublishingService;
+use App\SelfPublishingPortalRequest;
+use App\StorageSale;
 
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
 
@@ -740,28 +743,31 @@ class LearnerController extends Controller
             foreach( $courseTaken->package->course->activeAssignments as $assignment ) :
 
                 $allowed_package = json_decode($assignment->allowed_package);
+                $assignmentDisabledLearners = $assignment->disabledLearners()->pluck('user_id')->toArray();
                 $package_id = $courseTaken->package->id;
                 $course = $courseTaken->package->course;
                 // check if the assignment is allowed on the learners package or there's no set package allowed
                 if ((!is_null($allowed_package) && in_array($package_id,$allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)) {
-                    // added the condition because of the update for submission date
-                    // the original is the else
-                    if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
-                        if ($course->type == 'Single' && $assignment->submission_date == '365') {
-                            if(\Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
-                                $includeAssignment = $assignment;
-                                $includeAssignment->course_taken_end_date = $courseTaken->end_date; // for displaying submit button
-                                $assignments[] = $includeAssignment;
+                    if (!in_array($courseTaken->user_id, $assignmentDisabledLearners)) {
+                        // added the condition because of the update for submission date
+                        // the original is the else
+                        if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
+                            if ($course->type == 'Single' && $assignment->submission_date == '365') {
+                                if(\Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
+                                    $includeAssignment = $assignment;
+                                    $includeAssignment->course_taken_end_date = $courseTaken->end_date; // for displaying submit button
+                                    $assignments[] = $includeAssignment;
+                                }
+                            } else {
+                                if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)
+                                    ->gt(Carbon::now())) {
+                                    $assignments[] = $assignment;
+                                }
                             }
                         } else {
-                            if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)
-                                ->gt(Carbon::now())) {
+                            if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
                                 $assignments[] = $assignment;
                             }
-                        }
-                    } else {
-                        if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
-                            $assignments[] = $assignment;
                         }
                     }
                 }
@@ -798,7 +804,9 @@ class LearnerController extends Controller
                                     $assignmentGroups = AssignmentGroup::where('assignment_id', $assignment->id)->pluck('id')->toArray();
                                     $userAssignmentGroupLearner = AssignmentGroupLearner::where('user_id', Auth::user()->id)
                                         ->whereIn('assignment_group_id', $assignmentGroups)->first();
-                                    if ($assignmentFeedback || $userAssignmentGroupLearner) {
+                                    
+                                    // for assignment no group check if there's a feedback and the manuscript status is not 0
+                                    if (($assignmentFeedback && $assignmentManuscript->status > 0) || $userAssignmentGroupLearner) {
                                         $expiredAssignments[] = $assignment;
                                     } else {
                                         $waitingForResponse[] = $assignment;
@@ -1177,15 +1185,15 @@ class LearnerController extends Controller
 
     /**
      *
-     * @param $invoice_number
+     * @param $fiken_invoice_id
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function invoiceVippsPayment($invoice_number)
+    public function invoiceVippsPayment($fiken_invoice_id)
     {
-        $invoice = Invoice::where('invoice_number', $invoice_number)->first();
+        $invoice = Invoice::where('fiken_invoice_id', $fiken_invoice_id)->first();
 
         if ($invoice) {
-            $orderId = $invoice->invoice_number;
+            $orderId = $invoice->fiken_invoice_id;
             $price = $invoice->fiken_balance * 100;
             $transactionText = 'Betaling for fakturanummer'.$orderId;
             $vippsData = [
@@ -1398,7 +1406,7 @@ class LearnerController extends Controller
         $fikenInvoice->setMobileNumber($request->mobile_number);
         $fikenInvoice->setFikenInvoiceId($invoice->fiken_invoice_id);
 
-        $response = $fikenInvoice->vippsEFaktura();
+        $response = $fikenInvoice->vippsEFaktura(Auth::user());
         $alert_type = 'success';
         $message = 'Invoice sent.';
 
@@ -1689,6 +1697,31 @@ class LearnerController extends Controller
         return view('frontend.learner.self-publishing.sales', compact('bookSales', 'learner'));
     }
 
+    public function bookForSale($id)
+    {
+        $userBookForSaleList = Auth::user()->booksForSale()->pluck('id')->toArray();
+        
+        if (!in_array($id, $userBookForSaleList)) return redirect()->route('learner.book-sale');
+
+        $book = UserBookForSale::find($id);
+        $totalBookSold = $book->sales()->sum('quantity');
+        $totalBookSale = $book->sales()->sum('amount');
+
+        $quantitySoldCount = $this->salesReportCounter($id, 'quantity-sold');
+        $turnedOverCount = $this->salesReportCounter($id, 'turned-over');
+        $freeCount = $this->salesReportCounter($id, 'free');
+        $commissionCount = $this->salesReportCounter($id, 'commission');
+        $shreddedCount = $this->salesReportCounter($id, 'shredded');
+        $defectiveCount = $this->salesReportCounter($id, 'defective');
+        $correctionsCount = $this->salesReportCounter($id, 'corrections');
+        $countsCount = $this->salesReportCounter($id, 'counts');
+        $returnsCount = $this->salesReportCounter($id, 'returns');
+
+        return view('frontend.learner.self-publishing.book-for-sale', compact('book','totalBookSold', 'totalBookSale', 
+        'quantitySoldCount', 'turnedOverCount', 'freeCount', 'commissionCount', 'shreddedCount',
+        'defectiveCount', 'correctionsCount', 'countsCount', 'returnsCount',));
+    }
+
     public function bookSaleByMonth()
     {
         $sales =  UserBookSale::select(
@@ -1739,16 +1772,57 @@ class LearnerController extends Controller
         ]);
     }
 
+    public function requestSelfPublishingPortal()
+    {
+        SelfPublishingPortalRequest::firstOrCreate(['user_id' => Auth::id()]);
+        return back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Request submitted to admin.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
     public function project()
     {
         $projects = Project::where('user_id', Auth::user()->id)->get();
         return view('frontend.learner.self-publishing.project.index', compact('projects'));
     }
 
+    public function saveProject(Request $request, ProjectService $projectService)
+    {
+        $this->validate($request, [
+            'name' => 'required|no_links'
+        ]);
+
+        $nextProjectNumber = DB::table('projects')
+            ->select(DB::raw('CAST(identifier AS UNSIGNED) as identifier_numeric'))
+            ->orderByRaw('identifier_numeric DESC')
+            ->value('identifier') + 1;
+
+        $request->merge([
+            'user_id' => Auth::id(),
+            'number' => $nextProjectNumber,
+            'status' => 'active'
+        ]);
+
+        $projectService->saveProject($request);
+
+        return back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Project created.'),
+            'alert_type'            => 'success'
+        ]);
+    }
+
     public function showProject( $project_id )
     {
         $project = Project::where('user_id', Auth::user()->id)->where('id', $project_id)->firstOrFail();
         return view('frontend.learner.self-publishing.project.show', compact('project'));
+    }
+
+    public function orderService($projectId, $serviceId)
+    {
+        $service = AppPublishingService::findOrFail($serviceId);
+        return view('frontend.learner.self-publishing.project.service-order', compact('service', 'projectId'));
     }
 
     public function projectGraphicWork( $project_id )
@@ -1855,6 +1929,15 @@ class LearnerController extends Controller
         return view('frontend.learner.self-publishing.project.invoice', compact('project', 'invoices'));
     }
 
+    public function countFileCharacters(Request $request)
+    {
+        $compute = null;
+        if( $request->hasFile('manuscript') &&  $request->file('manuscript')->isValid() ) :
+            $compute = FrontendHelpers::countFileWords(0, $request);
+        endif;
+        return $compute;
+    }
+
     public function uploadSelfPublishingManuscript( $id, Request $request )
     {
         $this->validate($request, ['manuscript' => 'required']);
@@ -1943,12 +2026,14 @@ class LearnerController extends Controller
         // get course certificates based on users course taken
         $certificates = DB::table('course_certificates')
             ->leftJoin('courses', 'course_certificates.course_id','=','courses.id')
-            ->leftJoin('packages','packages.course_id','=','courses.id')
+            ->leftJoin('packages','packages.id','=','course_certificates.package_id')
             ->leftJoin('courses_taken','courses_taken.package_id', '=','packages.id')
             ->select('course_certificates.*', 'courses.title as course_title')
             ->whereNotNull('courses.completed_date')
             ->whereNotNull('courses.issue_date')
+            ->whereNotNull('course_certificates.package_id')
             ->where('courses_taken.user_id', \Auth::user()->id)
+            ->whereNull('courses_taken.deleted_at')
             ->groupBy('course_certificates.id')
             ->get();
         return view('frontend.learner.profile', compact('certificates'));
@@ -3123,7 +3208,8 @@ class LearnerController extends Controller
 
         // check if vipps payment mode and the current user id is 4
         if( $paymentMode->mode == "Vipps") :
-            $orderId = $invoice->invoice_number;
+            //$orderId = $invoice->invoice_number;
+            $orderId = $invoice->fiken_invoice_id;
             $transactionText = $package->course->title;
             $vippsData = [
                 'amount' => $price,
@@ -3273,7 +3359,8 @@ class LearnerController extends Controller
 
 
             if( $paymentMode->mode == "Vipps") :
-                $orderId = $invoice->invoice_number;
+                //$orderId = $invoice->invoice_number;
+                $orderId = $invoice->fiken_invoice_id;
                 $transactionText = $shopManuscript->title;
                 $vippsData = [
                     'amount' => $price,
@@ -4057,13 +4144,9 @@ class LearnerController extends Controller
         $course = $certificate->course;
 
         $courseLearner = Auth::user()->coursesTaken()->withTrashed()->whereIn('package_id', $course->packages()->pluck('id'))
-            ->get();
-        // check if not learner of the course
-        if (!$courseLearner->count()) {
-            return redirect()->back();
-        }
+            ->firstOrFail();
 
-        $issueDate = Carbon::parse($course->issue_date);
+        $issueDate = Carbon::parse($course->type === 'Single' ? Carbon::parse($courseLearner->started_at)->addDays(80) : $course->issue_date);
         $template = str_replace([
             '{LEARNERNAME}',
             '{COURSENAME}',
@@ -4685,5 +4768,11 @@ class LearnerController extends Controller
         $user = Auth::user();
         $user['address'] = $user->address;
         return $user;
+    }
+
+    private function salesReportCounter($book_for_sale_id, $type) {
+        return StorageSale::where('user_book_for_sale_id', $book_for_sale_id)
+        ->where('type', $type)
+        ->sum('value');
     }
 }

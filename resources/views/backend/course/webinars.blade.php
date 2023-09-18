@@ -5,6 +5,7 @@
 @stop
 
 @section('styles')
+	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="{{ asset('css/cropper.min.css') }}">
 	<style>
 		.image_container, .image_container_edit {
@@ -80,7 +81,7 @@
 											<a class="btn btn-xs btn-danger deleteWebinarBtn"
 											   data-toggle="modal"
 											   data-target="#deleteWebinarModal"
-											   data-action="{{ route('admin.webinar.destroy', $webinar->id) }}"
+											   data-action="{{ route('admin.webinar.delete', $webinar->id) }}"
 											   data-title="{{ $webinar->title }}"
 											><i class="fa fa-trash"></i></a>
 											<a class="btn btn-xs btn-warning hideWebinarBtn"
@@ -116,6 +117,15 @@
 										<button class="btn btn-warning btn-xs viewRegistrantsBtn"
 												data-webinar-id="{{ $webinar->id }}">
 											View Registrants
+										</button>
+
+										<button class="btn btn-info btn-xs scheduleWebinarBtn" data-toggle="modal"
+										data-target="#scheduleWebinarModal" 
+										data-action="{{ route('admin.webinar.schedule', $webinar->id) }}"
+										data-date="{{ $webinar->schedule
+											? strftime('%Y-%m-%d', strtotime($webinar->schedule->date))
+											: '' }}">
+											Schedule
 										</button>
 
 										@if (in_array($course->id, [17, 23, 89]) || $course->is_free) {{-- check if webinar-pakke --}}
@@ -171,10 +181,12 @@
 														   data-toggle="modal"
 														   data-edit="1"
 														   data-target="#addPresenterModal"
-														   data-editor_id="{{ $webinar_editor->editor->id }}"
-														   data-first_name="{{ $webinar_editor->editor->first_name }}"
-														   data-last_name="{{ $webinar_editor->editor->last_name }}"
-														   data-title="{{ trans('site.edit-editor').' '.$webinar_editor->editor->first_name.' '.$webinar_editor->editor->last_name }}"
+														   data-editor_id="{{ $webinar_editor->editor ? $webinar_editor->editor->id : '' }}"
+														   data-first_name="{{ $webinar_editor->editor ? $webinar_editor->editor->first_name : $webinar_editor->name }}"
+														   data-last_name="{{ $webinar_editor->editor ? $webinar_editor->editor->last_name : '' }}"
+														   data-title="{{ $webinar_editor->editor 
+														   ? trans('site.edit-editor').' '.$webinar_editor->editor->first_name.' '.$webinar_editor->editor->last_name
+														   : trans('site.edit-editor') . ' ' . $webinar_editor->name }}"
 														   data-editors = "{{ $selectEditor }}"
 														   data-editors_count = "{{ $selectEditor->keys()->last() }}"
 														   data-presenter_url="{{ $webinar_editor->presenter_url }}"
@@ -185,15 +197,19 @@
 														<a class="btn btn-xs btn-danger deletePresenterBtn"
 														   data-toggle="modal"
 														   data-target="#deletePresenterModal"
-														   data-first_name="{{ $webinar_editor->editor->first_name }}"
-														   data-last_name="{{ $webinar_editor->editor->last_name }}"
+														   data-first_name="{{ $webinar_editor->editor ? $webinar_editor->editor->first_name : '' }}"
+														   data-last_name="{{ $webinar_editor->editor ? $webinar_editor->editor->last_name : '' }}"
 														   data-action="{{ route('admin.webinar.webinar-editor.delete', $webinar_editor->id) }}">
 															<i class="fa fa-trash"></i></a>
 													</div>
-													<div class="webinar-presenter">
-														<div class="presenter-thumb" style="background-image: url('{{ $webinar_editor->editor->profile_image  }}')"></div>
-														{{ $webinar_editor->editor->first_name }} {{ $webinar_editor->editor->last_name }} <br />
-														{{ $webinar_editor->editor->email }} <br>
+													<div class="webinar-presenter" style="word-break: break-word;">
+														@if ($webinar_editor->editor)
+															<div class="presenter-thumb" style="background-image: url('{{ $webinar_editor->editor->profile_image  }}')"></div>
+															{{ $webinar_editor->editor->first_name }} {{ $webinar_editor->editor->last_name }} <br />
+															{{ $webinar_editor->editor->email }} <br>
+														@else
+															{{ $webinar_editor->name }} <br>
+														@endif
 														{{ $webinar_editor->presenter_url }}
 													</div>
 												</div>
@@ -233,6 +249,42 @@
 					</div>
 					<div class="text-right">
 						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="scheduleWebinarModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Schedule Webinar</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action=""
+					  onsubmit="disableSubmit(this)">
+					{{csrf_field()}}
+
+					<div class="form-group">
+						<label>Date</label>
+						<input type="date" name="date" class="form-control" required>
+					</div>
+
+					<div class="form-group">
+						<label>
+							Run the cron after save?
+						</label>
+						<br>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes"
+							   class="for-sale-toggle" data-off="No"
+							   name="run_cron" data-width="84">
+					</div>
+
+					<div class="text-right">
+						<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
 					</div>
 				</form>
 			</div>
@@ -357,9 +409,13 @@
       		{{ csrf_field() }}
 	      	<div class="form-group">
 				<label>{{ trans('site.assign-editor') }}</label>
-				<select name="editor_id" class="form-control select2" required>
+				<select name="editor_id" class="form-control select2">
 					<option value="" disabled="" selected>-- Select Editor --</option>
 				</select>
+			</div>
+			<div class="form-group">
+				<label>Name</label>
+				<input type="text" name="name" class="form-control"></input>
 			</div>
 			<div class="form-group">
 				<label>{{ trans('site.presenter-url') }}</label>
@@ -504,9 +560,8 @@
         <h4 class="modal-title">{{ trans('site.delete-webinar') }} <em></em></h4>
       </div>
       <div class="modal-body">
-        <form method="POST" action="" enctype="multipart/form-data">
+        <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
           {{ csrf_field() }}
-          {{ method_field('DELETE') }}
           <p>{{ trans('site.delete-webinar-question') }}</p>
           <div class="text-right">
           	<button type="submit" class="btn btn-danger">{{ trans('site.delete-webinar') }}</button>
@@ -634,6 +689,7 @@
 @stop
 
 @section('scripts')
+	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.0.0/cropper.js"></script>
 <script>
 
@@ -778,14 +834,19 @@
 			var editors_count = $(this).data('editors_count')
 			var edit = $(this).data('edit');
 			modal.find('form').trigger('reset');
-			modal.find('select[name=editor_id]').html('');
+			modal.find('select[name=editor_id]').html('<option value="" selected>-- Select Editor --</option>');
 			
 			if(edit){ //add selected editor on drpdwn && set presenter_url
 				var first_name = $(this).data('first_name')
 				var last_name = $(this).data('last_name')
 				var editor_id = $(this).data('editor_id')
 				var presenter_url = $(this).data('presenter_url')
-				modal.find('select[name=editor_id]').append('<option value="'+editor_id+'">'+first_name+' '+last_name+'</option>');
+				if(editor_id) {
+					modal.find('select[name=editor_id]').append('<option value="'+editor_id+'" selected>'+first_name+' '+last_name+'</option>');
+				} else {
+					modal.find('[name=name]').val(first_name);
+				}
+				
 				modal.find('[name=presenter_url]').val(presenter_url);
 			}
 			for(var i =0; i <= editors_count; i++){
@@ -846,6 +907,15 @@
 			});
 
 			console.log(registrants);*/
+		});
+
+		$(".scheduleWebinarBtn").click(function(){
+			let action = $(this).data('action');
+			let date = $(this).data('date');
+			let modal = $("#scheduleWebinarModal");
+
+			modal.find('form').attr('action', action);
+			modal.find("[name=date]").val(date);
 		});
 
 		$('.editWebinarBtn').click(function(){

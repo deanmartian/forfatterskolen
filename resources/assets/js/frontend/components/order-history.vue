@@ -12,7 +12,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="order in orders">
+                <tr v-for="order in orders" :key="order.id">
                     <td>{{ order.item }}</td>
                     <td>{{ order.package_variation }}</td>
                     <td>{{ order.created_at_formatted }}</td>
@@ -130,7 +130,7 @@
                 </div>
                 <div class="col-sm-2">
                     <span>{{ trans('site.order-history.vat') }}</span><br>
-                    <span>0%</span>
+                    <span>{{ currentOrder.type === 10 ? '25%' : '0%' }}</span>
                 </div>
                 <div class="col-sm-2">
                     <span>{{ trans('site.order-history.quantity') }}</span><br>

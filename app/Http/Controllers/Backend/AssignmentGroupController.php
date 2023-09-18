@@ -117,7 +117,7 @@ class AssignmentGroupController extends Controller
         if ( $request->hasFile('filename')) :
             $time = time();
             $destinationPath = 'storage/assignment-feedbacks'; // upload path
-            $extensions = ['pdf', 'docx', 'odt'];
+            $extensions = ['pdf', 'docx', 'odt', 'doc'];
 
             // loop through all the uploaded files
             foreach ($request->file('filename') as $k => $file) {
@@ -183,6 +183,7 @@ class AssignmentGroupController extends Controller
                     'is_admin' => true,
                     'is_active' => true,
                     'hours_worked' => $request->hours,
+                    'availability' => $request->filled('availability') ? $request->availability : Carbon::today(),
                     'notes_to_head_editor' => $request->notes_to_head_editor
                 ]);
 
@@ -286,7 +287,7 @@ class AssignmentGroupController extends Controller
             $request->file('filename')->isValid() ) :
             $time = time();
             $destinationPath = 'storage/assignment-feedbacks'; // upload path
-            $extensions = ['pdf', 'docx', 'odt'];
+            $extensions = ['pdf', 'docx', 'odt', 'doc'];
             $extension = pathinfo($_FILES['filename']['name'],PATHINFO_EXTENSION); // getting document extension
 
             $actual_name = AssignmentGroupLearner::find($id)->user_id;

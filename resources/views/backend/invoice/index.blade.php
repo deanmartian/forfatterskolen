@@ -29,6 +29,19 @@
 		<div class="navbar-form navbar-right">
 			<div class="form-group">
 				<form role="search" method="GET">
+					<div style="background: #fff; cursor: pointer; padding: 8px 10px;
+					border: 1px solid #ccc; width: 100%; display: inline; margin-right: 5px">
+						<i class="fa fa-file"></i>&nbsp;
+						<input type="text" name="fiken_invoice_id" style="border: none; width: 180px" 
+						placeholder="Search fiken invoice id" value="{{ Request::has('fiken_invoice_id') ? Request::get('fiken_invoice_id') : '' }}"/>
+					</div>
+
+					<button class="btn btn-default" type="submit" style="margin-right: 10px"><i class="fa fa-search"></i></button>
+				</form>
+			</div>
+
+			<div class="form-group">
+				<form role="search" method="GET">
 					<div id="reportrange" style="background: #fff; cursor: pointer; padding: 8px 10px;
 					border: 1px solid #ccc; width: 100%; display: inline; margin-right: 5px">
 						<i class="fa fa-calendar"></i>&nbsp;
@@ -47,6 +60,7 @@
 			<thead>
 		    	<tr>
 			        <th>{{ trans('site.invoice-nr') }}</th>
+			        <th>Fiken Invoice Id</th>
 			        <th>{{ trans_choice('site.learners', 1) }}</th>
 			        <th>{{ trans('site.status') }}</th>
 			        <th>{{ trans('site.pdf-url') }}</th>
@@ -62,6 +76,9 @@
 		    		<td>
 						<a href="{{route('admin.invoice.show', $invoice->id)}}">{{$invoice->invoice_number}}</a>
 		    		</td>
+					<td>
+						{{ $invoice->fiken_invoice_id }}
+					</td>
 					<td><a href="{{route('admin.learner.show', $invoice->user->id)}}">{{$invoice->user->fullname}}</a></td>
 		    		<td>
 						@if($invoice->fiken_is_paid)

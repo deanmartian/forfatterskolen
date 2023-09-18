@@ -14,7 +14,8 @@
         <project-details :current-project="{{ json_encode($project) }}" :learners="{{ json_encode($learners) }}"
                          :activities="{{ json_encode($activities) }}" :time-registers="{{ json_encode($timeRegisters) }}"
                          :project-time-list="{{ json_encode($projectTimeRegisters) }}" :projects="{{ json_encode($projects) }}"
-                         :whole-book-list="{{ json_encode($wholeBooks) }}"></project-details>
+                         :whole-book-list="{{ json_encode($wholeBooks) }}" :editor-and-admin-list="{{ json_encode($editorAndAdminList) }}"
+                         :task-list="{{ json_encode($tasks) }}" :book-critique-list="{{ json_encode($bookCritiques) }}"></project-details>
 
         <div class="col-md-12">
             <button type="button" class="btn btn-success addSelfPublishingBtn" data-toggle="modal"
@@ -120,7 +121,9 @@
             <!-- copy editing -->
             <div class="col-md-12 margin-top">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addOtherServiceModal"
-                        onclick="updateOtherServiceFields(1)">+ {{ trans('site.add-copy-editing') }}</button>
+                        onclick="updateOtherServiceFields(1, this)" data-editors="{{ json_encode($copyEditingEditors) }}">
+                        + {{ trans('site.add-copy-editing') }}
+                    </button>
                 <div class="table-users table-responsive">
                     <table class="table">
                         <thead>
@@ -139,14 +142,16 @@
                             <?php $extension = explode('.', basename($copy_editing->file)); ?>
                             <tr>
                                 <td>
-                                    <a href="{{ route($downloadOtherService, ['id' => $copy_editing->id, 'type' => 1]) }}"
-                                       download>
-                                        <i class="fa fa-download" aria-hidden="true"></i>
-                                    </a>&nbsp;
-                                    @if( end($extension) == 'pdf' || end($extension) == 'odt' )
-                                        <a href="/js/ViewerJS/#../../{{ $copy_editing->file }}">{{ basename($copy_editing->file) }}</a>
-                                    @elseif( end($extension) == 'docx' )
-                                        <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copy_editing->file}}">{{ basename($copy_editing->file) }}</a>
+                                    @if ($copy_editing->file)
+                                        <a href="{{ route($downloadOtherService, ['id' => $copy_editing->id, 'type' => 1]) }}"
+                                            download>
+                                            <i class="fa fa-download" aria-hidden="true"></i>
+                                        </a>&nbsp;
+                                        @if( end($extension) == 'pdf' || end($extension) == 'odt' )
+                                            <a href="/js/ViewerJS/#../../{{ $copy_editing->file }}">{{ basename($copy_editing->file) }}</a>
+                                        @elseif( end($extension) == 'docx' )
+                                            <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copy_editing->file}}">{{ basename($copy_editing->file) }}</a>
+                                        @endif
                                     @endif
                                 </td>
                                 <td>
@@ -241,7 +246,9 @@
             <!-- correction -->
             <div class="col-md-12 margin-top">
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addOtherServiceModal"
-                        onclick="updateOtherServiceFields(0)">+ {{ trans('site.add-correction') }}</button>
+                        onclick="updateOtherServiceFields(0, this)" data-editors="{{ json_encode($correctionEditors) }}">
+                        + {{ trans('site.add-correction') }}
+                    </button>
                 <div class="table-users table-responsive">
                     <table class="table">
                         <thead>
@@ -260,13 +267,15 @@
                             <?php $extension = explode('.', basename($correction->file)); ?>
                             <tr>
                                 <td>
-                                    <a href="{{ route($downloadOtherService, ['id' => $correction->id, 'type' => 2]) }}" download>
-                                        <i class="fa fa-download" aria-hidden="true"></i>
-                                    </a>&nbsp;
-                                    @if( end($extension) == 'pdf' || end($extension) == 'odt' )
-                                        <a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
-                                    @elseif( end($extension) == 'docx' )
-                                        <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+                                    @if ($correction->file)
+                                        <a href="{{ route($downloadOtherService, ['id' => $correction->id, 'type' => 2]) }}" download>
+                                            <i class="fa fa-download" aria-hidden="true"></i>
+                                        </a>&nbsp;
+                                        @if( end($extension) == 'pdf' || end($extension) == 'odt' )
+                                            <a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
+                                        @elseif( end($extension) == 'docx' )
+                                            <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+                                        @endif
                                     @endif
                                 </td>
                                 <td>
@@ -653,10 +662,6 @@
                         <div class="form-group">
                             <label>{{ trans('site.assign-to') }}</label>
                             <select name="editor_id" class="form-control select2">
-                                <option value="" disabled="" selected>-- Select Editor --</option>
-                                @foreach( App\User::whereIn('role', array(1,3))->orderBy('created_at', 'desc')->get() as $editor )
-                                    <option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
-                                @endforeach
                             </select>
                         </div>
 
@@ -1044,7 +1049,8 @@
             modal.find('form').attr('action', action);
         });
 
-        function updateOtherServiceFields(type) {
+        function updateOtherServiceFields(type, self) {
+            let editors = $(self).data('editors');
             let modal = $("#addOtherServiceModal");
             let add_correction_text = "{{ trans('site.add-correction') }}";
             let add_copy_editing_text = "{{ trans('site.add-copy-editing') }}";
@@ -1052,6 +1058,17 @@
             if (type === 1) {
                 modal_title = add_copy_editing_text;
             }
+
+            let editorContainer = modal.find('[name=editor_id]');
+            editorContainer.empty();
+
+            let editorOptions = '<option value="" disabled="" selected>-- Select Editor --</option>';
+
+            $.each(editors, function(k, editor) {
+                editorOptions += "<option value='" + editor.id + "'>" + editor.full_name + "</option>";
+            });
+
+            editorContainer.append(editorOptions);
 
             modal.find('.modal-title').text(modal_title);
             modal.find('form').find('[name=is_copy_editing]').val(type);

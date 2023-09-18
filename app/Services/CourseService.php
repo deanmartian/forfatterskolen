@@ -6,11 +6,14 @@ use App\Course;
 use App\CourseDiscount;
 use App\CourseOrderAttachment;
 use App\CoursesTaken;
+use App\EmailOut;
 use App\Events\AddToCampaignList;
 use App\Helpers\SveaConfig;
 use App\Http\AdminHelpers;
 use App\Http\FikenInvoice;
 use App\Http\FrontendHelpers;
+use App\Jobs\AddMailToQueueJob;
+use App\Jobs\AddToListJob;
 use App\Jobs\CourseOrderJob;
 use Illuminate\Support\Facades\Log;
 use App\Order;
@@ -138,7 +141,32 @@ class CourseService {
             ];
         }
 
+        if ($request->is_pay_later) {
+            return $this->processPayLaterOrder($request);
+        }
+        
         return $this->generateSveaCheckout($request);
+    }
+
+    public function processPayLaterOrder( Request $request )
+    {
+        $package = Package::find($request->package_id);
+        $course =  $package->course;
+        $calculatedPrice = $this->calculatePrice($course, $package, $request);
+
+        // check if upgrade course
+        if ($request->has('order_type') && $request->order_type === 6) {
+            $calculatedPrice = $request->price;
+        }
+
+        $discount = $request->price - $calculatedPrice;
+        $request->merge(['discount' => $discount]);
+
+        $orderRecord = $this->createOrder($request);
+
+        return [
+            'redirect_url' => url('/thankyou?pl_ord='.$orderRecord->id)
+        ];
     }
 
     /**
@@ -313,7 +341,17 @@ class CourseService {
                 }
 
                 $discount = ( (int) $discountCoupon->discount);
-                $price = $price - ( (int)$discount );
+
+                $packageDiscount = ($isBetweenFull && $package->full_payment_sale_price) 
+                ? (int)$package->full_payment_price - (int)$package->full_payment_sale_price : 0;
+
+                if ($discountCoupon->type === 1) {
+                    $price -= $discount - $packageDiscount;
+                }
+
+                if ($discountCoupon->type === 0) {
+                    $price -= $discount;
+                }
             }
 
         }
@@ -357,6 +395,7 @@ class CourseService {
         $newOrder['discount']   = $discount;
         $newOrder['payment_mode_id']   = $request->payment_mode_id;
         $newOrder['is_processed'] = 0;
+        $newOrder['is_pay_later'] = $request->is_pay_later;
 
         $order = Order::create($newOrder);
 
@@ -379,7 +418,7 @@ class CourseService {
      */
     public function addCourseToLearner( $user_id, $package_id, $start_course = false )
     {
-
+        Log::info("inside addCourseToLearner user = " . $user_id . ", package_id = " . $package_id);
         $course_status = 1;
         $package = Package::find($package_id);
         $course = $package->course;
@@ -442,6 +481,7 @@ class CourseService {
 
         // add user to automation
         if ($add_to_automation > 0) {
+            Log::info("inside addCourseToLearner add_to_automation.");
             $user_email = $user->email;
             $automation_id = 73;
             $user_name = $user->first_name;
@@ -451,6 +491,7 @@ class CourseService {
 
         // check if the course has activecampaign list then add the user
         if ($package->course->auto_list_id > 0) {
+            Log::info("inside addCourseToLearner checking of auto_list_id.");
             $list_id = $package->course->auto_list_id;
             $listData = [
                 'email' => $user->email,
@@ -461,6 +502,18 @@ class CourseService {
             event( new AddToCampaignList($list_id, $listData));
         }
 
+        /* use this instead of the AddToCampaignList if zagomail would be used
+        if ($package->course->auto_list_id) {
+            $list_id = $package->course->auto_list_id;
+            $listData = [
+                'email' => $user->email,
+                'fname' => $user->first_name,
+                'lname' => $user->last_name
+            ];
+
+            dispatch(new AddToListJob($list_id, $listData));
+        } */
+        Log::info("inside addCourseToLearner after all of the saving.");
         return $courseTaken;
 
     }
@@ -541,7 +594,7 @@ class CourseService {
      * @param $package_id
      * @param $courseTaken
      */
-    public function notifyUser( $user_id, $package_id, $courseTaken, $hasRegretForm = true )
+    public function notifyUser( $user_id, $package_id, $courseTaken, $hasRegretForm = true, $isEmailOut = false )
     {
         $user = $this->user->find($user_id);
         $package = Package::find($package_id);
@@ -550,27 +603,38 @@ class CourseService {
 
         $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
 
-        $search_string = [
-            '[username]', '[password]'
-        ];
-        $replace_string = [
-            $user->email, $password
-        ];
-        $email_content = str_replace($search_string, $replace_string, $package->course->email);
-
         $encode_email = encrypt($user_email);
         $redirectLink = encrypt(route('learner.course'));
         $actionUrl = route('auth.login.emailRedirect',[$encode_email, $redirectLink]);
         $actionText = 'Mine Kurs';
         $attachments = NULL;
+
+        if ($isEmailOut) {
+            $email_content = $this->getEmailOutWelcomeEmail($package->course_id, $encode_email, $user);
+        } else {
+            $search_string = [
+                '[username]', '[password]'
+            ];
+            $replace_string = [
+                $user->email, $password
+            ];
+            $email_content = str_replace($search_string, $replace_string, $package->course->email);
+        }
+
         if ($hasRegretForm) {
             $attachments = [asset($this->generateDocx($user->id, $package->id)),
                 asset('/email-attachments/skjema-for-opplysninger-om-angrerett.docx')];
         }
 
-        dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
+        if ($isEmailOut) {
+            dispatch(new AddMailToQueueJob($user_email, $package->course->title, $email_content,
+            'postmail@forfatterskolen.no', 'Forfatterskolen', $attachments,
+                    'courses-taken-order', $courseTaken->id));
+        } else {
+            dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
             'postmail@forfatterskolen.no', 'Forfatterskolen', $attachments, 'courses-taken-order',
             $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
+        }
     }
 
     /**
@@ -589,6 +653,34 @@ class CourseService {
         dispatch(new CourseOrderJob($user_email, $package->course->title, $email_content,
             'postmail@forfatterskolen.no', 'Forfatterskolen', null, 'courses-taken-upgrade',
             $courseTaken->id, $actionText, $actionUrl, $user, $package->id));
+    }
+
+    public function getEmailOutWelcomeEmail($course_id, $encode_email, $user)
+    {
+        $emailOut = EmailOut::where('course_id', $course_id)->where('send_immediately', 1)->first();
+        if ($emailOut) {
+            $extractLink        = FrontendHelpers::getTextBetween($emailOut->message, "[redirect]", "[/redirect]");
+            $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
+            $redirectLabel      =  FrontendHelpers::getTextBetween($emailOut->message, "[redirect_label]", "[/redirect_label]");
+            $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
+    
+            $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
+    
+            $search_string = [
+                '[username]', '[password]', '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]'
+            ];
+            $replace_string = [
+                $user->email, $password, $redirectLink, ''
+            ];
+            $message = str_replace($search_string, $replace_string, $emailOut->message);
+    
+            $emailOut->recipients()->updateOrCreate([
+                'user_id' => $user->id
+            ]);
+            return $message;
+        }
+        
+        return "";
     }
 
     public function createInvoiceFromOder( $order )
@@ -712,7 +804,7 @@ class CourseService {
         $table->addCell($width, [
             'borderBottomSize' => 6,
             'height' => 1
-        ])->addText('Forfatterskolen, Postboks 9233, 3064 DRAMMEN', [
+        ])->addText('Forfatterskolen, Lihagen 21, 3029 DRAMMEN', [
             'bgColor' => 'CCCCCC',
         ], [
             'space' => array('before' => 150, 'after' => 0),

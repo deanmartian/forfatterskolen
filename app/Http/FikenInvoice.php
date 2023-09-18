@@ -29,7 +29,7 @@ class FikenInvoice
 	public $invoice_number;
 	public $fikenUrl;
 	protected $mobile_number;
-	protected $fiken_invoice_id;
+	public $fiken_invoice_id;
     protected $fiken_bank_account_code;
 
 	public function __construct()
@@ -133,6 +133,7 @@ class FikenInvoice
 			$invoice->save();
             $this->invoiceID = $invoice->id;
             $this->invoice_number = $invoice->invoice_number;
+            $this->fiken_invoice_id = $invoice->fiken_invoice_id;
 		endif;
 
         if (isset($post_fields['payment_mode']) && $post_fields['payment_mode'] === 'Faktura'
@@ -457,13 +458,15 @@ class FikenInvoice
         $this->fiken_invoice_id = $fiken_invoice_id;
     }
 
-    public function vippsEFaktura()
+    public function vippsEFaktura($user)
     {
 
         $fields = [
-            'method' => ['vipps'],
+            'method' => ['efaktura'], //vipps
             "includeDocumentAttachments" => false,
-            "mobileNumber" => $this->mobile_number,
+            //"mobileNumber" => $this->mobile_number,
+            "recipientName" => $user->full_name,
+            "recipientEmail" => $user->email,
             "invoiceId" => $this->fiken_invoice_id
         ];
 

@@ -341,7 +341,7 @@ class OtherServiceController extends Controller
             // new 
             $time = time();
             $destinationPath = 'storage/other-service-feedback'; // upload path
-            $extensions = ['pdf', 'docx', 'odt'];
+            $extensions = ['pdf', 'docx', 'odt', 'doc'];
             $filesWithPath = '';
             // loop through all the uploaded files
             foreach ($request->file('manuscript') as $k => $file) {

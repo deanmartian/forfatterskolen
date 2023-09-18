@@ -28,14 +28,14 @@ class AddPackageRequest extends FormRequest
             'description' => 'required',
             'manuscripts_count' => 'required|integer|min:0',
             'full_payment_price' => 'required|numeric|min:0',
-            'months_3_price' => 'required|numeric|min:0',
-            'months_6_price' => 'required|numeric|min:0',
+            /* 'months_3_price' => 'required|numeric|min:0',
+            'months_6_price' => 'required|numeric|min:0', */
             'full_price_product' => 'required|string|max:255',
-            'months_3_product' => 'required|string|max:255',
-            'months_6_product' => 'required|string|max:255',
+            /* 'months_3_product' => 'required|string|max:255',
+            'months_6_product' => 'required|string|max:255', */
             'full_price_due_date' => 'required|integer|min:0',
-            'months_3_due_date' => 'required|integer|min:0',
-            'months_6_due_date' => 'required|integer|min:0',
+            /* 'months_3_due_date' => 'required|integer|min:0',
+            'months_6_due_date' => 'required|integer|min:0', */
         ];
     }
 }

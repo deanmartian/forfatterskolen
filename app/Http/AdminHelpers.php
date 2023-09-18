@@ -3,6 +3,8 @@
 namespace App\Http;
 
 use App\Assignment;
+use App\AssignmentDisabledLearner;
+use App\AssignmentFeedback;
 use App\Course;
 use App\CoursesTaken;
 use App\CronLog;
@@ -19,6 +21,7 @@ use App\WebinarEmailOut;
 use App\Workshop;
 use Carbon\Carbon;
 use Illuminate\Support\MessageBag;
+use Log;
 use Swift_Mailer;
 use Swift_Message;
 use Swift_Transport;
@@ -75,6 +78,41 @@ class AdminHelpers
     {
         return \App\User::where(function($query){
             $query->whereIn('role', [3])
+                ->orWhere('admin_with_editor_access', 1);
+        })
+            ->where('is_active', 1)
+            ->orderBy('id', 'desc')
+            ->get();
+    }
+
+    public static function copyEditingEditors()
+    {
+        return \App\User::where(function($query){
+            $query->whereIn('role', [3])
+                ->orWhere('admin_with_editor_access', 1);
+        })
+            ->where('is_copy_editing_admin', 1)
+            ->where('is_active', 1)
+            ->orderBy('id', 'desc')
+            ->get();
+    }
+
+    public static function correctionEditors()
+    {
+        return \App\User::where(function($query){
+            $query->whereIn('role', [3])
+                ->orWhere('admin_with_editor_access', 1);
+        })
+            ->where('is_correction_admin', 1)
+            ->where('is_active', 1)
+            ->orderBy('id', 'desc')
+            ->get();
+    }
+
+    public static function editorAndAdminList()
+    {
+        return \App\User::where(function($query){
+            $query->whereIn('role', [1,3])
                 ->orWhere('admin_with_editor_access', 1);
         })
             ->where('is_active', 1)
@@ -344,11 +382,20 @@ class AdminHelpers
             $groupLearner = \App\AssignmentGroupLearner::whereIn('assignment_group_id', $assignmentGroups)
                 ->where('user_id', $learner_id)->first();
             if ($groupLearner) {
-                return [ 'id' => $groupLearner->group->id, 'title' => $groupLearner->group->title];
+                return [ 'id' => $groupLearner->group->id, 'title' => $groupLearner->group->title,
+                 'group_learner_id' => $groupLearner->id];
             }
         }
 
         return NULL;
+    }
+
+    public static function getAssignmentFeedbackByGroupLearnerIdAndEditorId($groupLearnerId, $editorId)
+    {
+        return AssignmentFeedback::where([
+            'assignment_group_learner_id' => $groupLearnerId,
+            'user_id' => $editorId
+        ])->first();
     }
 
     /**
@@ -403,7 +450,8 @@ class AdminHelpers
                 $orderDetails = "<a href='".route('admin.assignment.show',
                         ['course_id' => $assignment->course->id, 'assignment' => $assignment->id])."'>"
                     .$assignment->title."</a>";
-
+            case 10:
+                $orderDetails = "Editing Service";
                 break;
         }
 
@@ -568,6 +616,45 @@ class AdminHelpers
             return true;
         }
 	}
+
+    public static function addToZagomailList($list_id, $data)
+    {
+        $curl = curl_init();
+        $data['publicKey'] = '2e4e9e238d2d08a31827c0e930b4294a01887b0a';
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.zagomail.com/lists/subscriber-create?list_uid=' . $list_id,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $data,
+        ));
+
+        $response = curl_exec($curl);
+
+        // Check for cURL errors
+        if (curl_errno($curl)) {
+            $error = curl_error($curl);
+            Log::info( "cURL Error: " . $error);
+        }
+        
+        curl_close($curl);
+        
+        $decoded_response = json_decode($response);
+
+        if ($decoded_response->status === 'success') {
+            Log::info("Email " . $data['email'] . ' is added to zagolist = ' . $list_id);
+        } else {
+            Log::info("----------- error for zagolist ------------");
+            Log::info("Email " . $data['email'] . ' is not added to zagolist = ' . $list_id);
+            Log::info($response);
+        }
+        
+    }
 
     public static function addToActiveCampaignListTest($list_id, $data)
     {
@@ -1059,7 +1146,8 @@ class AdminHelpers
             array( 'id' => 2, 'option' => 'Assignment Archive', 'route' => 'editor.assignment-archive', 'request_name' => 'assignment-archive'),
             array( 'id' => 4, 'options' => 'Editor Settings', 'route' => 'editor.settings', 'request_name' => 'editor-settings'),
             array( 'id' => 5, 'options' => 'Assigned Webinar', 'route' => 'editor.assigned-webinar', 'request_name' => 'assigned-webinar'),
-            array( 'id' => 8, 'option' => 'Årshjul', 'route' => 'editor.yearly-calendar.index', 'request_name' => 'yearly_calendar')
+            //array( 'id' => 8, 'option' => 'Årshjul', 'route' => 'editor.yearly-calendar.index', 'request_name' => 'yearly_calendar')
+            array( 'id' => 15, 'option' => 'Redaktørinnstruks', 'route' => 'editor.editors-note', 'request_name' => 'editors-note')
         );
 
         if ($id > 0) {
@@ -1261,6 +1349,14 @@ class AdminHelpers
         }
 
         return false;
+    }
+
+    public static function assignmentDisabledForLearner($assignment_id, $user_id)
+    {
+        return AssignmentDisabledLearner::where([
+            'assignment_id' => $assignment_id,
+            'user_id' => $user_id
+        ])->first();
     }
 
     /**

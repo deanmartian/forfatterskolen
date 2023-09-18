@@ -385,7 +385,7 @@ class ShopController extends Controller
         $newOrder['package_id'] = $package->id;
         $newOrder['plan_id']    = $paymentPlan->id;
 
-        Order::create($newOrder);
+        $order = Order::create($newOrder);
 
         // update the created log to mark it as ordered
         CheckoutLog::updateOrCreate([
@@ -523,7 +523,8 @@ class ShopController extends Controller
 
         // check if vipps payment mode and the current user id is 4
         if( $paymentMode->mode == "Vipps") :
-            $orderId = $invoice->invoice_number;
+            //$orderId = $invoice->invoice_number;
+            $orderId = $order->id."-".$user->id;
             $transactionText = $package->course->title;
             $vippsData = [
                 'amount' => $price,
@@ -1905,13 +1906,16 @@ class ShopController extends Controller
     {
 
         // check if from svea payment
-        if ($request->has('svea_ord')) {
-            $order_id = $request->get('svea_ord');
+        if ($request->has('svea_ord') || $request->has('pl_ord')) {
+
+            $order_id = $request->input('svea_ord') ?? $request->input('pl_ord');
             $order = Order::find($order_id);
 
-            Log::info('inside has SVEA order');
-            SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
-
+            if ($request->has('svea_ord')) {
+                Log::info('inside has SVEA order ' . $order_id);
+                SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
+            }
+            
             // add course to user
             if (!$order->is_processed) {
 
@@ -1920,7 +1924,11 @@ class ShopController extends Controller
                     $courseService->notifyUserForUpgrade($order, $courseTaken);
                 } else {
                     $courseTaken = $courseService->addCourseToLearner($order->user_id, $order->package_id);
-                    $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken);
+                    $courseTaken->is_pay_later = $order->is_pay_later;
+                    $courseTaken->is_active = $order->is_pay_later ? 0 : 1;
+                    $courseTaken->save();
+
+                    $courseService->notifyUser($order->user_id, $order->package_id, $courseTaken, true, true);
                 }
 
                 $courseService->notifyAdmin($order->user_id, $order->package_id);
@@ -1948,6 +1956,10 @@ class ShopController extends Controller
         }
 
         \Session::remove('vipps_checkout');
+
+        if ($request->has('pl_ord')) {
+            return view('frontend.shop.pay_later_thankyou');
+        }
         return view('frontend.shop.thankyou');
     }
 

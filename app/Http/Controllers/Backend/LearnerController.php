@@ -48,6 +48,7 @@ use App\Address;
 use App\Package;
 use App\Course;
 use App\CoursesTaken;
+use App\Exports\GenericExport;
 use App\ShopManuscriptsTaken;
 use App\ShopManuscriptComment;
 use App\Http\Controllers\Controller;
@@ -60,6 +61,9 @@ use File;
 use App\Http\FrontendHelpers;
 use App\Jobs\UpdateFikenContactDetailsJob;
 use App\RequestToEditor;
+use App\SelfPublishingOrder;
+use App\StorageDetail;
+use DB;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
 include_once($_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php');
@@ -212,7 +216,10 @@ class LearnerController extends Controller
             ->latest()
             ->withTrashed()
             ->get();
-        $projects = Project::where('user_id', $learner->id)->get();
+        $projects = Project::with(['registrations' => function ($query) {
+            $query->where('field', 'isbn');
+        }])->where('user_id', $learner->id)->get();
+        
 
         // get course certificates based on users course taken
         $certificates = \DB::table('course_certificates')
@@ -223,12 +230,17 @@ class LearnerController extends Controller
             ->whereNotNull('courses.completed_date')
             ->whereNotNull('courses.issue_date')
             ->where('courses_taken.user_id', $id)
+            ->whereNull('courses_taken.deleted_at')
             ->groupBy('course_certificates.id')
             ->get();
 
+        $projects = Project::where('user_id', $learner->id)->get();
+        $bookSale = new UserBookSale();
+        $bookSaleTypes = $bookSale->saleTypes();
+
         return view('backend.learner.show', compact('learner', 'learnerAssignments', 'emailHistories',
             'registeredWebinars', 'assignmentTemplates', 'selfPublishingList', 'learnerSelfPublishingList',
-            'timeRegisters', 'projects', 'certificates'));
+            'timeRegisters', 'projects', 'certificates', 'projects', 'bookSaleTypes'));
     }
 
 
@@ -1035,7 +1047,8 @@ class LearnerController extends Controller
             ]);
         }
 
-        $learner->forceDelete();
+        //$learner->forceDelete();
+        $learner->delete();
         return redirect(route('admin.learner.index'));
     }
 
@@ -1633,7 +1646,7 @@ class LearnerController extends Controller
                 $suggested_dates[$k] = Carbon::parse($suggested_date)->format('Y-m-d H:i:s');
             }*/
 
-            $extensions = ['docx'];
+            $extensions = ['doc', 'docx', 'odt', 'pdf'];
             $file   = NULL;
 
             if ($request->hasFile('manuscript') && $request->file('manuscript')->isValid()) :
@@ -2026,11 +2039,21 @@ class LearnerController extends Controller
 
     public function saveForSaleBooks( $user_id, Request $request )
     {
+        $this->validate($request, [
+            'project_id' => 'required'
+        ]);
         $request->merge(['user_id' => $user_id]);
 
         UserBookForSale::updateOrCreate([
             'id' => $request->id
         ], $request->except('id'));
+
+        if ($request->isbn) {
+            StorageDetail::where('user_book_for_sale_id', $request->id)
+            ->update([
+                'isbn' => $request->isbn
+            ]);
+        }
 
         return redirect()->back()->with([
             'errors'                => AdminHelpers::createMessageBag('Book for sale saved successfully.'),
@@ -2282,13 +2305,10 @@ class LearnerController extends Controller
         $user = User::find($user_id);
 
         $courseLearner = $user->coursesTaken()->withTrashed()->whereIn('package_id', $course->packages()->pluck('id'))
-            ->get();
-        // check if not learner of the course
-        if (!$courseLearner->count()) {
-            return redirect()->back();
-        }
+            ->firstOrFail();
 
-        $issueDate = Carbon::parse($course->issue_date);
+        $issueDate = Carbon::parse($course->type === 'Single' ? Carbon::parse($courseLearner->started_at)->addDays(80) : $course->issue_date);
+        
         $template = str_replace([
             '{LEARNERNAME}',
             '{COURSENAME}',
@@ -2310,6 +2330,12 @@ class LearnerController extends Controller
         $pdf->setPaper('letter', 'landscape');
         $pdf->loadHTML($template);
         return $pdf->download($course->title . ' certificate.pdf');
+    }
+
+    public function selfPublishingOrders($orderId)
+    {
+        $orders = SelfPublishingOrder::where('order_id', $orderId)->get();
+        return view('backend.learner._self-publishing-orders', compact('orders'));
     }
 
     /**
@@ -2335,11 +2361,12 @@ class LearnerController extends Controller
     public function vippsEFaktura( $invoice_id, Request $request)
     {
         $invoice = Invoice::find($invoice_id);
+        $user = $invoice->user;
         $fikenInvoice = new FikenInvoice();
         $fikenInvoice->setMobileNumber($request->mobile_number);
         $fikenInvoice->setFikenInvoiceId($invoice->fiken_invoice_id);
 
-        $response = $fikenInvoice->vippsEFaktura();
+        $response = $fikenInvoice->vippsEFaktura($user);
         $alert_type = 'success';
         $message = 'Invoice sent.';
 
@@ -2377,6 +2404,60 @@ class LearnerController extends Controller
 
         return redirect()->back()->with([
             'errors'                => AdminHelpers::createMessageBag('Record saved.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    public function exportLearnerWithVipps()
+    {
+        $address = Address::with('user')->whereNotNull('vipps_phone_number')->get();
+        $userList = [];
+
+        foreach($address as $addr) {
+            $userList[] = [
+                'name' => $addr->user->full_name,
+                'email' => $addr->user->email,
+                'phone' => $addr->vipps_phone_number
+            ];
+        }
+        
+        $headers = ['name', 'email', 'phone'];
+        $excel = \App::make('excel');
+        return $excel->download(new GenericExport($userList, $headers), 'Learner with vipps.xlsx');
+    }
+
+    public function sendUsernameAndPassword($userId, Request $request)
+    {
+        $this->validate($request, [
+            'subject' => 'required',
+            'message' => 'required'
+        ]);
+
+        $user = User::findOrFail($userId);
+        $loginLink = route('auth.login.emailRedirect', [encrypt($user->email), encrypt(route('learner.profile'))]);
+        $searchString = [
+            ':firstname',
+            '_username_',
+            ':login_link',
+            ' :end_login_link'
+        ];
+
+        $replaceString = [
+            $user->first_name,
+            $user->email,
+            "<a href='$loginLink'>",
+            "</a>"
+        ];
+
+        $message = str_replace($searchString, $replaceString, $request->message);
+        $toMail = $user->email;
+        // add email to queue
+        dispatch(new AddMailToQueueJob($toMail, $request->subject, $message,
+        $request->from_email, null, null, 'learner', $user->id));
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Email sent.'),
             'alert_type'            => 'success',
             'not-former-courses'    => true
         ]);

@@ -93,6 +93,9 @@
 				@if ($course->is_free)
 					<button type="button" class="btn btn-info margin-bottom" data-toggle="modal"
 							data-target="#reminderEmailModal">Send Reminder</button>
+
+					<button type="button" class="btn btn-primary margin-bottom" data-toggle="modal"
+							data-target="#setEndDateModal">Set Course Taken End Date</button>
 				@endif
 			@endif
 
@@ -123,6 +126,8 @@
 								<th>{{ trans_choice('site.packages', 1) }}</th>
 								<th>Preferred Editor</th>
 								<th>Include in email list</th>
+								<th>Exclude in Scheduled Registration</th>
+								<th>Facebook Group</th>
 								<th></th>
 							</tr>
 							</thead>
@@ -146,6 +151,17 @@
 											<input type="checkbox" data-toggle="toggle" data-on="Yes"
 												   class="receive-email-toggle" data-off="No" data-id="{{ $learner->id }}"
 												   name="can_receive_email" data-size="mini" @if($learner->can_receive_email) {{ 'checked' }} @endif>
+										</td>
+										<td>
+											<input type="checkbox" data-toggle="toggle" data-on="Yes"
+												   class="exclude-in-registration-toggle" data-off="No" data-id="{{ $learner->id }}"
+												   name="exclude_in_scheduled_registration" data-size="mini" 
+												   @if($learner->exclude_in_scheduled_registration) {{ 'checked' }} @endif>
+										</td>
+										<td>
+											<input type="checkbox" data-toggle="toggle" data-on="Yes"
+												   class="facebook-group-toggle" data-off="No" data-id="{{ $learner->id }}"
+												   name="in_facebook_group" data-size="mini" @if($learner->in_facebook_group) {{ 'checked' }} @endif>
 										</td>
 										<td>
 											<button type="submit" data-toggle="modal" data-target="#removeLearnerModal" class="btn btn-danger btn-xs pull-right btn-remove-learner"
@@ -353,11 +369,14 @@
 					</div>
 
 					<label>Learners</label> <br>
-					<input type="checkbox" name="check_all"> <label for="">Check/Uncheck All</label>
+					<input type="checkbox" name="check_all"> <label for="">Check/Uncheck All</label> <br>
+					<input type="checkbox" name="not_facebook_group" value="not-fb-group"> 
+					<label for="not_facebook">Not In Facebook Group</label>
 					<div class="form-group" style="max-height: 300px; overflow-y: scroll; margin-top: 10px">
 						@if(count($course->learners->get()) > 0)
 							@foreach( $course->learners->get() as $learner)
-								<input type="checkbox" name="learners[]" value="{{ $learner->user->id }}">
+								<input type="checkbox" name="learners[]" value="{{ $learner->user->id }}" 
+								class="{{ !$learner->in_facebook_group ? 'not-in-facebook-group' : '' }}">
 								<label>{{ $learner->user->full_name }}</label> <br>
 							@endforeach
 						@endif
@@ -410,6 +429,32 @@
 	</div>
 </div>
 <!-- end reminder email modal -->
+
+<div id="setEndDateModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Set Course Taken End Date</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('learner.course.set-end-date', $course->id) }}"
+					  onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+					{{csrf_field()}}
+
+					<div class="form-group">
+						<label>{{ trans('site.date') }}</label>
+						<input type="date" class="form-control" name="date" required>
+					</div>
+
+					<div class="text-right">
+						<input type="submit" class="btn btn-primary" value="{{ trans('site.save') }}">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 
 <div id="reminderEmailTemplateModal" class="modal fade" role="dialog">
 	<div class="modal-dialog">
@@ -579,12 +624,21 @@
             send_email.val('Sending....').attr('disabled', true);
 		}
 
-		$("[name=check_all]").click(function(){
-		   if ($(this).prop('checked')) {
-		    	$("[type=checkbox]").prop('checked', true);
-        	} else {
-               $("[type=checkbox]").prop('checked', false);
-		   }
+		$("[name=check_all]").click(function() {
+			if ($(this).prop('checked')) {
+				$("[type=checkbox][name!=not_facebook_group]").prop('checked', true);
+				$("[name=not_facebook_group]").prop('checked', false);
+			} else {
+				$("[type=checkbox]").prop('checked', false);
+			}
+		});
+
+		$("[name=not_facebook_group]").click(function(){
+			// uncheck all at first
+			$("[type=checkbox][name!=not_facebook_group]").prop('checked', false);
+			if ($(this).prop('checked')) {
+				$(".not-in-facebook-group").prop('checked', true);
+			}
 		});
 
         $(".receive-email-toggle").change(function(){
@@ -596,6 +650,34 @@
                 url:'/course-taken/' + learner_id + '/update-can-receive-email',
                 headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                 data: { 'can_receive_email' : check_val },
+                success: function(data){
+                }
+            });
+        });
+
+		$(".exclude-in-registration-toggle").change(function(){
+            let learner_id = $(this).attr('data-id');
+            let is_checked = $(this).prop('checked');
+            let check_val = is_checked ? 1 : 0;
+            $.ajax({
+                type:'POST',
+                url:'/course-taken/' + learner_id + '/exclude-in-registration',
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: { 'exclude_in_scheduled_registration' : check_val },
+                success: function(data){
+                }
+            });
+        });
+
+		$(".facebook-group-toggle").change(function(){
+            let learner_id = $(this).attr('data-id');
+            let is_checked = $(this).prop('checked');
+            let check_val = is_checked ? 1 : 0;
+            $.ajax({
+                type:'POST',
+                url:'/course-taken/' + learner_id + '/update-in-facebook-group',
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: { 'in_facebook_group' : check_val },
                 success: function(data){
                 }
             });

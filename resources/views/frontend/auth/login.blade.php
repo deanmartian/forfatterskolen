@@ -15,6 +15,21 @@ Password Change
 </title>
 @stop
 
+@section('styles')
+<style>
+	.nav-tabs {
+		margin-bottom: 30px;
+	}
+	.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
+		color: #555;
+		cursor: default;
+		background-color: #fff;
+		border: 1px solid #ddd;
+		border-bottom-color: transparent;
+	}
+</style>
+@stop
+
 @section('content')
 <div class="login-container" data-bg="https://www.forfatterskolen.no/images-new/login/login-bg.jpg">
 	<div class="container">
@@ -48,45 +63,82 @@ Password Change
 					<div class="d-table-cell align-middle">
 						<div class="tab-content">
 							<div id="login" class="tab-pane fade @if(!Request::input('t')) in active @endif" role="tabpanel">
-								<form method="post" action="{{route('frontend.login.store')}}" onsubmit="disableSubmit(this)">
-									{{csrf_field()}}
-									<h1>{{ trans('site.front.form.login') }}</h1>
+								<ul class="nav nav-tabs margin-top">
+									<li @if( Request::input('tab') == 'main' || Request::input('tab') == '') class="active" @endif>
+										<a href="?tab=main">Min Side</a>
+									</li>
+									<li @if( Request::input('tab') == 'self-publishing' ) class="active" @endif>
+										<a href="?tab=self-publishing">Selvpubliseringsportal</a>
+									</li>
+								</ul>
 
-									<div class="input-group">
-										<div class="input-group-prepend">
-											<span class="input-group-text"><i class="fa at-icon"></i></span>
+								@if( Request::input('tab') == 'main' || Request::input('tab') == '')
+									<form method="post" action="{{route('frontend.login.store')}}" onsubmit="disableSubmit(this)">
+										{{csrf_field()}}
+										<h1>{{ trans('site.front.form.login') }}</h1>
+
+										<div class="input-group">
+											<div class="input-group-prepend">
+												<span class="input-group-text"><i class="fa at-icon"></i></span>
+											</div>
+											<input type="email" name="email" class="form-control no-border-left"
+												placeholder="{{ trans('site.front.form.email') }}" required value="{{old('email')}}">
 										</div>
-										<input type="email" name="email" class="form-control no-border-left"
-											   placeholder="{{ trans('site.front.form.email') }}" required value="{{old('email')}}">
-									</div>
 
-									<div class="input-group">
-										<div class="input-group-prepend">
-											<span class="input-group-text"><i class="fa lock-icon"></i></span>
+										<div class="input-group">
+											<div class="input-group-prepend">
+												<span class="input-group-text"><i class="fa lock-icon"></i></span>
+											</div>
+											<input type="password" name="password" placeholder="{{ trans('site.front.form.password') }}"
+												class="form-control no-border-left" required>
 										</div>
-										<input type="password" name="password" placeholder="{{ trans('site.front.form.password') }}"
-											   class="form-control no-border-left" required>
-									</div>
 
-									<button type="submit" class="btn site-btn-global">{{ trans('site.front.form.login') }}</button>
+										<button type="submit" class="btn site-btn-global">{{ trans('site.front.form.login') }}</button>
 
-									<div class="clearfix"></div>
+										<div class="clearfix"></div>
 
-									<div class="social-btn-container">
-										<a href="{{ route('auth.login.facebook') }}" class="loginBtn loginBtn--facebook btn">
-											{{ ucwords(trans('site.front.form.login-with-facebook')) }}
-										</a>
+										<div class="social-btn-container">
+											<a href="{{ route('auth.login.facebook') }}" class="loginBtn loginBtn--facebook btn">
+												{{ ucwords(trans('site.front.form.login-with-facebook')) }}
+											</a>
 
-										<a href="{{ route('auth.login.google') }}" class="loginBtn loginBtn--google btn">
-											{{ ucwords(trans('site.front.form.login-with-google')) }}
-										</a>
+											<a href="{{ route('auth.login.google') }}" class="loginBtn loginBtn--google btn">
+												{{ ucwords(trans('site.front.form.login-with-google')) }}
+											</a>
 
-										<a href="{{ route('auth.login.vipps') }}" class="loginBtn btn mt-2">
-											<img src="{{ asset('images-new/vipps-login.png') }}" height="38px"
-												 alt="vipps-login-button">
-										</a>
-									</div>
-								</form>
+											<a href="{{ route('auth.login.vipps') }}" class="loginBtn btn mt-2">
+												<img src="{{ asset('images-new/vipps-login.png') }}" height="38px"
+													alt="vipps-login-button">
+											</a>
+										</div>
+									</form>
+								@endif
+
+								@if( Request::input('tab') == 'self-publishing' )
+									<form method="post" action="{{route('frontend.login.self-publishing-store')}}" 
+									onsubmit="disableSubmit(this)">
+										{{csrf_field()}}
+										<h1>{{ trans('site.front.form.login') }}</h1>
+
+										<div class="input-group">
+											<div class="input-group-prepend">
+												<span class="input-group-text"><i class="fa at-icon"></i></span>
+											</div>
+											<input type="email" name="email" class="form-control no-border-left"
+												placeholder="{{ trans('site.front.form.email') }}" required value="{{old('email')}}">
+										</div>
+
+										<div class="input-group">
+											<div class="input-group-prepend">
+												<span class="input-group-text"><i class="fa lock-icon"></i></span>
+											</div>
+											<input type="password" name="password" placeholder="{{ trans('site.front.form.password') }}"
+												class="form-control no-border-left" required>
+										</div>
+
+										<button type="submit" class="btn site-btn-global">{{ trans('site.front.form.login') }}</button>
+									</form>
+								@endif
 
 								<div class="clearfix"></div>
 

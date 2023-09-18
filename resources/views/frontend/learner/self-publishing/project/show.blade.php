@@ -1,7 +1,7 @@
-@extends('frontend.layout')
+@extends('frontend.learner.self-publishing.layout')
 
 @section('title')
-    <title>Time Register &rsaquo; Forfatterskolen</title>
+    <title>Project &rsaquo; Forfatterskolen</title>
 @stop
 
 @section('styles')
@@ -53,9 +53,14 @@
                 <div class="col-md-12 dashboard-course no-left-padding">
                     <div class="card global-card">
                         <div class="card-header">
-                            <h1>
-                                {{ trans('site.self-publishing-text') }}
+                            <h1 class="d-inline-block">
+                                {{-- {{ trans('site.self-publishing-text') }} --}}
+                                Redaktør
                             </h1>
+
+                            <a href="{{ route('learner.service.order', [$project->id, 3]) }}" class="btn btn-primary float-right">
+                                Order
+                            </a>
                         </div>
                         <div class="card-body">
                             <table class="table">
@@ -111,9 +116,13 @@
 
                     <div class="card global-card mt-5">
                         <div class="card-header">
-                            <h1>
+                            <h1 class="d-inline-block">
                                 {{ trans('site.learner.copy-editing') }}
                             </h1>
+
+                            <a href="{{ route('learner.service.order', [$project->id, 1]) }}" class="btn btn-primary float-right">
+                                Order
+                            </a>
                         </div>
                         <div class="card-body py-0">
                             <table class="table table-global">
@@ -174,8 +183,10 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <a href="{{ route('learner.other-service.download-doc',
-                                               ['id' => $editing->id, 'type' => 1]) }}">{{ trans('site.learner.download-original-script') }}</a>
+                                                @if ($editing->file)
+                                                    <a href="{{ route('learner.other-service.download-doc',
+                                                    ['id' => $editing->id, 'type' => 1]) }}">{{ trans('site.learner.download-original-script') }}</a>
+                                                @endif
 
                                                 @if ($editing->feedback)
                                                     <br>
@@ -194,9 +205,13 @@
 
                     <div class="card global-card mt-5">
                         <div class="card-header">
-                            <h1>
+                            <h1 class="d-inline-block">
                                 {{ trans('site.front.correction.title') }}
                             </h1>
+
+                            <a href="{{ route('learner.service.order', [$project->id, 2]) }}" class="btn btn-primary float-right">
+                                Order
+                            </a>
                         </div>
                         <div class="card-body py-0">
                             <table class="table table-global">
@@ -249,8 +264,10 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <a href="{{ route('learner.other-service.download-doc',
-										   ['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.learner.download-original-script') }}</a>
+                                            @if ($correction->file)
+                                                <a href="{{ route('learner.other-service.download-doc',
+                                                ['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.learner.download-original-script') }}</a>
+                                            @endif
 
                                             @if ($correction->feedback)
                                                 <br>

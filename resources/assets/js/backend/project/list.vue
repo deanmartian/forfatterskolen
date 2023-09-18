@@ -8,19 +8,47 @@
             Notes
         </button>
 
+        <a href="/services" class="btn btn-sm btn-success margin-top">
+            Publishing Services
+        </a>
+
+        <a href="/assemble-book-packages" class="btn btn-sm btn-success margin-top">
+            Assemble Book Package Options
+        </a>
+
+        <a href="/self-publishing/orders" class="btn btn-sm btn-success margin-top">
+            Orders
+        </a>
+
+        <a href="/book-publisher/calculator" class="btn btn-sm btn-success margin-top">
+            Book Publisher
+        </a>
+
+        <div class="form-group margin-top" style="width: 100px">
+            <label>Filter</label>
+            <select name="filter" class="form-control" v-model="filter">
+                <option value="">All</option>
+                <option value="active">Active</option>
+                <option value="lead">Lead</option>
+                <option value="finished">Finished</option>
+            </select>
+        </div>
+
         <div class="table-users">
             <table class="table table-responsive">
                 <thead>
                 <tr>
                     <th>Project Number</th>
                     <th>Name</th>
-                    <th>Description</th>
+                    <th>Learner</th>
+                    <th>Status</th>
+                    <th width="700">Description</th>
                     <th>Status</th>
                     <td></td>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="project in projectList">
+                <tr v-for="project in filteredProjects" :key="project.id">
                     <td>
                         {{ project.identifier}}
                     </td>
@@ -28,6 +56,14 @@
                         <a :href="'/project/' + project.id">
                             {{ project.name }}
                         </a>
+                    </td>
+                    <td>
+                        <a :href="'/learner/' + project.user_id" v-if="project.user">
+                            {{ project.user.full_name }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ capitalize(project.status) }}
                     </td>
                     <td>
                         {{ project.description }}
@@ -74,7 +110,7 @@
                           name="learner_id"></v-select>
             </div>
 
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label>Standard Activity</label>
                 <v-select :options="activityList" label="activity" v-model="selected_activity" @input="setSelectedActivity($event)"
                           name="activity" style="display: inline-block"
@@ -85,7 +121,7 @@
                 <button class="btn btn-default btn-sm" @click="showActivityModal(true)">
                     <i class="fa fa-plus" style="color: #009975"></i>
                 </button>
-            </div>
+            </div> -->
 
             <div class="form-group">
                 <label>Start date</label>
@@ -103,12 +139,20 @@
             </div>
 
             <div class="form-group">
+                <label>Status</label>
+                <select name="status" class="form-control" v-model="projectForm.status">
+                    <option value="active">Active</option>
+                    <option value="lead">Lead</option>
+                    <option value="finished">Finished</option>
+                </select>
+            </div>
+            <!-- <div class="form-group">
                 <label>Finished</label> <br>
                 <toggle-button :color="'#337ab7'"
                                :labels="{checked: 'Yes', unchecked: 'No'}"
                                v-model="projectForm.is_finished"
                                :width="60" :height="25" :font-size="14"/>
-            </div>
+            </div> -->
 
             <div slot="modal-footer">
                 <button class="btn btn-sm btn-primary" @click="saveProject()" :disabled="isLoading">
@@ -241,7 +285,7 @@
 <script>
     import moment from 'moment';
     export default {
-        props: ['learners', 'activities', 'projects', 'project-notes'],
+        props: ['learners', 'activities', 'projects', 'project-notes', 'next-project-number'],
         data() {
             return {
                 projectForm: {
@@ -253,8 +297,9 @@
                     start_date: '',
                     end_date: '',
                     description: '',
-                    is_finished: false
+                    status: 'active'
                 },
+                projectNumber: this.nextProjectNumber,
                 projectModalTitle: '',
                 selected_learner: '',
                 selected_activity: '',
@@ -281,10 +326,24 @@
                 isLoading: false,
                 isActivityLoading: false,
                 isDeleting: false,
+                filter: 'active'
             }
         },
 
+        computed: {
+            
+            filteredProjects() {
+                return this.projects.filter(project => {
+                    return !this.filter || (project.status && project.status.toLowerCase().indexOf(this.filter) > -1);
+                });
+            } 
+        },
+
         methods: {
+            capitalize(str) {
+                return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+            },
+
             closeProjectFormModal() {
                 this.selected_learner = '';
                 this.selected_activity = '';
@@ -298,13 +357,14 @@
                     start_date: '',
                     end_date: '',
                     description: '',
-                    is_finished: false
+                    status: 'active'
                 }
             },
 
             showFormModal(data = null) {
                 this.projectModalTitle = 'Add Project';
                 this.projectForm.start_date = moment().format("YYYY-MM-DD");
+                this.projectForm.number = this.projectNumber;
                 if (data) {
                     this.projectModalTitle = 'Edit Project';
                     this.projectForm = {
@@ -316,7 +376,7 @@
                         start_date: data.start_date,
                         end_date: data.end_date,
                         description: data.description,
-                        is_finished: data.is_finished ? true : false
+                        status: data.status
                     };
 
                     const actIndex = _.findIndex(this.activityList, {id: data.activity_id});
@@ -348,11 +408,13 @@
                 this.removeValidationError();
                 axios.post('/project/save', this.projectForm).then(response => {
                     this.isLoading = false;
+                    let project = response.data.project;
+                    this.projectNumber = response.data.nextProjectNumber;
 
                     if (this.projectForm.id) {
-                        this.updateRecordFromObject(this.projectList, this.projectForm.id, response.data);
+                        this.updateRecordFromObject(this.projectList, this.projectForm.id, project);
                     } else {
-                        this.projectList.push(response.data);
+                        this.projectList.push(project);
                     }
 
                     this.$refs.projectFormModal.hide();
@@ -493,7 +555,7 @@
         },
 
         mounted() {
-            console.log(this.projectNotes);
+            console.log(this.projects);
         }
     }
 </script>

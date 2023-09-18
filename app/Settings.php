@@ -76,6 +76,11 @@ class Settings extends Model
         return self::getByName('head-editor');
     }
 
+    public static function editorsNote()
+    {
+        return self::getByName('editors-note');
+    }
+
     public static function getByName($settingName)
     {
         return self::where('setting_name', $settingName)->pluck('setting_value')->first();

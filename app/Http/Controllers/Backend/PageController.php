@@ -29,12 +29,16 @@ use App\CoursesTaken;
 use App\WorkshopsTaken;
 use App\Manuscript;
 use App\AssignmentFeedback;
+use App\Exports\GenericExport;
 use App\Log;
 use App\ShopManuscriptsTaken;
 use App\FreeManuscript;
+use App\Jobs\AddMailToQueueJob;
+use App\SelfPublishingPortalRequest;
 use Artisan;
 use Illuminate\Support\MessageBag;
 use App\ShopManuscriptTakenFeedback;
+use DB;
 
 require app_path('/Http/BackupDB/MySQLDump.php');
 
@@ -118,6 +122,7 @@ class PageController extends Controller
         $correctionEditors = AdminHelpers::editorByAdminQuery('is_correction_admin');
         $copyEditingEditors = AdminHelpers::editorByAdminQuery('is_copy_editing_admin');
         $projects = Project::all();
+        $selfPublishingPortalRequests = SelfPublishingPortalRequest::all();
 
         return view('backend.dashboard', compact('pending_courses', 'pending_shop_manuscripts',
         'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts', 'assigned_free_manuscripts',
@@ -125,7 +130,7 @@ class PageController extends Controller
         'nearlyExpiredCoursesCount', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
         'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments',
         'pendingTasks', 'assignedAssignmentManuscripts','shopManuscriptTakenFeedback', 'selfPublishingList', 'editors',
-            'learners', 'coachingEditors', 'correctionEditors', 'copyEditingEditors', 'projects'));
+            'learners', 'coachingEditors', 'correctionEditors', 'copyEditingEditors', 'projects', 'selfPublishingPortalRequests'));
     }
 
     public function updateExpectedFinish( $type, $id, Request $request )
@@ -689,5 +694,104 @@ class PageController extends Controller
     {
         $orders = Order::svea()->where('is_processed', 1)->latest()->paginate(20);
         return view('backend.svea-orders', compact('orders'));
+    }
+
+    public function approveSelfPublishingRequest($id)
+    {
+        $request = SelfPublishingPortalRequest::findOrFail($id);
+        $user = User::findOrFail($request->user_id);
+        $user->is_self_publishing_learner = 1;
+        $user->save();
+
+        $request->delete();
+        return redirect()->back()->with([
+            'alert_type' => 'success',
+            'errors'    => AdminHelpers::createMessageBag('Self publishing portal request approved.')
+        ]);
+    }
+
+    public function deleteSelfPublishingRequest($id)
+    {
+        $request = SelfPublishingPortalRequest::findOrFail($id);
+        $request->delete();
+
+        return redirect()->back()->with([
+            'alert_type' => 'success',
+            'errors'    => AdminHelpers::createMessageBag('Self publishing portal request deleted.')
+        ]);
+    }
+
+    public function learnerNotStartedManu()
+    {
+        $usersWithCourse = CoursesTaken::groupBy('user_id')->get()->pluck('user_id')->toArray();
+        $users = User::join('shop_manuscripts_taken', 'users.id', '=', 'shop_manuscripts_taken.user_id')
+            ->select('users.*')
+            ->whereNull('shop_manuscripts_taken.file')
+            ->whereNotIn('users.id', $usersWithCourse)
+            ->where('users.role', 2)
+            ->oldest('users.id')
+            ->get();
+        $userList = array();
+
+        foreach( $users as $user ) {
+            $userList[] = array(
+                'id' => $user->id,
+                'name' => $user->full_name,
+                'email' => $user->email
+            );
+        }
+
+        $headers = ['id', 'name', 'email'];
+        $excel = \App::make('excel');
+        return $excel->download(new GenericExport($userList, $headers), 'Not Avail Anything List.xlsx');
+    }
+
+    public function learnerAvailedCourseYear($year)
+    {
+        $users = DB::table('courses_taken')
+            ->select('users.*', 'courses.title as course_title','user_id')
+            ->leftJoin('users', 'courses_taken.user_id', '=', 'users.id')
+            ->leftJoin('packages', 'courses_taken.package_id', '=', 'packages.id')
+            ->leftJoin('courses', 'packages.course_id', '=', 'courses.id')
+            ->whereYear('courses_taken.created_at', $year)
+            ->where('courses_taken.is_free', 0)
+            ->orderBy('user_id', 'asc')
+            ->get();
+        $userList = array();
+        
+        foreach( $users as $user ) {
+            $userList[] = array(
+                'id' => $user->id,
+                'name' => $user->first_name . " " . $user->last_name,
+                'email' => $user->email,
+                'course' => $user->course_title
+            );
+        }
+
+        $headers = ['id', 'name', 'email', 'course'];
+        $excel = \App::make('excel');
+        return $excel->download(new GenericExport($userList, $headers), $year . ' Course Buyers.xlsx');
+    }
+
+    public function sendEmailToQueue(Request $request)
+    {
+        $subject = $request->subject;
+        $message = $request->message;
+        $from = $request->from_email;
+
+        $emailData['email_subject'] = $request->subject;
+        $emailData['email_message'] = $message;
+        $emailData['from_name'] = NULL;
+        $emailData['from_email'] = $from;
+        $emailData['attach_file'] = NULL;
+
+        $to = $request->recipient;
+        dispatch(new AddMailToQueueJob($to, $subject, $message, $from, null, null,
+            $request->parent, $request->parent_id));
+
+        return redirect()->back()->with([
+            'alert_type' => 'success',
+            'errors'    => AdminHelpers::createMessageBag('Email Sent.')
+        ]);
     }
 }

@@ -46,6 +46,7 @@ class EmailOutController extends Controller {
         $data = $request->except('_token');
         $data['course_id'] = $course_id;
         $data['for_free_course'] = $request->has('for_free_course') ? 1 : 0;
+        $data['send_immediately'] = boolval($request->has('send_immediately'));
         $data['allowed_package'] = isset($request->allowed_package) ? json_encode($request->allowed_package) : NULL;
 
         if ($request->hasFile('attachment')) :
@@ -150,6 +151,7 @@ class EmailOutController extends Controller {
         $data = $request->except('_token');
         $data['course_id'] = $course_id;
         $data['for_free_course'] = $request->has('for_free_course') ? 1 : 0;
+        $data['send_immediately'] = boolval($request->has('send_immediately'));
         $data['allowed_package'] = isset($request->allowed_package) ? json_encode($request->allowed_package) : NULL;
 
         if ($request->hasFile('attachment')) :
@@ -248,7 +250,7 @@ class EmailOutController extends Controller {
         $packages = $emailOut->allowed_package ? json_decode($emailOut->allowed_package) :
             $emailOut->course->packages->pluck('id')->toArray();
         $emailRecipients = $emailOut->recipients->pluck('user_id')->toArray();
-        $coursesTaken = CoursesTaken::whereIn('package_id', $packages)
+        $coursesTaken = CoursesTaken::whereHas('user')->whereIn('package_id', $packages)
             ->whereNull('renewed_at')
             ->whereNotIn('user_id', $emailRecipients)
             ->get();

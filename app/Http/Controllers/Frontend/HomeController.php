@@ -106,7 +106,7 @@ class HomeController extends Controller
 
         $upcomingSections = UpcomingSection::all();
 
-        return view('frontend.home', compact('popular_courses', 'free_courses', 'free_webinars',
+        return view('frontend.home-new', compact('popular_courses', 'free_courses', 'free_webinars',
             'next_webinar', 'next_free_webinar', 'next_workshop','latest_blog', 'poems', 'testimonials', 'workshop',
             'upcomingSections'));
     }
@@ -168,7 +168,7 @@ class HomeController extends Controller
             $user_id = $user->id;
             $package_id = $request->package_id;
             $courseTaken = $courseService->addCourseToLearner($user_id, $package_id, true);
-            $courseService->notifyUser($user_id, $package_id, $courseTaken, false);
+            $courseService->notifyUser($user_id, $package_id, $courseTaken, false, true);
         }
     }
 
@@ -830,9 +830,9 @@ class HomeController extends Controller
 
     public function coachingTimeCalculate( Request $request )
     {
-        $this->validate($request, [
+        /* $this->validate($request, [
             'manuscript' => 'mimes:docx'
-        ]);
+        ]); */
 
         $data = [
             'file_name' => '',
@@ -842,6 +842,16 @@ class HomeController extends Controller
 
         if( $request->hasFile('manuscript') &&  $request->file('manuscript')->isValid() ) :
             $original_filename = $request->manuscript->getClientOriginalName();
+            $extension = $request->manuscript->getClientOriginalExtension();
+            $extensions = ['doc', 'docx', 'odt', 'pdf'];
+
+            if( !in_array($extension, $extensions) ) {
+                return response()->json([
+                    'errors' => [
+                        'manuscript' => [' The manuscript must be a file of type: doc, docx, odt, pdf.']
+                    ]
+                ], 422);
+            }
 
             $destinationPath = 'storage/manuscript-tests/'; // upload path
             $fileName = $original_filename; // rename document

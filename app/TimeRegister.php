@@ -25,6 +25,12 @@ class TimeRegister extends Model
         return $this->hasMany('App\TimeRegisterUsed');
     }
 
+    public function usedTimesDurationSum()
+    {
+        return $this->hasMany('App\TimeRegisterUsed')->selectRaw('SUM(time_used) as total_duration')
+        ->groupBy('time_register_id');
+    }
+
     public function getFileLinkAttribute()
     {
         $fileLink = '';

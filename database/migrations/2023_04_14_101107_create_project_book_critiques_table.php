@@ -1,0 +1,38 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateProjectBookCritiquesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('project_book_critiques', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedBigInteger('project_id');
+            $table->longText('book_content');
+            $table->longText('description')->nullable();
+            $table->tinyInteger('is_file')->default(0);
+            $table->longText('feedback')->nullable();
+            $table->timestamps();
+
+            $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('project_book_critiques');
+    }
+}

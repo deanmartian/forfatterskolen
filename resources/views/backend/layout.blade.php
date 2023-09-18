@@ -137,6 +137,21 @@
                 submit_btn.attr('disabled', 'disabled');
             }
 
+            function checkFormAction(t) {
+                let btn = $(t);
+                btn.text('');
+                btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+                btn.attr('disabled','disabled');
+                let form = $(t).closest('form');
+
+                if (form.attr('action') === '') {
+                    alert("Form don't have any action. Please refresh the page.");
+                    return;
+                }
+
+                form.submit();
+            }
+
             function enableSelect(parent) {
                 let parentContainer = $("#" + parent);
                 parentContainer.find('.select2').show();

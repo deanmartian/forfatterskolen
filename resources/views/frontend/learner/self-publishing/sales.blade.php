@@ -1,4 +1,4 @@
-@extends('frontend.layout')
+@extends('frontend.learner.self-publishing.layout')
 
 @section('title')
     <title>Sales &rsaquo; Forfatterskolen</title>
@@ -68,7 +68,11 @@
                                 <tbody>
                                 @foreach(Auth::user()->booksForSale as $bookForSale)
                                     <tr>
-                                        <td>{{ $bookForSale->title }}</td>
+                                        <td>
+                                            <a href="{{ route('learner.book-for-sale', $bookForSale->id) }}">
+                                                {{ $bookForSale->project ? $bookForSale->project->book_name : '' }}
+                                            </a>
+                                        </td>
                                         <td>{{ $bookForSale->description }}</td>
                                         <td>{{ $bookForSale->price_formatted }}</td>
                                         <td>

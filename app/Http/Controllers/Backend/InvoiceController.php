@@ -68,8 +68,12 @@ class InvoiceController extends Controller
             $endDate = Carbon::parse($dates[1])->format('Y-m-d');
         }
 
-        $invoiceFilter = $invoiceFilter->where('fiken_is_paid', 0)
+        if ($request->has('fiken_invoice_id') && $request->fiken_invoice_id) {
+            $invoiceFilter->where('fiken_invoice_id', $request->fiken_invoice_id);
+        } else {
+            $invoiceFilter = $invoiceFilter->where('fiken_is_paid', 0)
             ->whereBetween('fiken_dueDate', [$startDate, $endDate]);
+        }
 
         $totalBalance = $invoiceQuery->whereIn('id', $invoiceFilter->pluck('id'))
             ->sum('fiken_balance');

@@ -19,6 +19,7 @@ use App\MarketingPlan;
 use App\Project;
 use App\ProjectActivity;
 use App\ProjectBook;
+use App\ProjectBookCritique;
 use App\ProjectBookFormatting;
 use App\ProjectBookPicture;
 use App\ProjectGraphicWork;
@@ -26,12 +27,20 @@ use App\ProjectInvoice;
 use App\ProjectManualInvoice;
 use App\ProjectMarketing;
 use App\ProjectRegistration;
+use App\ProjectTask;
 use App\ProjectWholeBook;
 use App\Services\LearnerService;
 use App\Services\ProjectService;
 use App\Settings;
+use App\StorageBook;
+use App\StorageDetail;
+use App\StorageSale;
+use App\StorageVarious;
 use App\TimeRegister;
 use App\User;
+use App\UserBookForSale;
+use Carbon\Carbon;
+use DB;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Time;
 use PhpOffice\PhpWord\PhpWord;
@@ -41,20 +50,33 @@ class ProjectController extends Controller
 
     public function index()
     {
-        $learners =  User::where('role', 2)->where('is_self_publishing_learner', 1)->get();
+        $learners =  User::where('role', 2)->get(); //->where('is_self_publishing_learner', 1)
         $activities = ProjectActivity::all();
-        $projects = Project::all();
+        $projects = Project::with('user')
+        ->orderByRaw("CASE WHEN status='active' 
+            THEN 1 WHEN status='lead' 
+            THEN 2 WHEN status='finish' 
+            THEN 3 ELSE 4 END, 
+            status IS NULL ,status")->get();
+        $nextProjectNumber = DB::table('projects')
+            ->select(DB::raw('CAST(identifier AS UNSIGNED) as identifier_numeric'))
+            ->orderByRaw('identifier_numeric DESC')
+            ->value('identifier') + 1;
+        
         $projectNotes = Settings::getByName('project-notes');
         $layout = str_contains(request()->getHttpHost(), 'giutbok') ? 'giutbok.layout' : 'backend.layout';
         return view('backend.project.index', compact('learners', 'activities', 'projects', 'layout',
-            'projectNotes'));
+            'projectNotes', 'nextProjectNumber'));
     }
 
     public function show($id)
     {
         $project = Project::find($id)->load(['books', 'user', 'selfPublishingList']);
         $editors = AdminHelpers::editorList();
-        $learners = User::where('role', 2)->where('is_self_publishing_learner', 1)->get();
+        $copyEditingEditors = AdminHelpers::copyEditingEditors();
+        $correctionEditors = AdminHelpers::correctionEditors();
+        $editorAndAdminList = AdminHelpers::editorAndAdminList();
+        $learners = User::where('role', 2)->get(); //->where('is_self_publishing_learner', 1)
         $activities = ProjectActivity::all();
         $timeRegisters = TimeRegister::where('user_id', $project->user_id)->whereNull('project_id')->with('project')->get();
         $projectTimeRegisters = TimeRegister::where('project_id', $project->id)->with('project')->get();
@@ -64,6 +86,9 @@ class ProjectController extends Controller
         $bookPictures = ProjectBookPicture::where('project_id', $id)->get();
         $wholeBooks = ProjectWholeBook::where('project_id', $id)->get();
         $bookFormattingList = ProjectBookFormatting::where('project_id', $id)->get();
+        $tasks = ProjectTask::with('editor')->where('project_id', $id)->where('status', 0)->get();
+        $bookCritiques = ProjectBookCritique::where('project_id', $id)->get();
+
 
         $layout = 'backend.layout';
         $addOtherServiceRoute = 'admin.project.add-other-service';
@@ -105,19 +130,52 @@ class ProjectController extends Controller
             $deleteBookFormattingRoute = 'g-admin.project.delete-book-formatting';
         }
 
-        return view('backend.project.show', compact('project', 'editors', 'learners', 'activities',
-            'timeRegisters', 'projectTimeRegisters', 'projects', 'layout', 'addOtherServiceRoute', 'selfPublishingStoreRoute',
-            'selfPublishingUpdateRoute', 'selfPublishingDeleteRoute', 'selfPublishingAddFeedbackRoute',
+        return view('backend.project.show', compact('project', 'editors', 'copyEditingEditors', 'correctionEditors', 
+            'learners', 'activities', 'timeRegisters', 'projectTimeRegisters', 'projects', 'layout',
+            'addOtherServiceRoute', 'selfPublishingStoreRoute', 'selfPublishingUpdateRoute', 
+            'selfPublishingDeleteRoute', 'selfPublishingAddFeedbackRoute',
             'selfPublishingDownloadFeedbackRoute', 'selfPublishingLearnersRoute', 'assignEditorRoute',
             'updateExpectedFinishRoute', 'updateStatusRoute', 'otherServiceDeleteRoute', 'correctionFeedbackTemplate',
             'copyEditingFeedbackTemplate', 'otherServiceFeedbackRoute', 'saveBookPicturesRoute', 'bookPictures',
             'deleteBookPicturesRoute', 'wholeBooks', 'downloadOtherService', 'saveBookFormattingRoute', 'bookFormattingList',
-            'deleteBookFormattingRoute'));
+            'deleteBookFormattingRoute', 'editorAndAdminList', 'tasks', 'bookCritiques'));
+    }
+
+    public function saveTask(Request $request)
+    {
+        $model = $request->id ? ProjectTask::find($request->id) : new ProjectTask();
+        $model->fill($request->all());
+        $model->save();
+
+        return $model->load('editor');
+    }
+
+    public function finishTask($id)
+    {
+        $task = ProjectTask::find($id);
+        $task->status = 1;
+        $task->save();
+        return response()->json();
+    }
+
+    public function deleteTask($id)
+    {
+        ProjectTask::find($id)->delete();
+        return response()->json();
     }
 
     public function saveProject( ProjectRequest $request, ProjectService $projectService )
     {
-        return $projectService->saveProject($request);
+        $project = $projectService->saveProject($request);
+        $nextProjectNumber = DB::table('projects')
+            ->select(DB::raw('CAST(identifier AS UNSIGNED) as identifier_numeric'))
+            ->orderByRaw('identifier_numeric DESC')
+            ->value('identifier') + 1;
+
+        return response()->json([
+            'nextProjectNumber' => $nextProjectNumber,
+            'project' => $project
+        ]);
     }
 
     public function deleteProject( $project_id )
@@ -201,6 +259,10 @@ class ProjectController extends Controller
         }
 
         $wholeBook = $request->id ? ProjectWholeBook::find($request->id) : new ProjectWholeBook();
+        if ($request->has('is_book_critique')) {
+            $wholeBook = $request->id ? ProjectBookCritique::find($request->id) : new ProjectBookCritique();
+        }
+
         $wholeBook->project_id = $project_id;
         $wholeBook->book_content = $request->book_content;
         $wholeBook->description = $request->description;
@@ -219,6 +281,24 @@ class ProjectController extends Controller
     {
         ProjectWholeBook::find($whole_book_id)->delete();
         return response()->json();
+    }
+
+    public function deleteBookCritique( $whole_book_id )
+    {
+        ProjectBookCritique::find($whole_book_id)->delete();
+        return response()->json();
+    }
+
+    public function saveBookCritiqueFeedback($id, Request $request, ProjectService $projectService)
+    {
+        $request->merge(['project_id' => $id]);
+        $this->validate($request, ['feedback' => 'required']);
+        $record = ProjectBookCritique::find($id);
+        $record->feedback = $projectService->uploadFeedback( $request );
+        $record->save();
+
+        return $record;
+
     }
 
     public function downloadWholeBook( $project_id, $whole_book_id )
@@ -453,20 +533,22 @@ class ProjectController extends Controller
         }
 
         $isbns = ProjectRegistration::isbns()->where('project_id', $project_id)->get();
+        $isbnTypes = (new ProjectRegistration())->isbnTypes();
+        
         $centralDistributions = ProjectRegistration::centralDistributions()->where('project_id', $project_id)->get();
         $mentorBookBases = ProjectRegistration::mentorBookBase()->where('project_id', $project_id)->get();
         $uploadFilesToMentorBookBases = ProjectRegistration::uploadFilesToMentorBookBase()
             ->where('project_id', $project_id)->get();
 
         return view('backend.project.registration', compact('project', 'layout', 'saveRegistrationRoute',
-            'deleteRegistrationRoute', 'isbns', 'centralDistributions', 'mentorBookBases', 'uploadFilesToMentorBookBases',
-            'backRoute'));
+            'deleteRegistrationRoute', 'isbns', 'isbnTypes', 'centralDistributions', 'mentorBookBases', 
+            'uploadFilesToMentorBookBases', 'backRoute'));
     }
 
     public function saveRegistration( $project_id, Request $request )
     {
         $data = $request->merge(['project_id' => $project_id])->except('_token');
-        switch ($request->type) {
+        switch ($request->field) {
             case 'isbn':
                 $this->validate($request, ['isbn' => 'required']);
                 $data['value'] = $request->isbn;
@@ -985,6 +1067,164 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
+    public function storage($projectId)
+    {
+        $layout = 'backend.layout';
+        $backRoute = route('admin.project.show', $projectId);
+        $project = Project::find($projectId);
+        $projectUserBook = $project->userBookForSale;
+        $projectUserBookId = $project->userBookForSale ? $project->userBookForSale->id : '';
+        $userBooksForSale = UserBookForSale::where('user_id', $project->user_id)
+        ->where(function($query) use ($projectUserBookId){
+            $query->whereNull('project_id')
+            ->orWhere('id', $projectUserBookId);
+        })
+        ->get();
+
+        $totalBookSold = 0;
+        $totalBookSale = 0;
+        $currentYear = Carbon::now()->format('Y');
+        $years = [];
+        $quantitySoldList = [];
+        $turnedOverList = [];
+
+        if ($projectUserBook) {
+            $totalBookSold = $projectUserBook->sales()->sum('quantity');
+            $totalBookSale = $projectUserBook->sales()->sum('amount');
+
+            $years = range($currentYear, $currentYear - 1);
+        }
+
+        $yearlyData = [
+            [
+                'name' => 'Quantity Sold',
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'quantity-sold') : 0
+            ],
+            [
+                'name' => 'Turned Over',
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'turned-over') : 0
+            ],
+            [
+                'name' => 'Free',
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'free') : 0
+            ],
+            [
+                'name' => 'Commission',
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'commission') : 0
+            ],
+            [
+                'name' => 'Shredded',
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'shredded') : 0
+            ],
+            [
+                'name' => 'Defective',
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'defective') : 0
+            ],
+            [
+                'name' => 'Corrections',
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'corrections') : 0
+            ],
+            [
+                'name' => 'Counts',
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'counts') : 0
+            ],
+            [
+                'name' => 'Returns',
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'returns') : 0
+            ]
+        ];
+
+        return view('backend.project.storage', compact('backRoute', 'layout', 'projectId', 'project', 
+        'projectUserBook', 'userBooksForSale', 'totalBookSold', 'totalBookSale', 'years', 'yearlyData'));
+    }
+
+    public function saveStorageBook($projectId, Request $request)
+    {
+        $currentProjectBookForSale = UserBookForSale::where('project_id', $projectId)->update([
+            'project_id' => NULL
+        ]);
+
+        $userBookForSale = UserBookForSale::find($request->user_book_for_sale_id);
+        $userBookForSale->project_id = $projectId;
+        $userBookForSale->save();
+
+        return back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Storage Book saved successfully.'),
+                'alert_type' => 'success']); 
+    }
+
+    public function deleteStorageBook($projectId)
+    {
+        $userBookForSale = UserBookForSale::where('project_id', $projectId)->first();
+        $userBookForSale->project_id = NULL;
+        $userBookForSale->save();
+
+        if ($userBookForSale->detail) {
+            $userBookForSale->detail->delete();
+        }
+
+        if ($userBookForSale->various) {
+            $userBookForSale->various->delete();
+        }
+
+        return back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Book removed from project successfully.'),
+                'alert_type' => 'success']);
+    }
+
+    public function saveStorageBookDetails($book_id, Request $request)
+    {
+        StorageDetail::updateOrCreate([
+                'user_book_for_sale_id' => $book_id
+            ], [
+                'subtitle'                  => $request->subtitle,
+                'author'                    => $request->author,
+                'editor'                    => $request->editor,
+                'publisher'                 => $request->publisher,
+                'book_group'                => $request->book_group,
+                'item_number'               => $request->item_number,
+                'isbn'                      => $request->isbn,
+                'isbn_ebook'                => $request->isbn_ebook,
+                'edition_on_sale'           => $request->edition_on_sale,
+                'edition_total'             => $request->edition_total,
+                'release_date'              => $request->release_date,
+                'release_date_for_media'    => $request->release_date_for_media,
+                'price_vat'                 => $request->price_vat,
+                'registered_with_council'   => $request->registered_with_council,
+            ]);
+
+        if ($request->isbn) {
+            $bookForSale = UserBookForSale::find($book_id);
+            $bookForSale->isbn = $request->isbn;
+            $bookForSale->save();
+        }
+
+        return back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Storage details saved successfully.'),
+                'alert_type' => 'success']);
+    }
+
+    public function saveStorageVarious($book_id, Request $request)
+    {
+
+        StorageVarious::updateOrCreate([
+            'user_book_for_sale_id' => $book_id
+        ], [
+            'publisher' => $request->publisher,
+            'minimum_stock' => $request->minimum_stock,
+            'weight' => $request->weight,
+            'height' => $request->height,
+            'width' => $request->width,
+            'thickness' => $request->thickness,
+            'cost' => $request->cost,
+            'material_cost' => $request->material_cost
+        ]);
+
+        return back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Storage various saved successfully.'),
+                'alert_type' => 'success']);
+    }
+
     public function showNotes( $project_id )
     {
         $project = Project::find($project_id);
@@ -997,5 +1237,36 @@ class ProjectController extends Controller
         }
 
         return view('backend.project.notes', compact('project', 'backRoute', 'layout'));
+    }
+
+    private function storageSalesByType($user_book_for_sale_id, $type) {
+        return StorageSale::where('user_book_for_sale_id', $user_book_for_sale_id)
+        ->where('type', $type)
+        ->when(request()->filled('year') && request('year') != 'all', function ($query) {
+            $query->whereYear('date', request('year'));
+        })
+        ->when(request()->filled('month') && request('month') != 'all', function ($query) {
+            $query->whereMonth('date', request('month'));
+        })->sum('value');
+    }
+
+    private function storageYearSalesByType($user_book_for_sale_id, $type) {
+        $yearsData = DB::table('storage_sales')
+        ->select(DB::raw('YEAR(date) AS year'), DB::raw('SUM(value) AS sum_value'))
+        ->where('date', '>=', Carbon::now()->subYears(4))
+        ->where('user_book_for_sale_id', $user_book_for_sale_id)
+        ->where('type', $type)
+        ->groupBy('year')
+        ->pluck('sum_value', 'year')
+        ->toArray();
+
+        $years = range(Carbon::now()->subYears(4)->format('Y'), Carbon::now()->format('Y'));
+
+        // Assign a sum of 0 to years with no records
+        $yearsData = array_replace(array_fill_keys($years, 0), $yearsData);
+
+        krsort($yearsData);
+
+        return $yearsData;
     }
 }

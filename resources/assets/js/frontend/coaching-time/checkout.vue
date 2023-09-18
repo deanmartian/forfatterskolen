@@ -34,7 +34,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                     {{ trans('site.front.coaching-timer.note') }}
                 </div>
 
-                <div class="row mb-4">
+                <!-- <div class="row mb-4">
                     <div class="col-sm-4" style="" v-for="i in 3">
                         <label>
                             {{ trans('site.front.coaching-timer.desired-date') }}
@@ -45,7 +45,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                     <div class="col-sm-12">
                         <input type="hidden" name="suggested_date">
                     </div>
-                </div>
+                </div> -->
 
                 <div class="form-group">
                     <label for="">
@@ -88,7 +88,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
 
                     <button class="btn btn-default" @click="toggleNewCustomer()" v-if="isNewCustomer"
                             style="margin-bottom: 10px">
-                        < {{ trans('site.back') }}
+                        {{ trans('site.back') }}
                     </button>
 
                     <form @submit.prevent="handleLogin($event)" v-if="!isNewCustomer" class="second-col mb-4">
@@ -432,7 +432,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
             validateOrder() {
 
                 this.removeValidationError();
-                if (this.orderForm.suggested_date.length < 3) {
+                /* if (this.orderForm.suggested_date.length < 3) {
                     this.$toasted.global.showErrorMsg({
                         message : 'Error on the form'
                     });
@@ -442,7 +442,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                         "<i class='fas fa-exclamation-circle'></i> " +
                         "<span> Please select a date </span></small>");
                     return false;
-                }
+                } */
 
                 return true;
             },

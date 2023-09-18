@@ -2,6 +2,7 @@
 
 namespace App;
 
+use AdminHelpers;
 use Illuminate\Database\Eloquent\Model;
 
 class ShopManuscriptsTaken extends Model
@@ -105,6 +106,8 @@ class ShopManuscriptsTaken extends Model
 
     public function requests()
     {
-        return $this->hasMany('App\RequestToEditor', 'manuscript_id', 'id')->where('from_type', 'shop-manuscript');
+        return $this->hasMany('App\RequestToEditor', 'manuscript_id', 'id')
+        ->whereHas('editor')
+        ->where('from_type', 'shop-manuscript');
     }
 }

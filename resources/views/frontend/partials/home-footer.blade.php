@@ -19,11 +19,11 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6 col-sm-7">
-                <img data-src="https://www.forfatterskolen.no/{{'images-new/home/logo_small.png'}}" class="logo"
+                <img data-src="https://www.forfatterskolen.no/{{'images-new/home/logo_2.png'}}" class="logo"
                      alt="small logo">
                 <p class="mt-5">
                     <i class="icons marker"></i><span class="font-montserrat-semibold text-uppercase">Adresse:</span>
-                    <span class="font-montserrat-light">Postboks 9233, 3028 Drammen</span>
+                    <span class="font-montserrat-light">Lihagen 21, 3029 DRAMMEN</span>
                 </p>
 
                 <p>

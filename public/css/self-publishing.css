@@ -1,0 +1,371 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+@font-face {
+    font-family: 'Myriad-regular';
+    src: url('/fonts/Myriad-pro/MYRIADPRO-REGULAR.woff');
+}
+
+* {
+    font-family: 'Roboto';
+}
+
+.text-gray {
+    color: #595959;
+}
+
+.navbar, body {
+    background-color: #e1e4ed;
+}
+
+.modal-backdrop.in {
+    opacity: .5;
+}
+
+.modal.in .modal-dialog {
+    -webkit-transform: translate(0,0);
+    transform: translate(0,0);
+}
+
+header>.navbar {
+    padding: 2rem 1rem;
+}
+
+header .navbar-brand img {
+    height: 80px;
+    width: 80px;
+}
+
+.self-publishing-header .dropdown-menu {
+    min-width: 20rem;
+    padding: .5rem 0;
+    width: auto;
+}
+
+.self-publishing-header .dropdown-item {
+    display: block;
+    font-family: 'Roboto';
+    font-size: 14px;
+    font-weight: 400;
+    width: 100%;
+    padding: 0.25rem 1.5rem;
+    clear: both;
+    color: #212529;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+}
+
+.self-publishing-header .dropdown-item:hover {
+    color: #16181b !important;
+    text-decoration: none;
+    background-color: #e9ecef;
+}
+
+/* remove the red triangle color to the top */
+.self-publishing-header .dropdown-menu:after {
+    border-bottom-color: transparent;
+}
+
+.self-publishing-learner-container {
+    margin-top: 50px;
+}
+
+.self-publishing-learner-container .learner-container {
+    background-color: #e1e4ed;
+    padding-top: 0;
+}
+
+.self-publishing-learner-container .learner-menu {
+    background-color: transparent;
+    margin-top: 0;
+}
+
+.self-publishing-learner-container .learner-menu .list-group-item {
+    border: none;
+    background-color: transparent;
+    padding: 15px 20px 15px 70px;
+}
+
+.self-publishing-learner-container .learner-menu .list-group-item ul {
+    list-style-type: none;
+    background-color: #ccc;
+    border-radius: 5px;
+}
+
+.self-publishing-learner-container .learner-menu .list-group-item ul li.active a {
+    color: #e80707;
+}
+
+.self-publishing-learner-container .learner-menu .list-group-item ul a {
+    font-size: 14px;
+}
+
+.self-publishing-learner-container .learner-menu .list-group-item .fa,
+.self-publishing-learner-container .learner-menu .list-group-item a {
+    color: #000;
+    margin-right: 10px;
+}
+
+.self-publishing-learner-container .learner-menu .list-group-item a {
+    text-decoration: none;
+    color: #000;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.self-publishing-learner-container .list-group-item.active {
+    border-left: 10px solid #e80707;
+    padding-left: 60px;
+}
+
+.self-publishing-learner-container .learner-menu .list-group-item.active a {
+    color: #e80707;
+}
+
+.package-select-file {
+    margin: 0 auto;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+}
+
+.input-group>.custom-file {
+    display: flex;
+    align-items: center;
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+    margin-bottom: 0;
+}
+
+.custom-file-input {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+    opacity: 0;
+}
+
+.custom-file-label {
+    position: absolute;
+    left: 0;
+    z-index: 1;
+    overflow: hidden;
+    font-weight: 400;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+
+label.custom-file-label {
+    font-size: 17px;
+    text-align: left;
+    padding-left: 20px;
+    background-color: #f2f2f2;
+    border: none;
+    transition: background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+label.custom-file-label:after {
+    background-color: #354350;
+    color: #ffff;
+    text-align: center;
+    font-size: 17px;
+    text-transform: uppercase;
+    font-weight: 700;
+    position: absolute;
+    bottom: 0;
+    z-index: 3;
+    display: block;
+    height: calc(1.6em + 0.75rem);
+    content: "Browse";
+    border-left: inherit;
+    border-radius: 0 0.25rem 0.25rem 0;
+}
+
+/* update file text */
+.custom-file-input:lang(en)~.custom-file-label::after {
+    content: "Velg fil du vil beregne";
+}
+
+.custom-file-label, .custom-file-label::after {
+    padding: 0.375rem 0.75rem;
+    line-height: 1.6;
+    color: #495057;
+    top: 0;
+    right: 0;
+}
+
+.custom-file, .custom-file-input, .custom-file-label {
+    height: calc(1.6em + 0.75rem + 2px);
+}
+
+.description-container .form-check-container {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px;
+    background-color: rgb(114, 124, 150);
+    color: rgb(255, 255, 255);
+    text-align: center;
+    width: 30%;
+}
+
+.description-container .form-check-container .fa {
+    position: absolute;
+    left: 20%;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+}
+
+.description-container .form-check-container .form-check {
+    padding: 0;
+}
+
+.button-red {
+    background-color: #c12937;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 16px;
+    padding: 10px 29px;
+    border-radius: 10px;
+    font-weight: 400;
+    line-height: 1.6;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    border: none;
+}
+
+.button-red:disabled {
+    background-color: #d96c76;
+}
+
+.button-red .fa {
+    color: #fff;
+}
+
+.fa-check-square-o:before {
+    content: "\f046";
+}
+
+/* order page */
+
+.order-container .nav-tabs > li:first-child {
+    background-color: #e0dcdc;
+    z-index: 2;
+}
+
+.order-container .nav-tabs > li:nth-child(2) {
+    background-color: #ebeef3;
+    z-index: 1;
+}
+
+.order-container .nav-tabs > li:last-child {
+    background-color: #d0d9e7;
+}
+
+.order-container .nav-tabs > li {
+    border-top-right-radius: 27px;
+    margin-right: -22px;
+    position: relative;
+}
+
+.order-container .nav-tabs > li.active {
+    background-color: #fff;
+}
+
+.order-container .nav-tabs > li a {
+    color: #000;
+    font-weight: bolder;
+    margin-right: 0;
+    padding: 5px 50px;
+}
+
+.order-container .tab-content {
+    background-color: #fff;
+    padding: 30px;
+    min-height: 60vh;
+    border-bottom-right-radius: 50px;
+}
+
+/* end order page */
+
+/* main css styles */
+body.main, .main .navbar {
+    background-color: #fff;
+}
+
+.main .nav a, .main .fa, .main .navbar-light .navbar-nav .nav-link {
+    color: #000000;
+}
+
+.main .nav li a:hover {
+    background-color: transparent;
+}
+
+.main .dropdown-toggle::after, .main .dropdown-menu:after {
+    display: none;
+}
+
+.main .dropdown-menu {
+    border: none;
+    width: auto;
+}
+
+.main .dropdown-menu a {
+    font-weight: bold;
+}
+
+.main .dropdown-trigger {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.main .dropdown-trigger svg {
+    height: 15px;
+    width: 15px;
+}
+
+.main .dropdown-item {
+    padding: 2px 15px;
+}
+
+.main .dropdown-item:hover {
+    color: #000000 !important;
+}
+
+footer {
+    background-color: #262626;
+    color: #fff;
+    margin-top: 100px;
+    padding: 50px;
+}
+
+footer img {
+    width: 100px;
+}
+
+footer a {
+    color: #fff;
+    font-family: 'Myriad-regular';
+    font-size: 17px;
+}
+
+@media (min-width: 768px) {
+    .navbar-light .navbar-brand {
+        left: 9%;
+    }
+}

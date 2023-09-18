@@ -246,6 +246,32 @@ a {
     height: 110px;
 }
 
+#navbar-latest {
+    padding: 2rem 0;
+}
+
+#navbar-latest .navbar-brand img {
+    height: auto;
+}
+
+#navbar-latest .navbar-nav .nav-link {
+    color: #000000;
+    margin-right: 15px;
+}
+
+#navbar-latest .navbar-nav .nav-link:hover {
+    color: #862736;
+}
+
+#navbar-latest .nav-item .login-link {
+    padding-top: 10px;
+}
+
+#navbar-latest .nav-item .login-link > span {
+    border-radius: 30px;
+    padding: 10px 25px;
+}
+
 #learnerNav .navbar-brand img {
     height: auto;
     margin-right: 30px;
@@ -6743,6 +6769,212 @@ textarea.form-control {
 
 /* end personal trainer */
 
+/* newest front page 09/2023 */
+.front-page-new {
+    background-image: url('../images-new/home/home-right-bg.png');
+    background-repeat: no-repeat;
+    background-position: 100% 125px;
+}
+
+.front-page-new .header-new {
+    padding: 70px 0 60px;
+}
+.front-page-new .header-new .container {
+    padding: 0 70px;
+}
+
+.front-page-new .header-new h1 {
+    font-size: 70px;
+    font-weight: 500;
+    margin-top: 30px;
+}
+
+.front-page-new .header-new p {
+    font-size: 20px;
+    margin-top: 40px;
+    margin-bottom: 30px;
+}
+
+.btn-red {
+    background-color: #E93746;
+    color: #ffffff;
+    border-radius: 30px;
+    padding: 7px 25px;
+}
+
+.btn-outline-red {
+    background-color: #ffffff;
+    border: 2px solid #E93746;
+    color: #E93746;
+    border-radius: 30px;
+    padding: 7px 25px;
+}
+
+.btn-outline-maroon {
+    border: 2px solid #862836;
+    color: #862836;
+    border-radius: 30px;
+    padding: 7px 25px;
+}
+
+.btn-outline-maroon:hover {
+    background-color: #862836;
+    color: #ffffff !important;
+}
+
+.front-page-new .first-row {
+    background-color: #862836;
+    border-radius: 20px;
+    color: #ffffff;
+    text-align: center;
+    padding: 40px 0;
+}
+
+.front-page-new .first-row h2 {
+    font-size: 70px;
+    font-weight: 500;
+}
+
+.front-page-new .second-row {
+    margin: 100px 0;
+}
+
+.front-page-new .second-row h2 {
+    font-size: 50px;
+    margin-bottom: 50px;
+}
+
+.front-page-new .second-row .content-container {
+    background-color: #F2F2F2;
+    border-radius: 5px;
+    padding: 30px;
+    height: 100%;
+}
+
+.front-page-new .second-row .content-container .title {
+    background-color: #862836;
+    border-radius: 30px;
+    color: #ffffff;
+    display: inline;
+    margin-bottom: 40px;
+    padding: 5px 25px;
+}
+
+.front-page-new .second-row .content-container h3 {
+    font-size: 25px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+}
+
+.front-page-new .second-row .content-container .date-time-cont {
+    position: absolute;
+    border-top: 1px solid #862836;
+    bottom: 28px;
+    padding-top: 3px;
+    width: 75%;
+}
+
+.front-page-new .popular-courses-row {
+    background-color: #F2F2F2;
+    padding: 100px 0;
+}
+
+.front-page-new .popular-courses-row h2 {
+    font-size: 50px;
+    font-weight: 500;
+}
+
+.front-page-new .popular-courses-row .course-container .image-container {
+    margin-bottom: 30px;
+}
+
+.front-page-new .popular-courses-row .course-container .image-container img {
+    height: 177px;
+    width: 100%;
+}
+
+.front-page-new .popular-courses-row .course-container .image-container span {
+    position: absolute;
+    background-color: #E93746;
+    border-radius: 30px;
+    color: #ffffff;
+    padding: 3px 17px;
+    right: 20px;
+    top: 173px;
+}
+
+.front-page-new .online-courses-row {
+    background-color: #5E1C26;
+    color: #ffffff;
+    padding: 100px 0;
+}
+
+.front-page-new .online-courses-row .top-container {
+    position: relative;
+}
+
+.front-page-new .online-courses-row .top-container .details {
+    background-color: #862836;
+    padding: 20px;
+    border-radius: 10px;
+    position: absolute;
+    width: 375px;
+    right: 0;
+    top: 85px;
+}
+
+.front-page-new .online-courses-row .top-container .details h2,
+.front-page-new .online-courses-row .bottom-container h2 {
+    font-size: 30px;
+}
+
+.front-page-new .online-courses-row .top-container .details p {
+    margin: 17px 0;
+}
+
+.front-page-new .online-courses-row .top-container .details ul {
+    padding: 0;
+    list-style-type: none;
+}
+
+.front-page-new .online-courses-row .top-container .details li:not(:last-child) {
+    margin-bottom: 5px;
+}
+
+.front-page-new .online-courses-row .top-container .details li img {
+    margin-right: 10px;
+}
+
+.front-page-new .online-courses-row .bottom-container {
+    margin-top: 100px;
+}
+
+.front-page-new .online-courses-row .bottom-container p {
+    margin: 20px 0;
+    line-height: 26px;
+}
+
+.front-page-new .testimonials-row {
+    padding: 100px 0 10px;
+}
+
+.front-page-new .testimonials-row h2 {
+    font-size: 40px;
+    margin-bottom: 50px;
+}
+
+.navbar-toggler-icon::before,
+.navbar-toggler-icon::after {
+    content: "";
+    display: block;
+    background-color: #333;
+    width: 24px;
+    height: 2px;
+    margin-top: 4px; /* Adjust this value for vertical spacing */
+}
+
+/* end newest front page */
+
 /**
  media query
  */
@@ -7482,6 +7714,86 @@ textarea.form-control {
     footer .footer-info {
         padding: 30px;
     }
+
+    /* changes for  home-new.blade*/
+    #navbar-latest>.container {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    #navbar-latest>.container .navbar-brand {
+        margin-bottom: 20px;
+    }
+
+    .front-page-new {
+        background-size: 500px 600px;
+    }
+
+    .front-page-new .header-new h1, .front-page-new .first-row h2 {
+        font-size: 50px;
+    }
+
+    .front-page-new .header-new .container {
+        padding: 0;
+    }
+
+    .front-page-new .second-row {
+        margin: 70px 0;
+    }
+
+    .front-page-new .second-row .content-container {
+        padding: 20px;
+    }
+
+    .front-page-new .second-row .content-container h3 {
+        font-size: 20px;
+        margin-top: 10px;
+    }
+
+    .front-page-new .second-row .content-container .date-time-cont {
+        bottom: 12px;
+        width: 68%;
+    }
+
+    .front-page-new .popular-courses-row {
+        padding: 70px 0;
+    }
+
+    .front-page-new .popular-courses-row h2 {
+        font-size: 40px;
+        margin-bottom: 30px;
+    }
+
+    .front-page-new .popular-courses-row .course-container .image-container img {
+        height: auto;
+    }
+
+    .front-page-new .popular-courses-row .course-container .image-container span {
+        top: 100px;
+    }
+
+    .front-page-new .testimonials-row {
+        padding: 70px 0 0;
+    }
+
+    .front-page-new .professional-feedback-wrapper h2 {
+        font-size: 30px;
+    }
+
+    #home-footer-new h2 {
+        font-size: 16px;
+    }
+
+    #home-footer-new .site-btn-global {
+        font-size: 16px !important;
+        padding: 20px !important;
+    }
+
+    #home-footer-new {
+        padding: 50px 0 30px !important;
+    }
+
+    /* end changes for  home-new.blade*/
 
     .front-page .header {
         height: 470px;
@@ -8656,6 +8968,59 @@ textarea.form-control {
 
     .navbar-fixed-bottom .navbar-collapse {
         max-height: 410px;
+    }
+
+    .front-page-new {
+        background-image: none;
+    }
+
+    .front-page-new .header-new {
+        padding: 0px 0 60px;
+    }
+
+    .front-page-new .header-new img {
+        margin-top: 20px;
+        height: 400px;
+        object-fit: contain;
+    }
+
+    .front-page-new .header-new h1, .front-page-new .first-row h2 {
+        font-size: 40px;
+    }
+
+    .front-page-new .second-row {
+        margin: 50px 0;
+    }    
+
+    .front-page-new .second-row .col-md-4 {
+        margin-bottom: 20px;
+        padding: 0;
+    }
+
+    .front-page-new .popular-courses-row h2 {
+        font-size: 30px;
+    }
+
+    .front-page-new .popular-courses-row .course-container {
+        margin-bottom: 10px;
+    }
+
+    .front-page-new .popular-courses-row .course-container .image-container img {
+        height: 270px;
+    }
+
+    .front-page-new .popular-courses-row .course-container .image-container span {
+        top: 270px;
+    }
+
+    .professional-feedback-wrapper img {
+        margin-bottom: 20px;
+        height: 150px;
+    }
+
+    #home-footer-new .logo {
+        margin-bottom: 20px;
+        width: auto;
     }
 
     .front-page .header {
@@ -10034,6 +10399,32 @@ textarea.form-control {
     .start-today a {
         font-size: 18px;
         margin-top: 30px;
+    }
+
+    #navbar-latest>.container .navbar-brand {
+        margin-bottom: 0;
+    }
+
+    .front-page-new .header-new h1, .front-page-new .first-row h2,
+    .front-page-new .second-row h2 {
+        font-size: 35px;
+    }
+
+    .front-page-new .header-new .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .front-page-new .header-new .col-md-6:first-child {
+        padding: 0 25px;
+    }
+
+    .front-page-new .popular-courses-row {
+        padding: 50px 0;
+    }
+
+    .front-page-new .popular-courses-row h2 {
+        font-size: 23px;
     }
 
     footer p {
@@ -11797,6 +12188,10 @@ textarea.form-control {
         padding: 2rem 1rem;
     }
 
+    .front-page-new .header-new a {
+        margin-bottom: 10px;
+    }
+
     footer .navbar-brand {
         width: 210px;
     }
@@ -12979,6 +13374,27 @@ textarea.form-control {
     color: #fff;
 }
 
+.professional-feedback-wrapper {
+    background-color: #F2F2F2;
+    padding: 93px 0;
+}
+
+.professional-feedback-wrapper h2 {
+    font-size: 37px;
+    font-weight: 700;
+    line-height: 44px;
+    margin-top: 0;
+}
+
+.professional-feedback-wrapper .site-btn-global {
+    background-color: #E93746;
+    border-radius: 30px;
+}
+
+.professional-feedback-wrapper .site-btn-global:hover {
+    text-decoration: underline;
+}
+
 footer {
     background-color: #303030;
     color: #fff;
@@ -12997,7 +13413,7 @@ footer {
 }
 
 footer .logo {
-    width: 60%;
+    width: 50%;
 }
 
 footer .text-uppercase {
@@ -13035,6 +13451,29 @@ footer .copyright {
     margin-top: 30px;
 }
 
+#home-footer-new {
+    padding: 50px 0;
+}
+
+#home-footer-new ul {
+    padding: 0;
+    list-style-type: none;
+}
+
+#home-footer-new a {
+    color: #fff;
+    padding-left: 0;
+}
+
+#home-footer-new a:hover {
+    text-decoration: underline;
+}
+
+#home-footer-new .site-btn-global {
+    font-size: 20px;
+    border-radius: 30px;
+    padding: 10px 50px;
+}
 /*footer .right-container:before {
     content: "";
     background: url(../images-new/home/cta.png) no-repeat center / cover;

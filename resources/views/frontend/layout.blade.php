@@ -213,10 +213,10 @@
                     @include('frontend.partials.learner-nav')
                 @endif
             @else
-                @include('frontend.partials.navbar-new')
+                @include('frontend.partials._navbar-latest')
             @endif
         @else
-            @include('frontend.partials.navbar-new')
+            @include('frontend.partials._navbar-latest')
         @endif
 
         @yield('content')
@@ -228,9 +228,10 @@
         @endif--}}
 
         @if (Route::currentRouteName() == 'front.home')
-            @include('frontend.partials.home-footer')
+            @include('frontend.partials.home-footer-new')
         @else
-            @include('frontend.partials.footer-new')
+            {{-- @include('frontend.partials.footer-new') --}}
+            @include('frontend.partials.home-footer-new')
         @endif
 
         @if($errors->count())

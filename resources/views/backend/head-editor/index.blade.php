@@ -55,7 +55,11 @@
                                             </a>
                                         @endif
                                     </td>
-                                    <td>{{ $assignedManuscript->user->full_name }}</td>
+                                    <td>
+										<a href="{{ route('admin.learner.show', $assignedManuscript->user_id) }}">
+											{{ $assignedManuscript->user->full_name }}
+										</a>
+									</td>
                                     <td>
                                         {{ $assignedManuscript->expected_finish }}
                                     </td>
@@ -149,7 +153,11 @@
 												{{ \App\Http\FrontendHelpers::assignmentType($shopManuscript->genre) }}
 											@endif
 										</td>
-										<td>{{ $shopManuscript->user->full_name }}</td>
+										<td>
+											<a href="{{ route('admin.learner.show', $shopManuscript->user->id) }}">
+												{{ $shopManuscript->user->full_name }}
+											</a>
+										</td>
 										<td>{{ $shopManuscript->expected_finish }}</td>
                                         <td>
 										{{ $shopManuscript->admin->full_name }}
@@ -232,7 +240,11 @@
 												{{ $assignedAssignment->assignment->title }}
 										@endif
 									</td>
-									<td>{{ $assignedAssignment->user->full_name }}</td>
+									<td>
+										<a href="{{ route('admin.learner.show', $assignedAssignment->user->id) }}">
+											{{ $assignedAssignment->user->full_name }}
+										</a>
+									</td>
 									<td>{{$assignedAssignment->expected_finish}}</td>
 									<td>
 										@if ($assignedAssignment->editor)
@@ -487,7 +499,11 @@
 											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
 										@endif
 									</td>
-									<td>{{ $correction->user->full_name }}</td>
+									<td>
+										<a href="{{ route('admin.learner.show', $correction->user->id) }}">
+											{{ $correction->user->full_name }}
+										</a>
+									</td>
 									<td>
 										@if ($correction->expected_finish)
 											{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($correction->expected_finish) }}
@@ -578,7 +594,11 @@
 											<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copyEditing->file}}">{{ basename($copyEditing->file) }}</a>
 										@endif
 									</td>
-									<td>{{ $copyEditing->user->full_name }}</td>
+									<td>
+										<a href="{{ route('admin.learner.show', $copyEditing->user->id) }}">
+											{{ $copyEditing->user->full_name }}
+										</a>
+									</td>
 									<td>
 										@if ($copyEditing->expected_finish)
 											{{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($copyEditing->expected_finish) }}

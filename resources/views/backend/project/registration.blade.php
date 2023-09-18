@@ -17,12 +17,13 @@
     </div>
     <div class="col-sm-12 margin-top">
         <button type="button" class="btn btn-success registrationBtn" data-toggle="modal" data-target="#registrationModal"
-                data-type="isbn">+ Add ISBN</button>
+                data-field="isbn">+ Add ISBN</button>
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
                 <tr>
                     <th>ISBN</th>
+                    <th width="700">Type</th>
                     <th width="300"></th>
                 </tr>
                 </thead>
@@ -30,14 +31,15 @@
                 @foreach($isbns as $isbn)
                     <tr>
                         <td>{!! $isbn->value !!}</td>
+                        <td>{{ $isbn->isbn_type }}</td>
                         <td>
                             <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
                                     data-target="#registrationModal" data-record="{{ json_encode($isbn) }}"
-                                    data-type="isbn" data-id="{{ $isbn->id }}">
+                                    data-field="isbn" data-id="{{ $isbn->id }}" data-isbn_type="{{ $isbn->type }}">
                                 <i class="fa fa-edit"></i>
                             </button>
                             <button class="btn btn-danger btn-xs deleteRegistrationBtn" data-toggle="modal"
-                                    data-target="#deleteRegistrationModal" data-type="isbn"
+                                    data-target="#deleteRegistrationModal" data-field="isbn"
                                     data-action="{{ route($deleteRegistrationRoute, [$isbn->project_id, $isbn->id]) }}">
                                 <i class="fa fa-trash"></i>
                             </button>
@@ -49,7 +51,7 @@
         </div>
 
         <button type="button" class="btn btn-success registrationBtn" data-toggle="modal" data-target="#registrationModal"
-                data-type="central-distribution">+ Add Central distribution</button>
+                data-field="central-distribution">+ Add Central distribution</button>
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
@@ -65,11 +67,11 @@
                         <td>
                             <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
                                     data-target="#registrationModal" data-record="{{ json_encode($centralDistribution) }}"
-                                    data-type="central-distribution" data-id="{{ $centralDistribution->id }}">
+                                    data-field="central-distribution" data-id="{{ $centralDistribution->id }}">
                                 <i class="fa fa-edit"></i>
                             </button>
                             <button class="btn btn-danger btn-xs deleteRegistrationBtn" data-toggle="modal"
-                                    data-target="#deleteRegistrationModal" data-type="central-distribution"
+                                    data-target="#deleteRegistrationModal" data-field="central-distribution"
                                     data-action="{{ route($deleteRegistrationRoute, [$centralDistribution->project_id, $centralDistribution->id]) }}">
                                 <i class="fa fa-trash"></i>
                             </button>
@@ -81,7 +83,7 @@
         </div>
 
         <button type="button" class="btn btn-success registrationBtn" data-toggle="modal" data-target="#registrationModal"
-                data-type="mentor-book-base">+ Add Mentor book base</button>
+                data-field="mentor-book-base">+ Add Mentor book base</button>
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
@@ -97,11 +99,11 @@
                         <td>
                             <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
                                     data-target="#registrationModal" data-record="{{ json_encode($mentorBookBase) }}"
-                                    data-type="mentor-book-base" data-id="{{ $mentorBookBase->id }}">
+                                    data-field="mentor-book-base" data-id="{{ $mentorBookBase->id }}">
                                 <i class="fa fa-edit"></i>
                             </button>
                             <button class="btn btn-danger btn-xs deleteRegistrationBtn" data-toggle="modal"
-                                    data-target="#deleteRegistrationModal" data-type="mentor-book-base"
+                                    data-target="#deleteRegistrationModal" data-field="mentor-book-base"
                                     data-action="{{ route($deleteRegistrationRoute, [$mentorBookBase->project_id, $mentorBookBase->id]) }}">
                                 <i class="fa fa-trash"></i>
                             </button>
@@ -113,7 +115,7 @@
         </div>
 
         <button type="button" class="btn btn-success registrationBtn" data-toggle="modal" data-target="#registrationModal"
-                data-type="upload-files-to-mentor-book-base">+ Add Upload files to mentor book base</button>
+                data-field="upload-files-to-mentor-book-base">+ Add Upload files to mentor book base</button>
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
@@ -129,11 +131,11 @@
                         <td>
                             <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
                                     data-target="#registrationModal" data-record="{{ json_encode($uploadFilesToMentorBookBase) }}"
-                                    data-type="upload-files-to-mentor-book-base" data-id="{{ $uploadFilesToMentorBookBase->id }}">
+                                    data-field="upload-files-to-mentor-book-base" data-id="{{ $uploadFilesToMentorBookBase->id }}">
                                 <i class="fa fa-edit"></i>
                             </button>
                             <button class="btn btn-danger btn-xs deleteRegistrationBtn" data-toggle="modal"
-                                    data-target="#deleteRegistrationModal" data-type="upload-files-to-mentor-book-base"
+                                    data-target="#deleteRegistrationModal" data-field="upload-files-to-mentor-book-base"
                                     data-action="{{ route($deleteRegistrationRoute, [$uploadFilesToMentorBookBase->project_id, $uploadFilesToMentorBookBase->id]) }}">
                                 <i class="fa fa-trash"></i>
                             </button>
@@ -158,11 +160,24 @@
                           onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
                         <input type="hidden" name="id">
-                        <input type="hidden" name="type">
+                        <input type="hidden" name="field">
 
-                        <div class="form-group isbn-container">
-                            <label>ISBN</label>
-                            <input type="text" class="form-control" name="isbn">
+                        <div class="isbn-container">
+                            <div class="form-group">
+                                <label>ISBN</label>
+                                <input type="text" class="form-control" name="isbn">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Type</label>
+                                <select name="type" class="form-control">
+                                    @foreach ($isbnTypes as $k => $isbnType)
+                                        <option value="{{ $k }}">
+                                            {{ $isbnType }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
 
                         <div class="form-group central-distribution-container">
@@ -222,7 +237,7 @@
     <script>
         $(".registrationBtn").click(function() {
             let id = $(this).data('id');
-            let type = $(this).data('type');
+            let field = $(this).data('field');
             let record = $(this).data('record');
             let modal = $("#registrationModal");
             let form = modal.find("form");
@@ -237,10 +252,17 @@
             mentorBookBaseContainer.addClass('hide');
             uploadFilesToMentorBookBaseContainer.addClass('hide');
 
-            switch (type) {
+            switch (field) {
                 case 'isbn':
+                    let type = $(this).data('isbn_type');
+
                     modal.find('.modal-title').text('ISBN');
                     isbnContainer.removeClass('hide');
+                    if (!id) {
+                        type = 1;
+                    }
+
+                    isbnContainer.find('[name=type]').val(type);
                     break;
 
                 case 'central-distribution':
@@ -259,7 +281,7 @@
                     break;
             }
 
-            form.find('[name=type]').val(type);
+            form.find('[name=field]').val(field);
             if (id) {
                 form.find('[name=id]').val(id);
             }
@@ -273,13 +295,13 @@
         });
 
         $(".deleteRegistrationBtn").click(function() {
-            let type = $(this).data('type');
+            let field = $(this).data('field');
             let modal = $("#deleteRegistrationModal");
             let form = modal.find("form");
             let action = $(this).data('action');
             let pageTitle = '';
 
-            switch (type) {
+            switch (field) {
                 case 'isbn':
                     pageTitle = 'Isbn';
                     break;

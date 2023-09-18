@@ -6,6 +6,11 @@
 
 @section('styles')
 	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+	<style>
+		.d-none {
+			display: none;
+		}
+	</style>
 @stop
 
 @section('content')
@@ -34,8 +39,14 @@
 			</p>
 			
 			<div class="table-responsive">
-				<button type="button" class="pull-right btn btn-primary btn-sm margin-bottom" data-toggle="modal" data-target="#addManuscriptModal">{{ trans('site.add-manuscript') }}</button>
-				<a type="button" class="pull-right btn btn-warning btn-sm margin-bottom margin-right-5" data-toggle="modal" data-target="#addAssignmentToLearnerModal">
+				<button type="button" class="pull-right btn btn-success btn-sm margin-bottom assignMultipleManuscriptsBtn"
+				data-toggle="modal" data-target="#assignMultipleManuscriptsModal">
+					Assign Multiple Manuscripts
+				</button>
+				<button type="button" class="pull-right btn btn-primary btn-sm margin-bottom margin-right-5" data-toggle="modal"
+				 data-target="#addManuscriptModal">{{ trans('site.add-manuscript') }}</button>
+				<a type="button" class="pull-right btn btn-warning btn-sm margin-bottom margin-right-5" data-toggle="modal"
+				 data-target="#addAssignmentToLearnerModal">
 					Add-on for Learner
 				</a>
 				<a href="{{ route('assignment.export-all-learners-include-add-on-learners', $assignment->id) }}" class="pull-right btn btn-secondary btn-sm margin-bottom margin-right-5"
@@ -52,6 +63,12 @@
 				@if($assignment->manuscripts->count())
 					<button type="button" class="pull-right btn btn-info btn-sm margin-bottom margin-right-5"  data-toggle="modal" data-target="#sendEmailModal">{{ trans('site.send-email') }}</button>
 				@endif
+
+				<button class="btn btn-primary btn-sm pull-right margin-right-5 disableLearnerBtn" data-toggle="modal" 
+				data-target="#disableLearnerModal">
+					Disable for Learner
+				</button>
+
 				<h5>{{ trans_choice('site.manuscripts', 2) }}</h5>
 				<table class="table table-side-bordered table-white" style="margin-bottom: 0">
 					<thead>
@@ -65,13 +82,14 @@
 							<th>{{ trans('site.text-nr') }}</th>
 							<th>{{ trans_choice('site.groups', 1) }}</th>
 							<th>Join Group</th>
+							<th>Editor Expected Finish</th>
 							<th>{{ trans('site.feedback-out') }}</th>
 							<th>{{ trans_choice('site.editors', 1) }}</th>
 							<th width="250"></th>
 						</tr>
 					</thead>
 					<tbody>
-						@foreach( $assignment->manuscripts as $manuscript )
+						@foreach( $assignmentManuscripts as $manuscript )
 						<?php $extension = explode('.', basename($manuscript->filename)); ?>
 						<tr>
 							<td>
@@ -103,7 +121,7 @@
 							<td> {{ $manuscript->words }} </td>
 							<td> {{ $manuscript->text_number }} </td>
 							<td>
-								@if (\App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['id'])
+								@if (isset(\App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['id']))
 									<a href="{{ route('admin.assignment-group.show',
 									['course_id' => $course->id,
 									'assignment_id' => $assignment->id,
@@ -122,6 +140,18 @@
 								</a>
 							</td>
 							<td>
+								{{ $manuscript->editor_expected_finish 
+								? \App\Http\FrontendHelpers::formatDate($manuscript->editor_expected_finish)
+								: ($assignment->editor_expected_finish ? $assignment->editor_expected_finish : '') }} <br>
+								<button class="btn btn-xs btn-primary editEditorExpectedFinishBtn" data-toggle="modal" 
+								data-target="#editEditorExpectedFinishModal" 
+								data-action="{{ route('backend.assignment.edit-dates', $manuscript->id) }}"
+								data-editor_expected_finish="{{ $manuscript->editor_expected_finish
+									? strftime('%Y-%m-%d', strtotime($manuscript->editor_expected_finish)) : NULL }}">
+									Edit
+								</button>
+							</td>
+							<td>
 
                                 <?php
                                 $learner_list = [];
@@ -138,6 +168,17 @@
 									@if(!in_array($manuscript->user_id,$learner_list))
 										@if($noGroupHaveFeedback->count())
 											{{ \App\Http\FrontendHelpers::formatDate($noGroupHaveFeedback[0]->availability) }}
+										@endif
+									@endif
+
+									@if (isset(\App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['id']))
+										@php
+											$groupLearnerId = \App\Http\AdminHelpers::getLearnerAssignmentGroup($assignment->id, $manuscript->user->id)['group_learner_id'];
+											$editorFeedback = \App\Http\AdminHelpers::getAssignmentFeedbackByGroupLearnerIdAndEditorId($groupLearnerId, $manuscript->editor_id);
+										@endphp
+
+										@if($editorFeedback)
+											{{ \App\Http\FrontendHelpers::formatDate($editorFeedback->availability) }}
 										@endif
 									@endif
 							</td>
@@ -394,6 +435,49 @@
 	<div class="clearfix"></div>
 </div>
 
+<div id="assignMultipleManuscriptsModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal">&times;</button>
+		    <h4 class="modal-title">
+				Assign Multiple Manuscripts
+			</h4>
+		  </div>
+		  <div class="modal-body">
+		    <form method="POST" action="{{ route('admin.assignment.assign-editor-to-manuscripts', [$course->id, $assignment->id]) }}"
+				onsubmit="disableSubmit(this)">
+		      	{{ csrf_field() }}
+				
+				<div class="form-group">
+					<label>{{ trans_choice('site.editors', 1) }}</label>
+					<select class="form-control select2" name="editor_id" required>
+						<option value="" disabled selected>- Select Editor -</option>
+						@foreach( $editors as $editor )
+							<option value="{{ $editor->id }}">{{ $editor->full_name }}</option>
+						@endforeach
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label>{{ trans_choice('site.learners', 1) }}</label>
+					<select class="form-control select2 leaner-list" name="learner_id[]" multiple required>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label>Editor Expected Finish</label>
+					<input type="date" name="editor_expected_finish" class="form-control">
+				</div>
+
+		      	<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
+		      	<div class="clearfix"></div>
+		    </form>
+		  </div>
+		</div>
+	</div>
+</div>
+
 <div id="addManuscriptModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
@@ -500,6 +584,29 @@
 							</label>
 							<a href="javascript:void(0)" onclick="enableSelect('assignEditorModal')">Edit</a>
 						</div>
+					</div>
+
+					<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="editEditorExpectedFinishModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Editor Expected Finish</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<div class="form-group">
+						<label>Editor Expected Finish</label>
+						<input type="date" class="form-control" name="editor_expected_finish" required>
 					</div>
 
 					<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
@@ -998,6 +1105,130 @@
 </div>
 <!--end email modal-->
 
+<div id="disableLearnerModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+					Disable Learner
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="">
+					{{csrf_field()}}
+					
+					<div class="disable-learners-container">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="personalAssignmentModal" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Personal Assignment Modal</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit()">
+					{{ csrf_field() }}
+					<input type="hidden" name="course_id" value="{{ $assignment->course_id }}">
+					<input type="hidden" name="learner_id">
+
+					<div class="form-group">
+						<label>{{ trans('site.title') }}</label>
+						<input type="text" class="form-control" name="title" placeholder="{{ trans('site.title') }}"
+						 required value="{{ $assignment->title }}">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.description') }}</label>
+						<textarea class="form-control" name="description"
+						 placeholder="{{ trans('site.description') }}" rows="6">{{ $assignment->description }}</textarea>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.submission-date') }}</label>
+						<div class="input-group">
+							@if(\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date))
+								<input type="datetime-local" class="form-control" name="submission_date"
+										 min="0" required
+										@if( $assignment->submission_date )
+										value="{{ strftime('%Y-%m-%dT%H:%M:%S', strtotime($assignment->submission_date)) }}"
+									@endif>
+							@else
+								<input type="number" class="form-control" name="submission_date"
+										min="0" required value="{{$assignment->submission_date}}">
+							@endif
+							<span class="input-group-addon assignment-delay-text" id="basic-addon2">
+								@if(\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date))
+									date
+								@else
+									days
+								@endif
+								</span>
+						</div>
+					</div>
+	  
+					<div class="form-group">
+						<label>{{ trans('site.available-date') }}</label>
+						<input type="date" class="form-control" name="available_date"
+								@if( $assignment->available_date ) 
+								value="{{ strftime('%Y-%m-%d', strtotime($assignment->available_date)) }}" 
+								@endif>
+					</div>
+	  
+					<div class="form-group">
+						<label>{{ trans('site.editor-expected-finish') }}</label>
+						<input type="date" class="form-control" name="editor_expected_finish"
+						@if( $assignment->editor_expected_finish ) 
+						value="{{ strftime('%Y-%m-%d', strtotime($assignment->editor_expected_finish)) }}"
+						 @endif>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.expected-finish') }}</label>
+						<input type="date" class="form-control" name="expected_finish"
+								@if( $assignment->expected_finish ) 
+								value="{{ strftime('%Y-%m-%d', strtotime($assignment->expected_finish)) }}" 
+								@endif>
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.max-words') }}</label>
+						<input type="number" class="form-control" name="max_words" value="{{ $assignment->max_words }}">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans('site.send-letter-to-editor') }}</label> <br>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small"
+							   name="send_letter_to_editor">
+					</div>
+
+					<div class="form-group">
+						<label>{{ trans_choice('site.editors', 1) }}</label>
+						<select class="form-control select2" name="editor_id">
+							<option value="" selected disabled>- Select Editor -</option>
+							@foreach(\App\Http\AdminHelpers::editorList() as $editor)
+								<option value="{{ $editor->id }}">
+									{{ $editor->first_name . " " . $editor->last_name }}
+								</option>
+							@endforeach
+						</select>
+					</div>
+	  
+					<button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.save') }}</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <!-- update join group modal -->
 <div id="updateJoinGroupModal" class="modal fade" role="dialog" data-backdrop="static">
 	<div class="modal-dialog modal-sm">
@@ -1104,6 +1335,28 @@
         });
     });
 
+	$(".assignMultipleManuscriptsBtn").click(function(){
+		let url = "{{ request()->url() }}/list-manuscripts-without-editor";
+		
+		$.ajax({
+            type:'GET',
+            url: url,
+            headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            success: function(data){
+				let modal = $("#assignMultipleManuscriptsModal");
+				let select = modal.find(".leaner-list");
+				let options = "";
+
+				select.empty();
+				$.each(data, function(k, v) {
+					options += "<option value=" + v.user_id + ">" + v.user.full_name + "</option>";
+				});
+
+				select.append(options);
+            }
+        });
+	});
+
     $('.updateTypeBtn').click(function(){
         var form = $('#updateTypeModal form');
         var action = $(this).data('action');
@@ -1181,6 +1434,15 @@
 		modal.find('select').val(answer);
     });
 
+	$(".editEditorExpectedFinishBtn").click(function(){
+		let modal = $("#editEditorExpectedFinishModal");
+		let action = $(this).data('action');
+		let editor_expected_finish = $(this).data('editor_expected_finish');
+
+		modal.find('form').attr('action', action);
+		modal.find('[name=editor_expected_finish]').val(editor_expected_finish);
+	});
+
     $('.updateAvailabilityBtn').click(function(){
         console.log("adsfadsf");
         let modal = $('#updateAvailabilityModal');
@@ -1204,6 +1466,56 @@
     $("[name=for_editor]").change(function(){
         $("#editor_manu_gen_count").toggleClass('hide');
     });
+
+	$(".disableLearnerBtn").click(function() {
+		let assignment_id = "{{ $assignment->id }}";
+		let course_id = "{{ $course->id }}";
+		$.ajax({
+			method: "GET",
+			url: "/assignment/" + assignment_id + "/course/" + course_id + "/assignment-with-course-learners",
+			success: function(data) {
+				$(".disable-learners-container").html(data);
+
+				$(".dt-table").DataTable({
+					"lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+					pageLength: 10,
+					"aaSorting": [],
+					"createdRow": function(row, data, dataIndex) {
+						$(row).find('[data-toggle="toggle"]').bootstrapToggle();
+					}
+				});
+			}
+		})
+	});
+
+	function personalAssignment(user_id) {
+		let action = "/assignment/{{ $assignment->id }}/disabled-learner-assignment/save";
+		let modal = $("#personalAssignmentModal");
+		modal.find('form').attr('action', action);
+		modal.find("[name=learner_id]").val(user_id);
+	}
+
+	/* 
+	// Reinitialize Bootstrap toggle after DataTables has initialized the table
+	$(".dt-table").on("draw.dt", function() {
+		$('[data-toggle="toggle"]').bootstrapToggle();
+	}); */
+
+	$(document).on("change", ".disable-learner-toggle", function() {
+		let userId = $(this).data("id");
+		let isChecked = $(this).prop("checked");
+		let assignmentId = "{{ $assignment->id }}";
+
+		$.ajax({
+			method: "POST",
+			url: "/assignment/" + assignmentId + "/disable-learner",
+			data: {isChecked: isChecked, user_id: userId},
+			success: function(data) {
+				console.log(data);
+				$(".assignment-learner-" + userId).toggleClass('d-none');
+			}
+		})
+	});
 
     function formSubmitted(t) {
         let send_email = $(t).find("[type=submit]");

@@ -4,7 +4,7 @@
     </button>
 
     <a class="navbar-brand mx-auto" href="{{url('')}}" title="View front page">
-        <img src="{{ asset('images-new/logo-tagline.png') }}" alt="logo with tagline">
+        <img src="https://www.forfatterskolen.no/{{'images-new/logo_new_black.png'}}" alt="logo with tagline" style="height: 67px; margin-top: 20px">
         {{--asset('images-new/logo-tagline.png')--}}
     </a>
 
@@ -58,15 +58,16 @@
         <ul class="navbar-nav login-nav">
             <li class="nav-item">
                 <a class="nav-link login-link" href="{{route('auth.login.show')}}" title="View login page">
-                    <span>Min Side</span>
+                    {{-- <span>Min Side</span> --}}
+                    <span>{{ trans('site.front.form.login') }}</span>
                 </a>
             </li>
 
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link login-link" href="{{route('auth.login.self-publishing-show')}}" title="View login page">
                     <span>Selvpubliseringsportal</span>
                 </a>
-            </li>
+            </li> --}}
         </ul>
     @endif
 </nav>
@@ -95,11 +96,12 @@
                    title="View workshops">{{ trans('site.front.nav.workshop') }}</a>
             </li>--}}
             <li class="nav-item">
-                <a href="https://kurs.forfatterskolen.no" class="nav-link"
+                <a href="https://romankurs.no" class="nav-link"
                    title="Årskurs" target="_blank">Årskurs</a>
             </li>
-            <li class="nav-item @if(Route::currentRouteName() == 'front.gift-cards') active @endif">
-                <a href="{{route('front.gift-cards')}}" class="nav-link">Gavekort</a>
+            <li class="nav-item">
+                <a href="https://blog.forfatterskolen.no" class="nav-link">
+                    Blogg</a>
             </li>
             {{--<li class="nav-item @if(Route::currentRouteName() == 'front.faq') active @endif">
                 <a href="{{route('front.faq')}}" class="nav-link"

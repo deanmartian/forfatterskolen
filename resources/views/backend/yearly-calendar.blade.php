@@ -4,14 +4,28 @@
     <title>Yearly Calendar &rsaquo; Forfatterskolen Admin</title>
 @stop
 
+@section('styles')
+<style>
+    #editors-note-panel table td {
+        border: 1px solid #eeeeee;
+        padding: 5px 15px;
+    }
+
+    #editors-note-panel tr:nth-child(even) {
+        background-color: #f2f2f2; /* Alternate background color for even rows */
+    }
+</style>
+@stop
+
 @section('content')
 <div class="col-md-12">
     <ul class="nav nav-tabs margin-top">
         <li @if( Request::input('tab') == 'howManyManuscriptEditorCanTake' || Request::input('tab') == '') class="active" @endif><a href="?tab=howManyManuscriptEditorCanTake">How Many Manuscript You Can Take</a></li>
-        <li @if( Request::input('tab') == 'yearlyCalendar' ) class="active" @endif><a href="?tab=yearlyCalendar">Yearly Calendar</a></li>
+        {{-- <li @if( Request::input('tab') == 'yearlyCalendar' ) class="active" @endif><a href="?tab=yearlyCalendar">Yearly Calendar</a></li> --}}
         <li @if( Request::input('tab') == 'howManyAssignmentsEditorCanTake' ) class="active" @endif><a href="?tab=howManyAssignmentsEditorCanTake">{{ trans('site.how-many-manuscript-assignments-editor-can-take') }}</a></li>
         <li @if( Request::input('tab') == 'editorsAvailability' ) class="active" @endif><a href="?tab=editorsAvailability">{{ trans('site.editors-availability') }}</a></li>
         <li @if( Request::input('tab') == 'unfinished-manuscript' ) class="active" @endif><a href="?tab=unfinished-manuscript">{{ trans('site.unfinished-manuscript') }}</a></li>
+        <li @if( Request::input('tab') == 'editors-note' ) class="active" @endif><a href="?tab=editors-note">Redaktørinnstruks</a></li>
     </ul>
     <div class="col-sm-12 dashboard-left">
         @if( Request::input('tab') == 'yearlyCalendar')
@@ -158,6 +172,8 @@
                                     <th>{{ trans_choice('site.assignments', 1) }}</th>
                                     <th>{{ trans_choice('site.manuscripts', 1) }}</th>
                                     <th>{{ trans_choice('site.learners', 1) }}</th>
+                                    <th>Expected Finish</th>
+                                    <th>Expected Editor Finish</th>
                                     <th>{{ trans_choice('site.editors', 1) }}</th>
                                     <th>{{ trans('site.type') }}</th>
                                     <th>{{ trans('site.where') }}</th>
@@ -181,6 +197,12 @@
                                         </td>
                                         <td>
                                             <a href="{{route('admin.learner.show', $unfinishedAssignment->user->id)}}">{{ $unfinishedAssignment->user->full_name }}</a>
+                                        </td>
+                                        <td>
+                                            {{ $unfinishedAssignment->expected_finish }}
+                                        </td>
+                                        <td>
+                                            {{ $unfinishedAssignment->editor_expected_finish }}
                                         </td>
                                         <td>
                                             @if( $unfinishedAssignment->editor )
@@ -250,13 +272,25 @@
 											@endif
                                         </td>
                                         <td>
-                                            {{ $unfinishedAssignment->words }}
+                                            {{ $unfinishedShopManuscript->words }}
                                         </td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        @elseif(Request::input('tab') == 'editors-note')
+            <div class="panel" style="padding: 30px 50px;" id="editors-note-panel">
+                <div class="panel-heading">
+                    <button type="button" class="btn btn-primary btn-xs pull-right" 
+                    data-toggle="modal" data-target="#editEditorsNoteModal">
+                        <i class="fa fa-pencil"></i>
+                    </button>
+                </div>
+                <div class="panel-body">
+                    {!! App\Settings::editorsNote() !!}
                 </div>
             </div>
         @endif
@@ -325,7 +359,7 @@
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 		    <div class="modal-body">
-                <form id="hideEditorForm" method="POST" action=""  enctype="multipart/form-data">
+                <form method="POST" action=""  enctype="multipart/form-data">
                     {{ csrf_field() }}
                     <div class="form-group">
                         <label>{{ trans('site.how-many-you-can-take') }}</label>
@@ -335,6 +369,29 @@
                     <div class="clearfix"></div>
                 </form>
 		  </div>
+		</div>
+	</div>
+</div>
+
+<div id="editEditorsNoteModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">
+                    Redaktørinnstruks
+                </h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.settings.update.editors-note') }}" 
+                onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<textarea class="form-control tinymce" name="editors_note">{{ App\Settings::editorsNote() }}</textarea>
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">Save</button>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
 </div>

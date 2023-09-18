@@ -38,7 +38,7 @@ class ProjectService
         $model->start_date = $request->start_date;
         $model->end_date = $request->end_date;
         $model->description = $request->description;
-        $model->is_finished = $request->is_finished;
+        $model->status = $request->status;
         $model->notes = NULL;
         $model->save();
 
@@ -325,11 +325,24 @@ class ProjectService
         if ($request->hasFile('book_file')) :
             $destinationPath = 'storage/project-books'; // upload path
 
+            if ($request->has('is_book_critique')) {
+                $destinationPath = 'storage/project-book-critique'; // upload path
+            }
+
             AdminHelpers::createDirectory($destinationPath);
             $filePath = $this->saveFileOrImage($destinationPath, 'book_file');
 
         endif;
 
+        return $filePath;
+    }
+
+    public function uploadFeedback(Request $request)
+    {
+        $filePath = NULL;
+        $destinationPath = 'storage/project-book-critiques'; // upload path
+        AdminHelpers::createDirectory($destinationPath);
+        $filePath = $this->saveFileOrImage($destinationPath, 'feedback');
         return $filePath;
     }
 

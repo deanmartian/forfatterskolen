@@ -92,7 +92,8 @@ class Course extends Model
                 $query->whereNull('parent');
                 $query->orWhere('parent', 'assignment');
             })
-            ->orderBy('created_at', 'desc');
+            ->oldest('submission_date');
+            //->orderBy('created_at', 'desc');
     }
 
     public function expiredAssignments()
@@ -140,6 +141,35 @@ class Course extends Model
     public function emailOut()
     {
         return $this->hasMany('App\EmailOut');
+    }
+
+    public function emailOutOrdered()
+    {
+        return $this->hasMany('App\EmailOut')->orderByRaw("delay + 0 ASC")
+        ->orderBy('delay', 'asc');
+    }
+
+    public function emailOutActive()
+    {
+        $today = now()->toDateString();
+        return $this->hasMany('App\EmailOut')
+        ->where(function ($query) use ($today) {
+            $query->where('delay', '>=', $today)
+                  ->orWhereRaw('delay REGEXP "^[0-9]+$"')
+                  ->orWhere('send_immediately', 1);
+        })
+        ->orderByRaw("delay + 0 ASC")
+        ->orderBy('delay', 'asc');
+    }
+
+    public function emailOutArchive()
+    {
+        $today = now()->toDateString();
+        return $this->hasMany('App\EmailOut')
+        ->where('delay', '<', $today)
+        ->whereRaw('delay REGEXP "[0-9]{4}-[0-9]{2}-[0-9]{2}"')
+        ->orderByRaw("delay + 0 ASC")
+        ->orderBy('delay', 'asc');
     }
 
     public function emailOutLog()
@@ -205,8 +235,17 @@ class Course extends Model
     public function getLearnersAttribute()
     {
         $packageIds = $this->packages()->pluck('id')->toArray();
-        return CoursesTaken::whereIn('package_id', $packageIds)
+        return CoursesTaken::whereHas('user')->whereIn('package_id', $packageIds)
             ->where('is_active', true)
+            ->orderBy('updated_at', 'desc');
+    }
+
+    public function getwebinarLearnersAttribute()
+    {
+        $packageIds = $this->packages()->pluck('id')->toArray();
+        return CoursesTaken::whereHas('user')->whereIn('package_id', $packageIds)
+            ->where('is_active', true)
+            ->where('exclude_in_scheduled_registration', 0)
             ->orderBy('updated_at', 'desc');
     }
 
