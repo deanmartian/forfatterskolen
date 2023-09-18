@@ -159,6 +159,7 @@ class CourseController extends Controller
         $course->auto_list_id       = $request->auto_list_id ?: 0;
         $course->photographer       = $request->photographer;
         $course->hide_price         = isset($request->hide_price) ? 1 : 0;
+        $course->pay_later_with_application = isset($request->pay_later_with_application) ? 1 : 0;
         $course->meta_title         = $request->meta_title;
         $course->meta_description   = $request->meta_description;
         $course->save();
@@ -243,6 +244,7 @@ class CourseController extends Controller
         $course->photographer       = $request->photographer;
         $course->is_free            = isset($request->is_free) ? 1 : 0;
         $course->hide_price         = isset($request->hide_price) ? 1 : 0;
+        $course->pay_later_with_application = isset($request->pay_later_with_application) ? 1 : 0;
         $course->meta_title         = $request->meta_title;
         $course->meta_description   = $request->meta_description;
         $course->save();

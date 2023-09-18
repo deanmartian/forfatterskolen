@@ -101,6 +101,7 @@
 				<div class="form-group">
 					<label>Active Campaign List ID</label>
 					<input type="number" class="form-control" name="auto_list_id" @if( $course['auto_list_id'] ) value="{{ $course['auto_list_id'] }}" @endif>
+					{{-- <input type="text" class="form-control" name="auto_list_id" @if( $course['auto_list_id'] ) value="{{ $course['auto_list_id'] }}" @endif> --}}
 				</div>
 
 				<div class="form-group">
@@ -108,6 +109,13 @@
 					<input type="checkbox" data-toggle="toggle" data-on="Yes" name="is_free"
 						   class="for-sale-toggle" data-off="No"
 						   @if($course['is_free']) {{ 'checked' }} @endif>
+				</div>
+
+				<div class="form-group">
+					<label>Pay Later With Application</label> <br>
+					<input type="checkbox" data-toggle="toggle" data-on="Yes" name="pay_later_with_application"
+						   data-off="No"
+						   @if($course['pay_later_with_application']) {{ 'checked' }} @endif>
 				</div>
 
 				<div class="form-group">
