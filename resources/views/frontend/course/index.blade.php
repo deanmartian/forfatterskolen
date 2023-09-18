@@ -6,21 +6,26 @@
 
 @section('content')
 	<div class="course-page">
-		<div class="header" data-bg="https://www.forfatterskolen.no/images-new/course-header.png">
+		<div class="header" data-bg="https://www.forfatterskolen.no/images-new/course-header-new.png">
 			<div class="container text-center position-relative">
 				<h1>
 					{{ trans('site.front.our-course.title') }}
 				</h1>
-
-				<p>
-					{!! trans('site.front.our-course.details') !!}
-				</p>
 			</div>
 
 			<div class="row sub-header">
-				<p>
-					{{ trans('site.front.our-course.second-description') }}
-				</p>
+
+				<div class="col-md-6">
+					<p>
+						{!! trans('site.front.our-course.details') !!}
+					</p>
+				</div>
+
+				<div class="col-md-6">
+					<p>
+						{{ trans('site.front.our-course.second-description') }}
+					</p>
+				</div>
 
 				<p class="highlight">
 					{{ trans('site.front.our-course.highlight') }}

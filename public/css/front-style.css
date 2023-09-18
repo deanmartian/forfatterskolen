@@ -1,4 +1,5 @@
 /*@import url('https://fonts.googleapis.com/css?family=Montserrat:400,500');*/
+@import url('https://fonts.googleapis.com/css?family=Inter');
 
 @font-face{
     font-family: 'Barlow Light';
@@ -1535,13 +1536,13 @@ margin-right: 5px;
     background-repeat: no-repeat;
     /*background-position-y: -117px;*/
     color: #fff;
-    padding-top: 130px;
+    padding-top: 70px; /* 130px */
     padding-bottom: 134px;
     position: relative;
     transform: translateX(0);
 }
 
-.course-page .header::after {
+/* .course-page .header::after {
     content: '';
     position: absolute;
     background: linear-gradient(rgba(43,43,43,.6),rgba(43,43,43,.6));
@@ -1549,10 +1550,12 @@ margin-right: 5px;
     right: 0;
     left: 0;
     height: 100%;
-}
+} */
 
 .course-page .header h1 {
+    font-family: 'Inter';
     font-size: 50px;
+    font-weight: 600;
     letter-spacing: 2px;
 }
 
@@ -1572,6 +1575,7 @@ margin-right: 5px;
 
 .course-page .sub-header {
     background-color: #fff;
+    border-radius: 20px;
     box-shadow: 1px 3px 20px 1px rgba(210, 210, 210, 0.46);
     color: #212529;
     text-align: justify;
@@ -1583,12 +1587,13 @@ margin-right: 5px;
     width: 1115px;
     right: 50%;
     left: 50%;
-    bottom: -5%;
+    bottom: -55%; /* -5%; */
     transform: translate(-49%, 50%);
     z-index: 1;
 }
 
 .course-page .sub-header p {
+    font-family: 'Inter';
     font-size: 16px;
     margin-top: 0;
 }
@@ -1604,7 +1609,7 @@ margin-right: 5px;
 }
 
 .course-page .courses-list-container {
-    margin-top: 180px;
+    margin-top: 460px;/* 180px; */
 }
 
 .course-page .courses-list-container [class*='col-'], .course-page .courses-list-container .course {
@@ -7275,7 +7280,7 @@ textarea.form-control {
 
     .course-page .header {
         background-position-y: -70px;
-        padding-top: 60px;
+        padding-top: 28px;/* 60px; */
     }
 
     .course-page .header h1 {
@@ -7284,7 +7289,7 @@ textarea.form-control {
     }
 
     .course-page .sub-header {
-        bottom: -10px;/*3%*/
+        bottom: -115px;/*3%*/
         max-width: 960px;
         padding: 40px 60px 20px 60px;
     }
@@ -7294,7 +7299,7 @@ textarea.form-control {
     }
 
     .course-page .courses-list-container {
-        margin-top: 180px;
+        margin-top: 430px;/* 180px; */
     }
 
     .course-page .courses-list-container .course-header,
@@ -8118,10 +8123,15 @@ textarea.form-control {
     }
 
     .course-page .sub-header {
+        bottom: -165px;
         max-width: 720px;
         padding: 20px 40px 20px 40px;
     }
 
+    .course-page .courses-list-container {
+        margin-top: 510px;
+    }
+    
     .course-page .courses-list-container .course-header,
     .course-single-page .similar-courses .course-header {
         height: 160px;
@@ -9384,14 +9394,15 @@ textarea.form-control {
     }
 
     .course-page .sub-header {
+        bottom: -120px;
         max-width: 540px;
         padding: 15px 20px;
         transform: translate(-47%, 50%);
     }
 
-    /*.course-page .courses-list-container {
-        margin-top: 130px;
-    }*/
+    .course-page .courses-list-container {
+        margin-top: 430px;
+    }
 
     .course-page .courses-list-container [class*="col-"],
     .course-single-page .similar-courses [class*="col-"] {
@@ -10716,7 +10727,7 @@ textarea.form-control {
    }
 
     .course-page .sub-header {
-        bottom: -4%;/*10%*/
+        bottom: -76%;/* 4%; 10%*/
         transform: translate(-46%, 50%);
         width: 93%;
     }
@@ -10725,9 +10736,9 @@ textarea.form-control {
         margin-bottom: 5px;
     }
 
-    /*.course-page .courses-list-container {
-        margin-top: 90px;
-    }*/
+    .course-page .courses-list-container {
+        margin-top: 470px;/* 90px; */
+    }
 
     .course-page .courses-list-container [class*="col-"],
     .course-single-page .similar-courses [class*="col-"] {
@@ -11602,6 +11613,21 @@ textarea.form-control {
 
     .front-page-new .upcoming-row .column {
         height: 365px !important;
+    }
+}
+
+/* for classes not working in 375 */
+@media only screen and (max-width: 376px) {
+    .course-page .sub-header {
+        bottom: -90%;
+    }
+
+    .course-page .courses-list-container {
+        margin-top: 520px;
+    }
+
+    .course-page .courses-list-container .course-body {
+        min-width: 0 !important;
     }
 }
 
