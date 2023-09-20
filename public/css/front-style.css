@@ -1,5 +1,7 @@
 /*@import url('https://fonts.googleapis.com/css?family=Montserrat:400,500');*/
 @import url('https://fonts.googleapis.com/css?family=Inter');
+@import url('https://fonts.googleapis.com/css?family=Ubuntu');
+@import url('https://fonts.googleapis.com/css?family=Roboto');
 
 @font-face{
     font-family: 'Barlow Light';
@@ -3186,13 +3188,192 @@ margin-right: 5px;
 /* end support article page */
 
 /* checkout page */
-.checkout-page {
+.checkout-page, .checkout-page-new {
     /*background: url(../images-new/checkout-bg.png) no-repeat 0 -260px / 100%;*/
     background-repeat: no-repeat;
     background-position: 0 -260px;
     background-size: 100%;
     padding-bottom: 50px;
     padding-top: 100px;
+}
+
+.checkout-page-new {
+    margin-bottom: 100px;
+}
+
+.checkout-page-new .card {
+    border: none;
+}
+
+.checkout-page-new .table>tbody>tr>td {
+    border-top: none;
+}
+
+.vue-form-wizard .wizard-tab-content {
+    padding: 100px 20px 10px !important;
+}
+
+.vue-form-wizard .wizard-tab-content .course-details a {
+    font-family: 'Inter';
+    font-size: 40px;
+    font-weight: bolder;
+}
+
+.vue-form-wizard .wizard-tab-content .course-details img {
+    box-shadow: 0px 11.07px 17.03px 0px rgb(0, 0, 0, 11%);
+    border-radius: 25px;
+    margin: 40px 0;
+}
+
+.vue-form-wizard .wizard-tab-content .course-details h3 {
+    font-family: 'Inter';
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.vue-form-wizard .wizard-tab-content .course-details p {
+    font-family: 'Inter';
+    font-size: 16px;
+    line-height: 30px;
+    padding-left: 25px;
+}
+
+.vue-form-wizard .wizard-tab-content .course-details i {
+    position: absolute;
+    left: 12px;
+    margin-top: 3px;
+    background-image: url(../images-new/icon/green-check.png);
+    display: inline-block;
+    height: 22px;
+    width: 22px;
+}
+
+.vue-form-wizard .wizard-tab-content .course-details h4 {
+    font-family: 'Inter';
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px !important;
+}
+
+.vue-form-wizard .package-details {
+    padding-top: 100px;
+}
+
+.vue-form-wizard .package-details h3 {
+    font-family: 'Inter';
+    font-size: 20px;
+}
+
+.vue-form-wizard .package-details .discount-container {
+    margin-top: 150px;
+}
+
+.vue-form-wizard .package-details .discount-container h3 {
+    color: #718096;
+}
+
+.vue-form-wizard .package-details .discount-container .form-control {
+    border-radius: 10px;
+}
+
+.vue-form-wizard .package-details .package-option {
+    border: 2px solid rgb(46, 2, 73, 30%);
+    border-radius: 8px;
+    color: rgb(46, 2, 73, 30%);
+    cursor: pointer;
+    display: inline-block;
+    margin-top: 20px;
+    margin-right: 10px;
+    padding: 20px;
+}
+
+.vue-form-wizard .package-details .package-option.active {
+    background-color: #C12938;
+    border: none;
+    color: #eeeeee;
+}
+
+.vue-form-wizard .package-details table {
+    margin-top: 150px;
+    margin-bottom: 50px
+}
+
+.vue-form-wizard .package-details table tr:last-child {
+    border-bottom: 1px solid #eeeeee;
+}
+
+.vue-form-wizard .package-details table tr > td:first-child {
+    color: rgb(0, 0, 0, 60%);
+    font-family: 'Ubuntu';
+}
+
+.vue-form-wizard .package-details table tr > td:last-child {
+    font-family: 'Roboto';
+}
+
+.checkout-page-new .vue-form-wizard .wizard-btn {
+    border-radius: 10px !important;
+    margin-bottom: 10px !important;
+}
+
+.vue-form-wizard .back-btn {
+    font-family: 'Inter';
+    font-size: 20px !important;
+    font-weight: bolder !important;
+    padding: 0 !important;
+    text-align: left !important;
+    margin-bottom: 50px !important;
+}
+
+.vue-form-wizard .back-btn:hover {
+    text-decoration: underline;
+}
+
+.vue-form-wizard .form-details * {
+    font-family: 'Inter';
+}
+
+.vue-form-wizard .form-details span {
+    color: #718096;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.vue-form-wizard .form-details .form-group {
+    margin-bottom: 20px;
+}
+
+.vue-form-wizard .form-details .form-group:first-child {
+    margin-top: 15px;
+}
+
+.vue-form-wizard .form-details .form-group .form-control {
+    border: 2px solid #D2D2D2;
+    border-radius: 10px;
+    height: 50px;
+    padding-left: 15px;
+}
+
+.vue-form-wizard .form-details .form-group .form-control::placeholder {
+    color: #DCDCDC;
+}
+
+.vue-form-wizard .form-details .login-btn {
+    background-color: #C12938;
+    padding: 5px 30px;
+}
+
+.vue-form-wizard .form-details label {
+    color: #718096;
+}
+
+.vue-form-wizard .form-details .wizard-btn {
+    margin-top: 30px;
+    padding: 20px;
+}
+
+.vue-form-wizard .validation-err span {
+    color: #dc3545!important;
 }
 
 .checkout-page h2 {
@@ -6992,6 +7173,18 @@ textarea.form-control {
         top: 0;
     }
 
+    #navbar-latest .navbar-nav .nav-link {
+        margin-right: 10px;
+    }
+
+    .vue-form-wizard .wizard-tab-content .course-details a {
+        font-size: 35px;
+    }
+
+    .vue-form-wizard .wizard-tab-content .course-details h3 {
+        font-size: 30px;
+    }
+
     #learnerNav .navbar-collapse.collapse, .mobile-learner-menu .navbar-collapse.collapse,
     .portal-menu .navbar-collapse.collapse {
         display:none!important;
@@ -10382,6 +10575,23 @@ textarea.form-control {
     .front-page-new .upcoming-row .column.webinar, .front-page-new .upcoming-row .column.free-webinar {
         margin-top: 30px;
     }
+
+    .vue-form-wizard .package-details {
+        padding-top: 50px;
+    }
+
+    .vue-form-wizard .package-details .discount-container {
+        margin-top: 50px;
+    }
+
+    .vue-form-wizard .package-details table {
+        margin-top: 50px;
+    }
+
+    .checkout-page-new {
+        margin-bottom: 0;
+        padding-top: 50px;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -11613,6 +11823,18 @@ textarea.form-control {
 
     .front-page-new .upcoming-row .column {
         height: 365px !important;
+    }
+
+    .vue-form-wizard .wizard-tab-content .course-details a {
+        font-size: 30px;
+    }
+
+    .vue-form-wizard .wizard-tab-content .course-details h3 {
+        font-size: 26px;
+    }
+
+    .vue-form-wizard .wizard-tab-content {
+        padding: 70px 20px 10px !important;
     }
 }
 

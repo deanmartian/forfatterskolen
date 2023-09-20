@@ -10,240 +10,241 @@
                      :nextButtonText="'Til betaling'" :backButtonText="trans('site.paginate.previous')"
                      :finishButtonText="trans('site.front.buy')" title="" subtitle="" ref="wizard">
             <tab-content :title="'Bestillingsskjema'" icon="fa fa-clipboard-list">
-                <table class="table table-hover">
-                    <tbody>
-                        <tr>
-                            <td width="25%">
-                                <div class="media">
-                                    <a class="thumbnail mr-3" href="#">
-                                        <img class="media-object w-100" :src="course.course_image"
-                                             style="width: 200px; height: 200px;">
-                                    </a>
-                                </div>
-                            </td>
-                            <td width="45%">
-                                <div class="media-body">
-                                    <h1 class="media-heading font-quicksand">
-                                        <a :href="'/course/'+course.id" class="text-red h1 font-weight-bold">
-                                            {{ course.title }}
-                                        </a>
-                                    </h1>
+                <div class="row">
+                    <div class="col-md-6 course-details">
+                        <CourseDetails :course="course" :coursePackage="coursePackage"></CourseDetails>
+                    </div>
 
-                                    <h3 class="mt-3 font-weight-bold">
-                                        {{ trans('site.front.our-course.show.package-details-text') }}:
-                                    </h3>
+                    <div class="col-md-6 package-details">
+                        <h3>{{ trans('site.front.form.course-package') }}:</h3>
 
-                                    <p v-html="coursePackage.description_formatted" class="mt-2">
-                                    </p>
+                        <div :class="['package-option', orderForm.package_id === pkg.id ? 'active' : '']" 
+                            v-for="pkg in packages" :key="pkg.id" 
+                            @click="setSelectedPackage(pkg.id)">
+                                {{ pkg.variation }}
+                        </div>
 
-                                    <template
-                                            v-if="coursePackage.has_coaching
-                                            || (coursePackage.included_courses
-                                            && coursePackage.included_courses.length)">
+                        <div class="discount-container">
+                            <h3 class="font-weight-bold">
+                                Rabattkupong:
+                            </h3>
+                            <input type="text" name="coupon" class="form-control"
+                                    v-model="orderForm.coupon"
+                                    v-debounce:1s="checkDiscount" :debounce-events="'keyup'">
+                        </div>
 
-                                        <h5 class="mt-3" style="font-weight: 400">
-                                            {{ trans('site.front.our-course.show.includes') }}: </h5> <br>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td class="h3">{{ trans('site.front.price') }}:</td>
+                                    <td class="text-right h3">
+                                        {{ orderForm.price | currency('Kr', 2, currencyOptions) }}
+                                    </td>
+                                </tr>
 
-                                        <template v-if="coursePackage.included_courses
-                                        && coursePackage.included_courses.length">
+                                <tr v-if="studentDiscount">
+                                    <td class="h3">Studentrabatt:</td>
+                                    <td class="text-right h3">
+                                        {{ studentDiscount | currency('Kr', 2, currencyOptions) }}
+                                    </td>
+                                </tr>
 
-                                            <template v-for="included_course in coursePackage.included_courses">
-                                                {{ included_course.included_package_course_title }}
-                                                ({{ included_course.included_package_variation }}) <br>
-                                            </template>
+                                <tr v-if="totalDiscount">
+                                    <td class="h3">{{ trans('site.front.discount') }}:</td>
+                                    <td class="text-right h3">
+                                        {{ totalDiscount | currency('Kr', 2, currencyOptions) }}
+                                    </td>
+                                </tr>
 
-                                        </template>
-                                    </template>
+                                <tr v-if="isMonthly">
+                                    <td class="h3">{{ trans('site.checkout.per-month') }}:</td>
+                                    <td class="text-right h3">
+                                        {{ monthlyPrice | currency('Kr', 2, currencyOptions) }}
+                                    </td>
+                                </tr>
 
-                                    <div class="mt-3">
-                                        <h3 class="font-weight-bold">
-                                            Rabattkupong:
-                                        </h3>
-                                        <input type="text" name="coupon" class="form-control w-50"
-                                               v-model="orderForm.coupon"
-                                               v-debounce:1s="checkDiscount" :debounce-events="'keyup'">
-                                    </div>
-                                </div>
-                            </td>
-                            <td width="30%">
+                                <tr>
+                                    <td class="h3">{{ trans('site.front.total') }}:</td>
+                                    <td class="text-right h3">
+                                        {{ totalPrice | currency('Kr', 2, currencyOptions) }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-                                <h3>{{ trans('site.front.form.course-package') }}:</h3>
-                                <div class="package-option custom-radio" v-for="(pkg, index) in packages"
-                                     :key="pkg.id">
-                                    <input type="radio" name="package_id" :id="pkg.variation"
-                                           v-model="orderForm.package_id"
-                                           :value="pkg.id" @change="packageChanged">
-                                    <label :for="pkg.variation" v-text="pkg.variation" class="font-weight-normal"></label>
-                                </div>
+                        <wizard-button v-if="wizardProps.activeTabIndex === 0 && coursePackage.is_pay_later_allowed"
+                        @click.native="payLaterClicked()"
+                            class="wizard-footer-right w-100" :style="wizardProps.fillButtonStyle" style="margin-right: 10px">
+                            Bestill kurs, betal senere
+                        </wizard-button>
 
-                            </td>
-                        </tr>
+                        <wizard-button v-if="wizardProps.activeTabIndex === 0" @click="vippsCheckout()"
+                            class="wizard-footer-right w-100 vipps-btn" :style="wizardProps.fillButtonStyle"
+                            :disabled="isLoading">
+                            <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i>
+                            <span>Hurtigutsjekk med</span>
+                            <img src="/images-new/vipps.png" class="inline" alt="vipps-buy-button"
+                                :style="isLoading ? 'opacity: .8;' : ''">
+                        </wizard-button>
 
-                        <tr>
-                            <td></td>
-                            <td class="text-right h3">{{ trans('site.front.price') }}:</td>
-                            <td class="text-right h3 text-red">
-                                {{ orderForm.price | currency('Kr', 2, currencyOptions) }}
-                            </td>
-                        </tr>
+                        <wizard-button v-if="!wizardProps.isLastStep" @click.native="nextTab()"
+                            class="wizard-footer-right w-100" :style="wizardProps.fillButtonStyle">
+                            {{ orderForm.is_pay_later && wizardProps.activeTabIndex != 0 
+                            ? 'Bestill kurs, betal senere' :'Til betaling' }}
+                        </wizard-button>
 
-                        <tr v-if="studentDiscount">
-                            <td></td>
-                            <td class="text-right h3">Studentrabatt:</td>
-                            <td class="text-right h3 text-red">
-                                {{ studentDiscount | currency('Kr', 2, currencyOptions) }}
-                            </td>
-                        </tr>
-
-                        <tr v-if="totalDiscount">
-                            <td></td>
-                            <td class="text-right h3">{{ trans('site.front.discount') }}:</td>
-                            <td class="text-right h3 text-red">
-                                {{ totalDiscount | currency('Kr', 2, currencyOptions) }}
-                            </td>
-                        </tr>
-
-                        <tr v-if="isMonthly">
-                            <td></td>
-                            <td class="text-right h3">{{ trans('site.checkout.per-month') }}:</td>
-                            <td class="text-right h3 text-red">
-                                {{ monthlyPrice | currency('Kr', 2, currencyOptions) }}
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td></td>
-                            <td class="text-right h3">{{ trans('site.front.total') }}:</td>
-                            <td class="text-right h3 text-red">
-                                {{ totalPrice | currency('Kr', 2, currencyOptions) }}
-                            </td>
-                        </tr>
-
-                    </tbody>
-                </table>
+                    </div>
+                </div>
             </tab-content> <!-- end order details-->
 
             <tab-content :title="trans('site.front.form.user-information')" icon="fas fa-id-card"
                          :before-change="validateForm">
-                <form @submit.prevent="handleLogin($event)" v-if="!currentUser" class="mb-4">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <span>
-                                {{ trans('site.front.form.already-registered-text') }}
-                            </span>
+                <wizard-button  v-if="wizardProps.activeTabIndex > 0"  @click.native="wizardProps.prevTab();" 
+                    class="back-btn">
+                    Back
+                </wizard-button>
+
+                <div class="row">
+                    <div class="col-md-6 course-details">
+                        <CourseDetails :course="course" :coursePackage="coursePackage"></CourseDetails>
+                    </div>
+
+                    <div class="col-md-6 package-details form-details">
+                        <form @submit.prevent="handleLogin($event)" v-if="!currentUser" class="mb-4">
+                            <div class="row">
+                                <div class="col-sm-12 mb-1">
+                                    <span>
+                                        {{ trans('site.front.form.already-registered-text') }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-sm-12">
+                                    <input type="text" name="email" :placeholder="trans('site.front.form.email')"
+                                        class="form-control" v-model="loginForm.email" required>
+                                </div>
+
+                                <div class="form-group col-sm-12">
+                                    <input type="password" name="login_password" :placeholder="trans('site.front.form.password')"
+                                        class="form-control" v-model="loginForm.password" required>
+                                </div>
+
+                                <div class="form-group col-sm-6 mb-0">
+                                    <p style="margin-top: 7px;">
+                                        <a href="/auth/login?t=passwordreset" tabindex="-1" class="text-red">
+                                            {{ trans('site.front.form.reset-password') }}?
+                                        </a>
+                                    </p>
+                                </div>
+
+                                <div class="form-group col-sm-6 mb-0 text-right">
+                                    <button type="submit" class="btn site-btn-global login-btn"
+                                            :disabled="isLoginDisabled">
+                                        <i class="fas fa-spinner fa-spin" v-if="isLoginDisabled"></i>
+                                        {{ loginText }}
+                                    </button>
+                                </div>
+                            </div><!-- end row for login -->
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <span class="text-danger invalid-credentials" v-if="invalidCred">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        <span v-html="errorMsg"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </form> <!-- end login form -->
+
+                        <div class="form-group">
+                            <label for="email" class="control-label">
+                                {{ trans('site.front.form.email') }}
+                            </label>
+                            <input type="email" id="email" class="form-control" name="email" required
+                                v-model="orderForm.email"
+                                :disabled="currentUser"
+                                :placeholder="trans('site.front.form.email')">
+                        </div> <!-- end email form-group -->
+
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="first_name" class="control-label">
+                                    {{ trans('site.first-name') }}
+                                </label>
+                                <input type="text" id="first_name" class="form-control" name="first_name" required
+                                    v-model="orderForm.first_name"
+                                    :disabled="currentUser"
+                                    :placeholder="trans('site.first-name')">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="last_name" class="control-label">
+                                    {{ trans('site.last-name') }}
+                                </label>
+                                <input type="text" id="last_name" class="form-control" name="last_name" required
+                                    v-model="orderForm.last_name"
+                                    :disabled="currentUser"
+                                    :placeholder="trans('site.last-name')">
+                            </div>
+                        </div> <!-- end first and last name -->
+
+                        <div class="form-group">
+                            <label for="street" class="control-label">
+                                {{ trans('site.front.form.street') }}
+                            </label>
+                            <input type="text" id="street" class="form-control" name="street" required
+                                v-model="orderForm.street"
+                                :placeholder="trans('site.checkout.street')">
+                        </div> <!-- end street -->
+
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="zip" class="control-label">{{ trans('site.front.form.zip') }}</label>
+                                <input type="text" id="zip" class="form-control" name="zip" required
+                                    v-model="orderForm.zip" :placeholder="trans('site.checkout.zip')">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="city" class="control-label">{{ trans('site.front.form.city') }}</label>
+                                <input type="text" id="city" class="form-control" name="city" required
+                                    v-model="orderForm.city" :placeholder="trans('site.checkout.city')">
+                            </div>
+                        </div> <!-- end zip, city -->
+
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="phone" class="control-label">
+                                    {{ trans('site.front.form.phone-number') }}
+                                </label>
+                                <input type="text" id="phone" class="form-control" name="phone" required
+                                    v-model="orderForm.phone" :placeholder="trans('site.checkout.phone')">
+                            </div>
+
+                            <div class="col-md-6" v-if="!currentUser">
+                                <label for="password" class="control-label">
+                                    {{ trans('site.front.form.create-password') }}
+                                </label>
+                                <input type="password" id="password" class="form-control"
+                                    name="password" required :placeholder="trans('site.front.form.create-password')"
+                                    v-model="orderForm.password">
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="form-group col-sm-4 mb-0">
-                            <input type="text" name="email" :placeholder="trans('site.front.form.email')"
-                                   class="form-control" v-model="loginForm.email" required>
-
-                            <p style="margin-top: 7px;">
-                                <a href="/auth/login?t=passwordreset" tabindex="-1" class="text-red">
-                                    {{ trans('site.front.form.reset-password') }}?
-                                </a>
-                            </p>
-                        </div>
-
-                        <div class="form-group col-sm-4 mb-0">
-                            <input type="password" name="login_password" :placeholder="trans('site.front.form.password')"
-                                   class="form-control" v-model="loginForm.password" required>
-                        </div>
-                        <div class="form-group col-sm-4 mb-0">
-                            <button type="submit" class="btn site-btn-global"
-                                    :disabled="isLoginDisabled">
-                                <i class="fas fa-spinner fa-spin" v-if="isLoginDisabled"></i>
-                                {{ loginText }}
-                            </button>
-                        </div>
-                    </div><!-- end row -->
-
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <span class="text-danger invalid-credentials" v-if="invalidCred">
-                                <i class="fas fa-exclamation-circle"></i>
-                                <span v-html="errorMsg"></span>
-                            </span>
-                        </div>
-                    </div>
-                </form> <!-- end login form -->
-
-                <div class="form-group">
-                    <label for="email" class="control-label">
-                        {{ trans('site.front.form.email') }}
-                    </label>
-                    <input type="email" id="email" class="form-control" name="email" required
-                           v-model="orderForm.email"
-                           :disabled="currentUser"
-                           :placeholder="trans('site.front.form.email')">
-                </div> <!-- end email form-group -->
-
-                <div class="form-group row">
-                    <div class="col-md-6">
-                        <label for="first_name" class="control-label">
-                            {{ trans('site.first-name') }}
-                        </label>
-                        <input type="text" id="first_name" class="form-control" name="first_name" required
-                               v-model="orderForm.first_name"
-                               :disabled="currentUser"
-                               :placeholder="trans('site.first-name')">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="last_name" class="control-label">
-                            {{ trans('site.last-name') }}
-                        </label>
-                        <input type="text" id="last_name" class="form-control" name="last_name" required
-                               v-model="orderForm.last_name"
-                               :disabled="currentUser"
-                               :placeholder="trans('site.last-name')">
-                    </div>
-                </div> <!-- end first and last name -->
-
-                <div class="form-group">
-                    <label for="street" class="control-label">
-                        {{ trans('site.front.form.street') }}
-                    </label>
-                    <input type="text" id="street" class="form-control" name="street" required
-                           v-model="orderForm.street"
-                           :placeholder="trans('site.checkout.street')">
-                </div> <!-- end street -->
-
-                <div class="form-group row">
-                    <div class="col-md-6">
-                        <label for="zip" class="control-label">{{ trans('site.front.form.zip') }}</label>
-                        <input type="text" id="zip" class="form-control" name="zip" required
-                               v-model="orderForm.zip" :placeholder="trans('site.checkout.zip')">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="city" class="control-label">{{ trans('site.front.form.city') }}</label>
-                        <input type="text" id="city" class="form-control" name="city" required
-                               v-model="orderForm.city" :placeholder="trans('site.checkout.city')">
-                    </div>
-                </div> <!-- end zip, city -->
-
-                <div class="form-group row">
-                    <div class="col-md-6">
-                        <label for="phone" class="control-label">
-                            {{ trans('site.front.form.phone-number') }}
-                        </label>
-                        <input type="text" id="phone" class="form-control" name="phone" required
-                               v-model="orderForm.phone" :placeholder="trans('site.checkout.phone')">
-                    </div>
-
-                    <div class="col-md-6" v-if="!currentUser">
-                        <label for="password" class="control-label">
-                            {{ trans('site.front.form.create-password') }}
-                        </label>
-                        <input type="password" id="password" class="form-control"
-                               name="password" required :placeholder="trans('site.front.form.create-password')"
-                               v-model="orderForm.password">
-                    </div>
-                </div>
+                        <wizard-button v-if="!wizardProps.isLastStep" @click.native="nextTab()"
+                            class="wizard-footer-right w-100" :style="wizardProps.fillButtonStyle">
+                            {{ orderForm.is_pay_later && wizardProps.activeTabIndex != 0 
+                            ? 'Bestill kurs, betal senere' :'Til betaling' }}
+                        </wizard-button>
+                    </div> <!-- end package-details -->
+                </div> <!-- end row -->
             </tab-content>
 
             <tab-content :title="trans('site.checkout.payment-details')" icon="fas fa-credit-card"
                          :before-change="validateForm">
+
+                <wizard-button  v-if="wizardProps.activeTabIndex > 0"  @click.native="wizardProps.prevTab();" 
+                    class="back-btn">
+                    Back
+                </wizard-button>
 
                 <div id="checkout-display"></div>
 
@@ -266,32 +267,11 @@
             </div> -->
             
             <template slot="footer" slot-scope="props">
-                <div class=wizard-footer-left>
-                    <!--&& !props.isLastStep add this if don't want to show the previous button on last page/step-->
-                    <wizard-button  v-if="props.activeTabIndex > 0"
-                        :style="props.fillButtonStyle" @click.native="props.prevTab();">
-                        Back
-                    </wizard-button>
-                </div>
+                
                 <div class="wizard-footer-right">
+                    <!-- needed to hide the buttons on the footer -->
                     <wizard-button v-if="!props.isLastStep" @click.native="nextTab()"
-                        class="wizard-footer-right" :style="props.fillButtonStyle">
-                        {{ orderForm.is_pay_later && props.activeTabIndex != 0 ? 'Bestill kurs, betal senere' :'Til betaling' }}
-                    </wizard-button>
-
-                    <wizard-button v-if="props.activeTabIndex === 0" @click="vippsCheckout()"
-                        class="wizard-footer-right vipps-btn" :style="props.fillButtonStyle"
-                        :disabled="isLoading">
-                        <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i>
-                        <span>Hurtigutsjekk med</span>
-                        <img src="/images-new/vipps.png" class="inline" alt="vipps-buy-button"
-                            :style="isLoading ? 'opacity: .8;' : ''">
-                    </wizard-button>
-
-                    <wizard-button v-if="props.activeTabIndex === 0 && coursePackage.is_pay_later_allowed"
-                     @click.native="payLaterClicked()"
-                        class="wizard-footer-right" :style="props.fillButtonStyle" style="margin-right: 10px">
-                        Bestill kurs, betal senere
+                        class="wizard-footer-right d-none" :style="props.fillButtonStyle">
                     </wizard-button>
                 </div>
             </template>
@@ -348,6 +328,7 @@
 <script>
     import {FormWizard, TabContent} from 'vue-form-wizard'
     import 'vue-form-wizard/dist/vue-form-wizard.min.css'
+    import CourseDetails from './partials/details.vue';
     export default {
 
         props: {
@@ -415,6 +396,7 @@
                 loginText: i18n.site.front.form.login,
                 hasPaidCourse: false,
                 isLoading: false,
+                wizardProps: {},
                 requestUrl: '/course/'+this.course.id
             }
         },
@@ -429,12 +411,18 @@
             }
         },
 
+        components: {
+            CourseDetails
+        },
+
         mounted() {
             this.checkHasPaidCourse();
             this.loadOptions();
             if (this.orderForm.coupon) {
                 this.checkDiscount(this.orderForm.coupon);
             }
+
+            this.wizardProps = this.$refs.wizard;        
         },
 
         methods: {
@@ -452,6 +440,11 @@
 
                     this.currentUser = response.data;
                 })
+            },
+
+            setSelectedPackage(package_id) {
+                this.orderForm.package_id = package_id;
+                this.packageChanged();
             },
 
             packageChanged() {
@@ -581,7 +574,7 @@
                     this.checkHasPaidCourse();
                     this.getCurrentUser();
 
-                    //console.log(response);
+                    console.log(response);
                     if (response.data.course_link) {
                         window.location.href = response.data.course_link;
                     }

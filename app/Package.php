@@ -16,7 +16,8 @@ class Package extends Model
         'months_3_due_date', 'months_6_due_date', 'months_12_due_date', 'months_3_enable', 'months_6_enable', 'months_12_enable',
         'manuscripts_count', 'due_date', 'has_student_discount', 'is_reward','issue_date', 'validity_period', 'is_show',
         'is_upgradeable', 'is_pay_later_allowed'];
-    protected $appends = ['description_formatted', 'sale_discount', 'full_payment_is_sale', 'months_3_is_sale', 'months_6_is_sale', 'months_12_is_sale'];
+    protected $appends = ['description_formatted', 'description_with_check', 'sale_discount', 'full_payment_is_sale', 
+    'months_3_is_sale', 'months_6_is_sale', 'months_12_is_sale'];
     protected $with = ['included_courses'];
 
     public function scopeIsShow($query)
@@ -54,6 +55,11 @@ class Package extends Model
     public function getDescriptionFormattedAttribute()
     {
         return nl2br($this->attributes['description']);
+    }
+
+    public function getDescriptionWithCheckAttribute()
+    {
+        return str_replace('-', '<i class="checkmark"></i>', nl2br($this->attributes['description']));
     }
 
     public function getSaleDiscountAttribute()
