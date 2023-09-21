@@ -7173,10 +7173,6 @@ textarea.form-control {
         top: 0;
     }
 
-    #navbar-latest .navbar-nav .nav-link {
-        margin-right: 10px;
-    }
-
     .vue-form-wizard .wizard-tab-content .course-details a {
         font-size: 35px;
     }
@@ -7914,6 +7910,10 @@ textarea.form-control {
     }
 
     /* changes for  home-new.blade*/
+    #navbar-latest .navbar-nav .nav-link {
+        margin-right: 10px;
+    }
+    
     #navbar-latest>.container {
         flex-wrap: wrap;
         justify-content: center;
