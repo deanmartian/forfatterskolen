@@ -147,6 +147,12 @@
 				</div>
 
 				<div class="form-group">
+					<label>Check Max Words</label> <br>
+					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small" name="check_max_words"
+					checked>
+				</div>
+
+				<div class="form-group">
 					<label>{{ trans('site.send-letter-to-editor') }}</label> <br>
 					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small" name="send_letter_to_editor">
 				</div>

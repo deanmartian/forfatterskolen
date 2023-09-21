@@ -218,6 +218,7 @@ class AssignmentController extends Controller
                 'editor_manu_generate_count' => $request->editor_manu_generate_count,
                 'show_join_group_question' => isset($request->show_join_group_question) ? 1 : 0,
                 'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0,
+                'check_max_words' => isset($request->check_max_words) ? 1 : 0,
                 'editor_expected_finish' => $request->editor_expected_finish,
                 'parent' => $request->linked_assignment ? 'assignment' : NULL,
                 'parent_id' => $request->linked_assignment,
@@ -261,6 +262,7 @@ class AssignmentController extends Controller
             $assignment->editor_manu_generate_count = isset($request->for_editor) ? $request->editor_manu_generate_count : NULL;
             $assignment->show_join_group_question = isset($request->show_join_group_question) ? 1 : 0;
             $assignment->send_letter_to_editor = isset($request->send_letter_to_editor) ? 1 : 0;
+            $assignment->check_max_words = isset($request->check_max_words) ? 1 : 0;
             $assignment->editor_expected_finish = $request->editor_expected_finish;
             $assignment->expected_finish = $request->expected_finish;
 

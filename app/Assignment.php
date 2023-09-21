@@ -10,7 +10,7 @@ class Assignment extends Model
     protected $table = 'assignments';
     protected $fillable = ['course_id', 'title', 'description', 'submission_date', 'available_date','allowed_package', 'add_on_price',
         'max_words', 'for_editor', 'editor_id', 'editor_manu_generate_count', 'generated_filepath', 'show_join_group_question',
-        'send_letter_to_editor', 'parent_id', 'parent', 'editor_expected_finish', 'expected_finish'];
+        'send_letter_to_editor', 'check_max_words', 'parent_id', 'parent', 'editor_expected_finish', 'expected_finish'];
     protected $appends = ['submission_date_time_text'];
 
 
