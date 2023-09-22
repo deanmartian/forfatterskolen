@@ -1872,6 +1872,7 @@ Route::group([
         Route::get('/assigned-webinar', 'AssignedWebinarController@show')->name('editor.assigned-webinar');
         Route::post('/self-publishing/{id}/feedback', 'PageController@selfPublishingFeedback')->name('editor.self-publishing.feedback');
         Route::get('/self-publishing/{id}/download-manuscript', 'PageController@selfPublishingDownloadManuscript')->name('editor.self-publishing.download-manuscript');
+        Route::post('/assignment-manuscript/{id}/mark-finished', 'PageController@assignmentManuscriptFinished')->name('editor.assignment-manuscript.mark-finished');
     });
 
     Route::group([

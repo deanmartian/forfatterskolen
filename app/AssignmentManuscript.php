@@ -12,6 +12,9 @@ class AssignmentManuscript extends Model
         'join_group', 'letter_to_editor', 'expected_finish', 'editor_expected_finish'];
     protected $appends = ['file_link', 'file_link_with_download', 'assignment_type', 'where_in_script'];
 
+    const APPROVED_STATUS = 1; // approved feedback status
+    const FINISHED_STATUS = 2; // finished status
+
 
     public function assignment()
     {

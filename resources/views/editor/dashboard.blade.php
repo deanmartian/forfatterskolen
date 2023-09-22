@@ -744,6 +744,118 @@
 			</div>
 			<!-- end My Copy Editing -->
 
+			{{-- assignment editing --}}
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>Redigering</h4></div>
+						<div class="panel-body">
+							<div class="table-users table-responsive margin-top">
+								<table class="table dt-table">
+						
+									<thead>
+									<tr>
+										<th>{{ trans_choice('site.courses', 1) }}</th>
+										<th>Brev</th>
+										<th>{{ trans('site.learner-id') }}</th>
+										<th>{{ trans('site.type') }}</th>
+										<th>{{ trans('site.where') }}</th>
+										<th>{{ trans('site.deadline') }}</th>
+										<th>{{ trans('site.feedback-status') }}</th>
+										<th></th>
+									</tr>
+									</thead>
+									<tbody>
+									@foreach ($editingAssignments as $assignedAssignment)
+										<tr>
+											<td>
+												<a href="{{ route('editor.backend.download_assigned_manuscript', $assignedAssignment->id) }}"><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
+												@if($assignedAssignment->assignment->course)
+														{{ $assignedAssignment->assignment->course->title }}
+												@else
+														{{ $assignedAssignment->assignment->title }}
+												@endif
+											</td>
+											<td>
+												@if ($assignedAssignment->letter_to_editor)
+													<a href="{{ route('assignment.manuscript.download_letter', $assignedAssignment->id) }}">
+														<i class="fa fa-download" aria-hidden="true"></i>
+													</a>&nbsp;
+													{{ basename($assignedAssignment->letter_to_editor) }}
+												@endif
+											</td>
+											<td>{{ $assignedAssignment->user_id }}</td>
+											<td>{{ \App\Http\AdminHelpers::assignmentType($assignedAssignment->type) }}</td>
+											<td>{{ \App\Http\AdminHelpers::manuscriptType($assignedAssignment->manu_type) }}</td>
+											<td>{{ $assignedAssignment->editor_expected_finish?$assignedAssignment->editor_expected_finish:$assignedAssignment->assignment->editor_expected_finish }}</td>
+											<td>
+											<?php
+											$groupDetails = DB::SELECT("SELECT A.id as assignment_group_id, B.id AS assignment_group_learner_id FROM assignment_groups A JOIN assignment_group_learners B ON A.id = B.assignment_group_id AND B.user_id = $assignedAssignment->user_id WHERE A.assignment_id = $assignedAssignment->assignment_id");
+											if($groupDetails){ // Means the course assignment belongs to a group
+												$feedback = DB::SELECT("SELECT A.* FROM assignment_feedbacks A JOIN assignment_group_learners B ON A.assignment_group_learner_id = B.id WHERE B.user_id = $assignedAssignment->user_id AND A.assignment_group_learner_id = ".$groupDetails[0]->assignment_group_learner_id);
+											}
+											
+											if($assignedAssignment->has_feedback){
+												echo '<span class="label label-default">Pending</span> ';
+												if($groupDetails){
+													
+												}else{
+													echo '<button type="button" class="btn btn-success btn-xs submitFeedbackBtn"
+															data-toggle="modal" data-target="#submitFeedbackModal"
+															data-manuscript = "'.$assignedAssignment->noGroupFeedbacks->first()->filename.'"
+															data-created_at = "'.$assignedAssignment->noGroupFeedbacks->first()->created_at.'"
+															data-updated_at = "'.$assignedAssignment->noGroupFeedbacks->first()->updated_at.'"
+															data-feedback_id = "'.$assignedAssignment->noGroupFeedbacks->first()->id.'"
+															data-grade = "'.$assignedAssignment->grade.'"
+															data-edit = "1"
+															data-notes_to_head_editor = "'.$assignedAssignment->noGroupFeedbacks->first()->notes_to_head_editor.'"
+															data-name="'.$assignedAssignment->user->id.'"
+															data-action="'.route('editor.assignment.group.manuscript-feedback-no-group',
+															['id' => $assignedAssignment->id, 'learner_id' => $assignedAssignment->user_id]).'"
+															data-manuscript_id="'.$assignedAssignment->id.'">
+															<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+															</button>';
+												}
+											}else{
+												
+												if($groupDetails){ // Means the course assignment belongs to a group
+													echo '<button type="button" class="btn btn-warning btn-xs submitFeedbackBtn"
+																data-toggle="modal" data-target="#submitFeedbackModal"
+																data-name="'.$assignedAssignment->user->id.'"
+																data-action="'.route('editor.assignment.group.submit_feedback',
+																['group_id' => $groupDetails[0]->assignment_group_id, 'id' => $groupDetails[0]->assignment_group_learner_id]).'"
+																data-manuscript_id="'.$assignedAssignment->id.'">'.
+															'+ '.trans('site.add-feedback').'</button>';
+												}else{ //the course assignment does not belong to a group
+													echo '<button type="button" class="btn btn-warning btn-xs submitFeedbackBtn"
+																data-toggle="modal" data-target="#submitFeedbackModal"
+																data-name="'.$assignedAssignment->user->id.'"
+																data-action="'.route('editor.assignment.group.manuscript-feedback-no-group',
+																['id' => $assignedAssignment->id, 'learner_id' => $assignedAssignment->user_id]).'"
+																data-manuscript_id="'.$assignedAssignment->id.'">'.
+																'+ '.trans('site.add-feedback').'</button>';
+												}
+											}
+											?>
+											</td>
+											<td>
+												<button class="btn btn-success btn-xs finishAssignmentManuscriptBtn" data-toggle="modal" 
+												data-target="#finishAssignmentManuscriptModal" 
+												data-action="{{ route('editor.assignment-manuscript.mark-finished', $assignedAssignment->id) }}">
+													Mark as finished
+												</button>
+											</td>
+										</tr>
+									@endforeach
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			{{-- assignment editing --}}
+
 		</div>
 	</div>
 </div>
@@ -899,7 +1011,7 @@
 	</div>
 </div>
 
-<div id="finishAssignmentModal" class="modal fade" role="dialog" data-backdrop="static">
+<div id="finishAssignmentManuscriptModal" class="modal fade" role="dialog" data-backdrop="static">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -907,12 +1019,11 @@
 				<h4 class="modal-title">{{ trans('site.finish-assignment') }}</h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{csrf_field()}}
 					{{ trans('site.finish-assignment-question') }}
 					<div class="text-right margin-top">
 						<button type="submit" class="btn btn-success">{{ trans('site.submit') }}</button>
-						<button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('site.cancel') }}</button>
 					</div>
 				</form>
 			</div>
@@ -1529,8 +1640,8 @@
         }
 	});
 
-    $(".finishAssignmentBtn").click(function(){
-        let modal = $('#finishAssignmentModal');
+    $(".finishAssignmentManuscriptBtn").click(function(){
+        let modal = $('#finishAssignmentManuscriptModal');
         let action = $(this).data('action');
         modal.find('form').attr('action', action);
 	});

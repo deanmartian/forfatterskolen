@@ -29,13 +29,7 @@ class PageController extends Controller
     public function dashboard()
     {
         $assigned_shop_manuscripts = ShopManuscriptsTaken::where('feedback_user_id', Auth::user()->id)->get();
-        $assignedAssignments = AssignmentManuscript::where('editor_id', Auth::user()->id) // assigned manuscript group / course
-        ->where('status', 0)
-        ->whereHas('assignment', function($query){
-            $query->whereNull('parent');
-            $query->orWhere('parent', 'assignment');
-        })
-        ->get();
+        $assignedAssignments = $this->filterAssignmentByCheckMaxWords(1);
         $coachingTimers = Auth::user()->assignedCoachingTimers()->where('status',0)->get();
         $corrections = Auth::user()->assignedCorrections;
         $copyEditings = Auth::user()->assignedCopyEditing;
@@ -58,10 +52,11 @@ class PageController extends Controller
         $selfPublishingList = SelfPublishing::where('editor_id', Auth::user()->id)
             ->whereDoesntHave('feedback')
             ->get();
+        $editingAssignments = $this->filterAssignmentByCheckMaxWords(0);
 
         return view('editor.dashboard', compact('assigned_shop_manuscripts', 'assignedAssignments', 'coachingTimers',
         'corrections', 'copyEditings', 'assignedAssignmentManuscripts', 'shopManuscriptRequests', 'freeManuscripts', 'freeManuscriptEmailTemplate',
-            'freeManuscriptEmailTemplate2', 'selfPublishingList'));
+            'freeManuscriptEmailTemplate2', 'selfPublishingList', 'editingAssignments'));
 
     }
 
@@ -291,6 +286,35 @@ class PageController extends Controller
             return redirect()->back();
         }
         return response()->download(public_path($manuscripts[0]));
+    }
+
+    public function assignmentManuscriptFinished($assignment_manuscript_id)
+    {
+        if ($assignment = AssignmentManuscript::find($assignment_manuscript_id)) {
+            $assignment->status = AssignmentManuscript::FINISHED_STATUS;
+            $assignment->save();
+
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Assignment manuscript saved successfully.'),
+                'alert_type' => 'success'
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
+    private function filterAssignmentByCheckMaxWords($check_max_words) {
+        return AssignmentManuscript::where('editor_id', Auth::user()->id) // assigned manuscript group / course
+        ->where('status', 0)
+        ->whereHas('assignment', function($query) use ($check_max_words){
+            $query->where(function($subQuery) {
+                $subQuery->whereNull('parent');
+                $subQuery->orWhere('parent', 'assignment');
+            });
+            
+            $query->where('check_max_words', $check_max_words);
+        })
+        ->get();
     }
 
 }
