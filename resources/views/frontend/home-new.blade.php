@@ -148,28 +148,29 @@
         </div> <!-- end container -->
     </div> <!-- end popular-courses-new -->
 
-    <div class="online-courses-row d-none">
+    <div class="online-courses-row">
         <div class="container">
             <div class="top-container">
-                <img data-src="https://www.forfatterskolen.no/images-new/home/online-course.png" alt="online-course">
+                <img data-src="https://www.forfatterskolen.no/images-new/home/online-course.png" alt="online-course"
+                 class="inline-course-img">
                 <div class="details">
                     <h2>Hva er fordelene ved nettkurs?</h2>
                     <p>
-                        Vi hos Forfatterskolen har fulgt mange elever tett frem mot utgivelse, 
-                        og ønsker å hjelpe flere. Noen av fordelene ved å ta våre nettkurs er: 
+                        Fordelen med nettkurs er at du kan ta det hvor som helst, og i ditt helt eget tempo. 
+                        På kurset får du også: 
                     </p>
                     <ul>
                         <li>
                             <img data-src="https://www.forfatterskolen.no/images-new/home/arrow.svg" alt="arrow">
-                            Her kommer det en fordel
+                            Et unikt innblikk i skrivehåndverket, gode verktøy og nyttige tips.
                         </li>
                         <li>
                             <img data-src="https://www.forfatterskolen.no/images-new/home/arrow.svg" alt="arrow">
-                            Her kommer det en fordel
+                            Tilbakemelding på manus fra profesjonell redaktør.
                         </li>
                         <li>
                             <img data-src="https://www.forfatterskolen.no/images-new/home/arrow.svg" alt="arrow">
-                            Her kommer det en fordel
+                            Skjermtreff med kjente forfattere og flere hundre andre skriveglade.
                         </li>
                     </ul>
                 </div>
@@ -181,12 +182,10 @@
                         Møt mentorene dine
                     </h2>
                     <p>
-                        Nå kan du møte noen av landets største forfattere og dyktige 
-                        redaktører – live og direkte – i stuen din. Alt du trenger for å være med 
-                        på mentormøtene er en PC/mac/pad/mobil. Du går inn via en lenke, enkelt og 
-                        greit, og mentorene popper opp på skjermen din. Du får høre om ulike 
-                        skriveprosesser, verdifull innsideinformasjon om forlagsbransjen og mulighet 
-                        til å stille spørsmål om alt du lurer på.
+                        Hver mandag har vi treff med kjente forfattere på skjermen – og av og til en 
+                        profesjonell redaktør, dramaturg eller språkvasker. Alt for at du skal lære og 
+                        bli inspirert av landets beste skrivementorer. Enkelte av mandagene redigerer 
+                        også rektor innsendte tekster, live og direkte, så du lærer å bearbeide eget manus.
                     </p>
 
                     <a href="{{ route('front.course.show', 17) }}" class="btn btn-red">

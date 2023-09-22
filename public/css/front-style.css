@@ -9216,6 +9216,16 @@ textarea.form-control {
         top: 270px;
     }
 
+    .front-page-new .online-courses-row .top-container .details {
+        position: unset;
+        margin-top: 50px;
+        width: auto;
+    }
+
+    .front-page-new .online-courses-row .bottom-container {
+        margin-top: 50px;
+    }
+
     .professional-feedback-wrapper img {
         margin-bottom: 20px;
         height: 150px;
@@ -13927,6 +13937,10 @@ footer .copyright {
 
     .front-page-new .popular-course-wrapper .courses-container .card-header {
         height: 270px;
+    }
+    
+    .front-page-new .online-courses-row .inline-course-img {
+        width: 100%;
     }
 
     .front-page-new #poem-wrapper {
