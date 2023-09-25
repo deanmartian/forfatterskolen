@@ -1,6 +1,6 @@
 <nav id="learnerNav" class="navbar navbar-light">
     <a class="navbar-brand" href="javascript:void(0)" style="cursor: default">{{--{{url('')}}--}}
-        <img data-src="https://www.forfatterskolen.no/images-new/logo2.png">
+        <img data-src="https://www.forfatterskolen.no/images-new/logo11.png">
     </a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav">

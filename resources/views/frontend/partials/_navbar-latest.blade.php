@@ -2,7 +2,7 @@
     <div class="container">
         <!-- Logo or Brand -->
         <a class="navbar-brand" href="{{ route('front.home') }}">
-            <img src="{{asset('images-new/logo2.png')}}" alt="Your Logo">
+            <img src="{{asset('images-new/logo11.png')}}" alt="Your Logo">
         </a>
 
         <!-- Toggler/collapsibe Button -->
