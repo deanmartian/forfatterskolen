@@ -58,6 +58,7 @@ Route::group([
         Route::get('/children','HomeController@children')->name('front.children');
         Route::view('/subscribe-success', 'frontend.subscribe-success')->name('front.subscribe-success'); // Homepage
         Route::get('/shop-manuscript', 'ShopManuscriptController@index')->name('front.shop-manuscript.index'); // Shop Manuscript Listing
+        Route::get('/shop-manuscript/export-single-bought', 'ShopManuscriptController@exportSingleBought'); // Shop Manuscript Listing
         Route::get('/blog', 'HomeController@blog')->name('front.blog'); // Blog Page
         Route::get('/blog/{id}', 'HomeController@readBlog')->name('front.read-blog'); // Blog Page
         Route::get('/publishing', 'HomeController@publishing')->name('front.publishing'); // Forlag page
@@ -67,6 +68,7 @@ Route::group([
         Route::post('/coaching-timer/checkout/{plan}', 'HomeController@coachingTimerCheckout')->name('front.coaching-timer-checkout'); // Coaching Timer Page
         Route::post('/coaching-timer', 'HomeController@coachingTimer')->name('front.coaching-timer'); // Coaching Timer Page
         Route::post('coaching-timer/{plan}/place-order', 'HomeController@coachingTimerPlaceOrder')->name('front.coaching-timer-place-order'); // Coaching Timer Page
+        Route::get('/coaching-timer/export-single-bought', 'HomeController@exportSingleBoughtCoaching');
         Route::get('/vipps-order-status/{orderId}', 'HomeController@checkVippsOrderStatus');
         Route::get('/chat', 'ChatController@index');
         Route::post('/chat', 'ChatController@sendMessage');

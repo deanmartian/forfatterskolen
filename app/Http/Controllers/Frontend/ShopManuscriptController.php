@@ -21,6 +21,7 @@ use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
 use App\User;
 use App\Address;
+use App\Exports\GenericExport;
 use App\ShopManuscript;
 use App\PaymentMode;
 use App\PaymentPlan;
@@ -1274,6 +1275,23 @@ Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">po
             Session::forget('wordcount');
             return redirect()->route('front.free-manuscript.success');
         endif;
+    }
+
+    public function exportSingleBought()
+    {
+        $manuscriptsTaken = ShopManuscriptsTaken::where('package_shop_manuscripts_id', 0)->get();
+        $userList = [];
+        foreach($manuscriptsTaken as $manu) {
+            $userList[] = [
+                'name' => $manu->user->full_name,
+                'email' => $manu->user->email,
+                'date' => FrontendHelpers::formatDate($manu->created_at)
+            ];
+        }
+
+        $headers = ['name', 'email', 'date'];
+        $excel = \App::make('excel');
+        return $excel->download(new GenericExport($userList, $headers), 'Learner with single shop manuscripts.xlsx');
     }
 
     function readWord($filename) {

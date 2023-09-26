@@ -60,6 +60,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Course;
+use App\Exports\GenericExport;
 use App\FreeCourse;
 use App\Package;
 use App\Faq;
@@ -1038,6 +1039,24 @@ class HomeController extends Controller
         endif;
 
         return redirect()->to('/thank-you'); //route('front.simple.thankyou') not working if route name is used
+    }
+
+    public function exportSingleBoughtCoaching()
+    {
+        $coaching = CoachingTimerManuscript::where('payment_price', '>', 0)->get();
+        
+        $userList = [];
+        foreach($coaching as $coach) {
+            $userList[] = [
+                'name' => $coach->user->full_name,
+                'email' => $coach->user->email,
+                'date' => FrontendHelpers::formatDate($coach->created_at)
+            ];
+        }
+        
+        $headers = ['name', 'email', 'date'];
+        $excel = \App::make('excel');
+        return $excel->download(new GenericExport($userList, $headers), 'Learner with single coaching time.xlsx');
     }
 
     /**
