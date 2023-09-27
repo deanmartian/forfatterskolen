@@ -76,7 +76,7 @@ class AssignmentController extends Controller
 
     	$section = 'assignments';
     	if( $assignment->course->id == $course->id ) :
-            $assignmentManuscripts = $assignment->manuscripts()
+            $assignmentManuscripts = $assignment->notFinishedManuscripts()
                 ->orderByRaw("editor_id = 0 DESC")
                 ->orderByRaw("editor_expected_finish IS NULL, editor_expected_finish ASC")
                 ->get();
@@ -219,6 +219,7 @@ class AssignmentController extends Controller
                 'show_join_group_question' => isset($request->show_join_group_question) ? 1 : 0,
                 'send_letter_to_editor' => isset($request->send_letter_to_editor) ? 1 : 0,
                 'check_max_words' => isset($request->check_max_words) ? 1 : 0,
+                'assigned_editor' => !isset($request->check_max_words) ? $request->assigned_editor : NULL,
                 'editor_expected_finish' => $request->editor_expected_finish,
                 'parent' => $request->linked_assignment ? 'assignment' : NULL,
                 'parent_id' => $request->linked_assignment,
@@ -263,6 +264,7 @@ class AssignmentController extends Controller
             $assignment->show_join_group_question = isset($request->show_join_group_question) ? 1 : 0;
             $assignment->send_letter_to_editor = isset($request->send_letter_to_editor) ? 1 : 0;
             $assignment->check_max_words = isset($request->check_max_words) ? 1 : 0;
+            $assignment->assigned_editor = !isset($request->check_max_words) ? $request->assigned_editor : NULL;
             $assignment->editor_expected_finish = $request->editor_expected_finish;
             $assignment->expected_finish = $request->expected_finish;
 
@@ -287,6 +289,12 @@ class AssignmentController extends Controller
             $assignment->parent = $request->linked_assignment ? 'assignment' : NULL;
             $assignment->parent_id = $request->linked_assignment;
             $assignment->save();
+
+            if (!isset($request->check_max_words) && $request->assigned_editor) {
+                $assignment->manuscripts()->update(
+                    ['editor_id' => $request->assigned_editor]
+                );
+            }
 
     	endif;
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Assignment updatd successfully.'),

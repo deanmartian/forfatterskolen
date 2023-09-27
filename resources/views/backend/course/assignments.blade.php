@@ -152,6 +152,18 @@
 					checked>
 				</div>
 
+				<div class="form-group hidden" id="assigned-editor-container">
+					<label>Assigned Editor</label> <br>
+					<select name="assigned_editor" id="" class="form-control">
+						<option value="" disabled selected="">- Select Editor -</option>
+						@foreach(AdminHelpers::editorList() as $editor)
+							<option value="{{ $editor->id }}">
+								{{ $editor->full_name }}
+							</option>
+						@endforeach
+					</select>
+				</div>
+
 				<div class="form-group">
 					<label>{{ trans('site.send-letter-to-editor') }}</label> <br>
 					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small" name="send_letter_to_editor">
@@ -182,6 +194,10 @@
 
         $("[name=for_editor]").change(function(){
             $("#editor_manu_gen_count").toggleClass('hide');
+		});
+
+		$("[name=check_max_words]").change(function(){
+			$("#assigned-editor-container").toggleClass('hidden');
 		});
 	</script>
 @stop

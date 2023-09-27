@@ -962,6 +962,10 @@ class LearnerController extends Controller
 
             endif;
 
+            //assigned_editor is used in check_max_words
+            $editor_id = $assignment->editor_id ? $assignment->editor_id 
+                : ($assignment->assigned_editor ? $assignment->assigned_editor : 0);
+
             $submittedManuscript = AssignmentManuscript::create([
                 'assignment_id' => $assignment->id,
                 'user_id' => Auth::user()->id,
@@ -971,7 +975,7 @@ class LearnerController extends Controller
                 'manu_type' => $request->manu_type,
                 'join_group' => $join_group,
                 'letter_to_editor' => $letterToEditor,
-                'editor_id' => $assignment->editor_id ? $assignment->editor_id : 0
+                'editor_id' => $editor_id
             ]);
             Log::create([
                 'activity' => '<strong>'.Auth::user()->full_name.'</strong> submitted a manuscript for assignment '.$assignment->title

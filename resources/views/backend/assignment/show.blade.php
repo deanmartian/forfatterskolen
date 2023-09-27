@@ -27,7 +27,8 @@
 			<a href="{{ route('admin.course.show', $course->id) }}?section=assignments" class="btn btn-sm btn-default margin-bottom" ><i class="fa fa-angle-left"></i> {{ trans('site.all-assignments') }}</a>
 
 			<div class="pull-right">
-				<button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#editAssignmentModal"><i class="fa fa-pencil"></i></button>
+				<button type="button" class="btn btn-sm btn-info editAssignmentBtn" 
+				data-toggle="modal" data-target="#editAssignmentModal"><i class="fa fa-pencil"></i></button>
 				<button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteAssignmentModal"><i class="fa fa-trash"></i></button>
 			</div>
 			
@@ -876,6 +877,19 @@
 					@if ($assignment->check_max_words) checked @endif>
 				</div>
 
+				<div class="form-group" id="assigned-editor-container">
+					<label>Assigned Editor</label> <br>
+					<select name="assigned_editor" id="" class="form-control">
+						<option value="" disabled selected="">- Select Editor -</option>
+						@foreach(AdminHelpers::editorList() as $editor)
+							<option value="{{ $editor->id }}" 
+								@if($editor->id == $assignment->assigned_editor) selected @endif>
+								{{ $editor->full_name }}
+							</option>
+						@endforeach
+					</select>
+				</div>
+
 				<div class="form-group">
 					<label>{{ trans('site.send-letter-to-editor') }}</label> <br>
 					<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small" name="send_letter_to_editor"
@@ -1294,6 +1308,23 @@
 @section('scripts')
 	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
+
+	$(".editAssignmentBtn").click(function(){
+		let check_max_words = "{{ $assignment->check_max_words }}";
+		
+		if (check_max_words == 0) {
+			console.log("inside if");
+			$("#assigned-editor-container").removeClass('hidden');
+		} else {
+			$("#assigned-editor-container").addClass('hidden');
+		}
+	});
+
+	$("[name=check_max_words]").change(function(){
+			//if ($(this).prop('checked')) {
+				$("#assigned-editor-container").toggleClass('hidden');
+			//}
+		});
 
 	$('.setGradeBtn').click(function(){
 		var form = $('#setGradeModal form');

@@ -1,8 +1,15 @@
 <nav id="navbar-latest" class="navbar navbar-expand-md">
     <div class="container">
         <!-- Logo or Brand -->
-        <a class="navbar-brand" href="{{ route('front.home') }}">
-            <img src="{{asset('images-new/logo11.png')}}" alt="Your Logo">
+        <a class="navbar-brand" href="{{ route('front.home') }}" style="position: relative">
+            {{-- <img src="{{asset('images-new/logo11.png')}}" alt="Your Logo"> --}}
+            <svg xmlns="http://www.w3.org/2000/svg" width="43" height="41" viewBox="0 0 43 41" fill="none">
+                <path d="M0 0L21.5 2.90538V41L0 36.6077V0Z" fill="#E73946"/>
+                <path d="M43 0L21.5 2.90612V40.9983L43 36.3185V0Z" fill="#852636"/>
+            </svg>
+            <span>
+                FORFATTERSKOLEN
+            </span>
         </a>
 
         <!-- Toggler/collapsibe Button -->
