@@ -49,61 +49,68 @@
 
 	<div class="course-single-page">
 		<div class="header" data-bg="https://www.forfatterskolen.no/images-new/course-single-bg.png">
-			<div class="container text-center">
-				<h1 class="position-relative" style="z-index:1;">{{$course->title}}</h1>
-				@if (!$course->is_free && !$course->hide_price)
-					<span class="course-price position-relative">
-						<?php
-							$price = \App\Http\FrontendHelpers::currencyFormat($isBetween && $course->packagesIsShow[0]->full_payment_sale_price
-                                ? $course->packagesIsShow[0]->full_payment_sale_price
-                                : $course->packagesIsShow[0]->full_payment_price);
-						?>
-						{{ str_replace('_price_', $price, trans('site.front.our-course.show.price')) }}
-					</span>
-				@endif
+			<div class="container">
+				<div class="row">
+					<div class="col-md-6 details">
+						<h1 class="position-relative" style="z-index:1;">{{$course->title}}</h1>
 
-				<div class="sub-header">
-					@if(Auth::guest())
-						@if ($course->for_sale && !$course->is_free && !$course->hide_price)
-							<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn buy-course">
-								{{ trans('site.front.our-course.show.buy-course') }}
-							</a>
+						<p>
+							{{ trans('site.front.our-course.show.description') }}
+						</p>
+
+						@if (!$course->is_free && !$course->hide_price)
+							<span class="course-price position-relative">
+								<?php
+									$price = \App\Http\FrontendHelpers::currencyFormat($isBetween && $course->packagesIsShow[0]->full_payment_sale_price
+										? $course->packagesIsShow[0]->full_payment_sale_price
+										: $course->packagesIsShow[0]->full_payment_price);
+								?>
+								{{ str_replace('_price_', $price, trans('site.front.our-course.show.price')) }}
+							</span>
 						@endif
-					@else
-                        <?php
-                        $course_packages = $course->allPackages->pluck('id')->toArray();
-                        $courseTaken = App\CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
-                        ?>
-						@if($courseTaken)
-							<a href="{{route('learner.course.show', ['id' => $courseTaken->id])}}" class="btn buy-course">
-								{{ trans('site.front.our-course.show.continue-course') }}
-							</a>
-						@else
+
+						@if(Auth::guest())
 							@if ($course->for_sale && !$course->is_free && !$course->hide_price)
-									<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn buy-course">
-										{{ trans('site.front.our-course.show.buy-course') }}
-									</a>
+								<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn buy-course">
+									{{ trans('site.front.our-course.show.buy-course') }}
+								</a>
+							@endif
+						@else
+							<?php
+							$course_packages = $course->allPackages->pluck('id')->toArray();
+							$courseTaken = App\CoursesTaken::where('user_id', Auth::user()->id)->whereIn('package_id', $course_packages)->first();
+							?>
+							@if($courseTaken)
+								<a href="{{route('learner.course.show', ['id' => $courseTaken->id])}}" class="btn buy-course">
+									{{ trans('site.front.our-course.show.continue-course') }}
+								</a>
+							@else
+								@if ($course->for_sale && !$course->is_free && !$course->hide_price)
+										<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn buy-course">
+											{{ trans('site.front.our-course.show.buy-course') }}
+										</a>
+								@endif
 							@endif
 						@endif
-					@endif
-					{{ trans('site.front.our-course.show.description') }}
+					</div> <!-- end col-md-6 -->
+					<div class="col-md-6">
+						@if ($course->start_date)
+							<div class="date-container">
+								<h2>
+									{{ $start_date->format('d') }}
+								</h2>
+								<h3>
+									{{ ucwords(\App\Http\FrontendHelpers::convertMonthLanguage($start_date->format('n'))) }}
+								</h3>
+							</div>
+						@endif
+					</div>
 				</div>
 			</div>
 		</div> <!-- end header -->
 
 		<div class="container single-content">
 			<div class="row course-image-row" data-bg="https://www.forfatterskolen.no/{{$course->course_image}}">
-				@if ($course->start_date)
-					<div class="date-container">
-						<div class="h1 mt-0">
-							{{ $start_date->format('d') }}
-						</div>
-						<h2>
-							{{ strtoupper($start_date->format('M')) }}
-						</h2>
-					</div>
-				@endif
-
 				@if($course->photographer)
 					<div class="photographer-container">
 						<div class="h1" style="margin-top: 0">{{ trans('site.front.our-course.show.photo') }}: {{ $course->photographer }}</div>
@@ -251,78 +258,77 @@
 					<div class="tab-content course-tabs pt-0">
 
 						<div id="overview" class="tab-pane fade in active" role="tabpanel">
-							{!! nl2br($course->description) !!}
-							@if (!$course->is_free && !$course->hide_price)
-                                <?php
-                                $price = \App\Http\FrontendHelpers::currencyFormat($isBetween && $course->packagesIsShow[0]->full_payment_sale_price
-                                    ? $course->packagesIsShow[0]->full_payment_sale_price
-                                    : $course->packagesIsShow[0]->full_payment_price);
-                                ?>
-								<p class="course-price">
-									{{ str_replace('_price_', $price, trans('site.front.our-course.show.price')) }}
-								</p>
-							@endif
+							<div class="row">
+								<div class="col-md-8">
+									<div class="left-container">
+										{!! $course->description !!}
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="right-container">
+										<h2>
+											{{ $course->title }}
+										</h2>
+
+										<hr>
+
+										<img src="https://www.forfatterskolen.no/{{$course->course_image}}" alt="course-image"
+										class="w-100">
+
+										@if (!$course->is_free && !$course->hide_price)
+											<?php
+											$price = \App\Http\FrontendHelpers::currencyFormat($isBetween && $course->packagesIsShow[0]->full_payment_sale_price
+												? $course->packagesIsShow[0]->full_payment_sale_price
+												: $course->packagesIsShow[0]->full_payment_price);
+											?>
+											<p class="course-price">
+												{{ str_replace('_price_', $price, trans('site.front.our-course.show.price')) }}
+											</p>
+										@endif
+									</div>
+								</div>
+							</div>
 						</div> <!-- end overview -->
 
 						@if (!$course->is_free)
 							<div id="packages" class="tab-pane fade" role="tabpanel">
-								@foreach($course->packages()->where('is_show', 1)->get() as $package)
-                                    <?php
-                                    $from 		= \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
-                                    $to 			= \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
-                                    $isBetween 	= (($today >= $from) && ($today <= $to)) ? 1 : 0;
-                                    ?>
+								<div class="row">
+									@foreach($course->packages()->where('is_show', 1)->get() as $package)
+										<?php
+											$from 		= \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
+											$to 			= \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
+											$isBetween 	= (($today >= $from) && ($today <= $to)) ? 1 : 0;
+										?>
+										<div class="col-md-4 package-details-new {{ $package->course_type === 2 ? 'active' : '' }}">
+											<h3>
+												{{ $package->variation }}
+											</h3>
 
-									@if ($isBetween && $package->full_payment_sale_price)
-										<h4><i class="img-icon"></i>{{$package->variation}} -
-											<span class="line-through margin-right-5">
-												{{FrontendHelpers::currencyFormat($package->full_payment_price)}}
-											</span>
-											<span class="font-red">
-												Salg {{FrontendHelpers::currencyFormat($package->full_payment_sale_price)}}
-											</span>
-										</h4>
-									@else
-										<h4><i class="img-icon"></i>{{$package->variation}}-
-											{{FrontendHelpers::currencyFormat($package->full_payment_price)}}</h4>
-									@endif
-									<div class="package-details">
-										<p>{!! nl2br($package->description) !!}</p>
-										@if( $package->shop_manuscripts->count() > 0 ||
-                                            $package->included_courses->count() > 0 ||
-                                            $package->workshops > 0 || $package->has_coaching
-                                            )
-											<strong>{{ trans('site.front.our-course.show.includes') }}</strong><br />
-											@if( $package->shop_manuscripts->count() > 0 )
-												@foreach( $package->shop_manuscripts as $shop_manuscripts )
-													{{ $shop_manuscripts->shop_manuscript->title }} <br />
-												@endforeach
-											@endif
+											<h2>
+												@if ($isBetween && $package->full_payment_sale_price)
+													<span>
+														{{FrontendHelpers::currencyFormat($package->full_payment_sale_price)}}
+													</span>
+													<strike class="line-through margin-right-5">
+														{{FrontendHelpers::currencyFormat($package->full_payment_price)}}
+													</strike>
+												@else
+													{{FrontendHelpers::currencyFormat($package->full_payment_price)}}
+												@endif
+											</h2>
 
-											@if( $package->workshops )
-												{{ $package->workshops }}
-												{{ trans('site.front.our-course.show.workshops') }} <br />
-											@endif
+											<a class="btn site-btn-global" href="{{ route($checkoutRoute,
+												[$course->id,'package' => $package->id]) }}">
+												{{ trans('site.front.buy') }}
+											</a>
 
-											@if( $package->included_courses->count() > 0 )
-												@foreach( $package->included_courses as $included_course )
-													{{ $included_course->included_package->course->title }} ({{ $included_course->included_package->variation }}) <br />
-												@endforeach
-											@endif
+											<div class="description-container">
+												{!! ($package->description_with_check) !!}
+											</div>
+										</div>
+									@endforeach
+								</div>
 
-											@if ($package->has_coaching)
-												{{ str_replace('_time_',
-												\App\Http\FrontendHelpers::getCoachingTimerPlanType($package->has_coaching),
-												trans('site.front.our-course.show.coaching-session')) }}
-                                                <br>
-											@endif
-										@endif
-										<a class="btn site-btn-global mt-2" href="{{ route($checkoutRoute,
-										[$course->id,'package' => $package->id]) }}">
-											{{ trans('site.front.buy') }}
-										</a>
-									</div>
-								@endforeach
 							</div> <!-- end packages -->
 						@endif
 
@@ -427,17 +433,23 @@
 									</div> <!-- end testimonials-carouse -->
 								</div> <!-- end testimonial-container -->
 							@else
-								@if ($course->lesson_kursplan()->get()->count())
-									{!! $course->lesson_kursplan()->get()[0]->content !!}
-								@else
-									{!! nl2br($course->course_plan) !!}
-								@endif
+								<div class="row">
+									<div class="col-md-12">
+										<div class="left-container">
+											@if ($course->lesson_kursplan()->get()->count())
+												{!! $course->lesson_kursplan()->get()[0]->content !!}
+											@else
+												{!! nl2br($course->course_plan) !!}
+											@endif
 
-								@if ($course->course_plan_data)
-									<button class="btn buy-btn" data-toggle="modal" data-target="#coursePlanDataModal">
-										View Schedule
-									</button>
-								@endif
+											@if ($course->course_plan_data)
+												<button class="btn buy-btn" data-toggle="modal" data-target="#coursePlanDataModal">
+													View Schedule
+												</button>
+											@endif
+										</div>
+									</div> <!-- end col-md-8 -->
+								</div> <!-- end row -->
 							@endif
 						</div> <!-- end kursplan -->
 
