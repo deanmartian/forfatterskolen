@@ -281,9 +281,9 @@
 												? $course->packagesIsShow[0]->full_payment_sale_price
 												: $course->packagesIsShow[0]->full_payment_price);
 											?>
-											<p class="course-price">
+											<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn course-price w-100">
 												{{ str_replace('_price_', $price, trans('site.front.our-course.show.price')) }}
-											</p>
+											</a>
 										@endif
 									</div>
 								</div>
