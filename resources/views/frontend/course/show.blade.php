@@ -243,7 +243,7 @@
 						<li class="nav-item">
 							<a data-toggle="tab" href="#kursplan" class="nav-link" role="tab">
 								<span>{{ $course->id == 17 ? trans('site.front.our-course.show.scheduled-webinars') :
-								trans('site.front.our-course.show.course-plan') }}</span> <!-- check if webinar-pakke -->
+								'Kursplan' }}</span> <!-- check if webinar-pakke -->
 							</a>
 						</li>
 						@if($course->testimonials->count())
