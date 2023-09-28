@@ -565,9 +565,11 @@
 														{{ $assignment->description }}
 													</p>
 
-													<p>
-														{{ trans('site.max-words') }}: {{ $assignment->max_words }}
-													</p>
+													@if ($assignment->check_max_words)
+														<p>
+															{{ trans('site.max-words') }}: {{ $assignment->max_words }}
+														</p>
+													@endif
 
 													<span class="font-barlow-regular">{{ trans('site.learner.deadline') }}:</span>
 													<span>{{ \App\Http\FrontendHelpers::formatDateTimeNor($submission_date_formatted) }}</span>
