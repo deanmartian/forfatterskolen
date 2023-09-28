@@ -37,19 +37,19 @@
 <div class="col-sm-12 dashboard-left">
     <div class="row">
         <div class="col-sm-12 webinar-list-container">
-            @foreach($assignedWebinar as $webinar)
+            @foreach($webinars as $webinar)
                 <div class="col-md-4">
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <div class="webinar-img">
-                                <img src="{{ $webinar->webinar->image ? $webinar->webinar->image : asset('images/no_image.png') }}">
+                                <img src="{{ $webinar->image ? $webinar->image : asset('images/no_image.png') }}">
                             </div>
                             <div class="content">
-                                <i class="fa fa-book" aria-hidden="true"></i>&nbsp;{{ trans('site.front.course-text') }}: <span class="course-title">{{ $webinar->webinar->course->title }}</span><br>
+                                <i class="fa fa-book" aria-hidden="true"></i>&nbsp;{{ trans('site.front.course-text') }}: <span class="course-title">{{ $webinar->course_title }}</span><br>
                                 <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp; 
                                 {{ str_replace(['_date_', '_time_'],
-                                    [\Carbon\Carbon::parse($webinar->webinar->start_date)->format('d.m.Y'),
-                                    \Carbon\Carbon::parse($webinar->webinar->start_date)->format('H:i')],
+                                    [\Carbon\Carbon::parse($webinar->start_date)->format('d.m.Y'),
+                                    \Carbon\Carbon::parse($webinar->start_date)->format('H:i')],
                                     trans('site.front.our-course.show.start-date')) }} <br>
                                 <i class="fa fa-link" aria-hidden="true"></i>&nbsp;{{ trans('site.presenter-url') }}&nbsp;<a href="{{ $webinar->presenter_url }}">{{ $webinar->presenter_url }}</a>
                             </div>
