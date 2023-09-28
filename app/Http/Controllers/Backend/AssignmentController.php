@@ -76,7 +76,7 @@ class AssignmentController extends Controller
 
     	$section = 'assignments';
     	if( $assignment->course->id == $course->id ) :
-            $assignmentManuscripts = $assignment->notFinishedManuscripts()
+            $assignmentManuscripts = $assignment->manuscripts()
                 ->orderByRaw("editor_id = 0 DESC")
                 ->orderByRaw("editor_expected_finish IS NULL, editor_expected_finish ASC")
                 ->get();

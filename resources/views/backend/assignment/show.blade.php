@@ -92,7 +92,7 @@
 					<tbody>
 						@foreach( $assignmentManuscripts as $manuscript )
 						<?php $extension = explode('.', basename($manuscript->filename)); ?>
-						<tr>
+						<tr @if($manuscript->status != 0 ) style="background-color: #e6ffe6" @endif>
 							<td>
 								@if( end($extension) == 'pdf' || end($extension) == 'odt' )
 								<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">{{ basename($manuscript->filename) }}</a>
