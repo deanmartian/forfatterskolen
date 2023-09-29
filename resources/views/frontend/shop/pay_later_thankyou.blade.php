@@ -5,7 +5,8 @@
 @stop
 
 @section('content')
-	<div class="thank-you-page" data-bg="https://www.forfatterskolen.no/images-new/thankyou-bg.png">
+{{-- data-bg="https://www.forfatterskolen.no/images-new/thankyou-bg.png" --}}
+	<div class="thank-you-page" >
 		<div class="container">
 			<div class="row">
 
@@ -17,7 +18,7 @@
 				?>
 
 				<div class="col-sm-6 left-container">
-					<img src="{{ asset('images-new/thumb-icon.png') }}" alt="" class="thumb">
+					{{-- <img src="{{ asset('images-new/thumb-icon.png') }}" alt="" class="thumb"> --}}
 					<h1>{{ $header }}</h1>
 					<p>
 						{!! $message !!}
@@ -26,7 +27,7 @@
 				</div>
 
 				<div class="col-sm-6 right-container">
-					<img src="{{ asset('images-new/thankyou-hero.jpg') }}" alt="">
+					<img src="{{ asset('images-new/thankyou-hero.png') }}" alt="">
 				</div>
 			</div>
 		</div>
