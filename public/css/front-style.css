@@ -1480,7 +1480,15 @@ margin-right: 5px;
     background-size: 100% 92%;
     background-repeat: no-repeat;
     color: #fff;
-    padding: 100px 0 120px 0;
+    padding: 20px 0 120px 0;/* 100px 0 120px 0 */
+}
+
+.thank-you-page img {
+    margin-bottom: 30px;
+}
+
+.thank-you-page .left-container * {
+    color: #000000;
 }
 
 .thank-you-page .thumb {
@@ -1488,26 +1496,35 @@ margin-right: 5px;
 }
 
 .thank-you-page h1 {
-    font-size: 34px;
-    font-family: "Barlow Regular", sans serif;
-    margin: 40px 0 20px 0;
+    font-size: 90px;
+    font-family: 'Inter';
+    font-weight: bold;
 }
 
 .thank-you-page p {
-    font-family: "Barlow Regular", sans serif;
-    font-size: 19px;
+    font-family: 'Inter';
+    font-size: 22px;
     margin-bottom: 30px;
     text-align: justify;
+    margin-top: 30px;
 }
 
 .thank-you-page .buy-btn {
     border: 1px solid #fff;
-    color: #fff;
     padding: 7px 20px;
 }
 
+.thank-you-page .buy-btn {
+    background-color: #E93746;
+    border-radius: 10px;
+    color: #ffffff;
+    font-family: 'Inter';
+    padding: 10px 20px;
+}
+
 .thank-you-page .buy-btn:after {
-    background-image: url(../images-new/left-arrow.png);
+    background-image: none;/* url(../images-new/left-arrow.png); */
+    display: none;
 }
 
 .thank-you-page .buy-btn:hover {
@@ -1528,13 +1545,7 @@ margin-right: 5px;
 }
 
 .thank-you-page .right-container {
-    padding-top: 70px;
     text-align: center;
-}
-
-.thank-you-page .right-container img {
-    filter: brightness(70%); /* darken the image */
-    height: 530px;
 }
 
 /* end thank you page */
@@ -7755,16 +7766,18 @@ textarea.form-control {
     }
 
     .thank-you-page {
-        background-size: 100% 94%;
-        padding: 60px 0 120px 0;
+        /* background-size: 100% 94%; */
+        padding: 20px 0 60px 0;/* 60px 0 120px 0; */
+    }
+
+    .thank-you-page h1 {
+        font-size: 70px;
+        font-family: 'Inter';
+        font-weight: bold;
     }
 
     .thank-you-page .left-container {
         padding-left: 30px;
-    }
-
-    .thank-you-page .right-container img {
-        height: 480px;
     }
 
     .course-page .header {
@@ -8242,7 +8255,7 @@ textarea.form-control {
     } */
 
     .navbar>.container .navbar-brand {
-        margin-left: -90px;
+        margin-left: -71px; /* -90px; */
     }
 
     .front-page-new {
@@ -8601,7 +8614,7 @@ textarea.form-control {
     }
 
     .thank-you-page {
-        padding: 40px 0 120px 0;
+        padding: 20px 0 60px 0;
     }
 
     .thank-you-page .thumb {
@@ -8617,8 +8630,8 @@ textarea.form-control {
         font-size: 17px;
     }
 
-    .thank-you-page .right-container img {
-        height: 370px;
+    .thank-you-page .buy-btn {
+        font-size: 15px;
     }
 
     .course-page .header {
@@ -9947,7 +9960,7 @@ textarea.form-control {
     }
 
     .thank-you-page h1 {
-        font-size: 27px;
+        font-size: 30px;
         margin: 20px 0 15px 0;
     }
 
@@ -9958,12 +9971,12 @@ textarea.form-control {
     }
 
     .thank-you-page p {
-        font-size: 16px;
+        font-size: 15px;
         margin-bottom: 15px;
     }
 
     .thank-you-page .buy-btn {
-        font-size: 15px;
+        font-size: 14px;
     }
 
     .course-page {
@@ -11352,7 +11365,7 @@ textarea.form-control {
     }
 
     .thank-you-page {
-        background-color: rgba(132, 60, 70, 1);
+        /* background-color: rgba(132, 60, 70, 1); */
         background-image: none;
         padding: 15px 0;
     }
@@ -11367,7 +11380,7 @@ textarea.form-control {
 
     .thank-you-page .right-container img {
         object-fit: cover;
-        height: 450px;
+        height: auto;
         width: 100%;
     }
 
