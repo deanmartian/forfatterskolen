@@ -585,6 +585,20 @@ start today section
     padding: 80px 15px 150px 15px;
 }
 
+.manuscript-page-new * {
+    font-family: 'Inter';
+}
+
+.manuscript-page-new .header {
+    background-image: url(../images-new/shop-manuscript/bg.png);
+    background-size: cover;
+}
+
+.manuscript-page-new h1 {
+    font-size: 36px;
+    font-weight: bold;
+}
+
 .manuscript-page .top-page-container {
     box-shadow: 0 0 22.08px 1.92px rgba(204, 204, 204, 0.3);
     padding: 10px;
@@ -600,20 +614,22 @@ start today section
     background-size: auto 100%;
     background-repeat: no-repeat;
     background-position: right;
-    background-color: #ecf0f4;
+    background-color: #ffffff; /* ecf0f4 */
     height: 460px;
 }
 
 .manuscript-page .second-section .details {
     background-color: #fff;
-    box-shadow: 0 0 14.72px 1.28px rgba(204, 204, 204, 0.37);
-    padding: 40px 60px;
+    border-radius: 24px;
+    box-shadow: 35px 35px 100px 2px rgba(0, 0, 0, 0.13);
+    /* box-shadow: 0 0 14.72px 1.28px rgba(204, 204, 204, 0.37); */
+    padding: 40px;
     transform: translate(0, -19%);
 }
 
 .manuscript-page .second-section .title {
-    font-family: "Barlow Light", sans serif;
-    font-size: 42px;
+    font-size: 40px;
+    font-weight: bold;
 }
 
 .manuscript-page .second-section p {
@@ -622,20 +638,67 @@ start today section
 
 .manuscript-page .third-section {
     /*background-image: url(../images-new/notebook-pen.png);*/
-    background-size: auto 75%;
+    /* background-size: auto 75%;
     background-repeat: no-repeat;
     background-color: #eeeeeb;
     background-position-x: 20%;
-    background-position-y: 50px;
+    background-position-y: 50px; */
     height: 600px;
+    margin-top: 150px;
 }
 
-.manuscript-page .third-section .details {
-    padding: 80px 15px;
+.manuscript-page .third-section .left-container img {
+    height: 500px;
+    object-fit: contain;
 }
+
 
 .manuscript-page .third-section .title {
-    font-size: 26px;
+    font-size: 36px;
+    font-weight: bold;
+}
+
+.file-upload-label {
+    width: 100%;
+}
+
+.file-upload {
+    border: 2px dashed #7E7E7E;
+    border-radius: 24px;
+    padding: 20px;
+    min-height: 125px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+  
+.file-upload-text {
+    text-align: center; /* Center text horizontally */
+}
+
+.file-upload-btn {
+    font-weight: bold;
+}
+
+.manuscript-page-new .site-btn-global-w-arrow {
+    background-color: #5E1C26 !important;
+    border-radius: 10px;
+    color: #ffffff;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.manuscript-page-new .site-btn-global-w-arrow:hover {
+    background-color: #852635 !important;
+}
+
+.manuscript-page-new .site-btn-global-w-arrow::after {
+    background-image: none;
+}
+
+.manuscript-page-new .site-btn-global-w-arrow img {
+    margin-left: 10px;
 }
 
 .manuscript-page .third-section .instruction {
@@ -648,26 +711,125 @@ start today section
     font-weight: normal;
 }
 
+.manuscript-page .third-section .price-increase-note {
+    margin-top: 20px;
+}
+
 .manuscript-page .form-control {
     font-size: 1.5rem;
     height: calc(4.25rem + 2px);
 }
 
 .manuscript-page .fourth-section {
-    background-color: #f9f8f8;
-    height: 540px;
+    /* background-color: #f9f8f8; */
+    padding-top: 100px;
+    padding-bottom: 180px;
+    /* height: 540px; */
 }
 
 .manuscript-page .carousel {
     transform: translate(0, -90px);
 }
 
-.manuscript-page .carousel-indicators li{
+.manuscript-page-new .carousel {
+    transform: none;
+}
+
+.manuscript-page-new .carousel .panel-default {
+    border: 1px solid #EEEEEE;
+    box-shadow: 0 4px 4px 0 rgb(0, 0, 0, 0.25);
+    border-radius: 10px;
+    padding: 30px 15px;
+}
+
+.manuscript-page-new .carousel .panel-default:hover {
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.02), 
+        0px 10px 8px 0px rgba(0, 0, 0, 0.03), 
+        0px 10px 16px 0px rgba(0, 0, 0, 0.08), 
+        0px 40px 32px 0px rgba(0, 0, 0, 0.05), 
+        0px 80px 60px 0px rgba(0, 0, 0, 0.06), 
+        0px 120px 100px 0px rgba(0, 0, 0, 0.07);
+}
+
+.manuscript-page-new .carousel .panel-default:hover img {
+    border-radius: 50%;
+    filter: brightness(0.8);
+}
+
+.manuscript-page-new .carousel .panel-default:hover .buy-btn {
+    background-color: #620000;
+    color: #ffffff;
+}
+
+.manuscript-page-new .carousel .panel-default:hover .buy-btn .fa {
+    color: #ffffff !important;
+}
+
+.manuscript-page-new .carousel .panel-default .panel-header {
+    border-bottom: 2px solid rgb(0, 0, 0, 3%);
+    padding: 10px;
+}
+
+.manuscript-page-new .carousel .panel-default .panel-header h2 {
+    font-size: 35px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.manuscript-page-new .carousel .panel-default .h1 {
+    font-weight: bold;
+    margin-top: 0;
+}
+
+.manuscript-page-new .carousel .panel-default .price {
+    color: #480D00;
+    margin-top: 40px;
+}
+
+.manuscript-page-new .carousel .panel-default p {
+    color: #636363;
+    font-size: 16px;
+    line-height: 25px;
+}
+
+.manuscript-page-new .carousel .panel-default .buy-btn {
+    border: 1px solid #620000;
+    border-radius: 10px;
+    color: #000000;
+    font-family: 'Inter';
+    font-weight: bold;
+    margin-bottom: 0 !important;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.manuscript-page-new .carousel .panel-default .buy-btn:after {
+    background-image: none;
+    display: none;
+}
+
+.manuscript-page-new .carousel .panel-default .buy-btn .fa {
+    color: #000000;
+}
+
+.manuscript-page .carousel-indicators li {
     background-color:red;
 }
+
+.manuscript-page-new .carousel-indicators li {
+    margin-left: 0;
+    margin-right: 10px;
+}
+
 .manuscript-page .carousel-indicators {
     transform: translate(0, 50px);
 }
+
+.manuscript-page-new .carousel-indicators {
+    transform: translate(0, 80px);
+    width: auto;
+}
+
 .manuscript-page .carousel-control-prev-icon {
     background-image: url(../images-new/left-arrow-circle.png);
 }
@@ -838,6 +1000,14 @@ start today section
     width: 80px;
 }
 
+.manuscript-page-new .carousel-indicators li,
+.manuscript-page-new .carousel-indicators .active {
+    border-radius: 50%;
+    margin-right: 10px;
+    height: 25px;
+    width: 25px;
+}
+
 .buy-btn {
     background-color: transparent;
     border: 1px solid #9d515d;
@@ -873,6 +1043,45 @@ start today section
     background-size: cover;
     background-repeat: no-repeat;
     height: auto;
+}
+
+.manuscript-page-new .last-section {
+    background-position: right;
+    padding: 50px;
+}
+
+.manuscript-page-new .last-section .coaching-details {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.manuscript-page-new .last-section .coaching-details img {
+    height: 53px;
+    margin-right: 20px;
+}
+
+.manuscript-page-new .last-section .coaching-details h2 {
+    display: inline-block;
+    color: #ffffff;
+    font-size: 35px;
+    font-weight: bold;
+    margin-bottom: unset;
+}
+
+.manuscript-page-new .last-section a {
+    background-color: #ffffff;
+    color: #000000;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 50px;
+    margin-top: 20px;
+    display: inline-block;
+    border-radius: 10px;
+}
+
+.manuscript-page-new .last-section i {
+    color: #000000;
 }
 
 .manuscript-page .other-services-container {
@@ -8352,6 +8561,10 @@ textarea.form-control {
         height: 500px;
     }
 
+    .manuscript-page .second-section {
+        height: auto;
+    }
+
     .manuscript-page .second-section p {
         font-size: 16px;
     }
@@ -8452,6 +8665,11 @@ textarea.form-control {
 
     .manuscript-page .box-white:not(:last-child) {
         margin-bottom: 30px;
+    }
+
+    .manuscript-page-new .carousel .panel-default .h1 {
+        font-size: 18px;
+        margin-bottom: 10px;
     }
 
     #editorsModal .modal-header {
@@ -9701,6 +9919,19 @@ textarea.form-control {
         height: 500px;
     }
 
+    .manuscript-page-new .third-section {
+        height: auto;
+        margin-top: 0;
+    }
+
+    .manuscript-page .third-section .left-container img {
+        height: 300px;
+    }
+
+    .manuscript-page-new .carousel .panel-default .buy-btn {
+        padding: 10px;
+    }
+
     .manuscript-page .circle {
         height: 85px;
         width: 85px;
@@ -9750,12 +9981,12 @@ textarea.form-control {
     }
 
     .manuscript-page .carousel-indicators {
-        transform: translate(0, 40px);
+        transform: translate(0, 70px);
     }
 
-    .manuscript-page .carousel-indicators li, .manuscript-page .carousel-indicators .active {
+    /* .manuscript-page .carousel-indicators li, .manuscript-page .carousel-indicators .active {
         width: 50px;
-    }
+    } */
 
     .manuscript-page .buy-btn {
         padding: 3px 9px;
@@ -9767,6 +9998,10 @@ textarea.form-control {
 
     .manuscript-page .fourth-section {
         height: auto;
+    }
+
+    .manuscript-page-new .fourth-section {
+        padding-bottom: 100px;
     }
 
     .manuscript-page .box-white {
@@ -11122,12 +11357,16 @@ textarea.form-control {
 
     .manuscript-page .second-section {
         background-image: none;
-        height: 570px;
+        /* height: 570px; */
     }
 
     .manuscript-page .third-section {
         background-image: none;
-        height: 350px;
+        /* height: 350px; */
+    }
+
+    .manuscript-page-new .last-section .coaching-details h2 {
+        font-size: 28px;
     }
 
     .manuscript-page .col-xs-offset-6 {
@@ -12373,16 +12612,20 @@ textarea.form-control {
         height: 209px;
     }
 
-    .manuscript-page .second-section {
+    /* .manuscript-page .second-section {
         height: 590px;
-    }
+    } */
 
-    .manuscript-page .third-section {
+    /* .manuscript-page .third-section {
         height: 390px;
-    }
+    } */
 
     .manuscript-page .third-section .details {
         padding: 65px 15px;
+    }
+
+    .manuscript-page-new .last-section .coaching-details h2 {
+        font-size: 23px;
     }
 
     #editorsModal .modal-body {
@@ -12696,9 +12939,9 @@ textarea.form-control {
         height: 201px;
     }
 
-    .manuscript-page .second-section {
+    /* .manuscript-page .second-section {
         height: 665px;
-    }
+    } */
 
     .manuscript-page .third-section .details {
         padding: 25px 15px;
@@ -12940,12 +13183,20 @@ textarea.form-control {
         height: 179px;
     }
 
-    .manuscript-page .second-section {
+    /* .manuscript-page .second-section {
         height: 735px;
+    } */
+
+    /* .manuscript-page .third-section {
+        height: 410px;
+    } */
+
+    .manuscript-page-new h1 {
+        font-size: 30px;
     }
 
-    .manuscript-page .third-section {
-        height: 410px;
+    .manuscript-page .second-section .title {
+        font-size: 24px;
     }
 
     .publishing-page .page-title {
