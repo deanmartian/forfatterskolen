@@ -58,6 +58,7 @@ Vue.component('VueSlider', VueSlider);
 Vue.component('example', require('./components/Example.vue'));
 Vue.component('take-survey', require('./components/TakeSurvey.vue'));
 Vue.component('svea-checkout', require('./frontend/course/svea-checkout.vue'));
+Vue.component('publishing-list', require('./frontend/components/publishing-list.vue'));
 Vue.component('publishing-service-checkout', require('./frontend/publishing-service/checkout.vue'));
 Vue.component('service-calculator', require('./frontend/publishing-service/service-calculator.vue'));
 Vue.component('course-checkout', require('./frontend/course/checkout.vue'));

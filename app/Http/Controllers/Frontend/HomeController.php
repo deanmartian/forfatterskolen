@@ -276,7 +276,8 @@ class HomeController extends Controller
      */
     public function publishing()
     {
-        $books = PublisherBook::select(['*', \DB::raw('IF(display_order > 0, display_order, 1000000) display_order')])
+        $books = PublisherBook::with('libraries')
+            ->select(['*', \DB::raw('IF(display_order > 0, display_order, 1000000) display_order')])
             ->orderBy('display_order', 'asc')->get();
         return view('frontend.publishing-library', compact('books'));
         //return view('frontend.publishing', compact('books'));

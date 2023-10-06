@@ -1338,6 +1338,92 @@ start today section
     height: 30px;
 }
 
+.publishing-page-new * {
+    font-family: 'Inter';
+}
+
+.publishing-page-new .header {
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: #000000;
+    padding: 70px;
+    /* padding-bottom: 134px; */
+}
+
+.publishing-page-new .header h1 {
+    font-size: 36px;
+    font-weight: bold;
+    line-height: 74px;
+}
+
+.publishing-page-new .header p {
+    font-size: 16px;
+    line-height: 30px;
+    padding: 0 80px;
+}
+
+.publishing-page-new .details-wrapper {
+    padding: 30px 0 100px;
+}
+
+.publishing-page-new .details-wrapper .publishing-list {
+    margin-top: 30px;
+}
+
+.publishing-page-new .details-wrapper .publishing-list .authors-list-container {
+    border: 1px solid #EEEEEE;
+    margin-top: 20px;
+    max-height: 960px;
+    overflow-x: auto;
+}
+
+.publishing-page-new .details-wrapper .publishing-list .authors-list-container .author-list-details {
+    cursor: pointer;
+    display: flex;
+    padding: 10px 0;
+}
+
+.publishing-page-new .details-wrapper .publishing-list .authors-list-container .author-list-details:first-child {
+    padding: 20px 0;
+}
+
+.publishing-page-new .details-wrapper .publishing-list .authors-list-container .author-list-details:hover,
+.publishing-page-new .details-wrapper .publishing-list .authors-list-container .author-list-details.active {
+    border: 1px solid rgb(102,0,0,50%);
+    border-radius: 8px;
+    box-shadow: 0 4px 4px 0 rgb(0,0,0, 25%);
+}
+
+.publishing-page-new .details-wrapper .publishing-list .authors-list-container .author-list-details img {
+    border-radius: 50%;
+    object-fit: cover;
+    height: 63px;
+    width: 63px;
+}
+
+.publishing-page-new .details-wrapper .publishing-list .authors-list-container .author-list-details h4 {
+    font-weight: bold;
+    word-wrap: break-word;
+}
+.publishing-page-new .details-wrapper .publishing-list .description-container div {
+    margin-top: 20px;
+}
+
+.publishing-page-new .details-wrapper .publishing-list .description-container img {
+    max-height: 400px;
+    object-fit: contain;
+}
+
+.publishing-page-new .author-book-list-container h3 {
+    margin-bottom: 20px;
+}
+
+.publishing-page-new .author-book-list-container .author-book-list img {
+    border-radius: 10px;
+    height: 200px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
 /* end publishing page */
 
 /* blog page */
@@ -8735,6 +8821,25 @@ textarea.form-control {
         width: 74%;
     }
 
+    .publishing-page-new .header p {
+        padding: 0;
+    }
+
+    .publishing-page-new .author-book-list-container .author-book-list img {
+        height: auto;
+        width: 100%;
+    }
+
+    .publishing-page-new .details-wrapper .publishing-list .description-container img {
+        max-height: none;
+        width: 100%;
+    }
+
+    .publishing-page-new .details-wrapper .publishing-list .authors-list-container .author-list-details img {
+        height: 43px;
+        width: 43px;
+    }
+
     .publishing-page .left-quote:before {
         margin: 0 40px;
     }
@@ -14834,6 +14939,49 @@ footer .copyright {
 
     .front-page-new .popular-course-wrapper .courses-container [class^='col-']:nth-child(even) {
         padding-left: 0;
+    }
+
+    .publishing-page-new .header {
+        padding: 20px;
+    }
+
+    .publishing-page-new .header h1 {
+        font-size: 35px;
+        line-height: 50px;
+    }
+
+    .publishing-page-new .header p {
+        padding: 0;
+    }
+
+    .publishing-page-new .details-wrapper .publishing-list .authors-list-container {
+        max-height: 500px;
+    }
+
+    .publishing-page-new .details-wrapper .publishing-list .authors-list-container .author-list-details .image-container {
+        text-align: center;
+    }
+
+    .publishing-page-new .details-wrapper .publishing-list .authors-list-container .author-list-details img {
+        height: 73px;
+        width: 73px;
+    }
+    
+    .publishing-page-new .description-container {
+        margin-top: 50px;
+    }
+
+    .publishing-page-new .details-wrapper .publishing-list .description-container img {
+        max-height: 300px;
+    }
+
+    .publishing-page-new .author-book-list-container {
+        margin-top: 50px;
+    }
+
+    .publishing-page-new .author-book-list-container .author-book-list img {
+        height: 300px;
+        width: 100%;
     }
 
     .cta {
