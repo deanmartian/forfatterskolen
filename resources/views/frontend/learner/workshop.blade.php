@@ -370,7 +370,7 @@
 @stop
 
 @section('scripts')
-	<script id="et-iframe" data-version="0.5" data-widgetId="610cd762c02659717c0355e1" src="https://client.consolto.com/iframeApp/iframeApp.js"  ></script>
+	{{-- <script id="et-iframe" data-version="0.5" data-widgetId="610cd762c02659717c0355e1" src="https://client.consolto.com/iframeApp/iframeApp.js"  ></script> --}}
 	<script>
         $(".approveDateBtn").click(function(){
             let action = $(this).data('action');
@@ -418,7 +418,7 @@
             submit_btn.attr('disabled', 'disabled');
         }
 
-        let selectedCoaching = '';
+        /* let selectedCoaching = '';
         $(".consolto-btn").click(function(){
             selectedCoaching = $(this).data('fields');
 		});
@@ -438,7 +438,7 @@
                 });
 			}
 
-        });
+        }); */
 	</script>
 @stop
 
