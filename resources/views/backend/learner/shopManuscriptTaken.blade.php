@@ -104,6 +104,7 @@
 							<b>{{ $shopManuscriptTaken->coaching_time_later ? 'Yes' : 'No' }}</b>
 							<br>
 							{{ trans('site.description') }}: {{ $shopManuscriptTaken->description }}
+							<a href="#" data-target="#editDescriptionModal" data-toggle="modal">Edit</a>
 							<br>
 							@if ($shopManuscriptTaken->synopsis)
 								<a href="{{ route('admin.learner.download_synopsis', $shopManuscriptTaken->id) }}">{{ trans('site.download-synopsis') }}</a>
@@ -426,6 +427,30 @@
 							@if ($shopManuscriptTaken->genre == $type->id) selected @endif> {{ $type->name }} </option>
 						@endforeach
 					</select>
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<div id="editDescriptionModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">{{ trans('site.description') }}</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" 
+					action="{{ route('admin.shop-manuscript-taken.update-description', $shopManuscriptTaken->id) }}"
+					onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<textarea name="description" class="form-control" cols="30" 
+					rows="10">{{ $shopManuscriptTaken->description }}</textarea>
 					<div class="text-right margin-top">
 						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
 					</div>

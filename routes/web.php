@@ -1499,6 +1499,7 @@ Route::group([
         Route::post('/shop-manuscript-taken/{id}/add-feedback', 'ShopManuscriptController@addFeedback')->name('admin.shop-manuscript-taken-feedback.store'); // Store Shop Manuscript Feedback
         Route::post('/shop-manuscript-taken/{id}/delete', 'ShopManuscriptController@destroyFeedback')->name('admin.shop-manuscript-taken-feedback.delete'); // Remove Shop Manuscript Feedback
         Route::post('/shop-manuscript-taken/{id}/update-genre', 'ShopManuscriptController@updateGenre')->name('admin.shop-manuscript-taken.update-genre'); // Remove Shop Manuscript Feedback
+        Route::post('/shop-manuscript-taken/{id}/update-description', 'ShopManuscriptController@updateDescription')->name('admin.shop-manuscript-taken.update-description'); // Remove Shop Manuscript Feedback
         Route::post('/shop-manuscript-taken/{feedback_id}/approve-feedback', 'ShopManuscriptController@approveFeedback')->name('admin.shop-manuscript-taken.approve-feedback');
 
 

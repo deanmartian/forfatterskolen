@@ -467,6 +467,17 @@ class ShopManuscriptController extends Controller
         return redirect()->back();
     }
 
+    public function updateDescription($shopManuscriptTakenID, Request $request)
+    {
+        $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($shopManuscriptTakenID);
+        if ($shopManuscriptTaken) {
+            $shopManuscriptTaken->description = $request->description;
+            $shopManuscriptTaken->save();
+        }
+        return redirect()->back();
+    }
+    
+
     public function sendFeedback($id, Request $requests)
     {
         $url = 'https://forfatterskolen.api-us1.com';
