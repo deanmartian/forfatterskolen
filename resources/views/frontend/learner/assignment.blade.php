@@ -329,7 +329,9 @@
 														{{ trans('site.learner.editor-text') }}
 													</h2>
 												</th>
-												<th>Date Out</th>
+												<th>
+													{{ trans('site.date-out') }}
+												</th>
 												<th width="200"></th>
 											</tr>
 										</thead>
