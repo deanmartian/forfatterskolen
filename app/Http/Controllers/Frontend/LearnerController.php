@@ -844,15 +844,11 @@ class LearnerController extends Controller
 
             if (!$feedback) {
                 if ($manuscript && $manuscript->locked) {
-                    //$waitingForResponse[] = $assignment;
+                    $waitingForResponse[] = $assignment;
                 } else {
                     if(\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
                         $assignments[] = $assignment;
                     }
-                }
-
-                if ($manuscript && $manuscript->locked && $manuscript->editor_id > 0 && $manuscript->status === 0) {
-                    $waitingForResponse[] = $assignment;
                 }
             }
             /*
