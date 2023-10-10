@@ -36,7 +36,7 @@
                     <p>{{ trans('site.front.contact-us.main-container-photo-text') }}</p>
                 </div>
                 <div class="col-md-3 icons-container">
-                    <a href="https://www.pinterest.ph/forfatterskolenofficial/" target="_blank">
+                    <a href="https://www.facebook.com/bliforfatter/" target="_blank">
                         <img src="{{ asset('images-new/icon/facebook.png') }}" alt="facebook-icon">
                     </a>
                     <a href="https://twitter.com/Forfatterrektor" target="_blank" class="ml-0">
@@ -106,12 +106,14 @@
                 <div class="contact-info-container">
                     <p>
                         <img src="{{ asset('images-new/icon/outline-mail.png') }}" alt="outine mail">
-                        <a href="mailto:post@forfatterskolen.no" class="theme-text">post@forfatterskolen.no</a>
+                        <a href="mailto:{{ trans('site.front.contact-us.mail') }}" class="theme-text">
+                            {{ trans('site.front.contact-us.mail') }}
+                        </a>
                     </p>
 
                     <p>
                         <img src="{{ asset('images-new/icon/outline-marker.png') }}" alt="outine marker">
-                        <span>Postboks 9233, 3028 Drammen</span>
+                        <span>{{ trans('site.front.contact-us.address') }}</span>
                     </p>
                 </div> <!-- end contact-info-container -->
             </div> <!-- end col-md-5 -->
