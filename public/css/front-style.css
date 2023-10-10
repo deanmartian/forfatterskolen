@@ -3252,6 +3252,139 @@ margin-right: 5px;
     padding: 20px;
 }
 
+.contact-page-new * {
+    font-family: 'Inter';
+}
+
+.contact-page-new .advisory {
+    background-color: #ffffff;
+    box-shadow: 2px 1px 18px 3px rgba(187, 187, 187, 0.38);
+    color: #000000;
+    padding: 20px;
+}
+
+.contact-page-new .header {
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: #fff;
+    padding-top: 70px;
+    padding-bottom: 134px;
+    position: relative;
+}
+
+.contact-page-new .header h1 {
+    color: #000000;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.contact-page-new .sub-header {
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 1px 3px 20px 1px rgba(210,210,210,.46);
+    color: #212529;
+    text-align: justify;
+    line-height: 27px;
+    padding: 20px 30px;
+    position: absolute;
+    width: 1115px;
+    right: 50%;
+    left: 50%;
+    bottom: -135px;
+    transform: translate(-49%,50%);
+    z-index: 1;
+}
+
+.contact-page-new .sub-header h1 {
+    display: inline;
+    font-size: 27px;
+}
+
+.contact-page-new .sub-header .author {
+    background-color: #FFEEE8;
+    border-radius: 5px;
+    color: #833A3A;
+    font-weight: bold;
+    padding: 7px 20px;
+}
+
+.contact-page-new .sub-header p {
+    color: #6E7485;
+}
+
+.contact-page-new .sub-header .icons-container a {
+    background-color: #F5F7FA;
+    margin-right: 5px;
+    padding: 10px;
+}
+
+.contact-page-new .sub-header .details-container {
+    margin-top: 20px;
+}
+
+.contact-page-new .secondary-container {
+    margin-top: 450px;
+    margin-bottom: 100px;
+}
+
+.contact-page-new .secondary-container .stab-row {
+    border: 1px solid #E9EAF0;
+    margin-bottom: 50px;
+    padding: 10px;
+}
+
+.contact-page-new .secondary-container .stab-row ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.contact-page-new .secondary-container .stab-row .stab-image img {
+    width: 100%;
+}
+
+.contact-page-new .save-data-container {
+    border: 1px solid #E9EAF0;
+    margin-bottom: 50px;
+    padding: 20px;
+}
+
+.contact-page-new .contact-info-container img {
+    margin-right: 10px;
+    height: 27px;
+    width: 27px;
+}
+
+.contact-page-new .contact-info-container p > * {
+    color: #5F0000;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.contact-page-new .contact-form-container {
+    margin-top: 30px;
+}
+
+.contact-page-new .contact-form-container label {
+    color: #718096;
+}
+
+.contact-page-new .contact-form-container .form-control {
+    border: 2px solid #D2D2D2;
+    border-radius: 10px;
+}
+
+.contact-page-new .contact-form-container .site-btn-global {
+    background-color: #5F0000;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.contact-page-new .contact-form-container .site-btn-global img {
+    margin-left: 10px;
+}
+
 /* end contact page */
 
 /* gift-cards page */
@@ -9319,6 +9452,29 @@ textarea.form-control {
         padding: 30px 15px;
     }
 
+    .contact-page-new .sub-header {
+        bottom: -165px;
+        transform: translate(-50%,50%);
+        width: 710px !important;
+    }
+
+    .contact-page-new .sub-header h1 {
+        display: inline-block;
+        width: 255px;
+    }
+    
+    .contact-page-new .secondary-container {
+        margin-top: 500px;
+    }
+
+    .contact-page-new .sub-header .icons-container a {
+        display: table-cell;
+    }
+
+    .contact-page-new .contact-info-container p > * {
+        font-size: 16px;
+    }
+
     .faq-page {
         background-size: auto 425px;
     }
@@ -10719,6 +10875,37 @@ textarea.form-control {
     .contact-page .secondary-container .contact-row {
         background-position-y: -15px;
         padding: 30px 20px;
+    }
+
+    .contact-page-new .sub-header {
+        bottom: -310px;
+        width: 560px !important;
+    }
+
+    .contact-page-new .sub-header .left-container {
+        text-align: center;
+    }
+
+    .contact-page-new .sub-header .left-container img {
+        width: auto !important;
+    }
+
+    .contact-page-new .sub-header h1 {
+        width: 100%;
+    }
+
+    .contact-page-new .secondary-container {
+        margin-top: 750px;
+    }
+
+    .contact-page-new .secondary-container .stab-row .stab-image {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .contact-page-new .secondary-container .stab-row .stab-image img {
+        width: auto;
+        height: 140px;
     }
 
     .faq-page {
@@ -12686,6 +12873,10 @@ textarea.form-control {
 
     .course-single-page .course-tabs #kursplan .left-container {
         overflow: auto;
+    }
+
+    .contact-page-new .sub-header {
+        width: 350px !important;
     }
 }
 
@@ -14752,6 +14943,14 @@ footer .copyright {
 
         right: 120px;
     }
+
+    .contact-page-new .sub-header {
+        width: 915px;
+    }
+
+    .contact-page-new .sub-header .left-container img {
+        width: 100%;
+    }
 }
 
 @media only screen and (max-width: 768px) {
@@ -15175,6 +15374,19 @@ footer .copyright {
     .gdpr-actions>.btn-agree {
         padding: 15px 20px;
     }
+
+    .contact-page-new .sub-header {
+        bottom: -435px;
+        width: 380px !important;
+    }
+
+    .contact-page-new .sub-header h1 {
+        width: 233px;
+    }
+
+    .contact-page-new .secondary-container {
+        margin-top: 990px;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -15287,6 +15499,15 @@ footer .copyright {
 
     .front-page-new #poem-wrapper .heading .btn {
         width: 120px;
+    }
+
+    .contact-page-new .sub-header {
+        bottom: -560px;
+        width: 286px !important;
+    }
+
+    .contact-page-new .secondary-container {
+        margin-top: 1250px;
     }
 
     footer:before {
