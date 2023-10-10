@@ -782,6 +782,18 @@ class LearnerController extends Controller
                 if ((!is_null($allowed_package) && in_array($package_id,$allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)) {
                     // added the condition because of the update for submission date
                     // the original is the else
+
+                    // this waiting for response is new, if it's removed use the commented one
+                    $waitingForResponseManuscript = AssignmentManuscript::where('user_id', Auth::user()->id)
+                            ->where('editor_id', '!=', 0)
+                            ->where('locked', 1)
+                            ->where('status', 0)
+                            ->where('assignment_id', $assignment->id)->first();
+
+                    if ($waitingForResponseManuscript) {
+                        $waitingForResponse[] = $assignment;
+                    }                    
+                        
                     if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
                         if ($course->type == 'Single' && $assignment->submission_date == '365') {
                             if(\Carbon\Carbon::parse($courseTaken->end_date)->lt(Carbon::now())) {
@@ -809,7 +821,7 @@ class LearnerController extends Controller
                                     if (($assignmentFeedback && $assignmentManuscript->status > 0) || $userAssignmentGroupLearner) {
                                         $expiredAssignments[] = $assignment;
                                     } else {
-                                        $waitingForResponse[] = $assignment;
+                                        //$waitingForResponse[] = $assignment; this is the old one
                                     }
                                 } else {
                                     $expiredAssignments[] = $assignment;
@@ -832,11 +844,15 @@ class LearnerController extends Controller
 
             if (!$feedback) {
                 if ($manuscript && $manuscript->locked) {
-                    $waitingForResponse[] = $assignment;
+                    //$waitingForResponse[] = $assignment;
                 } else {
                     if(\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
                         $assignments[] = $assignment;
                     }
+                }
+
+                if ($manuscript && $manuscript->locked && $manuscript->editor_id > 0 && $manuscript->status === 0) {
+                    $waitingForResponse[] = $assignment;
                 }
             }
             /*
