@@ -765,7 +765,9 @@ class LearnerController extends Controller
                                 }
                             }
                         } else {
-                            if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now())) {
+                            // added the && to check if the course taken is not yet expired
+                            if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now()) &&
+                                \Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
                                 $assignments[] = $assignment;
                             }
                         }
