@@ -83,8 +83,8 @@
                             <label for="file-upload" class="file-upload-label">
                                 <div class="file-upload" id="file-upload-area">
                                     <div class="file-upload-text">
-                                        Click to <a href="javascript:void(0)" class="file-upload-btn">browse</a> or <br>
-                                        drag and drop your file
+                                        <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a> for å laste opp filen din eller <br>
+                                        dra filen din hit.
                                     </div>
                                   </div>
                               </label>
@@ -400,8 +400,8 @@
             const fileUploadArea = document.getElementById('file-upload-area');
             const fileInput = document.getElementById('file-upload');
             const fileUploadText = document.querySelector('.file-upload-text');
-            const textWithBrowseButton = 'Click to <a href="javascript:void(0)" class="file-upload-btn">browse</a> or <br>'
-                    +' drag and drop your file';
+            const textWithBrowseButton = '<a href="javascript:void(0)" class="file-upload-btn">Klikk her</a> for å laste opp filen din eller <br>' 
+                +'dra filen din hit.';
 
             const updateText = (text) => {
                 fileUploadText.innerHTML = text;
