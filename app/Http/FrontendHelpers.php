@@ -19,6 +19,8 @@ use App\User;
 use App\WebinarRegistrant;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Request as GlobalRequest;
 
 class FrontendHelpers
 {
@@ -284,6 +286,86 @@ class FrontendHelpers
     public static function getShopManuscriptAdvisory()
     {
         return Advisory::getShopManuscriptAdvisory();
+    }
+
+    public static function coursePortalNav()
+    {
+        $navs = [
+            [
+                'route_name' => 'learner.dashboard',
+                'fa-icon' => 'fa fa-home',
+                'label' => 'Kontrollpanel',
+                'is_active' => Route::currentRouteName() === 'learner.dashboard'
+            ],
+            [
+                'route_name' => 'learner.course',
+                'fa-icon' => 'fa fa-graduation-cap',
+                'label' => trans('site.learner.nav.course'),
+                'is_active' => !GlobalRequest::is('account/course-webinar') && GlobalRequest::is('account/course*')
+            ],
+            [
+                'route_name' => 'learner.shop-manuscript',
+                'fa-icon' => 'fa fa-file-alt',
+                'label' => trans('site.learner.nav.manuscript'),
+                'is_active' => GlobalRequest::is('account/shop-manuscript*')
+            ],
+            [
+                'route_name' => 'learner.workshop',
+                'fa-icon' => 'fa fa-briefcase',
+                'label' => trans('site.learner.nav.workshop'),
+                'is_active' => GlobalRequest::is('account/workshop*')
+            ],
+            [
+                'route_name' => 'learner.webinar',
+                'fa-icon' => 'fab fa-youtube',
+                'label' => trans('site.learner.nav.webinars'),
+                'is_active' => GlobalRequest::is('account/webinar*')
+            ],
+            [
+                'route_name' => 'learner.course-webinar',
+                'fa-icon' => 'fab fa-youtube',
+                'label' => trans('site.learner.nav.course-webinars'),
+                'is_active' => GlobalRequest::is('account/course-webinar*')
+            ],
+            [
+                'route_name' => 'learner.assignment',
+                'fa-icon' => 'fa fa-clipboard-list',
+                'label' => trans('site.learner.nav.assignment'),
+                'is_active' => GlobalRequest::is('account/assignment*')
+            ],
+            [
+                'route_name' => 'learner.calendar',
+                'fa-icon' => 'fa fa-calendar-alt',
+                'label' => trans('site.learner.nav.calendar'),
+                'is_active' => GlobalRequest::is('account/calendar*')
+            ],
+            [
+                'route_name' => 'learner.invoice',
+                'fa-icon' => 'fa fa-file-invoice',
+                'label' => trans('site.learner.nav.invoice'),
+                'is_active' => GlobalRequest::is('account/invoice*')
+            ],
+            [
+                'route_name' => 'learner.upgrade',
+                'fa-icon' => 'fa fa-cloud-upload-alt',
+                'label' => trans('site.learner.nav.upgrade'),
+                'is_active' => GlobalRequest::is('account/upgrade*')
+            ],
+            [
+                'route_name' => 'learner.private-message',
+                'fa-icon' => 'fa fa-comment',
+                'label' => trans('site.learner.nav.message'),
+                'is_active' => GlobalRequest::is('account/private-message*')
+            ],
+            [
+                'route_name' => 'learner.profile',
+                'fa-icon' => 'fa fa-users',
+                'label' => trans('site.learner.nav.profile'),
+                'is_active' => GlobalRequest::is('account/profile*')
+            ]
+        ];
+
+        return $navs;
     }
 
     /**

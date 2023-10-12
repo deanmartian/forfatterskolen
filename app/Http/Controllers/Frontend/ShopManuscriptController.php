@@ -1279,7 +1279,8 @@ Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">po
 
     public function exportSingleBought()
     {
-        $manuscriptsTaken = ShopManuscriptsTaken::where('package_shop_manuscripts_id', 0)->get();
+        $manuscriptsTaken = ShopManuscriptsTaken::where('package_shop_manuscripts_id', 0)
+            ->whereNotNull('file')->get();
         $userList = [];
         foreach($manuscriptsTaken as $manu) {
             $userList[] = [

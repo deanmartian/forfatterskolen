@@ -1,0 +1,209 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins');
+@import url('https://fonts.googleapis.com/css?family=Inter');
+
+:root {
+    --primary-color: #5F0000;
+    --secondary-color: #5D7285;
+    --box-shadow-style: 0 4px 4px 0 rgb(0,0,0,25%);
+}
+
+* {
+    font-family: 'Inter';
+}
+
+#sidebar {
+    height: 100%;
+    width: 300px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #ffffff;
+    box-shadow: var(--box-shadow-style);
+    overflow-x: auto;
+    padding: 30px;
+    transition: all 0.3s ease;
+    z-index: 9;
+}
+
+#sidebarCollapse {
+    color: #ffffff;
+    background: none;
+    border: none;
+}
+
+#sidebar .navbar-brand {
+    margin-bottom: 20px;
+    padding: .3125rem 0;
+}
+
+#sidebar .navbar-brand svg {
+    height: 34px;
+    width: 34px;
+}
+
+#sidebar .navbar-brand span {
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 3.625rem;
+}
+
+#sidebar ul {
+    width: 100%;
+}
+
+#sidebar ul > li {
+    width: 100%;
+}
+
+#sidebar ul > li a,
+#sidebar .learner-details-container {
+    color: var(--secondary-color);
+    font-family: 'Poppins';
+    font-size: 14px;
+}
+
+#sidebar ul > li a:hover,
+#sidebar ul > li.active a {
+    background-color: #EFF2F4;
+    border-radius: 5px;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+#sidebar ul > li a > .fa,
+#sidebar ul > li a > .fab {
+    color: var(--secondary-color);
+    font-size: 20px;
+    margin-right: 10px;
+    width: 22px; /* just to make the fa icon same width */
+}
+
+#sidebar ul > li.active a > .fa,
+#sidebar ul > li.active a > .fab,
+#sidebar ul > li a:hover > .fa,
+#sidebar ul > li a:hover > .fab {
+    color: var(--primary-color);
+}
+
+#sidebar .learner-details-container {
+    font-size: 18px;
+    margin-top: 30px;
+}
+
+#sidebar .icons-container {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#sidebar .icons-container a {
+    background-color: #f5f7fa;
+    border-radius: 10px;
+    display: inline-block;
+    margin-right: 5px;
+    padding: 10px 15px;
+}
+
+#sidebar .portal-btn {
+    border: 1px solid #9A9A9A;
+    border-radius: 5px;
+    color: var(--primary-color);
+    font-family: 'Poppins';
+    font-weight: bold;
+    margin-top: 20px;
+    padding: 15px;
+    width: 100%;
+}
+
+#sidebar .portal-btn:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+#sidebar .logout-btn {
+    background-color: var(--primary-color);
+    border-radius: 5px;
+    color: #ffffff;
+    font-family: 'Poppins';
+    font-weight: bold;
+    margin-top: 20px;
+    padding: 15px;
+    width: 100%;
+}
+
+#sidebar .logout-btn i {
+    margin-right: 10px;
+}
+
+#sidebar .logout-btn:hover {
+    background-color: #5f0000c2;
+}
+
+#main-container.enlarge {
+    margin-left: 300px; /* Adjust this value to match the width of the sidebar */
+}
+
+#topbar {
+    box-shadow: var(--box-shadow-style);
+    color: #fff;
+    height: 100px;
+    position: relative;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#topbar * {
+    color: var(--secondary-color);
+}
+
+#user-image {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+#main-content {
+    background-color: #f3f5f7;
+}
+
+@media only screen and (max-width: 1024px) {
+    #main-container.enlarge {
+        margin-left: 0;
+    }
+
+    .global-card .card-body {
+        overflow-x: auto;
+    }
+
+    .dashboard-last-container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+}
+
+@media only screen and (max-width: 768px) {
+    
+}
+
+@media only screen and (max-width: 640px) {
+    .dashboard-last-container {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+@media only screen and (max-width: 415px) {
+}
+
+@media only screen and (max-width: 375px) {
+}
+
+@media only screen and (max-width: 360px) {
+}
+
+@media only screen and (max-width: 320px) {
+}
