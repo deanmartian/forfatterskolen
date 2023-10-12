@@ -2,7 +2,7 @@
     <div class="row publishing-list">
         <div class="col-md-3">
             <h3 class="text-center">
-                List of Authors
+                Liste over forfattere
             </h3>
 
             <div class="authors-list-container">
@@ -30,7 +30,7 @@
 
         <div class="col-md-3 text-center author-book-list-container">
             <h3>
-                Author Books
+                Bøker fra forfatter
             </h3>
             <div class="author-book-list">
                 <template v-for="library in currentBook.libraries">

@@ -40,7 +40,7 @@
                             {{ trans('site.front.shop-manuscript.first-section.title') }}
                         </div>
     
-                        {!! trans('site.front.shop-manuscript.first-section.description') !!}
+                        {!! html_entity_decode(trans('site.front.shop-manuscript.first-section.description')) !!}
                         {{--<button class="btn site-btn-global-w-arrow" data-toggle="modal" data-target="#editorsModal">Redaktører</button>--}}
                     </div>
                     <div class="col-md-5">
