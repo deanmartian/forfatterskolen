@@ -3213,7 +3213,7 @@
 			</div>
 			<div class="modal-body">
 				<form method="POST" action="{{route('admin.learner.send-email', $learner->id)}}"
-					  enctype="multipart/form-data">
+					  enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 					{{csrf_field()}}
 
 					<div class="form-group">
