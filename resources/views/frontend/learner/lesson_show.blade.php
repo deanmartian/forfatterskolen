@@ -236,7 +236,7 @@
             let cookie = getCookie("_lesson_dl");
             if (cookie !== "") {
                 document.cookie = "_lesson_dl=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                $(".download-btn").text('')
+                $(".download-lesson-btn").text('')
                     .append('Last ned utskriftsvennlig pdf av leksjonen')
                 	.removeAttr('disabled');
             }
