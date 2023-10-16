@@ -2187,8 +2187,10 @@ class LearnerController extends Controller
         $courseTaken = CoursesTaken::where('user_id', Auth::user()->id)
             ->whereIn('package_id', $course->allPackages->pluck('id')->toArray()) //$course->packages->pluck('id')
             ->first();
+
+        $lessons = $courseTaken->package->course->lessons;
         if(  $courseTaken || FrontendHelpers::hasLessonAccess($courseTaken, $lesson) ) :
-            return view('frontend.learner.lesson_show', compact('lesson', 'course', 'courseTaken', 'lesson_content'));
+            return view('frontend.learner.lesson_show', compact('lesson', 'course', 'courseTaken', 'lesson_content' , 'lessons'));
         endif;
         return redirect()->route('learner.dashboard');
         //return abort('503');
