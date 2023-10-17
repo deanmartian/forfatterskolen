@@ -609,6 +609,11 @@
             if (fields.type === 2) {
                 modal.find(".package-variation").text(fields.item);
             }
+
+			if (fields.type > 2) {
+				modal.find(".package-variation").text(fields.payment_mode_id === 1 ? fields.packageVariation : fields.item);
+			}
+
            modal.find(".payment-mode").text(fields.payment_mode_id === 1 ? 'Bankoverføring' : '');
            modal.find(".payment-plan").text(fields.payment_plan.plan);
 

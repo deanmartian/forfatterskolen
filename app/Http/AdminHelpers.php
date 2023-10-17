@@ -450,6 +450,7 @@ class AdminHelpers
                 $orderDetails = "<a href='".route('admin.assignment.show',
                         ['course_id' => $assignment->course->id, 'assignment' => $assignment->id])."'>"
                     .$assignment->title."</a>";
+                break;
             case 10:
                 $orderDetails = "Editing Service";
                 break;
