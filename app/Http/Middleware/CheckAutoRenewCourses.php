@@ -69,7 +69,8 @@ class CheckAutoRenewCourses
                                 $addYear = date("Y-m-d", strtotime(date("Y-m-d", strtotime($coursesTaken->end_date)) . " + 1 year"));
                                 $coursesTaken->end_date = $addYear;
                             }
-
+                            
+                            $coursesTaken->renewed_at = Carbon::now();
                             $coursesTaken->started_at = Carbon::now();
                             $coursesTaken->save();
                         }
