@@ -57,6 +57,10 @@
 							[
 								'name' => 'groups',
 								'label' => trans('site.learner.groups')
+							],
+							[
+								'name' => 'upcoming',
+								'label' => 'Kommende Oppgaver'
 							]
 						]
 					@endphp
@@ -481,193 +485,172 @@
 								</div>
 							@else
 								<div class="row">
-									<div class="col-lg-8">
-										@foreach($assignments as $assignment)
-											@if (is_null($assignment->parent) || $assignment->parent === 'users'
-												|| ($assignment->linkedAssignment 
-												&& !$assignment->linkedAssignment->manuscripts()
-												->where('user_id', Auth::user()->id)->first()))
+									@foreach($assignments as $assignment)
+										<?php
+											/**
+											 * Check first if not linked to any assignment or if assignment is linked
+											 * and there's no submitted file/manuscript yet
+											 */
+										?>
+										@if (is_null($assignment->parent) || $assignment->parent === 'users'
+										|| ($assignment->linkedAssignment && !$assignment->linkedAssignment->manuscripts()->where('user_id', Auth::user()->id)->first()))
+										<div class="col-md-6 mt-5">
+											<div class="card card-global">
+                                                <?php $manuscript = $assignment->manuscripts->where('user_id', Auth::user()->id)->first(); ?>
+                                                <?php
+                                                $extension = $manuscript ? explode('.', basename($manuscript->filename)) : '';
+                                                $submission_date_formatted = $assignment->submission_date;
+                                                if (!\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', $assignment->submission_date)) {
+                                                    $coursesTaken = Auth::user()->coursesTaken()->get()->toArray();
+                                                    $allowed_packages = $assignment->allowed_package ?
+                                                        json_decode($assignment->allowed_package) : [];
 
-												@php
-													$manuscript = $assignment->manuscripts->where('user_id', Auth::user()->id)
-														->first();
-													$extension = $manuscript ? explode('.', basename($manuscript->filename)) : '';
-													$submission_date_formatted = $assignment->submission_date;
-													if (!\App\Http\AdminHelpers::isDateWithFormat('M d, Y h:i A', 
-													$assignment->submission_date)) {
-														$coursesTaken = Auth::user()->coursesTaken()->get()->toArray();
-														$allowed_packages = $assignment->allowed_package ?
-															json_decode($assignment->allowed_package) : [];
-
-														$courseStarted = '';
-														foreach ($coursesTaken as $course) {
-															if (in_array($course['package_id'], $allowed_packages)) {
-																$courseStarted =  $course['started_at'];
-															}
-														}
-														// original for submission date format is the one on else, 
-														// should be outside of the condition
-														if ($assignment['course_taken_end_date']) {
-															$courseStarted = $assignment['course_taken_end_date'];
-															$submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
-															->addDays(0);
-														} else {
-															$submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
-															->addDays($assignment->submission_date);
-														}
+                                                    $courseStarted = '';
+                                                    foreach ($coursesTaken as $course) {
+                                                        if (in_array($course['package_id'], $allowed_packages)) {
+                                                            $courseStarted =  $course['started_at'];
+                                                        }
+                                                    }
+                                                    // original for submission date format is the one on else, should be outside of the condition
+                                                    if ($assignment['course_taken_end_date']) {
+														$courseStarted = $assignment['course_taken_end_date'];
+														$submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
+														->addDays(0);
+													} else {
+														$submission_date_formatted = \Carbon\Carbon::parse($courseStarted)
+														->addDays($assignment->submission_date);
 													}
-												@endphp
+                                                }
+                                                ?>
 
-												<div class="assignment-container">
-													<div class="col-md-5 col-sm-12">
-														<div class="date-container">
-															<p>{{ trans('site.learner.deadline') }}</p>
-															<div class="row">
-																<div class="col-md-3">
-																	<i class="fa fa-calendar-check"></i>
-																</div>
-																<div class="col-md-9 pl-0">
-																	<h3>
-																		{{ \App\Http\FrontendHelpers::formatDateTimeNor(
-																			$submission_date_formatted) }}
-																	</h3>
-																</div>
-															</div>
-														</div> <!-- end date-container -->
-													</div> <!-- end col-md-5 -->
-													<div class="col-md-7 col-sm-12">
-														<div class="row">
-															<div class="col-md-9">
-																<h2>
-																	{{ $assignment->title }}
-																</h2>
-															</div>
-															@if ($assignment->check_max_words)
-																<div class="col-md-3">
-																	<div class="max-word-container">
-																		{{ trans('site.max-words') }} {{ $assignment->max_words }}
-																	</div>
-																</div>
-															@endif
+												<div class="card-header p-4">
+													<div class="row">
+														<div class="col-md-9">
+															<h2><i class="contract-sign"></i> {{ $assignment->title }}</h2>
 														</div>
-
-														<p class="description-container">
-															{{ $assignment->description }}
-														</p>
-
-														@if( $manuscript )
-														<div class="manuscript-container">
-															<div class="col-md-7">
-																Manus:
-																@if( end($extension) == 'pdf' || end($extension) == 'odt' )
-																	<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">
-																		{{ basename($manuscript->filename) }}
-																	</a>
-																@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
-																	<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">
-																		{{ basename($manuscript->filename) }}
-																	</a>
-																@endif
-															</div>
-															@if (!$manuscript->locked)
-																<div class="col-md-5">
-																	<div class="button-container">
-																		<button type="button" class="btn btn-sm btn-info editManuscriptBtn"
-																			data-toggle="modal" data-target="#editManuscriptModal"
-																			data-action="{{ route('learner.assignment.replace_manuscript', $manuscript->id) }}">
-																		<i class="fa fa-pencil-alt"></i>
-																		</button>
-																		<button type="button" class="btn btn-sm btn-danger deleteManuscriptBtn"
-																				data-toggle="modal" data-target="#deleteManuscriptModal"
-																				data-action="{{ route('learner.assignment.delete_manuscript', $manuscript->id) }}">
-																			<i class="fa fa-trash-alt"></i>
-																		</button>
-																		<a href="{{ end($extension) == 'pdf' || end($extension) == 'odt' 
-																		? '/js/ViewerJS/#../..' . $manuscript->filename 
-																		: 'https://view.officeapps.live.com/op/embed.aspx?src=' . url('') . $manuscript->filename}}"
-																		 class="btn">
-																			<i class="fa fa-eye"></i>
-																		</a>
-																	</div>
-																</div>
-															@endif
-														</div>
-														@endif
-
-														<div class="bottom-container">
-															<div class="row">
-																<div class="col-md-6">
-																	@if($assignment->course)
-																		<p>
-																			{{ trans('site.front.course-text') }}: 
-																			{{ $assignment->course->title }}
-																		</p>
-																	@endif
-																</div>
-																<div class="col-md-6">
-																	@if (!$manuscript && (is_null($assignment->parent) || $assignment->parent === 'users' ||
-																		($assignment->linkedAssignment && !$assignment->linkedAssignment->manuscripts()
-																		->where('user_id', Auth::user()->id)->first())))
-																		@if($assignment->for_editor)
-																			<button class="btn red-outline-btn submitEditorManuscriptBtn" 
-																			data-toggle="modal"
+														<div class="col-md-3">
+															@if (!$manuscript && (is_null($assignment->parent) || $assignment->parent === 'users' ||
+															($assignment->linkedAssignment && !$assignment->linkedAssignment->manuscripts()->where('user_id', Auth::user()->id)->first())))
+																@if($assignment->for_editor)
+																	<button class="btn site-btn-global site-btn-global-sm w-100 submitEditorManuscriptBtn" data-toggle="modal"
 																			data-target="#submitEditorManuscriptModal"
 																			data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 																			data-show-group-question="{{ $assignment->show_join_group_question }}"
 																			data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
 																			@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))
 																			&& $assignment->parent !== 'users') disabled @endif>
-																				{{ trans('site.learner.upload-script') }}
-																			</button>
-																		@else
-																			<button class="btn red-outline-btn submitManuscriptBtn" 
-																			data-toggle="modal"
+																		{{ trans('site.learner.upload-script') }}
+																	</button>
+																@else
+																	<button class="btn site-btn-global site-btn-global-sm w-100 submitManuscriptBtn" data-toggle="modal"
 																			data-target="#submitManuscriptModal"
 																			data-action="{{ route('learner.assignment.add_manuscript', $assignment->id) }}"
 																			data-show-group-question="{{ $assignment->show_join_group_question }}"
 																			data-send-letter-to-editor="{{ $assignment->send_letter_to_editor }}"
 																			@if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($submission_date_formatted))
 																			&& $assignment->parent !== 'users') disabled @endif>
-																				{{ trans('site.learner.upload-script') }}
-																			</button>
-																		@endif
-																	@else
-																		@if($assignment->parent === 'users')
-																			<label class="badge badge-info w-100"
-																				style="font-size: 100%">
-																				{{ trans('site.started') }}
-																			</label>
-																		@endif
-																	@endif
-																</div>
-															</div>
+																		{{ trans('site.learner.upload-script') }}
+																	</button>
+																@endif
+															@else
+																@if($assignment->parent === 'users')
+																	<label class="badge badge-info w-100"
+																		   style="font-size: 100%">
+																		{{ trans('site.started') }}
+																	</label>
+																@endif
+															@endif
 														</div>
-													</div> <!-- endcol-md-7 -->
-												</div> <!-- end assignment-container -->
-											@endif
-										@endforeach
-									</div> <!-- end col-lg-8 -->
-									<div class="col-lg-4">
-										<div class="upcoming-assignment-container">
-											<h2>
-												Kommende Oppgaver
-											</h2>
+													</div> <!-- end row -->
+												</div> <!-- end card-header -->
+												<div class="card-body p-4">
+													<p>
+														{{ $assignment->description }}
+													</p>
 
-											@foreach($upcomingPersonalAssignments as $assignment)
-												<div class="upcoming-assignment-list">
-													<h3>
-														{{ $assignment->title }}
-													</h3>
-													<h4>
-														{{ trans('site.available-date') }}: 
-														{{ \App\Http\FrontendHelpers::formatDate($assignment->available_date) }}
-													</h4>
-													<span class="font-barlow-regular">{{ trans('site.deadline') }}:</span>
-													<span>{{ \App\Http\FrontendHelpers::formatDateTimeNor($assignment->submission_date) }}</span>
-												</div>
-											@endforeach
-										</div>
-									</div> <!-- end col-md-4 -->
+													@if ($assignment->check_max_words)
+														<p>
+															{{ trans('site.max-words') }}: {{ $assignment->max_words }}
+														</p>
+													@endif
+
+													<span class="font-barlow-regular">{{ trans('site.learner.deadline') }}:</span>
+													<span>{{ \App\Http\FrontendHelpers::formatDateTimeNor($submission_date_formatted) }}</span>
+													@if( $manuscript )
+														<div class="mt-3">
+															Manus:
+															@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+																<a href="/js/ViewerJS/#../..{{ $manuscript->filename }}">
+																	{{ basename($manuscript->filename) }}
+																</a>
+															@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
+																<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">
+																	{{ basename($manuscript->filename) }}
+																</a>
+															@endif
+
+															@if (!$manuscript->locked)
+																<div class="pull-right">
+																	<button type="button" class="btn btn-sm btn-info editManuscriptBtn"
+																			data-toggle="modal" data-target="#editManuscriptModal"
+																			data-action="{{ route('learner.assignment.replace_manuscript', $manuscript->id) }}">
+																		<i class="fa fa-pen"></i>
+																	</button>
+																	<button type="button" class="btn btn-sm btn-danger deleteManuscriptBtn"
+																			data-toggle="modal" data-target="#deleteManuscriptModal"
+																			data-action="{{ route('learner.assignment.delete_manuscript', $manuscript->id) }}">
+																		<i class="fa fa-trash"></i>
+																	</button>
+																</div>
+															@endif
+														</div>
+
+														@if($manuscript->letter_to_editor)
+															<div class="mt-3">
+																<?php
+                                                                	$extension = $manuscript ? explode('.', basename($manuscript->letter_to_editor)) : '';
+																?>
+																Brev:
+																@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+																	<a href="/js/ViewerJS/#../..{{ $manuscript->letter_to_editor }}">
+																		{{ basename($manuscript->letter_to_editor) }}
+																	</a>
+																@elseif( end($extension) == 'docx' || end($extension) == 'doc' )
+																	<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->letter_to_editor}}">
+																		{{ basename($manuscript->letter_to_editor) }}
+																	</a>
+																@endif
+
+																	@if (!$manuscript->locked)
+																		<div class="pull-right">
+																			<button type="button" class="btn btn-sm btn-info editLetterBtn"
+																					data-toggle="modal" data-target="#editLetterModal"
+																					data-action="{{ route('learner.assignment.replace_letter', $manuscript->id) }}">
+																				<i class="fa fa-pen"></i>
+																			</button>
+																		</div>
+																	@endif
+															</div>
+														@endif
+
+														@if($assignment->parent === 'users')
+															<p class="mt-3">
+																{{ trans('site.expected-finish') }}:
+																{{ $manuscript->expected_finish ? \Carbon\Carbon::parse($manuscript->expected_finish)->addDay()->format('d.m.Y') : NULL }}
+															</p>
+														@endif
+													@endif
+												</div> <!-- end card-body -->
+												@if($assignment->course)
+													<div class="card-footer p-4">
+														<span class="font-barlow-regular">{{ trans('site.front.course-text') }}:</span>
+														<span>{{ $assignment->course->title }}</span>
+													</div> <!-- end card-footer -->
+												@endif
+											</div> <!-- end card -->
+										</div> <!-- end col-md-6 -->
+										@endif
+									@endforeach
 								</div>
 							@endif
 						</div> <!-- end tab-pane-->
@@ -706,7 +689,7 @@
 	</div>
 </div>
 
-<div id="submitEditorManuscriptModal" class="modal fade new-global-modal" role="dialog">
+<div id="submitEditorManuscriptModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-md">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -720,18 +703,11 @@
 				onsubmit="disableSubmit(this);">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<div class="file-upload" id="file-upload-area">
-							<i class="fa fa-cloud-upload-alt"></i>
-							<div class="file-upload-text" id="file-upload-text-editor-manu">
-								Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>
-							</div>
-							<input type="file" class="form-control hidden input-file-upload" name="filename" 
-							id="file-upload" accept="application/msword,
-						application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-						  </div>
-						<label class="file-label">
+						<label>
 							* {{ trans('site.learner.manuscript.doc-format-text') }}
 						</label>
+						<input type="file" class="form-control" required name="filename" accept="application/msword,
+						application/vnd.openxmlformats-officedocument.wordprocessingml.document">
 					</div>
 
 					<div class="form-group">
@@ -753,13 +729,7 @@
 							{{ trans('site.learner.manuscript.where-in-manuscript') }}
 						</label>
 						@foreach(\App\Http\FrontendHelpers::manuscriptType() as $manu)
-							<div class="custom-radio">
-								<input type="radio" name="manu_type" value="{{ $manu['id'] }}" id="{{ $manu['id'] }}" required>
-								<label for="{{ $manu['id'] }}">
-									{{ $manu['option'] }}
-								</label>
-							</div>
-							{{-- <input type="radio" name="manu_type" value="{{ $manu['id'] }}" required> <label>{{ $manu['option'] }}</label> <br> --}}
+							<input type="radio" name="manu_type" value="{{ $manu['id'] }}" required> <label>{{ $manu['option'] }}</label> <br>
 						@endforeach
 					</div>
 
@@ -779,7 +749,7 @@
 					application/vnd.oasis.opendocument.text,application/pdf">
 					</div>
 
-					<button type="submit" class="btn btn-primary submit-btn pull-right">
+					<button type="submit" class="btn btn-primary pull-right">
 						{{ trans('site.front.upload') }}
 					</button>
 					<div class="clearfix"></div>
@@ -789,7 +759,7 @@
 	</div>
 </div>
 
-<div id="submitManuscriptModal" class="modal fade new-global-modal" role="dialog">
+<div id="submitManuscriptModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-md">
 		<div class="modal-content">
 		  <div class="modal-header">
@@ -802,18 +772,12 @@
 		    <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this);">
 		      	{{ csrf_field() }}
 				<div class="form-group">
-					<div class="file-upload" id="file-upload-area-submit-manu">
-						<i class="fa fa-cloud-upload-alt"></i>
-						<div class="file-upload-text">
-							Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>
-						</div>
-						<input type="file" class="form-control hidden input-file-upload" name="filename" 
-						id="file-upload" accept="application/msword,
-					application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-					  </div>
-					<label class="file-label">
-						* {{ trans('site.learner.manuscript.doc-format-text') }}
+					<label>
+						* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
 					</label>
+					<input type="file" class="form-control margin-top" required name="filename" accept="application/msword,
+					application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+					application/vnd.oasis.opendocument.text,application/pdf">
 				</div>
 
 				<div class="form-group">
@@ -835,13 +799,7 @@
 						{{ trans('site.learner.manuscript.where-in-manuscript') }}
 					</label>
 					@foreach(\App\Http\FrontendHelpers::manuscriptType() as $manu)
-						<div class="custom-radio">
-							<input type="radio" name="manu_type" value="{{ $manu['id'] }}" id="submit-manu-{{ $manu['id'] }}" required>
-							<label for="submit-manu-{{ $manu['id'] }}">
-								{{ $manu['option'] }}
-							</label>
-						</div>
-						{{-- <input type="radio" name="manu_type" value="{{ $manu['id'] }}" required> <label>{{ $manu['option'] }}</label> <br> --}}
+						<input type="radio" name="manu_type" value="{{ $manu['id'] }}" required> <label>{{ $manu['option'] }}</label> <br>
 					@endforeach
 				</div>
 
@@ -861,7 +819,7 @@
 					application/vnd.oasis.opendocument.text,application/pdf">
 				</div>
 
-		      	<button type="submit" class="btn btn-primary submit-btn pull-right">
+		      	<button type="submit" class="btn btn-primary pull-right">
 					{{ trans('site.front.upload') }}
 				</button>
 		      	<div class="clearfix"></div>
@@ -871,8 +829,8 @@
 	</div>
 </div>
 
-<div id="editManuscriptModal" class="modal new-global-modal fade" role="dialog">
-	<div class="modal-dialog modal-md">
+<div id="editManuscriptModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3 class="modal-title">
@@ -884,21 +842,14 @@
 				<form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
-						<div class="file-upload" id="file-upload-area-edit-manu">
-							<i class="fa fa-cloud-upload-alt"></i>
-							<div class="file-upload-text">
-								Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>
-							</div>
-							<input type="file" class="form-control hidden input-file-upload" name="filename" 
-							id="file-upload" accept="application/msword,
-						application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-						  </div>
-						<label class="file-label">
-							* {{ trans('site.learner.manuscript.doc-format-text') }}
+						<label>
+							{{ trans('site.learner.manuscript-text') }}
 						</label>
+						<input type="file" class="form-control" required name="filename" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+						* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
 					</div>
 
-					<button type="submit" class="btn btn-primary submit-btn pull-right">
+					<button type="submit" class="btn btn-primary pull-right">
 						{{ trans('site.front.submit') }}
 					</button>
 					<div class="clearfix"></div>
@@ -908,25 +859,22 @@
 	</div>
 </div>
 
-<div id="deleteManuscriptModal" class="modal new-global-modal fade" role="dialog">
-	<div class="modal-dialog modal-md">
+<div id="deleteManuscriptModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3 class="modal-title">
-					<i class="far fa-flag"></i>
+					{{ trans('site.learner.delete-manuscript.title') }}
 				</h3>
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
-				<h3>
-					{{ trans('site.learner.delete-manuscript.title') }}
-				</h3>
 				<p>
 					{{ trans('site.learner.delete-manuscript.question') }}
 				</p>
 				<form method="POST" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
-					<button type="submit" class="btn btn-danger submit-btn pull-right margin-top">
+					<button type="submit" class="btn btn-danger pull-right margin-top">
 						{{ trans('site.learner.delete') }}
 					</button>
 					<div class="clearfix"></div>
@@ -1006,11 +954,6 @@
     	$('#manuscriptTestErrorModal').modal('show');
 	@endif
 
-
-	setupFileUpload('file-upload-area');
-	setupFileUpload('file-upload-area-submit-manu');
-	setupFileUpload('file-upload-area-edit-manu');
-
 	$('.submitManuscriptBtn').click(function(){
 		let form = $('#submitManuscriptModal').find("form");
         let action = $(this).data('action');
@@ -1068,82 +1011,6 @@
         let action = $(this).data('action');
         form.attr('action', action)
 	});
-
-	function setupFileUpload(area) {
-		const fileUploadArea = document.getElementById(area);
-		const fileInput = fileUploadArea.querySelector('.input-file-upload');
-		const fileUploadText = fileUploadArea.querySelector('.file-upload-text');
-
-		// Function to open the file input dialog when the file-upload-area is clicked
-		const openFileInput = () => {
-			fileInput.click();
-		};
-
-		// Function to update the file upload text
-		const updateText = (text) => {
-			fileUploadText.innerHTML = text;
-		};
-
-		// Function to check if the file input is not empty
-		const isFileInputNotEmpty = () => {
-			return fileInput.files.length > 0;
-		};
-
-		fileUploadArea.querySelector('.file-upload-btn').addEventListener('mousedown', (e) => {
-			// Check if the mousedown event was triggered by the button inside file-upload-area
-			if (e.target.classList.contains('file-upload-btn')) {
-				openFileInput();
-			}
-		});
-
-		// Add a click event for the file-upload-btn in the current modal
-		fileUploadArea.querySelector('.file-upload-btn').addEventListener('click', openFileInput);
-
-		const textWithBrowseButton = 'Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>';
-
-		fileUploadArea.addEventListener('dragover', (e) => {
-			e.preventDefault();
-			fileUploadArea.classList.add('dragover');
-			updateText('Release to upload');
-		});
-
-		fileUploadArea.addEventListener('dragleave', () => {
-			fileUploadArea.classList.remove('dragover');
-			updateText(textWithBrowseButton);
-		});
-
-		fileUploadArea.addEventListener('drop', (e) => {
-			e.preventDefault();
-			fileUploadArea.classList.remove('dragover');
-
-			const files = e.dataTransfer.files;
-
-			for (let i = 0; i < files.length; i++) {
-				console.log('Dropped file:', files[i].name);
-			}
-
-			fileInput.files = files;
-
-			const selectedText = isFileInputNotEmpty() ? fileInput.files[0].name : textWithBrowseButton;
-			updateText(selectedText);
-		});
-
-		fileInput.addEventListener('change', () => {
-			const selectedText = isFileInputNotEmpty() ? fileInput.files[0].name : textWithBrowseButton;
-			updateText(selectedText);
-		});
-
-		// Add a click event for the file-upload-area to open the file input dialog
-		fileUploadArea.addEventListener('click', openFileInput);
-
-		// Add a click event for the submit button in the current modal
-		fileUploadArea.closest('.modal').querySelector('[type=submit]').addEventListener('click', function (e) {
-			if (!isFileInputNotEmpty()) {
-				alert('Please select a document file.');
-				e.preventDefault();
-			}
-		});
-	}
 </script>
 @stop
 

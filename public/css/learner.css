@@ -14,6 +14,10 @@
     font-family: 'Inter';
 }
 
+body:not(.modal-open) {
+    padding-right: 0 !important;
+}
+
 #sidebar {
     height: 100%;
     width: 300px;
@@ -388,7 +392,249 @@
     background-color: var(--secondary-red) !important;
 }
 
+.learner-assignment .nav-tabs > li > a {
+    color: #75777A;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.learner-assignment .nav-tabs > li.active > a,
+.learner-assignment .nav-tabs > li.active > a:hover,
+.learner-assignment .nav-tabs > li > a:hover {
+    background-color: transparent;
+    border: none;
+    border-bottom: 3px solid #E83A47;
+    color: var(--black);
+}
+
+.learner-assignment .col-sm-12 {
+    padding: 0;
+}
+
+.learner-assignment .assignment-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    background-color: var(--white);
+    border-radius: 10px;
+    margin-top: 40px;
+    padding: 20px;
+}
+
+.learner-assignment .assignment-container .date-container {
+    background-color: #610000;
+    border-radius: 10px;
+    color: var(--white);
+    padding: 20px;
+    text-align: center;
+}
+
+.learner-assignment .assignment-container .date-container p,
+.learner-assignment .assignment-container .date-container h3 {
+    font-size: 20px;
+}
+
+.learner-assignment .assignment-container .date-container .fa {
+    color: var(--white);
+    font-size: 45px;
+}
+
+.learner-assignment .assignment-container h2 {
+    font-weight: bold;
+}
+
+.learner-assignment .assignment-container .max-word-container {
+    background-color: #FFEEE8;
+    color: #A60000;
+    font-weight: bold;
+    padding: 3px;
+    text-align: center;
+}
+
+.learner-assignment .assignment-container .description-container {
+    margin-top: 20px;
+}
+
+.learner-assignment .assignment-container .manuscript-container {
+    display: flex;
+    background-color: #FFFCEC;
+    margin-top: 30px;
+    padding: 10px 0;
+}
+
+.learner-assignment .assignment-container .manuscript-container a {
+    font-weight: bold;
+}
+
+.learner-assignment .assignment-container .manuscript-container .button-container {
+    text-align: center;
+}
+
+.learner-assignment .assignment-container .manuscript-container .button-container .btn-info,
+.learner-assignment .assignment-container .manuscript-container .button-container .btn-danger {
+    background-color: transparent;
+    border: none;
+}
+
+.learner-assignment .assignment-container .manuscript-container .button-container .btn-info .fa {
+    color: #00477B;
+}
+
+.learner-assignment .assignment-container .manuscript-container .button-container .btn-danger .fa {
+    color: #A60000;
+}
+
+.learner-assignment .assignment-container .manuscript-container .button-container .fa-eye {
+    color: #00477B;
+}
+
+.learner-assignment .assignment-container .bottom-container {
+    border-top: 1px solid #EFEFEF;
+    margin-top: 30px;
+    padding-top: 10px;
+}
+
+.learner-assignment .assignment-container .bottom-container p {
+    font-size: 13px;
+}
+
+.red-outline-btn {
+    background-color: transparent;
+    border: 1px solid #610000;
+    border-radius: 10px;
+    color: #610000;
+    font-weight: bold;
+    padding: 7px;
+    width: 100%;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.red-outline-btn:hover {
+    background-color: #610000;
+    color: var(--white);
+}
+
+.learner-assignment .upcoming-assignment-container {
+    background-color: var(--white);
+    border: 1px solid #959595;
+    border-radius: 10px;
+    box-shadow: var(--box-shadow-style);
+    margin-top: 40px;
+    padding: 40px 30px;
+}
+
+.learner-assignment .upcoming-assignment-container h2 {
+    border-bottom: 1px solid #D9D9D9;
+    color: var(--primary-color);
+    font-weight: bold;
+    margin-bottom: 0;
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+.learner-assignment .upcoming-assignment-container .upcoming-assignment-list {
+    border-bottom: 1px solid #D9D9D9;
+    padding: 30px 0 20px;
+}
+
+#submitEditorManuscriptModal .file-upload,
+#submitManuscriptModal .file-upload,
+#editManuscriptModal .file-upload {
+    background-color: #F8F8FF;
+    border-radius: 0.25rem;
+    border: 1px dashed rgba(56, 78, 183, 0.30);
+    flex-direction: column;
+    margin-top: 0;
+    padding: 50px;
+}
+
+#submitEditorManuscriptModal .file-upload .fa,
+#submitManuscriptModal .file-upload .fa,
+#editManuscriptModal .file-upload .fa {
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+
+#submitEditorManuscriptModal .file-label,
+#submitManuscriptModal .file-label,
+#editManuscriptModal .file-label {
+    color: #676767;
+    display: block;
+    margin-bottom: 20px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+#submitEditorManuscriptModal .file-upload-text,
+#submitManuscriptModal .file-upload-text,
+#editManuscriptModal .file-upload-text {
+    font-weight: bold;
+}
+
+.custom-radio [type=radio]:checked+label {
+    color: var(--primary-color);
+}
+
+.custom-radio [type=radio]:checked+label, 
+.custom-radio [type=radio]:not(:checked)+label {
+    color: #6E7485;
+    font-family: 'Inter';
+    font-weight: normal;
+}
+
+.custom-radio [type=radio]:checked+label:before {
+    border: 1.5px solid var(--primary-color);
+}
+
+.custom-radio [type=radio]:checked+label:after {
+    background: var(--primary-color);
+}
+
+.toggle-on.btn-primary {
+    background-color: #5F0000 !important;
+}
+
+.learner-assignment .col-sm-12 {
+    padding-left: 15px;
+    padding-right: 15px;
+}
 /* end course lesson page */
+
+.new-global-modal .modal-content {
+    border-radius: 10px;
+}
+
+.new-global-modal .modal-header {
+    padding: 20px;
+}
+
+.new-global-modal .modal-header .modal-title {
+    font-size: 18px;
+}
+
+.new-global-modal .modal-header .close {
+    font-size: 28px;
+}
+
+.new-global-modal .modal-body {
+    padding: 20px;
+}
+
+.new-global-modal .submit-btn {
+    background-color: var(--primary-color) !important;
+    border: 1px solid var(--primary-color) !important;
+    border-radius: 8px;
+    font-size: 16px;
+    min-width: 250px;
+    padding: 10px;
+}
+
+.new-global-modal .submit-btn:hover {
+    color: var(--primary-color) !important;
+    background-color: transparent !important;
+    border: 1px solid var(--primary-color) !important;
+}
 
 @media only screen and (max-width: 1024px) {
     #main-container.enlarge {
@@ -411,11 +657,17 @@
     .learner-container .lesson-container .lesson-details iframe {
         width: 100%;
     }
+
+    .learner-assignment .assignment-container .date-container .fa {
+        font-size: 35px;
+    }
     
 }
 
 @media only screen and (max-width: 768px) {
-    
+    .learner-assignment .assignment-container .date-container .fa {
+        font-size: 45px;
+    }
 }
 
 @media only screen and (max-width: 640px) {
@@ -426,6 +678,23 @@
 
     .learner-container .lesson-container .right-container {
         margin-top: 30px;
+    }
+
+    .learner-assignment .assignment-container .date-container .fa {
+        margin-bottom: 10px;
+    }
+
+    .learner-assignment .assignment-container .date-container .pl-0 {
+        padding-left: 15px !important;
+    }
+
+    .learner-assignment .assignment-container .date-container {
+        margin-bottom: 20px;
+    }
+
+    .learner-assignment .col-sm-12 {
+        padding-left: 0;
+        padding-right: 0;
     }
 }
 
@@ -439,12 +708,20 @@
 }
 
 @media only screen and (max-width: 415px) {
+    .learner-assignment .col-sm-12 {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
 }
 
 @media only screen and (max-width: 376px) {
     .learner-container .lesson-container .previous-lesson-link,
     .learner-container .lesson-container .next-lesson-link {
         max-width: 320px;
+    }
+
+    .learner-assignment .assignment-container .date-container .fa {
+        font-size: 35px;
     }
 }
 

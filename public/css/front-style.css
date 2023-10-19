@@ -665,6 +665,7 @@ start today section
 .file-upload {
     border: 2px dashed #7E7E7E;
     border-radius: 24px;
+    cursor: pointer;
     padding: 20px;
     min-height: 125px;
     display: flex;
