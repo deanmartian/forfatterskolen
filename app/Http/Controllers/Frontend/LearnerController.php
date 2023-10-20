@@ -749,27 +749,39 @@ class LearnerController extends Controller
                 // check if the assignment is allowed on the learners package or there's no set package allowed
                 if ((!is_null($allowed_package) && in_array($package_id,$allowed_package)) || is_null($allowed_package) || in_array($assignment->id, $addOns)) {
                     if (!in_array($courseTaken->user_id, $assignmentDisabledLearners)) {
-                        // added the condition because of the update for submission date
-                        // the original is the else
-                        if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
-                            if ($course->type == 'Single' && $assignment->submission_date == '365') {
-                                if(\Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
-                                    $includeAssignment = $assignment;
-                                    $includeAssignment->course_taken_end_date = $courseTaken->end_date; // for displaying submit button
-                                    $assignments[] = $includeAssignment;
+                        
+                        $assignmentManuscript = AssignmentManuscript::where('user_id', Auth::user()->id)
+                        ->where('assignment_id', $assignment->id)
+                        ->first();
+
+                        if(!$assignmentManuscript || ($assignmentManuscript && !$assignmentManuscript->locked
+                            && !$assignmentManuscript->has_feedback)) {
+                            // added the condition because of the update for submission date
+                            // the original is the else
+                            if (!AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)) {
+                                if ($course->type == 'Single' && $assignment->submission_date == '365') {
+                                    if(\Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
+                                        $includeAssignment = $assignment;
+                                        $includeAssignment->course_taken_end_date = $courseTaken->end_date; // for displaying submit button
+                                        $assignments[] = $includeAssignment;
+                                    }
+                                } else {
+                                    if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)
+                                        ->gt(Carbon::now())) {
+                                        $assignments[] = $assignment;
+                                    }
                                 }
                             } else {
-                                if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)
-                                    ->gt(Carbon::now())) {
+                                // added the && to check if the course taken is not yet expired
+                                if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now()) &&
+                                    \Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
                                     $assignments[] = $assignment;
                                 }
                             }
-                        } else {
-                            // added the && to check if the course taken is not yet expired
-                            if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now()) &&
-                                \Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
-                                $assignments[] = $assignment;
-                            }
+                        }
+
+                        if ($assignmentManuscript && $assignmentManuscript->locked && !$assignmentManuscript->has_feedback) {
+                            $waitingForResponse[] = $assignment;
                         }
                     }
                 }
