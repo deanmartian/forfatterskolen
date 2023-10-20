@@ -498,6 +498,52 @@ body:not(.modal-open) {
     font-size: 13px;
 }
 
+.learner-assignment .feedback-from-editor-container {
+    margin-top: 30px;
+}
+
+.learner-assignment .feedback-from-editor-container table {
+    background-color: var(--white);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    margin-top: 10px;
+}
+
+.learner-assignment .feedback-from-editor-container table th,
+.learner-assignment .feedback-from-editor-container table td {
+    padding: 15px;
+}
+
+.learner-assignment .feedback-from-editor-container table th {
+    color: #B3B3B3;
+    font-weight: bold;
+}
+
+.learner-assignment .feedback-from-editor-container table td.td-date {
+    color: #666666;
+}
+
+.learner-assignment .feedback-from-editor-container table td a {
+    color: #5F0000;
+    font-weight: bold;
+}
+
+.learner-assignment .feedback-from-editor-container table td a.download-feedback {
+    border: 2px solid #00477B;
+    color: #00477B;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.learner-assignment .feedback-from-editor-container table td a.download-feedback:hover {
+    background-color: #00477B;
+    color: var(--white);
+}
+
+.learner-assignment .feedback-from-editor-container table td .fas {
+    margin-left: 5px;
+}
+
 .red-outline-btn {
     background-color: transparent;
     border: 1px solid #610000;
