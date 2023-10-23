@@ -738,6 +738,7 @@ class LearnerController extends Controller
             ->oldest('submission_date')
             ->get();
         $waitingForResponse = [];
+        $waitingForResponseIDs = [];
 
         foreach( $coursesTaken as $courseTaken ) :
             foreach( $courseTaken->package->course->activeAssignments as $assignment ) :
@@ -782,6 +783,7 @@ class LearnerController extends Controller
 
                         if ($assignmentManuscript && $assignmentManuscript->locked && !$assignmentManuscript->has_feedback) {
                             $waitingForResponse[] = $assignment;
+                            $waitingForResponseIDs[] = $assignment->id;
                         }
                     }
                 }
@@ -804,7 +806,7 @@ class LearnerController extends Controller
                             ->where('status', 0)
                             ->where('assignment_id', $assignment->id)->first();
 
-                    if ($waitingForResponseManuscript) {
+                    if ($waitingForResponseManuscript && !in_array($assignment->id, $waitingForResponseIDs)) {
                         $waitingForResponse[] = $assignment;
                     }                    
                         

@@ -18,6 +18,7 @@
                     <th width="400">
                         Kurs/oppgavetekst
                     </th>
+                    <th>Av</th>
                     <th>
                         {{ trans('site.learner.feedback-text') }}
                     </th>
@@ -52,9 +53,13 @@
                                 <td>
                                     {{ $titleLabel . ': '. $title }}
                                 </td>
+                                <td style="color: #B3B3B3">
+                                    @if( $feedback->is_admin ) 
+                                        Forfatterskolens redaktør
+                                    @endif
+                                </td>
                                 <td>
                                     {!! $feedback->file_link !!}
-                                    @if( $feedback->is_admin ) - {{ trans('site.learner.admin-text') }} @endif
                                 </td>
                                 <td class="td-date">
                                     {{ \App\Http\FrontendHelpers::formatDate($feedback->availability) }}
