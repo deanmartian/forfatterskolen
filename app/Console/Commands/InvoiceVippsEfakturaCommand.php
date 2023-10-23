@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\CronLog;
 use App\Http\FikenInvoice;
 use App\Invoice;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -54,11 +55,11 @@ class InvoiceVippsEfakturaCommand extends Command
             ->get();
 
         foreach ($invoices as $invoice) {
-
+            $user = User::find($invoice->user_id);
             $fikenInvoice = new FikenInvoice();
             $fikenInvoice->setMobileNumber($invoice->vipps_phone_number);
             $fikenInvoice->setFikenInvoiceId($invoice->fiken_invoice_id);
-            $response = $fikenInvoice->vippsEFaktura();
+            $response = $fikenInvoice->vippsEFaktura($user);
 
             if ($response['code'] == 200 ) {
                 CronLog::create(['activity' => 'InvoiceVippsEfaktura created for invoice id ' . $invoice->id . '.']);
