@@ -1061,6 +1061,38 @@ class HomeController extends Controller
     }
 
     /**
+     * export learners with pay later and have active course
+     *
+     * @return void
+     */
+    public function exportCoursePayLaterWithActive()
+    {
+        $coursesTaken = CoursesTaken::where('is_pay_later', 1)
+        ->whereIn('user_id', function ($query) {
+            $query->select('user_id')
+                ->from('courses_taken')
+                ->whereNotNull('end_date')
+                ->whereDate('end_date', '>=', now())
+                ->whereNull('deleted_at')
+                ->distinct();
+        })
+        ->get();
+
+        $userList = [];
+
+        foreach($coursesTaken as $courseTaken) {
+            $userList[] = [
+                'name' => $courseTaken->user->full_name,
+                'email' => $courseTaken->user->email,
+            ];
+        }
+
+        $headers = ['name', 'email'];
+        $excel = \App::make('excel');
+        return $excel->download(new GenericExport($userList, $headers), 'Learners with pay later.xlsx');
+    }
+
+    /**
      * Display the articles of the selected solution
      * @param Solution $support_id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
