@@ -182,6 +182,13 @@
                     </h4>
                     <span class="font-barlow-regular">{{ trans('site.deadline') }}:</span>
                     <span>{{ \App\Http\FrontendHelpers::formatDateTimeNor($assignment->submission_date) }}</span>
+
+                    @if($assignment->course)
+                        <p>
+                            {{ trans('site.front.course-text') }}: 
+                            {{ $assignment->course->title }}
+                        </p>
+                    @endif
                 </div>
             @endforeach
         </div>
