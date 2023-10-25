@@ -1283,11 +1283,17 @@ Er det feil må du sende en mail til <a href="mailto:post@forfatterskolen.no">po
             ->whereNotNull('file')->get();
         $userList = [];
         foreach($manuscriptsTaken as $manu) {
-            $userList[] = [
-                'name' => $manu->user->full_name,
-                'email' => $manu->user->email,
-                'date' => FrontendHelpers::formatDate($manu->created_at)
-            ];
+            $shopManuscriptOrder = Order::where('type', 2)
+                ->where('item_id', $manu->shop_manuscript_id)
+                ->where('user_id', $manu->user_id)
+                ->whereNull('svea_order_id')->first();
+            if ($shopManuscriptOrder) {
+                $userList[] = [
+                    'name' => $manu->user->full_name,
+                    'email' => $manu->user->email,
+                    'date' => FrontendHelpers::formatDate($manu->created_at)
+                ];
+            }
         }
 
         $headers = ['name', 'email', 'date'];
