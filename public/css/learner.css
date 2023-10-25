@@ -392,6 +392,10 @@ body:not(.modal-open) {
     background-color: var(--secondary-red) !important;
 }
 
+/* end course lesson page */
+
+/* learner assignment */
+
 .learner-assignment .nav-tabs > li > a {
     color: #75777A;
     font-weight: bold;
@@ -584,6 +588,77 @@ body:not(.modal-open) {
     padding: 30px 0 20px;
 }
 
+.learner-assignment .waiting-for-feedback-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 40px;
+}
+
+.learner-assignment .waiting-for-feedback-wrapper .assignment-container:first-child {
+    margin-top: 0;
+}
+
+.learner-assignment .waiting-for-feedback-wrapper .assignment-container img {
+    margin-right: 5px;
+}
+
+.learner-assignment .finish-assignment-wrapper {
+    background-color: var(--white);
+    border-radius: 10px;
+    box-shadow: var(--box-shadow-style);
+    max-height: 90vh;
+    overflow: auto;
+    padding: 40px 20px;
+    position: sticky;
+    top: 0;
+}
+
+.learner-assignment .finish-assignment-wrapper h2 {
+    color: #00477B;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.learner-assignment .finish-assignment-wrapper .timeline-wrapper h3,
+.learner-assignment .finish-assignment-wrapper .timeline-wrapper .timeline {
+    padding-left: 15px;
+    position: relative;
+}
+
+.learner-assignment .finish-assignment-wrapper .timeline-wrapper h3:before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    background: #175302;
+    border-radius: 50%;
+    position: absolute;
+    left: -5px;
+    top: 5px;
+}
+
+.learner-assignment .finish-assignment-wrapper .timeline-wrapper .timeline {
+    border-left: 3px solid #175302;
+    padding-bottom: 30px;
+}
+
+.learner-assignment .finish-assignment-wrapper .timeline-wrapper:last-child .timeline {
+    padding-bottom: 0;
+}
+
+.learner-assignment .finish-assignment-wrapper .timeline-wrapper .timeline .feedback-container p {
+    color: #384247;
+    font-size: 14px;
+}
+
+.learner-assignment .finish-assignment-wrapper .timeline-wrapper .timeline .feedback-container .btn {
+    background-color: #00477B !important;
+    border-radius: 5px;
+    font-size: 11px;
+    margin-top: 5px;
+}
+
 #submitEditorManuscriptModal .file-upload,
 #submitManuscriptModal .file-upload,
 #editManuscriptModal .file-upload {
@@ -645,7 +720,8 @@ body:not(.modal-open) {
     padding-left: 15px;
     padding-right: 15px;
 }
-/* end course lesson page */
+
+/* end assignment page */
 
 .new-global-modal .modal-content {
     border-radius: 10px;
@@ -713,6 +789,10 @@ body:not(.modal-open) {
 @media only screen and (max-width: 768px) {
     .learner-assignment .assignment-container .date-container .fa {
         font-size: 45px;
+    }
+
+    .learner-assignment .finish-assignment-wrapper {
+        margin-top: 30px;
     }
 }
 
