@@ -737,6 +737,8 @@ class LearnerController extends Controller
             ->where('available_date','>', Carbon::now())
             ->oldest('submission_date')
             ->get();
+
+        $upcomingAssignments = [];
         $waitingForResponse = [];
         $waitingForResponseIDs = [];
 
@@ -846,6 +848,12 @@ class LearnerController extends Controller
                                 $expiredAssignments[] = $assignment;
                             }
                         }
+
+                        if (!$assignmentManuscript && AdminHelpers::isDateWithFormat('M d, Y h:i A',$assignment->submission_date)
+                            && \Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now()) &&
+                            \Carbon\Carbon::parse($assignment->available_date)->gt(Carbon::now())) {
+                                $upcomingAssignments[] = $assignment;
+                        }
                     }
                 }
             endforeach;
@@ -895,10 +903,18 @@ class LearnerController extends Controller
         $expiredAssignmentCreated = array_column($expiredAssignments, 'created_at');
         array_multisort($expiredAssignmentCreated, SORT_DESC, $expiredAssignments);
 
+        foreach($upcomingPersonalAssignments as $upcomingPersonalAssignment) {
+            $upcomingAssignments[] = $upcomingPersonalAssignment;
+        }
+
+        usort($upcomingAssignments, function ($a, $b) {
+            return strtotime($a->submission_date) - strtotime($b->submission_date);
+        });
+
         $expiredAssignments = array_unique($expiredAssignments);
 
         return view('frontend.learner.assignment', compact('assignments', 'expiredAssignments',
-            'upcomingPersonalAssignments', 'waitingForResponse'));
+            'upcomingAssignments', 'waitingForResponse'));
     }
 
 

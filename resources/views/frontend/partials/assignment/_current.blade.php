@@ -171,7 +171,7 @@
                 Kommende Oppgaver
             </h2>
 
-            @foreach($upcomingPersonalAssignments as $assignment)
+            @foreach($upcomingAssignments as $assignment)
                 <div class="upcoming-assignment-list">
                     <h3>
                         {{ $assignment->title }}
