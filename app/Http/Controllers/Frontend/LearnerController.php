@@ -824,10 +824,11 @@ class LearnerController extends Controller
                             }
                         }
                     } else {
+                        $assignmentManuscript = AssignmentManuscript::where('user_id', Auth::user()->id)
+                                    ->where('assignment_id', $assignment->id)->first();
+                                    
                         if (\Carbon\Carbon::parse($assignment->submission_date)->lt(Carbon::now())) {
                             if ($course->type == 'Group') {
-                                $assignmentManuscript = AssignmentManuscript::where('user_id', Auth::user()->id)
-                                    ->where('assignment_id', $assignment->id)->first();
                                 // check if assignment manuscript has feedback
                                 if ($assignmentManuscript) {
                                     $assignmentFeedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $assignmentManuscript->id)->first();
@@ -1103,8 +1104,60 @@ class LearnerController extends Controller
             'groupLearnerList', 'assignmentManuscript'));
     }
 
+    public function groupLearnerDetails($group_id)
+    {
+        /* $groupLearners = AssignmentGroupLearner::where('assignment_group_id', $group_id)
+            ->where('user_id', '!=', Auth::user()->id);
+        $groupLearner = AssignmentGroupLearner::where('assignment_group_id', $group_id)
+            ->where('user_id', '=', Auth::user()->id)->first();
 
+        $otherLearnersIdList = $groupLearners->pluck('id')->toArray();
+        $could_send_feedback_to = $groupLearner->could_send_feedback_to_id_list ?: $otherLearnersIdList;
 
+        array_push($could_send_feedback_to, $groupLearner->id);
+        $groupLearnerList = AssignmentGroupLearner::where('assignment_group_id', $group_id)
+            ->whereIn('id', $could_send_feedback_to)->orderBy('created_at', 'desc')->get()->map(function($groupLearner) {
+                $groupLearner['feedback'] = AssignmentFeedback::where('assignment_group_learner_id',
+                            $groupLearner->id)->where('user_id', Auth::user()->id)->first();
+                return $groupLearner;
+            });
+
+        return [
+            'groupLearnerList' => $groupLearnerList
+        ]; */
+
+        $group = AssignmentGroup::where('id', $group_id)->whereHas('learners', function($query){
+            $query->where('user_id', Auth::user()->id);
+        })->firstOrFail();
+
+        $userId = Auth::user()->id;
+
+        $groupLearnerList = AssignmentGroupLearner::where('assignment_group_id', $group_id)
+            ->where('user_id', '!=', $userId)
+            ->orWhere('user_id', $userId)
+            ->whereIn(
+                'id',
+                AssignmentGroupLearner::where('assignment_group_id', $group_id)
+                    ->pluck('id')
+                    ->toArray()
+            )
+            ->orderBy('created_at', 'desc')
+            ->with(['feedback' => function($query) use ($userId) {
+                $query->where('user_id', $userId);
+            }])
+            ->with('user')
+            ->get();
+
+        // Manually call the accessor for each model instance
+        $groupLearnerList->map(function ($groupLearner) {
+            $groupLearner->learnerManuscript = $groupLearner->learnerManuscript();
+            return $groupLearner;
+        });
+
+        return [
+            'groupLearnerList' => $groupLearnerList
+        ];
+    }
 
     public function submit_feedback($group_id, $id, Request $request)
     {
