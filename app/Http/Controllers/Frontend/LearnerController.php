@@ -433,10 +433,20 @@ class LearnerController extends Controller
             $isReplay = 1;
         }
 
+        $coursesTaken = Auth::user()->coursesTaken;
+        $courses = DB::table('courses')
+                ->leftJoin('packages', 'courses.id', '=', 'packages.course_id')
+                ->leftJoin('courses_taken', 'courses_taken.package_id', '=', 'packages.id')
+                ->where('courses_taken.user_id', Auth::user()->id)
+                ->whereNull('courses_taken.deleted_at')
+                ->pluck('courses.id')
+                ->toArray();
+
         $replayWebinars = DB::table('lesson_contents')->select('lesson_contents.*')
                             ->leftJoin('lessons', 'lesson_contents.lesson_id', '=', 'lessons.id')
                             ->leftJoin('courses', 'lessons.course_id', '=', 'courses.id')
                             ->where('courses.id', '=', 17)
+                            ->whereIn('courses.id', $courses)
                             ->latest('lesson_contents.id')
                             ->paginate(25);
 
