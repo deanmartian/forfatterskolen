@@ -8,6 +8,15 @@ class Webinar extends Model
     protected $table = 'webinars';
     protected $fillable = ['course_id', 'title', 'description', 'start_date', 'image' , 'link', 'set_as_replay', 'status'];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function($query) {
+            $query->webinar_editors()->delete();
+        });
+    }
+
     public function course()
     {
         return $this->belongsTo('App\Course');
