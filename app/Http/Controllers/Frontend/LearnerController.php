@@ -752,6 +752,9 @@ class LearnerController extends Controller
         $waitingForResponse = [];
         $waitingForResponseIDs = [];
 
+        $assignmentGroupLearners = AssignmentGroupLearner::with(['group.assignment.course'])
+                                ->where('user_id', Auth::user()->id)->get();
+
         foreach( $coursesTaken as $courseTaken ) :
             foreach( $courseTaken->package->course->activeAssignments as $assignment ) :
 
@@ -925,7 +928,7 @@ class LearnerController extends Controller
         $expiredAssignments = array_unique($expiredAssignments);
 
         return view('frontend.learner.assignment', compact('assignments', 'expiredAssignments',
-            'upcomingAssignments', 'waitingForResponse'));
+            'upcomingAssignments', 'waitingForResponse', 'assignmentGroupLearners'));
     }
 
 
@@ -1107,10 +1110,32 @@ class LearnerController extends Controller
         $assignmentManuscript = AssignmentManuscript::where('assignment_id', $group->assignment_id)
             ->where('user_id', Auth::user()->id)->first();
 
+
         array_push($could_send_feedback_to, $groupLearner->id);
         $groupLearnerList = AssignmentGroupLearner::where('assignment_group_id', $id)
             ->whereIn('id', $could_send_feedback_to)->orderBy('created_at', 'desc')->get();
         return view('frontend.learner.groupShow', compact('group', 'otherLearnersIdList', 'could_send_feedback_to',
+            'groupLearnerList', 'assignmentManuscript'));
+    }
+
+    public function groupShowDetails($id)
+    {
+        $group = AssignmentGroup::where('id', $id)->whereHas('learners', function($query){
+            $query->where('user_id', Auth::user()->id);
+        })->firstOrFail();
+        $groupLearners = AssignmentGroupLearner::where('assignment_group_id', $id)
+            ->where('user_id', '!=', Auth::user()->id);
+        $groupLearner = AssignmentGroupLearner::where('assignment_group_id', $id)
+            ->where('user_id', '=', Auth::user()->id)->first();
+        $otherLearnersIdList = $groupLearners->pluck('id')->toArray();
+        $could_send_feedback_to = $groupLearner->could_send_feedback_to_id_list ?: $otherLearnersIdList;
+        $assignmentManuscript = AssignmentManuscript::where('assignment_id', $group->assignment_id)
+            ->where('user_id', Auth::user()->id)->first(); 
+
+        array_push($could_send_feedback_to, $groupLearner->id);
+        $groupLearnerList = AssignmentGroupLearner::where('assignment_group_id', $id)
+            ->whereIn('id', $could_send_feedback_to)->orderBy('created_at', 'desc')->get();
+        return view('frontend.partials.assignment._group_show', compact('group', 'otherLearnersIdList', 'could_send_feedback_to',
             'groupLearnerList', 'assignmentManuscript'));
     }
 

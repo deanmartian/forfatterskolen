@@ -388,6 +388,8 @@ Route::group([
         Route::post('assignment/{id}/delete_manuscript', 'LearnerController@deleteAssignmentManuscript')->name('learner.assignment.delete_manuscript');
         Route::post('assignment/{id}/replace_letter', 'LearnerController@replaceAssignmentLetter')->name('learner.assignment.replace_letter');
         Route::get('/assignment/group/{id}', 'LearnerController@group_show')->name('learner.assignment.group.show'); // Assignment show Page
+        Route::get('/assignment/group/{id}/learner-details', 'LearnerController@groupLearnerDetails');
+        Route::get('/assignment/group/{id}/show-details', 'LearnerController@groupShowDetails');
         Route::get('/assignment/manuscript/{id}', 'LearnerController@downloadAssignmentGroupManuscript')->name('learner.assignment.manuscript.download'); // Assignment show Page
         Route::get('/assignment/feedback/{id}/download', 'LearnerController@downloadAssignmentGroupFeedback')->name('learner.assignment.feedback.download'); // Download assignment feedback
         Route::get('/assignment/feedback-no-group/{id}/download', 'LearnerController@downloadAssignmentNoGroupFeedback')->name('learner.assignment.no-group-feedback.download'); // Download assignment feedback

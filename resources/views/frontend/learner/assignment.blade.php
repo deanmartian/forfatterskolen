@@ -36,7 +36,7 @@
 
 @section('content')
 
-	<div class="learner-container learner-assignment">
+	<div class="learner-container learner-assignment" id="app-container">
 		<div class="container">
 			<div class="row">
 				<div class="col-sm-12">
@@ -80,40 +80,9 @@
 							@elseif( Request::input('tab') == 'feedback-from-editor' )
 								@include('frontend.partials.assignment._feedback_from_editor')
 							@elseif( Request::input('tab') == 'groups' )
-                                <?php $assignmentGroups = App\AssignmentGroupLearner::where('user_id', Auth::user()->id)->get(); ?>
-								@if( $assignmentGroups->count() > 0 )
-									@foreach( $assignmentGroups as $group )
-										<div class="card mt-5">
-											<div class="card-header p-4">
-												<h2>
-													<i class="contract-sign"></i>
-													<a href="{{ route('learner.assignment.group.show', $group->group->id) }}"
-													   class="h2-font">
-														{{ $group->group->title }}
-													</a>
-												</h2>
-											</div>
-											<div class="card-body p-4">
-											<span class="d-block">{{ trans('site.front.course-text') }}:
-												{{ $group->group->assignment->course->title }}
-											</span>
-												<span class="d-block">{{ trans('site.learner.assignment-single') }}:
-													{{ $group->group->assignment->title }}
-											</span>
-                                                <?php
-                                                /*$submission_date = strtr(trans('site.learner.submission-date-value'), [
-                                                       '_date_' => \Carbon\Carbon::parse($group->group->submission_date)->format('d M Y'),
-                                                        '_time_' => \Carbon\Carbon::parse($group->group->submission_date)->format('H:i')
-                                                    ]);*/
-                                                $submission_date = \App\Http\FrontendHelpers::formatDateTimeNor($group->group->submission_date);
-                                                ?>
-												<span>{{ trans('site.learner.submission-date') }}:
-													{{ $submission_date }}
-											</span>
-											</div>
-										</div>
-									@endforeach
-								@endif
+								@include('frontend.partials.assignment._group')
+								{{-- <group-assignment :learners="{{ json_encode($assignmentGroupLearners) }}" 
+								:current-user="{{ json_encode(Auth::user()) }}"></group-assignment> --}}
 							@elseif( Request::input('tab') == 'upcoming' )
 								<div class="row past-assignment grid mt-5">
 									@foreach($upcomingPersonalAssignments as $assignment)
@@ -460,14 +429,21 @@
 @section('scripts')
 	<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script>
 	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+	<script src="{{ asset('/js/app.js?v='.time()) }}"></script>
 <script>
 
     // call the function once fully loaded
     $(window).on('load', function() {
-        $('.grid').masonry({
+        /* $('.grid').masonry({
             // options
             itemSelector : '.grid-item'
-        });
+        }); */
+
+		const groupLearnerGroupId = '{{ $assignmentGroupLearners[0] ? $assignmentGroupLearners[0]->group->id : "" }}';
+		
+		if (groupLearnerGroupId) {
+			showGroupDetails(groupLearnerGroupId);
+		}
     });
 
 	@if (Session::has('success'))
@@ -617,6 +593,23 @@
 			if (!isFileInputNotEmpty()) {
 				alert('Please select a document file.');
 				e.preventDefault();
+			}
+		});
+	}
+
+	function showGroupDetails(group_id) {
+		$(".group-container").removeClass('active');
+		$("#group-"+group_id).addClass('active');
+
+		$.ajax({
+			type: "GET",
+			url: "/account/assignment/group/" + group_id + "/show-details",
+			beforeSend: function() {
+				$("#loading-wrapper").removeClass('d-none');
+			},
+			success:function(data) {
+				$("#loading-wrapper").addClass('d-none');
+				$("#group-details-container").html(data);
 			}
 		});
 	}

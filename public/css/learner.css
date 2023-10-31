@@ -548,23 +548,6 @@ body:not(.modal-open) {
     margin-left: 5px;
 }
 
-.red-outline-btn {
-    background-color: transparent;
-    border: 1px solid #610000;
-    border-radius: 10px;
-    color: #610000;
-    font-weight: bold;
-    padding: 7px;
-    width: 100%;
-    word-wrap: break-word;
-    white-space: normal;
-}
-
-.red-outline-btn:hover {
-    background-color: #610000;
-    color: var(--white);
-}
-
 .learner-assignment .upcoming-assignment-container {
     background-color: var(--white);
     border: 1px solid #959595;
@@ -588,7 +571,8 @@ body:not(.modal-open) {
     padding: 30px 0 20px;
 }
 
-.learner-assignment .waiting-for-feedback-wrapper {
+.learner-assignment .waiting-for-feedback-wrapper,
+.learner-assignment .group-assignment-wrapper {
     display: flex;
     flex-wrap: wrap;
     margin-top: 40px;
@@ -602,7 +586,8 @@ body:not(.modal-open) {
     margin-right: 5px;
 }
 
-.learner-assignment .finish-assignment-wrapper {
+.learner-assignment .finish-assignment-wrapper,
+.learner-assignment .group-list-wrapper {
     background-color: var(--white);
     border-radius: 10px;
     box-shadow: var(--box-shadow-style);
@@ -613,7 +598,8 @@ body:not(.modal-open) {
     top: 0;
 }
 
-.learner-assignment .finish-assignment-wrapper h2 {
+.learner-assignment .finish-assignment-wrapper h2,
+.learner-assignment .group-list-wrapper h2 {
     color: #00477B;
     font-size: 24px;
     font-weight: bold;
@@ -658,6 +644,191 @@ body:not(.modal-open) {
     font-size: 11px;
     margin-top: 5px;
 }
+
+.learner-assignment .group-assignment-wrapper h1 {
+    font-weight: bold;
+}
+
+.learner-assignment .group-assignment-wrapper a,
+.learner-assignment .group-assignment-wrapper .fa {
+    color: var(--black);
+}
+
+.learner-assignment .group-assignment-wrapper a:hover {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.learner-assignment .group-assignment-wrapper a:hover .fa {
+    color: var(--primary-color);
+}
+
+.learner-assignment .group-assignment-wrapper a:active {
+    text-decoration: none;
+}
+
+.learner-assignment .group-assignment-wrapper .group-container {
+    border: 1px solid #C4C4C4;
+    border-radius: 20px;
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.learner-assignment .group-assignment-wrapper .group-container:hover,
+.learner-assignment .group-assignment-wrapper .group-container.active {
+    background-color: #FFFDF4;
+    cursor: pointer;
+}
+
+.learner-assignment .group-assignment-wrapper .group-container h3 .fa {
+    margin-right: 5px;
+}
+
+.learner-assignment .group-assignment-wrapper .group-container b {
+    color: #384247;
+    display: block;
+    margin-top: 15px;
+}
+
+.learner-assignment .group-assignment-wrapper .group-container p {
+    color: #384247;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.learner-assignment .group-assignment-wrapper .group-learner-list-wrapper {
+    background-color: var(--white);
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.learner-assignment .group-assignment-wrapper .group-learner-list-wrapper .title-container {
+    display: flex;
+    align-items: center;
+}
+
+.learner-assignment .group-assignment-wrapper .group-learner-list-wrapper .title-container h1 {
+    display: inline;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.learner-assignment .group-assignment-wrapper .group-learner-list-wrapper .title-container span {
+    background-color: #FFEEE8;
+    color: #833A3A;
+    font-weight: bold;
+    margin-left: 15px;
+    padding: 5px 10px;
+}
+
+.learner-assignment .group-assignment-wrapper .group-learner-list-wrapper .learner-details-wrapper {
+    border: 1px solid #D8D8D8;
+    border-radius: 20px;
+    margin-top: 20px;
+    padding: 10px 15px;
+}
+
+.learner-assignment .group-assignment-wrapper .group-learner-list-wrapper .learner-details-wrapper.active {
+    background-color: #FFFDF4;
+    border-color: #9F9F9F;
+}
+
+.learner-assignment .group-assignment-wrapper .group-learner-list-wrapper .learner-details-wrapper .header {
+    position: relative;
+    border-bottom: 1px solid #CACACA;
+    padding: 10px 0 20px;
+}
+
+.learner-assignment .group-assignment-wrapper .group-learner-list-wrapper .learner-details-wrapper .header img {
+    position: absolute;
+    top: 0;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.learner-assignment .group-assignment-wrapper .group-learner-list-wrapper .learner-details-wrapper .header h2 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.learner-assignment .group-assignment-wrapper .group-learner-list-wrapper .learner-details-wrapper .body {
+    padding-top: 20px;
+}
+
+.learner-assignment .group-assignment-wrapper .group-learner-list-wrapper .learner-details-wrapper .body p {
+    margin-bottom: 50px;
+    margin-top: 10px;
+}
+
+.learner-assignment .group-assignment-wrapper .group-learner-list-wrapper .learner-details-wrapper .file-container {
+    margin-top: 30px;
+}
+
+.learner-assignment .group-assignment-wrapper .group-learner-list-wrapper .learner-details-wrapper .file-container .fa {
+    color: var(--black);
+    font-size: 20px;
+    margin-right: 5px;
+}
+
+.learner-assignment .group-assignment-wrapper .group-learner-list-wrapper .learner-details-wrapper .file-container b {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.learner-assignment .group-assignment-wrapper .group-learner-list-wrapper .learner-details-wrapper .file-container a:hover {
+    color: var(--white);
+}
+
+.learner-assignment .group-assignment-wrapper .group-learner-list-wrapper .date {
+    color: #384247;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.learner-assignment .group-assignment-wrapper .group-learner-list-wrapper table {
+    margin-top: 40px;
+}
+
+.learner-assignment .group-assignment-wrapper .group-learner-list-wrapper table>thead>tr>th {
+    color: #96A5B8;
+}
+
+/* .learner-assignment .group-assignment-wrapper .group-list-wrapper h2 {
+    color: var(--black);
+}
+
+.learner-assignment .group-assignment-wrapper .group-list-wrapper {
+    cursor: pointer;
+}
+
+.learner-assignment .group-assignment-wrapper .group-list-wrapper .group-container {
+    padding: 20px;
+    border: 1px solid var(--white);
+}
+
+.learner-assignment .group-assignment-wrapper .group-list-wrapper .group-container:hover,
+.learner-assignment .group-assignment-wrapper .group-list-wrapper .group-container.active {
+    background-color: #FFFDF4;
+    border: 1px solid #D0D0D0;
+    border-radius: 20px;
+}
+
+.learner-assignment .group-assignment-wrapper .group-list-wrapper .group-container h3 {
+    color: var(--primary-color);
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.learner-assignment .group-assignment-wrapper .group-list-wrapper .group-container b {
+    color: #384247;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.learner-assignment .group-assignment-wrapper .group-list-wrapper .group-container p {
+    color: #384247;
+    font-size: 14px;
+} */
 
 #submitEditorManuscriptModal .file-upload,
 #submitManuscriptModal .file-upload,
@@ -758,6 +929,95 @@ body:not(.modal-open) {
     border: 1px solid var(--primary-color) !important;
 }
 
+.loading-wrapper {
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading-wrapper .fa {
+    font-size: 80px;
+    color: var(--primary-color) !important;
+}
+
+.red-global-btn {
+    background-color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 10px;
+    color: var(--white) !important;
+    font-weight: bold;
+    padding: 10px;
+    width: 100%;
+}
+
+.red-global-btn:hover {
+    background-color: var(--white);
+    color: var(--primary-color) !important;
+}
+
+.pink-global-btn {
+    background-color: #FFEEE8;
+    border: 1px solid #FFEEE8;
+    border-radius: 10px;
+    color: var(--primary-color);
+    font-weight: bold;
+    padding: 10px;
+    width: 100%;
+}
+
+.pink-global-btn:hover {
+    background-color: var(--white);
+    color: var(--primary-color);
+}
+
+.red-outline-btn {
+    background-color: transparent;
+    border: 1px solid #610000;
+    border-radius: 10px;
+    color: #610000;
+    font-weight: bold;
+    padding: 7px;
+    width: 100%;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.red-outline-btn:hover {
+    background-color: #610000;
+    color: var(--white);
+}
+
+.blue-outline-btn {
+    background-color: transparent;
+    border: 1px solid #00477B;
+    border-radius: 5px;
+    color: #00477B !important;
+    font-weight: bold;
+}
+
+.blue-outline-btn .fa {
+    color: #00477B !important;
+    font-size: 15px !important;
+}
+
+.blue-outline-btn:hover {
+    background-color: #00477B;
+    color: var(--white) !important;
+}
+
+.blue-outline-btn:hover .fa {
+    color: var(--white) !important;
+}
+
+.text-gray {
+    color: #96A5B8;
+}
+
+.text-red {
+    color: var(--primary-color) !important;
+}
+
 @media only screen and (max-width: 1024px) {
     #main-container.enlarge {
         margin-left: 0;
@@ -791,7 +1051,8 @@ body:not(.modal-open) {
         font-size: 45px;
     }
 
-    .learner-assignment .finish-assignment-wrapper {
+    .learner-assignment .finish-assignment-wrapper,
+    .learner-assignment .group-list-wrapper {
         margin-top: 30px;
     }
 }
@@ -831,6 +1092,10 @@ body:not(.modal-open) {
         max-width: 350px;
         white-space: normal;
     }
+
+    .learner-assignment .group-assignment-wrapper .group-learner-feedback-wrapper .title-container .w-25 {
+        width: auto !important;
+    }
 }
 
 @media only screen and (max-width: 415px) {
@@ -849,10 +1114,28 @@ body:not(.modal-open) {
     .learner-assignment .assignment-container .date-container .fa {
         font-size: 35px;
     }
+
+    .learner-assignment .group-assignment-wrapper .group-learner-list-wrapper .title-container {
+        display: block;
+    }
+
+    .learner-assignment .group-assignment-wrapper .group-learner-list-wrapper .title-container span {
+        display: block;
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .learner-assignment .group-assignment-wrapper .group-learner-feedback-wrapper .title-container .w-25 {
+        margin-top: 10px;
+        width: 100% !important;
+    }
 }
 
 @media only screen and (max-width: 360px) {
 }
 
 @media only screen and (max-width: 320px) {
+    .learner-assignment .group-assignment-wrapper .group-learner-list-wrapper {
+        overflow: auto;
+    }
 }

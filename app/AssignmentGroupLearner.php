@@ -30,4 +30,14 @@ class AssignmentGroupLearner extends Model
         return $this->attributes['could_send_feedback_to'] ? array_map('intval',explode(', ', $this->attributes['could_send_feedback_to'])) : NULL;
     }
 
+    public function feedback()
+    {
+       return $this->hasOne('App\AssignmentFeedback', 'assignment_group_learner_id', 'id');
+    }
+
+    public function learnerManuscript()
+    {
+        return $this->group->assignment->manuscripts->where('user_id', $this->attributes['user_id'])->first();
+    }
+
 }

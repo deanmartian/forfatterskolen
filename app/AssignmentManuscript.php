@@ -10,7 +10,10 @@ class AssignmentManuscript extends Model
     protected $table = 'assignment_manuscripts';
     protected $fillable = ['assignment_id', 'user_id', 'filename', 'words', 'grade', 'type', 'manu_type', 'editor_id',
         'join_group', 'letter_to_editor', 'expected_finish', 'editor_expected_finish'];
-    protected $appends = ['file_link', 'file_link_with_download', 'assignment_type', 'where_in_script'];
+    protected $appends = ['file_link', 'file_link_with_download', 'assignment_type', 'where_in_script',
+        'file_name',
+        'file_extension',
+        'file_link_url'];
 
     const APPROVED_STATUS = 1; // approved feedback status
     const FINISHED_STATUS = 2; // finished status
@@ -95,6 +98,32 @@ class AssignmentManuscript extends Model
         }
 
         return trim($fileLink, ', ');
+    }
+
+    public function getFileNameAttribute()
+    {
+        return basename($this->attributes['filename']);
+    }
+
+    public function getFileExtensionAttribute()
+    {
+        $file = explode('.', basename($this->attributes['filename']));
+        return end($file);
+    }
+
+    public function getFileLinkUrlAttribute()
+    {
+        $fileLink = '';
+        $file = $this->attributes['filename'];
+        $extension = explode('.', basename($file));
+
+        if (end($extension) == 'pdf' || end($extension) == 'odt') {
+            $fileLink = "/js/ViewerJS/#../..".trim($file);
+        } else {
+            $fileLink = "https://view.officeapps.live.com/op/embed.aspx?src=".url('').trim($file);
+        }
+
+        return $fileLink;
     }
 
     public function getExpectedFinishAttribute($value) {
