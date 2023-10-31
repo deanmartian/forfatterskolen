@@ -59,7 +59,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    {!! $feedback->file_link !!}
+                                    {!! $feedback->manuscript->file_link_with_download !!}
                                 </td>
                                 <td class="td-date">
                                     {{ \App\Http\FrontendHelpers::formatDate($feedback->availability) }}
