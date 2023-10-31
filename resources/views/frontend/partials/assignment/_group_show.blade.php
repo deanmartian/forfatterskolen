@@ -133,8 +133,8 @@
                 <thead>
                     <tr>
                         <th>Fil</th>
-                        <th>By</th>
-                        <th>Action</th>
+                        <th>Av</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -165,7 +165,11 @@
 										@endphp
                                     </td>
                                     <td class="text-gray">
-                                        @if( $feedback->is_admin ) {{ trans('site.learner.admin-text') }} @endif
+                                        @if( $feedback->is_admin ) 
+                                            {{ trans('site.learner.admin-text') }} 
+                                        @else
+                                            {{ trans('site.learner.learner-text') . " " .$feedback->user_id }}
+                                        @endif
                                     </td>
                                     <td>
                                         <a href="{{route('learner.assignment.feedback.download', $feedback->id)}}"

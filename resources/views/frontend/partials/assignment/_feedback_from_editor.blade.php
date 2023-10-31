@@ -20,7 +20,7 @@
                     </th>
                     <th>Av</th>
                     <th>
-                        {{ trans('site.learner.feedback-text') }}
+                        Original manus
                     </th>
                     <th>
                         {{ trans('site.date-out') }}
