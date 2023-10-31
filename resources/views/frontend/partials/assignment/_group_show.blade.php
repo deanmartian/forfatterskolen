@@ -23,7 +23,6 @@
             <div class="col-md-6">
                 <div class="learner-details-wrapper {{ $isCurrentUser ? 'active' : '' }}">
                     <div class="header">
-                        <img src="{{ $learner->user->profile_image }}">
                         <h2 class="text-center">
                             {{  $isCurrentUser ? trans('site.learner.you-text') 
                                 : trans('site.learner.learner-text') . " " . $learner->user_id }}
