@@ -11,7 +11,6 @@ class AssignmentManuscript extends Model
     protected $fillable = ['assignment_id', 'user_id', 'filename', 'words', 'grade', 'type', 'manu_type', 'editor_id',
         'join_group', 'letter_to_editor', 'expected_finish', 'editor_expected_finish'];
     protected $appends = ['file_link', 'file_link_with_download', 'assignment_type', 'where_in_script',
-        'file_name',
         'file_extension',
         'file_link_url'];
 
@@ -98,11 +97,6 @@ class AssignmentManuscript extends Model
         }
 
         return trim($fileLink, ', ');
-    }
-
-    public function getFileNameAttribute()
-    {
-        return basename($this->attributes['filename']);
     }
 
     public function getFileExtensionAttribute()
