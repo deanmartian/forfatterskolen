@@ -1,6 +1,6 @@
 <div class="group-assignment-wrapper">
     <div class="col-lg-8">
-        <div class="loading-wrapper" id="loading-wrapper">
+        <div class="loading-wrapper d-none" id="loading-wrapper">
             <i class="fa fa-pulse fa-loading fa-spinner"></i>
         </div>
         <div id="group-details-container"></div>

@@ -439,9 +439,9 @@
             itemSelector : '.grid-item'
         }); */
 
-		const groupLearnerGroupId = '{{ $assignmentGroupLearners[0] ? $assignmentGroupLearners[0]->group->id : "" }}';
-		
+		const groupLearnerGroupId = '{{ $assignmentGroupLearners->count() ? $assignmentGroupLearners[0]->group->id : "" }}';
 		if (groupLearnerGroupId) {
+			console.log("inside if");
 			showGroupDetails(groupLearnerGroupId);
 		}
     });
