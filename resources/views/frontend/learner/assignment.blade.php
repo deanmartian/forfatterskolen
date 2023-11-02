@@ -53,6 +53,10 @@
 							[
 								'name' => 'groups',
 								'label' => trans('site.learner.groups')
+							],
+							[
+								'name' => 'no-word-limit',
+								'label' => 'Redigering Årskurs'
 							]
 						]
 					@endphp
@@ -112,6 +116,8 @@
 									</div> <!-- end grid-item -->
 									@endforeach
 								</div>
+							@elseif( Request::input('tab') == 'no-word-limit' )
+								@include('frontend.partials.assignment._no_word_limit')
 							@else
 								@include('frontend.partials.assignment._current')
 							@endif

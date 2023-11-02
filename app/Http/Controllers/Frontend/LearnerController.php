@@ -737,7 +737,7 @@ class LearnerController extends Controller
     {
         $assignments = [];
         $expiredAssignments = [];
-        $coursesTaken = Auth::user()->coursesTaken;
+        $coursesTaken = Auth::user()->coursesTaken()->whereNotNull('end_date')->get();
         $addOns = AssignmentAddon::where('user_id', \Auth::user()->id)->pluck('assignment_id')->toArray();
         $userAssignments = Auth::user()->activeAssignments;
         $userExpiredAssignments = Auth::user()->expiredAssignments;
@@ -751,6 +751,7 @@ class LearnerController extends Controller
         $upcomingAssignments = [];
         $waitingForResponse = [];
         $waitingForResponseIDs = [];
+        $noWordLimitAssignments = [];
 
         $assignmentGroupLearners = AssignmentGroupLearner::with(['group.assignment.course'])
                                 ->where('user_id', Auth::user()->id)->get();
@@ -779,19 +780,31 @@ class LearnerController extends Controller
                                     if(\Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
                                         $includeAssignment = $assignment;
                                         $includeAssignment->course_taken_end_date = $courseTaken->end_date; // for displaying submit button
-                                        $assignments[] = $includeAssignment;
+                                        if ($assignment->max_words === 0) {
+                                            $noWordLimitAssignments[] = $includeAssignment;
+                                        } else {
+                                            $assignments[] = $includeAssignment;
+                                        }
                                     }
                                 } else {
                                     if(\Carbon\Carbon::parse($courseTaken->started_at)->addDays($assignment->submission_date)
                                         ->gt(Carbon::now())) {
-                                        $assignments[] = $assignment;
+                                        if ($assignment->max_words === 0) {
+                                            $noWordLimitAssignments[] = $assignment;
+                                        } else {
+                                            $assignments[] = $assignment;
+                                        }
                                     }
                                 }
                             } else {
                                 // added the && to check if the course taken is not yet expired
                                 if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now()) &&
                                     \Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
-                                    $assignments[] = $assignment;
+                                    if ($assignment->max_words === 0) {
+                                        $noWordLimitAssignments[] = $assignment;
+                                    } else {
+                                        $assignments[] = $assignment;
+                                    }
                                 }
                             }
                         }
@@ -928,7 +941,7 @@ class LearnerController extends Controller
         $expiredAssignments = array_unique($expiredAssignments);
 
         return view('frontend.learner.assignment', compact('assignments', 'expiredAssignments',
-            'upcomingAssignments', 'waitingForResponse', 'assignmentGroupLearners'));
+            'upcomingAssignments', 'waitingForResponse', 'assignmentGroupLearners', 'noWordLimitAssignments'));
     }
 
 
