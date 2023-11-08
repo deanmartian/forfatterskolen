@@ -101,7 +101,8 @@ class CourseController extends Controller
             'hide_price' => '',
             'meta_title' => '',
             'meta_description' => '',
-            'meta_image' => ''
+            'meta_image' => '',
+            'pay_later_with_application' => ''
         ];
         return view('backend.course.create', compact('course'));
     }
