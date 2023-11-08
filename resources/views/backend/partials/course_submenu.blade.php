@@ -19,6 +19,14 @@
     <li @if($section == 'email-out') class="active" @endif><a href="{{route('admin.course.show', $course->id)}}?section=email-out"><i class="fa fa-envelope"></i>&nbsp;&nbsp;{{ trans('site.email-out') }}</a></li>
 @endif
 
+@if ($course->pay_later_with_application)
+<li @if($section == 'applications') class="active" @endif>
+    <a href="{{route('admin.course.show', $course->id)}}?section=applications">
+        <i class="fa fa-file"></i>&nbsp;&nbsp;Applications
+    </a>
+</li>
+@endif
+
 @if ($course->rewardPackages->count())
     <li @if($section == 'reward-coupons') class="active" @endif><a href="{{route('admin.course.show', $course->id)}}?section=reward-coupons"><i class="fa fa-star"></i>&nbsp;&nbsp;Reward Coupons</a></li>
 @endif

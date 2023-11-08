@@ -120,6 +120,10 @@ class ShopController extends Controller
             endif;
         endif;
 
+        if ($course->pay_later_with_application) {
+            return redirect()->route('front.course.application', $course_id);
+        }
+
         $hasPaidCourse = false;
         if( !Auth::guest() ) :
             foreach( \Auth::user()->coursesTakenNotOld as $courseTaken ) {

@@ -350,6 +350,74 @@
                 submit_btn.attr('disabled', 'disabled');
             }
 
+            function setupGlobalFileUpload(area) {
+                const fileUploadArea = document.getElementById(area);
+                const fileInput = fileUploadArea.querySelector('.input-file-upload');
+                const fileUploadText = fileUploadArea.querySelector('.file-upload-text');
+
+                // Function to open the file input dialog when the file-upload-area is clicked
+                const openFileInput = () => {
+                    fileInput.click();
+                };
+
+                // Function to update the file upload text
+                const updateText = (text) => {
+                    fileUploadText.innerHTML = text;
+                };
+
+                // Function to check if the file input is not empty
+                const isFileInputNotEmpty = () => {
+                    return fileInput.files.length > 0;
+                };
+
+                fileUploadArea.querySelector('.file-upload-btn').addEventListener('mousedown', (e) => {
+                    // Check if the mousedown event was triggered by the button inside file-upload-area
+                    if (e.target.classList.contains('file-upload-btn')) {
+                        openFileInput();
+                    }
+                });
+
+                // Add a click event for the file-upload-btn in the current modal
+                fileUploadArea.querySelector('.file-upload-btn').addEventListener('click', openFileInput);
+
+                const textWithBrowseButton = 'Drag and drop files or <a href="javascript:void(0)" class="file-upload-btn">Klikk her</a>';
+
+                fileUploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    fileUploadArea.classList.add('dragover');
+                    updateText('Release to upload');
+                });
+
+                fileUploadArea.addEventListener('dragleave', () => {
+                    fileUploadArea.classList.remove('dragover');
+                    updateText(textWithBrowseButton);
+                });
+
+                fileUploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    fileUploadArea.classList.remove('dragover');
+
+                    const files = e.dataTransfer.files;
+
+                    for (let i = 0; i < files.length; i++) {
+                        console.log('Dropped file:', files[i].name);
+                    }
+
+                    fileInput.files = files;
+
+                    const selectedText = isFileInputNotEmpty() ? fileInput.files[0].name : textWithBrowseButton;
+                    updateText(selectedText);
+                });
+
+                fileInput.addEventListener('change', () => {
+                    const selectedText = isFileInputNotEmpty() ? fileInput.files[0].name : textWithBrowseButton;
+                    updateText(selectedText);
+                });
+
+                // Add a click event for the file-upload-area to open the file input dialog
+                fileUploadArea.addEventListener('click', openFileInput);
+            }
+
             const layoutMethod = {
                 removeNotification: function(id) {
 

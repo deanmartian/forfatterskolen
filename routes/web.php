@@ -204,6 +204,9 @@ Route::group([
             Route::get('/', 'CourseController@index')->name('front.course.index'); // Course Listing
             Route::get('/{id}', 'CourseController@show')->name('front.course.show'); // Course Details
             Route::get('/{id}/checkout', 'ShopController@sveaCheckout')->name('front.course.checkout'); // Checkout
+            Route::get('/{id}/application', 'CourseController@application')->name('front.course.application'); // Checkout
+            Route::post('/{id}/application/process', 'CourseController@processApplication')->name('front.course.process-application'); // Checkout
+            Route::get('/{id}/application/thank-you', 'CourseController@applicationThankyou')->name('front.course.application.thank-you'); // Checkout
             Route::get('/{id}/fs_checkout', 'ShopController@checkout')->name('front.course.fs-checkout'); // Checkout
             Route::get('/{id}/cancelled-order', 'ShopController@orderCancelled')->name('front.course.cancelled-order');
             Route::get('/{id}/checkout-svea', 'ShopController@sveaCheckout')->name('front.course.svea-checkout'); // Checkout
@@ -832,6 +835,9 @@ Route::group([
         Route::get('course/{id}/download-certificate', 'CourseController@downloadCertificate')->name('admin.course.download-certificate-template');
         Route::post('course/{id}/save-certificate-template', 'CourseController@saveCertificateTemplate')->name('admin.course.save-certificate-template');
         Route::get('/course/{id}/export-hidden-webinars', 'CourseController@exportHiddenWebinars');
+        Route::get('/course/application/{id}/details', 'CourseController@applicationDetails');
+        Route::get('/course/application/{id}/download', 'CourseController@applicationDownload')->name('admin.course.application.download');
+        Route::post('/course/application/{id}/approve', 'CourseController@applicationApprove')->name('admin.course.application.approve');
         Route::post('course-taken/{id}/update-can-receive-email', 'CourseController@canReceiveEmailUpdate');
         Route::post('course-taken/{id}/update-in-facebook-group', 'CourseController@inFacebookGroupUpdate');
         Route::post('course-taken/{id}/exclude-in-registration', 'CourseController@excludeInScheduledRegistration');

@@ -28,10 +28,12 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Course;
+use App\CourseApplication;
 use App\SimilarCourse;
 use App\Http\AdminHelpers;
 use App\Http\Requests\CourseCreateRequest;
 use App\Http\Requests\CourseUpdateRequest;
+use App\Services\CourseService;
 use File;
 use Maatwebsite\Excel\Excel;
 
@@ -999,6 +1001,59 @@ class CourseController extends Controller
             return $excel->download(new GenericExport($webinars, $headers), 'Hidden Webinars.xlsx');
         }
         return redirect()->back();
+    }
+
+    public function applicationDetails($application_id)
+    {
+        $application = CourseApplication::find($application_id);
+        return view('backend.course.partials._application-details', compact('application'));
+    }
+
+    public function applicationDownload($application_id)
+    {
+        $application = CourseApplication::find($application_id);
+        
+        $zipFileName = $application->user->full_name . '.zip';
+        $public_dir  = public_path('storage');
+        $zip         = new \ZipArchive();
+
+        if ($zip->open($public_dir . '/' . $zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== TRUE) {
+            die ("An error occurred creating your ZIP file.");
+        }
+
+        $pdf = \App::make('dompdf.wrapper');
+        $pdfContent = $pdf->loadHTML(view('frontend.pdf.course-application', compact('application')))->output();
+        $zip->addFromString('application.pdf', $pdfContent);
+
+        //get the correct filename
+        $expFileName = explode('/', $application->file_path);
+        $file = str_replace('\\', '/', public_path());
+
+        // physical file location and name of the file
+        $zip->addFile($file.$application->file_path, end($expFileName));
+
+        $zip->close();
+
+        $fileToPath = $public_dir.'/'.$zipFileName;
+
+        return response()->download($fileToPath)->deleteFileAfterSend(true);
+    }
+
+    public function applicationApprove($application_id, CourseService $courseService)
+    {
+        $application = CourseApplication::find($application_id);
+        $courseTaken = $courseService->addCourseToLearner($application->user_id, $application->package_id);
+        $courseTaken->is_active = 1;
+        $courseTaken->save();
+
+        $courseService->notifyUser($application->user_id, $application->package_id, $courseTaken, true, true);
+        $application->approved_date = now();
+        $application->save();
+        
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Application approved.'),
+            'alert_type' => 'success',
+        ]);
     }
 
     public function canReceiveEmailUpdate( $course_taken_id, Request $request )

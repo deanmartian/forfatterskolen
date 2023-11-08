@@ -71,9 +71,15 @@
 
 						@if(Auth::guest())
 							@if ($course->for_sale && !$course->is_free && !$course->hide_price)
-								<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn buy-course">
-									{{ trans('site.front.our-course.show.buy-course') }}
-								</a>
+								@if ($course->pay_later_with_application)
+									<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn buy-course">
+										Søk kurset
+									</a>
+								@else
+									<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn buy-course">
+										{{ trans('site.front.our-course.show.buy-course') }}
+									</a>
+								@endif
 							@endif
 						@else
 							<?php
@@ -86,9 +92,15 @@
 								</a>
 							@else
 								@if ($course->for_sale && !$course->is_free && !$course->hide_price)
+									@if ($course->pay_later_with_application)
+										<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn buy-course">
+											Søk kurset
+										</a>
+									@else
 										<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn buy-course">
 											{{ trans('site.front.our-course.show.buy-course') }}
 										</a>
+									@endif
 								@endif
 							@endif
 						@endif

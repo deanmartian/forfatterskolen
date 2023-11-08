@@ -6,6 +6,7 @@ use App\Assignment;
 use App\AssignmentDisabledLearner;
 use App\AssignmentFeedback;
 use App\Course;
+use App\CourseApplication;
 use App\CoursesTaken;
 use App\CronLog;
 use App\EmailTemplate;
@@ -44,7 +45,7 @@ class AdminHelpers
 	public static function courseSubpages()
 	{
 		$subpages = ['overview', 'lessons', 'manuscripts', 'videos', 'assignments', 'webinars', 'workshops', 'dripping',
-            'packages', 'learners', 'email-out', 'reward-coupons', 'surveys', 'certificate'];
+            'packages', 'learners', 'email-out', 'reward-coupons', 'surveys', 'certificate', 'applications'];
 		return $subpages;
 	}
 
@@ -130,6 +131,13 @@ class AdminHelpers
             ->where('is_active', 1)
             ->orderBy('id', 'desc')
             ->get();
+    }
+
+    public static function courseApplications($course_id)
+    {
+        $course = Course::find($course_id);
+        $packageIds = $course->packages()->pluck('id')->toArray();
+        return CourseApplication::whereIn('package_id', $packageIds)->get();
     }
 	
 	public static function currencyFormat($value)

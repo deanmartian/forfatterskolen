@@ -16,7 +16,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Course;
+use App\CourseApplication;
 use App\Http\FrontendHelpers;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class CourseController extends Controller
 {
@@ -51,7 +54,117 @@ class CourseController extends Controller
             endif;
         endif;
         $checkoutRoute = 'front.course.checkout';
+        if ($course->pay_later_with_application) {
+            $checkoutRoute = 'front.course.application';
+        }
     	return view('frontend.course.show', compact('course', 'checkoutRoute'));
+    }
+
+    public function application($id)
+    {
+        $course = Course::findOrFail($id);
+
+        if (!$course->is_free): // added this condition to check if the course is for sale
+            if( !FrontendHelpers::isCourseActive($course) || count($course->packages) == 0 ) : // Display 404 if Course has no Packages
+                return abort(404);
+            endif;
+        endif;
+
+        if (!$course->pay_later_with_application) {
+            return redirect()->route('front.course.checkout', $id);
+        }
+
+        return view('frontend.course.application', compact('course'));
+    }
+
+    public function processApplication($course_id, Request $request)
+    {
+        
+        $course = Course::findOrFail($course_id);
+
+        if (!$course->is_free): // added this condition to check if the course is for sale
+            if( !FrontendHelpers::isCourseActive($course) || count($course->packages) == 0 ) : // Display 404 if Course has no Packages
+                return abort(404);
+            endif;
+        endif;
+
+        if (!$course->pay_later_with_application) {
+            return redirect()->route('front.course.checkout', $course_id);
+        }
+        
+        $messages = array(
+            'reason_for_applying.required'  => 'Hva er årsaken til at du søker dette kurset (kort begrunnelse) field is required.',
+            'need_in_course.required'       => 'Hva skal til for at du fullfører dette kurset field is required.',
+            'expectations.required'         => 'Hvilke forventninger har du til deg selv – og oss field is required.',
+        );
+        $this->validate($request, [
+            'email'                 => 'required',
+            'first_name'            => 'required|alpha_spaces',
+            'last_name'             => 'required|alpha_spaces',
+            'phone'                 => 'required',
+            'reason_for_applying'   => 'required',
+            'need_in_course'        => 'required',
+            'expectations'          => 'required',
+            'how_ready'             => 'required',
+            'manuscript'            => 'required'
+        ], $messages);
+        
+        if ($request->hasFile('manuscript')) {
+            $file = $request->file('manuscript');
+            $extension = $file->getClientOriginalExtension();
+
+            if (!in_array($extension, ['odt', 'pdf', 'doc', 'docx'])) {
+                $customErrors = ['manuscript' => 'The manuscript must be a file of type: odt, pdf, doc, docx.'];
+                $validator = Validator::make([], []); 
+                $validator->validate(); // Perform validation without rules
+                $validator->errors()->merge($customErrors);
+
+                throw new ValidationException($validator);
+            }
+        }
+        
+        if( Auth::guest() ) :
+            $user = User::where('email', $request->email)->first();
+            if( $user ) :
+                Auth::login($user);
+            else :
+                // register new user
+                $new_user = new User();
+                $new_user->email = $request->email;
+                $new_user->first_name = $request->first_name;
+                $new_user->last_name = $request->last_name;
+                $new_user->password = bcrypt($request->password);
+                $new_user->save();
+                Auth::login($new_user);
+            endif;
+        endif;
+
+        $package_id = $course->packagesIsShow[0]->id;
+        $user_id = Auth::user()->id;
+        $file = FrontendHelpers::saveFile($request, 'course-application', 'manuscript');
+        $request->merge([
+            'package_id' => $package_id,
+            'file_path' => $file,
+            'user_id' => $user_id
+        ]);
+
+        $courseApplication = CourseApplication::where('user_id', $user_id)->where('package_id', $package_id)->first();
+        if ($courseApplication) {
+            $customErrors = ['user' => 'You already sent an application for this course.'];
+            $validator = Validator::make([], []); 
+            $validator->validate(); // Perform validation without rules
+            $validator->errors()->merge($customErrors);
+
+            throw new ValidationException($validator);
+        }
+
+        CourseApplication::create($request->except('_token', 'manuscript'));
+        return redirect()->route('front.course.application.thank-you', $course_id);
+    }
+
+    public function applicationThankyou($course_id)
+    {
+        return view('frontend.course.application-thankyou');
     }
 
     /**

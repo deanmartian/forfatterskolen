@@ -2694,6 +2694,90 @@ margin-right: 5px;
 
 /* end course single page */
 
+/* course application page */
+.course-application-wrapper {
+    padding-bottom: 150px;
+}
+
+.course-application-wrapper * {
+    font-family: 'Inter';
+}
+
+.course-application-wrapper .header {
+    height: 155px;
+    display: block;
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+
+.course-application-wrapper .body {
+    background-image: url('../images-new/course/top-left.png'), url('../images-new/course/low-right.png');
+    background-size: 328px;
+    background-position: left top, right bottom;
+    background-repeat: no-repeat;
+}
+
+.course-application-wrapper .body .form-wrapper {
+    border-radius: 24px;
+    box-shadow: -35px -35px 100px 10px rgb(0, 0, 0, 6%),
+        35px 35px 100px 2px rgb(0, 0, 0, 13%);
+    padding: 40px;
+}
+
+.course-application-wrapper .body .form-wrapper .price {
+    background-color: #FFEEE8;
+    color: #A60000;
+    display: inline-block;
+    font-size: 14px;
+    padding: 5px 10px;
+}
+
+.course-application-wrapper .body .form-wrapper form {
+    margin-top: 20px;
+}
+
+.course-application-wrapper .body .form-wrapper label {
+    font-weight: bold;
+}
+
+.course-application-wrapper .body .form-wrapper .form-control {
+    border-radius: 10px;
+    border: 1px solid #A4A4A4;
+    padding: 15px;
+}
+
+.course-application-wrapper .body .form-wrapper .file-upload {
+    background-color: #F8F8FF;
+    border: 1px dashed #384EB7;
+    border-radius: 4px;
+    flex-direction: column;
+}
+
+.course-application-wrapper .body .form-wrapper .file-upload .fa {
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+
+.course-application-wrapper .body .form-wrapper .file-label {
+    color: #676767;
+    display: block;
+    font-size: 12px;
+    margin-top: 5px;
+    text-align: center;
+}
+
+.course-application-wrapper .custom-radio [type="radio"]:checked + label, 
+.course-application-wrapper .custom-radio [type="radio"]:not(:checked) + label {
+    color: #6E7485;
+    font-family: 'Inter';
+    font-weight: normal;
+}
+
+.course-application-wrapper .custom-radio [type="radio"]:checked + label {
+    color: #000000;
+}
+/* end course application page */
+
 /* opt-in thanks page */
 
 .opt-in-thanks {
@@ -8631,6 +8715,10 @@ textarea.form-control {
 
     .personal-trainer-wrapper .white-background {
         margin: 50px 0;
+    }
+
+    .course-application-wrapper .body {
+        background-size: 215px;
     }
 }
 
@@ -15057,6 +15145,14 @@ footer .copyright {
     #writingPlanModal .modal-dialog {
         max-width: 675px;
     }
+
+    .course-application-wrapper .header {
+        height: 125px;
+    }
+
+    .course-application-wrapper .body {
+        background-size: 165px;
+    }
 }
 
 @media only screen and (max-width: 640px) {
@@ -15234,6 +15330,14 @@ footer .copyright {
     #writingPlanModal .modal-dialog {
         max-width: 615px;
     }
+
+    .course-application-wrapper .header {
+        height: 100px;
+    }
+
+    .course-application-wrapper .body {
+        background-image: none;
+    }
 }
 
 @media only screen and (max-width: 450px) {
@@ -15262,6 +15366,16 @@ footer .copyright {
         width: 190px;
         right: 6px;
         top: -170px;
+    }
+}
+
+@media only screen and (max-width: 426px) {
+    .course-application-wrapper .body .form-wrapper #first_name {
+        margin-bottom: 20px;
+    }
+
+    .course-application-wrapper .body .form-wrapper .mce-tinymce {
+        overflow: auto;
     }
 }
 
