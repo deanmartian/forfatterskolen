@@ -294,7 +294,8 @@
 												: $course->packagesIsShow[0]->full_payment_price);
 											?>
 											<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn course-price w-100">
-												{{ str_replace('_price_', $price, trans('site.front.our-course.show.price')) }}
+												{{ $course->pay_later_with_application ? 'Søk kurset' 
+												: str_replace('_price_', $price, trans('site.front.our-course.show.price')) }}
 											</a>
 										@endif
 									</div>
