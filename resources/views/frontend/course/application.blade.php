@@ -23,7 +23,7 @@
             <div class="col-md-8 col-sm-offset-2">
                 <div class="form-wrapper">
                     <h3 class="price">
-                        {{ str_replace('_price_', $price, trans('site.front.our-course.show.price')) }}
+                        {{ $price }} kroner
                     </h3>
 
                     {{-- @if ( $errors->any() )

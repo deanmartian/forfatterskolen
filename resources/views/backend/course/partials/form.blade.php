@@ -112,7 +112,7 @@
 				</div>
 
 				<div class="form-group">
-					<label>Pay Later With Application</label> <br>
+					<label>Søknader</label> <br>
 					<input type="checkbox" data-toggle="toggle" data-on="Yes" name="pay_later_with_application"
 						   data-off="No"
 						   @if($course['pay_later_with_application']) {{ 'checked' }} @endif>
