@@ -417,6 +417,31 @@
 			</div>
 		</div>
 	</div>
+
+	<div id="submitFeedbackModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <h3 class="modal-title">{{ trans('site.learner.submit-feedback-to') }} <em></em></h3>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+              <div class="modal-body">
+                  <form method="POST" action=""  enctype="multipart/form-data">
+                      {{ csrf_field() }}
+                      <div class="form-group">
+                          <label>* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}</label>
+                          <input type="file" class="form-control margin-top" required multiple name="filename[]"
+                                 accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                 application/pdf, application/vnd.oasis.opendocument.text">
+                      </div>
+    
+                      <button type="submit" class="btn btn-primary pull-right">{{ trans('site.front.submit') }}</button>
+                      <div class="clearfix"></div>
+                </form>
+              </div>
+            </div>
+        </div>
+    </div>
 @if(Session::has('manuscript_test_error'))
 	<div id="manuscriptTestErrorModal" class="modal fade" role="dialog">
 		<div class="modal-dialog modal-sm">
@@ -526,6 +551,26 @@
         let action = $(this).data('action');
         form.attr('action', action)
 	});
+
+	function submitFeedbackFromGroup(self) {
+		var modal = $('#submitFeedbackModal');
+		var name = $(self).data('name');
+		var action = $(self).data('action');
+		modal.find('em').text(name);
+		modal.find('form').attr('action', action);
+	}
+
+	function editFeedbackFromGroup(self) {
+		let form = $('#editManuscriptModal form');
+        let action = $(self).data('action');
+        form.attr('action', action);
+	}
+
+	function deleteFeedbackFromGroup(self) {
+		let form = $('#deleteManuscriptModal form');
+        let action = $(self).data('action');
+        form.attr('action', action);
+	}
 
 	function setupFileUpload(area) {
 		const fileUploadArea = document.getElementById(area);

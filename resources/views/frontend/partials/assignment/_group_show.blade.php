@@ -78,15 +78,17 @@
 
                                 @if( !$feedback->is_active && !$feedback->locked)
                                     <div class="my-3">
-                                        <button type="button" class="btn btn-danger deleteManuscriptBtn pull-right w-50 
+                                        <button type="button" class="btn btn-danger pull-right w-50 
                                         rounded-0 font-16"
                                             data-toggle="modal" data-target="#deleteManuscriptModal"
-                                            data-action="{{ route('learner.assignment.group.delete_feedback', $feedback->id) }}">
+                                            data-action="{{ route('learner.assignment.group.delete_feedback', $feedback->id) }}"
+                                            onclick="deleteFeedbackFromGroup(this)">
                                             <i class="fa fa-trash text-white"></i>
                                         </button>
-                                        <button type="button" class="btn btn-info editManuscriptBtn pull-right w-50 rounded-0 font-16"
+                                        <button type="button" class="btn btn-info pull-right w-50 rounded-0 font-16"
                                                 data-toggle="modal" data-target="#editManuscriptModal"
-                                                data-action="{{ route('learner.assignment.group.replace_feedback', $feedback->id) }}">
+                                                data-action="{{ route('learner.assignment.group.replace_feedback', $feedback->id) }}"
+                                                onclick="editFeedbackFromGroup(this)">
                                             <i class="fa fa-edit text-white"></i>
                                         </button>
 
@@ -94,11 +96,12 @@
                                     </div>
                                 @endif
                             @else
-                                <button type="button" class="btn pink-global-btn submitFeedbackBtn"
+                                <button type="button" class="btn pink-global-btn"
 												data-toggle="modal" data-target="#submitFeedbackModal"
-												data-name="Learner {{ $i }}"
+												data-name="Learner {{ $learner->user->id }}"
 												data-action="{{ route('learner.assignment.group.submit_feedback',
-												['group_id' => $group->id, 'id' => $learner->id]) }}">
+												['group_id' => $group->id, 'id' => $learner->id]) }}"
+                                                onclick="submitFeedbackFromGroup(this)">
 											{{ trans('site.learner.give-feedback') }}
                                 </button>
                             @endif
