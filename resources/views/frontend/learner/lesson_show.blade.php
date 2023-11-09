@@ -138,11 +138,18 @@
 					<div class="right-container">
 						<div class="text-center">
 							@if ($course->id != 17)
-								<a class="download-lesson-btn" href="{{ route('learner.course.download-lesson', 
-								['course_id' => $course->id, 'id' => $lesson->id]) }}"
-								onclick="disableButton(this)">
-									<i class="fa fa-arrow-down"></i> {{ trans('site.learner.download-pdf-of-lesson') }}
-								</a>
+								@if ($lesson->whole_lesson_file)
+									<a class="download-lesson-btn" href="{{ asset($lesson->whole_lesson_file) }}"
+									 download>
+										<i class="fa fa-arrow-down"></i> {{ trans('site.learner.download-pdf-of-lesson') }}
+									</a>
+								@else
+									<a class="download-lesson-btn" href="{{ route('learner.course.download-lesson', 
+									['course_id' => $course->id, 'id' => $lesson->id]) }}"
+									onclick="disableButton(this)">
+										<i class="fa fa-arrow-down"></i> {{ trans('site.learner.download-pdf-of-lesson') }}
+									</a>
+								@endif
 							@endif
 
 							@if ($lesson->documents->count())
@@ -237,7 +244,7 @@
             if (cookie !== "") {
                 document.cookie = "_lesson_dl=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                 $(".download-lesson-btn").text('')
-                    .append('Last ned utskriftsvennlig pdf av leksjonen')
+                    .append('<i class="fa fa-arrow-down"></i> Last ned utskriftsvennlig pdf av leksjonen')
                 	.removeAttr('disabled');
             }
         }

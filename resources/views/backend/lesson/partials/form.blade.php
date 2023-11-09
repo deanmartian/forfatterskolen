@@ -47,7 +47,20 @@
 					</div>
 				</div>
                 <div class="row">
-                    <div class="col-sm-6 col-sm-offset-6">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>Whole Lesson File</label>
+                            <input type="file" name="whole_lesson_file" class="form-control"
+                               accept="application/pdf">
+
+                            @if($lesson['whole_lesson_file'])
+                                <a href="{{ '/js/ViewerJS/#../..' . $lesson['whole_lesson_file'] }}">
+                                   {{ basename($lesson['whole_lesson_file'])}}
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
                         @foreach($documents as $document)
                             <ul>
                                 <li class="lesson-document-container">

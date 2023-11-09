@@ -19,7 +19,7 @@ class Lesson extends Model
      *
      * @var array
      */
-    protected $fillable = ['course_id', 'title', 'description', 'description_simplemde', 'delay', 'period'];
+    protected $fillable = ['course_id', 'title', 'whole_lesson_file', 'description', 'description_simplemde', 'delay', 'period'];
 
     public function course()
     {

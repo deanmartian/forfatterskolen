@@ -12,6 +12,8 @@ use App\Course;
 use App\Lesson;
 use App\Http\Requests\LessonCreateRequest;
 use App\Http\Requests\LessonUpdateRequest;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class LessonController extends Controller
 {
@@ -45,6 +47,7 @@ class LessonController extends Controller
             'title' => old('title'),
             'content' => old('content'),
             'delay' => old('delay'),
+            'whole_lesson_file' => ''
         ];
         $documents = [];
 
@@ -72,12 +75,14 @@ class LessonController extends Controller
         }
 
         $this->validate($request,$reqFields);
+        $wholeLessonFile = $this->uploadWholeFile($request);
 
         $course = Course::findOrFail($course_id);
         $lesson = new Lesson();
         $lesson->course_id = $course->id;
         $lesson->title = $request->title;
         $lesson->content = $request->content;
+        $lesson->whole_lesson_file = $wholeLessonFile;
         $lesson->delay = $request->delay;
         $lesson->save();
 
@@ -133,12 +138,14 @@ class LessonController extends Controller
         }
 
         $this->validate($request,$reqFields);
-
+        $wholeLessonFile = $this->uploadWholeFile($request);
+        
         $course = Course::findOrFail($course_id);
         $lesson = Lesson::findOrFail($id);
         $lesson->course_id = $course->id;
         $lesson->title = $request->title;
         $lesson->content = $request->content;
+        $lesson->whole_lesson_file = $wholeLessonFile;
         $lesson->delay = $request->delay;
         $lesson->save();
 
@@ -301,5 +308,36 @@ class LessonController extends Controller
         }
 
         return response()->json(['error' => 'Opss. Something went wrong'], 500);
+    }
+
+    private function uploadWholeFile(Request $request)
+    {
+        $wholeLessonFile = null;
+
+        if($request->hasFile('whole_lesson_file'))
+        {
+            $file = $request->file('whole_lesson_file');
+            $extension = $file->getClientOriginalExtension();
+
+            if (!in_array($extension, ['pdf'])) {
+                $customErrors = ['manuscript' => 'The whole lesson file must be a file of type: pdf'];
+                $validator = Validator::make([], []); 
+                $validator->validate(); // Perform validation without rules
+                $validator->errors()->merge($customErrors);
+
+                throw new ValidationException($validator);
+            }
+
+            $destinationPath = 'storage/lesson-whole-file'; // upload path
+            $document_name  = $file->getClientOriginalName();
+            $actual_name    = pathinfo($document_name, PATHINFO_FILENAME);
+            $fileName       = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+            $expFileName    = explode('/', $fileName);
+            $file->move($destinationPath, end($expFileName));
+
+            $wholeLessonFile = $fileName;
+        }
+
+        return $wholeLessonFile;
     }
 }
