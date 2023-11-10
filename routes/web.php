@@ -1007,6 +1007,7 @@ Route::group([
         Route::post('/lesson/save_order', 'LessonController@save_order')->name('admin.lesson.save_order'); // Save lesson order
         Route::get('/lesson/download-document/{id}', 'LessonController@downloadLessonDocument')->name('admin.lesson.download-lesson-document');
         Route::delete('/lesson/delete-document/{id}', 'LessonController@deleteLessonDocument')->name('admin.lesson.delete-lesson-document');
+        Route::delete('/lesson/delete-document/{id}', 'LessonController@deleteLessonFile')->name('admin.lesson.delete-lesson-whole-file');
         Route::post('/lesson/{id}/add-content', 'LessonController@addContent')->name('admin.lesson.add_content'); // Save lesson order
         Route::get('/lesson/{id}/get-lesson-content', 'LessonController@getLessonContent')->name('admin.lesson.get_lesson_content'); // Save lesson order
         Route::post('/lesson-content/{id}/delete-lesson-content', 'LessonController@deleteLessonContent')->name('admin.lesson.delete_lesson_content'); // Save lesson order

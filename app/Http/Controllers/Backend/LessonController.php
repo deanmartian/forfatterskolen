@@ -238,6 +238,24 @@ class LessonController extends Controller
         return redirect()->back();
     }
 
+    public function deleteLessonFile($lessonId)
+    {
+        $lesson = Lesson::find($lessonId);
+
+        if ($lesson) {
+
+            $file = public_path($lesson->whole_lesson_file);
+            if(\File::isFile($file)){
+                \File::delete($file);
+            }
+
+            $lesson->whole_lesson_file = null;
+            $lesson->save();
+        }
+
+        return redirect()->back();
+    }
+
     /**
      * Get the lesson content of a lesson
      * @param $lesson_id

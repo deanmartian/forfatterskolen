@@ -57,6 +57,9 @@
                                 <a href="{{ '/js/ViewerJS/#../..' . $lesson['whole_lesson_file'] }}">
                                    {{ basename($lesson['whole_lesson_file'])}}
                                 </a>
+                                <a href="#" data-toggle="modal" data-target="#deleteLessonFileModal"
+                                    data-action="{{ route('admin.lesson.delete-lesson-whole-file', $lesson['id']) }}"
+                                    class="deleteLessonFileBtn" style="color: red">&times;</a>
                             @endif
                         </div>
                     </div>
@@ -168,6 +171,14 @@ jQuery(document).ready(function(){
 	   var document_name = $(this).data('document-name');
 	   var action = $(this).data('action');
 	   var modal = $("#deleteLessonDocumentModal");
+        modal.find('form').attr('action', action);
+        modal.find('.modal-title').find('em').text(document_name);
+    });
+
+    $(".deleteLessonFileBtn").click(function(){
+	   var document_name = $(this).data('document-name');
+	   var action = $(this).data('action');
+	   var modal = $("#deleteLessonFileModal");
         modal.find('form').attr('action', action);
         modal.find('.modal-title').find('em').text(document_name);
     });
