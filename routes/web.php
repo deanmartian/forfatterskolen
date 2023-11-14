@@ -835,6 +835,8 @@ Route::group([
         Route::get('course/{id}/download-certificate', 'CourseController@downloadCertificate')->name('admin.course.download-certificate-template');
         Route::post('course/{id}/save-certificate-template', 'CourseController@saveCertificateTemplate')->name('admin.course.save-certificate-template');
         Route::get('/course/{id}/export-hidden-webinars', 'CourseController@exportHiddenWebinars');
+        Route::get('/course/export-former-learners/bulk', 'CourseController@exportFormerLearners');
+        Route::get('/course/export-current-learners/bulk', 'CourseController@exportCurrentLearners');
         Route::get('/course/application/{id}/details', 'CourseController@applicationDetails');
         Route::get('/course/application/{id}/download', 'CourseController@applicationDownload')->name('admin.course.application.download');
         Route::post('/course/application/{id}/approve', 'CourseController@applicationApprove')->name('admin.course.application.approve');

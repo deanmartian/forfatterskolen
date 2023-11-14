@@ -29,6 +29,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Course;
 use App\CourseApplication;
+use App\FormerCourse;
 use App\SimilarCourse;
 use App\Http\AdminHelpers;
 use App\Http\Requests\CourseCreateRequest;
@@ -1002,6 +1003,42 @@ class CourseController extends Controller
             return $excel->download(new GenericExport($webinars, $headers), 'Hidden Webinars.xlsx');
         }
         return redirect()->back();
+    }
+
+    public function exportFormerLearners()
+    {
+        $formerCourses = FormerCourse::join('packages', 'former_courses.package_id', '=', 'packages.id')
+        ->whereIn('packages.course_id', [47, 68, 74])
+        ->select('former_courses.*')
+        ->get();
+
+        $headers = ['name', 'email'];
+        $learners = [];
+
+        foreach ($formerCourses as $formerCourse) {
+            $learners[] = [$formerCourse->user->full_name, $formerCourse->user->email];
+        }
+
+        $excel          = \App::make('excel');
+        return $excel->download(new GenericExport($learners, $headers), 'Former Learners.xlsx');
+    }
+
+    public function exportCurrentLearners()
+    {
+        $coursesTaken = CoursesTaken::join('packages', 'courses_taken.package_id', '=', 'packages.id')
+        ->whereIn('packages.course_id', [47, 68, 74])
+        ->select('courses_taken.*')
+        ->get();
+
+        $headers = ['name', 'email'];
+        $learners = [];
+
+        foreach ($coursesTaken as $courseTaken) {
+            $learners[] = [$courseTaken->user->full_name, $courseTaken->user->email];
+        }
+
+        $excel          = \App::make('excel');
+        return $excel->download(new GenericExport($learners, $headers), 'Current Learners.xlsx');
     }
 
     public function applicationDetails($application_id)
