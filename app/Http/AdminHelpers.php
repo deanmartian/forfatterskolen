@@ -487,6 +487,13 @@ class AdminHelpers
         return false;
     }
 
+    public static function getWebinarPakkeDetails($user_id)
+    {
+        $user = User::find($user_id);
+        $courseTaken = $user->coursesTaken->where('package_id', 29)->first();
+        return $courseTaken;
+    }
+
     public static function addToAutomation($email, $automation_id, $name)
     {
         $url = 'https://forfatterskolen.api-us1.com';

@@ -1801,7 +1801,24 @@ class LearnerController extends Controller
                 }
             endforeach;
         endforeach;
-        return view('frontend.learner.upgrade', compact('assignments'));
+
+        $user = Auth::user();
+
+        $coursesTaken = CoursesTaken::where('user_id', $user->id)
+            ->whereDoesntHave('package.course', function ($query) {
+                $query->where('id', 17); // Exclude course with ID 17
+            })
+            ->latest('created_at')
+            ->get();
+
+        $coursesTaken->each(function ($courseTaken) {
+            $courseTaken->otherPackages = Package::where('course_id', $courseTaken->package->course->id)
+                ->where('id', '>', $courseTaken->package->id)
+                ->where('is_show', 1)
+                ->get();
+        });
+        
+        return view('frontend.learner.upgrade', compact('assignments', 'coursesTaken'));
     }
 
     public function takeCourse(Request $request)
@@ -2845,6 +2862,10 @@ class LearnerController extends Controller
                 'attach_file' => NULL
             ];
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        }
+
+        if ($request->auto_renew) {
+            return redirect()->back()->with('success', 'You successfully renew!');
         }
 
         return redirect()->back();
