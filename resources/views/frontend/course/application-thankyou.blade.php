@@ -11,9 +11,9 @@
 			<div class="row">
 				<div class="col-sm-6 left-container">
 					{{-- <img src="{{ asset('images-new/thumb-icon.png') }}" alt="" class="thumb"> --}}
-					<h1>{{ trans('site.thankyou-page.course.title') }}</h1>
+					<h1>Takk for din søknad!</h1>
 					<p>
-						{!! trans('site.thankyou-page.course.description') !!}
+						Vi gleder oss å lese søknaden din, vi tar kontakt i løpet av desember
 					</p>
 					<a class="btn buy-btn" href="{{ route('learner.course') }}'">
                     <i class="fa fa-graduation-cap"></i>&nbsp;&nbsp;&nbsp;Se på mine kurs</a>
