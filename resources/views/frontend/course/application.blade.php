@@ -26,19 +26,6 @@
                         {{ $price }} kroner
                     </h3>
 
-                    {{-- @if ( $errors->any() )
-                        <div class="col-sm-12">
-                            <div class="alert alert-danger mb-0">
-                                <ul>
-                                    @foreach($errors->all() as $error)
-                                        <li>{!! $error !!}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                            <br />
-                        </div>
-                    @endif --}}
-
                     <form class="form-theme" method="POST" action="{{ route('front.course.process-application', $course->id) }}"
 								  id="place_order_form" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
                         {{csrf_field()}}
@@ -101,6 +88,23 @@
                         </div>
 
                         <div class="form-group">
+                            <b>
+                                Last opp ett dokument som inneholder:
+                            </b>
+                            <ul>
+                                <li>
+                                    Last opp ett dokument som inneholder:
+                                </li>
+                                <li>
+                                    Last opp ett dokument som inneholder:
+                                </li>
+                                <li>
+                                    500-1000 ord av prosjektet du planlegger å jobbe med på kurset
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="form-group">
                             <div class="file-upload" id="file-upload-application">
                                 <i class="fa fa-cloud-upload-alt"></i>
                                 <div class="file-upload-text">
@@ -113,53 +117,6 @@
                             <label class="file-label">
                                 * {{ trans('site.learner.manuscript.doc-format-text') }}
                             </label>
-                        </div>
-
-                        <div class="form-group mt-5">
-                            <label class="mb-4">
-                                Skriv en valgfri tekst på 1000 ord (innenfor hvilken som helst sjanger, unntatt sakprosa)
-                            </label>
-                            <textarea class="form-control" name="optional_words" rows="12"
-                                      id="optional_words">{{ old('optional_words') }}</textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="mb-4">
-                                Hva er årsaken til at du søker dette kurset (kort begrunnelse)
-                            </label>
-                            <textarea class="form-control" name="reason_for_applying" rows="12"
-                                      id="reason_for_applying">{{ old('reason_for_applying') }}</textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="mb-4">
-                                Hva skal til for at du fullfører dette kurset?
-                            </label>
-                            <textarea class="form-control" name="need_in_course" rows="12"
-                                      id="need_in_course">{{ old('need_in_course') }}</textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="mb-4">
-                                Hvilke forventninger har du til deg selv – og oss?
-                            </label>
-                            <textarea class="form-control" name="expectations" rows="12"
-                                      id="expectations">{{ old('expectations') }}</textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="mb-4">
-                                Hvor gira er du på å klare målet om ferdig manusutkast innen ett år (sett kryss ved det som er mest riktig):
-                            </label>
-
-                            @foreach(\App\Http\FrontendHelpers::howReadyOptions() as $readyOption)
-                            <div class="custom-radio px-0">
-                                <input type="radio" name="how_ready" value="{{ $readyOption['id'] }}"
-                                       id="{{ str_slug($readyOption['text']) }}" required
-                                    {{ old('how_ready') && old('how_ready') == $readyOption['id'] ? 'checked' : ''}}>
-                                <label for="{{ str_slug($readyOption['text']) }}">{{ $readyOption['text'] }}</label>
-                            </div>
-                            @endforeach
                         </div>
 
                         <div class="form-group">

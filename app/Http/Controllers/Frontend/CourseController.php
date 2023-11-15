@@ -92,22 +92,13 @@ class CourseController extends Controller
             return redirect()->route('front.course.checkout', $course_id);
         }
         
-        $messages = array(
-            'reason_for_applying.required'  => 'Hva er årsaken til at du søker dette kurset (kort begrunnelse) field is required.',
-            'need_in_course.required'       => 'Hva skal til for at du fullfører dette kurset field is required.',
-            'expectations.required'         => 'Hvilke forventninger har du til deg selv – og oss field is required.',
-        );
         $this->validate($request, [
             'email'                 => 'required',
             'first_name'            => 'required|alpha_spaces',
             'last_name'             => 'required|alpha_spaces',
             'phone'                 => 'required',
-            'reason_for_applying'   => 'required',
-            'need_in_course'        => 'required',
-            'expectations'          => 'required',
-            'how_ready'             => 'required',
             'manuscript'            => 'required'
-        ], $messages);
+        ]);
         
         if ($request->hasFile('manuscript')) {
             $file = $request->file('manuscript');

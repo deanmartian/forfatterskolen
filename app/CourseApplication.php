@@ -10,11 +10,6 @@ class CourseApplication extends Model
         'package_id',
         'user_id', 
         'age',
-        'optional_words', 
-        'reason_for_applying', 
-        'need_in_course', 
-        'expectations',
-        'how_ready',
         'file_path',
         'approved_date'
     ];
