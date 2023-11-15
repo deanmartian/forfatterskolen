@@ -482,7 +482,7 @@
 
             }).catch( error => {
                 self.disabled = false;
-                $.each(error.responseJSON, function(k, v) {
+                $.each(error.responseJSON.errors, function(k, v) {
                     let item = "<li>" + v[0] + "</li>";
 
                     if (error_container.hasClass('d-none')) {

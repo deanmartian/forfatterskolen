@@ -14473,6 +14473,61 @@ textarea.form-control {
 }
 /* end video testimonial carousel */
 
+/* global-modal */
+.global-modal .modal-content {
+    border-radius: 10px;
+}
+
+.global-modal .modal-header {
+    display: block;
+    padding: 20px;
+}
+
+.global-modal .modal-header .modal-title {
+    float: left;
+    font-size: 18px;
+}
+
+.global-modal .modal-header .close {
+    float: right;
+    font-size: 28px;
+}
+
+.global-modal .modal-body {
+    padding: 20px;
+}
+
+.global-modal .custom-checkbox > [type="checkbox"]:not(:checked) + label {
+    color: #6C0000;
+}
+
+.global-modal .custom-checkbox > [type="checkbox"]:not(:checked) + label > a {
+    font-weight: bold;
+}
+
+.global-modal em {
+    color: #5E1C26;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.global-modal .submit-btn {
+    background-color: #5F0000;
+    border: 1px solid #5F0000;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.global-modal .submit-btn:hover {
+    color: #5F0000;
+    background-color: transparent !important;
+    border: 1px solid #5F0000;
+}
+/* end global-modal */
+
 /* testimonial carousel */
 .front-page-new .testimonial-row {
     padding-bottom: 50px;

@@ -1,28 +1,49 @@
-<div id="writingPlanModal" class="modal fade no-header-modal" role="dialog">
+<div id="writingPlanModal" class="modal fade global-modal" role="dialog"> {{-- no-header-modal --}}
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
+                <div class="modal-title">
+                    <h3>Gratis skrivetips</h3>                    
+                    <p>
+                        Rektor sine 66 beste tips 
+                    </p>
+                </div>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <div class="modal-body main-form" style="padding: 30px">
+            <div class="modal-body" style="padding: 30px"> {{-- main-form --}}
 
                 <div class="form-container">
+                    <div class="form-group">
+                        <label>
+                            {{ trans('site.first-name') }}
+                        </label>
 
-                    <div class="input-group">
+                        <input type="text" name="name" class="form-control"
+                               required value="{{old('name')}}">
+                    </div>
+                    {{-- <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa user-icon"></i></span>
                         </div>
                         <input type="text" name="name" class="form-control no-border-left"
                                placeholder="Fornavn" required value="{{old('name')}}">
-                    </div>
+                    </div> --}}
 
-                    <div class="input-group">
+                    <div class="form-group">
+                        <label>
+                            {{ trans('site.front.form.email') }}
+                        </label>
+
+                        <input type="email" name="email"
+                               class="form-control" required>
+                    </div>
+                    {{-- <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa email-icon"></i></span>
                         </div>
                         <input type="email" name="email" placeholder="Epost"
                                class="form-control no-border-left" required>
-                    </div>
+                    </div> --}}
 
                     <div class="row options-row">
                         <div class="col-md-6">
@@ -40,7 +61,9 @@
                                 <label for="terms">{!! $terms_link !!}</label>
                             </div>
 
-                            <small class="font-montserrat-light">{{ trans('site.front.main-form.note') }}</small>
+                            <em>
+                                {{ trans('site.front.main-form.note') }}
+                            </em>
                         </div>
 
                         <div class="col-md-6">
@@ -52,7 +75,7 @@
                     <input type="hidden" name="captcha" value="">
 
                     <div class="btn-container text-right" style="margin-top: 20px">
-                        <button type="button" class="btn font-montserrat-light" onclick="submitWritingPlan(this)">
+                        <button type="button" class="btn submit-btn w-100" onclick="submitWritingPlan(this)">
                             {{ trans('site.front.main-form.submit-text') }}
                         </button>
                     </div>
