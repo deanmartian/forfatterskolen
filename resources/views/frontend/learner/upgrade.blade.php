@@ -231,7 +231,7 @@
                             {{ trans('site.learner.subscription-expires-text') }}
                         </h2>
                         <p>
-                            {{ $webinarPakke->end_date }}
+                            {{ \Carbon\Carbon::parse($webinarPakke->end_date)->format('d F Y') }}
                         </p>
     
                         <h2>
