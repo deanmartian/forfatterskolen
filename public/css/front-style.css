@@ -6791,6 +6791,21 @@ margin-right: 5px;
 
 /* end global modal */
 
+.subscribe-success {
+    margin-bottom: 150px;
+}
+
+.subscribe-success h1 {
+    font-family: 'Inter';
+    font-weight: bold;
+}
+
+.subscribe-success .redirect {
+    color: #4E5566;
+    font-family: 'Inter';
+    font-size: 20px;
+}
+
 footer .navbar-inverse {
     background-color: #2b2829;
     padding: 1rem 12rem;
@@ -10097,6 +10112,10 @@ textarea.form-control {
         width: 100%;
     }
 
+    .subscribe-success {
+        margin-bottom: 100px;
+    }
+
     /* theme tab */
     .theme-tabs li a {
         padding: 20px;
@@ -12934,6 +12953,10 @@ textarea.form-control {
 
     .vue-form-wizard .wizard-tab-content {
         padding: 70px 20px 10px !important;
+    }
+
+    .subscribe-success img {
+        width: 100%;
     }
 }
 
