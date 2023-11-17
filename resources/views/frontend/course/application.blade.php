@@ -93,10 +93,10 @@
                             </b>
                             <ul>
                                 <li>
-                                    Last opp ett dokument som inneholder:
+                                    en kort redegjørelse for din motivasjon for kurset
                                 </li>
                                 <li>
-                                    Last opp ett dokument som inneholder:
+                                    en kort beskrivelse av prosjektet ditt (blant annet sjanger og hva du skriver om)
                                 </li>
                                 <li>
                                     500-1000 ord av prosjektet du planlegger å jobbe med på kurset
