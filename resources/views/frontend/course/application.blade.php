@@ -112,10 +112,11 @@
                                 </div>
                                 <input type="file" class="form-control hidden input-file-upload" name="manuscript" 
                                 id="file-upload" accept="application/msword,
-                            application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                            application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                            application/pdf, application/vnd.oasis.opendocument.text">
                               </div>
                             <label class="file-label">
-                                * {{ trans('site.learner.manuscript.doc-format-text') }}
+                                * {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
                             </label>
                         </div>
 
