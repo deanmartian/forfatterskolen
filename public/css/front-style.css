@@ -5664,6 +5664,107 @@ margin-right: 5px;
 }
 /* end login page */
 
+/* new login page */
+.login-wrapper {
+    padding-bottom: 150px;
+}
+
+.login-wrapper img {
+    width: 100%;
+}
+
+.login-wrapper .tab-content {
+    min-height: 400px;
+    padding-top: 30px;
+}
+
+.login-wrapper .tab-content h1 {
+    font-family: 'Inter';
+    font-size: 35px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.login-wrapper .global-nav-tabs {
+    margin-top: 30px;
+}
+
+.login-wrapper .global-gray-tabs {
+    margin-bottom: 30px;
+}
+
+.login-wrapper .site-btn-global-w-arrow {
+    color: #ffffff;
+    font-family: 'Inter';
+    padding: 8px 30px;
+}
+
+.login-wrapper .login-text {
+    color: #8C94A3;
+    position: relative;
+    font-weight: bold;
+    display: inline-block;
+    margin: 30px 0;
+    padding: 0 10px;
+    text-align: center;
+    width: 100%;
+}
+
+.login-wrapper .login-text::before,
+.login-wrapper .login-text::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 41%;
+    border-top: 1px solid #E9EAF0; /* Adjust the color as needed */
+}
+
+.login-wrapper .login-text::before {
+    left: 0;
+}
+
+.login-wrapper .login-text::after {
+    right: 0;
+}
+
+.global-nav-tabs > li > a,
+.global-nav-tabs > li > a > span,
+.global-gray-tabs > li > a,
+.global-gray-tabs > li > a > span {
+    color: #4E5566;
+    font-family: 'Inter';
+    font-size: 14px;
+}
+
+.global-nav-tabs > li > a,
+.global-gray-tabs > li > a {
+    border-bottom: 1px solid #E9EAF0;
+    padding-bottom: 20px;
+}
+
+.global-nav-tabs > li > a.active,
+.global-nav-tabs > li > a:hover,
+.global-gray-tabs > li > a.active,
+.global-gray-tabs > li > a:hover {
+    background-color: transparent;
+    border: none;
+    border-bottom: 3px solid #E83A47;
+    color: #000000;
+    font-weight: bold;
+}
+
+.global-gray-tabs > li > a.active,
+.global-gray-tabs > li > a:hover {
+border-bottom-color: #D7D7D7;
+}
+
+.global-nav-tabs > li > a:active,
+.global-gray-tabs > li > a:active {
+    background-color: transparent !important;
+}
+/* end new login page */
+
 /* learner search container */
 
 .learner-search-container .form-control, .webinar-search-container .form-control {
@@ -7100,6 +7201,16 @@ blockquote {
     height: 16px;
 }
 
+.mail-icon:after {
+    content: '';
+    display: block;
+    background-image: url(../images-new/icon/mail.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    width: 16px;
+    height: 16px;
+}
+
 .select-manuscript {
     color:#fff;
     font-size: 20px;
@@ -7219,6 +7330,55 @@ blockquote {
 .loginBtn--facebook:before {
     background: url(../images/icons/facebook.png) 6px 6px no-repeat;
     border-right: 1px solid #364e92;
+}
+
+.social-btn-container {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+
+.newLoginBtn {
+    border: 1px solid #E9EAF0;
+    border-radius: 0.2em;
+    box-sizing: border-box;
+    color: #1D2026;
+    line-height: 34px;
+    margin-top: 0.2em;
+    padding: 4px 30px 4px 60px;
+    position: relative;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.newLoginBtn:hover {
+    background-color: #E9EAF0;
+}
+
+.newLoginBtn:before {
+    box-sizing: border-box;
+    content: "";
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 34px;
+}
+
+.newLoginBtn--google:before {
+    background: url(../images-new/icon/google.png) 7px 11px no-repeat;
+    border-right: 1px solid #E9EAF0;
+}
+
+.newLoginBtn--facebook:before {
+    background: url(../images-new/icon/facebook-blue.png) 7px 11px no-repeat;
+    border-right: 1px solid #E9EAF0;
+}
+
+.newLoginBtn--vipps:before {
+    background: url(../images-new/icon/vipps.png) 4px 7px no-repeat;
+    border-right: 1px solid #E9EAF0;
+    width: 38px;
 }
 
 #fixed_to_bottom_alert {
@@ -9824,6 +9984,10 @@ textarea.form-control {
         padding: 40px 52px;
     }
 
+    .login-wrapper .image-container {
+        display: none;
+    }
+
     .login-container {
         padding: 70px 0;
     }
@@ -11344,6 +11508,10 @@ textarea.form-control {
         font-size: 28px;
     }
 
+    .login-wrapper .tab-content {
+        min-height: auto;
+    }
+
     .login-container {
         background: linear-gradient( rgba(0, 0, 0, .33), rgba(0, 0, 0, .33) ),url(../images-new/login/left-bg.jpg)
         no-repeat -370px -140px / 1200px 1100px;
@@ -12613,6 +12781,28 @@ textarea.form-control {
         font-size: 22px;
     }
 
+    .social-btn-container {
+        display: block;
+    }
+
+    .newLoginBtn {
+        margin-bottom: 10px;
+        text-align: center;
+        width: 100%;
+    }
+
+    .login-wrapper .site-btn-global-w-arrow {
+        margin-top: 10px;
+    }
+
+    .login-wrapper img {
+        width: auto;
+    }
+
+    .login-wrapper .login-text::before, .login-wrapper .login-text::after {
+        width: 34%;
+    }
+
     .login-container {
         background-position: -391px -115px;
         background-size: 1000px 900px;
@@ -13660,8 +13850,12 @@ textarea.form-control {
         bottom: 3%;
     }*/
 
+    .course-page .sub-header {
+        bottom: -114%;
+    }
+
     .course-page .courses-list-container {
-        margin-top: 250px;
+        margin-top: 605px;
     }
 
     .course-page .courses-list-container .course-body,
@@ -14030,6 +14224,10 @@ textarea.form-control {
 
     .personal-trainer-wrapper {
         height: 535px;
+    }
+
+    .login-wrapper .login-text::before, .login-wrapper .login-text::after {
+        width: 30%;
     }
 }
 
