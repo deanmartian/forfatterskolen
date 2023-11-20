@@ -101,7 +101,8 @@ class LoginController extends Controller
     public function login(LoginRequest $request)
     {
         $this->validate($request, [
-            'email' => 'required|email'
+            'email' => 'required|email',
+            'g-recaptcha-response' => 'required|captcha',
         ]);
         $user = User::where('email', $request->email)->where('role', 2)->first();
         $secondaryEmail = UserEmail::where('email', $request->email)->first();
