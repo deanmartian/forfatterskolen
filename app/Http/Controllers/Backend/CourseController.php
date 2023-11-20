@@ -1094,6 +1094,16 @@ class CourseController extends Controller
         ]);
     }
 
+    public function applicationDelete($application_id)
+    {
+        CourseApplication::find($application_id)->delete();
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Application deleted.'),
+            'alert_type' => 'success',
+        ]);
+    }
+
     public function canReceiveEmailUpdate( $course_taken_id, Request $request )
     {
         $courseTaken = CoursesTaken::find($course_taken_id);

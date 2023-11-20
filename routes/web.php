@@ -840,6 +840,7 @@ Route::group([
         Route::get('/course/application/{id}/details', 'CourseController@applicationDetails');
         Route::get('/course/application/{id}/download', 'CourseController@applicationDownload')->name('admin.course.application.download');
         Route::post('/course/application/{id}/approve', 'CourseController@applicationApprove')->name('admin.course.application.approve');
+        Route::delete('/course/application/{id}/delete', 'CourseController@applicationDelete')->name('admin.course.application.delete');
         Route::post('course-taken/{id}/update-can-receive-email', 'CourseController@canReceiveEmailUpdate');
         Route::post('course-taken/{id}/update-in-facebook-group', 'CourseController@inFacebookGroupUpdate');
         Route::post('course-taken/{id}/exclude-in-registration', 'CourseController@excludeInScheduledRegistration');

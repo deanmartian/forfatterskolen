@@ -55,6 +55,12 @@
                                         data-action="{{ route('admin.course.application.approve',$application->id) }}">
                                             <i class="fa fa-check"></i>
                                         </button>
+
+                                        <button class="btn btn-danger btn-sm deleteBtn" data-toggle="modal" 
+                                        data-target="#deleteModal"
+                                        data-action="{{ route('admin.course.application.delete',$application->id) }}">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
                                     @endif
                                 </td>
                             </tr>
@@ -115,12 +121,47 @@
   
     </div>
   </div>
+
+  <div id="deleteModal" class="modal new-global-modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h3 class="modal-title">
+					Delete Application
+				</h3>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+                    {{ method_field('DELETE') }}
+
+                    <p>
+                        Are you sure you want to delete this application?
+                    </p>
+
+					<button type="submit" class="btn btn-danger pull-right">
+						{{ trans('site.learner.delete') }}
+					</button>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
 <script>
     $(".approveBtn").click(function() {
         let modal = $("#approveModal");
+        let action = $(this).data('action');
+        
+        modal.find('form').attr('action', action);
+    });
+
+    $(".deleteBtn").click(function() {
+        let modal = $("#deleteModal");
         let action = $(this).data('action');
         
         modal.find('form').attr('action', action);
