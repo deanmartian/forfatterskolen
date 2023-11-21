@@ -547,7 +547,9 @@
 										{{ $similar_course->similar_course->title }}
 									</h2>
 
-									<p class="color-b4">{{ \Illuminate\Support\Str::limit(strip_tags($similar_course->similar_course->description), 180)}}</p>
+									<p class="color-b4">
+										{!! \Illuminate\Support\Str::limit(strip_tags($similar_course->similar_course->description), 180) !!}
+									</p>
 
 									<a href="{{ route('front.course.show', $similar_course->similar_course->id) }}"
 									   class="btn buy-btn">{{ trans('site.front.view') }}</a>

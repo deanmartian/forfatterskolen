@@ -15780,7 +15780,7 @@ footer .copyright {
     }
 }
 
-@media only screen and (max-width: 375px) {
+@media only screen and (max-width: 376px) {
     .front-page-new .main-form {
         right: 4px;
     }
@@ -15823,6 +15823,10 @@ footer .copyright {
 
     .front-page-new .popular-course-wrapper .featured-item {
         margin-top: -95px;
+    }
+
+    .course-single-page .similar-courses .course-body {
+        min-width: 345px;
     }
 
     .cta:after {
