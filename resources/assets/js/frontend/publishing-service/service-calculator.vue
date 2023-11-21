@@ -116,8 +116,16 @@ export default {
                 services.forEach(function (item, index){
                     if(item.per_unit=='char' || item.per_unit=='words'){
                         count = (item.per_unit=='char') ? scope.roundCount(scope.order.char_count, item.base_char_word) 
-                        : scope.roundCount(scope.order.word_count, item.base_char_word)
+                        : scope.roundCount(scope.order.word_count, item.base_char_word);
                         services[index]['computation'] = parseFloat((( count / item.per_word_hour) * item.price)).toFixed(2);
+                        if (item.id === 3) { // check if Redaktor 1
+                            if (count <= 10000) {
+                                services[index]['computation'] = 2000;
+                            } else {
+                                let deductedCount = count - 10000;
+                                services[index]['computation'] = 2000 + ((deductedCount / item.per_word_hour) * item.price);
+                            }
+                        }
                     }else{
                         // hour computation
                         services[index]['computation'] = parseFloat((item.per_word_hour * item.price)).toFixed(2);
@@ -199,6 +207,7 @@ export default {
 
     mounted() {
         console.log("mounted");
+        console.log("Ads fad fasf ");
         console.log(this.activeServices);
     }
 }

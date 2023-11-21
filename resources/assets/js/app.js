@@ -77,6 +77,7 @@ Vue.component('project-notes', require('./backend/project/notes.vue'));
 Vue.component('publishing-services', require('./backend/publishing-package/services.vue'));
 Vue.component('assemble-book', require('./backend/assemble-books/list.vue'));
 Vue.component('service-order-calculator', require('./frontend/services/calculator.vue'));
+Vue.component('group-assignment', require('./frontend/components/group-assignment.vue'));
 Vue.component('chat', require('./frontend/chat/index.vue'));
 Vue.component('v-select', vSelect);
 Vue.use(VueQuillEditor);
