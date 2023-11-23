@@ -33,6 +33,8 @@ use Validator;
 use Carbon\Carbon;
 use App\Http\FikenInvoice;
 use App\Jobs\AddMailToQueueJob;
+use Illuminate\Support\Facades\Validator as FacadeValidator;
+use Illuminate\Validation\ValidationException;
 
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
@@ -79,9 +81,23 @@ class ShopManuscriptController extends Controller
     public function validateOrder( $shop_manuscript_id, Request $request, ShopManuscriptService $shopManuscriptService )
     {
         $this->validate($request, [
-            'manuscript' => 'required|mimes:pdf,odt,doc,docx',
+            'manuscript' => 'required',
             'genre' => 'required'
         ]);
+
+        if ($request->hasFile('manuscript')) {
+            $file = $request->file('manuscript');
+            $extension = $file->getClientOriginalExtension();
+
+            if (!in_array($extension, ['odt', 'pdf', 'doc', 'docx'])) {
+                $customErrors = ['manuscript' => ['The manuscript must be a file of type: odt, pdf, doc, docx.']];
+                $validator = FacadeValidator::make([], []); 
+                $validator->validate(); // Perform validation without rules
+                $validator->errors()->merge($customErrors);
+
+                throw new ValidationException($validator);
+            }
+        }
 
         if ($request->has('synopsis')) {
             $this->validate($request, [

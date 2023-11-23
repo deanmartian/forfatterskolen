@@ -2,6 +2,8 @@
 @import url('https://fonts.googleapis.com/css?family=Inter');
 @import url('https://fonts.googleapis.com/css?family=Ubuntu');
 @import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/css?family=Ubuntu Mono');
+@import url('https://fonts.googleapis.com/css?family=Roboto Mono');
 
 @font-face{
     font-family: 'Barlow Light';
@@ -4015,6 +4017,92 @@ margin-right: 5px;
     border-top: none;
 }
 
+.global-checkout-page {
+    padding-bottom: 150px;
+}
+
+.global-checkout-page .main-card {
+    box-shadow: 0 4px 4px 0 rgb(0,0,0,25%),
+        -35px -35px 100px 10px rgb(0,0,0,6%), 
+        35px 35px 100px 2px rgb(0,0,0,13%);
+}
+
+.global-checkout-page .header {
+    height: 98px;
+    display: block;
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+
+.global-checkout-page .gray-box {
+    background-color: #F8F8FF;
+    border: 1px solid #E6E6E6;
+    padding: 10px;
+}
+
+.global-checkout-page .gray-box h1 {
+    font-family: 'Inter';
+    font-weight: bold;
+}
+
+.global-checkout-page .file-upload {
+    border-radius: 4px;
+    background-color: #F8F8FF;
+    border-color: rgb(56, 78, 183, 30%);
+    font-family: 'Inter';
+    font-weight: bold;
+    min-height: 50px;
+    padding: 0;
+}
+
+.global-checkout-page label {
+    color: #718096;
+}
+
+.global-checkout-page .file-upload .fa {
+    font-size: 22px;
+    margin-right: 10px;
+}
+
+.global-checkout-page table > tbody > tr > td:first-child {
+    font-family: 'Ubuntu Mono';
+    font-size: 17.5px;
+}
+
+.global-checkout-page table > tbody > tr > td:last-child {
+    font-family: 'Roboto Mono';
+    font-size: 17.5px;
+    font-weight: bold;
+}
+
+.global-checkout-page .vue-form-wizard {
+    padding-bottom: 70px;
+}
+
+.global-checkout-page .vue-form-wizard .wizard-card-footer .wizard-footer-right {
+    width: 50%;
+}
+
+.global-checkout-page .vue-form-wizard .wizard-btn,
+.global-checkout-page .vue-form-wizard .vipps-btn {
+    border-radius: 5px !important;
+    padding: .6180469716em 1.41575em!important;
+}
+
+.global-checkout-page .vue-form-wizard .back-btn {
+    margin-bottom: 20px!important;
+    padding: 0 !important;
+}
+
+.global-price {
+    background-color: #ffeee8;
+    color: #a60000;
+    display: inline-block;
+    font-family: 'Inter';
+    font-size: 14px;
+    padding: 5px 10px;
+}
+
 .vue-form-wizard .wizard-tab-content {
     padding: 100px 20px 10px !important;
 }
@@ -7049,6 +7137,10 @@ blockquote {
     font-family: "Quicksand Medium", sans serif;
 }
 
+.font-ubuntu-mono {
+    font-family: 'Ubuntu Mono';
+}
+
 .font-16 {
     font-size: 16px;
 }
@@ -8706,6 +8798,11 @@ textarea.form-control {
 
     .checkout-page .panel {
         padding: 25px 20px;
+    }
+
+    .global-checkout-page .vipps-btn {
+        width: 49%;
+        margin-right: 0;
     }
 
     .front-page .first-container-row .card-body {
@@ -11854,6 +11951,25 @@ textarea.form-control {
         margin-bottom: 0;
         padding-top: 50px;
     }
+
+    .global-checkout-page .vue-form-wizard {
+        padding-bottom: 40px;
+    }
+
+    .global-checkout-page .vue-form-wizard .wizard-tab-content {
+        padding: 50px 20px 10px !important;
+    }
+
+    .global-checkout-page .vue-form-wizard .wizard-card-footer .wizard-footer-right,
+    .global-checkout-page .vipps-btn {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    .global-checkout-page .gray-box {
+        margin-bottom: 10px;
+    }
+
 }
 
 @media only screen and (max-width: 415px) {
@@ -13180,6 +13296,11 @@ textarea.form-control {
     .contact-page-new .sub-header {
         width: 350px !important;
     }
+
+    .global-checkout-page .vue-form-wizard .wizard-nav-pills a, 
+    .global-checkout-page .vue-form-wizard .wizard-nav-pills li {
+        flex: auto;
+    }
 }
 
 @media only screen and (max-width: 375px) {
@@ -14228,6 +14349,14 @@ textarea.form-control {
 
     .login-wrapper .login-text::before, .login-wrapper .login-text::after {
         width: 30%;
+    }
+
+    .global-checkout-page {
+        padding-bottom: 70px;
+    }
+
+    .global-checkout-page .vue-form-wizard .wizard-card-footer .wizard-footer-right {
+        display: block;
     }
 }
 

@@ -1,129 +1,125 @@
 <template>
-    <div class="card">
+    <div class="card main-card">
         <div id="scrollhere"></div>
         <form-wizard color="#c12938" error-color="#ff4949"
                      :nextButtonText="'Til betaling'" :backButtonText="trans('site.paginate.previous')"
-                     :finishButtonText="trans('site.front.buy')" title="" subtitle="">
+                     :finishButtonText="trans('site.front.buy')" title="" subtitle="" ref="wizard">
 
             <tab-content :title="'Bestillingsskjema'" icon="fa fa-clipboard-list" :before-change="validateOrder">
-                <table class="table table-hover">
-                    <tbody>
-                    <tr>
-                        <td width="45%">
-                            <div class="media-body">
-                                <h1 class="media-heading font-quicksand">
-                                    {{ shopManuscript.title }}
-                                </h1>
-
-                                <h3 class="mt-3 font-weight-bold">
-                                    {{ trans('site.front.our-course.show.package-details-text') }}:
-                                </h3>
-
-                                <p v-html="shopManuscript.description" class="mt-2">
-                                </p>
-
-                                <h3 class="mt-3 font-weight-bold">
-                                    {{ trans('site.learner.max-number-of-words-text') }}:
-                                </h3>
-                                <p>
-                                    {{ shopManuscript.max_words }} {{ trans('site.learner.words-text') }}
-                                </p>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-group">
-                                <label>
-                                    {{ trans('site.front.form.upload-manuscript') }}
-                                </label>
-                                <div class="custom-file">
-                                    <input type="file" name="manuscript" class="form-control"
-                                           @change="onManuscriptChange"
-                                           id="manuscript"
-                                           accept="application/msword,
-application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="gray-box">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h1>
+                                        {{ shopManuscript.title }}
+                                    </h1>
                                 </div>
-
-                                <div class="custom-checkbox mt-4">
-                                    <input type="checkbox" name="send_to_email" id="send_to_email"
-                                           v-model="orderForm.send_to_email">
-                                    <label for="send_to_email" class="control-label">
-                                        {{ trans('site.front.form.send-to-email') }}
-                                    </label>
-                                </div>
-                            </div> <!-- end manuscript -->
-
-                            <div class="form-group">
-                                <label class="font-weight-500">
-                                    {{ trans('site.front.genre') }}
-                                </label>
-                                <select class="form-control" name="genre" v-model="orderForm.genre" @change="genreChanged()">
-                                    <option value="" disabled="disabled" selected
-                                            v-html="trans('site.free-text-evaluation.choose-genre')">
-                                    </option>
-
-                                    <option :value="type.id" v-for="type in assignmentTypes" v-text="type.name">
-                                    </option>
-                                </select>
-                            </div> <!-- end genre -->
-
-                            <div class="form-group">
-                                <label>
-                                    {{ trans('site.front.form.synopsis-optional') }}
-                                </label>
-                                <div class="custom-file d-block">
-                                    <input type="file" name="synopsis" class="form-control"
-                                           @change="onSynopsisChange"
-                                           id="synopsis"
-                                           accept="application/msword,
-application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
+                                <div class="col-md-4">
+                                    <h3 class="global-price">
+                                        {{ shopManuscript.max_words }} {{ trans('site.learner.words-text') }}
+                                    </h3>
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label>{{ trans('site.front.form.coaching-time-later-in-manus') }}</label>
-                                <toggle-button :labels="{checked: trans('site.front.yes'), unchecked: trans('site.front.no')}"
-                                               :width="60" :height="30" :font-size="12"
-                                               :color="{checked:'#337ab7', unchecked:'#354350'}" class="mt-2 ml-2"
-                                               v-model="orderForm.coaching_time_later">
-                                </toggle-button>
-                            </div>
+                            <h3 class="mt-3 font-weight-bold">
+                                {{ trans('site.front.our-course.show.package-details-text') }}:
+                            </h3>
 
-                            <div class="form-group">
-                                <label for="">
-                                    {{ trans('site.front.form.manuscript-description') }}
+                            <p v-html="shopManuscript.description" class="mt-2">
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="mb-0">
+                                {{ trans('site.front.form.upload-manuscript') }}
+                            </label>
+
+                            <FileUpload
+                            :accept="'application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,' 
+                            + 'application/pdf, application/vnd.oasis.opendocument.text'" 
+                            @fileSelected="handleFileSelected('manuscript', $event)"/>
+                            <input type="hidden" name="manuscript">
+
+                            <div class="custom-checkbox mt-4">
+                                <input type="checkbox" name="send_to_email" id="send_to_email"
+                                        v-model="orderForm.send_to_email">
+                                <label for="send_to_email" class="control-label">
+                                    {{ trans('site.front.form.send-to-email') }}
                                 </label>
-                                <textarea name="description" id="" cols="30" rows="7" class="form-control"
-                                          v-model="orderForm.description"></textarea>
                             </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                        </div>
 
-                <table class="table table-hover">
-                    <tbody>
-                    <tr>
-                        <td class="text-right h3">{{ trans('site.front.price') }}:</td>
-                        <td class="text-right h3 text-red" style="width: 150px">
-                            {{ orderForm.price | currency('Kr', 2, currencyOptions) }}
-                        </td>
-                    </tr>
+                        <div class="form-group">
+                            <label class="font-weight-500">
+                                {{ trans('site.front.genre') }}
+                            </label>
+                            <select class="form-control" name="genre" v-model="orderForm.genre" @change="genreChanged()">
+                                <option value="" disabled="disabled" selected
+                                        v-html="trans('site.free-text-evaluation.choose-genre')">
+                                </option>
 
-                    <tr v-if="orderForm.totalDiscount">
-                        <td class="text-right h3">{{ trans('site.front.discount') }}:</td>
-                        <td class="text-right h3 text-red">
-                            {{ orderForm.totalDiscount | currency('Kr', 2, currencyOptions) }}
-                        </td>
-                    </tr>
+                                <option :value="type.id" v-for="type in assignmentTypes" v-text="type.name" 
+                                    :key="'assignment-type-' + type.id">
+                                </option>
+                            </select>
+                        </div> <!-- end genre -->
 
-                    <tr>
-                        <td class="text-right h3">{{ trans('site.front.total') }}:</td>
-                        <td class="text-right h3 text-red" style="width: 150px">
-                            {{ totalPrice | currency('Kr', 2, currencyOptions) }}
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                        <div class="form-group">
+                            <label class="mb-0">
+                                {{ trans('site.front.form.synopsis-optional') }}
+                            </label>
+                            <FileUpload
+                            :accept="'application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,' 
+                            + 'application/pdf, application/vnd.oasis.opendocument.text'" 
+                            @fileSelected="handleFileSelected('synopsis', $event)"/>
+                            <input type="hidden" name="synopsis">
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ trans('site.front.form.coaching-time-later-in-manus') }}</label>
+                            <toggle-button :labels="{checked: trans('site.front.yes'), unchecked: trans('site.front.no')}"
+                                            :width="60" :height="30" :font-size="12"
+                                            :color="{checked:'#5F0000', unchecked:'#CCCCCC'}" class="mt-2 ml-2"
+                                            v-model="orderForm.coaching_time_later">
+                            </toggle-button>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">
+                                {{ trans('site.front.form.manuscript-description') }}
+                            </label>
+                            <textarea name="description" id="" cols="30" rows="7" class="form-control"
+                                        v-model="orderForm.description"></textarea>
+                        </div>
+
+                        <table class="table table-hover">
+                            <tbody>
+                            <tr>
+                                <td>{{ trans('site.front.price') }}:</td>
+                                <td class="text-right" style="width: 150px">
+                                    {{ orderForm.price | currency('Kr', 2, currencyOptions) }}
+                                </td>
+                            </tr>
+
+                            <tr v-if="orderForm.totalDiscount">
+                                <td>{{ trans('site.front.discount') }}:</td>
+                                <td class="text-right">
+                                    {{ orderForm.totalDiscount | currency('Kr', 2, currencyOptions) }}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>{{ trans('site.front.total') }}:</td>
+                                <td class="text-right" style="width: 150px">
+                                    {{ totalPrice | currency('Kr', 2, currencyOptions) }}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </tab-content>
 
             <tab-content :title="trans('site.front.form.user-information')" icon="fas fa-id-card"
@@ -133,7 +129,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
 
                     <button class="btn btn-default" @click="toggleNewCustomer()" v-if="isNewCustomer"
                             style="margin-bottom: 10px">
-                        < {{ trans('site.back') }}
+                        {{ trans('site.back') }}
                     </button>
 
                     <form @submit.prevent="handleLogin($event)" v-if="!isNewCustomer" class="second-col mb-4">
@@ -196,75 +192,107 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                 </template> <!-- end not logged in user -->
 
                 <template v-if="currentUser || isNewCustomer">
-                    <div class="form-group">
-                        <label for="email" class="control-label">
-                            {{ trans('site.front.form.email') }}
-                        </label>
-                        <input type="email" id="email" class="form-control" name="email" required
-                               v-model="orderForm.email"
-                               :disabled="currentUser"
-                               :placeholder="trans('site.front.form.email')">
-                    </div> <!-- end email form-group -->
+                    <wizard-button  v-if="wizardProps.activeTabIndex > 0"  @click.native="wizardProps.prevTab();" 
+                        class="back-btn">
+                        {{ trans('site.back') }}
+                    </wizard-button>
 
-                    <div class="form-group row">
+                    <div class="row">
                         <div class="col-md-6">
-                            <label for="first_name" class="control-label">
-                                {{ trans('site.first-name') }}
-                            </label>
-                            <input type="text" id="first_name" class="form-control" name="first_name" required
-                                   v-model="orderForm.first_name"
-                                   :disabled="currentUser"
-                                   :placeholder="trans('site.first-name')">
+                            <div class="gray-box">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <h1>
+                                            {{ shopManuscript.title }}
+                                        </h1>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h3 class="global-price">
+                                            {{ shopManuscript.max_words }} {{ trans('site.learner.words-text') }}
+                                        </h3>
+                                    </div>
+                                </div>
+
+                                <h3 class="mt-3 font-weight-bold">
+                                    {{ trans('site.front.our-course.show.package-details-text') }}:
+                                </h3>
+
+                                <p v-html="shopManuscript.description" class="mt-2">
+                                </p>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <label for="last_name" class="control-label">
-                                {{ trans('site.last-name') }}
-                            </label>
-                            <input type="text" id="last_name" class="form-control" name="last_name" required
-                                   v-model="orderForm.last_name"
-                                   :disabled="currentUser"
-                                   :placeholder="trans('site.last-name')">
-                        </div>
-                    </div> <!-- end first and last name -->
+                            <div class="form-group">
+                                <label for="email" class="control-label">
+                                    {{ trans('site.front.form.email') }}
+                                </label>
+                                <input type="email" id="email" class="form-control" name="email" required
+                                    v-model="orderForm.email"
+                                    :disabled="currentUser"
+                                    :placeholder="trans('site.front.form.email')">
+                            </div> <!-- end email form-group -->
 
-                    <div class="form-group">
-                        <label for="street" class="control-label">
-                            {{ trans('site.front.form.street') }}
-                        </label>
-                        <input type="text" id="street" class="form-control" name="street" required
-                               v-model="orderForm.street"
-                               :placeholder="trans('site.checkout.street')">
-                    </div> <!-- end street -->
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label for="first_name" class="control-label">
+                                        {{ trans('site.first-name') }}
+                                    </label>
+                                    <input type="text" id="first_name" class="form-control" name="first_name" required
+                                        v-model="orderForm.first_name"
+                                        :disabled="currentUser"
+                                        :placeholder="trans('site.first-name')">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="last_name" class="control-label">
+                                        {{ trans('site.last-name') }}
+                                    </label>
+                                    <input type="text" id="last_name" class="form-control" name="last_name" required
+                                        v-model="orderForm.last_name"
+                                        :disabled="currentUser"
+                                        :placeholder="trans('site.last-name')">
+                                </div>
+                            </div> <!-- end first and last name -->
 
-                    <div class="form-group row">
-                        <div class="col-md-6">
-                            <label for="zip" class="control-label">{{ trans('site.front.form.zip') }}</label>
-                            <input type="text" id="zip" class="form-control" name="zip" required
-                                   v-model="orderForm.zip" :placeholder="trans('site.checkout.zip')">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="city" class="control-label">{{ trans('site.front.form.city') }}</label>
-                            <input type="text" id="city" class="form-control" name="city" required
-                                   v-model="orderForm.city" :placeholder="trans('site.checkout.city')">
-                        </div>
-                    </div> <!-- end zip, city -->
+                            <div class="form-group">
+                                <label for="street" class="control-label">
+                                    {{ trans('site.front.form.street') }}
+                                </label>
+                                <input type="text" id="street" class="form-control" name="street" required
+                                    v-model="orderForm.street"
+                                    :placeholder="trans('site.checkout.street')">
+                            </div> <!-- end street -->
 
-                    <div class="form-group row">
-                        <div class="col-md-6">
-                            <label for="phone" class="control-label">
-                                {{ trans('site.front.form.phone-number') }}
-                            </label>
-                            <input type="text" id="phone" class="form-control" name="phone" required
-                                   v-model="orderForm.phone" :placeholder="trans('site.checkout.phone')">
-                        </div>
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label for="zip" class="control-label">{{ trans('site.front.form.zip') }}</label>
+                                    <input type="text" id="zip" class="form-control" name="zip" required
+                                        v-model="orderForm.zip" :placeholder="trans('site.checkout.zip')">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="city" class="control-label">{{ trans('site.front.form.city') }}</label>
+                                    <input type="text" id="city" class="form-control" name="city" required
+                                        v-model="orderForm.city" :placeholder="trans('site.checkout.city')">
+                                </div>
+                            </div> <!-- end zip, city -->
 
-                        <div class="col-md-6" v-if="!currentUser">
-                            <label for="password" class="control-label">
-                                {{ trans('site.front.form.create-password') }}
-                            </label>
-                            <input type="password" id="password" class="form-control"
-                                   name="password" required :placeholder="trans('site.front.form.create-password')"
-                                   v-model="orderForm.password">
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label for="phone" class="control-label">
+                                        {{ trans('site.front.form.phone-number') }}
+                                    </label>
+                                    <input type="text" id="phone" class="form-control" name="phone" required
+                                        v-model="orderForm.phone" :placeholder="trans('site.checkout.phone')">
+                                </div>
+
+                                <div class="col-md-6" v-if="!currentUser">
+                                    <label for="password" class="control-label">
+                                        {{ trans('site.front.form.create-password') }}
+                                    </label>
+                                    <input type="password" id="password" class="form-control"
+                                        name="password" required :placeholder="trans('site.front.form.create-password')"
+                                        v-model="orderForm.password">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </template>
@@ -273,23 +301,23 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
 
             <tab-content :title="trans('site.checkout.payment-details')" icon="fas fa-credit-card"
                          :before-change="validateForm">
+                <wizard-button class="back-btn" v-if="wizardProps.activeTabIndex > 0"  @click.native="wizardProps.prevTab();">
+                    {{ trans('site.back') }}
+                </wizard-button>
+
                 <div id="checkout-display"></div>
             </tab-content>
 
             <template slot="footer" slot-scope="props">
                 <div class="wizard-footer-left">
-                    <wizard-button  v-if="props.activeTabIndex > 0 && !props.isLastStep"
+                    <!-- <wizard-button  v-if="props.activeTabIndex > 0 && !props.isLastStep"
                                     @click.native="props.prevTab(); scrollTop()"
                                     :style="props.fillButtonStyle">
                         {{ trans('site.back') }}
-                    </wizard-button>
+                    </wizard-button> -->
                 </div>
                 <div class="wizard-footer-right">
                     <template v-if="props.activeTabIndex === 0">
-                        <span style="margin-right: 10px">
-                            {{ trans('site.front.checkout.note') }}
-                        </span>
-
                         <button type="button" class="vipps-btn" slot="custom-buttons-right" @click="vippsCheckout();"
                                 :disabled="isLoading">
                             <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i>
@@ -301,6 +329,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
 
                     <template v-if="!currentUser || (currentUser && currentUser.could_buy_course)">
                         <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab(); scrollTop()" class="wizard-footer-right"
+                        :class="{'w-100': props.activeTabIndex === 1 }"
                                        :style="props.fillButtonStyle" :disabled="!currentUser && !isNewCustomer && props.activeTabIndex > 0">
                             Til betaling
                         </wizard-button>
@@ -312,6 +341,13 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                             {{props.isLastStep ? trans('site.front.buy')
                             : trans('site.learner.next-text')}}</wizard-button>
                     </template>
+
+                    <template v-if="props.activeTabIndex === 0">
+                        <br>
+                        <span class="d-block mt-3">
+                            {{ trans('site.front.checkout.note') }}
+                        </span>
+                    </template>
                 </div>
             </template> <!-- end buttons slot -->
 
@@ -322,6 +358,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
 </template>
 
 <script>
+import FileUpload from '../../components/FileUpload.vue';
     export default {
 
         props: {
@@ -373,6 +410,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                 synopsisName: i18n.site['learner.files-text'],
                 hasPaidCourse: false,
                 isLoading: false,
+                wizardProps: {},
                 requestUrl: '/shop-manuscript/'+this.shopManuscript.id
             }
         },
@@ -381,6 +419,10 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
             totalPrice() {
                 return parseFloat(this.orderForm.price) - this.orderForm.totalDiscount;
             }
+        },
+
+        components: {
+            FileUpload,
         },
 
         methods: {
@@ -563,10 +605,21 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
 
                 this.orderForm.totalDiscount = totalDiscount;
                 this.orderForm.price = price;
+            },
+
+            handleFileSelected(type, file) {
+                if (type === 'synopsis') {
+                    this.orderForm.synopsis = file;
+                } else {
+                    this.orderForm.manuscript = file;
+                }
+                
+                console.log(this.orderForm);
             }
         },
 
         mounted() {
+            this.wizardProps = this.$refs.wizard;        
             this.loadOptions();
             this.checkHasPaidCourse();
         }
