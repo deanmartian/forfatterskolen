@@ -21,7 +21,7 @@
 				</template>
 				<template v-else>
 					<i class="fa fa-cloud-upload-alt"></i>
-					Drag and drop file or <a href='javascript:void(0)' @click.stop="triggerFileInput">Browse</a>
+					Dra og slipp filen eller <a href='javascript:void(0)' @click.stop="triggerFileInput">søk i maskinen</a>
 				</template>
 				
 			</div>
