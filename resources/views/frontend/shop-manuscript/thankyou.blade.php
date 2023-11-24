@@ -5,8 +5,10 @@
 @stop
 
 @section('content')
-	<div class="thank-you-page" data-bg="https://www.forfatterskolen.no/images-new/thankyou-bg.png">
+{{-- data-bg="https://www.forfatterskolen.no/images-new/thankyou-bg.png" --}}
+	<div class="thank-you-page" >
 		<div class="container">
+			<img src="{{ asset('images-new/thankyou-banner.png') }}" class="w-100 banner" alt="thank-you-banner">
 			<div class="row">
 
 				<?php
