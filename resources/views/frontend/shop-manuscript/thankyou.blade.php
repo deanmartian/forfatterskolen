@@ -28,7 +28,7 @@
 				</div>
 
 				<div class="col-sm-6 right-container">
-					<img src="{{ asset('images-new/thankyou-hero.jpg') }}" alt="">
+					<img src="{{ asset('images-new/thankyou-hero.png') }}" alt="">
 				</div>
 			</div>
 		</div>
