@@ -5,6 +5,17 @@
         </h3>
     </div>
     <div class="col-md-6 text-right">
+        @if (Route::currentRouteName() === 'learner.dashboard')
+            <div class="auto-renew-wrapper">
+                <label>
+                    Automatisk registert for felleswebinarer
+                </label>
+                <input type="checkbox" data-toggle="toggle" data-on="{{ trans('site.front.yes') }}"
+                        class="webinar-auto-register-toggle" data-off="{{ trans('site.front.no') }}"
+                        data-size="mini"
+                @if(Auth::user()->userAutoRegisterToCourseWebinar) {{ 'checked' }} @endif>
+            </div>
+        @endif
         <div class="user-image-container d-inline-block">
             <!-- User image and dropdown menu -->
             <a href="{{ route('learner.profile') }}">

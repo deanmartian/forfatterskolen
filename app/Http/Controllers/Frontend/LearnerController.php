@@ -142,6 +142,9 @@ class LearnerController extends Controller
 
     public function dashboard()
     {
+        $user           = Auth::user();
+        $coursesTaken   = $user->coursesTaken()->limit(3)->get();
+        $invoices       = $user->invoices()->limit(5)->get();
         $packageArr     = Auth::user()->coursesTaken()->pluck('package_id')->toArray();
         $courses        = Package::whereIn('id', $packageArr)->pluck('course_id')->toArray();
         $surveyTaken    = Auth::user()->surveyTaken()->pluck("survey_id")->toArray();
@@ -159,11 +162,15 @@ class LearnerController extends Controller
             ->pluck('self_publishing_id')->toArray();
         $selfPublishingList = SelfPublishing::whereIn('id', $selfPublishingLearners)->get();
 
+        $dashboardCalendar = $this->dashboardCalendar();
+        $freeCourses = FrontendHelpers::getFreeCourses();
+
         $view = Session::get('current-portal') === 'self-publishing'
             ? 'frontend.learner.self-publishing.dashboard'
             : 'frontend.learner.dashboard';
 
-        return view($view, compact('surveys', 'assignments', 'selfPublishingList'));
+        return view($view, compact('surveys', 'assignments', 'selfPublishingList', 'coursesTaken', 'invoices',
+            'dashboardCalendar', 'freeCourses'));
     }
 
 

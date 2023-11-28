@@ -853,6 +853,11 @@ class FrontendHelpers
         return $mode->get();
 	}
 
+    public static function getFreeCourses()
+    {
+        return \App\Course::where('is_free', '=', 1)->where('status', 1)->get();
+    }
+
     /**
      * Generate unique code
      * @param int $codeLength
