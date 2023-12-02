@@ -126,24 +126,6 @@
 											</p>
 										</div>
 									</div>
-
-									<div class="card">
-										<div class="card-header p-0">
-											<img src="https://www.forfatterskolen.no/{{ $formerCourse->package->course->course_image }}" 
-											alt="">
-										</div>
-										<div class="card-body p-3">
-											<h3>
-												{{ $formerCourse->package->course->title }}
-											</h3>
-
-											<p class="text-gray mb-0">
-												{!! \Illuminate\Support\Str::limit(
-													strip_tags($courseTaken->package->course->description
-													), 200) !!}
-											</p>
-										</div>
-									</div>
 								@endforeach
 							</div>
 						</div>
