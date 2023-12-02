@@ -178,8 +178,11 @@ class LearnerController extends Controller
 
     public function course()
     {
+        $user = Auth::user();
         $surveys = Survey::all();
-        return view('frontend.learner.course', compact('surveys'));
+        $coursesTaken = $user->coursesTaken()->paginate(5);
+        $formerCourses = $user->formerCourses;
+        return view('frontend.learner.course', compact('surveys', 'coursesTaken', 'formerCourses'));
     }
 
     /**

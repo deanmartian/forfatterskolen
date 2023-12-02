@@ -7,172 +7,147 @@
 
 @section('heading') {{ trans('site.learner.my-course') }} @stop
 
-@section('styles')
-	<style>
-		.divider-center-text {
-			margin: 25px 0 0;
-		}
-		.divider-center-text:before {
-			left: 15px;
-			width: 40%;
-		}
-
-		@media only screen and (max-width: 1024px) {
-			.divider-center-text:before {
-				left: 30px;
-				width: 39%;
-			}
-		}
-
-		@media only screen and (max-width: 768px) {
-			.divider-center-text:before {
-				left: 15px;
-				width: 36%;
-			}
-
-			.divider-center-text:after {
-				width: 38%;
-			}
-		}
-
-		@media only screen and (max-width: 640px) {
-			.divider-center-text:before {
-				width: 33%;
-			}
-
-			.divider-center-text:after {
-				right: 0;
-				width: 36%;
-			}
-		}
-
-		@media only screen and (max-width: 415px) {
-			.divider-center-text:before {
-				width: 27%;
-			}
-
-			.divider-center-text:after {
-				right: 0;
-				width: 31%;
-			}
-		}
-
-		@media only screen and (max-width: 360px) {
-			.divider-center-text:before {
-				width: 25%;
-			}
-
-			.divider-center-text:after {
-				width: 29%;
-			}
-		}
-
-		@media only screen and (max-width: 320px) {
-			.divider-center-text:before {
-				width: 23%;
-			}
-
-			.divider-center-text:after {
-				width: 27%;
-			}
-		}
-	</style>
-@stop
 
 @section('content')
 
-	<div class="learner-container">
+	<div class="learner-container learner-course-wrapper">
 		<div class="container">
 			<div class="row">
-				@include('frontend.partials.learner-search-new')
-				<div class="row w-100 learner-courses-container adjust-left">
-					@foreach( Auth::user()->coursesTaken as $courseTaken )
-						<div class="col-md-12 col-lg-3 no-right-padding adjust-right-padding">
-							<div class="learner-course card border-0">
-								<div class="course-thumb" data-bg="https://www.forfatterskolen.no/{{$courseTaken->package->course->course_image}}"></div>
-								<div class="course-details card-body">
-									<h3 class="font-weight-normal font-barlow-regular">
-										{{$courseTaken->package->course->title}}
-									</h3>
-									<p class="note-color">
-										{!! \Illuminate\Support\Str::limit(strip_tags($courseTaken->package->course->description), 200) !!}
-									</p>
-								</div>
-								<div class="card-footer no-border p-0">
-									@if( $courseTaken->is_active )
-										@if($courseTaken->hasStarted)
-											@if($courseTaken->hasEnded)
-												<button class="btn btn-info w-100 rounded-0" data-toggle="modal"
-														data-target="#renewAllModal">
-													{{ trans('site.learner.renew-subscription') }}
-												</button>
-											@else
-												<a class="btn site-btn-global-w-arrow w-100 rounded-0"
-												   href="{{route('learner.course.show', ['id' => $courseTaken->id])}}">
-													{{ trans('site.learner.continue-this-course') }}
-												</a>
-												{{-- check if course is webinar-pakke --}}
-                                                <?php
-                                                $package = \App\Package::find($courseTaken->package_id);
-                                                ?>
-												@if ($package && $package->course_id == 17)
+				<div class="col-md-8">
+					<div class="global-card">
+						<div class="card-header">
+							<h2>
+								{{ trans('site.learner.my-course') }}
+							</h2>
+						</div>
+						<div class="card-body">
+							
+							@foreach ($coursesTaken as $courseTaken)
+								@php
+									$status = '';
+									$statusText = '';
+									if( $courseTaken->is_active ) {
+										if($courseTaken->hasStarted) {
+											if($courseTaken->hasEnded) {
+												$status = 'ended';
+												$statusText = trans('site.learner.renew-subscription');
+											} else {
+												$status = 'active';
+												$statusText = 'fortsette kurset';
+											}
+										} else {
+											$status = 'start';
+											$statusText = 'Start kurset';
+										}
+									} else {
+										$status = 'on-hold';
+										$statusText = trans('site.learner.course-on-hold');
+									}
+								@endphp
+								<div class="course-item">
+									<div class="col-md-5">
+										<img data-src="https://www.forfatterskolen.no/{{$courseTaken->package->course->course_image}}" 
+                                            alt="{{ $courseTaken->package->course->title }}">
+									</div>
+									<div class="col-md-7">
+										<h3>
+                                            {{$courseTaken->package->course->title}}
+											<p class="{{ $status }}">
+												{{ $statusText }}
+											</p>
+                                        </h3>
+                                        <p>
+                                            {!! \Illuminate\Support\Str::limit(
+                                                strip_tags($courseTaken->package->course->description), 200
+                                                ) !!}
+                                        </p>
 
-                                                    <?php
-
-                                                    $checkDate = date('m/Y', strtotime($courseTaken->started_at));
-
-                                                    if ($courseTaken->end_date) {
-                                                        $checkDate = date('m/Y', strtotime($courseTaken->end_date));
-                                                    }
-
-                                                    $now = new DateTime();
-                                                    $input = DateTime::createFromFormat('m/Y', $checkDate);
-                                                    $diff = $input->diff($now); // Returns DateInterval
-
-                                                    // m is months
-                                                    $withinSixMonths = $diff->y === 0 && $diff->m <= 6;  // true
-                                                    ?>
+										@if( $courseTaken->is_active )
+											@if($courseTaken->hasStarted)
+												@if($courseTaken->hasEnded)
+													<button class="btn light-red-outline-btn" data-toggle="modal"
+															data-target="#renewAllModal">
+														{{ trans('site.learner.renew-subscription') }}
+													</button>
+												@else
+													<a class="btn light-red-outline-btn"
+													href="{{route('learner.course.show', ['id' => $courseTaken->id])}}">
+														{{ trans('site.learner.continue-this-course') }}
+													</a>
 												@endif
+											@else
+												<form method="POST" action="{{route('learner.course.take')}}">
+													{{csrf_field()}}
+													<input type="hidden" name="courseTakenId" value="{{$courseTaken->id}}">
+													<button type="submit" class="btn light-red-outline-btn">
+														{{ trans('site.learner.start-course') }}
+													</button>
+												</form>
 											@endif
 										@else
-											<form method="POST" action="{{route('learner.course.take')}}">
-												{{csrf_field()}}
-												<input type="hidden" name="courseTakenId" value="{{$courseTaken->id}}">
-												<button type="submit" class="btn site-btn-global-w-arrow w-100 rounded-0 btn-success">
-													{{ trans('site.learner.start-course') }}
-												</button>
-											</form>
+											<a class="btn light-red-outline-btn disabled">
+												{{ trans('site.learner.course-on-hold') }}
+											</a>
 										@endif
-									@else
-										<a class="btn site-btn-global disabled w-100 rounded-0">
-											{{ trans('site.learner.course-on-hold') }}
-										</a>
-									@endif
+									</div>
 								</div>
-							</div>
+							@endforeach
+							
+							<div class="text-center">
+                                {{ $coursesTaken->appends(request()->except('page'))->links('pagination.custom-pagination') }}
+                            </div>
 						</div>
-					@endforeach
-				</div>
-
-				<div class="row w-100 learner-courses-container adjust-left">
-					<div class="divider-center-text  no-right-padding adjust-right-padding">
-						{{ trans('site.front.former-courses') }}
 					</div>
-					@foreach( Auth::user()->formerCourses as $courseTaken )
-						<div class="col-md-12 col-lg-3 no-right-padding adjust-right-padding">
-							<div class="learner-course card border-0">
-								<div class="course-thumb" style="background-image: url({{$courseTaken->package->course->course_image}})"></div>
-								<div class="course-details card-body">
-									<h3 class="font-weight-normal font-barlow-regular">
-										{{$courseTaken->package->course->title}}
-									</h3>
-									<p class="note-color">
-										{{\Illuminate\Support\Str::limit(strip_tags($courseTaken->package->course->description), 200)}}
-									</p>
-								</div>
+				</div>
+				<div class="col-md-4">
+					<div class="former-courses-wrapper">
+						<div class="global-card">
+							<div class="card-header">
+								<h2>
+									{{ trans('site.front.former-courses') }}
+								</h2>
+							</div>
+							<div class="card-body">
+								@foreach ($formerCourses as $formerCourse)
+									<div class="card">
+										<div class="card-header p-0">
+											<img src="https://www.forfatterskolen.no/{{ $formerCourse->package->course->course_image }}" 
+											alt="">
+										</div>
+										<div class="card-body p-3">
+											<h3>
+												{{ $formerCourse->package->course->title }}
+											</h3>
+
+											<p class="text-gray mb-0">
+												{!! \Illuminate\Support\Str::limit(
+													strip_tags($courseTaken->package->course->description
+													), 200) !!}
+											</p>
+										</div>
+									</div>
+
+									<div class="card">
+										<div class="card-header p-0">
+											<img src="https://www.forfatterskolen.no/{{ $formerCourse->package->course->course_image }}" 
+											alt="">
+										</div>
+										<div class="card-body p-3">
+											<h3>
+												{{ $formerCourse->package->course->title }}
+											</h3>
+
+											<p class="text-gray mb-0">
+												{!! \Illuminate\Support\Str::limit(
+													strip_tags($courseTaken->package->course->description
+													), 200) !!}
+											</p>
+										</div>
+									</div>
+								@endforeach
 							</div>
 						</div>
-					@endforeach
+					</div>
 				</div>
 			</div>
 		</div>
