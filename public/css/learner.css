@@ -189,7 +189,8 @@ body:not(.modal-open) {
     font-family: 'Poppins';
 }
 
-.learner-dashboard-wrapper .page-title {
+.learner-dashboard-wrapper .page-title,
+.learner-manuscript-wrapper .page-title {
     color: var(--secondary-color);
     font-weight: bold;
     margin-bottom: 20px;
@@ -326,32 +327,6 @@ body:not(.modal-open) {
 /* end learner-dashboard */
 
 /* learner course */
-.learner-course-wrapper .course-item h3 > p {
-    font-family: 'Inter';
-    font-size: 14px;
-    display: inline-block;
-    padding: 5px 10px;
-}
-
-.learner-course-wrapper .course-item h3 > p.active {
-    background-color: var(--pink);
-    color: var(--primary-color);
-}
-
-.learner-course-wrapper .course-item h3 > p.start {
-    background-color: #CFFFCE;
-    color: #175302;
-}
-
-.learner-course-wrapper .course-item h3 > p.on-hold {
-    background-color: #eee;
-    color: #a39696;
-}
-
-.learner-course-wrapper .course-item h3 > p.ended {
-    background-color: #EDEDFE;
-    color: #0C0059;
-}
 
 .learner-course-wrapper .former-courses-wrapper {
     position: sticky;
@@ -586,6 +561,28 @@ body:not(.modal-open) {
 }
 
 /* end course lesson page */
+
+/* learner shop-manuscript page */
+.learner-manuscript-wrapper .manuscript-taken-row {
+    border-bottom: 1px solid #EDEDED;
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+}
+
+.learner-manuscript-wrapper .button-container {
+    float: left;
+}
+
+.learner-manuscript-wrapper .word-container {
+    float: right;
+}
+
+.learner-manuscript-wrapper .pagination .page-link .fa {
+    margin-top: 3px;
+}
+/* end learner shop-manuscript page */
 
 /* learner assignment */
 
@@ -1246,6 +1243,10 @@ body:not(.modal-open) {
     color: var(--primary-color) !important;
 }
 
+.red-global-btn:hover .fa {
+    color: var(--primary-color);
+}
+
 .pink-global-btn {
     background-color: var(--pink);
     border: 1px solid var(--pink);
@@ -1298,6 +1299,23 @@ body:not(.modal-open) {
 
 .blue-outline-btn:hover .fa {
     color: var(--white) !important;
+}
+
+.blue-btn {
+    background-color: #00477B;
+    border: 1px solid #00477B;
+    border-radius: 5px;
+    color: var(--white);
+    font-weight: bold;
+}
+
+.blue-btn:hover {
+    background-color: transparent;
+    color: #00477B;
+}
+
+.blue-btn:hover .fa {
+    color: #00477B;
 }
 
 .light-red-outline-btn {
@@ -1369,6 +1387,8 @@ body:not(.modal-open) {
     border-radius: 18px;
     color: var(--black);
     margin-right: 5px;
+    padding: 6px 12px;
+    height: 33px;
     width: 33px; /* to have same width */
 }
 
@@ -1394,6 +1414,42 @@ body:not(.modal-open) {
 .custom-center-pagination .page-item:last-child .page-link {
     border-top-right-radius: 18px;
     border-bottom-right-radius: 18px;
+}
+
+.custom-badge {
+    font-family: 'Inter';
+    font-size: 14px;
+    display: inline-block;
+    padding: 5px 10px;
+}
+
+.custom-badge.active {
+    background-color: var(--pink);
+    color: var(--primary-color);
+}
+
+.custom-badge.start {
+    background-color: #CFFFCE;
+    color: #175302;
+}
+
+.custom-badge.on-hold {
+    background-color: #eee;
+    color: #a39696;
+}
+
+.custom-badge.ended {
+    background-color: #EDEDFE;
+    color: #0C0059;
+}
+
+.custom-badge.yellow {
+    background-color: #FFF8BA;
+    color: #804D00;
+}
+
+.rounded-20 {
+    border-radius: 20px;
 }
 
 @media only screen and (max-width: 1024px) {
@@ -1448,6 +1504,11 @@ body:not(.modal-open) {
 
     .learner-dashboard-wrapper .right-container {
         margin-top: 20px;
+    }
+
+    .learner-manuscript-wrapper .manuscript-taken-row .button-container .blue-outline-btn,
+    .learner-manuscript-wrapper .manuscript-taken-row .button-container .blue-btn {
+        margin-top: 5px;
     }
 }
 
@@ -1521,6 +1582,14 @@ body:not(.modal-open) {
     .learner-course-wrapper .course-item h3,
     .learner-course-wrapper .former-courses-wrapper {
         margin-top: 20px;
+    }
+
+    .learner-manuscript-wrapper .manuscript-taken-row {
+        padding-bottom: 0;
+    }
+
+    .learner-manuscript-wrapper .manuscript-taken-row .global-card {
+        margin-bottom: 20px;
     }
 }
 

@@ -806,6 +806,7 @@
     </div>
 
     @if (Auth::user()->need_pass_update)
+        <button class="passUpdateBtn hidden" data-toggle="modal" data-target="#passUpdateModal"></button>
         <div class="modal fade" role="dialog" id="passUpdateModal" data-backdrop="static">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -847,6 +848,7 @@
     @endif
 
     @if (Session::has('passUpdated'))
+        <button class="passUpdatedBtn hidden" data-toggle="modal" data-target="#passUpdatedModal"></button>
         <div id="passUpdatedModal" class="modal fade" role="dialog">
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">
@@ -868,11 +870,13 @@
     <script>
 
         @if (Auth::user()->need_pass_update)
-            $("#passUpdateModal").modal('show');
+            //$("#passUpdateModal").modal('show');
+            $(".passUpdateBtn").trigger('click');
         @endif
 
         @if (Session::has('passUpdated'))
-            $('#passUpdatedModal').modal('show');
+            //$('#passUpdatedModal').modal('show');
+            $(".passUpdatedBtn").trigger('click');
         @endif
 
         @if (Session::has('success'))

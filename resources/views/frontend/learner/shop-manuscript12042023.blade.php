@@ -13,127 +13,97 @@
 
 @section('content')
 <div class="learner-container">
-	<div class="container learner-manuscript-wrapper">
+	<div class="container learner-manuscript-page">
 		@include('frontend.partials.learner-search-new')
 
-		<div class="global-card mt-4 px-0">
-			<div class="card-body p-0">
-				@foreach ($shopManuscriptsTaken->chunk(2) as $shopManuscriptTaken_chunk)
-					<div class="manuscript-taken-row">
-						@foreach ($shopManuscriptTaken_chunk as $shopManuscriptTaken)
-							<div class="col-md-6">
-								<div class="global-card">
-									<div class="card-body p-0">
-										<h3>
-											{{ $shopManuscriptTaken->shop_manuscript->title }}
+		@foreach(Auth::user()->shopManuscriptsTaken->chunk(3) as $shopManuscriptTaken_chunk)
+			<div class="row">
+				@foreach($shopManuscriptTaken_chunk as $shopManuscriptTaken)
+					<div class="col-md-4 mt-5">
+						<div class="card card-global">
+							<div class="card-body">
+								<h3 class="mb-1">{{ $shopManuscriptTaken->shop_manuscript->title }}</h3>
+								@if($shopManuscriptTaken->expected_finish)
+									<p>
+										<span class="label label-danger">
+											{{ trans('site.learner.expected-finish') }}:</span> {{ $shopManuscriptTaken->expected_finish }}
+									</p>
+								@endif
 
-											@if($shopManuscriptTaken->expected_finish)
-												<p class="custom-badge active rounded-20">
-													{{ trans('site.learner.expected-finish') }}:
-													{{ $shopManuscriptTaken->expected_finish }}
-												</p>
-											@endif
+									@if( $shopManuscriptTaken->status == 'Finished' )
+										<span class="label label-success">
+											{{ trans('site.learner.finished') }}
+										</span>
+									@elseif( $shopManuscriptTaken->status == 'Pending' )
+										<span class="label label-info">
+											{{ trans('site.learner.pending') }}
+										</span>
+									@elseif( $shopManuscriptTaken->status == 'Started' )
+										<span class="label label-primary">
+											{{ trans('site.learner.started') }}
+										</span>
+									@elseif( $shopManuscriptTaken->status == 'Not started' )
+										<span class="label label-warning">
+											{{ trans('site.learner.not-started') }}
+										</span>
+								@endif
 
-											@if( $shopManuscriptTaken->status == 'Finished' )
-												<p class="custom-badge start rounded-20">
-													{{ trans('site.learner.finished') }}
-												</p>
-											@elseif( $shopManuscriptTaken->status == 'Pending' )
-												<p class="custom-badge on-hold rounded-20">
-													{{ trans('site.learner.pending') }}
-												</p>
-											@elseif( $shopManuscriptTaken->status == 'Started' )
-												<p class="custom-badge ended rounded-20">
-													{{ trans('site.learner.started') }}
-												</p>
-											@elseif( $shopManuscriptTaken->status == 'Not started' )
-												<p class="custom-badge yellow rounded-20">
-													{{ trans('site.learner.not-started') }}
-												</p>
-											@endif
-										</h3>
-
-										<p class="mb-5">
-											{{ $shopManuscriptTaken->shop_manuscript->description }}
-										</p>
-
-										<div class="button-container">
-											@if( $shopManuscriptTaken->is_active )
-												@if( $shopManuscriptTaken->status == 'Not started' )
-													<button type="button" class="btn red-global-btn uploadManuscriptBtn py-2 px-4 rounded-20"
-															data-toggle="modal" data-target="#uploadManuscriptModal"
-															data-action="{{ route('learner.shop-manuscript.upload', 
-															$shopManuscriptTaken->id) }}">
-														{{ trans('site.learner.upload-script') }}
-														<i class="fa fa-upload"></i>
-													</button>
-												@else
-													<a class="btn blue-outline-btn rounded-20 px-4" 
-														href="{{ route('learner.shop-manuscript.show',
-													$shopManuscriptTaken->id) }}">
-														{{ trans('site.learner.see-manuscript') }}
-													</a>
-													@if (!$shopManuscriptTaken->is_manuscript_locked 
-													&& $shopManuscriptTaken->status != 'Finished')
-														<button class="btn btn-success updateManuscriptBtn" type="button" 
-															data-toggle="modal" data-target="#updateUploadedManuscriptModal" 
-															data-fields="{{ json_encode($shopManuscriptTaken) }}"
-															data-action="{{ route('learner.shop-manuscript.update-uploaded-manuscript', 
-															$shopManuscriptTaken->id) }}">
-																<i class="fa fa-pen"></i>
-														</button>
-														<button class="btn btn-danger deleteManuscriptBtn" type="button" 
-															data-toggle="modal" data-target="#deleteUploadedManuscriptModal"
-															data-action="{{ route('learner.shop-manuscript.delete-uploaded-manuscript',
-															$shopManuscriptTaken->id) }}">
-																<i class="fa fa-trash"></i>
-														</button>
-													@endif
-
-													@if( $shopManuscriptTaken->status == 'Finished' )
-														<?php
-															$feedback = $shopManuscriptTaken->feedbacks()->first();
-														?>
-														<a href="{{ route('learner.shop-manuscript.download-feedback',
-														 [$shopManuscriptTaken->id, $feedback->id]) }}" 
-														 class="btn blue-btn rounded-20 px-4 ml-2">
-															{{ trans('site.learner.download-feedback') }}
-															<i class="fa fa-download"></i>
-														</a>
-													@endif
-
-												@endif
-											@else
-												<a class="btn btn-warning disabled" style="color: #fff">
-													{{ trans('site.learner.pending') }}
-												</a>
-											@endif
-										</div>
-										<div class="word-container font-weight-bold">
-											@if( $shopManuscriptTaken->status != 'Not started' )
-												{{ trans('site.learner.word') }}: {{ $shopManuscriptTaken->words }} <br>
-											@endif
-										</div>
-
-										<div class="clearfix"></div>
-									</div>
+								<div class="note-color mt-4">
+									@if( $shopManuscriptTaken->status != 'Not started' )
+										{{ trans('site.learner.word') }}: {{ $shopManuscriptTaken->words }} <br>
+									@endif
+									{{ $shopManuscriptTaken->shop_manuscript->description }}
 								</div>
-							</div>
-						@endforeach
-					</div>
-				@endforeach
+							</div> <!-- end panel-body-->
+							<div class="card-footer">
+								@if( $shopManuscriptTaken->is_active )
+									@if( $shopManuscriptTaken->status == 'Not started' )
+										<button type="button" class="btn btn-primary uploadManuscriptBtn"
+												data-toggle="modal" data-target="#uploadManuscriptModal"
+												data-action="{{ route('learner.shop-manuscript.upload', $shopManuscriptTaken->id) }}">
+											{{ trans('site.learner.upload-script') }}
+										</button>
+									@else
+										<a class="btn btn-primary" href="{{ route('learner.shop-manuscript.show',
+										$shopManuscriptTaken->id) }}">
+											{{ trans('site.learner.see-manuscript') }}
+										</a>
+										@if (!$shopManuscriptTaken->is_manuscript_locked && $shopManuscriptTaken->status != 'Finished')
+											<button class="btn btn-success updateManuscriptBtn" type="button" data-toggle="modal"
+													data-target="#updateUploadedManuscriptModal" data-fields="{{ json_encode($shopManuscriptTaken) }}"
+													data-action="{{ route('learner.shop-manuscript.update-uploaded-manuscript', $shopManuscriptTaken->id) }}"><i class="fa fa-pen"></i></button>
+											<button class="btn btn-danger deleteManuscriptBtn" type="button" data-toggle="modal"
+													data-target="#deleteUploadedManuscriptModal"
+													data-action="{{ route('learner.shop-manuscript.delete-uploaded-manuscript', $shopManuscriptTaken->id) }}"><i class="fa fa-trash"></i></button>
+										@endif
 
-				<div class="text-center">
-					{{ $shopManuscriptsTaken->appends(request()->except('page'))->links('pagination.custom-pagination') }}
-				</div>
+										@if( $shopManuscriptTaken->status == 'Finished' )
+											<?php
+												$feedback = $shopManuscriptTaken->feedbacks()->first();
+											?>
+											<a href="{{ route('learner.shop-manuscript.download-feedback', [$shopManuscriptTaken->id, $feedback->id]) }}" class="btn btn-info float-right">
+												{{ trans('site.download') }}
+											</a>
+										@endif
+
+									@endif
+								@else
+									<a class="btn btn-warning disabled" style="color: #fff">
+										{{ trans('site.learner.pending') }}
+									</a>
+								@endif
+							</div>
+						</div> <!-- end panel -->
+					</div> <!-- end column -->
+				@endforeach
 			</div>
-		</div> <!-- end global-card -->
+		@endforeach
 	</div>
 </div>
 
 
-<div id="uploadManuscriptModal" class="modal fade global-modal" role="dialog">
-  <div class="modal-dialog modal-md">
+<div id="uploadManuscriptModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
         <h3 class="modal-title">{{ trans('site.learner.upload-script') }}</h3>
@@ -146,9 +116,7 @@
 				<label>
 					* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}
 				</label>
-      			<input type="file" class="form-control" required name="manuscript" 
-				accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, 
-				application/pdf, application/vnd.oasis.opendocument.text">
+      			<input type="file" class="form-control" required name="manuscript" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
       		</div>
 			<div class="form-group">
 				<label for="">{{ trans('site.front.genre') }}</label>
@@ -161,15 +129,13 @@
 			</div>
 			<div class="form-group">
 				<label for="">{{ trans('site.front.form.synopsis-optional') }}</label>
-				<input type="file" class="form-control" name="synopsis" 
-				accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-				 application/pdf, application/vnd.oasis.opendocument.text">
+				<input type="file" class="form-control" name="synopsis" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 			</div>
 			<div class="form-group">
 				<label for="">{{ trans('site.front.form.manuscript-description') }}</label>
 				<textarea name="description" id="" cols="30" rows="10" class="form-control"></textarea>
 			</div>
-      		<button type="submit" class="btn submit-btn pull-right">{{ trans('site.learner.upload-script') }}</button>
+      		<button type="submit" class="btn btn-primary pull-right">{{ trans('site.learner.upload-script') }}</button>
       		<div class="clearfix"></div>
       	</form>
       </div>
@@ -178,8 +144,8 @@
   </div>
 </div>
 
-<div id="updateUploadedManuscriptModal" class="modal fade global-modal" role="dialog">
-	<div class="modal-dialog modal-md">
+<div id="updateUploadedManuscriptModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h3 class="modal-title">{{ trans('site.learner.upload-script') }}</h3>
@@ -190,9 +156,7 @@
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}</label>
-						<input type="file" class="form-control" required name="manuscript" 
-						accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-						application/pdf, application/vnd.oasis.opendocument.text">
+						<input type="file" class="form-control" required name="manuscript" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 					</div>
 					<div class="form-group">
 						<label for="">{{ trans('site.front.genre') }}</label>
@@ -205,9 +169,7 @@
 					</div>
 					<div class="form-group synopsis">
 						<label for="">{{ trans('site.front.form.synopsis-optional') }}</label>
-						<input type="file" class="form-control" name="synopsis" 
-						accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-						application/pdf, application/vnd.oasis.opendocument.text">
+						<input type="file" class="form-control" name="synopsis" accept="application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
 					</div>
 
 					<div class="form-group synopsis">
@@ -221,7 +183,7 @@
 						<label for="">{{ trans('site.front.form.manuscript-description') }}</label>
 						<textarea name="description" id="" cols="30" rows="10" class="form-control"></textarea>
 					</div>
-					<button type="submit" class="btn submit-btn pull-right">{{ trans('site.learner.upload-script') }}</button>
+					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.learner.upload-script') }}</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -230,7 +192,7 @@
 	</div>
 </div>
 
-<div id="deleteUploadedManuscriptModal" class="modal fade global-modal" role="dialog">
+<div id="deleteUploadedManuscriptModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">

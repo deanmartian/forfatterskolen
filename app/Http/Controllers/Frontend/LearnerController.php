@@ -234,7 +234,8 @@ class LearnerController extends Controller
 
     public function shopManuscript()
     {
-        return view('frontend.learner.shop-manuscript');
+        $shopManuscriptsTaken = Auth::user()->shopManuscriptsTaken()->paginate(4);
+        return view('frontend.learner.shop-manuscript', compact('shopManuscriptsTaken'));
     }
 
 

@@ -1,7 +1,7 @@
 <div class="row w-100 learner-search-container adjust-left-padding">
     <form role="search" class="w-100" method="get" action="{{ route('learner.account.search') }}">
         <div class="col-md-4 col-sm-12">
-            <h1 class="font-barlow-regular">@yield('heading')</h1>
+            <h1 class="page-title">@yield('heading')</h1>
 
             @if(Request::is('account/invoice'))
                 <?php

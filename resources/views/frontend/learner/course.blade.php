@@ -52,7 +52,7 @@
 									<div class="col-md-7">
 										<h3>
                                             {{$courseTaken->package->course->title}}
-											<p class="{{ $status }}">
+											<p class="custom-badge {{ $status }}">
 												{{ $statusText }}
 											</p>
                                         </h3>
