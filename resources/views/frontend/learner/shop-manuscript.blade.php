@@ -140,7 +140,7 @@
 		  <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
-      	<form method="POST" enctype="multipart/form-data" action="">
+      	<form method="POST" enctype="multipart/form-data" action="" onsubmit="disableSubmit(this)">
       		{{ csrf_field() }}
       		<div class="form-group">
 				<label>
@@ -186,7 +186,7 @@
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
-				<form method="POST" enctype="multipart/form-data" action="">
+				<form method="POST" enctype="multipart/form-data" action="" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>* {{ trans('site.learner.manuscript.doc-pdf-odt-text') }}</label>
@@ -230,7 +230,7 @@
 	</div>
 </div>
 
-<div id="deleteUploadedManuscriptModal" class="modal fade global-modal" role="dialog">
+<div id="deleteUploadedManuscriptModal" class="modal fade global-modal" role="dialog" onsubmit="disableSubmit(this)">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
 			<div class="modal-header">

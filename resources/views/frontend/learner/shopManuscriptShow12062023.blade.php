@@ -32,37 +32,30 @@
 					</div>
 
 					<div class="col-sm-12 col-md-5">
-						<div class="mb-3">
-							<h3>
-								{{ $shopManuscriptTaken->shop_manuscript->title }}
-	
-								@if( $shopManuscriptTaken->status == 'Finished' )
-									<p class="custom-badge start rounded-20 mb-0">
-										{{ trans('site.learner.finished') }}
-									</p>
-								@elseif( $shopManuscriptTaken->status == 'Started' )
-									<p class="custom-badge ended rounded-20 mb-0">
-										{{ trans('site.learner.started') }}
-									</p>
-								@elseif( $shopManuscriptTaken->status == 'Not started' )
-									<p class="custom-badge yellow rounded-20 mb-0">
-										{{ trans('site.learner.not-started') }}
-									</p>
-								@endif
-							</h3>
-							<a href="{{ route('learner.shop-manuscript.download', [$shopManuscriptTaken->id, 'manuscript']) }}" 
-								class="btn blue-outline-btn">
-								{{ trans('site.learner.download-original-script') }}
-								<i class="fa fa-download"></i>
-							</a>
-						</div>
-						<span class="font-barlow-regular mt-3">{{ trans('site.learner.filename-text') }}</span>:
+						@if( $shopManuscriptTaken->status == 'Finished' )
+							<span class="label label-success">
+								{{ trans('site.learner.finished') }}
+							</span>
+						@elseif( $shopManuscriptTaken->status == 'Started' )
+							<span class="label label-primary">
+								{{ trans('site.learner.started') }}
+							</span>
+						@elseif( $shopManuscriptTaken->status == 'Not started' )
+							<span class="label label-warning">
+								{{ trans('site.learner.not-started') }}
+							</span>
+						@endif
+						<h2 class="font-barlow-bold">{{ $shopManuscriptTaken->shop_manuscript->title }}</h2>
+						<span class="font-barlow-regular">{{ trans('site.learner.filename-text') }}</span>:
 							{{ basename($shopManuscriptTaken->file) }}<br />
 						@if($shopManuscriptTaken->words)
 							<span class="font-barlow-regular">{{ trans('site.learner.words-text') }}</span>: {{ basename($shopManuscriptTaken->words) }}<br />
 						@endif
 							<span class="font-barlow-regular">{{ trans('site.learner.date-uploaded') }}</span>:
 							{{ \App\Http\FrontendHelpers::formatDate($shopManuscriptTaken->created_at) }}<br />
+							<a href="{{ route('learner.shop-manuscript.download', [$shopManuscriptTaken->id, 'manuscript']) }}">
+								{{ trans('site.learner.download-original-script') }}
+							</a>
 							<br>
 							@if ($shopManuscriptTaken->synopsis)
 								<a href="{{ route('learner.shop-manuscript.download', [$shopManuscriptTaken->id, 'synopsis']) }}">
@@ -71,22 +64,27 @@
 								<br>
 							@endif
 						<br />
-						<h3>
+						<h3 class="font-barlow-semi-bold font-weight-normal">
 							{{ trans('site.learner.feedbacks-text') }}
 						</h3>
 						<div class="row margin-top">
 							@if($shopManuscriptTaken->status == 'Finished')
 								@foreach($shopManuscriptTaken->feedbacks as $feedback)
-									<div class="col-sm-12 mt-3">
-										<a href="{{ route('learner.shop-manuscript.download-feedback', 
-										[$shopManuscriptTaken->id, $feedback->id]) }}" class="btn short-red-outline-btn mb-2">
-											{{ trans('site.learner.download-feedback') }}
-											<i class="fa fa-download"></i>
-										</a> <br>
-										<strong>{{ trans('site.learner.notes-text') }}:</strong> 
-										{{ $feedback->notes }} <br />
-										<strong>{{ trans('site.learner.submitted-on') }}:</strong> 
-										{{ \App\Http\FrontendHelpers::formatDateTimeNor($feedback->created_at) }} <br />
+									<div class="col-sm-12">
+										<div class="panel panel-default">
+											<div class="panel-body">
+												{{--<strong>{{ trans('site.learner.files-text') }}:</strong>
+                                                @foreach( $feedback->filename as $filename )<br />
+                                                <a href="{{ $filename }}" target="_blank">{{ basename($filename) }}</a>
+                                                @endforeach--}}
+												<a href="{{ route('learner.shop-manuscript.download-feedback', [$shopManuscriptTaken->id, $feedback->id]) }}">
+													{{ trans('site.learner.download-feedback') }}
+												</a>
+												<br />
+												<strong>{{ trans('site.learner.notes-text') }}:</strong> {{ $feedback->notes }} <br />
+												<strong>{{ trans('site.learner.submitted-on') }}:</strong> {{ \App\Http\FrontendHelpers::formatDateTimeNor($feedback->created_at) }} <br />
+											</div>
+										</div>
 									</div>
 								@endforeach
 							@endif
@@ -101,15 +99,28 @@
                             $created_at = Carbon\Carbon::parse($feedbackFirst->created_at);
                             $diff = $created_at->diffInDays();
                             ?>
-							<div class="mt-4">
-								<input type="text" placeholder="{{ trans('site.learner.comment') }}" name="comment"
-										class="form-control" required disabled>
-								<div class="text-right mt-4">
-									<button class="btn btn-info btn-sm" type="button" disabled>
-										{{ trans('site.learner.add-comment') }}
-									</button>
+							{{-- @if( $diff <= 7 )
+								<form method="POST" class="mt-4" action="{{ route('learner.shop-manuscript.post-comment', $shopManuscriptTaken->id) }}">
+									{{ csrf_field() }}
+									<input type="text" placeholder="{{ trans('site.learner.comment') }}" name="comment"
+										   class="form-control" required>
+									<div class="text-right mt-4">
+										<button class="btn btn-info btn-sm" type="submit">
+											{{ trans('site.learner.add-comment') }}
+										</button>
+									</div>
+								</form>
+							@else --}}
+								<div class="mt-4">
+									<input type="text" placeholder="{{ trans('site.learner.comment') }}" name="comment"
+										   class="form-control" required disabled>
+									<div class="text-right mt-4">
+										<button class="btn btn-info btn-sm" type="button" disabled>
+											{{ trans('site.learner.add-comment') }}
+										</button>
+									</div>
 								</div>
-							</div>
+							{{-- @endif --}}
 						@else
 							<form method="POST" class="mt-4" action="{{ route('learner.shop-manuscript.post-comment', $shopManuscriptTaken->id) }}">
 								{{ csrf_field() }}

@@ -1274,9 +1274,23 @@ body:not(.modal-open) {
     white-space: normal;
 }
 
-.red-outline-btn:hover {
+.short-red-outline-btn {
+    background-color: transparent;
+    border: 1px solid #610000;
+    border-radius: 5px;
+    color: #610000;
+    font-weight: bold;
+}
+
+.red-outline-btn:hover,
+.short-red-outline-btn:hover {
     background-color: #610000;
     color: var(--white);
+}
+
+.red-outline-btn .fa,
+.short-red-outline-btn .fa {
+    color: #610000;
 }
 
 .blue-outline-btn {
@@ -1297,7 +1311,9 @@ body:not(.modal-open) {
     color: var(--white) !important;
 }
 
-.blue-outline-btn:hover .fa {
+.blue-outline-btn:hover .fa,
+.red-outline-btn:hover .fa,
+.short-red-outline-btn:hover .fa {
     color: var(--white) !important;
 }
 
