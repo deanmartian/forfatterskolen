@@ -6,16 +6,15 @@
 @stop
 
 @section('content')
-<div class="learner-container learner-workshop-wrapper">
+<div class="learner-container learner-workshop-page">
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-12">
-				<h1 class="page-title">{{ trans('site.learner.registered-workshop') }}
+				<h1 class="font-barlow-regular mb-0 w-100">{{ trans('site.learner.registered-workshop') }}
 
 					@if(!count(Auth::user()->workshopsTaken))
-						<a href="{{ route('front.workshop.index') }}" class="btn blue-btn">
+						<a href="{{ route('front.workshop.index') }}" class="btn site-btn-global font-15">
 							{{ trans('site.learner.workshop-order-text') }}
-							<i class="fa fa-book-open"></i>
 						</a>
 					@endif
 
@@ -66,34 +65,32 @@
 			@endforeach
 		</div> <!-- end row -->
 
-		<?php
-			$packages = \App\Package::where('has_coaching', '>', 0)->pluck('id');
-			$coachingTimerTaken = Auth::user()->coachingTimersTaken()->pluck('course_taken_id');
-			$checkCourseTakenWithCoaching = Auth::user()->coursesTaken()->whereIn('package_id', $packages)
-				->whereNotIn('id', $coachingTimerTaken)->get();
-		?>
 		<div class="row mt-5">
 			<div class="col-md-12">
 				<div class="card global-card">
 					<div class="card-header">
-						<h2 class="pull-left">
+						<h1>
 							{{ trans('site.front.coaching-timer.title') }}
-						</h2>
-
+						</h1>
+					</div>
+					<div class="card-body py-0">
+                        <?php
+                        $packages = \App\Package::where('has_coaching', '>', 0)->pluck('id');
+                        $coachingTimerTaken = Auth::user()->coachingTimersTaken()->pluck('course_taken_id');
+                        $checkCourseTakenWithCoaching = Auth::user()->coursesTaken()->whereIn('package_id', $packages)
+                            ->whereNotIn('id', $coachingTimerTaken)->get();
+                        ?>
 						@if ($checkCourseTakenWithCoaching->count())
-							<button class="btn blue-outline-btn pull-right px-4" data-toggle="modal"
+							<button class="btn btn-xs btn-primary pull-right mt-2 mr-2 rounded-0" data-toggle="modal"
 									data-target="#addCoachingSessionModal"
 									data-action="{{ route('learner.course-taken.coaching-timer.add') }}"
 									id="addCoachingSessionBtn">
 								{{ trans('site.learner.add-coaching-lesson') }}
-								<i class="fa fa-plus"></i>
 							</button>
 						@endif
-					</div>
-					<div class="card-body py-0">
 
 						<div class="table-responsive">
-							<table class="table gray-table">
+							<table class="table table-global">
 								<thead>
 								<tr>
 									<th>{{ trans('site.learner.script') }}</th>
@@ -102,9 +99,7 @@
 									<th>{{ trans('site.front.coaching-timer.help-with-text') }}</th>
 									{{--<th>{{ trans('site.learner.admin-proposed-dates') }}</th>--}}
 									<th>{{ trans('site.learner.agreed-date-time') }}</th>
-									<th>
-										Status
-									</th>
+									<th></th>
 								</tr>
 								</thead>
 								<tbody>
@@ -116,14 +111,9 @@
 									<tr>
 										<td>
 											@if( end($extension) == 'pdf' || end($extension) == 'odt' )
-												<a href="/js/ViewerJS/#../../{{ $coachingTimer->file }}" class="font-weight-bold">
-													{{ basename($coachingTimer->file) }}
-												</a>
+												<a href="/js/ViewerJS/#../../{{ $coachingTimer->file }}">{{ basename($coachingTimer->file) }}</a>
 											@elseif( end($extension) == 'docx' )
-												<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$coachingTimer->file}}"
-													class="font-weight-bold">
-													{{ basename($coachingTimer->file) }}
-												</a>
+												<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$coachingTimer->file}}">{{ basename($coachingTimer->file) }}</a>
 											@endif
 										</td>
 										<td>
@@ -151,7 +141,7 @@
 
 										</td>-->
 										<td>
-											<a href="#viewHelpWithModal" class="viewHelpWithBtn font-weight-bold"
+											<a href="#viewHelpWithModal" class="viewHelpWithBtn"
 											   data-toggle="modal" data-details="{{ $coachingTimer->help_with }}"
 											   data-action="{{ route('learner.coaching-timer.help_with', $coachingTimer->id) }}">
 												{{ trans('site.learner.need-help-with-text') }}
@@ -178,17 +168,14 @@
 												@endfor
 											@endif
 										</td> -->
-										<td class="font-weight-bold">
-											{!! $coachingTimer->approved_date ?
-											"<i class='fa fa-calendar-check mr-2' style='color:#000000'></i>" 
-											. \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
-											 : ''!!}
+										<td>
+											{{ $coachingTimer->approved_date ?
+											\App\Http\FrontendHelpers::formatToYMDtoPrettyDate($coachingTimer->approved_date)
+											 : ''}}
 										</td>
 										<td id="coaching-time-{{ $coachingTimer->id }}">
 											@if ($coachingTimer->status === 1)
-												<b class="custom-badge start rounded-20 px-3 py-1">
-													{{ trans('site.learner.finished') }}
-												</b>
+												<span class="label label-success">{{ trans('site.learner.finished') }}</span>
 											@endif
 
 											@if($coachingTimer->status === 0 && !$coachingTimer->approved_date)

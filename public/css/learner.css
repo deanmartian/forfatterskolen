@@ -190,7 +190,8 @@ body:not(.modal-open) {
 }
 
 .learner-dashboard-wrapper .page-title,
-.learner-manuscript-wrapper .page-title {
+.learner-manuscript-wrapper .page-title,
+.learner-workshop-wrapper .page-title {
     color: var(--secondary-color);
     font-weight: bold;
     margin-bottom: 20px;
@@ -1466,6 +1467,19 @@ body:not(.modal-open) {
 
 .rounded-20 {
     border-radius: 20px;
+}
+
+.gray-table > thead > tr > th {
+    background-color: #FAFAFB;
+    border: none;
+    color: #8492A6;
+    font-family: 'Inter';
+    font-weight: bold;
+    padding: 15px;
+}
+
+.gray-table > tbody > tr > td {
+    padding: 15px;
 }
 
 @media only screen and (max-width: 1024px) {
