@@ -1021,6 +1021,116 @@ body:not(.modal-open) {
     font-size: 14px;
 } */
 
+/* learner webinar page */
+.learner-webinar-page .webinar-search-container input {
+    border: 1px solid #E9EAF0;
+    border-radius: 40px 0 0 40px !important;
+    margin-right: 0;
+    padding: 15px;
+}
+
+.learner-webinar-page .second-search {
+    margin-bottom: 20px;
+}
+
+.learner-webinar-page .page-title {
+    font-family: 'Poppins';
+    font-weight: bold;
+}
+
+.learner-webinar-page .table > tbody > tr > td {
+    padding: 15px;
+}
+
+.learner-webinar-page .replay-card .pagination>li>a, 
+.learner-webinar-page .replay-card .pagination>li>span {
+    border-color: #DFE3E8;
+    border-radius: 4px;
+    color: var(--black);
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.learner-webinar-page .replay-card .pagination .page-item.active > .page-link {
+    background-color: transparent;
+    border-color: var(--black);
+    color: var(--black);
+}
+
+.learner-webinar-page .replay-card .pagination .page-item.disabled > .page-link {
+    background-color: #C4CDD5;
+    color: var(--white);
+}
+
+.learner-webinar-page .second-search .input-group {
+    display: -webkit-box;
+}
+
+.learner-webinar-page .webinar-list-card .top-row {
+    margin-bottom: 30px;
+}
+
+.learner-webinar-page .webinar-list-card  > .card-body {
+    padding-top: 0;
+}
+
+.learner-webinar-page .webinar-list-card .webinar-row {
+    margin-top: 20px;
+}
+
+.learner-webinar-page .webinar-list-card .webinar-row .webinar-card {
+    box-shadow: var(--box-shadow-style);
+    position: relative;
+}
+
+.learner-webinar-page .webinar-list-card .webinar-row .webinar-card .webinar-thumb {
+    padding-bottom: 0;
+}
+
+.learner-webinar-page .webinar-list-card .webinar-row .webinar-card .webinar-thumb div {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.learner-webinar-page .webinar-list-card .webinar-row .webinar-card .fa {
+    color: var(--black);
+}
+
+.learner-webinar-page .webinar-list-card .webinar-row .webinar-card .date {
+    color: #585858;
+    font-weight: bold;
+}
+
+.learner-webinar-page .webinar-list-card .webinar-row .webinar-card .hidden-container {
+    height: 111px;
+}
+
+.learner-webinar-page .webinar-list-card .webinar-row .webinar-card .button-container {
+    position: absolute;
+    bottom: 0;
+    right: 20px;
+    left: 20px;
+    border-top: 1px solid #E9EAF0;
+    padding: 10px 0;
+}
+
+.learner-webinar-page .webinar-list-card .webinar-row .webinar-card .button-container .btn {
+    border-radius: 5px;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.learner-webinar-page .webinar-list-card .webinar-row .webinar-card .button-container .light-red-outline-btn {
+    color: #C12938;
+    border-color: #C12938;
+}
+
+.learner-webinar-page .webinar-list-card .webinar-row .webinar-card .button-container .light-red-outline-btn:hover {
+    background-color: #C12938;
+    color: var(--white);
+}
+/* end learner webinar page */
+
 #submitEditorManuscriptModal .file-upload,
 #submitManuscriptModal .file-upload,
 #editManuscriptModal .file-upload {
@@ -1349,6 +1459,20 @@ body:not(.modal-open) {
     color: var(--white);
 }
 
+.light-red-btn {
+    background-color: #C12938;
+    border: 1px solid #C12938;
+    color: var(--white);
+    font-family: 'Inter';
+    font-weight: bold;
+    padding: 8px;
+}
+
+.light-red-btn:hover {
+    background-color: transparent;
+    color: #C12938;
+}
+
 .text-gray {
     color: #96A5B8;
 }
@@ -1482,6 +1606,10 @@ body:not(.modal-open) {
     padding: 15px;
 }
 
+.webinar-thumb .play-button:before {
+    background-image: url(../images-new/icon/play-circle.png);
+}
+
 @media only screen and (max-width: 1024px) {
     #topbar .auto-renew-wrapper {
         display: none;
@@ -1515,6 +1643,16 @@ body:not(.modal-open) {
     .learner-dashboard-wrapper .webinar-wrapper .btn {
         left: 10px;
     }
+
+    .learner-webinar-page .webinar-list-card .top-row,
+    .learner-webinar-page .webinar-list-card .webinar-row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .learner-webinar-page .webinar-list-card .webinar-row .webinar-card .hidden-container {
+        height: 133px;
+    }
     
 }
 
@@ -1539,6 +1677,18 @@ body:not(.modal-open) {
     .learner-manuscript-wrapper .manuscript-taken-row .button-container .blue-outline-btn,
     .learner-manuscript-wrapper .manuscript-taken-row .button-container .blue-btn {
         margin-top: 5px;
+    }
+
+    .learner-webinar-page .webinar-list-card .top-row {
+        margin-bottom: 0;
+    }
+
+    .learner-webinar-page .webinar-list-card .webinar-row {
+        margin-top: 0;
+    }
+
+    .learner-webinar-page .webinar-list-card .webinar-row [class^="col-"] {
+        margin-top: 20px;
     }
 }
 
@@ -1621,6 +1771,10 @@ body:not(.modal-open) {
     .learner-manuscript-wrapper .manuscript-taken-row .global-card {
         margin-bottom: 20px;
     }
+
+    .learner-webinar-page .webinar-list-card .webinar-row .webinar-card .date {
+        text-align: center;
+    }
 }
 
 /* for 425 screen */
@@ -1646,6 +1800,10 @@ body:not(.modal-open) {
     .learner-dashboard-wrapper .webinar-wrapper .btn {
         left: 20px;
         width: 89% !important;
+    }
+
+    .learner-webinar-page .replay-card table .red-outline-btn {
+        display: block;
     }
 }
 

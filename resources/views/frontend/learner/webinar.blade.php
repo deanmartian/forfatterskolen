@@ -7,7 +7,7 @@
 
 @section('styles')
 	<style>
-		.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
+		/* .nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
 			color: #555;
 			cursor: default;
 			background-color: #fff;
@@ -21,7 +21,7 @@
 
 		.tab-content {
 			border-top: 1px solid #dee2e6;
-		}
+		} */
 	</style>
 @stop
 
@@ -39,16 +39,19 @@
                     ]
                 @endphp
 
-                <ul class="nav nav-tabs margin-top">
-                    <li @if(!in_array(Request::input('tab'), array_column($tabWithLabel, 'name'))) class="active" @endif>
-                        <a href="?tab=webinars">
+                <ul class="nav global-nav-tabs">
+                    <li class="nav-item">
+                        <a href="?tab=webinars" 
+                        class="nav-link {{ !in_array(Request::input('tab'), array_column($tabWithLabel, 'name')) 
+                        ? 'active' : '' }}">
                             {{ trans('site.learner.my-webinar') }}
                         </a>
                     </li>
 
                     @foreach($tabWithLabel as $tab)
-                        <li @if( Request::input('tab') == $tab['name'] ) class="active" @endif>
-                            <a href="?tab={{ $tab['name'] }}">
+                        <li class="nav-item">
+                            <a href="?tab={{ $tab['name'] }}" 
+                            class="nav-link {{ Request::input('tab') == $tab['name'] ? 'active' : '' }}">
                                 {{ $tab['label'] }}
                             </a>
                         </li>
@@ -59,15 +62,45 @@
                     <div class="tab-pane fade in active pt-5">
                         @if( Request::input('tab') == 'replay' )
                             <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <table class="table table-bordered">
+                                <div class="global-card replay-card">
+                                    <div class="card-body pt-0">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <h1 class="page-title">
+                                                    {{ trans('site.replay') }}
+                                                </h1>
+                                            </div>
+                                            <div class="col-sm-6 second-search">
+                                                <div class="form-group mb-0">
+                                                    <form class="webinar-search-container" method="get" 
+                                                    action="{{ route('learner.webinar') }}">
+                                                        <div class="input-group">
+                                                            <input type="hidden" name="tab" value="webinars">
+                                                            <input type="text" class="form-control" name="search_replay"
+                                                                value="{{ Request::input('search_replay') }}"
+                                                                placeholder="{{ trans('site.learner.search-webinar-replay') }}"
+                                                                aria-label="Enter here...">
+                                                            <span class="input-group-btn">
+                                                                <button class="btn" type="submit">
+                                                                    <i class="fa fa-search"></i>
+                                                                </button>
+                                                                <a class="btn" type="reset" 
+                                                                href="{{ route('learner.webinar') }}">
+                                                                    <i class="fa fa-redo"></i>
+                                                                </a>
+                                                            </span>
+                                                        </div> <!-- end input-group -->
+                                                    </form> <!-- end searchBoxForm -->
+                                                </div> <!-- end #simpleSearchbox -->
+                                            </div> <!-- end col-sm-6 -->
+                                        </div>
+                                        <table class="table">
                                             <thead>
                                                 <tr>
                                                     <td>{{ trans('site.date') }}</td>
                                                     <td>{{ trans('site.title') }}</td>
                                                     <td width="400">{{ trans('site.description') }}</td>
-                                                    <td>Link</td>
+                                                    <td width="150">Link</td>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -78,8 +111,10 @@
                                                         <td>{{ $replayWebinar->description }}</td>
                                                         <td>
                                                             <a href="#" data-toggle="modal" data-target="#videoModal"
-                                                             data-record="{{ json_encode($replayWebinar) }}" class="videoBtn">
+                                                             data-record="{{ json_encode($replayWebinar) }}" 
+                                                             class="videoBtn red-outline-btn px-4 py-2">
                                                                 {{ trans('site.view') }}
+                                                                <i class="fa fa-eye"></i>
                                                             </a>
                                                         </td>
                                                     </tr>
@@ -88,420 +123,178 @@
                                         </table>
 
                                         <div class="pull-right">
-                                            {{ $replayWebinars->appends(Request::all())->render() }}
+                                            {{ $replayWebinars->appends(Request::all())->links('pagination.short-pagination') }}
                                         </div>
+
+                                        <div class="clearfix"></div>
                                     </div>
                                 </div>
                             </div>
                         @else
-                            <div class="col-md-3">
-                                <h1 class="font-barlow-regular">
-                                    {{ trans('site.learner.my-webinar') }}
-                                </h1>
-                            </div> <!-- end col-sm-2 -->
-                            <div class="col-md-8 col-sm-offset-1">
-                                <div class="row">
-                                    <div class="col-sm-6 first-search">
-                                        <div class="form-group mb-0">
-                                            <form class="webinar-search-container" method="get" action="{{ route('learner.webinar') }}">
-                                                <div class="input-group">
-                                                    <input type="hidden" name="tab" value="webinars">
-                                                    <input type="text" class="form-control" name="search_upcoming"
-                                                        value="{{ Request::input('search_upcoming') }}"
-                                                        placeholder="{{ trans('site.learner.search-webinar-upcoming') }}"
-                                                        aria-label="Enter here...">
-                                                    <span class="input-group-btn">
-                                                        <button class="btn" type="submit"><i class="fa fa-search"></i></button>
-                                                        <a class="btn" type="reset" href="{{ route('learner.webinar') }}">
-                                                            <i class="fa fa-redo"></i>
-                                                        </a>
-                                                    </span>
-                                                </div> <!-- end input-group -->
-                                            </form> <!-- end searchBoxForm -->
-                                        </div> <!-- end #simpleSearchbox -->
-                                    </div> <!-- end col-sm-6 -->
-            
-                                    <div class="col-sm-6 second-search">
-                                        <div class="form-group mb-0">
-                                            <form class="webinar-search-container" method="get" action="{{ route('learner.webinar') }}">
-                                                <div class="input-group">
-                                                    <input type="hidden" name="tab" value="webinars">
-                                                    <input type="text" class="form-control" name="search_replay"
-                                                        value="{{ Request::input('search_replay') }}"
-                                                        placeholder="{{ trans('site.learner.search-webinar-replay') }}"
-                                                        aria-label="Enter here...">
-                                                    <span class="input-group-btn">
-                                                        <button class="btn" type="submit"><i class="fa fa-search"></i></button>
-                                                        <a class="btn" type="reset" href="{{ route('learner.webinar') }}">
-                                                            <i class="fa fa-redo"></i>
-                                                        </a>
-                                                    </span>
-                                                </div> <!-- end input-group -->
-                                            </form> <!-- end searchBoxForm -->
-                                        </div> <!-- end #simpleSearchbox -->
-                                    </div> <!-- end col-sm-6 -->
-                                </div> <!-- end row -->
-                            </div> <!-- end col-sm-10 -->
-
                             <div class="row">
-                                @if (!$isPost)
-                                    <?php
-                                    // separate the id's and display the Repriser first
-                                    $webinarsRepriser = DB::table('courses_taken')
-                                        ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
-                                        ->join('courses', 'packages.course_id', '=', 'courses.id')
-                                        ->join('webinars', 'courses.id', '=', 'webinars.course_id')
-                                        ->select('webinars.*','courses_taken.id as courses_taken_id','courses.title as course_title')
-                                        ->where('user_id',Auth::user()->id)
-                                        ->where('courses.id',17) // just added this line to show all webinar pakke webinars
-                                        ->where(function($query){
-                                            $query->whereIn('webinars.id',[24, 25, 31]);
-                                            $query->orWhere('set_as_replay',1);
-                                        })
-                                        //->whereIn('webinars.id',[24, 25, 31]) // remove this to return the original
-                                        ->orderBy('courses.type', 'ASC')
-                                        ->orderBy('webinars.start_date', 'ASC')
-                                        ->get();
-                
-                                    $webinars = DB::table('courses_taken')
-                                        ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
-                                        ->join('courses', 'packages.course_id', '=', 'courses.id')
-                                        ->join('webinars', 'courses.id', '=', 'webinars.course_id')
-                                        ->select('webinars.*','courses_taken.id as courses_taken_id','courses.title as course_title')
-                                        ->where('user_id',Auth::user()->id)
-                                        ->where('courses.id',17) // just added this line to show all webinar pakke webinars
-                                        ->whereNotIn('webinars.id',[24, 25, 31])
-                                        ->where('set_as_replay',0)
-                                        ->orderBy('courses.type', 'ASC')
-                                        ->orderBy('webinars.start_date', 'ASC')
-                                        ->get();
-                                    ?>
-                
-                                    @foreach($webinarsRepriser as $webinar)
-                                        <?php
-                                        $start_date = Carbon\Carbon::parse($webinar->start_date);
-                                        $now = Carbon\Carbon::now();
-                                        $diff = $now->diffIndays($start_date, false);
-                                        $diffWithHours = $now->diffInHours($start_date, false);
-                                        $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
-                                        ?>
-                                        @if( $diffWithHours >= 0 && $coursesTaken)
-                                            <div class="col-sm-12 col-md-6 col-lg-4 mt-5">
-                                                <div class="card card-global border-0">
-                                                    <div class="card-header webinar-thumb">
-                                                        <?php
-                                                            $img_web_link = '#';
-                                                            if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id)) {
-                                                                $img_web_link = \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id);
-                                                            } else {
-                                                                $img_web_link = \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
-                                                                    ? 'javascript:void(0)' :route('learner.webinar.register',
-                                                                        [$webinar->link, $webinar->id]);
-                                                            }
-                                                        ?>
-                                                        <a href="{{ $img_web_link }}">
-                                                            <div data-bg="https://www.forfatterskolen.no/{{ $webinar->image }}">
-                                                                <i class="play-button"></i>
-                                                            </div>
-                                                        </a>
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <?php $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);?>
-                                                        <div class="webinar-header">
-                                                            <h4>
-                                                                <i class="book"></i> {{ trans('site.front.course-text') }}:
-                                                                <a href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
-                                                                        ? 'javascript:void(0)' : route('learner.course.show', ['id' => $webinar->courses_taken_id]) }}">{{ $webinar->course_title }}</a>
-                                                            </h4>
-                
-                                                            {{--<h4>
-                                                                <i class="calendar"></i> test
-                                                            </h4>--}}
-                                                        </div>
-                
-                                                            <h2>{{ $webinar->title }}</h2>
-                
-                                                        <p class="note-color my-4">
-                                                            {{ $webinar->description }}
-                                                        </p>
-                                                    </div> <!-- end card-body -->
-                                                    <div class="card-footer border-0 p-0">
-                                                        @if( \App\Http\FrontendHelpers::isWebinarAvailable($webinar) )
-                                                            <a class="btn site-btn-global w-100 rounded-0" href="{{ $webinar->link }}" target="_blank">
-                                                                {{ trans('site.learner.join-webinar') }}
-                                                                <i class="img-icon icon-right-arrow"></i>
-                                                            </a>
-                                                        @else
-                
-                                                            @if ($webinar->id == 24 || $webinar->id == 25 || $webinar->id == 31)
-                                                                <a class="btn site-btn-global w-100 rounded-0" href="{{ $coursesTaken && $coursesTaken->hasEnded
-                                                                        ? 'javascript:void(0)' : $webinar->link }}" target="_blank">
-                                                                    {{ trans('site.learner.replay') }}
-                                                                    <i class="img-icon icon-right-arrow"></i>
-                                                                </a>
-                                                            @else
-                                                                @if($webinar->set_as_replay)
-                                                                    <a class="btn site-btn-global w-100 rounded-0" href="{{ $webinar->link }}" target="_blank">
-                                                                        {{ trans('site.learner.replay') }}
-                                                                        <i class="img-icon icon-right-arrow"></i>
-                                                                    </a>
-                                                                @else
-                                                                    {{--<a class="btn site-btn-global w-100 rounded-0" href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
-                                                                        ? 'javascript:void(0)' :$webinar->link }}" target="_blank">
-                                                                        Registrer Deg
-                                                                        <i class="img-icon icon-right-arrow"></i>
-                                                                    </a>--}}
-                                                                    @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id))
-                                                                        <a class="btn site-btn-global w-100 rounded-0"
-                                                                        href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id) }}">
-                                                                            {{ trans('site.learner.signed') }}
-                                                                        </a>
-                                                                    @else
-                                                                        <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
-                                                                        href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
-                                                                    ? 'javascript:void(0)' :route('learner.webinar.register',
-                                                                    [$webinar->link, $webinar->id]) }}">
-                                                                            {{ trans('site.learner.register') }}
-                                                                            <i class="img-icon icon-right-arrow"></i>
-                                                                        </a>
-                                                                    @endif
-                                                                @endif
-                                                            @endif
-                                                        @endif
-                                                    </div>
-                                                </div> <!-- end card -->
+                                <div class="col-md-12">
+                                    <div class="global-card webinar-list-card">
+                                        <div class="card-body">
+                                            <div class="row top-row">
+                                                <div class="col-md-6">
+                                                    <h1 class="page-title">
+                                                        {{ trans('site.learner.my-webinar') }}
+                                                    </h1>
+                                                </div> <!-- end col-sm-2 -->
+                                                <div class="col-md-6">
+                                                    <div class="row">
+                                                        <div class="col-sm-10 col-sm-offset-2 first-search">
+                                                            <div class="form-group mb-0">
+                                                                <form class="webinar-search-container" method="get" action="{{ route('learner.webinar') }}">
+                                                                    <div class="input-group">
+                                                                        <input type="hidden" name="tab" value="webinars">
+                                                                        <input type="text" class="form-control" name="search_upcoming"
+                                                                            value="{{ Request::input('search_upcoming') }}"
+                                                                            placeholder="{{ trans('site.learner.search-webinar-upcoming') }}"
+                                                                            aria-label="Enter here...">
+                                                                        <span class="input-group-btn">
+                                                                            <button class="btn" type="submit"><i class="fa fa-search"></i></button>
+                                                                            <a class="btn" type="reset" href="{{ route('learner.webinar') }}">
+                                                                                <i class="fa fa-redo"></i>
+                                                                            </a>
+                                                                        </span>
+                                                                    </div> <!-- end input-group -->
+                                                                </form> <!-- end searchBoxForm -->
+                                                            </div> <!-- end #simpleSearchbox -->
+                                                        </div> <!-- end col-sm-6 -->
+                                                    </div> <!-- end row -->
+                                                </div> <!-- end col-sm-10 -->
                                             </div>
-                                        @endif
-                                    @endforeach <!-- end $webinarsRepriser -->
-                
-                                    @foreach($webinars as $webinar)
-                                        <?php
-                                        $start_date = Carbon\Carbon::parse($webinar->start_date)->addHour();
-                                        $now = Carbon\Carbon::now();
-                                        $diff = $now->diffIndays($start_date, false);
-                                        $diffWithHours = $now->diffInHours($start_date, false);
-                                        $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
-                                        ?>
-                                        @if( $diffWithHours >= 0 && $coursesTaken)
-                                            <div class="col-sm-12 col-md-6 col-lg-4 mt-5">
-                                                <div class="card card-global border-0">
-                                                    <div class="card-header webinar-thumb">
-                                                        <?php
-                                                            $img_web_link = '#';
-                                                            if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id)) {
-                                                                $img_web_link = \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id);
-                                                            } else {
-                                                                $img_web_link = \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
-                                                                    ? 'javascript:void(0)' : ($webinar->link ? route('learner.webinar.register',
-                                                                        [$webinar->link, $webinar->id]) : '#');
-                                                            }
-                                                        ?>
-                                                        @if($webinar->link)
-                                                            <a href="{{ $img_web_link }}">
-                                                                <div data-bg="https://www.forfatterskolen.no/{{ $webinar->image }}">
-                                                                    <i class="play-button"></i>
-                                                                </div>
-                                                            </a>
-                                                        @else
-                                                            <div data-bg="https://www.forfatterskolen.no/{{ $webinar->image }}">
-                                                                <i class="play-button"></i>
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <?php $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);?>
-                                                        <div class="webinar-header">
-                                                            <h4>
-                                                                <i class="book"></i> {{ trans('site.front.course-text') }}:
-                                                                <a href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
-                                                                    ? 'javascript:void(0)' : route('learner.course.show', ['id' => $webinar->courses_taken_id]) }}">{{ $webinar->course_title }}</a>
-                                                            </h4>
-                
-                                                            <h4>
-                                                                <i class="calendar"></i>
-                                                                {{ str_replace(['_date_', '_time_'],
-                                                                [\Carbon\Carbon::parse($webinar->start_date)->format('d.m.Y'),
-                                                                \Carbon\Carbon::parse($webinar->start_date)->format('H:i')],
-                                                                trans('site.front.our-course.show.start-date')) }}
-                                                            </h4>
-                                                        </div>
-                
-                                                        <h2>{{ $webinar->title }}</h2>
-                
-                                                        <p class="note-color my-4">
-                                                            {{ $webinar->description }}
-                                                        </p>
-                                                    </div> <!-- end card-body -->
-                                                    <div class="card-footer border-0 p-0">
-                                                        @if( \App\Http\FrontendHelpers::isWebinarAvailablePlusHour($webinar) )
-                                                            <a class="btn site-btn-global w-100 rounded-0" href="{{ $webinar->link }}" target="_blank">
-                                                                {{ trans('site.learner.join-webinar') }}
-                                                                <i class="img-icon icon-right-arrow"></i>
-                                                            </a>
-                                                        @else
-                
-                                                            @if ($webinar->id == 24 || $webinar->id == 25 || $webinar->id == 31)
-                                                                <a class="btn site-btn-global w-100 rounded-0" href="{{ $coursesTaken && $coursesTaken->hasEnded
-                                                                    ? 'javascript:void(0)' : $webinar->link }}" target="_blank">Repriser
-                                                                    <i class="img-icon icon-right-arrow"></i>
-                                                                </a>
-                                                            @else
-                                                                @if($webinar->set_as_replay)
-                                                                    <a class="btn site-btn-global w-100 rounded-0" href="{{ $webinar->link }}" target="_blank">
-                                                                        {{ trans('site.learner.replay') }}
-                                                                        <i class="img-icon icon-right-arrow"></i>
-                                                                    </a>
-                                                                @else
-                                                                    @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($webinar->id, Auth::user()->id))
-                                                                        <a class="btn site-btn-global w-100 rounded-0"
-                                                                        href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL($webinar->id, Auth::user()->id) }}">
-                                                                            @if ($now->diffInMinutes($start_date, false) <= 90)
-                                                                                Se Webinar
-                                                                            @else
-                                                                                {{ trans('site.learner.signed') }}
-                                                                            @endif
+
+                                            @foreach ( $subscriptionWebinars->chunk(4) as $subscriptionChunk)
+                                                <div class="row webinar-row">
+                                                    @foreach ($subscriptionChunk as $webinar)
+                                                    @php
+                                                        $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
+                                                    @endphp
+                                                        <div class="col-lg-3 col-md-6">
+                                                            <div class="card-global webinar-card">
+                                                                <div class="card-header webinar-thumb">
+                                                                    <?php
+                                                                        $img_web_link = '#';
+                                                                        if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant(
+                                                                            $webinar->id, Auth::user()->id)
+                                                                            ) {
+                                                                            $img_web_link = \App\Http\FrontendHelpers::getWebinarJoinURL(
+                                                                                $webinar->id, Auth::user()->id);
+                                                                        } else {
+                                                                            $img_web_link = \Carbon\Carbon::parse($webinar->start_date)
+                                                                            ->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                                                ? 'javascript:void(0)' 
+                                                                                : ($webinar->link ? route('learner.webinar.register',
+                                                                                    [$webinar->link, $webinar->id]) : '#');
+                                                                        }
+                                                                    ?>
+                                                                    @if($webinar->link)
+                                                                        <a href="{{ $img_web_link }}">
+                                                                            <div data-bg="https://www.forfatterskolen.no/{{ 
+                                                                                $webinar->image }}">
+                                                                                <i class="play-button"></i>
+                                                                            </div>
                                                                         </a>
                                                                     @else
-                                                                        {{-- check if have webinar link --}}
-                                                                        @if($webinar->link)
-                                                                            <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
-                                                                            href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
-                                                                    ? 'javascript:void(0)' :route('learner.webinar.register',
-                                                                    [$webinar->link, $webinar->id]) }}">
-                                                                                {{ trans('site.learner.register') }}
-                                                                                <i class="img-icon icon-right-arrow"></i>
+                                                                        <div data-bg="https://www.forfatterskolen.no/{{ 
+                                                                        $webinar->image }}">
+                                                                            <i class="play-button"></i>
+                                                                        </div>
+                                                                    @endif
+                                                                </div> <!-- end card-header -->
+                                                                <div class="card-body">
+                                                                    <p class="date">
+                                                                        <i class="fa fa-calendar-check"></i>
+                                                                        {{ str_replace(['_date_', '_time_'],
+                                                                        [\Carbon\Carbon::parse($webinar->start_date)->format('d.m.Y'),
+                                                                        \Carbon\Carbon::parse($webinar->start_date)->format('H:i')],
+                                                                        trans('site.front.our-course.show.start-date')) }}
+                                                                    </p>
+
+                                                                    <h3 class="text-center">{{ $webinar->title }}</h3>
+
+                                                                    <p class="text-gray text-center mt-4">
+                                                                        {{ $webinar->description }}
+                                                                    </p>
+                                                                    <div class="hidden-container"></div>
+                                                                    <div class="button-container">
+                                                                        @if( \App\Http\FrontendHelpers::isWebinarAvailablePlusHour($webinar) )
+                                                                            <a class="btn light-red-btn w-100" 
+                                                                            href="{{ $webinar->link }}" target="_blank">
+                                                                                {{ trans('site.learner.join-webinar') }}
                                                                             </a>
                                                                         @else
-                                                                            <a href="javascript:void(0)"
-                                                                            class="btn w-100 rounded-0 btn-success disabled" disabled>
-                                                                                Påmelding kommer
-                                                                            </a>
+                                                                            @if ($webinar->id == 24 || $webinar->id == 25 || $webinar->id == 31)
+                                                                                <a class="btn light-red-btn w-100" 
+                                                                                href="{{ $coursesTaken && $coursesTaken->hasEnded
+                                                                                    ? 'javascript:void(0)' : $webinar->link }}" 
+                                                                                    target="_blank">Repriser
+                                                                                </a>
+                                                                            @else
+                                                                                @if($webinar->set_as_replay)
+                                                                                    <a class="btn light-red-btn w-100" 
+                                                                                    href="{{ $webinar->link }}" target="_blank">
+                                                                                        {{ trans('site.learner.replay') }}
+                                                                                    </a>
+                                                                                @else
+                                                                                    @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant(
+                                                                                        $webinar->id, Auth::user()->id))
+                                                                                        <a class="btn light-red-btn w-100"
+                                                                                        href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL(
+                                                                                            $webinar->id, Auth::user()->id) }}">
+                                                                                            @if ($now->diffInMinutes($start_date, false) <= 90)
+                                                                                                Se Webinar
+                                                                                            @else
+                                                                                                {{ trans('site.learner.signed') }}
+                                                                                            @endif
+                                                                                        </a>
+                                                                                    @else
+                                                                                        {{-- check if have webinar link --}}
+                                                                                        @if($webinar->link)
+                                                                                            <a class="btn light-red-btn w-100 webinarRegister"
+                                                                                            href="{{ \Carbon\Carbon::parse($webinar->start_date)
+                                                                                            ->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                                                    ? 'javascript:void(0)' :route('learner.webinar.register',
+                                                                                    [$webinar->link, $webinar->id]) }}">
+                                                                                                {{ trans('site.learner.register') }}
+                                                                                            </a>
+                                                                                        @else
+                                                                                            <a href="javascript:void(0)"
+                                                                                            class="btn w-100 rounded-0 btn-success disabled" 
+                                                                                            disabled>
+                                                                                                Påmelding kommer
+                                                                                            </a>
+                                                                                        @endif
+                                                                                    @endif
+                                                                                @endif
+                                                                            @endif
                                                                         @endif
-                                                                        {{--<a class="btn site-btn-global w-100 rounded-0 webinarRegister"
-                                                                        href="{{ \Carbon\Carbon::parse($webinar->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
-                                                                    ? 'javascript:void(0)' :route('learner.webinar.register',
-                                                                    [\App\Http\FrontendHelpers::extractWebinarKeyFromLink($webinar->link), $webinar->id]) }}">
-                                                                            {{ trans('site.learner.register') }}
-                                                                            <i class="img-icon icon-right-arrow"></i>
-                                                                        </a>--}}
-                                                                    @endif
-                                                                @endif
-                                                            @endif
-                                                        @endif
-                                                    </div>
-                                                </div> <!-- end card -->
-                                            </div>
-                                        @endif
-                                    @endforeach
-                                @else
-                                    @foreach($searchResult->chunk(3) as $k => $result_chunk)
-                                        @foreach($result_chunk as $result)
-                                            @if (!$isReplay)
-                                                <div class="col-sm-12 col-md-6 col-lg-4 mt-5">
-                                                    <div class="card card-global border-0">
-                                                        <div class="card-header webinar-thumb">
-                                                            <?php
-                                                                $img_web_link = '#';
-                                                                $coursesTaken = \App\CoursesTaken::find($result->courses_taken_id);
-                                                                if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($result->id, Auth::user()->id)) {
-                                                                    $img_web_link = \App\Http\FrontendHelpers::getWebinarJoinURL($result->id, Auth::user()->id);
-                                                                } else {
-                                                                    $img_web_link = \Carbon\Carbon::parse($result->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
-                                                                        ? 'javascript:void(0)' :route('learner.webinar.register',
-                                                                            [$result->link, $result->id]);
-                                                                }
-                                                            ?>
-                                                            <a href="{{ $img_web_link }}">
-                                                                <div style="background-image: url({{ $result->image }})">
-                                                                    <i class="play-button"></i>
+
+                                                                        <a href="{{ \Carbon\Carbon::parse($webinar->start_date)
+                                                                        ->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
+                                                                            ? 'javascript:void(0)' 
+                                                                            : route('learner.course.show', 
+                                                                            ['id' => $webinar->courses_taken_id]) }}"
+                                                                            class="btn light-red-outline-btn mt-3">
+                                                                            {{ trans('site.front.course-text') }}:
+                                                                            {{ $webinar->course_title }}
+                                                                        </a>
+                                                                    </div>
                                                                 </div>
-                                                            </a>
+                                                            </div> <!-- end card-global -->
                                                         </div>
-                
-                                                        <div class="card-body">
-                                                            <?php $coursesTaken = \App\CoursesTaken::find($result->courses_taken_id);?>
-                                                            <div class="webinar-header">
-                                                                <h4>
-                                                                    <i class="book"></i> {{ trans('site.front.course-text') }}:
-                                                                    <a href="{{ \Carbon\Carbon::parse($result->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
-                                                                        ? 'javascript:void(0)' : route('learner.course.show', ['id' => $result->courses_taken_id]) }}">{{ $result->course_title }}</a>
-                                                                </h4>
-                
-                                                                <h4>
-                                                                    <i class="calendar"></i>
-                                                                    {{ str_replace(['_date_', '_time_'],
-                                                                        [\Carbon\Carbon::parse($result->start_date)->format('d.m.Y'),
-                                                                        \Carbon\Carbon::parse($result->start_date)->format('H:i')],
-                                                                        trans('site.front.our-course.show.start-date')) }}
-                                                                </h4>
-                                                            </div>
-                
-                                                            <h2>{{ $result->title }}</h2>
-                
-                                                            <p class="note-color my-4">
-                                                                {{ $result->description }}
-                                                            </p>
-                                                        </div> <!-- end card-body -->
-                
-                                                        <div class="card-footer border-0 p-0">
-                                                            @if( \App\Http\FrontendHelpers::isWebinarAvailable($result) )
-                                                                <a class="btn site-btn-global w-100 rounded-0" href="{{ $result->link }}" target="_blank">
-                                                                    {{ trans('site.learner.join-webinar') }}
-                                                                    <i class="img-icon icon-right-arrow"></i>
-                                                                </a>
-                                                            @else
-                                                                @if ($result->id == 24 || $result->id == 25 || $result->id == 31)
-                                                                    <a class="btn site-btn-global w-100 rounded-0" href="{{ $coursesTaken && $coursesTaken->hasEnded
-                                                                            ? 'javascript:void(0)' : $result->link }}" target="_blank">
-                                                                        {{ trans('site.learner.replay') }}
-                                                                        <i class="img-icon icon-right-arrow"></i>
-                                                                    </a>
-                                                                @else
-                                                                    {{--<a class="btn site-btn-global w-100 rounded-0" href="{{ \Carbon\Carbon::parse($result->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
-                                                                            ? 'javascript:void(0)' :$result->link }}" target="_blank">
-                                                                        Registrer Deg
-                                                                        <i class="img-icon icon-right-arrow"></i>
-                                                                    </a>--}}
-                                                                    @if (\App\Http\FrontendHelpers::checkIfWebinarRegistrant($result->id, Auth::user()->id))
-                                                                        <a class="btn site-btn-global w-100 rounded-0"
-                                                                        href="{{ \App\Http\FrontendHelpers::getWebinarJoinURL($result->id, Auth::user()->id) }}">
-                                                                            {{ trans('site.learner.signed') }}
-                                                                        </a>
-                                                                    @else
-                                                                        <a class="btn site-btn-global w-100 rounded-0 webinarRegister"
-                                                                        href="{{ \Carbon\Carbon::parse($result->start_date)->gt(\Carbon\Carbon::parse($coursesTaken->end_date))
-                                                                    ? 'javascript:void(0)' :route('learner.webinar.register',
-                                                                    [$result->link, $result->id]) }}">
-                                                                            {{ trans('site.learner.register') }}
-                                                                            <i class="img-icon icon-right-arrow"></i>
-                                                                        </a>
-                                                                    @endif
-                                                                @endif
-                                                            @endif
-                                                        </div> <!-- end card-footer -->
-                                                    </div> <!-- end card -->
-                                                </div> <!-- end col-sm-12 col-md-4 mt-5 -->
-                                            @else
-                                                <div class="col-sm-12 col-md-6 col-lg-4 mt-5">
-                                                    <div class="card card-global border-0">
-                                                        <div class="card-header webinar-thumb">
-                                                            {{--<i class="play-button"></i>--}}
-                                                            {!! ($result->lesson_content) !!}
-                                                        </div>
-                                                        <div class="card-body">
-                                                            <h2>{{ $result->title }}</h2>
-                                                            @if($result->tags)
-                                                            <span class="mt-4">
-                                                                <i class="fa fa-tags"></i> {{ $result->tags }}
-                                                            </span>
-                                                            @endif
-                                                        </div>
-                                                    </div> <!-- end card -->
-                                                </div> <!-- end col-sm-12 col-md-4 -->
-                                            @endif
-                                        @endforeach
-                                    @endforeach
-                                @endif
+                                                    @endforeach
+                                                </div>
+                                            @endforeach
+
+                                            <div class="text-center">
+                                                {{ $subscriptionWebinars->appends(request()->except('page'))->links('pagination.custom-pagination') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div> <!-- end row -->
                         @endif
                     </div>
