@@ -31,13 +31,14 @@
             <div class="row">
                 <div class="col-sm-12">
                     @php
-                    $tabWithLabel = [
-                        [
-                            'name' => 'replay',
-                            'label' => trans('site.replay')
-                        ]
-                    ]
-                @endphp
+                        $tabWithLabel = [
+                            [
+                                'name' => 'replay',
+                                'label' => trans('site.replay')
+                            ]
+                        ];
+                        $now = Carbon\Carbon::now();
+                    @endphp
 
                 <ul class="nav global-nav-tabs">
                     <li class="nav-item">
