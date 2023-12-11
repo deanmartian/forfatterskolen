@@ -172,6 +172,7 @@
                                                     @foreach ($subscriptionChunk as $webinar)
                                                     @php
                                                         $coursesTaken = \App\CoursesTaken::find($webinar->courses_taken_id);
+                                                        $start_date = Carbon\Carbon::parse($webinar->start_date);
                                                     @endphp
                                                         <div class="col-lg-3 col-md-6">
                                                             <div class="card-global webinar-card">
