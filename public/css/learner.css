@@ -1105,6 +1105,10 @@ body:not(.modal-open) {
     height: 111px;
 }
 
+.learner-course-webinar-page .webinar-list-card .webinar-row .webinar-card .hidden-container {
+    height: 156px;
+}
+
 .learner-webinar-page .webinar-list-card .webinar-row .webinar-card .button-container {
     position: absolute;
     bottom: 0;
@@ -1775,6 +1779,10 @@ body:not(.modal-open) {
     .learner-webinar-page .webinar-list-card .webinar-row .webinar-card .date {
         text-align: center;
     }
+
+    .learner-course-webinar-page iframe {
+        height: 100% !important;
+    }
 }
 
 /* for 425 screen */
@@ -1804,6 +1812,10 @@ body:not(.modal-open) {
 
     .learner-webinar-page .replay-card table .red-outline-btn {
         display: block;
+    }
+
+    .learner-course-webinar-page .first-search {
+        margin-bottom: 20px;
     }
 }
 

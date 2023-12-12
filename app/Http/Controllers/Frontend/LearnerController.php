@@ -597,7 +597,7 @@ class LearnerController extends Controller
         $isReplay = 0;
         $searchResult = [];
 
-        if ($request->exists('search_upcoming')) {
+        /* if ($request->exists('search_upcoming')) {
             $query = DB::table('courses_taken')
                 ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
                 ->join('courses', 'packages.course_id', '=', 'courses.id')
@@ -638,9 +638,49 @@ class LearnerController extends Controller
                 ->get();
             $isPost = 1;
             $isReplay = 1;
+        } */
+
+        /* this is new query until the end, the top is the old function/query */
+        $webinars = DB::table('courses_taken')
+                    ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
+                    ->join('courses', 'packages.course_id', '=', 'courses.id')
+                    ->join('webinars', 'courses.id', '=', 'webinars.course_id')
+                    ->select(
+                        'webinars.*',
+                        'courses_taken.id as courses_taken_id',
+                        'courses.title as course_title',
+                        'courses_taken.deleted_at',
+                        DB::raw('TIMESTAMPDIFF(HOUR, NOW(), webinars.start_date) as diffWithHours')
+                    )
+                    ->where('user_id', Auth::user()->id)
+                    ->where('courses.id','!=',17) // just added this line to show all webinar pakke webinars
+                    ->whereNull('courses_taken.deleted_at');
+
+        if ($request->exists('search_upcoming')) {
+            $webinars = $webinars->whereNotIn('webinars.id',[24, 25, 31])
+            ->where('webinars.start_date', '>=' ,Carbon::today())
+            ->where('webinars.title','LIKE','%'.$request->search_upcoming.'%')
+            ->where('set_as_replay',0);
+        } else {
+            $webinars = $webinars->where(function($query){
+                $query->whereIn('webinars.id',[24, 25, 31]);
+                $query->orWhere('set_as_replay',1);
+            });
         }
 
-        return view('frontend.learner.course-webinar', compact('searchResult', 'isPost', 'isReplay'));
+        $webinars = $webinars->orderBy('courses.type', 'ASC')
+                    ->orderBy('webinars.start_date', 'ASC')
+                    ->having('diffWithHours', '>=', 0) // filter results after 'SELECT'
+                    ->get()
+                    ->paginate(8);
+
+        $lessonContents = [];
+        if ($request->exists('search_replay')) {
+            $lessonContents = LessonContent::where('title', 'like', '%'.$request->search_replay.'%')
+                ->paginate(8);
+            $isReplay = 1;
+        }
+        return view('frontend.learner.course-webinar', compact('isReplay', 'webinars', 'lessonContents'));
     }
 
 
