@@ -597,7 +597,7 @@ class LearnerController extends Controller
         $isReplay = 0;
         $searchResult = [];
 
-        /* if ($request->exists('search_upcoming')) {
+        if ($request->exists('search_upcoming')) {
             $query = DB::table('courses_taken')
                 ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
                 ->join('courses', 'packages.course_id', '=', 'courses.id')
@@ -638,7 +638,7 @@ class LearnerController extends Controller
                 ->get();
             $isPost = 1;
             $isReplay = 1;
-        } */
+        }
 
         /* this is new query until the end, the top is the old function/query */
         $webinars = DB::table('courses_taken')
@@ -680,7 +680,8 @@ class LearnerController extends Controller
                 ->paginate(8);
             $isReplay = 1;
         }
-        return view('frontend.learner.course-webinar', compact('isReplay', 'webinars', 'lessonContents'));
+        return view('frontend.learner.course-webinar12112023', compact('isReplay', 'webinars', 'lessonContents', 
+        'webinarsRepriser', 'isPost', 'searchResult'));
     }
 
 
