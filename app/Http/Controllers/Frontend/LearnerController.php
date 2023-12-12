@@ -597,7 +597,7 @@ class LearnerController extends Controller
         $isReplay = 0;
         $searchResult = [];
 
-        if ($request->exists('search_upcoming')) {
+        /* if ($request->exists('search_upcoming')) {
             $query = DB::table('courses_taken')
                 ->join('packages', 'courses_taken.package_id', '=', 'packages.id')
                 ->join('courses', 'packages.course_id', '=', 'courses.id')
@@ -638,7 +638,7 @@ class LearnerController extends Controller
                 ->get();
             $isPost = 1;
             $isReplay = 1;
-        }
+        } */
 
         /* this is new query until the end, the top is the old function/query */
         $webinars = DB::table('courses_taken')
@@ -663,12 +663,20 @@ class LearnerController extends Controller
             ->where('set_as_replay',0);
         } else {
             $webinars = $webinars->where(function($query){
-                $query->whereIn('webinars.id',[24, 25, 31]);
-                $query->orWhere('set_as_replay',1);
+                $query->where(function($subQuery) {
+                    $subQuery->whereIn('webinars.id',[24, 25, 31]);
+                    $subQuery->orWhere('set_as_replay',1);
+                });
+
+                $query->orWhere(function($subQuery) {
+                    $subQuery->whereNotIn('webinars.id',[24, 25, 31])
+                    ->where('set_as_replay',0);
+                });
             });
         }
 
         $webinars = $webinars->orderBy('courses.type', 'ASC')
+                    ->orderBy('webinars.set_as_replay', 'DESC')
                     ->orderBy('webinars.start_date', 'ASC')
                     ->having('diffWithHours', '>=', 0) // filter results after 'SELECT'
                     ->get()
@@ -680,8 +688,8 @@ class LearnerController extends Controller
                 ->paginate(8);
             $isReplay = 1;
         }
-        return view('frontend.learner.course-webinar12112023', compact('isReplay', 'webinars', 'lessonContents', 
-        'webinarsRepriser', 'isPost', 'searchResult'));
+        return view('frontend.learner.course-webinar', compact('isReplay', 'webinars', 'lessonContents', 
+        /* 'webinarsRepriser', 'isPost', 'searchResult' */));
     }
 
 
