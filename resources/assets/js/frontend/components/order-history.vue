@@ -28,7 +28,7 @@
                                 <i class="fas fa-download"></i>
                             </button>
 
-                            <button class="btn blue-outline-btn"
+                            <button class="btn blue-outline-btn d-inline-block"
                                     @click="companyEdit(order)">
                                 {{ trans('site.order-history.edit-company') }}
                             </button>
