@@ -8,13 +8,13 @@
 @section('heading') {{ trans('site.learner.my-invoice') }} @stop
 @section('styles')
 	<style>
-		.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
+		/* .nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
 			color: #555;
 			cursor: default;
 			background-color: #fff;
 			border: 1px solid #ddd;
 			border-bottom-color: transparent;
-		}
+		} */
 
 		#viewOrderModal table.no-border td {
 			border: none;
@@ -23,13 +23,13 @@
 @stop
 
 @section('content')
-	<div class="learner-container" id="app-container">
+	<div class="learner-container learner-invoice-wrapper" id="app-container">
 		<div class="container">
-			<div class="row">
+			{{-- <div class="row">
 				@include('frontend.partials.learner-search-new')
-			</div> <!-- end row -->
+			</div> <!-- end row --> --}}
 
-			<div class="row mt-5">
+			<div class="row">
 				<div class="col-sm-12">
 
 					@php
@@ -46,31 +46,33 @@
 								'name' => 'gift',
 								'label' => 'Gift Purchases'
 							],
-							[
+							/* [
 								'name' => 'redeem',
 								'label' => 'Redeem Gift'
-							],
+							], */
 							[
 								'name' => 'order-history',
 								'label' => trans('site.order-history.title')
 							],
-							[
+							/* [
 								'name' => 'time-register',
 								'label' => 'Time Register'
-							]
+							] */
 						]
 					@endphp
 
-					<ul class="nav nav-tabs margin-top">
-						<li @if(!in_array(Request::input('tab'), array_column($tabWithLabel, 'name'))) class="active" @endif>
-							<a href="?tab=fiken">
+					<ul class="nav global-nav-tabs">
+						<li class="nav-item">
+							<a href="?tab=fiken" 
+							class="nav-link {{ !in_array(Request::input('tab'), array_column($tabWithLabel, 'name')) ? 'active' : '' }}">
 								Fiken
 							</a>
 						</li>
 
 						@foreach($tabWithLabel as $tab)
-							<li @if( Request::input('tab') == $tab['name'] ) class="active" @endif>
-								<a href="?tab={{ $tab['name'] }}">
+							<li class="nav-item">
+								<a href="?tab={{ $tab['name'] }}" 
+								class="nav-link {{  ( Request::input('tab') == $tab['name'] ) ? 'active' : '' }}">
 									{{ $tab['label'] }}
 								</a>
 							</li>
@@ -79,7 +81,7 @@
 
 
 					<div class="tab-content">
-						<div class="tab-pane fade in active">
+						<div class="tab-pane fade in active pt-4">
 
 							@if( Request::input('tab') == 'svea' )
 
@@ -107,7 +109,7 @@
 														<td>
 															@if ($order->is_credited_amount)
 																<a href="{{ route('learner.order.download-credited', $order->id) }}"
-																   class="btn btn-sm btn-danger downloadCreditNote">
+																   class="btn blue-outline-btn downloadCreditNote">
 																	<i class="fa fa-download"></i>
 																</a>
 															@endif
@@ -117,14 +119,14 @@
 														</td>
 														<td>
 															@if($order->price)
-																<button class="btn btn-dark btn-sm viewOrderBtn"
+																<button class="btn blue-link viewOrderBtn"
 																		data-toggle="modal"
 																		data-target="#viewOrderModal"
 																		data-fields="{{ json_encode($order) }}">
 																	<i class="fas fa-eye"></i>
 																</button>
 
-																<button class="btn btn-sm btn-danger downloadReceipt"
+																<button class="btn blue-link downloadReceipt"
 																		style="margin-left: 5px"
 																		data-fields="{{ json_encode($order) }}">
 																	<i class="fa fa-download"></i>
@@ -139,7 +141,7 @@
 								</div> <!-- end global-card -->
 
 								<div class="float-right">
-									{{ $sveaOrders->appends(request()->except('page')) }}
+									{{ $sveaOrders->appends(request()->except('page'))->links('pagination.short-pagination') }}
 								</div>
 							@elseif( Request::input('tab') == 'regret-form' )
 								<div class="card global-card">
@@ -155,13 +157,23 @@
 											@foreach($orderAttachments as $orderAttachment)
 												<tr>
 													<td>
-														<a href="{{ route('learner.course.show', $orderAttachment->course_taken_id) }}">
+														<p class="pull-left">
 															{{ $orderAttachment->course_title }}
+														</p>
+
+														<a href="{{ route('learner.course.show', $orderAttachment->course_taken_id) }}" 
+															class="pull-right blue-link">
+															<i class="fa fa-eye"></i>
 														</a>
 													</td>
 													<td>
-														<a href="{{ $orderAttachment->file_path }}" download>
+														<p class="pull-left">
 															{{ basename($orderAttachment->file_path) }}
+														</p>
+
+														<a href="{{ $orderAttachment->file_path }}" class="pull-right blue-link"
+															download>
+															<i class="fa fa-download"></i>
 														</a>
 													</td>
 													<td></td>
@@ -270,6 +282,25 @@
 								</div>
 							@else
 
+								<?php
+									$hasVipps = Auth::user()->address && Auth::user()->address->vipps_phone_number;
+								?>
+								@if ($hasVipps)
+									<a href="javascript:void(0)" class="btn short-red-outline-btn mb-4 stopVippsEFakturaBtn" 
+									data-toggle="modal"
+									data-target="#stopVippsEFakturaModal"
+									data-vipps-number="{{ NULL }}">
+										{!! trans('site.stop-vipps-efaktura') !!}
+									</a>
+								@else
+									<a href="javascript:void(0)" class="btn short-red-outline-btn mb-4 setVippsEFakturaBtn" 
+									data-toggle="modal"
+									data-target="#setVippsEFakturaModal"
+									data-vipps-number="{{ Auth::user()->address->vipps_phone_numberc }}">
+										{!! trans('site.set-vipps-efaktura') !!}
+									</a>
+								@endif
+
 								<div class="card global-card">
 									<div class="card-body py-0">
 										<table class="table table-global">
@@ -314,11 +345,11 @@
 													</td>
 													<td>
 														@if($invoice->fiken_is_paid === 1)
-															<span class="label label-success">{{$status}}</span>
+															<span class="label label-green">{{$status}}</span>
 														@elseif($invoice->fiken_is_paid === 2)
-															<span class="label label-warning">{{$status}}</span>
+															<span class="label label-orange">{{$status}}</span>
 														@elseif($invoice->fiken_is_paid === 3)
-															<span class="label label-primary text-uppercase">Kreditert</span>
+															<span class="label label-violet text-uppercase">Kreditert</span>
 														@else
 															<span class="label label-danger">{{$status}}</span>
 														@endif
@@ -328,36 +359,45 @@
 													<td> 9015 18 00393 </td>
 													<td>
 														@if($invoice->credit_note_url)
-															<a href="{{ route('learner.download.credit-note', $invoice->id) }}">
+															<a href="{{ route('learner.download.credit-note', $invoice->id) }}" 
+																class="blue-outline-btn">
 																Credit Note
 															</a>
 														@endif
 													</td>
 													<td>
-														<a href="{{route('learner.download.invoice', $invoice->id)}}">{{ trans('site.learner.download-invoice') }}</a>
+														<a href="{{route('learner.download.invoice', $invoice->id)}}" 
+															class="blue-outline-btn">
+															{{ trans('site.learner.download-invoice') }}
+														</a>
 
 														@if ($invoice->fiken_invoice_id && !$invoice->fiken_is_paid)
-															<button class="btn btn-success btn-xs vippsFakturaBtn" style="margin-top: 5px"
+															<button class="btn btn-success btn-xs vippsFakturaBtn" 
+															style="margin-top: 5px"
 																	data-toggle="modal"
 																	data-target="#vippsFakturaModal"
-																	data-action="{{ route('learner.invoice.vipps-e-faktura', $invoice->id) }}">
+																	data-action="{{ route('learner.invoice.vipps-e-faktura', 
+																	$invoice->id) }}">
 																	Send som Efaktura
 															</button>
 														@endif
 
 														@if(!$invoice->fiken_is_paid)
 															<div class="gateway--paypal">
-																<form method="POST" action="{{ route('checkout.payment.paypal', encrypt($invoice->id)) }}">
+																<form method="POST" 
+																action="{{ route('checkout.payment.paypal', encrypt($invoice->id)) }}">
 																	{{ csrf_field() }}
-																	{{--<input type="image" name="submit" src="https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif" align="right" alt="PayPal - The safer, easier way to pay online">--}}
 																	<button class="btn btn-primary">
-																		<i class="fa fa-paypal" aria-hidden="true"></i> {{ trans('site.learner.pay-with-paypal-or-credit-card') }}
+																		<i class="fa fa-paypal" aria-hidden="true"></i> 
+																		{{ trans('site.learner.pay-with-paypal-or-credit-card') }}
 																	</button>
 																</form>
 															</div>
 
-															<a href="{{ route('learner.invoice.vipps-payment', $invoice->fiken_invoice_id) }}" class="mt-3">
-																<img src="{{ asset('images-new/betal-vipps.png') }}" class="w-75 mt-3">
+															<a href="{{ route('learner.invoice.vipps-payment', 
+															$invoice->fiken_invoice_id) }}" class="mt-3">
+																<img src="{{ asset('images-new/betal-vipps.png') }}" 
+																class="w-75 mt-3">
 															</a>
 														@endif
 													</td>
@@ -368,7 +408,7 @@
 									</div>
 								</div> <!-- end card -->
 								<div class="float-right">
-									{{ $invoices->render() }}
+									{{ $invoices->appends(Request::all())->links('pagination.short-pagination') }}
 								</div>
 
 							@endif
@@ -406,8 +446,8 @@
 		</div>
 	</div>
 
-	<div id="setVippsEFakturaModal" class="modal fade" role="dialog">
-		<div class="modal-dialog modal-sm">
+	<div id="setVippsEFakturaModal" class="modal global-modal fade" role="dialog">
+		<div class="modal-dialog modal-md">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h4 class="modal-title">
@@ -426,7 +466,7 @@
 							<input type="text" class="form-control" name="mobile_number" required>
 						</div>
 
-						<button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
+						<button type="submit" class="btn red-global-btn mt-3 pull-right">{{ trans('site.save') }}</button>
 						<div class="clearfix"></div>
 					</form>
 				</div>
@@ -434,12 +474,12 @@
 		</div>
 	</div>
 
-	<div id="stopVippsEFakturaModal" class="modal fade" role="dialog">
-		<div class="modal-dialog modal-sm">
+	<div id="stopVippsEFakturaModal" class="modal global-modal fade" role="dialog">
+		<div class="modal-dialog modal-md">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h4 class="modal-title">
-						{!! trans('site.stop-vipps-efaktura') !!}
+						<i class="far fa-flag"></i>
 					</h4>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
@@ -448,12 +488,47 @@
 						{{ csrf_field() }}
 						<input type="hidden" name="mobile_number">
 
+						<h3>
+							{!! trans('site.stop-vipps-efaktura') !!}
+						</h3>
 						<div class="form-group">
 							{!! trans('site.stop-vipps-efaktura-message') !!}
 						</div>
 
-						<button type="submit" class="btn btn-danger pull-right">{{ trans('site.delete') }}</button>
+						<button type="submit" class="btn red-global-btn mt-3 pull-right">{{ trans('site.delete') }}</button>
 						<div class="clearfix"></div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="redeemModal" class="modal global-modal fade" role="dialog">
+		<div class="modal-dialog modal-md">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">
+						<img src="{{ asset('images-new/icon/gift.png') }}">
+					</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<form action="{{ route('learner.redeem-gift') }}" method="POST" onsubmit="disableSubmit(this)">
+						{{ csrf_field() }}
+
+						<h3>
+							Redeem Code
+						</h3>
+
+						<div class="form-group">
+							<label>Code*</label>
+							<input type="text" name="redeem_code" class="form-control" placeholder="Enter code"
+								   style="text-transform: uppercase" required>
+						</div>
+
+						<button class="btn red-global-btn mt-3" type="submit">
+							Submit
+						</button>
 					</form>
 				</div>
 			</div>

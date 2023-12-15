@@ -1518,7 +1518,7 @@ class LearnerController extends Controller
                 $errorMessage = AdminHelpers::createMessageBag('Buyer cannot claim the gift.');
             }
 
-            if ($giftPurchase->expired_at && Carbon::now()->gt($giftPurchase->expired_at)) {
+            if ($giftPurchase && $giftPurchase->expired_at && Carbon::now()->gt($giftPurchase->expired_at)) {
                 $errorMessage = AdminHelpers::createMessageBag('Gift card expired.');
             }
 

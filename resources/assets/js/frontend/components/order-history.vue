@@ -18,17 +18,17 @@
                     <td>{{ order.created_at_formatted }}</td>
                     <td>
                         <template v-if="order.price">
-                            <button class="btn btn-dark btn-sm" @click="viewOrder(order)">
+                            <button class="btn blue-link" @click="viewOrder(order)">
                                 <i class="fas fa-eye"></i>
                             </button>
 
-                            <button class="btn btn-danger btn-sm" @click="downloadRecord(order)"
+                            <button class="btn blue-link btn-sm" @click="downloadRecord(order)"
                                     :disabled="isLoading && currentOrder.id === order.id">
                                 <i class="fas fa-spinner fa-pulse" v-if="isLoading && currentOrder.id === order.id"></i>
                                 <i class="fas fa-download"></i>
                             </button>
 
-                            <button class="btn btn-dark btn-sm"
+                            <button class="btn blue-outline-btn"
                                     @click="companyEdit(order)">
                                 {{ trans('site.order-history.edit-company') }}
                             </button>

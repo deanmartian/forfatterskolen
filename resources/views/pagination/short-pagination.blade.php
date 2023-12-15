@@ -1,4 +1,5 @@
 @if ($paginator->hasPages())
+<div class="custom-short-pagination">
     <nav>
         <ul class="pagination">
             {{-- Previous Page Link --}}
@@ -40,4 +41,5 @@
             @endif
         </ul>
     </nav>
+</div>
 @endif

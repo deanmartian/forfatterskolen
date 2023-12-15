@@ -11,6 +11,7 @@
     --white: #ffffff;
     --black: #000000;
     --pink: #FFEEE8;
+    --blue: #00477B;
 }
 
 * {
@@ -672,7 +673,7 @@ body:not(.modal-open) {
 }
 
 .learner-assignment .assignment-container .manuscript-container .button-container .btn-info .fa {
-    color: #00477B;
+    color: var(--blue);
 }
 
 .learner-assignment .assignment-container .manuscript-container .button-container .btn-danger .fa {
@@ -680,7 +681,7 @@ body:not(.modal-open) {
 }
 
 .learner-assignment .assignment-container .manuscript-container .button-container .fa-eye {
-    color: #00477B;
+    color: var(--blue);
 }
 
 .learner-assignment .assignment-container .bottom-container {
@@ -724,14 +725,14 @@ body:not(.modal-open) {
 }
 
 .learner-assignment .feedback-from-editor-container table td a.download-feedback {
-    border: 2px solid #00477B;
-    color: #00477B;
+    border: 2px solid var(--blue);
+    color: var(--blue);
     font-weight: bold;
     padding: 10px;
 }
 
 .learner-assignment .feedback-from-editor-container table td a.download-feedback:hover {
-    background-color: #00477B;
+    background-color: var(--blue);
     color: var(--white);
 }
 
@@ -791,7 +792,7 @@ body:not(.modal-open) {
 
 .learner-assignment .finish-assignment-wrapper h2,
 .learner-assignment .group-list-wrapper h2 {
-    color: #00477B;
+    color: var(--blue);
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 20px;
@@ -830,7 +831,7 @@ body:not(.modal-open) {
 }
 
 .learner-assignment .finish-assignment-wrapper .timeline-wrapper .timeline .feedback-container .btn {
-    background-color: #00477B !important;
+    background-color: var(--blue) !important;
     border-radius: 5px;
     font-size: 11px;
     margin-top: 5px;
@@ -1042,26 +1043,6 @@ body:not(.modal-open) {
     padding: 15px;
 }
 
-.learner-webinar-page .replay-card .pagination>li>a, 
-.learner-webinar-page .replay-card .pagination>li>span {
-    border-color: #DFE3E8;
-    border-radius: 4px;
-    color: var(--black);
-    font-weight: bold;
-    margin-right: 10px;
-}
-
-.learner-webinar-page .replay-card .pagination .page-item.active > .page-link {
-    background-color: transparent;
-    border-color: var(--black);
-    color: var(--black);
-}
-
-.learner-webinar-page .replay-card .pagination .page-item.disabled > .page-link {
-    background-color: #C4CDD5;
-    color: var(--white);
-}
-
 .learner-webinar-page .second-search .input-group {
     display: -webkit-box;
 }
@@ -1134,6 +1115,20 @@ body:not(.modal-open) {
     color: var(--white);
 }
 /* end learner webinar page */
+
+/* learner invoice page */
+.learner-invoice-wrapper .table>thead>tr>th {
+    font-family: 'Inter';
+    font-weight: bold;
+    padding: 0 8px 8px;
+}
+
+.learner-invoice-wrapper .table .blue-outline-btn {
+    display: block;
+    padding: 5px;
+    text-align: center;
+}
+/* end learner invoice page */
 
 #submitEditorManuscriptModal .file-upload,
 #submitManuscriptModal .file-upload,
@@ -1227,14 +1222,14 @@ body:not(.modal-open) {
 }
 
 .learner-upgrade .btn-outline-primary {
-    color: #00477B;
-    border-color: #00477B;
+    color: var(--blue);
+    border-color: var(--blue);
     border-radius: 5px;
     padding: 5px 10px;
 }
 
 .learner-upgrade .btn-outline-primary:hover {
-    background-color: #00477B;
+    background-color: var(--blue);
     color: var(--white);
 }
 
@@ -1410,19 +1405,19 @@ body:not(.modal-open) {
 
 .blue-outline-btn {
     background-color: transparent;
-    border: 1px solid #00477B;
+    border: 1px solid var(--blue);
     border-radius: 5px;
-    color: #00477B !important;
+    color: var(--blue) !important;
     font-weight: bold;
 }
 
 .blue-outline-btn .fa {
-    color: #00477B !important;
+    color: var(--blue) !important;
     font-size: 15px !important;
 }
 
 .blue-outline-btn:hover {
-    background-color: #00477B;
+    background-color: var(--blue);
     color: var(--white) !important;
 }
 
@@ -1433,8 +1428,8 @@ body:not(.modal-open) {
 }
 
 .blue-btn {
-    background-color: #00477B;
-    border: 1px solid #00477B;
+    background-color: var(--blue);
+    border: 1px solid var(--blue);
     border-radius: 5px;
     color: var(--white);
     font-weight: bold;
@@ -1442,11 +1437,11 @@ body:not(.modal-open) {
 
 .blue-btn:hover {
     background-color: transparent;
-    color: #00477B;
+    color: var(--blue);
 }
 
 .blue-btn:hover .fa {
-    color: #00477B;
+    color: var(--blue);
 }
 
 .light-red-outline-btn {
@@ -1506,7 +1501,9 @@ body:not(.modal-open) {
 
 .label-violet,
 .label-green,
-.label-rounded {
+.label-rounded,
+.label-orange,
+.label-red {
     border-radius: 20px;
     padding: 6px 16px;
 }
@@ -1519,6 +1516,16 @@ body:not(.modal-open) {
 .label-green {
     background-color: #CFFFCE;
     color: #175302;
+}
+
+.label-orange {
+    background-color: #FFF4E4;
+    color: #E99518;
+}
+
+.label-red {
+    background-color: #FFF0F0;
+    color: #F93232;
 }
 
 .custom-center-pagination {
@@ -1559,6 +1566,26 @@ body:not(.modal-open) {
 .custom-center-pagination .page-item:last-child .page-link {
     border-top-right-radius: 18px;
     border-bottom-right-radius: 18px;
+}
+
+.custom-short-pagination .pagination>li>a, 
+.custom-short-pagination .pagination>li>span {
+    border-color: #DFE3E8;
+    border-radius: 4px;
+    color: var(--black);
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.custom-short-pagination .pagination .page-item.active > .page-link {
+    background-color: transparent;
+    border-color: var(--black);
+    color: var(--black);
+}
+
+.custom-short-pagination .pagination .page-item.disabled > .page-link {
+    background-color: #C4CDD5;
+    color: var(--white);
 }
 
 .custom-badge {
@@ -1612,6 +1639,29 @@ body:not(.modal-open) {
 
 .webinar-thumb .play-button:before {
     background-image: url(../images-new/icon/play-circle.png);
+}
+
+.blue-link {
+    background-color: transparent;
+    color: var(--blue);
+}
+
+.blue-link:hover,
+.blue-link:hover .fa {
+    color: #087acd;
+}
+
+.blue-link .fa {
+    color: var(--blue);
+}
+
+.redeem-gift-link {
+    margin-right: 1rem;
+}
+
+.redeem-gift-link:hover,
+.redeem-gift-link:active {
+    text-decoration: none;
 }
 
 @media only screen and (max-width: 1024px) {
@@ -1850,6 +1900,10 @@ body:not(.modal-open) {
         margin-top: 10px;
         width: 100% !important;
     }
+
+    .redeem-gift-link img {
+        width: 33px;
+    }
 }
 
 @media only screen and (max-width: 360px) {
@@ -1862,5 +1916,9 @@ body:not(.modal-open) {
 
     .learner-dashboard-wrapper .webinar-wrapper .btn {
         width: 85% !important;
+    }
+
+    .redeem-gift-link {
+        margin-right: 0;
     }
 }

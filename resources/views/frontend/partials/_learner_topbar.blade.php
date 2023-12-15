@@ -16,6 +16,12 @@
                 @if(Auth::user()->userAutoRegisterToCourseWebinar) {{ 'checked' }} @endif>
             </div>
         @endif
+
+        @if (Route::currentRouteName() === 'learner.invoice')
+            <a href="#" data-toggle="modal" data-target="#redeemModal" class="redeem-gift-link">
+                <img src="{{ asset('images-new/icon/gift.png') }}">
+            </a>
+        @endif
         <div class="user-image-container d-inline-block">
             <!-- User image and dropdown menu -->
             <a href="{{ route('learner.profile') }}">
