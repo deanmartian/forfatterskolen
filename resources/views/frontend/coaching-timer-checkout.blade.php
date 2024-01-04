@@ -10,7 +10,9 @@
         $data = Session::get('data');
         ?>
     @endif
-    <div class="checkout-page" id="app-container">
+    <div class="global-checkout-page" id="app-container">
+        <div class="header" data-bg="https://www.forfatterskolen.no/images-new/checkout-top.png">
+		</div>
         <div class="container">
             <coaching-time-checkout :price="{{ json_encode($data['price']) }}"
                                     :title="{{ json_encode(str_replace('_title_', $data['title'], trans('site.front.form.book-form-for'))) }}"

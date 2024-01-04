@@ -3818,6 +3818,108 @@ margin-right: 5px;
 
 /* end coaching timer page */
 
+/* coaching timer page new */
+.coaching-timer-page-new {
+    padding-bottom: 700px;
+}
+
+.coaching-timer-page-new .header {
+    background-size: 100%;
+    background-repeat: no-repeat;
+    color: #fff;
+    height: 299px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.coaching-timer-page-new .header h1 {
+    font-family: 'Inter';
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.coaching-timer-page-new .details-wrapper {
+    position: absolute;
+    left: 50%;
+    top: 260px;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff;
+    border-radius: 40px;
+    box-shadow:  -35px -35px 100px 10px rgb(0,0,0,6%),
+                35px 35px 100px 2px rgb(0,0,0,13%);
+    padding: 100px 50px;
+    width: 1140px;
+}
+
+.coaching-timer-page-new .details-wrapper .top-details {
+    border-bottom: 1px solid rgb(0, 0, 0, 3%);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.coaching-timer-page-new .details-wrapper .top-details h2 {
+    font-family: 'Inter';
+    font-size: 40px;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.coaching-timer-page-new .details-wrapper h2 {
+    font-family: 'Inter';
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.coaching-timer-page-new .details-wrapper .card {
+    border: 1px solid #D6D6D6;
+    border-radius: 36px;
+    box-shadow: 0 4px 4px 0 #5F0000;
+    padding: 10px 20px;
+}
+
+.coaching-timer-page-new .details-wrapper .card:hover {
+    box-shadow: 0 4px 4px 0 rgb(0, 0, 0, 25%),
+        35px 35px 100px 2px rgb(0,0,0,13%);
+}
+
+.coaching-timer-page-new .details-wrapper .card p {
+    color: #636363;
+    font-family: 'Inter';
+    line-height: 25px;
+}
+
+.coaching-timer-page-new .details-wrapper .card .buy-btn {
+    border: 1px solid #620000;
+    border-radius: 16px;
+    font-family: 'Inter';
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.coaching-timer-page-new .details-wrapper .card .buy-btn:hover {
+    background-color: #620000;
+    color: #ffffff;
+}
+
+.coaching-timer-page-new .details-wrapper .card .buy-btn:hover .fa {
+    color: #ffffff;
+}
+
+.coaching-timer-page-new .details-wrapper .card .buy-btn::after {
+    background-image: none;
+}
+
+.coaching-timer-page-new .details-wrapper .card .buy-btn .fa {
+    color: #670000;
+}
+/* end coaching timer page new */
+
 /* support page */
 
 .support-tabs h1 {
@@ -5504,9 +5606,9 @@ margin-right: 5px;
     margin-bottom: 20px;
 }
 
-.free-manuscript-page .header {
-    /*background: linear-gradient(rgba(58, 58, 58, .52), rgba(58, 58, 58, .52)),
-    url(../images-new/free-manuscript-header.jpg) no-repeat bottom / cover;*/
+/* .free-manuscript-page .header {
+    background: linear-gradient(rgba(58, 58, 58, .52), rgba(58, 58, 58, .52)),
+    url(../images-new/free-manuscript-header.jpg) no-repeat bottom / cover;
     background-repeat: no-repeat;
     background-position: bottom;
     background-size: cover;
@@ -5514,9 +5616,9 @@ margin-right: 5px;
     height: 460px;
     padding: 90px 400px;
     position: relative;
-}
+} */
 
-.free-manuscript-page .header:before {
+/* .free-manuscript-page .header:before {
     content: "";
     background: linear-gradient(rgba(58, 58, 58, .52), rgba(58, 58, 58, .52));
     position: absolute;
@@ -5524,6 +5626,13 @@ margin-right: 5px;
     right: 0;
     left: 0;
     height: 100%;
+} */
+
+.free-manuscript-page .header {
+    height: 98px;
+    display: block;
+    background-size: 100%;
+    background-repeat: no-repeat;
 }
 
 .free-manuscript-page .header h1 {
@@ -5537,27 +5646,34 @@ margin-right: 5px;
     margin-top: 25px;
 }
 
-.free-manuscript-page .body {
-    /*background: url(../images-new/free-manuscript-body.png) no-repeat bottom / cover;*/
+.free-manuscript-page-new .body {
+    background-image: url(../images-new/girl-book.png), url(../images-new/girl-comment.png);
+    background-position: left top, right bottom;
     background-repeat: no-repeat;
-    background-position: bottom;
-    background-size: cover;
-
+    background-size: 300px;
+    margin-bottom: 8em;
 }
 
-.free-manuscript-page .body .form-container {
+/* .free-manuscript-page .body .form-container {
     transform: translateY(-175px);
-}
+} */
 
 .free-manuscript-page .body .form-container .card {
     border-color: transparent;
     border-radius: 0;
     box-shadow: 0 0 14.72px 1.28px rgba(204, 204, 204, 0.37);
-    padding: 50px 60px;
+    /* padding: 50px 60px; */
+    padding: 20px;
     position: relative;
 }
 
-.free-manuscript-page .body .form-container h2 {
+.free-manuscript-page-new .body .form-container .card {
+    border-radius: 20px;
+    box-shadow: -35px -35px 100px 10px rgb(0, 0, 0, 6%),
+        35px 35px 100px 2px rgb(0, 0, 0, 13%);
+}
+
+/* .free-manuscript-page .body .form-container h2 {
     background-color: #e83a46;
     border-radius: 5px;
     color: #fff;
@@ -5569,6 +5685,18 @@ margin-right: 5px;
     text-align: center;
     top: -25px;
     width: 40%;
+} */
+
+.free-manuscript-page-new .body h1 {
+    font-family: 'Inter';
+    font-weight: bold;
+}
+
+.free-manuscript-page-new .body .form-container h2 {
+    font-family: 'Inter';
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 2em;
 }
 
 .free-manuscript-page .body .form-container .input-group .input-group-text {
@@ -7179,6 +7307,21 @@ blockquote {
 
 .clearfix {
     clear: both;
+}
+
+.outline-btn-global {
+    background-color: transparent;
+    border: 1px solid #852635;
+    border-radius: 6px;
+    color: #852635 !important;
+    font-family: "Barlow Regular",sans serif;
+    font-size: 17px;
+    padding: 5px 20px;
+}
+
+.outline-btn-global:hover {
+    background-color: #852635;
+    color: #ffffff !important;
 }
 
 .site-btn-global {
@@ -8934,8 +9077,8 @@ textarea.form-control {
         margin-bottom: 70px;
     }
 
-    .free-manuscript-page .header {
-        padding: 90px 200px;
+    .free-manuscript-page-new .body {
+        background-size: 200px;
     }
 
     .free-webinar-thanks-page .header {
@@ -8991,6 +9134,21 @@ textarea.form-control {
 
     .course-application-wrapper .body {
         background-size: 215px;
+    }
+
+    .coaching-timer-page-new {
+        padding-bottom: 650px;
+    }
+
+    .coaching-timer-page-new .header {
+        height: 201px;
+    }
+
+    .coaching-timer-page-new .details-wrapper {
+        left: 51.5%;
+        top: 245px;
+        max-width: 960px;
+        padding: 60px 50px;
     }
 }
 
@@ -10305,13 +10463,17 @@ textarea.form-control {
     }
 
     .free-manuscript-page .header {
-        height: 280px;
-        padding: 30px 85px;
+        height: 98px;
+        padding: 0;
     }
 
-    .free-manuscript-page .body .form-container {
-        transform: translateY(-70px);
+    .free-manuscript-page-new .body {
+        background-image: none;
     }
+
+    /* .free-manuscript-page .body .form-container {
+        transform: translateY(-70px);
+    } */
 
     .free-manuscript-page .body .form-container .card {
         padding: 40px 30px;
@@ -10375,6 +10537,24 @@ textarea.form-control {
 
     .subscribe-success {
         margin-bottom: 100px;
+    }
+
+    .coaching-timer-page-new {
+        padding-bottom: 1050px;
+    }
+
+    .coaching-timer-page-new .header {
+        height: 151px;
+    }
+
+    .coaching-timer-page-new .details-wrapper {
+        max-width: 720px;
+        padding: 40px 30px 10px;
+        top: 475px;
+    }
+
+    .coaching-timer-page-new .details-wrapper .card:last-child {
+        margin-bottom: 30px;
     }
 
     /* theme tab */
@@ -11853,9 +12033,13 @@ textarea.form-control {
         width: 150px;
     }
 
-    .free-manuscript-page .header {
+    /* .free-manuscript-page .header {
         height: 250px;
         padding: 30px 45px;
+    } */
+
+    .free-manuscript-page .header {
+        height: 70px;
     }
 
     .free-manuscript-page .header h1 {
@@ -11968,6 +12152,19 @@ textarea.form-control {
 
     .global-checkout-page .gray-box {
         margin-bottom: 10px;
+    }
+
+    .coaching-timer-page-new {
+        padding-bottom: 1100px;
+    }
+
+    .coaching-timer-page-new .header {
+        height: 126px;
+    }
+
+    .coaching-timer-page-new .details-wrapper {
+        max-width: 540px;
+        top: 510px;
     }
 
 }
@@ -13169,10 +13366,10 @@ textarea.form-control {
         width: 120px;
     }
 
-    .free-manuscript-page .header {
+    /* .free-manuscript-page .header {
         height: 170px;
         padding: 20px 0;
-    }
+    } */
 
     .free-manuscript-page .header h1 {
         font-size: 25px;
@@ -13264,6 +13461,20 @@ textarea.form-control {
     .subscribe-success img {
         width: 100%;
     }
+
+    .coaching-timer-page-new .header {
+        background-size: auto;
+    }
+
+    .coaching-timer-page-new .details-wrapper {
+        left: 54%;
+        max-width: 360px;
+        top: 655px;
+    }
+
+    .coaching-timer-page-new {
+        padding-bottom: 1405px;
+    }
 }
 
 /* for classes not working in 375 */
@@ -13300,6 +13511,17 @@ textarea.form-control {
     .global-checkout-page .vue-form-wizard .wizard-nav-pills a, 
     .global-checkout-page .vue-form-wizard .wizard-nav-pills li {
         flex: auto;
+    }
+
+    .coaching-timer-page-new .details-wrapper {
+        max-width: 330px;
+        top: 650px;
+    }
+}
+
+@media only screen and (max-width: 376px) {
+    .coaching-timer-page-new .details-wrapper .card .buy-btn {
+        padding: 10px;
     }
 }
 
@@ -14305,10 +14527,10 @@ textarea.form-control {
         margin-top: 60px !important;
     }
 
-    .free-manuscript-page .header {
+    /* .free-manuscript-page .header {
         height: 150px;
         padding: 10px 0;
-    }
+    } */
 
     .free-manuscript-page .header h1 {
         font-size: 21px;
@@ -14357,6 +14579,12 @@ textarea.form-control {
 
     .global-checkout-page .vue-form-wizard .wizard-card-footer .wizard-footer-right {
         display: block;
+    }
+
+    .coaching-timer-page-new .details-wrapper {
+        max-width: 280px;
+        padding: 30px 10px 10px;
+        top: 670px;
     }
 }
 

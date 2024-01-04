@@ -38,8 +38,11 @@
     $webinarTitle = $freeWebinar->title;
     ?>
 
-    <div class="free-webinar-page">
-        <div class="header text-center" data-bg="https://www.forfatterskolen.no/images-new/free-webinar-header.jpg">
+    <div class="free-webinar-page free-webinar-page-new">
+        <div class="header" data-bg="https://www.forfatterskolen.no/images-new/free-webinar-header-new.png">
+        </div>
+
+        <div class="container text-center">
             <h1>{{ $webinarTitle }}</h1>
         </div>
 

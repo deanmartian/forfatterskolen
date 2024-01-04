@@ -6,55 +6,68 @@
 
 @section('content')
 
-    <div class="coaching-timer-page" data-bg="https://www.forfatterskolen.no/images-new/ctimer-bg.png">
-        <div class="container">
-            <h1 class="title text-center">
-                {{ trans('site.front.coaching-timer.title') }}
-            </h1>
+    <div class="coaching-timer-page-new">
+        <div class="header" style="background-image: url('https://www.forfatterskolen.no/images-new/red-header-new.png')">
+            <div class="container">
+                <h1>
+                    {{ trans('site.front.coaching-timer.title') }}
+                </h1>
+            </div>
+        </div>
 
-            <div class="row details-container text-center">
-                <div class="col-md-6">
-                    <div class="left-column" data-bg="https://www.forfatterskolen.no/images-new/ctimer-left.jpg">
-                        <div class="circle">
-                            <div class="smaller-circle">
-                                <div class="h1">1190 KR</div>
-                                <h2 class="theme-text">
-                                    {{ trans('site.front.30-mins') }}
+        <div class="container position-relative">
+            <div class="row details-wrapper">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="top-details">
+                                <img src="{{ asset('images-new/icon/open-book-dark-red.png') }}" alt="">
+                                <h2>
+                                    1190 KR
                                 </h2>
+                                <p>
+                                    {{ trans('site.front.30-mins') }}
+                                </p>
                             </div>
+                    
+                            <h2>
+                                {{ trans('site.front.coaching-timer.one-on-one-coaching') }}
+                            </h2>
+                            <p class="position-relative">
+                                {{ trans('site.front.coaching-timer.one-on-one-coaching-description') }}
+                            </p>
+                            <a href="{{ route('front.coaching-timer-checkout', 2) }}" class="btn buy-btn">
+                                {{ trans('site.front.buy') }}
+                                <i class="fa fa-arrow-right"></i>
+                            </a>
                         </div>
-
-                        <div class="h1">
-                            {{ trans('site.front.coaching-timer.one-on-one-coaching') }}
-                        </div>
-                        <p class="position-relative">
-                            {{ trans('site.front.coaching-timer.one-on-one-coaching-description') }}
-                        </p>
-                        <a href="{{ route('front.coaching-timer-checkout', 2) }}" class="btn buy-btn">
-                            {{ trans('site.front.buy') }}
-                        </a>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="right-column" data-bg="https://www.forfatterskolen.no/images-new/ctimer-right.jpg">
-                        <div class="circle">
-                            <div class="smaller-circle">
-                                <div class="h1">1690 KR</div>
-                                <h2 class="theme-text">
-                                    {{ trans('site.front.60-mins') }}
-                                </h2>
-                            </div>
-                        </div>
 
-                        <div class="h1">
-                            {{ trans('site.front.coaching-timer.one-on-one-coaching') }}
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="top-details">
+                                <img src="{{ asset('images-new/icon/open-book-dark-red.png') }}" alt="">
+                                <h2>
+                                    1690 KR
+                                </h2>
+                                <p>
+                                    {{ trans('site.front.60-mins') }}
+                                </p>
+                            </div>
+                    
+                            <h2>
+                                {{ trans('site.front.coaching-timer.one-on-one-coaching') }}
+                            </h2>
+                            <p class="position-relative">
+                                {{ trans('site.front.coaching-timer.one-on-one-coaching-description') }}
+                            </p>
+                            <a href="{{ route('front.coaching-timer-checkout', 1) }}" class="btn buy-btn">
+                                {{ trans('site.front.buy') }}
+                                <i class="fa fa-arrow-right"></i>
+                            </a>
                         </div>
-                        <p class="position-relative">
-                            {{ trans('site.front.coaching-timer.one-on-one-coaching-description') }}
-                        </p>
-                        <a href="{{ route('front.coaching-timer-checkout', 1) }}" class="btn buy-btn">
-                            {{ trans('site.front.buy') }}
-                        </a>
                     </div>
                 </div>
             </div>

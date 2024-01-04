@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div class="card main-card">
         <div id="scrollhere"></div>
         <form-wizard color="#c12938" error-color="#ff4949"
                      :nextButtonText="trans('site.paginate.next')" :backButtonText="trans('site.paginate.previous')"
@@ -14,14 +14,21 @@
                         <label class="control-label">
                             {{ trans('site.front.form.upload-manuscript') }}
                         </label>
-                        <input type="file" ref="file" class="hidden"
+                        <!-- <input type="file" ref="file" class="hidden"
                                @change="onManuscriptChange"
                                id="manuscript"
                                accept="application/msword,
 application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/pdf, application/vnd.oasis.opendocument.text">
                         <input type="text" readonly class="form-control"
                                :placeholder="manuscriptName" name="manuscript"
-                               @click="$refs.file.click()">
+                               @click="$refs.file.click()"> -->
+
+                        <FileUpload
+                            ref="fileUpload"
+                            :accept="'application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,' 
+                            + 'application/pdf, application/vnd.oasis.opendocument.text'" 
+                            @fileSelected="handleFileSelected('manuscript', $event)"/>
+                            <input type="hidden" name="manuscript">
                     </div>
 
                     <button class="btn btn-default mt-4 btn-common-padding" @click="clearManuscript()"
@@ -93,47 +100,58 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
 
                     <form @submit.prevent="handleLogin($event)" v-if="!isNewCustomer" class="second-col mb-4">
 
-                        <p class="text-center" v-html="trans('site.login-or-register-below')">
-                        </p>
+                        <h1 class="font-weight-bold text-center mb-5" v-html="trans('site.login-or-register-below')">
+                        </h1>
 
                         <div class="row">
                             <div class="col-sm-6 col-sm-offset-3">
                                 <div class="form-group">
-                                    <input type="email" name="email" class="form-control no-border-left"
-                                           :placeholder="trans('site.front.form.email')" v-model="loginForm.email">
+                                    <label>
+                                        {{ trans('site.front.form.email') }}
+                                    </label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa mail-icon"></i></span>
+                                        </div>
+                                        <input type="email" name="email" class="form-control no-border-left" 
+                                            v-model="loginForm.email">
+                                    </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <input type="password" name="password" :placeholder="trans('site.front.form.password')"
-                                           class="form-control no-border-left" v-model="loginForm.password">
+                                    <label>
+                                        {{ trans('site.front.form.password') }}
+                                    </label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa lock-icon"></i></span>
+                                        </div>
+                                        <input type="password" name="password"
+                                            class="form-control no-border-left" v-model="loginForm.password">
+                                    </div>
                                 </div>
 
                                 <div class="form-group clearfix">
-                                    <a href="/auth/login?t=passwordreset" class="no-underline pull-left">
-                                        {{ trans('site.front.login.password-reset') }}
-                                    </a>
                                     <a href="/auth/login?t=password-change" class="no-underline pull-right">
                                         {{ trans('site.front.login.change-password') }}
                                     </a>
                                 </div>
 
-                                <button type="submit" class="btn btn-dark site-btn btn-block"
-                                        :disabled="isLoginDisabled">
-                                    <i class="fas fa-spinner fa-spin" v-if="isLoginDisabled"></i>
-                                    {{ loginText }}
-                                </button>
-
-                                <a :href="'/auth/login/facebook'" class="btn site-btn btn-block fb-link">
-                                    {{ trans('site.front.form.login-with-facebook') }}
-                                </a>
-
-                                <a :href="'/auth/login/google'" class="btn site-btn btn-block google-link">
-                                    {{ trans('site.front.form.login-with-google') }}
-                                </a>
-
-                                <button class="btn btn-dark-red site-btn btn-block" type="button" @click="toggleNewCustomer()">
-                                    {{ trans('site.front.login.register') }}
-                                </button>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <button class="btn outline-btn-global btn-block rounded-0" type="button" 
+                                            @click="toggleNewCustomer()">
+                                                {{ trans('site.front.login.register') }}
+                                        </button>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <button type="submit" class="btn site-btn-global btn-block rounded-0"
+                                            :disabled="isLoginDisabled">
+                                            <i class="fas fa-spinner fa-spin" v-if="isLoginDisabled"></i>
+                                            {{ loginText }}
+                                        </button>
+                                    </div>
+                                </div>
                             </div> <!-- end col-sm-6 -->
 
                         </div><!-- end row -->
@@ -264,6 +282,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
 </template>
 
 <script>
+    import FileUpload from '../../components/FileUpload.vue';
     export default {
 
         props: ['price', 'title', 'plan_id', 'user'],
@@ -319,6 +338,10 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
             }
         },
 
+        components: {
+            FileUpload,
+        },
+
         methods: {
             onManuscriptChange(e) {
                 let files = e.target.files;
@@ -339,13 +362,20 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                 $(".validation-err").remove();
             },
 
+            handleFileSelected(type, file) {
+                this.orderForm.manuscript = file;
+                this.checkAdditionalPrice();
+                console.log(this.orderForm);
+                $(".validation-err").remove();
+            },
+
             clearManuscript() {
                 this.manuscriptName = i18n.site.front.form['select-document-to-upload'];
                 this.orderForm.manuscript = null;
                 this.orderForm.fileName = '';
                 this.orderForm.fileLocation = '';
                 this.orderForm.additional_price = 0;
-                this.$refs.file.value = null;
+                this.$refs.fileUpload.files = null;
             },
 
             checkAdditionalPrice() {

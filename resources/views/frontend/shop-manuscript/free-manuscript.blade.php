@@ -13,18 +13,22 @@
 @stop
 
 @section('content')
-<div class="free-manuscript-page">
-    <div class="header" data-bg="https://www.forfatterskolen.no/images-new/free-manuscript-header.jpg">
-        <div class="container text-center position-relative">
-            <h1>{{ trans('site.front.free-manuscript.header-title') }}</h1>
-            <p>
-                {{ trans('site.front.free-manuscript.description') }}
-            </p>
-        </div>
+<div class="free-manuscript-page free-manuscript-page-new">
+    <div class="header" data-bg="https://www.forfatterskolen.no/images-new/checkout-top.png">
     </div> <!-- end header-->
 
-    <div class="body" data-bg="https://www.forfatterskolen.no/images-new/free-manuscript-body.png">
+    <div class="body">
         <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-12 col-md-offset-2">
+                    <div class="text-center mb-5">
+                        <h1>{{ trans('site.front.free-manuscript.header-title') }}</h1>
+                        <p>
+                            {{ trans('site.front.free-manuscript.description') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
             <div class="row form-container">
                 <div class="col-lg-8 col-md-12 col-md-offset-2">
                     <div class="card">
