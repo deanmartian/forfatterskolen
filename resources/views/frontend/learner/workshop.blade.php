@@ -151,11 +151,13 @@
 
 										</td>-->
 										<td>
-											<a href="#viewHelpWithModal" class="viewHelpWithBtn font-weight-bold"
-											   data-toggle="modal" data-details="{{ $coachingTimer->help_with }}"
-											   data-action="{{ route('learner.coaching-timer.help_with', $coachingTimer->id) }}">
-												{{ trans('site.learner.need-help-with-text') }}
-											</a>
+											@if ($coachingTimer->status !== 1)
+												<a href="#viewHelpWithModal" class="viewHelpWithBtn font-weight-bold"
+												data-toggle="modal" data-details="{{ $coachingTimer->help_with }}"
+												data-action="{{ route('learner.coaching-timer.help_with', $coachingTimer->id) }}">
+													{{ trans('site.learner.need-help-with-text') }}
+												</a>
+											@endif
 										</td>
 										<!--<td>
 											<?php
