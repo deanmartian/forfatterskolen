@@ -218,7 +218,10 @@
 								@if( $shopManuscript->status == 'Started' )
 									<tr>
 										<td>@if($shopManuscript->is_active)
-												<a href="{{ route('shop_manuscript_taken', ['id' => $shopManuscript->user->id, 'shop_manuscript_taken_id' => $shopManuscript->id]) }}">{{$shopManuscript->shop_manuscript->title}}</a>
+												<a href="{{ route('shop_manuscript_taken', [
+													'id' => $shopManuscript->user->id, 
+													'shop_manuscript_taken_id' => $shopManuscript->id]) }}">
+													{{$shopManuscript->shop_manuscript->title}}</a>
 											@else
 												{{$shopManuscript->shop_manuscript->title}}
 											@endif
@@ -228,7 +231,8 @@
 												{{ \App\Http\FrontendHelpers::assignmentType($shopManuscript->genre) }}
 											@endif
 										</td>
-										<td><a href="{{ route('admin.learner.show', $shopManuscript->user->id) }}">{{ $shopManuscript->user->full_name }}</a></td>
+										<td><a href="{{ route('admin.learner.show', $shopManuscript->user->id) }}">
+											{{ $shopManuscript->user->full_name }}</a></td>
 										<td>
 											@if ($shopManuscript->file)
 												<input type="checkbox" data-toggle="toggle" data-on="Locked"
@@ -1693,7 +1697,7 @@
 </div>
 
 <div id="editExpectedFinishModal" class="modal fade" role="dialog" data-backdrop="static">
-	<div class="modal-dialog modal-sm">
+	<div class="modal-dialog modal-md">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -1706,6 +1710,27 @@
 						<label>{{ trans('site.expected-finish') }}</label>
 						<input type="date" name="expected_finish" class="form-control" required>
 					</div>
+					<div class="form-group">
+						<label>Send Email</label> <br>
+						<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small" name="send_email">
+					</div>
+
+					<div class="email-container hide">
+						<?php
+							$emailTemplate = \App\Http\AdminHelpers::emailTemplate('New date feedback');
+						?>
+						<div class="form-group">
+							<label>{{ trans('site.subject') }}</label>
+							<input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}">
+						</div>
+
+						<div class="form-group">
+							<label>{{ trans('site.message') }}</label>
+							<textarea class="form-control tinymce" name="message" 
+							rows="6">{!! $emailTemplate->email_content !!}</textarea>
+						</div>
+					</div>
+
 					<div class="text-right">
 						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
 					</div>
@@ -1972,7 +1997,14 @@
         let action = $(this).data('action');
         modal.find('form').attr('action', action);
         modal.find('[name=expected_finish]').val(expected_finish);
+
+		modal.find("[name=send_email]").bootstrapToggle('off');
+		modal.find(".email-container").addClass('hide');
 	});
+
+	$("#editExpectedFinishModal [name=send_email]").change(function(){
+        $("#editExpectedFinishModal .email-container").toggleClass('hide');
+    });
 
 	$(".editAssignmentDateBtn").click(function() {
         let expected_finish = $(this).data('expected_finish');

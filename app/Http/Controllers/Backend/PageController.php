@@ -136,17 +136,29 @@ class PageController extends Controller
     public function updateExpectedFinish( $type, $id, Request $request )
     {
         $manuscript = null;
+        $emailType = '';
         if ($type === 'assignment') {
             $manuscript = AssignmentManuscript::find($id);
+            $emailType = 'assignment-manuscripts-new-feedback-date';
         }
 
         if ($type === 'shop-manuscript') {
             $manuscript = ShopManuscriptsTaken::find($id);
+            $emailType = 'shop-manuscripts-taken-new-feedback-date';
         }
 
         if ($manuscript) {
             $manuscript->expected_finish = $request->expected_finish;
             $manuscript->save();
+
+            if($request->has('send_email')) {
+                $user = $manuscript->user;
+                $to = $user->email;
+                $firstname = $user->first_name;
+                $message = str_replace([':firstname'], [$firstname], $request->message);
+                dispatch(new AddMailToQueueJob($to, $request->subject, $message, null,
+                null, null, $emailType, $manuscript->id));
+            }
 
             return redirect()->back()->with([
                 'errors'                => AdminHelpers::createMessageBag('Expected finish date updated successfully.'),
