@@ -76,7 +76,7 @@
                                                     <form class="webinar-search-container" method="get" 
                                                     action="{{ route('learner.webinar') }}">
                                                         <div class="input-group">
-                                                            <input type="hidden" name="tab" value="webinars">
+                                                            <input type="hidden" name="tab" value="replay">
                                                             <input type="text" class="form-control" name="search_replay"
                                                                 value="{{ Request::input('search_replay') }}"
                                                                 placeholder="{{ trans('site.learner.search-webinar-replay') }}"
@@ -86,7 +86,7 @@
                                                                     <i class="fa fa-search"></i>
                                                                 </button>
                                                                 <a class="btn" type="reset" 
-                                                                href="{{ route('learner.webinar') }}">
+                                                                href="{{ route('learner.webinar') }}?tab=replay">
                                                                     <i class="fa fa-redo"></i>
                                                                 </a>
                                                             </span>

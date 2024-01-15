@@ -457,7 +457,16 @@ class LearnerController extends Controller
                             ->leftJoin('lessons', 'lesson_contents.lesson_id', '=', 'lessons.id')
                             ->leftJoin('courses', 'lessons.course_id', '=', 'courses.id')
                             ->where('courses.id', '=', 17)
-                            ->whereIn('courses.id', $courses)
+                            ->whereIn('courses.id', $courses);
+
+                if ($request->exists('search_replay')) {
+                    $replayWebinars = $replayWebinars->where(function($query) use ($request) {
+                        $query->where('lesson_contents.title', 'like', '%'.$request->search_replay.'%')
+                        ->orWhere('tags', 'like', '%'.$request->search_replay.'%');
+                    });
+                }
+                
+        $replayWebinars = $replayWebinars                            
                             ->latest('lesson_contents.id')
                             ->paginate(10);
 
