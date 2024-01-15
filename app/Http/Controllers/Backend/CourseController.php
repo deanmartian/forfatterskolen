@@ -203,9 +203,9 @@ class CourseController extends Controller
             $checkImageExistCount = Course::where('course_image', 'LIKE', '%'.$course->course_image.'%')
                 ->get()->count();
             $image = substr($course->course_image, 1);
-            if( File::exists($image) && $checkImageExistCount < 2) :
+            /* if( File::exists($image) && $checkImageExistCount < 2) :
                 File::delete($image);
-            endif;
+            endif; */
             $destinationPath = 'storage/course-images/'; // upload path
             $extension = $request->course_image->extension(); // getting image extension
             $fileName = time().'.'.$extension; // renameing image
