@@ -2341,7 +2341,7 @@ class LearnerController extends Controller
         $address->save();
         
         $learner = Auth::user();
-        if ($learner->fiken_contact_id) {
+        if ($learner->fiken_contact_id && $learner->fiken_contact_id != 'none') {
             dispatch(new UpdateFikenContactDetailsJob($learner));
         }
 
