@@ -113,4 +113,22 @@ class SaleController extends Controller {
         ]);
     }
 
+    public function orderInvoiceSent(Request $request)
+    {
+        $order = $this->service->getOrder($request->order_id);
+        $success = false;
+
+        if ($order) {
+            $order->is_invoice_sent = $request->is_invoice_sent;
+            $order->save();
+            $success = TRUE;
+        }
+
+        return response()->json([
+            'data' => [
+                'success' => $success,
+            ]
+        ]);
+    }
+
 }

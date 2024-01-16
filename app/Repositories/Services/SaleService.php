@@ -108,4 +108,9 @@ class SaleService {
         return $this->order->payLater()->isProcessed()->paginate(20);
     }
 
+    public function getOrder($order_id)
+    {
+        return $this->order->find($order_id);
+    }
+
 }

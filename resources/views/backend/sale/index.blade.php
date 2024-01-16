@@ -4,6 +4,10 @@
     <title>Sales &rsaquo; Forfatterskolen Admin</title>
 @stop
 
+@section('styles')
+	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+@stop
+
 @section('content')
     <div class="page-toolbar">
         <h3><i class="fa fa-file-text-o"></i> Sales</h3>
@@ -183,6 +187,7 @@
                                         <th>{{ trans_choice('site.packages', 1) }}</th>
                                         <th>{{ trans_choice('site.learners', 1) }}</th>
                                         <th>{{ trans('site.date-sold') }}</th>
+                                        <th>Sent Invoice</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -202,6 +207,12 @@
                                                 </td>
                                                 <td>
                                                     {{ $order->created_at }}
+                                                </td>
+                                                <td>
+                                                    <input type="checkbox" data-toggle="toggle" data-on="Yes"
+                                                        class="is-invoice-sent-toggle" data-off="No"
+                                                        data-id="{{$order->id}}" data-size="mini"
+                                                         @if($order->is_invoice_sent) {{ 'checked' }} @endif>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -493,6 +504,7 @@
 @stop
 
 @section('scripts')
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script type="text/javascript">
 
         $(".sendEmailBtn").click(function(){
@@ -543,5 +555,20 @@
                 email_container.find('.message-container').empty().append(email_data ? email_data.message : '');
             })
         });
+
+        $(".is-invoice-sent-toggle").change(function(){
+               var order_id = $(this).attr('data-id');
+               var is_checked = $(this).prop('checked');
+               var check_val = is_checked ? 1 : 0;
+               $.ajax({
+                   type:'POST',
+                   url:'/sale/is-invoice-sent',
+                   headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                   data: { "order_id" : order_id, 'is_invoice_sent' : check_val },
+                   success: function(data){
+                    console.log(data);
+                   }
+               });
+		   });
     </script>
 @stop
