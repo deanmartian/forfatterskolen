@@ -483,7 +483,8 @@ class LearnerController extends Controller
                     ->where('user_id',Auth::user()->id)
                     ->where('courses.id',17) // just added this line to show all webinar pakke webinars
                     ->whereNotIn('webinars.id',[24, 25, 31])
-                    ->where('set_as_replay',0);
+                    ->where('set_as_replay',0)
+                    ->whereNull('courses_taken.deleted_at');
 
         if ($request->exists('search_upcoming')) {
             $subscriptionWebinars = $subscriptionWebinars->where('webinars.start_date', '>=' ,Carbon::today())
