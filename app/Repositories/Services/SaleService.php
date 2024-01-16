@@ -4,22 +4,29 @@ namespace App\Repositories\Services;
 
 use App\CoursesTaken;
 use App\EmailHistory;
+use App\Order;
 use App\ShopManuscriptsTaken;
 
 class SaleService {
 
     protected $coursesTaken;
     protected $shopManuscriptsTaken;
+    protected $order;
 
     /**
      * SaleService constructor.
      * @param CoursesTaken $coursesTaken
      * @param ShopManuscriptsTaken $shopManuscriptsTaken
      */
-    public function __construct(CoursesTaken $coursesTaken, ShopManuscriptsTaken $shopManuscriptsTaken)
+    public function __construct(
+        CoursesTaken $coursesTaken, 
+        ShopManuscriptsTaken $shopManuscriptsTaken,
+        Order $order
+    )
     {
         $this->coursesTaken = $coursesTaken;
         $this->shopManuscriptsTaken = $shopManuscriptsTaken;
+        $this->order = $order;
     }
 
     /**
@@ -94,6 +101,11 @@ class SaleService {
     public function shopManuscriptTaken($id)
     {
         return ShopManuscriptsTaken::find($id);
+    }
+
+    public function getPayLaterOrders()
+    {
+        return $this->order->payLater()->isProcessed()->paginate(20);
     }
 
 }

@@ -41,6 +41,8 @@ class SaleController extends Controller {
         $archiveManuscriptsTaken = $this->service->queryShopManuscriptsTaken(1);
         $newManuscriptsTaken = $this->service->queryShopManuscriptsTaken();
 
+        $payLaterOrders = $this->service->getPayLaterOrders();
+
         return view('backend.sale.index',
             compact(
                 'archiveCourses',
@@ -52,7 +54,8 @@ class SaleController extends Controller {
                 'archiveManuscriptsTaken',
                 'newManuscriptsTaken',
                 'followUpEmailShopManuscript',
-                'followUpEmailCourseTaken'
+                'followUpEmailCourseTaken',
+                'payLaterOrders'
             )
         );
     }

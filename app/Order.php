@@ -66,6 +66,16 @@ class Order extends Model {
         return $query->whereNotNull('svea_order_id');
     }
 
+    public function scopePayLater($query)
+    {
+        return $query->where('is_pay_later', 1);
+    }
+
+    public function scopeIsProcessed($query)
+    {
+        return $query->where('is_processed', 1);
+    }
+
     public function getItemAttribute()
     {
         if (in_array($this->attributes['type'], [2, 7])) {

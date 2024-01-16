@@ -11,30 +11,35 @@
 
     <div class="col-md-12">
         <ul class="nav nav-tabs margin-top">
-            <li @if( Request::input('p') != 'shop-manuscript' ) class="active" @endif>
+            <li @if( Request::input('p') == 'course' ) class="active" @endif>
                 <a href="?p=course">Course</a>
             </li>
             <li @if( Request::input('p') == 'shop-manuscript' ) class="active" @endif>
                 <a href="?p=shop-manuscript">Shop Manuscript</a>
+            </li>
+            <li @if( Request::input('p') == 'pay-later' ) class="active" @endif>
+                <a href="?p=pay-later">Pay Later</a>
             </li>
         </ul>
 
         <div class="tab-content">
             <div class="tab-pane fade in active">
 
-                <ul class="nav nav-tabs margin-top">
-                    <li @if( Request::input('tab') != 'archive' ) class="active" @endif>
-                        <a href="?p={{ Request::input('p') }}&tab=new">{{ trans('site.new') }}</a>
-                    </li>
-                    <li @if( Request::input('tab') == 'archive' ) class="active" @endif>
-                        <a href="?p={{ Request::input('p') }}&tab=archive">{{ trans('site.archive') }}</a>
-                    </li>
-                </ul>
+                @if( Request::input('p') != 'pay-later')
+                    <ul class="nav nav-tabs margin-top">
+                        <li @if( Request::input('tab') != 'archive' ) class="active" @endif>
+                            <a href="?p={{ Request::input('p') }}&tab=new">{{ trans('site.new') }}</a>
+                        </li>
+                        <li @if( Request::input('tab') == 'archive' ) class="active" @endif>
+                            <a href="?p={{ Request::input('p') }}&tab=archive">{{ trans('site.archive') }}</a>
+                        </li>
+                    </ul>
+                @endif
 
                 <div class="tab-content">
                     <div class="tab-pane fade in active">
 
-                        @if( Request::input('p') != 'shop-manuscript' )
+                        @if( Request::input('p') == 'course' )
 
                             @if( Request::input('tab') != 'archive' )
                                 <div class="table-users table-responsive">
@@ -170,6 +175,41 @@
                             <div class="pull-right">{{$archiveCourses->appends(request()->except('page'))}}</div>
                             @endif
 
+                        @elseif( Request::input('p') == 'pay-later' )
+                            <div class="table-users table-responsive">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>{{ trans_choice('site.packages', 1) }}</th>
+                                        <th>{{ trans_choice('site.learners', 1) }}</th>
+                                        <th>{{ trans('site.date-sold') }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($payLaterOrders as $order)
+                                            <tr>
+                                                <td>
+                                                    <a href="{{ route('admin.course.show', 
+                                                        $order->package->course_id) }}?section=packages">
+                                                        {{ $order->package->course->title . ' - ' .
+                                                        $order->package->variation }}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('admin.learner.show', $order->user->id) }}">
+                                                        {{ $order->user->full_name }}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    {{ $order->created_at }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+
+                                <div class="pull-right">{{$payLaterOrders->appends(request()->except('page'))}}</div>
+                            </div>
                         @else <!-- shop manuscript -->
                             @if( Request::input('tab') != 'archive' )
                                 <div class="table-users table-responsive">
