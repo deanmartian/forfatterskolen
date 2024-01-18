@@ -39,9 +39,9 @@
                     <div class="col-md-3" style="margin-bottom: 10px">
                         <div class="panel panel-default">
                             <div class="panel-body">
-                                <div class="webinar-img">
+                                {{-- <div class="webinar-img">
                                     <img src="{{ $webinar->image ? $webinar->image : asset('images/no_image.png') }}">
-                                </div>
+                                </div> --}}
                                 <div class="pull-right">
                                     <a class="btn btn-xs btn-info editWebinarBtn"
                                     data-toggle="modal"
