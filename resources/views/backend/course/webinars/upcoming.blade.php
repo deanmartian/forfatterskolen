@@ -175,7 +175,9 @@
                                                 @else
                                                     {{ $webinar_editor->name }} <br>
                                                 @endif
-                                                {{ $webinar_editor->presenter_url }}
+                                                <a href="{{ $webinar_editor->presenter_url }}" style="display: contents">
+                                                    {{ $webinar_editor->presenter_url }}
+                                                </a>
                                             </div>
                                         </div>
                                         <br />
