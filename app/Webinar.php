@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 class Webinar extends Model
 {
     protected $table = 'webinars';
-    protected $fillable = ['course_id', 'title', 'description', 'start_date', 'image' , 'link', 'set_as_replay', 'status'];
+    protected $fillable = [
+        'course_id', 'title', 'description', 'host', 'start_date', 'image' , 'link', 'set_as_replay', 'status'
+    ];
 
     protected static function boot()
     {
