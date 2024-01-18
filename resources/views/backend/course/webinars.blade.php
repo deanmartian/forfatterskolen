@@ -102,7 +102,9 @@
 										@endif
 
 											<i class="fa fa-calendar-o"></i> <b>Scheduled Registration:</b>
-											<span>{{ $webinar->schedule ? $webinar->schedule->date : NULL }}</span>
+											<span>{{ $webinar->schedule ? $webinar->schedule->date : NULL }}</span> <br>
+											<i class="fa fa-user-o"></i> <b> Host:</b>
+											<span>{{ $webinar->host }}</span>
 
 										<!-- <i class="fa fa-users"></i>&nbsp;&nbsp;Attendees (20) -->
 										</p>
@@ -451,6 +453,10 @@
           	<label>{{ trans('site.description') }}</label>
           	<textarea class="form-control" name="description" required rows="6"></textarea>
           </div>
+		  <div class="form-group">
+			<label>Host</label>
+			<input type="text" name="host" class="form-control">
+		  </div>
           <div class="form-group">
           	<label>{{ trans('site.start-date') }}</label>
           	<input type="datetime-local" name="start_date" class="form-control" required>
@@ -511,6 +517,10 @@
           	<label>{{ trans('site.description') }}</label>
           	<textarea class="form-control" name="description" required rows="6"></textarea>
           </div>
+		  <div class="form-group">
+			<label>Host</label>
+			<input type="text" name="host" class="form-control">
+		  </div>
           <div class="form-group">
           	<label>{{ trans('site.start-date') }}</label>
           	<input type="datetime-local" name="start_date" class="form-control" required>
@@ -873,6 +883,9 @@
 			let webinar_id = $(this).data('webinar-id');
 			let self = this;
             self.disabled = true;
+
+			// Clear the DataTable before adding new data
+            registrantTable.clear().draw();
 
             $.ajax({
                 type:'GET',

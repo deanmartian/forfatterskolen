@@ -35,6 +35,7 @@ use App\Http\AdminHelpers;
 use App\Http\Requests\CourseCreateRequest;
 use App\Http\Requests\CourseUpdateRequest;
 use App\Services\CourseService;
+use App\Webinar;
 use File;
 use Maatwebsite\Excel\Excel;
 
@@ -1229,5 +1230,14 @@ class CourseController extends Controller
 
         $excel = \App::make('excel');
         return $excel->download(new GenericExport($learnerList, $headers), 'Course Buyers 2021.xlsx');
+    }
+
+    public function allUpcomingWebinars()
+    {
+        $webinars = Webinar::where('start_date', '>=' , now()->format('Y-m-d H:i:s'))
+            ->oldest('start_date')
+            ->paginate(20);
+        
+        return view('backend.course.webinars.upcoming', compact('webinars'));
     }
 }

@@ -32,6 +32,7 @@ class WebinarController extends Controller
         $webinar->course_id = $course->id;
         $webinar->title = $request->title;
         $webinar->description = $request->description;
+        $webinar->host = $request->host;
         $webinar->start_date = $request->start_date;
         $webinar->link = $request->link;
 
@@ -142,6 +143,7 @@ class WebinarController extends Controller
         $webinar = Webinar::findOrFail($id);
         $webinar->title = $request->title;
         $webinar->description = $request->description;
+        $webinar->host = $request->host;
         $webinar->start_date = $request->start_date;
         $webinar->link = $request->link;
 

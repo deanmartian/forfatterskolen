@@ -31,6 +31,7 @@
 	<a class="btn btn-primary margin-top" href="{{route('admin.course-testimonial.index')}}">{{ trans_choice('site.testimonials',2) }}</a>
 	<a class="btn btn-primary margin-top" href="{{route('admin.survey.index')}}">{{ trans('site.surveys') }}</a>
 	<a class="btn btn-primary margin-top" href="{{route('admin.shareable-course.index')}}">Shareable Course</a>
+	<a class="btn btn-primary margin-top" href="{{route('admin.course.all-upcoming-webinars')}}">Webinars</a>
 	<div class="table-users table-responsive">
 		<table class="table">
 			<thead>

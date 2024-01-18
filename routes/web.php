@@ -801,6 +801,7 @@ Route::group([
 
         // Courses Route
         Route::get('course/get-all-learners', 'CourseController@getAllPaidLearners'); // get all learners that avail a paid course
+        Route::get('course/webinars', 'CourseController@allUpcomingWebinars')->name('admin.course.all-upcoming-webinars');
         Route::resource('course', 'CourseController', [
             'names' => [
                 'index' => 'admin.course.index',
@@ -1296,6 +1297,7 @@ Route::group([
             Route::post('/send-email/{id}/{parent}', 'SaleController@sendEmail')
                 ->name('admin.sales.send-email');
             Route::get('/move-to-archive/{id}', 'SaleController@moveToArchive')->name('admin.sales.move-to-archive');
+            Route::post('/is-invoice-sent', 'SaleController@orderInvoiceSent');
 
         });
 
