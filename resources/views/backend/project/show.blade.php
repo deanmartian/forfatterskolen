@@ -156,7 +156,14 @@
                                 </td>
                                 <td>
                                     @if ($copy_editing->editor_id)
-                                        {{ $copy_editing->editor->full_name }}
+                                        {{ $copy_editing->editor->full_name }} <br>
+
+                                        <button class="btn btn-xs btn-primary assignEditorBtn" data-toggle="modal"
+                                                data-target="#assignEditorModal"
+                                                data-editor="{{ json_encode($copy_editing->editor) }}"
+                                                data-action="{{ route($assignEditorRoute, ['id' => $copy_editing->id, 'type' => 1]) }}">
+                                            {{ trans('site.assign-editor') }}
+                                        </button>
                                     @else
                                         <button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal"
                                                 data-target="#assignEditorModal"
@@ -968,6 +975,10 @@
             let modal = $('#assignEditorModal');
             modal.find('select').val(editor);
             modal.find('form').attr('action', action);
+
+            if (editor) {
+                modal.find('form').find('select[name=editor_id]').val(editor.id).trigger('change');
+            }
         });
 
         $(".setOtherServiceFinishDateBtn").click(function(){
