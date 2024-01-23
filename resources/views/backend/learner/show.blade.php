@@ -22,6 +22,19 @@
 		.d-none {
 			display: none;
 		}
+
+		.started-container {
+			display: inline-block;
+			width: 100%;
+		}
+
+		.started-container a {
+			display: none;
+		}
+
+		.started-container:hover a {
+			display: inline-block;
+		}
 	</style>
 @stop
 
@@ -222,14 +235,20 @@
 												<br />
 												{{ trans('site.plan') }}: {{ $courseTaken->package->variation }} <br />
 												@if( $courseTaken->hasStarted )
-													{{ trans('site.started-at') }}: {{ Carbon\Carbon::parse($courseTaken->started_at)->format('M d, Y H.i') }}
-													@php
-														$started_at_parse = \Carbon\Carbon::parse($courseTaken->started_at);
-													@endphp
-													<a href="#" class="btn btn-primary btn-xs setCourseTakenStartedAtBtn" data-toggle="modal"
-													   data-target="#updateCourseTakenStartedAtModal"
-													   data-started_at="{{ $started_at_parse->format('Y-m-d').'T'.$started_at_parse->format('H:i') }}"
-														data-action="{{ route('admin.course_taken.updated_started_at', $courseTaken->id) }}">Edit</a>
+													<div class="started-container">
+														<span>
+															{{ trans('site.started-at') }}: 
+															{{ Carbon\Carbon::parse($courseTaken->started_at)->format('M d, Y H.i') }}
+														</span>
+														@php
+															$started_at_parse = \Carbon\Carbon::parse($courseTaken->started_at);
+														@endphp
+														<a href="#" class="btn btn-primary btn-xs setCourseTakenStartedAtBtn" data-toggle="modal"
+														data-target="#updateCourseTakenStartedAtModal"
+														data-started_at="{{ $started_at_parse->format('Y-m-d').'T'.$started_at_parse->format('H:i') }}"
+															data-action="{{ route('admin.course_taken.updated_started_at', $courseTaken->id) }}">Edit</a>
+													</div>
+													
 												@else
 													{{ trans('site.started-at') }}: <em>Not yet started</em>
 												@endif
