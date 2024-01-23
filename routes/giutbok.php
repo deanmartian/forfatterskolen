@@ -109,6 +109,9 @@ Route::group([
         Route::get('/other-service/{id}/download/{type}', 'OtherServiceController@downloadOtherServiceDoc')->name('g-admin.other-service.download-doc'); // Download assignment feedback
         Route::delete('/other-service/{id}/coaching-timer/delete', 'OtherServiceController@deleteCoaching')->name('g-admin.other-service.coaching-timer.delete');
 
+        Route::post('/task/save', 'ProjectController@saveTask')->name('g-admin.project-task.save');
+        Route::post('/project/task/{id}/finish', 'ProjectController@finishTask');
+        Route::delete('/project/task/{id}/delete', 'ProjectController@deleteTask');
         Route::post('/project/activity/save', 'ProjectController@saveActivity');
         Route::delete('/project/activity/{id}/delete', 'ProjectController@deleteActivity');
         Route::post('/project/{id}/notes/save', 'ProjectController@saveNote');
