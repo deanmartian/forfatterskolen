@@ -105,7 +105,7 @@ class SaleService {
 
     public function getPayLaterOrders()
     {
-        return $this->order->payLater()->isProcessed()->paginate(20);
+        return $this->order->payLater()->isProcessed()->latest()->paginate(20);
     }
 
     public function getOrder($order_id)

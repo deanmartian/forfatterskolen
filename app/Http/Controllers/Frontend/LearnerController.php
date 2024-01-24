@@ -894,7 +894,7 @@ class LearnerController extends Controller
                                 }
                             } else {
                                 // added the && to check if the course taken is not yet expired
-                                if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now()) &&
+                                if (\Carbon\Carbon::parse($assignment->submission_date)->gt(Carbon::now()->subDay()) &&
                                     \Carbon\Carbon::parse($courseTaken->end_date)->gt(Carbon::now())) {
                                     if ($assignment->max_words === 0) {
                                         $noWordLimitAssignments[] = $assignment;
