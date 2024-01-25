@@ -110,6 +110,13 @@
                                 </td>
                             </tr>
 
+                            <tr v-if="orderForm.is_pay_later">
+                                <td>Moms 25%:</td>
+                                <td class="text-right">
+                                    {{ orderForm.additional | currency('Kr', 2, currencyOptions) }}
+                                </td>
+                            </tr>
+
                             <tr>
                                 <td>{{ trans('site.front.total') }}:</td>
                                 <td class="text-right" style="width: 150px">
@@ -317,37 +324,49 @@
                     </wizard-button> -->
                 </div>
                 <div class="wizard-footer-right">
-                    <template v-if="props.activeTabIndex === 0">
-                        <button type="button" class="vipps-btn" slot="custom-buttons-right" @click="vippsCheckout();"
-                                :disabled="isLoading">
-                            <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i>
-                            <span>Hurtigutsjekk med</span>
-                            <img src="/images-new/vipps.png" class="inline" alt="vipps-buy-button"
-                                 :style="isLoading ? 'opacity: .8;' : ''">
-                        </button>
-                    </template>
+                    <template v-if="userHasPaidCourse">
+                        <template v-if="props.activeTabIndex === 0">
+                            <button type="button" class="vipps-btn" slot="custom-buttons-right" @click="vippsCheckout();"
+                                    :disabled="isLoading">
+                                <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i>
+                                <span>Hurtigutsjekk med</span>
+                                <img src="/images-new/vipps.png" class="inline" alt="vipps-buy-button"
+                                    :style="isLoading ? 'opacity: .8;' : ''">
+                            </button>
+                        </template>
 
-                    <template v-if="!currentUser || (currentUser && currentUser.could_buy_course)">
-                        <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab(); scrollTop()" class="wizard-footer-right"
-                        :class="{'w-100': props.activeTabIndex === 1 }"
-                                       :style="props.fillButtonStyle" :disabled="!currentUser && !isNewCustomer && props.activeTabIndex > 0">
-                            Til betaling
+                        <template v-if="!currentUser || (currentUser && currentUser.could_buy_course)">
+                            <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab(); scrollTop()" 
+                            class="wizard-footer-right"
+                            :class="{'w-100': props.activeTabIndex === 1 }"
+                                        :style="props.fillButtonStyle" :disabled="!currentUser && !isNewCustomer 
+                                        && props.activeTabIndex > 0">
+                                Til betaling
+                            </wizard-button>
+
+                            <!-- v-else before -->
+                            <wizard-button v-if="props.isLastStep && !isSveaPayment" @click.native="props.nextTab()" 
+                                class="wizard-footer-right finish-button"
+                                        :style="props.fillButtonStyle" :disabled="isLoading && props.isLastStep">
+                                <i class="fa fa-pulse fa-spinner" v-if="isLoading && props.isLastStep"></i>
+                                {{props.isLastStep ? trans('site.front.buy')
+                                : trans('site.learner.next-text')}}</wizard-button>
+                        </template>
+
+                        <template v-if="props.activeTabIndex === 0">
+                            <br>
+                            <span class="d-block mt-3">
+                                {{ trans('site.front.checkout.note') }}
+                            </span>
+                        </template>
+                    </template>
+                    <template v-else>
+                        <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab(); scrollTop()" 
+                            class="wizard-footer-right w-100" :style="props.fillButtonStyle">
+                                Betal senere
                         </wizard-button>
-
-                        <!-- v-else before -->
-                        <wizard-button v-if="props.isLastStep && !isSveaPayment" @click.native="props.nextTab()" class="wizard-footer-right finish-button"
-                                       :style="props.fillButtonStyle" :disabled="isLoading && props.isLastStep">
-                            <i class="fa fa-pulse fa-spinner" v-if="isLoading && props.isLastStep"></i>
-                            {{props.isLastStep ? trans('site.front.buy')
-                            : trans('site.learner.next-text')}}</wizard-button>
                     </template>
-
-                    <template v-if="props.activeTabIndex === 0">
-                        <br>
-                        <span class="d-block mt-3">
-                            {{ trans('site.front.checkout.note') }}
-                        </span>
-                    </template>
+                    
                 </div>
             </template> <!-- end buttons slot -->
 
@@ -364,7 +383,8 @@ import FileUpload from '../../components/FileUpload.vue';
         props: {
             user: Object,
             shopManuscript: Object,
-            assignmentTypes: Array
+            assignmentTypes: Array,
+            userHasPaidCourse: Boolean
         },
 
         data() {
@@ -391,6 +411,8 @@ import FileUpload from '../../components/FileUpload.vue';
                     coaching_time_later: false,
                     item_type: 2,
                     shop_manuscript_id: this.shopManuscript.id,
+                    is_pay_later: !this.userHasPaidCourse,
+                    additional: !this.userHasPaidCourse ? (this.shopManuscript.full_payment_price * .25) : 0
                 },
                 currencyOptions: {
                     thousandsSeparator: '.',
@@ -417,7 +439,7 @@ import FileUpload from '../../components/FileUpload.vue';
 
         computed: {
             totalPrice() {
-                return parseFloat(this.orderForm.price) - this.orderForm.totalDiscount;
+                return parseFloat(this.orderForm.price) - this.orderForm.totalDiscount + parseFloat(this.orderForm.additional);
             }
         },
 
@@ -505,6 +527,11 @@ import FileUpload from '../../components/FileUpload.vue';
                 return axios.post(this.requestUrl+'/checkout/validate-form', formData).then(response => {
                     this.removeValidationError();
                     this.getCurrentUser();
+
+                    if (response.data.redirect_url) {
+                        window.location.href = response.data.redirect_url;
+                    }
+
                     $("#checkout-display").html(response.data);
                     return true;
 

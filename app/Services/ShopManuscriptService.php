@@ -100,6 +100,11 @@ class ShopManuscriptService {
             $request->only('street', 'zip', 'city', 'phone')
         );
 
+
+        if (filter_var($request->is_pay_later, FILTER_VALIDATE_BOOLEAN)) {
+            return $this->processPayLaterOrder($request);
+        }
+
         return $this->generateSveaCheckout($request);
     }
 
@@ -127,6 +132,22 @@ class ShopManuscriptService {
                 Address::create(array_merge($address, ['user_id' => $new_user->id]));
             endif;
         endif;
+    }
+
+    public function processPayLaterOrder(Request $request)
+    {
+        $orderRecord = $this->createOrder($request);
+
+        if (!$request->has('order_type') ||
+            ($request->has('order_type') && $request->order_type === Order::MANUSCRIPT_TYPE)) {
+            $this->createOrderShopManuscript($orderRecord->id, $request);
+        }
+
+        $shopManuscript = ShopManuscript::find($orderRecord->item_id);
+
+        return [
+            'redirect_url' => url('/shop-manuscript/' . $shopManuscript->id .'/thankyou?pl_ord='.$orderRecord->id)
+        ];
     }
 
     /**
@@ -266,6 +287,11 @@ class ShopManuscriptService {
         $newOrder['discount']   = $discount;
         $newOrder['payment_mode_id']   = $request->payment_mode_id;
         $newOrder['is_processed'] = 0;
+        $newOrder['is_pay_later'] = filter_var($request->is_pay_later, FILTER_VALIDATE_BOOLEAN);
+
+        if ($request->has('additional')) {
+            $newOrder['additional'] = $request->additional;
+        }
 
         $order = Order::create($newOrder);
 
@@ -364,6 +390,7 @@ class ShopManuscriptService {
         $shopManuscriptTaken->is_active             = false;
         $shopManuscriptTaken->coaching_time_later   = $shopManuscriptOrder->coaching_time_later;
         $shopManuscriptTaken->is_welcome_email_sent = 0;
+        $shopManuscriptTaken->is_pay_later          = $order->is_pay_later;
         $shopManuscriptTaken->save();
 
         return $shopManuscriptTaken;

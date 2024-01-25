@@ -15,7 +15,7 @@
 
     <div class="col-md-12">
         <ul class="nav nav-tabs margin-top">
-            <li @if( Request::input('p') == 'course' ) class="active" @endif>
+            <li @if( Request::input('p') == 'course' || !Request::has('p') ) class="active" @endif>
                 <a href="?p=course">Course</a>
             </li>
             <li @if( Request::input('p') == 'shop-manuscript' ) class="active" @endif>
@@ -194,11 +194,17 @@
                                         @foreach ($payLaterOrders as $order)
                                             <tr>
                                                 <td>
-                                                    <a href="{{ route('admin.course.show', 
-                                                        $order->package->course_id) }}?section=packages">
-                                                        {{ $order->package->course->title . ' - ' .
-                                                        $order->package->variation }}
-                                                    </a>
+                                                    @if (in_array($order->type, [1, 6]))
+                                                        <a href="{{ route('admin.course.show', 
+                                                            $order->package->course_id) }}?section=packages">
+                                                            {{ $order->package->course->title . ' - ' .
+                                                            $order->package->variation }}
+                                                        </a>
+                                                    @endif
+
+                                                    @if (in_array($order->type, [2, 7]))
+                                                        {{ $order->item  }}
+                                                    @endif
                                                 </td>
                                                 <td>
                                                     <a href="{{ route('admin.learner.show', $order->user->id) }}">

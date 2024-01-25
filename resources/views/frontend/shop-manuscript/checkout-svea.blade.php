@@ -12,7 +12,8 @@
 		<div class="body">
 			<div class="container">
 				<shop-manuscript-checkout :user="{{ json_encode($user) }}" :shop-manuscript="{{ json_encode($shopManuscript) }}"
-										  :assignment-types="{{ json_encode($assignmentTypes) }}">
+										  :assignment-types="{{ json_encode($assignmentTypes) }}"
+										  :user-has-paid-course="{{ json_encode($userHasPaidCourse) }}">
 				</shop-manuscript-checkout>
 			</div>
 		</div>

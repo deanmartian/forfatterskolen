@@ -1048,6 +1048,23 @@ class FrontendHelpers
         return Project::where('user_id', $user_id)->where('id', $project_id)->firstOrFail();
     }
 
+    public static function userHasPaidCourse()
+    {
+        $hasPaidCourse = false;
+        if( !\Auth::guest() ) :
+            foreach( \Auth::user()->coursesTakenNotOld as $courseTaken ) {
+                if( $courseTaken->package->course->type != "Free" && $courseTaken->is_active ) {
+                    if ($courseTaken->package->course->is_free != 1) {
+                        $hasPaidCourse = true;
+                        break;
+                    }
+                }
+            }
+        endif;
+
+        return $hasPaidCourse;
+    }
+
     public static function checkIfLearnerHasAccessToLesson( $user_id, $course_id, $lesson_id )
     {
         $user = User::find($user_id);

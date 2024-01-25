@@ -57,8 +57,9 @@ class ShopManuscriptController extends Controller
 
     public function checkout($id)
     {
-      $shopManuscript = ShopManuscript::findOrFail($id);
+        $shopManuscript = ShopManuscript::findOrFail($id);
         $user = \Auth::user();
+        $userHasPaidCourse = FrontendHelpers::userHasPaidCourse();
 
         if ($user) {
             $user['address'] = $user->address;
@@ -66,10 +67,13 @@ class ShopManuscriptController extends Controller
                 'parent' => 'shop-manuscript',
                 'parent_id' => $shopManuscript->id
             ]);
+        } else {
+            return view('frontend.shop-manuscript.login');
         }
         $assignmentTypes = FrontendHelpers::assignmentType();
 
-      return view('frontend.shop-manuscript.checkout-svea', compact('shopManuscript', 'user', 'assignmentTypes'));
+        return view('frontend.shop-manuscript.checkout-svea', compact('shopManuscript', 'user', 'assignmentTypes', 
+        'userHasPaidCourse'));
     }
 
     /**
@@ -259,11 +263,13 @@ class ShopManuscriptController extends Controller
     public function thankyou($id, Request $request, ShopManuscriptService $shopManuscriptService)
     {
         // check if from svea payment
-        if ($request->has('svea_ord')) {
-            $order_id = $request->get('svea_ord');
+        if ($request->has('svea_ord') || $request->has('pl_ord')) {
+            $order_id = $request->input('svea_ord') ?? $request->input('pl_ord');
             $order = Order::find($order_id);
 
-            SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
+            if ($request->has('svea_ord')) {
+                SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
+            }
 
             // add shop manuscript to user
             if (!$order->is_processed) {
