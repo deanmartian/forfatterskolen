@@ -67,6 +67,8 @@ class RegisterController extends Controller
         if ($request->has('redirect')) {
             if ($request->redirect === 'redeem-gift') {
                 return redirect(route('front.gift.show-redeem'));
+            } else {
+                return redirect()->to($request->redirect);
             }
         }
 
