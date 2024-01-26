@@ -144,9 +144,14 @@ class ShopManuscriptService {
         }
 
         $shopManuscript = ShopManuscript::find($orderRecord->item_id);
+        $redirectUrl = url('/shop-manuscript/' . $shopManuscript->id .'/thankyou?pl_ord='.$orderRecord->id);
+
+        if ($request->has('order_type') && $request->order_type === Order::MANUSCRIPT_UPGRADE_TYPE) {
+            $redirectUrl = route('learner.upgrade',['pl_ord' => $orderRecord->id]);
+        }
 
         return [
-            'redirect_url' => url('/shop-manuscript/' . $shopManuscript->id .'/thankyou?pl_ord='.$orderRecord->id)
+            'redirect_url' => $redirectUrl
         ];
     }
 

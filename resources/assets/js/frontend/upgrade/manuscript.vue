@@ -32,15 +32,19 @@
                                 </td>
                                 <td>
                                     <h3 class="mb-4"> {{ trans('site.learner.upgrade-to-text') }} </h3>
-                                    <div class="custom-radio mb-1" v-for="shopManuscriptUpgrade in shopManuscriptUpgrades">
+                                    <div class="custom-radio mb-1" v-for="shopManuscriptUpgrade in shopManuscriptUpgrades" 
+                                        :key="shopManuscriptUpgrade.upgrade_shop_manuscript_id">
                                         <input type="radio" name="shop_manuscript_id"
                                                :value="shopManuscriptUpgrade.upgrade_shop_manuscript_id"
                                                :id="shopManuscriptUpgrade.upgrade_manuscript.title"
-                                               v-model="upgradeForm.shop_manuscript_id" @change="packageChanged(shopManuscriptUpgrade)">
+                                               v-model="upgradeForm.shop_manuscript_id" 
+                                               @change="packageChanged(shopManuscriptUpgrade)">
                                         <label :for="shopManuscriptUpgrade.upgrade_manuscript.title">
                                             {{ shopManuscriptUpgrade.upgrade_manuscript.title }}
                                             - {{ shopManuscriptUpgrade.upgrade_manuscript.max_words }} ord
-                                            ({{ shopManuscriptUpgrade.price_formatted }})</label>
+                                            ({{ (parseFloat(shopManuscriptUpgrade.price) 
+                                                + parseFloat(shopManuscriptUpgrade.price_25_additional)) 
+                                                | currency('Kr', 2, currencyOptions) }})</label>
                                     </div>
                                 </td>
                             </tr>
@@ -53,6 +57,12 @@
                                 <td class="text-right h3">{{ trans('site.front.price') }}:</td>
                                 <td class="text-right h3 text-red" width="150">
                                     {{ upgradeForm.price | currency('Kr', 2, currencyOptions) }}
+                                </td>
+                            </tr>
+                            <tr v-if="upgradeForm.additional > 0">
+                                <td class="text-right h3">Moms 25%:</td>
+                                <td class="text-right h3 text-red" width="150">
+                                    {{ upgradeForm.additional | currency('Kr', 2, currencyOptions) }}
                                 </td>
                             </tr>
                             <tr>
@@ -183,6 +193,7 @@
                     mobile_number: "",
                     order_type: 7,
                     shop_manuscript_id: null,
+                    additional: 0
                 },
                 currencyOptions: {
                     thousandsSeparator: '.',
@@ -195,7 +206,7 @@
 
         computed: {
             totalPrice() {
-                return this.upgradeForm.price;
+                return parseFloat(this.upgradeForm.price) + parseFloat(this.upgradeForm.additional);
             }
         },
 
@@ -213,8 +224,8 @@
             },
 
             packageChanged(shopManuscriptUpgrade) {
-                console.log(shopManuscriptUpgrade);
                 this.upgradeForm.price = shopManuscriptUpgrade.price;
+                this.upgradeForm.additional = shopManuscriptUpgrade.price_25_additional;
             },
 
             validateUpgrade() {
@@ -234,7 +245,12 @@
 
                 return axios.post(self.requestUrl+'/validate-form', self.upgradeForm).then(response => {
 
-                    $("#checkout-display").html(response.data);
+                    if (response.data.redirect_url) {
+                        window.location.href = response.data.redirect_url;
+                    } else {
+                        $("#checkout-display").html(response.data);
+                    }
+                    
                     return true;
 
                 }).catch(error => {

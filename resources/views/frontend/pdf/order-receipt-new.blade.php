@@ -187,7 +187,7 @@
                         {{ $order->item }}
                     @endif
                 </td>
-                <td>{{ in_array($order->type, [2, 6, 10]) ? '25%' : '0%' }}</td>
+                <td>{{ in_array($order->type, [2, 7, 10]) ? '25%' : '0%' }}</td>
                 <td>1 stk</td>
                 <td>{{ $order->price_formatted }}</td>
                 <td>{{ $order->total_formatted }}</td>

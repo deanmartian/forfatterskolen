@@ -1857,11 +1857,13 @@ class LearnerController extends Controller
     {
 
         // check if from svea payment
-        if ($request->has('svea_ord')) {
-            $order_id = $request->get('svea_ord');
+        if ($request->has('svea_ord') || $request->has('pl_ord')) {
+            $order_id = $request->get('svea_ord') ?? $request->input('pl_ord');
             $order = Order::find($order_id);
 
-            SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
+            if ($request->has('svea_ord')) {
+                SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
+            }
 
             // add shop manuscript to user
             if (!$order->is_processed) {
@@ -3539,6 +3541,13 @@ class LearnerController extends Controller
         );
 
         $request->merge(['parent' => 'manuscript-taken', 'parent_id' => $manuscriptTakenId]);
+
+        if ($request->additional > 0) {
+            $request->merge([
+                'is_pay_later' => true
+            ]);
+            return response()->json($shopManuscriptService->processPayLaterOrder($request));
+        }
 
         return response()->json($shopManuscriptService->generateSveaCheckout($request));
     }

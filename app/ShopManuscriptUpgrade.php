@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\FrontendHelpers;
 use Illuminate\Database\Eloquent\Model;
 
 class ShopManuscriptUpgrade extends Model
@@ -9,7 +10,10 @@ class ShopManuscriptUpgrade extends Model
     protected $table = 'shop_manuscripts_upgrade';
     protected $fillable = ['shop_manuscript_id', 'upgrade_shop_manuscript_id', 'price'];
     protected $with = ['upgrade_manuscript'];
-    protected $appends = ['price_formatted'];
+    protected $appends = [
+        'price_formatted',
+        'price_25_additional'
+    ];
 
     public function upgrade_manuscript()
     {
@@ -19,6 +23,15 @@ class ShopManuscriptUpgrade extends Model
     public function getPriceFormattedAttribute()
     {
         return \App\Http\FrontendHelpers::currencyFormat($this->attributes['price']);
+    }
+
+    public function getPrice25AdditionalAttribute()
+    {
+        $userHasPaidCourse = FrontendHelpers::userHasPaidCourse();
+        if ($userHasPaidCourse) {
+            return 0;
+        }
+        return $this->attributes['price'] * .25;
     }
 
 }
