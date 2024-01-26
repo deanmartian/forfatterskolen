@@ -70,6 +70,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
+use Illuminate\Support\Facades\Log as FacadesLog;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
 include_once($_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php');
@@ -1783,6 +1784,9 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
      * @return \Illuminate\Http\RedirectResponse
      */
     public function gotoWebinarEmailRegistration($webinar_key, $email) {
+        FacadesLog::info("---------------- inside gotowebinaremail registration --------------");
+        FacadesLog::info($webinar_key);
+        FacadesLog::info($email);
         $webinar_key    = decrypt($webinar_key);
         $email          = decrypt($email);
         $webinar        = Webinar::where('link', '=', $webinar_key)->first();
