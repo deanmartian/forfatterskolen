@@ -31,7 +31,10 @@
                         <div class="tab-content">
                             <div id="login" class="tab-pane fade @if(!Request::input('t')) in active @endif" role="tabpanel">
 
-                                <h1 class="my-5 text-center">{{ trans('site.front.form.login') }}</h1>
+                                {{-- <h1 class="mt-5 text-center">{{ trans('site.front.form.login') }}</h1> --}}
+                                <h3 class="w-75 text-center mx-auto my-5">
+                                    {{ trans('site.front.checkout.login-or-register-note') }}
+                                </h3>
 
                                 <form id="checkoutLogin" action="{{ route('frontend.login.checkout.store') }}" method="POST">
                                     {{csrf_field()}}
