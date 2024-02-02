@@ -70,6 +70,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
+use App\Http\PowerOffice;
 use Illuminate\Support\Facades\Log as FacadesLog;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
@@ -608,11 +609,13 @@ class HomeController extends Controller
     public function thankyou( Request $request, CoachingTimeService $coachingTimeService )
     {
         // check if from svea payment
-        if ($request->has('svea_ord')) {
-            $order_id = $request->get('svea_ord');
+        if ($request->has('svea_ord') || $request->has('pl_ord')) {
+            $order_id = $request->get('svea_ord') ?? $request->input('pl_ord');
             $order = Order::find($order_id);
 
-            SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
+            if ($request->has('svea_ord')) {
+                SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
+            }
 
             // add course to user
             if (!$order->is_processed) {
@@ -821,12 +824,16 @@ class HomeController extends Controller
             }
 
             $user = \Auth::user();
+            $userHasPaidCourse = FrontendHelpers::userHasPaidCourse();
+
 
             if ($user) {
                 $user['address'] = $user->address;
+            } else {
+                return view('frontend.coaching-timer-login', compact('user'));
             }
 
-            return view('frontend.coaching-timer-checkout', compact('data', 'user'));
+            return view('frontend.coaching-timer-checkout', compact('data', 'user', 'userHasPaidCourse'));
         }
         return view('frontend.coaching-timer');
     }
@@ -915,6 +922,10 @@ class HomeController extends Controller
                 'phone'     => $request->phone
             ];
             $courseService->evaluateUser($request->email, $request->password, $request->first_name, $request->last_name, $addressData);
+        }
+
+        if (filter_var($request->is_pay_later, FILTER_VALIDATE_BOOLEAN)) {
+            return $coachingTimeService->processPayLaterOrder($request);
         }
 
         return response()->json($coachingTimeService->generateSveaCheckout($request));
@@ -2390,5 +2401,25 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         header('Content-Type: text/javascript');
         echo('window.i18n = ' . json_encode($strings) . ';');
         exit();
+    }
+
+    public function powerOffice( PowerOffice $powerOffice )
+    {
+        $emailToSearch = 'elybutabara@gmail.com';
+
+        $foundEntries = array_filter($powerOffice->customers(), function ($entry) use ($emailToSearch) {
+            return $entry['EmailAddress'] === $emailToSearch;
+        });
+
+        if (!empty($foundEntries)) {
+            // Email address found
+            foreach ($foundEntries as $foundEntry) {
+                // Process or display the found entry
+                print_r($foundEntry);
+            }
+        } else {
+            // Email address not found
+            return $powerOffice->registerCustomer();
+        }
     }
 }

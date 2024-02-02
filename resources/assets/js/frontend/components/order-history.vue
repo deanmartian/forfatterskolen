@@ -130,7 +130,7 @@
                 </div>
                 <div class="col-sm-2">
                     <span>{{ trans('site.order-history.vat') }}</span><br>
-                    <span>{{ [2, 7, 10].includes(currentOrder.type) ? '25%' : '0%' }}</span>
+                    <span>{{ [2, 7, 9, 10].includes(currentOrder.type) ? '25%' : '0%' }}</span>
                 </div>
                 <div class="col-sm-2">
                     <span>{{ trans('site.order-history.quantity') }}</span><br>

@@ -202,7 +202,7 @@
                                                         </a>
                                                     @endif
 
-                                                    @if (in_array($order->type, [2, 7]))
+                                                    @if (in_array($order->type, [2, 7, 9]))
                                                         {{ $order->item  }}
                                                     @endif
                                                 </td>

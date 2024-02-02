@@ -12,6 +12,14 @@ use Illuminate\Http\Request;
 
 class CoachingTimeService
 {
+    public function processPayLaterOrder(Request $request)
+    {
+        $orderRecord = $this->createOrder($request);
+        $redirectUrl = url('/thank-you?pl_ord='.$orderRecord->id);
+        return [
+            'redirect_url' => $redirectUrl
+        ];
+    }
 
     public function generateSveaCheckout( Request $request )
     {
@@ -123,6 +131,11 @@ class CoachingTimeService
         $newOrder['discount']   = 0;
         $newOrder['payment_mode_id']   = $request->payment_mode_id;
         $newOrder['is_processed'] = 0;
+        $newOrder['is_pay_later'] = filter_var($request->is_pay_later, FILTER_VALIDATE_BOOLEAN);
+
+        if ($request->has('additional')) {
+            $newOrder['additional'] = $request->additional;
+        }
 
         $order = Order::create($newOrder);
 

@@ -77,6 +77,13 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                         </td>
                     </tr>
 
+                    <tr v-if="orderForm.is_pay_later">
+                        <td class="text-right h3">Moms 25%:</td>
+                        <td class="text-right h3 text-red" style="width: 150px">
+                            {{ orderForm.additional | currency('Kr', 2, currencyOptions) }}
+                        </td>
+                    </tr>
+
                     <tr>
                         <td class="text-right h3">{{ trans('site.front.total') }}:</td>
                         <td class="text-right h3 text-red" style="width: 150px">
@@ -285,7 +292,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
     import FileUpload from '../../components/FileUpload.vue';
     export default {
 
-        props: ['price', 'title', 'plan_id', 'user'],
+        props: ['price', 'title', 'plan_id', 'user', 'userHasPaidCourse'],
 
         data() {
             return {
@@ -310,7 +317,9 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                     fileLocation: '',
                     additional_price: 0,
                     suggested_date: [],
-                    help_with: ''
+                    help_with: '',
+                    is_pay_later: !this.userHasPaidCourse,
+                    additional: !this.userHasPaidCourse ? (this.price * .25) : 0
                 },
                 currencyOptions: {
                     thousandsSeparator: '.',
@@ -328,13 +337,14 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                 isLoginDisabled: false,
                 loginText: i18n.site.front.form.login,
                 isLoading: false,
+                hasPaidCourse: false,
                 requestUrl: '/coaching-time'
             }
         },
 
         computed: {
             totalPrice() {
-                return this.orderForm.price + this.orderForm.additional_price;
+                return this.orderForm.price + this.orderForm.additional_price + parseFloat(this.orderForm.additional);
             }
         },
 
@@ -488,6 +498,11 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                 return axios.post(this.requestUrl+'/validate-form', formData).then(response => {
                     this.removeValidationError();
                     this.getCurrentUser();
+                    
+                    if (response.data.redirect_url) {
+                        window.location.href = response.data.redirect_url;
+                    }
+                    
                     $("#checkout-display").html(response.data);
                     return true;
 

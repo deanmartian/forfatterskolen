@@ -17,7 +17,8 @@
             <coaching-time-checkout :price="{{ json_encode($data['price']) }}"
                                     :title="{{ json_encode(str_replace('_title_', $data['title'], trans('site.front.form.book-form-for'))) }}"
                                     :plan_id="{{ json_encode($data['plan_id']) }}"
-                                    :user="{{ json_encode($user) }}"></coaching-time-checkout>
+                                    :user="{{ json_encode($user) }}"
+                                    :user-has-paid-course="{{ json_encode($userHasPaidCourse) }}"></coaching-time-checkout>
         </div> <!-- end container -->
     </div>
 
