@@ -1181,6 +1181,37 @@
 										</td>
 									</tr>
 								@endforeach
+
+								@foreach($pendingProjectTasks as $task)
+									<tr>
+										<td>
+											<a href="{{ route('admin.learner.show', $task->project->user->id) }}">
+												{{ $task->project->user->full_name }}
+											</a>
+										</td>
+										<td>{!! nl2br($task->task) !!}</td>
+										<td>
+											<button class="btn btn-success btn-xs finishTaskBtn" data-toggle="modal"
+													data-target="#finishTaskModal"
+													data-action="{{ route('admin.project-task.finish', $task->id)}}">
+												<i class="fa fa-check"></i>
+											</button>
+
+											<button class="btn btn-primary btn-xs editTaskBtn" data-toggle="modal"
+													data-target="#editTaskModal"
+													data-fields="{{ json_encode($task) }}"
+													data-action="{{ route('admin.project-task.update', $task->id) }}">
+												<i class="fa fa-edit"></i>
+											</button>
+
+											<button class="btn btn-danger btn-xs deleteTaskBtn" data-toggle="modal"
+													data-target="#deleteTaskModal"
+													data-action="{{ route('admin.project-task.delete', $task->id) }}">
+												<i class="fa fa-trash"></i>
+											</button>
+										</td>
+									</tr>
+								@endforeach
 							</tbody>
 						</table>
 					</div>

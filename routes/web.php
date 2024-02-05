@@ -74,6 +74,9 @@ Route::group([
         Route::get('/chat', 'ChatController@index');
         Route::post('/chat', 'ChatController@sendMessage');
 
+
+        Route::get('/power-office', 'HomeController@powerOffice');
+
         Route::group([
             'prefix' => 'coaching-time'
         ], function() {
@@ -435,7 +438,7 @@ Route::group([
         Route::post('/course/{id}/uploadManuscript', 'LearnerController@uploadManuscript')->name('learner.course.uploadManuscript'); // Upload manuscript to course
         Route::post('/shop-manuscript/{id}/comment', 'LearnerController@shopManuscriptPostComment')->name('learner.shop-manuscript.post-comment'); // Shop Manuscript Show Page
         Route::post('/assignment/{id}/upload', 'LearnerController@assignmentManuscriptUpload')->name('learner.assignment.add_manuscript'); // Upload assignment manuscript
-        Route::post('/group/{group_id}/learner/{id}/submit_feedback', 'LearnerController@submit_feedback')->name('learner.assignment.group.submit_feedback'); // Submit feedback manuscript
+        Route::post('/group/{group_id}/learner/{id}/submit_feedba', 'LearnerController@submit_feedback')->name('learner.assignment.group.submit_feedback'); // Submit feedback manuscript
         Route::post('/feedback/{id}/replace_feedback', 'LearnerController@replaceFeedback')->name('learner.assignment.group.replace_feedback'); // Submit feedback manuscript
         Route::post('/feedback/{id}/delete_feedback', 'LearnerController@deleteFeedback')->name('learner.assignment.group.delete_feedback'); // Submit feedback manuscript
         Route::post('/shop-manuscript/{id}/upload', 'ShopManuscriptController@upload_manuscript')->name('learner.shop-manuscript.upload'); // Upload shop manuscript
@@ -661,6 +664,7 @@ Route::group([
         Route::delete('/self-publishing-request/{id}/delete', 'PageController@deleteSelfPublishingRequest')->name('admin.self-publishing-portal-request.destroy');
         Route::get('/learner-not-started-manu', 'PageController@learnerNotStartedManu');
         Route::get('/learner-avail-course/{year}', 'PageController@learnerAvailedCourseYear');
+        Route::get('/learner-with-no-paid-records', 'PageController@learnersWithNoPaidRecords');
         Route::post('/send-email-to-queue', 'PageController@sendEmailToQueue')->name('admin.send-email-to-queue');
 
         Route::resource('page_meta','PageMetaController',[
@@ -1736,8 +1740,9 @@ Route::group([
         ]);
 
         Route::post('/task/save', 'ProjectController@saveTask')->name('admin.project-task.save');
-        Route::post('/project/task/{id}/finish', 'ProjectController@finishTask');
-        Route::delete('/project/task/{id}/delete', 'ProjectController@deleteTask');
+        Route::put('/project/task/{id}/update', 'ProjectController@updateTask')->name('admin.project-task.update');
+        Route::post('/project/task/{id}/finish', 'ProjectController@finishTask')->name('admin.project-task.finish');
+        Route::delete('/project/task/{id}/delete', 'ProjectController@deleteTask')->name('admin.project-task.delete');
         Route::post('/time-register/save', 'TimeRegisterController@save')->name('admin.time-register.save');
         Route::delete('/time-register/{id}/delete', 'TimeRegisterController@destroy')->name('admin.time-register.delete');
         Route::get('/time-register/{id}/time-used-list', 'TimeRegisterController@timeUsedList');

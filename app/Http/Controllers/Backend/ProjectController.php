@@ -150,18 +150,50 @@ class ProjectController extends Controller
         return $model->load('editor');
     }
 
+    public function updateTask($task_id, Request $request)
+    {
+        $task = ProjectTask::find($task_id);
+        
+        if (!$task) {
+            return redirect()->back();
+        }
+
+        $task->update($request->except('_token'));
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Task updated successfully.'),
+                'alert_type' => 'success',
+                'not-former-courses' => true]);
+    }
+
     public function finishTask($id)
     {
         $task = ProjectTask::find($id);
         $task->status = 1;
         $task->save();
-        return response()->json();
+
+        if (request()->ajax()) {
+            return response()->json();
+        }
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Task finished successfully.'),
+                'alert_type' => 'success',
+                'not-former-courses' => true]);
+        
     }
 
     public function deleteTask($id)
     {
         ProjectTask::find($id)->delete();
-        return response()->json();
+
+        if (request()->ajax()) {
+            return response()->json();
+        }
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Task finished successfully.'),
+                'alert_type' => 'success',
+                'not-former-courses' => true]);
     }
 
     public function saveProject( ProjectRequest $request, ProjectService $projectService )

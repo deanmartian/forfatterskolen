@@ -34,6 +34,7 @@ use App\Log;
 use App\ShopManuscriptsTaken;
 use App\FreeManuscript;
 use App\Jobs\AddMailToQueueJob;
+use App\ProjectTask;
 use App\SelfPublishingPortalRequest;
 use Artisan;
 use Illuminate\Support\MessageBag;
@@ -111,6 +112,8 @@ class PageController extends Controller
             ->get();
         $pendingTasks = UserTask::where('assigned_to', Auth::user()->id)
             ->where('status', 0)->get();
+        $pendingProjectTasks = ProjectTask::where('assigned_to', Auth::user()->id)
+            ->where('status', 0)->get();
 
         $shopManuscriptTakenFeedback = ShopManuscriptTakenFeedback::with('shop_manuscript_taken')->where('approved', 0)->orderBy('created_at', 'desc')->paginate(10);
         $selfPublishingApprovedFeedbacks = SelfPublishingFeedback::where('is_approved', 1)->pluck('self_publishing_id')->toArray();
@@ -129,7 +132,7 @@ class PageController extends Controller
         'pending_assignment_feedbacks', 'logs', 'manuscripts','shopManuscripts',
         'nearlyExpiredCoursesCount', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
         'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments',
-        'pendingTasks', 'assignedAssignmentManuscripts','shopManuscriptTakenFeedback', 'selfPublishingList', 'editors',
+        'pendingTasks', 'pendingProjectTasks', 'assignedAssignmentManuscripts','shopManuscriptTakenFeedback', 'selfPublishingList', 'editors',
             'learners', 'coachingEditors', 'correctionEditors', 'copyEditingEditors', 'projects', 'selfPublishingPortalRequests'));
     }
 
@@ -783,6 +786,27 @@ class PageController extends Controller
         $headers = ['id', 'name', 'email', 'course'];
         $excel = \App::make('excel');
         return $excel->download(new GenericExport($userList, $headers), $year . ' Course Buyers.xlsx');
+    }
+
+    public function learnersWithNoPaidRecords()
+    {
+        $users = User::doesntHave('coursesTakenNotOld')
+                    ->doesntHave('shopManuscriptsTaken')
+                    ->doesntHave('coachingTimers')
+                    ->get();
+        
+        return $users->pluck('id');
+        /* $users = DB::table('users')
+    ->whereIn('id', function ($query) {
+        $query->select('user_id')
+            ->from('courses_taken')
+            ->where(function ($subquery) {
+                $subquery->where('end_date', '>=', DB::raw('NOW() - INTERVAL 60 DAY'))
+                    ->orWhereNull('end_date');
+            });
+    })->whereNull('deleted_at')
+    ->get();
+    return $users->count(); */
     }
 
     public function sendEmailToQueue(Request $request)
