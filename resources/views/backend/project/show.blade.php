@@ -287,7 +287,14 @@
                                 </td>
                                 <td>
                                     @if ($correction->editor_id)
-                                        {{ $correction->editor->full_name }}
+                                        {{ $correction->editor->full_name }} <br>
+
+                                        <button class="btn btn-xs btn-primary assignEditorBtn" data-toggle="modal"
+                                                data-target="#assignEditorModal"
+                                                data-editor="{{ json_encode($correction->editor) }}"
+                                                data-action="{{ route($assignEditorRoute, ['id' => $correction->id, 'type' => 2]) }}">
+                                            {{ trans('site.assign-editor') }}
+                                        </button>
                                     @else
                                         <button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal"
                                                 data-target="#assignEditorModal"
