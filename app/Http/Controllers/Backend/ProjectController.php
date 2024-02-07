@@ -463,7 +463,8 @@ class ProjectController extends Controller
 
             $manuType =  $projectService->saveOtherService($request->merge([
                 'user_id' => $project->user_id,
-                'project_id' => $project_id
+                'project_id' => $project_id,
+                'type' => $request->is_copy_editing
             ]));
 
             return redirect()->back()->with([

@@ -332,6 +332,7 @@
                                                     ['id' => $correction->id, 'type' => 2]) }}"
                                            data-email-template="{{ json_encode($correctionFeedbackTemplate) }}">+ {{ trans('site.add-feedback') }}</a>
                                     @else
+                                    <?php $files = explode(',',$correction->feedback->manuscript); ?>
                                         @foreach($files as $file)
                                             <a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
                                         @endforeach
