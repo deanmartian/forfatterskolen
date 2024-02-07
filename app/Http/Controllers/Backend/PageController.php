@@ -60,22 +60,29 @@ class PageController extends Controller
         $pending_courses = CoursesTaken::where('is_active', false)->orderBy('created_at', 'desc')->get();
         $pending_shop_manuscripts = ShopManuscriptsTaken::where('is_active', false)->orderBy('created_at', 'desc')->get();
         $pending_workshops = WorkshopsTaken::where('is_active', false)->orderBy('created_at', 'desc')->get();
-        $assigned_course_manuscripts = Manuscript::where('feedback_user_id', Auth::user()->id)->get();
+        /* $assigned_course_manuscripts = Manuscript::where('feedback_user_id', Auth::user()->id)->get();
 
         if (Auth::user()->role == 3) {
             $assigned_course_manuscripts = Manuscript::where('feedback_user_id', Auth::user()->id)
                 ->orWhereNull('feedback_user_id')
                 ->orderBy('created_at', 'desc')
                 ->get();
-        }
+        } */
 
-        $assigned_shop_manuscripts = ShopManuscriptsTaken::where('feedback_user_id', Auth::user()->id)->get();
-        $assigned_free_manuscripts = FreeManuscript::where('editor_id', Auth::user()->id)->where('is_feedback_sent', '=', 0)->get();
+        //$assigned_shop_manuscripts = ShopManuscriptsTaken::where('feedback_user_id', Auth::user()->id)->get();
+        //$assigned_free_manuscripts = FreeManuscript::where('editor_id', Auth::user()->id)->where('is_feedback_sent', '=', 0)->get();
         $pending_assignment_feedbacks = AssignmentFeedback::where('is_active', false)->get();
-        $logs = Log::orderBy('created_at', 'desc')->get();
-        $manuscripts = Manuscript::orderBy('created_at', 'desc')->get();
-        $shopManuscripts = ShopManuscriptsTaken::orderBy('created_at', 'desc')->get();
-        $nearlyExpiredCoursesCount = \App\Http\AdminHelpers::checkNearlyExpiredCoursesCount();
+        $oneYearAgo = Carbon::now()->subYear();
+        $logs = Log::where('created_at', '>=', $oneYearAgo)->orderBy('created_at', 'desc')->get();
+        //$manuscripts = Manuscript::orderBy('created_at', 'desc')->get();
+        //$shopManuscripts = ShopManuscriptsTaken::orderBy('created_at', 'desc')->get();
+        $shopManuscripts = ShopManuscriptsTaken::doesntHave('feedbacks')
+                ->whereNotNull('file')
+                ->without(['shop_manuscript', 'user', 'receivedWelcomeEmail', 'receivedExpectedFinishEmail',
+                'receivedAdminFeedbackEmail', 'receivedFollowUpEmail'])
+                ->orderBy('created_at', 'desc')
+                ->get();
+        //$nearlyExpiredCoursesCount = \App\Http\AdminHelpers::checkNearlyExpiredCoursesCount();
         $assignedAssignments = AssignmentManuscript::where('editor_id', Auth::user()->id)
             ->where('has_feedback',0)
             ->get();
@@ -115,11 +122,15 @@ class PageController extends Controller
         $pendingProjectTasks = ProjectTask::where('assigned_to', Auth::user()->id)
             ->where('status', 0)->get();
 
-        $shopManuscriptTakenFeedback = ShopManuscriptTakenFeedback::with('shop_manuscript_taken')->where('approved', 0)->orderBy('created_at', 'desc')->paginate(10);
-        $selfPublishingApprovedFeedbacks = SelfPublishingFeedback::where('is_approved', 1)->pluck('self_publishing_id')->toArray();
-        $selfPublishingList = SelfPublishing::whereNotIn('id', $selfPublishingApprovedFeedbacks)->get();
+        /* $shopManuscriptTakenFeedback = ShopManuscriptTakenFeedback::with('shop_manuscript_taken')
+        ->where('approved', 0)->orderBy('created_at', 'desc')->paginate(10); */
+        /* $selfPublishingApprovedFeedbacks = SelfPublishingFeedback::where('is_approved', 1)->pluck('self_publishing_id')->toArray();
+        $selfPublishingList = SelfPublishing::whereNotIn('id', $selfPublishingApprovedFeedbacks)->get(); */
+        $selfPublishingList = SelfPublishing::whereDoesntHave('feedback', function($query) {
+            $query->where('is_approved', 1);
+        })->get();
         $editors = AdminHelpers::editorList();
-        $learners = User::where('role', 2)->get();
+        $learners = User::without('preferredEditor')->where('role', 2)->get();
 
         $coachingEditors = AdminHelpers::editorByAdminQuery('is_coaching_admin');
         $correctionEditors = AdminHelpers::editorByAdminQuery('is_correction_admin');
@@ -128,11 +139,10 @@ class PageController extends Controller
         $selfPublishingPortalRequests = SelfPublishingPortalRequest::all();
 
         return view('backend.dashboard', compact('pending_courses', 'pending_shop_manuscripts',
-        'pending_workshops', 'assigned_course_manuscripts', 'assigned_shop_manuscripts', 'assigned_free_manuscripts',
-        'pending_assignment_feedbacks', 'logs', 'manuscripts','shopManuscripts',
-        'nearlyExpiredCoursesCount', 'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
+        'pending_workshops', 'pending_assignment_feedbacks', 'logs', 'shopManuscripts',
+        'assignedAssignments', 'coachingTimers', 'pendingCoachingTimers',
         'corrections', 'pendingCorrections', 'copyEditings', 'pendingCopyEditings', 'pendingAssignments',
-        'pendingTasks', 'pendingProjectTasks', 'assignedAssignmentManuscripts','shopManuscriptTakenFeedback', 'selfPublishingList', 'editors',
+        'pendingTasks', 'pendingProjectTasks', 'assignedAssignmentManuscripts', 'selfPublishingList', 'editors',
             'learners', 'coachingEditors', 'correctionEditors', 'copyEditingEditors', 'projects', 'selfPublishingPortalRequests'));
     }
 
@@ -793,20 +803,39 @@ class PageController extends Controller
         $users = User::doesntHave('coursesTakenNotOld')
                     ->doesntHave('shopManuscriptsTaken')
                     ->doesntHave('coachingTimers')
+                    ->doesntHave('invoices')
+                    ->whereNull('notes')
                     ->get();
+        return $users->count();
+    }
+
+    public function exportLearnersWithNoPaidRecords()
+    {
+        $users = $this->learnersWithNoPaidRecords();
         
-        return $users->pluck('id');
-        /* $users = DB::table('users')
-    ->whereIn('id', function ($query) {
-        $query->select('user_id')
-            ->from('courses_taken')
-            ->where(function ($subquery) {
-                $subquery->where('end_date', '>=', DB::raw('NOW() - INTERVAL 60 DAY'))
-                    ->orWhereNull('end_date');
-            });
-    })->whereNull('deleted_at')
-    ->get();
-    return $users->count(); */
+        foreach( $users as $user ) {
+            $userList[] = array(
+                'id' => $user->id,
+                'name' => $user->first_name . " " . $user->last_name,
+                'email' => $user->email
+            );
+        }
+
+        $headers = ['id', 'name', 'email'];
+
+        $excel = \App::make('excel');
+        return $excel->download(new GenericExport($userList, $headers), "Learners no record.xlsx");
+    }
+
+    public function deleteLearnersWithNoPaidRecords()
+    {
+        $users = $this->learnersWithNoPaidRecords();
+
+        foreach($users as $user) {
+            print_r($user);
+            $user->delete();
+            break;
+        }
     }
 
     public function sendEmailToQueue(Request $request)

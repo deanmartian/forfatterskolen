@@ -215,71 +215,69 @@
 							</thead>
 							<tbody>
 							@foreach($shopManuscripts as $shopManuscript)
-								@if( $shopManuscript->status == 'Started' )
-									<tr>
-										<td>@if($shopManuscript->is_active)
-												<a href="{{ route('shop_manuscript_taken', [
-													'id' => $shopManuscript->user->id, 
-													'shop_manuscript_taken_id' => $shopManuscript->id]) }}">
-													{{$shopManuscript->shop_manuscript->title}}</a>
-											@else
-												{{$shopManuscript->shop_manuscript->title}}
-											@endif
-										</td>
-										<td>
-											@if($shopManuscript->genre > 0)
-												{{ \App\Http\FrontendHelpers::assignmentType($shopManuscript->genre) }}
-											@endif
-										</td>
-										<td><a href="{{ route('admin.learner.show', $shopManuscript->user->id) }}">
-											{{ $shopManuscript->user->full_name }}</a></td>
-										<td>
-											@if ($shopManuscript->file)
-												<input type="checkbox" data-toggle="toggle" data-on="Locked"
-													   class="is-manuscript-locked-toggle" data-off="Unlocked"
-													   data-id="{{$shopManuscript->id}}" data-size="mini"
-												@if($shopManuscript->is_manuscript_locked) {{ 'checked' }} @endif>
-											@endif
-										</td>
-										<td>
-											@if ($shopManuscript->requests->count())
-												<button class="btn btn-xs btn-success previewRequestsSentBtn"
-														data-toggle="modal"
-														data-target="#previewRequestsSent"
-														data-requests="{{ $shopManuscript->requests }}"
-														>
-													{{ trans('site.learner.preview-text') }}
-												</button>
-											@endif
-										</td>
-										<td>
-											@if( $shopManuscript->admin )
-												{{ $shopManuscript->admin->full_name }}
-											@else
-												<em>Not set</em>
-											@endif
-										</td>
-										<td>
-											{{ $shopManuscript->expected_finish }}
-											<button class="btn btn-primary btn-xs editExpectedFinishBtn" data-toggle="modal"
-													data-target="#editExpectedFinishModal"
-													data-action="{{ route('backend.update-expected-finish', ['shop-manuscript', $shopManuscript->id]) }}"
-													data-expected_finish="{{ $shopManuscript->expected_finish
-												? strftime('%Y-%m-%d', strtotime($shopManuscript->expected_finish)) : NULL }}">
-												<i class="fa fa-edit"></i> Edit
+								<tr>
+									<td>@if($shopManuscript->is_active)
+											<a href="{{ route('shop_manuscript_taken', [
+												'id' => $shopManuscript->user->id, 
+												'shop_manuscript_taken_id' => $shopManuscript->id]) }}">
+												{{$shopManuscript->shop_manuscript->title}}</a>
+										@else
+											{{$shopManuscript->shop_manuscript->title}}
+										@endif
+									</td>
+									<td>
+										@if($shopManuscript->genre > 0)
+											{{ \App\Http\FrontendHelpers::assignmentType($shopManuscript->genre) }}
+										@endif
+									</td>
+									<td><a href="{{ route('admin.learner.show', $shopManuscript->user->id) }}">
+										{{ $shopManuscript->user->full_name }}</a></td>
+									<td>
+										@if ($shopManuscript->file)
+											<input type="checkbox" data-toggle="toggle" data-on="Locked"
+													class="is-manuscript-locked-toggle" data-off="Unlocked"
+													data-id="{{$shopManuscript->id}}" data-size="mini"
+											@if($shopManuscript->is_manuscript_locked) {{ 'checked' }} @endif>
+										@endif
+									</td>
+									<td>
+										@if ($shopManuscript->requests->count())
+											<button class="btn btn-xs btn-success previewRequestsSentBtn"
+													data-toggle="modal"
+													data-target="#previewRequestsSent"
+													data-requests="{{ $shopManuscript->requests }}"
+													>
+												{{ trans('site.learner.preview-text') }}
 											</button>
-										</td>
-										<td>
-											<a href="{{ route('backend.download_shop_manuscript', $shopManuscript->id) }}"
-											   class="btn btn-primary btn-xs">{{ trans('site.download') }}</a> <br>
+										@endif
+									</td>
+									<td>
+										@if( $shopManuscript->admin )
+											{{ $shopManuscript->admin->full_name }}
+										@else
+											<em>Not set</em>
+										@endif
+									</td>
+									<td>
+										{{ $shopManuscript->expected_finish }}
+										<button class="btn btn-primary btn-xs editExpectedFinishBtn" data-toggle="modal"
+												data-target="#editExpectedFinishModal"
+												data-action="{{ route('backend.update-expected-finish', ['shop-manuscript', $shopManuscript->id]) }}"
+												data-expected_finish="{{ $shopManuscript->expected_finish
+											? strftime('%Y-%m-%d', strtotime($shopManuscript->expected_finish)) : NULL }}">
+											<i class="fa fa-edit"></i> Edit
+										</button>
+									</td>
+									<td>
+										<a href="{{ route('backend.download_shop_manuscript', $shopManuscript->id) }}"
+											class="btn btn-primary btn-xs">{{ trans('site.download') }}</a> <br>
 
-											<button type="button" class="btn btn-warning btn-xs margin-top addShopManuscriptFeedback" data-toggle="modal"
-													data-target="#addFeedbackModal"
-												data-action="{{ route('admin.shop-manuscript-taken-feedback.store',
-												$shopManuscript->id) }}">+ {{ trans('site.add-feedback') }}</button>
-										</td>
-									</tr>
-								@endif
+										<button type="button" class="btn btn-warning btn-xs margin-top addShopManuscriptFeedback" data-toggle="modal"
+												data-target="#addFeedbackModal"
+											data-action="{{ route('admin.shop-manuscript-taken-feedback.store',
+											$shopManuscript->id) }}">+ {{ trans('site.add-feedback') }}</button>
+									</td>
+								</tr>
 							@endforeach
 							</tbody>
 						</table>
