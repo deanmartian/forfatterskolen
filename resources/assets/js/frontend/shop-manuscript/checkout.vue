@@ -630,7 +630,7 @@ import FileUpload from '../../components/FileUpload.vue';
                     price = price + ((price - totalDiscount) * .50);
                 }
 
-                this.orderForm.totalDiscount = totalDiscount;
+                //this.orderForm.totalDiscount = totalDiscount;
                 this.orderForm.price = price;
             },
 
