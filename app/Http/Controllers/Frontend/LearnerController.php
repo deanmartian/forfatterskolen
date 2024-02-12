@@ -3048,6 +3048,7 @@ class LearnerController extends Controller
                                 $coursesTaken->end_date = $addYear;
                             }
 
+                            $coursesTaken->renewed_at = Carbon::now();
                             //$coursesTaken->started_at = Carbon::now();
                             $coursesTaken->save();
                         }
