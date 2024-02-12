@@ -47,7 +47,8 @@ class LessonController extends Controller
             'title' => old('title'),
             'content' => old('content'),
             'delay' => old('delay'),
-            'whole_lesson_file' => ''
+            'whole_lesson_file' => '',
+            'allow_lesson_download' => true
         ];
         $documents = [];
 
@@ -84,6 +85,7 @@ class LessonController extends Controller
         $lesson->content = $request->content;
         $lesson->whole_lesson_file = $wholeLessonFile;
         $lesson->delay = $request->delay;
+        $lesson->allow_lesson_download = $request->has('allow_lesson_download') && $request->allow_lesson_download ? 1 : 0;
         $lesson->save();
 
         $destinationPath = 'storage/lesson-documents'; // upload path
@@ -147,6 +149,7 @@ class LessonController extends Controller
         $lesson->content = $request->content;
         $lesson->whole_lesson_file = $wholeLessonFile;
         $lesson->delay = $request->delay;
+        $lesson->allow_lesson_download = $request->has('allow_lesson_download') && $request->allow_lesson_download ? 1 : 0;
         $lesson->save();
 
         $destinationPath = 'storage/lesson-documents'; // upload path

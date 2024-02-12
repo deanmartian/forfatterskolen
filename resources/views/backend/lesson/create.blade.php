@@ -7,6 +7,7 @@
 @section('styles')
 <link rel="stylesheet" href="{{asset('content_tools/content-tools.min.css')}}">
 <link rel="stylesheet" href="{{asset('fileuploader/src/jquery.fileuploader.css')}}">
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 @stop
 
 

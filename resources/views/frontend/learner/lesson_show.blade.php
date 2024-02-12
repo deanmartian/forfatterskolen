@@ -137,7 +137,7 @@
 				<div class="col-md-5">
 					<div class="right-container">
 						<div class="text-center">
-							@if ($course->id != 17)
+							@if ($course->id != 17 && $lesson->allow_lesson_download)
 								@if ($lesson->whole_lesson_file)
 									<a class="download-lesson-btn" href="{{ asset($lesson->whole_lesson_file) }}"
 									 download>

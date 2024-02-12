@@ -84,7 +84,20 @@
                     </div>
                 </div>
 				<div class="row margin-top">
-					<div class="col-sm-6 col-sm-offset-6 text-right">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>
+                                Allow download of whole lesson
+                            </label> <br>
+                            <input type="checkbox" name="allow_lesson_download" data-toggle="toggle" 
+                                data-on="{{ trans('site.front.yes') }}" class="lock-toggle" 
+                                data-off="{{ trans('site.front.no') }}"
+                                data-size="small" @if($lesson['allow_lesson_download']) 
+                                    {{ 'checked' }} 
+                                @endif>
+                        </div>
+                    </div>
+					<div class="col-sm-6 text-right">
 						@if(Request::is('course/*/lesson/create'))
 						<button type="submit" class="btn btn-info">{{ trans('site.create-lesson') }}</button>
 						@else
@@ -157,6 +170,7 @@
 @section('scripts')
 <script src="{{asset('content_tools/content-tools.js')}}"></script>
 <script src="{{ asset('js/toastr/toastr.min.js') }}"></script>
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
 jQuery(document).ready(function(){
 	$('#lessonForm').on('submit', function(e){
