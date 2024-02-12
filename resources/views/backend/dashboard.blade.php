@@ -1183,12 +1183,19 @@
 								@foreach($pendingProjectTasks as $task)
 									<tr>
 										<td>
-											<a href="{{ route('admin.learner.show', $task->project->user->id) }}">
-												{{ $task->project->user->full_name }}
-											</a>
+											@if ($task->project->user)
+												<a href="{{ route('admin.learner.show', $task->project->user->id) }}">
+													{{ $task->project->user->full_name }}
+												</a>
+											@endif
 										</td>
 										<td>{!! nl2br($task->task) !!}</td>
 										<td>
+											<a href="{{ route('admin.project.show', $task->project->id) }}" 
+												class="btn btn-info btn-xs">
+												<i class="fa fa-eye"></i>
+											</a>
+
 											<button class="btn btn-success btn-xs finishTaskBtn" data-toggle="modal"
 													data-target="#finishTaskModal"
 													data-action="{{ route('admin.project-task.finish', $task->id)}}">
