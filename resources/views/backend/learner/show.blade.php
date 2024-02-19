@@ -1942,9 +1942,10 @@
 											[$learner->id, $registeredWebinar->id])}}">
 										{{ trans('site.send-email') }}
 									</button>
-									<button class="btn btn-danger btn-xs registeredWebinarRemoveBtn" data-toggle="modal"
+									<button class="btn btn-danger btn-xs" data-toggle="modal"
 											data-target="#registeredWebinarRemoveModal"
-											data-action="{{ route('admin.webinar.remove-registrant', $registeredWebinar->id) }}">
+											onclick="registeredWebinarRemove('{{ route('admin.webinar.remove-registrant', 
+											$registeredWebinar->id) }}')">
 										Remove from Webinar
 									</button>
 								</td>
@@ -5886,6 +5887,11 @@ console.log(record);
         isbnContainer.append(list);
 
     }
+
+	function registeredWebinarRemove(url) {
+		let modal = $('#registeredWebinarRemoveModal');
+		modal.find('form').attr('action', url);
+	}
 </script>
 	{{--<script type="text/javascript" src="{{ mix('js/app.js') }}"></script>--}}
 @stop
