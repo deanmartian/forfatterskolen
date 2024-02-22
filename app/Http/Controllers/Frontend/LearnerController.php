@@ -2300,7 +2300,7 @@ class LearnerController extends Controller
             ->whereNotNull('courses.issue_date')
             ->whereNotNull('course_certificates.package_id')
             ->where('courses_taken.user_id', \Auth::user()->id)
-            ->whereNull('courses_taken.deleted_at')
+            //->whereNull('courses_taken.deleted_at') //remove this to not show deleted courses_taken
             ->groupBy('course_certificates.id')
             ->get();
         return view('frontend.learner.profile', compact('certificates'));
