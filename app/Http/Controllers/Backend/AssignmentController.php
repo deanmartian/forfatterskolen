@@ -214,6 +214,7 @@ class AssignmentController extends Controller
                 'allowed_package' => isset($request->allowed_package) ? json_encode($request->allowed_package) : NULL,
                 'add_on_price' => $request->add_on_price,
                 'max_words' => (int) $request->max_words,
+                'allow_up_to' => (int) $request->allow_up_to,
                 'for_editor' => isset($request->for_editor) ? 1 : 0,
                 'editor_manu_generate_count' => $request->editor_manu_generate_count,
                 'show_join_group_question' => isset($request->show_join_group_question) ? 1 : 0,
@@ -259,6 +260,7 @@ class AssignmentController extends Controller
     		$assignment->allowed_package = isset($request->allowed_package) ? json_encode($request->allowed_package) : NULL;
             $assignment->add_on_price = $request->add_on_price;
             $assignment->max_words = (int) $request->max_words;
+            $assignment->allow_up_to = (int) $request->allow_up_to;
             $assignment->for_editor = isset($request->for_editor) ? 1 : 0;
             $assignment->editor_manu_generate_count = isset($request->for_editor) ? $request->editor_manu_generate_count : NULL;
             $assignment->show_join_group_question = isset($request->show_join_group_question) ? 1 : 0;

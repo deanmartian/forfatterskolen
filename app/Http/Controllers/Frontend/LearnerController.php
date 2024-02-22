@@ -1099,10 +1099,11 @@ class LearnerController extends Controller
 
             $word_to_deduct = $word_count * 0.02;
             $new_word_count = ceil($word_count - $word_to_deduct);
+            $assignment_max_words = $assignment->allow_up_to > 0 ? $assignment->allow_up_to : $assignment->max_words;
 
             // check if the assignment is for editor only and if it meets the max word
             /*$assignment->for_editor && */
-            if ($new_word_count > $assignment->max_words && $assignment->check_max_words) {
+            if ($new_word_count > $assignment_max_words && $assignment->check_max_words) {
                 return redirect()->back()->with(['errorMaxWord' => true, 'editorMaxWord' => $assignment->max_words]);
             }
 
@@ -3827,7 +3828,10 @@ class LearnerController extends Controller
 
                 // check if the assignment is for editor only and if it meets the max word
                 // $assignmentManuscript->assignment->for_editor &&
-                if ($word_count > $assignmentManuscript->assignment->max_words) {
+                $assignment = $assignmentManuscript->assignment;
+                $assignment_max_words = $assignment->allow_up_to > 0 ? $assignment->allow_up_to : $assignment->max_words;
+
+                if ($word_count > $assignment_max_words) {
                     return redirect()->back()->with(['errorMaxWord' => true, 'editorMaxWord' => $assignmentManuscript->assignment->max_words]);
                 }
 

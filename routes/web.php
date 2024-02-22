@@ -664,7 +664,8 @@ Route::group([
         Route::delete('/self-publishing-request/{id}/delete', 'PageController@deleteSelfPublishingRequest')->name('admin.self-publishing-portal-request.destroy');
         Route::get('/learner-not-started-manu', 'PageController@learnerNotStartedManu');
         Route::get('/learner-avail-course/{year}', 'PageController@learnerAvailedCourseYear');
-        Route::get('/learner-with-no-paid-records', 'PageController@learnersWithNoPaidRecords');
+        Route::get('/learner-with-no-paid-records/export', 'PageController@exportLearnersWithNoPaidRecords');
+        Route::get('/learner-with-no-paid-records/delete', 'PageController@deleteLearnersWithNoPaidRecords');
         Route::post('/send-email-to-queue', 'PageController@sendEmailToQueue')->name('admin.send-email-to-queue');
 
         Route::resource('page_meta','PageMetaController',[
@@ -1302,6 +1303,7 @@ Route::group([
                 ->name('admin.sales.send-email');
             Route::get('/move-to-archive/{id}', 'SaleController@moveToArchive')->name('admin.sales.move-to-archive');
             Route::post('/is-invoice-sent', 'SaleController@orderInvoiceSent');
+            Route::get('/add-to-po/{order_id}', 'SaleController@addToPowerOffice')->name('admin.sale.add-to-po');
 
         });
 

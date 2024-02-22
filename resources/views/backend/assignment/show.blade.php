@@ -831,6 +831,13 @@
 					<input type="number" class="form-control" name="max_words"
 					value="{{ $assignment->max_words }}">
 				</div>
+
+				<div class="form-group">
+					<label>Allowed up to</label>
+					<input type="number" class="form-control" name="allow_up_to"
+					value="{{ $assignment->allow_up_to }}">
+				</div>
+
 				<div class="form-group">
 					<label>{{ trans('site.editor-expected-finish') }}</label>
 					<input type="date" class="form-control" name="editor_expected_finish"
