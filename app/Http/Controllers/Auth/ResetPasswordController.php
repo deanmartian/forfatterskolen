@@ -78,6 +78,11 @@ class ResetPasswordController extends Controller
             \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
             //Mail::to($request->reset_email)->send(new PasswordResetEmail($passwordReset));
 
+            if ($request->has('redirect')) {
+                return redirect()->to($request->redirect)
+                    ->with(['passwordreset_success' => 'Vi har sendt en passord tilbakestillingslink til din epost.']);
+            }
+            
             return redirect()->back()->with(['passwordreset_success' => 'Vi har sendt en passord tilbakestillingslink til din epost.']);
         else :
             return redirect()->route('auth.login.show', 't=passwordreset')->withErrors("We can't find the email in our records.");
