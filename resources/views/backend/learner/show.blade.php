@@ -2627,7 +2627,7 @@
 							<div class="col-sm-6">
 								<input type="radio" @if($paymentPlan->plan == 'Full Payment') checked @endif
 								name="payment_plan_id" value="{{$paymentPlan->id}}" data-plan="{{trim($paymentPlan->plan)}}"
-									   id="{{$paymentPlan->plan}}" required onchange="payment_plan_change(this)"
+									   id="{{$paymentPlan->plan}}" onchange="payment_plan_change(this)"
 									   data-plan-id="{{ $paymentPlan->id }}">
 								<label>{{$paymentPlan->plan}} </label>
 							</div>
@@ -2636,9 +2636,14 @@
 						<div class="col-sm-6">
 							<input type="radio" @if($paymentPlan->plan == 'Full Payment') checked @endif
 							name="payment_plan_id" value="10" data-plan="{{trim('24 måneder')}}"
-								   id="24 måneder" required onchange="payment_plan_change(this)"
+								   id="24 måneder" onchange="payment_plan_change(this)"
 								   data-plan-id="10">
 							<label>24 måneder</label>
+						</div>
+
+						<div class="col-sm-6">
+							<input type="number" class="form-control" name="payment_plan_in_months" placeholder="Custom month"
+							onchange="payment_plan_in_month_change(this)" data-plan-id="0">
 						</div>
 						<div class="clearfix"></div>
 					</div>
@@ -2685,7 +2690,9 @@
 						<div class="charNum">136 characters left</div>
 					</div>
 
-					<button type="submit" class="btn btn-primary pull-right">{{ trans('site.create-invoice') }}</button>
+					<button type="button" class="btn btn-primary pull-right submitInvoice">
+						{{ trans('site.create-invoice') }}
+					</button>
 					<div class="clearfix"></div>
 				</form>
 			</div>
@@ -5088,6 +5095,25 @@
             modal.find('.total-formatted').text(fields.total_formatted);
 		});
 
+		$(".submitInvoice").click(function(){
+			let form = $(this).closest('form');
+			let hasPaymentPlanSelected = form.find('input[name="payment_plan_id"]:checked').length;
+			let planInMonths = parseInt(form.find('[name=payment_plan_in_months]').val());
+			let price = parseInt(form.find('[name=price]').val());
+
+			if ((planInMonths === 0 || isNaN(planInMonths)) && !hasPaymentPlanSelected) {
+				alert('Please select plan details or input custom month.');
+				return;
+			}
+
+			if (price === 0 || isNaN(price)) {
+				alert('Please add a price.');
+				return;
+			}
+
+			form.trigger('submit');
+		});
+
         $("#submitDeleteInvoice").click(function(e) {
            e.preventDefault();
             $(this).attr('disabled','disabled');
@@ -5827,6 +5853,20 @@ console.log(record);
             split_invoice.prop('checked', false);
         }
     }
+
+	function payment_plan_in_month_change(t) {
+		let plan = $(t).data('plan');
+        let split_invoice = $('input:radio[name=split_invoice]');
+        let payment_plan_id = $('input:radio[name=payment_plan_id]');
+
+        split_invoice.prop('disabled', false);
+
+		payment_plan_id.prop('checked', false);
+        if( plan === 'Hele beløpet' ) {
+            split_invoice.prop('disabled', true);
+            split_invoice.prop('checked', false);
+        }
+	}
 
     function showEmailMessage(t) {
         let modal = $("#showEmailModal");

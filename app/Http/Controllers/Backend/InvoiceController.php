@@ -305,12 +305,26 @@ class InvoiceController extends Controller
      */
     public function addInvoice(Request $request)
     {
+        $this->validate($request,[
+            'price' => 'required'
+        ]);
+
         $learner = User::find($request->learner_id);
         $paymentMode = PaymentMode::findOrFail(3);
+        $payment_mode = 'Bankoverføring';
+
+        if ($request->has('payment_plan_id')) {
+        $paymentPlan = PaymentPlan::find($request->payment_plan_id);
         $paymentPlan = PaymentPlan::find($request->payment_plan_id);
         $payment_mode = 'Bankoverføring';
-        $payment_plan = (int)$request->payment_plan_id === 10 ? '24 måneder' : $paymentPlan->plan;
-        $divisor = (int)$request->payment_plan_id === 10 ? 24 : $paymentPlan->division;
+            $paymentPlan = PaymentPlan::find($request->payment_plan_id);
+        $payment_mode = 'Bankoverføring';
+            $payment_plan = (int)$request->payment_plan_id === 10 ? '24 måneder' : $paymentPlan->plan;
+            $divisor = (int)$request->payment_plan_id === 10 ? 24 : $paymentPlan->division;
+        } else {
+            $payment_plan = $request->payment_plan_in_months . ' måneder';
+            $divisor = $request->payment_plan_in_months;
+        }
 
         $inputtedComment = $request->comment;
         $comment = '('.$inputtedComment.' ';
