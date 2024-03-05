@@ -102,7 +102,7 @@ class PageController extends Controller
             ->get()->pluck('id');
         //$singleCourses = [36, 37, 57, 48, 56, 50, 44, 49, 64];
         $assignmentForCourse = Assignment::whereIn('course_id', $singleCourses)
-            ->where('id', '!=', 527)->get()->pluck('id')->toArray();
+            ->where('id', '!=', 527)->where('for_editor', 0)->get()->pluck('id')->toArray();
         $assignmentForLearners = Assignment::where('parent', 'users')->get()->pluck('id')->toArray();
         $allAssignmentQuery = array_merge($assignmentForCourse, $assignmentForLearners);
         $pendingAssignments = AssignmentManuscript::whereHas('user')->where('editor_id', 0)
