@@ -28,7 +28,10 @@ class CourseUpdateRequest extends FormRequest
             'description' => 'required',
             'type' => 'required',
             'meta_title'        => 'required|max:70|min:40',
-            'meta_description'  => 'required|max:160|min:70'
+            'meta_description'  => 'required|max:160|min:70',
+            'free_for_days' => [
+                'required_if:is_free,on'
+            ],
         ];
     }
 }

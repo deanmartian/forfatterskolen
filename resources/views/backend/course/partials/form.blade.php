@@ -112,6 +112,12 @@
 				</div>
 
 				<div class="form-group">
+					<label>Free for days</label>
+					<input type="number" class="form-control" name="free_for_days" 
+					@if( $course['free_for_days'] ) value="{{ $course['free_for_days'] }}" @endif>
+				</div>
+
+				<div class="form-group">
 					<label>Søknader</label> <br>
 					<input type="checkbox" data-toggle="toggle" data-on="Yes" name="pay_later_with_application"
 						   data-off="No"

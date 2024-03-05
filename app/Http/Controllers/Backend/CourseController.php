@@ -104,7 +104,8 @@ class CourseController extends Controller
             'meta_title' => '',
             'meta_description' => '',
             'meta_image' => '',
-            'pay_later_with_application' => ''
+            'pay_later_with_application' => '',
+            'free_for_days' => ''
         ];
         return view('backend.course.create', compact('course'));
     }
@@ -113,6 +114,7 @@ class CourseController extends Controller
 
     public function store(CourseCreateRequest $request)
     {
+        $free_for_days = $request->is_free ? $request->free_for_days : 0;
         $requestData = $request->toArray();
         $requestData['display_order'] = $requestData['display_order'] ? $requestData['display_order'] : 0;
 
@@ -167,6 +169,7 @@ class CourseController extends Controller
         $course->pay_later_with_application = isset($request->pay_later_with_application) ? 1 : 0;
         $course->meta_title         = $request->meta_title;
         $course->meta_description   = $request->meta_description;
+        $course->free_for_days      = $free_for_days;
         $course->save();
 
         $display_order = $requestData['display_order'];
@@ -190,6 +193,8 @@ class CourseController extends Controller
 
     public function update($id, CourseUpdateRequest $request)
     {
+
+        $free_for_days = $request->is_free ? $request->free_for_days : 0;
         $requestData = $request->toArray();
         $requestData['display_order'] = $requestData['display_order'] ? $requestData['display_order'] : 0;
 
@@ -252,6 +257,7 @@ class CourseController extends Controller
         $course->pay_later_with_application = isset($request->pay_later_with_application) ? 1 : 0;
         $course->meta_title         = $request->meta_title;
         $course->meta_description   = $request->meta_description;
+        $course->free_for_days      = $free_for_days; 
         $course->save();
 
         $display_order = $requestData['display_order'];
