@@ -141,6 +141,38 @@ class ShopManuscriptService {
         if (!$request->has('order_type') ||
             ($request->has('order_type') && $request->order_type === Order::MANUSCRIPT_TYPE)) {
             $this->createOrderShopManuscript($orderRecord->id, $request);
+
+            $shopManuscript = ShopManuscript::findOrFail($request->shop_manuscript_id);
+            $user = $orderRecord->user;
+            $price = $request->price;
+            $dueDate = date("Y-m-d");
+            $dueDate = Carbon::parse($dueDate);
+            $dueDate->addDays($shopManuscript->full_price_due_date);
+            
+            $comment = '(Manuskript: ' . $shopManuscript->title . ', ';
+            $comment .= 'Betalingsmodus: Faktura, ';
+            $comment .= 'Betalingsplan: Hele beløpet)';
+
+            $invoice_fields = [
+                'user_id'       => $user->id,
+                'first_name'    => $user->first_name,
+                'last_name'     => $user->last_name,
+                'netAmount'     => $price * 100,
+                'vat'           => $request->additional * 100,
+                'dueDate'       => $dueDate->format('Y-m-d'),
+                'description'   => 'Kursordrefaktura',
+                'productID'     => 5686476118,//this is MVA productid //$shopManuscript->full_price_product,
+                'email'         => $user->email,
+                'telephone'     => $user->address->phone,
+                'address'       => $user->address->street,
+                'postalPlace'   => $user->address->city,
+                'postalCode'    => $user->address->zip,
+                'comment'       => $comment,
+                'payment_mode'  => 'Faktura',
+            ];
+
+            $invoice = new FikenInvoice();
+            $invoice->create_invoice($invoice_fields, true);
         }
 
         $shopManuscript = ShopManuscript::find($orderRecord->item_id);

@@ -60,7 +60,7 @@
                                 </td>
                             </tr>
                             <tr v-if="upgradeForm.additional > 0">
-                                <td class="text-right h3">Moms 25%:</td>
+                                <td class="text-right h3">Mva 25%:</td>
                                 <td class="text-right h3 text-red" width="150">
                                     {{ upgradeForm.additional | currency('Kr', 2, currencyOptions) }}
                                 </td>

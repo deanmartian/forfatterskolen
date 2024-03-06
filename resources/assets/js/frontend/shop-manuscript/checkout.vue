@@ -111,7 +111,7 @@
                             </tr>
 
                             <tr v-if="orderForm.is_pay_later">
-                                <td>Moms 25%:</td>
+                                <td>Mva 25%:</td>
                                 <td class="text-right">
                                     {{ orderForm.additional | currency('Kr', 2, currencyOptions) }}
                                 </td>

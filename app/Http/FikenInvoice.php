@@ -65,7 +65,7 @@ class FikenInvoice
 
 
 
-	public function create_invoice($post_fields)
+	public function create_invoice($post_fields, $has_vat = false)
 	{
 	    Log::info("inside create invoice");
 		$customer = $this->customer($post_fields);
@@ -90,6 +90,30 @@ class FikenInvoice
             'cash'              => false,
             'currency'          => 'NOK',
         ];
+
+        if ($has_vat) {
+            $fields = [
+                'issueDate' => isset($post_fields['issueDate']) && $post_fields['issueDate']
+                    ? Carbon::parse($post_fields['issueDate'])->format('Y-m-d') :date('Y-m-d'),
+                'dueDate' => $post_fields['dueDate'],
+                'lines' => [[
+                    'net'           => $post_fields['netAmount'],
+                    'vat'           => $post_fields['vat'],
+                    'gross'         => $post_fields['netAmount'] + $post_fields['vat'],
+                    'vatType'       => 'HIGH',
+                    'vatInPercent'  => 25,
+                    'description'   => $post_fields['description'],
+                    'productId'     => $post_fields['productID'],
+                    'comment'       => $post_fields['comment'],
+                    'quantity'      => 1,
+                    'unitPrice'     => $post_fields['netAmount']
+                ]],
+                'customerId'        => $customer->contactId,
+                'bankAccountCode'   => $this->fiken_bank_account_code,
+                'cash'              => false,
+                'currency'          => 'NOK',
+            ];
+        }
 
         $field_string = json_encode($fields, true);
         Log::info($field_string);

@@ -78,7 +78,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document, applica
                     </tr>
 
                     <tr v-if="orderForm.is_pay_later">
-                        <td class="text-right h3">Moms 25%:</td>
+                        <td class="text-right h3">Mva 25%:</td>
                         <td class="text-right h3 text-red" style="width: 150px">
                             {{ orderForm.additional | currency('Kr', 2, currencyOptions) }}
                         </td>
