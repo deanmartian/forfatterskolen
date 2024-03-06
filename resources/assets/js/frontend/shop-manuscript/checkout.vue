@@ -363,7 +363,7 @@
                     <template v-else>
                         <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab(); scrollTop()" 
                             class="wizard-footer-right w-100" :style="props.fillButtonStyle">
-                                Betal senere
+                                Bestill
                         </wizard-button>
                     </template>
                     
