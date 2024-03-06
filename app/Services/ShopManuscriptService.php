@@ -324,7 +324,8 @@ class ShopManuscriptService {
         $newOrder['discount']   = $discount;
         $newOrder['payment_mode_id']   = $request->payment_mode_id;
         $newOrder['is_processed'] = 0;
-        $newOrder['is_pay_later'] = filter_var($request->is_pay_later, FILTER_VALIDATE_BOOLEAN);
+        // commented out pay later since it's now creating an invoice
+        //$newOrder['is_pay_later'] = filter_var($request->is_pay_later, FILTER_VALIDATE_BOOLEAN);
 
         if ($request->has('additional')) {
             $newOrder['additional'] = $request->additional;
