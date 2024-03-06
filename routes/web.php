@@ -1303,6 +1303,7 @@ Route::group([
                 ->name('admin.sales.send-email');
             Route::get('/move-to-archive/{id}', 'SaleController@moveToArchive')->name('admin.sales.move-to-archive');
             Route::post('/is-invoice-sent', 'SaleController@orderInvoiceSent');
+            Route::post('/is-order-withdrawn', 'SaleController@isOrderWithdrawn');
             Route::get('/add-to-po/{order_id}', 'SaleController@addToPowerOffice')->name('admin.sale.add-to-po');
 
         });

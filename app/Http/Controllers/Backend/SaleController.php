@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
+use App\Http\PowerOffice;
 use App\Jobs\AddMailToQueueJob;
 use App\Repositories\Services\SaleService;
 use Illuminate\Http\Request;
@@ -129,6 +130,70 @@ class SaleController extends Controller {
                 'success' => $success,
             ]
         ]);
+    }
+
+    public function isOrderWithdrawn(Request $request)
+    {
+        $order = $this->service->getOrder($request->order_id);
+        $success = false;
+
+        if ($order) {
+            $order->is_order_withdrawn = $request->is_order_withdrawn;
+            $order->save();
+            $success = TRUE;
+        }
+
+        return response()->json([
+            'data' => [
+                'success' => $success,
+            ]
+        ]);
+    }
+
+    public function addToPowerOffice($order_id, PowerOffice $powerOffice)
+    {
+        $order = $this->service->getOrder($order_id);
+        $user = $order->user;
+        
+        $emailToSearch = $user->email;
+
+        $foundEntries = array_filter($powerOffice->customers(), function ($entry) use ($emailToSearch) {
+            return $entry['EmailAddress'] === $emailToSearch;
+        });
+
+        if (!empty($foundEntries)) {
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Learner already exists in Power Office.'),
+                'alert_type' => 'danger'
+            ]);
+        } else {
+            // Email address not found
+            $userAddress = $user['address'];
+            $line1 = null;
+            $city = null;
+            $zip = null;
+
+            if ($userAddress) {
+                $line1 = $userAddress->street;
+                $city = $userAddress->city;
+                $zip = $userAddress->zip;
+            }
+
+            
+            return $powerOffice->registerCustomer(
+                $user->first_name,
+                $user->last_name,
+                $user->email,
+                $line1,
+                $city,
+                $zip
+            );
+
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Successfuly added to power office.'),
+                'alert_type' => 'success'
+            ]);
+        }
     }
 
 }

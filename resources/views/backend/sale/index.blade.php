@@ -188,6 +188,7 @@
                                         <th>{{ trans_choice('site.learners', 1) }}</th>
                                         <th>{{ trans('site.date-sold') }}</th>
                                         <th>Sent Invoice</th>
+                                        <th>Trukket bestilling</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -207,9 +208,15 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('admin.learner.show', $order->user->id) }}">
+                                                    <a href="{{ route('admin.learner.show', $order->user->id) }}"
+                                                        class="d-block">
                                                         {{ $order->user->full_name }}
                                                     </a>
+
+                                                    {{-- <a href="{{ route('admin.sale.add-to-po', $order->id) }}" 
+                                                        class="btn btn-primary btn-xs">
+                                                        Add to PO
+                                                    </a> --}}
                                                 </td>
                                                 <td>
                                                     {{ $order->created_at }}
@@ -219,6 +226,12 @@
                                                         class="is-invoice-sent-toggle" data-off="No"
                                                         data-id="{{$order->id}}" data-size="mini"
                                                          @if($order->is_invoice_sent) {{ 'checked' }} @endif>
+                                                </td>
+                                                <td>
+                                                    <input type="checkbox" data-toggle="toggle" data-on="Yes"
+                                                        class="is-order-withdrawn-toggle" data-off="No"
+                                                        data-id="{{$order->id}}" data-size="mini"
+                                                         @if($order->is_order_withdrawn) {{ 'checked' }} @endif>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -576,5 +589,20 @@
                    }
                });
 		   });
+
+        $(".is-order-withdrawn-toggle").change(function(){
+            var order_id = $(this).attr('data-id');
+            var is_checked = $(this).prop('checked');
+            var check_val = is_checked ? 1 : 0;
+            $.ajax({
+                type:'POST',
+                url:'/sale/is-order-withdrawn',
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: { "order_id" : order_id, 'is_order_withdrawn' : check_val },
+                success: function(data){
+                console.log(data);
+                }
+            });
+        });
     </script>
 @stop
