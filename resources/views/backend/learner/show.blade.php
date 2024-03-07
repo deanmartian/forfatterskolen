@@ -2670,6 +2670,15 @@
 					</div>
 
 					<div class="form-group">
+						<label>Product Type</label>
+						<select name="product_type" class="form-control">
+							<option value="course" data-product-id="884373255">Course</option>
+							<option value="manuscript" data-product-id="884373255">Manuscript</option>
+							<option value="manuscript_vat" data-product-id="5686476118">Manuscript MVA</option>
+						</select>
+					</div>
+
+					<div class="form-group">
 						<label>Product ID</label>
 						<input type="text" class="form-control" required name="product_id" value="884373255">
 					</div>
@@ -5049,6 +5058,13 @@
             modal.find('form').attr('action', action);
             modal.find('input[name=mobile_number]').val(vipps_phone_number);
         });
+
+		$("#createInvoiceModal").find("[name=product_type]").change(function() {
+			var selectedOption = $(this).find('option:selected');
+            // Get the data-id attribute value
+            var dataId = selectedOption.data('product-id');
+			$("#createInvoiceModal").find("[name=product_id]").val(dataId);
+		})
 
         $(".viewOrderBtn").click(function(){
             let fields = $(this).data('fields');

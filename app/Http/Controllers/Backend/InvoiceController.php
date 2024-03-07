@@ -340,6 +340,7 @@ class InvoiceController extends Controller
             $division   = $divisor * 100; // multiply the split count to get the correct value
             $price      = round($price/$division, 2); // round the value to the nearest tenths
             $price      = (int)$price*100;
+            $has_vat    = false;
 
             for ($i=1; $i <= $divisor; $i++ ) { // loop based on the split count
                 $dueDate =  $request->issue_date ?: date("Y-m-d");
@@ -362,10 +363,16 @@ class InvoiceController extends Controller
                     'index'         => $i
                 ];
 
+                if ($request->product_type === 'manuscript_vat') {
+                    $invoice_fields['vat'] = ($price/100) * 25;
+                    $has_vat = true;
+                }
+
                 $invoice = new FikenInvoice();
-                $invoice->create_invoice($invoice_fields);
+                $invoice->create_invoice($invoice_fields, $has_vat);
             }
         } else {
+            $has_vat = false;
             $dueDate = date_format(date_create(Carbon::parse($dueDate)->addDays(14)), 'Y-m-d');
             $invoice_fields = [
                 'user_id'       => $learner->id,
@@ -384,8 +391,13 @@ class InvoiceController extends Controller
                 'payment_mode'  => $paymentMode->mode,
             ];
 
+            if ($request->product_type === 'manuscript_vat') {
+                $invoice_fields['vat'] = ($price/100) * 25;
+                $has_vat = true;
+            }
+
             $invoice = new FikenInvoice();
-            $invoice->create_invoice($invoice_fields);
+            $invoice->create_invoice($invoice_fields, $has_vat);
         }
 
         return redirect()->back()->with([
