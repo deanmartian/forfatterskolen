@@ -64,10 +64,10 @@
                     <div class="receipt-invoice-pink">
                         <span style="font-size: 19px; font-weight: 600;">{{ trans('site.order-history.invoice-copy') }}</span>
                         <div class="receipt-pink-bg">
-                            <div>
+                            <!-- <div>
                                 <span>{{ trans('site.order-history.due-date') }}</span>
                                 <span style="float: right;">{{ currentOrder.created_at_formatted }}</span>
-                            </div>
+                            </div> -->
                             <div>
                                 <span>{{ trans('site.order-history.amount-to-pay') }}</span>
                                 <span style="float: right;">{{ currentOrder.total_formatted }}</span>
@@ -102,7 +102,7 @@
                         </div>
                         <div>
                             <span>{{ trans('site.order-history.customer-reference') }}</span>
-                            <span class="float-right">Sven-Inge Henningsen</span>
+                            <span class="float-right">Sven Inge Henningsen</span>
                         </div>
                     </div>
                     <div class="col-sm-6">
