@@ -314,11 +314,7 @@ class InvoiceController extends Controller
         $payment_mode = 'Bankoverføring';
 
         if ($request->has('payment_plan_id')) {
-        $paymentPlan = PaymentPlan::find($request->payment_plan_id);
-        $paymentPlan = PaymentPlan::find($request->payment_plan_id);
-        $payment_mode = 'Bankoverføring';
             $paymentPlan = PaymentPlan::find($request->payment_plan_id);
-        $payment_mode = 'Bankoverføring';
             $payment_plan = (int)$request->payment_plan_id === 10 ? '24 måneder' : $paymentPlan->plan;
             $divisor = (int)$request->payment_plan_id === 10 ? 24 : $paymentPlan->division;
         } else {
