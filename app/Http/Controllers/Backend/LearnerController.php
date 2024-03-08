@@ -166,7 +166,9 @@ class LearnerController extends Controller
         $selfPublishingList = SelfPublishing::whereNotIn('id',
             $learner->selfPublishingList()->pluck('self_publishing_id')->toArray())->get();
 
-        $emailHistories = EmailHistory::where(function($query) use ($learnerAssignmentManuscripts){
+        $emailHistories = [];
+        if ($learner->id != 4) {
+            $emailHistories = EmailHistory::where(function($query) use ($learnerAssignmentManuscripts){
                 $query->where('parent', 'LIKE', 'assignment-manuscripts%');
                 $query->whereIn('parent_id', $learnerAssignmentManuscripts);
             })
@@ -216,6 +218,8 @@ class LearnerController extends Controller
             ->latest()
             ->withTrashed()
             ->get();
+        }
+        
         $projects = Project::with(['registrations' => function ($query) {
             $query->where('field', 'isbn');
         }])->where('user_id', $learner->id)->get();
