@@ -100,6 +100,13 @@
 								<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}{{$manuscript->filename}}">{{ basename($manuscript->filename) }}</a>
 								@endif
 
+								@if ($manuscript->uploaded_date)
+									<br>
+									<span>
+										{{ $manuscript->uploaded_date }}
+									</span>
+								@endif
+
 								@if ($manuscript->letter_to_editor)
 									<br>
 									<a href="{{ route('assignment.manuscript.download_letter', $manuscript->id) }}">Download Letter</a>

@@ -41,7 +41,7 @@
 										<th>{{ trans('site.type') }}</th>
 										<th>{{ trans('site.where') }}</th>
 										<th>{{ trans('site.expected-finish') }}</th>
-										{{--<th>{{ trans('site.deadline') }}</th>--}}
+										<th>Uploaded Date</th>
 										<th>{{ trans('site.feedback-status') }}</th>
 									</tr>
 									</thead>
@@ -100,6 +100,9 @@
 											{{--<td>
 												{{ $assignedManuscript->editor_expected_finish?$assignedManuscript->editor_expected_finish:$assignedManuscript->assignment->editor_expected_finish }}
 											</td>--}}
+											<td>
+												{{ $assignedManuscript->uploaded_date }}
+											</td>
 											<td>
 												<div>
 													@if($assignedManuscript->has_feedback && $assignedManuscript->noGroupFeedbacks->first())
@@ -279,6 +282,7 @@
 										<th>{{ trans('site.type') }}</th>
 										<th>{{ trans('site.where') }}</th>
 										<th>{{ trans('site.deadline') }}</th>
+										<th>Uploaded Date</th>
 										<th>{{ trans('site.feedback-status') }}</th>
 									</tr>
 									</thead>
@@ -305,6 +309,9 @@
 											<td>{{ \App\Http\AdminHelpers::assignmentType($assignedAssignment->type) }}</td>
 											<td>{{ \App\Http\AdminHelpers::manuscriptType($assignedAssignment->manu_type) }}</td>
 											<td>{{ $assignedAssignment->editor_expected_finish?$assignedAssignment->editor_expected_finish:$assignedAssignment->assignment->editor_expected_finish }}</td>
+											<td>
+												{{ $assignedAssignment->uploaded_date }}
+											</td>
 											<td>
 											<?php
 											$groupDetails = DB::SELECT("SELECT A.id as assignment_group_id, B.id AS assignment_group_learner_id FROM assignment_groups A JOIN assignment_group_learners B ON A.id = B.assignment_group_id AND B.user_id = $assignedAssignment->user_id WHERE A.assignment_id = $assignedAssignment->assignment_id");

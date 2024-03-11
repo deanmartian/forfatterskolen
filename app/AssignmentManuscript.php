@@ -2,6 +2,8 @@
 namespace App;
 
 use App\Http\AdminHelpers;
+use Carbon\Carbon;
+use FrontendHelpers;
 use Illuminate\Database\Eloquent\Model;
 
 class AssignmentManuscript extends Model
@@ -9,10 +11,16 @@ class AssignmentManuscript extends Model
     
     protected $table = 'assignment_manuscripts';
     protected $fillable = ['assignment_id', 'user_id', 'filename', 'words', 'grade', 'type', 'manu_type', 'editor_id',
-        'join_group', 'letter_to_editor', 'expected_finish', 'editor_expected_finish'];
-    protected $appends = ['file_link', 'file_link_with_download', 'assignment_type', 'where_in_script',
+        'join_group', 'letter_to_editor', 'expected_finish', 'editor_expected_finish', 'uploaded_at'];
+    protected $appends = [
+        'file_link', 
+        'file_link_with_download', 
+        'assignment_type', 
+        'where_in_script',
         'file_extension',
-        'file_link_url'];
+        'file_link_url',
+        'uploaded_date'
+    ];
 
     const APPROVED_STATUS = 1; // approved feedback status
     const FINISHED_STATUS = 2; // finished status
@@ -136,5 +144,10 @@ class AssignmentManuscript extends Model
     public function getWhereInScriptAttribute()
     {
         return AdminHelpers::manuscriptType($this->attributes['manu_type']);
+    }
+
+    public function getUploadedDateAttribute()
+    {
+        return $this->attributes['uploaded_at'] ? FrontendHelpers::formatDate($this->attributes['uploaded_at']) : NULL;
     }
 }
