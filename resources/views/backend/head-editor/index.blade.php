@@ -712,19 +712,31 @@
                         <input required type="date" class="form-control" name="availability">
                     </div>
 					<div class="form-group">
+						<label>
+							Email Template	
+						</label>
+						<select name="email_templates" class="form-control">
+							<option value="" disabled selected>- Select Email - </option>
+							@foreach ($assignmentFeedbackEmailTemplates as $assignmentFeedbackEmailTemplate)
+								<option value="{{ $assignmentFeedbackEmailTemplate->subject }}" 
+									data-fields="{{ $assignmentFeedbackEmailTemplate }}">
+									{{ $assignmentFeedbackEmailTemplate->subject }}
+								</option>
+							@endforeach
+						</select>
+					</div>
+					<div class="form-group">
 						<label>{{ trans('site.subject') }}</label>
-						<input type="text" class="form-control" name="subject" value="{{ $emailTemplate->subject }}"
+						<input type="text" class="form-control" name="subject"
 							   required>
 					</div>
 					<div class="form-group">
 						<label>{{ trans('site.from') }}</label>
-						<input type="text" class="form-control" name="from_email"
-							   value="{{ $emailTemplate->from_email }}" required>
+						<input type="text" class="form-control" name="from_email" required>
 					</div>
 					<div class="form-group">
 						<label>{{ trans('site.message') }}</label>
-						<textarea class="form-control tinymce" name="message" rows="6"
-								  required>{!! $emailTemplate->email_content !!}</textarea>
+						<textarea class="form-control tinymce" name="message" id="messageEditor" rows="6"></textarea>
 					</div>
 
 					<div class="form-group">
@@ -1157,6 +1169,18 @@
         modal.find('[name=feedback_id]').val(feedback_id);
         modal.find('[name=availability]').val(availability);
         modal.find('form#personalAssignmentApproveFeedback').attr('action', action);
+		tinymce.get('messageEditor').setContent('');
+	});
+
+	$('#personalAssignmentShowFeedbackModal').find('[name=email_templates]').change(function() {
+		let modal = $('#personalAssignmentShowFeedbackModal');
+		let selectedOption = this.options[this.selectedIndex];
+		let fields = JSON.parse(selectedOption.getAttribute('data-fields'));
+		if (fields) {
+			modal.find('[name=subject]').val(fields.subject);
+			modal.find('[name=from_email]').val(fields.from_email);
+			tinymce.get('messageEditor').setContent(fields.email_content);
+		}
 	});
 	$('.courseAssignmentShowFeedbackBtn').click(function(){
 

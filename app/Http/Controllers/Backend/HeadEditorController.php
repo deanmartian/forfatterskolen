@@ -12,6 +12,7 @@ use App\ShopManuscriptsTaken;
 use Illuminate\Support\Facades\Auth;
 use App\CorrectionManuscript;
 use App\CopyEditingManuscript;
+use App\EmailTemplate;
 use App\User;
 use App\Jobs\AddMailToQueueJob;
 use App\Http\AdminHelpers;
@@ -46,8 +47,11 @@ class HeadEditorController extends Controller
             $query->where('is_approved', 0);
         })->get();
 
+        $assignmentFeedbackEmailTemplates = EmailTemplate::where('is_assignment_manu_feedback', 1)->get();
+
         return view('backend.head-editor.index', compact('assignedAssignmentManuscripts',
-            'assigned_shop_manuscripts', 'assignedAssignments','corrections', 'copyEditings', 'freeManuscripts', 'selfPublishingList'));
+            'assigned_shop_manuscripts', 'assignedAssignments','corrections', 'copyEditings', 'freeManuscripts', 'selfPublishingList',
+            'assignmentFeedbackEmailTemplates'));
     }
 
     public function sendEmail($editor_id, $type, $title, $learner, Request $request)

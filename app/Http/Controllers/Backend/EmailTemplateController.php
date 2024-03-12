@@ -70,10 +70,14 @@ class EmailTemplateController extends Controller
             'from_email' => $request->from_email,
             'email_content' => $request->email_content,
             'course_id' => is_numeric($request->course_id) ? $request->course_id : NULL,
-            'course_type' => $type
+            'course_type' => $type,
+            'is_assignment_manu_feedback' => $request->is_assignment_manu_feedback ? 1 : 0
         ]);
 
-        return redirect()->back();
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Email template created successfully.'),
+            'alert_type' => 'success'
+        ]);
     }
 
     public function editEmailTemplate($id, Request $request)
@@ -84,9 +88,13 @@ class EmailTemplateController extends Controller
             $emailtemplate->subject = $request->subject ?: $emailtemplate->subject;
             $emailtemplate->from_email = $request->from_email ? $request->from_email : $emailtemplate->from_email;
             $emailtemplate->email_content = $request->email_content;
+            $emailtemplate->is_assignment_manu_feedback = $request->is_assignment_manu_feedback ? 1 : 0;
             $emailtemplate->save();
         }
-        return redirect()->back();
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Email template updated successfully.'),
+            'alert_type' => 'success'
+        ]);
     }
 
     public function courseEditAdd($courseId, Request $request)

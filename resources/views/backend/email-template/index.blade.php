@@ -57,10 +57,12 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">{{ trans('site.send-feedback') }}</h4>
+                    <h4 class="modal-title">
+                        Email Template
+                    </h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
 
                         <div class="form-group">
@@ -83,6 +85,11 @@
                             <!-- <div id="group-course-multi-invioce-email-div"> 
                                 <input type="checkbox" name="group-course-multi-invioce-email" id="group-course-multi-invioce-email"> {{ trans('site.group-course-multi-invioce-email') }}</input>
                             </div> -->
+                        </div>
+
+                        <div class="form-group">
+                            <input type="checkbox" name="is_assignment_manu_feedback" /> 
+                            Is Assignmet Feedback?
                         </div>
 
                         <div class="form-group">
@@ -154,7 +161,12 @@
 
             $('#is_course_for_sale').prop('checked', false)
             $('#is_course_for_sale_div').hide()
-            $('#courses').hide()
+            $('#courses').hide();
+
+            modal.find('[name=is_assignment_manu_feedback]').prop('checked', false);
+            if (fields.is_assignment_manu_feedback) {
+                modal.find('[name=is_assignment_manu_feedback]').prop('checked', true);
+            }
         });
 
         $('#is_course_for_sale').change(function() {

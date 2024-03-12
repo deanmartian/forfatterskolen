@@ -17,5 +17,7 @@ class EmailTemplate extends Model
      *
      * @var array
      */
-    protected $fillable = ['page_name', 'subject', 'from_email', 'email_content', 'course_type', 'course_id'];
+    protected $fillable = [
+        'page_name', 'subject', 'from_email', 'email_content', 'course_type', 'course_id', 'is_assignment_manu_feedback'
+    ];
 }
