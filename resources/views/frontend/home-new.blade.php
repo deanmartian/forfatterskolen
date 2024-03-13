@@ -20,19 +20,18 @@
             <div class="row">
                 <div class="col-md-6">
                     <h1>
-                        For deg som vil gjøre alvor av skrivedrømmen
+                        {!! trans('site.front.home.title') !!}
                     </h1>
                     <p>
-                        Vi hos Forfatterskolen har fulgt mange elever tett frem mot utgivelse, 
-                        og ønsker å hjelpe flere. Er du den neste?
+                        {!! trans('site.front.home.description') !!}
                     </p>
 
                     <a href="{{ route('front.course.index') }}" class="btn btn-red" style="margin-right: 20px">
-                        Alle Kurs
+                        {{ trans('site.front.home.all-course') }}
                     </a>
                     <button class="btn btn-outline-red" data-toggle="modal"
                     data-target="#writingPlanModal">
-                        Gratis skrivetips
+                        {{ trans('site.front.home.free-writing-tips') }}
                     </button>
                 </div>
                 <div class="col-md-6">
@@ -47,33 +46,33 @@
             <div class="row first-row">
                 <div class="col-md-4">
                     <h2>
-                        20+
+                        {!! trans('site.front.home.quality-course-count') !!}
                     </h2>
                     <p>
-                        Høykvalitets kurs
+                        {!! trans('site.front.home.quality-course') !!}
                     </p>
                 </div>
                 <div class="col-md-4">
                     <h2>
-                        1000+
+                        {{ trans('site.front.home.student-count') }}
                     </h2>
                     <p>
-                        Studenter
+                        {!! trans('site.front.home.students') !!}
                     </p>
                 </div>
                 <div class="col-md-4">
                     <h2>
-                        15+
+                        {{ trans('site.front.home.mentor-count') }}
                     </h2>
                     <p>
-                        Erfarne mentorer
+                        {!! trans('site.front.home.mentors') !!}
                     </p>
                 </div>
             </div> <!-- end first-row -->
             
             <div class="row second-row">
                 <h2 class="w-100 text-center">
-                    Siste nytt
+                    {!! trans('site.front.latest-seminars') !!}
                 </h2>
 
                 @foreach($upcomingSections as $k => $upcomingSection)
@@ -111,10 +110,10 @@
     <div class="popular-courses-row">
         <div class="container">
             <h2 class="float-left">
-                Våre mest populære kurs
+                {!! trans('site.front.home.most-popular-course') !!}
             </h2>
             <a href="{{ route('front.course.index') }}" class="btn float-right btn-outline-maroon">
-                Alle kurs
+                {{ trans('site.front.home.all-course') }}
             </a>
 
             <div class="clearfix"></div>
@@ -154,23 +153,22 @@
                 <img data-src="https://www.forfatterskolen.no/images-new/home/online-course.png" alt="online-course"
                  class="inline-course-img">
                 <div class="details">
-                    <h2>Hva er fordelene ved nettkurs?</h2>
+                    <h2>{!! trans('site.front.home.advantages-of-online-course') !!}</h2>
                     <p>
-                        Fordelen med nettkurs er at du kan ta det hvor som helst, og i ditt helt eget tempo. 
-                        På kurset får du også: 
+                        {!! trans('site.front.home.advantages-of-online-course-description') !!} 
                     </p>
                     <ul>
                         <li>
                             <img data-src="https://www.forfatterskolen.no/images-new/home/arrow.svg" alt="arrow">
-                            Et unikt innblikk i skrivehåndverket, gode verktøy og nyttige tips.
+                            {!! trans('site.front.home.advantages-of-online-course-1') !!}
                         </li>
                         <li>
                             <img data-src="https://www.forfatterskolen.no/images-new/home/arrow.svg" alt="arrow">
-                            Tilbakemelding på manus fra profesjonell redaktør.
+                            {!! trans('site.front.home.advantages-of-online-course-2') !!}
                         </li>
                         <li>
                             <img data-src="https://www.forfatterskolen.no/images-new/home/arrow.svg" alt="arrow">
-                            Skjermtreff med kjente forfattere og flere hundre andre skriveglade.
+                            {!! trans('site.front.home.advantages-of-online-course-3') !!}
                         </li>
                     </ul>
                 </div>
@@ -179,17 +177,14 @@
             <div class="bottom-container">
                 <div class="col-md-5">
                     <h2>
-                        Møt mentorene dine
+                        {!! trans('site.front.home.meet-your-mentors') !!}
                     </h2>
                     <p>
-                        Hver mandag har vi treff med kjente forfattere på skjermen – og av og til en 
-                        profesjonell redaktør, dramaturg eller språkvasker. Alt for at du skal lære og 
-                        bli inspirert av landets beste skrivementorer. Enkelte av mandagene redigerer 
-                        også rektor innsendte tekster, live og direkte, så du lærer å bearbeide eget manus.
+                        {!! trans('site.front.home.meet-your-mentors-details') !!}
                     </p>
 
                     <a href="{{ route('front.course.show', 17) }}" class="btn btn-red">
-                        Les mer om mentormøter
+                        {!! trans('site.front.home.see-more-mentors') !!}
                     </a>
                 </div>
             </div>
@@ -248,11 +243,11 @@
                 </div>
                 <div class="col-md-7">
                     <h2>
-                        Vil du ha profesjonell tilbakemelding på en smakebit av din personlige tekst, helt gratis?
+                        {!! trans('site.front.home.like-pro-feedback') !!}
                     </h2>
 
                     <a href="{{ route('front.free-manuscript.index') }}" class="btn site-btn-global mt-5">
-                        Ja, dette vil jeg ha!
+                        {!! trans('site.front.home.like-pro-feedback-yes') !!}
                     </a>
                 </div>
             </div>
@@ -264,22 +259,22 @@
     <div class="col-sm-12 no-left-padding no-right-padding gdpr">
         <div class="container display-flex">
             <div class="gdpr-body">
-                <div class="h1 mt-0 gdpr-title">Dine data, dine valg</div>
+                <div class="h1 mt-0 gdpr-title">{!! trans('site.front.home.gdpr-title') !!}</div>
                 <div>
                     <p>
-                        Forfatterskolen er den som behandler dine data.
+                        {!! trans('site.front.home.gdpr-description-1') !!}
                     </p>
                     <p>
-                        Dine data er trygge hos oss. Vi bruker dem til å tilpasse tjenestene og tilbudene for deg.
+                        {!! trans('site.front.home.gdpr-description-2') !!}
                     </p>
                 </div>
             </div>
 
             <div class="gdpr-actions">
                 <button class="btn btn-agree" onclick="agreeGdpr()">
-                    JEG FORSTÅR
+                    {!! trans('site.front.home.gdpr-understand') !!}
                 </button>
-                <a href="{{ route('front.terms') }}" title="View terms">Vis meg mer</a>
+                <a href="{{ route('front.terms') }}" title="View terms">{!! trans('site.front.home.gdpr-view-terms') !!}</a>
             </div>
         </div>
     </div>
