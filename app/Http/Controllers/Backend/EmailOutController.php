@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
 use App\Jobs\AddMailToQueueJob;
 use App\Mail\SubjectBodyEmail;
+use App\User;
 use \Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
 
@@ -74,7 +75,51 @@ class EmailOutController extends Controller {
 
         EmailOut::create($data);
 
-        $notif = AdminHelpers::createMessageBag('Email out updated successfully.');
+        $notif = AdminHelpers::createMessageBag('Email out created successfully.');
+        if ($request->send_to_learners_no_course) {
+            $excludeFreeManuscriptLearners = false;
+
+            $users = $this->getNonPayingLearners($excludeFreeManuscriptLearners);
+            
+            $userCounter = 0;
+            foreach($users as $user) {
+                $subject = $request->subject;
+                $from = 'post@forfatterskolen.no';
+                $to = $user->email;
+                $content = $request->message;
+
+                $encode_email = encrypt($to);
+                if (strpos($request->message, "[redirect]")) {
+                    $extractLink        = FrontendHelpers::getTextBetween($request->message, "[redirect]", "[/redirect]");
+                    $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
+                    $redirectLabel      =  FrontendHelpers::getTextBetween($request->message, "[redirect_label]", 
+                        "[/redirect_label]");
+                    $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
+                    $search_string = [
+                        '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]'
+                    ];
+                    $replace_string = [
+                        $redirectLink, ''
+                    ];
+                    $content = str_replace($search_string, $replace_string, $request->message);
+                }
+
+                $emailData = [
+                    'email_subject' => $subject,
+                    'email_message' => $content,
+                    'from_name' => '',
+                    'from_email' => $from,
+                    'attach_file' => NULL
+                ];
+                \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+                
+                $userCounter++;
+            }
+
+            $notif = AdminHelpers::createMessageBag('Email out created successfully. ' 
+            . $userCounter .' email(s) sent.');
+        }
+
         if ($request->send_to) {
             $subject = $request->subject;
             $from = 'post@forfatterskolen.no';
@@ -180,6 +225,53 @@ class EmailOutController extends Controller {
         $email_out->save();
 
         $notif = AdminHelpers::createMessageBag('Email out updated successfully.');
+        if ($request->send_to_learners_no_course) {
+            $excludeFreeManuscriptLearners = false;
+            if ($id == 2666) {
+                $excludeFreeManuscriptLearners = true;
+            }
+
+            $users = $this->getNonPayingLearners($excludeFreeManuscriptLearners);
+            
+            $userCounter = 0;
+            foreach($users as $user) {
+                $subject = $email_out->subject;
+                $from = 'post@forfatterskolen.no';
+                $to = $user->email;
+                $content = $email_out->message;
+
+                $encode_email = encrypt($to);
+                if (strpos($request->message, "[redirect]")) {
+                    $extractLink        = FrontendHelpers::getTextBetween($request->message, "[redirect]", "[/redirect]");
+                    $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
+                    $redirectLabel      =  FrontendHelpers::getTextBetween($request->message, "[redirect_label]", 
+                        "[/redirect_label]");
+                    $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
+                    $search_string = [
+                        '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]'
+                    ];
+                    $replace_string = [
+                        $redirectLink, ''
+                    ];
+                    $content = str_replace($search_string, $replace_string, $request->message);
+                }
+
+                $emailData = [
+                    'email_subject' => $subject,
+                    'email_message' => $content,
+                    'from_name' => '',
+                    'from_email' => $from,
+                    'attach_file' => NULL
+                ];
+                \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+                
+                $userCounter++;
+            }
+
+            $notif = AdminHelpers::createMessageBag('Email out updated successfully. ' 
+            . $userCounter .' email(s) sent.');
+        }
+
         if ($request->send_to) {
             $subject = $email_out->subject;
             $from = 'post@forfatterskolen.no';
@@ -313,6 +405,21 @@ class EmailOutController extends Controller {
             'errors' => AdminHelpers::createMessageBag('Email out sent successfully.'),
             'alert_type' => 'success'
         ]);
+    }
+
+    public function getNonPayingLearners($excludeFreeManuscriptLearners = false)
+    {
+        $users = User::doesntHave('coursesTakenNotOld')
+                    ->doesntHave('shopManuscriptsTaken')
+                    ->doesntHave('coachingTimers')
+                    ->doesntHave('invoices');
+
+        if ($excludeFreeManuscriptLearners) {
+            $users->whereNotIn('email', function ($query) {
+                $query->select('email')->from('free_manuscripts');
+            });
+        }
+        return $users->whereNull('notes')->get();
     }
 
 }
