@@ -16,8 +16,10 @@ class AddMailToQueueMail extends Mailable
     public $from_email;
     public $attach_file;
     public $track_code;
+    public $emailView;
 
-    public function __construct($to, $subject, $message, $from_email, $from_name, $attachment = null, $track_code)
+    public function __construct($to, $subject, $message, $from_email, $from_name, $attachment = null, $track_code,
+        $emailView = 'emails.mail_to_queue')
     {
         $this->recipient = $to;
         $this->email_subject = $subject;
@@ -26,6 +28,7 @@ class AddMailToQueueMail extends Mailable
         $this->from_name = $from_name;
         $this->attach_file = $attachment;
         $this->track_code = $track_code;
+        $this->emailView = $emailView;
     }
 
     public function build()
@@ -33,7 +36,7 @@ class AddMailToQueueMail extends Mailable
         $email =  $this->to($this->recipient)
             ->from($this->from_email, $this->from_name)
             ->subject($this->email_subject)
-            ->view('emails.mail_to_queue')
+            ->view($this->emailView)
             ->text('emails.subject_body_plain');
 
         // check if there's an attachment to prevent error

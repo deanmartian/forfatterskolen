@@ -168,9 +168,11 @@ class PageController extends Controller
                 $user = $manuscript->user;
                 $to = $user->email;
                 $firstname = $user->first_name;
-                $message = str_replace([':firstname'], [$firstname], $request->message);
+                $date = Carbon::parse($request->expected_finish)->format('d/m/Y');
+
+                $message = str_replace([':firstname', '_date_'], [$firstname, $date], $request->message);
                 dispatch(new AddMailToQueueJob($to, $request->subject, $message, null,
-                null, null, $emailType, $manuscript->id));
+                null, null, $emailType, $manuscript->id, 'emails.mail_to_queue_no_nlbr'));
             }
 
             return redirect()->back()->with([
@@ -811,6 +813,7 @@ class PageController extends Controller
 
     public function exportLearnersWithNoPaidRecords()
     {
+        return "inside export learners with no paid records";
         $users = $this->learnersWithNoPaidRecords();
         
         foreach( $users as $user ) {
