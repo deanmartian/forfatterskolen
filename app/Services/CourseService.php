@@ -432,7 +432,17 @@ class CourseService {
         $courseTaken->is_active = $course_status;
         $courseTaken->is_welcome_email_sent = 0;
         $courseTaken->is_free = $course->is_free;
-        $courseTaken->end_date = Carbon::parse($start_date)->addYear();
+
+        if ($course->is_free) {
+            $started_at = now();
+            $dayCount = $course->free_for_days == 0 ? 30 : $course->free_for_days;
+            $end_date = Carbon::today()->addDays($dayCount)->format('Y-m-d');
+            $courseTaken->started_at = $started_at;
+            $courseTaken->end_date = $end_date;
+        } else {
+            $courseTaken->end_date = Carbon::parse($start_date)->addYear();
+        }
+
         $courseTaken->save();
 
         // Check for shop manuscripts

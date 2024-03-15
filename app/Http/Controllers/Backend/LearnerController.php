@@ -343,7 +343,13 @@ class LearnerController extends Controller
 		$courseTaken->is_active = 1;
 
 		if ($course->is_free) {
+            $started_at = now();
+            $dayCount = $course->free_for_days == 0 ? 30 : $course->free_for_days;
+            $end_date = Carbon::today()->addDays($dayCount)->format('Y-m-d');
+
             $courseTaken->is_free = 1;
+            $courseTaken->started_at = $started_at;
+            $courseTaken->end_date = $end_date;
         }
 
 		$courseTaken->save();

@@ -65,10 +65,12 @@
 										@if( $courseTaken->is_active )
 											@if($courseTaken->hasStarted)
 												@if($courseTaken->hasEnded)
-													<button class="btn light-red-outline-btn" data-toggle="modal"
-															data-target="#renewAllModal">
-														{{ trans('site.learner.renew-subscription') }}
-													</button>
+													@if(!$courseTaken->is_free)
+														<button class="btn light-red-outline-btn" data-toggle="modal"
+																data-target="#renewAllModal">
+															{{ trans('site.learner.renew-subscription') }}
+														</button>
+													@endif
 												@else
 													<a class="btn light-red-outline-btn"
 													href="{{route('learner.course.show', ['id' => $courseTaken->id])}}">

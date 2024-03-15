@@ -215,7 +215,8 @@ class CourseController extends Controller
 
             // create new course taken
             $started_at = now();
-            $end_date = Carbon::today()->addDays($course->free_for_days)->format('Y-m-d');
+            $dayCount = $course->free_for_days == 0 ? 30 : $course->free_for_days;
+            $end_date = Carbon::today()->addDays($dayCount)->format('Y-m-d');
 
             $courseTaken = CoursesTaken::firstOrNew(['user_id' => Auth::user()->id, 'package_id' => $package->id]);
             $courseTaken->is_active = 1;
