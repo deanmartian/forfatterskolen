@@ -68,7 +68,7 @@ class WebinarScheduleRegistrationJob implements ShouldQueue
                 $response = curl_exec($ch);
                 $decoded_response = json_decode($response);
 
-                if (array_key_exists('conference_url', $decoded_response)) {
+                if (property_exists($decoded_response, 'conference_url')) {
                     $registrant['user_id'] = $user->id;
                     $registrant['webinar_id'] = $webinar->id;
                     $webRegister = WebinarRegistrant::firstOrNew($registrant);
