@@ -69,6 +69,7 @@ class WebinarScheduleRegistrationJob implements ShouldQueue
                 $response = curl_exec($ch);
                 $decoded_response = json_decode($response);
 
+                Log::info("----------- inside webinar schedule registration job ----------------");
                 Log::info(json_encode($decoded_response));
                 if (property_exists($decoded_response, 'conference_url')) {
                     $registrant['user_id'] = $user->id;
