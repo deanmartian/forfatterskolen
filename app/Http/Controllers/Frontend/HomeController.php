@@ -1825,7 +1825,7 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
         $response = curl_exec($ch);
         $decoded_response = json_decode($response);
 
-        if (array_key_exists('conference_url', $decoded_response)) {
+        if (property_exists($decoded_response, 'conference_url')) {
             // add to webinar registrant to mark as Pameldt
             if ($webinar) {
                 $registrant['user_id'] = $user->id;
