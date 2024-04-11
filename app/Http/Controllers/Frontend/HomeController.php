@@ -164,7 +164,7 @@ class HomeController extends Controller
                 'from_email' => 'post@forfatterskolen.no',
                 'attach_file' => NULL
             ];
-            \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+            //\Mail::to($to)->queue(new SubjectBodyEmail($emailData));
         }
 
         if ($request->has('package_id')) {
