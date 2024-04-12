@@ -1236,7 +1236,7 @@ class HomeController extends Controller
             $response = curl_exec($ch);
             $decoded_response = json_decode($response);
 
-            if (array_key_exists('conference_url', $decoded_response)) {
+            if (property_exists($decoded_response, 'conference_url')) {
                 return view('frontend.free-webinar-success', compact('freeWebinar'));
             } else {
                 $message = $decoded_response->error;
