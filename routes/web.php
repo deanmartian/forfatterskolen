@@ -73,6 +73,9 @@ Route::group([
         Route::get('/vipps-order-status/{orderId}', 'HomeController@checkVippsOrderStatus');
         Route::get('/chat', 'ChatController@index');
         Route::post('/chat', 'ChatController@sendMessage');
+        Route::get('/import-webinar-registrants', 'HomeController@importWebinarRegistrants');
+        Route::post('/import-webinar-registrants', 'HomeController@processImportWebinarRegistrants')
+            ->name('process-import-webinar-registrants');
 
 
         Route::get('/power-office', 'HomeController@powerOffice');

@@ -71,7 +71,9 @@ use Illuminate\Support\Facades\Session;
 use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Http\PowerOffice;
+use App\Imports\WebinarRegistrantsImport;
 use Illuminate\Support\Facades\Log as FacadesLog;
+use Maatwebsite\Excel\Facades\Excel;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
 include_once($_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php');
@@ -2421,5 +2423,16 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
             // Email address not found
             return $powerOffice->registerCustomer();
         }
+    }
+
+    public function importWebinarRegistrants()
+    {
+        return view('frontend.import-webinar-registrant');
+    }
+
+    public function processImportWebinarRegistrants(Request $request)
+    {
+        Excel::import(new WebinarRegistrantsImport($request->link), request()->file('file'));
+        echo "after import";
     }
 }
