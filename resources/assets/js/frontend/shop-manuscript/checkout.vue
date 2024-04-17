@@ -625,13 +625,16 @@ import FileUpload from '../../components/FileUpload.vue';
                 let shopManuscript = this.shopManuscript;
                 let totalDiscount = this.hasPaidCourse ? (shopManuscript.full_payment_price * 0.05) : 0;
                 let price = parseFloat(this.shopManuscript.full_payment_price);
+                let additional = price * .25;
 
                 if (this.orderForm.genre === 10) {
                     price = price + ((price - totalDiscount) * .50);
+                    additional = price * .25; // get the new additional price
                 }
 
                 //this.orderForm.totalDiscount = totalDiscount;
                 this.orderForm.price = price;
+                this.orderForm.additional = additional;
             },
 
             handleFileSelected(type, file) {
