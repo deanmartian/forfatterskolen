@@ -217,6 +217,7 @@ class LearnerController extends Controller
             })
             ->latest()
             ->withTrashed()
+            ->limit(20)
             ->get();
         }
         
