@@ -18,6 +18,7 @@ use App\Http\Controllers\Controller;
 use App\Course;
 use App\CourseApplication;
 use App\Http\FrontendHelpers;
+use App\Jobs\AddMailToQueueJob;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -201,10 +202,44 @@ class CourseController extends Controller
                 \Mail::to($toEmail)->queue(new FreeCourseNewUserEmail($email_data));*/
 
                 // add to delayed email instead of sending email directly
-                $delayedEmail['user_id'] = $new_user->id;
+               /*  $delayedEmail['user_id'] = $new_user->id;
                 $delayedEmail['course_id'] = $course->id;
                 $delayedEmail['send_at'] = Carbon::now()->addMinute(10);
-                FreeCourseDelayedEmail::create($delayedEmail);
+                FreeCourseDelayedEmail::create($delayedEmail); */
+
+                $emailOut =  $course->emailOut()->where('send_immediately', 1)->first();
+                if ($emailOut) {
+                    $toEmail = $new_user->email;
+
+                    $encode_email = encrypt($toEmail);
+                    $user = $new_user;
+                    $loginLink = "<a href='".route('auth.login.email', $encode_email)."'>Klikk her for å logge inn</a>";
+                    $password = $user->need_pass_update ? 'Z5C5E5M2jv' : 'Skjult (kan endres inne i portalen eller via glemt passord)';
+                    if (strpos($emailOut->message, "[redirect]")) {
+                        $extractLink        = FrontendHelpers::getTextBetween($emailOut->message, "[redirect]", "[/redirect]");
+                        $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
+                        $redirectLabel      =  FrontendHelpers::getTextBetween($emailOut->message, "[redirect_label]", "[/redirect_label]");
+                        $redirectLink       = "<a href='".$formatRedirectLink."'>".$redirectLabel."</a>";
+                        $search_string = [
+                            '[redirect]'.$extractLink.'[/redirect]', '[redirect_label]'.$redirectLabel.'[/redirect_label]'
+                        ];
+                        $replace_string = [
+                            $redirectLink, ''
+                        ];
+                        $message = str_replace($search_string, $replace_string, $emailOut->message);
+                    } else {
+                        $search_string = [
+                            '[login_link]', '[username]', '[password]'
+                        ];
+                        $replace_string = [
+                            $loginLink, $toEmail, $password
+                        ];
+                        $message = str_replace($search_string, $replace_string, $emailOut->message);
+                    }
+
+                    dispatch(new AddMailToQueueJob($toEmail, $course->title, $message, 'postmail@forfatterskolen.no', null, null,
+                    'learner', $user->id));
+                }
             }
 
             // check if the course is taken and redirect the user to the course page before processing the free course
