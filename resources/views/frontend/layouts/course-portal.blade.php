@@ -8,25 +8,13 @@
     <link rel="alternate" href="{{ config('app.url') }}" hreflang="x-default" />
     <link rel="canonical" href="{{ url()->current() }}">
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-44061222-1"></script>
-    <script async>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', 'UA-44061222-1');
-    </script>
-
-    <!-- Global site tag (gtag.js) - Google Ads: 754620576 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-754620576"></script>
-    <script async>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', 'AW-754620576');
-    </script>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-PBZBPBN2');</script>
+    <!-- End Google Tag Manager -->
 
     @if(in_array(Route::currentRouteName(), ['front.free-webinar']))
     <!-- Event snippet for Webinar_pamelding conversion page In your html page, add the snippet and call
@@ -185,5 +173,9 @@ e.onload=function(){NDRSL.init("5de00781dd95d15fd33a275f")}},"interactive"===t.r
     }
 </script>
 <script src="https://cdn.helpwise.io/assets/js/livechat.js"></script>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PBZBPBN2"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 </body>
 </html>
