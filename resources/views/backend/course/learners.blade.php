@@ -372,11 +372,22 @@
 					<input type="checkbox" name="check_all"> <label for="">Check/Uncheck All</label> <br>
 					<input type="checkbox" name="not_facebook_group" value="not-fb-group"> 
 					<label for="not_facebook">Not In Facebook Group</label>
+
+					<div class="form-group">
+						@if(count($course->packages) > 0)
+							@foreach ($course->packages as $package)
+								<input type="checkbox" name="packages[]" class="check-packages" value="{{ $package->id }}">
+								<label>{{ $package->variation }}</label> <br>
+							@endforeach
+						@endif
+					</div>
+
 					<div class="form-group" style="max-height: 300px; overflow-y: scroll; margin-top: 10px">
 						@if(count($course->learners->get()) > 0)
 							@foreach( $course->learners->get() as $learner)
 								<input type="checkbox" name="learners[]" value="{{ $learner->user->id }}" 
-								class="{{ !$learner->in_facebook_group ? 'not-in-facebook-group' : '' }}">
+								class="{{ !$learner->in_facebook_group ? 'not-in-facebook-group' : '' }}" 
+								data-package="{{ $learner->package_id }}">
 								<label>{{ $learner->user->full_name }}</label> <br>
 							@endforeach
 						@endif
@@ -628,6 +639,7 @@
 			if ($(this).prop('checked')) {
 				$("[type=checkbox][name!=not_facebook_group]").prop('checked', true);
 				$("[name=not_facebook_group]").prop('checked', false);
+				$(".check-packages").prop('checked', false);
 			} else {
 				$("[type=checkbox]").prop('checked', false);
 			}
@@ -639,6 +651,12 @@
 			if ($(this).prop('checked')) {
 				$(".not-in-facebook-group").prop('checked', true);
 			}
+		});
+
+		$('.check-packages').change(function() {
+            var packageValue = $(this).val();
+            var isChecked = $(this).prop('checked');
+            $('input[name="learners[]"][data-package="' + packageValue + '"]').prop('checked', isChecked);
 		});
 
         $(".receive-email-toggle").change(function(){
