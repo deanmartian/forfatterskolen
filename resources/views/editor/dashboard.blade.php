@@ -221,41 +221,43 @@
 										@endif
 									@endforeach
 									@foreach($shopManuscriptRequests as $request)
-										<tr style="background-color: beige;">
-											<td>
-												<a href="{{ route('editor.backend.download_shop_manuscript', $request->manuscript_id) }}"><i class="fa fa-download" aria-hidden="true"></i>
-												</a>&nbsp;
-												@if($request->manuscript->is_active)
-													<a href="{{ route('editor.shop_manuscript_taken', ['id' => $request->manuscript->user->id, 'shop_manuscript_taken_id' => $request->manuscript_id]) }}">{{$request->manuscript->shop_manuscript->title}}</a>
-												@else
-													{{$request->manuscript->shop_manuscript->title}}
-												@endif
-											</td>
-											<td>
-												@if($request->manuscript->genre > 0)
-													{{ \App\Http\FrontendHelpers::assignmentType($request->manuscript->genre) }}
-												@endif
-											</td>
-											<td>{{ $request->manuscript->user->id }}</td>
-											<td>{{ $request->manuscript->editor_expected_finish }}</td>
-											<td>
-												<button class="btn btn-success btn-xs acceptRequestBtn"
-														data-toggle="modal"
-														data-target="#acceptRequest"
-														data-title="{{ trans('site.are-you-sure-you-want-to-accept') }}"
-														data-sub_title="{{ trans('site.are-you-sure-you-want-to-accept-sub') }}"
-														data-action="{{ route('editor.acceptShopManuscriptRequest', ['shop_manuscript_taken_id' => $request->manuscript_id, 'accept' => '1', 'request_id' => $request->id]) }}"
-												><i class="fa fa-check" aria-hidden="true"></i>&nbsp;{{ trans('site.accept') }}</button>&nbsp;&nbsp;
-												<button class="btn btn-danger btn-xs acceptRequestBtn"
-														data-toggle="modal"
-														data-target="#acceptRequest"
-														data-title="{{ trans('site.are-you-sure-you-want-to-reject') }}"
-														data-sub_title="{{ trans('site.are-you-sure-you-want-to-reject-sub') }}"
-														data-action="{{ route('editor.acceptShopManuscriptRequest', ['shop_manuscript_taken_id' => $request->manuscript_id, 'accept' => '0', 'request_id' => $request->id]) }}"
-												><i class="fa fa-times" aria-hidden="true"></i>&nbsp;{{ trans('site.reject') }}</button>&nbsp;&nbsp;
-												<span class="label label-info" style="font-size: 1.2rem; font-weight: 100;"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;{{ trans('site.answer-until') }}&nbsp;{{ $request->answer_until }}</span>
-											</td>
-										</tr>
+										@if($request->manuscript)
+											<tr style="background-color: beige;">
+												<td>
+													<a href="{{ route('editor.backend.download_shop_manuscript', $request->manuscript_id) }}"><i class="fa fa-download" aria-hidden="true"></i>
+													</a>&nbsp;
+													@if($request->manuscript->is_active)
+														<a href="{{ route('editor.shop_manuscript_taken', ['id' => $request->manuscript->user->id, 'shop_manuscript_taken_id' => $request->manuscript_id]) }}">{{$request->manuscript->shop_manuscript->title}}</a>
+													@else
+														{{$request->manuscript->shop_manuscript->title}}
+													@endif
+												</td>
+												<td>
+													@if($request->manuscript->genre > 0)
+														{{ \App\Http\FrontendHelpers::assignmentType($request->manuscript->genre) }}
+													@endif
+												</td>
+												<td>{{ $request->manuscript->user->id }}</td>
+												<td>{{ $request->manuscript->editor_expected_finish }}</td>
+												<td>
+													<button class="btn btn-success btn-xs acceptRequestBtn"
+															data-toggle="modal"
+															data-target="#acceptRequest"
+															data-title="{{ trans('site.are-you-sure-you-want-to-accept') }}"
+															data-sub_title="{{ trans('site.are-you-sure-you-want-to-accept-sub') }}"
+															data-action="{{ route('editor.acceptShopManuscriptRequest', ['shop_manuscript_taken_id' => $request->manuscript_id, 'accept' => '1', 'request_id' => $request->id]) }}"
+													><i class="fa fa-check" aria-hidden="true"></i>&nbsp;{{ trans('site.accept') }}</button>&nbsp;&nbsp;
+													<button class="btn btn-danger btn-xs acceptRequestBtn"
+															data-toggle="modal"
+															data-target="#acceptRequest"
+															data-title="{{ trans('site.are-you-sure-you-want-to-reject') }}"
+															data-sub_title="{{ trans('site.are-you-sure-you-want-to-reject-sub') }}"
+															data-action="{{ route('editor.acceptShopManuscriptRequest', ['shop_manuscript_taken_id' => $request->manuscript_id, 'accept' => '0', 'request_id' => $request->id]) }}"
+													><i class="fa fa-times" aria-hidden="true"></i>&nbsp;{{ trans('site.reject') }}</button>&nbsp;&nbsp;
+													<span class="label label-info" style="font-size: 1.2rem; font-weight: 100;"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;{{ trans('site.answer-until') }}&nbsp;{{ $request->answer_until }}</span>
+												</td>
+											</tr>
+										@endif
 									@endforeach
 									</tbody>
 								</table>
