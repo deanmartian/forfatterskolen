@@ -986,7 +986,8 @@ class LearnerController extends Controller
             $manuscript = $assignment->manuscripts->first();
             $feedback = null;
             if ($manuscript) {
-                $feedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $manuscript['id'])->first();
+                $feedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $manuscript['id'])
+                    ->where('is_active',1)->first();
             }
 
             if (!$feedback) {
@@ -1010,7 +1011,8 @@ class LearnerController extends Controller
             $manuscript = $assignment->manuscripts->first();
             $feedback = null;
             if ($manuscript) {
-                $feedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $manuscript['id'])->first();
+                $feedback = AssignmentFeedbackNoGroup::where('assignment_manuscript_id', $manuscript['id'])
+                ->where('is_active',1)->first();
             }
 
             if ($feedback) {

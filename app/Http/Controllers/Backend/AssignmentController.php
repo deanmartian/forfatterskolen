@@ -1131,7 +1131,7 @@ class AssignmentController extends Controller
                     'feedback_user_id' => Auth::user()->id,
                     'filename' => $filesWithPath,
                     'is_admin' => true,
-                    'is_active' => true,
+                    'is_active' => false,
                     'hours_worked' => $request->hours,
                     'notes_to_head_editor' => $request->notes_to_head_editor,
                     'availability' => $request->has('availability') ? $request->availability : NULL
@@ -1189,6 +1189,7 @@ class AssignmentController extends Controller
             $assignmentFeedbackNoGroup->filename = $filesWithPath;
         }
         $assignmentFeedbackNoGroup->availability = $request->availability;
+        $assignmentFeedbackNoGroup->is_active = 1;
         $assignmentFeedbackNoGroup->save();
 
         // set status = 1 in assignmentManuscript

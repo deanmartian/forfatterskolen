@@ -96,7 +96,7 @@
                     @endphp
                     <div class="timeline-wrapper">
                         <h3>
-                            {{ $manuscript->id }} {{ $assignment->title }}
+                            {{ $assignment->title }}
                         </h3>
                         <div class="timeline">
                             <p>
