@@ -1715,6 +1715,9 @@
 
 			<div class="panel panel-default">
 				<div class="panel-body">
+					<a href="{{ route('admin.learner.email-history', $learner->id) }}" class="btn btn-primary pull-right btn-xs">
+						View More
+					</a>
 					<h4>
 						Email History
 					</h4>
