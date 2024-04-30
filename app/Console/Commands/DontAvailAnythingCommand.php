@@ -44,7 +44,8 @@ class DontAvailAnythingCommand extends Command
     {
         CronLog::create(['activity' => 'DontAvailAnything CRON running.']);
         $yesterday = date("Y-m-d", strtotime( '-1 days' ) ); // get the date yesterday
-        $users = User::whereDate('created_at', $yesterday )->get(); // get users created yesterday
+        $users = User::whereDate('created_at', $yesterday )
+                ->where('role', 2)->get(); // get users created yesterday
         foreach($users as $user) {
             // check if the user don't have workshop, manuscript and courses taken
             if ($user->workshopsTaken->count() == 0 && $user->shopManuscriptsTaken->count() == 0 && count($user->coursesTaken) == 0
