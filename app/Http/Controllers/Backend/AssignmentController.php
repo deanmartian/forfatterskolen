@@ -1391,6 +1391,7 @@ class AssignmentController extends Controller
             'submission_date' => $request->submission_date,
             'available_date' => $request->available_date,
             'max_words' => (int) $request->max_words,
+            'allow_up_to' => (int) $request->allow_up_to,
             'show_join_group_question' => 0,
             'course_id' => $request->course_id,
             'parent_id' => $request->learner_id,

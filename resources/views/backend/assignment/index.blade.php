@@ -395,6 +395,12 @@
 							</div>
 
 							<div class="form-group">
+								<label>Allowed up to</label>
+								<input type="number" class="form-control" name="allow_up_to"
+								value="">
+							</div>
+
+							<div class="form-group">
 								<label>{{ trans('site.send-letter-to-editor') }}</label> <br>
 								<input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No" data-size="small"
 									   name="send_letter_to_editor">
