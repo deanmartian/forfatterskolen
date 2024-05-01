@@ -467,6 +467,16 @@ class ShopManuscriptController extends Controller
         return redirect()->back();
     }
 
+    public function updateCoachingTimeLater($shopManuscriptTakenID, Request $request)
+    {
+        $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($shopManuscriptTakenID);
+        if ($shopManuscriptTaken) {
+            $shopManuscriptTaken->coaching_time_later = $request->coaching_time_later;
+            $shopManuscriptTaken->save();
+        }
+        return redirect()->back();
+    }
+
     public function updateDescription($shopManuscriptTakenID, Request $request)
     {
         $shopManuscriptTaken = ShopManuscriptsTaken::findOrFail($shopManuscriptTakenID);

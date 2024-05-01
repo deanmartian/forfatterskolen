@@ -101,7 +101,9 @@
 							<a href="#" data-target="#editGenreModal" data-toggle="modal">{{ trans('site.edit-genre') }}</a>
 							<br>
 							{{ trans('site.front.form.coaching-time-later-in-manus') }}
-							<b>{{ $shopManuscriptTaken->coaching_time_later ? 'Yes' : 'No' }}</b>
+							<a href="#" data-target="#coachingTimeModal" data-toggle="modal">
+								{{ $shopManuscriptTaken->coaching_time_later ? 'Yes' : 'No' }}
+							</a>
 							<br>
 							{{ trans('site.description') }}: {{ $shopManuscriptTaken->description }}
 							<a href="#" data-target="#editDescriptionModal" data-toggle="modal">Edit</a>
@@ -426,6 +428,36 @@
 							<option value="{{ $type->id }}"
 							@if ($shopManuscriptTaken->genre == $type->id) selected @endif> {{ $type->name }} </option>
 						@endforeach
+					</select>
+					<div class="text-right margin-top">
+						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<div id="coachingTimeModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body">
+				<form method="POST" 
+				action="{{ route('admin.shop-manuscript-taken.update-coaching-time-later', $shopManuscriptTaken->id) }}"
+				onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					{{ trans('site.front.form.coaching-time-later-in-manus') }}
+					<select class="form-control" name="coaching_time_later" required>
+						<option value="1" {{ $shopManuscriptTaken->coaching_time_later ? 'selected' : '' }}>
+							Yes
+						</option>
+						<option value="0" {{ !$shopManuscriptTaken->coaching_time_later ? 'selected' : '' }}>
+							No
+						</option>
 					</select>
 					<div class="text-right margin-top">
 						<button type="submit" class="btn btn-primary">{{ trans('site.save') }}</button>
