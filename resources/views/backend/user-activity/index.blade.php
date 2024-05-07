@@ -134,7 +134,7 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Log Preview</h4>
 		    </div>
-		    <div class="modal-body">
+		    <div class="modal-body" style="overflow: auto">
                 <table class="table" id="info-table">
                     <thead>
                         <tr>
