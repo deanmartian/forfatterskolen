@@ -2,11 +2,12 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
 class SelfPublishing extends Model
 {
-
+    
     protected $table = 'self_publishing';
     protected $fillable = ['title', 'description', 'manuscript', 'word_count', 'editor_id', 'project_id', 'price',
         'editor_share', 'expected_finish'];

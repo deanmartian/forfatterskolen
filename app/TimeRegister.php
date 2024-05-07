@@ -2,10 +2,12 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
 class TimeRegister extends Model
 {
+    use Loggable;
 
     protected $fillable = ['user_id', 'project_id', 'date', 'time', 'time_used', 'description', 'invoice_file'];
     protected $appends = ['file_link'];

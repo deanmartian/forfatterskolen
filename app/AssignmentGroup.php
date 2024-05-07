@@ -1,10 +1,12 @@
 <?php
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
 class AssignmentGroup extends Model
 {
+    use Loggable;
     
     protected $table = 'assignment_groups';
     protected $fillable = ['assignment_id', 'title', 'submission_date', 'allow_feedback_download'];

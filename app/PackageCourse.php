@@ -1,10 +1,13 @@
 <?php
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
 class PackageCourse extends Model
 {
+    use Loggable;
+    
     protected $table = 'package_courses';
     protected $fillable = ['package_id', 'included_package_id'];
     protected $appends = ['included_package_course_title', 'included_package_variation'];

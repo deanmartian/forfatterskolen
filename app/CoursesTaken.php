@@ -2,12 +2,14 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CoursesTaken extends Model
 {
     use SoftDeletes;
+    use Loggable;
 
     protected $table = 'courses_taken';
     protected $fillable = ['user_id', 'package_id', 'gift_purchase_id', 'is_active', 'started_at', 'start_date',

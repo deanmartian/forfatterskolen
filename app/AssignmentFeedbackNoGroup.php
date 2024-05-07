@@ -1,11 +1,13 @@
 <?php
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
 class AssignmentFeedbackNoGroup extends Model
 {
 
+    use Loggable;
     protected $table = 'assignment_feedbacks_no_group';
     protected $fillable = ['assignment_manuscript_id', 'learner_id','feedback_user_id', 'filename', 'is_admin', 'is_active', 'availability', 'hours_worked', 'notes_to_head_editor'];
     protected $with = ['manuscript'];

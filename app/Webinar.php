@@ -1,10 +1,13 @@
 <?php
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
 class Webinar extends Model
 {
+    use Loggable;
+    
     protected $table = 'webinars';
     protected $fillable = [
         'course_id', 'title', 'description', 'host', 'start_date', 'image' , 'link', 'set_as_replay', 'status'

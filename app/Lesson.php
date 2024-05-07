@@ -4,9 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Http\FrontendHelpers;
+use App\Traits\Loggable;
 
 class Lesson extends Model
 {
+    use Loggable;
     /**
      * The database table used by the model.
      *

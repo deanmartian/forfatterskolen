@@ -2,10 +2,13 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
 class Package extends Model
 {
+    use Loggable;
+    
     protected $table = 'packages';
     /**
      * issue_date is for the faktura issue date

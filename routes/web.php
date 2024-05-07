@@ -1878,6 +1878,8 @@ Route::group([
 
     Route::get('/backup', 'Backend\PageController@backup')->name('backup');
     Route::get('/check-nearly-expired-course', 'Backend\PageController@checkNearlyExpiredCourses');
+    Route::get('/user-activity', 'Backend\PageController@userActivity');
+    Route::get('/user-activity/{id}', 'Backend\PageController@userActivityDetails');
 });
 
 

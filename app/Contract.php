@@ -3,10 +3,12 @@
 namespace App;
 
 use App\Http\AdminHelpers;
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
 class Contract extends Model
 {
+    use Loggable;
 
     const SUPER_ADMIN_ONLY = 1;
 

@@ -3,10 +3,13 @@
 namespace App;
 
 use AdminHelpers;
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
 class ShopManuscriptsTaken extends Model
 {
+    use Loggable;
+    
     protected $table = 'shop_manuscripts_taken';
     protected $fillable = ['user_id', 'shop_manuscript_id', 'file', 'is_active', 'words', 'feedback_user_id',
         'expected_finish', 'manuscript_uploaded_date', 'genre', 'description', 'is_manuscript_locked','synopsis',

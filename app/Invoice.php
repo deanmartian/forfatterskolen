@@ -2,10 +2,12 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
 class Invoice extends Model
 {
+    use Loggable;
 
     const COMPLETED = 1;
     const PENDING = 0;

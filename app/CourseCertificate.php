@@ -2,10 +2,13 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
 class CourseCertificate extends Model
 {
+    use Loggable;
+    
     /**
      * The database table used by the model.
      *

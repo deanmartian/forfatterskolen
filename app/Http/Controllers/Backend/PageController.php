@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Backend;
 
+use App\ActivityLog;
 use App\Assignment;
 use App\AssignmentManuscript;
 use App\CoachingTimerManuscript;
@@ -861,5 +862,36 @@ class PageController extends Controller
             'alert_type' => 'success',
             'errors'    => AdminHelpers::createMessageBag('Email Sent.')
         ]);
+    }
+
+    public function userActivity()
+    {
+        $logs = ActivityLog::with('user')->orderBy('id', 'desc');
+
+        $logs = $logs->paginate(10);
+
+
+        $totalCount = $logs->total();
+        $currentPage = $logs->currentPage();
+        $perPage = $logs->perPage();
+        $fromCount = ($currentPage - 1) * $perPage + 1;
+        $toCount = min($currentPage * $perPage, $totalCount);
+
+        // $currentData = DB::table($table)->find($id);
+        return view('backend.user-activity.index', compact('logs', 'fromCount', 'toCount', 'totalCount'));
+    }
+
+    public function userActivityDetails($id)
+    {
+        $log = ActivityLog::find($id);
+        $tableId = $log->json_data['id'];
+        
+        $currentData = DB::table($log->table_name)->find($tableId);
+
+        if ($currentData) {
+            return response()->json($currentData);
+        }
+
+        return null;
     }
 }

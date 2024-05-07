@@ -2,11 +2,14 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Course extends Model
 {
+    use Loggable;
+    
     protected $table = 'courses';
 
     // completed_date and issue_date is used on downloading certificate

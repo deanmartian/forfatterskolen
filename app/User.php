@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
@@ -18,6 +19,7 @@ class User extends Authenticatable
 {
     use Notifiable;
     use SoftDeletes;
+    use Loggable;
 
     const AdminRole = 1;
     const LearnerRole = 2;
@@ -361,7 +363,7 @@ class User extends Authenticatable
 
     public function isSuperUser()
     {
-        $ids = [1376, 1070, 4464];
+        $ids = [1376, 1070, 4];
         return in_array($this->attributes['id'], $ids) ? true : false;
     }
 

@@ -1,11 +1,12 @@
 <?php
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
 class AssignmentGroupLearner extends Model
 {
-    
+    use Loggable;
     protected $table = 'assignment_group_learners';
     // could_send_feedback_to - stores the group learner id
     protected $fillable = ['assignment_group_id', 'user_id', 'could_send_feedback_to'];

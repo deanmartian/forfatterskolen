@@ -2,10 +2,12 @@
 
 namespace App;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Model;
 
 class Manuscript extends Model
 {
+    use Loggable;
     /**
      * The database table used by the model.
      *

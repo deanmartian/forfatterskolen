@@ -2,6 +2,7 @@
 namespace App;
 
 use App\Http\AdminHelpers;
+use App\Traits\Loggable;
 use Carbon\Carbon;
 use FrontendHelpers;
 use Illuminate\Database\Eloquent\Model;
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 class AssignmentManuscript extends Model
 {
     
+    use Loggable;
+
     protected $table = 'assignment_manuscripts';
     protected $fillable = ['assignment_id', 'user_id', 'filename', 'words', 'grade', 'type', 'manu_type', 'editor_id',
         'join_group', 'letter_to_editor', 'expected_finish', 'editor_expected_finish', 'uploaded_at'];
@@ -138,12 +141,14 @@ class AssignmentManuscript extends Model
 
     public function getAssignmentTypeAttribute()
     {
-        return AdminHelpers::assignmentType($this->attributes['type']);
+        return isset($this->attributes['type']) && $this->attributes['type'] 
+        ? AdminHelpers::assignmentType($this->attributes['type']) : 'None';
     }
 
     public function getWhereInScriptAttribute()
     {
-        return AdminHelpers::manuscriptType($this->attributes['manu_type']);
+        return isset($this->attributes['manu_type']) && $this->attributes['manu_type'] 
+        ? AdminHelpers::manuscriptType($this->attributes['manu_type']) : 'None';
     }
 
     public function getUploadedDateAttribute()
