@@ -402,7 +402,11 @@
 									<tr>
 										<td>
 											@if($shopManuscriptTaken->is_active)
-												<a href="{{ route('shop_manuscript_taken', ['id' => $learner->id, 'shop_manuscript_taken_id' => $shopManuscriptTaken->id]) }}">{{$shopManuscriptTaken->shop_manuscript->title}}</a>
+												<a href="{{ route('shop_manuscript_taken', ['id' => $learner->id, 
+												'shop_manuscript_taken_id' => $shopManuscriptTaken->id]) }}">
+													{{$shopManuscriptTaken->shop_manuscript->title}}
+												</a> <br>
+												({{ $shopManuscriptTaken->words }} {{ trans('site.learner.words-text') }})
 											@else
 												{{$shopManuscriptTaken->shop_manuscript->title}}
 											@endif
@@ -986,6 +990,7 @@
 								<th>Is Disabled</th>
 								<th>Personal Assignment</th>
 								<th>{{ trans_choice('site.courses', 1) }}</th>
+								<th>Words</th>
 								<th>Editor</th>
 								<th>{{ trans_choice('site.manuscripts', 1) }}</th>
 								<th>{{ trans_choice('site.feedbacks', 1) }}</th>
@@ -1105,6 +1110,10 @@
 										</a>
 									</td>
 									<td>
+										@if ($manuscript)
+											{{ $manuscript->words }}
+										@endif
+									</td><td>
 										@if ($manuscript && $manuscript->editor)
 											{{ $manuscript->editor->full_name }}
 										@endif
@@ -5898,6 +5907,20 @@ console.log(record);
         let message = $(t).data('message');
         modal.find('.modal-body').html(message);
     }
+
+	function showEmailHistoryMessage(t) {
+		let modal = $("#showEmailModal");
+        let id = $(t).data('id');
+		
+		$.ajax({
+			method: "GET",
+			url: "/learner/email-history/" + id + "/details",
+			data: {},
+			success: function(data) {
+				console.log(data);
+			}
+		})
+	}
 
     function countChar(val) {
         let len = val.value.length;
