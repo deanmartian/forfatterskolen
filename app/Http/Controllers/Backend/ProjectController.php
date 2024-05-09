@@ -485,6 +485,10 @@ class ProjectController extends Controller
         $backRoute = 'admin.project.show';
         $saveGraphicRoute = 'admin.project.save-graphic-work';
         $deleteGraphicRoute = 'admin.project.delete-graphic-work';
+        $saveBookPicturesRoute = 'admin.project.save-picture';
+        $saveBookFormattingRoute = 'admin.project.save-book-formatting';
+        $deleteBookPicturesRoute = 'admin.project.delete-picture';
+        $deleteBookFormattingRoute = 'admin.project.delete-book-formatting';
 
         if (AdminHelpers::isGiutbokPage()) {
             $layout = 'giutbok.layout';
@@ -497,9 +501,13 @@ class ProjectController extends Controller
         $rewriteScripts = ProjectGraphicWork::rewriteScripts()->where('project_id', $project_id)->get();
         $trialPages = ProjectGraphicWork::trialPage()->where('project_id', $project_id)->get();
         $sampleBookPDFs = ProjectGraphicWork::sampleBookPdf()->where('project_id', $project_id)->get();
+        $bookPictures = ProjectBookPicture::where('project_id', $project_id)->get();
+        $bookFormattingList = ProjectBookFormatting::where('project_id', $project_id)->get();
 
         return view('backend.project.graphic-work', compact('project', 'layout', 'backRoute', 'saveGraphicRoute',
-            'deleteGraphicRoute', 'covers', 'barCodes', 'rewriteScripts', 'trialPages', 'sampleBookPDFs'));
+            'deleteGraphicRoute', 'covers', 'barCodes', 'rewriteScripts', 'trialPages', 'sampleBookPDFs',
+            'saveBookPicturesRoute', 'bookPictures', 'deleteBookPicturesRoute',
+             'saveBookFormattingRoute', 'bookFormattingList', 'deleteBookFormattingRoute'));
     }
 
     public function saveGraphicWork( $project_id, Request $request, ProjectService $projectService )

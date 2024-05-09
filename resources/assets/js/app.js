@@ -73,6 +73,10 @@ Vue.component('order-history', require('./frontend/components/order-history.vue'
 Vue.component('time-register', require('./backend/TimeRegister.vue'));
 Vue.component('project', require('./backend/project/list.vue'));
 Vue.component('project-details', require('./backend/project/details.vue'));
+Vue.component('project-whole-book', require('./backend/project/whole-book.vue'));
+Vue.component('project-books', require('./backend/project/books.vue'));
+Vue.component('project-tasks', require('./backend/project/tasks.vue'));
+Vue.component('project-time-register', require('./backend/project/time-register.vue'));
 Vue.component('project-notes', require('./backend/project/notes.vue'));
 Vue.component('publishing-services', require('./backend/publishing-package/services.vue'));
 Vue.component('assemble-book', require('./backend/assemble-books/list.vue'));

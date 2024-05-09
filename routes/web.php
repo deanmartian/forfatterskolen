@@ -687,6 +687,7 @@ Route::group([
         Route::post('learner/register', 'LearnerController@registerLearner')->name('admin.learner.register');
         Route::get('learner/export-vipps-efaktura', 'LearnerController@exportLearnerWithVipps');
         Route::get('learner/{id}/email-history', 'LearnerController@learnerEmailHistory')->name('admin.learner.email-history');
+        Route::get('learner/email-history/{id}/details', 'LearnerController@emailHistoryDetails');
         Route::resource('learner', 'LearnerController', [
             'names' => [
                 'index' => 'admin.learner.index',

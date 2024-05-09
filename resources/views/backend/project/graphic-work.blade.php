@@ -206,6 +206,114 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="panel">
+                    <div class="panel-header" style="padding: 10px;">
+                        <em><b>Book Pictures</b></em>
+                        <button class="btn btn-success btn-xs pull-right saveBookPictureBtn" data-toggle="modal"
+                                data-target="#bookPicturesModal"
+                                data-action="{{ route($saveBookPicturesRoute, $project->id) }}">
+                            Add
+                        </button>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="table-users table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Description</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($bookPictures as $bookPicture)
+                                    <tr>
+                                        <td>
+                                            <a href="{{ asset( $bookPicture->image ) }}">
+                                                <img src="{{ asset( $bookPicture->image ) }}" width="100" height="100">
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {!! $bookPicture->description !!}
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-primary btn-sm saveBookPictureBtn" data-toggle="modal"
+                                                    data-target="#bookPicturesModal"
+                                                    data-record="{{ json_encode($bookPicture) }}"
+                                                    data-action="{{ route($saveBookPicturesRoute, $project->id) }}">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-danger btn-sm deleteBookPictureBtn" data-toggle="modal"
+                                                    data-target="#deleteModal"
+                                                    data-action="{{ route($deleteBookPicturesRoute, $bookPicture->id) }}">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="panel">
+                    <div class="panel-header" style="padding: 10px;">
+                        <em><b>Page Format</b></em>
+                        <button class="btn btn-success btn-xs pull-right bookFormattingBtn" data-toggle="modal"
+                                data-target="#bookFormattingModal"
+                                data-action="{{ route($saveBookFormattingRoute, $project->id) }}">
+                            Add
+                        </button>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-users table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>File</th>
+                                    <th width="300"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($bookFormattingList as $bookFormatting)
+                                    <tr>
+                                        <td>
+                                            {!! $bookFormatting->file_link !!}
+                                        </td>
+                                        <td>
+                                            <a href="{{ $bookFormatting->file }}" class="btn btn-sm btn-success" download>
+                                                <i class="fa fa-download"></i>
+                                            </a>
+                                            <button class="btn btn-primary btn-sm bookFormattingBtn" data-toggle="modal"
+                                                    data-target="#bookFormattingModal"
+                                                    data-record="{{ json_encode($bookFormatting) }}"
+                                                    data-action="{{ route($saveBookFormattingRoute, $project->id) }}">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-danger btn-sm deleteBtn" data-toggle="modal"
+                                                    data-target="#deleteModal"
+                                                    data-action="{{ route($deleteBookFormattingRoute, $bookFormatting->id) }}">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- This is a pdf. This is the last thing for the book before it gets printed -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="graphicWorkModal" class="modal fade" role="dialog">
@@ -305,6 +413,91 @@
             </div>
         </div>
     </div>
+
+    <div id="bookPicturesModal" class="modal fade" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        Book Picture
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="id">
+                        <div class="form-group">
+                            <label>Images</label>
+                            <input type="file" name="images[]" class="form-control"
+                                   accept="image/*" multiple>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
+                        </div>
+
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">{{ trans('site.delete') }} <em></em></h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        {{ method_field('DELETE') }}
+                        Are you sure you want to delete this record?
+                        <div class="text-right margin-top">
+                            <button class="btn btn-danger" type="submit">{{ trans('site.delete') }}</button>
+                        </div>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="bookFormattingModal" class="modal fade" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        Book Formatting
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="id">
+                        <div class="form-group">
+                            <label>File</label>
+                            <input type="file" name="file" class="form-control"
+                                   accept="application/pdf">
+                        </div>
+
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('scripts')
@@ -398,6 +591,40 @@
 
             modal.find('.modal-title').text('Delete ' + pageTitle);
             form.attr('action', action);
+        });
+
+        $(".saveBookPictureBtn").click(function() {
+            let action = $(this).data('action');
+            let record = $(this).data('record');
+            let modal = $('#bookPicturesModal');
+            modal.find('form').attr('action', action);
+
+            if (record) {
+                modal.find('[name=id]').val(record.id);
+            }
+        });
+
+        $(".deleteBookPictureBtn").click(function(){
+            let action = $(this).data('action');
+            let modal = $('#deleteModal');
+            modal.find('form').attr('action', action);
+        });
+
+        $(".bookFormattingBtn").click(function(){
+            let action = $(this).data('action');
+            let record = $(this).data('record');
+            let modal = $('#bookFormattingModal');
+            modal.find('form').attr('action', action);
+
+            if (record) {
+                modal.find('[name=id]').val(record.id);
+            }
+        });
+
+        $(".deleteBtn").click(function(){
+            let action = $(this).data('action');
+            let modal = $('#deleteModal');
+            modal.find('form').attr('action', action);
         });
     </script>
 @stop

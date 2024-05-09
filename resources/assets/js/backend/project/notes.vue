@@ -7,7 +7,7 @@
                     Notes
                 </button>
             </div>
-            <div class="panel-body" v-html="project.notes_formatted">
+            <div class="panel-body" v-html="formattedNotes">
             </div>
         </div>
 
@@ -49,7 +49,17 @@
             }
         },
 
+        computed: {
+            formattedNotes() {
+                return this.project.short_notes ? this.nl2br(this.project.short_notes) : null;
+            }
+        },
+
         methods: {
+            nl2br(str) {
+                return str.replace(/\n/g, '<br>');
+            },
+            
             showNotes() {
                 this.noteForm = {
                     id: this.project.id,
