@@ -363,7 +363,7 @@ class User extends Authenticatable
 
     public function isSuperUser()
     {
-        $ids = [1376, 1070, 4];
+        $ids = [1376, 1070, 4464];
         return in_array($this->attributes['id'], $ids) ? true : false;
     }
 
