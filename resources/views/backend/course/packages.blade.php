@@ -69,6 +69,9 @@
             data-full_payment_sale_price="{{ number_format($package->full_payment_sale_price, 0, 0, '') }}"
             data-full_payment_sale_price_from="{{ $package->full_payment_sale_price_from }}"
             data-full_payment_sale_price_to="{{ $package->full_payment_sale_price_to }}"
+            data-full_payment_other_sale_price="{{ number_format($package->full_payment_other_sale_price, 0, 0, '') }}"
+            data-full_payment_other_sale_price_from="{{ $package->full_payment_other_sale_price_from }}"
+            data-full_payment_other_sale_price_to="{{ $package->full_payment_other_sale_price_to }}"
             data-months_3_sale_price="{{ number_format($package->months_3_sale_price, 0, 0, '') }}"
             data-months_3_sale_price_from="{{ $package->months_3_sale_price_from }}"
             data-months_3_sale_price_to="{{ $package->months_3_sale_price_to }}"
@@ -404,9 +407,9 @@
             <div class="col-sm-7">
               <ul class="nav nav-tabs">
                 <li class="active"><a data-toggle="tab" href="#fullprice">{{ trans('site.full-payment') }}</a></li>
-                <li><a data-toggle="tab" href="#3months">3 {{ trans('site.months') }}</a></li>
+                {{-- <li><a data-toggle="tab" href="#3months">3 {{ trans('site.months') }}</a></li>
                 <li><a data-toggle="tab" href="#6months">6 {{ trans('site.months') }}</a></li>
-                <li><a data-toggle="tab" href="#12months">12 {{ trans('site.months') }}</a></li>
+                <li><a data-toggle="tab" href="#12months">12 {{ trans('site.months') }}</a></li> --}}
               </ul>
               <div class="tab-content">
                 <div id="fullprice" class="tab-pane fade in active">
@@ -429,6 +432,23 @@
                             <input type="date" name="full_payment_sale_price_to" placeholder="{{ trans('site.sale-price-to') }}" class="form-control">
                         </div>
                     </div>
+                  <div class="form-group">
+                      <label>Other Sale Price</label>
+                      <input type="number" step="0.01" name="full_payment_other_sale_price" 
+                      placeholder="Other Sale Price" min="0" class="form-control">
+                  </div>
+                  <div class="form-row">
+                      <div class="form-group col-md-6">
+                          <label>Sale Price From</label>
+                          <input type="date" name="full_payment_other_sale_price_from" 
+                          placeholder="Sale Price From" class="form-control">
+                      </div>
+                      <div class="form-group col-md-6">
+                          <label>Sale Price To</label>
+                          <input type="date" name="full_payment_other_sale_price_to" 
+                          placeholder="Sale Price To" class="form-control">
+                      </div>
+                  </div>
                   <div class="form-group">
                     <label>Fiken Product ID</label>
                     <input type="text" name="full_price_product" placeholder="Fiken Product ID" required class="form-control">
@@ -741,9 +761,9 @@
             <div class="col-sm-7">
               <ul class="nav nav-tabs">
                 <li class="active"><a data-toggle="tab" href="#fullprice_edit">{{ trans('site.full-payment') }}</a></li>
-                <li><a data-toggle="tab" href="#3months_edit">3 {{ trans('site.months') }}</a></li>
+                {{-- <li><a data-toggle="tab" href="#3months_edit">3 {{ trans('site.months') }}</a></li>
                 <li><a data-toggle="tab" href="#6months_edit">6 {{ trans('site.months') }}</a></li>
-                <li><a data-toggle="tab" href="#12months_edit">12 {{ trans('site.months') }}</a></li>
+                <li><a data-toggle="tab" href="#12months_edit">12 {{ trans('site.months') }}</a></li> --}}
               </ul>
               <div class="tab-content">
                 <div id="fullprice_edit" class="tab-pane fade in active">
@@ -765,6 +785,23 @@
                       <label>{{ trans('site.sale-price-to') }}</label>
                       <input type="date" name="full_payment_sale_price_to" placeholder="{{ trans('site.sale-price-to') }}" class="form-control">
                     </div>
+                  </div>
+                  <div class="form-group">
+                      <label>Other Sale Price</label>
+                      <input type="number" step="0.01" name="full_payment_other_sale_price" 
+                      placeholder="Other Sale Price" min="0" class="form-control">
+                  </div>
+                  <div class="form-row">
+                      <div class="form-group col-md-6">
+                          <label>Sale Price From</label>
+                          <input type="date" name="full_payment_other_sale_price_from" 
+                          placeholder="Sale Price From" class="form-control">
+                      </div>
+                      <div class="form-group col-md-6">
+                          <label>Sale Price To</label>
+                          <input type="date" name="full_payment_other_sale_price_to" 
+                          placeholder="Sale Price To" class="form-control">
+                      </div>
                   </div>
                   <div class="form-group">
                     <label>Fiken Product ID</label>
@@ -1244,6 +1281,10 @@ $(document).ready(function(){
       var full_payment_sale_price_from = $(this).data('full_payment_sale_price_from');
       var full_payment_sale_price_to = $(this).data('full_payment_sale_price_to');
 
+      var full_payment_other_sale_price = $(this).data('full_payment_other_sale_price');
+      var full_payment_other_sale_price_from = $(this).data('full_payment_other_sale_price_from');
+      var full_payment_other_sale_price_to = $(this).data('full_payment_other_sale_price_to');
+
       var months_3_sale_price = $(this).data('months_3_sale_price');
       var months_3_sale_price_from = $(this).data('months_3_sale_price_from');
       var months_3_sale_price_to = $(this).data('months_3_sale_price_to');
@@ -1310,6 +1351,10 @@ $(document).ready(function(){
       $('#editPackageModal input[name=full_payment_sale_price]').val(full_payment_sale_price > 0 ? full_payment_sale_price : '');
       $('#editPackageModal input[name=full_payment_sale_price_from]').val(full_payment_sale_price_from);
       $('#editPackageModal input[name=full_payment_sale_price_to]').val(full_payment_sale_price_to);
+
+      $('#editPackageModal input[name=full_payment_other_sale_price]').val(full_payment_other_sale_price > 0 ? full_payment_other_sale_price : '');
+      $('#editPackageModal input[name=full_payment_other_sale_price_from]').val(full_payment_other_sale_price_from);
+      $('#editPackageModal input[name=full_payment_other_sale_price_to]').val(full_payment_other_sale_price_to);
 
       $('#editPackageModal input[name=months_3_sale_price]').val(months_3_sale_price > 0 ? months_3_sale_price : '');
       $('#editPackageModal input[name=months_3_sale_price_from]').val(months_3_sale_price_from);

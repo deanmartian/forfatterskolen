@@ -307,9 +307,21 @@ class CourseService {
         $toFull 		= \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
         $isBetweenFull 	= (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
 
-        $price = $isBetweenFull && $package->full_payment_sale_price
+        $fromFullOther 		= \Carbon\Carbon::parse($package->full_payment_other_sale_price_from)->format('Y-m-d');
+        $toFullOther 		= \Carbon\Carbon::parse($package->full_payment_other_sale_price_to)->format('Y-m-d');
+        $isBetweenFullOther 	= (($today >= $fromFullOther) && ($today <= $toFullOther)) ? 1 : 0;
+
+        $price = $package->full_payment_price;
+        if ($isBetweenFullOther && $package->full_payment_other_sale_price) {
+            $price = (int)$package->full_payment_other_sale_price;
+        }
+
+        if ($isBetweenFull && $package->full_payment_sale_price) {
+            $price = (int)$package->full_payment_sale_price;
+        }
+        /* $price = $isBetweenFull && $package->full_payment_sale_price
             ? (int)$package->full_payment_sale_price
-            : (int)$package->full_payment_price;
+            : (int)$package->full_payment_price; */
 
         // check if the user has a paid course
         if ($hasPaidCourse && $package->has_student_discount) {
@@ -342,8 +354,16 @@ class CourseService {
 
                 $discount = ( (int) $discountCoupon->discount);
 
-                $packageDiscount = ($isBetweenFull && $package->full_payment_sale_price) 
-                ? (int)$package->full_payment_price - (int)$package->full_payment_sale_price : 0;
+                /* $packageDiscount = ($isBetweenFull && $package->full_payment_sale_price) 
+                ? (int)$package->full_payment_price - (int)$package->full_payment_sale_price : 0; */
+                $packageDiscount = 0;
+                if ($isBetweenFullOther && $package->full_payment_other_sale_price) {
+                    $packageDiscount = (int)$package->full_payment_price - (int)$package->full_payment_other_sale_price;
+                }
+        
+                if ($isBetweenFull && $package->full_payment_sale_price) {
+                    $packageDiscount = (int)$package->full_payment_price - (int)$package->full_payment_sale_price;
+                }
 
                 if ($discountCoupon->type === 1) {
                     $price -= $discount - $packageDiscount;

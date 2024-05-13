@@ -48,6 +48,10 @@ class PackageController extends Controller
             $package->full_payment_sale_price_from  = $request->full_payment_sale_price_from;
             $package->full_payment_sale_price_to    = $request->full_payment_sale_price_to;
 
+            $package->full_payment_other_sale_price       = $request->full_payment_other_sale_price;
+            $package->full_payment_other_sale_price_from  = $request->full_payment_other_sale_price_from;
+            $package->full_payment_other_sale_price_to    = $request->full_payment_other_sale_price_to;
+
             $package->months_3_sale_price       = $request->months_3_sale_price;
             $package->months_3_sale_price_from  = $request->months_3_sale_price_from;
             $package->months_3_sale_price_to    = $request->months_3_sale_price_to;
@@ -133,6 +137,10 @@ class PackageController extends Controller
             $package->full_payment_sale_price       = $request->full_payment_sale_price;
             $package->full_payment_sale_price_from  = $request->full_payment_sale_price_from;
             $package->full_payment_sale_price_to    = $request->full_payment_sale_price_to;
+
+            $package->full_payment_other_sale_price       = $request->full_payment_other_sale_price;
+            $package->full_payment_other_sale_price_from  = $request->full_payment_other_sale_price_from;
+            $package->full_payment_other_sale_price_to    = $request->full_payment_other_sale_price_to;
 
             $package->months_3_sale_price       = $request->months_3_sale_price;
             $package->months_3_sale_price_from  = $request->months_3_sale_price_from;

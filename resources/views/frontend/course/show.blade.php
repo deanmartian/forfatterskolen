@@ -311,6 +311,9 @@
 											$from 		= \Carbon\Carbon::parse($package->full_payment_sale_price_from)->format('Y-m-d');
 											$to 			= \Carbon\Carbon::parse($package->full_payment_sale_price_to)->format('Y-m-d');
 											$isBetween 	= (($today >= $from) && ($today <= $to)) ? 1 : 0;
+											$fromOther 		= \Carbon\Carbon::parse($package->full_payment_other_sale_price_from)->format('Y-m-d');
+											$toOther 		= \Carbon\Carbon::parse($package->full_payment_other_sale_price_to)->format('Y-m-d');
+											$isBetweenOther = (($today >= $fromOther) && ($today <= $toOther)) ? 1 : 0;
 										?>
 										<div class="col-md-4 package-details-new {{ $package->course_type === 2 ? 'active' : '' }}">
 											<h3>
@@ -321,6 +324,13 @@
 												@if ($isBetween && $package->full_payment_sale_price)
 													<span>
 														{{FrontendHelpers::currencyFormat($package->full_payment_sale_price)}}
+													</span>
+													<strike class="line-through margin-right-5">
+														{{FrontendHelpers::currencyFormat($package->full_payment_price)}}
+													</strike>
+												@elseif ($isBetweenOther && $package->full_payment_other_sale_price)
+													<span>
+														{{FrontendHelpers::currencyFormat($package->full_payment_other_sale_price)}}
 													</span>
 													<strike class="line-through margin-right-5">
 														{{FrontendHelpers::currencyFormat($package->full_payment_price)}}

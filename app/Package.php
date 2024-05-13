@@ -72,8 +72,16 @@ class Package extends Model
         $toFull 		= \Carbon\Carbon::parse($this->attributes['full_payment_sale_price_to'])->format('Y-m-d');
         $isBetweenFull 	= (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
 
+        $fromFullOther 		= \Carbon\Carbon::parse($this->attributes['full_payment_other_sale_price_from'])->format('Y-m-d');
+        $toFullOther 		= \Carbon\Carbon::parse($this->attributes['full_payment_other_sale_price_to'])->format('Y-m-d');
+        $isBetweenFullOther 	= (($today >= $fromFullOther) && ($today <= $toFullOther)) ? 1 : 0;
+
         if ( $isBetweenFull && $this->attributes['full_payment_sale_price']) {
             return $this->attributes['full_payment_price'] - $this->attributes['full_payment_sale_price'];
+        }
+
+        if ( $isBetweenFullOther && $this->attributes['full_payment_other_sale_price']) {
+            return $this->attributes['full_payment_price'] - $this->attributes['full_payment_other_sale_price'];
         }
         return 0;
     }
