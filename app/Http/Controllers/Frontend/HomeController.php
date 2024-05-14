@@ -72,6 +72,7 @@ use App\Helpers\ApiException;
 use App\Helpers\ApiResponse;
 use App\Http\PowerOffice;
 use App\Imports\WebinarRegistrantsImport;
+use App\ShopManuscriptsTaken;
 use Illuminate\Support\Facades\Log as FacadesLog;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -2434,5 +2435,43 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
     {
         Excel::import(new WebinarRegistrantsImport($request->link), request()->file('file'));
         echo "after import";
+    }
+
+    public function exportCourseTakenByYear($year)
+    {
+        $coursesTaken = CoursesTaken::whereYear('created_at', $year)
+            ->where('is_free', 0)
+            ->get();
+        
+        $userList = [];
+        foreach($coursesTaken as $courseTaken) {
+            $userList[] = [
+                'name' => $courseTaken->user->full_name,
+                'email' => $courseTaken->user->email,
+                'course' => $courseTaken->package->course->title
+            ];
+        }
+        
+        $headers = ['name', 'email', 'course'];
+        $excel = \App::make('excel');
+        return $excel->download(new GenericExport($userList, $headers), $year . ' Bought Courses.xlsx');
+    }
+
+    public function exportShopManuscriptsTakenByYear($year)
+    {
+        $manuscriptsTaken = ShopManuscriptsTaken::whereYear('created_at', $year)->get();
+        
+        $list = [];
+        foreach($manuscriptsTaken as $manuscriptTaken) {
+            $list[] = [
+                'name' => $manuscriptTaken->user->full_name,
+                'email' => $manuscriptTaken->user->email,
+                'manuscript' => $manuscriptTaken->shop_manuscript->title
+            ];
+        }
+
+        $headers = ['name', 'email', 'manuscript'];
+        $excel = \App::make('excel');
+        return $excel->download(new GenericExport($list, $headers), $year . ' Bought Shop Manuscripts.xlsx');
     }
 }

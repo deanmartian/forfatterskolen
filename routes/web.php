@@ -76,6 +76,8 @@ Route::group([
         Route::get('/import-webinar-registrants', 'HomeController@importWebinarRegistrants');
         Route::post('/import-webinar-registrants', 'HomeController@processImportWebinarRegistrants')
             ->name('process-import-webinar-registrants');
+        Route::get('/export/course-taken/{year}', 'HomeController@exportCourseTakenByYear');
+        Route::get('/export/shop-manuscripts-taken/{year}', 'HomeController@exportShopManuscriptsTakenByYear');
 
 
         Route::get('/power-office', 'HomeController@powerOffice');
@@ -687,7 +689,6 @@ Route::group([
         Route::post('learner/register', 'LearnerController@registerLearner')->name('admin.learner.register');
         Route::get('learner/export-vipps-efaktura', 'LearnerController@exportLearnerWithVipps');
         Route::get('learner/{id}/email-history', 'LearnerController@learnerEmailHistory')->name('admin.learner.email-history');
-        Route::get('learner/email-history/{id}/details', 'LearnerController@emailHistoryDetails');
         Route::resource('learner', 'LearnerController', [
             'names' => [
                 'index' => 'admin.learner.index',
