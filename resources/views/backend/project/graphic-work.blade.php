@@ -205,6 +205,47 @@
                 @endforeach
                 </tbody>
             </table>
+
+            <button class="btn btn-success bookFormattingBtn" data-toggle="modal"
+                            data-target="#bookFormattingModal"
+                            data-action="{{ route($saveBookFormattingRoute, $project->id) }}">
+                Add Page Format
+            </button>
+            <div class="table-users table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>File</th>
+                        <th width="300"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($bookFormattingList as $bookFormatting)
+                        <tr>
+                            <td>
+                                {!! $bookFormatting->file_link !!}
+                            </td>
+                            <td>
+                                <a href="{{ $bookFormatting->file }}" class="btn btn-sm btn-success" download>
+                                    <i class="fa fa-download"></i>
+                                </a>
+                                <button class="btn btn-primary btn-sm bookFormattingBtn" data-toggle="modal"
+                                        data-target="#bookFormattingModal"
+                                        data-record="{{ json_encode($bookFormatting) }}"
+                                        data-action="{{ route($saveBookFormattingRoute, $project->id) }}">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btn-sm deleteBtn" data-toggle="modal"
+                                        data-target="#deleteModal"
+                                        data-action="{{ route($deleteBookFormattingRoute, $bookFormatting->id) }}">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div> <!-- end page format table -->
         </div>
 
         <div class="row">
@@ -259,57 +300,6 @@
                             </table>
                         </div>
 
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="panel">
-                    <div class="panel-header" style="padding: 10px;">
-                        <em><b>Page Format</b></em>
-                        <button class="btn btn-success btn-xs pull-right bookFormattingBtn" data-toggle="modal"
-                                data-target="#bookFormattingModal"
-                                data-action="{{ route($saveBookFormattingRoute, $project->id) }}">
-                            Add
-                        </button>
-                    </div>
-                    <div class="panel-body">
-                        <div class="table-users table-responsive">
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th>File</th>
-                                    <th width="300"></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($bookFormattingList as $bookFormatting)
-                                    <tr>
-                                        <td>
-                                            {!! $bookFormatting->file_link !!}
-                                        </td>
-                                        <td>
-                                            <a href="{{ $bookFormatting->file }}" class="btn btn-sm btn-success" download>
-                                                <i class="fa fa-download"></i>
-                                            </a>
-                                            <button class="btn btn-primary btn-sm bookFormattingBtn" data-toggle="modal"
-                                                    data-target="#bookFormattingModal"
-                                                    data-record="{{ json_encode($bookFormatting) }}"
-                                                    data-action="{{ route($saveBookFormattingRoute, $project->id) }}">
-                                                <i class="fa fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-danger btn-sm deleteBtn" data-toggle="modal"
-                                                    data-target="#deleteModal"
-                                                    data-action="{{ route($deleteBookFormattingRoute, $bookFormatting->id) }}">
-                                                <i class="fa fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- This is a pdf. This is the last thing for the book before it gets printed -->
                     </div>
                 </div>
             </div>
