@@ -123,7 +123,7 @@
 
 											<p class="text-gray mb-0">
 												{!! \Illuminate\Support\Str::limit(
-													strip_tags($courseTaken->package->course->description
+													strip_tags($formerCourse->package->course->description
 													), 200) !!}
 											</p>
 										</div>
