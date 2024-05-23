@@ -53,6 +53,10 @@
                     <div class="receipt-logo-container">
                         <img src="/images-new/logo-tagline.png" alt="Logo" class="w-100">
                     </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
                     <div class="receipt-papermoon-address">
                         <span style="font-weight: 600;">{{ trans('site.order-history.fs-name') }}</span> <br>
                         <span style="font-weight: 600;">{{ trans('site.order-history.fs-address1') }}</span> <br>
@@ -61,19 +65,15 @@
                     </div>
                 </div>
                 <div class="col-sm-6">
-                    <div class="receipt-invoice-pink">
+                    <!-- <div class="receipt-invoice-pink">
                         <span style="font-size: 19px; font-weight: 600;">{{ trans('site.order-history.invoice-copy') }}</span>
                         <div class="receipt-pink-bg">
-                            <!-- <div>
-                                <span>{{ trans('site.order-history.due-date') }}</span>
-                                <span style="float: right;">{{ currentOrder.created_at_formatted }}</span>
-                            </div> -->
                             <div>
                                 <span>{{ trans('site.order-history.amount-to-pay') }}</span>
                                 <span style="float: right;">{{ currentOrder.total_formatted }}</span>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <div v-if="currentOrder.company" class="customer-name-address">
                         <span>{{ currentOrder.company.company_name }}</span> <br>
                         <span>{{ currentOrder.company.street_address }}</span> <br>
@@ -385,7 +385,7 @@
     }
 
     .receipt-papermoon-address {
-        padding-top: 37px; /*70*/
+        padding-top: 30px; /*70*/
     }
 
     .customer-name-address{

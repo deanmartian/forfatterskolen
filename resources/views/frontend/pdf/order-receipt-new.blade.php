@@ -86,21 +86,6 @@
                 <img src="{{ url('/images-new/logo-tagline.png') }}" alt="Logo" style="width: 260px;">
             </div>
         </div>
-        <div class="w-50 float-right">
-            <div class="receipt-invoice-pink">
-                <span style="font-size: 19px; font-weight: 600;">{{ trans('site.order-history.invoice-copy') }}</span>
-                <div class="receipt-pink-bg">
-                    {{-- <div>
-                        <span>{{ trans('site.order-history.due-date') }}</span>
-                        <span>{{ $order->created_at_formatted }}</span>
-                    </div> --}}
-                    <div>
-                        <span>{{ trans('site.order-history.amount-to-pay') }}</span>
-                        <span>{{ $order->total_formatted }}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 
