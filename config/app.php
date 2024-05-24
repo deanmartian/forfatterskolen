@@ -194,6 +194,7 @@ return [
         Barryvdh\DomPDF\ServiceProvider::class,
 
         Anhskohbo\NoCaptcha\NoCaptchaServiceProvider::class,
+        App\Providers\DropboxServiceProvider::class
     ],
 
     /*
@@ -255,6 +256,7 @@ return [
         'Image' => Intervention\Image\Facades\Image::class,
 
         'NoCaptcha' => Anhskohbo\NoCaptcha\Facades\NoCaptcha::class,
+        'Http' => Illuminate\Support\Facades\Http::class
     ],
 
 ];
