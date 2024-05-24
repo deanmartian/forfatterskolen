@@ -42,7 +42,8 @@ class Kernel extends ConsoleKernel
         Commands\WebinarScheduledRegistrationCommand::class,
         Commands\InvoiceVippsEfakturaCommand::class,
         Commands\SveaDeliveryCommand::class,
-        Commands\CheckFikenContactCommand::class
+        Commands\CheckFikenContactCommand::class,
+        Commands\RefreshDropboxToken::class
     ];
 
     /**
@@ -100,6 +101,7 @@ class Kernel extends ConsoleKernel
             ->dailyAt('08:30');
         $schedule->command('webinarscheduledregistration:command')
             ->dailyAt('20:30');
+        $schedule->command('dropbox:refresh-token')->everyThirtyMinutes();
         /*$schedule->command('updategross:command')
             ->dailyAt('06:00');*/
         $schedule->command('freecoursedelayedemail:command')

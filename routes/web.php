@@ -78,6 +78,11 @@ Route::group([
             ->name('process-import-webinar-registrants');
         Route::get('/export/course-taken/{year}', 'HomeController@exportCourseTakenByYear');
         Route::get('/export/shop-manuscripts-taken/{year}', 'HomeController@exportShopManuscriptsTakenByYear');
+        Route::get('/dropbox/redirect', 'DropboxController@redirectToDropbox')->name('dropbox.redirect');
+        Route::get('/dropbox/callback', 'DropboxController@handleDropboxCallback')->name('dropbox.callback');
+        Route::post('/dropbox/refresh-token', 'DropboxController@refreshDropboxAccessToken')->name('dropbox.refresh_token');
+        Route::get('/dropbox/upload', 'DropboxController@dropboxUpload');
+        Route::post('/dropbox/upload', 'DropboxController@dropboxPostUpload')->name('dropbox.post-upload');
 
 
         Route::get('/power-office', 'HomeController@powerOffice');

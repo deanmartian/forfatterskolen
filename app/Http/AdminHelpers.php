@@ -23,6 +23,7 @@ use App\Workshop;
 use Carbon\Carbon;
 use Illuminate\Support\MessageBag;
 use Log;
+use Storage;
 use Swift_Mailer;
 use Swift_Message;
 use Swift_Transport;
@@ -1014,6 +1015,22 @@ class AdminHelpers
             $newName = "$path/$filename.$extension";
         }
         return $newName;
+    }
+
+    public static function getUniqueFilename($disk, $directory, $filename)
+    {
+        $pathInfo = pathinfo($filename);
+        $extension = isset($pathInfo['extension']) ? '.' . $pathInfo['extension'] : '';
+        $basename = $pathInfo['filename'];
+        $newFilename = $filename;
+        $counter = 1;
+
+        while (Storage::disk($disk)->exists($directory . '/' . $newFilename)) {
+            $newFilename = $basename . ' (' . $counter . ')' . $extension;
+            $counter++;
+        }
+
+        return $newFilename;
     }
 
     /**
