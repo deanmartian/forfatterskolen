@@ -101,7 +101,7 @@ class Kernel extends ConsoleKernel
             ->dailyAt('08:30');
         $schedule->command('webinarscheduledregistration:command')
             ->dailyAt('20:30');
-        $schedule->command('dropbox:refresh-token')->everyThirtyMinutes();
+        $schedule->command('dropbox:refresh-token')->hourly();
         /*$schedule->command('updategross:command')
             ->dailyAt('06:00');*/
         $schedule->command('freecoursedelayedemail:command')
