@@ -60,7 +60,7 @@ class RefreshDropboxToken extends Command
             if (file_exists($path)) {
                 echo $accessToken;
                 file_put_contents($path, str_replace(
-                    'DROPBOX_TOKEN=' . env('DROPBOX_ACCESS_TOKEN'),
+                    'DROPBOX_TOKEN=' . env('DROPBOX_TOKEN'),
                     'DROPBOX_TOKEN=' . $accessToken,
                     file_get_contents($path)
                 ));
