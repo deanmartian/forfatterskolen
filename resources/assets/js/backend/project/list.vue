@@ -43,7 +43,7 @@
                     <th>Learner</th>
                     <th>Status</th>
                     <th width="700">Description</th>
-                    <th>Status</th>
+                    <th>Date</th>
                     <td></td>
                 </tr>
                 </thead>

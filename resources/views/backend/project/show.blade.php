@@ -122,7 +122,7 @@
 
                 @if($project->user_id)
                     <!-- copy editing -->
-                    <div class="col-md-12 margin-top">
+                    <div class="margin-top">
                         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addOtherServiceModal"
                                 onclick="updateOtherServiceFields(1, this)" data-editors="{{ json_encode($copyEditingEditors) }}">
                                 + {{ trans('site.add-copy-editing') }}
@@ -261,6 +261,135 @@
                             </table>
                         </div>
                     </div> <!-- end copy editing -->
+
+                    <!-- correction -->
+                    <div class="margin-top">
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addOtherServiceModal"
+                                onclick="updateOtherServiceFields(0, this)" data-editors="{{ json_encode($correctionEditors) }}">
+                                + {{ trans('site.add-correction') }}
+                            </button>
+                        <div class="table-users table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>{{ trans_choice('site.manus', 2) }}</th>
+                                    <th>{{ trans_choice('site.editors', 1) }}</th>
+                                    <th>{{ trans('site.date-ordered') }}</th>
+                                    <th>{{ trans('site.expected-finish') }}</th>
+                                    <th>{{ trans_choice('site.feedbacks', 1) }}</th>
+                                    <th>{{ trans('site.status') }}</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($project->corrections as $correction)
+                                    <?php $extension = explode('.', basename($correction->file)); ?>
+                                    <tr>
+                                        <td>
+                                            @if ($correction->file)
+                                                <a href="{{ route($downloadOtherService, ['id' => $correction->id, 'type' => 2]) }}" download>
+                                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                                </a>&nbsp;
+                                                @if( end($extension) == 'pdf' || end($extension) == 'odt' )
+                                                    <a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
+                                                @elseif( end($extension) == 'docx' )
+                                                    <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+                                                @endif
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($correction->editor_id)
+                                                {{ $correction->editor->full_name }} <br>
+
+                                                <button class="btn btn-xs btn-primary assignEditorBtn" data-toggle="modal"
+                                                        data-target="#assignEditorModal"
+                                                        data-editor="{{ json_encode($correction->editor) }}"
+                                                        data-action="{{ route($assignEditorRoute, ['id' => $correction->id, 'type' => 2]) }}">
+                                                    {{ trans('site.assign-editor') }}
+                                                </button>
+                                            @else
+                                                <button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal"
+                                                        data-target="#assignEditorModal"
+                                                        data-action="{{ route($assignEditorRoute, ['id' => $correction->id, 'type' => 2]) }}">
+                                                    Assign Editor
+                                                </button>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            {{ \App\Http\FrontendHelpers::formatDate($correction->created_at) }}
+                                        </td>
+                                        <td>
+                                            @if ($correction->expected_finish)
+                                                {{ $correction->expected_finish_formatted }}
+                                                <br>
+                                            @endif
+
+                                            @if ($correction->status !== 2)
+                                                <a href="#setOtherServiceFinishDateModal" data-toggle="modal"
+                                                class="setOtherServiceFinishDateBtn"
+                                                data-action="{{ route($updateExpectedFinishRoute,
+                                                ['id' => $correction->id, 'type' => 2]) }}"
+                                                data-finish="{{ $correction->expected_finish ?
+                                                strftime('%Y-%m-%d', strtotime($correction->expected_finish)) : '' }}">
+                                                    Set Date
+                                                </a>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <!-- show only if no feedback is given yet for this copyEditing -->
+                                            @if (!$correction->feedback)
+                                                <a href="#addOtherServiceFeedbackModal" data-toggle="modal" style="color:#dc3545"
+                                                class="addOtherServiceFeedbackBtn" data-service="2"
+                                                data-action="{{ route($otherServiceFeedbackRoute,
+                                                            ['id' => $correction->id, 'type' => 2]) }}"
+                                                data-email-template="{{ json_encode($correctionFeedbackTemplate) }}">+ {{ trans('site.add-feedback') }}</a>
+                                            @else
+                                            <?php $files = explode(',',$correction->feedback->manuscript); ?>
+                                                @foreach($files as $file)
+                                                    <a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
+                                                @endforeach
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if( $correction->status == 2 )
+                                                <span class="label label-success">Finished</span>
+                                            @elseif( $correction->status == 1 )
+                                                <span class="label label-primary">Started</span>
+                                            @elseif( $correction->status == 0 )
+                                                <span class="label label-warning">Not started</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <?php
+                                            $btnColor = $correction->status == 1 ? 'primary' : 'warning';
+                                            ?>
+
+                                                <input type="checkbox" data-toggle="toggle" data-on="Locked"
+                                                    class="lock-toggle" data-off="Unlocked"
+                                                    data-type="correction" onchange="lockToggle(this)"
+                                                    data-id="{{$correction->id}}" data-size="mini" @if($correction->is_locked)
+                                                    {{ 'checked' }}
+                                                        @endif>
+
+                                            @if ($correction->status !== 2)
+                                                <button class="btn btn-{{ $btnColor }} btn-xs updateOtherServiceStatusBtn" type="button"
+                                                        data-toggle="modal" data-target="#updateOtherServiceStatusModal"
+                                                        data-service="2"
+                                                        data-action="{{ route($updateStatusRoute, ['id' => $correction->id, 'type' => 2]) }}"><i class="fa fa-check"></i></button>
+                                            @endif
+
+                                                <button class="btn btn-danger btn-xs deleteOtherServiceBtn" type="button"
+                                                        data-toggle="modal" data-target="#deleteOtherServiceModal"
+                                                        data-action="{{ route($otherServiceDeleteRoute, ['id' => $correction->id, 'type' => 2]) }}">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div> <!-- end correction -->
                 @endif
             </div>
             <div class="col-md-6">
