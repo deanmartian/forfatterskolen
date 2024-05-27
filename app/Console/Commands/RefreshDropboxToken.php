@@ -66,6 +66,7 @@ class RefreshDropboxToken extends Command
                 ));
             }
 
+            $this->call('config:clear'); // run config clear
             $this->info('Dropbox access token refreshed successfully.');
             Log::info('Dropbox access token refreshed successfully.');
         } else {
