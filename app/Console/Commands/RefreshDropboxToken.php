@@ -56,6 +56,7 @@ class RefreshDropboxToken extends Command
             $accessToken = $data['access_token'];
 
             $path = base_path('.env');
+            Log::info("path = " . $path);
             if (file_exists($path)) {
                 echo $accessToken;
                 file_put_contents($path, str_replace(
