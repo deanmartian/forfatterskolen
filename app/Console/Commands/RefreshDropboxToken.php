@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Log;
 use SebastianBergmann\Environment\Console;
 
 class RefreshDropboxToken extends Command
@@ -65,8 +66,10 @@ class RefreshDropboxToken extends Command
             }
 
             $this->info('Dropbox access token refreshed successfully.');
+            Log::info('Dropbox access token refreshed successfully.');
         } else {
             $this->error('Failed to refresh Dropbox access token.');
+            Log::info('Failed to refresh Dropbox access token.');
         }
     }
 }
