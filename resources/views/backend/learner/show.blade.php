@@ -541,44 +541,6 @@
 				</div>
 			</div>
 
-			<div class="panel panel-default">
-				<div class="panel-body">
-					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#selfPublishingModal">
-						+ Add to Self publishing
-					</button>
-					<h4>Self publishing</h4>
-				</div>
-
-				<div class="table-responsive">
-					<table class="table">
-						<thead>
-						<tr>
-							<th>Title</th>
-							<th width="150"></th>
-						</tr>
-						</thead>
-						<tbody>
-						@foreach($learnerSelfPublishingList as $selfPublishing)
-							<tr>
-								<td>
-									<a href="{{ route('admin.self-publishing.index') }}">
-										{{ $selfPublishing->selfPublishing->title }}
-									</a>
-								</td>
-								<td>
-									<button class="btn btn-danger btn-xs deleteSelfPublishingBtn" data-toggle="modal"
-											data-target="#deleteSelfPublishingModal"
-											data-action="{{ route('admin.learner.remove-self-publishing', $selfPublishing->id) }}">
-										<i class="fa fa-trash"></i>
-									</button>
-								</td>
-							</tr>
-						@endforeach
-						</tbody>
-					</table>
-				</div>
-			</div> <!-- end self publishing-->
-
 			{{--<time-register :time-registers="{{ json_encode($timeRegisters) }}" :learner-id="{{ $learner->id }}"
 						   :projects="{{ json_encode($projects) }}"></time-register>--}}
 
@@ -1286,6 +1248,94 @@
 				</div>
 			</div> <!-- end personal assignments -->
 
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<h4>Projects</h4>
+				</div>
+
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Project Number</th>
+								<th>Name</th>
+								<th>Status</th>
+								{{-- <th width="700">Description</th> --}}
+								<th>Date</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach ($projects as $project)
+								<tr>
+									<td>
+										{{ $project->identifier }}
+									</td>
+									<td>
+										<a href="/project/{{ $project->id }}">
+											{{ $project->name }}
+										</a>
+									</td>
+									<td>
+										{{ strtoupper($project->status) }}
+									</td>
+									{{-- <td>
+										{{ $project->description }}
+									</td> --}}
+									<td>
+										{{ $project->start_date}} 
+										@if($project->end_date) 
+											- {{ $project->end_date }}
+										@endif 
+										<br>
+										@if ($project->is_finished)
+											<span class="small">Finished</span>
+										@endif
+									</td>
+								</tr>
+							@endforeach
+						</tbody>
+					</table>
+				</div>
+			</div> <!-- end projects -->
+
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<button class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#selfPublishingModal">
+						+ Add to Self publishing
+					</button>
+					<h4>Self publishing</h4>
+				</div>
+
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+						<tr>
+							<th>Title</th>
+							<th width="150"></th>
+						</tr>
+						</thead>
+						<tbody>
+						@foreach($learnerSelfPublishingList as $selfPublishing)
+							<tr>
+								<td>
+									<a href="{{ route('admin.self-publishing.index') }}">
+										{{ $selfPublishing->selfPublishing->title }}
+									</a>
+								</td>
+								<td>
+									<button class="btn btn-danger btn-xs deleteSelfPublishingBtn" data-toggle="modal"
+											data-target="#deleteSelfPublishingModal"
+											data-action="{{ route('admin.learner.remove-self-publishing', $selfPublishing->id) }}">
+										<i class="fa fa-trash"></i>
+									</button>
+								</td>
+							</tr>
+						@endforeach
+						</tbody>
+					</table>
+				</div>
+			</div> <!-- end self publishing-->
+
 			<!-- correction -->
 			<div class="panel panel-default">
 				<div class="panel-body">
@@ -1300,6 +1350,7 @@
 						<tr>
 							<th>{{ trans_choice('site.manus', 2) }}</th>
 							<th>{{ trans_choice('site.editors', 1) }}</th>
+							<th>Project</th>
 							<th>{{ trans('site.date-ordered') }}</th>
 							<th>{{ trans('site.expected-finish') }}</th>
 							<th>{{ trans('site.status') }}</th>
@@ -1319,10 +1370,26 @@
 								</td>
 								<td>
 									@if ($correction->editor_id)
-										{{ $correction->editor->full_name }}
+										{{ $correction->editor->full_name }} <br>
+
+										<button class="btn btn-xs btn-primary assignEditorBtn" data-toggle="modal"
+												data-target="#assignEditorModal"
+												data-editor="{{ json_encode($correction->editor) }}"
+												data-action="{{ route('admin.other-service.assign-editor', 
+												['id' => $correction->id, 'type' => 2]) }}">
+											{{ trans('site.assign-editor') }}
+										</button>
 									@else
-										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $correction->id, 'type' => 2]) }}">Assign Editor</button>
+										<button class="btn btn-xs btn-warning assignEditorBtn" 
+										data-toggle="modal" data-target="#assignEditorModal" 
+										data-action="{{ route('admin.other-service.assign-editor', 
+										['id' => $correction->id, 'type' => 2]) }}">
+											{{ trans('site.assign-editor') }}
+										</button>
 									@endif
+								</td>
+								<td>
+									{{ optional($correction->project)->name }}
 								</td>
 								<td>
 									{{ \App\Http\FrontendHelpers::formatDate($correction->created_at) }}
@@ -1388,6 +1455,7 @@
 						<tr>
 							<th>{{ trans_choice('site.manus', 2) }}</th>
 							<th>{{ trans_choice('site.editors', 1) }}</th>
+							<th>Project</th>
 							<th>{{ trans('site.date-ordered') }}</th>
 							<th>{{ trans('site.expected-finish') }}</th>
 							<th>{{ trans('site.status') }}</th>
@@ -1407,10 +1475,26 @@
 								</td>
 								<td>
 									@if ($copy_editing->editor_id)
-										{{ $copy_editing->editor->full_name }}
+										{{ $copy_editing->editor->full_name }} <br>
+
+										<button class="btn btn-xs btn-primary assignEditorBtn" data-toggle="modal"
+												data-target="#assignEditorModal"
+												data-editor="{{ json_encode($copy_editing->editor) }}"
+												data-action="{{ route('admin.other-service.assign-editor', 
+												['id' => $copy_editing->id, 'type' => 1]) }}">
+											{{ trans('site.assign-editor') }}
+										</button>
 									@else
-										<button class="btn btn-xs btn-warning assignEditorBtn" data-toggle="modal" data-target="#assignEditorModal" data-action="{{ route('admin.other-service.assign-editor', ['id' => $copy_editing->id, 'type' => 1]) }}">{{ trans('site.assign-editor') }}</button>
+										<button class="btn btn-xs btn-warning assignEditorBtn" 
+										data-toggle="modal" data-target="#assignEditorModal" 
+										data-action="{{ route('admin.other-service.assign-editor', 
+										['id' => $copy_editing->id, 'type' => 1]) }}">
+											{{ trans('site.assign-editor') }}
+										</button>
 									@endif
+								</td>
+								<td>
+									{{ optional($copy_editing->project)->name }}
 								</td>
 								<td>
 									{{ \App\Http\FrontendHelpers::formatDate($copy_editing->created_at) }}
@@ -5275,6 +5359,10 @@
         let modal = $('#assignEditorModal');
         modal.find('select').val(editor);
         modal.find('form').attr('action', action);
+
+		if (editor) {
+			modal.find('form').find('select[name=editor_id]').val(editor.id).trigger('change');
+		}
     });
 
     $(".setReplayBtn").click(function(){

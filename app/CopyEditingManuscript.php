@@ -37,6 +37,11 @@ class CopyEditingManuscript extends Model {
             ->where('service_type','=',1);
     }
 
+    public function project()
+    {
+        return $this->belongsTo('App\Project', 'project_id', 'id');
+    }
+
     public function getExpectedFinishFormattedAttribute()
     {
         return $this->attributes['expected_finish'] ? FrontendHelpers::formatDate($this->attributes['expected_finish']) : '';
