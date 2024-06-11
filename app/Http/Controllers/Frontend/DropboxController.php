@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Http\FrontendHelpers;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Spatie\Dropbox\Client as DropboxClient;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+
+include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
 
 class DropboxController extends Controller {
     
@@ -91,14 +96,117 @@ class DropboxController extends Controller {
 
     public function dropboxPostUpload(Request $request)
     {
-        $destinationPath = 'assignment-manuscripts/'; // upload path
+        $destinationPath = 'Forfatterskolen_app/assignment-manuscripts/'; // upload path
         $extension = pathinfo($_FILES['file']['name'],PATHINFO_EXTENSION); // getting document extension
         $actual_name = pathinfo($_FILES['file']['name'], PATHINFO_FILENAME);
         $fileName = AdminHelpers::getUniqueFilename('dropbox', 'assignment-manuscripts', $actual_name . "." . $extension);
         $file = $request->file('file');
         $expFileName = explode('/', $fileName);
-        $file->storeAs($destinationPath, end($expFileName), 'dropbox');
+        $dropboxFileName = end($expFileName);
+
+        $file->storeAs($destinationPath, $dropboxFileName, 'dropbox');
+
+        // Path to the uploaded file in Dropbox
+        $dropboxFilePath = $destinationPath . $dropboxFileName;
+
+        try {
+            // Create Dropbox client
+            $dropbox = new DropboxClient(config('filesystems.disks.dropbox.authorization_token'));
+
+            // Download the file from Dropbox
+            $response = $dropbox->download($dropboxFilePath);
+
+            // Ensure the temp directory exists
+            $tempDirectory = storage_path('app/temp');
+            if (!is_dir($tempDirectory)) {
+                mkdir($tempDirectory, 0755, true);
+            }
+
+            // Save the downloaded content to a temporary file
+            $tempFilePath = $tempDirectory . '/' . $dropboxFileName;
+            file_put_contents($tempFilePath, stream_get_contents($response));
+
+            $docObj = new \Docx2Text($tempFilePath);
+            $docText = $docObj->convertToText();
+            $word_count = FrontendHelpers::get_num_of_words($docText);
+
+            // Clean up the local temporary file
+            unlink($tempFilePath);
+            
+            return $word_count;
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Uploaded'),
+                'alert_type' => 'success',
+                'word_count' => $word_count // Include word count in the response
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Failed to upload or download the file from Dropbox: ' . $e->getMessage()),
+                'alert_type' => 'danger'
+            ]);
+        }
+        /* return $dropboxFilePath;
+
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Uploaded'),
-        'alert_type' => 'success']);
+        'alert_type' => 'success']); */
+    }
+
+    public function createSharedLink($path)
+    {
+        try {
+            $client = new DropboxClient(config('filesystems.disks.dropbox.authorization_token'));
+            // Check for existing shared links
+            $response = $client->listSharedLinks($path);
+
+            if (isset($response[0]['url'])) {
+                // Use the first existing shared link
+                $sharedLink = str_replace('?dl=0', '?raw=1', $response[0]['url']);
+            } else {
+                // Create a new shared link if none exists
+                $response = $client->createSharedLinkWithSettings($path, [
+                    'requested_visibility' => 'public'
+                ]);
+                $sharedLink = str_replace('?dl=0', '?raw=1', $response['url']);
+            }
+        
+            if (request()->isJson()) {
+                return response()->json(['shared_link' => $sharedLink]);
+            }
+            return redirect()->to($sharedLink);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to create shared link: ' . $e->getMessage());
+            if (!request()->isJson()) {
+                return AdminHelpers::createMessageBag('Failed to create shared link: ' . $e->getMessage());
+                return redirect()->back()->with([
+                    'errors' => AdminHelpers::createMessageBag('Failed to create shared link: ' . $e->getMessage()),
+                    'alert_type' => 'danger'
+                ]);
+            }
+            return null;
+        }
+    }
+
+    public function downloadFile($path)
+    {
+        try {
+            // Create Dropbox client
+            $dropbox = new DropboxClient(config('filesystems.disks.dropbox.authorization_token'));
+            $dropboxFilePath = $path;
+            // Download the file from Dropbox
+            $response = $dropbox->download($dropboxFilePath);
+
+            return new StreamedResponse(function () use ($response) {
+                echo stream_get_contents($response);
+            }, 200, [
+                'Content-Type' => 'application/octet-stream',
+                'Content-Disposition' => 'attachment; filename="' . basename($path) . '"',
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'errors' => AdminHelpers::createMessageBag('Failed to download the file from Dropbox: ' . $e->getMessage()),
+                'alert_type' => 'danger'
+            ]);
+        }
     }
 }
