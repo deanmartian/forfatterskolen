@@ -74,9 +74,7 @@
         <script src="https://Forfatterskolen.cdn.vooplayer.com/assets/vooplayer.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-        {{-- <script src="https://cdn.tiny.cloud/1/58zy6vmujertl448ngd6tq81e40p4een1t8y9lnkq9licymu/tinymce/5/tinymce.min.js"
-                referrerpolicy="origin"></script> --}}
-        <script src="https://cdn.tiny.cloud/1/gix9kunuk5tuvr4rqdkmwl7ixdzmy6oo4y7gxnmrmmenm94g/tinymce/5/tinymce.min.js"
+        <script src="https://cdn.tiny.cloud/1/at9h19nmgr4aahzi0km0mkwkejc37a686yxis2zks33o0p6n/tinymce/5/tinymce.min.js"
                 referrerpolicy="origin"></script>
         <script>
             $(".dt-table").DataTable({
