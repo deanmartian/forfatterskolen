@@ -100,7 +100,17 @@ class HeadEditorController extends Controller
             $feedback->manuscript =  trim($filesWithPath,", ");
         }
 
-        $feedback->save();
+        //$feedback->save();
+
+        if ($project = $feedback->selfPublishing->project) {
+            $to = $project->user;
+            $emailTemplate = AdminHelpers::emailTemplate('Self Publishing Feedback');
+            $content = AdminHelpers::formatEmailContent($emailTemplate->email_content, '', $to->first_name, '');
+            $email = $to->email;
+            dispatch(new AddMailToQueueJob($email, $emailTemplate->subject, $content, $emailTemplate->from_email,
+                    null, null, 'learner', $to->id));
+        }
+        
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Feedback approved successfully.'),
             'alert_type' => 'success']);
     }
