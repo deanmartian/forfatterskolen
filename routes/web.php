@@ -83,6 +83,12 @@ Route::group([
         Route::post('/dropbox/refresh-token', 'DropboxController@refreshDropboxAccessToken')->name('dropbox.refresh_token');
         Route::get('/dropbox/upload', 'DropboxController@dropboxUpload');
         Route::post('/dropbox/upload', 'DropboxController@dropboxPostUpload')->name('dropbox.post-upload');
+        Route::get('/dropbox/shared-link/{path}', 'DropboxController@createSharedLink')
+            ->where('path', '.*')
+            ->name('dropbox.shared_link');
+        Route::get('/dropbox/download/{path}', 'DropboxController@downloadFile')
+            ->where('path', '.*')
+            ->name('dropbox.download_file');
 
 
         Route::get('/power-office', 'HomeController@powerOffice');

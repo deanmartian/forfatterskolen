@@ -101,11 +101,12 @@ class ProjectService
     public function saveBookPicture( Request $request )
     {
         if ($request->hasFile('images')) :
-            $destinationPath = 'storage/project-book-pictures'; // upload path
+            /* $destinationPath = 'storage/project-book-pictures'; // upload path
 
             AdminHelpers::createDirectory($destinationPath);
-            $filePath = $this->saveMultipleFileOrImage($destinationPath, 'images');
-
+            $filePath = $this->saveMultipleFileOrImage($destinationPath, 'images'); */
+            $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/book-pictures/';
+            $filePath = $this->saveMultipleFileOrImageDropbox($destinationPath, 'images');
             if ($request->id) {
                 $bookPicture = ProjectBookPicture::find($request->id);
                 $bookPicture->image = $filePath;
@@ -129,10 +130,11 @@ class ProjectService
         $filePath = NULL;
 
         if ($request->hasFile('file')) :
-            $destinationPath = 'storage/project-book-formatting'; // upload path
+            //$destinationPath = 'storage/project-book-formatting'; // upload path
 
-            AdminHelpers::createDirectory($destinationPath);
-            $filePath = $this->saveFileOrImage($destinationPath, 'file');
+            //AdminHelpers::createDirectory($destinationPath);
+            $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/book-formatting';
+            $filePath = $this->saveFileOrImageDropbox($destinationPath, 'file');
         endif;
 
         if ($request->id) {
@@ -156,9 +158,9 @@ class ProjectService
      * @param Request $request
      * @return string
      */
-    public function saveOtherService( Request $request )
+    public function saveOtherService( $project_id, Request $request )
     {
-        $filePath = $this->saveFile($request);
+        $filePath = $this->saveFile($project_id, $request);
         $calculatedPrice = $this->calculateFileTextPrice($filePath, $request->is_copy_editing);
 
         $manuType = 'Correction';
@@ -188,20 +190,19 @@ class ProjectService
      * @param Request $request
      * @return string
      */
-    public function saveFile( Request $request )
+    public function saveFile( $project_id, Request $request )
     {
         $extension = $request->manuscript->extension();
-        $destinationPath = 'storage/correction-manuscripts/'; // upload path
+        $destinationPath = 'Forfatterskolen_app/project/project-' . $project_id . '/correction-manuscripts'; // upload path
 
         if ($request->type == 1) {
-            $destinationPath = 'storage/copy-editing-manuscripts/'; // upload path
+            $destinationPath = 'Forfatterskolen_app/project/project-' . $project_id . '/copy-editing-manuscripts'; // upload path
         }
 
         $time = time();
         $fileName = $time.'.'.$extension;//$original_filename; // rename document
-        $request->manuscript->move($destinationPath, $fileName);
-
-        return $destinationPath.$fileName;
+        //$request->manuscript->move($destinationPath, $fileName);
+        return $this->saveFileOrImageDropbox($destinationPath, 'manuscript');
     }
 
     /**
@@ -211,9 +212,11 @@ class ProjectService
      */
     public function calculateFileTextPrice( $file, $is_copy_editing )
     {
-        $docObj = new FileToText($file);
+        
+        $word_count = AdminHelpers::dropboxFileCountWords($file, basename($file));
+        /* $docObj = new FileToText($file);
         // count characters with space
-        $word_count = strlen($docObj->convertToText()) - 2;
+        $word_count = strlen($docObj->convertToText()) - 2; */
 
         $word_per_price = 1000;
         $price_per_word = 25;
@@ -303,17 +306,18 @@ class ProjectService
         }
 
         if ($request->hasFile($fieldName)) :
-            $destinationPath = 'storage/project-graphic-work/' . $fieldName; // upload path
+            //$destinationPath = 'storage/project-graphic-work/' . $fieldName; // upload path
+            $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/' . $fieldName; // upload path
 
-            AdminHelpers::createDirectory($destinationPath);
-            $filePath = $this->saveFileOrImage($destinationPath, $fieldName);
+            //AdminHelpers::createDirectory($destinationPath);
+            $filePath = $this->saveFileOrImageDropbox($destinationPath, $fieldName);
 
         endif;
 
         return $filePath;
     }
 
-    public function uploadWholeBook( Request $request )
+    public function uploadWholeBook( $project_id, Request $request )
     {
         $filePath = NULL;
 
@@ -323,14 +327,14 @@ class ProjectService
         }
 
         if ($request->hasFile('book_file')) :
-            $destinationPath = 'storage/project-books'; // upload path
+            $destinationPath = 'Forfatterskolen_app/project/project-' . $project_id . '/project-books'; // upload path
 
             if ($request->has('is_book_critique')) {
-                $destinationPath = 'storage/project-book-critique'; // upload path
+                $destinationPath = 'Forfatterskolen_app/project/project-' . $project_id . '/project-book-critique'; // upload path
             }
 
-            AdminHelpers::createDirectory($destinationPath);
-            $filePath = $this->saveFileOrImage($destinationPath, 'book_file');
+            //AdminHelpers::createDirectory($destinationPath);
+            $filePath = $this->saveFileOrImageDropbox($destinationPath, 'book_file');
 
         endif;
 
@@ -388,6 +392,23 @@ class ProjectService
         return '/'.$fileName;
     }
 
+    public function saveFileOrImageDropbox( $destinationPath, $requestFilename )
+    {
+        $requestFile = \request()->file($requestFilename);
+        $extension = $requestFile->getClientOriginalExtension();
+        $original_filename = $requestFile->getClientOriginalName();
+        $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
+
+        $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name . "." . $extension);// rename document
+        $expFileName = explode('/', $fileName);
+        $dropboxFileName = end($expFileName);
+
+        $requestFile->storeAs($destinationPath, $dropboxFileName, 'dropbox');
+
+        // remove the project_id in front which is numeric
+        return "/" . $destinationPath ."/". $dropboxFileName;
+    }
+
     /**
      * @param $destinationPath
      * @param $requestFile
@@ -404,6 +425,26 @@ class ProjectService
             $filesWithPath .= "/".AdminHelpers::checkFileName($destinationPath, $filename, $extension).", ";
 
             $file->move($destinationPath, $fileName);
+        }
+
+        return $filesWithPath = trim($filesWithPath,", ");
+    }
+
+    public function saveMultipleFileOrImageDropbox( $destinationPath, $requestFilename )
+    {
+        $filesWithPath = '';
+        foreach (\request()->file($requestFilename) as $k => $file) {
+            $extension = pathinfo($_FILES[$requestFilename]['name'][$k],PATHINFO_EXTENSION);
+            $original_filename = $file->getClientOriginalName();
+            $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
+
+            $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name . "." . $extension);// rename document
+            $expFileName = explode('/', $fileName);
+            $dropboxFileName = end($expFileName);
+
+            $filesWithPath .= "/". $destinationPath . $fileName.", ";
+
+            $file->storeAs($destinationPath, $dropboxFileName, 'dropbox');
         }
 
         return $filesWithPath = trim($filesWithPath,", ");

@@ -35,9 +35,16 @@
                         <td>{{ $cover->description }}</td>
                         <th>{{ $cover->is_checked ? 'Yes' : 'No' }}</th>
                         <td>
-                            <a href="{{ $cover->value }}" class="btn btn-success btn-xs" download>
-                                <i class="fa fa-download"></i>
-                            </a>
+                            @if (strpos($cover->value, "project-"))
+                                <a href="{{ route('dropbox.download_file', trim($cover->value)) }}" 
+                                    class="btn btn-success btn-xs">
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                </a>
+                            @else
+                                <a href="{{ $cover->value }}" class="btn btn-success btn-xs" download>
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            @endif                            
                             <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
                                     data-target="#graphicWorkModal"
                                     data-type="cover" data-id="{{ $cover->id }}"
@@ -81,9 +88,16 @@
                                 {{ $barCode->date }}
                             </td>
                             <td>
-                                <a href="{{ $barCode->value }}" class="btn btn-success btn-xs" download>
-                                    <i class="fa fa-download"></i>
-                                </a>
+                                @if (strpos($barCode->value, "project-"))
+                                    <a href="{{ route('dropbox.download_file', trim($barCode->value)) }}" 
+                                        class="btn btn-success btn-xs">
+                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                    </a>
+                                @else
+                                    <a href="{{ $barCode->value }}" class="btn btn-success btn-xs" download>
+                                        <i class="fa fa-download"></i>
+                                    </a>
+                                @endif
                                 <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
                                         data-target="#graphicWorkModal"
                                         data-type="barcode" data-id="{{ $barCode->id }}"
@@ -117,9 +131,16 @@
                     <tr>
                         <td>{!! $rewriteScript->file_link !!}</td>
                         <td>
-                            <a href="{{ $rewriteScript->value }}" class="btn btn-success btn-xs" download>
-                                <i class="fa fa-download"></i>
-                            </a>
+                            @if (strpos($rewriteScript->value, "project-"))
+                                <a href="{{ route('dropbox.download_file', trim($rewriteScript->value)) }}" 
+                                    class="btn btn-success btn-xs">
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                </a>
+                            @else
+                                <a href="{{ $rewriteScript->value }}" class="btn btn-success btn-xs" download>
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            @endif
                             <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
                                     data-target="#graphicWorkModal"
                                     data-type="rewrite-script" data-id="{{ $rewriteScript->id }}">
@@ -152,9 +173,16 @@
                     <tr>
                         <td>{!! $trialPage->image !!}</td>
                         <td>
-                            <a href="{{ $trialPage->value }}" class="btn btn-success btn-xs" download>
-                                <i class="fa fa-download"></i>
-                            </a>
+                            @if (strpos($trialPage->value, "project-"))
+                                <a href="{{ route('dropbox.download_file', trim($trialPage->value)) }}" 
+                                    class="btn btn-success btn-xs">
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                </a>
+                            @else
+                                <a href="{{ $trialPage->value }}" class="btn btn-success btn-xs" download>
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            @endif
                             <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
                                     data-target="#graphicWorkModal"
                                     data-type="trial-page" data-id="{{ $trialPage->id }}">
@@ -187,9 +215,16 @@
                     <tr>
                         <td>{!! $sampleBookPDF->file_link !!}</td>
                         <td>
-                            <a href="{{ $sampleBookPDF->value }}" class="btn btn-success btn-xs" download>
-                                <i class="fa fa-download"></i>
-                            </a>
+                            @if (strpos($sampleBookPDF->value, "project-"))
+                                <a href="{{ route('dropbox.download_file', trim($sampleBookPDF->value)) }}" 
+                                    class="btn btn-success btn-xs">
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                </a>
+                            @else
+                                <a href="{{ $sampleBookPDF->value }}" class="btn btn-success btn-xs" download>
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            @endif
                             <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
                                     data-target="#graphicWorkModal"
                                     data-type="sample-book-pdf" data-id="{{ $sampleBookPDF->id }}">
@@ -226,16 +261,23 @@
                                 {!! $bookFormatting->file_link !!}
                             </td>
                             <td>
-                                <a href="{{ $bookFormatting->file }}" class="btn btn-sm btn-success" download>
-                                    <i class="fa fa-download"></i>
-                                </a>
-                                <button class="btn btn-primary btn-sm bookFormattingBtn" data-toggle="modal"
+                                @if (strpos($bookFormatting->file, "project-"))
+                                    <a href="{{ route('dropbox.download_file', trim($bookFormatting->file)) }}" 
+                                        class="btn btn-success btn-xs">
+                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                    </a>
+                                @else
+                                    <a href="{{ $bookFormatting->file }}" class="btn btn-success btn-xs" download>
+                                        <i class="fa fa-download"></i>
+                                    </a>
+                                @endif
+                                <button class="btn btn-primary btn-xs bookFormattingBtn" data-toggle="modal"
                                         data-target="#bookFormattingModal"
                                         data-record="{{ json_encode($bookFormatting) }}"
                                         data-action="{{ route($saveBookFormattingRoute, $project->id) }}">
                                     <i class="fa fa-edit"></i>
                                 </button>
-                                <button class="btn btn-danger btn-sm deleteBtn" data-toggle="modal"
+                                <button class="btn btn-danger btn-xs deleteBtn" data-toggle="modal"
                                         data-target="#deleteModal"
                                         data-action="{{ route($deleteBookFormattingRoute, $bookFormatting->id) }}">
                                     <i class="fa fa-trash"></i>
@@ -274,21 +316,27 @@
                                 @foreach($bookPictures as $bookPicture)
                                     <tr>
                                         <td>
-                                            <a href="{{ asset( $bookPicture->image ) }}">
-                                                <img src="{{ asset( $bookPicture->image ) }}" width="100" height="100">
-                                            </a>
+                                            @if (strpos($bookPicture->image, 'storage'))
+                                                <a href="{{ asset( $bookPicture->image ) }}">
+                                                    <img src="{{ asset( $bookPicture->image ) }}" width="100" height="100">
+                                                </a>
+                                            @else
+                                                <a href="{{ route('dropbox.shared_link', $bookPicture->image ) }}" target="_blank">
+                                                    {{ basename($bookPicture->image) }}
+                                                </a>
+                                            @endif
                                         </td>
                                         <td>
                                             {!! $bookPicture->description !!}
                                         </td>
                                         <td>
-                                            <button class="btn btn-primary btn-sm saveBookPictureBtn" data-toggle="modal"
+                                            <button class="btn btn-primary btn-xs saveBookPictureBtn" data-toggle="modal"
                                                     data-target="#bookPicturesModal"
                                                     data-record="{{ json_encode($bookPicture) }}"
                                                     data-action="{{ route($saveBookPicturesRoute, $project->id) }}">
                                                 <i class="fa fa-edit"></i>
                                             </button>
-                                            <button class="btn btn-danger btn-sm deleteBookPictureBtn" data-toggle="modal"
+                                            <button class="btn btn-danger btn-xs deleteBookPictureBtn" data-toggle="modal"
                                                     data-target="#deleteModal"
                                                     data-action="{{ route($deleteBookPicturesRoute, $bookPicture->id) }}">
                                                 <i class="fa fa-trash"></i>

@@ -348,14 +348,26 @@ class OtherServiceController extends Controller
                 $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION);
                 $original_filename = $file->getClientOriginalName();
                 $filename = pathinfo($original_filename, PATHINFO_FILENAME);
-                $fileName = AdminHelpers::checkFileName($destinationPath, $filename, $extension);
-                $filesWithPath .= "/".AdminHelpers::checkFileName($destinationPath, $filename, $extension).", ";
+                
+                if ($request->has('project_id'))
+                {
+                    $destinationPath = 'Forfatterskolen_app/project/project-'. $request->project_id . '/other-service-feedback/';
+                    $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $original_filename);
+                    $expFileName = explode('/', $fileName);
+                    $dropboxFileName = end($expFileName);
 
-                if( !in_array($extension, $extensions) ) :
-                    return redirect()->back();
-                endif;
+                    $file->storeAs($destinationPath, $dropboxFileName, 'dropbox');
+                    $filesWithPath .= "/". $destinationPath . $dropboxFileName .", ";
+                } else {
+                    $fileName = AdminHelpers::checkFileName($destinationPath, $filename, $extension);
+                    $filesWithPath .= "/".AdminHelpers::checkFileName($destinationPath, $filename, $extension).", ";
 
-                $file->move($destinationPath, $fileName);
+                    if( !in_array($extension, $extensions) ) :
+                        return redirect()->back();
+                    endif;
+
+                    $file->move($destinationPath, $fileName);
+                }
             }
 
             return $filesWithPath = trim($filesWithPath,", ");

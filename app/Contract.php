@@ -75,14 +75,16 @@ class Contract extends Model
     public function getSignedFileLinkAttribute()
     {
         $fileLink = '';
-        $filename = $this->attributes['signed_file'];
+        if (isset($this->attributes['signed_file'])) {
+            $filename = $this->attributes['signed_file'];
 
-        $extension = explode('.', basename($filename));
-        if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
-            $fileLink = '<a href="/js/ViewerJS/#../..'.$filename.'">'.basename($filename).'</a>';
-        } elseif( end($extension) == 'docx' || end($extension) == 'doc' ) {
-            $fileLink = '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').$filename.'">'
-                .basename($filename).'</a>';
+            $extension = explode('.', basename($filename));
+            if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
+                $fileLink = '<a href="/js/ViewerJS/#../..'.$filename.'">'.basename($filename).'</a>';
+            } elseif( end($extension) == 'docx' || end($extension) == 'doc' ) {
+                $fileLink = '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').$filename.'">'
+                    .basename($filename).'</a>';
+            }
         }
 
         return $fileLink;
@@ -91,7 +93,7 @@ class Contract extends Model
     public function getLearnerDownloadLinkAttribute()
     {
         $link = route('front.contract.download', $this->attributes['code']);
-        if ($this->attributes['is_file']) {
+        if ($this->attributes['is_file'] && isset($this->attributes['signed_file'])) {
             $link = $this->attributes['signed_file'];
         }
         return $link;
@@ -100,7 +102,7 @@ class Contract extends Model
     public function getSignatureTextAttribute()
     {
         $label = '<label class="label label-warning">Unsigned</label>';
-        if ($this->attributes['signature']) {
+        if (isset($this->attributes['signature']) && $this->attributes['signature']) {
             $label = '<label class="label label-success">Signed</label>';
         }
         return $label;

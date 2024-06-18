@@ -85,35 +85,52 @@ class SelfPublishingController extends Controller
             $filesWithPath = '';
             $word_count = 0;
             foreach ($request->file('manuscript') as $k => $file) {
+                $wholeFilePath = '';
                 $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION); // getting document extension
                 $actual_name = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_FILENAME);
-                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
 
-                $expFileName = explode('/', $fileName);
-                $filePath = "/".$destinationPath.end($expFileName);
-                $file->move($destinationPath, end($expFileName));
+                if ($request->project_id) {
+                    $destinationPath = 'Forfatterskolen_app/project/project-'. $request->project_id . '/self-publishing-manuscript/';
+                    $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name . "." . $extension);
+                    $expFileName = explode('/', $fileName);
+                    $dropboxFileName = end($expFileName);
 
-                $filesWithPath .= $filePath.", ";
+                    $file->storeAs($destinationPath, $dropboxFileName, 'dropbox');
 
-                // count words
-                if($extension == "pdf") :
-                    $pdf  =  new \PdfToText( $destinationPath.end($expFileName) ) ;
-                    $pdf_content = $pdf->Text;
-                    $word_count += FrontendHelpers::get_num_of_words($pdf_content);
-                elseif($extension == "docx") :
-                    $docObj = new \Docx2Text($destinationPath.end($expFileName));
-                    $docText= $docObj->convertToText();
-                    $word_count += FrontendHelpers::get_num_of_words($docText);
-                elseif($extension == "doc") :
-                    $docText = FrontendHelpers::readWord($destinationPath.end($expFileName));
-                    $word_count += FrontendHelpers::get_num_of_words($docText);
-                elseif($extension == "odt") :
-                    $doc = odt2text($destinationPath.end($expFileName));
-                    $word_count += FrontendHelpers::get_num_of_words($doc);
-                endif;
+                    $wholeFilePath = $destinationPath . $dropboxFileName;
+                    $filePath = "/".$wholeFilePath;
+                    $word_count += AdminHelpers::dropboxFileCountWords($wholeFilePath, $dropboxFileName);
+                    $filesWithPath .= $filePath .", ";
+                } else {
+                    $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+
+                    $expFileName = explode('/', $fileName);
+                    $filePath = "/".$destinationPath.end($expFileName);
+                    $file->move($destinationPath, end($expFileName));
+                    $wholeFilePath = $destinationPath.end($expFileName);
+
+                    $filesWithPath .= $filePath.", ";
+
+                    // count words
+                    if($extension == "pdf") :
+                        $pdf  =  new \PdfToText( $wholeFilePath ) ;
+                        $pdf_content = $pdf->Text;
+                        $word_count += FrontendHelpers::get_num_of_words($pdf_content);
+                    elseif($extension == "docx") :
+                        $docObj = new \Docx2Text($wholeFilePath);
+                        $docText= $docObj->convertToText();
+                        $word_count += FrontendHelpers::get_num_of_words($docText);
+                    elseif($extension == "doc") :
+                        $docText = FrontendHelpers::readWord($wholeFilePath);
+                        $word_count += FrontendHelpers::get_num_of_words($docText);
+                    elseif($extension == "odt") :
+                        $doc = odt2text($wholeFilePath);
+                        $word_count += FrontendHelpers::get_num_of_words($doc);
+                    endif;
+                }
             }
 
-            $publishing->manuscript = $filesWithPath = trim($filesWithPath,", ");
+            $publishing->manuscript = trim($filesWithPath,", ");
             $publishing->word_count = $word_count;
         endif;
 
@@ -123,30 +140,19 @@ class SelfPublishingController extends Controller
             foreach ($request->file('add_files') as $k => $file) {
                 $extension = pathinfo($_FILES['add_files']['name'][$k],PATHINFO_EXTENSION); // getting document extension
                 $actual_name = pathinfo($_FILES['add_files']['name'][$k],PATHINFO_FILENAME);
-                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+                //$fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
 
+                $destinationPath = 'Forfatterskolen_app/project/project-'. $request->project_id . '/self-publishing-manuscript/';
+                $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name . "." . $extension);
                 $expFileName = explode('/', $fileName);
-                $filePath = "/".$destinationPath.end($expFileName);
-                $file->move($destinationPath, end($expFileName));
+                $dropboxFileName = end($expFileName);
 
-                $filesWithPath .= $filePath.", ";
+                $file->storeAs($destinationPath, $dropboxFileName, 'dropbox');
 
-                // count words
-                if($extension == "pdf") :
-                    $pdf  =  new \PdfToText( $destinationPath.end($expFileName) ) ;
-                    $pdf_content = $pdf->Text;
-                    $word_count += FrontendHelpers::get_num_of_words($pdf_content);
-                elseif($extension == "docx") :
-                    $docObj = new \Docx2Text($destinationPath.end($expFileName));
-                    $docText= $docObj->convertToText();
-                    $word_count += FrontendHelpers::get_num_of_words($docText);
-                elseif($extension == "doc") :
-                    $docText = FrontendHelpers::readWord($destinationPath.end($expFileName));
-                    $word_count += FrontendHelpers::get_num_of_words($docText);
-                elseif($extension == "odt") :
-                    $doc = odt2text($destinationPath.end($expFileName));
-                    $word_count += FrontendHelpers::get_num_of_words($doc);
-                endif;
+                $wholeFilePath = $destinationPath . $dropboxFileName;
+                $filePath = "/".$wholeFilePath;
+                $word_count += AdminHelpers::dropboxFileCountWords($wholeFilePath, $dropboxFileName);
+                $filesWithPath .= $filePath .", ";
             }
 
             $publishing->manuscript = trim($publishing->manuscript . ", " .$filesWithPath,", ");
@@ -295,6 +301,8 @@ class SelfPublishingController extends Controller
             'manuscript' => 'required'
         ]);
 
+        $selfPublishing = SelfPublishing::find($id);
+
         $filesWithPath = '';
         $word_count = 0;
         $destinationPath = 'storage/self-publishing-feedback/'; // upload path
@@ -302,36 +310,52 @@ class SelfPublishingController extends Controller
         foreach ($request->file('manuscript') as $k => $file) {
             $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION); // getting document extension
             $actual_name = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_FILENAME);
-            $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
 
-            $expFileName = explode('/', $fileName);
-            $filePath = "/".$destinationPath.end($expFileName);
-            $file->move($destinationPath, end($expFileName));
+            if ($selfPublishing->project_id) {
+                $destinationPath = 'Forfatterskolen_app/project/project-'. $selfPublishing->project_id . '/self-publishing-feedback/';
+                $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name . "." . $extension);
+                $expFileName = explode('/', $fileName);
+                $dropboxFileName = end($expFileName);
 
-            $filesWithPath .= $filePath.", ";
+                $file->storeAs($destinationPath, $dropboxFileName, 'dropbox');
 
-            // count words
-            if($extension == "pdf") :
-                $pdf  =  new \PdfToText( $destinationPath.end($expFileName) ) ;
-                $pdf_content = $pdf->Text;
-                $word_count += FrontendHelpers::get_num_of_words($pdf_content);
-            elseif($extension == "docx") :
-                $docObj = new \Docx2Text($destinationPath.end($expFileName));
-                $docText= $docObj->convertToText();
-                $word_count += FrontendHelpers::get_num_of_words($docText);
-            elseif($extension == "doc") :
-                $docText = FrontendHelpers::readWord($destinationPath.end($expFileName));
-                $word_count += FrontendHelpers::get_num_of_words($docText);
-            elseif($extension == "odt") :
-                $doc = odt2text($destinationPath.end($expFileName));
-                $word_count += FrontendHelpers::get_num_of_words($doc);
-            endif;
+                $wholeFilePath = $destinationPath . $dropboxFileName;
+                $filePath = "/".$wholeFilePath;
+                $word_count += AdminHelpers::dropboxFileCountWords($wholeFilePath, $dropboxFileName);
+                $filesWithPath .= $filePath .", ";
+            } else {
+                $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
+
+                $expFileName = explode('/', $fileName);
+                $filePath = "/".$destinationPath.end($expFileName);
+                $file->move($destinationPath, end($expFileName));
+
+                $filesWithPath .= $filePath.", ";
+
+                // count words
+                if($extension == "pdf") :
+                    $pdf  =  new \PdfToText( $destinationPath.end($expFileName) ) ;
+                    $pdf_content = $pdf->Text;
+                    $word_count += FrontendHelpers::get_num_of_words($pdf_content);
+                elseif($extension == "docx") :
+                    $docObj = new \Docx2Text($destinationPath.end($expFileName));
+                    $docText= $docObj->convertToText();
+                    $word_count += FrontendHelpers::get_num_of_words($docText);
+                elseif($extension == "doc") :
+                    $docText = FrontendHelpers::readWord($destinationPath.end($expFileName));
+                    $word_count += FrontendHelpers::get_num_of_words($docText);
+                elseif($extension == "odt") :
+                    $doc = odt2text($destinationPath.end($expFileName));
+                    $word_count += FrontendHelpers::get_num_of_words($doc);
+                endif;
+            }
+            
         }
 
         $feedback = new SelfPublishingFeedback();
         $feedback->self_publishing_id = $id;
         $feedback->feedback_user_id = \Auth::user()->id;
-        $feedback->manuscript = $filesWithPath = trim($filesWithPath,", ");
+        $feedback->manuscript = trim($filesWithPath,", ");
         $feedback->notes = $request->notes;
         $feedback->save();
 

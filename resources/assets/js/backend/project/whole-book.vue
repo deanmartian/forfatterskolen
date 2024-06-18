@@ -17,7 +17,12 @@
                 <tbody>
                 <tr v-for="wholeBook in wholeBooks" :key="wholeBook.id">
                     <td>
-                        <a href="javascript:;" @click="showManuscript(wholeBook)" >{{ formattedContent(wholeBook) }}</a>
+                        <template v-if="wholeBook.dropbox_link">
+                            <a :href="wholeBook.dropbox_link" target="_blank">{{ formattedContent(wholeBook) }}</a>
+                        </template>
+                        <template v-else>
+                            <a href="javascript:;" @click="showManuscript(wholeBook)" >{{ formattedContent(wholeBook) }}</a>
+                        </template>
                     </td>
                     <td>
                         {{ wholeBook.description }}

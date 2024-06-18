@@ -55,7 +55,7 @@
                                     {{ $publishing->description }}
                                 </td>
                                 <td>
-                                    {!! $publishing->file_link_with_download !!}
+                                    {!! $publishing->dropbox_file_link_with_download !!}
                                 </td>
                                 <td>
                                     {{ $publishing->editor ? $publishing->editor->full_name : '' }}
@@ -146,16 +146,25 @@
                                     <tr>
                                         <td>
                                             @if ($copy_editing->file)
-                                                <a href="{{ route($downloadOtherService, ['id' => $copy_editing->id, 'type' => 1]) }}"
-                                                    download>
-                                                    <i class="fa fa-download" aria-hidden="true"></i>
-                                                </a>&nbsp;
-                                                @if( end($extension) == 'pdf' || end($extension) == 'odt' )
-                                                    <a href="/js/ViewerJS/#../../{{ $copy_editing->file }}">
-                                                        {{ basename($copy_editing->file) }}</a>
-                                                @elseif( end($extension) == 'docx' )
-                                                    <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copy_editing->file}}">
-                                                        {{ basename($copy_editing->file) }}</a>
+                                                @if (strpos($copy_editing->file, 'project-'))
+                                                    <a href="{{ route('dropbox.download_file', trim($copy_editing->file)) }}">
+                                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                                    </a>&nbsp;
+                                                    <a href="{{ route('dropbox.shared_link', trim($copy_editing->file)) }}" target="_blank">
+                                                        {{ basename($copy_editing->file) }}
+                                                    </a>
+                                                @else
+                                                    <a href="{{ route($downloadOtherService, ['id' => $copy_editing->id, 'type' => 1]) }}"
+                                                        download>
+                                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                                    </a>&nbsp;
+                                                    @if( end($extension) == 'pdf' || end($extension) == 'odt' )
+                                                        <a href="/js/ViewerJS/#../../{{ $copy_editing->file }}">
+                                                            {{ basename($copy_editing->file) }}</a>
+                                                    @elseif( end($extension) == 'docx' )
+                                                        <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copy_editing->file}}">
+                                                            {{ basename($copy_editing->file) }}</a>
+                                                    @endif
                                                 @endif
                                             @endif
                                         </td>
@@ -210,7 +219,7 @@
                                             @else
                                                 <?php $files = explode(',',$copy_editing->feedback->manuscript); ?>
                                                 @foreach($files as $file)
-                                                    <a href="{{ $file }}" download>
+                                                    <a href="{{ route('dropbox.download_file', trim($file)) }}">
                                                         <i class="fa fa-download" aria-hidden="true"></i>
                                                     </a> &nbsp;
                                                 @endforeach
@@ -286,14 +295,23 @@
                                     <?php $extension = explode('.', basename($correction->file)); ?>
                                     <tr>
                                         <td>
-                                            @if ($correction->file)
-                                                <a href="{{ route($downloadOtherService, ['id' => $correction->id, 'type' => 2]) }}" download>
-                                                    <i class="fa fa-download" aria-hidden="true"></i>
-                                                </a>&nbsp;
-                                                @if( end($extension) == 'pdf' || end($extension) == 'odt' )
-                                                    <a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
-                                                @elseif( end($extension) == 'docx' )
-                                                    <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+                                            @if (strpos($correction->file, 'project-'))
+                                                    <a href="{{ route('dropbox.download_file', trim($correction->file)) }}">
+                                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                                    </a>&nbsp;
+                                                    <a href="{{ route('dropbox.shared_link', trim($correction->file)) }}" target="_blank">
+                                                        {{ basename($correction->file) }}
+                                                    </a>
+                                            @else
+                                                @if ($correction->file)
+                                                    <a href="{{ route($downloadOtherService, ['id' => $correction->id, 'type' => 2]) }}" download>
+                                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                                    </a>&nbsp;
+                                                    @if( end($extension) == 'pdf' || end($extension) == 'odt' )
+                                                        <a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
+                                                    @elseif( end($extension) == 'docx' )
+                                                        <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+                                                    @endif
                                                 @endif
                                             @endif
                                         </td>
@@ -346,7 +364,9 @@
                                             @else
                                             <?php $files = explode(',',$correction->feedback->manuscript); ?>
                                                 @foreach($files as $file)
-                                                    <a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
+                                                    <a href="{{ route('dropbox.download_file', trim($file)) }}">
+                                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                                    </a> &nbsp;
                                                 @endforeach
                                             @endif
                                         </td>
@@ -666,6 +686,7 @@
                 <div class="modal-body">
                     <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
                         {{csrf_field()}}
+                        <input type="hidden" name="project_id" value="{{ $project->id }}">
                         <div class="form-group">
                             <label>{{ trans_choice('site.manuscripts', 1) }}</label>
                             <input type="file" class="form-control" name="manuscript[]" multiple

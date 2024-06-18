@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProjectWholeBook extends Model
 {
 
-    protected $fillable = ['project_id', 'book_content', 'description', 'is_file'];
+    protected $fillable = ['project_id', 'book_content', 'description', 'dropbox_link', 'is_file'];
     protected $appends = ['file_link', 'filename', 'date_uploaded'];
 
     public function getFilenameAttribute()

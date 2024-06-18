@@ -15,6 +15,7 @@ use App\Http\Requests\ProjectActivityRequest;
 use App\Http\Requests\ProjectBookRequest;
 use App\Http\Requests\ProjectCopyEditingRequest;
 use App\Http\Requests\ProjectRequest;
+use App\Jobs\UpdateDropboxLink;
 use App\MarketingPlan;
 use App\Project;
 use App\ProjectActivity;
@@ -44,6 +45,8 @@ use DB;
 use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Time;
 use PhpOffice\PhpWord\PhpWord;
+use Spatie\Dropbox\Client;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProjectController extends Controller
 {
@@ -285,7 +288,7 @@ class ProjectController extends Controller
             if (!$request->id) {
                 $this->validate($request, ['book_file' => 'required']);
             }
-            $request->book_content = $projectService->uploadWholeBook( $request );
+            $request->book_content = $projectService->uploadWholeBook($project_id, $request );
         } else {
             $this->validate($request, ['book_content' => 'required']);
         }
@@ -300,6 +303,10 @@ class ProjectController extends Controller
         $wholeBook->description = $request->description;
         $wholeBook->is_file = filter_var($request->is_file, FILTER_VALIDATE_BOOLEAN);
         $wholeBook->save();
+
+        if ($wholeBook->is_file) {
+            dispatch(new UpdateDropboxLink($wholeBook));
+        }
 
         return $wholeBook;
 
@@ -339,10 +346,30 @@ class ProjectController extends Controller
         $project = Project::find($project_id);
 
         if ($wholeBook->is_file) {
-            $pathinfo = pathinfo($wholeBook->book_content);
+            /* $pathinfo = pathinfo($wholeBook->book_content);
             $extension = $pathinfo['extension'];
-            $filename = $pathinfo['filename'];
-            return response()->download(public_path($wholeBook->book_content),$filename.'.'.$extension);
+            $fileName = $pathinfo['filename'];
+            return response()->download(public_path($wholeBook->book_content),$filename.'.'.$extension); */
+
+            try {
+                // Create Dropbox client
+                $dropbox = new Client(config('filesystems.disks.dropbox.authorization_token'));
+                $dropboxFilePath = $wholeBook->book_content;
+                // Download the file from Dropbox
+                $response = $dropbox->download($dropboxFilePath);
+
+                return new StreamedResponse(function () use ($response) {
+                    echo stream_get_contents($response);
+                }, 200, [
+                    'Content-Type' => 'application/octet-stream',
+                    'Content-Disposition' => 'attachment; filename="' . basename($wholeBook->book_content) . '"',
+                ]);
+            } catch (\Exception $e) {
+                return redirect()->back()->with([
+                    'errors' => AdminHelpers::createMessageBag('Failed to download the file from Dropbox: ' . $e->getMessage()),
+                    'alert_type' => 'danger'
+                ]);
+            }
         } else {
             $phpWord = new PhpWord();
 
@@ -461,7 +488,7 @@ class ProjectController extends Controller
     {
         if ($project = Project::find($project_id)) {
 
-            $manuType =  $projectService->saveOtherService($request->merge([
+            $manuType =  $projectService->saveOtherService($project_id, $request->merge([
                 'user_id' => $project->user_id,
                 'project_id' => $project_id,
                 'type' => $request->is_copy_editing

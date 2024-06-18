@@ -23,10 +23,15 @@ use App\Workshop;
 use Carbon\Carbon;
 use Illuminate\Support\MessageBag;
 use Log;
+use Spatie\Dropbox\Client;
 use Storage;
 use Swift_Mailer;
 use Swift_Message;
 use Swift_Transport;
+
+include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php');
 
 class AdminHelpers
 {
@@ -1031,6 +1036,52 @@ class AdminHelpers
         }
 
         return $newFilename;
+    }
+
+    public static function dropboxFileCountWords($dropboxFilePath, $dropboxFileName)
+    {
+        try {
+            // Create Dropbox client
+            $dropbox = new Client(config('filesystems.disks.dropbox.authorization_token'));
+
+            // Download the file from Dropbox
+            $response = $dropbox->download($dropboxFilePath);
+
+            // Ensure the temp directory exists
+            $tempDirectory = storage_path('app/temp');
+            if (!is_dir($tempDirectory)) {
+                mkdir($tempDirectory, 0755, true);
+            }
+
+            // Save the downloaded content to a temporary file
+            $tempFilePath = $tempDirectory . '/' . $dropboxFileName;
+            file_put_contents($tempFilePath, stream_get_contents($response));
+
+            $extension = pathinfo($dropboxFileName, PATHINFO_EXTENSION);
+            // count words
+            if($extension == "pdf") :
+                $pdf  =  new \PdfToText( $tempFilePath ) ;
+                $pdf_content = $pdf->Text;
+                $word_count = FrontendHelpers::get_num_of_words($pdf_content);
+            elseif($extension == "docx") :
+                $docObj = new \Docx2Text($tempFilePath);
+                $docText= $docObj->convertToText();
+                $word_count = FrontendHelpers::get_num_of_words($docText);
+            elseif($extension == "doc") :
+                $docText = FrontendHelpers::readWord($tempFilePath);
+                $word_count = FrontendHelpers::get_num_of_words($docText);
+            elseif($extension == "odt") :
+                $doc = odt2text($tempFilePath);
+                $word_count = FrontendHelpers::get_num_of_words($doc);
+            endif;
+
+            // Clean up the local temporary file
+            unlink($tempFilePath);
+            return $word_count;
+        } catch (\Exception $e) {
+            Log::info(json_encode($e->getMessage()));
+            return 0;
+        }
     }
 
     /**
