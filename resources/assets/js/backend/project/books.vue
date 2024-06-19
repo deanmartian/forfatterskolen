@@ -172,6 +172,11 @@ export default {
             });
         },
 
+        setSelectedLearner(value) {
+            this.form.user_id = value ? value.id : "";
+            //this.projectForm.user_id = value ? value.id : "";
+        },
+
         showDeleteModal(book) {
             this.book = book;
             this.$refs.deleteModal.show();
