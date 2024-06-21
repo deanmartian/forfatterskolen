@@ -108,7 +108,7 @@ class ProjectController extends Controller
         $otherServiceFeedbackRoute = 'admin.other-service.add-feedback';
         $saveBookPicturesRoute = 'admin.project.save-picture';
         $deleteBookPicturesRoute = 'admin.project.delete-picture';
-        $downloadOtherService = 'editor.other-service.download-doc';
+        $downloadOtherService = 'admin.other-service.download-doc';
         $saveBookFormattingRoute = 'admin.project.save-book-formatting';
         $deleteBookFormattingRoute = 'admin.project.delete-book-formatting';
 
@@ -1291,6 +1291,18 @@ class ProjectController extends Controller
         return back()
             ->with(['errors' => AdminHelpers::createMessageBag('Storage various saved successfully.'),
                 'alert_type' => 'success']);
+    }
+
+    public function ebook($project_id)
+    {
+        $layout = 'backend.layout';
+        return view('backend.project.e-book', compact('layout'));
+    }
+
+    public function audio($project_id)
+    {
+        $layout = 'backend.layout';
+        return view('backend.project.audio', compact('layout'));
     }
 
     public function showNotes( $project_id )
