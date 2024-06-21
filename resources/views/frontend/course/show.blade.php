@@ -61,10 +61,9 @@
 						@if (!$course->is_free && !$course->hide_price)
 							<span class="course-price position-relative">
 								<?php
-									$price = \App\Http\FrontendHelpers::currencyFormat($isBetween && $course->packagesIsShow[0]->full_payment_sale_price
-										? $course->packagesIsShow[0]->full_payment_sale_price
-										: $course->packagesIsShow[0]->full_payment_price);
+									$price = \App\Http\FrontendHelpers::currencyFormat($course->packagesIsShow[0]->calculated_price);
 								?>
+
 								{{ str_replace('_price_', $price, trans('site.front.our-course.show.price')) }}
 							</span>
 						@endif

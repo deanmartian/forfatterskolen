@@ -20,7 +20,7 @@ class Package extends Model
         'manuscripts_count', 'due_date', 'has_student_discount', 'is_reward','issue_date', 'validity_period', 'is_show',
         'is_upgradeable', 'is_pay_later_allowed'];
     protected $appends = ['description_formatted', 'description_with_check', 'sale_discount', 'full_payment_is_sale', 
-    'months_3_is_sale', 'months_6_is_sale', 'months_12_is_sale'];
+    'months_3_is_sale', 'months_6_is_sale', 'months_12_is_sale', 'calculated_price'];
     protected $with = ['included_courses'];
 
     public function scopeIsShow($query)
@@ -84,6 +84,27 @@ class Package extends Model
             return $this->attributes['full_payment_price'] - $this->attributes['full_payment_other_sale_price'];
         }
         return 0;
+    }
+
+    public function getCalculatedPriceAttribute()
+    {
+        $today 			= \Carbon\Carbon::today()->format('Y-m-d');
+        $fromFull 		= \Carbon\Carbon::parse($this->attributes['full_payment_sale_price_from'])->format('Y-m-d');
+        $toFull 		= \Carbon\Carbon::parse($this->attributes['full_payment_sale_price_to'])->format('Y-m-d');
+        $isBetweenFull 	= (($today >= $fromFull) && ($today <= $toFull)) ? 1 : 0;
+
+        $fromFullOther 		= \Carbon\Carbon::parse($this->attributes['full_payment_other_sale_price_from'])->format('Y-m-d');
+        $toFullOther 		= \Carbon\Carbon::parse($this->attributes['full_payment_other_sale_price_to'])->format('Y-m-d');
+        $isBetweenFullOther 	= (($today >= $fromFullOther) && ($today <= $toFullOther)) ? 1 : 0;
+
+        if ( $isBetweenFull && $this->attributes['full_payment_sale_price']) {
+            return $this->attributes['full_payment_sale_price'];
+        }
+
+        if ( $isBetweenFullOther && $this->attributes['full_payment_other_sale_price']) {
+            return $this->attributes['full_payment_other_sale_price'];
+        }
+        return $this->attributes['full_payment_price'];
     }
 
     public function getFullPaymentIsSaleAttribute()
