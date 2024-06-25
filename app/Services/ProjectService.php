@@ -258,7 +258,7 @@ class ProjectService
         switch ($request->type) {
             case 'cover':
                 $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'cover');
-                $data['description'] = $request->description;
+                $data['description'] = $this->saveGraphicWorkFileOrImage($request, 'interior');
                 $data['is_checked'] = $request->has('is_approved') && $request->is_approved ? 1 : 0;
                 break;
 
@@ -275,6 +275,10 @@ class ProjectService
             case 'trial-page':
                 $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'trial_page');
                 break;
+
+            case 'print-ready':
+                    $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'print_ready');
+                    break;
 
             case 'sample-book-pdf':
                 $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'sample_book_pdf');

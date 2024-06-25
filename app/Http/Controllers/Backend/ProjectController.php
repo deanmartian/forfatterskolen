@@ -528,12 +528,13 @@ class ProjectController extends Controller
         $rewriteScripts = ProjectGraphicWork::rewriteScripts()->where('project_id', $project_id)->get();
         $trialPages = ProjectGraphicWork::trialPage()->where('project_id', $project_id)->get();
         $sampleBookPDFs = ProjectGraphicWork::sampleBookPdf()->where('project_id', $project_id)->get();
+        $printReadyList = ProjectGraphicWork::printReady()->where('project_id', $project_id)->get();
         $bookPictures = ProjectBookPicture::where('project_id', $project_id)->get();
         $bookFormattingList = ProjectBookFormatting::where('project_id', $project_id)->get();
 
         return view('backend.project.graphic-work', compact('project', 'layout', 'backRoute', 'saveGraphicRoute',
             'deleteGraphicRoute', 'covers', 'barCodes', 'rewriteScripts', 'trialPages', 'sampleBookPDFs',
-            'saveBookPicturesRoute', 'bookPictures', 'deleteBookPicturesRoute',
+            'saveBookPicturesRoute', 'bookPictures', 'deleteBookPicturesRoute', 'printReadyList',
              'saveBookFormattingRoute', 'bookFormattingList', 'deleteBookFormattingRoute'));
     }
 
@@ -562,6 +563,9 @@ class ProjectController extends Controller
                     $this->validate($request, ['trial_page' => 'required|mimes:jpeg,jpg,png,gif']);
                     break;
 
+                case 'print-ready':
+                        $this->validate($request, ['print_ready' => 'required|mimes:pdf']);
+                        break;
                 case 'sample-book-pdf':
                     $this->validate($request, ['sample_book_pdf' => 'required|mimes:pdf']);
                     break;

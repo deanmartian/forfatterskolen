@@ -23,28 +23,35 @@
                 <thead>
                 <tr>
                     <th>Cover</th>
-                    <th width="500">Description</th>
-                    <th>Approved Final</th>
+                    <th width="500">Interior</th>
                     <th width="300"></th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach($covers as $cover)
                     <tr>
-                        <td>{!! $cover->image !!}</td>
-                        <td>{{ $cover->description }}</td>
-                        <th>{{ $cover->is_checked ? 'Yes' : 'No' }}</th>
                         <td>
-                            @if (strpos($cover->value, "project-"))
-                                <a href="{{ route('dropbox.download_file', trim($cover->value)) }}" 
-                                    class="btn btn-success btn-xs">
+                            @if (strpos($cover->value, 'project-'))
+                                <a href="{{ route('dropbox.download_file', trim($cover->value)) }}">
                                     <i class="fa fa-download" aria-hidden="true"></i>
-                                </a>
+                                </a>&nbsp;
                             @else
                                 <a href="{{ $cover->value }}" class="btn btn-success btn-xs" download>
                                     <i class="fa fa-download"></i>
                                 </a>
-                            @endif                            
+                            @endif
+
+                            {!! $cover->image !!}
+                        </td>
+                        <td>
+                            @if ($cover->interior)
+                                <a href="{{ route('dropbox.download_file', trim($cover->description)) }}">
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                </a>&nbsp;
+                                {!! $cover->interior !!}
+                            @endif
+                        </td>
+                        <td>                      
                             <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
                                     data-target="#graphicWorkModal"
                                     data-type="cover" data-id="{{ $cover->id }}"
@@ -117,6 +124,53 @@
         </div>
 
         <button type="button" class="btn btn-success graphicWorkBtn" data-toggle="modal" data-target="#graphicWorkModal"
+                data-type="print-ready">+ Print Ready</button>
+        <div class="table-responsive margin-top">
+            <table class="table table-side-bordered table-white">
+                <thead>
+                <tr>
+                    <th>File</th>
+                    <th width="300"></th>
+                </tr>
+                </thead>
+                <tbody>
+                    @foreach ($printReadyList as $printReady)
+                        <tr>
+                            <td>
+                                @if ($printReady->value)
+                                    @if (strpos($printReady->value, 'project-'))
+                                        <a href="{{ route('dropbox.download_file', trim($printReady->value)) }}">
+                                            <i class="fa fa-download" aria-hidden="true"></i>
+                                        </a>&nbsp;
+                                    @else
+                                        <a href="{{ $printReady->value }}" class="btn btn-success btn-xs" download>
+                                            <i class="fa fa-download"></i>
+                                        </a>
+                                    @endif
+                                @endif
+                                
+                                {!! $printReady->image !!}
+                            </td>
+                            <td>
+                                <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
+                                        data-target="#graphicWorkModal"
+                                        data-type="print-ready" data-id="{{ $printReady->id }}"
+                                        data-record="{{ json_encode($printReady) }}">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btn-xs deleteGraphicWorkBtn" data-toggle="modal"
+                                        data-target="#deleteGraphicWorkModal" data-type="print-ready"
+                                        data-action="{{ route($deleteGraphicRoute, [$printReady->project_id, $printReady->id]) }}">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        {{-- <button type="button" class="btn btn-success graphicWorkBtn" data-toggle="modal" data-target="#graphicWorkModal"
                 data-type="rewrite-script">+ Add Rewrite script</button>
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
@@ -198,7 +252,7 @@
                 @endforeach
                 </tbody>
             </table>
-        </div>
+        </div> --}}
 
         <button type="button" class="btn btn-success graphicWorkBtn" data-toggle="modal" data-target="#graphicWorkModal"
                 data-type="sample-book-pdf">+ Add Sample book/PDF</button>
@@ -376,6 +430,10 @@
                             </div>
 
                             <div class="form-group">
+                                <label>Interior</label>
+                                <input type="file" class="form-control" name="interior" accept="application/pdf">
+                            </div>
+                            {{-- <div class="form-group">
                                 <label>Description</label>
                                 <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
                             </div>
@@ -384,7 +442,7 @@
                                 <label>Approved Final</label> <br>
                                 <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
                                        name="is_approved" data-width="84">
-                            </div>
+                            </div> --}}
                         </div>
 
                         <div class="barcode-container">
@@ -408,6 +466,11 @@
                         <div class="form-group trial-page-container">
                             <label>Trial Page</label>
                             <input type="file" class="form-control" name="trial_page" accept="image/*">
+                        </div>
+
+                        <div class="form-group print-ready-container">
+                            <label>File</label>
+                            <input type="file" class="form-control" name="print_ready" accept="application/pdf">
                         </div>
 
                         <div class="form-group sample-book-pdf-container">
@@ -553,12 +616,14 @@
             let barcodeContainer = $(".barcode-container");
             let rewriteScriptContainer = $(".rewrite-script-container");
             let trialPageContainer = $(".trial-page-container");
+            let printReadyContainer = $(".print-ready-container");
             let sampleBookPdfContainer = $(".sample-book-pdf-container");
 
             coverContainer.addClass('hide');
             barcodeContainer.addClass('hide');
             rewriteScriptContainer.addClass('hide');
             trialPageContainer.addClass('hide');
+            printReadyContainer.addClass('hide');
             sampleBookPdfContainer.addClass('hide');
 
             switch (type) {
@@ -578,6 +643,12 @@
                     modal.find('.modal-title').text('Trial Page');
                     trialPageContainer.removeClass('hide');
                     break;
+
+                case 'print-ready':
+                    modal.find('.modal-title').text('Print Ready');
+                    printReadyContainer.removeClass('hide');
+                    break;
+
                 case 'sample-book-pdf':
                     modal.find('.modal-title').text('Sample Book/PDF');
                     sampleBookPdfContainer.removeClass('hide');

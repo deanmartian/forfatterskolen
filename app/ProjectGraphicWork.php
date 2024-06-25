@@ -8,7 +8,7 @@ class ProjectGraphicWork extends Model
 {
 
     protected $fillable = ['project_id', 'type', 'value', 'description', 'date', 'is_checked'];
-    protected $appends = ['image', 'file_link'];
+    protected $appends = ['image', 'file_link', 'interior'];
 
     /*protected static function boot() {
         parent::boot();
@@ -46,9 +46,28 @@ class ProjectGraphicWork extends Model
         $query->where('type', 'sample-book-pdf');
     }
 
+    public function scopePrintReady( $query )
+    {
+        $query->where('type', 'print-ready');
+    }
+
     public function getImageAttribute()
     {
         $filename = $this->attributes['value'];
+        $fileLink = NULL;
+        if ($filename) {
+            if (strpos($filename, 'project-')) {
+                $fileLink = '<a href="'.route('dropbox.shared_link', $filename).'" target="_blank">' .basename($filename).'</a>';
+            } else {
+                $fileLink = '<a href="'.asset($filename).'">' .basename($filename).'</a>';
+            }
+        }
+        return $fileLink;
+    }
+
+    public function getInteriorAttribute()
+    {
+        $filename = $this->attributes['description'];
         $fileLink = NULL;
         if ($filename) {
             if (strpos($filename, 'project-')) {
