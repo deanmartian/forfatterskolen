@@ -23,6 +23,7 @@ use App\ProjectBook;
 use App\ProjectBookCritique;
 use App\ProjectBookFormatting;
 use App\ProjectBookPicture;
+use App\ProjectEbook;
 use App\ProjectGraphicWork;
 use App\ProjectInvoice;
 use App\ProjectManualInvoice;
@@ -1299,8 +1300,49 @@ class ProjectController extends Controller
 
     public function ebook($project_id)
     {
+        $project = Project::find($project_id);
+
         $layout = 'backend.layout';
-        return view('backend.project.e-book', compact('layout'));
+        $backRoute = route('admin.project.show', $project_id);
+        $saveEbookRoute = 'admin.project.save-ebook';
+        $deleteEbookRoute = 'admin.project.delete-ebook';
+
+        $epubs = ProjectEbook::epub()->where('project_id', $project_id)->get();
+        $mobis = ProjectEbook::mobi()->where('project_id', $project_id)->get();
+        $covers = ProjectEbook::cover()->where('project_id', $project_id)->get();
+
+        return view('backend.project.e-book', compact('layout', 'project', 'saveEbookRoute', 'epubs', 
+            'deleteEbookRoute' ,'mobis', 'covers', 'backRoute'));
+    }
+
+    public function saveEbook( $project_id, Request $request, ProjectService $projectService )
+    {
+        $request->merge(['project_id' => $project_id]);
+        
+        /* if (!$request->id){
+            switch ($request->type) {
+                case 'epub':
+                    $this->validate($request, ['cover' => 'required|mimes:jpeg,jpg,png,gif']);
+                    break;
+            }
+        } */
+
+        $projectService->saveEbook($request);
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace('-',' ', $request->type)) . ' saved successfully.'),
+                'alert_type' => 'success']);
+    }
+
+    public function deleteEbook( $project_id, $ebook_id )
+    {
+        $ebook = ProjectEbook::find($ebook_id);
+        $type = $ebook->type;
+        $ebook->delete();
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace('-',' ', $type)) . ' delete successfully.'),
+                'alert_type' => 'success']);
     }
 
     public function audio($project_id)

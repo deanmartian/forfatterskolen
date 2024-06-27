@@ -14,6 +14,7 @@ use App\ProjectActivity;
 use App\ProjectBook;
 use App\ProjectBookFormatting;
 use App\ProjectBookPicture;
+use App\ProjectEbook;
 use App\ProjectGraphicWork;
 use App\ProjectMarketing;
 use App\ProjectWholeBook;
@@ -295,6 +296,34 @@ class ProjectService
         return $graphicWork;
     }
 
+    public function saveEbook( Request $request )
+    {
+        $data = $request->except('_token');
+
+        switch ($request->type) {
+            case 'epub':
+                $data['value'] = $this->saveEbookFile($request, 'epub');
+                break;
+
+            case 'mobi':
+                $data['value'] = $this->saveEbookFile($request, 'mobi');
+                break;
+
+            case 'cover':
+                $data['value'] = $this->saveEbookFile($request, 'cover');
+                break;
+        }
+
+        if ($request->id) {
+            $ebook = ProjectEbook::find($request->id);
+            $ebook->update($data);
+        } else {
+            $ebook = ProjectEbook::create($data);
+        }
+
+        return $ebook;
+    }
+
     /**
      * @param Request $request
      * @param $fieldName
@@ -312,6 +341,27 @@ class ProjectService
         if ($request->hasFile($fieldName)) :
             //$destinationPath = 'storage/project-graphic-work/' . $fieldName; // upload path
             $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/' . $fieldName; // upload path
+
+            //AdminHelpers::createDirectory($destinationPath);
+            $filePath = $this->saveFileOrImageDropbox($destinationPath, $fieldName);
+
+        endif;
+
+        return $filePath;
+    }
+
+    public function saveEbookFile( Request $request, $fieldName)
+    {
+        $filePath = NULL;
+
+        if ($request->id) {
+            $ebook = ProjectEbook::find($request->id);
+            $filePath = $ebook->value;
+        }
+
+        if ($request->hasFile($fieldName)) :
+            //$destinationPath = 'storage/project-graphic-work/' . $fieldName; // upload path
+            $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/ebook/' . $fieldName; // upload path
 
             //AdminHelpers::createDirectory($destinationPath);
             $filePath = $this->saveFileOrImageDropbox($destinationPath, $fieldName);

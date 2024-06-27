@@ -1211,6 +1211,10 @@ Route::group([
         Route::delete('/project/{id}/storage/delete', 'ProjectController@deleteStorageBook')->name('admin.project.storage.delete-book');
         Route::post('/project/book/{id}/storage/save-details', 'ProjectController@saveStorageBookDetails')->name('admin.project.storage.save-details');
         Route::post('/project/book/{id}/storage/save-various', 'ProjectController@saveStorageVarious')->name('admin.project.storage.save-various');
+        Route::get('/project/{id}/e-book', 'ProjectController@ebook')->name('admin.project.ebook');
+        Route::post('/project/{id}/e-book/save', 'ProjectController@saveEbook')->name('admin.project.save-ebook');
+        Route::delete('/project/{id}/e-book/{ebook_id}/delete', 'ProjectController@deleteEbook')->name('admin.project.delete-ebook');
+        Route::get('/project/{id}/audio', 'ProjectController@audio')->name('admin.project.audio');
         Route::get('/project/{id}/notes', 'ProjectController@showNotes')->name('admin.project.notes');
         Route::get('/project', 'ProjectController@index')->name('admin.project.index');
         Route::post('/project/save', 'ProjectController@saveProject');

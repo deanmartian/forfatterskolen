@@ -23,6 +23,15 @@
             <a :href="'/project/' + project.id + '/storage'" class="btn btn-primary btn-sm">
                 Storage
             </a>
+            <a :href="'/project/' + project.id + '/e-book'" class="btn btn-primary btn-sm">
+                Ebook
+            </a>
+            <!-- <a :href="'/project/' + project.id + '/audio'" class="btn btn-primary btn-sm">
+                Audio
+            </a>
+            <a :href="'/project/' + project.id + '/print'" class="btn btn-primary btn-sm">
+                Print
+            </a> -->
             <div class="pull-right">
                 <button class="btn btn-success btn-sm" @click="showLearnerFormModal()">
                     <i class="fa fa-user"></i> Add Learner
