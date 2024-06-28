@@ -1215,6 +1215,8 @@ Route::group([
         Route::post('/project/{id}/e-book/save', 'ProjectController@saveEbook')->name('admin.project.save-ebook');
         Route::delete('/project/{id}/e-book/{ebook_id}/delete', 'ProjectController@deleteEbook')->name('admin.project.delete-ebook');
         Route::get('/project/{id}/audio', 'ProjectController@audio')->name('admin.project.audio');
+        Route::post('/project/{id}/audio/save', 'ProjectController@saveAudio')->name('admin.project.save-audio');
+        Route::delete('/project/{id}/audio/{audio_id}/delete', 'ProjectController@deleteAudio')->name('admin.project.delete-audio');
         Route::get('/project/{id}/notes', 'ProjectController@showNotes')->name('admin.project.notes');
         Route::get('/project', 'ProjectController@index')->name('admin.project.index');
         Route::post('/project/save', 'ProjectController@saveProject');

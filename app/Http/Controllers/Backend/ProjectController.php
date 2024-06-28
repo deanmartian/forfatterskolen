@@ -19,6 +19,7 @@ use App\Jobs\UpdateDropboxLink;
 use App\MarketingPlan;
 use App\Project;
 use App\ProjectActivity;
+use App\ProjectAudio;
 use App\ProjectBook;
 use App\ProjectBookCritique;
 use App\ProjectBookFormatting;
@@ -1347,8 +1348,41 @@ class ProjectController extends Controller
 
     public function audio($project_id)
     {
+        $project = Project::find($project_id);
+
         $layout = 'backend.layout';
-        return view('backend.project.audio', compact('layout'));
+        $backRoute = route('admin.project.show', $project_id);
+        $saveAudioRoute = 'admin.project.save-audio';
+        $deleteAudioRoute = 'admin.project.delete-audio';
+
+        $files = ProjectAudio::files()->where('project_id', $project_id)->get();
+        $covers = ProjectAudio::cover()->where('project_id', $project_id)->get();
+        
+        return view('backend.project.audio', compact('layout', 'project', 'saveAudioRoute', 'files', 'deleteAudioRoute', 
+            'covers', 'backRoute'));
+    }
+
+    public function saveAudio( $project_id, Request $request, ProjectService $projectService )
+    {
+        $request->merge(['project_id' => $project_id]);
+        
+
+        $projectService->saveAudio($request);
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace('-',' ', $request->type)) . ' saved successfully.'),
+                'alert_type' => 'success']);
+    }
+
+    public function deleteAudio( $project_id, $audio_id )
+    {
+        $audio = ProjectAudio::find($audio_id);
+        $type = $audio->type;
+        $audio->delete();
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace('-',' ', $type)) . ' delete successfully.'),
+                'alert_type' => 'success']);
     }
 
     public function showNotes( $project_id )
