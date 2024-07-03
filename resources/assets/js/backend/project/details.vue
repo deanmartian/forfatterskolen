@@ -29,9 +29,9 @@
             <a :href="'/project/' + project.id + '/audio'" class="btn btn-primary btn-sm">
                 Audio
             </a>
-            <!-- <a :href="'/project/' + project.id + '/print'" class="btn btn-primary btn-sm">
+            <a :href="'/project/' + project.id + '/print'" class="btn btn-primary btn-sm">
                 Print
-            </a> -->
+            </a>
             <div class="pull-right">
                 <button class="btn btn-success btn-sm" @click="showLearnerFormModal()">
                     <i class="fa fa-user"></i> Add Learner

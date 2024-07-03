@@ -1791,6 +1791,112 @@ class AdminHelpers
 
         return $presenterList;
     }
+
+    public static function projectFormats($currentFormat = NULL)
+    {
+        $formats = array(
+            array( 'id' => '125x200', 'option' => '125x200 mm (liten roman)'),
+            array( 'id' => '140x220', 'option' => '140x220 mm (roman)'),
+            array( 'id' => '148x210', 'option' => '148x210 mm (A5)'),
+            array( 'id' => '155x230', 'option' => '155x230 mm (stor roman)'),
+            array( 'id' => '170x240', 'option' => '170x240 mm (B5 - lærebok)'),
+            array( 'id' => '210x210', 'option' => '210x210 mm (kvadratisk)'),
+            array( 'id' => '210x297', 'option' => '210x297 mm (A4)'),
+        );
+
+        if ($currentFormat) {
+            foreach ($formats as $format) {
+                if ($format['id'] == $currentFormat) {
+                    return $format['option'];
+                }
+            }
+        }
+
+        return $formats;
+	}
+
+    public static function projectBindings($currentBinding = NULL)
+    {
+        $bindings = array(
+            array( 'id' => '1', 'option' => 'Paperback/softcover'),
+            array( 'id' => '2', 'option' => 'Paperback/softcover m. flappomslag'),
+            array( 'id' => '20', 'option' => 'Spiralbok'),
+            array( 'id' => '4', 'option' => 'Helbind/hardcover')
+        );
+
+        if ($currentBinding) {
+            foreach ($bindings as $binding) {
+                if ($binding['id'] == $currentBinding) {
+                    return $binding['option'];
+                }
+            }
+        }
+
+        return $bindings;
+	}
+
+    public static function projectMedias($currentMedia = NULL)
+    {
+        $medias = array(
+            array( 'id' => '1', 'option' => '90g Offsetpapir'),
+            array( 'id' => '2', 'option' => '120g Offsetpapir'),
+            array( 'id' => '183', 'option' => '140g Offsetpapir'),
+            array( 'id' => '3', 'option' => '130g Silk-papir'),
+            array( 'id' => '4', 'option' => '170g Silk-papir'),
+            array( 'id' => '34', 'option' => '80g Munken Cream'),
+            array( 'id' => '36', 'option' => '100g Munken Cream'),
+            array( 'id' => '40', 'option' => '100g Munken Print White'),
+            array( 'id' => '163', 'option' => '115g G Print'),
+            array( 'id' => '349', 'option' => '135g Resirkulert papir')
+        );
+
+        if ($currentMedia) {
+            foreach ($medias as $media) {
+                if ($media['id'] == $currentMedia) {
+                    return $media['option'];
+                }
+            }
+        }
+
+        return $medias;
+	}
+
+    public static function projectPrintMethods($currentPrintMethod = NULL)
+    {
+        $methods = array(
+            array( 'id' => '99', 'option' => 'Billigste'),
+            array( 'id' => '1', 'option' => 'Digitaltrykk'),
+            array( 'id' => '2', 'option' => 'Offsettrykk')
+        );
+
+        if ($currentPrintMethod) {
+            foreach ($methods as $method) {
+                if ($method['id'] == $currentPrintMethod) {
+                    return $method['option'];
+                }
+            }
+        }
+
+        return $methods;
+	}
+
+    public static function projectPrintColors($currentColor = NULL)
+    {
+        $colors = array(
+            array( 'id' => '3', 'option' => '4+4 (fargetrykk på begge sider)'),
+            array( 'id' => '4', 'option' => '1+1 (trykk med 1 farge på 2 sider)')
+        );
+
+        if ($currentColor) {
+            foreach ($colors as $color) {
+                if ($color['id'] == $currentColor) {
+                    return $color['option'];
+                }
+            }
+        }
+
+        return $colors;
+	}
 }
 
 

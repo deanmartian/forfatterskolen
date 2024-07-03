@@ -11,12 +11,14 @@ use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
 use App\Project;
 use App\ProjectActivity;
+use App\ProjectAudio;
 use App\ProjectBook;
 use App\ProjectBookFormatting;
 use App\ProjectBookPicture;
 use App\ProjectEbook;
 use App\ProjectGraphicWork;
 use App\ProjectMarketing;
+use App\ProjectPrint;
 use App\ProjectWholeBook;
 use Carbon\Carbon;
 use Illuminate\Http\Concerns\InteractsWithInput;
@@ -324,6 +326,39 @@ class ProjectService
         return $ebook;
     }
 
+    public function saveAudio( Request $request )
+    {
+        $data = $request->except('_token');
+
+        switch ($request->type) {
+            case 'files':
+                $data['value'] = $this->saveAudioFile($request, 'files');
+                break;
+
+            case 'cover':
+                $data['value'] = $this->saveAudioFile($request, 'cover');
+                break;
+        }
+
+        if ($request->id) {
+            $audio = ProjectAudio::find($request->id);
+            $audio->update($data);
+        } else {
+            $audio = ProjectAudio::create($data);
+        }
+
+        return $audio;
+    }
+
+    public function savePrint(Request $request)
+    {
+        $data = $request->except('_token');
+
+        return ProjectPrint::updateOrCreate([
+            'project_id' => $data['project_id']
+        ], $data);
+    }
+
     /**
      * @param Request $request
      * @param $fieldName
@@ -362,6 +397,27 @@ class ProjectService
         if ($request->hasFile($fieldName)) :
             //$destinationPath = 'storage/project-graphic-work/' . $fieldName; // upload path
             $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/ebook/' . $fieldName; // upload path
+
+            //AdminHelpers::createDirectory($destinationPath);
+            $filePath = $this->saveFileOrImageDropbox($destinationPath, $fieldName);
+
+        endif;
+
+        return $filePath;
+    }
+
+    public function saveAudioFile( Request $request, $fieldName)
+    {
+        $filePath = NULL;
+
+        if ($request->id) {
+            $audio = ProjectAudio::find($request->id);
+            $filePath = $audio->value;
+        }
+
+        if ($request->hasFile($fieldName)) :
+            //$destinationPath = 'storage/project-graphic-work/' . $fieldName; // upload path
+            $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/audio/' . $fieldName; // upload path
 
             //AdminHelpers::createDirectory($destinationPath);
             $filePath = $this->saveFileOrImageDropbox($destinationPath, $fieldName);

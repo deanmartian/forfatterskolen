@@ -1385,6 +1385,28 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
+    public function print($project_id)
+    {
+        $project = Project::find($project_id);
+        $print = $project->print;
+
+        $layout = 'backend.layout';
+        $backRoute = route('admin.project.show', $project_id);
+        
+        return view('backend.project.print', compact('layout', 'project', 'backRoute', 'print'));
+    }
+
+    public function savePrint($project_id, Request $request, ProjectService $projectService)
+    {
+        $request->merge(['project_id' => $project_id]);
+
+        $projectService->savePrint($request);
+
+        return redirect()->back()
+            ->with(['errors' => AdminHelpers::createMessageBag('Print details saved successfully.'),
+                'alert_type' => 'success']);
+    }
+
     public function showNotes( $project_id )
     {
         $project = Project::find($project_id);

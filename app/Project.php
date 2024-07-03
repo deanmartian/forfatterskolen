@@ -53,6 +53,11 @@ class Project extends Model
         return $this->hasMany('App\ProjectRegistration');
     }
 
+    public function print()
+    {
+        return $this->hasOne('App\ProjectPrint');
+    }
+
     public function getShortNotesAttribute()
     {
         return Str::words($this->attributes['notes'], 250,
