@@ -894,4 +894,19 @@ class PageController extends Controller
 
         return null;
     }
+
+    public function searchLearners(Request $request)
+    {
+        $search = $request->search;
+
+        $users = User::where('role', 2);
+        if ($search) {
+            $users = $users->where(function($query) use ($search) {
+                $query->where('first_name', 'like', $search . '%')
+                    ->orWhere('last_name', 'like', $search . '%');
+            });
+        }
+        $users->limit(50);
+        return response()->json($users->get());
+    }
 }

@@ -683,6 +683,7 @@ Route::group([
         Route::get('/learner-with-no-paid-records/export', 'PageController@exportLearnersWithNoPaidRecords');
         Route::get('/learner-with-no-paid-records/delete', 'PageController@deleteLearnersWithNoPaidRecords');
         Route::post('/send-email-to-queue', 'PageController@sendEmailToQueue')->name('admin.send-email-to-queue');
+        Route::get('/learners/search', 'PageController@searchLearners');
 
         Route::resource('page_meta','PageMetaController',[
             'except' => ['show', 'create', 'edit'],

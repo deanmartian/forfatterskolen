@@ -81,7 +81,7 @@ class ProjectController extends Controller
         $copyEditingEditors = AdminHelpers::copyEditingEditors();
         $correctionEditors = AdminHelpers::correctionEditors();
         $editorAndAdminList = AdminHelpers::editorAndAdminList();
-        $learners = User::where('role', 2)->get(); //->where('is_self_publishing_learner', 1)
+        $learners = [];//User::where('role', 2)->get(); //->where('is_self_publishing_learner', 1)
         $activities = ProjectActivity::all();
         $timeRegisters = TimeRegister::where('user_id', $project->user_id)->whereNull('project_id')->with('project')->get();
         $projectTimeRegisters = TimeRegister::where('project_id', $project->id)->with('project')->get();
