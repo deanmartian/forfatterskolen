@@ -2,6 +2,46 @@
 
 @section('styles')
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <style>
+        .dropdown-container {
+            position: relative;
+            width: 100%;
+        }
+        .dropdown-results {
+            position: absolute;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            z-index: 1000;
+        }
+        .dropdown-results div {
+            padding: 8px;
+            cursor: pointer;
+        }
+        .dropdown-results div:hover {
+            background-color: #f1f1f1;
+        }
+        .selected-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        .selected-item {
+            background-color: #007bff;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .selected-item span {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+    </style>
 @stop
 
 @section('title')
@@ -436,7 +476,8 @@
                     <h4 class="modal-title"></h4>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
+                    <form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)"
+                    id="learnerForm">
                         {{ csrf_field() }}
                         <input type="hidden" name="project_id" value="{{ $project->id }}">
 
@@ -479,13 +520,11 @@
                             <label>
                                 {{ trans_choice('site.learners', 2) }}
                             </label>
-                            <select name="learners[]" class="form-control select2 template" multiple="multiple">
-                                @foreach($learners as $learner)
-                                    <option value="{{$learner->id}}">
-                                        {{$learner->full_name}}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div class="dropdown-container">
+                                <input type="hidden" id="selectedLearnerId" name="learners[]">
+                                <input type="text" id="searchInput" class="form-control" placeholder="Search for users">
+                                <div id="dropdownResults" class="dropdown-results" style="display: none;"></div>
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -852,6 +891,7 @@
 @section('scripts')
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script src="{{ asset('js/app.js?v='.time()) }}"></script>
+    <script type="text/javascript" src="{{asset('select2/dist/js/select2.min.js')}}"></script>
     <script>
         $(".addSelfPublishingBtn").click(function() {
             let modal = $("#selfPublishingModal");
@@ -1046,6 +1086,48 @@
                 }
             });
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const dropdownResults = document.getElementById('dropdownResults');
+            const selectedLearnerId = document.getElementById('selectedLearnerId');
+
+            searchInput.addEventListener('input', function() {
+                const query = searchInput.value.trim();
+                if (query.length > 1) {
+                    fetch(`/learners/search?search=${query}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            dropdownResults.innerHTML = '';
+                            if (data.length > 0) {
+                                data.forEach(item => {
+                                    const div = document.createElement('div');
+                                    div.textContent = item.first_name + " " + item.last_name;
+                                    div.dataset.id = item.id;
+                                    div.addEventListener('click', () => {
+                                        searchInput.value = item.first_name + " " + item.last_name;
+                                        selectedLearnerId.value = item.id;
+                                        dropdownResults.style.display = 'none';
+                                    });
+                                    dropdownResults.appendChild(div);
+                                });
+                                dropdownResults.style.display = 'block';
+                            } else {
+                                dropdownResults.style.display = 'none';
+                            }
+                        })
+                        .catch(error => console.error('Error fetching data:', error));
+                } else {
+                    dropdownResults.style.display = 'none';
+                }
+            });
+
+            document.addEventListener('click', function(event) {
+                if (!dropdownResults.contains(event.target) && event.target !== searchInput) {
+                    dropdownResults.style.display = 'none';
+                }
+            });
+        });
+
     </script>
-    <script type="text/javascript" src="{{asset('select2/dist/js/select2.min.js')}}"></script>
 @stop
