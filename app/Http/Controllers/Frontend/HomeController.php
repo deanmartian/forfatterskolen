@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Address;
 use App\Advisory;
+use App\Application;
 use App\Blog;
 use App\CoachingTimerManuscript;
 use App\Contract;
@@ -2435,6 +2436,37 @@ text-decoration:none;border-radius:3px;padding:12px 18px;border:1px solid #114c7
     {
         Excel::import(new WebinarRegistrantsImport($request->link), request()->file('file'));
         echo "after import";
+    }
+
+    public function application(Request $request)
+    {
+        if (request()->isMethod('post')) {
+            $this->validate($request, [
+                'first_name' =>'required|alpha',
+                'last_name' =>'required|alpha',
+                'phone' =>'required',
+                'email' =>'required|email',
+                'address' =>'required',
+                'zip' =>'required',
+                'city' =>'required',
+                'file' => 'required|mimes:doc,docx,pdf,txt,odt'
+            ]);
+
+            $data = $request->except('_token');
+
+            if ($request->has('file')) {
+                $file = FrontendHelpers::saveFile($request, 'application', 'file');
+                $data['file'] = $file;
+            }
+
+            Application::create(
+                $data
+            );
+
+            return redirect()->to('/thank-you');
+        }
+
+        return view('frontend.application');
     }
 
     public function exportCourseTakenByYear($year)

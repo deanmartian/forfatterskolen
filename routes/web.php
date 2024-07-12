@@ -76,8 +76,11 @@ Route::group([
         Route::get('/import-webinar-registrants', 'HomeController@importWebinarRegistrants');
         Route::post('/import-webinar-registrants', 'HomeController@processImportWebinarRegistrants')
             ->name('process-import-webinar-registrants');
+        Route::get('/soknad2024', 'HomeController@application');
+        Route::post('/soknad2024', 'HomeController@application');
         Route::get('/export/course-taken/{year}', 'HomeController@exportCourseTakenByYear');
         Route::get('/export/shop-manuscripts-taken/{year}', 'HomeController@exportShopManuscriptsTakenByYear');
+
         Route::get('/dropbox/redirect', 'DropboxController@redirectToDropbox')->name('dropbox.redirect');
         Route::get('/dropbox/callback', 'DropboxController@handleDropboxCallback')->name('dropbox.callback');
         Route::post('/dropbox/refresh-token', 'DropboxController@refreshDropboxAccessToken')->name('dropbox.refresh_token');
@@ -1769,6 +1772,8 @@ Route::group([
                 'show' => 'admin.book-for-sale.show',
             ],
         ]);
+
+        Route::get('/application', 'PageController@application')->name('admin.application');
 
         Route::post('/task/save', 'ProjectController@saveTask')->name('admin.project-task.save');
         Route::put('/project/task/{id}/update', 'ProjectController@updateTask')->name('admin.project-task.update');

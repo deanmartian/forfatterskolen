@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\ActivityLog;
+use App\Application;
 use App\Assignment;
 use App\AssignmentManuscript;
 use App\CoachingTimerManuscript;
@@ -879,6 +880,12 @@ class PageController extends Controller
 
         // $currentData = DB::table($table)->find($id);
         return view('backend.user-activity.index', compact('logs', 'fromCount', 'toCount', 'totalCount'));
+    }
+
+    public function application()
+    {
+        $applications = Application::paginate(20);
+        return view('backend.application.index', compact('applications'));
     }
 
     public function userActivityDetails($id)

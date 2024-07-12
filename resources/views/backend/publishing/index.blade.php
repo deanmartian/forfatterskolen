@@ -57,6 +57,9 @@
 	<a class="btn btn-success margin-top" href="{{ route('admin.book-for-sale.index') }}">
 		Books For Sale
 	</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.application') }}">
+		Application
+	</a>
 
 	<div class="table-users table-responsive">
 		<table class="table">
