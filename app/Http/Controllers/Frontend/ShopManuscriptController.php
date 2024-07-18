@@ -882,6 +882,7 @@ class ShopManuscriptController extends Controller
     {
         $extensions = ['pdf', 'doc', 'docx', 'odt'];
         $word_count = 0;
+        $price = 20000;
 
     	if( $request->hasFile('manuscript') &&  $request->file('manuscript')->isValid() ) :
     		$extension = pathinfo($_FILES['manuscript']['name'],PATHINFO_EXTENSION);
