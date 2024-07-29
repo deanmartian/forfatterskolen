@@ -150,7 +150,8 @@
 			<button type="button" class="btn btn-info" data-toggle="modal" data-target="#editContactModal">{{ trans('site.edit-contact-info') }}</button>
 			<button type="button" class="margin-top btn btn-danger" data-toggle="modal" data-target="#deleteLearnerModal">{{ trans('site.delete-learner') }}</button>
 			<button type="button" class="margin-top btn btn-success" data-toggle="modal" data-target="#learnerNotesModal">{{ trans_choice('site.notes', 2) }}</button>
-			<button type="button" class="margin-top btn btn-primary" data-toggle="modal" data-target="#sendEmailModal">{{ trans('site.send-email') }}</button>
+			<button type="button" class="margin-top btn btn-primary loadScriptButton" data-toggle="modal" 
+				data-target="#sendEmailModal">{{ trans('site.send-email') }}</button>
 			<button type="button" class="margin-top btn btn-warning" data-toggle="modal" data-target="#preferredEditorModal">Preferred Editor</button>
 			<button type="button" class="margin-top btn btn-success setVippsEFakturaBtn" data-toggle="modal"
 					data-target="#setVippsEFakturaModal"
@@ -161,7 +162,7 @@
 				Login as user
 			</a>
 
-			<button type="button" class="margin-top btn btn-primary" data-toggle="modal" data-target="#sendUsernameAndPasswordModal">
+			<button type="button" class="margin-top btn btn-primary loadScriptButton" data-toggle="modal" data-target="#sendUsernameAndPasswordModal">
 				Send Username and Password
 			</button>
 			<div class="former-course-container">
@@ -1847,7 +1848,7 @@
 												data-message="{{ $emailHistory->message }}" onclick="showEmailMessage(this)">
 												Show Message
 											</button>
-										<button class="btn btn-success btn-xs resendEmailHistoryBtn" data-toggle="modal" 
+										<button class="btn btn-success btn-xs resendEmailHistoryBtn loadScriptButton" data-toggle="modal" 
 											data-target="#resendEmailHistoryModal" data-record="{{ json_encode($emailHistory) }}"
 											style="margin-top: 5px;">
 											Resend Email
@@ -2031,7 +2032,7 @@
 								</td>
 								<td>{{ $registeredWebinar->webinar->start_date }}</td>
 								<td>
-									<button class="btn btn-primary btn-xs registeredWebinarEmailBtn" data-toggle="modal"
+									<button class="btn btn-primary btn-xs registeredWebinarEmailBtn loadScriptButton" data-toggle="modal"
 											data-url="{{ $registeredWebinar->join_url }}"
 											data-target="#registeredWebinarEmailModal"
 											data-action="{{ route('admin.learner.send-webinar-registrant-email',
@@ -2054,7 +2055,7 @@
 
 			<div class="panel panel-default">
 				<div class="panel-body">
-					<button class="btn btn-primary pull-right btn-xs addPrivateMessageBtn" data-toggle="modal"
+					<button class="btn btn-primary pull-right btn-xs addPrivateMessageBtn loadScriptButton" data-toggle="modal"
 							data-action="{{ route('admin.learner.add-private-message', $learner->id) }}"
 							data-target="#privateMessageModal">
 						+ Private beskjeder
@@ -2079,7 +2080,7 @@
 									{!! $message->message !!}
 								</td>
 								<td>
-									<button class="btn btn-warning btn-xs editPrivateMessageBtn"
+									<button class="btn btn-warning btn-xs editPrivateMessageBtn loadScriptButton"
 											data-toggle="modal" data-target="#privateMessageModal"
 											data-action="{{ route('admin.learner.update-private-message',
 											[$learner->id, $message->id]) }}"

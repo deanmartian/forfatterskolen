@@ -107,7 +107,7 @@
 											@if($assignedManuscript->locked) {{ 'checked' }} @endif>
 
                                             <button class="btn btn-warning btn-xs d-block
-                                            submitPersonalAssignmentFeedbackBtn" style="margin-top: 5px"
+                                            submitPersonalAssignmentFeedbackBtn loadScriptButton" style="margin-top: 5px"
                                                     data-target="#submitPersonalAssignmentFeedbackModal"
                                                     data-toggle="modal"
 													data-name="{{ $assignedManuscript->user->full_name }}"
@@ -260,7 +260,7 @@
 									</td>
 									<td>
 										{{ $shopManuscript->expected_finish }}
-										<button class="btn btn-primary btn-xs editExpectedFinishBtn" data-toggle="modal"
+										<button class="btn btn-primary btn-xs editExpectedFinishBtn loadScriptButton" data-toggle="modal"
 												data-target="#editExpectedFinishModal"
 												data-action="{{ route('backend.update-expected-finish', ['shop-manuscript', $shopManuscript->id]) }}"
 												data-expected_finish="{{ $shopManuscript->expected_finish
@@ -272,8 +272,8 @@
 										<a href="{{ route('backend.download_shop_manuscript', $shopManuscript->id) }}"
 											class="btn btn-primary btn-xs">{{ trans('site.download') }}</a> <br>
 
-										<button type="button" class="btn btn-warning btn-xs margin-top addShopManuscriptFeedback" data-toggle="modal"
-												data-target="#addFeedbackModal"
+										<button type="button" class="btn btn-warning btn-xs margin-top addShopManuscriptFeedback loadScriptButton" 
+											data-toggle="modal" data-target="#addFeedbackModal"
 											data-action="{{ route('admin.shop-manuscript-taken-feedback.store',
 											$shopManuscript->id) }}">+ {{ trans('site.add-feedback') }}</button>
 									</td>
@@ -618,7 +618,7 @@
 										<!-- show only if no feedback is given yet for this copyEditing -->
 										@if (!$copyEditing->feedback)
 											<a href="#addOtherServiceFeedbackModal" data-toggle="modal" style="color:#eea236"
-											   class="addOtherServiceFeedbackBtn" data-service="1"
+											   class="addOtherServiceFeedbackBtn loadScriptButton" data-service="1"
 											   data-action="{{ route('admin.other-service.add-feedback',
 											['id' => $copyEditing->id, 'type' => 1]) }}">+ {{ trans('site.add-feedback') }}</a>
 										@endif
@@ -662,7 +662,7 @@
 										</td>
 								        <td>{{ $pending_course->created_at }}</td>
 								        <td>
-											<button class="btn btn-success btn-xs sendPayLaterEmailBtn" data-toggle="modal" 
+											<button class="btn btn-success btn-xs sendPayLaterEmailBtn loadScriptButton" data-toggle="modal" 
 											data-target="#sendPayLaterEmailModal" 
 											data-action="{{ route('admin.learner.send-email', $pending_course->user_id) }}">
 												Send Email

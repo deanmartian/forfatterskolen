@@ -20,10 +20,10 @@
 @section('content')
 <div class="page-toolbar">
 	<h3><i class="fa fa-file-text-o"></i> {{ trans('site.free-manuscripts') }}</h3>
-	<a href="#" data-toggle="modal" class="freeManuscriptEmailTemplateBtn" data-target="#freeManuscriptEmailTemplate"
+	<a href="#" data-toggle="modal" class="freeManuscriptEmailTemplateBtn loadScriptButton" data-target="#freeManuscriptEmailTemplate"
 	   data-fields="{{ json_encode($emailTemplate) }}" data-action="{{ route('admin.manuscript.edit_email_template', $emailTemplate->id) }}">
 		{{ trans('site.email-template') }}</a> |
-	<a href="#" data-toggle="modal" class="freeManuscriptEmailTemplateBtn" data-target="#freeManuscriptEmailTemplate"
+	<a href="#" data-toggle="modal" class="freeManuscriptEmailTemplateBtn loadScriptButton" data-target="#freeManuscriptEmailTemplate"
 	   data-fields="{{ json_encode($emailTemplate2) }}" data-action="{{ route('admin.manuscript.edit_email_template', $emailTemplate2->id) }}">
 		{{ trans('site.email-template') }} 2</a>
 </div>
@@ -79,7 +79,7 @@
 								<td>@if( $freeManuscript->editor ) {{ $freeManuscript->editor->full_name }} @endif</td>
 								<td>
 									@if( $freeManuscript->editor )
-										<button class="btn btn-xs btn-success sendFeedbackBtn" data-toggle="modal" data-target="#feedbackModal"
+										<button class="btn btn-xs btn-success sendFeedbackBtn loadScriptButton" data-toggle="modal" data-target="#feedbackModal"
 												data-fields="{{ json_encode($freeManuscript) }}"
 												data-action="{{ route('admin.free-manuscript.send_feedback', $freeManuscript->id) }}"
 												data-email_template="{{ $freeManuscript->from === 'Giutbok'
@@ -430,7 +430,10 @@
         let email_template = $(this).data('email_template');
         let fields = $(this).data('fields');
         let content = fields.feedback_content ? fields.feedback_content : email_template;
-        tinymce.get('FMEmailContentEditor').setContent(content);
+        //tinymce.get('FMEmailContentEditor').setContent(content);
+		setTimeout(() => {
+			setEditorContent('FMEmailContentEditor', content);
+		}, 500);
     });
 
 	$(".freeManuscriptEmailTemplateBtn").click(function() {
@@ -442,7 +445,10 @@
         modal.find('input[name=from_email]').val(fields.from_email);
         modal.find('input[name=page_name]').val(fields.page_name);
         let content = fields.email_content;
-        tinymce.get('freeManuscriptEmailContent').setContent(content);
+        //tinymce.get('freeManuscriptEmailContent').setContent(content);
+		setTimeout(() => {
+			setEditorContent('freeManuscriptEmailContent', content);
+		}, 500);
 	});
 
 	$('.assignEditorBtn').click(function(){

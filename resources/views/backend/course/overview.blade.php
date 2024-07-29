@@ -24,7 +24,8 @@
 						<?php
 							$emailTemplate = \App\EmailTemplate::where('course_id', $course->id)->get();
 						?>
-						<button class="btn btn-sm btn-success" id="editEmailTemplateBtn" data-action="{{ route('admin.email_template.courseEditAdd', $course->id) }}" data-toggle="modal" data-templates="{{ $emailTemplate }}" data-course="{{ $course }}" data-target="#editEmailTemplate"><i class="fa fa-envelope"></i> {{ trans('site.edit') }} {{ trans('site.email-template') }}</button>
+						<button class="btn btn-sm btn-success loadScriptButton" id="editEmailTemplateBtn" 
+						data-action="{{ route('admin.email_template.courseEditAdd', $course->id) }}" data-toggle="modal" data-templates="{{ $emailTemplate }}" data-course="{{ $course }}" data-target="#editEmailTemplate"><i class="fa fa-envelope"></i> {{ trans('site.edit') }} {{ trans('site.email-template') }}</button>
 					</div>
 
 					<h4>{{ trans('site.course-details') }}</h4>

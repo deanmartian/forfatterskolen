@@ -28,7 +28,8 @@
 
                 <div class="tab-content">
                     <div class="tab-pane fade in active margin-top" id="current" role="tabpanel">
-                        <button class="btn btn-primary margin-bottom addEmailBtn" data-target="#emailModal" data-toggle="modal"
+                        <button class="btn btn-primary margin-bottom addEmailBtn loadScriptButton" 
+                        data-target="#emailModal" data-toggle="modal"
                         data-action="{{ route('admin.email-out.store', $course->id) }}">
                             + {{ trans('site.add-email') }}
                         </button>

@@ -74,8 +74,11 @@
         <script src="https://Forfatterskolen.cdn.vooplayer.com/assets/vooplayer.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-        <script src="https://cdn.tiny.cloud/1/nhht03iq9mcjeplfuld9lw87c3u7x80atzo0go0eovc81oa6/tinymce/5/tinymce.min.js"
+        @if (!in_array(Route::currentRouteName(),['backend.dashboard', 'admin.course.show', 'admin.learner.show',
+             'admin.email-template.index', 'admin.free-manuscript.index']))
+            <script src="https://cdn.tiny.cloud/1/nhht03iq9mcjeplfuld9lw87c3u7x80atzo0go0eovc81oa6/tinymce/5/tinymce.min.js"
                 referrerpolicy="origin"></script>
+        @endif
         <script>
             $(".dt-table").DataTable({
                 "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
@@ -88,6 +91,8 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+
+            const currentRoute = "{{ Route::currentRouteName() }}";
 
             // tinymce load editor
             let tiny_editor_config = {
@@ -128,7 +133,37 @@
                     });
                 }
             };
-            tinymce.init(tiny_editor_config);
+
+            function initTinyMCE() {
+                tinymce.init(tiny_editor_config);
+            }
+
+            if (!['backend.dashboard', 'admin.course.show', 'admin.learner.show', 'admin.email-template.index', 'admin.free-manuscript.index'].includes(currentRoute)) {
+                initTinyMCE();
+            } else {
+                document.querySelectorAll('.loadScriptButton').forEach(button => {
+                    button.addEventListener('click', function() {
+                        if (typeof tinymce === 'undefined') {
+                            var script = document.createElement('script');
+                            script.src = "https://cdn.tiny.cloud/1/nhht03iq9mcjeplfuld9lw87c3u7x80atzo0go0eovc81oa6/tinymce/5/tinymce.min.js";
+                            script.referrerPolicy = "origin";
+                            script.onload = initTinyMCE;
+                            document.body.appendChild(script);
+                        } else {
+                            initTinyMCE();
+                        }
+                    });
+                });
+            }
+
+            function setEditorContent(editorId, content) {
+                if (typeof tinymce !== 'undefined') {
+                    tinymce.get(editorId).setContent(content);
+                } else {
+                    console.error('TinyMCE is not defined');
+                }
+            }
+
 
             function disableSubmit(t) {
                 let submit_btn = $(t).find('[type=submit]');
