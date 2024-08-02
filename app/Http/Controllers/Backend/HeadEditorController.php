@@ -100,7 +100,7 @@ class HeadEditorController extends Controller
             $feedback->manuscript =  trim($filesWithPath,", ");
         }
 
-        //$feedback->save();
+        $feedback->save();
 
         if ($project = $feedback->selfPublishing->project) {
             $to = $project->user;
