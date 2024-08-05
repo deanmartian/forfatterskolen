@@ -160,16 +160,19 @@
 										</td>
 										<td>{{ $shopManuscript->expected_finish }}</td>
                                         <td>
-										{{ $shopManuscript->admin->full_name }}
-										<button class="btn btn-info btn-xs send-email"
-										data-toggle="modal"
-										data-target="#sendEmail"
-										data-action="{{ route('admin.head-editor-to-editor', 
-															['type' => 'shop-manuscript',
-															'title' => $shopManuscript->shop_manuscript->title,
-															'learner' => $shopManuscript->user->id,
-															'editor_id' => $shopManuscript->admin->id]) }}"
-										><i class="fa fa-paper-plane" aria-hidden="true"></i>&nbsp;{{ trans('site.send-email') }}</button>
+											@if ($shopManuscript->admin)
+												{{ $shopManuscript->admin->full_name }}
+												<button class="btn btn-info btn-xs send-email"
+												data-toggle="modal"
+												data-target="#sendEmail"
+												data-action="{{ route('admin.head-editor-to-editor', 
+																	['type' => 'shop-manuscript',
+																	'title' => $shopManuscript->shop_manuscript->title,
+																	'learner' => $shopManuscript->user->id,
+																	'editor_id' => $shopManuscript->admin->id]) }}"
+												><i class="fa fa-paper-plane" aria-hidden="true"></i>
+												&nbsp;{{ trans('site.send-email') }}</button>
+											@endif
 										</td>
                                         <td>
 											<?php
