@@ -33,7 +33,7 @@
                                 }}">
                             <i class="fa fa-paper-plane"></i>
                         </button>
-                        <button class="btn btn-info btn-xs editEmailBtn" data-toggle="modal"
+                        <button class="btn btn-info btn-xs editEmailBtn loadScriptButton" data-toggle="modal"
                         data-target="#emailModal" data-fields="{{ json_encode($email) }}"
                         data-action="{{ route('admin.email-out.update', ['course_id' => $course->id, 'email_out' => $email->id]) }}"
                         data-filename="{{ \App\Http\AdminHelpers::extractFileName($email->attachment) }}"
