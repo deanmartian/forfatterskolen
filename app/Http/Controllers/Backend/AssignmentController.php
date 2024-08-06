@@ -514,6 +514,24 @@ class AssignmentController extends Controller
         ]);
     }
 
+    public function updateDashboardStatus(Request $request)
+    {
+        $assignmentManuscript = AssignmentManuscript::find($request->manuscript_id);
+        $success = false;
+
+        if ($assignmentManuscript) {
+            $assignmentManuscript->show_in_dashboard = $request->locked;
+            $assignmentManuscript->save();
+            $success = TRUE;
+        }
+
+        return response()->json([
+            'data' => [
+                'success' => $success,
+            ]
+        ]);
+    }
+
     /**
      * Download the assignment manuscript
      * @param $id int assignment id

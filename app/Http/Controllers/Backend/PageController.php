@@ -108,7 +108,11 @@ class PageController extends Controller
         $assignmentForLearners = Assignment::where('parent', 'users')->get()->pluck('id')->toArray();
         $allAssignmentQuery = array_merge($assignmentForCourse, $assignmentForLearners);
         $pendingAssignments = AssignmentManuscript::whereHas('user')->where('editor_id', 0)
-            ->whereIn('assignment_id', $allAssignmentQuery)->get();
+            ->where(function($query) use ($allAssignmentQuery) {
+                $query->whereIn('assignment_id', $allAssignmentQuery)
+                    ->orWhere('show_in_dashboard', 1);
+            })
+            ->get();
 
         $assignedAssignmentManuscripts = AssignmentManuscript::whereHas('editor')
             ->whereHas('assignment', function($query) use ($singleCourses) {

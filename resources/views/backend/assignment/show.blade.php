@@ -256,6 +256,10 @@
 										   data-id="{{$manuscript->id}}" data-size="mini" @if($manuscript->locked) {{ 'checked' }} @endif>
 									<button type="button" class="btn btn-info btn-xs replaceManuscriptBtn" data-toggle="modal" data-target="#replaceManuscriptModal" data-action="{{ route('assignment.group.replace_manuscript', $manuscript->id) }}" data-grade="{{ $manuscript->grade }}" data-ass-type="{{ $manuscript->type }}" data-manu-type="{{ $manuscript->manu_type }}">{{ trans('site.replace-doc') }}</button>
 									<div class="margin-top">
+										<input type="checkbox" data-toggle="toggle" data-on="In Dash"
+										   class="dashboard-toggle" data-off="Hide Dash"
+										   style="width: 200px"
+										   data-id="{{$manuscript->id}}" data-size="mini" @if($manuscript->show_in_dashboard) {{ 'checked' }} @endif>
 										<button type="button" class="btn btn-warning btn-xs setGradeBtn" data-toggle="modal" data-target="#setGradeModal" data-action="{{ route('assignment.group.set_grade', $manuscript->id) }}" data-grade="{{ $manuscript->grade }}">{{ trans('site.set-grade') }}</button>
 										<button type="button" class="btn btn-danger btn-xs deleteManuscriptBtn" data-toggle="modal" data-target="#deleteManuscriptModal" data-action="{{ route('assignment.group.delete_manuscript', $manuscript->id) }}"><i class="fa fa-trash"></i></button>
 										<button type="button" class="btn btn-info btn-xs moveAssignmentBtn" data-toggle="modal" data-target="#moveAssignmentModal" data-action="{{ route('assignment.group.move_manuscript', $manuscript->id) }}"><i class="fa fa-arrows"></i></button>
@@ -1379,6 +1383,20 @@
         $.ajax({
             type:'POST',
             url:'/assignment_manuscript/lock-status',
+            headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            data: { "manuscript_id" : course_id, 'locked' : check_val },
+            success: function(data){
+            }
+        });
+    });
+
+	$(".dashboard-toggle").change(function(){
+        var course_id = $(this).attr('data-id');
+        var is_checked = $(this).prop('checked');
+        var check_val = is_checked ? 1 : 0;
+        $.ajax({
+            type:'POST',
+            url:'/assignment_manuscript/dashboard-status',
             headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
             data: { "manuscript_id" : course_id, 'locked' : check_val },
             success: function(data){
