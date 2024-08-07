@@ -23,7 +23,7 @@
                 <thead>
                 <tr>
                     <th>Cover</th>
-                    <th width="500">Interior</th>
+                    {{-- <th width="500">Interior</th> --}}
                     <th width="300"></th>
                 </tr>
                 </thead>
@@ -43,14 +43,14 @@
 
                             {!! $cover->image !!}
                         </td>
-                        <td>
+                        {{-- <td>
                             @if ($cover->interior)
                                 <a href="{{ route('dropbox.download_file', trim($cover->description)) }}">
                                     <i class="fa fa-download" aria-hidden="true"></i>
                                 </a>&nbsp;
                                 {!! $cover->interior !!}
                             @endif
-                        </td>
+                        </td> --}}
                         <td>                      
                             <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
                                     data-target="#graphicWorkModal"
@@ -69,6 +69,108 @@
                 </tbody>
             </table>
         </div>
+
+        <button class="btn btn-success bookFormattingBtn" data-toggle="modal"
+                        data-target="#bookFormattingModal"
+                        data-action="{{ route($saveBookFormattingRoute, $project->id) }}">
+            Add Page Format
+        </button>
+        <div class="table-users table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Interior</th>
+                    <th width="300"></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($bookFormattingList as $bookFormatting)
+                    <tr>
+                        <td>
+                            {!! $bookFormatting->file_link !!}
+                        </td>
+                        <td>
+                            @if (strpos($bookFormatting->file, "project-"))
+                                <a href="{{ route('dropbox.download_file', trim($bookFormatting->file)) }}" 
+                                    class="btn btn-success btn-xs">
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                </a>
+                            @else
+                                <a href="{{ $bookFormatting->file }}" class="btn btn-success btn-xs" download>
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            @endif
+                            <button class="btn btn-primary btn-xs bookFormattingBtn" data-toggle="modal"
+                                    data-target="#bookFormattingModal"
+                                    data-record="{{ json_encode($bookFormatting) }}"
+                                    data-action="{{ route($saveBookFormattingRoute, $project->id) }}">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-xs deleteBtn" data-toggle="modal"
+                                    data-target="#deleteModal"
+                                    data-action="{{ route($deleteBookFormattingRoute, $bookFormatting->id) }}">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div> <!-- end page format table -->
+
+        <button type="button" class="btn btn-success indesignBtn" data-toggle="modal" data-target="#indesignModal"
+                data-type="indesign">+ Add Indesign</button>
+        <div class="table-users table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Cover</th>
+                    <th>Interior</th>
+                    <th width="300"></th>
+                </tr>
+                </thead>
+                <tbody>
+                    @foreach($indesigns as $indesign)
+                        <tr>
+                            <td>
+                                @if (strpos($indesign->value, 'project-'))
+                                    <a href="{{ route('dropbox.download_file', trim($indesign->value)) }}">
+                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                    </a>&nbsp;
+                                @else
+                                    <a href="{{ $indesign->value }}" class="btn btn-success btn-xs" download>
+                                        <i class="fa fa-download"></i>
+                                    </a>
+                                @endif
+
+                                {!! $indesign->image !!}
+                            </td>
+                            <td>
+                                @if ($indesign->interior)
+                                    <a href="{{ route('dropbox.download_file', trim($indesign->description)) }}">
+                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                    </a>&nbsp;
+                                    {!! $indesign->interior !!}
+                                @endif
+                            </td>
+                            <td>                      
+                                <button class="btn btn-primary btn-xs indesignBtn" data-toggle="modal"
+                                        data-target="#indesignModal"
+                                        data-type="indesign" data-id="{{ $indesign->id }}"
+                                        data-record="{{ json_encode($indesign) }}">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btn-xs deleteGraphicWorkBtn" data-toggle="modal"
+                                        data-target="#deleteGraphicWorkModal" data-type="indesign"
+                                        data-action="{{ route($deleteGraphicRoute, [$indesign->project_id, $indesign->id]) }}">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div> <!-- end indesign-->
 
         @if(!$barCodes->count())
             <button type="button" class="btn btn-success graphicWorkBtn" data-toggle="modal" data-target="#graphicWorkModal"
@@ -294,54 +396,6 @@
                 @endforeach
                 </tbody>
             </table>
-
-            <button class="btn btn-success bookFormattingBtn" data-toggle="modal"
-                            data-target="#bookFormattingModal"
-                            data-action="{{ route($saveBookFormattingRoute, $project->id) }}">
-                Add Page Format
-            </button>
-            <div class="table-users table-responsive">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>File</th>
-                        <th width="300"></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach($bookFormattingList as $bookFormatting)
-                        <tr>
-                            <td>
-                                {!! $bookFormatting->file_link !!}
-                            </td>
-                            <td>
-                                @if (strpos($bookFormatting->file, "project-"))
-                                    <a href="{{ route('dropbox.download_file', trim($bookFormatting->file)) }}" 
-                                        class="btn btn-success btn-xs">
-                                        <i class="fa fa-download" aria-hidden="true"></i>
-                                    </a>
-                                @else
-                                    <a href="{{ $bookFormatting->file }}" class="btn btn-success btn-xs" download>
-                                        <i class="fa fa-download"></i>
-                                    </a>
-                                @endif
-                                <button class="btn btn-primary btn-xs bookFormattingBtn" data-toggle="modal"
-                                        data-target="#bookFormattingModal"
-                                        data-record="{{ json_encode($bookFormatting) }}"
-                                        data-action="{{ route($saveBookFormattingRoute, $project->id) }}">
-                                    <i class="fa fa-edit"></i>
-                                </button>
-                                <button class="btn btn-danger btn-xs deleteBtn" data-toggle="modal"
-                                        data-target="#deleteModal"
-                                        data-action="{{ route($deleteBookFormattingRoute, $bookFormatting->id) }}">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    @endforeach
-                    </tbody>
-                </table>
-            </div> <!-- end page format table -->
         </div>
 
         <div class="row">
@@ -428,11 +482,6 @@
                                 <label>Cover</label>
                                 <input type="file" class="form-control" name="cover" accept="image/*">
                             </div>
-
-                            <div class="form-group">
-                                <label>Interior</label>
-                                <input type="file" class="form-control" name="interior" accept="application/pdf">
-                            </div>
                             {{-- <div class="form-group">
                                 <label>Description</label>
                                 <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
@@ -476,6 +525,42 @@
                         <div class="form-group sample-book-pdf-container">
                             <label>Sample Book/Pdf</label>
                             <input type="file" class="form-control" name="sample_book_pdf" accept="application/pdf">
+                        </div>
+
+                        <button type="submit" class="btn btn-success pull-right margin-top">
+                            {{ trans('site.save') }}
+                        </button>
+
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="indesignModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route($saveGraphicRoute, $project->id) }}"
+                          enctype="multipart/form-data" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="id">
+                        <input type="hidden" name="type">
+
+                        <div class="form-group">
+                            <label>Cover</label>
+                            <input type="file" class="form-control" name="cover" accept="*">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Interior</label>
+                            <input type="file" class="form-control" name="interior" accept="*">
                         </div>
 
                         <button type="submit" class="btn btn-success pull-right margin-top">
@@ -585,7 +670,7 @@
                         {{ csrf_field() }}
                         <input type="hidden" name="id">
                         <div class="form-group">
-                            <label>File</label>
+                            <label>Interior</label>
                             <input type="file" name="file" class="form-control"
                                    accept="application/pdf">
                         </div>
@@ -671,6 +756,17 @@
                 }
 
             }
+        });
+
+        $(".indesignBtn").click(function(){
+            let id = $(this).data('id');
+            let type = $(this).data('type');
+            let record = $(this).data('record');
+            let modal = $("#indesignModal");
+            let form = modal.find("form");
+            modal.find('.modal-title').text('Indesign');
+            form.find('[name=id]').val(id);
+            form.find('[name=type]').val(type);
         });
 
         $(".deleteGraphicWorkBtn").click(function() {

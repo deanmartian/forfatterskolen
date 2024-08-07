@@ -11,6 +11,7 @@ use App\Helpers\FileToText;
 use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\FrontendHelpers;
+use App\Http\PowerOffice;
 use App\Http\Requests\ProjectActivityRequest;
 use App\Http\Requests\ProjectBookRequest;
 use App\Http\Requests\ProjectCopyEditingRequest;
@@ -32,6 +33,7 @@ use App\ProjectMarketing;
 use App\ProjectRegistration;
 use App\ProjectTask;
 use App\ProjectWholeBook;
+use App\SelfPublishing;
 use App\Services\LearnerService;
 use App\Services\ProjectService;
 use App\Settings;
@@ -533,11 +535,12 @@ class ProjectController extends Controller
         $printReadyList = ProjectGraphicWork::printReady()->where('project_id', $project_id)->get();
         $bookPictures = ProjectBookPicture::where('project_id', $project_id)->get();
         $bookFormattingList = ProjectBookFormatting::where('project_id', $project_id)->get();
+        $indesigns = ProjectGraphicWork::indesigns()->where('project_id', $project_id)->get();
 
         return view('backend.project.graphic-work', compact('project', 'layout', 'backRoute', 'saveGraphicRoute',
             'deleteGraphicRoute', 'covers', 'barCodes', 'rewriteScripts', 'trialPages', 'sampleBookPDFs',
             'saveBookPicturesRoute', 'bookPictures', 'deleteBookPicturesRoute', 'printReadyList',
-             'saveBookFormattingRoute', 'bookFormattingList', 'deleteBookFormattingRoute'));
+             'saveBookFormattingRoute', 'bookFormattingList', 'deleteBookFormattingRoute', 'indesigns'));
     }
 
     public function saveGraphicWork( $project_id, Request $request, ProjectService $projectService )
@@ -568,6 +571,13 @@ class ProjectController extends Controller
                 case 'print-ready':
                         $this->validate($request, ['print_ready' => 'required|mimes:pdf']);
                         break;
+
+                case 'indesign':
+                    if (!$request->id) {
+                        $this->validate($request, ['cover' => 'required']);
+                    }
+                    break;
+
                 case 'sample-book-pdf':
                     $this->validate($request, ['sample_book_pdf' => 'required|mimes:pdf']);
                     break;
@@ -1419,6 +1429,62 @@ class ProjectController extends Controller
         }
 
         return view('backend.project.notes', compact('project', 'backRoute', 'layout'));
+    }
+
+    public function addSelfPublshingToPowerOffice($project_id, $publishing_id, PowerOffice $powerOffice)
+    {
+        $selfPublishing = SelfPublishing::findOrFail($publishing_id);
+        $user = $selfPublishing->project->user;
+        $emailToSearch = $user->email;
+
+        //return $powerOffice->products();
+        $foundEntries = array_filter($powerOffice->customers(), function ($entry) use ($emailToSearch) {
+            return $entry['EmailAddress'] === $emailToSearch;
+        });
+
+        $customerId = null;
+
+        if (!empty($foundEntries)) {
+            // Since array_filter preserves keys, use array_values to reset the array keys
+            $filteredData = array_values($foundEntries);
+
+            // Access the first (and probably only) entry in the filtered data
+            $dataArray = $filteredData[0];
+            $customerId = $dataArray['Id'];
+        } else {
+            // Email address not found
+            $userAddress = $user['address'];
+            $line1 = null;
+            $city = null;
+            $zip = null;
+
+            if ($userAddress) {
+                $line1 = $userAddress->street;
+                $city = $userAddress->city;
+                $zip = $userAddress->zip;
+            }
+
+            
+            $newCustomer = $powerOffice->registerCustomer(
+                $user->first_name,
+                $user->last_name,
+                $user->email,
+                $line1,
+                $city,
+                $zip
+            );
+
+            $customerId = $newCustomer['Id'];
+        }
+
+        $data = [
+            'customer_id' => $customerId,
+            'reference' => 'self_publishing_' . $selfPublishing->id,
+            'product_description' => $selfPublishing->title,
+            'product_id' => 22957001 // id from power office
+        ];
+
+        return $powerOffice->salesOrder($data);
     }
 
     private function storageSalesByType($user_book_for_sale_id, $type) {

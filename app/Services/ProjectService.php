@@ -286,6 +286,11 @@ class ProjectService
             case 'sample-book-pdf':
                 $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'sample_book_pdf');
                 break;
+
+            case 'indesign':
+                $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'cover', 'indesign/');
+                $data['description'] = $this->saveGraphicWorkFileOrImage($request, 'interior', 'indesign/');
+                break;
         }
 
         if ($request->id) {
@@ -364,7 +369,7 @@ class ProjectService
      * @param $fieldName
      * @return null|string
      */
-    public function saveGraphicWorkFileOrImage( Request $request, $fieldName)
+    public function saveGraphicWorkFileOrImage( Request $request, $fieldName, $additionFolder = null)
     {
         $filePath = NULL;
 
@@ -375,7 +380,8 @@ class ProjectService
 
         if ($request->hasFile($fieldName)) :
             //$destinationPath = 'storage/project-graphic-work/' . $fieldName; // upload path
-            $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/' . $fieldName; // upload path
+            $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/' 
+                . $additionFolder . $fieldName; // upload path
 
             //AdminHelpers::createDirectory($destinationPath);
             $filePath = $this->saveFileOrImageDropbox($destinationPath, $fieldName);

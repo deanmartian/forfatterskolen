@@ -1224,6 +1224,8 @@ Route::group([
         Route::get('/project/{id}/print', 'ProjectController@print')->name('admin.project.print');
         Route::post('/project/{id}/print/save', 'ProjectController@savePrint')->name('admin.project.save-print');
         Route::get('/project/{id}/notes', 'ProjectController@showNotes')->name('admin.project.notes');
+        Route::get('/project/{id}/self-publishing/{publishing_id}/add-to-po', 'ProjectController@addSelfPublshingToPowerOffice')
+        ->name('admin.project.self-publishing.add-to-po');
         Route::get('/project', 'ProjectController@index')->name('admin.project.index');
         Route::post('/project/save', 'ProjectController@saveProject');
         Route::get('/project/{id}', 'ProjectController@show')->name('admin.project.show');
@@ -1240,6 +1242,7 @@ Route::group([
         Route::post('assignment_manuscript/{id}/set_grade', 'AssignmentController@setGrade')->name('assignment.group.set_grade');
         Route::post('assignment_manuscript/{id}/replace_manuscript', 'AssignmentController@replaceManuscript')->name('assignment.group.replace_manuscript');
         Route::post('assignment_manuscript/lock-status', 'AssignmentController@updateLockStatus')->name('assignment.group.lock-status'); // Courses For Sale Status
+        Route::post('assignment_manuscript/dashboard-status', 'AssignmentController@updateDashboardStatus')->name('assignment.group.dashboard-status'); // Courses For Sale Status
         Route::post('assignment_manuscript/{id}/update_manu_types', 'AssignmentController@updateTypes')->name('assignment.group.update_manu_types');
         Route::post('assignment_manuscript/{id}/assignEditor', 'AssignmentController@assignManuscriptEditor')->name('assignment.group.assign_manu_editor');
         Route::delete('assignment_manuscript/{id}/remove-editor', 'AssignmentController@removeManuscriptEditor')->name('assignment.group.remove_manu_editor');

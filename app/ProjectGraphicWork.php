@@ -51,6 +51,11 @@ class ProjectGraphicWork extends Model
         $query->where('type', 'print-ready');
     }
 
+    public function scopeIndesigns( $query )
+    {
+        $query->where('type', 'indesign');
+    }
+
     public function getImageAttribute()
     {
         $filename = $this->attributes['value'];
