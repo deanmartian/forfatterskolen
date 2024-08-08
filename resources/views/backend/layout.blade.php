@@ -75,7 +75,7 @@
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
         @if (!in_array(Route::currentRouteName(),['backend.dashboard', 'admin.course.show', 'admin.learner.show',
-             'admin.email-template.index', 'admin.free-manuscript.index']))
+             'admin.free-manuscript.index']))
             <script src="https://cdn.tiny.cloud/1/at9h19nmgr4aahzi0km0mkwkejc37a686yxis2zks33o0p6n/tinymce/5/tinymce.min.js"
                 referrerpolicy="origin"></script>
         @endif
@@ -138,7 +138,7 @@
                 tinymce.init(tiny_editor_config);
             }
 
-            if (!['backend.dashboard', 'admin.course.show', 'admin.learner.show', 'admin.email-template.index', 'admin.free-manuscript.index'].includes(currentRoute)) {
+            if (!['backend.dashboard', 'admin.course.show', 'admin.learner.show', 'admin.free-manuscript.index'].includes(currentRoute)) {
                 initTinyMCE();
             } else {
                 document.querySelectorAll('.loadScriptButton').forEach(button => {
