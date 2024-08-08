@@ -168,9 +168,11 @@ class SelfPublishingController extends Controller
 
         if ($request->learners) {
             foreach($request->learners as $learner ) {
-                $publishing->learners()->create([
-                    'user_id' => $learner
-                ]);
+                if ($learner){
+                    $publishing->learners()->create([
+                        'user_id' => $learner
+                    ]);
+                }
             }
         }
     }
