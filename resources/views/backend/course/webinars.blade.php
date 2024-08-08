@@ -134,7 +134,7 @@
 											<?php
 												$webinarEmailOut = \App\Http\AdminHelpers::getWebinarEmailOut($webinar->id, $course->id);
 											?>
-											<button class="btn btn-success btn-xs emailOutBtn" data-toggle="modal"
+											<button class="btn btn-success btn-xs emailOutBtn loadScriptButton" data-toggle="modal"
 													data-target="#webinarEmailOutModal" data-backdrop="static"
 											data-action="{{ route('admin.webinar.email-out', [$webinar->id, $course->id]) }}"
 											data-send-date="{{ $webinarEmailOut
@@ -981,7 +981,10 @@
 		    form.find('[name=send_date]').val(send_date);
             form.find('[name=subject]').val(subject);
 
-            tinymce.get('modalEditor').setContent(message);
+            //tinymce.get('modalEditor').setContent(message);
+			setTimeout(function(){
+				setEditorContent('modalEditor', message)
+			}, 500);
 		});
 
 		$(".registerLearnersToWebinarBtn").click(function(){
