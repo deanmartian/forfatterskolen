@@ -35,7 +35,7 @@
                                 {{ $template->subject }}
                             </td>
                             <td>
-                                <button class="btn btn-primary btn-xs editTemplateBtn"
+                                <button class="btn btn-primary btn-xs editTemplateBtn loadScriptButton"
                                         data-toggle="modal"
                                         data-target="#templateModal"
                                         data-action="{{ route('admin.manuscript.edit_email_template', $template->id) }}"
