@@ -50,7 +50,9 @@
                 <tbody>
                 <tr v-for="project in filteredProjects" :key="project.id">
                     <td>
-                        {{ project.identifier}}
+                        <a :href="'/project/' + project.id">
+                            {{ project.identifier}}
+                        </a>
                     </td>
                     <td>
                         <a :href="'/project/' + project.id">
