@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\PowerOffice;
 use App\Jobs\AddMailToQueueJob;
 use App\Repositories\Services\SaleService;
+use App\User;
 use Illuminate\Http\Request;
 
 class SaleController extends Controller {
@@ -30,7 +31,8 @@ class SaleController extends Controller {
      */
     public function index()
     {
-        $archiveCourses = $this->service->queryCoursesTaken(1);
+        return view('backend.sale.index');
+        /* $archiveCourses = $this->service->queryCoursesTaken(1);
         $newCourses = $this->service->queryCoursesTaken();
         $singleCourseEmail = AdminHelpers::emailTemplate('Single Course Welcome Email');
         $groupCourseEmail = AdminHelpers::emailTemplate('Group Course Welcome Email');
@@ -58,7 +60,42 @@ class SaleController extends Controller {
                 'followUpEmailCourseTaken',
                 'payLaterOrders'
             )
-        );
+        ); */
+    }
+
+    public function loadTabContent(Request $request)
+    {
+        $tab = $request->input('tab');
+        $page = $request->input('p');
+
+        switch ($page) {
+            case 'shop-manuscript':
+                
+                $newManuscriptsTaken = $this->service->queryShopManuscriptsTaken();
+                $shopManuscriptEmail = AdminHelpers::emailTemplate('Shop Manuscript Welcome Email');
+                $archiveManuscriptsTaken = $this->service->queryShopManuscriptsTaken(1);
+                $followUpEmailShopManuscript = AdminHelpers::emailTemplate('Shop Manuscript Follow-up Email');
+
+                return view('backend.sale.partials._shop-manuscript', compact(
+                    'tab', 'page', 'newManuscriptsTaken', 'shopManuscriptEmail', 'archiveManuscriptsTaken',
+                    'followUpEmailShopManuscript'
+                ));
+            case 'pay-later':
+                $payLaterOrders = $this->service->getPayLaterOrders();
+
+                return view('backend.sale.partials._pay-later', compact('payLaterOrders'));
+            default:
+                $newCourses = $this->service->queryCoursesTaken();
+                $groupCourseEmail = AdminHelpers::emailTemplate('Group Course Welcome Email');
+                $singleCourseEmail = AdminHelpers::emailTemplate('Single Course Welcome Email');
+                $archiveCourses = $this->service->queryCoursesTaken(1);
+                $followUpEmailCourseTaken = AdminHelpers::emailTemplate('Course Taken Follow-up Email');
+
+                return view('backend.sale.partials._course', compact(
+                    'tab', 'page', 'newCourses', 'groupCourseEmail', 'singleCourseEmail', 'archiveCourses', 
+                    'followUpEmailCourseTaken'
+                ));
+        }
     }
 
     /**

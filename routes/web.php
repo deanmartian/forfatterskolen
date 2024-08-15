@@ -1169,6 +1169,12 @@ Route::group([
             ],
         ]);
 
+        Route::get('/power-office/self-publishing/{publishing_id}/add-to-po', 'PowerOfficeController@addSelfPublshingToPowerOffice')
+        ->name('admin.power-office.self-publishing.add-to-po');
+        Route::get('/power-office/self-publishing/{publishing_id}/invoice/{invoice_id}/view', 
+            'PowerOfficeController@selfPublishingPowerOfficeInvoice')
+            ->name('admin.power-office.self-publishing.view-po-order');
+
         Route::post('/project/activity/save', 'ProjectController@saveActivity');
         Route::delete('/project/activity/{id}/delete', 'ProjectController@deleteActivity');
         Route::post('/project/{id}/notes/save', 'ProjectController@saveNote');
@@ -1224,8 +1230,6 @@ Route::group([
         Route::get('/project/{id}/print', 'ProjectController@print')->name('admin.project.print');
         Route::post('/project/{id}/print/save', 'ProjectController@savePrint')->name('admin.project.save-print');
         Route::get('/project/{id}/notes', 'ProjectController@showNotes')->name('admin.project.notes');
-        Route::get('/project/{id}/self-publishing/{publishing_id}/add-to-po', 'ProjectController@addSelfPublshingToPowerOffice')
-        ->name('admin.project.self-publishing.add-to-po');
         Route::get('/project', 'ProjectController@index')->name('admin.project.index');
         Route::post('/project/save', 'ProjectController@saveProject');
         Route::get('/project/{id}', 'ProjectController@show')->name('admin.project.show');
@@ -1331,6 +1335,7 @@ Route::group([
         ], function(){
 
             Route::get('/', 'SaleController@index')->name('admin.sales.index');
+            Route::get('/load-tab-content', 'SaleController@loadTabContent');
             Route::post('/send-email/{id}/{parent}', 'SaleController@sendEmail')
                 ->name('admin.sales.send-email');
             Route::get('/move-to-archive/{id}', 'SaleController@moveToArchive')->name('admin.sales.move-to-archive');

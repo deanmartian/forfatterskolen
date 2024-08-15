@@ -14,340 +14,27 @@
     </div>
 
     <div class="col-md-12">
-        <ul class="nav nav-tabs margin-top">
-            <li @if( Request::input('p') == 'course' || !Request::has('p') ) class="active" @endif>
-                <a href="?p=course">Course</a>
+        <ul class="nav nav-tabs margin-top parent-nav">
+            <li class="{{ Request::input('p') == 'course' || !Request::has('p') ? 'active' : '' }}">
+                <a href="#" data-target="course">Course</a>
             </li>
-            <li @if( Request::input('p') == 'shop-manuscript' ) class="active" @endif>
-                <a href="?p=shop-manuscript">Shop Manuscript</a>
+            <li class="{{ Request::input('p') == 'shop-manuscript' ? 'active' : '' }}">
+                <a href="#" data-target="shop-manuscript">Shop Manuscript</a>
             </li>
-            <li @if( Request::input('p') == 'pay-later' ) class="active" @endif>
-                <a href="?p=pay-later">Pay Later</a>
+            <li class="{{ Request::input('p') == 'pay-later' ? 'active' : '' }}">
+                <a href="#" data-target="pay-later">Pay Later</a>
             </li>
         </ul>
 
-        <div class="tab-content">
-            <div class="tab-pane fade in active">
+        <div id="tab-content" class="tab-content" style="position: relative; min-height: 400px">
+            <!-- Dynamic content will be loaded here -->
+        </div>
 
-                @if( Request::input('p') != 'pay-later')
-                    <ul class="nav nav-tabs margin-top">
-                        <li @if( Request::input('tab') != 'archive' ) class="active" @endif>
-                            <a href="?p={{ Request::input('p') }}&tab=new">{{ trans('site.new') }}</a>
-                        </li>
-                        <li @if( Request::input('tab') == 'archive' ) class="active" @endif>
-                            <a href="?p={{ Request::input('p') }}&tab=archive">{{ trans('site.archive') }}</a>
-                        </li>
-                    </ul>
-                @endif
-
-                <div class="tab-content">
-                    <div class="tab-pane fade in active">
-
-                        @if( Request::input('p') == 'course' )
-
-                            @if( Request::input('tab') != 'archive' )
-                                <div class="table-users table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th>{{ trans_choice('site.packages', 1) }}</th>
-                                            <th>{{ trans_choice('site.learners', 1) }}</th>
-                                            <th>{{ trans('site.date-sold') }}</th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach($newCourses as $newCourseTaken)
-                                            <tr>
-                                                <td>
-                                                    <a href="{{ route('admin.course.show',
-                                                    $newCourseTaken->package->course_id) }}?section=packages">
-                                                        {{ $newCourseTaken->package->course->title . ' - ' .
-                                                        $newCourseTaken->package->variation }}
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <a href="{{ route('admin.learner.show', $newCourseTaken->user->id) }}">
-                                                        {{ $newCourseTaken->user->full_name }}
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    {{ $newCourseTaken->created_at }}
-                                                </td>
-                                                <td>
-                                                    <?php
-                                                    // select the template for course, if not template for course use the general.
-                                                        $emailTemplate = null;
-                                                        $tempData = null;
-                                                        
-                                                        $emailTemplate = null;
-                                                        $tempData = null;
-                                                        
-                                                        if ($newCourseTaken->package->course->type === 'Group') {
-                                                            
-                                                            $tempData = \App\EmailTemplate::where('course_id', $newCourseTaken->package->course->id)->where('course_type', 'GROUP')->first();
-                                                            $emailTemplate = $tempData ? $tempData : $groupCourseEmail;
-                                                            // no group multiple invoice
-                                                            // if($newCourseTaken->order && $newCourseTaken->order->paymentPlan->division > 1){
-                                                            //     $tempData = \App\EmailTemplate::where('course_id', $newCourseTaken->package->course->id)->where('course_type', 'GROUP-MULTI-INVOICE')->first();
-                                                            //     $emailTemplate = $tempData ? $tempData : $groupCourseMultiInvoiceEmail;
-                                                            // }else{ //group
-                                                            //     $tempData = \App\EmailTemplate::where('course_id', $newCourseTaken->package->course->id)->where('course_type', 'GROUP')->first();
-                                                            //     $emailTemplate = $tempData ? $tempData : $groupCourseEmail;
-                                                            // }
-
-                                                        }else{ //Single
-                                                            $tempData = \App\EmailTemplate::where('course_id', $newCourseTaken->package->course->id)->where('course_type', 'SINGLE')->first();
-                                                            $emailTemplate = $tempData ? $tempData : $singleCourseEmail;
-                                                        }
-
-                                                    ?>
-                                                    <button class="btn btn-success btn-xs sendEmailBtn"
-                                                        data-toggle="modal"
-                                                        data-target="#sendEmailModal"
-                                                        data-email-template="{{ json_encode($emailTemplate) }}"
-                                                        data-action="{{ route('admin.sales.send-email',
-                                                        [$newCourseTaken->id, 'courses-taken-welcome']) }}">
-                                                        {{ trans('site.send-email') }}
-                                                    </button>
-                                                    <button class="btn btn-warning btn-xs moveToArchiveBtn"
-                                                        data-toggle="modal"
-                                                        data-target="#moveToArchiveModal"
-                                                        data-action="{{ route('admin.sales.move-to-archive', [$newCourseTaken->id]) }}">
-                                                        {{ trans('site.move-to-archive') }}
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-                                </div> <!-- end new course -->
-                                <div class="pull-right">{{$newCourses->appends(request()->except('page'))}}</div>
-
-                            @else<!-- archive -->
-                                <div class="table-users table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th>{{ trans_choice('site.packages', 1) }}</th>
-                                            <th>{{ trans_choice('site.learners', 1) }}</th>
-                                            <th>{{ trans('site.date-sold') }}</th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach($archiveCourses as $archiveCourse)
-                                            <tr>
-                                                <td>
-                                                    <a href="{{ route('admin.course.show',
-                                                    $archiveCourse->package->course_id) }}?section=packages">
-                                                        {{ $archiveCourse->package->course->title . ' - ' .
-                                                        $archiveCourse->package->variation }}
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <a href="{{ route('admin.learner.show', $archiveCourse->user->id) }}">
-                                                        {{ $archiveCourse->user->full_name }}
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    {{ $archiveCourse->created_at }}
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-primary btn-xs viewEmailBtn"
-                                                            data-toggle="modal"
-                                                            data-target="#viewEmailModal"
-                                                            data-record="{{ json_encode($archiveCourse) }}"
-                                                            data-type="courses-taken">
-                                                        View Email
-                                                    </button>
-
-                                                    <button class="btn btn-success btn-xs sendEmailBtn"
-                                                            data-toggle="modal"
-                                                            data-target="#sendEmailModal"
-                                                            data-email-template="{{ json_encode($followUpEmailCourseTaken) }}"
-                                                            data-action="{{ route('admin.sales.send-email',
-                                                    [$archiveCourse->id, 'courses-taken-follow-up']) }}">
-                                                        Send following up email
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-                                </div> <!-- end new course -->
-                            <div class="pull-right">{{$archiveCourses->appends(request()->except('page'))}}</div>
-                            @endif
-
-                        @elseif( Request::input('p') == 'pay-later' )
-                            <div class="table-users table-responsive">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th>{{ trans_choice('site.packages', 1) }}</th>
-                                        <th>{{ trans_choice('site.learners', 1) }}</th>
-                                        <th>{{ trans('site.date-sold') }}</th>
-                                        <th>Sent Invoice</th>
-                                        <th>Trukket bestilling</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($payLaterOrders as $order)
-                                            <tr>
-                                                <td>
-                                                    @if (in_array($order->type, [1, 6]))
-                                                        <a href="{{ route('admin.course.show', 
-                                                            $order->package->course_id) }}?section=packages">
-                                                            {{ $order->package->course->title . ' - ' .
-                                                            $order->package->variation }}
-                                                        </a>
-                                                    @endif
-
-                                                    @if (in_array($order->type, [2, 7, 9]))
-                                                        {{ $order->item  }}
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <a href="{{ route('admin.learner.show', $order->user->id) }}"
-                                                        class="d-block">
-                                                        {{ $order->user->full_name }}
-                                                    </a>
-
-                                                    {{-- <a href="{{ route('admin.sale.add-to-po', $order->id) }}" 
-                                                        class="btn btn-primary btn-xs">
-                                                        Add to PO
-                                                    </a> --}}
-                                                </td>
-                                                <td>
-                                                    {{ $order->created_at }}
-                                                </td>
-                                                <td>
-                                                    <input type="checkbox" data-toggle="toggle" data-on="Yes"
-                                                        class="is-invoice-sent-toggle" data-off="No"
-                                                        data-id="{{$order->id}}" data-size="mini"
-                                                         @if($order->is_invoice_sent) {{ 'checked' }} @endif>
-                                                </td>
-                                                <td>
-                                                    <input type="checkbox" data-toggle="toggle" data-on="Yes"
-                                                        class="is-order-withdrawn-toggle" data-off="No"
-                                                        data-id="{{$order->id}}" data-size="mini"
-                                                         @if($order->is_order_withdrawn) {{ 'checked' }} @endif>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-
-                                <div class="pull-right">{{$payLaterOrders->appends(request()->except('page'))}}</div>
-                            </div>
-                        @else <!-- shop manuscript -->
-                            @if( Request::input('tab') != 'archive' )
-                                <div class="table-users table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th>{{ trans_choice('site.manuscripts', 1) }}</th>
-                                            <th>{{ trans_choice('site.learners', 1) }}</th>
-                                            <th>{{ trans('site.date-sold') }}</th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach($newManuscriptsTaken as $newManuscriptTaken)
-                                            <tr>
-                                                <td>
-                                                    {{ $newManuscriptTaken->shop_manuscript->title }}
-                                                </td>
-                                                <td>
-                                                    <a href="{{ route('admin.learner.show', $newManuscriptTaken->user->id) }}">
-                                                        {{ $newManuscriptTaken->user->full_name }}
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    {{ $newManuscriptTaken->created_at }}
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-success btn-xs sendEmailBtn"
-                                                        data-toggle="modal"
-                                                        data-target="#sendEmailModal"
-                                                        data-email-template="{{ json_encode($shopManuscriptEmail) }}"
-                                                        data-action="{{ route('admin.sales.send-email',
-                                                        [$newManuscriptTaken->id, 'shop-manuscripts-taken-welcome']) }}">
-                                                        {{ trans('site.send-email') }}
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-                                </div> <!-- end new shop-manuscript -->
-                            <div class="pull-right">{{$newManuscriptsTaken->appends(request()->except('page'))}}</div>
-
-                            @else <!-- archive -->
-                                <div class="table-users table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th>{{ trans_choice('site.manuscripts', 1) }}</th>
-                                            <th>{{ trans_choice('site.learners', 1) }}</th>
-                                            <th>{{ trans('site.date-sold') }}</th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach($archiveManuscriptsTaken as $archiveManuscriptTaken)
-                                            <tr>
-                                                <td>
-                                                    @if($archiveManuscriptTaken->is_active)
-                                                        <a href="{{ route('shop_manuscript_taken',
-                                                        ['id' => $archiveManuscriptTaken->user_id,
-                                                        'shop_manuscript_taken_id' => $archiveManuscriptTaken->id]) }}">
-                                                            {{$archiveManuscriptTaken->shop_manuscript->title}}
-                                                        </a>
-                                                    @else
-                                                        {{$archiveManuscriptTaken->shop_manuscript->title}}
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <a href="{{ route('admin.learner.show', $archiveManuscriptTaken->user->id) }}">
-                                                        {{ $archiveManuscriptTaken->user->full_name }}
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    {{ $archiveManuscriptTaken->created_at }}
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-primary btn-xs viewEmailBtn"
-                                                            data-toggle="modal"
-                                                            data-target="#viewEmailModal"
-                                                            data-record="{{ json_encode($archiveManuscriptTaken) }}"
-                                                            data-type="shop-manuscripts-taken">
-                                                        View Email
-                                                    </button>
-
-                                                    <button class="btn btn-success btn-xs sendEmailBtn"
-                                                            data-toggle="modal"
-                                                            data-target="#sendEmailModal"
-                                                            data-email-template="{{ json_encode($followUpEmailShopManuscript) }}"
-                                                            data-action="{{ route('admin.sales.send-email',
-                                                        [$archiveManuscriptTaken->id, 'shop-manuscripts-taken-follow-up']) }}">
-                                                        Send following up email
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-                                </div> <!-- end new shop-manuscript -->
-                                <div class="pull-right">{{$archiveManuscriptsTaken->appends(request()->except('page'))}}</div>
-                            @endif
-                        @endif
-
-                    </div><!-- end new/archive tab-pane-->
-                </div> <!-- end new/archive tab-content-->
-
-            </div> <!-- end tab-pane-->
-        </div> <!-- end tab-content -->
+        <div id="loading-indicator" 
+        style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            <i class="fa fa-spinner fa-pulse" style="font-size: 100px"></i>
+            <!-- You can replace this with a spinner or any loading animation -->
+        </div>
     </div>
 
     <div id="sendEmailModal" class="modal fade" role="dialog">
@@ -523,10 +210,9 @@
 @stop
 
 @section('scripts')
-    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script type="text/javascript">
 
-        $(".sendEmailBtn").click(function(){
+        $(document).on('click', '.sendEmailBtn', function() {
             let action = $(this).data('action');
             let modal = $('#sendEmailModal');
             let form = modal.find('form');
@@ -538,7 +224,7 @@
             tinymce.get('send_email_editor').setContent(emailTemplate.email_content);
         });
 
-        $(".moveToArchiveBtn").click(function(){
+        $(document).on('click', '.moveToArchiveBtn', function() {
             let action = $(this).data('action');
             let modal = $('#moveToArchiveModal');
             let form = modal.find('form');
@@ -546,7 +232,7 @@
             form.attr('action', action);
         });
 
-        $(".viewEmailBtn").click(function(){
+        $(document).on('click', '.viewEmailBtn', function() {
             let record = $(this).data('record');
             let type = $(this).data('type');
             let modal = $('#viewEmailModal');
@@ -575,7 +261,7 @@
             })
         });
 
-        $(".is-invoice-sent-toggle").change(function(){
+        $(document).on('change', '.is-invoice-sent-toggle', function() {
                var order_id = $(this).attr('data-id');
                var is_checked = $(this).prop('checked');
                var check_val = is_checked ? 1 : 0;
@@ -590,7 +276,7 @@
                });
 		   });
 
-        $(".is-order-withdrawn-toggle").change(function(){
+        $(document).on('change', '.is-order-withdrawn-toggle', function() {
             var order_id = $(this).attr('data-id');
             var is_checked = $(this).prop('checked');
             var check_val = is_checked ? 1 : 0;
@@ -604,5 +290,104 @@
                 }
             });
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.parent-nav a');
+            const subTabs = document.querySelectorAll('.sub-nav a'); // Subtabs within the course tab
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function(event) {
+                    event.preventDefault();
+
+                    const target = this.getAttribute('data-target');
+                    const tabParam = new URLSearchParams(window.location.search).get('tab') || 'new';
+
+                    // Update the URL without refreshing the page
+                    const newUrl = `${window.location.pathname}?p=${target}&tab=${tabParam}`;
+                    window.history.pushState({ path: newUrl }, '', newUrl);
+
+                    // Load the content for the selected tab
+                    loadTabContent(target, tabParam);
+
+                    // Update active tab class
+                    document.querySelector('.parent-nav .active').classList.remove('active');
+                    this.parentNode.classList.add('active');
+                });
+            });
+
+            subTabs.forEach(subTab => {
+                subTab.addEventListener('click', function(event) {
+                    event.preventDefault();
+
+                    const subTabTarget = this.getAttribute('data-tab');
+                    const mainTab = new URLSearchParams(window.location.search).get('p') || 'course';
+
+                    // Update the URL without refreshing the page
+                    const newUrl = `${window.location.pathname}?p=${mainTab}&tab=${subTabTarget}`;
+                    window.history.pushState({ path: newUrl }, '', newUrl);
+
+                    // Load the content for the selected tab
+                    loadTabContent(mainTab, subTabTarget);
+
+                    // Update active sub-tab class
+                    document.querySelector('.sub-nav .active').classList.remove('active');
+                    this.parentNode.classList.add('active');
+                });
+            });
+
+            function handlePaginationLinks() {
+                const paginationLinks = document.querySelectorAll('#tab-content .pagination a');
+
+                paginationLinks.forEach(link => {
+                    link.addEventListener('click', function(event) {
+                        event.preventDefault();
+
+                        const urlParams = new URLSearchParams(this.search);
+                        const targetTab = urlParams.get('p') || 'course';
+                        const subTab = urlParams.get('tab') || 'new';
+                        const page = urlParams.get('page') || 1;
+
+                        // Update the URL with pagination
+                        const newUrl = `${window.location.pathname}?p=${targetTab}&tab=${subTab}&page=${page}`;
+                        window.history.pushState({ path: newUrl }, '', newUrl);
+
+                        // Load the content for the selected tab and page
+                        loadTabContent(targetTab, subTab, page);
+                    });
+                });
+            }
+
+            // Modified loadTabContent function to include pagination handling
+            function loadTabContent(tab, subTab, page = 1) {
+                // Show loading indicator
+                $('#tab-content').empty();
+                document.getElementById('loading-indicator').style.display = 'block';
+
+                $.ajax({
+                    url: `/sale/load-tab-content?p=${tab}&tab=${subTab}&page=${page}`, // Replace with your actual endpoint
+                    method: 'GET',
+                    success: function(data) {
+                        // Populate the tab-content div with the loaded data
+                        $('#tab-content').html(data);
+                        
+                        // Re-bind pagination click events
+                        handlePaginationLinks();
+                    },
+                    error: function() {
+                        $('#tab-content').html('<p>An error occurred while loading the content.</p>');
+                    },
+                    complete: function() {
+                        // Hide loading indicator
+                        document.getElementById('loading-indicator').style.display = 'none';
+                    }
+                });
+            }
+
+            // Initial load
+            const initialTab = new URLSearchParams(window.location.search).get('p') || 'course';
+            const initialSubTab = new URLSearchParams(window.location.search).get('tab') || 'new';
+            const initialPage = new URLSearchParams(window.location.search).get('page') || 1;
+            loadTabContent(initialTab, initialSubTab, initialPage);
+    });
     </script>
 @stop
