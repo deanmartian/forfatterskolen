@@ -595,11 +595,24 @@
 										<?php $extension = explode('.', basename($correction->file)); ?>
 										<tr>
 											<td>
-												<a href="{{ route('editor.other-service.download-doc', ['id' => $correction->id, 'type' => 2]) }}"><i class="fa fa-download" aria-hidden="true"></i></a>&nbsp;
-												@if( end($extension) == 'pdf' || end($extension) == 'odt' )
-													<a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
-												@elseif( end($extension) == 'docx' )
-													<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+												@if (strpos($correction->file, 'project-'))
+                                                    <a href="{{ route('dropbox.download_file', trim($correction->file)) }}">
+                                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                                    </a>&nbsp;
+                                                    <a href="{{ route('dropbox.shared_link', trim($correction->file)) }}" target="_blank">
+                                                        {{ basename($correction->file) }}
+                                                    </a>
+												@else
+													@if ($correction->file)
+														<a href="{{ route('editor.other-service.download-doc', ['id' => $correction->id, 'type' => 2]) }}" download>
+															<i class="fa fa-download" aria-hidden="true"></i>
+														</a>&nbsp;
+														@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+															<a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
+														@elseif( end($extension) == 'docx' )
+															<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+														@endif
+													@endif
 												@endif
 											</td>
 											<td>{{ $correction->user->id }}</td>
@@ -686,11 +699,27 @@
 										<?php $extension = explode('.', basename($copyEditing->file)); ?>
 										<tr>
 											<td>
-												<a href="{{ route('editor.other-service.download-doc', ['id' => $copyEditing->id, 'type' => 1]) }}"><i class="fa fa-download" aria-hidden="true"></i></a>
-												@if( end($extension) == 'pdf' || end($copyEditing) == 'odt' )
-													<a href="/js/ViewerJS/#../../{{ $copyEditing->file }}">{{ basename($copyEditing->file) }}</a>
-												@elseif( end($extension) == 'docx' )
-													<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copyEditing->file}}">{{ basename($copyEditing->file) }}</a>
+												@if ($copyEditing->file)
+													@if (strpos($copyEditing->file, 'project-'))
+														<a href="{{ route('dropbox.download_file', trim($copyEditing->file)) }}">
+															<i class="fa fa-download" aria-hidden="true"></i>
+														</a>&nbsp;
+														<a href="{{ route('dropbox.shared_link', trim($copyEditing->file)) }}" target="_blank">
+															{{ basename($copyEditing->file) }}
+														</a>
+													@else
+														<a href="{{ route('editor.other-service.download-doc', ['id' => $copyEditing->id, 'type' => 1]) }}"
+															download>
+															<i class="fa fa-download" aria-hidden="true"></i>
+														</a>&nbsp;
+														@if( end($extension) == 'pdf' || end($extension) == 'odt' )
+															<a href="/js/ViewerJS/#../../{{ $copyEditing->file }}">
+																{{ basename($copyEditing->file) }}</a>
+														@elseif( end($extension) == 'docx' )
+															<a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$copyEditing->file}}">
+																{{ basename($copyEditing->file) }}</a>
+														@endif
+													@endif
 												@endif
 											</td>
 											<td>{{ $copyEditing->user->id }}</td>
