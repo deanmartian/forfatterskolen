@@ -14,6 +14,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Spatie\Dropbox\Client as DropboxClient;
 use Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
 include_once($_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php');
