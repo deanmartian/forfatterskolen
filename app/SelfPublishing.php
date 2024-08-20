@@ -33,6 +33,11 @@ class SelfPublishing extends Model
         return $this->belongsTo('App\Project');
     }
 
+    public function poInvoice()
+    {
+        return $this->hasOne('App\PowerOfficeInvoice', 'parent_id', 'id') ->where('parent', 'self-publishing');
+    }
+
     /**
      * Accessor field
      * @return string

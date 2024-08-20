@@ -89,7 +89,21 @@
                         @foreach($project->selfPublishingList as $publishing)
                             <tr>
                                 <td>
-                                    {{ $publishing->title }}
+                                    {{ $publishing->title }} <br>
+                                    @if ($publishing->poInvoice)
+                                        <button class="btn btn-primary btn-xs powerOfficeOrderBtn" 
+                                        data-action="{{ route('admin.power-office.self-publishing.view-po-order', 
+                                        [$publishing->id, $publishing->poInvoice->id]) }}" 
+                                            data-target="#powerOfficeOrderModal"
+                                            data-toggle="modal">
+                                            View Invoice
+                                        </button>
+                                    @else
+                                        <a href="{{ route('admin.power-office.self-publishing.add-to-po', [$publishing->id]) }}" 
+                                            class="btn btn-primary btn-xs">
+                                            Add to PO
+                                        </a>
+                                    @endif
                                 </td>
                                 <td>
                                     {{ $publishing->description }}
@@ -631,6 +645,27 @@
         </div>
     </div>
 
+    <div id="powerOfficeOrderModal" class="modal fade" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        <em>
+                            Invoice Details
+                        </em>
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="invoice-container"></div>
+                    <div class="text-center loader-container" style="font-size: 50px">
+                        <i class="fa fa-spinner fa-pulse"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="addOtherServiceModal" class="modal fade" role="dialog" data-backdrop="static">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
@@ -953,6 +988,76 @@
             let fields = $(this).data('fields');
             modal.find("#manus-container").html(fields.feedback.file_link);
             modal.find("#notes-container").text(fields.feedback.notes);
+        });
+
+        $(".powerOfficeOrderBtn").click(function() {
+            let action = $(this).data('action');
+            let modal = $('#powerOfficeOrderModal');
+            
+            modal.find(".invoice-container").empty();
+            modal.find(".loader-container").show();
+            
+            $.ajax({
+                type:'GET',
+                url: action,
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: {},
+                success: function(data){
+                    modal.find(".invoice-container").html(data);
+                    modal.find(".loader-container").hide();
+                }
+            });
+        });
+
+        $(document).on('click', '.downloadInvoice', function() {
+            const self = $(this);
+            const spinner = self.find('.fa-spinner');
+            const action = self.data('action');
+            self.attr('disabled', true);
+            spinner.show();
+
+            $.ajax({
+                url: action,
+                method: 'GET',
+                xhrFields: {
+                    responseType: 'blob' // Important for binary data
+                },
+                success: function(data, status, xhr) {
+                    // Hide the loading indicator
+                    spinner.hide();
+                    self.removeAttr('disabled');
+
+                    // Extract the file name from the response headers
+                    var disposition = xhr.getResponseHeader('Content-Disposition');
+                    var fileName = "invoice.pdf"; // Default file name
+
+                    if (disposition && disposition.indexOf('filename=') !== -1) {
+                        var matches = /filename="(.+)"/.exec(disposition);
+                        if (matches != null && matches[1]) {
+                            fileName = matches[1];
+                        }
+                    } else {
+                        // Fallback to X-File-Name header
+                        var headerFileName = xhr.getResponseHeader('X-File-Name');
+                        if (headerFileName) {
+                            fileName = headerFileName;
+                        }
+                    }
+
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(new Blob([data]));
+                    link.download = fileName;
+                    link.click();
+                    
+                },
+                error: function() {
+                    // Hide the loading indicator
+                    spinner.hide();
+                    self.removeAttr('disabled');
+
+                    alert('Failed to download the PDF. Please try again.');
+                }
+            });
         });
 
         $('.assignEditorBtn').click(function(){

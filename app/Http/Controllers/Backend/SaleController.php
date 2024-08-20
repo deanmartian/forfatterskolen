@@ -6,6 +6,7 @@ use App\Http\AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\PowerOffice;
 use App\Jobs\AddMailToQueueJob;
+use App\PowerOfficeInvoice;
 use App\Repositories\Services\SaleService;
 use App\User;
 use Illuminate\Http\Request;
@@ -84,6 +85,12 @@ class SaleController extends Controller {
                 $payLaterOrders = $this->service->getPayLaterOrders();
 
                 return view('backend.sale.partials._pay-later', compact('payLaterOrders'));
+            case 'power-office':
+                $invoices = PowerOfficeInvoice::wherehas('user')
+                    ->with('selfPublishing')
+                    ->where('parent', 'self-publishing')->paginate(25);
+
+                return view('backend.sale.partials._power-office', compact('invoices'));
             default:
                 $newCourses = $this->service->queryCoursesTaken();
                 $groupCourseEmail = AdminHelpers::emailTemplate('Group Course Welcome Email');

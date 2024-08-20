@@ -1174,6 +1174,8 @@ Route::group([
         Route::get('/power-office/self-publishing/{publishing_id}/invoice/{invoice_id}/view', 
             'PowerOfficeController@selfPublishingPowerOfficeInvoice')
             ->name('admin.power-office.self-publishing.view-po-order');
+        Route::get('/power-office/{id}/download', 'PowerOfficeController@downloadInvoice')
+            ->name('admin.power-office.download');
 
         Route::post('/project/activity/save', 'ProjectController@saveActivity');
         Route::delete('/project/activity/{id}/delete', 'ProjectController@deleteActivity');
