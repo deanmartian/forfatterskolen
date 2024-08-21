@@ -641,7 +641,11 @@
 												['id' => $copyEditing->id, 'type' => 1]) }}"> {{ trans('site.approve-feedback') }}</a> &nbsp;
 											<?php $files = explode(',',$copyEditing->feedback->manuscript); ?>
 											@foreach($files as $file)
-												<a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
+												@if(strpos($file, 'Forfatterskolen_app'))
+													<a href="{{ route('dropbox.download_file', trim($file)) }}"><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
+												@else
+													<a href="{{ $file }}" download><i class="fa fa-download" aria-hidden="true"></i></a> &nbsp;
+												@endif
 											@endforeach
 											{{ $copyEditing->feedback->created_at }}
 										@endif
