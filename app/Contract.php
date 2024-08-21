@@ -55,7 +55,7 @@ class Contract extends Model
     public function getSentFileLinkAttribute()
     {
         $fileLink = '';
-        $filename = $this->attributes['sent_file'];
+        $filename = isset($this->attributes['sent_file']) ? $this->attributes['sent_file'] : NULL;
 
         $extension = explode('.', basename($filename));
         if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
