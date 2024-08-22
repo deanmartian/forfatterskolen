@@ -425,8 +425,8 @@
 										{{ $publishing->expected_finish }}
 									</td>
 									<td>
-										<a href="{{ $publishing->feedback->manuscript }}" download>
-											<i class="fa fa-download"></i>
+										<a href="{{ route('admin.self-publishing.download-feedback', $publishing->feedback->id) }}">
+											<i class="fa fa-download" aria-hidden="true"></i>
 										</a>
 										{!! $publishing->feedback->file_link !!} <br>
 									</td>

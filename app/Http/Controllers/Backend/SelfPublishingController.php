@@ -453,43 +453,77 @@ class SelfPublishingController extends Controller
         $feedback = SelfPublishingFeedback::find($feedback_id);
         
         $manuscripts = explode(', ', $feedback->manuscript);
+        // Determine if there are multiple files to download
         if (count($manuscripts) > 1) {
-            $zipFileName    = $feedback->selfPublishing->title.'.zip';
-            $public_dir     = public_path('storage');
-            $zip            = new \ZipArchive();
+            $zipFileName = $feedback->selfPublishing->title . '.zip';
+            $public_dir = public_path('storage');
+            $zip = new \ZipArchive();
 
-            // open zip file connection and create the zip
-            if ($zip->open($public_dir . '/' . $zipFileName, \ZIPARCHIVE::CREATE | \ZIPARCHIVE::OVERWRITE) !== TRUE) {
-                die ("An error occurred creating your ZIP file.");
+            // Open the ZIP file and create it
+            if ($zip->open($public_dir . '/' . $zipFileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== TRUE) {
+                die("An error occurred creating your ZIP file.");
             }
 
-            foreach($manuscripts as $feedFile) {
-                if (file_exists(public_path().'/'.trim($feedFile))) {
+            foreach ($manuscripts as $feedFile) {
+                $filePath = trim($feedFile);
 
-                    //get the correct filename
-                    $expFileName = explode('/', $feedFile);
+                // Check if the file is local or on Dropbox
+                if (Storage::disk('dropbox')->exists($filePath)) {
+                    // Download the file from Dropbox
+                    $dropbox = new DropboxClient(config('filesystems.disks.dropbox.authorization_token'));
+                    $response = $dropbox->download($filePath);
+                    $fileContent = stream_get_contents($response);
+
+                    // Add file to ZIP archive
+                    $zip->addFromString(basename($filePath), $fileContent);
+                } elseif (file_exists(public_path() . '/' . $filePath)) {
+                    // The file is local
+                    $expFileName = explode('/', $filePath);
                     $file = str_replace('\\', '/', public_path());
 
-                    // physical file location and name of the file
-                    $zip->addFile(trim($file.trim($feedFile)), end($expFileName));
+                    // Add the local file to the ZIP archive
+                    $zip->addFile($file . $filePath, end($expFileName));
+                } else {
+                    // Handle the case where the file does not exist
+                    return redirect()->back()->withErrors('One or more files could not be found.');
                 }
             }
 
-            $zip->close(); // close zip connection
+            $zip->close(); // Close ZIP connection
 
             $headers = array(
                 'Content-Type' => 'application/octet-stream',
             );
 
-            $fileToPath = $public_dir.'/'.$zipFileName;
+            $fileToPath = $public_dir . '/' . $zipFileName;
 
-            if(file_exists($fileToPath)){
+            if (file_exists($fileToPath)) {
                 return response()->download($fileToPath, $zipFileName, $headers)->deleteFileAfterSend(true);
             }
 
             return redirect()->back();
         }
-        return response()->download(public_path($manuscripts[0]));
+
+        // If there's only one file, download it directly
+        $singleFile = trim($manuscripts[0]);
+
+        if (Storage::disk('dropbox')->exists($singleFile)) {
+            // Download the file from Dropbox
+            $dropbox = new DropboxClient(config('filesystems.disks.dropbox.authorization_token'));
+            $response = $dropbox->download($singleFile);
+
+            return new StreamedResponse(function () use ($response) {
+                echo stream_get_contents($response);
+            }, 200, [
+                'Content-Type' => 'application/octet-stream',
+                'Content-Disposition' => 'attachment; filename="' . basename($singleFile) . '"',
+            ]);
+        } elseif (file_exists(public_path($singleFile))) {
+            // The file is local
+            return response()->download(public_path($singleFile));
+        }
+
+        return redirect()->back()->withErrors('File not found.');
 
         //return response()->download(trim($feedback->manuscript, '/'));
     }
