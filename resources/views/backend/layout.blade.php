@@ -145,7 +145,7 @@
                     button.addEventListener('click', function() {
                         if (typeof tinymce === 'undefined') {
                             var script = document.createElement('script');
-                            script.src = "https://cdn.tiny.cloud/1/at9h19nmgr4aahzi0km0mkwkejc37a686yxis2zks33o0p6n/tinymce/5/tinymce.min.js";
+                            script.src = "https://cdn.tiny.cloud/1/nhht03iq9mcjeplfuld9lw87c3u7x80atzo0go0eovc81oa6/tinymce/5/tinymce.min.js";
                             script.referrerPolicy = "origin";
                             script.onload = initTinyMCE;
                             document.body.appendChild(script);
