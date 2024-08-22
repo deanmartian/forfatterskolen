@@ -271,12 +271,16 @@
                                                 data-email-template="{{ json_encode($copyEditingFeedbackTemplate) }}">
                                                 + {{ trans('site.add-feedback') }}</a>
                                             @else
-                                                <?php $files = explode(',',$copy_editing->feedback->manuscript); ?>
-                                                @foreach($files as $file)
+                                                <?php //$files = explode(',',$copy_editing->feedback->manuscript); ?>
+                                                {{-- @foreach($files as $file)
                                                     <a href="{{ route('dropbox.download_file', trim($file)) }}">
                                                         <i class="fa fa-download" aria-hidden="true"></i>
                                                     </a> &nbsp;
-                                                @endforeach
+                                                @endforeach --}}
+                                                <a href="{{ route($otherServiceDownloadFeedbackRoute, [$copy_editing->feedback->id, 1]) }}"
+                                                    class="btn btn-success btn-xs">
+                                                        Download Feedback
+                                                </a>
                                             @endif
                                         </td>
                                         <td>

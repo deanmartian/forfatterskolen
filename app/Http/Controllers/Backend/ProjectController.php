@@ -110,6 +110,7 @@ class ProjectController extends Controller
         $updateStatusRoute = 'admin.other-service.update-status';
         $otherServiceDeleteRoute = 'admin.other-service.delete';
         $otherServiceFeedbackRoute = 'admin.other-service.add-feedback';
+        $otherServiceDownloadFeedbackRoute = 'admin.other-service.download-feedback';
         $saveBookPicturesRoute = 'admin.project.save-picture';
         $deleteBookPicturesRoute = 'admin.project.delete-picture';
         $downloadOtherService = 'admin.other-service.download-doc';
@@ -145,7 +146,7 @@ class ProjectController extends Controller
             'updateExpectedFinishRoute', 'updateStatusRoute', 'otherServiceDeleteRoute', 'correctionFeedbackTemplate',
             'copyEditingFeedbackTemplate', 'otherServiceFeedbackRoute', 'saveBookPicturesRoute', 'bookPictures',
             'deleteBookPicturesRoute', 'wholeBooks', 'downloadOtherService', 'saveBookFormattingRoute', 'bookFormattingList',
-            'deleteBookFormattingRoute', 'editorAndAdminList', 'tasks', 'bookCritiques'));
+            'deleteBookFormattingRoute', 'editorAndAdminList', 'tasks', 'bookCritiques', 'otherServiceDownloadFeedbackRoute'));
     }
 
     public function saveTask(Request $request)
