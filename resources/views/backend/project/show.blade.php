@@ -420,12 +420,16 @@
                                                             ['id' => $correction->id, 'type' => 2]) }}"
                                                 data-email-template="{{ json_encode($correctionFeedbackTemplate) }}">+ {{ trans('site.add-feedback') }}</a>
                                             @else
-                                            <?php $files = explode(',',$correction->feedback->manuscript); ?>
-                                                @foreach($files as $file)
+                                            <?php //$files = explode(',',$correction->feedback->manuscript); ?>
+                                                {{-- @foreach($files as $file)
                                                     <a href="{{ route('dropbox.download_file', trim($file)) }}">
                                                         <i class="fa fa-download" aria-hidden="true"></i>
                                                     </a> &nbsp;
-                                                @endforeach
+                                                @endforeach --}}
+                                            <a href="{{ route($otherServiceDownloadFeedbackRoute, [$correction->feedback->id, 2]) }}"
+                                                class="btn btn-success btn-xs">
+                                                    Download Feedback
+                                            </a>
                                             @endif
                                         </td>
                                         <td>

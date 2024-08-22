@@ -472,7 +472,11 @@ class OtherServiceController extends Controller
         $manuscripts = explode(', ', $feedback->manuscript);
         // Determine if there are multiple files to download
         if (count($manuscripts) > 1) {
-            $zipFileName = 'Feedbacks.zip';
+            $zipFileName = 'Copy Editing Feedbacks.zip';
+            if ($service_type == 2) {
+                $zipFileName = 'Correction Feedbacks.zip';
+            }
+
             $public_dir = public_path('storage');
             $zip = new \ZipArchive();
 
