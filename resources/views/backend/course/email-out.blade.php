@@ -223,10 +223,10 @@
                    prependDelayInput(input_group, 'number', 'days');
                } else {
                    $(v).val('');
-                   //$(tinymce.get('message').getBody()).html('');
-                   setTimeout(() => {
+                   $(tinymce.get('message').getBody()).html('');
+                   /* setTimeout(() => {
                         setEditorContent('message', '');
-                   }, 500);
+                   }, 500); */
                }
             });
 
@@ -277,10 +277,10 @@
                }
 
                if (field === 'message') {
-                   //$(tinymce.get('message').getBody()).html(value);
-                   setTimeout(() => {
+                   $(tinymce.get('message').getBody()).html(value);
+                   /* setTimeout(() => {
                         setEditorContent('message', value);
-                   }, 500);
+                   }, 500); */
                }
 
                if (field === 'for_free_course') {
