@@ -155,7 +155,7 @@
                             @foreach($course->packages as $package)
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="{{ $package->id }}" name="allowed_package[]">
-                                    <label class="form-check-label" for="{{ $package->variation }}">
+                                    <label class="form-check-label" {{-- for="{{ $package->variation }}" --}}>
                                         {{ $package->variation }}
                                     </label>
                                 </div>
