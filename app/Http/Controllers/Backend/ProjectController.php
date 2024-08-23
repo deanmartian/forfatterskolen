@@ -554,7 +554,7 @@ class ProjectController extends Controller
         if (!$request->id){
             switch ($request->type) {
                 case 'cover':
-                    //$this->validate($request, ['cover' => 'required|mimes:jpeg,jpg,png,gif']);
+                    $this->validate($request, ['cover' => 'required|mimes:jpeg,jpg,png,gif']);
                     break;
 
                 /*case 'barcode':
@@ -574,9 +574,9 @@ class ProjectController extends Controller
                         break;
 
                 case 'indesign':
-                    if (!$request->id) {
+                    /* if (!$request->id) {
                         $this->validate($request, ['cover' => 'required']);
-                    }
+                    } */
                     break;
 
                 case 'sample-book-pdf':
