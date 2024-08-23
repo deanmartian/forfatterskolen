@@ -74,7 +74,7 @@
         <script src="https://Forfatterskolen.cdn.vooplayer.com/assets/vooplayer.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-        @if (!in_array(Route::currentRouteName(),['backend.dashboard', 'admin.course.show', 'admin.learner.show',
+        @if (!in_array(Route::currentRouteName(),['backend.dashboard', 'admin.learner.show',
              'admin.free-manuscript.index']))
             <script src="https://cdn.tiny.cloud/1/ktrp7pnky7grwhkgft8m2lw12pv3d1aq5i9wanmihifc4l5m/tinymce/5/tinymce.min.js"
                 referrerpolicy="origin"></script>
@@ -138,7 +138,7 @@
                 tinymce.init(tiny_editor_config);
             }
 
-            if (!['backend.dashboard', 'admin.course.show', 'admin.learner.show', 'admin.free-manuscript.index'].includes(currentRoute)) {
+            if (!['backend.dashboard', 'admin.learner.show', 'admin.free-manuscript.index'].includes(currentRoute)) {
                 initTinyMCE();
             } else {
                 document.querySelectorAll('.loadScriptButton').forEach(button => {
