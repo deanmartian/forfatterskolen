@@ -138,9 +138,11 @@
                                         <i class="fa fa-download" aria-hidden="true"></i>
                                     </a>&nbsp;
                                 @else
-                                    <a href="{{ $indesign->value }}" class="btn btn-success btn-xs" download>
-                                        <i class="fa fa-download"></i>
-                                    </a>
+                                    @if ($indesign->value)
+                                        <a href="{{ $indesign->value }}" class="btn btn-success btn-xs" download>
+                                            <i class="fa fa-download"></i>
+                                        </a>
+                                    @endif
                                 @endif
 
                                 {!! $indesign->image !!}
