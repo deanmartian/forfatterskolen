@@ -104,7 +104,7 @@
                     'insertdatetime media nonbreaking save table directionality',
                     'emoticons template paste textpattern'],
                 toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript ' +
-                'superscript | forecolor backcolor | link | alignleft aligncenter alignright ' +
+                'superscript | forecolor backcolor | alignleft aligncenter alignright ' +
                 'alignjustify  | removeformat',
                 toolbar2: 'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code ' +
                 '| print fullscreen',
