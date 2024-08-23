@@ -19,7 +19,7 @@ class DropboxController extends Controller {
     {
         $appKey = config('filesystems.disks.dropbox.key');
         $redirectUri = route('dropbox.callback');
-
+        return "https://www.dropbox.com/oauth2/authorize?client_id={$appKey}&token_access_type=offline&response_type=code&redirect_uri={$redirectUri}";
         return redirect()->away("https://www.dropbox.com/oauth2/authorize?client_id={$appKey}&token_access_type=offline&response_type=code&redirect_uri={$redirectUri}");
     }
 
@@ -77,7 +77,7 @@ class DropboxController extends Controller {
                 $accessToken = $data['access_token'];
 
                 // Save the access token securely, e.g., in the database or session
-                session(['dropbox_token' => $accessToken]);
+                //session(['dropbox_token' => $accessToken]);
 
                 return response()->json(['success' => 'Access token refreshed successfully!', 'access_token' => $accessToken]);
             } else {
@@ -99,7 +99,7 @@ class DropboxController extends Controller {
         $destinationPath = 'Forfatterskolen_app/assignment-manuscripts/'; // upload path
         $extension = pathinfo($_FILES['file']['name'],PATHINFO_EXTENSION); // getting document extension
         $actual_name = pathinfo($_FILES['file']['name'], PATHINFO_FILENAME);
-        $fileName = AdminHelpers::getUniqueFilename('dropbox', 'assignment-manuscripts', $actual_name . "." . $extension);
+        $fileName = AdminHelpers::getUniqueFilename('dropbox', 'Forfatterskolen_app/assignment-manuscripts', $actual_name . "." . $extension);
         $file = $request->file('file');
         $expFileName = explode('/', $fileName);
         $dropboxFileName = end($expFileName);
@@ -133,7 +133,7 @@ class DropboxController extends Controller {
             // Clean up the local temporary file
             unlink($tempFilePath);
             
-            return $word_count;
+            return $dropboxFilePath;
             return redirect()->back()->with([
                 'errors' => AdminHelpers::createMessageBag('Uploaded'),
                 'alert_type' => 'success',
@@ -195,9 +195,14 @@ class DropboxController extends Controller {
             $dropboxFilePath = $path;
             // Download the file from Dropbox
             $response = $dropbox->download($dropboxFilePath);
-
+        
             return new StreamedResponse(function () use ($response) {
-                echo stream_get_contents($response);
+                $chunkSize = 1024 * 1024; // 1MB per chunk
+        
+                while (!feof($response)) {
+                    echo fread($response, $chunkSize);
+                    flush(); // Flush system output buffer to prevent memory issues
+                }
             }, 200, [
                 'Content-Type' => 'application/octet-stream',
                 'Content-Disposition' => 'attachment; filename="' . basename($path) . '"',
