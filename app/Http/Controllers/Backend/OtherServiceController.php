@@ -547,8 +547,8 @@ class OtherServiceController extends Controller
         return redirect()->back()->withErrors('File not found.');
     }
 
-    public function approveFeedback($service_id, $service_type, Request $request){
-        
+    public function approveFeedback($service_id, $service_type, Request $request)
+    {
         // replace feedback file
         $filesWithPath = $this->getFiles($request);
         $otherServiceFeedback = OtherServiceFeedback::find($request->feedback_id);
@@ -576,17 +576,25 @@ class OtherServiceController extends Controller
         $parent = null;
         $emailContent = $request->message;
         $emailSubject = $request->subject;
+        $extractLink = route('learner.self-publishing.correction');
 
         if ($service_type == 1) {
             $parent = 'copy-editing-feedback';
+            $extractLink = route('learner.self-publishing.copy-editing');
         }else{
             $parent = 'correction-feedback';
         }
 
         $emailTemplate = AdminHelpers::emailTemplate('Other Services Feedback');
 
-        $emailContent = AdminHelpers::formatEmailContent($emailContent, $from,
-        Auth::user()->first_name, '');
+        if ($request->has('send_email')) {
+            $encode_email = encrypt($user_email);
+            $formatRedirectLink = route('auth.login.emailRedirect',[$encode_email, encrypt($extractLink)]);
+            $redirectLink       = "<a href='".$formatRedirectLink."'>Login</a>";
+            $emailContent       = str_replace(':login', $redirectLink, $emailContent);
+
+            $emailContent = AdminHelpers::formatEmailContent($emailContent, $from,
+                Auth::user()->first_name, '');
 
         if ($request->has('send_email')) {
             dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
