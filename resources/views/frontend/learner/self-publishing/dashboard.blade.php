@@ -57,12 +57,16 @@
                                         <td>
                                             @if($publishing->feedback)
                                                 @if($publishing->feedback->is_approved)
-                                                    <button class="btn btn-primary btn-xs viewFeedbackBtn"
+                                                    {{-- <button class="btn btn-primary btn-xs viewFeedbackBtn"
                                                             data-target="#viewFeedbackModal"
                                                             data-toggle="modal"
                                                             data-fields="{{ json_encode($publishing) }}">
                                                         View Feedback
-                                                    </button>
+                                                    </button> --}}
+                                                    <a class="btn btn-primary btn-xs viewFeedbackBtn" 
+                                                    href="{{ route('learner.self-publishing.feedback.download', $publishing->feedback->id) }}">
+                                                        Download Feedback
+                                                    </a>
                                                 @else
                                                     <label class="label label-warning" style="margin-right: 5px;">
                                                         Pending
