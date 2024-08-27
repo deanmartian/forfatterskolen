@@ -17,51 +17,13 @@ class PowerOfficeController extends Controller {
         $user = $selfPublishing->project->user;
         $emailToSearch = $user->email;
 
-        //return $powerOffice->products();
-        $foundEntries = array_filter($powerOffice->customers(), function ($entry) use ($emailToSearch) {
-            return $entry['EmailAddress'] === $emailToSearch;
-        });
-
-        $customerId = null;
-
-        if (!empty($foundEntries)) {
-            // Since array_filter preserves keys, use array_values to reset the array keys
-            $filteredData = array_values($foundEntries);
-
-            // Access the first (and probably only) entry in the filtered data
-            $dataArray = $filteredData[0];
-            $customerId = $dataArray['Id'];
-        } else {
-            // Email address not found
-            $userAddress = $user['address'];
-            $line1 = null;
-            $city = null;
-            $zip = null;
-
-            if ($userAddress) {
-                $line1 = $userAddress->street;
-                $city = $userAddress->city;
-                $zip = $userAddress->zip;
-            }
-
-            
-            $newCustomer = $powerOffice->registerCustomer(
-                $user->first_name,
-                $user->last_name,
-                $user->email,
-                $line1,
-                $city,
-                $zip
-            );
-
-            $customerId = $newCustomer['Id'];
-        }
-
+        $customerId = $this->getCustomerId($user, $emailToSearch);
+        
         $data = [
             'customer_id' => $customerId,
             'reference' => 'self_publishing_' . $selfPublishing->id,
             'product_description' => $selfPublishing->title,
-            'product_id' => 22957001, // id from power office
+            'product_id' => 44696040,//44696040, //22957001, // id from power office demo
             "product_unit_cost" => $selfPublishing->price,
             "product_unit_price" => $selfPublishing->price,
         ];
@@ -183,5 +145,51 @@ class PowerOfficeController extends Controller {
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'attachment; filename="' . $fileName . '"')
                 ->header('X-File-Name', $fileName);
+    }
+
+    private function getCustomerId($user, $emailToSearch)
+    {
+        $powerOffice = app(PowerOffice::class);
+        
+        $foundEntries = array_filter($powerOffice->customers(), function ($entry) use ($emailToSearch) {
+            return $entry['EmailAddress'] === $emailToSearch;
+        });
+
+        $customerId = null;
+
+        if (!empty($foundEntries)) {
+            // Since array_filter preserves keys, use array_values to reset the array keys
+            $filteredData = array_values($foundEntries);
+
+            // Access the first (and probably only) entry in the filtered data
+            $dataArray = $filteredData[0];
+            $customerId = $dataArray['Id'];
+        } else {
+            // Email address not found
+            $userAddress = $user['address'];
+            $line1 = null;
+            $city = null;
+            $zip = null;
+
+            if ($userAddress) {
+                $line1 = $userAddress->street;
+                $city = $userAddress->city;
+                $zip = $userAddress->zip;
+            }
+
+            
+            $newCustomer = $powerOffice->registerCustomer(
+                $user->first_name,
+                $user->last_name,
+                $user->email,
+                $line1,
+                $city,
+                $zip
+            );
+
+            $customerId = $newCustomer['Id'];
+        }
+
+        return $customerId;
     }
 }

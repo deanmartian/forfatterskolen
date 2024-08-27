@@ -20,7 +20,7 @@ class PowerOffice {
         $this->app_key = env('PO_APP_KEY');
         $this->client_key = env('PO_CLIENT_KEY');
         $this->subscription_key = env('PO_SUBSCRIPTION_KEY');
-        $this->base_url = 'https://goapi.poweroffice.net';
+        $this->base_url = 'https://goapi.poweroffice.net/v2';
         $this->authorization = 'Basic ' . base64_encode($this->app_key . ":" . $this->client_key);
 
         $this->client = new Client();
@@ -40,7 +40,7 @@ class PowerOffice {
             'Authorization' => $this->authorization,
         ];
 
-        return $this->post($this->base_url . '/demo/oauth/Token', $data, 'form', $headers);
+        return $this->post('https://goapi.poweroffice.net/oauth/Token', $data, 'form', $headers);
     }
 
     public function customers()
@@ -50,7 +50,7 @@ class PowerOffice {
         $headers = [
             'Authorization' => 'Bearer ' . $authorization['access_token']
         ];
-        return $this->get($this->base_url . '/demo/v2/Customers?Fields=EmailAddress,FirstName,LastName,LegalName,Id', $headers);
+        return $this->get($this->base_url . '/Customers?Fields=EmailAddress,FirstName,LastName,LegalName,Id', $headers);
     }
 
     public function customer($id)
@@ -60,7 +60,7 @@ class PowerOffice {
         $headers = [
             'Authorization' => 'Bearer ' . $authorization['access_token']
         ];
-        return $this->get($this->base_url . '/demo/v2/Customers/' . $id, $headers);
+        return $this->get($this->base_url . '/Customers/' . $id, $headers);
     }
 
     public function registerCustomer($first_name, $last_name, $email, $address = null, $city = null, $zip = null)
@@ -85,7 +85,7 @@ class PowerOffice {
             ]
         ];
 
-        return $this->post( $this->base_url . '/demo/v2/Customers', $data, 'json', $headers);
+        return $this->post( $this->base_url . '/Customers', $data, 'json', $headers);
     }
 
     public function salesOrder($orderData)
@@ -114,7 +114,7 @@ class PowerOffice {
             'Authorization' => 'Bearer ' . $authorization['access_token'],
         ];
 
-        return $this->post($this->base_url . '/demo/v2/SalesOrders/Complete', $data, 'json', $headers);
+        return $this->post($this->base_url . '/SalesOrders/Complete', $data, 'json', $headers);
     }
 
     public function saleOrder($id)
@@ -124,7 +124,7 @@ class PowerOffice {
             'Authorization' => 'Bearer ' . $authorization['access_token']
         ];
 
-        return $this->get($this->base_url . '/demo/v2/SalesOrders/' . $id . '/Complete', $headers);
+        return $this->get($this->base_url . '/SalesOrders/' . $id . '/Complete', $headers);
     }
 
     public function saleOrders()
@@ -134,7 +134,7 @@ class PowerOffice {
             'Authorization' => 'Bearer ' . $authorization['access_token']
         ];
 
-        return $this->get($this->base_url . '/demo/v2/SalesOrders', $headers);
+        return $this->get($this->base_url . '/SalesOrders', $headers);
     }
 
     public function saleOrderLines($id)
@@ -144,7 +144,7 @@ class PowerOffice {
             'Authorization' => 'Bearer ' . $authorization['access_token']
         ];
 
-        return $this->get($this->base_url . '/demo/v2/SalesOrders/' . $id . '/Lines', $headers);
+        return $this->get($this->base_url . '/SalesOrders/' . $id . '/Lines', $headers);
     }
 
     public function products()
@@ -154,7 +154,7 @@ class PowerOffice {
         $headers = [
             'Authorization' => 'Bearer ' . $authorization['access_token']
         ];
-        return $this->get($this->base_url . '/demo/v2/Products', $headers);
+        return $this->get($this->base_url . '/Products', $headers);
     }
 
     public function outgoingInvoices()
@@ -164,7 +164,7 @@ class PowerOffice {
         $headers = [
             'Authorization' => 'Bearer ' . $authorization['access_token']
         ];
-        return $this->get($this->base_url . '/demo/v2/OutgoingInvoices', $headers);
+        return $this->get($this->base_url . '/OutgoingInvoices', $headers);
     }
 
     public function outgoingInvoice($id)
@@ -174,7 +174,7 @@ class PowerOffice {
         $headers = [
             'Authorization' => 'Bearer ' . $authorization['access_token']
         ];
-        return $this->get($this->base_url . '/demo/v2/OutgoingInvoices/' . $id, $headers);
+        return $this->get($this->base_url . '/OutgoingInvoices/' . $id, $headers);
     }
 
     public function outgoingInvoiceLines($invoice_id)
@@ -184,7 +184,7 @@ class PowerOffice {
         $headers = [
             'Authorization' => 'Bearer ' . $authorization['access_token']
         ];
-        return $this->get($this->base_url . '/demo/v2/OutgoingInvoices/' . $invoice_id . '/Lines', $headers);
+        return $this->get($this->base_url . '/OutgoingInvoices/' . $invoice_id . '/Lines', $headers);
     }
 
     public function get($url, $headers = [])
