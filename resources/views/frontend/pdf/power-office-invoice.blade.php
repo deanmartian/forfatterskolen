@@ -63,7 +63,7 @@
         </div>
         <div class="w-50 float-right" style="margin-left: 400px">
             <p>
-                Easywrite AS - API Test Client <br>
+                Easywrite AS<br>
                 Lihagen 21, <br>
                 3029 Drammen, Norge
             </p>

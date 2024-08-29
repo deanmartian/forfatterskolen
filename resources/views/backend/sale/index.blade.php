@@ -203,7 +203,7 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">
                         <em>
-                            Invoice Details
+                            Faktura - kopi
                         </em>
                     </h4>
                 </div>

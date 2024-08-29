@@ -14,7 +14,7 @@
         @endif
     </div>
     <div class="col-md-5">
-        <p>Easywrite AS - API Test Client</p>
+        <p>Easywrite AS</p>
         <p>
             Lihagen 21,
         </p>
