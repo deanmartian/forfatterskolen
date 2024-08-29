@@ -22,7 +22,7 @@ class PowerOfficeController extends Controller {
         
         $data = [
             'customer_id' => $customerId,
-            'reference' => 'self_publishing_' . $selfPublishing->id,
+            'reference' => $user->full_name, //'self_publishing_' . $selfPublishing->id,
             'product_description' => $selfPublishing->title,
             'product_id' => 44696040,//44696040, //22957001, // id from power office demo
             "product_unit_cost" => $request->has('price') ? $request->price : $selfPublishing->price,

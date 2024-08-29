@@ -83,13 +83,22 @@
                 </b>
                 <p>
                     Forfallsdato: {{ FrontendHelpers::formatDate($poInvoice['DueDate']) }} <br>
+                    Kontonummer: 2480 34 61208 <br>
                     KID: {{ $poInvoice['Cid'] }}
+                </p>
+
+                <b>
+                    For betaling fra utlandet:
+                </b>
+                <p>
+                    Iban nummer: NO5824803461208 <br>
+                    Bic: SPTRNO22
                 </p>
             @endif
         </div>
 
         @php
-            $topSpace = $poInvoice ? '280px' : '200px';
+            $topSpace = $poInvoice ? '400px' : '300px';
         @endphp
         <table class="table table-striped" style="margin-top: {{ $topSpace }}">
             <thead>

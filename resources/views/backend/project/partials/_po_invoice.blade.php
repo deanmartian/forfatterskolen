@@ -54,11 +54,43 @@
                     </div>
                 </div>
             </div>
+
             <div class="form-group" style="margin-bottom: 0">
+                <div class="row">
+                    <div class="col-md-6">Kontonummer:</div>
+                    <div class="col-md-6">
+                        2480 34 61208
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
                 <div class="row">
                     <div class="col-md-6">KID:</div>
                     <div class="col-md-6">
                         {{$poInvoice['Cid'] }}
+                    </div>
+                </div>
+            </div>
+
+            <b>
+                For betaling fra utlandet:
+            </b>
+
+            <div class="form-group" style="margin-bottom: 0">
+                <div class="row">
+                    <div class="col-md-6">Iban nummer:</div>
+                    <div class="col-md-6">
+                        NO5824803461208
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0">
+                <div class="row">
+                    <div class="col-md-6">Bic:</div>
+                    <div class="col-md-6">
+                        SPTRNO22
                     </div>
                 </div>
             </div>
