@@ -8,10 +8,11 @@ use App\Http\PowerOffice;
 use App\PowerOfficeInvoice;
 use App\SelfPublishing;
 use App\User;
+use Illuminate\Http\Request;
 
 class PowerOfficeController extends Controller {
 
-    public function addSelfPublshingToPowerOffice($publishing_id, PowerOffice $powerOffice)
+    public function addSelfPublshingToPowerOffice($publishing_id, Request $request, PowerOffice $powerOffice)
     {
         $selfPublishing = SelfPublishing::findOrFail($publishing_id);
         $user = $selfPublishing->project->user;
@@ -24,8 +25,8 @@ class PowerOfficeController extends Controller {
             'reference' => 'self_publishing_' . $selfPublishing->id,
             'product_description' => $selfPublishing->title,
             'product_id' => 44696040,//44696040, //22957001, // id from power office demo
-            "product_unit_cost" => $selfPublishing->price,
-            "product_unit_price" => $selfPublishing->price,
+            "product_unit_cost" => $request->has('price') ? $request->price : $selfPublishing->price,
+            "product_unit_price" => $request->has('price') ? $request->price : $selfPublishing->price,
         ];
 
         $sales = $powerOffice->salesOrder($data);
@@ -38,6 +39,11 @@ class PowerOfficeController extends Controller {
             'parent_id' => $selfPublishing->id
         ]);
         
+        if ($request->has('price')) {
+            $selfPublishing->price = $request->price;
+            $selfPublishing->save();
+        }
+
         return redirect()->back()
         ->with(['errors' => AdminHelpers::createMessageBag('Power office order created successfully.'),
             'alert_type' => 'success']);

@@ -112,6 +112,38 @@
                     @endforeach
                     </tbody>
                 </table>
+
+                <button class="btn btn-primary margin-bottom powerOfficeBtn" data-toggle="modal"
+                        data-target="#powerOfficeModal">
+                    Add Power Office Invoice
+                </button>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Self Publishing</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($poInvoices as $invoice)
+                            <tr>
+                                <td>
+                                    {{ $invoice->selfPublishing->title }}
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary btn-xs powerOfficeOrderBtn" 
+                                    data-action="{{ route('admin.power-office.self-publishing.view-po-order', 
+                                    [$invoice->parent_id, $invoice->id]) }}" 
+                                        data-target="#powerOfficeOrderModal"
+                                        data-toggle="modal">
+                                        View Invoice
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -235,6 +267,70 @@
             </div>
         </div>
     </div>
+
+    <div id="powerOfficeModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        Power Office
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action=""
+                          enctype="multipart/form-data" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        
+                        <div class="form-group">
+                            <label>Self Publishing</label>
+                            <select name="self_publishing" class="form-control" onchange="selectSelfPublishing(this)" required>
+                                <option value="">-- Select Self Publishing --</option>
+                                @foreach ($selfPublishingList as $selfPublishing)
+                                    <option value="{{ $selfPublishing->id }}" data-fields="{{ json_encode($selfPublishing) }}">
+                                        {{ $selfPublishing->title }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                Price
+                            </label>
+                            <input type="text" class="form-control" name="price" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-success pull-right margin-top">
+                            {{ trans('site.save') }}
+                        </button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="powerOfficeOrderModal" class="modal fade" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        <em>
+                            Invoice Details
+                        </em>
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="invoice-container"></div>
+                    <div class="text-center loader-container" style="font-size: 50px">
+                        <i class="fa fa-spinner fa-pulse"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('scripts')
@@ -278,5 +374,96 @@
                 form.find('[name=note]').text(record.note);
             }
         });
+
+        $(document).on('click', '.powerOfficeOrderBtn', function() {
+            let action = $(this).data('action');
+            let modal = $('#powerOfficeOrderModal');
+            
+            modal.find(".invoice-container").empty();
+            modal.find(".loader-container").show();
+            
+            $.ajax({
+                type:'GET',
+                url: action,
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: {},
+                success: function(data){
+                    modal.find(".invoice-container").html(data);
+                    modal.find(".loader-container").hide();
+                }
+            });
+        });
+
+        $(document).on('click', '.downloadInvoice', function() {
+            const self = $(this);
+            const spinner = self.find('.fa-spinner');
+            const action = self.data('action');
+            self.attr('disabled', true);
+            spinner.show();
+
+            $.ajax({
+                url: action,
+                method: 'GET',
+                xhrFields: {
+                    responseType: 'blob' // Important for binary data
+                },
+                success: function(data, status, xhr) {
+                    // Hide the loading indicator
+                    spinner.hide();
+                    self.removeAttr('disabled');
+
+                    // Extract the file name from the response headers
+                    var disposition = xhr.getResponseHeader('Content-Disposition');
+                    var fileName = "invoice.pdf"; // Default file name
+
+                    if (disposition && disposition.indexOf('filename=') !== -1) {
+                        var matches = /filename="(.+)"/.exec(disposition);
+                        if (matches != null && matches[1]) {
+                            fileName = matches[1];
+                        }
+                    } else {
+                        // Fallback to X-File-Name header
+                        var headerFileName = xhr.getResponseHeader('X-File-Name');
+                        if (headerFileName) {
+                            fileName = headerFileName;
+                        }
+                    }
+
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(new Blob([data]));
+                    link.download = fileName;
+                    link.click();
+                    
+                },
+                error: function() {
+                    // Hide the loading indicator
+                    spinner.hide();
+                    self.removeAttr('disabled');
+
+                    alert('Failed to download the PDF. Please try again.');
+                }
+            });
+        });
+
+        function selectSelfPublishing(selectElement) {
+            const modal = $("#powerOfficeModal");
+            const form = modal.find('form');
+
+            // Get the selected option
+            var selectedOption = selectElement.options[selectElement.selectedIndex];
+            
+            // Retrieve the data-fields attribute (which contains the JSON-encoded data)
+            var fieldsData = selectedOption.getAttribute('data-fields');
+            
+            // Parse the JSON data to a JavaScript object
+            var fields = JSON.parse(fieldsData);
+            
+            if (fields) {
+                form.attr('action', '/power-office/self-publishing/' + fields.id + '/add-to-po');
+                form.find('[name=price]').val(fields.price);
+            } else {
+                form.find('[name=price]').val('');
+            }
+        }
     </script>
 @stop

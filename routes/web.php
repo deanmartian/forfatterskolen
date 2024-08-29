@@ -1173,6 +1173,8 @@ Route::group([
 
         Route::get('/power-office/self-publishing/{publishing_id}/add-to-po', 'PowerOfficeController@addSelfPublshingToPowerOffice')
         ->name('admin.power-office.self-publishing.add-to-po');
+        Route::post('/power-office/self-publishing/{publishing_id}/add-to-po', 'PowerOfficeController@addSelfPublshingToPowerOffice')
+        ->name('admin.power-office.self-publishing.add-to-po');
         Route::get('/power-office/self-publishing/{publishing_id}/invoice/{invoice_id}/view', 
             'PowerOfficeController@selfPublishingPowerOfficeInvoice')
             ->name('admin.power-office.self-publishing.view-po-order');

@@ -18,6 +18,7 @@ use App\Http\Requests\ProjectCopyEditingRequest;
 use App\Http\Requests\ProjectRequest;
 use App\Jobs\UpdateDropboxLink;
 use App\MarketingPlan;
+use App\PowerOfficeInvoice;
 use App\Project;
 use App\ProjectActivity;
 use App\ProjectAudio;
@@ -1071,8 +1072,16 @@ class ProjectController extends Controller
         $invoices = ProjectInvoice::where('project_id', $project_id)->get();
         $manualInvoices = ProjectManualInvoice::where('project_id', $project_id)->get();
 
+        $poInvoices = PowerOfficeInvoice::with('selfPublishing')
+                    ->where('parent', 'self-publishing')
+                    ->where('user_id', $project->user_id)
+                    ->get();
+        $selfPublishingList = SelfPublishing::where('project_id', $project_id)
+            ->whereNotIn('id', $poInvoices->pluck('parent_id'))->get();
+
         return view('backend.project.invoice', compact('project', 'backRoute', 'layout', 'saveInvoiceRoute',
-            'invoices', 'deleteInvoiceRoute', 'saveManualInvoiceRoute', 'manualInvoices', 'deleteManualInvoiceRoute'));
+            'invoices', 'deleteInvoiceRoute', 'saveManualInvoiceRoute', 'manualInvoices', 'deleteManualInvoiceRoute',
+            'poInvoices', 'selfPublishingList'));
     }
 
     /**
