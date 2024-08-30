@@ -595,8 +595,7 @@ class OtherServiceController extends Controller
 
             $emailContent = AdminHelpers::formatEmailContent($emailContent, $from,
                 Auth::user()->first_name, '');
-
-        if ($request->has('send_email')) {
+                
             dispatch(new AddMailToQueueJob($user_email, $emailTemplate->subject, $emailContent,
                 $emailTemplate->from_email, null, null, $parent, $service_id));
         }
