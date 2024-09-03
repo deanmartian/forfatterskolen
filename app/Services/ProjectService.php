@@ -261,7 +261,7 @@ class ProjectService
         switch ($request->type) {
             case 'cover':
                 $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'cover');
-                $data['description'] = $this->saveGraphicWorkFileOrImage($request, 'interior');
+                $data['description'] = $this->saveGraphicWorkFileOrImage($request, 'interior', null, true);
                 $data['is_checked'] = $request->has('is_approved') && $request->is_approved ? 1 : 0;
                 break;
 
@@ -288,8 +288,15 @@ class ProjectService
                 break;
 
             case 'indesign':
-                $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'cover', 'indesign/');
-                $data['description'] = $this->saveGraphicWorkFileOrImage($request, 'interior', 'indesign/');
+                //$data['value'] = $this->saveGraphicWorkFileOrImage($request, 'cover', 'indesign/');
+                if (\request()->hasFile('cover')) {
+                    $destinationPathCover = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/indesign/cover/';
+                    $data['value'] = $this->saveMultipleFileOrImageDropbox($destinationPathCover, 'cover');
+                }
+
+                if (\request()->hasFile('interior')) {
+                    $data['description'] = $this->saveGraphicWorkFileOrImage($request, 'interior', 'indesign/', true);
+                }                
                 break;
         }
 
@@ -369,13 +376,13 @@ class ProjectService
      * @param $fieldName
      * @return null|string
      */
-    public function saveGraphicWorkFileOrImage( Request $request, $fieldName, $additionFolder = null)
+    public function saveGraphicWorkFileOrImage( Request $request, $fieldName, $additionFolder = null, $isDescription = false)
     {
         $filePath = NULL;
 
         if ($request->id) {
             $graphicWork = ProjectGraphicWork::find($request->id);
-            $filePath = $graphicWork->value;
+            $filePath = $isDescription ? $graphicWork->description : $graphicWork->value;
         }
 
         if ($request->hasFile($fieldName)) :

@@ -133,19 +133,29 @@
                     @foreach($indesigns as $indesign)
                         <tr>
                             <td>
-                                @if (strpos($indesign->value, 'project-'))
-                                    <a href="{{ route('dropbox.download_file', trim($indesign->value)) }}">
-                                        <i class="fa fa-download" aria-hidden="true"></i>
-                                    </a>&nbsp;
-                                @else
-                                    @if ($indesign->value)
-                                        <a href="{{ $indesign->value }}" class="btn btn-success btn-xs" download>
-                                            <i class="fa fa-download"></i>
+                                @php
+                                    $coverFiles = explode(',', $indesign->value);
+                                @endphp
+                                @foreach ($coverFiles as $coverFile)
+                                    @if (strpos($coverFile, 'project-'))
+                                        <a href="{{ route('dropbox.download_file', trim($coverFile)) }}">
+                                            <i class="fa fa-download" aria-hidden="true"></i>
+                                        </a>&nbsp;
+                                        <a href="{{ route('dropbox.shared_link', $coverFile) }}" target="_blank" 
+                                        style="margin-right: 5px">
+                                            {{ basename($coverFile) }}
                                         </a>
+                                    @else
+                                        @if ($coverFile)
+                                            <a href="{{ $coverFile }}" class="btn btn-success btn-xs" download>
+                                                <i class="fa fa-download"></i>
+                                            </a>
+                                            <a href="{{ asset($coverFile) }}" target="_blank" style="margin-right: 5px">
+                                                {{ basename($coverFile) }}
+                                            </a>
+                                        @endif
                                     @endif
-                                @endif
-
-                                {!! $indesign->image !!}
+                                @endforeach
                             </td>
                             <td>
                                 @if ($indesign->interior)
@@ -557,12 +567,12 @@
 
                         <div class="form-group">
                             <label>Cover</label>
-                            <input type="file" class="form-control" name="cover" accept="*">
+                            <input type="file" class="form-control" name="cover[]" accept="*" multiple>
                         </div>
 
                         <div class="form-group">
                             <label>Interior</label>
-                            <input type="file" class="form-control" name="interior" accept="*">
+                            <input type="file" class="form-control" name="interior" accept="*" multiple>
                         </div>
 
                         <button type="submit" class="btn btn-success pull-right margin-top">
