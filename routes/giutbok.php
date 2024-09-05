@@ -20,6 +20,9 @@ Route::group([
         Route::get('/', 'PageController@dashboard')->name('g-admin.dashboard');
         Route::post('/change-password', 'PageController@changePassword')->name('editor.change-password');
 
+        Route::post('/project/book-formatting/{id}/feedback', 'PageController@addBookFormatFeedback')
+        ->name('g-admin.book-format.add-feedback');
+
         Route::post('learner/register', 'LearnerController@registerLearner')->name('g-admin.learner.register');
         Route::group([
             'prefix' => 'learner'
@@ -30,6 +33,13 @@ Route::group([
         Route::get('/self-publishing', 'SelfPublishingController@index')->name('g-admin.self-publishing.index');
         Route::get('/self-publishing/{id}/learners', 'SelfPublishingController@learners')->name('g-admin.self-publishing.learners');
         Route::get('learner/{id}', 'LearnerController@show')->name('g-admin.learner.show');
+
+        Route::get('/dropbox/shared-link/{path}', 'PageController@createSharedLink')
+            ->where('path', '.*')
+            ->name('dropbox.shared_link');
+        Route::get('/dropbox/download/{path}', 'PageController@downloadFile')
+            ->where('path', '.*')
+            ->name('dropbox.download_file');
     });
 
     Route::group([
@@ -186,5 +196,7 @@ Route::group([
         'namespace' => 'Auth',
     ], function () {
         Route::post('login', 'LoginController@giutbokLogin')->name('giutbok.login.store');
+        Route::get('login/email-redirect/{email}/{redirect_link}', 'LoginController@giutbokEmailLoginRedirect')
+            ->name('giutbok.login.emailRedirect');
     });
 });

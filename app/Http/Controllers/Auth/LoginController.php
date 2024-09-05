@@ -83,6 +83,18 @@ class LoginController extends Controller
         return redirect()->back()->withInput()->withErrors('Feil passord');
     }
 
+    public function giutbokEmailLoginRedirect($email, $redirect_link)
+    {
+        $email = decrypt($email);
+        $redirect_link = decrypt($redirect_link);
+
+        $user = User::where('email', $email)->where('admin_with_giutbok_access', 1)->first();
+        if(!$user) return redirect()->route('g-admin.dashboard');
+
+        Auth::loginUsingId($user->id);
+        return redirect()->to($redirect_link);
+    }
+
     public function editorEmailLogin($email)
     {
         $email = decrypt($email);

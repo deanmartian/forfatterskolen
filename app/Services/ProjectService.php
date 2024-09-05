@@ -9,6 +9,7 @@ use App\CorrectionManuscript;
 use App\Helpers\FileToText;
 use App\Http\AdminHelpers;
 use App\Http\FrontendHelpers;
+use App\Jobs\AddMailToQueueJob;
 use App\Project;
 use App\ProjectActivity;
 use App\ProjectAudio;
@@ -20,6 +21,7 @@ use App\ProjectGraphicWork;
 use App\ProjectMarketing;
 use App\ProjectPrint;
 use App\ProjectWholeBook;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Concerns\InteractsWithInput;
 use Illuminate\Http\Request;
@@ -143,18 +145,54 @@ class ProjectService
         if ($request->id) {
 
             $bookPicture = ProjectBookFormatting::find($request->id);
-            $bookPicture->file = $filePath;
+            $bookPicture->file = $filePath ?? $bookPicture->file;
+            $bookPicture->designer_id = $request->designer_id ?? $bookPicture->designer_id;
             $bookPicture->save();
 
         } else {
 
-            ProjectBookFormatting::create([
+            $bookPicture = ProjectBookFormatting::create([
                 'project_id' => $request->project_id,
-                'file' => $filePath
+                'file' => $filePath,
+                'designer_id' => $request->has('designer_id') ? $request->designer_id : NULL
             ]);
 
         }
 
+        if ($bookPicture->designer_id) {
+            $emailTemplate = AdminHelpers::emailTemplate('Graphic Designer Notification');
+            $user = User::find($bookPicture->designer_id);
+            $to = $user->email;
+
+            $loginLink = route('giutbok.login.emailRedirect', [encrypt($user->email), encrypt(route('g-admin.dashboard'))]);
+            $searchString = [
+                ':login_link',
+            ];
+
+            $replaceString = [
+                "<a href='$loginLink'>Klikk her for å logge inn</a>"
+            ];
+
+
+            $emailContent = str_replace($searchString, $replaceString, $emailTemplate->email_content);
+        
+            dispatch(new AddMailToQueueJob($to, $emailTemplate->subject, $emailContent,
+                    $emailTemplate->from_email, null, null,
+                    'admin', $user->id));
+        }
+        return $bookPicture;
+
+    }
+
+    public function saveBookFormatFeedback( Request $request )
+    {
+        $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/book-formatting/feedback';
+        $filePath = $this->saveFileOrImageDropbox($destinationPath, 'file');
+
+        $bookPicture = ProjectBookFormatting::find($request->id);
+        $bookPicture->feedback = $filePath;
+        $bookPicture->feedback_status = 'pending';
+        $bookPicture->save();
     }
 
     /**

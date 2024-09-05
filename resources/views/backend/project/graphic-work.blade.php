@@ -80,6 +80,8 @@
                 <thead>
                 <tr>
                     <th>Interior</th>
+                    <th>Designer</th>
+                    <th>{{ trans_choice('site.feedbacks', 1) }}</th>
                     <th width="300"></th>
                 </tr>
                 </thead>
@@ -88,6 +90,20 @@
                     <tr>
                         <td>
                             {!! $bookFormatting->file_link !!}
+                        </td>
+                        <td>
+                            {{ optional($bookFormatting->designer)->full_name }}
+                        </td>
+                        <td>
+                            {!! $bookFormatting->feedback_file_link !!}
+                            @if ($bookFormatting->feedback && $bookFormatting->feedback_status == 'pending')
+                                <button class="btn btn-xs btn-success approveFeedbackBtn" data-toggle="modal" 
+                                    data-target="#approveFeedbackModal"
+                                    data-action="{{ route('admin.project.book-formatting.approve-feedback', $bookFormatting->id) }}"
+                                    style="margin-left: 5px">
+                                    <i class="fa fa-check"></i>
+                                </button>
+                            @endif
                         </td>
                         <td>
                             @if (strpos($bookFormatting->file, "project-"))
@@ -687,6 +703,18 @@
                                    accept="application/pdf">
                         </div>
 
+                        <div class="form-group">
+                            <label>Graphic Designer</label>
+                            <select name="designer_id" class="form-control select2 template">
+                                <option value="" selected="" disabled>- Select Designer -</option>
+                                @foreach($designers as $designer)
+                                    <option value="{{ $designer->id }}">
+                                        {{$designer->full_name}}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         <div class="text-right">
                             <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
                         </div>
@@ -696,10 +724,34 @@
             </div>
         </div>
     </div>
+
+    <div id="approveFeedbackModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        Approve Feedback
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        Are you sure you want to approve this feedback?
+                        <div class="text-right margin-top">
+                            <button class="btn btn-primary" type="submit">{{ trans('site.submit') }}</button>
+                        </div>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('scripts')
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <script type="text/javascript" src="{{asset('select2/dist/js/select2.min.js')}}"></script>
     <script>
         $(".graphicWorkBtn").click(function() {
             let id = $(this).data('id');
@@ -836,6 +888,12 @@
             if (record) {
                 modal.find('[name=id]').val(record.id);
             }
+        });
+
+        $(".approveFeedbackBtn").click(function(){
+            let action = $(this).data('action');
+            let modal = $('#approveFeedbackModal');
+            modal.find('form').attr('action', action);
         });
 
         $(".deleteBtn").click(function(){

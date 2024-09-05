@@ -132,6 +132,63 @@
                         </div>
                     </div>
                 </div> <!-- end copy editing -->
+
+                <!-- Page Formatting -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><h4>Page Format</h4></div>
+                            <div class="panel-body">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>{{ trans_choice('site.manus', 2) }}</th>
+                                        <th>{{ trans_choice('site.feedbacks', 1) }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($pageFormats as $pageFormat)
+                                            <tr>
+                                                <td>
+                                                    <a href="{{ route('dropbox.download_file', trim($pageFormat->file)) }}">
+                                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                                    </a>&nbsp;
+                                                    <a href="{{ route('dropbox.shared_link', trim($pageFormat->file)) }}" 
+                                                        target="_blank">
+                                                        {{ basename($pageFormat->file) }}
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    @if($pageFormat->feedback)
+                                                        <span class="label label-default">{{ trans('site.pending') }}</span>
+                                                        <button class="btn btn-xs btn-success pageFormatFeedbackBtn"
+																data-target = "#pageFormatFeedbackModal"
+																data-toggle = "modal"
+																data-action="{{ route('g-admin.book-format.add-feedback', 
+                                                                $pageFormat->id) }}">
+															<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+														</button>
+                                                    @else
+                                                        <button class="btn btn-warning btn-xs d-block
+														pageFormatFeedbackBtn"
+																data-target="#pageFormatFeedbackModal"
+																data-toggle="modal"
+																data-name=""
+																data-action="{{ route('g-admin.book-format.add-feedback', 
+                                                                $pageFormat->id) }}">
+															+ {{ trans('site.add-feedback') }}
+														</button>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Page Formatting -->
             </div>
         </div>
     </div>
@@ -234,6 +291,32 @@
             </div>
         </div>
     </div>
+
+    <div id="pageFormatFeedbackModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Feedback <em></em></h4>
+                </div>
+                <div class="modal-body">
+                    <form  method="POST" action=""  enctype="multipart/form-data" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        <div class="form-group">
+                            <label name="manuscriptLabel">{{ trans_choice('site.feedbacks', 1) }}</label>
+                            <input type="file" class="form-control" required name="file"
+                                   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                       application/pdf, application/vnd.oasis.opendocument.text">
+                            {{ trans('site.docx-pdf-odt-text') }} <br>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('scripts')
@@ -266,5 +349,14 @@
             let form = modal.find('form');
             form.attr('action', action);
         })
+
+        $(".pageFormatFeedbackBtn").click(function() {
+            let action = $(this).data('action');
+            let modal = $("#pageFormatFeedbackModal");
+
+            let form = modal.find('form');
+            form.attr('action', action);
+        })
+        
     </script>
 @stop

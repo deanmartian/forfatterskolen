@@ -457,12 +457,28 @@ class ProjectController extends Controller
      */
     public function saveBookFormatting( $project_id, Request $request, ProjectService $projectService )
     {
-        $this->validate($request, ['file' => 'required|mimes:pdf']);
+        if (!$request->id) {
+            $this->validate($request, ['file' => 'required|mimes:pdf']);
+        } 
+        
         $request->merge(['project_id' => $project_id]);
         $projectService->saveBookFormatting($request);
 
         return redirect()->back()->with([
             'errors'                => AdminHelpers::createMessageBag('Book formatting saved successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    public function approveBookFormattingFeedback($id)
+    {
+        $bookFormatting = ProjectBookFormatting::find($id);
+        $bookFormatting->feedback_status = 'completed';
+        $bookFormatting->save();
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book formatting feedback completed successfully.'),
             'alert_type'            => 'success',
             'not-former-courses'    => true
         ]);
@@ -538,11 +554,12 @@ class ProjectController extends Controller
         $bookPictures = ProjectBookPicture::where('project_id', $project_id)->get();
         $bookFormattingList = ProjectBookFormatting::where('project_id', $project_id)->get();
         $indesigns = ProjectGraphicWork::indesigns()->where('project_id', $project_id)->get();
+        $designers = AdminHelpers::giutbokUsers();
 
         return view('backend.project.graphic-work', compact('project', 'layout', 'backRoute', 'saveGraphicRoute',
             'deleteGraphicRoute', 'covers', 'barCodes', 'rewriteScripts', 'trialPages', 'sampleBookPDFs',
             'saveBookPicturesRoute', 'bookPictures', 'deleteBookPicturesRoute', 'printReadyList',
-             'saveBookFormattingRoute', 'bookFormattingList', 'deleteBookFormattingRoute', 'indesigns'));
+             'saveBookFormattingRoute', 'bookFormattingList', 'deleteBookFormattingRoute', 'indesigns', 'designers'));
     }
 
     public function saveGraphicWork( $project_id, Request $request, ProjectService $projectService )

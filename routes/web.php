@@ -1195,6 +1195,8 @@ Route::group([
         Route::post('/project/{id}/book-pictures/save', 'ProjectController@saveBookPicture')->name('admin.project.save-picture');
         Route::delete('/project/book-pictures/{id}/delete', 'ProjectController@deleteBookPicture')->name('admin.project.delete-picture');
         Route::post('/project/{id}/book-formatting/save', 'ProjectController@saveBookFormatting')->name('admin.project.save-book-formatting');
+        Route::post('/project/book-formatting/{id}/approve-feedback', 'ProjectController@approveBookFormattingFeedback')
+        ->name('admin.project.book-formatting.approve-feedback');
         Route::delete('/project/book-formatting/{id}/delete', 'ProjectController@deleteBookFormatting')->name('admin.project.delete-book-formatting');
         Route::post('/project/{id}/add-other-service', 'ProjectController@addOtherService')->name('admin.project.add-other-service');
         Route::get('/project/{id}/graphic-work', 'ProjectController@graphicWork')->name('admin.project.graphic-work');

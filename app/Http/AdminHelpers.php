@@ -139,6 +139,14 @@ class AdminHelpers
             ->get();
     }
 
+    public static function giutbokUsers()
+    {
+        return \App\User::where('admin_with_giutbok_access', 1)
+            ->where('is_active', 1)
+            ->orderBy('id', 'desc')
+            ->get();
+    }
+
     public static function courseApplications($course_id)
     {
         $course = Course::find($course_id);
