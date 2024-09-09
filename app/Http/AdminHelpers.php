@@ -141,7 +141,10 @@ class AdminHelpers
 
     public static function giutbokUsers()
     {
-        return \App\User::where('admin_with_giutbok_access', 1)
+        return \App\User::where(function($query){
+            $query->whereIn('role', [4])
+                ->orWhere('admin_with_giutbok_access', 1);
+        })
             ->where('is_active', 1)
             ->orderBy('id', 'desc')
             ->get();
