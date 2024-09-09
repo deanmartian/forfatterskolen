@@ -298,8 +298,10 @@ class ProjectService
 
         switch ($request->type) {
             case 'cover':
-                $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'cover');
-                $data['description'] = $this->saveGraphicWorkFileOrImage($request, 'interior', null, true);
+                $destinationPathCover = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/cover/';
+                $data['value'] = $this->saveMultipleFileOrImageDropbox($destinationPathCover, 'cover');
+                //$data['value'] = $this->saveGraphicWorkFileOrImage($request, 'cover');
+                //$data['description'] = $this->saveGraphicWorkFileOrImage($request, 'interior', null, true);
                 $data['is_checked'] = $request->has('is_approved') && $request->is_approved ? 1 : 0;
                 break;
 

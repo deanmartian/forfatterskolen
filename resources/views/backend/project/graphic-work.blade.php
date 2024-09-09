@@ -31,17 +31,29 @@
                 @foreach($covers as $cover)
                     <tr>
                         <td>
-                            @if (strpos($cover->value, 'project-'))
-                                <a href="{{ route('dropbox.download_file', trim($cover->value)) }}">
-                                    <i class="fa fa-download" aria-hidden="true"></i>
-                                </a>&nbsp;
-                            @else
-                                <a href="{{ $cover->value }}" class="btn btn-success btn-xs" download>
-                                    <i class="fa fa-download"></i>
-                                </a>
-                            @endif
-
-                            {!! $cover->image !!}
+                            @php
+                                $coverFiles = explode(',', $cover->value);
+                            @endphp
+                            @foreach ($coverFiles as $coverFile)
+                                @if (strpos($coverFile, 'project-'))
+                                    <a href="{{ route('dropbox.download_file', trim($coverFile)) }}">
+                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                    </a>&nbsp;
+                                    <a href="{{ route('dropbox.shared_link', $coverFile) }}" target="_blank" 
+                                    style="margin-right: 5px">
+                                        {{ basename($coverFile) }}
+                                    </a>
+                                @else
+                                    @if ($coverFile)
+                                        <a href="{{ $coverFile }}" class="btn btn-success btn-xs" download>
+                                            <i class="fa fa-download"></i>
+                                        </a>
+                                        <a href="{{ asset($coverFile) }}" target="_blank" style="margin-right: 5px">
+                                            {{ basename($coverFile) }}
+                                        </a>
+                                    @endif
+                                @endif
+                            @endforeach
                         </td>
                         {{-- <td>
                             @if ($cover->interior)
@@ -508,7 +520,7 @@
                         <div class="cover-container">
                             <div class="form-group">
                                 <label>Cover</label>
-                                <input type="file" class="form-control" name="cover" accept="image/*">
+                                <input type="file" class="form-control" name="cover[]" accept="image/*" multiple>
                             </div>
                             {{-- <div class="form-group">
                                 <label>Description</label>
