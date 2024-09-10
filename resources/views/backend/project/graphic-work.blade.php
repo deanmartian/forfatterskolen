@@ -562,9 +562,23 @@
                             <input type="file" class="form-control" name="trial_page" accept="image/*">
                         </div>
 
-                        <div class="form-group print-ready-container">
-                            <label>File</label>
-                            <input type="file" class="form-control" name="print_ready" accept="application/pdf">
+                        <div class="print-ready-container">
+                            <div class="form-group">
+                                <label>File</label>
+                                <input type="file" class="form-control" name="print_ready" accept="application/pdf">
+                            </div>
+
+                            {{-- <div class="form-group">
+                                <label>Størrelse</label>
+                                <select class="form-control" name="format">
+                                    <option value="">Valgfri størrelse</option>
+                                        @foreach (AdminHelpers::projectFormats() as $format)
+                                            <option value="{{ $format['id'] }}">
+                                                {{ $format['option'] }}
+                                            </option>
+                                        @endforeach
+                                </select>
+                            </div> --}}
                         </div>
 
                         <div class="form-group sample-book-pdf-container">
@@ -575,7 +589,7 @@
                         <div class="description-container">
                             <div class="form-group">
                                 <label>Print Ready</label>
-                                <input type="file" class="form-control" name="print_ready" accept="application/pdf">
+                                <input type="file" class="form-control" name="cover_print_ready" accept="application/pdf">
                             </div>
                         </div>
 
