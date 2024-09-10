@@ -277,6 +277,7 @@
                 <thead>
                 <tr>
                     <th>File</th>
+                    <th>Format</th>
                     <th width="300"></th>
                 </tr>
                 </thead>
@@ -297,6 +298,9 @@
                                 @endif
                                 
                                 {!! $printReady->image !!}
+                            </td>
+                            <td>
+                                {{ $printReady->format ? AdminHelpers::projectFormats($printReady->format) : null }}
                             </td>
                             <td>
                                 <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
@@ -568,7 +572,7 @@
                                 <input type="file" class="form-control" name="print_ready" accept="application/pdf">
                             </div>
 
-                            {{-- <div class="form-group">
+                            <div class="form-group">
                                 <label>Størrelse</label>
                                 <select class="form-control" name="format">
                                     <option value="">Valgfri størrelse</option>
@@ -578,7 +582,7 @@
                                             </option>
                                         @endforeach
                                 </select>
-                            </div> --}}
+                            </div>
                         </div>
 
                         <div class="form-group sample-book-pdf-container">
@@ -857,6 +861,7 @@
             form.find('[name=type]').val(type);
             if (id) {
                 form.find('[name=id]').val(id);
+                form.find('[name=format]').val(record.format);
 
                 if (['cover', 'barcode'].includes(type)) {
                     form.find('[name=' + checkbox + ']').prop('checked', false).change();
