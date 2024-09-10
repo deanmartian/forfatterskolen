@@ -338,6 +338,11 @@ class ProjectService
                     $data['description'] = $this->saveGraphicWorkFileOrImage($request, 'interior', 'indesign/', true);
                 }                
                 break;
+
+            case 'description':
+                $data['type'] = 'cover';
+                $data['description'] = $this->saveGraphicWorkFileOrImage($request, 'print_ready', 'cover/', true);              
+                break;
         }
 
         if ($request->id) {

@@ -23,7 +23,7 @@
                 <thead>
                 <tr>
                     <th>Cover</th>
-                    {{-- <th width="500">Interior</th> --}}
+                    <th width="500">Print Ready</th>
                     <th width="300"></th>
                 </tr>
                 </thead>
@@ -55,14 +55,19 @@
                                 @endif
                             @endforeach
                         </td>
-                        {{-- <td>
-                            @if ($cover->interior)
+                        <td>
+                            @if ($cover->description)
                                 <a href="{{ route('dropbox.download_file', trim($cover->description)) }}">
                                     <i class="fa fa-download" aria-hidden="true"></i>
                                 </a>&nbsp;
-                                {!! $cover->interior !!}
+                                {!! basename($cover->description) !!}
+                            @else
+                                <button class="btn btn-success btn-xs graphicWorkBtn" data-toggle="modal" 
+                                    data-target="#graphicWorkModal" data-type="description" data-id="{{ $cover->id }}">
+                                    Add File
+                                </button>
                             @endif
-                        </td> --}}
+                        </td>
                         <td>                      
                             <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
                                     data-target="#graphicWorkModal"
@@ -567,6 +572,13 @@
                             <input type="file" class="form-control" name="sample_book_pdf" accept="application/pdf">
                         </div>
 
+                        <div class="description-container">
+                            <div class="form-group">
+                                <label>Print Ready</label>
+                                <input type="file" class="form-control" name="print_ready" accept="application/pdf">
+                            </div>
+                        </div>
+
                         <button type="submit" class="btn btn-success pull-right margin-top">
                             {{ trans('site.save') }}
                         </button>
@@ -779,6 +791,7 @@
             let trialPageContainer = $(".trial-page-container");
             let printReadyContainer = $(".print-ready-container");
             let sampleBookPdfContainer = $(".sample-book-pdf-container");
+            let descriptionContainer = $(".description-container");
 
             coverContainer.addClass('hide');
             barcodeContainer.addClass('hide');
@@ -786,6 +799,7 @@
             trialPageContainer.addClass('hide');
             printReadyContainer.addClass('hide');
             sampleBookPdfContainer.addClass('hide');
+            descriptionContainer.addClass('hide');
 
             switch (type) {
                 case 'cover':
@@ -814,9 +828,15 @@
                     modal.find('.modal-title').text('Sample Book/PDF');
                     sampleBookPdfContainer.removeClass('hide');
                     break;
+
                 case 'rewrite-script':
                     modal.find('.modal-title').text('Rewrite Script');
                     rewriteScriptContainer.removeClass('hide');
+                    break;
+
+                case 'description':
+                    modal.find('.modal-title').text('Print Ready');
+                    descriptionContainer.removeClass('hide');
                     break;
             }
 
