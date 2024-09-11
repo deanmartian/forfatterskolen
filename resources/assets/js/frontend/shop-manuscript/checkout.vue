@@ -634,7 +634,7 @@ import FileUpload from '../../components/FileUpload.vue';
 
                 //this.orderForm.totalDiscount = totalDiscount;
                 this.orderForm.price = price;
-                this.orderForm.additional = additional;
+                this.orderForm.additional = !this.hasPaidCourse ? additional : 0;
             },
 
             handleFileSelected(type, file) {
