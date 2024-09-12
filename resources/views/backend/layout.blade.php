@@ -76,7 +76,7 @@
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
         @if (!in_array(Route::currentRouteName(),['backend.dashboard', 'admin.learner.show',
              'admin.free-manuscript.index']))
-            <script src="https://cdn.tiny.cloud/1/gix9kunuk5tuvr4rqdkmwl7ixdzmy6oo4y7gxnmrmmenm94g/tinymce/5/tinymce.min.js"
+            <script src="https://cdn.tiny.cloud/1/na70700lc1cqnseqmwu2r5kqjeuddmdlnvw56fgw4lqp2q0c/tinymce/5/tinymce.min.js"
                 referrerpolicy="origin"></script>
         @endif
         <script>
@@ -145,7 +145,7 @@
                     button.addEventListener('click', function() {
                         if (typeof tinymce === 'undefined') {
                             var script = document.createElement('script');
-                            script.src = "https://cdn.tiny.cloud/1/gix9kunuk5tuvr4rqdkmwl7ixdzmy6oo4y7gxnmrmmenm94g/tinymce/5/tinymce.min.js";
+                            script.src = "https://cdn.tiny.cloud/1/na70700lc1cqnseqmwu2r5kqjeuddmdlnvw56fgw4lqp2q0c/tinymce/5/tinymce.min.js";
                             script.referrerPolicy = "origin";
                             script.onload = initTinyMCE;
                             document.body.appendChild(script);
