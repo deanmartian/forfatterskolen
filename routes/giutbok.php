@@ -33,6 +33,7 @@ Route::group([
         Route::get('/self-publishing', 'SelfPublishingController@index')->name('g-admin.self-publishing.index');
         Route::get('/self-publishing/{id}/learners', 'SelfPublishingController@learners')->name('g-admin.self-publishing.learners');
         Route::get('learner/{id}', 'LearnerController@show')->name('g-admin.learner.show');
+        Route::post('/project/whole-book/{id}', 'PageController@updateProjectWholeBook')->name('g-admin.project-whole-book.update');
 
         Route::get('/dropbox/shared-link/{path}', 'PageController@createSharedLink')
             ->where('path', '.*')

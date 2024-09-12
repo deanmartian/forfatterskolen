@@ -61,7 +61,8 @@
         <div class="margin-top">
             <div class="col-md-6">
                 <project-whole-book :current-project="{{ json_encode($project) }}" 
-                :whole-book-list="{{ json_encode($wholeBooks) }}"></project-whole-book>
+                :whole-book-list="{{ json_encode($wholeBooks) }}"
+                :designers="{{ json_encode(AdminHelpers::giutbokUsers()) }}"></project-whole-book>
 
                 <button type="button" class="btn btn-success addSelfPublishingBtn" data-toggle="modal"
                     data-target="#selfPublishingModal" data-action="{{ route($selfPublishingStoreRoute) }}">

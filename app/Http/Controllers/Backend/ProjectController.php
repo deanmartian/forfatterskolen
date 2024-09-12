@@ -16,6 +16,7 @@ use App\Http\Requests\ProjectActivityRequest;
 use App\Http\Requests\ProjectBookRequest;
 use App\Http\Requests\ProjectCopyEditingRequest;
 use App\Http\Requests\ProjectRequest;
+use App\Jobs\AddMailToQueueJob;
 use App\Jobs\UpdateDropboxLink;
 use App\MarketingPlan;
 use App\PowerOfficeInvoice;
@@ -92,7 +93,7 @@ class ProjectController extends Controller
         $correctionFeedbackTemplate = AdminHelpers::emailTemplate('Correction Feedback');
         $copyEditingFeedbackTemplate = AdminHelpers::emailTemplate('Copy Editing Feedback');
         $bookPictures = ProjectBookPicture::where('project_id', $id)->get();
-        $wholeBooks = ProjectWholeBook::where('project_id', $id)->get();
+        $wholeBooks = ProjectWholeBook::with('designer')->where('project_id', $id)->get();
         $bookFormattingList = ProjectBookFormatting::where('project_id', $id)->get();
         $tasks = ProjectTask::with('editor')->where('project_id', $id)->where('status', 0)->get();
         $bookCritiques = ProjectBookCritique::where('project_id', $id)->get();
@@ -299,6 +300,14 @@ class ProjectController extends Controller
             $this->validate($request, ['book_content' => 'required']);
         }
 
+        if (filter_var($request->send_to_designer, FILTER_VALIDATE_BOOLEAN)) {
+            $this->validate($request, [
+                'designer_id' => 'required',
+                'width' => 'required',
+                'height' => 'required'
+            ]);
+        }
+
         $wholeBook = $request->id ? ProjectWholeBook::find($request->id) : new ProjectWholeBook();
         if ($request->has('is_book_critique')) {
             $wholeBook = $request->id ? ProjectBookCritique::find($request->id) : new ProjectBookCritique();
@@ -308,6 +317,32 @@ class ProjectController extends Controller
         $wholeBook->book_content = $request->book_content;
         $wholeBook->description = $request->description;
         $wholeBook->is_file = filter_var($request->is_file, FILTER_VALIDATE_BOOLEAN);
+        
+        if (filter_var($request->send_to_designer, FILTER_VALIDATE_BOOLEAN)) {
+            $wholeBook->designer_id = $request->designer_id;
+            $wholeBook->width = $request->width;
+            $wholeBook->height = $request->height;
+
+            $emailTemplate = AdminHelpers::emailTemplate('Graphic Designer Notification');
+            $user = User::find($request->designer_id);
+            $to = $user->email;
+
+            $loginLink = route('giutbok.login.emailRedirect', [encrypt($user->email), encrypt(route('g-admin.dashboard'))]);
+            $searchString = [
+                ':login_link',
+            ];
+
+            $replaceString = [
+                "<a href='$loginLink'>Klikk her for å logge inn</a>"
+            ];
+
+            $emailContent = str_replace($searchString, $replaceString, $emailTemplate->email_content);
+        
+            dispatch(new AddMailToQueueJob($to, $emailTemplate->subject, $emailContent,
+                    $emailTemplate->from_email, null, null,
+                    'admin', $user->id));
+        }
+
         $wholeBook->save();
 
         if ($wholeBook->is_file) {
@@ -316,6 +351,13 @@ class ProjectController extends Controller
 
         return $wholeBook;
 
+    }
+
+    public function saveWholeBookStatus($id, Request $request)
+    {
+        $book = ProjectWholeBook::find($id);
+        $book->status = $request->status;
+        $book->save();
     }
 
     /**
@@ -458,7 +500,7 @@ class ProjectController extends Controller
     public function saveBookFormatting( $project_id, Request $request, ProjectService $projectService )
     {
         if (!$request->id) {
-            $this->validate($request, ['file' => 'required|mimes:pdf']);
+            $this->validate($request, ['file' => 'required|mimes:doc,docx']);
         } 
         
         $request->merge(['project_id' => $project_id]);

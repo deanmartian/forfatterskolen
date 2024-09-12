@@ -11,11 +11,13 @@
                     <th>Book</th>
                     <th>Description</th>
                     <th>Date Uploaded</th>
-                    <th width="300"></th>
+                    <th>Designer</th>
+                    <th width="150">Details</th>
+                    <th width="150"></th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="wholeBook in wholeBooks" :key="wholeBook.id">
+                <tr v-for="(wholeBook, index) in wholeBooks" :key="wholeBook.id">
                     <td>
                         <template v-if="wholeBook.dropbox_link">
                             <a :href="wholeBook.dropbox_link" target="_blank">{{ formattedContent(wholeBook) }}</a>
@@ -31,6 +33,23 @@
                         {{ wholeBook.date_uploaded }}
                     </td>
                     <td>
+                        {{ wholeBook.designer ? wholeBook.designer.full_name : '' }}
+                    </td>
+                    <td>
+                        <template v-if="wholeBook.width">
+                            <b>Width:</b> {{ wholeBook.width }} (mm) <br>
+                            <b>Height:</b> {{ wholeBook.height }} (mm) <br>
+
+                            <template v-if="wholeBook.page_count">
+                                <b>Page Count:</b> {{ wholeBook.page_count }} <br>
+                                <a href="#" v-if="wholeBook.designer_description" 
+                                    @click="showDescriptionModal(wholeBook.designer_description)">
+                                    Description
+                                </a>
+                            </template>
+                        </template>
+                    </td>
+                    <td>
                         <a class="btn btn-xs btn-success"
                             :href="'/project/' + project.id + '/whole-book/' + wholeBook.id + '/download'">
                             <i class="fa fa-download"></i>
@@ -43,6 +62,12 @@
                         <button class="btn btn-xs btn-danger" @click="showDeleteBookFormModal(wholeBook)">
                             <i class="fa fa-trash"></i>
                         </button>
+
+                        <toggle-button :color="'#337ab7'"
+                        class="mt-3"
+                               :labels="{checked: 'Completed', unchecked: 'Pending'}"
+                               v-model="wholeBookStatusBoolean[index]"
+                               :width="110" :height="25" :font-size="14" @change="updateBookStatus(wholeBook, index)"/>
                     </td>
                 </tr>
                 </tbody>
@@ -87,6 +112,52 @@
                 <textarea name="description" cols="30" rows="10" class="form-control" v-model="wholeBookForm.description"></textarea>
             </div>
 
+            <div class="form-group">
+                <label>Send Book to Graphic Designer</label>
+                <toggle-button :color="'#337ab7'"
+                               :labels="{checked: 'Yes', unchecked: 'No'}"
+                               v-model="wholeBookForm.send_to_designer"
+                               :width="70" :height="30" :font-size="16"/>
+            </div>
+
+            <div v-if="wholeBookForm.send_to_designer">
+                <div class="form-group">
+                    <label>
+                        Graphic Designer
+                    </label>
+                    <select name="designer_id" class="form-control" v-model="wholeBookForm.designer_id">
+                        <option value="" selected disabled>- Select Designer -</option>
+                        <option :value="designer.id" v-for="designer in designers" :key="'designer' + designer.id">
+                            {{ designer.full_name }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="width">Width (mm)</label>
+                        <input 
+                            type="number" 
+                            id="width" 
+                            v-model="wholeBookForm.width"
+                            class="form-control" 
+                            placeholder="Width in mm">
+                    </div>
+            
+                    <div class="form-group col-md-6">
+                        <label for="height">Height (mm)</label>
+                        <input 
+                            type="number" 
+                            id="height" 
+                            v-model="wholeBookForm.height"
+                            class="form-control" 
+                            placeholder="Height in mm">
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+            </div>
+
             <div slot="modal-footer">
                 <button class="btn btn-sm btn-primary" @click="saveWholeBookForm()" :disabled="isLoading">
                     <i class="fa fa-spinner fa-pulse" v-if="isLoading"></i> Save
@@ -112,6 +183,17 @@
                 </button>
             </div>
         </b-modal>
+
+        <b-modal
+                ref="descriptionModal"
+                title="Description"
+                centered
+                hide-footer
+        >
+
+            <div v-html="designerDescription">
+            </div>
+        </b-modal>
     </div>
 </template>
 
@@ -119,7 +201,7 @@
 
 
 export default {
-     props: ['current-project', 'whole-book-list'],
+     props: ['current-project', 'whole-book-list', 'designers'],
     data() {
         return {
             project: this.currentProject,
@@ -130,10 +212,20 @@ export default {
                 book_content: '',
                 book_file: [],
                 description: '',
-                is_file: true
+                is_file: true,
+                send_to_designer: false,
+                designer_id: null,
+                width: null,
+                height: null
             },
+            designerDescription: null,
+            wholeBookStatusBoolean: [], // Will hold boolean statuses
             isLoading: false
         }
+    },
+    created() {
+        // Initialize the boolean array based on status
+        this.wholeBookStatusBoolean = this.wholeBooks.map(book => book.status === 'completed');
     },
     methods: {
         showWholeBookFormModal(data = null) {
@@ -144,7 +236,11 @@ export default {
                     id: data.id,
                     is_file: !!data.is_file,
                     book_content: data.book_content,
-                    description: data.description
+                    description: data.description,
+                    send_to_designer: data.designer_id ? true : false,
+                    designer_id: data.designer_id,
+                    width: data.width,
+                    height: data.height,
                 };
             }
 
@@ -248,8 +344,30 @@ export default {
                     message : 'Record deleted'
                 });
             });
+        },
+
+        showDescriptionModal(description) {
+            this.designerDescription = description;
+            this.$refs.descriptionModal.show();
+        },
+
+        updateBookStatus(book, index) {
+            const updatedStatus = this.wholeBookStatusBoolean[index] ? 'completed' : 'pending';
+            this.wholeBooks[index].status = updatedStatus;
+            
+            axios.post('/project/whole-book/' + book.id + '/update-status', {status: updatedStatus}).then(response => {
+                this.$toasted.global.showSuccessMsg({
+                    message : 'Status Updated'
+                });
+            });
         }
     }
 
 }
 </script>
+
+<style scoped>
+.mt-3 {
+    margin-top: 1rem;
+}
+</style>

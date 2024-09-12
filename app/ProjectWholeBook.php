@@ -8,8 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class ProjectWholeBook extends Model
 {
 
-    protected $fillable = ['project_id', 'book_content', 'description', 'dropbox_link', 'is_file'];
+    protected $fillable = ['project_id', 'book_content', 'description', 'dropbox_link', 'is_file', 'designer_id',
+        'page_count', 'width', 'height', 'designer_description'];
     protected $appends = ['file_link', 'filename', 'date_uploaded'];
+
+    public function designer()
+    {
+        return $this->belongsTo('\App\User', 'designer_id', 'id');
+    }
 
     public function getFilenameAttribute()
     {
@@ -22,12 +28,16 @@ class ProjectWholeBook extends Model
         $filename = $this->attributes['book_content'];
 
         if ($this->attributes['is_file']) {
-            $extension = explode('.', basename($filename));
-            if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
-                $fileLink = '<a href="/js/ViewerJS/#../..'.$filename.'">'.basename($filename).'</a>';
-            } elseif( end($extension) == 'docx' || end($extension) == 'doc' ) {
-                $fileLink = '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').$filename.'">'
-                    .basename($filename).'</a>';
+            if (strpos($filename, 'project-')) {
+                $fileLink = '<a href="'.route('dropbox.shared_link', $filename).'" target="_blank">' .basename($filename).'</a>';
+            } else {
+                $extension = explode('.', basename($filename));
+                if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
+                    $fileLink = '<a href="/js/ViewerJS/#../..'.$filename.'">'.basename($filename).'</a>';
+                } elseif( end($extension) == 'docx' || end($extension) == 'doc' ) {
+                    $fileLink = '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').$filename.'">'
+                        .basename($filename).'</a>';
+                }
             }
         }
 

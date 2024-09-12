@@ -5,11 +5,13 @@ use AdminHelpers;
 use App\Http\Controllers\Controller;
 use App\Project;
 use App\ProjectBookFormatting;
+use App\ProjectWholeBook;
 use App\SelfPublishing;
 use App\SelfPublishingFeedback;
 use App\Services\ProjectService;
 use App\User;
 use Illuminate\Http\Request;
+use Log;
 use Spatie\Dropbox\Client as DropboxClient;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -28,8 +30,10 @@ class PageController extends Controller
                     ->orWhereNull('feedback_status');
             })
             ->get();
-        
-        return view('giutbok.dashboard', compact('selfPublishingList', 'learners', 'projects', 'pageFormats'));
+        $projectWholeBooks = ProjectWholeBook::where('designer_id', auth()->id())
+            ->where('status', 'pending')->get();
+
+        return view('giutbok.dashboard', compact('selfPublishingList', 'learners', 'projects', 'pageFormats', 'projectWholeBooks'));
     }
 
     public function addBookFormatFeedback($id, Request $request, ProjectService $projectService)
@@ -38,6 +42,18 @@ class PageController extends Controller
         $projectService->saveBookFormatFeedback($request);
         return redirect()->back()->with([
             'errors'                => AdminHelpers::createMessageBag('Book format feedback saved successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    public function updateProjectWholeBook($id, Request $request)
+    {
+        $wholeBook = ProjectWholeBook::find($id);
+
+        $wholeBook->update($request->all());
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Record saved successfully.'),
             'alert_type'            => 'success',
             'not-former-courses'    => true
         ]);

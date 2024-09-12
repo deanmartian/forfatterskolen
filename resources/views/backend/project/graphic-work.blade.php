@@ -742,7 +742,7 @@
                         <div class="form-group">
                             <label>Interior</label>
                             <input type="file" name="file" class="form-control"
-                                   accept="application/pdf">
+                            accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
                         </div>
 
                         <div class="form-group">

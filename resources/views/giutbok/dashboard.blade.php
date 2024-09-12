@@ -189,6 +189,64 @@
                     </div>
                 </div>
                 <!-- End Page Formatting -->
+
+                <!-- Project Book -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading"><h4>Project Book</h4></div>
+                            <div class="panel-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Book</th>
+                                            <th>Description</th>
+                                            <th>Width (mm)</th>
+                                            <th>Height (mm)</th>
+                                            <th>Page Count</th>
+                                            <th>Designer Description</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($projectWholeBooks as $projectWholeBook)
+                                            <tr>
+                                                <td>
+                                                    {!! $projectWholeBook->file_link !!}
+                                                </td>
+                                                <td>
+                                                    {{ $projectWholeBook->description }}
+                                                </td>
+                                                <td>
+                                                    {{ $projectWholeBook->width }}
+                                                </td>
+                                                <td>
+                                                    {{ $projectWholeBook->height }}
+                                                </td>
+                                                <td>
+                                                    {{ $projectWholeBook->page_count }}
+                                                </td>
+                                                <td>
+                                                    {{ $projectWholeBook->designer_description }}
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-primary btn-xs editWholeBookBtn" data-toggle="modal" 
+                                                        data-target="#editWholeBookModal"
+                                                        data-action="{{ route('g-admin.project-whole-book.update', 
+                                                        $projectWholeBook->id) }}"
+                                                        data-record="{{ json_encode($projectWholeBook) }}">
+                                                        <i class="fa fa-edit"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Project Book -->
             </div>
         </div>
     </div>
@@ -317,6 +375,40 @@
             </div>
         </div>
     </div>
+
+    <div id="editWholeBookModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Project Whole Book <em></em></h4>
+                </div>
+                <div class="modal-body">
+                    <form  method="POST" action=""  enctype="multipart/form-data" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        <div class="form-group">
+                            <label for="pageCount">How many pages?</label>
+                            <input 
+                              type="number" 
+                              id="pageCount" 
+                              name="page_count"
+                              class="form-control" 
+                              placeholder="Enter number of pages"
+                              required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description (Optional)</label>
+                            <textarea name="designer_description" class="form-control" cols="30" rows="10"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary pull-right margin-top">{{ trans('site.submit') }}</button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('scripts')
@@ -356,7 +448,20 @@
 
             let form = modal.find('form');
             form.attr('action', action);
-        })
+        });
+
+        $(".editWholeBookBtn").click(function() {
+            let modal = $("#editWholeBookModal");
+            let action = $(this).data('action');
+            let record = $(this).data('record');
+
+            let form = modal.find('form');
+            form.attr('action', action);
+            form.find("[name=page_count]").val(record.page_count);
+            form.find("[name=width]").val(record.width);
+            form.find("[name=height]").val(record.height);
+            form.find("[name=designer_description]").text(record.designer_description);
+        });
         
     </script>
 @stop
