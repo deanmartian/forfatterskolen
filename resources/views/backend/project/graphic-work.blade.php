@@ -532,10 +532,10 @@
                                 <input type="file" class="form-control" name="cover[]" accept="image/*" multiple>
                             </div>
                             
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label>Description</label>
                                 <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
-                            </div>
+                            </div> --}}
 
                             {{-- <div class="form-group">
                                 <label>Approved Final</label> <br>
