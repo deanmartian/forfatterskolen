@@ -651,7 +651,7 @@ class ProjectController extends Controller
         $projectService->saveGraphicWorks($request);
 
         return redirect()->back()
-            ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace('-',' ', $request->type)) . ' saved successfully.'),
+            ->with(['errors' => AdminHelpers::createMessageBag(ucfirst(str_replace(['-', '_'],' ', $request->type)) . ' saved successfully.'),
                 'alert_type' => 'success']);
     }
 

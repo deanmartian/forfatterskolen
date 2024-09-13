@@ -339,9 +339,9 @@ class ProjectService
                 }                
                 break;
 
-            case 'description':
+            case 'cover-print-ready':
                 $data['type'] = 'cover';
-                $data['description'] = $this->saveGraphicWorkFileOrImage($request, 'cover_print_ready', 'cover/', true);              
+                $data['print_ready'] = $this->saveGraphicWorkFileOrImage($request, 'cover_print_ready', 'cover/', true);              
                 break;
         }
 

@@ -56,14 +56,14 @@
                             @endforeach
                         </td>
                         <td>
-                            @if ($cover->description)
-                                <a href="{{ route('dropbox.download_file', trim($cover->description)) }}">
+                            @if ($cover->print_ready)
+                                <a href="{{ route('dropbox.download_file', trim($cover->print_ready)) }}">
                                     <i class="fa fa-download" aria-hidden="true"></i>
                                 </a>&nbsp;
-                                {!! basename($cover->description) !!}
+                                {!! basename($cover->print_ready) !!}
                             @else
                                 <button class="btn btn-success btn-xs graphicWorkBtn" data-toggle="modal" 
-                                    data-target="#graphicWorkModal" data-type="description" data-id="{{ $cover->id }}">
+                                    data-target="#graphicWorkModal" data-type="cover-print-ready" data-id="{{ $cover->id }}">
                                     Add File
                                 </button>
                             @endif
@@ -531,12 +531,13 @@
                                 <label>Cover</label>
                                 <input type="file" class="form-control" name="cover[]" accept="image/*" multiple>
                             </div>
-                            {{-- <div class="form-group">
+                            
+                            <div class="form-group">
                                 <label>Description</label>
                                 <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
                             </div>
 
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label>Approved Final</label> <br>
                                 <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
                                        name="is_approved" data-width="84">
@@ -852,7 +853,7 @@
                     rewriteScriptContainer.removeClass('hide');
                     break;
 
-                case 'description':
+                case 'cover-print-ready':
                     modal.find('.modal-title').text('Print Ready');
                     descriptionContainer.removeClass('hide');
                     break;
