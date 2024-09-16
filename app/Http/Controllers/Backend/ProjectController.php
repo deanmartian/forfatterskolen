@@ -597,11 +597,12 @@ class ProjectController extends Controller
         $bookFormattingList = ProjectBookFormatting::where('project_id', $project_id)->get();
         $indesigns = ProjectGraphicWork::indesigns()->where('project_id', $project_id)->get();
         $designers = AdminHelpers::giutbokUsers();
+        $isbns = ProjectRegistration::isbns()->where('project_id', $project_id)->get();
 
         return view('backend.project.graphic-work', compact('project', 'layout', 'backRoute', 'saveGraphicRoute',
             'deleteGraphicRoute', 'covers', 'barCodes', 'rewriteScripts', 'trialPages', 'sampleBookPDFs',
             'saveBookPicturesRoute', 'bookPictures', 'deleteBookPicturesRoute', 'printReadyList',
-             'saveBookFormattingRoute', 'bookFormattingList', 'deleteBookFormattingRoute', 'indesigns', 'designers'));
+             'saveBookFormattingRoute', 'bookFormattingList', 'deleteBookFormattingRoute', 'indesigns', 'designers', 'isbns'));
     }
 
     public function saveGraphicWork( $project_id, Request $request, ProjectService $projectService )
@@ -614,7 +615,12 @@ class ProjectController extends Controller
         if (!$request->id){
             switch ($request->type) {
                 case 'cover':
-                    $this->validate($request, ['cover.*' => 'required|mimes:jpeg,jpg,png,gif']);
+                    $this->validate($request, [
+                        'cover.*' => 'required|mimes:jpeg,jpg,png,gif',
+                        'description' => 'required',
+                        'isbn_id' => 'required',
+                        'cover_format' => 'required'
+                    ]);
                     break;
 
                 /*case 'barcode':

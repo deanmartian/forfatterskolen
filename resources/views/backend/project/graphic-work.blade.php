@@ -532,10 +532,62 @@
                                 <input type="file" class="form-control" name="cover[]" accept="image/*" multiple>
                             </div>
                             
-                            {{-- <div class="form-group">
+                            <div class="form-group">
                                 <label>Description</label>
                                 <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Størrelse</label>
+                                <select class="form-control" name="cover_format">
+                                    <option value="">Valgfri størrelse</option>
+                                        @foreach (AdminHelpers::projectFormats() as $format)
+                                            <option value="{{ $format['id'] }}">
+                                                {{ $format['option'] }}
+                                            </option>
+                                        @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>ISBN</label>
+                                <select class="form-control" name="isbn_id" required>
+                                    <option value="" disabled selected>- Select ISBN -</option>
+                                    @foreach ($isbns as $isbn)
+                                        <option value="{{ $isbn->id }}">
+                                            {{ $isbn->value }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            {{-- <div class="form-group">
+                                <label>Backside Text Type</label> <br>
+                                
                             </div> --}}
+
+                            <div class="form-group">
+                                <label>Backside Text (optional)</label> <br>
+                                <input type="checkbox" data-toggle="toggle" data-on="Text" data-off="Document"
+                                       name="backside_type" data-width="100" class="backsideToggle" checked
+                                       >
+
+                                <textarea name="backside_text" cols="30" rows="3" class="form-control backside-text"
+                                style="margin-top: 10px"></textarea>
+                                <input type="file" name="backside_file" class="form-control backside-file"
+                            accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document" 
+                            style="display: none; margin-top: 10px">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Backside Image (optional)</label>
+                                <input type="file" class="form-control" name="backside_image" accept="image/*">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Instruction (for graphic designer)</label>
+                                <textarea name="instruction" cols="30" rows="10" class="form-control"></textarea>
+                            </div>
 
                             {{-- <div class="form-group">
                                 <label>Approved Final</label> <br>
@@ -869,6 +921,21 @@
                     if (record.is_checked) {
                         form.find('[name=' + checkbox + ']').prop('checked', true).change();
                     }
+
+                    if (type == 'cover') {
+                        form.find("[name=description]").val(record.description);
+                        form.find("[name=cover_format]").val(record.format);
+                        form.find("[name=isbn_id]").val(record.isbn_id);
+                        form.find("[name=instruction]").val(record.instruction);
+                        
+                        if (record.backside_type == 'text') {
+                            form.find("[name=backside_text]").val(record.backside_text);
+                            $(".backsideToggle").prop("checked", true).change();
+                        } else {
+                            form.find("[name=backside_text]").val("");
+                            $(".backsideToggle").prop("checked", false).change();
+                        }
+                    }
                 }
 
             }
@@ -952,6 +1019,16 @@
             let action = $(this).data('action');
             let modal = $('#deleteModal');
             modal.find('form').attr('action', action);
+        });
+
+        $(".backsideToggle").change(function() {
+            if ($(this).prop('checked')) {
+                $(".backside-text").show();
+                $(".backside-file").hide();
+            } else {
+                $(".backside-text").hide();
+                $(".backside-file").show();
+            }
         });
     </script>
 @stop

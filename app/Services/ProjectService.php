@@ -299,10 +299,22 @@ class ProjectService
         switch ($request->type) {
             case 'cover':
                 $destinationPathCover = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/cover/';
-                $data['value'] = $this->saveMultipleFileOrImageDropbox($destinationPathCover, 'cover');
+                if (\request()->hasFile('cover')) {
+                    $data['value'] = $this->saveMultipleFileOrImageDropbox($destinationPathCover, 'cover');
+                }
                 //$data['value'] = $this->saveGraphicWorkFileOrImage($request, 'cover');
                 //$data['description'] = $this->saveGraphicWorkFileOrImage($request, 'interior', null, true);
                 $data['is_checked'] = $request->has('is_approved') && $request->is_approved ? 1 : 0;
+                $data['format'] = $request->cover_format;
+                if (\request()->hasFile('backside_image')) {
+                    $data['backside_image'] = $this->saveGraphicWorkFileOrImage($request, 'backside_image', 'cover/');
+                }
+
+                if (!\request()->has('backside_type')) {
+                    if (\request()->hasFile('backside_file')) {
+                        $data['backside_text'] = $this->saveGraphicWorkFileOrImage($request, 'backside_file', 'cover/');
+                    }
+                }
                 break;
 
             case 'barcode':

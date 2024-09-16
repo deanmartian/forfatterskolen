@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class ProjectGraphicWork extends Model
 {
 
-    protected $fillable = ['project_id', 'type', 'value', 'description', 'print_ready', 'format', 'date', 'is_checked'];
-    protected $appends = ['image', 'file_link', 'interior'];
+    protected $fillable = ['project_id', 'type', 'value', 'description', 'print_ready', 'format', 'isbn_id',
+        'backside_text', 'backside_image', 'instruction', 'date', 'is_checked'];
+    protected $appends = ['image', 'file_link', 'interior', 'backside_type'];
 
     /*protected static function boot() {
         parent::boot();
@@ -102,5 +103,14 @@ class ProjectGraphicWork extends Model
         }
 
         return $fileLink;
+    }
+
+    public function getBacksideTypeAttribute()
+    {
+        if (strpos($this->attributes['backside_text'], 'project-')) {
+            return "file";
+        }
+
+        return "text";
     }
 }
