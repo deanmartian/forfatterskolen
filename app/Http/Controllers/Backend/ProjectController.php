@@ -672,6 +672,17 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
+    public function cover($project_id, $cover_id)
+    {
+        $project = Project::find($project_id);
+        $cover = ProjectGraphicWork::find($cover_id);
+        $isbns = ProjectRegistration::isbns()->where('project_id', $project_id)->get();
+
+        $saveGraphicRoute = 'admin.project.save-graphic-work';
+
+        return view('backend.project.cover', compact('project', 'cover', 'isbns', 'saveGraphicRoute'));
+    }
+
     public function registration( $project_id )
     {
         $project = Project::find($project_id);

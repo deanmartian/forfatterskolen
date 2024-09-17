@@ -68,7 +68,11 @@
                                 </button>
                             @endif
                         </td>
-                        <td>                      
+                        <td>
+                            <a href="{{ route('admin.project.cover.show', [$cover->project_id, $cover->id]) }}" 
+                                class="btn btn-info btn-xs">
+                                <i class="fa fa-eye"></i>
+                            </a>
                             <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
                                     data-target="#graphicWorkModal"
                                     data-type="cover" data-id="{{ $cover->id }}"

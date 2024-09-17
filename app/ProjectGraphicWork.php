@@ -57,6 +57,11 @@ class ProjectGraphicWork extends Model
         $query->where('type', 'indesign');
     }
 
+    public function isbn()
+    {
+        return $this->hasOne('\App\ProjectRegistration', 'id', 'isbn_id');
+    }
+
     public function getImageAttribute()
     {
         $filename = $this->attributes['value'];
