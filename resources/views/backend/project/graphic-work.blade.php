@@ -560,7 +560,7 @@
 
                             <div class="form-group">
                                 <label>ISBN</label>
-                                <select class="form-control" name="isbn_id" required>
+                                <select class="form-control" name="isbn_id">
                                     <option value="" disabled selected>- Select ISBN -</option>
                                     @foreach ($isbns as $isbn)
                                         <option value="{{ $isbn->id }}">
