@@ -143,6 +143,10 @@
                                     <thead>
                                     <tr>
                                         <th>{{ trans_choice('site.manus', 2) }}</th>
+                                        <th>Corporate Page</th>
+                                        <th>Format</th>
+                                        <th>Format Image</th>
+                                        <th>Description</th>
                                         <th>{{ trans_choice('site.feedbacks', 1) }}</th>
                                     </tr>
                                     </thead>
@@ -150,13 +154,27 @@
                                         @foreach ($pageFormats as $pageFormat)
                                             <tr>
                                                 <td>
-                                                    <a href="{{ route('dropbox.download_file', trim($pageFormat->file)) }}">
+                                                    {{-- <a href="{{ route('dropbox.download_file', trim($pageFormat->file)) }}">
                                                         <i class="fa fa-download" aria-hidden="true"></i>
                                                     </a>&nbsp;
                                                     <a href="{{ route('dropbox.shared_link', trim($pageFormat->file)) }}" 
                                                         target="_blank">
                                                         {{ basename($pageFormat->file) }}
-                                                    </a>
+                                                    </a> --}}
+                                                    {!! $pageFormat->file_link !!}
+                                                </td>
+                                                <td>
+                                                    {!! $pageFormat->corporate_page_link !!}
+                                                </td>
+                                                <td>
+                                                    {{ $pageFormat->format 
+                                                        ? AdminHelpers::projectFormats($pageFormat->format) : null }}
+                                                </td>
+                                                <td>
+                                                    {!! $pageFormat->format_image_link !!}
+                                                </td>
+                                                <td>
+                                                    {!! $pageFormat->description !!}
                                                 </td>
                                                 <td>
                                                     @if($pageFormat->feedback)

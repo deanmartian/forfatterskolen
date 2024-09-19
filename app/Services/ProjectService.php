@@ -133,20 +133,37 @@ class ProjectService
     {
 
         $filePath = NULL;
+        $corporatePage = NULL;
+        $formatImage = NULL;
 
         if ($request->hasFile('file')) :
             //$destinationPath = 'storage/project-book-formatting'; // upload path
 
             //AdminHelpers::createDirectory($destinationPath);
             $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/book-formatting';
-            $filePath = $this->saveFileOrImageDropbox($destinationPath, 'file');
+            $filePath = $this->saveMultipleFileOrImageDropbox($destinationPath, 'file');
         endif;
 
-        if ($request->id) {
+        if ($request->hasFile('corporate_page')) {
+            $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id 
+            . '/graphic-work/book-formatting/corporate_page';
+            $corporatePage = $this->saveFileOrImageDropbox($destinationPath, 'corporate_page');
+        }
 
+        if ($request->format && $request->hasFile('format_image')) {
+            $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id 
+                . '/graphic-work/book-formatting/format_image';
+            $formatImage = $this->saveFileOrImageDropbox($destinationPath, 'format_image');
+        }
+
+        if ($request->id) {
             $bookPicture = ProjectBookFormatting::find($request->id);
             $bookPicture->file = $filePath ?? $bookPicture->file;
+            $bookPicture->corporate_page = $corporatePage ?? $bookPicture->corporate_page;
             $bookPicture->designer_id = $request->designer_id ?? $bookPicture->designer_id;
+            $bookPicture->format = $request->format ?? $bookPicture->format;
+            $bookPicture->format_image = $formatImage ?? $bookPicture->format_image;
+            $bookPicture->description = $request->description ?? $bookPicture->description;
             $bookPicture->save();
 
         } else {
@@ -154,7 +171,11 @@ class ProjectService
             $bookPicture = ProjectBookFormatting::create([
                 'project_id' => $request->project_id,
                 'file' => $filePath,
-                'designer_id' => $request->has('designer_id') ? $request->designer_id : NULL
+                'corporate_page' => $corporatePage,
+                'designer_id' => $request->has('designer_id') ? $request->designer_id : NULL,
+                'format' => $request->format,
+                'format_image' => $formatImage,
+                'description' => $request->description,
             ]);
 
         }
@@ -302,12 +323,14 @@ class ProjectService
                 if (\request()->hasFile('cover')) {
                     $data['value'] = $this->saveMultipleFileOrImageDropbox($destinationPathCover, 'cover');
                 }
+                
                 //$data['value'] = $this->saveGraphicWorkFileOrImage($request, 'cover');
                 //$data['description'] = $this->saveGraphicWorkFileOrImage($request, 'interior', null, true);
                 $data['is_checked'] = $request->has('is_approved') && $request->is_approved ? 1 : 0;
                 $data['format'] = $request->cover_format;
                 if (\request()->hasFile('backside_image')) {
-                    $data['backside_image'] = $this->saveGraphicWorkFileOrImage($request, 'backside_image', 'cover/');
+                    $destinationPathCover = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/cover/backside_image/';
+                    $data['backside_image'] = $this->saveMultipleFileOrImageDropbox($destinationPathCover, 'backside_image');
                 }
 
                 if (!\request()->has('backside_type')) {

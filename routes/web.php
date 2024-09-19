@@ -1204,6 +1204,7 @@ Route::group([
         Route::post('/project/{id}/graphic-work/save', 'ProjectController@saveGraphicWork')->name('admin.project.save-graphic-work');
         Route::delete('/project/{id}/graphic-work/{graphic_work_id}/delete', 'ProjectController@deleteGraphicWork')->name('admin.project.delete-graphic-work');
         Route::get('/project/{id}/cover/{cover_id}', 'ProjectController@cover')->name('admin.project.cover.show');
+        Route::get('/project/{id}/book-format/{format_id}', 'ProjectController@bookFormat')->name('admin.project.book-format.show');
         Route::get('/project/{id}/registration', 'ProjectController@registration')->name('admin.project.registration');
         Route::post('/project/{id}/registration/save', 'ProjectController@saveRegistration')->name('admin.project.save-registration');
         Route::delete('/project/{id}/registration/{registration_id}/delete', 'ProjectController@deleteRegistration')->name('admin.project.delete-registration');

@@ -160,6 +160,8 @@ Route::group([
         Route::delete('/project/{id}/invoice/{invoice_id}/delete', 'ProjectController@deleteInvoice')->name('g-admin.project.invoice.delete');
         Route::post('/project/{id}/manual-invoice/save', 'ProjectController@saveManualInvoice')->name('g-admin.project.manual-invoice.save');
         Route::delete('/project/{id}/manual-invoice/{invoice_id}/delete', 'ProjectController@deleteManualInvoice')->name('g-admin.project.manual-invoice.delete');
+        Route::get('/project/{id}/storage', 'ProjectController@storage')->name('g-admin.project.storage');
+        Route::post('/project/{id}/storage', 'ProjectController@storage')->name('g-admin.project.storage');
         Route::get('/project', 'ProjectController@index')->name('g-admin.project.index');
         Route::post('/project/save', 'ProjectController@saveProject');
         Route::get('/project/{id}', 'ProjectController@show')->name('g-admin.project.show');

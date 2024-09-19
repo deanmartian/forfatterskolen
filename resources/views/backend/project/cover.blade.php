@@ -91,10 +91,15 @@
                         </td>
                         <td>
                             @if ($cover->backside_image)
-                                <a href="{{ route('dropbox.download_file', trim($cover->backside_image)) }}">
-                                    <i class="fa fa-download" aria-hidden="true"></i>
-                                </a>&nbsp;
-                                {{ basename($cover->backside_image) }}
+                                @php
+                                    $backsideImages = explode(',', $cover->backside_image);
+                                @endphp
+                                @foreach ($backsideImages as $backsideImage)
+                                    <a href="{{ route('dropbox.download_file', trim($backsideImage)) }}">
+                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                    </a>&nbsp;
+                                    <span>{{ basename($backsideImage) }}</span>
+                                @endforeach
                             @endif
                         </td>
                         <td>

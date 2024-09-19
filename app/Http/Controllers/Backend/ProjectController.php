@@ -500,7 +500,7 @@ class ProjectController extends Controller
     public function saveBookFormatting( $project_id, Request $request, ProjectService $projectService )
     {
         if (!$request->id) {
-            $this->validate($request, ['file' => 'required|mimes:doc,docx']);
+            $this->validate($request, ['file.*' => 'required|mimes:doc,docx']);
         } 
         
         $request->merge(['project_id' => $project_id]);
@@ -681,6 +681,16 @@ class ProjectController extends Controller
         $saveGraphicRoute = 'admin.project.save-graphic-work';
 
         return view('backend.project.cover', compact('project', 'cover', 'isbns', 'saveGraphicRoute'));
+    }
+
+    public function bookFormat($project_id, $format_id)
+    {
+        $project = Project::find($project_id);
+        $bookFormatting = ProjectBookFormatting::find($format_id);
+        $designers = AdminHelpers::giutbokUsers();
+        
+        $saveBookFormattingRoute = 'admin.project.save-book-formatting';
+        return view('backend.project.book-format', compact('project', 'bookFormatting', 'designers', 'saveBookFormattingRoute'));
     }
 
     public function registration( $project_id )

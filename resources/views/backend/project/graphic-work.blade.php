@@ -137,6 +137,11 @@
                                     <i class="fa fa-download"></i>
                                 </a>
                             @endif
+                            <a href="{{ route('admin.project.book-format.show', 
+                            [$bookFormatting->project_id, $bookFormatting->id]) }}" 
+                                class="btn btn-info btn-xs">
+                                <i class="fa fa-eye"></i>
+                            </a>
                             <button class="btn btn-primary btn-xs bookFormattingBtn" data-toggle="modal"
                                     data-target="#bookFormattingModal"
                                     data-record="{{ json_encode($bookFormatting) }}"
@@ -585,7 +590,7 @@
 
                             <div class="form-group">
                                 <label>Backside Image (optional)</label>
-                                <input type="file" class="form-control" name="backside_image" accept="image/*">
+                                <input type="file" class="form-control" name="backside_image[]" accept="image/*" multiple>
                             </div>
 
                             <div class="form-group">
@@ -798,7 +803,14 @@
                         <input type="hidden" name="id">
                         <div class="form-group">
                             <label>Interior</label>
-                            <input type="file" name="file" class="form-control"
+                            <input type="file" name="file[]" class="form-control"
+                            accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            multiple>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Corporate Page</label>
+                            <input type="file" name="corporate_page" class="form-control"
                             accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
                         </div>
 
@@ -812,6 +824,29 @@
                                     </option>
                                 @endforeach
                             </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Størrelse (optional)</label>
+                            <select class="form-control" name="format">
+                                <option value="" selected disabled>Valgfri størrelse</option>
+                                    @foreach (AdminHelpers::projectFormats() as $format)
+                                        <option value="{{ $format['id'] }}">
+                                            {{ $format['option'] }}
+                                        </option>
+                                    @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group format-image-container hide">
+                            <label>Format Image</label>
+                            <input type="file" name="format_image" class="form-control"
+                            accept="image/*">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea name="description" class="form-control" cols="30" rows="10"></textarea>
                         </div>
 
                         <div class="text-right">
@@ -1010,7 +1045,14 @@
 
             if (record) {
                 modal.find('[name=id]').val(record.id);
+                modal.find('[name=designer_id]').val(record.designer_id).change();
+                modal.find('[name=format]').val(record.format).change();
+                modal.find('[name=description]').val(record.description);
             }
+        });
+
+        $("#bookFormattingModal").find("[name=format]").change(function() {
+            $("#bookFormattingModal").find(".format-image-container").removeClass('hide');
         });
 
         $(".approveFeedbackBtn").click(function(){
