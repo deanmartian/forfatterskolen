@@ -1,7 +1,7 @@
 <div class="panel" id="various-panel" data-record="{{ json_encode($projectUserBook->varuous) }}">
     <div class="panel-body">
         <div class="col-md-6">
-            <form method="POST" action="{{ route('admin.project.storage.save-various', $projectUserBook->id) }}"
+            <form method="POST" action="{{ route($saveVariousRoute, $projectUserBook->id) }}"
                 onsubmit="disableSubmit(this)">
                 @csrf
                 <div class="row">

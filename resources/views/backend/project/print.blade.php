@@ -148,7 +148,7 @@
                 </h4>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{ route('admin.project.save-print', $project->id) }}"
+                <form method="POST" action="{{ route($savePrintRoute, $project->id) }}"
                     enctype="multipart/form-data" onsubmit="disableSubmit(this)">
                       {{ csrf_field() }}
 

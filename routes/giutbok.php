@@ -162,6 +162,18 @@ Route::group([
         Route::delete('/project/{id}/manual-invoice/{invoice_id}/delete', 'ProjectController@deleteManualInvoice')->name('g-admin.project.manual-invoice.delete');
         Route::get('/project/{id}/storage', 'ProjectController@storage')->name('g-admin.project.storage');
         Route::post('/project/{id}/storage', 'ProjectController@storage')->name('g-admin.project.storage');
+        Route::post('/project/{id}/storage/save-book', 'ProjectController@saveStorageBook')->name('g-admin.project.storage.save-book');
+        Route::delete('/project/{id}/storage/delete', 'ProjectController@deleteStorageBook')->name('g-admin.project.storage.delete-book');
+        Route::post('/project/book/{id}/storage/save-details', 'ProjectController@saveStorageBookDetails')->name('g-admin.project.storage.save-details');
+        Route::post('/project/book/{id}/storage/save-various', 'ProjectController@saveStorageVarious')->name('g-admin.project.storage.save-various');
+        Route::get('/project/{id}/e-book', 'ProjectController@ebook')->name('g-admin.project.ebook');
+        Route::post('/project/{id}/e-book/save', 'ProjectController@saveEbook')->name('g-admin.project.save-ebook');
+        Route::delete('/project/{id}/e-book/{ebook_id}/delete', 'ProjectController@deleteEbook')->name('g-admin.project.delete-ebook');
+        Route::get('/project/{id}/audio', 'ProjectController@audio')->name('g-admin.project.audio');
+        Route::post('/project/{id}/audio/save', 'ProjectController@saveAudio')->name('g-admin.project.save-audio');
+        Route::delete('/project/{id}/audio/{audio_id}/delete', 'ProjectController@deleteAudio')->name('g-admin.project.delete-audio');
+        Route::get('/project/{id}/print', 'ProjectController@print')->name('g-admin.project.print');
+        Route::post('/project/{id}/print/save', 'ProjectController@savePrint')->name('g-admin.project.save-print');
         Route::get('/project', 'ProjectController@index')->name('g-admin.project.index');
         Route::post('/project/save', 'ProjectController@saveProject');
         Route::get('/project/{id}', 'ProjectController@show')->name('g-admin.project.show');

@@ -37,7 +37,7 @@
 
                         @if(!$projectUserBook)
                             <button class="btn btn-primary btn-sm pull-right bookBtn" data-toggle="modal" 
-                            data-target="#bookModal" data-action="{{ route('admin.project.storage.save-book', $projectId) }}"
+                            data-target="#bookModal" data-action="{{ route($saveBookRoute, $projectId) }}"
                             data-title="Select Book">
                                 Select Book
                             </button>
@@ -63,13 +63,13 @@
                                             <button class="btn btn-xs btn-primary bookBtn" data-toggle="modal" 
                                             data-target="#bookModal" data-title="Edit Book" 
                                             data-record="{{ json_encode ($projectUserBook)}}"
-                                            data-action="{{ route('admin.project.storage.save-book', $projectId) }}">
+                                            data-action="{{ route($saveBookRoute, $projectId) }}">
                                                 <i class="fa fa-edit"></i>
                                             </button>
 
                                             <button class="btn btn-danger btn-xs deleteBtn" data-toggle="modal" 
                                             data-target="#deleteModal"
-                                            data-action="{{ route('admin.project.storage.delete-book', $projectId) }}">
+                                            data-action="{{ route($deleteBookRoute, $projectId) }}">
                                                 <i class="fa fa-trash"></i>
                                             </button>
                                         </td>

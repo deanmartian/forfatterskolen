@@ -1254,6 +1254,11 @@ class ProjectController extends Controller
     {
         $layout = 'backend.layout';
         $backRoute = route('admin.project.show', $projectId);
+        $saveBookRoute = 'admin.project.storage.save-book';
+        $deleteBookRoute = 'admin.project.storage.delete-book';
+        $saveDetailsRoute = 'admin.project.storage.save-details';
+        $saveVariousRoute = 'admin.project.storage.save-various';
+
         $project = Project::find($projectId);
         $projectUserBook = $project->userBookForSale;
         $projectUserBookId = $project->userBookForSale ? $project->userBookForSale->id : '';
@@ -1317,8 +1322,18 @@ class ProjectController extends Controller
             ]
         ];
 
+        if (AdminHelpers::isGiutbokPage()) {
+            $layout = 'giutbok.layout';
+            $backRoute = route('g-admin.project.show', $projectId);
+            $saveBookRoute = 'g-admin.project.storage.save-book';
+            $deleteBookRoute = 'g-admin.project.storage.delete-book';
+            $saveDetailsRoute = 'g-admin.project.storage.save-details';
+            $saveVariousRoute = 'g-admin.project.storage.save-various';
+        }
+
         return view('backend.project.storage', compact('backRoute', 'layout', 'projectId', 'project', 
-        'projectUserBook', 'userBooksForSale', 'totalBookSold', 'totalBookSale', 'years', 'yearlyData'));
+        'projectUserBook', 'userBooksForSale', 'totalBookSold', 'totalBookSale', 'years', 'yearlyData', 'saveBookRoute',
+        'deleteBookRoute', 'saveDetailsRoute', 'saveVariousRoute'));
     }
 
     public function saveStorageBook($projectId, Request $request)
@@ -1421,6 +1436,13 @@ class ProjectController extends Controller
         $mobis = ProjectEbook::mobi()->where('project_id', $project_id)->get();
         $covers = ProjectEbook::cover()->where('project_id', $project_id)->get();
 
+        if (AdminHelpers::isGiutbokPage()) {
+            $layout = 'giutbok.layout';
+            $backRoute = route('g-admin.project.show', $project_id);
+            $saveEbookRoute = 'g-admin.project.save-ebook';
+            $deleteEbookRoute = 'g-admin.project.delete-ebook';
+        }
+
         return view('backend.project.e-book', compact('layout', 'project', 'saveEbookRoute', 'epubs', 
             'deleteEbookRoute' ,'mobis', 'covers', 'backRoute'));
     }
@@ -1466,6 +1488,13 @@ class ProjectController extends Controller
 
         $files = ProjectAudio::files()->where('project_id', $project_id)->get();
         $covers = ProjectAudio::cover()->where('project_id', $project_id)->get();
+
+        if (AdminHelpers::isGiutbokPage()) {
+            $layout = 'giutbok.layout';
+            $backRoute = route('g-admin.project.show', $project_id);
+            $saveAudioRoute = 'g-admin.project.save-audio';
+            $deleteAudioRoute = 'g-admin.project.delete-audio';
+        }
         
         return view('backend.project.audio', compact('layout', 'project', 'saveAudioRoute', 'files', 'deleteAudioRoute', 
             'covers', 'backRoute'));
@@ -1501,8 +1530,15 @@ class ProjectController extends Controller
 
         $layout = 'backend.layout';
         $backRoute = route('admin.project.show', $project_id);
+        $savePrintRoute = 'admin.project.save-print';
+
+        if (AdminHelpers::isGiutbokPage()) {
+            $layout = 'giutbok.layout';
+            $backRoute = route('g-admin.project.show', $project_id);
+            $savePrintRoute = 'g-admin.project.save-print';
+        }
         
-        return view('backend.project.print', compact('layout', 'project', 'backRoute', 'print'));
+        return view('backend.project.print', compact('layout', 'project', 'backRoute', 'print', 'savePrintRoute'));
     }
 
     public function savePrint($project_id, Request $request, ProjectService $projectService)
