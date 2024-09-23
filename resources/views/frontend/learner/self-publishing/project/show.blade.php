@@ -96,10 +96,18 @@
                                         <td>
                                             @if($publishing->feedback)
                                                 @if($publishing->feedback->is_approved)
-                                                    <a href="{{ $publishing->feedback->manuscript }}"
-                                                       class="btn btn-primary btn-xs margin-top" download="">
-                                                        {{ trans('site.learner.download-feedback') }}
-                                                    </a>
+                                                    @if (strpos($publishing->feedback->manuscript, 'project-'))
+                                                        <a href="{{ route('dropbox.download_file', 
+                                                            trim($publishing->feedback->manuscript)) }}"
+                                                        class="btn btn-primary btn-xs margin-top" download="">
+                                                            {{ trans('site.learner.download-feedback') }}
+                                                        </a>
+                                                    @else
+                                                        <a href="{{ $publishing->feedback->manuscript }}"
+                                                        class="btn btn-primary btn-xs margin-top" download="">
+                                                            {{ trans('site.learner.download-feedback') }}
+                                                        </a>
+                                                    @endif
                                                 @else
                                                     <label class="label label-warning" style="margin-right: 5px;">
                                                         {{ trans('site.pending') }}

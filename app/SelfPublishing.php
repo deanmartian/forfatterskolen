@@ -72,23 +72,31 @@ class SelfPublishing extends Model
         foreach ($files as $file) {
             $extension = explode('.', basename($file));
 
-            if (end($extension) == 'pdf' || end($extension) == 'odt') {
-                $fileLink .= '<a href="/js/ViewerJS/#../..'.trim($file).'">'.basename($file).'</a>';
-
-                if ($file) {
-                    $fileLink .= ' <a href="'.$file.'" download><i class="fa fa-download" aria-hidden="true"></i></a>';
-                }
-
+            if(strpos($file, 'project-')) {
+                $fileLink .= '<a href="'.route('dropbox.shared_link', trim($file)).'" target="_blank">' . basename($file) . '</a>';
+                $fileLink .= ' <a href="'.route('dropbox.download_file', trim($file)).'">
+                    <i class="fa fa-download" aria-hidden="true"></i></a>';
                 $fileLink .= ', ';
             } else {
-                $fileLink .= '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').trim($file).'">'.basename($file).'</a>';
-
-                if ($file) {
-                    $fileLink .= ' <a href="'.$file.'" download><i class="fa fa-download" aria-hidden="true"></i></a>';
+                if (end($extension) == 'pdf' || end($extension) == 'odt') {
+                    $fileLink .= '<a href="/js/ViewerJS/#../..'.trim($file).'">'.basename($file).'</a>';
+    
+                    if ($file) {
+                        $fileLink .= ' <a href="'.$file.'" download><i class="fa fa-download" aria-hidden="true"></i></a>';
+                    }
+    
+                    $fileLink .= ', ';
+                } else {
+                    $fileLink .= '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').trim($file).'">'.basename($file).'</a>';
+    
+                    if ($file) {
+                        $fileLink .= ' <a href="'.$file.'" download><i class="fa fa-download" aria-hidden="true"></i></a>';
+                    }
+    
+                    $fileLink .= ', ';
                 }
-
-                $fileLink .= ', ';
             }
+            
         }
 
         return trim($fileLink, ', ');

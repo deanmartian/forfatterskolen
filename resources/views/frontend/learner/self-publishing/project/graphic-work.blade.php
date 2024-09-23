@@ -27,13 +27,21 @@
                 </a>
 
                 <div class="col-md-12 dashboard-course no-left-padding">
+
+                    <h3 class="mt-3">
+                        Cover
+                    </h3>
                     <div class="card global-card">
                         <div class="card-body p-0">
                             <table class="table">
                                 <thead>
                                 <tr>
                                     <th>Cover</th>
-                                    <th width="500">Description</th>
+                                    <th>Description</th>
+                                    <th>Format</th>
+                                    <th>ISBN</th>
+                                    <th>Backside Text</th>
+                                    <th>Backside Image</th>
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -54,12 +62,49 @@
                         </div>
                     </div> <!-- end card global-card for cover-->
 
-                    <div class="card global-card mt-5">
+                    <h3 class="mt-5">
+                        Page Format
+                    </h3>
+                    <div class="card global-card">
+                        <div class="card-body p-0">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Interior</th>
+                                        <th>Designer</th>
+                                        <th>{{ trans_choice('site.feedbacks', 1) }}</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+
+                    <h3 class="mt-5">
+                        Indesign
+                    </h3>
+                    <div class="card global-card">
+                        <div class="card-body p-0">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Cover</th>
+                                        <th>Interior</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+
+                    <h3 class="mt-5">
+                        Barcode
+                    </h3>
+                    <div class="card global-card">
                         <div class="card-body p-0">
                             <table class="table">
                                 <thead>
                                 <tr>
                                     <th>Barcode</th>
+                                    <th>Date</th>
                                     <th width="300"></th>
                                 </tr>
                                 </thead>
@@ -79,62 +124,31 @@
                         </div>
                     </div> <!-- end card global-card for barcode-->
 
-                    <div class="card global-card mt-5">
+                    <h3 class="mt-5">
+                        Print Ready
+                    </h3>
+                    <div class="card global-card">
                         <div class="card-body p-0">
                             <table class="table">
                                 <thead>
-                                <tr>
-                                    <th>Rewrite script</th>
-                                    <th width="300"></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($rewriteScripts as $rewriteScript)
                                     <tr>
-                                        <td>{!! $rewriteScript->file_link !!}</td>
-                                        <td>
-                                            <a href="{{ $rewriteScript->value }}" class="btn btn-success btn-xs" download>
-                                                <i class="fa fa-download"></i>
-                                            </a>
-                                        </td>
+                                        <th>File</th>
+                                        <th>Format</th>
                                     </tr>
-                                @endforeach
-                                </tbody>
+                                </thead>
                             </table>
                         </div>
-                    </div> <!-- end card global-card for rewrite scripts -->
+                    </div>
 
-                    <div class="card global-card mt-5">
+                    <h3 class="mt-5">
+                        Sample book/PDF
+                    </h3>
+                    <div class="card global-card">
                         <div class="card-body p-0">
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Trial pages</th>
-                                    <th width="300"></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($trialPages as $trialPage)
-                                    <tr>
-                                        <td>{!! $trialPage->image !!}</td>
-                                        <td>
-                                            <a href="{{ $trialPage->value }}" class="btn btn-success btn-xs" download>
-                                                <i class="fa fa-download"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div> <!-- end card global-card for trial page -->
-
-                    <div class="card global-card mt-5">
-                        <div class="card-body p-0">
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th>Sample book/PDF</th>
+                                    <th>File</th>
                                     <th width="300"></th>
                                 </tr>
                                 </thead>

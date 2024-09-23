@@ -27,6 +27,9 @@
                 </a>
 
                 <div class="col-md-12 dashboard-course no-left-padding">
+                    <h3 class="mt-3">
+                        Email Bookstore
+                    </h3>
                     <div class="card global-card">
                         <div class="card-body p-0">
                             <table class="table table-side-bordered table-white">
@@ -54,7 +57,10 @@
                         </div>
                     </div> <!-- end card global-card for email bookstore -->
 
-                    <div class="card global-card mt-5">
+                    <h3 class="mt-5">
+                        Email Library
+                    </h3>
+                    <div class="card global-card">
                         <div class="card-body p-0">
                             <table class="table table-side-bordered table-white">
                                 <thead>
@@ -81,7 +87,10 @@
                         </div>
                     </div> <!-- end card global-card for email library-->
 
-                    <div class="card global-card mt-5">
+                    <h3 class="mt-5">
+                        Email Press
+                    </h3>
+                    <div class="card global-card">
                         <div class="card-body p-0">
                             <table class="table">
                                 <thead>
@@ -108,7 +117,10 @@
                         </div>
                     </div> <!-- end card global-card for email-press -->
 
-                    <div class="card global-card mt-5">
+                    <h3 class="mt-5">
+                        Review copies
+                    </h3>
+                    <div class="card global-card">
                         <div class="card-body p-0">
                             <table class="table">
                                 <thead>

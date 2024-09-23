@@ -81,12 +81,12 @@
                 </div>
             </div>
 
-            <iframe
+            {{-- <iframe
 src="https://www.chatbase.co/chatbot-iframe/s7nqoF2-3_v5RucONplQE"
 width="100%"
 height="700"
 frameborder="0"
-></iframe>
+></iframe> --}}
         </div>
     </div>
 
