@@ -6,81 +6,85 @@
 
 @section('content')
     <div class="learner-container">
-        <div class="col-md-12 dashboard-course no-left-padding">
-            <div class="card global-card">
-                <div class="card-header">
-                    <h1 class="d-inline-block">
-                        {{ trans('site.front.correction.title') }}
-                    </h1>
-                </div>
-                <div class="card-body py-0">
-                    <table class="table table-global">
-                        <thead>
-                        <tr>
-                            <th>{{ trans('site.learner.script') }}</th>
-                            <th>{{ trans('site.learner.date-ordered') }}</th>
-                            <th>{{ trans('site.learner.status') }}</th>
-                            <th>{{ trans('site.learner.expected-finish') }}</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($corrections as $correction)
-                                <?php $extension = explode('.', basename($correction->file)); ?>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 dashboard-course">
+                    <div class="card global-card">
+                        <div class="card-header">
+                            <h1 class="d-inline-block">
+                                {{ trans('site.front.correction.title') }}
+                            </h1>
+                        </div>
+                        <div class="card-body py-0">
+                            <table class="table table-global">
+                                <thead>
                                 <tr>
-                                    <td>
-                                        @if( end($extension) == 'pdf' || end($extension) == 'odt' )
-                                            <a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
-                                        @elseif( end($extension) == 'docx' )
-                                            <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
-                                        @endif
-
-                                        @if(!$correction->is_locked && $correction->status !=2)
-                                            <br>
-                                            <button class="btn btn-primary btn-xs uploadOtherServiceManuscriptBtn" data-toggle="modal"
-                                                    data-target="#uploadOtherServiceManuscriptModal"
-                                                    data-action="{{ route('learner.project.other-service.upload-manuscript',
-                                                        ['id' => $correction->id, 'type' => 2]) }}">
-                                                {{ trans('site.front.form.upload-manuscript') }}
-                                            </button>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        {{ \App\Http\FrontendHelpers::formatDate($correction->created_at) }}
-                                    </td>
-                                    <td>
-                                        @if( $correction->status == 2 )
-                                            <span class="label label-success">{{ trans('site.learner.finished') }}</span>
-                                        @elseif( $correction->status == 1 )
-                                            <span class="label label-primary">{{ trans('site.learner.started') }}</span>
-                                        @elseif( $correction->status == 0 )
-                                            <span class="label label-warning">{{ trans('site.learner.not-started') }}</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($correction->expected_finish)
-                                            {{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($correction->expected_finish) }}
-                                            <br>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($correction->file)
-                                            <a href="{{ route('learner.other-service.download-doc',
-                                            ['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.learner.download-original-script') }}</a>
-                                        @endif
-
-                                        @if ($correction->feedback)
-                                            <br>
-                                            <a href="{{ route('learner.other-service.download-feedback', $correction->feedback->id) }}"
-                                               style="color:#eea236">
-                                                {{ trans('site.learner.download-feedback') }}
-                                            </a>
-                                        @endif
-                                    </td>
+                                    <th>{{ trans('site.learner.script') }}</th>
+                                    <th>{{ trans('site.learner.date-ordered') }}</th>
+                                    <th>{{ trans('site.learner.status') }}</th>
+                                    <th>{{ trans('site.learner.expected-finish') }}</th>
+                                    <th></th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                                </thead>
+                                <tbody>
+                                    @foreach($corrections as $correction)
+                                        <?php $extension = explode('.', basename($correction->file)); ?>
+                                        <tr>
+                                            <td>
+                                                @if( end($extension) == 'pdf' || end($extension) == 'odt' )
+                                                    <a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
+                                                @elseif( end($extension) == 'docx' )
+                                                    <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+                                                @endif
+        
+                                                @if(!$correction->is_locked && $correction->status !=2)
+                                                    <br>
+                                                    <button class="btn btn-primary btn-xs uploadOtherServiceManuscriptBtn" data-toggle="modal"
+                                                            data-target="#uploadOtherServiceManuscriptModal"
+                                                            data-action="{{ route('learner.project.other-service.upload-manuscript',
+                                                                ['id' => $correction->id, 'type' => 2]) }}">
+                                                        {{ trans('site.front.form.upload-manuscript') }}
+                                                    </button>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                {{ \App\Http\FrontendHelpers::formatDate($correction->created_at) }}
+                                            </td>
+                                            <td>
+                                                @if( $correction->status == 2 )
+                                                    <span class="label label-success">{{ trans('site.learner.finished') }}</span>
+                                                @elseif( $correction->status == 1 )
+                                                    <span class="label label-primary">{{ trans('site.learner.started') }}</span>
+                                                @elseif( $correction->status == 0 )
+                                                    <span class="label label-warning">{{ trans('site.learner.not-started') }}</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($correction->expected_finish)
+                                                    {{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($correction->expected_finish) }}
+                                                    <br>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($correction->file)
+                                                    <a href="{{ route('learner.other-service.download-doc',
+                                                    ['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.learner.download-original-script') }}</a>
+                                                @endif
+        
+                                                @if ($correction->feedback)
+                                                    <br>
+                                                    <a href="{{ route('learner.other-service.download-feedback', $correction->feedback->id) }}"
+                                                       style="color:#eea236">
+                                                        {{ trans('site.learner.download-feedback') }}
+                                                    </a>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

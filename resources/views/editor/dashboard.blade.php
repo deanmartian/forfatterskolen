@@ -789,7 +789,7 @@
 						<div class="panel-heading"><h4>Redigering</h4></div>
 						<div class="panel-body">
 							<div class="table-users table-responsive margin-top">
-								<table class="table dt-table">
+								<table class="table dt-table assignment-table">
 						
 									<thead>
 									<tr>
@@ -1577,7 +1577,7 @@
         tinymce.get('editContentEditor').setContent(content);
     });
 
-	$('#myAssignmentTable').on('click','.submitFeedbackBtn',function (){
+	$('#myAssignmentTable, .assignment-table').on('click','.submitFeedbackBtn',function (){
 		
 		var modal = $('#submitFeedbackModal');
         var name = $(this).data('name');

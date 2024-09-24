@@ -6,64 +6,68 @@
 
 @section('content')
     <div class="learner-container">
-        <div class="col-md-12 dashboard-course no-left-padding">
-            <div class="card global-card">
-                <div class="card-header">
-                    <h1 class="d-inline-block">
-                        Redaktør
-                    </h1>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 dashboard-course">
+                    <div class="card global-card">
+                        <div class="card-header">
+                            <h1 class="d-inline-block">
+                                Redaktør
+                            </h1>
+                        </div>
+                        <div class="card-body py-0">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>{{ trans('site.title') }}</th>
+                                    <th>{{ trans('site.description') }}</th>
+                                    <th>{{ trans_choice('site.files', 0) }}</th>
+                                    <th>{{ trans_choice('site.feedbacks', 0) }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($selfPublishingList as $publishing)
+                                    <tr>
+                                        <td>
+                                            {{ $publishing->title }}
+                                        </td>
+                                        <td>
+                                            {{ $publishing->description }}
+                                        </td>
+                                        <td>
+                                            {!! $publishing->file_link_with_download !!}
+                                            @if(!$publishing->feedback)
+                                                <br>
+                                                <button class="btn btn-primary btn-xs uploadSelfPublishingManuscriptBtn"
+                                                        data-toggle="modal"
+                                                        data-target="#uploadSelfPublishingManuscriptModal"
+                                                        data-action="{{ route('learner.project.self-publishing.upload-manuscript', $publishing->id) }}">
+                                                    {{ trans('site.front.form.upload-manuscript') }}
+                                                </button>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($publishing->feedback)
+                                                @if($publishing->feedback->is_approved)
+                                                    <a href="{{ $publishing->feedback->manuscript }}"
+                                                       class="btn btn-primary btn-xs margin-top" download="">
+                                                        {{ trans('site.learner.download-feedback') }}
+                                                    </a>
+                                                @else
+                                                    <label class="label label-warning" style="margin-right: 5px;">
+                                                        {{ trans('site.pending') }}
+                                                    </label>
+                                                @endif
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div> <!-- end card -->
                 </div>
-                <div class="card-body">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>{{ trans('site.title') }}</th>
-                            <th>{{ trans('site.description') }}</th>
-                            <th>{{ trans_choice('site.files', 0) }}</th>
-                            <th>{{ trans_choice('site.feedbacks', 0) }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($selfPublishingList as $publishing)
-                            <tr>
-                                <td>
-                                    {{ $publishing->title }}
-                                </td>
-                                <td>
-                                    {{ $publishing->description }}
-                                </td>
-                                <td>
-                                    {!! $publishing->file_link_with_download !!}
-                                    @if(!$publishing->feedback)
-                                        <br>
-                                        <button class="btn btn-primary btn-xs uploadSelfPublishingManuscriptBtn"
-                                                data-toggle="modal"
-                                                data-target="#uploadSelfPublishingManuscriptModal"
-                                                data-action="{{ route('learner.project.self-publishing.upload-manuscript', $publishing->id) }}">
-                                            {{ trans('site.front.form.upload-manuscript') }}
-                                        </button>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($publishing->feedback)
-                                        @if($publishing->feedback->is_approved)
-                                            <a href="{{ $publishing->feedback->manuscript }}"
-                                               class="btn btn-primary btn-xs margin-top" download="">
-                                                {{ trans('site.learner.download-feedback') }}
-                                            </a>
-                                        @else
-                                            <label class="label label-warning" style="margin-right: 5px;">
-                                                {{ trans('site.pending') }}
-                                            </label>
-                                        @endif
-                                    @endif
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div> <!-- end card -->
+            </div>
         </div>
     </div>
 

@@ -6,91 +6,94 @@
 
 @section('content')
     <div class="learner-container">
-        <div class="col-md-12 dashboard-course no-left-padding">
-            <div class="card global-card">
-                <div class="card-header">
-                    <h1 class="d-inline-block">
-                        {{ trans('site.learner.copy-editing') }}
-                    </h1>
-
-                </div>
-                <div class="card-body py-0">
-                    <table class="table table-global">
-                        <thead>
-                        <tr>
-                            <th>
-                                {{ trans('site.learner.script') }}
-                            </th>
-                            <th>
-                                {{ trans('site.learner.date-ordered') }}
-                            </th>
-                            <th>
-                                {{ trans('site.learner.status') }}
-                            </th>
-                            <th>
-                                {{ trans('site.learner.expected-finish') }}
-                            </th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($copyEditings as $editing)
-                                <?php $extension = explode('.', basename($editing->file)); ?>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 dashboard-course">
+                    <div class="card global-card">
+                        <div class="card-header">
+                            <h1 class="d-inline-block">
+                                {{ trans('site.learner.copy-editing') }}
+                            </h1>
+                        </div>
+                        <div class="card-body py-0">
+                            <table class="table table-global">
+                                <thead>
                                 <tr>
-                                    <td>
-                                        {{ $editing->id }}
-                                        @if( end($extension) == 'pdf' || end($extension) == 'odt' )
-                                            <a href="/js/ViewerJS/#../../{{ $editing->file }}">{{ basename($editing->file) }}</a>
-                                        @elseif( end($extension) == 'docx' )
-                                            <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$editing->file}}">{{ basename($editing->file) }}</a>
-                                        @endif
-
-                                        @if(!$editing->is_locked && $editing->status !=2)
-                                                <br>
-                                            <button class="btn btn-primary btn-xs uploadOtherServiceManuscriptBtn" data-toggle="modal"
-                                                    data-target="#uploadOtherServiceManuscriptModal"
-                                                    data-action="{{ route('learner.project.other-service.upload-manuscript',
-                                                        ['id' => $editing->id, 'type' => 1]) }}">
-                                                {{ trans('site.front.form.upload-manuscript') }}
-                                            </button>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        {{ \App\Http\FrontendHelpers::formatDate($editing->created_at) }}
-                                    </td>
-                                    <td>
-                                        @if( $editing->status == 2 )
-                                            <span class="label label-success">{{ trans('site.learner.finished') }}</span>
-                                        @elseif( $editing->status == 1 )
-                                            <span class="label label-primary">{{ trans('site.learner.started') }}</span>
-                                        @elseif( $editing->status == 0 )
-                                            <span class="label label-warning">{{ trans('site.learner.not-started') }}</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($editing->expected_finish)
-                                            {{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($editing->expected_finish) }}
-                                            <br>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($editing->file)
-                                            <a href="{{ route('learner.other-service.download-doc',
-                                            ['id' => $editing->id, 'type' => 1]) }}">{{ trans('site.learner.download-original-script') }}</a>
-                                        @endif
-
-                                        @if ($editing->feedback)
-                                            <br>
-                                            <a href="{{ route('learner.other-service.download-feedback', $editing->feedback->id) }}"
-                                               style="color:#eea236">
-                                                {{ trans('site.learner.download-feedback') }}
-                                            </a>
-                                        @endif
-                                    </td>
+                                    <th>
+                                        {{ trans('site.learner.script') }}
+                                    </th>
+                                    <th>
+                                        {{ trans('site.learner.date-ordered') }}
+                                    </th>
+                                    <th>
+                                        {{ trans('site.learner.status') }}
+                                    </th>
+                                    <th>
+                                        {{ trans('site.learner.expected-finish') }}
+                                    </th>
+                                    <th></th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                                </thead>
+                                <tbody>
+                                    @foreach($copyEditings as $editing)
+                                        <?php $extension = explode('.', basename($editing->file)); ?>
+                                        <tr>
+                                            <td>
+                                                {{ $editing->id }}
+                                                @if( end($extension) == 'pdf' || end($extension) == 'odt' )
+                                                    <a href="/js/ViewerJS/#../../{{ $editing->file }}">{{ basename($editing->file) }}</a>
+                                                @elseif( end($extension) == 'docx' )
+                                                    <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$editing->file}}">{{ basename($editing->file) }}</a>
+                                                @endif
+        
+                                                @if(!$editing->is_locked && $editing->status !=2)
+                                                        <br>
+                                                    <button class="btn btn-primary btn-xs uploadOtherServiceManuscriptBtn" data-toggle="modal"
+                                                            data-target="#uploadOtherServiceManuscriptModal"
+                                                            data-action="{{ route('learner.project.other-service.upload-manuscript',
+                                                                ['id' => $editing->id, 'type' => 1]) }}">
+                                                        {{ trans('site.front.form.upload-manuscript') }}
+                                                    </button>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                {{ \App\Http\FrontendHelpers::formatDate($editing->created_at) }}
+                                            </td>
+                                            <td>
+                                                @if( $editing->status == 2 )
+                                                    <span class="label label-success">{{ trans('site.learner.finished') }}</span>
+                                                @elseif( $editing->status == 1 )
+                                                    <span class="label label-primary">{{ trans('site.learner.started') }}</span>
+                                                @elseif( $editing->status == 0 )
+                                                    <span class="label label-warning">{{ trans('site.learner.not-started') }}</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($editing->expected_finish)
+                                                    {{ \App\Http\FrontendHelpers::formatToYMDtoPrettyDate($editing->expected_finish) }}
+                                                    <br>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($editing->file)
+                                                    <a href="{{ route('learner.other-service.download-doc',
+                                                    ['id' => $editing->id, 'type' => 1]) }}">{{ trans('site.learner.download-original-script') }}</a>
+                                                @endif
+        
+                                                @if ($editing->feedback)
+                                                    <br>
+                                                    <a href="{{ route('learner.other-service.download-feedback', $editing->feedback->id) }}"
+                                                       style="color:#eea236">
+                                                        {{ trans('site.learner.download-feedback') }}
+                                                    </a>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
