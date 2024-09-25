@@ -130,7 +130,8 @@
         <h4 class="modal-title">{{ trans('site.edit-manuscript') }}</h4>
       </div>
       <div class="modal-body">
-      	<form method="POST" action="{{ route('admin.shop-manuscript-taken.update_taken', $shopManuscriptTaken->id) }}">
+      	<form method="POST" action="{{ route('admin.shop-manuscript-taken.update_taken', $shopManuscriptTaken->id) }}"
+			onsubmit="disableSubmit(this)">
       		{{csrf_field()}}
       		<div class="form-group">
       			<label>{{ trans_choice('site.editors', 1) }}</label>
