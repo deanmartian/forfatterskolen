@@ -139,6 +139,7 @@ Route::group([
         Route::get('/project/{id}/graphic-work', 'ProjectController@graphicWork')->name('g-admin.project.graphic-work');
         Route::post('/project/{id}/graphic-work/save', 'ProjectController@saveGraphicWork')->name('g-admin.project.save-graphic-work');
         Route::delete('/project/{id}/graphic-work/{graphic_work_id}/delete', 'ProjectController@deleteGraphicWork')->name('g-admin.project.delete-graphic-work');
+        Route::get('/project/{id}/cover/{cover_id}', 'ProjectController@cover')->name('g-admin.project.cover.show');
         Route::get('/project/{id}/registration', 'ProjectController@registration')->name('g-admin.project.registration');
         Route::post('/project/{id}/registration/save', 'ProjectController@saveRegistration')->name('g-admin.project.save-registration');
         Route::delete('/project/{id}/registration/{registration_id}/delete', 'ProjectController@deleteRegistration')->name('g-admin.project.delete-registration');

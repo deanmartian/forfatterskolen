@@ -69,7 +69,7 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('admin.project.cover.show', [$cover->project_id, $cover->id]) }}" 
+                            <a href="{{ route($showGraphicWorkRoute, [$cover->project_id, $cover->id]) }}" 
                                 class="btn btn-info btn-xs">
                                 <i class="fa fa-eye"></i>
                             </a>
@@ -309,7 +309,7 @@
                                 {!! $printReady->image !!}
                             </td>
                             <td>
-                                {{ $printReady->format ? AdminHelpers::projectFormats($printReady->format) : null }}
+                                {{ $printReady->format }}
                             </td>
                             <td>
                                 <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"

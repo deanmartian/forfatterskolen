@@ -580,12 +580,14 @@ class ProjectController extends Controller
         $saveBookFormattingRoute = 'admin.project.save-book-formatting';
         $deleteBookPicturesRoute = 'admin.project.delete-picture';
         $deleteBookFormattingRoute = 'admin.project.delete-book-formatting';
+        $showGraphicWorkRoute = 'admin.project.cover.show';
 
         if (AdminHelpers::isGiutbokPage()) {
             $layout = 'giutbok.layout';
             $backRoute = 'g-admin.project.show';
             $saveGraphicRoute = 'g-admin.project.save-graphic-work';
             $deleteGraphicRoute = 'g-admin.project.delete-graphic-work';
+            $showGraphicWorkRoute = 'g-admin.project.cover.show';
         }
         $covers = ProjectGraphicWork::cover()->where('project_id', $project_id)->get();
         $barCodes = ProjectGraphicWork::barcode()->where('project_id', $project_id)->get();
@@ -602,7 +604,8 @@ class ProjectController extends Controller
         return view('backend.project.graphic-work', compact('project', 'layout', 'backRoute', 'saveGraphicRoute',
             'deleteGraphicRoute', 'covers', 'barCodes', 'rewriteScripts', 'trialPages', 'sampleBookPDFs',
             'saveBookPicturesRoute', 'bookPictures', 'deleteBookPicturesRoute', 'printReadyList',
-             'saveBookFormattingRoute', 'bookFormattingList', 'deleteBookFormattingRoute', 'indesigns', 'designers', 'isbns'));
+             'saveBookFormattingRoute', 'bookFormattingList', 'deleteBookFormattingRoute', 'indesigns', 'designers', 'isbns',
+            'showGraphicWorkRoute'));
     }
 
     public function saveGraphicWork( $project_id, Request $request, ProjectService $projectService )
@@ -679,6 +682,10 @@ class ProjectController extends Controller
         $isbns = ProjectRegistration::isbns()->where('project_id', $project_id)->get();
 
         $saveGraphicRoute = 'admin.project.save-graphic-work';
+
+        if (AdminHelpers::isGiutbokPage()) {
+            $saveGraphicRoute = 'g-admin.project.save-graphic-work';
+        }
 
         return view('backend.project.cover', compact('project', 'cover', 'isbns', 'saveGraphicRoute'));
     }
@@ -1543,26 +1550,52 @@ class ProjectController extends Controller
 
     public function savePrint($project_id, Request $request, ProjectService $projectService)
     {
-        $format = $request->input('format');
-        $customFormat = $request->input('custom_format');
-
-        // If "Other" is selected, use the custom format
-        if ($format === 'other' && !empty($customFormat)) {
-            $finalFormat = $customFormat;
-        } else {
-            // Use the selected predefined format
-            $finalFormat = $format;
+        try {
+            $this->validate($request, [
+                'isbn' => 'required',
+                'number' => 'required',
+                'pages' => 'required',
+                'width' => 'required',
+                'height' => 'required',
+                'number_of_color_pages' => 'required',
+            ]);
+    
+            $format = $request->input('format');
+            $customFormat = $request->input('custom_format');
+    
+            // If "Other" is selected, use the custom format
+            if ($format === 'other' && !empty($customFormat)) {
+                $finalFormat = $customFormat;
+            } else {
+                // Use the selected predefined format
+                $finalFormat = $format;
+            }
+    
+            // Merge project_id and final format into the request
+            $request->merge([
+                'project_id' => $project_id,
+                'format' => $finalFormat
+            ]);
+    
+            // Save the print details via the service
+            $projectService->savePrint($request);
+    
+            // Return a JSON success response for AJAX
+            return response()->json(['success' => true, 'message' => 'Print details saved successfully.']);
+    
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Return validation errors as a JSON response
+            return response()->json([
+                'success' => false,
+                'errors' => $e->validator->errors()
+            ], 422); // Use 422 Unprocessable Entity status code for validation errors
+        } catch (\Exception $e) {
+            // Handle any other error and return a JSON error response
+            return response()->json([
+                'success' => false, 
+                'message' => 'Failed to save print details. Error: ' . $e->getMessage()
+            ], 500);
         }
-        $request->merge([
-            'project_id' => $project_id,
-            'format' => $finalFormat
-        ]);
-
-        $projectService->savePrint($request);
-
-        return redirect()->back()
-            ->with(['errors' => AdminHelpers::createMessageBag('Print details saved successfully.'),
-                'alert_type' => 'success']);
     }
 
     public function showNotes( $project_id )

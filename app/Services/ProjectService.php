@@ -336,6 +336,11 @@ class ProjectService
                 if (!\request()->has('backside_type')) {
                     if (\request()->hasFile('backside_file')) {
                         $data['backside_text'] = $this->saveGraphicWorkFileOrImage($request, 'backside_file', 'cover/');
+                    } else {
+                        if ($request->id) {
+                            $graphicWork = ProjectGraphicWork::find($request->id);
+                            $data['backside_text'] = $graphicWork->backside_text;
+                        }
                     }
                 }
                 break;

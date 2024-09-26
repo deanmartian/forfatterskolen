@@ -150,7 +150,7 @@
             </div>
             <div class="modal-body">
                 <form method="POST" action="{{ route($savePrintRoute, $project->id) }}"
-                    enctype="multipart/form-data" onsubmit="disableSubmit(this)">
+                    enctype="multipart/form-data">
                       {{ csrf_field() }}
 
                     <div class="form-group">
@@ -160,12 +160,12 @@
 
                     <div class="form-group">
                         <label>Antall</label>
-                        <input type="text" class="form-control" name="number" onkeypress="return numeralsOnly(event)">
+                        <input type="text" class="form-control" name="number" onkeypress="return numeralsOnly(event)" required>
                     </div>
 
                     <div class="form-group">
                         <label>Sider</label>
-                        <input type="text" class="form-control" name="pages" onkeypress="return numeralsOnly(event)">
+                        <input type="text" class="form-control" name="pages" onkeypress="return numeralsOnly(event)" required>
                     </div>
 
                     <div class="form-group">
@@ -288,7 +288,7 @@
         return true;
     }
 
-    document.getElementById('format-select').addEventListener('change', function() {
+    /* document.getElementById('format-select').addEventListener('change', function() {
         var customFormatGroup = document.getElementById('custom-format-group');
         if (this.value === 'other') {
             customFormatGroup.style.display = 'block'; // Show the custom format input
@@ -297,7 +297,7 @@
             customFormatGroup.style.display = 'none'; // Hide the custom format input
             document.getElementById('custom-format-input').required = false; // Remove required
         }
-    });
+    }); */
 
     $(".printBtn").click(function() {
         let data = $(this).data('print');
@@ -319,6 +319,58 @@
             modal.find('[name=color]').val(data.color);
             modal.find('[name=number_of_color_pages]').val(data.number_of_color_pages);
         }
+    });
+
+    // Show or hide custom format input field based on selected option
+    $('#format-select').on('change', function () {
+        if ($(this).val() === 'other') {
+            $('#custom-format-group').show();
+            $('#custom-format-input').prop('required', true);
+        } else {
+            $('#custom-format-group').hide();
+            $('#custom-format-input').prop('required', false);
+        }
+    });
+
+    // Handle form submission
+    $('form').on('submit', function (e) {
+        e.preventDefault(); // Prevent default form submission
+        
+        var formData = new FormData(this); // Capture form data
+
+        // Clear any previous error messages
+        $('.error-message').remove();
+
+        // AJAX request
+        $.ajax({
+            url: $(this).attr('action'), // Form action URL
+            method: 'POST', // Form method (POST)
+            data: formData,
+            processData: false, // Do not process data automatically
+            contentType: false, // Allow form data with file upload (if necessary)
+            success: function (response) {
+                if (response.success) {
+                    alert(response.message); // Show success message
+                    location.reload();
+                } else {
+                    alert('Error: ' + response.message); // Show error message
+                }
+            },
+            error: function (xhr) {
+                if (xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    // Display validation errors
+                    $.each(errors, function (field, messages) {
+                        var inputField = $('[name="' + field + '"]');
+                        inputField.after('<span class="error-message" style="color:red;">' + messages.join('<br>') + '</span>');
+                    });
+
+                    alert("Error in form");
+                } else {
+                    alert('An unknown error occurred.');
+                }
+            }
+        });
     });
 </script>
 @stop
