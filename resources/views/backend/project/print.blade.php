@@ -49,7 +49,8 @@
                             <div class="form-group">
                                 <label>Størrelse</label>
                                 <p>
-                                    {{ AdminHelpers::projectFormats($print->format) }}
+                                    {{ !is_array(AdminHelpers::projectFormats($print->format)) ?
+                                        AdminHelpers::projectFormats($print->format) : $print->format }}
                                 </p>
                             </div>
                         </div>
@@ -169,14 +170,21 @@
 
                     <div class="form-group">
                         <label>Størrelse</label>
-                        <select class="form-control" name="format" required>
+                        <select class="form-control" name="format" id="format-select" required>
                             <option value="">Valgfri størrelse</option>
-                                @foreach (AdminHelpers::projectFormats() as $format)
-                                    <option value="{{ $format['id'] }}">
-                                        {{ $format['option'] }}
-                                    </option>
-                                @endforeach
+                            @foreach (AdminHelpers::projectFormats() as $format)
+                                <option value="{{ $format['id'] }}">
+                                    {{ $format['option'] }}
+                                </option>
+                            @endforeach
+                            <option value="other">Annen størrelse</option> <!-- "Other" option -->
                         </select>
+                    </div>
+                    
+                    <div class="form-group" id="custom-format-group" style="display: none;"> <!-- Hidden by default -->
+                        <label>Spesifiser størrelse</label>
+                        <input type="text" class="form-control" name="custom_format" id="custom-format-input" 
+                        placeholder="Skriv inn størrelse">
                     </div>
 
                     <div class="form-group">
@@ -279,6 +287,17 @@
         }
         return true;
     }
+
+    document.getElementById('format-select').addEventListener('change', function() {
+        var customFormatGroup = document.getElementById('custom-format-group');
+        if (this.value === 'other') {
+            customFormatGroup.style.display = 'block'; // Show the custom format input
+            document.getElementById('custom-format-input').required = true; // Make it required
+        } else {
+            customFormatGroup.style.display = 'none'; // Hide the custom format input
+            document.getElementById('custom-format-input').required = false; // Remove required
+        }
+    });
 
     $(".printBtn").click(function() {
         let data = $(this).data('print');

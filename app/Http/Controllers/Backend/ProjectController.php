@@ -1543,7 +1543,20 @@ class ProjectController extends Controller
 
     public function savePrint($project_id, Request $request, ProjectService $projectService)
     {
-        $request->merge(['project_id' => $project_id]);
+        $format = $request->input('format');
+        $customFormat = $request->input('custom_format');
+
+        // If "Other" is selected, use the custom format
+        if ($format === 'other' && !empty($customFormat)) {
+            $finalFormat = $customFormat;
+        } else {
+            // Use the selected predefined format
+            $finalFormat = $format;
+        }
+        $request->merge([
+            'project_id' => $project_id,
+            'format' => $finalFormat
+        ]);
 
         $projectService->savePrint($request);
 
