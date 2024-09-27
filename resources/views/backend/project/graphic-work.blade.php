@@ -286,6 +286,7 @@
                 <thead>
                 <tr>
                     <th>File</th>
+                    <th>Upload Date</th>
                     <th>Format</th>
                     <th width="300"></th>
                 </tr>
@@ -307,6 +308,9 @@
                                 @endif
                                 
                                 {!! $printReady->image !!}
+                            </td>
+                            <td>
+                                {{ $printReady->upload_date }}
                             </td>
                             <td>
                                 {{ $printReady->format }}
@@ -636,14 +640,21 @@
 
                             <div class="form-group">
                                 <label>Størrelse</label>
-                                <select class="form-control" name="format">
+                                <select class="form-control" name="format" id="format-select" required>
                                     <option value="">Valgfri størrelse</option>
-                                        @foreach (AdminHelpers::projectFormats() as $format)
-                                            <option value="{{ $format['id'] }}">
-                                                {{ $format['option'] }}
-                                            </option>
-                                        @endforeach
+                                    @foreach (AdminHelpers::projectFormats() as $format)
+                                        <option value="{{ $format['id'] }}">
+                                            {{ $format['option'] }}
+                                        </option>
+                                    @endforeach
+                                    <option value="other">Annen størrelse</option> <!-- "Other" option -->
                                 </select>
+                            </div>
+                            
+                            <div class="form-group" id="custom-format-group" style="display: none;"> <!-- Hidden by default -->
+                                <label>Spesifiser størrelse</label>
+                                <input type="text" class="form-control" name="custom_format" id="custom-format-input" 
+                                placeholder="Skriv inn størrelse">
                             </div>
                         </div>
 
@@ -977,6 +988,30 @@
                     }
                 }
 
+                if (type == 'print-ready') {
+                    const formatSelect = $('#format-select');
+                    const customFormatInput = $('#custom-format-input');
+                    const customFormatGroup = $('#custom-format-group');
+
+                    // Get all options from the format select dropdown
+                    let predefinedFormats = [];
+                    formatSelect.find('option').each(function () {
+                        predefinedFormats.push($(this).val()); // Push all values into the array
+                    });
+                    
+                    // Check if the saved format exists in the predefined formats
+                    if (predefinedFormats.includes(record.format)) {
+                        formatSelect.val(record.format); // Set the predefined format value
+                        customFormatGroup.hide(); // Hide the custom format input
+                        customFormatInput.val(''); // Clear the custom format input
+                    } else {
+                        // If the format is not in the predefined list, treat it as "Other"
+                        formatSelect.val('other'); // Set the select to 'Other'
+                        customFormatGroup.show(); // Show the custom format input
+                        customFormatInput.val(record.format); // Set the custom format value
+                    }
+                }
+
             }
         });
 
@@ -1076,5 +1111,15 @@
                 $(".backside-file").show();
             }
         });
+
+        $('#format-select').on('change', function () {
+        if ($(this).val() === 'other') {
+            $('#custom-format-group').show();
+            $('#custom-format-input').prop('required', true);
+        } else {
+            $('#custom-format-group').hide();
+            $('#custom-format-input').prop('required', false);
+        }
+    });
     </script>
 @stop

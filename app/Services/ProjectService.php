@@ -360,8 +360,22 @@ class ProjectService
                 break;
 
             case 'print-ready':
-                    $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'print_ready');
-                    break;
+                $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'print_ready');
+                $data['print_ready'] = null;
+
+                $format = $request->input('format');
+                $customFormat = $request->input('custom_format');
+        
+                // If "Other" is selected, use the custom format
+                if ($format === 'other' && !empty($customFormat)) {
+                    $finalFormat = $customFormat;
+                } else {
+                    // Use the selected predefined format
+                    $finalFormat = $format;
+                }
+
+                $data['format'] = $finalFormat;
+                break;
 
             case 'sample-book-pdf':
                 $data['value'] = $this->saveGraphicWorkFileOrImage($request, 'sample_book_pdf');

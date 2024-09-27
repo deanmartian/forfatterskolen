@@ -8,19 +8,25 @@ class ProjectGraphicWork extends Model
 {
 
     protected $fillable = ['project_id', 'type', 'value', 'description', 'print_ready', 'format', 'isbn_id',
-        'backside_text', 'backside_image', 'instruction', 'date', 'is_checked'];
+        'backside_text', 'backside_image', 'instruction', 'date', 'is_checked', 'upload_date'];
     protected $appends = ['image', 'file_link', 'interior', 'backside_type'];
 
-    /*protected static function boot() {
+    protected static function boot() {
         parent::boot();
 
-        static::deleting(function($graphicWork) { // before delete() method call this
+        static::saving(function ($model) {
+            if ($model->isDirty('value')) {
+                $model->upload_date = today()->format('Y-m-d');
+            }
+        });
+
+        /* static::deleting(function($graphicWork) { // before delete() method call this
             $file = public_path($graphicWork->value);
             if(\File::isFile($file)){
                 \File::delete($file);
             }
-        });
-    }*/
+        }); */
+    }
 
     public function scopeCover( $query )
     {

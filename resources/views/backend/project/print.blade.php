@@ -318,6 +318,28 @@
             modal.find('[name=print_method]').val(data.print_method);
             modal.find('[name=color]').val(data.color);
             modal.find('[name=number_of_color_pages]').val(data.number_of_color_pages);
+
+            const formatSelect = $('#format-select');
+            const customFormatInput = $('#custom-format-input');
+            const customFormatGroup = $('#custom-format-group');
+
+            // Get all options from the format select dropdown
+            let predefinedFormats = [];
+            formatSelect.find('option').each(function () {
+                predefinedFormats.push($(this).val()); // Push all values into the array
+            });
+
+            // Check if the saved format exists in the predefined formats
+            if (predefinedFormats.includes(data.format)) {
+                formatSelect.val(data.format); // Set the predefined format value
+                customFormatGroup.hide(); // Hide the custom format input
+                customFormatInput.val(''); // Clear the custom format input
+            } else {
+                // If the format is not in the predefined list, treat it as "Other"
+                formatSelect.val('other'); // Set the select to 'Other'
+                customFormatGroup.show(); // Show the custom format input
+                customFormatInput.val(data.format); // Set the custom format value
+            }
         }
     });
 
