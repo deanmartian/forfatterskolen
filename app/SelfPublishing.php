@@ -110,9 +110,9 @@ class SelfPublishing extends Model
         foreach ($files as $file) {
             $extension = explode('.', basename($file));
 
-            if(strpos($file, 'project-')) {
-                $fileLink .= '<a href="'.route('dropbox.shared_link', trim($file)).'" target="_blank">' . basename($file) . '</a>';
-                $fileLink .= ' <a href="'.route('dropbox.download_file', trim($file)).'">
+            if(strpos($file, 'project-') || strpos($file, 'Forfatterskolen_app')) {
+                $fileLink .= '<a href="'.url('/dropbox/shared-link/' . trim($file)).'" target="_blank">' . basename($file) . '</a>';
+                $fileLink .= ' <a href="'.url('/dropbox/download/' .  trim($file)).'">
                     <i class="fa fa-download" aria-hidden="true"></i></a>';
                 $fileLink .= ', ';
             } else {

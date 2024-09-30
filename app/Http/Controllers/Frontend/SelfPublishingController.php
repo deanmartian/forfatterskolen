@@ -12,6 +12,7 @@ use App\SelfPublishing;
 use App\SelfPublishingFeedback;
 use App\SelfPublishingOrder;
 use Auth;
+use DB;
 use FrontendHelpers;
 use Illuminate\Http\Request;
 use Spatie\Dropbox\Client as DropboxClient;
@@ -170,12 +171,22 @@ class SelfPublishingController extends Controller
 
     public function listSelfPublishing()
     {
-        $selfPublishingList = SelfPublishing::join('self_publishing_learners', 
+        /* $selfPublishingList = SelfPublishing::join('self_publishing_learners', 
         'self_publishing.id', '=', 'self_publishing_learners.self_publishing_id')
         ->select('self_publishing.*')
         ->where('user_id', Auth::id())
         ->whereNull('project_id')
-        ->get();
+        ->get(); */
+        $selfPublishingList = SelfPublishing::leftJoin('self_publishing_learners', 
+            'self_publishing.id', '=', 'self_publishing_learners.self_publishing_id')
+            ->leftJoin('projects', 'self_publishing.project_id', '=', 'projects.id') // Join the projects table via project_id
+            ->select('self_publishing.*')
+            ->where(function ($query) {
+                $query->where('self_publishing_learners.user_id', Auth::id())
+                    ->orWhere('projects.user_id', Auth::id()); // Check if user_id matches in either table
+            })
+            ->latest()
+            ->get();
 
         return view('frontend.learner.self-publishing.self-publishing-list', compact('selfPublishingList'));
     }

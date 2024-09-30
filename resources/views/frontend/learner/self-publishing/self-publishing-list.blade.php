@@ -35,7 +35,7 @@
                                             {{ $publishing->description }}
                                         </td>
                                         <td>
-                                            {!! $publishing->file_link_with_download !!}
+                                            {!! $publishing->dropbox_file_link_with_download !!}
                                             @if(!$publishing->feedback)
                                                 <br>
                                                 <button class="btn btn-primary btn-xs uploadSelfPublishingManuscriptBtn"
@@ -103,7 +103,9 @@
 
 @section('scripts')
     <script>
+        console.log("ADsf adsf adsf asdf as f");
         $(".uploadSelfPublishingManuscriptBtn").click(function() {
+        console.log("clicked");
             let action = $(this).data('action');
             let modal = $('#uploadSelfPublishingManuscriptModal');
             modal.find('form').attr('action', action);

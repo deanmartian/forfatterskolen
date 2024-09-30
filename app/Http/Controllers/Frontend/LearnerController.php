@@ -2214,13 +2214,65 @@ class LearnerController extends Controller
 
         $publishing = SelfPublishing::find($id);
 
-        $destinationPath = 'storage/self-publishing-manuscript/'; // upload path
+        //$destinationPath = 'storage/self-publishing-manuscript/'; // upload path
+        $destinationPath = 'Forfatterskolen_app/self-publishing-manuscript/';
+        
+        if ($publishing->project_id) {
+            $destinationPath = 'Forfatterskolen_app/project/project-' . $publishing->project_id . '/self-publishing-manuscript/';
+        }
 
         if ( $request->hasFile('manuscript') ) :
 
             $filesWithPath = '';
             $word_count = 0;
-            foreach ($request->file('manuscript') as $k => $file) {
+            $requestFilename = 'manuscript';
+
+            foreach (\request()->file($requestFilename) as $k => $file) {
+                $extension = pathinfo($_FILES[$requestFilename]['name'][$k], PATHINFO_EXTENSION);
+                $original_filename = $file->getClientOriginalName();
+                $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
+        
+                $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name . "." . $extension); // rename document
+                $expFileName = explode('/', $fileName);
+                $dropboxFileName = end($expFileName);
+        
+                // Store the file in Dropbox
+                $file->storeAs($destinationPath, $dropboxFileName, 'dropbox');
+        
+                // Full file path for reference
+                $filesWithPath .= "/" . $destinationPath . $fileName . ", ";
+        
+                // File path in Dropbox
+                $filePath = $destinationPath . $dropboxFileName;
+
+                // Download the file locally from Dropbox (temporarily)
+                $tempFile = Storage::disk('dropbox')->get($filePath);
+                $localPath = storage_path('app/temp/' . $dropboxFileName); // Define temporary local path
+
+                file_put_contents($localPath, $tempFile); // Save it locally temporarily
+        
+                // Word counting logic based on the file extension
+                if ($extension == "pdf") {
+                    $pdf = new \PdfToText($localPath);
+                    $pdfContent = $pdf->Text;
+                    $word_count += FrontendHelpers::get_num_of_words($pdfContent);
+                } elseif ($extension == "docx") {
+                    $docObj = new \Docx2Text($localPath);
+                    $docText = $docObj->convertToText();
+                    $word_count += FrontendHelpers::get_num_of_words($docText);
+                } elseif ($extension == "doc") {
+                    $docText = FrontendHelpers::readWord($localPath);
+                    $word_count += FrontendHelpers::get_num_of_words($docText);
+                } elseif ($extension == "odt") {
+                    $doc = odt2text($localPath);
+                    $word_count += FrontendHelpers::get_num_of_words($doc);
+                }
+
+                // Delete the temporary local file after processing
+                unlink($localPath);
+            }
+            
+            /* foreach ($request->file('manuscript') as $k => $file) {
                 $extension = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_EXTENSION); // getting document extension
                 $actual_name = pathinfo($_FILES['manuscript']['name'][$k],PATHINFO_FILENAME);
                 $fileName = AdminHelpers::checkFileName($destinationPath, $actual_name, $extension);// rename document
@@ -2247,7 +2299,7 @@ class LearnerController extends Controller
                     $doc = odt2text($destinationPath.end($expFileName));
                     $word_count += FrontendHelpers::get_num_of_words($doc);
                 endif;
-            }
+            } */
 
             $publishing->manuscript = $filesWithPath = trim($filesWithPath,", ");
             $publishing->word_count = $word_count;

@@ -39,6 +39,14 @@
                 height: 70px;
                 margin: 0 auto;
             }
+
+            .modal.fade .modal-dialog {
+                transform: translate(0,0);
+            }
+
+            .modal-open .modal {
+                background-color: #66646463;
+            }
         </style>
         @yield('styles')
 
@@ -66,5 +74,65 @@
                 @yield('content')
             </div>
         </div>
+
+        @if($errors->count())
+            <?php
+            $alert_type = session('alert_type');
+            if(!Session::has('alert_type')) {
+                $alert_type = 'danger';
+            }
+            ?>
+            <div class="alert alert-{{ $alert_type }} global-alert-box" style="z-index: 9; min-width: 300px"
+                 id="fixed_to_bottom_alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                <ul>
+                    @foreach($errors->all() as $error)
+                        <li>{!! $error !!}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        @include('frontend.partials.scripts')
+        <script src="https://Forfatterskolen.cdn.vooplayer.com/assets/vooplayer.js" defer></script>
+        <script src="/js/lang.js"></script>
+        <script async>
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            if ('serviceWorker' in navigator ) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+                        // Registration was successful
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    }, function(err) {
+                        // registration failed :(
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+                });
+            }
+
+            function disableSubmit(t) {
+                let submit_btn = $(t).find('[type=submit]');
+                submit_btn.text('');
+                submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
+                submit_btn.attr('disabled', 'disabled');
+            }
+
+            function disableSubmitOrigText(t) {
+                let submit_btn = $(t).find('[type=submit]');
+                submit_btn.attr('disabled', 'disabled');
+            }
+        </script>
+
+        @yield('scripts')
+
+        <!-- Google Tag Manager (noscript) -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PBZBPBN2"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+            <!-- End Google Tag Manager (noscript) -->
     </body>
 </html>
