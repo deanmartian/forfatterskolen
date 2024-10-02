@@ -206,7 +206,15 @@ class SelfPublishingController extends Controller
 
     public function correction()
     {
-        $corrections = Auth::user()->corrections()->whereNull('project_id')->get();
+        //$corrections = Auth::user()->corrections()->whereNull('project_id')->get();
+        $corrections = CorrectionManuscript::leftJoin('projects', 'correction_manuscripts.project_id', '=', 'projects.id')
+            ->select('correction_manuscripts.*')
+            ->where('correction_manuscripts.user_id', Auth::id())
+            ->where(function($query) {
+                $query->whereNull('project_id')
+                    ->orWhere('projects.user_id', Auth::id());
+            })->latest('correction_manuscripts.created_at')->get();
+
         return view('frontend.learner.self-publishing.correction', compact('corrections'));
     }
 

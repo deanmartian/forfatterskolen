@@ -2347,9 +2347,11 @@ class LearnerController extends Controller
     
             // File path in Dropbox
             $filePath = $destinationPath . $dropboxFileName;
+            $calculatedPrice = $projectService->calculateFileTextPrice($filePath, $type);
 
             //$file = $projectService->saveFile($data->project_id, $request);
             $data->file = "/" . $filePath;
+            $data->payment_price = $calculatedPrice;
             $data->save();
         }
 

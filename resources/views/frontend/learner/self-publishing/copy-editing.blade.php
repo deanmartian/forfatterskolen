@@ -39,10 +39,16 @@
                                         <?php $extension = explode('.', basename($editing->file)); ?>
                                         <tr>
                                             <td>
-                                                @if( end($extension) == 'pdf' || end($extension) == 'odt' )
-                                                    <a href="/js/ViewerJS/#../../{{ $editing->file }}">{{ basename($editing->file) }}</a>
-                                                @elseif( end($extension) == 'docx' )
-                                                    <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$editing->file}}">{{ basename($editing->file) }}</a>
+                                                @if (strpos($editing->file, 'Forfatterskolen_app'))
+                                                    <a href="/dropbox/shared-link/{{ $editing->file }}" target="_blank">
+                                                        {{ basename($editing->file) }}
+                                                    </a>
+                                                @else
+                                                    @if( end($extension) == 'pdf' || end($extension) == 'odt' )
+                                                        <a href="/js/ViewerJS/#../../{{ $editing->file }}">{{ basename($editing->file) }}</a>
+                                                    @elseif( end($extension) == 'docx' )
+                                                        <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$editing->file}}">{{ basename($editing->file) }}</a>
+                                                    @endif
                                                 @endif
         
                                                 @if(!$editing->is_locked && $editing->status !=2)
