@@ -222,8 +222,13 @@ class ProjectService
      */
     public function saveOtherService( $project_id, Request $request )
     {
-        $filePath = $this->saveFile($project_id, $request);
-        $calculatedPrice = $this->calculateFileTextPrice($filePath, $request->is_copy_editing);
+        $filePath = null;
+        $calculatedPrice = 0;
+        
+        if ($request->has('manuscript')) {
+            $filePath = $this->saveFile($project_id, $request);
+            $calculatedPrice = $this->calculateFileTextPrice($filePath, $request->is_copy_editing);
+        }
 
         $manuType = 'Correction';
         if ($request->is_copy_editing == 1) {

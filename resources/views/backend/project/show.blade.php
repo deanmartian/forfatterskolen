@@ -690,8 +690,7 @@
                         <div class="form-group">
                             <label>{{ trans_choice('site.manuscripts', 1) }}</label>
                             <input type="file" class="form-control" name="manuscript"
-                                   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                   required>
+                                   accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
                         </div>
 
                         <div class="form-group">

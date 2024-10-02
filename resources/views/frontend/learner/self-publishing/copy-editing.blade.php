@@ -39,7 +39,6 @@
                                         <?php $extension = explode('.', basename($editing->file)); ?>
                                         <tr>
                                             <td>
-                                                {{ $editing->id }}
                                                 @if( end($extension) == 'pdf' || end($extension) == 'odt' )
                                                     <a href="/js/ViewerJS/#../../{{ $editing->file }}">{{ basename($editing->file) }}</a>
                                                 @elseif( end($extension) == 'docx' )
@@ -76,8 +75,16 @@
                                             </td>
                                             <td>
                                                 @if ($editing->file)
-                                                    <a href="{{ route('learner.other-service.download-doc',
-                                                    ['id' => $editing->id, 'type' => 1]) }}">{{ trans('site.learner.download-original-script') }}</a>
+                                                    @if (strpos($editing->file, 'Forfatterskolen_app'))
+                                                        <a href="{{ url('dropbox/download/' . trim($editing->file)) }}">
+                                                            {{ trans('site.learner.download-original-script') }}
+                                                        </a>
+                                                    @else
+                                                        <a href="{{ route('learner.other-service.download-doc',
+                                                        ['id' => $editing->id, 'type' => 1]) }}">
+                                                            {{ trans('site.learner.download-original-script') }}
+                                                        </a>
+                                                    @endif
                                                 @endif
         
                                                 @if ($editing->feedback)

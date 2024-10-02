@@ -193,7 +193,14 @@ class SelfPublishingController extends Controller
 
     public function copyEditing()
     {
-        $copyEditings = Auth::user()->copyEditings()->whereNull('project_id')->get();
+        //$copyEditings = Auth::user()->copyEditings()->whereNull('project_id')->get();
+        $copyEditings = CopyEditingManuscript::leftJoin('projects', 'copy_editing_manuscripts.project_id', '=', 'projects.id')
+            ->select('copy_editing_manuscripts.*')
+            ->where('copy_editing_manuscripts.user_id', Auth::id())
+            ->where(function($query) {
+                $query->whereNull('project_id')
+                    ->orWhere('projects.user_id', Auth::id());
+            })->latest('copy_editing_manuscripts.created_at')->get();
         return view('frontend.learner.self-publishing.copy-editing', compact('copyEditings'));
     }
 

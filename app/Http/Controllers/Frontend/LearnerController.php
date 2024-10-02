@@ -2326,8 +2326,30 @@ class LearnerController extends Controller
         if (in_array($type, [1, 2])) {
             $data = $type == 1 ? CopyEditingManuscript::find($id) : CorrectionManuscript::find($id);
             $request->merge(['type' => $type]);
-            $file = $projectService->saveFile($request);
-            $data->file = $file;
+
+            $folderName = $type == 1 ? 'copy-editing-manuscripts' : 'correction-manuscripts';
+            $destinationPath = 'Forfatterskolen_app/' . ($data->project_id ? 'project/project-' . $data->project_id . '/' : '') 
+                . $folderName . '/';
+
+            $requestFilename = 'manuscript';
+            $file = \request()->file($requestFilename);
+
+            $extension = pathinfo($_FILES[$requestFilename]['name'], PATHINFO_EXTENSION);
+            $original_filename = $file->getClientOriginalName();
+            $actual_name = pathinfo($original_filename, PATHINFO_FILENAME);
+    
+            $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name . "." . $extension); // rename document
+            $expFileName = explode('/', $fileName);
+            $dropboxFileName = end($expFileName);
+    
+            // Store the file in Dropbox
+            $file->storeAs($destinationPath, $dropboxFileName, 'dropbox');
+    
+            // File path in Dropbox
+            $filePath = $destinationPath . $dropboxFileName;
+
+            //$file = $projectService->saveFile($data->project_id, $request);
+            $data->file = "/" . $filePath;
             $data->save();
         }
 

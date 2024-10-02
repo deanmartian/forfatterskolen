@@ -24,7 +24,7 @@ class ProjectCopyEditingRequest extends FormRequest
     public function rules()
     {
         return [
-            'manuscript' => 'required|mimes:docx'
+            //'manuscript' => 'required|mimes:docx'
         ];
     }
 }
