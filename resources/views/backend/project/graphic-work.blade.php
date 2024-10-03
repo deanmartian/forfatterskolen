@@ -313,7 +313,9 @@
                                 {{ $printReady->upload_date }}
                             </td>
                             <td>
-                                {{ $printReady->format }}
+                                {{ !is_array(AdminHelpers::projectFormats($printReady->format)) ?
+                                    AdminHelpers::projectFormats($printReady->format) 
+                                    : $printReady->format . ' mm' }}
                             </td>
                             <td>
                                 <button class="btn btn-primary btn-xs graphicWorkBtn" data-toggle="modal"
@@ -640,21 +642,26 @@
 
                             <div class="form-group">
                                 <label>Størrelse</label>
-                                <select class="form-control" name="format" id="format-select" required>
+                                <select class="form-control" name="format" id="format-select">
                                     <option value="">Valgfri størrelse</option>
                                     @foreach (AdminHelpers::projectFormats() as $format)
                                         <option value="{{ $format['id'] }}">
                                             {{ $format['option'] }}
                                         </option>
                                     @endforeach
-                                    <option value="other">Annen størrelse</option> <!-- "Other" option -->
                                 </select>
                             </div>
                             
-                            <div class="form-group" id="custom-format-group" style="display: none;"> <!-- Hidden by default -->
-                                <label>Spesifiser størrelse</label>
-                                <input type="text" class="form-control" name="custom_format" id="custom-format-input" 
-                                placeholder="Skriv inn størrelse">
+                            <div class="form-group">
+                                <label>Bredde (mm)</label>
+                                <input type="text" class="form-control" name="width" id="width-input" 
+                                onkeypress="return numeralsOnly(event)">
+                            </div>
+        
+                            <div class="form-group">
+                                <label>Høyde (mm)</label>
+                                <input type="text" class="form-control" name="height" id="height-input" 
+                                onkeypress="return numeralsOnly(event)">
                             </div>
                         </div>
 
@@ -989,26 +996,45 @@
                 }
 
                 if (type == 'print-ready') {
-                    const formatSelect = $('#format-select');
-                    const customFormatInput = $('#custom-format-input');
-                    const customFormatGroup = $('#custom-format-group');
-
-                    // Get all options from the format select dropdown
-                    let predefinedFormats = [];
-                    formatSelect.find('option').each(function () {
-                        predefinedFormats.push($(this).val()); // Push all values into the array
-                    });
                     
-                    // Check if the saved format exists in the predefined formats
-                    if (predefinedFormats.includes(record.format)) {
-                        formatSelect.val(record.format); // Set the predefined format value
-                        customFormatGroup.hide(); // Hide the custom format input
-                        customFormatInput.val(''); // Clear the custom format input
-                    } else {
-                        // If the format is not in the predefined list, treat it as "Other"
-                        formatSelect.val('other'); // Set the select to 'Other'
-                        customFormatGroup.show(); // Show the custom format input
-                        customFormatInput.val(record.format); // Set the custom format value
+                    var formatSelect = document.getElementById('format-select');
+                    var widthInput = document.getElementById('width-input');
+                    var heightInput = document.getElementById('height-input');
+
+                    var formatExists = false;
+
+                    // Check if the format matches any predefined options
+                    for (var i = 0; i < formatSelect.options.length; i++) {
+                        if (formatSelect.options[i].value === record.format) {
+                            formatSelect.value = record.format;
+                            formatExists = true;
+
+                            // If it's a predefined format like '125x200', split it for width/height
+                            var dimensions = record.format.split('x');
+                            if (dimensions.length == 2) {
+                                widthInput.value = dimensions[0];
+                                heightInput.value = dimensions[1];
+                            }
+                            break;
+                        }
+                    }
+                    
+                    if (!formatExists) {
+                        console.log("here");
+                        formatSelect.value = ''; // Select "other" option
+
+                        // Assuming `printData` contains custom width and height
+                        if (record.format) {
+                            var dimensions = record.format.split('x');
+                            if (dimensions.length == 2) {
+                                widthInput.value = dimensions[0];
+                                heightInput.value = dimensions[1];
+                            }
+                        } else {
+                            // You can also fallback to width and height fields if needed
+                            widthInput.value = record.width || ''; // Use width from printData
+                            heightInput.value = record.height || ''; // Use height from printData
+                        }
                     }
                 }
 
@@ -1113,13 +1139,29 @@
         });
 
         $('#format-select').on('change', function () {
-        if ($(this).val() === 'other') {
-            $('#custom-format-group').show();
-            $('#custom-format-input').prop('required', true);
-        } else {
-            $('#custom-format-group').hide();
-            $('#custom-format-input').prop('required', false);
+            var selectedFormat = this.value;
+            var widthInput = document.getElementById('width-input');
+            var heightInput = document.getElementById('height-input');
+            
+            // If the selected value is "other", clear the width and height inputs
+            if (selectedFormat !== "") {
+                // Split the selected format (e.g., '125x200' => ['125', '200'])
+                var dimensions = selectedFormat.split('x');
+                widthInput.value = dimensions[0];  // Set the width
+                heightInput.value = dimensions[1]; // Set the height
+            } else {
+                widthInput.value = '';
+                heightInput.value = '';
+            }
+        });
+
+    function numeralsOnly(event) {
+        const charCode = event.which ? event.which : event.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            event.preventDefault();
+            return false;
         }
-    });
+        return true;
+    }
     </script>
 @stop

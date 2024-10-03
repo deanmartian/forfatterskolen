@@ -641,7 +641,8 @@ class ProjectController extends Controller
                 case 'print-ready':
                         $this->validate($request, [
                             'print_ready' => 'required|mimes:pdf',
-                            'format' => 'required'
+                            'width' => 'required',
+                            'height' => 'required',
                         ]);
                         break;
 

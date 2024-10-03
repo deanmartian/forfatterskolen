@@ -369,16 +369,15 @@ class ProjectService
                 $data['print_ready'] = null;
 
                 $format = $request->input('format');
-                $customFormat = $request->input('custom_format');
+                $customFormat = $request->width  . "x" . $request->height;
         
                 // If "Other" is selected, use the custom format
-                if ($format === 'other' && !empty($customFormat)) {
+                if ((empty($format) || is_null($format)) && !empty($request->width) && !empty($request->height)) {
                     $finalFormat = $customFormat;
                 } else {
                     // Use the selected predefined format
                     $finalFormat = $format;
                 }
-
                 $data['format'] = $finalFormat;
                 break;
 

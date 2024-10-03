@@ -50,7 +50,7 @@
                                 <label>Størrelse</label>
                                 <p>
                                     {{ !is_array(AdminHelpers::projectFormats($print->format)) ?
-                                        AdminHelpers::projectFormats($print->format) : $print->format }}
+                                        AdminHelpers::projectFormats($print->format) : $print->width . 'x' . $print->height . ' mm' }}
                                 </p>
                             </div>
                         </div>
@@ -170,31 +170,24 @@
 
                     <div class="form-group">
                         <label>Størrelse</label>
-                        <select class="form-control" name="format" id="format-select" required>
+                        <select class="form-control" name="format" id="format-select">
                             <option value="">Valgfri størrelse</option>
                             @foreach (AdminHelpers::projectFormats() as $format)
                                 <option value="{{ $format['id'] }}">
                                     {{ $format['option'] }}
                                 </option>
                             @endforeach
-                            <option value="other">Annen størrelse</option> <!-- "Other" option -->
                         </select>
-                    </div>
-                    
-                    <div class="form-group" id="custom-format-group" style="display: none;"> <!-- Hidden by default -->
-                        <label>Spesifiser størrelse</label>
-                        <input type="text" class="form-control" name="custom_format" id="custom-format-input" 
-                        placeholder="Skriv inn størrelse">
                     </div>
 
                     <div class="form-group">
                         <label>Bredde (mm)</label>
-                        <input type="text" class="form-control" name="width" onkeypress="return numeralsOnly(event)">
+                        <input type="text" class="form-control" name="width" id="width-input" onkeypress="return numeralsOnly(event)">
                     </div>
 
                     <div class="form-group">
                         <label>Høyde (mm)</label>
-                        <input type="text" class="form-control" name="height" onkeypress="return numeralsOnly(event)">
+                        <input type="text" class="form-control" name="height" id="height-input" onkeypress="return numeralsOnly(event)">
                     </div>
 
                     <div class="form-group">
@@ -288,17 +281,6 @@
         return true;
     }
 
-    /* document.getElementById('format-select').addEventListener('change', function() {
-        var customFormatGroup = document.getElementById('custom-format-group');
-        if (this.value === 'other') {
-            customFormatGroup.style.display = 'block'; // Show the custom format input
-            document.getElementById('custom-format-input').required = true; // Make it required
-        } else {
-            customFormatGroup.style.display = 'none'; // Hide the custom format input
-            document.getElementById('custom-format-input').required = false; // Remove required
-        }
-    }); */
-
     $(".printBtn").click(function() {
         let data = $(this).data('print');
         let modal = $("#printModal");
@@ -318,39 +300,23 @@
             modal.find('[name=print_method]').val(data.print_method);
             modal.find('[name=color]').val(data.color);
             modal.find('[name=number_of_color_pages]').val(data.number_of_color_pages);
-
-            const formatSelect = $('#format-select');
-            const customFormatInput = $('#custom-format-input');
-            const customFormatGroup = $('#custom-format-group');
-
-            // Get all options from the format select dropdown
-            let predefinedFormats = [];
-            formatSelect.find('option').each(function () {
-                predefinedFormats.push($(this).val()); // Push all values into the array
-            });
-
-            // Check if the saved format exists in the predefined formats
-            if (predefinedFormats.includes(data.format)) {
-                formatSelect.val(data.format); // Set the predefined format value
-                customFormatGroup.hide(); // Hide the custom format input
-                customFormatInput.val(''); // Clear the custom format input
-            } else {
-                // If the format is not in the predefined list, treat it as "Other"
-                formatSelect.val('other'); // Set the select to 'Other'
-                customFormatGroup.show(); // Show the custom format input
-                customFormatInput.val(data.format); // Set the custom format value
-            }
         }
     });
 
-    // Show or hide custom format input field based on selected option
-    $('#format-select').on('change', function () {
-        if ($(this).val() === 'other') {
-            $('#custom-format-group').show();
-            $('#custom-format-input').prop('required', true);
+    document.getElementById('format-select').addEventListener('change', function () {
+        var selectedFormat = this.value;
+        var widthInput = document.getElementById('width-input');
+        var heightInput = document.getElementById('height-input');
+        
+        // If the selected value is "other", clear the width and height inputs
+        if (selectedFormat !== "") {
+            // Split the selected format (e.g., '125x200' => ['125', '200'])
+            var dimensions = selectedFormat.split('x');
+            widthInput.value = dimensions[0];  // Set the width
+            heightInput.value = dimensions[1]; // Set the height
         } else {
-            $('#custom-format-group').hide();
-            $('#custom-format-input').prop('required', false);
+            widthInput.value = '';
+            heightInput.value = '';
         }
     });
 
