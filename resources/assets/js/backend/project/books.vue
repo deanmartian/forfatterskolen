@@ -44,8 +44,16 @@
 
             <div class="form-group">
                 <label>Author</label>
-                <v-select :options="learners" label="full_name" v-model="selected_learner" @input="setSelectedLearner($event)"
-                          name="learner_id"></v-select>
+                <!-- <v-select :options="learners" label="full_name" v-model="selected_learner" @input="setSelectedLearner($event)"
+                          name="learner_id"></v-select> -->
+                <div class="dropdown-container">
+                    <input type="text" v-model="searchQuery" @input="fetchLearners" class="form-control" placeholder="Search for users">
+                    <div class="dropdown-results" v-if="searchLearnerList.length">
+                        <div v-for="learner in searchLearnerList" :key="learner.id" @click="selectLearner(learner)">
+                            {{ learner.first_name + " " + learner.last_name }}
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="form-group">
@@ -100,6 +108,8 @@ export default {
             },
             selected_learner: '',
             book: {},
+            searchQuery: '',
+            searchLearnerList: [],
             isLoading: false
         }
     },
@@ -192,6 +202,26 @@ export default {
                 });
                 this.$refs.deleteModal.hide();
             });
+        },
+
+        fetchLearners() {
+            if (this.searchQuery.length > 1) {
+                fetch(`/learners/search?search=${this.searchQuery}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        this.searchLearnerList = data;
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            } else {
+                this.searchLearnerList = [];
+            }
+        },
+
+        selectLearner(learner) {
+            this.form.user_id = learner.id;
+            //this.selected_learner = learner.first_name + " " + learner.last_name;
+            this.searchQuery = learner.first_name + " " + learner.last_name;
+            this.searchLearnerList = [];
         },
     }
 }
