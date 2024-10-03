@@ -290,7 +290,7 @@
 											<?php
 											$price = \App\Http\FrontendHelpers::currencyFormat($isBetween && $course->packagesIsShow[0]->full_payment_sale_price
 												? $course->packagesIsShow[0]->full_payment_sale_price
-												: $course->packagesIsShow[0]->full_payment_price);
+												: $course->packagesIsShow[0]->calculated_price);
 											?>
 											<a href="{{route($checkoutRoute, ['id' => $course->id])}}" class="btn course-price w-100">
 												{{ $course->pay_later_with_application ? 'Søk kurset' 
