@@ -8,7 +8,7 @@ class StorageDistributionCost extends Model
 {
     
     protected $fillable = [
-        'user_book_for_sale_id',
+        'project_book_id',
         'nr',
         'service',
         'number',

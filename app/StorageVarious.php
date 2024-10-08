@@ -8,7 +8,7 @@ class StorageVarious extends Model
 {
     protected $table = 'storage_various';
     protected $fillable = [
-        'user_book_for_sale_id',
+        'project_book_id',
         'publisher',
         'minimum_stock',
         'weight',

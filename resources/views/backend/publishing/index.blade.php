@@ -54,9 +54,9 @@
 	@if(Auth::user()->isSuperUser())
 		<a class="btn btn-success margin-top" href="{{ route('admin.invoice.index') }}">Invoices</a>
 	@endif
-	<a class="btn btn-success margin-top" href="{{ route('admin.book-for-sale.index') }}">
+	{{-- <a class="btn btn-success margin-top" href="{{ route('admin.book-for-sale.index') }}">
 		Books For Sale
-	</a>
+	</a> --}}
 	<a class="btn btn-success margin-top" href="{{ route('admin.application') }}">
 		Application
 	</a>

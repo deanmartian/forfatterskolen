@@ -141,5 +141,67 @@
                 </table>
             </div>
         </div>
+
+        <div class="col-md-6">
+            <button class="btn btn-primary pull-right btn-xs bookSalesBtn" data-toggle="modal"
+                data-target="#bookSalesModal">
+                + Book Sales
+            </button>
+            <h4>
+                Books sales
+            </h4>
+
+            <div class="clearfix"></div>
+
+            <div class="table-responsive" style="padding: 10px">
+                <table class="table dt-table">
+                    <thead>
+                        <tr>
+                            <th>Book</th>
+                            <th>Type</th>
+                            <th>Quantity</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($projectBook->sales as $bookSale)
+                            <tr>
+                                <td>
+                                    {{ $projectBook->book_name }}
+                                </td>
+                                <td>
+                                    {{ $bookSale->sale_type_text }}
+                                </td>
+                                <td>
+                                    {{ $bookSale->quantity }}
+                                </td>
+                                <td>
+                                    {{ $bookSale->total_amount_formatted }}
+                                </td>
+                                <td>
+                                    {{ $bookSale->date }}
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary btn-xs bookSalesBtn" data-toggle="modal"
+                                            data-record="{{ json_encode($bookSale) }}"
+                                            data-target="#bookSalesModal">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+
+                                    <button class="btn btn-danger btn-xs deleteBtn" data-toggle="modal"
+                                            data-target="#deleteModal"
+                                            data-title="Delete Book Sale"
+                                            data-action="{{ route($deleteBookSaleRoute, $bookSale->id) }}">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>

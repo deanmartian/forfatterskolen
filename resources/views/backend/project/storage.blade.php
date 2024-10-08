@@ -35,7 +35,7 @@
                             </b>
                         </em>
 
-                        @if(!$projectUserBook)
+                        @if(!$projectBook || ($projectBook && !$projectBook->in_storage))
                             <button class="btn btn-primary btn-sm pull-right bookBtn" data-toggle="modal" 
                             data-target="#bookModal" data-action="{{ route($saveBookRoute, $projectId) }}"
                             data-title="Select Book">
@@ -47,6 +47,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
+                                    <th>ISBN</th>
                                     <th>
                                         Book name
                                     </th>
@@ -54,18 +55,29 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if ($projectUserBook)
+                                @if ($projectBook && $projectBook->in_storage)
                                     <tr>
                                         <td>
-                                            {{ $projectUserBook->title }}
+                                            @if ($project)
+                                                <ul>
+                                                    @foreach ($project->registrations as $registration)
+                                                        @if ($registration->field === 'isbn')
+                                                            <li>{{ $registration->value }}</li>
+                                                        @endif
+                                                    @endforeach
+                                                </ul>
+                                            @endif
                                         </td>
                                         <td>
-                                            <button class="btn btn-xs btn-primary bookBtn" data-toggle="modal" 
+                                            {{ $projectBook->book_name }}
+                                        </td>
+                                        <td>
+                                            {{-- <button class="btn btn-xs btn-primary bookBtn" data-toggle="modal" 
                                             data-target="#bookModal" data-title="Edit Book" 
-                                            data-record="{{ json_encode ($projectUserBook)}}"
+                                            data-record="{{ json_encode ($projectBook)}}"
                                             data-action="{{ route($saveBookRoute, $projectId) }}">
                                                 <i class="fa fa-edit"></i>
-                                            </button>
+                                            </button> --}}
 
                                             <button class="btn btn-danger btn-xs deleteBtn" data-toggle="modal" 
                                             data-target="#deleteModal"
@@ -82,7 +94,10 @@
             </div>
         </div>
         
-        @if($projectUserBook)
+        @if($projectBook && $projectBook->in_storage/* $projectUserBook */)
+            @php
+                $projectUserBook = $projectBook;
+            @endphp
             <ul class="nav nav-tabs margin-top">
                 <li @if( Request::input('tab') == 'master' || Request::input('tab') == '') class="active" @endif>
                     <a href="?tab=master">Master Data</a>
@@ -127,11 +142,17 @@
                             <label>Book</label>
                             <select name="user_book_for_sale_id" class="form-control" required>
                                 <option value="">- Select Book -</option>
-                                @foreach ($userBooksForSale as $book)
+                                @if ($projectBook)
+                                    <option value="{{ $projectBook->id }}">
+                                        {{ $projectBook->book_name }}
+                                    </option>
+                                @endif
+                                
+                                {{-- @foreach ($userBooksForSale as $book)
                                     <option value="{{ $book->id }}">
                                         {{ $book->title }}
                                     </option>
-                                @endforeach
+                                @endforeach --}}
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
@@ -164,6 +185,108 @@
             </div>
         </div>
     </div>
+
+    <div id="distributionsModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Distribution Cost</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" 
+                        onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="id">
+    
+                        <div class="form-group">
+                            <label>Nr</label>
+                            <input type="text" class="form-control" name="nr" required>
+                        </div>
+    
+                        <div class="form-group">
+                            <label>Service</label>
+                            <input type="text" class="form-control" name="service" required>
+                        </div>
+    
+                        <div class="form-group">
+                            <label>Number</label>
+                            <input type="number" class="form-control" name="number" required>
+                        </div>
+    
+                        <div class="form-group">
+                            <label>Amount</label>
+                            <input type="number" class="form-control" name="amount" required>
+                        </div>
+    
+                        <button class="btn btn-primary pull-right" type="submit">
+                            {{ trans('site.save') }}
+                        </button>
+    
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="bookSalesModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Book sales</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route($saveBookSaleRoute, $projectBook->project_id) }}" 
+                        onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="id">
+    
+                        <div class="form-group">
+                            <label>Book</label>
+                            <input type="text" class="form-control" value="{{ $projectBook->book_name }}" disabled>
+                            <input type="hidden" name="project_book_id" value="{{ $projectBook->id }}">
+                        </div>
+    
+                        <div class="form-group">
+                            <label>Sale Type</label>
+                            <select name="sale_type" class="form-control" required>
+                                <option value="" disabled selected>
+                                    - Select Sale Type-
+                                </option>
+                                @foreach ($bookSaleTypes as $key => $saleType)
+                                    <option value="{{ $key }}">
+                                        {{ $saleType }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+    
+                        <div class="form-group">
+                            <label>Quantity</label>
+                            <input type="number" class="form-control" name="quantity" required>
+                        </div>
+    
+                        <div class="form-group">
+                            <label>Amount</label>
+                            <input type="number" class="form-control" name="amount">
+                        </div>
+    
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" class="form-control" name="date" required>
+                        </div>
+    
+                        <button class="btn btn-primary pull-right" type="submit">
+                            {{ trans('site.save') }}
+                        </button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div> <!-- end bookSalesModal -->
 @stop
 
 @section('scripts')
@@ -213,7 +336,48 @@
     $(".inventory-selector").change(function() {
         var form = document.getElementById('inventory-form');
         form.submit();
-    })
+    });
+
+    $(".distributionsBtn").click(function() {
+        let modal = $("#distributionsModal");
+        let record = $(this).data('record');
+        let action = $(this).data('action');
+
+        modal.find("form").attr('action', action);
+        modal.find('[name=id]').val('');
+        modal.find('[name=nr]').val('');
+        modal.find('[name=service]').val('');
+        modal.find('[name=number]').val('');
+        modal.find('[name=amount]').val('');
+
+        if (record) {
+            modal.find('[name=id]').val(record.id);
+            modal.find('[name=nr]').val(record.nr);
+            modal.find('[name=service]').val(record.service);
+            modal.find('[name=number]').val(record.number);
+            modal.find('[name=amount]').val(record.amount);
+        }
+    });
+
+    $(".bookSalesBtn").click(function() {
+        let modal = $("#bookSalesModal");
+        let record = $(this).data('record');
+        modal.find('[name=id]').val('');
+        //modal.find('[name=project_book_id]').val('');
+        modal.find('[name=sale_type]').val('');
+        modal.find('[name=quantity]').val('');
+        modal.find('[name=amount]').val('');
+        modal.find('[name=date]').val('');
+
+        if (record) {
+            modal.find('[name=id]').val(record.id);
+            //modal.find('[name=project_book_id]').val(record.project_book_id);
+            modal.find('[name=sale_type]').val(record.sale_type);
+            modal.find('[name=quantity]').val(record.quantity);
+            modal.find('[name=amount]').val(record.amount);
+            modal.find('[name=date]').val(record.date);
+        }
+    });
 
     function toggleButtons(identifier) {
 

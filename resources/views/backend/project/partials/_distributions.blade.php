@@ -1,13 +1,22 @@
 <div class="panel">
     <div class="panel-body">
         <div class="col-md-6">
-            <table class="table">
+            <button class="btn btn-primary pull-right btn-xs distributionsBtn" data-toggle="modal"
+                data-target="#distributionsModal"
+                data-action="{{ route($saveDistributionRoute, $projectUserBook->id) }}">
+                + Add Distribution Cost
+            </button>
+
+            <div class="clearfix"></div>
+
+            <table class="table margin-top">
                 <thead>
                     <tr>
                         <th>Nr</th>
                         <th>Service</th>
                         <th>Number</th>
                         <th>Amount</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -24,6 +33,20 @@
                             </td>
                             <td>
                                 {{ $distributionCost->amount }}
+                            </td>
+                            <td>
+                                <button class="btn btn-primary btn-xs distributionsBtn" data-toggle="modal" 
+                                data-record="{{ json_encode($distributionCost) }}"
+                                data-action="{{ route($saveDistributionRoute, $projectUserBook->id) }}"
+                                data-target="#distributionsModal">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+
+                                <button class="btn btn-danger btn-xs deleteBtn" data-toggle="modal"
+                                data-target="#deleteModal" 
+                                data-action="{{ route($deleteDistributionRoute, $distributionCost->id) }}">
+                                    <i class="fa fa-trash"></i>
+                                </button>
                             </td>
                         </tr>
                     @endforeach

@@ -27,6 +27,7 @@ use App\ProjectBook;
 use App\ProjectBookCritique;
 use App\ProjectBookFormatting;
 use App\ProjectBookPicture;
+use App\ProjectBookSale;
 use App\ProjectEbook;
 use App\ProjectGraphicWork;
 use App\ProjectInvoice;
@@ -41,6 +42,7 @@ use App\Services\ProjectService;
 use App\Settings;
 use App\StorageBook;
 use App\StorageDetail;
+use App\StorageDistributionCost;
 use App\StorageSale;
 use App\StorageVarious;
 use App\TimeRegister;
@@ -1266,8 +1268,13 @@ class ProjectController extends Controller
         $deleteBookRoute = 'admin.project.storage.delete-book';
         $saveDetailsRoute = 'admin.project.storage.save-details';
         $saveVariousRoute = 'admin.project.storage.save-various';
+        $saveDistributionRoute = 'admin.project.storage.save-distribution-cost';
+        $deleteDistributionRoute = 'admin.project.storage.delete-distribution-cost';
+        $saveBookSaleRoute = 'admin.project.storage.save-book-sales';
+        $deleteBookSaleRoute = 'admin.project.storage.delete-book-sales';
 
         $project = Project::find($projectId);
+        $projectBook = $project->book;
         $projectUserBook = $project->userBookForSale;
         $projectUserBookId = $project->userBookForSale ? $project->userBookForSale->id : '';
         $userBooksForSale = UserBookForSale::where('user_id', $project->user_id)
@@ -1276,6 +1283,8 @@ class ProjectController extends Controller
             ->orWhere('id', $projectUserBookId);
         })
         ->get();
+        $bookSale = new ProjectBookSale();
+        $bookSaleTypes = $bookSale->saleTypes();
 
         $totalBookSold = 0;
         $totalBookSale = 0;
@@ -1284,9 +1293,9 @@ class ProjectController extends Controller
         $quantitySoldList = [];
         $turnedOverList = [];
 
-        if ($projectUserBook) {
-            $totalBookSold = $projectUserBook->sales()->sum('quantity');
-            $totalBookSale = $projectUserBook->sales()->sum('amount');
+        if ($projectBook->sales) {
+            $totalBookSold = $projectBook->sales()->sum('quantity');
+            $totalBookSale = $projectBook->sales()->sum('amount');
 
             $years = range($currentYear, $currentYear - 1);
         }
@@ -1341,18 +1350,22 @@ class ProjectController extends Controller
 
         return view('backend.project.storage', compact('backRoute', 'layout', 'projectId', 'project', 
         'projectUserBook', 'userBooksForSale', 'totalBookSold', 'totalBookSale', 'years', 'yearlyData', 'saveBookRoute',
-        'deleteBookRoute', 'saveDetailsRoute', 'saveVariousRoute'));
+        'deleteBookRoute', 'saveDetailsRoute', 'saveVariousRoute', 'projectBook', 'saveDistributionRoute',
+        'deleteDistributionRoute', 'bookSaleTypes', 'saveBookSaleRoute', 'deleteBookSaleRoute'));
     }
 
     public function saveStorageBook($projectId, Request $request)
     {
-        $currentProjectBookForSale = UserBookForSale::where('project_id', $projectId)->update([
+        /* $currentProjectBookForSale = UserBookForSale::where('project_id', $projectId)->update([
             'project_id' => NULL
         ]);
 
         $userBookForSale = UserBookForSale::find($request->user_book_for_sale_id);
         $userBookForSale->project_id = $projectId;
-        $userBookForSale->save();
+        $userBookForSale->save(); */
+        $book = ProjectBook::find($request->user_book_for_sale_id);
+        $book->in_storage = 1;
+        $book->save();
 
         return back()
             ->with(['errors' => AdminHelpers::createMessageBag('Storage Book saved successfully.'),
@@ -1361,8 +1374,12 @@ class ProjectController extends Controller
 
     public function deleteStorageBook($projectId)
     {
-        $userBookForSale = UserBookForSale::where('project_id', $projectId)->first();
+        /* $userBookForSale = UserBookForSale::where('project_id', $projectId)->first();
         $userBookForSale->project_id = NULL;
+        $userBookForSale->save(); */
+
+        $userBookForSale = ProjectBook::where('project_id', $projectId)->first();
+        $userBookForSale->in_storage = 0;
         $userBookForSale->save();
 
         if ($userBookForSale->detail) {
@@ -1378,12 +1395,39 @@ class ProjectController extends Controller
                 'alert_type' => 'success']);
     }
 
+    public function saveBookSales($project_id, Request $request)
+    {
+        $request->merge(['project_id' => $project_id]);
+        
+        ProjectBookSale::updateOrCreate([
+            'id' => $request->id
+        ], $request->except('id'));
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book sale saved successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
+    public function deleteBookSales($sale_id)
+    {
+        ProjectBookSale::find($sale_id)->delete();
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book sale deleted successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    }
+
     public function saveStorageBookDetails($book_id, Request $request)
     {
         StorageDetail::updateOrCreate([
-                'user_book_for_sale_id' => $book_id
+                'project_book_id' => $book_id
             ], [
                 'subtitle'                  => $request->subtitle,
+                'original_title'            => $request->original_title,
                 'author'                    => $request->author,
                 'editor'                    => $request->editor,
                 'publisher'                 => $request->publisher,
@@ -1414,7 +1458,7 @@ class ProjectController extends Controller
     {
 
         StorageVarious::updateOrCreate([
-            'user_book_for_sale_id' => $book_id
+            'project_book_id' => $book_id
         ], [
             'publisher' => $request->publisher,
             'minimum_stock' => $request->minimum_stock,
@@ -1429,6 +1473,29 @@ class ProjectController extends Controller
         return back()
             ->with(['errors' => AdminHelpers::createMessageBag('Storage various saved successfully.'),
                 'alert_type' => 'success']);
+    }
+
+    public function saveDistributionCost($book_id, Request $request)
+    {
+        StorageDistributionCost::updateOrCreate([
+            'id' => $request->id,
+            'project_book_id' => $book_id
+        ], $request->except('id'));
+        
+        return back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Distribution Cost saved successfully.'),
+            'alert_type'            => 'success'
+        ]);
+    }
+
+    public function deleteDistributionCost($distribution_cost_id)
+    {
+        StorageDistributionCost::find($distribution_cost_id)->delete();
+
+        return back()->with([
+            'errors'      => AdminHelpers::createMessageBag('Distribution cost deleted successfully.'),
+            'alert_type'  => 'success'
+        ]);
     }
 
     public function ebook($project_id)
@@ -1614,7 +1681,7 @@ class ProjectController extends Controller
     }
 
     private function storageSalesByType($user_book_for_sale_id, $type) {
-        return StorageSale::where('user_book_for_sale_id', $user_book_for_sale_id)
+        return StorageSale::where('project_book_id', $user_book_for_sale_id)
         ->where('type', $type)
         ->when(request()->filled('year') && request('year') != 'all', function ($query) {
             $query->whereYear('date', request('year'));
@@ -1628,7 +1695,7 @@ class ProjectController extends Controller
         $yearsData = DB::table('storage_sales')
         ->select(DB::raw('YEAR(date) AS year'), DB::raw('SUM(value) AS sum_value'))
         ->where('date', '>=', Carbon::now()->subYears(4))
-        ->where('user_book_for_sale_id', $user_book_for_sale_id)
+        ->where('project_book_id', $user_book_for_sale_id)
         ->where('type', $type)
         ->groupBy('year')
         ->pluck('sum_value', 'year')
