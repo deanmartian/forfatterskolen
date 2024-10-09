@@ -92,7 +92,7 @@
 <script>
 
 export default {
-     props: ['current-project', 'learners'],
+     props: ['current-project', 'learners', 'project-user'],
 
     data() {
         return {
@@ -119,6 +119,7 @@ export default {
             this.modalTitle = 'Add Book';
             if (data) {
                 this.modalTitle = 'Edit Book';
+                this.searchQuery = this.projectUser ? this.projectUser.full_name : '';
                 this.form = {
                     id: data.id,
                     user_id: this.project.user_id,
@@ -127,6 +128,7 @@ export default {
                     isbn_ebook: data.isbn_ebook,
                 };
             }
+
 
             const index = _.findIndex(this.learners, {id: this.project.user_id});
             if (index >= 0) {
@@ -161,6 +163,7 @@ export default {
                 if (this.form.id) {
                     this.updateRecordFromObject(this.books, this.form.id, data.book);
                     message = 'Book updated';
+                    location.reload();
                 } else {
                     this.books.push(data.book);
                     message = 'Book created';

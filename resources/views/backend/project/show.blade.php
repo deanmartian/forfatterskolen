@@ -476,7 +476,8 @@
                 @endif
             </div>
             <div class="col-md-6">
-                <project-books :current-project="{{ json_encode($project) }}" :learners="{{ json_encode($learners) }}"></project-books>
+                <project-books :current-project="{{ json_encode($project) }}" 
+                    :project-user="{{ json_encode($project->user) }}" :learners="{{ json_encode($learners) }}"></project-books>
 
                 <project-tasks :current-project="{{ json_encode($project) }}" :task-list="{{ json_encode($tasks) }}"
                 :editor-and-admin-list="{{ json_encode($editorAndAdminList) }}"></project-tasks>
