@@ -235,6 +235,7 @@
         </div>
     </div>
 
+    @if ($projectBook)
     <div id="bookSalesModal" class="modal fade" role="dialog">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
@@ -292,6 +293,8 @@
             </div>
         </div>
     </div> <!-- end bookSalesModal -->
+    @endif
+    
 @stop
 
 @section('scripts')

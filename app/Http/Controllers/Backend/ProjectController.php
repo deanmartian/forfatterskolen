@@ -1296,7 +1296,7 @@ class ProjectController extends Controller
         $quantitySoldList = [];
         $turnedOverList = [];
 
-        if ($projectBook->sales) {
+        if ($projectBook && $projectBook->sales) {
             $totalBookSold = $projectBook->sales()->sum('quantity');
             $totalBookSale = $projectBook->sales()->sum('amount');
 
