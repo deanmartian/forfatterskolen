@@ -27,7 +27,7 @@
                                 {{ $distributionCost->nr }}
                             </td>
                             <td>
-                                {{ $distributionCost->service }}
+                                {{ AdminHelpers::distributionServices($distributionCost->service) }}
                             </td>
                             <td>
                                 {{ $distributionCost->number }}

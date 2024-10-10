@@ -206,7 +206,15 @@
     
                         <div class="form-group">
                             <label>Service</label>
-                            <input type="text" class="form-control" name="service" required>
+                            {{-- <input type="text" class="form-control" name="service" required> --}}
+                            <select name="service" class="form-control" required>
+                                <option value="">- Select Service -</option>
+                                @foreach (AdminHelpers::distributionServices() as $service)
+                                    <option value="{{ $service['label'] }}">
+                                        {{ $service['value'] }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
     
                         <div class="form-group">
@@ -216,7 +224,7 @@
     
                         <div class="form-group">
                             <label>Amount</label>
-                            <input type="number" class="form-control" name="amount" required>
+                            <input type="number" class="form-control" name="amount" step=".50" required>
                         </div>
 
                         <div class="form-group">

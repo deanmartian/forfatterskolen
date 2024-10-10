@@ -1454,6 +1454,25 @@ class AdminHelpers
         ])->first();
     }
 
+    public static function distributionServices($service = null)
+    {
+        $options = \App\Enums\DistributionServices::toOptions();
+        $value = '';
+        
+        if (!$service) {
+            return $options;
+        }
+
+        foreach ($options as $option) {
+            if ($option['label'] === $service) {
+                $value = $option['value'];
+            }
+        }
+
+        return $value;
+    }
+
+
     /**
      * Generate access token, used for every gt webinar request using oauth v2
      * @return mixed
