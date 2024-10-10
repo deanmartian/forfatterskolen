@@ -894,6 +894,61 @@
 			</div>
 			{{-- assignment editing --}}
 
+			{{-- project --}}
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h4>Project</h4></div>
+						<div class="panel-body">
+							<div class="table-users table-responsive margin-top">
+								<table class="table dt-table assignment-table">
+									<thead>
+										<tr>
+											<th>Project Number</th>
+											<th>Name</th>
+											<th>{{ trans_choice('site.learners', 1) }}</th>
+											<th>Description</th>
+											<th>Total Hours Worked</th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach ($projects as $project)
+											<tr>
+												<td>
+													{{ $project->identifier }}
+												</td>
+												<td>
+													{{ $project->name }}
+												</td>
+												<td>
+													{{ $project->user_id }}
+												</td>
+												<td>
+													{{ $project->description }}
+												</td>
+												<td>
+													{{ $project->editor_total_hours }}
+												</td>
+												<td>
+													<button class="btn btn-primary btn-xs projectHoursBtn"
+														data-toggle="modal" data-target="#projectHoursModal"
+														data-action="{{ route('editor.project.update-editor-hours', $project->id) }}"
+														data-record="{{ json_encode($project) }}">
+														<i class="fa fa-edit"></i>
+													</button>
+												</td>
+											</tr>
+										@endforeach
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			{{-- project --}}
+
 		</div>
 	</div>
 </div>
@@ -1545,6 +1600,51 @@
 		</div>
 	</div>
 </div>
+
+<div id="projectHoursModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+		    	<button type="button" class="close" data-dismiss="modal">&times;</button>
+		    	<h4 class="modal-title">
+					Edit Project
+				</h4>
+		  	</div>
+		  	<div class="modal-body">
+				<form method="POST" action="" onsubmit="disableSubmit(this)">
+		    		{{ csrf_field() }}
+					<div class="form-group">
+						<label>
+							Project Number
+						</label>
+						<input type="text" class="form-control" name="project_number" readonly>
+					</div>
+
+					<div class="form-group">
+						<label>
+							Name
+						</label>
+						<input type="text" class="form-control" name="name" readonly>
+					</div>
+
+					<div class="form-group">
+						<label>Number of hours</label>
+						<input type="text" name="editor_total_hours" class="form-control" id="timeInput" required>
+		
+						<button type="button" class="btn btn-xs" onclick="adjustTime(1)">+1</button>
+						<button type="button" class="btn btn-xs" onclick="adjustTime(0.5)">+1/2</button>
+						<button type="button" class="btn btn-xs" onclick="adjustTime(-0.5)">-1/2</button>
+						<button type="button" class="btn btn-xs" onclick="adjustTime(-1)">-1</button>
+					</div>
+
+					<div class="text-right margin-top">
+		      			<button type="submit" class="btn btn-primary">{{ trans('site.submit') }}</button>
+		      		</div>
+		    	</form>
+		  	</div>
+		</div>
+	</div>
+</div>
 @stop
 
 @section('scripts')
@@ -1995,6 +2095,17 @@
 		modal.find('form').attr('action', action);
 	});
 
+	$(".projectHoursBtn").click(function() {
+		let action = $(this).data('action');
+		let modal = $('#projectHoursModal');
+		let record = $(this).data('record');
+
+		modal.find('form').attr('action', action);
+		modal.find("[name=project_number]").val(record.identifier);
+		modal.find("[name=name]").val(record.name);
+		modal.find("[name=editor_total_hours]").val(record.editor_total_hours);
+	})
+
     function editExpectedFinish(self) {
         let expected_finish = $(self).data('expected_finish');
         let modal = $('#editExpectedFinishModal');
@@ -2020,6 +2131,17 @@
         let content = fields.feedback_content ? fields.feedback_content : email_template;
 
         tinymce.get('FMEmailContentEditor').setContent(content);
+	}
+
+	function adjustTime(amount) {
+		let timeInput = document.getElementById('timeInput');
+		let currentTime = parseFloat(timeInput.value);
+
+		if (isNaN(currentTime)) {
+			currentTime = 0;
+		}
+
+		timeInput.value = currentTime + amount;
 	}
 </script>
 @stop

@@ -75,9 +75,12 @@ class ProjectController extends Controller
             ->value('identifier') + 1;
         
         $projectNotes = Settings::getByName('project-notes');
+        $editors = AdminHelpers::editorList();
+
         $layout = str_contains(request()->getHttpHost(), 'giutbok') ? 'giutbok.layout' : 'backend.layout';
+
         return view('backend.project.index', compact('learners', 'activities', 'projects', 'layout',
-            'projectNotes', 'nextProjectNumber'));
+            'projectNotes', 'nextProjectNumber', 'editors'));
     }
 
     public function show($id)

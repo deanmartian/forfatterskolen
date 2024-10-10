@@ -17,6 +17,7 @@ use App\AssignmentManuscript;
 use App\Course;
 use App\CorrectionManuscript;
 use App\CopyEditingManuscript;
+use App\Project;
 use App\Settings;
 use Carbon\Carbon;
 use Spatie\Dropbox\Client as DropboxClient;
@@ -56,10 +57,11 @@ class PageController extends Controller
             ->whereDoesntHave('feedback')
             ->get();
         $editingAssignments = $this->filterAssignmentByCheckMaxWords(0);
+        $projects = Project::where('editor_id', Auth::user()->id)->get();
 
         return view('editor.dashboard', compact('assigned_shop_manuscripts', 'assignedAssignments', 'coachingTimers',
         'corrections', 'copyEditings', 'assignedAssignmentManuscripts', 'shopManuscriptRequests', 'freeManuscripts', 'freeManuscriptEmailTemplate',
-            'freeManuscriptEmailTemplate2', 'selfPublishingList', 'editingAssignments'));
+            'freeManuscriptEmailTemplate2', 'selfPublishingList', 'editingAssignments', 'projects'));
 
     }
 
@@ -382,6 +384,18 @@ class PageController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function projectEditorHours($project_id, Request $request)
+    {
+        $project = Project::find($project_id);
+        $project->editor_total_hours = $request->editor_total_hours;
+        $project->save();
+        
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Project total hours saved successfully.'),
+            'alert_type' => 'success'
+        ]);
     }
 
     private function filterAssignmentByCheckMaxWords($check_max_words) {

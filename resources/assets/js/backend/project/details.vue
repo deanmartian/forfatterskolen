@@ -133,11 +133,18 @@
             </div>
 
             <div class="form-group">
+                <label>Editor</label>
+                <v-select :options="editorList" label="full_name" v-model="selected_editor" @input="setSelectedEditor($event)"
+                          name="editor_id"></v-select>
+            </div>
+
+            <div class="form-group">
                 <label>Status</label>
                 <select name="status" class="form-control" v-model="projectForm.status">
                     <option value="active">Active</option>
                     <option value="lead">Lead</option>
                     <option value="finished">Finished</option>
+                    <option value="closed">Closed</option>
                 </select>
             </div>
 
@@ -156,12 +163,13 @@
 
     export default {
 
-        props: ['current-project', 'learners', 'activities'],
+        props: ['current-project', 'learners', 'activities', 'editors'],
         data() {
             return {
                 project: this.currentProject,
                 learnerList: this.learners,
                 activityList: this.activities,
+                editorList: this.editors,
                 learnerForm: {
                     project_id: this.currentProject.id,
                     email: '',
@@ -179,11 +187,13 @@
                     start_date: '',
                     end_date: '',
                     description: '',
+                    editor_id: '',
                     status: 'active'
                 },
                 currentActivity: '',
                 selected_activity: '',
                 selected_learner: '',
+                selected_editor: '',
                 searchQuery: '',
                 searchLearnerList: [],
                 isLoading: false,
@@ -244,6 +254,7 @@
                     start_date: data.start_date,
                     end_date: data.end_date,
                     description: data.description,
+                    editor_id: data.editor_id,
                     status: data.status
                 };
 
@@ -253,6 +264,9 @@
 
                 const actIndex = _.findIndex(this.activityList, {id: data.activity_id});
                 const learnerIndex = _.findIndex(this.learnerList, {id: data.user_id});
+                const editorIndex = _.findIndex(this.editorList, {id: data.editor_id});
+                console.log(data);
+
                 if (actIndex >= 0) {
                     this.currentActivity = this.activityList[actIndex];
                     this.selected_activity = this.currentActivity.activity;
@@ -262,12 +276,20 @@
                     this.selected_learner = this.learnerList[learnerIndex].full_name;
                 }
 
+                if (editorIndex >= 0) {
+                    this.selected_editor = this.editorList[editorIndex].full_name;
+                }
+
                 this.$refs.projectFormModal.show();
             },
 
             setSelectedLearner(value) {
                 this.form.user_id = value ? value.id : "";
                 this.projectForm.user_id = value ? value.id : "";
+            },
+
+            setSelectedEditor(value) {
+                this.projectForm.editor_id = value ? value.id : "";
             },
 
             saveProject() {

@@ -55,7 +55,8 @@
                          :activities="{{ json_encode($activities) }}" :time-registers="{{ json_encode($timeRegisters) }}"
                          :project-time-list="{{ json_encode($projectTimeRegisters) }}" :projects="{{ json_encode($projects) }}"
                          :whole-book-list="{{ json_encode($wholeBooks) }}" :editor-and-admin-list="{{ json_encode($editorAndAdminList) }}"
-                         :task-list="{{ json_encode($tasks) }}" :book-critique-list="{{ json_encode($bookCritiques) }}"></project-details>
+                         :task-list="{{ json_encode($tasks) }}" :book-critique-list="{{ json_encode($bookCritiques) }}"
+                         :editors="{{ json_encode($editors) }}"></project-details>
 
         
         <div class="margin-top">

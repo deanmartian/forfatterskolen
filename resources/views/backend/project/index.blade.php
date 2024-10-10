@@ -18,7 +18,8 @@
     <div class="col-md-12" id="app-container">
         <project :learners="{{ json_encode($learners) }}" :activities="{{ json_encode($activities) }}"
                  :projects="{{ json_encode($projects) }}" :project-notes="{{ json_encode($projectNotes) }}" 
-                 :next-project-number="{{ json_encode($nextProjectNumber) }}"></project>
+                 :next-project-number="{{ json_encode($nextProjectNumber) }}"
+                 :editors="{{ json_encode($editors) }}"></project>
     </div>
 @stop
 

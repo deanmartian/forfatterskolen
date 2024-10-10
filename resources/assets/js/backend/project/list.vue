@@ -31,6 +31,7 @@
                 <option value="active">Active</option>
                 <option value="lead">Lead</option>
                 <option value="finished">Finished</option>
+                <option value="closed">Closed</option>
             </select>
         </div>
 
@@ -141,11 +142,18 @@
             </div>
 
             <div class="form-group">
+                <label>Editor</label>
+                <v-select :options="editorList" label="full_name" v-model="selected_editor" @input="setSelectedEditor($event)"
+                          name="editor_id"></v-select>
+            </div>
+
+            <div class="form-group">
                 <label>Status</label>
                 <select name="status" class="form-control" v-model="projectForm.status">
                     <option value="active">Active</option>
                     <option value="lead">Lead</option>
                     <option value="finished">Finished</option>
+                    <option value="closed">Closed</option>
                 </select>
             </div>
             <!-- <div class="form-group">
@@ -287,7 +295,7 @@
 <script>
     import moment from 'moment';
     export default {
-        props: ['learners', 'activities', 'projects', 'project-notes', 'next-project-number'],
+        props: ['learners', 'activities', 'projects', 'project-notes', 'next-project-number', 'editors'],
         data() {
             return {
                 projectForm: {
@@ -299,6 +307,7 @@
                     start_date: '',
                     end_date: '',
                     description: '',
+                    editor_id: '',
                     status: 'active'
                 },
                 projectNumber: this.nextProjectNumber,
@@ -306,9 +315,11 @@
                 selected_learner: '',
                 selected_activity: '',
                 selected_project: '',
+                selected_editor: '',
                 activityList: this.activities,
                 projectList: this.projects,
                 learnerList: this.learners,
+                editorList: this.editors,
                 activityModalTitle: 'Activity',
                 project: {},
                 activityForm: {
@@ -378,11 +389,13 @@
                         start_date: data.start_date,
                         end_date: data.end_date,
                         description: data.description,
+                        editor_id: data.editor_id,
                         status: data.status
                     };
 
                     const actIndex = _.findIndex(this.activityList, {id: data.activity_id});
                     const learnerIndex = _.findIndex(this.learnerList, {id: data.user_id});
+                    const editorIndex = _.findIndex(this.editorList, {id: data.editor_id});
                     if (actIndex >= 0) {
                         this.currentActivity = this.activityList[actIndex];
                         this.selected_activity = this.currentActivity.activity;
@@ -390,6 +403,10 @@
 
                     if (learnerIndex >= 0) {
                         this.selected_learner = this.learnerList[learnerIndex].full_name;
+                    }
+                    
+                    if (editorIndex >= 0) {
+                        this.selected_editor = this.editorList[editorIndex].full_name;
                     }
 
                 }
@@ -403,6 +420,10 @@
             setSelectedActivity(value) {
                 this.projectForm.activity_id = value ? value.id : "";
                 this.currentActivity = value;
+            },
+
+            setSelectedEditor(value) {
+                this.projectForm.editor_id = value ? value.id : "";
             },
 
             saveProject() {

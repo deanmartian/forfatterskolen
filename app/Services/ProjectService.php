@@ -44,6 +44,7 @@ class ProjectService
         $model->end_date = $request->end_date;
         $model->description = $request->description;
         $model->status = $request->status;
+        $model->editor_id = $request->editor_id;
         $model->notes = NULL;
         $model->save();
 
