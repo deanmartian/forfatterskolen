@@ -13,6 +13,7 @@ class StorageDistributionCost extends Model
         'service',
         'number',
         'amount',
+        'date'
     ];
 
 }

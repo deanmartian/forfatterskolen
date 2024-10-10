@@ -16,6 +16,7 @@
                         <th>Service</th>
                         <th>Number</th>
                         <th>Amount</th>
+                        <th>Date</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -33,6 +34,9 @@
                             </td>
                             <td>
                                 {{ $distributionCost->amount }}
+                            </td>
+                            <td>
+                                {{ $distributionCost->date ? FrontendHelpers::formatDate($distributionCost->date) : '' }}
                             </td>
                             <td>
                                 <button class="btn btn-primary btn-xs distributionsBtn" data-toggle="modal" 

@@ -218,6 +218,11 @@
                             <label>Amount</label>
                             <input type="number" class="form-control" name="amount" required>
                         </div>
+
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" class="form-control" name="date" required>
+                        </div>
     
                         <button class="btn btn-primary pull-right" type="submit">
                             {{ trans('site.save') }}
@@ -349,6 +354,7 @@
         modal.find('[name=service]').val('');
         modal.find('[name=number]').val('');
         modal.find('[name=amount]').val('');
+        modal.find('[name=date]').val('');
 
         if (record) {
             modal.find('[name=id]').val(record.id);
@@ -356,6 +362,7 @@
             modal.find('[name=service]').val(record.service);
             modal.find('[name=number]').val(record.number);
             modal.find('[name=amount]').val(record.amount);
+            modal.find('[name=date]').val(record.date);
         }
     });
 
