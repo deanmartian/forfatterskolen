@@ -72,7 +72,9 @@
                             {{ $cover->description }}
                         </td>
                         <td>
-                            {{ $cover->format ? AdminHelpers::projectFormats($cover->format) : null }}
+                            {{ !is_array(AdminHelpers::projectFormats($cover->format)) ?
+                                AdminHelpers::projectFormats($cover->format) 
+                                : $cover->format . ' mm' }}
                         </td>
                         <td>
                             {{ optional($cover->isbn)->value }}
@@ -153,7 +155,7 @@
 
                             <div class="form-group">
                                 <label>Størrelse</label>
-                                <select class="form-control" name="cover_format">
+                                <select class="form-control" name="cover_format" id="cover-format-select">
                                     <option value="">Valgfri størrelse</option>
                                         @foreach (AdminHelpers::projectFormats() as $format)
                                             <option value="{{ $format['id'] }}">
@@ -161,6 +163,18 @@
                                             </option>
                                         @endforeach
                                 </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Bredde (mm)</label>
+                                <input type="text" class="form-control" name="cover_width" id="cover-width-input" 
+                                onkeypress="return numeralsOnly(event)">
+                            </div>
+        
+                            <div class="form-group">
+                                <label>Høyde (mm)</label>
+                                <input type="text" class="form-control" name="cover_height" id="cover-height-input" 
+                                onkeypress="return numeralsOnly(event)">
                             </div>
 
                             <div class="form-group">
@@ -252,20 +266,59 @@
             form.find('[name=id]').val(id);
             form.find('[name=format]').val(record.format);
 
-                if (type == 'cover') {
-                    form.find("[name=description]").val(record.description);
-                    form.find("[name=cover_format]").val(record.format);
-                    form.find("[name=isbn_id]").val(record.isbn_id);
-                    form.find("[name=instruction]").val(record.instruction);
-                    
-                    if (record.backside_type == 'text') {
-                        form.find("[name=backside_text]").val(record.backside_text);
-                        $(".backsideToggle").prop("checked", true).change();
-                    } else {
-                        form.find("[name=backside_text]").val("");
-                        $(".backsideToggle").prop("checked", false).change();
+            if (type == 'cover') {
+                form.find("[name=description]").val(record.description);
+                form.find("[name=cover_format]").val(record.format);
+                form.find("[name=isbn_id]").val(record.isbn_id);
+                form.find("[name=instruction]").val(record.instruction);
+                
+                if (record.backside_type == 'text') {
+                    form.find("[name=backside_text]").val(record.backside_text);
+                    $(".backsideToggle").prop("checked", true).change();
+                } else {
+                    form.find("[name=backside_text]").val("");
+                    $(".backsideToggle").prop("checked", false).change();
+                }
+
+                var formatSelect = document.getElementById('cover-format-select');
+                var widthInput = document.getElementById('cover-width-input');
+                var heightInput = document.getElementById('cover-height-input');
+
+                var formatExists = false;
+
+                // Check if the format matches any predefined options
+                for (var i = 0; i < formatSelect.options.length; i++) {
+                    if (formatSelect.options[i].value === record.format) {
+                        formatSelect.value = record.format;
+                        formatExists = true;
+
+                        // If it's a predefined format like '125x200', split it for width/height
+                        var dimensions = record.format.split('x');
+                        if (dimensions.length == 2) {
+                            widthInput.value = dimensions[0];
+                            heightInput.value = dimensions[1];
+                        }
+                        break;
                     }
                 }
+                
+                if (!formatExists) {
+                    formatSelect.value = ''; // Select "other" option
+
+                    // Assuming `printData` contains custom width and height
+                    if (record.format) {
+                        var dimensions = record.format.split('x');
+                        if (dimensions.length == 2) {
+                            widthInput.value = dimensions[0];
+                            heightInput.value = dimensions[1];
+                        }
+                    } else {
+                        // You can also fallback to width and height fields if needed
+                        widthInput.value = record.width || ''; // Use width from printData
+                        heightInput.value = record.height || ''; // Use height from printData
+                    }
+                }
+            }
         }
     });
 
@@ -276,6 +329,23 @@
         } else {
             $(".backside-text").hide();
             $(".backside-file").show();
+        }
+    });
+
+    $('#cover-format-select').on('change', function () {
+        var selectedFormat = this.value;
+        var widthInput = document.getElementById('cover-width-input');
+        var heightInput = document.getElementById('cover-height-input');
+        
+        // If the selected value is "other", clear the width and height inputs
+        if (selectedFormat !== "") {
+            // Split the selected format (e.g., '125x200' => ['125', '200'])
+            var dimensions = selectedFormat.split('x');
+            widthInput.value = dimensions[0];  // Set the width
+            heightInput.value = dimensions[1]; // Set the height
+        } else {
+            widthInput.value = '';
+            heightInput.value = '';
         }
     });
 </script>

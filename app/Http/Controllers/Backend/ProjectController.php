@@ -626,8 +626,7 @@ class ProjectController extends Controller
                     $this->validate($request, [
                         'cover.*' => 'required|mimes:jpeg,jpg,png,gif',
                         'description' => 'required',
-                        'isbn_id' => 'required',
-                        'cover_format' => 'required'
+                        'isbn_id' => 'required'
                     ]);
                     break;
 

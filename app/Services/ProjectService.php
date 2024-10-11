@@ -333,7 +333,18 @@ class ProjectService
                 //$data['value'] = $this->saveGraphicWorkFileOrImage($request, 'cover');
                 //$data['description'] = $this->saveGraphicWorkFileOrImage($request, 'interior', null, true);
                 $data['is_checked'] = $request->has('is_approved') && $request->is_approved ? 1 : 0;
-                $data['format'] = $request->cover_format;
+                $format = $request->input('cover_format');
+                $customFormat = $request->cover_width  . "x" . $request->cover_height;
+        
+                // If "Other" is selected, use the custom format
+                if ((empty($format) || is_null($format)) && !empty($request->cover_width) && !empty($request->cover_height)) {
+                    $finalFormat = $customFormat;
+                } else {
+                    // Use the selected predefined format
+                    $finalFormat = $format;
+                }
+                $data['format'] = $finalFormat;
+
                 if (\request()->hasFile('backside_image')) {
                     $destinationPathCover = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/cover/backside_image/';
                     $data['backside_image'] = $this->saveMultipleFileOrImageDropbox($destinationPathCover, 'backside_image');
