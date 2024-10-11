@@ -742,18 +742,19 @@ class ProjectController extends Controller
                 break;
 
             case 'central-distribution':
-                $this->validate($request, ['central_distribution' => 'required|numeric']);
+                $this->validate($request, ['central_distribution' => 'required|exists:project_registrations,value']);
                 $data['value'] = $request->central_distribution;
                 break;
 
             case 'mentor-book-base':
-                $this->validate($request, ['mentor_book_base' => 'required']);
-                $data['value'] = $request->mentor_book_base;
+                //$this->validate($request, ['mentor_book_base' => 'required']);
+                $data['value'] = $request->has('mentor_book_base') ? 1 : 0;
                 break;
 
             case 'upload-files-to-mentor-book-base':
-                $this->validate($request, ['upload_files_to_mentor_book_base' => 'required|date']);
-                $data['value'] = $request->upload_files_to_mentor_book_base;
+                /* $this->validate($request, ['upload_files_to_mentor_book_base' => 'required|date']);
+                $data['value'] = $request->upload_files_to_mentor_book_base; */
+                $data['value'] = $request->has('upload_files_to_mentor_book_base') ? 1 : 0;
                 break;
         }
 

@@ -95,7 +95,7 @@
                 <tbody>
                 @foreach($mentorBookBases as $mentorBookBase)
                     <tr>
-                        <td>{!! $mentorBookBase->value !!}</td>
+                        <td>{!! $mentorBookBase->value ? 'Yes' : 'No' !!}</td>
                         <td>
                             <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
                                     data-target="#registrationModal" data-record="{{ json_encode($mentorBookBase) }}"
@@ -127,7 +127,7 @@
                 <tbody>
                 @foreach($uploadFilesToMentorBookBases as $uploadFilesToMentorBookBase)
                     <tr>
-                        <td>{!! $uploadFilesToMentorBookBase->value !!}</td>
+                        <td>{!! $uploadFilesToMentorBookBase->value ? 'Yes' : 'No' !!}</td>
                         <td>
                             <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
                                     data-target="#registrationModal" data-record="{{ json_encode($uploadFilesToMentorBookBase) }}"
@@ -182,17 +182,29 @@
 
                         <div class="form-group central-distribution-container">
                             <label>Central Distribution</label>
-                            <input type="number" class="form-control" name="central_distribution">
+                            <select name="central_distribution" class="form-control">
+                                <option value="">- Select ISBN-</option>
+                                @foreach ($isbns as $isbn)
+                                    <option value="{{ $isbn->value }}">
+                                        {{ $isbn->value }} | {{ $isbn->isbn_type }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            {{-- <input type="number" class="form-control" name="central_distribution"> --}}
                         </div>
 
                         <div class="form-group mentor-book-base-container">
-                            <label>Mentor Book Base</label>
-                            <textarea name="mentor_book_base" class="form-control" cols="30" rows="10"></textarea>
+                            <label>Mentor Book Base</label> <br>
+                            <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                                       name="mentor_book_base" data-width="100" class="mentorToggle">
+                            {{-- <textarea name="mentor_book_base" class="form-control" cols="30" rows="10"></textarea> --}}
                         </div>
 
                         <div class="form-group upload-files-to-mentor-book-base-container">
-                            <label>Upload files to Mentor Book Base</label>
-                            <input type="date" class="form-control" name="upload_files_to_mentor_book_base">
+                            <label>Upload files to Mentor Book Base</label> <br>
+                            <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                                       name="upload_files_to_mentor_book_base" data-width="100">
+                            {{-- <input type="date" class="form-control" name="upload_files_to_mentor_book_base"> --}}
                         </div>
 
                         <button type="submit" class="btn btn-success pull-right margin-top">
@@ -234,6 +246,7 @@
 @stop
 
 @section('scripts')
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script>
         $(".registrationBtn").click(function() {
             let id = $(this).data('id');
@@ -282,6 +295,8 @@
             }
 
             form.find('[name=field]').val(field);
+            form.find('[name=mentor_book_base]').prop("checked", false).change();
+            form.find('[name=upload_files_to_mentor_book_base]').prop("checked", false).change();
             if (id) {
                 form.find('[name=id]').val(id);
             }
@@ -289,8 +304,13 @@
             if (record) {
                 form.find('[name=isbn]').val(record.value);
                 form.find('[name=central_distribution]').val(record.value);
-                form.find('[name=mentor_book_base]').val(record.value);
-                form.find('[name=upload_files_to_mentor_book_base]').val(record.value);
+                form.find('[name=mentor_book_base]').prop("checked", false).change();
+                form.find('[name=upload_files_to_mentor_book_base]').prop("checked", false).change();
+                //form.find('[name=upload_files_to_mentor_book_base]').val(record.value);
+                if (record.value == 1) {
+                    form.find('[name=mentor_book_base]').prop("checked", true).change();
+                    form.find('[name=upload_files_to_mentor_book_base]').prop("checked", true).change();
+                }
             }
         });
 
