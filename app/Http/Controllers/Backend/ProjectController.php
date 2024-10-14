@@ -744,6 +744,7 @@ class ProjectController extends Controller
             case 'central-distribution':
                 $this->validate($request, ['central_distribution' => 'required|exists:project_registrations,value']);
                 $data['value'] = $request->central_distribution;
+                $data['type'] = 0;
                 break;
 
             case 'mentor-book-base':
@@ -1289,6 +1290,8 @@ class ProjectController extends Controller
         $bookSale = new ProjectBookSale();
         $bookSaleTypes = $bookSale->saleTypes();
 
+        $centralISBN = ProjectRegistration::centralDistributions()->where('project_id', $projectId)->get();
+
         $totalBookSold = 0;
         $totalBookSale = 0;
         $currentYear = Carbon::now()->format('Y');
@@ -1632,10 +1635,10 @@ class ProjectController extends Controller
             ]);
     
             $format = $request->input('format');
-            $customFormat = $request->input('custom_format');
+            $customFormat = $request->width  . "x" . $request->height;
     
             // If "Other" is selected, use the custom format
-            if ($format === 'other' && !empty($customFormat)) {
+            if ((empty($format) || is_null($format)) && !empty($request->width) && !empty($request->height)) {
                 $finalFormat = $customFormat;
             } else {
                 // Use the selected predefined format
