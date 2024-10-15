@@ -1270,6 +1270,40 @@ class ProjectController extends Controller
         $backRoute = route('admin.project.show', $projectId);
         $saveBookRoute = 'admin.project.storage.save-book';
         $deleteBookRoute = 'admin.project.storage.delete-book';
+
+        $project = Project::find($projectId);
+        $projectBook = $project->book;
+        $centralISBNs = ProjectRegistration::centralDistributions()->where('project_id', $projectId)
+            ->where('in_storage', 0)->get()->map(function($isbn) {
+            $record = ProjectRegistration::where('field', 'isbn')->where('value', $isbn['value'])->first();
+            $isbn['custom_type'] = optional($record)->isbn_type;
+            return $isbn;
+        });
+        $projectCentralDistributions = $project->registrations()
+            ->where([
+                'field' => 'central-distribution',
+                'in_storage' => 1
+            ])
+            ->get();
+        
+
+        if (AdminHelpers::isGiutbokPage()) {
+            $layout = 'giutbok.layout';
+            $backRoute = route('g-admin.project.show', $projectId);
+            $saveBookRoute = 'g-admin.project.storage.save-book';
+            $deleteBookRoute = 'g-admin.project.storage.delete-book';
+        }
+
+        return view('backend.project.storage', compact('layout', 'backRoute', 'centralISBNs', 'saveBookRoute', 'projectId',
+        'projectCentralDistributions', 'projectBook', 'deleteBookRoute'));
+    }
+
+    public function storageDetails($projectId, $registration_id)
+    {
+        $layout = 'backend.layout';
+        $backRoute = route('admin.project.storage', $projectId);
+        $saveBookRoute = 'admin.project.storage.save-book';
+        $deleteBookRoute = 'admin.project.storage.delete-book';
         $saveDetailsRoute = 'admin.project.storage.save-details';
         $saveVariousRoute = 'admin.project.storage.save-various';
         $saveDistributionRoute = 'admin.project.storage.save-distribution-cost';
@@ -1279,7 +1313,7 @@ class ProjectController extends Controller
 
         $project = Project::find($projectId);
         $projectBook = $project->book;
-        $projectUserBook = $project->userBookForSale;
+        //$projectUserBook = $project->userBookForSale;
         $projectUserBookId = $project->userBookForSale ? $project->userBookForSale->id : '';
         $userBooksForSale = UserBookForSale::where('user_id', $project->user_id)
         ->where(function($query) use ($projectUserBookId){
@@ -1290,7 +1324,12 @@ class ProjectController extends Controller
         $bookSale = new ProjectBookSale();
         $bookSaleTypes = $bookSale->saleTypes();
 
-        $centralISBN = ProjectRegistration::centralDistributions()->where('project_id', $projectId)->get();
+        $centralISBNs = ProjectRegistration::centralDistributions()->where('project_id', $projectId)->get()->map(function($isbn) {
+            $record = ProjectRegistration::where('field', 'isbn')->where('value', $isbn['value'])->first();
+            $isbn['custom_type'] = optional($record)->isbn_type;
+            return $isbn;
+        });
+        $projectUserBook = ProjectRegistration::find($registration_id);
 
         $totalBookSold = 0;
         $totalBookSale = 0;
@@ -1354,10 +1393,10 @@ class ProjectController extends Controller
             $saveVariousRoute = 'g-admin.project.storage.save-various';
         }
 
-        return view('backend.project.storage', compact('backRoute', 'layout', 'projectId', 'project', 
+        return view('backend.project.storage-details', compact('backRoute', 'layout', 'projectId', 'project', 
         'projectUserBook', 'userBooksForSale', 'totalBookSold', 'totalBookSale', 'years', 'yearlyData', 'saveBookRoute',
         'deleteBookRoute', 'saveDetailsRoute', 'saveVariousRoute', 'projectBook', 'saveDistributionRoute',
-        'deleteDistributionRoute', 'bookSaleTypes', 'saveBookSaleRoute', 'deleteBookSaleRoute'));
+        'deleteDistributionRoute', 'bookSaleTypes', 'saveBookSaleRoute', 'deleteBookSaleRoute', 'centralISBNs'));
     }
 
     public function saveStorageBook($projectId, Request $request)
@@ -1369,22 +1408,24 @@ class ProjectController extends Controller
         $userBookForSale = UserBookForSale::find($request->user_book_for_sale_id);
         $userBookForSale->project_id = $projectId;
         $userBookForSale->save(); */
-        $book = ProjectBook::find($request->user_book_for_sale_id);
-        $book->in_storage = 1;
-        $book->save();
+        $registration = ProjectRegistration::where('project_id', $projectId)
+            ->centralDistributions()
+            ->where('value', $request->user_book_for_sale_id)->first();
+        $registration->in_storage = 1;
+        $registration->save();
 
         return back()
             ->with(['errors' => AdminHelpers::createMessageBag('Storage Book saved successfully.'),
                 'alert_type' => 'success']); 
     }
 
-    public function deleteStorageBook($projectId)
+    public function deleteStorageBook($registration_id)
     {
         /* $userBookForSale = UserBookForSale::where('project_id', $projectId)->first();
         $userBookForSale->project_id = NULL;
         $userBookForSale->save(); */
 
-        $userBookForSale = ProjectBook::where('project_id', $projectId)->first();
+        $userBookForSale = ProjectRegistration::find($registration_id);
         $userBookForSale->in_storage = 0;
         $userBookForSale->save();
 
@@ -1396,7 +1437,7 @@ class ProjectController extends Controller
             $userBookForSale->various->delete();
         }
 
-        return back()
+        return redirect()->route('admin.project.storage', $userBookForSale->project_id)
             ->with(['errors' => AdminHelpers::createMessageBag('Book removed from project successfully.'),
                 'alert_type' => 'success']);
     }

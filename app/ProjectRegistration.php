@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProjectRegistration extends Model
 {
 
-    protected $fillable = ['project_id', 'field', 'value', 'type'];
+    protected $fillable = ['project_id', 'field', 'value', 'type', 'in_storage'];
 
     protected $appends = ['isbn_type'];
 
@@ -45,8 +45,27 @@ class ProjectRegistration extends Model
         return $this->isbnTypes;
     }
 
+    public function detail()
+    {
+        return $this->hasOne('\App\StorageDetail', 'project_book_id', 'id');
+    }
+
+    public function various()
+    {
+        return $this->hasOne('\App\StorageVarious', 'project_book_id', 'id');
+    }
+
+    public function distributionCosts()
+    {
+        return $this->hasMany('\App\StorageDistributionCost', 'project_book_id', 'id');
+    }
+
     public function getIsbnTypeAttribute()
     {
         return $this->isbnTypes()[$this->attributes['type']] ?? NULL;
+    }
+
+    public function totalDistributionCost() {
+        return $this->distributionCosts()->sum('amount');
     }
 }
