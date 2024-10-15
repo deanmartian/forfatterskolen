@@ -88,7 +88,7 @@
                     </div>
                 </div>
 
-                <div class="row">
+                {{-- <div class="row">
                     <div class="col-xs-3">
                         <div class="form-group">
                             <label class="control-label">Item Number</label>
@@ -157,7 +157,7 @@
                             value="{{ $projectUserBook->detail->edition_total ?? '' }}" disabled>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <div class="row">
                     <div class="col-xs-3">
@@ -173,7 +173,7 @@
                     </div>
                 </div>
 
-                <div class="row">
+                {{-- <div class="row">
                     <div class="col-xs-3">
                         <div class="form-group">
                             <label class="control-label">Release Date For Media</label>
@@ -185,7 +185,7 @@
                             value="{{ $projectUserBook->detail->release_date_for_media ?? '' }}" disabled>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <div class="row">
                     <div class="col-xs-3">
