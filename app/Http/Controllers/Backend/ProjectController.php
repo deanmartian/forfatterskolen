@@ -54,6 +54,7 @@ use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Time;
 use PhpOffice\PhpWord\PhpWord;
 use Spatie\Dropbox\Client;
+
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProjectController extends Controller
@@ -1310,6 +1311,8 @@ class ProjectController extends Controller
         $deleteDistributionRoute = 'admin.project.storage.delete-distribution-cost';
         $saveBookSaleRoute = 'admin.project.storage.save-book-sales';
         $deleteBookSaleRoute = 'admin.project.storage.delete-book-sales';
+        $saveStorageSaleRoute = 'admin.project.storage.save-sales';
+        $deleteStorageSaleRoute = 'admin.project.storage.delete-sales';
 
         $project = Project::find($projectId);
         $projectBook = $project->book;
@@ -1344,6 +1347,9 @@ class ProjectController extends Controller
 
             $years = range($currentYear, $currentYear - 1);
         }
+
+        $inventorySales = StorageSale::where('project_book_id', $projectUserBook->id)
+            ->where('type', 'like', 'inventory_%')->get();
 
         $yearlyData = [
             [
@@ -1396,7 +1402,8 @@ class ProjectController extends Controller
         return view('backend.project.storage-details', compact('backRoute', 'layout', 'projectId', 'project', 
         'projectUserBook', 'userBooksForSale', 'totalBookSold', 'totalBookSale', 'years', 'yearlyData', 'saveBookRoute',
         'deleteBookRoute', 'saveDetailsRoute', 'saveVariousRoute', 'projectBook', 'saveDistributionRoute',
-        'deleteDistributionRoute', 'bookSaleTypes', 'saveBookSaleRoute', 'deleteBookSaleRoute', 'centralISBNs'));
+        'deleteDistributionRoute', 'bookSaleTypes', 'saveBookSaleRoute', 'deleteBookSaleRoute', 'centralISBNs', 
+        'saveStorageSaleRoute', 'inventorySales', 'deleteStorageSaleRoute'));
     }
 
     public function saveStorageBook($projectId, Request $request)
@@ -1542,6 +1549,29 @@ class ProjectController extends Controller
         return back()->with([
             'errors'      => AdminHelpers::createMessageBag('Distribution cost deleted successfully.'),
             'alert_type'  => 'success'
+        ]);
+    }
+
+    public function saveStorageSales($project_book_id, Request $request) 
+    {
+        StorageSale::updateOrCreate([
+            'id' => $request->id,
+            'project_book_id' => $project_book_id
+        ], $request->except('id'));
+        
+        return back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Sales updated successfully.'),
+            'alert_type'            => 'success'
+        ]);
+    }
+
+    public function deleteStorageSales($id)
+    {
+        StorageSale::find($id)->delete();
+
+        return back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Sales delete successfully.'),
+            'alert_type'            => 'success'
         ]);
     }
 

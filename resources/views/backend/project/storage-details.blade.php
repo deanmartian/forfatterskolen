@@ -82,6 +82,9 @@
                 <li @if( Request::input('tab') == 'distribution' ) class="active" @endif>
                     <a href="?tab=distribution">Distribution Cost</a>
                 </li>
+                <li @if( Request::input('tab') == 'sales' ) class="active" @endif>
+                    <a href="?tab=sales">Inventory Sales</a>
+                </li>
             </ul>
 
             <div class="tab-content">
@@ -91,7 +94,9 @@
                     @elseif( Request::input('tab') == 'inventory')
                         @include('backend.project.partials._inventory')
                     @elseif( Request::input('tab') == 'distribution')
-                    @include('backend.project.partials._distributions')
+                        @include('backend.project.partials._distributions')
+                    @elseif( Request::input('tab') == 'sales')
+                        @include('backend.project.partials._sales')
                     @else
                         @include('backend.project.partials._master')
                     @endif
@@ -278,6 +283,58 @@
             </div>
         </div>
     </div> <!-- end bookSalesModal -->
+
+        <div id="inventorySalesModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Sales</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="{{ route($saveStorageSaleRoute, $projectUserBook->id) }}" 
+                            onsubmit="disableSubmit(this)">
+                            {{ csrf_field() }}
+                            <input type="hidden" name="id">
+        
+                            <div class="form-group">
+                                <label>Book</label>
+                                <input type="text" class="form-control" value="{{ $projectBook->book_name }}" disabled>
+                            </div>
+        
+                            <div class="form-group">
+                                <label>Sale Type</label>
+                                <select name="type" class="form-control" required>
+                                    <option value="" disabled selected>
+                                        - Select Sale Type-
+                                    </option>
+                                    @foreach (AdminHelpers::inventorySalesType() as $invSale)
+                                        <option value="{{ $invSale['label'] }}">
+                                            {{ $invSale['value'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+        
+                            <div class="form-group">
+                                <label>Quantity</label>
+                                <input type="number" class="form-control" name="value" required>
+                            </div>
+        
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" class="form-control" name="date" required>
+                            </div>
+        
+                            <button class="btn btn-primary pull-right" type="submit">
+                                {{ trans('site.save') }}
+                            </button>
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- end bookSalesModal -->
     @endif
     
 @stop
@@ -373,6 +430,23 @@
             modal.find('[name=date]').val(record.date);
         }
     });
+
+    $(".inventorySalesBtn").click(function() {
+        let modal = $("#inventorySalesModal");
+        let record = $(this).data('record');
+        console.log(record);
+        modal.find('[name=id]').val('');
+        modal.find('[name=type]').val('');
+        modal.find('[name=value]').val('');
+        modal.find('[name=date]').val('');
+
+        if (record) {
+            modal.find('[name=id]').val(record.id);
+            modal.find('[name=type]').val(record.type);
+            modal.find('[name=value]').val(record.value);
+            modal.find('[name=date]').val(record.date);
+        }
+    })
 
     function toggleButtons(identifier) {
 

@@ -1472,6 +1472,24 @@ class AdminHelpers
         return $value;
     }
 
+    public static function inventorySalesType($type = null)
+    {
+        $options = \App\Enums\InventorySaleTypes::toOptions();
+        $value = '';
+
+        if (!$type) {
+            return $options;
+        }
+
+        foreach ($options as $option) {
+            if ($option['label'] === $type) {
+                $value = $option['value'];
+            }
+        }
+
+        return $value;
+    }
+
 
     /**
      * Generate access token, used for every gt webinar request using oauth v2
