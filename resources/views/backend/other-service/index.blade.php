@@ -189,6 +189,11 @@
                                                         data-action="{{ route('admin.other-service.add-feedback',
                                                         ['id' => $editing->id, 'type' => 1]) }}"
                                                            data-email-template="{{ json_encode($copyEditingFeedbackTemplate) }}">+ {{ trans('site.add-feedback') }}</a>
+                                                    @else
+                                                        <a href="{{ route('admin.other-service.download-feedback', 
+                                                        ['id' => $editing->feedback->id, 'type' => 1]) }}" class="btn btn-primary btn-sm">
+                                                            {{ trans('site.learner.download-feedback') }}
+                                                        </a>
                                                     @endif
                                                 </td>
                                                 <td>
