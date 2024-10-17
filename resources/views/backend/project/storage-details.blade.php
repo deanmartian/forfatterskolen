@@ -192,7 +192,7 @@
                             <select name="service" class="form-control" required>
                                 <option value="">- Select Service -</option>
                                 @foreach (AdminHelpers::distributionServices() as $service)
-                                    <option value="{{ $service['label'] }}">
+                                    <option value="{{ $service['label'] }}" data-number="{{ $service['number'] }}">
                                         {{ $service['value'] }}
                                     </option>
                                 @endforeach
@@ -409,6 +409,13 @@
             modal.find('[name=amount]').val(record.amount);
             modal.find('[name=date]').val(record.date);
         }
+    });
+
+    $("#distributionsModal").find("[name=service]").change(function() {
+        let selectedOption = $(this).find("option:selected");
+        let dataNumber = selectedOption.data("number"); // Get the data-number value
+    
+        $("#distributionsModal").find('[name=nr]').val(dataNumber);
     });
 
     $(".bookSalesBtn").click(function() {

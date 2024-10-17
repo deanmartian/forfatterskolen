@@ -1456,7 +1456,7 @@ class AdminHelpers
 
     public static function distributionServices($service = null)
     {
-        $options = \App\Enums\DistributionServices::toOptions();
+        /* $options = \App\Enums\DistributionServices::toOptions();
         $value = '';
         
         if (!$service) {
@@ -1469,7 +1469,68 @@ class AdminHelpers
             }
         }
 
-        return $value;
+        return $value; */
+        $options = [
+            [
+                'label' => 'order_line_debit_bookstore',
+                'value' => 'Ordrelinje debet bokhandel',
+                'number' => '1011'
+            ],
+            [
+                'label' => 'weight_books_debit_bookstore',
+                'value' => 'Vekt bøker debet bokhandel',
+                'number' => '1012'
+            ],
+            [
+                'label' => 'order_line_free_withdrawal',
+                'value' => 'Ordrelinje frieks uttak',
+                'number' => '1031'
+            ],
+            [
+                'label' => 'weight_books_freeks_withdrawal',
+                'value' => 'Vekt bøker frieks uttak',
+                'number' => '1032'
+            ],
+            [
+                'label' => 'order_line_credit',
+                'value' => 'Ordrelinje kredit',
+                'number' => '1051'
+            ],
+            [
+                'label' => 'weight_books_credit',
+                'value' => 'Vekt bøker kredit',
+                'number' => '1052'
+            ],
+            [
+                'label' => 'storage_fee_per_isbn_no',
+                'value' => 'Lagerholdsavgift pr ISBN-nr',
+                'number' => '1061'
+            ],
+            [
+                'label' => 'title_fee_per_isbn_no',
+                'value' => 'Tittelavgift pr ISBN-nr',
+                'number' => '1071'
+            ],
+            [
+                'label' => 'freight_bookstore',
+                'value' => 'Frakt bokhandel',
+                'number' => '1091'
+            ]
+        ];
+
+        $selected = null;
+
+        if (!$service) {
+            return $options;
+        }
+
+        foreach ($options as $option) {
+            if ($option['label'] === $service) {
+                $selected = $option;
+            }
+        }
+
+        return $selected;
     }
 
     public static function inventorySalesType($type = null)
