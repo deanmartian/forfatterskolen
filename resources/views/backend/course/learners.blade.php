@@ -110,6 +110,7 @@
 			<ul class="nav nav-tabs margin-top">
 				<li class="active"><a href="#learners" data-toggle="tab">Learners</a></li>
 				<li><a href="#logs" data-toggle="tab">Email Out Log</a></li>
+				<li><a href="#packages" data-toggle="tab">Packages</a></li>
 				@if ($course->is_free)
 					<li><a href="#templateTab" data-toggle="tab">Email Reminder Template</a></li>
 				@endif
@@ -253,6 +254,32 @@
 						</div>
 					</div>
 				</div> <!-- end send email out log -->
+
+				<div class="tab-pane fade margin-top" id="packages" role="tabpanel">
+					<div class="table-responsive">
+						<table class="table table-side-bordered table-white">
+							<thead>
+								<tr>
+									<th>Package</th>
+									<th>Learners</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach ($course->packages as $package)
+									<tr>
+										<td>
+											{{ $package->variation }}
+										</td>
+										<td>
+											{{ \App\CoursesTaken::where('package_id', $package->id)
+											->where('is_active', true)->count() }}
+										</td>
+									</tr>
+								@endforeach
+							</tbody>
+						</table>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
