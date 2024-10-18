@@ -1238,6 +1238,7 @@ Route::group([
         Route::post('/project/book/{id}/storage/save-various', 'ProjectController@saveStorageVarious')->name('admin.project.storage.save-various');
         Route::post('/project/book/{id}/storage/save-distribution-cost', 'ProjectController@saveDistributionCost')
             ->name('admin.project.storage.save-distribution-cost');
+        Route::get('/project/book/{id}/storage/sales-details', 'ProjectController@storageSalesDetails');
         Route::delete('/project/book/distribution-cost/{dist_id}/delete', 'ProjectController@deleteDistributionCost')
             ->name('admin.project.storage.delete-distribution-cost');
         Route::post('/project/book/{id}/storage/save-sales', 'ProjectController@saveStorageSales')->name('admin.project.storage.save-sales');

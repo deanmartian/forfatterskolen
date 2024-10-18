@@ -9,6 +9,10 @@
           text-align: right;
           width: 100px;
         }
+
+        #sales-details-table {
+            width: 100% !important;
+        }
       </style>
 @stop
 
@@ -85,6 +89,9 @@
                 <li @if( Request::input('tab') == 'sales' ) class="active" @endif>
                     <a href="?tab=sales">Inventory Sales</a>
                 </li>
+                <li @if( Request::input('tab') == 'sales-report' ) class="active" @endif>
+                    <a href="?tab=sales-report">Sales Report</a>
+                </li>
             </ul>
 
             <div class="tab-content">
@@ -97,6 +104,8 @@
                         @include('backend.project.partials._distributions')
                     @elseif( Request::input('tab') == 'sales')
                         @include('backend.project.partials._sales')
+                    @elseif( Request::input('tab') == 'sales-report')
+                        @include('backend.project.partials._sales_report')
                     @else
                         @include('backend.project.partials._master')
                     @endif
@@ -335,6 +344,38 @@
                 </div>
             </div>
         </div> <!-- end bookSalesModal -->
+
+        <div id="salesReportModal" class="modal fade" role="dialog" data-backdrop="static">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="{{ route($saveStorageSaleRoute, $projectUserBook->id) }}" 
+                            onsubmit="disableSubmit(this)">
+                            @csrf
+                            <input type="hidden" name="id">
+                            <input type="hidden" name="type">
+        
+                            <div class="form-group">
+                                <label>Value</label>
+                                <input type="number" class="form-control" name="value" required>
+                            </div>
+        
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" class="form-control" name="date" required>
+                            </div>
+        
+                            <button type="submit" class="btn btn-primary pull-right">{{ trans('site.save') }}</button>
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- end salesReportModal -->
     @endif
     
 @stop
@@ -453,7 +494,21 @@
             modal.find('[name=value]').val(record.value);
             modal.find('[name=date]').val(record.date);
         }
-    })
+    });
+
+    let salesDetailsTable = $("#sales-details-table").DataTable({
+            columnDefs: [
+                {
+                    targets: [0], // Index of the hidden column
+                    visible: false, // Hide the column
+                    orderable: true, // Enable sorting on the column
+                    render: function(data, type, row) {
+                        return data; // Return the hidden data for sorting
+                    },
+                    type: 'numeric', // Specify the sorting type (e.g., 'string', 'numeric', 'date')
+                }
+            ]
+        });
 
     function toggleButtons(identifier) {
 
@@ -483,6 +538,91 @@
 
     function capitalizeFirstLetter(str) {
         return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function showDetails(type, book_for_sale_id, record = null) {
+        fillSalesReportModalFields(type, record);
+
+        $("#sales-report-details").removeClass('hidden');
+        $("#sales-report-details").find('.report-title').text(formatText(type));
+        $("[name=hidden_type]").val(type);
+        $("[name=hidden_book_id]").val(book_for_sale_id);
+
+        if (!record) {
+            getDetails(type, book_for_sale_id);
+        }
+    }
+
+    function fillSalesReportModalFields(type, record) {
+        let modal = $("#salesReportModal");
+
+        modal.find(".modal-title").text('Add ' + formatText(type));
+        modal.find("[name=id]").val('');
+        modal.find("[name=type]").val(type);
+        modal.find("[name=value]").val('');
+        modal.find("[name=date]").val('');
+
+        if (record) {
+            modal.find(".modal-title").text('Edit ' + formatText(type));
+            modal.find("[name=id]").val(record.id);
+            modal.find("[name=value]").val(record.value);
+            modal.find("[name=date]").val(record.date);
+        }
+    }
+
+    function showDeleteSalesModal(id) {
+        let modal = $("#deleteModal");
+        let action = '/project/storage/' + id + '/delete-sales';
+        modal.find("form").attr('action', action);
+    }
+
+    function getDetails(type, project_book_id) {
+        console.log(type);
+        console.log(project_book_id);
+
+        $.ajax({
+            type:'GET',
+            url:'/project/book/' + project_book_id + '/storage/sales-details',
+            data: { "type" : type},
+            success: function(data){
+                console.log(data);
+                salesDetailsTable.clear().draw();
+
+                $.each(data.details, function(k, record) {
+                    salesDetailsTable.row.add([
+                            record.id,
+                            record.value,
+                            record.date,
+                            "<button class='btn btn-primary btn-xs' data-toggle='modal' data-target='#salesReportModal' onclick='showDetails(\"" + type + "\", " 
+                                + project_book_id + ", "+JSON.stringify(record)+")'>"
+                                + "<i class='fa fa-edit'></i>"
+                            + "</button>"
+                            + "<button class='btn btn-danger btn-xs' data-toggle='modal' data-target='#deleteModal' onclick='showDeleteSalesModal(\"" + record.id + "\")' "
+                            + "style='margin-left: 5px'>"
+                                +"<i class='fa fa-trash'></i>"
+                                +"</button>"
+                        ]).draw(false);
+                });
+            }
+        });
+    }
+
+    function formatText(text) {
+        // Replace underscores with spaces
+        var formattedText = text.replace(/-/g, ' ');
+        
+        // Split the text into an array of words
+        var words = formattedText.split(' ');
+        
+        // Capitalize each word
+        var capitalizedWords = words.map(function(word) {
+            return word.charAt(0).toUpperCase() + word.slice(1);
+        });
+        
+        // Join the capitalized words with spaces
+        var result = capitalizedWords.join(' ');
+        
+        return result;
     }
 
 </script>

@@ -1348,8 +1348,23 @@ class ProjectController extends Controller
             $years = range($currentYear, $currentYear - 1);
         }
 
+        $project_book_id = $projectUserBook->id;
+
         $inventorySales = StorageSale::where('project_book_id', $projectUserBook->id)
             ->where('type', 'like', 'inventory_%')->get();
+
+        $categories = ['quantity-sold', 'turned-over', 'free', 'commission', 'shredded'];
+
+        $categories = ['quantitySoldCount' => 'quantity-sold', 'turnedOverCount' => 'turned-over', 
+        'freeCount' => 'free', 'commissionCount' => 'commission', 'shreddedCount' => 'shredded',
+        'defectiveCount' => 'defective', 'correctionsCount' => 'corrections', 'countsCount' => 'counts',
+        'returnsCount' => 'returns'];
+
+        $counts = array_map(function($label) use ($project_book_id) {
+            return $this->salesReportCounter($project_book_id, $label);
+        }, $categories);
+
+        extract($counts);
 
         $yearlyData = [
             [
@@ -1403,7 +1418,7 @@ class ProjectController extends Controller
         'projectUserBook', 'userBooksForSale', 'totalBookSold', 'totalBookSale', 'years', 'yearlyData', 'saveBookRoute',
         'deleteBookRoute', 'saveDetailsRoute', 'saveVariousRoute', 'projectBook', 'saveDistributionRoute',
         'deleteDistributionRoute', 'bookSaleTypes', 'saveBookSaleRoute', 'deleteBookSaleRoute', 'centralISBNs', 
-        'saveStorageSaleRoute', 'inventorySales', 'deleteStorageSaleRoute'));
+        'saveStorageSaleRoute', 'inventorySales', 'deleteStorageSaleRoute', array_keys($categories)));
     }
 
     public function saveStorageBook($projectId, Request $request)
@@ -1572,6 +1587,16 @@ class ProjectController extends Controller
         return back()->with([
             'errors'                => AdminHelpers::createMessageBag('Sales delete successfully.'),
             'alert_type'            => 'success'
+        ]);
+    }
+
+    public function storageSalesDetails($project_book_id, Request $request)
+    {
+        $details = StorageSale::where('project_book_id', $project_book_id)->where('type', $request->type)
+        ->get();
+
+        return response()->json([
+            'details' => $details
         ]);
     }
 
@@ -1786,5 +1811,11 @@ class ProjectController extends Controller
         krsort($yearsData);
 
         return $yearsData;
+    }
+
+    private function salesReportCounter($project_book_id, $type) {
+        return StorageSale::where('project_book_id', $project_book_id)
+        ->where('type', $type)
+        ->sum('value');
     }
 }
