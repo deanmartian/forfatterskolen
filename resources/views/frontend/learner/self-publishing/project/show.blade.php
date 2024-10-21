@@ -192,8 +192,16 @@
                                             </td>
                                             <td>
                                                 @if ($editing->file)
-                                                    <a href="{{ route('learner.other-service.download-doc',
-                                                    ['id' => $editing->id, 'type' => 1]) }}">{{ trans('site.learner.download-original-script') }}</a>
+                                                    @if (strpos($editing->file, 'Forfatterskolen_app'))
+                                                        <a href="{{ url('dropbox/download/' . trim($editing->file)) }}">
+                                                            {{ trans('site.learner.download-original-script') }}
+                                                        </a>
+                                                    @else
+                                                        <a href="{{ route('learner.other-service.download-doc',
+                                                        ['id' => $editing->id, 'type' => 1]) }}">
+                                                            {{ trans('site.learner.download-original-script') }}
+                                                        </a>
+                                                    @endif
                                                 @endif
 
                                                 @if ($editing->feedback)
