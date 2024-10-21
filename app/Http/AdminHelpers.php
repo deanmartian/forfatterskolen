@@ -29,11 +29,13 @@ use Swift_Mailer;
 use Swift_Message;
 use Swift_Transport;
 
-include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
-Log::info("------------------------- inside admin helpers here ----------------------");
-Log::info($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
-include_once($_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php');
-include_once($_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php');
+if (!app()->runningInConsole()) {
+    include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
+    Log::info("------------------------- inside admin helpers here ----------------------");
+    Log::info($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
+    include_once($_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php');
+    include_once($_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php');
+}
 
 class AdminHelpers
 {
