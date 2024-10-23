@@ -10,8 +10,10 @@ class ProjectBookSale extends Model
     
     protected $fillable = [
         'project_book_id',
-        'sale_type',
+        'customer_name',
         'quantity',
+        'full_price',
+        'discount',
         'amount',
         'date',
     ];
@@ -23,15 +25,21 @@ class ProjectBookSale extends Model
     ];
 
     protected $appends = [
+        'price_formatted', 
         'amount_formatted', 
         'total_amount',
         'total_amount_formatted',
-        'sale_type_text'
+        //'sale_type_text'
     ];
 
     public function saleTypes()
     {
         return $this->saleTypes;
+    }
+
+    public function getPriceFormattedAttribute()
+    {
+        return isset($this->attributes['full_price']) ? FrontendHelpers::currencyFormat($this->attributes['full_price']) : null;
     }
 
     public function getAmountFormattedAttribute()
@@ -51,9 +59,9 @@ class ProjectBookSale extends Model
         return FrontendHelpers::currencyFormat($this->getAttributeValue('total_amount'));
     }
 
-    public function getSaleTypeTextAttribute()
+    /* public function getSaleTypeTextAttribute()
     {
         return $this->saleTypes[$this->attributes['sale_type']];
-    }
+    } */
 
 }

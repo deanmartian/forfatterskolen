@@ -255,6 +255,12 @@
                         </div>
     
                         <div class="form-group">
+                            <label>
+                                Customer Name
+                            </label>
+                            <input type="text" class="form-control" name="customer_name" required>
+                        </div>
+                        {{-- <div class="form-group">
                             <label>Sale Type</label>
                             <select name="sale_type" class="form-control" required>
                                 <option value="" disabled selected>
@@ -266,16 +272,30 @@
                                     </option>
                                 @endforeach
                             </select>
-                        </div>
+                        </div> --}}
     
                         <div class="form-group">
                             <label>Quantity</label>
                             <input type="number" class="form-control" name="quantity" required>
                         </div>
+
+                        <div class="form-group">
+                            <label>
+                                Price
+                            </label>
+                            <input type="number" class="form-control" name="full_price" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                Discount
+                            </label>
+                            <input type="number" class="form-control" name="discount">
+                        </div>
     
                         <div class="form-group">
                             <label>Amount</label>
-                            <input type="number" class="form-control" name="amount">
+                            <input type="text" class="form-control" name="amount">
                         </div>
     
                         <div class="form-group">
@@ -292,6 +312,36 @@
             </div>
         </div>
     </div> <!-- end bookSalesModal -->
+
+    <div id="importBookSalesModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Import Book sales</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route($importBookSaleRoute, $projectBook->id) }}" 
+                        enctype="multipart/form-data"
+                        onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="id">
+    
+                        <div class="form-group">
+                            <input type="file" name="book_sale" class="form-control"
+                            accept=".xls, .xlsx, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
+                            required>
+                        </div>
+    
+                        <button class="btn btn-primary pull-right" type="submit">
+                            {{ trans('site.submit') }}
+                        </button>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div> <!-- end importBookSalesModal -->
 
         <div id="inventorySalesModal" class="modal fade" role="dialog">
             <div class="modal-dialog modal-md">
@@ -343,7 +393,7 @@
                     </div>
                 </div>
             </div>
-        </div> <!-- end bookSalesModal -->
+        </div> <!-- end inventorySaleModal -->
 
         <div id="salesReportModal" class="modal fade" role="dialog" data-backdrop="static">
             <div class="modal-dialog modal-md">
@@ -459,21 +509,25 @@
         $("#distributionsModal").find('[name=nr]').val(dataNumber);
     });
 
-    $(".bookSalesBtn").click(function() {
+    $(document).on('click', '.bookSalesBtn', function() {
         let modal = $("#bookSalesModal");
         let record = $(this).data('record');
         modal.find('[name=id]').val('');
         //modal.find('[name=project_book_id]').val('');
-        modal.find('[name=sale_type]').val('');
+        modal.find('[name=customer_name]').val('');
         modal.find('[name=quantity]').val('');
+        modal.find('[name=full_price]').val('');
+        modal.find('[name=discount]').val('');
         modal.find('[name=amount]').val('');
         modal.find('[name=date]').val('');
 
         if (record) {
             modal.find('[name=id]').val(record.id);
             //modal.find('[name=project_book_id]').val(record.project_book_id);
-            modal.find('[name=sale_type]').val(record.sale_type);
+            modal.find('[name=customer_name]').val(record.customer_name);
             modal.find('[name=quantity]').val(record.quantity);
+            modal.find('[name=full_price]').val(record.full_price);
+            modal.find('[name=discount]').val(record.discount);
             modal.find('[name=amount]').val(record.amount);
             modal.find('[name=date]').val(record.date);
         }

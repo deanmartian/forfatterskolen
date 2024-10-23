@@ -143,10 +143,16 @@
         </div>
 
         <div class="col-md-6">
-            <button class="btn btn-primary pull-right btn-xs bookSalesBtn" data-toggle="modal"
-                data-target="#bookSalesModal">
-                + Book Sales
-            </button>
+            <div class="pull-right">
+                <button class="btn btn-primary btn-xs" data-toggle="modal"
+                    data-target="#importBookSalesModal">
+                    Import Book Sales
+                </button>
+                <button class="btn btn-primary btn-xs bookSalesBtn" data-toggle="modal"
+                    data-target="#bookSalesModal">
+                    + Book Sales
+                </button>
+            </div>
             <h4>
                 Books sales
             </h4>
@@ -157,11 +163,12 @@
                 <table class="table dt-table">
                     <thead>
                         <tr>
-                            <th>Book</th>
-                            <th>Type</th>
-                            <th>Quantity</th>
-                            <th>Amount</th>
                             <th>Date</th>
+                            <th>Customer Name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Discount</th>
+                            <th>Amount</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -169,19 +176,22 @@
                         @foreach($projectBook->sales as $bookSale)
                             <tr>
                                 <td>
-                                    {{ $projectBook->book_name }}
+                                    {{ $bookSale->date }}
                                 </td>
                                 <td>
-                                    {{ $bookSale->sale_type_text }}
+                                    {{ $bookSale->customer_name }}
                                 </td>
                                 <td>
                                     {{ $bookSale->quantity }}
                                 </td>
                                 <td>
-                                    {{ $bookSale->total_amount_formatted }}
+                                    {{ $bookSale->price_formatted }}
                                 </td>
                                 <td>
-                                    {{ $bookSale->date }}
+                                    {{ $bookSale->discounts }}
+                                </td>
+                                <td>
+                                    {{ $bookSale->total_amount_formatted }}
                                 </td>
                                 <td>
                                     <button class="btn btn-primary btn-xs bookSalesBtn" data-toggle="modal"

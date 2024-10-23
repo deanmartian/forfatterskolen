@@ -166,6 +166,17 @@ class AdminHelpers
 		return 'Kr ' . number_format($value, 2, ",", ".");
 	}
 
+    public static function formatPrice($price) {
+        // Remove dots used as thousand separators
+        $price = str_replace('.', '', $price);
+        
+        // Replace comma with a dot to convert to a decimal
+        $price = str_replace(',', '.', $price);
+        
+        // Convert to float or number format if necessary
+        return (float) $price;
+    }
+
 
 	public static function isDate($string)
 	{

@@ -16,6 +16,7 @@ use App\Http\Requests\ProjectActivityRequest;
 use App\Http\Requests\ProjectBookRequest;
 use App\Http\Requests\ProjectCopyEditingRequest;
 use App\Http\Requests\ProjectRequest;
+use App\Imports\ProjectBookSaleImport;
 use App\Jobs\AddMailToQueueJob;
 use App\Jobs\UpdateDropboxLink;
 use App\MarketingPlan;
@@ -51,6 +52,10 @@ use App\UserBookForSale;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Excel as ExcelFormat;
+use Maatwebsite\Excel\HeadingRowImport;
 use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Time;
 use PhpOffice\PhpWord\PhpWord;
 use Spatie\Dropbox\Client;
@@ -1310,6 +1315,7 @@ class ProjectController extends Controller
         $saveDistributionRoute = 'admin.project.storage.save-distribution-cost';
         $deleteDistributionRoute = 'admin.project.storage.delete-distribution-cost';
         $saveBookSaleRoute = 'admin.project.storage.save-book-sales';
+        $importBookSaleRoute = 'admin.project.storage.import-book-sales';
         $deleteBookSaleRoute = 'admin.project.storage.delete-book-sales';
         $saveStorageSaleRoute = 'admin.project.storage.save-sales';
         $deleteStorageSaleRoute = 'admin.project.storage.delete-sales';
@@ -1417,8 +1423,8 @@ class ProjectController extends Controller
         return view('backend.project.storage-details', compact('backRoute', 'layout', 'projectId', 'project', 
         'projectUserBook', 'userBooksForSale', 'totalBookSold', 'totalBookSale', 'years', 'yearlyData', 'saveBookRoute',
         'deleteBookRoute', 'saveDetailsRoute', 'saveVariousRoute', 'projectBook', 'saveDistributionRoute',
-        'deleteDistributionRoute', 'bookSaleTypes', 'saveBookSaleRoute', 'deleteBookSaleRoute', 'centralISBNs', 
-        'saveStorageSaleRoute', 'inventorySales', 'deleteStorageSaleRoute', array_keys($categories)));
+        'deleteDistributionRoute', 'bookSaleTypes', 'saveBookSaleRoute', 'importBookSaleRoute', 'deleteBookSaleRoute', 
+        'centralISBNs', 'saveStorageSaleRoute', 'inventorySales', 'deleteStorageSaleRoute', array_keys($categories)));
     }
 
     public function saveStorageBook($projectId, Request $request)
@@ -1478,6 +1484,97 @@ class ProjectController extends Controller
             'not-former-courses'    => true
         ]);
     }
+
+    public function importBookSales($project_book_id, Request $request)
+    {
+        $file = $request->file('book_sale');
+        $data = array_map('trim', explode(PHP_EOL, file_get_contents($file->getRealPath())));
+        $headers = explode("\t", strtolower($data[1]));
+        
+        $formattedData = array_filter(array_map(function($row) use ($headers) {
+            $rowData = explode("\t", $row);
+            if (count($rowData) === count($headers)) {
+                $rowAssoc = array_combine($headers, array_pad($rowData, count($headers), null));
+                return $this->hasValues($rowAssoc) ? $rowAssoc : null;
+            }
+        }, array_slice($data, 2)));
+
+        foreach ($formattedData as $importData) {
+            ProjectBookSale::create([
+                'project_book_id' => $project_book_id,
+                'customer_name' => $importData['kundenavn'],
+                'quantity' => $importData['ant'],
+                'full_price' => $importData['lpris'],
+                'discount' => $importData['rab'],
+                'amount' => AdminHelpers::formatPrice($importData['belop']),
+                'date' => $importData['dato'],
+            ]);
+        }
+
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag(count($formattedData) . ' sales imported successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true
+        ]);
+    }
+
+
+    /* public function importBookSalesOrig($project_book_id, Request $request)
+    {
+
+        $file = $request->file('book_sale');
+
+         // Read the entire file content as plain text
+        $content = file_get_contents($file->getRealPath());
+
+         // Split the content into rows based on newlines
+        $data = explode(PHP_EOL, $content);
+ 
+        $headers = explode("\t", trim(strtolower($data[1])));
+
+        $formattedData = [];
+
+        for ($i = 2; $i < count($data); $i++) {
+            //Split each row by tab
+            $rowData = explode("\t", trim($data[$i]));
+        
+            //Check if row has fewer columns than headers
+            if (count($rowData) < count($headers)) {
+                // Fill missing columns with empty values
+                $rowData = array_pad($rowData, count($headers), null);
+            }
+        
+            // Combine headers with row data to form an associative array
+            if (count($headers) === count($rowData)) {
+                $rowAssoc = array_combine($headers, $rowData);
+                //$formattedData[] = array_combine($headers, $rowData);
+                if ($this->hasValues($rowAssoc)) {
+                    $formattedData[] = $rowAssoc; // Add the formatted row to the array
+                }
+            } else {
+                // Handle the mismatch (optional logging or error handling)
+                echo "Row $i has a mismatch: expected " . count($headers) . " columns but got " . count($rowData) . "\n";
+            }
+        }
+
+        foreach($formattedData as $importData) {
+            ProjectBookSale::create([
+                'project_book_id' => $project_book_id,
+                'customer_name' => $importData['kundenavn'],
+                'quantity' => $importData['ant'],
+                'full_price' => $importData['lpris'],
+                'discount' => $importData['rab'],
+                'amount' => AdminHelpers::formatPrice($importData['belop']),
+                'date' => $importData['dato'],
+            ]);
+        }
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag(count($formattedData) . 'sale imported successfully.'),
+            'alert_type'            => 'success',
+            'not-former-courses'    => true
+        ]);
+    } */    
 
     public function deleteBookSales($sale_id)
     {
@@ -1817,5 +1914,14 @@ class ProjectController extends Controller
         return StorageSale::where('project_book_id', $project_book_id)
         ->where('type', $type)
         ->sum('value');
+    }
+
+    private function hasValues($row) {
+        // Filter the row to keep only non-empty values
+        $filtered = array_filter($row, function($value) {
+            return !empty($value); // Keep non-empty values
+        });
+        // If the filtered array is not empty, return true, meaning it has values
+        return !empty($filtered);
     }
 }
