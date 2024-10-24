@@ -1359,6 +1359,31 @@ class ProjectController extends Controller
         $inventorySales = StorageSale::where('project_book_id', $projectUserBook->id)
             ->where('type', 'like', 'inventory_%')->get();
 
+        $inventorySalesGroup = StorageSale::where('project_book_id', $projectUserBook->id)
+            ->where('type', 'like', 'inventory_%')
+            ->select('type', DB::raw('SUM(value) as total_sales'))
+            ->groupBy('type')
+            ->get();
+
+        $inventoryPhysicalItems = 0;
+        $inventoryDelivered = 0;
+        $inventoryReturns = 0;
+
+        foreach ($inventorySalesGroup as $sale) {
+            switch ($sale->type) {
+                case 'inventory_physical_items':
+                    $inventoryPhysicalItems = $sale->total_sales;
+                    break;
+                case 'inventory_delivered':
+                    $inventoryDelivered = $sale->total_sales;
+                    break;
+                case 'inventory_returns':
+                    $inventoryReturns = $sale->total_sales;
+                    break;
+                // Add more cases as needed for other types
+            }
+        }
+            
         $categories = ['quantity-sold', 'turned-over', 'free', 'commission', 'shredded'];
 
         $categories = ['quantitySoldCount' => 'quantity-sold', 'turnedOverCount' => 'turned-over', 
@@ -1424,7 +1449,8 @@ class ProjectController extends Controller
         'projectUserBook', 'userBooksForSale', 'totalBookSold', 'totalBookSale', 'years', 'yearlyData', 'saveBookRoute',
         'deleteBookRoute', 'saveDetailsRoute', 'saveVariousRoute', 'projectBook', 'saveDistributionRoute',
         'deleteDistributionRoute', 'bookSaleTypes', 'saveBookSaleRoute', 'importBookSaleRoute', 'deleteBookSaleRoute', 
-        'centralISBNs', 'saveStorageSaleRoute', 'inventorySales', 'deleteStorageSaleRoute', array_keys($categories)));
+        'centralISBNs', 'saveStorageSaleRoute', 'inventorySales', 'deleteStorageSaleRoute', array_keys($categories),
+        'inventoryPhysicalItems', 'inventoryDelivered', 'inventoryReturns'));
     }
 
     public function saveStorageBook($projectId, Request $request)

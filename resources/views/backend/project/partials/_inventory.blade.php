@@ -48,10 +48,16 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>
+                                    {{ $inventoryDelivered + $inventoryPhysicalItems + $inventoryReturns  }}
+                                </td>
+                                <td>
+                                    {{ $inventoryDelivered }}
+                                </td>
+                                <td>
+                                    {{ $inventoryPhysicalItems }}
+                                </td>
+                                <td>{{ $inventoryReturns }}</td>
                                 <td></td>
                             </tr>
                         </tbody>
