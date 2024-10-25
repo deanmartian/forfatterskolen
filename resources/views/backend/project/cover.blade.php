@@ -204,7 +204,7 @@
 
                             <div class="form-group">
                                 <label>Backside Image (optional)</label>
-                                <input type="file" class="form-control" name="backside_image" accept="image/*">
+                                <input type="file" class="form-control" name="backside_image[]" accept="image/*" multiple>
                             </div>
 
                             <div class="form-group">

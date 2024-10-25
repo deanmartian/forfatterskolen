@@ -58,9 +58,9 @@
                                 Redaktør
                             </h1>
 
-                            <a href="{{ route('learner.service.order', [$project->id, 3]) }}" class="btn btn-primary float-right">
+                            {{-- <a href="{{ route('learner.service.order', [$project->id, 3]) }}" class="btn btn-primary float-right">
                                 Order
-                            </a>
+                            </a> --}}
                         </div>
                         <div class="card-body">
                             <table class="table">
@@ -128,9 +128,9 @@
                                 {{ trans('site.learner.copy-editing') }}
                             </h1>
 
-                            <a href="{{ route('learner.service.order', [$project->id, 1]) }}" class="btn btn-primary float-right">
+                            {{-- <a href="{{ route('learner.service.order', [$project->id, 1]) }}" class="btn btn-primary float-right">
                                 Order
-                            </a>
+                            </a> --}}
                         </div>
                         <div class="card-body py-0">
                             <table class="table table-global">
@@ -225,9 +225,9 @@
                                 {{ trans('site.front.correction.title') }}
                             </h1>
 
-                            <a href="{{ route('learner.service.order', [$project->id, 2]) }}" class="btn btn-primary float-right">
+                            {{-- <a href="{{ route('learner.service.order', [$project->id, 2]) }}" class="btn btn-primary float-right">
                                 Order
-                            </a>
+                            </a> --}}
                         </div>
                         <div class="card-body py-0">
                             <table class="table table-global">
@@ -281,8 +281,16 @@
                                         </td>
                                         <td>
                                             @if ($correction->file)
-                                                <a href="{{ route('learner.other-service.download-doc',
-                                                ['id' => $correction->id, 'type' => 2]) }}">{{ trans('site.learner.download-original-script') }}</a>
+                                                @if (strpos($correction->file, 'Forfatterskolen_app'))
+                                                    <a href="{{ url('dropbox/download/' . trim($correction->file)) }}">
+                                                        {{ trans('site.learner.download-original-script') }}
+                                                    </a>
+                                                @else
+                                                    <a href="{{ route('learner.other-service.download-doc',
+                                                    ['id' => $correction->id, 'type' => 2]) }}">
+                                                        {{ trans('site.learner.download-original-script') }}
+                                                    </a>
+                                                @endif
                                             @endif
 
                                             @if ($correction->feedback)

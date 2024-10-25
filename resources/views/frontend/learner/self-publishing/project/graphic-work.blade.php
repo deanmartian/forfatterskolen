@@ -42,7 +42,6 @@
                                     <th>ISBN</th>
                                     <th>Backside Text</th>
                                     <th>Backside Image</th>
-                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -51,9 +50,37 @@
                                         <td>{!! $cover->image !!}</td>
                                         <td>{{ $cover->description }}</td>
                                         <td>
-                                            <a href="{{ $cover->value }}" class="btn btn-success btn-xs" download>
-                                                <i class="fa fa-download"></i>
-                                            </a>
+                                            {{ !is_array(AdminHelpers::projectFormats($cover->format)) ?
+                                                AdminHelpers::projectFormats($cover->format) 
+                                                : $cover->format . ' mm' }}
+                                        </td>
+                                        <td>
+                                            {{ optional($cover->isbn)->value }}
+                                        </td>
+                                        <td>
+                                            @if ($cover->backside_type == 'text')
+                                                {{ $cover->backside_text }}
+                                            @else
+                                                <a href="{{ route('dropbox.download_file', trim($cover->backside_text)) }}">
+                                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                                </a>&nbsp;
+                                                <a href="{{ route('dropbox.shared_link', $cover->backside_text) }}" target="_blank">
+                                                    {{ basename($cover->backside_text) }}
+                                                </a>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($cover->backside_image)
+                                                @php
+                                                    $backsideImages = explode(',', $cover->backside_image);
+                                                @endphp
+                                                @foreach ($backsideImages as $backsideImage)
+                                                    <a href="{{ route('dropbox.download_file', trim($backsideImage)) }}">
+                                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                                    </a>&nbsp;
+                                                    <span>{{ basename($backsideImage) }}</span>
+                                                @endforeach
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
