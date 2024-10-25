@@ -102,6 +102,7 @@ use Hash;
 use File;
 use App\Http\FrontendHelpers;
 use App\Jobs\UpdateFikenContactDetailsJob;
+use App\ProjectBookFormatting;
 use App\PublishingService as AppPublishingService;
 use App\SelfPublishingPortalRequest;
 use App\StorageSale;
@@ -2103,8 +2104,9 @@ class LearnerController extends Controller
         $rewriteScripts = ProjectGraphicWork::rewriteScripts()->where('project_id', $project_id)->get();
         $trialPages = ProjectGraphicWork::trialPage()->where('project_id', $project_id)->get();
         $sampleBookPDFs = ProjectGraphicWork::sampleBookPdf()->where('project_id', $project_id)->get();
+        $bookFormattingList = ProjectBookFormatting::where('project_id', $project_id)->get();
         return view('frontend.learner.self-publishing.project.graphic-work', compact('project', 'covers',
-            'barCodes', 'rewriteScripts', 'trialPages', 'sampleBookPDFs'));
+            'barCodes', 'rewriteScripts', 'trialPages', 'sampleBookPDFs', 'bookFormattingList'));
     }
 
     public function projectRegistration( $project_id )

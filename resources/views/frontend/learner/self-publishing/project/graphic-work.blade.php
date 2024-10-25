@@ -61,10 +61,10 @@
                                             @if ($cover->backside_type == 'text')
                                                 {{ $cover->backside_text }}
                                             @else
-                                                <a href="{{ route('dropbox.download_file', trim($cover->backside_text)) }}">
+                                                <a href="{{ url('/dropbox/download/' . trim($cover->backside_text)) }}">
                                                     <i class="fa fa-download" aria-hidden="true"></i>
                                                 </a>&nbsp;
-                                                <a href="{{ route('dropbox.shared_link', $cover->backside_text) }}" target="_blank">
+                                                <a href="{{ url('/dropbox/shared-link/' . trim($cover->backside_text)) }}" target="_blank">
                                                     {{ basename($cover->backside_text) }}
                                                 </a>
                                             @endif
@@ -75,7 +75,7 @@
                                                     $backsideImages = explode(',', $cover->backside_image);
                                                 @endphp
                                                 @foreach ($backsideImages as $backsideImage)
-                                                    <a href="{{ route('dropbox.download_file', trim($backsideImage)) }}">
+                                                    <a href="{{ url('/dropbox/download/' . trim($backsideImage)) }}">
                                                         <i class="fa fa-download" aria-hidden="true"></i>
                                                     </a>&nbsp;
                                                     <span>{{ basename($backsideImage) }}</span>
@@ -102,6 +102,23 @@
                                         <th>{{ trans_choice('site.feedbacks', 1) }}</th>
                                     </tr>
                                 </thead>
+                                <tbody>
+                                    @foreach($bookFormattingList as $bookFormatting)
+                                        <tr>
+                                            <td>
+                                                {!! $bookFormatting->file_link !!}
+                                            </td>
+                                            <td>
+                                                {{ optional($bookFormatting->designer)->full_name }}
+                                            </td>
+                                            <td>
+                                                @if ($bookFormatting->feedback_status === 'completed')
+                                                    {!! $bookFormatting->feedback_file_link !!}
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
                             </table>
                         </div>
                     </div>

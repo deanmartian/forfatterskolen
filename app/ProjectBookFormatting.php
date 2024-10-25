@@ -25,9 +25,9 @@ class ProjectBookFormatting extends Model
             $extension = explode('.', basename($file));
 
             if(strpos($file, 'project-')) {
-                $fileLink .= '<a href="'.route('dropbox.download_file', trim($file)).'">
+                $fileLink .= '<a href="'.url('/dropbox/download/' . trim($file)).'">
                     <i class="fa fa-download" aria-hidden="true"></i></a>';
-                $fileLink .= ' <a href="'.route('dropbox.shared_link', trim($file)).'" target="_blank">' . basename($file) . '</a>';
+                $fileLink .= ' <a href="'.url('/dropbox/shared-link/' . trim($file)).'" target="_blank">' . basename($file) . '</a>';
                 $fileLink .= ', ';
             } else {
                 if (end($extension) == 'pdf' || end($extension) == 'odt') {
@@ -68,9 +68,9 @@ class ProjectBookFormatting extends Model
                         .basename($filename).'</a>';
                 }
             } else {
-                $fileLink = '<a href="'.route('dropbox.download_file', trim($filename)).'">
+                $fileLink = '<a href="'.url('/dropbox/download/' . trim($filename)).'">
                 <i class="fa fa-download"></i></a> ';
-                $fileLink .= '<a href="'.route('dropbox.shared_link', $filename).'" target="_blank">' .basename($filename).'</a>';
+                $fileLink .= '<a href="'.url('/dropbox/shared-link/' . trim($filename)).'" target="_blank">' .basename($filename).'</a>';
             }
         }
 

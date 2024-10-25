@@ -74,7 +74,7 @@ class ProjectGraphicWork extends Model
         $fileLink = NULL;
         if ($filename) {
             if (strpos($filename, 'project-')) {
-                $fileLink = '<a href="'.route('dropbox.shared_link', $filename).'" target="_blank">' .basename($filename).'</a>';
+                $fileLink = '<a href="'.url('/dropbox/shared-link/' . trim($filename)).'" target="_blank">' .basename($filename).'</a>';
             } else {
                 $fileLink = '<a href="'.asset($filename).'">' .basename($filename).'</a>';
             }
