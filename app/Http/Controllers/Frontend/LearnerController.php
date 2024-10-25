@@ -715,7 +715,7 @@ class LearnerController extends Controller
 
             return view('frontend.learner.course_show', compact('courseTaken'));
         endif;
-        return abort('503');
+        return abort('450', 'testing here');
     }
 
     public function notifications()
