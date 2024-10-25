@@ -1940,6 +1940,13 @@ Route::group([
     Route::get('/check-nearly-expired-course', 'Backend\PageController@checkNearlyExpiredCourses');
     Route::get('/user-activity', 'Backend\PageController@userActivity');
     Route::get('/user-activity/{id}', 'Backend\PageController@userActivityDetails');
+
+    Route::get('/dropbox/shared-link/{path}', 'Frontend\DropboxController@createSharedLink')
+        ->where('path', '.*')
+        ->name('dropbox.shared_link');
+    Route::get('/dropbox/download/{path}', 'Frontend\DropboxController@downloadFile')
+        ->where('path', '.*')
+        ->name('dropbox.download_file');
 });
 
 

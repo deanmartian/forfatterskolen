@@ -135,6 +135,45 @@
                                         <th>Interior</th>
                                     </tr>
                                 </thead>
+                                <tbody>
+                                    @foreach($indesigns as $indesign)
+                                        <tr>
+                                            <td>
+                                                @php
+                                                    $coverFiles = explode(',', $indesign->value);
+                                                @endphp
+                                                @foreach ($coverFiles as $coverFile)
+                                                    @if (strpos($coverFile, 'project-'))
+                                                        <a href="{{ url('/dropbox/download/' . trim($coverFile)) }}">
+                                                            <i class="fa fa-download" aria-hidden="true"></i>
+                                                        </a>&nbsp;
+                                                        <a href="{{ url('/dropbox/shared-link/' . trim($coverFile)) }}" target="_blank" 
+                                                        style="margin-right: 5px">
+                                                            {{ basename($coverFile) }}
+                                                        </a>
+                                                    @else
+                                                        @if ($coverFile)
+                                                            <a href="{{ $coverFile }}" class="btn btn-success btn-xs" download>
+                                                                <i class="fa fa-download"></i>
+                                                            </a>
+                                                            <a href="{{ asset($coverFile) }}" target="_blank" style="margin-right: 5px">
+                                                                {{ basename($coverFile) }}
+                                                            </a>
+                                                        @endif
+                                                    @endif
+                                                @endforeach
+                                            </td>
+                                            <td>
+                                                @if ($indesign->interior)
+                                                    <a href="{{ url('/dropbox/download/' . trim($indesign->description)) }}">
+                                                        <i class="fa fa-download" aria-hidden="true"></i>
+                                                    </a>&nbsp;
+                                                    {!! $indesign->interior !!}
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
                             </table>
                         </div>
                     </div>

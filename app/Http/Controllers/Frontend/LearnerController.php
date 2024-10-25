@@ -2105,8 +2105,10 @@ class LearnerController extends Controller
         $trialPages = ProjectGraphicWork::trialPage()->where('project_id', $project_id)->get();
         $sampleBookPDFs = ProjectGraphicWork::sampleBookPdf()->where('project_id', $project_id)->get();
         $bookFormattingList = ProjectBookFormatting::where('project_id', $project_id)->get();
+        $indesigns = ProjectGraphicWork::indesigns()->where('project_id', $project_id)->get();
+
         return view('frontend.learner.self-publishing.project.graphic-work', compact('project', 'covers',
-            'barCodes', 'rewriteScripts', 'trialPages', 'sampleBookPDFs', 'bookFormattingList'));
+            'barCodes', 'rewriteScripts', 'trialPages', 'sampleBookPDFs', 'bookFormattingList', 'indesigns'));
     }
 
     public function projectRegistration( $project_id )
