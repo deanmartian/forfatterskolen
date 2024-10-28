@@ -220,9 +220,39 @@
                                 <thead>
                                     <tr>
                                         <th>File</th>
+                                        <th>Upload Date</th>
                                         <th>Format</th>
                                     </tr>
                                 </thead>
+                                <tbody>
+                                    @foreach ($printReadyList as $printReady)
+                                        <tr>
+                                            <td>
+                                                @if ($printReady->value)
+                                                    @if (strpos($printReady->value, 'project-'))
+                                                        <a href="{{ url('/dropbox/download/' . trim($printReady->value)) }}">
+                                                            <i class="fa fa-download" aria-hidden="true"></i>
+                                                        </a>&nbsp;
+                                                    @else
+                                                        <a href="{{ $printReady->value }}" class="btn btn-success btn-xs" download>
+                                                            <i class="fa fa-download"></i>
+                                                        </a>
+                                                    @endif
+                                                @endif
+                                                
+                                                {!! $printReady->image !!}
+                                            </td>
+                                            <td>
+                                                {{ $printReady->upload_date }}
+                                            </td>
+                                            <td>
+                                                {{ !is_array(AdminHelpers::projectFormats($printReady->format)) ?
+                                                    AdminHelpers::projectFormats($printReady->format) 
+                                                    : $printReady->format . ' mm' }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
                             </table>
                         </div>
                     </div>
