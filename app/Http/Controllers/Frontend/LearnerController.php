@@ -2204,6 +2204,26 @@ class LearnerController extends Controller
         return view('frontend.learner.self-publishing.project.invoice', compact('project', 'invoices'));
     }
 
+    public function projectStorage( $project_id )
+    {
+        $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
+        $projectBook = $project->book;
+        $projectCentralDistributions = $project->registrations()
+            ->where([
+                'field' => 'central-distribution',
+                'in_storage' => 1
+            ])
+            ->get();
+        
+            return view('frontend.learner.self-publishing.project.storage', compact('project', 'projectBook', 
+            'projectCentralDistributions'));
+    }
+
+    public function projectStorageDetails()
+    {
+        # code...
+    }
+
     public function countFileCharacters(Request $request)
     {
         $compute = null;

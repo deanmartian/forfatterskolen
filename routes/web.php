@@ -388,6 +388,9 @@ Route::group([
             Route::post('/save-answer', 'LearnerController@saveMarketingPlanQA')->name('learner.project.save-marketing-qa');
             Route::get('/contract', 'LearnerController@projectContract')->name('learner.project.contract');
             Route::get('/invoice', 'LearnerController@projectInvoice')->name('learner.project.invoice');
+            Route::get('/storage', 'LearnerController@projectStorage')->name('learner.project.storage');
+            Route::get('/storage/{registration_id}/details', 'LearnerController@projectStorageDetails')
+            ->name('learner.project.storage-details');
         });
 
         Route::get('/profile', 'LearnerController@profile')->name('learner.profile'); // Profile Page

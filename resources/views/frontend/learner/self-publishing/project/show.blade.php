@@ -46,6 +46,11 @@
                     Contract
                 </a>
 
+                <a href="{{ route('learner.project.storage', $project->id) }}"
+                    class="btn mb-3 site-btn-global mr-2">
+                     Storage
+                 </a>
+
                 {{--<a href="{{ route('learner.project.invoice', $project->id) }}"
                    class="btn mb-3 site-btn-global">
                     Invoice
