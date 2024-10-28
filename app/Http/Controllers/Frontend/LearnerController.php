@@ -2219,9 +2219,14 @@ class LearnerController extends Controller
             'projectCentralDistributions'));
     }
 
-    public function projectStorageDetails()
+    public function projectStorageDetails( $project_id, $registration_id )
     {
-        # code...
+        $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
+        $projectBook = $project->book;
+        $projectUserBook = ProjectRegistration::find($registration_id);
+        
+        return view('frontend.learner.self-publishing.project.storage-details', compact('project', 'projectBook',
+        'projectUserBook'));
     }
 
     public function countFileCharacters(Request $request)
