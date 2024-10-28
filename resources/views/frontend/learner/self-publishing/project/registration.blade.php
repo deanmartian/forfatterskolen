@@ -33,12 +33,14 @@
                                 <thead>
                                 <tr>
                                     <th>ISBN</th>
+                                    <th width="700">Type</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($isbns as $isbn)
                                     <tr>
                                         <td>{!! $isbn->value !!}</td>
+                                        <td>{{ $isbn->isbn_type }}</td>
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -76,7 +78,7 @@
                                 <tbody>
                                 @foreach($mentorBookBases as $mentorBookBase)
                                     <tr>
-                                        <td>{!! $mentorBookBase->value !!}</td>
+                                        <td>{!! $mentorBookBase->value ? 'Yes' : 'No' !!}</td>
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -95,7 +97,7 @@
                                 <tbody>
                                 @foreach($uploadFilesToMentorBookBases as $uploadFilesToMentorBookBase)
                                     <tr>
-                                        <td>{!! $uploadFilesToMentorBookBase->value !!}</td>
+                                        <td>{!! $uploadFilesToMentorBookBase->value ? 'Yes' : 'No' !!}</td>
                                     </tr>
                                 @endforeach
                                 </tbody>
