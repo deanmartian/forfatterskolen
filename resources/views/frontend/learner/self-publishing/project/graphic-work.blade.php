@@ -274,9 +274,16 @@
                                     <tr>
                                         <td>{!! $sampleBookPDF->file_link !!}</td>
                                         <td>
-                                            <a href="{{ $sampleBookPDF->value }}" class="btn btn-success btn-xs" download>
-                                                <i class="fa fa-download"></i>
-                                            </a>
+                                            @if (strpos($sampleBookPDF->value, "project-"))
+                                                <a href="{{ url('/dropbox/download/' . trim($sampleBookPDF->value)) }}" 
+                                                    class="btn btn-success btn-xs">
+                                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                                </a>
+                                            @else
+                                                <a href="{{ $sampleBookPDF->value }}" class="btn btn-success btn-xs" download>
+                                                    <i class="fa fa-download"></i>
+                                                </a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

@@ -103,7 +103,7 @@ class ProjectGraphicWork extends Model
 
         $extension = explode('.', basename($filename));
         if (strpos($filename, 'project-')) {
-            $fileLink = '<a href="'.route('dropbox.shared_link', $filename).'" target="_blank">' .basename($filename).'</a>';
+            $fileLink = '<a href="'.url('/dropbox/shared-link/' . trim($filename)).'" target="_blank">' .basename($filename).'</a>';
         } else {
             if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
                 $fileLink = '<a href="/js/ViewerJS/#../..'.$filename.'">'.basename($filename).'</a>';
