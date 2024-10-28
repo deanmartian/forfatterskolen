@@ -196,7 +196,11 @@
                                     <tr>
                                         <td>{!! $barCode->image !!}</td>
                                         <td>
-                                            <a href="{{ $barCode->value }}" class="btn btn-success btn-xs" download>
+                                            {{ $barCode->date }}
+                                        </td>
+                                        <td>
+                                            <a href="{{ url('/dropbox/download/' . trim($barCode->value)) }}" 
+                                                class="btn btn-success btn-xs" download>
                                                 <i class="fa fa-download"></i>
                                             </a>
                                         </td>
