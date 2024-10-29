@@ -44,12 +44,15 @@
                         <li @if( Request::input('tab') == 'master' || Request::input('tab') == '') class="active" @endif>
                             <a href="?tab=master">Master Data</a>
                         </li>
+                        <li @if( Request::input('tab') == 'various' ) class="active" @endif>
+                            <a href="?tab=various">Various</a>
+                        </li>
                     </ul>
 
                     <div class="tab-content">
                         <div class="tab-pane fade in active">
                             @if( Request::input('tab') == 'various')
-                                {{-- @include('backend.project.partials._various') --}}
+                                @include('frontend.learner.self-publishing.project.partials._various')
                             @elseif( Request::input('tab') == 'inventory')
                                 {{-- @include('backend.project.partials._inventory') --}}
                             @elseif( Request::input('tab') == 'distribution')
