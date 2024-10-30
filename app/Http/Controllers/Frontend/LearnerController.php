@@ -2224,9 +2224,68 @@ class LearnerController extends Controller
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);
         $projectBook = $project->book;
         $projectUserBook = ProjectRegistration::find($registration_id);
+
+        $totalBookSold = 0;
+        $totalBookSale = 0;
+        $currentYear = Carbon::now()->format('Y');
+        $years = [];
+        $quantitySoldList = [];
+        $turnedOverList = [];
+
+        if ($projectBook && $projectBook->sales) {
+            $totalBookSold = $projectBook->sales()->sum('quantity');
+            $totalBookSale = $projectBook->sales()->sum('amount');
+
+            $years = range($currentYear, $currentYear - 1);
+        }
+
+        $inventorySalesGroup = StorageSale::where('project_book_id', $projectUserBook->id)
+            ->where('type', 'like', 'inventory_%')
+            ->select('type', DB::raw('SUM(value) as total_sales'))
+            ->groupBy('type')
+            ->get();
+
+        $inventoryPhysicalItems = 0;
+        $inventoryDelivered = 0;
+        $inventoryReturns = 0;
+
+        foreach ($inventorySalesGroup as $sale) {
+            switch ($sale->type) {
+                case 'inventory_physical_items':
+                    $inventoryPhysicalItems = $sale->total_sales;
+                    break;
+                case 'inventory_delivered':
+                    $inventoryDelivered = $sale->total_sales;
+                    break;
+                case 'inventory_returns':
+                    $inventoryReturns = $sale->total_sales;
+                    break;
+                // Add more cases as needed for other types
+            }
+        }
+
+        $types = [
+            'quantity-sold' => 'Quantity Sold',
+            'turned-over' => 'Turned Over',
+            'free' => 'Free',
+            'commission' => 'Commission',
+            'shredded' => 'Shredded',
+            'defective' => 'Defective',
+            'corrections' => 'Corrections',
+            'counts' => 'Counts',
+            'returns' => 'Returns'
+        ];
+        
+        $yearlyData = array_map(function($key, $name) use ($projectUserBook) {
+            return [
+                'name' => $name,
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, $key) : 0
+            ];
+        }, array_keys($types), $types);
         
         return view('frontend.learner.self-publishing.project.storage-details', compact('project', 'projectBook',
-        'projectUserBook'));
+        'projectUserBook', 'totalBookSold', 'totalBookSale', 'inventoryPhysicalItems', 'inventoryDelivered',
+        'inventoryReturns', 'years', 'yearlyData'));
     }
 
     public function countFileCharacters(Request $request)
@@ -5167,5 +5226,16 @@ class LearnerController extends Controller
         return StorageSale::where('user_book_for_sale_id', $book_for_sale_id)
         ->where('type', $type)
         ->sum('value');
+    }
+
+    private function storageSalesByType($user_book_for_sale_id, $type) {
+        return StorageSale::where('project_book_id', $user_book_for_sale_id)
+        ->where('type', $type)
+        ->when(request()->filled('year') && request('year') != 'all', function ($query) {
+            $query->whereYear('date', request('year'));
+        })
+        ->when(request()->filled('month') && request('month') != 'all', function ($query) {
+            $query->whereMonth('date', request('month'));
+        })->sum('value');
     }
 }

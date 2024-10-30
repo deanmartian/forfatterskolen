@@ -83,6 +83,7 @@
                 </li>
                 <li @if( Request::input('tab') == 'inventory' ) class="active" @endif>
                     <a href="?tab=inventory">Inventory Data</a>
+                </li>
                 <li @if( Request::input('tab') == 'distribution' ) class="active" @endif>
                     <a href="?tab=distribution">Distribution Cost</a>
                 </li>

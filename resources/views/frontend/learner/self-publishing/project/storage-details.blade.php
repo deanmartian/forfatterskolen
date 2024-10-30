@@ -4,6 +4,15 @@
     <title>Project Storage &rsaquo; Forfatterskolen</title>
 @stop
 
+@section('styles')
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" />
+<style>
+    .custom-select {
+        width: 50px !important;
+    }
+</style>
+@stop
+
 @section('content')
 <div class="learner-container">
     <div class="container">
@@ -47,6 +56,12 @@
                         <li @if( Request::input('tab') == 'various' ) class="active" @endif>
                             <a href="?tab=various">Various</a>
                         </li>
+                        <li @if( Request::input('tab') == 'inventory' ) class="active" @endif>
+                            <a href="?tab=inventory">Inventory Data</a>
+                        </li>
+                        <li @if( Request::input('tab') == 'book-sales' ) class="active" @endif>
+                            <a href="?tab=book-sales">Book Sales</a>
+                        </li>
                     </ul>
 
                     <div class="tab-content">
@@ -54,7 +69,9 @@
                             @if( Request::input('tab') == 'various')
                                 @include('frontend.learner.self-publishing.project.partials._various')
                             @elseif( Request::input('tab') == 'inventory')
-                                {{-- @include('backend.project.partials._inventory') --}}
+                                @include('frontend.learner.self-publishing.project.partials._inventory')
+                            @elseif( Request::input('tab') == 'book-sales')
+                                @include('frontend.learner.self-publishing.project.partials._book-sales')
                             @elseif( Request::input('tab') == 'distribution')
                                 {{-- @include('backend.project.partials._distributions') --}}
                             @elseif( Request::input('tab') == 'sales')
@@ -72,3 +89,20 @@
     </div>
 </div>
 @endsection
+
+@section('scripts')
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(".dt-table").DataTable({
+        "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+        pageLength: 10,
+        "aaSorting": []
+    });
+
+    $(".inventory-selector").change(function() {
+        var form = document.getElementById('inventory-form');
+        form.submit();
+    });
+</script>
+@stop
