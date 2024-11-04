@@ -29,6 +29,7 @@ class ProjectBookSale extends Model
         'amount_formatted', 
         'total_amount',
         'total_amount_formatted',
+        'discount_formatted',
         //'sale_type_text'
     ];
 
@@ -57,6 +58,11 @@ class ProjectBookSale extends Model
     public function getTotalAmountFormattedAttribute()
     {
         return FrontendHelpers::currencyFormat($this->getAttributeValue('total_amount'));
+    }
+
+    public function getDiscountFormattedAttribute()
+    {
+        return FrontendHelpers::currencyFormat($this->getAttributeValue('discount'));
     }
 
     /* public function getSaleTypeTextAttribute()

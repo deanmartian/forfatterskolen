@@ -194,7 +194,7 @@
                                     {{ $bookSale->price_formatted }}
                                 </td>
                                 <td>
-                                    {{ $bookSale->discounts }}
+                                    {{ $bookSale->discount_formatted }}
                                 </td>
                                 <td>
                                     {{ $bookSale->total_amount_formatted }}

@@ -2282,10 +2282,33 @@ class LearnerController extends Controller
                 'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, $key) : 0
             ];
         }, array_keys($types), $types);
+
+        $inventorySales = StorageSale::where('project_book_id', $projectUserBook->id)
+            ->where('type', 'like', 'inventory_%')->get();
+
+        $inventorySalesGroup = StorageSale::where('project_book_id', $projectUserBook->id)
+            ->where('type', 'like', 'inventory_%')
+            ->select('type', DB::raw('SUM(value) as total_sales'))
+            ->groupBy('type')
+            ->get();
+
+        $project_book_id = $projectUserBook->id;
+        $categories = ['quantity-sold', 'turned-over', 'free', 'commission', 'shredded'];
+
+        $categories = ['quantitySoldCount' => 'quantity-sold', 'turnedOverCount' => 'turned-over', 
+        'freeCount' => 'free', 'commissionCount' => 'commission', 'shreddedCount' => 'shredded',
+        'defectiveCount' => 'defective', 'correctionsCount' => 'corrections', 'countsCount' => 'counts',
+        'returnsCount' => 'returns'];
+
+        $counts = array_map(function($label) use ($project_book_id) {
+            return $this->salesReportCounter($project_book_id, $label);
+        }, $categories);
+
+        extract($counts);
         
         return view('frontend.learner.self-publishing.project.storage-details', compact('project', 'projectBook',
         'projectUserBook', 'totalBookSold', 'totalBookSale', 'inventoryPhysicalItems', 'inventoryDelivered',
-        'inventoryReturns', 'years', 'yearlyData'));
+        'inventoryReturns', 'years', 'yearlyData', 'inventorySales', array_keys($categories)));
     }
 
     public function countFileCharacters(Request $request)
@@ -5222,8 +5245,8 @@ class LearnerController extends Controller
         return $user;
     }
 
-    private function salesReportCounter($book_for_sale_id, $type) {
-        return StorageSale::where('user_book_for_sale_id', $book_for_sale_id)
+    private function salesReportCounter($project_book_id, $type) {
+        return StorageSale::where('project_book_id', $project_book_id)
         ->where('type', $type)
         ->sum('value');
     }
