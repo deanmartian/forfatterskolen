@@ -211,12 +211,12 @@
     
                         <div class="form-group">
                             <label>Number</label>
-                            <input type="number" class="form-control" name="number" required>
+                            <input type="number" class="form-control" name="number" step=".01" required>
                         </div>
     
                         <div class="form-group">
                             <label>Amount</label>
-                            <input type="number" class="form-control" name="amount" step=".50" required>
+                            <input type="number" class="form-control" name="amount" step=".01" required>
                         </div>
 
                         <div class="form-group">
