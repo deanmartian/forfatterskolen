@@ -412,7 +412,7 @@
         
                             <div class="form-group">
                                 <label>Value</label>
-                                <input type="number" class="form-control" name="value" required>
+                                <input type="number" class="form-control" name="value" step="0.01" required>
                             </div>
         
                             <div class="form-group">
