@@ -62,6 +62,9 @@
                         <li @if( Request::input('tab') == 'book-sales' ) class="active" @endif>
                             <a href="?tab=book-sales">Book Sales</a>
                         </li>
+                        <li @if( Request::input('tab') == 'distribution' ) class="active" @endif>
+                            <a href="?tab=distribution">Distribution Cost</a>
+                        </li>
                     </ul>
 
                     <div class="tab-content">
@@ -73,7 +76,7 @@
                             @elseif( Request::input('tab') == 'book-sales')
                                 @include('frontend.learner.self-publishing.project.partials._book-sales')
                             @elseif( Request::input('tab') == 'distribution')
-                                {{-- @include('backend.project.partials._distributions') --}}
+                                @include('frontend.learner.self-publishing.project.partials._distributions')
                             @elseif( Request::input('tab') == 'sales')
                                 {{-- @include('backend.project.partials._sales') --}}
                             @elseif( Request::input('tab') == 'sales-report')
