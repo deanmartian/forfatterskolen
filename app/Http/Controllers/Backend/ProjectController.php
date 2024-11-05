@@ -1397,7 +1397,30 @@ class ProjectController extends Controller
 
         extract($counts);
 
-        $yearlyData = [
+        $types = [
+            'quantity-sold' => 'Quantity Sold',
+            'turned-over' => 'Turned Over',
+            'free' => 'Free',
+            'commission' => 'Commission',
+            'shredded' => 'Shredded',
+            'defective' => 'Defective',
+            'corrections' => 'Corrections',
+            'counts' => 'Counts',
+            'returns' => 'Returns'
+        ];
+        
+        $yearlyData = array_map(function($key, $name) use ($projectUserBook) {
+            return [
+                'name' => $name,
+                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, $key) : 0
+            ];
+        }, array_keys($types), $types);
+
+        $totalBalance = array_reduce($yearlyData, function($sum, $data) {
+            return $data['name'] !== 'Turned Over' ? $sum + $data['value'] : $sum;
+        }, 0);
+
+        /* $yearlyData = [
             [
                 'name' => 'Quantity Sold',
                 'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'quantity-sold') : 0
@@ -1434,7 +1457,7 @@ class ProjectController extends Controller
                 'name' => 'Returns',
                 'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, 'returns') : 0
             ]
-        ];
+        ]; */
 
         if (AdminHelpers::isGiutbokPage()) {
             $layout = 'giutbok.layout';
@@ -1450,7 +1473,7 @@ class ProjectController extends Controller
         'deleteBookRoute', 'saveDetailsRoute', 'saveVariousRoute', 'projectBook', 'saveDistributionRoute',
         'deleteDistributionRoute', 'bookSaleTypes', 'saveBookSaleRoute', 'importBookSaleRoute', 'deleteBookSaleRoute', 
         'centralISBNs', 'saveStorageSaleRoute', 'inventorySales', 'deleteStorageSaleRoute', array_keys($categories),
-        'inventoryPhysicalItems', 'inventoryDelivered', 'inventoryReturns'));
+        'inventoryPhysicalItems', 'inventoryDelivered', 'inventoryReturns', 'totalBalance'));
     }
 
     public function saveStorageBook($projectId, Request $request)

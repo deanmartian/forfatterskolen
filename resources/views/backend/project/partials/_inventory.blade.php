@@ -58,7 +58,9 @@
                                     {{ $inventoryPhysicalItems }}
                                 </td>
                                 <td>{{ $inventoryReturns }}</td>
-                                <td></td>
+                                <td>
+                                    {{ $totalBalance }}
+                                </td>
                             </tr>
                         </tbody>
                     </table>
