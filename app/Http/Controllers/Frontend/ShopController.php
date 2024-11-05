@@ -1915,6 +1915,7 @@ class ShopController extends Controller
             $order_id = $request->input('svea_ord') ?? $request->input('pl_ord');
             $order = Order::find($order_id);
 
+            Log::info('has svea_ord or pl_ord order_id = ' . $order_id);
             if ($request->has('svea_ord')) {
                 Log::info('inside has SVEA order ' . $order_id);
                 SveaUpdateOrderDetailsJob::dispatch($order->id)->delay(Carbon::now()->addMinute(1));
