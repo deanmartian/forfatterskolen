@@ -16,4 +16,13 @@ class StorageDistributionCost extends Model
         'date'
     ];
 
+    protected $appends = [
+        'learner_amount'
+    ];
+
+    public function getLearnerAmountAttribute()
+    {
+        return $this->attributes['amount'] * 1.2;
+    }
+
 }

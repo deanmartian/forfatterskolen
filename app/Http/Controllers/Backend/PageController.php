@@ -912,12 +912,19 @@ class PageController extends Controller
 
         $users = User::where('role', 2);
         if ($search) {
-            $users = $users->where(function($query) use ($search) {
-                $query->where('first_name', 'like', $search . '%')
-                    ->orWhere('last_name', 'like', $search . '%');
+            $searchTerms = explode(' ', $search);
+            $users = $users->where(function($query) use ($searchTerms) {
+                foreach ($searchTerms as $term) {
+                    $query->where(function($subQuery) use ($term) {
+                        $subQuery->where('first_name', 'like', $term . '%')
+                            ->orWhere('last_name', 'like', $term . '%');
+                    });
+                }
             });
         }
+        
         $users->limit(50);
         return response()->json($users->get());
     }
+
 }

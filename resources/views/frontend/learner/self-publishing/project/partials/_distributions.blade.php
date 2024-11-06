@@ -24,7 +24,7 @@
                             {{ $distributionCost->number }}
                         </td>
                         <td>
-                            {{ $distributionCost->amount }}
+                            {{ AdminHelpers::currencyFormat($distributionCost->learner_amount) }}
                         </td>
                         <td>
                             {{ $distributionCost->date ? FrontendHelpers::formatDate($distributionCost->date) : '' }}

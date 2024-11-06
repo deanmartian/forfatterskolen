@@ -1,6 +1,6 @@
 <div class="panel">
     <div class="panel-body">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <button class="btn btn-primary pull-right btn-xs distributionsBtn" data-toggle="modal"
                 data-target="#distributionsModal"
                 data-action="{{ route($saveDistributionRoute, $projectUserBook->id) }}">
@@ -16,6 +16,7 @@
                         <th>Service</th>
                         <th>Number</th>
                         <th>Amount</th>
+                        <th>Learner Price</th>
                         <th>Date</th>
                         <th></th>
                     </tr>
@@ -33,7 +34,10 @@
                                 {{ $distributionCost->number }}
                             </td>
                             <td>
-                                {{ $distributionCost->amount }}
+                                {{ AdminHelpers::currencyFormat($distributionCost->amount) }}
+                            </td>
+                            <td>
+                                {{ AdminHelpers::currencyFormat($distributionCost->learner_amount) }}
                             </td>
                             <td>
                                 {{ $distributionCost->date ? FrontendHelpers::formatDate($distributionCost->date) : '' }}
