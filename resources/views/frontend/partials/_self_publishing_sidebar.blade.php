@@ -7,47 +7,55 @@
     <ul class="nav nav-sidebar">
         <li class="@if(Request::is('account/dashboard')) active @endif">
             <a href=" {{ route('learner.dashboard') }} ">
-                <i class="fa fa-home"></i> Kontrollpanel
+                <i class="fa fa-home"></i> {{ trans('site.author-portal-menu.dashboard') }}
             </a>
         </li>
 
         <li class=" @if(Request::is('account/time-register')) active @endif">
             <a href=" {{ route('learner.time-register') }} ">
-                <i class="fa fa-clock"></i> Time Register
+                <i class="fa fa-clock"></i> {{ trans('site.author-portal-menu.time-register') }}
             </a>
         </li>
 
         <li class="@if(Request::is('account/book-sale')) active @endif">
             <a href=" {{ route('learner.book-sale') }} ">
-                <i class="fa fa-bar-chart"></i> Sales
+                <i class="fa fa-bar-chart"></i> {{ trans('site.author-portal-menu.sales') }}
             </a>
         </li>
 
         <li>
-            <a href="#">Editor Services</a>
+            <a href="#">
+                {{ trans('site.author-portal-menu.editor-services') }}
+            </a>
             <ul>
                 <li class="@if(Request::is('account/self-publishing/list')) active @endif">
-                    <a href="{{ route('learner.self-publishing.list') }}">Redaktør</a>
+                    <a href="{{ route('learner.self-publishing.list') }}">
+                        {{ trans('site.author-portal-menu.editor') }}
+                    </a>
                 </li>
                 <li class="@if(Request::is('account/self-publishing/copy-editing')) active @endif">
-                    <a href="{{ route('learner.self-publishing.copy-editing') }}">Språkvask</a>
+                    <a href="{{ route('learner.self-publishing.copy-editing') }}">
+                        {{ trans('site.author-portal-menu.copy-editing') }}
+                    </a>
                 </li>
                 <li class="@if(Request::is('account/self-publishing/correction')) active @endif">
-                    <a href="{{ route('learner.self-publishing.correction') }}">Korrektur</a>
+                    <a href="{{ route('learner.self-publishing.correction') }}">
+                        {{ trans('site.author-portal-menu.correction') }}
+                    </a>
                 </li>
             </ul>
         </li>
     </ul>
 
     <a href="{{ route('learner.change-portal', 'learner') }}" class="btn portal-btn">
-        Learner Portal
+        {{ trans('site.author-portal-menu.learner-portal') }}
     </a>
 
     <a href="{{ route('auth.logout-get') }}" style="display: block">
         <form method="POST" action="{{route('auth.logout')}}" class="form-logout">
             {{csrf_field()}}
             <button type="submit" class="btn logout-btn">
-                <i class="fa fa-sign-out-alt"></i> Logg av
+                <i class="fa fa-sign-out-alt"></i> {{ trans('site.logout') }}
             </button>
         </form>
     </a>
