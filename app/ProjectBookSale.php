@@ -10,6 +10,7 @@ class ProjectBookSale extends Model
     
     protected $fillable = [
         'project_book_id',
+        'invoice_number',
         'customer_name',
         'quantity',
         'full_price',

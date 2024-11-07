@@ -1549,8 +1549,11 @@ class ProjectController extends Controller
         }, array_slice($data, 2)));
 
         foreach ($formattedData as $importData) {
-            ProjectBookSale::create([
+            ProjectBookSale::updateOrCreate([
                 'project_book_id' => $project_book_id,
+                'invoice_number' => $importData['faktnr'],
+            ],
+            [
                 'customer_name' => $importData['kundenavn'],
                 'quantity' => $importData['ant'],
                 'full_price' => $importData['lpris'],
@@ -1561,7 +1564,7 @@ class ProjectController extends Controller
         }
 
         return redirect()->back()->with([
-            'errors' => AdminHelpers::createMessageBag(count($formattedData) . ' sales imported successfully.'),
+            'errors' => AdminHelpers::createMessageBag('Book sales imported successfully.'),
             'alert_type' => 'success',
             'not-former-courses' => true
         ]);
