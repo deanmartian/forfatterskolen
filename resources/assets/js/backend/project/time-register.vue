@@ -15,7 +15,7 @@
                         <tr>
                             <th>Date</th>
                             <th>Number of hours</th>
-                            <th>Invoice</th>
+                            <th>Notes</th>
                             <th width="150"></th>
                         </tr>
                         </thead>
@@ -23,7 +23,7 @@
                         <tr v-for="(projectTimeRegister, index) in projectTimeRegisters" :key="index">
                             <td>{{ projectTimeRegister.date }}</td>
                             <td>{{ projectTimeRegister.time }}</td>
-                            <td v-html="projectTimeRegister.file_link"></td>
+                            <td v-html="projectTimeRegister.notes_formatted"></td>
                             <td>
                                 <button class="btn btn-xs btn-primary" @click="showTimeFormModal(projectTimeRegister)">
                                     <i class="fa fa-edit"></i>
@@ -69,11 +69,13 @@
             </div>
 
             <div class="form-group">
-                <label>Invoice file</label>
+                <!-- <label>Invoice file</label>
                 <input type="file" name="invoice_file" class="form-control"
                        @change="onFileChange"
                        id="manuscript"
-                       accept="application/pdf">
+                       accept="application/pdf"> -->
+                <label>Notes</label>
+                <textarea name="notes" cols="30" rows="10" class="form-control" v-model="timeForm.notes"></textarea>
             </div>
 
             <div slot="modal-footer">
@@ -220,6 +222,7 @@
                     date: '',
                     time: '',
                     invoice_file: '',
+                    notes: ''
                 },
                 timeUsedList: [],
                 timeUsedFormModalTitle: '',
@@ -246,6 +249,7 @@
                     this.timeForm.project_id = data.project_id;
                     this.timeForm.date = data.date;
                     this.timeForm.time = data.time;
+                    this.timeForm.notes = data.notes;
 
                 }
                 this.$refs.timeFormModal.show();
@@ -258,6 +262,7 @@
                     project_id: this.currentProject.id,
                     date: '',
                     time: '',
+                    notes: '',
                 };
             },
 

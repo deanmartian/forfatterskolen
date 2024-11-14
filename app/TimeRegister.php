@@ -9,8 +9,8 @@ class TimeRegister extends Model
 {
     use Loggable;
 
-    protected $fillable = ['user_id', 'project_id', 'date', 'time', 'time_used', 'description', 'invoice_file'];
-    protected $appends = ['file_link'];
+    protected $fillable = ['user_id', 'project_id', 'date', 'time', 'time_used', 'description', 'invoice_file', 'notes'];
+    protected $appends = ['file_link', 'notes_formatted'];
 
     public function user()
     {
@@ -48,6 +48,11 @@ class TimeRegister extends Model
         }
 
         return $fileLink;
+    }
+
+    public function getNotesFormattedAttribute()
+    {
+        return nl2br($this->attributes['notes']);
     }
 
 }

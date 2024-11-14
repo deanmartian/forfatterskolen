@@ -24,6 +24,7 @@ class TimeRegisterController extends Controller
         $model->date = $request->date;
         $model->time = $request->time;
         $model->time_used = $request->time_used;
+        $model->notes = $request->notes;
 
         if ($request->hasFile('invoice_file') && $request->file('invoice_file')->isValid()) :
             $destinationPath = 'storage/time-register-invoice/'; // upload path
