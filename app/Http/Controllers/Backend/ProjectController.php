@@ -730,8 +730,31 @@ class ProjectController extends Controller
         
         $centralDistributions = ProjectRegistration::centralDistributions()->where('project_id', $project_id)->get();
         $mentorBookBases = ProjectRegistration::mentorBookBase()->where('project_id', $project_id)->get();
+        if ($mentorBookBases->isEmpty()) {
+            // Create a new record if no records are found
+            $newMentorBookBase = ProjectRegistration::create([
+                'project_id' => $project_id,
+                'field' => 'mentor-book-base',
+                'value' => 0,
+                'type' => 0
+            ]);
+            
+            $mentorBookBases = collect([$newMentorBookBase]);
+        }
+
         $uploadFilesToMentorBookBases = ProjectRegistration::uploadFilesToMentorBookBase()
             ->where('project_id', $project_id)->get();
+        if ($uploadFilesToMentorBookBases->isEmpty()) {
+            // Create a new record if no records are found
+            $newUploadFilesToMentorBookBases = ProjectRegistration::create([
+                'project_id' => $project_id,
+                'field' => 'upload-files-to-mentor-book-base',
+                'value' => 0,
+                'type' => 0
+            ]);
+            
+            $uploadFilesToMentorBookBases = collect([$newUploadFilesToMentorBookBases]);
+        }
 
         return view('backend.project.registration', compact('project', 'layout', 'saveRegistrationRoute',
             'deleteRegistrationRoute', 'isbns', 'isbnTypes', 'centralDistributions', 'mentorBookBases', 
@@ -755,13 +778,14 @@ class ProjectController extends Controller
 
             case 'mentor-book-base':
                 //$this->validate($request, ['mentor_book_base' => 'required']);
-                $data['value'] = $request->has('mentor_book_base') ? 1 : 0;
+                //$data['value'] = $request->has('mentor_book_base') ? 1 : 0;
+                $data['value'] = $request->mentor_book_base;
                 break;
 
             case 'upload-files-to-mentor-book-base':
-                /* $this->validate($request, ['upload_files_to_mentor_book_base' => 'required|date']);
-                $data['value'] = $request->upload_files_to_mentor_book_base; */
-                $data['value'] = $request->has('upload_files_to_mentor_book_base') ? 1 : 0;
+                /* $this->validate($request, ['upload_files_to_mentor_book_base' => 'required|date']); */
+                $data['value'] = $request->upload_files_to_mentor_book_base;
+                //$data['value'] = $request->has('upload_files_to_mentor_book_base') ? 1 : 0;
                 break;
         }
 

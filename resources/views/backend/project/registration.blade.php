@@ -82,8 +82,8 @@
             </table>
         </div>
 
-        <button type="button" class="btn btn-success registrationBtn" data-toggle="modal" data-target="#registrationModal"
-                data-field="mentor-book-base">+ Add Mentor book base</button>
+        {{-- <button type="button" class="btn btn-success registrationBtn" data-toggle="modal" data-target="#registrationModal"
+                data-field="mentor-book-base">+ Add Mentor book base</button> --}}
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
@@ -95,18 +95,23 @@
                 <tbody>
                 @foreach($mentorBookBases as $mentorBookBase)
                     <tr>
-                        <td>{!! $mentorBookBase->value ? 'Yes' : 'No' !!}</td>
                         <td>
-                            <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
+                            <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                            name="mentor_book_base" data-width="100" data-record="{{ json_encode($mentorBookBase) }}" 
+                            class="mentorToggle" data-field="mentor_book_base"
+                            @if ($mentorBookBase->value) checked @endif>
+                        </td>
+                        <td>
+                            {{-- <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
                                     data-target="#registrationModal" data-record="{{ json_encode($mentorBookBase) }}"
                                     data-field="mentor-book-base" data-id="{{ $mentorBookBase->id }}">
                                 <i class="fa fa-edit"></i>
-                            </button>
+                            </button> 
                             <button class="btn btn-danger btn-xs deleteRegistrationBtn" data-toggle="modal"
                                     data-target="#deleteRegistrationModal" data-field="mentor-book-base"
                                     data-action="{{ route($deleteRegistrationRoute, [$mentorBookBase->project_id, $mentorBookBase->id]) }}">
                                 <i class="fa fa-trash"></i>
-                            </button>
+                            </button>--}}
                         </td>
                     </tr>
                 @endforeach
@@ -114,8 +119,8 @@
             </table>
         </div>
 
-        <button type="button" class="btn btn-success registrationBtn" data-toggle="modal" data-target="#registrationModal"
-                data-field="upload-files-to-mentor-book-base">+ Add Upload files to mentor book base</button>
+        {{-- <button type="button" class="btn btn-success registrationBtn" data-toggle="modal" data-target="#registrationModal"
+                data-field="upload-files-to-mentor-book-base">+ Add Upload files to mentor book base</button> --}}
         <div class="table-responsive margin-top">
             <table class="table table-side-bordered table-white">
                 <thead>
@@ -127,18 +132,25 @@
                 <tbody>
                 @foreach($uploadFilesToMentorBookBases as $uploadFilesToMentorBookBase)
                     <tr>
-                        <td>{!! $uploadFilesToMentorBookBase->value ? 'Yes' : 'No' !!}</td>
                         <td>
-                            <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
+                            <input type="checkbox" data-toggle="toggle" data-on="Yes" data-off="No"
+                            name="upload_files_to_mentor_book_base" data-width="100" 
+                            data-field="upload_files_to_mentor_book_base"
+                            data-record="{{ json_encode($uploadFilesToMentorBookBase) }}" 
+                            class="mentorBaseToggle" 
+                            @if ($uploadFilesToMentorBookBase->value) checked @endif>
+                        </td>
+                        <td>
+                            {{-- <button class="btn btn-primary btn-xs registrationBtn" data-toggle="modal"
                                     data-target="#registrationModal" data-record="{{ json_encode($uploadFilesToMentorBookBase) }}"
                                     data-field="upload-files-to-mentor-book-base" data-id="{{ $uploadFilesToMentorBookBase->id }}">
                                 <i class="fa fa-edit"></i>
-                            </button>
+                            </button> 
                             <button class="btn btn-danger btn-xs deleteRegistrationBtn" data-toggle="modal"
                                     data-target="#deleteRegistrationModal" data-field="upload-files-to-mentor-book-base"
                                     data-action="{{ route($deleteRegistrationRoute, [$uploadFilesToMentorBookBase->project_id, $uploadFilesToMentorBookBase->id]) }}">
                                 <i class="fa fa-trash"></i>
-                            </button>
+                            </button>--}}
                         </td>
                     </tr>
                 @endforeach
@@ -341,6 +353,30 @@
 
             modal.find('.modal-title').text('Delete ' + pageTitle);
             form.attr('action', action);
+        });
+
+        $(".mentorToggle, .mentorBaseToggle").change(function() {
+            const record = $(this).data('record');
+            let newStatus = $(this).prop('checked') ? 1 : 0;
+            const url = "{{ route($saveRegistrationRoute, $project->id) }}";
+            const field = $(this).data('field');
+            
+            $.ajax({
+                url: url, 
+                method: 'POST',
+                headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                data: {
+                    id: record.id,
+                    field: record.field,
+                    [field]: newStatus,
+                },
+                success: function (response) {
+                    
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
         });
     </script>
 @stop
