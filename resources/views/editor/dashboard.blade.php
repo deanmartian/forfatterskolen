@@ -908,15 +908,17 @@
 											<th>Name</th>
 											<th>{{ trans_choice('site.learners', 1) }}</th>
 											<th>Description</th>
-											<th>Total Hours Worked</th>
-											<th></th>
+											{{-- <th>Total Hours Worked</th>
+											<th></th> --}}
 										</tr>
 									</thead>
 									<tbody>
 										@foreach ($projects as $project)
 											<tr>
 												<td>
-													{{ $project->identifier }}
+													<a href="{{ route('editor.project.show', $project->id) }}">
+														{{ $project->identifier }}
+													</a>
 												</td>
 												<td>
 													{{ $project->name }}
@@ -927,7 +929,7 @@
 												<td>
 													{{ $project->description }}
 												</td>
-												<td>
+												{{-- <td>
 													{{ $project->editor_total_hours }}
 												</td>
 												<td>
@@ -937,7 +939,7 @@
 														data-record="{{ json_encode($project) }}">
 														<i class="fa fa-edit"></i>
 													</button>
-												</td>
+												</td> --}}
 											</tr>
 										@endforeach
 									</tbody>

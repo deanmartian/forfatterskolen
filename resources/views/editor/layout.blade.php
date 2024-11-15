@@ -70,6 +70,7 @@
             </div>
         @endif
 
+        <script src="{{ mix('/js/app.js') }}"></script>
         @include('backend.partials.scripts')
         <script src="https://Forfatterskolen.cdn.vooplayer.com/assets/vooplayer.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>

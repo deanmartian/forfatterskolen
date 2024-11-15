@@ -19,6 +19,7 @@ use App\CorrectionManuscript;
 use App\CopyEditingManuscript;
 use App\Project;
 use App\Settings;
+use App\TimeRegister;
 use Carbon\Carbon;
 use Spatie\Dropbox\Client as DropboxClient;
 use Storage;
@@ -384,6 +385,14 @@ class PageController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function projectDetails($project_id)
+    {
+        $project = Project::find($project_id);
+        $projectTimeRegisters = TimeRegister::where('project_id', $project->id)->with('project')->get();
+        
+        return view('editor.project.show', compact('project', 'projectTimeRegisters'));
     }
 
     public function projectEditorHours($project_id, Request $request)

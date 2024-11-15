@@ -1977,6 +1977,7 @@ Route::group([
         Route::post('/self-publishing/{id}/feedback', 'PageController@selfPublishingFeedback')->name('editor.self-publishing.feedback');
         Route::get('/self-publishing/{id}/download-manuscript', 'PageController@selfPublishingDownloadManuscript')->name('editor.self-publishing.download-manuscript');
         Route::post('/assignment-manuscript/{id}/mark-finished', 'PageController@assignmentManuscriptFinished')->name('editor.assignment-manuscript.mark-finished');
+        Route::get('/project/{id}', 'PageController@projectDetails')->name('editor.project.show');
         Route::post('/project/{id}/update-editor-hours', 'PageController@projectEditorHours')->name('editor.project.update-editor-hours');
     });
 
@@ -2007,7 +2008,11 @@ Route::group([
         Route::post('/free-manuscript/{id}/edit-content', 'FreeManuscriptController@editContent')->name('editor.free-manuscript.edit-content');
         Route::post('/free-manuscript/{id}/send_feedback', 'FreeManuscriptController@sendFeedback')->name('editor.free-manuscript.send_feedback');
         Route::get('/free-manuscript/{id}/download', 'FreeManuscriptController@downloadContent')->name('editor.free-manuscript.download');
-
+        Route::post('/time-register/save', 'TimeRegisterController@save')->name('editor.time-register.save');
+        Route::delete('/time-register/{id}/delete', 'TimeRegisterController@destroy')->name('admin.time-register.delete');
+        Route::get('/time-register/{id}/time-used-list', 'TimeRegisterController@timeUsedList');
+        Route::post('/time-register/{id}/save-time-used', 'TimeRegisterController@saveTimeUsed');
+        Route::delete('/time-register/time-used/{id}/delete', 'TimeRegisterController@deleteTimeUsed');
     });
 
     // Authentication
