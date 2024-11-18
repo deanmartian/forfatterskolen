@@ -1262,6 +1262,8 @@ Route::group([
         Route::get('/project/{id}', 'ProjectController@show')->name('admin.project.show');
         Route::delete('/project/{id}/delete', 'ProjectController@deleteProject');
 
+        Route::get('/storage-books', 'StorageBookController@index')->name('admin.storage-books.index');
+
         Route::post('generate_assignment_group/{id}', 'AssignmentController@generateGroup')->name('assignment.generate_assignment_group');
         Route::post('assignment/{id}/uploadManuscript', 'AssignmentController@uploadManuscript')->name('assignment.group.upload_manuscript');
         Route::post('assignment/{id}/add-on-for-learner', 'AssignmentController@addOnForLearner')->name('assignment.add-on-for-learner');
