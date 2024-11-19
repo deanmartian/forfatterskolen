@@ -31,9 +31,34 @@
                 <div class="col-md-12 dashboard-course no-left-padding">
                     <div class="card global-card">
                         <div class="card-header">
-                            <h1>
-                                Sales
-                            </h1>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h1>
+                                        Sales
+                                    </h1>
+                                </div>
+                                <div class="col-md-4">
+                                    <form action="">
+                                        <div class="form-group">
+                                            <label>
+                                                Year
+                                            </label>
+            
+                                            <select name="year" id="yearSelector" class="form-control" onchange="this.form.submit()">
+                                                @foreach ($uniqueYears as $year)
+                                                    <option value="{{ $year }}" 
+                                                    @if (request()->get('year') == $year)
+                                                        selected
+                                                    @endif>
+                                                        {{ $year }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            
                         </div>
                         <div class="card-body">
                             <div class="chart-container" style="position: relative; height:400px; width: 100%">
@@ -204,7 +229,11 @@
                     mode: 'single',
                     callbacks: {
                         label: function(tooltipItems, data) {
-                            return 'Sales: ' + tooltipItems.yLabel;
+                            const currencyFormatter = new Intl.NumberFormat('no-NO', {
+                                style: 'currency',
+                                currency: 'NOK',
+                            });
+                            return 'Sales: ' + currencyFormatter.format(tooltipItems.yLabel);
                         }
                     }
                 }
@@ -225,8 +254,15 @@
                 options: options
             });
 
+            let year = "{{ request()->get('year') }}";
+            const currentYear = new Date().getFullYear();
+            
+            if (!year) {
+                year = currentYear;
+            }
+
             // get the chart data
-            ajax_chart(myLineChart, '/account/book-sale/list-by-month');
+            ajax_chart(myLineChart, '/account/book-sale/list-by-month/' + year);
 
             $(".booksForSaleBtn").click(function() {
                 let record = $(this).data('record');
@@ -255,9 +291,26 @@
             let data = {};
 
             $.getJSON(url, data).done(function(response) {
-                const totalSales = response.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+                const maxValue = Math.max(...response);
+
+                const totalAmount = response.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+                const currencyFormatter = new Intl.NumberFormat('no-NO', {
+                    style: 'currency',
+                    currency: 'NOK',
+                });
+                const formattedTotalAmount = currencyFormatter.format(totalAmount);
+
+                // Dynamically adjust max ticks based on totalSales
+                const dynamicMax = Math.ceil(maxValue / 10) * 10; // Round up to the nearest multiple of 10
+                const stepSize = Math.ceil(dynamicMax / 5); // Adjust step size dynamically
+
                 chart.data.datasets[0].data = response; // or you can iterate for multiple datasets
-                chart.data.datasets[0].label = 'Total Sales: ' + totalSales;
+                chart.data.datasets[0].label = 'Total Sales: ' + formattedTotalAmount;
+
+                // Update chart options dynamically
+                chart.options.scales.yAxes[0].ticks.max = dynamicMax;
+                chart.options.scales.yAxes[0].ticks.stepSize = stepSize;
                 chart.update(); // finally update our chart
             });
         }

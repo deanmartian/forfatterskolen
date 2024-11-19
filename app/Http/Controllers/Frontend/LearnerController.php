@@ -103,6 +103,7 @@ use File;
 use App\Http\FrontendHelpers;
 use App\Jobs\UpdateFikenContactDetailsJob;
 use App\ProjectBookFormatting;
+use App\ProjectBookSale;
 use App\PublishingService as AppPublishingService;
 use App\SelfPublishingPortalRequest;
 use App\StorageSale;
@@ -1963,9 +1964,16 @@ class LearnerController extends Controller
 
     public function bookSale()
     {
-        $bookSales = Auth::user()->bookSales;
-        $learner = Auth::user();
-        return view('frontend.learner.self-publishing.sales', compact('bookSales', 'learner'));
+        /* $bookSales = Auth::user()->bookSales;*/
+        $learner = Auth::user(); 
+
+        $uniqueYears = ProjectBookSale::selectRaw('YEAR(date) as year')
+        ->leftJoin('project_books', 'project_book_sales.project_book_id', '=', 'project_books.id')
+        ->where('user_id', $learner->id)
+        ->distinct()
+        ->pluck('year');
+
+        return view('frontend.learner.self-publishing.sales', compact('learner', 'uniqueYears'));
     }
 
     public function bookForSale($id)
@@ -1993,9 +2001,9 @@ class LearnerController extends Controller
         'defectiveCount', 'correctionsCount', 'countsCount', 'returnsCount',));
     }
 
-    public function bookSaleByMonth()
+    public function bookSaleByMonth($year)
     {
-        $sales =  UserBookSale::select(
+        /* $sales =  UserBookSale::select(
             DB::raw('sum(quantity) as total_quantity'),
             DB::raw("DATE_FORMAT(date,'%m') as month")
         )
@@ -2009,6 +2017,27 @@ class LearnerController extends Controller
 
         foreach($sales as $order){
             $data[$order->month-1] = (int) $order->total_quantity;
+        }
+
+        return $data; */
+
+        $learner = Auth::user();
+
+        $sales = ProjectBookSale::leftJoin('project_books', 'project_book_sales.project_book_id', '=', 'project_books.id')
+            ->select(
+                DB::raw('SUM(amount) as amount_total'),
+                DB::raw("DATE_FORMAT(date, '%m') as month"),
+            )
+            ->whereYear('date', $year)
+            ->where('user_id', $learner->id)
+            ->groupBy('month')
+            ->orderBy('month', 'ASC')
+            ->get();
+
+        $data = array_fill(0, 12, 0);
+
+        foreach ($sales as $sale) {
+            $data[$sale->month - 1] = round($sale->amount_total, 2);
         }
 
         return $data;
