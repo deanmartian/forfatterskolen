@@ -34,9 +34,9 @@
                                 <tr>
                                     <th>{{ trans('site.title') }}</th>
                                     <th>{{ trans('site.description') }}</th>
-                                    <th>File</th>
+                                    <th>{{ trans_choice('site.files', 1) }}</th>
                                     <th>{{ trans('site.expected-finish') }}</th>
-                                    <th>Feedback</th>
+                                    <th>{{ trans_choice('site.feedbacks', 1) }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -65,11 +65,11 @@
                                                     </button> --}}
                                                     <a class="btn btn-primary btn-xs viewFeedbackBtn" 
                                                     href="{{ route('learner.self-publishing.feedback.download', $publishing->feedback->id) }}">
-                                                        Download Feedback
+                                                        {{ trans('site.learner.download-feedback') }}
                                                     </a>
                                                 @else
                                                     <label class="label label-warning" style="margin-right: 5px;">
-                                                        Pending
+                                                        {{ trans('site.pending') }}
                                                     </label>
                                                 @endif
                                             @endif
