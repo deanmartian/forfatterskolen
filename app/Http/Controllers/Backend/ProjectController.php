@@ -1430,7 +1430,7 @@ class ProjectController extends Controller
             'defective' => 'Defective',
             'corrections' => 'Corrections',
             'counts' => 'Counts',
-            'returns' => 'Returns'
+            //'returns' => 'Returns'
         ];
         
         $yearlyData = array_map(function($key, $name) use ($projectUserBook) {
@@ -1441,8 +1441,16 @@ class ProjectController extends Controller
         }, array_keys($types), $types);
 
         $totalBalance = array_reduce($yearlyData, function($sum, $data) {
-            return $data['name'] !== 'Turned Over' ? $sum + $data['value'] : $sum;
+            return !in_array($data['name'], ['Turned Over', 'Free']) ? $sum + $data['value'] : $sum;
         }, 0);
+        
+        // Find the value for "Free"
+        $freeValue = array_reduce($yearlyData, function($free, $data) {
+            return $data['name'] === 'Free' ? $data['value'] : $free;
+        }, 0);
+        
+        // Deduct the "Free" value from the total balance
+        $totalBalance -= $freeValue;
 
         /* $yearlyData = [
             [
