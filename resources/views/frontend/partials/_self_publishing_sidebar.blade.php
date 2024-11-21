@@ -23,6 +23,12 @@
             </a>
         </li>
 
+        <li class="@if(Request::is('account/project')) active @endif">
+            <a href=" {{ route('learner.project') }} ">
+                <i class="fa fa-file"></i> Projects
+            </a>
+        </li>
+
         <li>
             <a href="#">
                 {{ trans('site.author-portal-menu.editor-services') }}

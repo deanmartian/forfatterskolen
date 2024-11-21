@@ -68,7 +68,7 @@
                         </div>
                     </div>
 
-                    <div class="card global-card mt-5">
+                    {{-- <div class="card global-card mt-5">
                         <div class="card-header">
                             <button class="btn btn-primary pull-right btn-xs booksForSaleBtn" data-toggle="modal"
                                     data-action=""
@@ -119,7 +119,7 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>
