@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Middleware;
 
+use AdminHelpers;
+use Auth;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 
@@ -33,19 +35,31 @@ class Learner
      */
     public function handle($request, Closure $next)
     {
-        if ($this->auth->guest()) :
-            if ($request->ajax()) :
+        if ($this->auth->guest()) {
+            if ($request->ajax()) {
                 return response('Unauthorized.', 401);
-            else :
+            } else {
                 return response(view('frontend.auth.login'));
-            endif;
-        else :
-            if ($this->auth->user()->role != 2) :
-                $this->auth->logout();
+            }
+        } else {
+            $user = $this->auth->user();
+    
+            // Check if the user has the correct role
+            if ($user->role != 2) {
+                Auth::logout();
                 echo "Forbidden <br />";
                 return redirect('/');
-            endif;
-        endif;
+            }
+    
+            // Check if the user's email is verified
+            if (is_null($user->email_verified_at)) {
+                Auth::logout();
+                return redirect()->route('auth.login.show')->with([
+                    'errors' => AdminHelpers::createMessageBag('Your email is not verified. Please verify your email to continue.'),
+                    'alert_type' => 'danger'
+                ]);
+            }
+        }
 
         return $next($request);
     }

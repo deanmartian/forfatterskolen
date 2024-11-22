@@ -597,6 +597,7 @@ Route::group([
         Route::get('passwordreset/{token}', 'ResetPasswordController@resetForm')->name('frontend.passwordreset.form');
         Route::post('passwordreset/{token}/update', 'ResetPasswordController@updatePassword')->name('frontend.passwordreset.update');
         Route::post('password-change', 'ResetPasswordController@changePassword')->name('frontend.password-change');
+        Route::get('verify-email/{token}', 'RegisterController@verifyEmail')->name('email.verify');
 
         //Route::get('login/email/{email_hash}', 'LoginController@emailLogin')->name('auth.login.email');
         //Route::get('login/email-normal/{email}', 'LoginController@emailLoginNormal')->name('auth.login.email-normal');
