@@ -52,13 +52,13 @@ class Learner
             }
     
             // Check if the user's email is verified
-            if (is_null($user->email_verified_at)) {
+            /* if (is_null($user->email_verified_at)) {
                 Auth::logout();
                 return redirect()->route('auth.login.show')->with([
                     'errors' => AdminHelpers::createMessageBag('Your email is not verified. Please verify your email to continue.'),
                     'alert_type' => 'danger'
                 ]);
-            }
+            } */
         }
 
         return $next($request);
