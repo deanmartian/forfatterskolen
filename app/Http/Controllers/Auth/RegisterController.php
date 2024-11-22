@@ -41,7 +41,7 @@ class RegisterController extends Controller
         $user->last_name = $request->register_last_name;
         $user->email = $request->register_email;
         $user->password = bcrypt($request->register_password);
-        $user->email_verification_token = Str::random(32);
+        //$user->email_verification_token = Str::random(32);
         $user->save();
 
         // Send welcome email
@@ -54,7 +54,17 @@ class RegisterController extends Controller
         //mail($user->email, 'Velkommen til Forfatterskolen', view('emails.registration', compact('actionText', 'actionUrl', 'user')), $headers);
         /*AdminHelpers::send_email('Velkommen til Forfatterskolen',
             'post@forfatterskolen.no', $user->email, view('emails.registration', compact('actionText', 'actionUrl', 'user')));*/
-        $verificationUrl = route('email.verify', ['token' => $user->email_verification_token]);
+
+        $to = $user->email; //
+        $emailData = [
+            'email_subject' => 'Velkommen til Forfatterskolen',
+            'email_message' => view('emails.registration', compact('actionText', 'actionUrl', 'user'))->render(),
+            'from_name' => '',
+            'from_email' => 'post@forfatterskolen.no',
+            'attach_file' => NULL
+        ];
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
+        /* $verificationUrl = route('email.verify', ['token' => $user->email_verification_token]);
 
         $to = $user->email;
         $emailData = [
@@ -69,8 +79,8 @@ class RegisterController extends Controller
         return redirect()->back()->with([
             'errors' => AdminHelpers::createMessageBag('Registration success, please verify you emai.'),
             'alert_type' => 'success'
-        ]);
-        /* Auth::login($user);
+        ]); */
+        Auth::login($user);
 
         if ($request->has('redirect')) {
             if ($request->redirect === 'redeem-gift') {
@@ -80,7 +90,7 @@ class RegisterController extends Controller
             }
         }
 
-        return redirect(route('learner.course')); */
+        return redirect(route('learner.course'));
     }
 
     public function verifyEmail($token)
