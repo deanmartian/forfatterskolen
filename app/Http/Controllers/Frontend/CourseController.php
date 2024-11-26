@@ -19,6 +19,7 @@ use App\Course;
 use App\CourseApplication;
 use App\Http\FrontendHelpers;
 use App\Jobs\AddMailToQueueJob;
+use App\Mail\SubjectBodyEmail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -151,6 +152,19 @@ class CourseController extends Controller
         }
 
         CourseApplication::create($request->except('_token', 'manuscript'));
+
+        $emailTemplate = AdminHelpers::emailTemplate('Course Application Email');
+        $message = str_replace(':firstname', Auth::user()->first_name, $emailTemplate->email_content);
+        $to = Auth::user()->email;
+        $emailData = [
+            'email_subject' => $emailTemplate->subject,
+            'email_message' => $message,
+            'from_name' => '',
+            'from_email' => $emailTemplate->from_email,
+            'attach_file' => NULL
+        ];
+
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
         return redirect()->route('front.course.application.thank-you', $course_id);
     }
 
