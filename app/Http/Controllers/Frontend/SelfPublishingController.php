@@ -177,16 +177,18 @@ class SelfPublishingController extends Controller
         ->where('user_id', Auth::id())
         ->whereNull('project_id')
         ->get(); */
-        $selfPublishingList = SelfPublishing::leftJoin('self_publishing_learners', 
+        $standardProject = FrontendHelpers::getLearnerStandardProject(auth()->user()->id);
+        $selfPublishingList = $standardProject ? SelfPublishing::leftJoin('self_publishing_learners', 
             'self_publishing.id', '=', 'self_publishing_learners.self_publishing_id')
             ->leftJoin('projects', 'self_publishing.project_id', '=', 'projects.id') // Join the projects table via project_id
             ->select('self_publishing.*')
-            ->where(function ($query) {
+            ->where('projects.id', $standardProject->id)
+            /* ->where(function ($query) {
                 $query->where('self_publishing_learners.user_id', Auth::id())
                     ->orWhere('projects.user_id', Auth::id()); // Check if user_id matches in either table
-            })
+            }) */
             ->latest()
-            ->get();
+            ->get() : [];
 
         return view('frontend.learner.self-publishing.self-publishing-list', compact('selfPublishingList'));
     }
@@ -194,26 +196,30 @@ class SelfPublishingController extends Controller
     public function copyEditing()
     {
         //$copyEditings = Auth::user()->copyEditings()->whereNull('project_id')->get();
-        $copyEditings = CopyEditingManuscript::leftJoin('projects', 'copy_editing_manuscripts.project_id', '=', 'projects.id')
+        $standardProject = FrontendHelpers::getLearnerStandardProject(auth()->user()->id);
+        $copyEditings = $standardProject ? CopyEditingManuscript::leftJoin('projects', 'copy_editing_manuscripts.project_id', '=', 'projects.id')
             ->select('copy_editing_manuscripts.*')
             ->where('copy_editing_manuscripts.user_id', Auth::id())
-            ->where(function($query) {
+            ->where('projects.id', $standardProject->id)
+            /* ->where(function($query) {
                 $query->whereNull('project_id')
                     ->orWhere('projects.user_id', Auth::id());
-            })->latest('copy_editing_manuscripts.created_at')->get();
+            }) */->latest('copy_editing_manuscripts.created_at')->get() : [];
         return view('frontend.learner.self-publishing.copy-editing', compact('copyEditings'));
     }
 
     public function correction()
     {
         //$corrections = Auth::user()->corrections()->whereNull('project_id')->get();
-        $corrections = CorrectionManuscript::leftJoin('projects', 'correction_manuscripts.project_id', '=', 'projects.id')
+        $standardProject = FrontendHelpers::getLearnerStandardProject(auth()->user()->id);
+        $corrections = $standardProject ? CorrectionManuscript::leftJoin('projects', 'correction_manuscripts.project_id', '=', 'projects.id')
             ->select('correction_manuscripts.*')
             ->where('correction_manuscripts.user_id', Auth::id())
-            ->where(function($query) {
+            ->where('projects.id', $standardProject->id)
+            /* ->where(function($query) {
                 $query->whereNull('project_id')
                     ->orWhere('projects.user_id', Auth::id());
-            })->latest('correction_manuscripts.created_at')->get();
+            }) */->latest('correction_manuscripts.created_at')->get() : [];
 
         return view('frontend.learner.self-publishing.correction', compact('corrections'));
     }

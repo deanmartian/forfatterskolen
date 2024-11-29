@@ -356,6 +356,7 @@ Route::group([
             ->name('learner.request-self-publishing-portal');
         Route::get('/project', 'LearnerController@project')->name('learner.project');
         Route::post('/project', 'LearnerController@saveProject')->name('learner.save-project');
+        Route::post('/project/{id}/set-standard', 'LearnerController@setStandardProject')->name('learner.project.set-standard');
         Route::post('/project/self-publishing/{id}/upload-manuscript', 'LearnerController@uploadSelfPublishingManuscript')
             ->name('learner.project.self-publishing.upload-manuscript');
         Route::post('/project/other-service/{id}/upload-manuscript/{type}', 'LearnerController@uploadOtherServiceManuscript')

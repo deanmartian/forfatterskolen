@@ -10,7 +10,7 @@ class Project extends Model
 {
 
     protected $fillable = ['user_id', 'name', 'identifier', 'activity_id', 'start_date', 'end_date', 'description',
-        'notes', 'is_finished', 'editor_id', 'editor_total_hours'];
+        'notes', 'is_finished', 'editor_id', 'editor_total_hours', 'is_standard'];
     protected $appends = ['short_notes', 'notes_formatted', 'book_name'];
 
     public function user()

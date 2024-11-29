@@ -267,6 +267,15 @@ class User extends Authenticatable
         return $this->hasMany('App\Project');
     }
 
+    public function standardProject()
+    {
+        // Attempt to get the first project where `is_standard` is 1
+        $project = $this->hasMany('App\Project')->where('is_standard', 1)->first();
+
+        // If no project is found, return the first project
+        return $project ?? $this->hasMany('App\Project')->first();
+    }
+
     public function getProfileImageAttribute($value)
     {
         $image = substr($this->attributes['profile_image'], 1);

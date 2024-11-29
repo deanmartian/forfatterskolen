@@ -40,6 +40,9 @@
                                     <th>Name</th>
                                     <th>Description</th>
                                     <th>Status</th>
+                                    <th>
+                                        Standard Project
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -70,6 +73,15 @@
                                                 <span class="badge badge-warning">Lead</span>
                                             @elseif($project->status === 'finished')
                                                 <span class="badge badge-success">Finished</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($project->is_standard)
+                                                <span class="badge badge-primary">Current</span>
+                                            @else
+                                                <button class="btn btn-primary btn-xs standardProjectBtn" data-toggle="modal" 
+                                                data-action="{{ route('learner.project.set-standard', $project->id) }}"
+                                                data-target="#standardProjectModal">Set Standard</button>
                                             @endif
                                         </td>
                                     </tr>
@@ -131,4 +143,40 @@ frameborder="0"
             </div>
         </div>
     </div>
+
+    <div id="standardProjectModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        Standard Project
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+
+                        <p>
+                            Are you sure you want to set this project as <em>standard</em>?
+                        </p>
+
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@stop
+
+@section('scripts')
+<script>
+    $(".standardProjectBtn").click(function() {
+        const action = $(this).data('action');
+
+        $("#standardProjectModal").find("form").attr("action", action)
+    });
+</script>
 @stop

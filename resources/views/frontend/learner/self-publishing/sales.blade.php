@@ -308,9 +308,14 @@
                 chart.data.datasets[0].data = response; // or you can iterate for multiple datasets
                 chart.data.datasets[0].label = 'Total Sales: ' + formattedTotalAmount;
 
-                // Update chart options dynamically
-                chart.options.scales.yAxes[0].ticks.max = dynamicMax;
-                chart.options.scales.yAxes[0].ticks.stepSize = stepSize;
+                const hasValueGreaterThanZero = response.some(value => value > 0);
+
+                if (hasValueGreaterThanZero) {
+                    // Update chart options dynamically
+                    chart.options.scales.yAxes[0].ticks.max = dynamicMax;
+                    chart.options.scales.yAxes[0].ticks.stepSize = stepSize;
+                }
+                
                 chart.update(); // finally update our chart
             });
         }

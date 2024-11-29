@@ -1085,6 +1085,13 @@ class FrontendHelpers
         return SelfPublishingPortalRequest::where('user_id', $user_id)->first();
     }
 
+    public static function getLearnerStandardProject($user_id)
+    {
+        $user = User::find($user_id);
+        return $user->standardProject();
+    }
+
+
     public static function countFileWords($type, $request)
     {
         $extensions = ['docx'];

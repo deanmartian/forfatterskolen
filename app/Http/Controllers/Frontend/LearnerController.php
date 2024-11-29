@@ -160,9 +160,13 @@ class LearnerController extends Controller
             ->get();
         $assignments = $this->dashboardAssignment();
 
-        $selfPublishingLearners = SelfPublishingLearner::where('user_id', Auth::user()->id)
+        /* $selfPublishingLearners = SelfPublishingLearner::where('user_id', Auth::user()->id)
             ->pluck('self_publishing_id')->toArray();
-        $selfPublishingList = SelfPublishing::whereIn('id', $selfPublishingLearners)->get();
+        $selfPublishingList = SelfPublishing::whereIn('id', $selfPublishingLearners)->get(); */
+        $standardProject = FrontendHelpers::getLearnerStandardProject(Auth::id());
+        $selfPublishingList = $standardProject 
+            ? SelfPublishing::where('project_id', $standardProject->id)->latest()->get() 
+            : [];        
 
         $dashboardCalendar = $this->dashboardCalendar();
         $freeCourses = FrontendHelpers::getFreeCourses();
@@ -1958,7 +1962,10 @@ class LearnerController extends Controller
 
     public function timeRegister()
     {
-        $timeRegisters = Auth::user()->timeRegisters->load('project');
+        /* $timeRegisters = Auth::user()->timeRegisters->load('project'); */
+        $standardProject = FrontendHelpers::getLearnerStandardProject(Auth::id());
+        $timeRegisters = $standardProject ? TimeRegister::where('project_id', $standardProject->id)->get() : [];
+
         return view('frontend.learner.self-publishing.time-register', compact('timeRegisters'));
     }
 
@@ -2022,6 +2029,7 @@ class LearnerController extends Controller
         return $data; */
 
         $learner = Auth::user();
+        $standardProject = FrontendHelpers::getLearnerStandardProject($learner->id);
 
         $sales = ProjectBookSale::leftJoin('project_books', 'project_book_sales.project_book_id', '=', 'project_books.id')
             ->select(
@@ -2029,7 +2037,8 @@ class LearnerController extends Controller
                 DB::raw("DATE_FORMAT(date, '%m') as month"),
             )
             ->whereYear('date', $year)
-            ->where('user_id', $learner->id)
+            //->where('user_id', $learner->id)
+            ->where('project_id', $standardProject->id)
             ->groupBy('month')
             ->orderBy('month', 'ASC')
             ->get();
@@ -2117,6 +2126,26 @@ class LearnerController extends Controller
     {
         $project = Project::where('user_id', Auth::user()->id)->where('id', $project_id)->firstOrFail();
         return view('frontend.learner.self-publishing.project.show', compact('project'));
+    }
+
+    public function setStandardProject($project_id)
+    {
+        $project = Project::where('user_id', Auth::user()->id)->where('id', $project_id)->firstOrFail();
+        
+        $project = Project::where('user_id', Auth::id())->where('id', $project_id)->firstOrFail();
+
+        // Set `is_standard` to 0 for all user's projects
+        DB::table('projects')
+            ->where('user_id', Auth::id())
+            ->update(['is_standard' => 0]);
+
+        // Set `is_standard` to 1 for the selected project
+        $project->update(['is_standard' => 1]);
+
+        return back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Standard project updated.'),
+            'alert_type'            => 'success'
+        ]);
     }
 
     public function orderService($projectId, $serviceId)

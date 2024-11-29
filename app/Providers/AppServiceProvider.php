@@ -7,6 +7,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -47,6 +48,14 @@ class AppServiceProvider extends ServiceProvider
                         ->withPath('');
                 });
         }
+
+        // Share $standardProject globally
+        View::composer('*', function ($view) {
+            if (auth()->check()) {
+                $standardProject = auth()->user()->standardProject();
+                $view->with('standardProject', $standardProject);
+            }
+        });
     }
 
     /**
