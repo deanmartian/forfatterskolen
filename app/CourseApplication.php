@@ -35,9 +35,22 @@ class CourseApplication extends Model
     public function getFileLinkAttribute()
     {
         $fileLink = '';
-        $filename = $this->attributes['file_path'];
+        $files = explode(',', $this->attributes['file_path']);
 
-        $extension = explode('.', basename($filename));
+        foreach ($files as $file) {
+            $extension = explode('.', basename($file));
+            if (end($extension) == 'pdf' || end($extension) == 'odt') {
+                $fileLink .= '<a href="/js/ViewerJS/#../..'.trim($file).'">'.basename($file).'</a>';
+                $fileLink .= ', ';
+            } else {
+                $fileLink .= '<a href="https://view.officeapps.live.com/op/embed.aspx?src='.url('').trim($file).'">'.basename($file).'</a>';
+                $fileLink .= ', ';
+            }
+        }
+
+        return trim($fileLink, ', ');
+
+        /* $extension = explode('.', basename($filename));
         if( end($extension) == 'pdf' || end($extension) == 'odt' ) {
             $fileLink = '<a href="/js/ViewerJS/#../..'.$filename.'">'.basename($filename).'</a>';
         } elseif( end($extension) == 'docx' || end($extension) == 'doc' ) {
@@ -45,6 +58,6 @@ class CourseApplication extends Model
                 .basename($filename).'</a>';
         }
 
-        return $fileLink;
+        return $fileLink; */
     }
 }

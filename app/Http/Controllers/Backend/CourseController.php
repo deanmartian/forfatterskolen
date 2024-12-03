@@ -1070,12 +1070,23 @@ class CourseController extends Controller
         $pdfContent = $pdf->loadHTML(view('frontend.pdf.course-application', compact('application')))->output();
         $zip->addFromString('application.pdf', $pdfContent);
 
-        //get the correct filename
+        $filePaths = explode(', ', $application->file_path);
+        foreach ($filePaths as $applicationFile) {
+            $filePath = trim($applicationFile);
+            //get the correct filename
+            $expFileName = explode('/', $filePath);
+            $file = str_replace('\\', '/', public_path());
+
+            // physical file location and name of the file
+            $zip->addFile($file.$filePath, end($expFileName));
+        }
+
+        /* //get the correct filename
         $expFileName = explode('/', $application->file_path);
         $file = str_replace('\\', '/', public_path());
 
         // physical file location and name of the file
-        $zip->addFile($file.$application->file_path, end($expFileName));
+        $zip->addFile($file.$application->file_path, end($expFileName)); */
 
         $zip->close();
 
