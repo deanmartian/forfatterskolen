@@ -25,24 +25,22 @@
                     <div class="card global-card">
                         <div class="card-header">
                             <h1 class="d-inline-block">
-                                Bokprosjekt
+                                {{ trans('site.author-portal.book-project') }}
                             </h1>
 
                             <button class="btn btn-primary projectBtn pull-right" data-toggle="modal" data-target="#projectModal">
-                                Add Bokprosjekt
+                                {{ trans('site.author-portal.add-book-project') }}
                             </button>
                         </div>
                         <div class="card-body">
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Project Number</th>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th>Status</th>
-                                    <th>
-                                        Standard Project
-                                    </th>
+                                    <th>{{ trans('site.author-portal.project-number') }}</th>
+                                    <th>{{ trans('site.author-portal.project-name') }}</th>
+                                    <th>{{ trans('site.description') }}</th>
+                                    <th>{{ trans('site.status') }}</th>
+                                    <th>{{ trans('site.author-portal.standard-project') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -68,7 +66,9 @@
                                             <br>
 
                                             @if($project->status === 'active')
-                                                <span class="badge badge-primary">Active</span>
+                                                <span class="badge badge-primary">
+                                                    {{ trans('site.author-portal.active') }}
+                                                </span>
                                             @elseif ($project->status === 'lead')
                                                 <span class="badge badge-warning">Lead</span>
                                             @elseif($project->status === 'finished')
@@ -77,11 +77,15 @@
                                         </td>
                                         <td>
                                             @if ($project->is_standard)
-                                                <span class="badge badge-primary">Current</span>
+                                                <span class="badge badge-primary">
+                                                    {{ trans('site.author-portal.current') }}
+                                                </span>
                                             @else
                                                 <button class="btn btn-primary btn-xs standardProjectBtn" data-toggle="modal" 
                                                 data-action="{{ route('learner.project.set-standard', $project->id) }}"
-                                                data-target="#standardProjectModal">Set Standard</button>
+                                                data-target="#standardProjectModal">
+                                                    {{ trans('site.author-portal.set-standard') }}
+                                                </button>
                                             @endif
                                         </td>
                                     </tr>
@@ -107,7 +111,7 @@ frameborder="0"
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">
-                        Add Project
+                        {{ trans('site.author-portal.add-book-project') }}
                     </h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -115,22 +119,22 @@ frameborder="0"
                     <form method="POST" action="{{ route('learner.save-project') }}" onsubmit="disableSubmit(this)" enctype="multipart/form-data">
                         {{ csrf_field() }}
                         <div class="form-group">
-                            <label>Name</label>
+                            <label>{{ trans('site.author-portal.project-name') }}</label>
                             <input type="text" class="form-control" name="name" required>
                         </div>
 
                         <div class="form-group">
-                            <label>Start Date</label>
+                            <label>{{ trans('site.start-date') }}</label>
                             <input type="date" class="form-control" name="start_date">
                         </div>
 
                         <div class="form-group">
-                            <label>End Date</label>
+                            <label>{{ trans('site.end-date') }}</label>
                             <input type="date" class="form-control" name="end_date">
                         </div>
 
                         <div class="form-group">
-                            <label>Description</label>
+                            <label>{{ trans('site.description') }}</label>
                             <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
                         </div>
 
@@ -149,7 +153,7 @@ frameborder="0"
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">
-                        Standard Project
+                        {{ trans('site.author-portal.standard-project') }}
                     </h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
