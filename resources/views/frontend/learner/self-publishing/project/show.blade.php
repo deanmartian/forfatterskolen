@@ -23,32 +23,32 @@
             <div class="row">
                 <a href="{{ route('learner.project.graphic-work', $project->id) }}"
                    class="btn mb-3 site-btn-global mr-2">
-                    Graphic Work
+                    {{ trans('site.author-portal.graphic-work') }}
                 </a>
 
                 <a href="{{ route('learner.project.registration', $project->id) }}"
                    class="btn mb-3 site-btn-global mr-2">
-                    Registration
+                    {{ trans('site.author-portal.registration') }}
                 </a>
 
                 <a href="{{ route('learner.project.marketing', $project->id) }}"
                    class="btn mb-3 site-btn-global mr-2">
-                    Marketing
+                    {{ trans('site.author-portal.marketing') }}
                 </a>
 
                 <a href="{{ route('learner.project.marketing-plan', $project->id) }}"
                    class="btn mb-3 site-btn-global mr-2">
-                    Marketing Plan
+                    {{ trans('site.author-portal.marketing-plan') }}
                 </a>
 
                 <a href="{{ route('learner.project.contract', $project->id) }}"
                    class="btn mb-3 site-btn-global mr-2">
-                    Contract
+                    {{ trans('site.author-portal.contract') }}
                 </a>
 
                 <a href="{{ route('learner.project.storage', $project->id) }}"
                     class="btn mb-3 site-btn-global mr-2">
-                     Storage
+                     {{ trans('site.author-portal.storage') }}
                  </a>
 
                 {{--<a href="{{ route('learner.project.invoice', $project->id) }}"
@@ -60,7 +60,7 @@
                         <div class="card-header">
                             <h1 class="d-inline-block">
                                 {{-- {{ trans('site.self-publishing-text') }} --}}
-                                Redaktør
+                                {{ trans('site.learner.editor-text') }}
                             </h1>
 
                             {{-- <a href="{{ route('learner.service.order', [$project->id, 3]) }}" class="btn btn-primary float-right">
@@ -87,7 +87,7 @@
                                             {{ $publishing->description }}
                                         </td>
                                         <td>
-                                            {!! $publishing->file_link_with_download !!}
+                                            {!! $publishing->dropbox_file_link_with_download !!}
                                             @if(!$publishing->feedback)
                                                 <br>
                                                 <button class="btn btn-primary btn-xs uploadSelfPublishingManuscriptBtn"
@@ -323,7 +323,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">
-                        Upload Manuscript
+                        {{ trans('site.learner.course-show.upload-manuscript') }}
                     </h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -352,7 +352,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">
-                        Upload Manuscript
+                        {{ trans('site.learner.course-show.upload-manuscript') }}
                     </h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
