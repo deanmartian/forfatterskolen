@@ -34,14 +34,14 @@
                             <div class="row">
                                 <div class="col-md-8">
                                     <h1>
-                                        Sales
+                                        {{ trans('site.author-portal-menu.sales') }}
                                     </h1>
                                 </div>
                                 <div class="col-md-4">
                                     <form action="">
                                         <div class="form-group">
                                             <label>
-                                                Year
+                                                {{ trans('site.year') }}
                                             </label>
             
                                             <select name="year" id="yearSelector" class="form-control" onchange="this.form.submit()">
@@ -195,6 +195,8 @@
     <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.bundle.min.js'></script>
     <script>
+        console.log(i18n);
+        console.log(i18n.site['author-portal-menu'].sales);
         $(".dt-table").DataTable({
             "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
             pageLength: 10,
@@ -233,7 +235,7 @@
                                 style: 'currency',
                                 currency: 'NOK',
                             });
-                            return 'Sales: ' + currencyFormatter.format(tooltipItems.yLabel);
+                            return i18n.site['author-portal-menu'].sales + ': ' + currencyFormatter.format(tooltipItems.yLabel);
                         }
                     }
                 }
