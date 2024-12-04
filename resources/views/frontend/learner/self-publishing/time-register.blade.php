@@ -27,17 +27,17 @@
                     <div class="card global-card">
                         <div class="card-header">
                             <h1>
-                                Time Register
+                                {{ trans('site.author-portal-menu.time-register') }}
                             </h1>
                         </div>
                         <div class="card-body" style="padding: 0">
                             <table class="table" style="margin-bottom: 0">
                                 <thead>
                                 <tr>
-                                    <th>Project</th>
+                                    <th>{{ trans('site.author-portal.project') }}</th>
                                     <th>{{ trans('site.date') }}</th>
-                                    <th>Number of hours</th>
-                                    <th>Time used</th>
+                                    <th>{{ trans('site.author-portal.number-of-hours') }}</th>
+                                    <th>{{ trans('site.author-portal.time-used') }}</th>
                                     {{-- <th>{{ trans('site.description') }}</th> --}}
                                 </tr>
                                 </thead>
@@ -76,7 +76,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title">
-                        Time Used
+                        {{ trans('site.author-portal.time-used') }}
                     </h3>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -85,9 +85,9 @@
                         <table class="table">
                             <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Time Used</th>
-                                <th>Description</th>
+                                <th>{{ trans('site.date') }}</th>
+                                <th>{{ trans('site.author-portal.time-used') }}</th>
+                                <th>{{ trans('site.description') }}</th>
                             </tr>
                             </thead>
                             <tbody>

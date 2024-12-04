@@ -23,25 +23,25 @@
             <div class="row">
                 <a href="{{ route('learner.project.show', $project->id) }}"
                    class="btn btn-secondary mb-3">
-                    <i class="fa fa-arrow-left"></i> Back
+                    <i class="fa fa-arrow-left"></i> {{ trans('site.back') }}
                 </a>
 
                 <div class="col-md-12 dashboard-course no-left-padding">
 
                     <h3 class="mt-3">
-                        Cover
+                        {{ trans('site.homepage.illustration-cover-design') }}
                     </h3>
                     <div class="card global-card">
                         <div class="card-body p-0">
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Cover</th>
-                                    <th>Description</th>
-                                    <th>Format</th>
-                                    <th>ISBN</th>
-                                    <th>Backside Text</th>
-                                    <th>Backside Image</th>
+                                    <th>{{ trans('site.homepage.illustration-cover-design') }}</th>
+                                    <th>{{ trans('site.description') }}</th>
+                                    <th>{{ trans('site.author-portal.format') }}</th>
+                                    <th>{{ trans('site.author-portal.isbn') }}</th>
+                                    <th>{{ trans('site.author-portal.backside-text') }}</th>
+                                    <th>{{ trans('site.author-portal.backside-image') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -90,15 +90,15 @@
                     </div> <!-- end card global-card for cover-->
 
                     <h3 class="mt-5">
-                        Page Format
+                        {{ trans('site.author-portal.page-format') }}
                     </h3>
                     <div class="card global-card">
                         <div class="card-body p-0">
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>Interior</th>
-                                        <th>Designer</th>
+                                        <th>{{ trans('site.author-portal.interior') }}</th>
+                                        <th>{{ trans('site.author-portal.designer') }}</th>
                                         <th>{{ trans_choice('site.feedbacks', 1) }}</th>
                                     </tr>
                                 </thead>
