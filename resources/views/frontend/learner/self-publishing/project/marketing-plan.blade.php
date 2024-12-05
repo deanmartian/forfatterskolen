@@ -23,16 +23,16 @@
             <div class="row">
                 <a href="{{ route('learner.project.show', $project->id) }}"
                    class="btn btn-secondary mb-3">
-                    <i class="fa fa-arrow-left"></i> Back
+                    <i class="fa fa-arrow-left"></i> {{ trans('site.back') }}
                 </a>
 
                 <div class="col-md-12 dashboard-course no-left-padding">
                     <table class="table">
                         <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Questions</th>
-                            <th>Answers</th>
+                            <th>{{ trans('site.name') }}</th>
+                            <th>{{ trans('site.author-portal.questions') }}</th>
+                            <th>{{ trans('site.answer-text') }}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -81,7 +81,7 @@
                                             data-toggle="modal" data-target="#marketingPlanAnswerModal"
                                             data-action="{{ route('learner.project.save-marketing-qa', $project->id) }}"
                                             data-plan="{{ json_encode($marketingPlan) }}">
-                                        Answer
+                                            {{ trans('site.answer-text') }}
                                     </button>
                                 </td>
                             </tr>
@@ -98,7 +98,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">
-                        Answer
+                        {{ trans('site.answer-text') }}
                     </h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
