@@ -23,20 +23,20 @@
             <div class="row">
                 <a href="{{ route('learner.project.show', $project->id) }}"
                    class="btn btn-secondary mb-3">
-                    <i class="fa fa-arrow-left"></i> Back
+                    <i class="fa fa-arrow-left"></i> {{ trans('site.back') }}
                 </a>
 
                 <div class="col-md-12 dashboard-course no-left-padding">
                     <h3 class="mt-3">
-                        Email Bookstore
+                        {{ trans('site.author-portal.email-bookstore') }}
                     </h3>
                     <div class="card global-card">
                         <div class="card-body p-0">
                             <table class="table table-side-bordered table-white">
                                 <thead>
                                 <tr>
-                                    <th>File</th>
-                                    <th>Date</th>
+                                    <th>{{ trans_choice('site.files', 1) }}</th>
+                                    <th>{{ trans('site.date') }}</th>
                                     <th width="300"></th>
                                 </tr>
                                 </thead>
@@ -58,15 +58,15 @@
                     </div> <!-- end card global-card for email bookstore -->
 
                     <h3 class="mt-5">
-                        Email Library
+                        {{ trans('site.author-portal.email-library') }}
                     </h3>
                     <div class="card global-card">
                         <div class="card-body p-0">
                             <table class="table table-side-bordered table-white">
                                 <thead>
                                 <tr>
-                                    <th>File</th>
-                                    <th>Date</th>
+                                    <th>{{ trans_choice('site.files', 1) }}</th>
+                                    <th>{{ trans('site.date') }}</th>
                                     <th width="300"></th>
                                 </tr>
                                 </thead>
@@ -88,15 +88,15 @@
                     </div> <!-- end card global-card for email library-->
 
                     <h3 class="mt-5">
-                        Email Press
+                        {{ trans('site.author-portal.email-press') }}
                     </h3>
                     <div class="card global-card">
                         <div class="card-body p-0">
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>File</th>
-                                    <th>Date</th>
+                                    <th>{{ trans_choice('site.files', 1) }}</th>
+                                    <th>{{ trans('site.date') }}</th>
                                     <th width="300"></th>
                                 </tr>
                                 </thead>
@@ -118,14 +118,14 @@
                     </div> <!-- end card global-card for email-press -->
 
                     <h3 class="mt-5">
-                        Review copies
+                        {{ trans('site.author-portal.review-copies') }}
                     </h3>
                     <div class="card global-card">
                         <div class="card-body p-0">
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Review copies are sent</th>
+                                    <th>{{ trans('site.author-portal.review-copies-sent') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -144,8 +144,8 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Set up online store</th>
-                                    <th>Link Address</th>
+                                    <th>{{ trans('site.author-portal.setup-online-store') }}</th>
+                                    <th>{{ trans('site.author-portal.link-address') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -165,8 +165,8 @@
                             <table class="table table-side-bordered table-white">
                                 <thead>
                                 <tr>
-                                    <th>Set up Facebook</th>
-                                    <th>Link Address</th>
+                                    <th>{{ trans('site.author-portal.setup-facebook') }}</th>
+                                    <th>{{ trans('site.author-portal.link-address') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -186,9 +186,9 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>File</th>
-                                    <th width="500">Details</th>
-                                    <th>Is finished</th>
+                                    <th>{{ trans_choice('site.files', 1) }}</th>
+                                    <th width="500">{{ trans('site.details') }}</th>
+                                    <th>{{ trans('site.author-portal.is-finished') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -209,8 +209,8 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Cultural Council</th>
-                                    <th>Is Finished</th>
+                                    <th>{{ trans('site.author-portal.cultural-council') }}</th>
+                                    <th>{{ trans('site.author-portal.is-finished') }}</th>
                                     <th width="300"></th>
                                 </tr>
                                 </thead>
@@ -236,8 +236,8 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Application Free Word</th>
-                                    <th>Is Finished</th>
+                                    <th>{{ trans('site.author-portal.application-free-word') }}</th>
+                                    <th>{{ trans('site.author-portal.is-finished') }}</th>
                                     <th width="300"></th>
                                 </tr>
                                 </thead>
@@ -263,7 +263,7 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Agreement on time registration</th>
+                                    <th>{{ trans('site.author-portal.agreement-on-time-registration') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -282,8 +282,8 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Print/Ebook</th>
-                                    <th>Is Finished</th>
+                                    <th>{{ trans('site.author-portal.print-ebook') }}</th>
+                                    <th>{{ trans('site.author-portal.is-finished') }}</th>
                                     <th width="300"></th>
                                 </tr>
                                 </thead>
@@ -309,8 +309,8 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Sample book approved</th>
-                                    <th>Is Finished</th>
+                                    <th>{{ trans('site.author-portal.sample-book-approved') }}</th>
+                                    <th>{{ trans('site.author-portal.is-finished') }}</th>
                                     <th width="300"></th>
                                 </tr>
                                 </thead>
@@ -336,7 +336,7 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Manuscripts are sent to print</th>
+                                    <th>{{ trans('site.author-portal.manuscripts-sent-to-print') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -355,8 +355,8 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>PDF is approved</th>
-                                    <th>Is Finished</th>
+                                    <th>{{ trans('site.author-portal.pdf-approved') }}</th>
+                                    <th>{{ trans('site.author-portal.is-finished') }}</th>
                                     <th width="300"></th>
                                 </tr>
                                 </thead>
@@ -382,8 +382,8 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Number of books by author</th>
-                                    <th>Is Finished</th>
+                                    <th>{{ trans('site.author-portal.number-of-books-by-author') }}</th>
+                                    <th>{{ trans('site.author-portal.is-finished') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -403,7 +403,7 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Update the book base</th>
+                                    <th>{{ trans('site.author-portal.update-book-base') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -422,7 +422,7 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>E-book ordered</th>
+                                    <th>{{ trans('site.author-portal.ebook-ordered') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -441,7 +441,7 @@
                             <table class="table table-side-bordered table-white">
                                 <thead>
                                 <tr>
-                                    <th>E-book received and registered</th>
+                                    <th>{{ trans('site.author-portal.ebook-received-and-registered') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
