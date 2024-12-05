@@ -23,7 +23,7 @@
             <div class="row">
                 <a href="{{ route('learner.project.show', $project->id) }}"
                    class="btn btn-secondary mb-3">
-                    <i class="fa fa-arrow-left"></i> Back
+                    <i class="fa fa-arrow-left"></i> {{ trans('site.back') }}
                 </a>
 
                 <div class="col-md-12 dashboard-course no-left-padding">
@@ -32,8 +32,8 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>ISBN</th>
-                                    <th width="700">Type</th>
+                                    <th>{{ trans('site.author-portal.isbn') }}</th>
+                                    <th width="700">{{ trans('site.type') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -53,7 +53,7 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Central distribution</th>
+                                    <th>{{ trans('site.author-portal.central-distribution') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -72,7 +72,7 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Mentor book base</th>
+                                    <th>{{ trans('site.author-portal.mentor-book-base') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -91,7 +91,7 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Upload files to mentor book base</th>
+                                    <th>{{ trans('site.author-portal.upload-files-mentor-book-base') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
