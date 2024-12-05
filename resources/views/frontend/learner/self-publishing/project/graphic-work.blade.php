@@ -124,15 +124,15 @@
                     </div>
 
                     <h3 class="mt-5">
-                        Indesign
+                        {{ trans('site.author-portal.indesign') }}
                     </h3>
                     <div class="card global-card">
                         <div class="card-body p-0">
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>Cover</th>
-                                        <th>Interior</th>
+                                        <th>{{ trans('site.author-portal.interior') }}</th>
+                                        <th>{{ trans('site.author-portal.interior') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -179,15 +179,15 @@
                     </div>
 
                     <h3 class="mt-5">
-                        Barcode
+                        {{ trans('site.author-portal.barcode') }}
                     </h3>
                     <div class="card global-card">
                         <div class="card-body p-0">
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Barcode</th>
-                                    <th>Date</th>
+                                    <th>{{ trans('site.author-portal.barcode') }}</th>
+                                    <th>{{ trans('site.date') }}</th>
                                     <th width="300"></th>
                                 </tr>
                                 </thead>
@@ -212,16 +212,16 @@
                     </div> <!-- end card global-card for barcode-->
 
                     <h3 class="mt-5">
-                        Print Ready
+                        {{ trans('site.author-portal.print-ready') }}
                     </h3>
                     <div class="card global-card">
                         <div class="card-body p-0">
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>File</th>
-                                        <th>Upload Date</th>
-                                        <th>Format</th>
+                                        <th>{{ trans_choice('site.files', 1) }}</th>
+                                        <th>{{ trans('site.date-uploaded') }}</th>
+                                        <th>{{ trans('site.author-portal.format') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -258,14 +258,14 @@
                     </div>
 
                     <h3 class="mt-5">
-                        Sample book/PDF
+                        {{ trans('site.author-portal.sample-book-pdf') }}
                     </h3>
                     <div class="card global-card">
                         <div class="card-body p-0">
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>File</th>
+                                    <th>{{ trans_choice('site.files', 1) }}</th>
                                     <th width="300"></th>
                                 </tr>
                                 </thead>
