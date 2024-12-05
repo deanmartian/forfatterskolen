@@ -23,7 +23,7 @@
             <div class="row">
                 <a href="{{ route('learner.project.show', $project->id) }}"
                    class="btn btn-secondary mb-3">
-                    <i class="fa fa-arrow-left"></i> Back
+                    <i class="fa fa-arrow-left"></i> {{ trans('site.back') }}
                 </a>
 
                 <div class="col-md-12 dashboard-course no-left-padding">
@@ -32,7 +32,7 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th>Name</th>
+                                    <th>{{ trans('site.name') }}</th>
                                     <th></th>
                                 </tr>
                                 </thead>
