@@ -10,7 +10,7 @@
             <div class="row">
                 <a href="{{ route('learner.project.show', $project->id) }}"
                    class="btn btn-secondary mb-3">
-                    <i class="fa fa-arrow-left"></i> Back
+                    <i class="fa fa-arrow-left"></i> {{ trans('site.back') }}
                 </a>
 
                 <div class="col-md-12 dashboard-course no-left-padding">
@@ -19,9 +19,9 @@
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>ISBN</th>
+                                        <th>{{ trans('site.author-portal.isbn') }}</th>
                                         <th>
-                                            Book name
+                                            {{ trans('site.author-portal.book-name') }}
                                         </th>
                                         <th width="100"></th>
                                     </tr>
