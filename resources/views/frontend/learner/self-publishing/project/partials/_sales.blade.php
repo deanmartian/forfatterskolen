@@ -4,9 +4,9 @@
             <table class="table dt-table">
                 <thead>
                     <tr>
-                        <th>Type</th>
-                        <th>Quantity</th>
-                        <th>Date</th>
+                        <th>{{ trans('site.type') }}</th>
+                        <th>{{ trans('site.order-history.quantity') }}</th>
+                        <th>{{ trans('site.date') }}</th>
                     </tr>
                 </thead>
                 <tbody>
