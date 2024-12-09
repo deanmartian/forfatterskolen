@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Publisher</label>
+                        <label class="control-label">{{ trans('site.author-portal.publisher') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -18,7 +18,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Minimumsbeh.</label>
+                        <label class="control-label">{{ trans('site.author-portal.minimum-beh') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -32,7 +32,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Weight in grams</label>
+                        <label class="control-label">{{ trans('site.author-portal.weight-in-grams') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -46,7 +46,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Height mm</label>
+                        <label class="control-label">{{ trans('site.author-portal.height-mm') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -60,7 +60,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Width mm</label>
+                        <label class="control-label">{{ trans('site.author-portal.width-mm') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -74,7 +74,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Thickness mm</label>
+                        <label class="control-label">{{ trans('site.author-portal.thickness-mm') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -88,7 +88,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Selvkost</label>
+                        <label class="control-label">{{ trans('site.author-portal.self-catering') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -102,7 +102,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Mat.kost</label>
+                        <label class="control-label">{{ trans('site.author-portal.material-cost') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
