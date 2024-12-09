@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Total Sold Books</label>
+                        <label class="control-label">{{ trans('site.author-portal.total-sold-books') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -18,7 +18,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Total Sales</label>
+                        <label class="control-label">{{ trans('site.author-portal.total-sales') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -32,18 +32,18 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Inventory</label>
+                        <label class="control-label">{{ trans('site.author-portal.inventory-text') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
                     <table class="table">
                         <thead>
                             <tr>
-                                <td>Total</td>
-                                <td>Delivered</td>
-                                <td>Physical Items</td>
-                                <td>Returns</td>
-                                <td>Balance</td>
+                                <td>{{ trans('site.front.total') }}</td>
+                                <td>{{ ucfirst(trans('site.learner.delivered-text')) }}</td>
+                                <td>{{ trans('site.author-portal.physical-items') }}</td>
+                                <td>{{ trans('site.author-portal.returns') }}</td>
+                                <td>{{ trans('site.balance') }}</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -68,7 +68,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Order</label>
+                        <label class="control-label">{{ trans('site.author-portal.order-text') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -82,7 +82,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Reservations</label>
+                        <label class="control-label">{{ trans('site.author-portal.reservations') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -98,7 +98,7 @@
                     <input type="hidden" name="tab" value="inventory">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Year</label>
+                            <label>{{ trans('site.year') }}</label>
                             <select name="year" id="inventory-year-selector" class="form-control inventory-selector">
                                 <option value="all">All</option>
                                 @foreach ($years as $year)
@@ -112,7 +112,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Month</label>
+                            <label>{{ trans('site.learner.month-text') }}</label>
                             <select name="month" id="inventory-month-selector" class="form-control inventory-selector">
                                 <option value="all">All</option>
                                 @for ($month = 1; $month <= 12; $month++)
@@ -130,7 +130,7 @@
                     <tbody>
                         <tr>
                             <td></td>
-                            <td>Total</td>
+                            <td>{{ trans('site.front.total') }}</td>
                         </tr>
 
                         @foreach ($yearlyData as $yearly)
