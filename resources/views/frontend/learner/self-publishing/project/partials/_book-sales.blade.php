@@ -2,7 +2,7 @@
     <div class="panel-body">
         <div class="col-md-12">
             <h4>
-                Books sales
+                {{ trans('site.author-portal.book-sales') }}
             </h4>
 
             <div class="clearfix"></div>
@@ -11,12 +11,12 @@
                 <table class="table dt-table">
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>Customer Name</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>Discount</th>
-                            <th>Amount</th>
+                            <th>{{ trans('site.date') }}</th>
+                            <th>{{ trans('site.author-portal.customer-name') }}</th>
+                            <th>{{ trans('site.order-history.quantity') }}</th>
+                            <th>{{ trans('site.price') }}</th>
+                            <th>{{ trans('site.front.discount') }}</th>
+                            <th>{{ trans('site.amount') }}</th>
                         </tr>
                     </thead>
                     <tbody>
