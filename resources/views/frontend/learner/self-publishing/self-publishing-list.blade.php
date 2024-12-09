@@ -12,7 +12,7 @@
                     <div class="card global-card">
                         <div class="card-header">
                             <h1 class="d-inline-block">
-                                Redaktør
+                                {{ trans('site.learner.editor-text') }}
                             </h1>
                         </div>
                         <div class="card-body py-0">
@@ -76,7 +76,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">
-                        Upload Manuscript
+                        {{ trans('site.front.form.upload-manuscript') }}
                     </h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -103,9 +103,7 @@
 
 @section('scripts')
     <script>
-        console.log("ADsf adsf adsf asdf as f");
         $(".uploadSelfPublishingManuscriptBtn").click(function() {
-        console.log("clicked");
             let action = $(this).data('action');
             let modal = $('#uploadSelfPublishingManuscriptModal');
             modal.find('form').attr('action', action);
