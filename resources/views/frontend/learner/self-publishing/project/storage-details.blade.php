@@ -19,7 +19,7 @@
         <div class="row">
             <a href="{{ route('learner.project.storage', $project->id) }}"
                class="btn btn-secondary mb-3">
-                <i class="fa fa-arrow-left"></i> Back
+                <i class="fa fa-arrow-left"></i> {{ trans('site.back') }}
             </a>
 
             <div class="col-md-12 learner-assignment no-left-padding">
@@ -28,9 +28,9 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>ISBN</th>
+                                    <th>{{ trans('site.author-portal.isbn') }}</th>
                                     <th>
-                                        Book name
+                                        {{ trans('site.author-portal.book-name') }}
                                     </th>
                                 </tr>
                             </thead>
@@ -51,25 +51,25 @@
                 @if($projectUserBook)
                     <ul class="nav nav-tabs my-5">
                         <li @if( Request::input('tab') == 'master' || Request::input('tab') == '') class="active" @endif>
-                            <a href="?tab=master">Master Data</a>
+                            <a href="?tab=master">{{ trans('site.author-portal.master-data') }}</a>
                         </li>
                         <li @if( Request::input('tab') == 'various' ) class="active" @endif>
-                            <a href="?tab=various">Various</a>
+                            <a href="?tab=various">{{ trans('site.author-portal.various') }}</a>
                         </li>
                         <li @if( Request::input('tab') == 'inventory' ) class="active" @endif>
-                            <a href="?tab=inventory">Inventory Data</a>
+                            <a href="?tab=inventory">{{ trans('site.author-portal.inventory-data') }}</a>
                         </li>
                         <li @if( Request::input('tab') == 'book-sales' ) class="active" @endif>
-                            <a href="?tab=book-sales">Book Sales</a>
+                            <a href="?tab=book-sales">{{ trans('site.author-portal.book-sales') }}</a>
                         </li>
                         <li @if( Request::input('tab') == 'distribution' ) class="active" @endif>
-                            <a href="?tab=distribution">Distribution Cost</a>
+                            <a href="?tab=distribution">{{ trans('site.author-portal.distribution-cost') }}</a>
                         </li>
                         <li @if( Request::input('tab') == 'sales' ) class="active" @endif>
-                            <a href="?tab=sales">Inventory Sales</a>
+                            <a href="?tab=sales">{{ trans('site.author-portal.inventory-sales') }}</a>
                         </li>
                         <li @if( Request::input('tab') == 'sales-report' ) class="active" @endif>
-                            <a href="?tab=sales-report">Sales Report</a>
+                            <a href="?tab=sales-report">{{ trans('site.author-portal.sales-report') }}</a>
                         </li>
                     </ul>
 

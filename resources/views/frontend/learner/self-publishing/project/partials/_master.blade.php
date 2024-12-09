@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Subtitle</label>
+                        <label class="control-label">{{ trans('site.author-portal.subtitle') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -18,7 +18,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Original Title</label>
+                        <label class="control-label">{{ trans('site.author-portal.original-title') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -32,7 +32,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Author</label>
+                        <label class="control-label">{{ trans('site.author-portal.author-text') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -46,7 +46,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Editor</label>
+                        <label class="control-label">{{ trans_choice('site.editors', 1) }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -60,7 +60,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Publisher</label>
+                        <label class="control-label">{{ trans('site.author-portal.publisher') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -74,7 +74,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Book Group</label>
+                        <label class="control-label">{{ trans('site.author-portal.book-group') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -88,7 +88,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Release Date</label>
+                        <label class="control-label">{{ trans('site.author-portal.release-date') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -102,7 +102,7 @@
             <div class="row">
                 <div class="col-xs-3">
                     <div class="form-group">
-                        <label class="control-label">Price ex VAT</label>
+                        <label class="control-label">{{ trans('site.author-portal.price-no-vat') }}</label>
                     </div>
                 </div>
                 <div class="col-xs-9">
@@ -117,7 +117,7 @@
                 <div class="col-xs-3">
                     <div class="form-group">
                         <label class="control-label">
-                            Registered with the cultural council
+                            {{ trans('site.author-portal.registered-cultural-council') }}
                         </label>
                     </div>
                 </div>
