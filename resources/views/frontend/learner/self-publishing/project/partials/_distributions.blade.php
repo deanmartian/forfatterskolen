@@ -5,10 +5,10 @@
                 <thead>
                     <tr>
                         <th>Nr</th>
-                        <th>Service</th>
-                        <th>Number</th>
-                        <th>Amount</th>
-                        <th>Date</th>
+                        <th>{{ trans('site.author-portal.service-text') }}</th>
+                        <th>{{ trans('site.author-portal.number-text') }}</th>
+                        <th>{{ trans('site.amount') }}</th>
+                        <th>{{ trans('site.date') }}</th>
                     </tr>
                 </thead>
                 <tbody>
