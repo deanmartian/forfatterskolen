@@ -36,7 +36,7 @@ class SaleService {
      */
     public function queryCoursesTaken( $is_archive = 0 )
     {
-        return $this->coursesTaken->with(['user', 'receivedWelcomeEmail', 'receivedFollowUpEmail'])
+        return $this->coursesTaken->with(['user']) // , 'receivedWelcomeEmail', 'receivedFollowUpEmail'
             ->whereHas('package.course', function($query) {
                 $query->where('is_free', 0);
             })
