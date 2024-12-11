@@ -22,11 +22,11 @@
             @foreach($newManuscriptsTaken as $newManuscriptTaken)
                 <tr>
                     <td>
-                        {{ $newManuscriptTaken->shop_manuscript->title }}
+                        {{ $newManuscriptTaken->manuscript_title }}
                     </td>
                     <td>
-                        <a href="{{ route('admin.learner.show', $newManuscriptTaken->user->id) }}">
-                            {{ $newManuscriptTaken->user->full_name }}
+                        <a href="{{ route('admin.learner.show', $newManuscriptTaken->user_id) }}">
+                            {{ $newManuscriptTaken->first_name . " " . $newManuscriptTaken->last_name }}
                         </a>
                     </td>
                     <td>
@@ -67,15 +67,15 @@
                             <a href="{{ route('shop_manuscript_taken',
                             ['id' => $archiveManuscriptTaken->user_id,
                             'shop_manuscript_taken_id' => $archiveManuscriptTaken->id]) }}">
-                                {{$archiveManuscriptTaken->shop_manuscript->title}}
+                                {{$archiveManuscriptTaken->manuscript_title}}
                             </a>
                         @else
-                            {{$archiveManuscriptTaken->shop_manuscript->title}}
+                            {{$archiveManuscriptTaken->manuscript_title}}
                         @endif
                     </td>
                     <td>
-                        <a href="{{ route('admin.learner.show', $archiveManuscriptTaken->user->id) }}">
-                            {{ $archiveManuscriptTaken->user->full_name }}
+                        <a href="{{ route('admin.learner.show', $archiveManuscriptTaken->user_id) }}">
+                            {{ $archiveManuscriptTaken->first_name . " " . $archiveManuscriptTaken->last_name }}
                         </a>
                     </td>
                     <td>
@@ -99,7 +99,7 @@
                             Send following up email
                         </button>
                     </td>
-                </tr>
+                </tr> 
             @endforeach
             </tbody>
         </table>

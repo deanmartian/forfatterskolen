@@ -6,6 +6,7 @@ use App\CoursesTaken;
 use App\EmailHistory;
 use App\Order;
 use App\ShopManuscriptsTaken;
+use DB;
 
 class SaleService {
 
@@ -81,13 +82,25 @@ class SaleService {
     public function queryShopManuscriptsTaken( $is_archive = 0 )
     {
 
-        $query = ShopManuscriptsTaken::leftJoin('shop_manuscript_taken_feedbacks', 'shop_manuscripts_taken.id',
+        $query = DB::table('shop_manuscripts_taken')
+            ->join('shop_manuscripts', 'shop_manuscripts_taken.shop_manuscript_id', '=', 'shop_manuscripts.id')
+            ->join('users', 'shop_manuscripts_taken.user_id', '=', 'users.id')
+            ->select(
+                'shop_manuscripts_taken.*',
+                'shop_manuscripts.title as manuscript_title',
+                'first_name',
+                'last_name'
+            )
+            ->where('shop_manuscripts_taken.is_welcome_email_sent', '=', $is_archive)
+            ->paginate(25);
+        return $query;
+        /* $query = ShopManuscriptsTaken::leftJoin('shop_manuscript_taken_feedbacks', 'shop_manuscripts_taken.id',
             '=', 'shop_manuscript_taken_feedbacks.shop_manuscript_taken_id')
             ->orderBy('shop_manuscript_taken_feedbacks.updated_at', 'DESC')
             ->where('is_welcome_email_sent', '=', $is_archive)
             ->select('shop_manuscripts_taken.*')
             ->paginate(25);
-        return $query;
+        return $query; */
         /*return $this->shopManuscriptsTaken
             ->where('is_welcome_email_sent', '=', $is_archive)
             ->orderBy('created_at', 'desc')
