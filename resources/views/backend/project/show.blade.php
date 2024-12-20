@@ -562,7 +562,7 @@
                         @if (Auth::user()->isSuperUser())
                             <div class="form-group">
                                 <label>Price</label>
-                                <input type="number" name="price" class="form-control">
+                                <input type="number" name="price" class="form-control" step="0.01">
                             </div>
 
                             <div class="form-group">

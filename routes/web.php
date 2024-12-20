@@ -376,6 +376,12 @@ Route::group([
         Route::get('/self-publishing/list', 'SelfPublishingController@listSelfPublishing')->name('learner.self-publishing.list');
         Route::get('/self-publishing/copy-editing', 'SelfPublishingController@copyEditing')->name('learner.self-publishing.copy-editing');
         Route::get('/self-publishing/correction', 'SelfPublishingController@correction')->name('learner.self-publishing.correction');
+        Route::get('/self-publishing/publishing/order', 'SelfPublishingController@publishingOrder')
+            ->name('learner.self-publishing.publishing.order');
+        Route::post('/self-publishing/publishing/order/validate', 'SelfPublishingController@validatePublishingOrder')
+            ->name('learner.self-publishing.publishing.order.validate');
+        Route::post('/self-publishing/publishing/order/process', 'SelfPublishingController@processPublishingOrder')
+            ->name('learner.self-publishing.publishing.order.process');
 
         Route::group([
             'prefix' => 'project/{id}'

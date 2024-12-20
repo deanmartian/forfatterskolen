@@ -5,7 +5,7 @@
 @stop
 
 @section('content')
-<div class="learner-container">
+<div class="learner-container" id="app-container">
     <div class="container card">
         <div class="card-body" style="padding: 30px;">
             <a href="{{ route('learner.project.show', $projectId) }}" class="btn btn-secondary btn-sm" 
