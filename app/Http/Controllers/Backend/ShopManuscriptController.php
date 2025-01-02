@@ -28,6 +28,7 @@ use Swift_Mailer;
 use Swift_Message;
 use Swift_Transport;
 use App\RequestToEditor;
+use App\Settings;
 
 class ShopManuscriptController extends Controller
 {
@@ -77,11 +78,14 @@ class ShopManuscriptController extends Controller
         $emailTemplate = EmailTemplate::where('page_name', 'Manuscript')->first();
         $emailTemplateRoute = 'admin.manuscript.add_email_template';
         $isUpdate = 0;
+        $excessPerWordAmount = Settings::getDetailsByName('manuscript-excess-per-word-amount');
+
         if ($emailTemplate->count()) {
             $emailTemplateRoute = 'admin.manuscript.edit_email_template';
             $isUpdate = 1;
         }
-        return view('backend.shop-manuscript.index', compact('shopManuscripts','emailTemplate', 'emailTemplateRoute', 'isUpdate'));
+        return view('backend.shop-manuscript.index', compact('shopManuscripts','emailTemplate', 'emailTemplateRoute', 'isUpdate',
+            'excessPerWordAmount'));
     }
 
 

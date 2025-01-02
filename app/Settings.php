@@ -85,4 +85,9 @@ class Settings extends Model
     {
         return self::where('setting_name', $settingName)->pluck('setting_value')->first();
     }
+
+    public static function getDetailsByName($settingName)
+    {
+        return self::where('setting_name', $settingName)->first();
+    }
 }

@@ -61,6 +61,7 @@ Vue.component('svea-checkout', require('./frontend/course/svea-checkout.vue'));
 Vue.component('publishing-list', require('./frontend/components/publishing-list.vue'));
 Vue.component('publishing-service-checkout', require('./frontend/publishing-service/checkout.vue'));
 Vue.component('service-calculator', require('./frontend/publishing-service/service-calculator.vue'));
+Vue.component('publishing-order', require('./frontend/publishing-service/publishing-order.vue'));
 Vue.component('course-checkout', require('./frontend/course/checkout.vue'));
 Vue.component('gift-course-checkout', require('./frontend/gift/course-checkout.vue'));
 Vue.component('gift-shop-manuscript-checkout', require('./frontend/gift/shop-manuscript-checkout.vue'));

@@ -106,6 +106,7 @@ use App\ProjectBookFormatting;
 use App\ProjectBookSale;
 use App\PublishingService as AppPublishingService;
 use App\SelfPublishingPortalRequest;
+use App\ShopManuscript;
 use App\StorageSale;
 
 require app_path('/Http/PaypalIPN/PaypalIPN.php');
@@ -3753,15 +3754,70 @@ class LearnerController extends Controller
      */
     public function getUpgradeManuscript($shopManuscriptTakenId)
     {
-        $shopManuscriptTaken = ShopManuscriptsTaken::where('id',$shopManuscriptTakenId)
+        /* $shopManuscriptTaken = ShopManuscriptsTaken::where('id',$shopManuscriptTakenId)
             ->where('user_id', Auth::user()->id)
             ->first();
         if ($shopManuscriptTaken && $shopManuscriptTaken->status == 'Not started') {
             $shopManuscriptId = $shopManuscriptTaken->shop_manuscript->id;
             $shopManuscriptUpgrades = ShopManuscriptUpgrade::where('shop_manuscript_id', $shopManuscriptId)->get();
             $currentUser = $this->currentUser();
+            $shopManuscript = $shopManuscriptTaken->shop_manuscript;
             return view('frontend.learner.upgrade-manuscript',
-                compact('shopManuscriptTaken', 'shopManuscriptUpgrades', 'currentUser'));
+                compact('shopManuscriptTaken', 'shopManuscriptUpgrades', 'currentUser', 'shopManuscript'));
+        } */
+
+        $shopManuscriptTaken = DB::table('shop_manuscripts_taken')
+            ->leftJoin('shop_manuscripts', 'shop_manuscripts_taken.shop_manuscript_id', '=', 'shop_manuscripts.id')
+            ->select('shop_manuscripts_taken.*', 'shop_manuscripts.title as manuscript_title')
+            ->where('shop_manuscripts_taken.id', $shopManuscriptTakenId)
+            ->where('user_id', Auth::user()->id)
+            ->first();
+
+        if ($shopManuscriptTaken) {
+            $is_active = $shopManuscriptTaken->is_active ?? false;
+            $file = $shopManuscriptTaken->file ?? null;
+            
+            $feedbacks = DB::table('shop_manuscript_taken_feedbacks')
+            ->where('shop_manuscript_taken_id', $shopManuscriptTakenId)
+            ->get();
+
+            $feedbackCount = $feedbacks->count();
+            $approved = $feedbacks->first()->approved ?? 0;
+
+            // Apply status logic
+            $status = 'Not started'; // Default
+            if (!$is_active) {
+                $status = 'Not started';
+            } elseif ($file && $feedbackCount > 0 && $approved == 1) {
+                $status = 'Finished';
+            } elseif ($file && $feedbackCount > 0 && $approved == 0) {
+                $status = 'Pending';
+            } elseif ($file && $feedbackCount == 0) {
+                $status = 'Started';
+            }
+
+            // Attach status to the object (if needed for further use)
+            $shopManuscriptTaken->status = $status;
+
+            if ($status == "Not started") {
+                $shopManuscriptId = $shopManuscriptTaken->shop_manuscript_id;
+                $shopManuscript = ShopManuscript::find($shopManuscriptId);
+                $shopManuscriptUpgrades = ShopManuscriptUpgrade::where('shop_manuscript_id', $shopManuscriptId)->get()
+                    ->each(function($upgrade) use ($shopManuscript) {
+                        // check if the one being upgraded is Manuscript Start
+                        if ($shopManuscript->id == 9 && $upgrade->upgrade_manuscript->id == 3) {
+                            $upgrade->price = $upgrade->upgrade_manuscript->full_payment_price - $shopManuscript->full_payment_price;
+                        } else {
+                            $excessWords = $upgrade->upgrade_manuscript->max_words - $shopManuscript->max_words;
+                            $excessWordAmount = $excessWords * 0.15;
+                            $upgrade->price = $excessWordAmount;
+                        }
+                        return $upgrade;
+                    });
+                $currentUser = $this->currentUser();
+                return view('frontend.learner.upgrade-manuscript',
+                    compact('shopManuscriptTaken', 'shopManuscriptUpgrades', 'currentUser', 'shopManuscript'));
+            }
         }
 
         return redirect()->route('learner.upgrade');

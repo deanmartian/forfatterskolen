@@ -1751,6 +1751,7 @@ Route::group([
         Route::post('/settings/update/head-editor', 'SettingsController@headEditor')->name('admin.settings.update.head-editor');
         Route::post('/settings/update/editors-note', 'SettingsController@updateEditorsNote')->name('admin.settings.update.editors-note'); // Store Terms
         Route::post('/settings/create/{name}', 'SettingsController@create')->name('admin.settings.create');
+        Route::post('/settings/update-record', 'SettingsController@updateRecord')->name('admin.settings.update-record');
         Route::get('/news', 'SettingsController@news')->name('admin.news.index');
         Route::post('/news/save', 'SettingsController@saveNews')->name('admin.news.save');
 

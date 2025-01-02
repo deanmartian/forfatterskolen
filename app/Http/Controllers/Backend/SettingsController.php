@@ -139,5 +139,12 @@ class SettingsController extends Controller
         return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag("News saved successfully."),
             'alert_type' => 'success']);
     }
+
+    public function updateRecord(Request $request)
+    {
+        Settings::updateOrCreate(['setting_name' => $request->setting_name], ['setting_value' => $request->setting_value]);
+        return redirect()->back()->with(['errors' => AdminHelpers::createMessageBag('Record updated successfully.'),
+            'alert_type' => 'success']);
+    }
     
 }
