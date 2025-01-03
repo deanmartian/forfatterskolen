@@ -170,13 +170,13 @@
         props: {
             shopManuscriptTaken: Object,
             shopManuscriptUpgrades: Array,
-            currentUser: Object
+            currentUser: Object,
+            shopManuscript: Object
         },
 
         data() {
             return {
                 startIndex: 0,
-                shopManuscript: this.shopManuscriptTaken.shop_manuscript,
                 upgradeForm: {
                     email: '',
                     first_name: '',

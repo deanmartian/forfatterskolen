@@ -180,6 +180,9 @@
 				<div class="panel panel-default no-padding-bottom" style="border-top: 0">
 					<div class="panel-body">
 						<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addShopManuscriptModal">{{ ucwords(trans('site.add-shop-manuscript')) }}</button>
+						<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#excessAmountModal">
+							Edit Excess Word Amount
+						</button>
 						<div class="table-users table-responsive">
 							<table class="table no-margin-bottom">
 								<thead>
@@ -306,6 +309,34 @@
 	    </div>
 
 	  </div>
+	</div>
+
+	<div id="excessAmountModal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-md">
+			<div class="modal-content">
+				<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Excess amount modal</h4>
+			</div>
+			<div class="modal-body">
+				<form method="POST" action="{{ route('admin.settings.update-record') }}" onsubmit="disableSubmit(this)">
+					{{ csrf_field() }}
+					<input type="hidden" name="setting_name" value="{{ $excessPerWordAmount->setting_name }}">
+
+						<div class="form-group">
+							<label>
+								Amount per word
+							</label>
+							<input type="number" class="form-control" step="0.01" name="setting_value" 
+							value="{{ $excessPerWordAmount->setting_value }}" required>
+						</div>
+
+					  <div class="text-right margin-top">
+						<button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
 
 

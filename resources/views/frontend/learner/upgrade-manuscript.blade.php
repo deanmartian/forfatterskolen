@@ -6,7 +6,7 @@
 @stop
 
 @section('heading')
-    {{ trans('site.learner.upgrades-text') }} {{$shopManuscriptTaken->shop_manuscript->title}}
+    {{ trans('site.learner.upgrades-text') }} {{$shopManuscriptTaken->manuscript_title}}
 @stop
 
 @section('content')
@@ -15,7 +15,8 @@
         <div class="container">
             <manuscript-upgrade :shop-manuscript-taken="{{ json_encode($shopManuscriptTaken) }}"
                                 :shop-manuscript-upgrades="{{ json_encode($shopManuscriptUpgrades) }}"
-                                :current-user="{{ $currentUser }}"></manuscript-upgrade>
+                                :current-user="{{ $currentUser }}"
+                                :shop-manuscript="{{ json_encode($shopManuscript) }}"></manuscript-upgrade>
         </div>
     </div> <!-- end learner-container -->
 

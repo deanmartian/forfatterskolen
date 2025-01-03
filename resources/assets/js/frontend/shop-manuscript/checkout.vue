@@ -336,12 +336,12 @@
                         </template>
 
                         <template v-if="!currentUser || (currentUser && currentUser.could_buy_course)">
-                            <wizard-button v-if="!props.isLastStep" @click.native="props.nextTab(); scrollTop()" 
+                            <wizard-button v-if="!props.isLastStep" @click.native="handleNextTab(props)" 
                             class="wizard-footer-right"
                             :class="{'w-100': props.activeTabIndex === 1 }"
-                                        :style="props.fillButtonStyle" :disabled="!currentUser && !isNewCustomer 
-                                        && props.activeTabIndex > 0">
-                                Til betaling
+                                        :style="props.fillButtonStyle" :disabled="(!currentUser && !isNewCustomer 
+                                        && props.activeTabIndex > 0) || isLoadingSubmit">
+                                <i class="fa fa-pulse fa-spinner" v-if="isLoadingSubmit"></i> Til betaling
                             </wizard-button>
 
                             <!-- v-else before -->
@@ -412,7 +412,8 @@ import FileUpload from '../../components/FileUpload.vue';
                     item_type: 2,
                     shop_manuscript_id: this.shopManuscript.id,
                     is_pay_later: !this.userHasPaidCourse,
-                    additional: !this.userHasPaidCourse ? (this.shopManuscript.full_payment_price * .25) : 0
+                    additional: !this.userHasPaidCourse ? (this.shopManuscript.full_payment_price * .25) : 0,
+                    excess_words_amount: 0
                 },
                 currencyOptions: {
                     thousandsSeparator: '.',
@@ -432,6 +433,7 @@ import FileUpload from '../../components/FileUpload.vue';
                 synopsisName: i18n.site['learner.files-text'],
                 hasPaidCourse: false,
                 isLoading: false,
+                isLoadingSubmit: false,
                 wizardProps: {},
                 requestUrl: '/shop-manuscript/'+this.shopManuscript.id
             }
@@ -501,6 +503,37 @@ import FileUpload from '../../components/FileUpload.vue';
             validateOrder() {
 
                 this.removeValidationError();
+                this.isLoadingSubmit = true;
+                return new Promise((resolve, reject) => {
+                    let formData = new FormData();
+                    $.each(this.orderForm, function(k, v) {
+                        formData.append(k, v);
+                    });
+                    // Add your form data here if needed
+
+                    axios.post(this.requestUrl + '/checkout/validate-order', formData)
+                        .then(response => {
+                            this.orderForm.excess_words_amount = response.data.excess_words_amount;
+                            this.orderForm.price = response.data.price;
+                            this.orderForm.price = parseFloat(this.orderForm.price) + response.data.excess_words_amount;
+                            this.genreChanged(); // re-calculate for genres
+
+                            // Delay and then resolve
+                            setTimeout(() => {
+                                this.scrollTop(); // Call scrollTop after the delay
+                                this.isLoadingSubmit = false;
+                                resolve(true);
+                            }, 1500); // 1-second delay
+                        })
+                        .catch(error => {
+                            this.processError(error);
+                            this.scrollTop(); // Call scrollTop after the delay
+                            this.isLoadingSubmit = false;
+                            reject(false); // Reject to prevent tab change on error
+                        });
+                });
+
+                /* this.removeValidationError();
 
                 let formData = new FormData();
                 $.each(this.orderForm, function(k, v) {
@@ -508,10 +541,19 @@ import FileUpload from '../../components/FileUpload.vue';
                 });
 
                 return axios.post(this.requestUrl+'/checkout/validate-order', formData).then(response => {
-                    return true;
+                    console.log(response);
+                    this.orderForm.excess_words_amount = response.data.excess_words_amount;
+                    this.orderForm.price = response.data.price;
+                    this.orderForm.price = parseFloat(this.orderForm.price) + response.data.excess_words_amount;
+                    console.log(this.orderForm.price);
+                    
+                    // Return a promise that resolves after a delay
+                    return new Promise((resolve) => {
+                        setTimeout(() => resolve(false), 3000);
+                    });
                 }).catch(error => {
                     this.processError(error);
-                });
+                }); */
             },
 
             validateForm() {
@@ -576,6 +618,16 @@ import FileUpload from '../../components/FileUpload.vue';
                 this.isNewCustomer = !this.isNewCustomer;
             },
 
+            handleNextTab(props) {
+                // Call the next tab method
+                props.nextTab();
+
+                // Prevent scrollTop on the first page
+                if (props.activeTabIndex !== 0) {
+                    this.scrollTop();
+                }
+            },
+
             scrollTop() {
                 jQuery([document.documentElement, document.body]).animate({
                     scrollTop: $("#scrollhere").offset().top
@@ -624,7 +676,7 @@ import FileUpload from '../../components/FileUpload.vue';
             genreChanged() {
                 let shopManuscript = this.shopManuscript;
                 let totalDiscount = this.hasPaidCourse ? (shopManuscript.full_payment_price * 0.05) : 0;
-                let price = parseFloat(this.shopManuscript.full_payment_price);
+                let price = parseFloat(this.shopManuscript.full_payment_price) + this.orderForm.excess_words_amount;
                 let additional = price * .25;
 
                 if (this.orderForm.genre === 10) {
@@ -642,9 +694,28 @@ import FileUpload from '../../components/FileUpload.vue';
                     this.orderForm.synopsis = file;
                 } else {
                     this.orderForm.manuscript = file;
+                    this.computeManuscriptPrice();
                 }
-                
-                console.log(this.orderForm);
+            },
+
+            computeManuscriptPrice() {
+                let formData = new FormData();
+                $.each(this.orderForm, function(k, v) {
+                    formData.append(k, v);
+                });
+
+                formData.append('is_manuscript_only', true);
+
+                axios.post(this.requestUrl+'/checkout/validate-order', formData).then(response => {
+                    console.log(response);
+                    this.orderForm.excess_words_amount = response.data.excess_words_amount;
+                    this.orderForm.price = response.data.price;
+                    this.orderForm.price = parseFloat(this.orderForm.price) + response.data.excess_words_amount;
+                    console.log(this.orderForm.price);
+                    
+                }).catch(error => {
+                    //this.processError(error);
+                });
             }
         },
 

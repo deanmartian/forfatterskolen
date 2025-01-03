@@ -153,7 +153,7 @@ class PowerOfficeController extends Controller {
                 ->header('X-File-Name', $fileName);
     }
 
-    private function getCustomerId($user, $emailToSearch)
+    public function getCustomerId($user, $emailToSearch)
     {
         $powerOffice = app(PowerOffice::class);
         

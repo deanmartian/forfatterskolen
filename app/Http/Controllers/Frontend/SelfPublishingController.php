@@ -5,19 +5,30 @@ namespace App\Http\Controllers\Frontend;
 use AdminHelpers;
 use App\CopyEditingManuscript;
 use App\CorrectionManuscript;
+use App\Http\Controllers\Backend\PowerOfficeController;
 use App\Http\Controllers\Controller;
+use App\Http\PowerOffice;
 use App\Order;
+use App\PowerOfficeInvoice;
 use App\PublishingService;
 use App\SelfPublishing;
 use App\SelfPublishingFeedback;
 use App\SelfPublishingOrder;
+use App\Services\ShopManuscriptService;
+use App\ShopManuscript;
 use Auth;
 use DB;
 use FrontendHelpers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Spatie\Dropbox\Client as DropboxClient;
 use Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+
+include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php');
+include_once($_SERVER['DOCUMENT_ROOT'].'/Odt2Text.php');
 
 class SelfPublishingController extends Controller
 {
@@ -222,6 +233,165 @@ class SelfPublishingController extends Controller
             }) */->latest('correction_manuscripts.created_at')->get() : [];
 
         return view('frontend.learner.self-publishing.correction', compact('corrections'));
+    }
+
+    public function publishingOrder()
+    {
+        $shopManuscript = ShopManuscript::find(3); // manusutvikling 1
+        return view('frontend.learner.self-publishing.publishing-order', compact('shopManuscript'));
+    }
+
+    public function validatePublishingOrder(Request $request, ShopManuscriptService $shopManuscriptService)
+    {
+        if (!$request->has('is_manuscript_only')) {
+            $this->validate($request, [
+                'manuscript' => 'required',
+                'title' => 'required',
+                'description' => 'required'
+            ]);
+        }
+
+        if ($request->hasFile('manuscript')) {
+            $file = $request->file('manuscript');
+            $extension = $file->getClientOriginalExtension();
+
+            if (!in_array($extension, ['odt', 'pdf', 'doc', 'docx'])) {
+                $customErrors = ['manuscript' => ['The manuscript must be a file of type: odt, pdf, doc, docx.']];
+                $validator = Validator::make([], []); 
+                $validator->validate(); // Perform validation without rules
+                $validator->errors()->merge($customErrors);
+
+                throw new ValidationException($validator);
+            }
+        }
+
+        $shopManuscript = ShopManuscript::find(3); // manusutvikling 1
+        $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest( $request );
+        $word_count =  $uploadedManuscript['word_count'];
+        $word_to_deduct = $word_count * 0.02;
+        $new_word_count = ceil($word_count - $word_to_deduct);
+        $excess_words = $new_word_count - 17500; // deduct the manusutvikling 1 max words
+        $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
+
+        $request->merge([
+            'word_count' => $uploadedManuscript['word_count'],
+            'excess_words' => $excess_words,
+            'excess_words_amount' => $excess_words > 0 ? $excess_words * $excessPerWordAmount : 0,
+            'price' => $shopManuscript->full_payment_price
+         ]);
+
+         return $request->all();
+    }
+
+    public function processPublishingOrder(Request $request, PowerOffice $powerOffice)
+    {
+        $validation = [
+            'email'         => 'required|email',
+            'first_name'    => 'required',
+            'last_name'     => 'required',
+            'street'        => 'required',
+            'zip'           => 'required',
+            'city'          => 'required',
+            'phone'         => 'required',
+        ];
+
+        $validator = \Validator::make($request->all(), $validation);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $destinationPath = 'storage/self-publishing-manuscript/'; // upload path
+
+        $publishing = new SelfPublishing();
+        $publishing->title = $request->title;
+        $publishing->description = $request->description;
+        $publishing->price = $request->price;
+        $publishing->project_id = $request->project_id;
+
+        $filesWithPath = '';
+        if ( $request->hasFile('manuscript') ) :
+
+            $file = $request->file('manuscript');
+            $word_count = $request->word_count;
+
+            $extension = pathinfo($_FILES['manuscript']['name'],PATHINFO_EXTENSION); // getting document extension
+            $actual_name = pathinfo($_FILES['manuscript']['name'],PATHINFO_FILENAME);
+
+            $destinationPath = 'Forfatterskolen_app/project/project-'. $request->project_id . '/self-publishing-manuscript/';
+            $fileName = AdminHelpers::getUniqueFilename('dropbox', $destinationPath, $actual_name . "." . $extension);
+            $expFileName = explode('/', $fileName);
+            $dropboxFileName = end($expFileName);
+
+            $file->storeAs($destinationPath, $dropboxFileName, 'dropbox');
+
+            $wholeFilePath = $destinationPath . $dropboxFileName;
+            $filePath = "/".$wholeFilePath;
+            $filesWithPath .= $filePath .", ";
+
+            $publishing->manuscript = trim($filesWithPath,", ");
+            $publishing->word_count = $word_count;
+            
+        endif;
+
+        $publishing->save();
+
+        // create self publishing order
+        $publishingOrder = SelfPublishingOrder::create([
+            'user_id'       => Auth::id(),
+            'project_id'    => $request->project_id,
+            'parent'        => 'self-publishing',
+            'parent_id'     => $publishing->id,
+            'title'         => $request->title,
+            'description'   => $request->description,
+            'file'          => $filesWithPath,
+            'price'         => floatval($request->price),
+            'word_count'    => $request->word_count,
+            'status'        => 'active'
+        ]);
+
+        // request to powerOffice
+        $user = $publishing->project->user;
+        $emailToSearch = $user->email;
+
+        $powerOfficeController = new PowerOfficeController();
+        $customerId = $powerOfficeController->getCustomerId($user, $emailToSearch);
+
+        $data = [
+            'customer_id' => $customerId,
+            'reference' => $user->full_name, //'self_publishing_' . $selfPublishing->id,
+            'product_description' => $publishing->title,
+            'product_id' => 44696040,//44696040, //22957001, // id from power office demo
+            "product_unit_cost" => $request->price,
+            "product_unit_price" => $request->price,
+        ];
+
+        $sales = $powerOffice->salesOrder($data);
+        
+        // create power office invoice record
+        PowerOfficeInvoice::create([
+            'user_id' => $user->id,
+            'order_id' => $sales['Id'],
+            'sales_order_no' => $sales['SalesOrderNo'], 
+            'parent' => 'self-publishing',
+            'parent_id' => $publishing->id
+        ]);
+
+        // create order record
+        Order::create([
+            'user_id'       => Auth::id(),
+            'item_id'       => $publishingOrder->id,
+            'type'          => Order::EDITING_SERVICES,
+            'plan_id'       => 8,
+            'price'         => $publishingOrder->price,
+            'discount'      => 0,
+            'is_processed'  => 1
+        ]);
+
+        $publishingOrder->status = 'paid';
+        $publishingOrder->save();
+
+        return response()->json();
     }
 
     public function download($id)

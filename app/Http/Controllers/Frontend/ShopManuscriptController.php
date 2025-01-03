@@ -84,10 +84,12 @@ class ShopManuscriptController extends Controller
      */
     public function validateOrder( $shop_manuscript_id, Request $request, ShopManuscriptService $shopManuscriptService )
     {
-        $this->validate($request, [
-            'manuscript' => 'required',
-            'genre' => 'required'
-        ]);
+        if (!$request->has('is_manuscript_only')) {
+            $this->validate($request, [
+                'manuscript' => 'required',
+                'genre' => 'required'
+            ]);
+        }
 
         if ($request->hasFile('manuscript')) {
             $file = $request->file('manuscript');
@@ -114,6 +116,7 @@ class ShopManuscriptController extends Controller
         $word_count =  $uploadedManuscript['word_count'];
         $word_to_deduct = $word_count * 0.02;
         $new_word_count = ceil($word_count - $word_to_deduct);
+        $excess_words = $new_word_count - 17500; // deduct the manusutvikling 1 max words
 
         // check if the uploaded file exceeds the plan max words
         if ($new_word_count > $shopManuscript->max_words) {
@@ -127,9 +130,14 @@ class ShopManuscriptController extends Controller
             ], 400);
         }
 
+        $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
+
         $request->merge([
            'manuscript_file' => $uploadedManuscript['manuscript_file'],
-           'word_count' => $uploadedManuscript['word_count']
+           'word_count' => $uploadedManuscript['word_count'],
+           'excess_words' => $excess_words,
+           'excess_words_amount' => $excess_words > 0 ? $excess_words * $excessPerWordAmount : 0,
+           'price' => $shopManuscript->full_payment_price
         ]);
         return $request->all();
     }

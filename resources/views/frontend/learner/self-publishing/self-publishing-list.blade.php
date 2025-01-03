@@ -14,6 +14,12 @@
                             <h1 class="d-inline-block">
                                 {{ trans('site.learner.editor-text') }}
                             </h1>
+
+                            @if ($standardProject)
+                                <a href="{{ route('learner.self-publishing.publishing.order') }}" class="btn btn-primary float-right">
+                                    Order
+                                </a>
+                            @endif
                         </div>
                         <div class="card-body py-0">
                             <table class="table">
