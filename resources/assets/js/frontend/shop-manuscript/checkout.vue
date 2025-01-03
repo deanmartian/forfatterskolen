@@ -714,7 +714,7 @@ import FileUpload from '../../components/FileUpload.vue';
                     console.log(this.orderForm.price);
                     
                 }).catch(error => {
-                    //this.processError(error);
+                    this.processError(error);
                 });
             }
         },
