@@ -271,11 +271,12 @@ class SelfPublishingController extends Controller
         $word_to_deduct = $word_count * 0.02;
         $new_word_count = ceil($word_count - $word_to_deduct);
         $excess_words = $new_word_count - 17500; // deduct the manusutvikling 1 max words
+        $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
 
         $request->merge([
             'word_count' => $uploadedManuscript['word_count'],
             'excess_words' => $excess_words,
-            'excess_words_amount' => $excess_words > 0 ? $excess_words * 0.15 : 0,
+            'excess_words_amount' => $excess_words > 0 ? $excess_words * $excessPerWordAmount : 0,
             'price' => $shopManuscript->full_payment_price
          ]);
 

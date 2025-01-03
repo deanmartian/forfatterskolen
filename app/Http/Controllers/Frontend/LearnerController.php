@@ -3800,16 +3800,17 @@ class LearnerController extends Controller
             $shopManuscriptTaken->status = $status;
 
             if ($status == "Not started") {
+                $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
                 $shopManuscriptId = $shopManuscriptTaken->shop_manuscript_id;
                 $shopManuscript = ShopManuscript::find($shopManuscriptId);
                 $shopManuscriptUpgrades = ShopManuscriptUpgrade::where('shop_manuscript_id', $shopManuscriptId)->get()
-                    ->each(function($upgrade) use ($shopManuscript) {
+                    ->each(function($upgrade) use ($shopManuscript, $excessPerWordAmount) {
                         // check if the one being upgraded is Manuscript Start
                         if ($shopManuscript->id == 9 && $upgrade->upgrade_manuscript->id == 3) {
                             $upgrade->price = $upgrade->upgrade_manuscript->full_payment_price - $shopManuscript->full_payment_price;
                         } else {
                             $excessWords = $upgrade->upgrade_manuscript->max_words - $shopManuscript->max_words;
-                            $excessWordAmount = $excessWords * 0.15;
+                            $excessWordAmount = $excessWords * $excessPerWordAmount;
                             $upgrade->price = $excessWordAmount;
                         }
                         return $upgrade;

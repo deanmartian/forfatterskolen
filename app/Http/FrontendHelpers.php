@@ -14,6 +14,7 @@ use App\PrivateGroupMember;
 use App\Project;
 use App\SelfPublishingOrder;
 use App\SelfPublishingPortalRequest;
+use App\Settings;
 use App\Staff;
 use App\User;
 use App\WebinarRegistrant;
@@ -1169,6 +1170,12 @@ class FrontendHelpers
             $newName = "$path/$filename.$extension";
         }
         return $newName;
+    }
+
+    public static function manuscriptExcessPerWordPrice()
+    {
+        $excessPerWordAmount = Settings::getDetailsByName('manuscript-excess-per-word-amount');
+        return $excessPerWordAmount->setting_value;
     }
 
     /**
