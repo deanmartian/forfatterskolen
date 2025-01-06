@@ -57,8 +57,22 @@ class PageController extends Controller
         $this->middleware('checkPageAccess:9')->only('downloadShopManuscript');
     }
 
+    function isQueueWorkerRunning()
+    {
+        $output = [];
+        exec("ps aux | grep 'queue:work' | grep -v grep", $output);
+        return count($output) > 0;
+    }
+
+    
+
     public function dashboard()
     {
+        if ($this->isQueueWorkerRunning()) {
+            echo "Queue worker is running.";
+        } else {
+            echo "Queue worker is NOT running.";
+        }
         $pending_courses = CoursesTaken::where('is_active', false)->orderBy('created_at', 'desc')->get();
         $pending_shop_manuscripts = ShopManuscriptsTaken::where('is_active', false)->orderBy('created_at', 'desc')->get();
         $pending_workshops = WorkshopsTaken::where('is_active', false)->orderBy('created_at', 'desc')->get();
