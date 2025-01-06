@@ -138,14 +138,17 @@
                                                     <div class="h1">{{ $shopManuscript->title }}</div>
                                                     <p>{{ $shopManuscript->description }}</p>
                                                     <div class="h1 price">
-                                                        {{ \App\Http\FrontendHelpers::formatCurrency($shopManuscript->full_payment_price) }} KR <br>
-                                                        {{-- @if(!Str::contains($shopManuscript->title, 'Start') &&
+                                                        @if(!Str::contains($shopManuscript->title, 'Start') &&
                                                         !Str::contains($shopManuscript->title, '1'))
-                                                            <small style="color: #480d00"> 
-                                                                + ({{ $shopManuscript->max_words }}-17500) *
-                                                                {{ FrontendHelpers::formatCurrency(FrontendHelpers::manuscriptExcessPerWordPrice()) }}
-                                                            </small>
-                                                        @endif --}}
+                                                            @php
+                                                                $extra_price = ($shopManuscript->max_words - 17500) * 
+                                                                FrontendHelpers::manuscriptExcessPerWordPrice();
+                                                                $new_price = $shopManuscript->full_payment_price + $extra_price;
+                                                            @endphp
+                                                            {{ \App\Http\FrontendHelpers::formatCurrency($new_price) }} KR
+                                                        @else
+                                                            {{ \App\Http\FrontendHelpers::formatCurrency($shopManuscript->full_payment_price) }} KR
+                                                        @endif
                                                     </div>
                                                     <a class="btn buy-btn" href="{{ route($checkoutRoute, $shopManuscript->id) }}">
                                                         {{ trans('site.front.buy') }}
