@@ -13,7 +13,8 @@
 			<div class="container">
 				<shop-manuscript-checkout :user="{{ json_encode($user) }}" :shop-manuscript="{{ json_encode($shopManuscript) }}"
 										  :assignment-types="{{ json_encode($assignmentTypes) }}"
-										  :user-has-paid-course="{{ json_encode($userHasPaidCourse) }}">
+										  :user-has-paid-course="{{ json_encode($userHasPaidCourse) }}"
+										  :original-price="{{ json_encode($originalPrice) }}">
 				</shop-manuscript-checkout>
 			</div>
 		</div>

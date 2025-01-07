@@ -35,7 +35,7 @@ use App\Http\FikenInvoice;
 use App\Jobs\AddMailToQueueJob;
 use Illuminate\Support\Facades\Validator as FacadeValidator;
 use Illuminate\Validation\ValidationException;
-
+use Str;
 
 include_once($_SERVER['DOCUMENT_ROOT'].'/Docx2Text.php');
 include_once($_SERVER['DOCUMENT_ROOT'].'/Pdf2Text.php');
@@ -71,9 +71,14 @@ class ShopManuscriptController extends Controller
             return view('frontend.shop-manuscript.login');
         }
         $assignmentTypes = FrontendHelpers::assignmentType();
+        $originalPrice = $shopManuscript->full_payment_price;
+        if(!Str::contains($shopManuscript->title, 'Start') && !Str::contains($shopManuscript->title, '1')) {
+            $extra_price = ($shopManuscript->max_words - 17500) * FrontendHelpers::manuscriptExcessPerWordPrice();
+            $originalPrice = $shopManuscript->full_payment_price + $extra_price;
+        }
 
         return view('frontend.shop-manuscript.checkout-svea', compact('shopManuscript', 'user', 'assignmentTypes', 
-        'userHasPaidCourse'));
+        'userHasPaidCourse', 'originalPrice'));
     }
 
     /**

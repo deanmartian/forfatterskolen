@@ -384,7 +384,8 @@ import FileUpload from '../../components/FileUpload.vue';
             user: Object,
             shopManuscript: Object,
             assignmentTypes: Array,
-            userHasPaidCourse: Boolean
+            userHasPaidCourse: Boolean,
+            originalPrice: Number
         },
 
         data() {
@@ -400,7 +401,7 @@ import FileUpload from '../../components/FileUpload.vue';
                     phone: '',
                     password: '',
                     package_id: 0,
-                    price: this.shopManuscript.full_payment_price,
+                    price: this.originalPrice,//this.shopManuscript.full_payment_price,
                     payment_plan_id: 8,
                     payment_mode_id: 3,
                     mobile_number: "",
@@ -670,6 +671,7 @@ import FileUpload from '../../components/FileUpload.vue';
                 axios.get('/has-paid-course/').then(response => {
                     this.hasPaidCourse = response.data;
                     this.genreChanged();
+                    this.orderForm.price = this.originalPrice; // to set original price instead of the 2900
                 })
             },
 
