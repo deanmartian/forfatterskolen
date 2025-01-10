@@ -60,6 +60,9 @@
 	<a class="btn btn-success margin-top" href="{{ route('admin.application') }}">
 		Application
 	</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.queue-jobs') }}">
+		Queue Jobs
+	</a>
 
 	<div class="table-users table-responsive">
 		<table class="table">

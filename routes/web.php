@@ -1823,6 +1823,15 @@ Route::group([
 
         Route::get('/application', 'PageController@application')->name('admin.application');
 
+        Route::group(['prefix' => 'queue-jobs'], function() {
+            Route::get('/', 'QueueJobController@index')->name('admin.queue-jobs');
+            Route::post('/jobs/run', 'QueueJobController@runJobs')->name('admin.queue-jobs.jobs.run');
+            Route::post('/failed-jobs/retry-all', 'QueueJobController@retryAll')->name('admin.queue-jobs.failed-jobs.retry-all');
+            Route::post('/failed-jobs/{id}/retry', 'QueueJobController@retry')->name('admin.queue-jobs.failed-jobs.retry');
+            Route::delete('/failed-jobs/{id}/delete', 'QueueJobController@deleteFailedJob')
+            ->name('admin.queue-jobs.failed-jobs.destroy');
+        });
+
         Route::post('/task/save', 'ProjectController@saveTask')->name('admin.project-task.save');
         Route::put('/project/task/{id}/update', 'ProjectController@updateTask')->name('admin.project-task.update');
         Route::post('/project/task/{id}/finish', 'ProjectController@finishTask')->name('admin.project-task.finish');

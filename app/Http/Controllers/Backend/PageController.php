@@ -927,22 +927,4 @@ class PageController extends Controller
         return response()->json($users->get());
     }
 
-    public function workerStatus()
-    {
-        if ($this->isQueueWorkerRunning()) {
-            echo "Queue worker is running.";
-        } else {
-            echo "Queue worker is NOT running.";
-        }
-    }
-
-    function isQueueWorkerRunning()
-    {
-        $output = [];
-        exec("ps aux | grep 'queue:work' | grep -v grep", $output);
-        return count($output) > 0;
-    }
-
-    
-
 }
