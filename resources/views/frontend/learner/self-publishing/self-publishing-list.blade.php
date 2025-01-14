@@ -42,7 +42,7 @@
                                         </td>
                                         <td>
                                             {!! $publishing->dropbox_file_link_with_download !!}
-                                            @if(!$publishing->feedback)
+                                            @if(!$publishing->feedback && $publishing->manuscript)
                                                 <br>
                                                 <button class="btn btn-primary btn-xs uploadSelfPublishingManuscriptBtn"
                                                         data-toggle="modal"

@@ -152,7 +152,13 @@
 											{{ $publishing->title }}
 										</td>
 										<td>
-											{{ $publishing->description }}
+											{{ Str::limit($publishing->description, 100) }}
+											@if(Str::length($publishing->description) > 100)
+												<br> <a href="#" data-toggle="modal"
+												data-target="#selfPublishingDescriptionModal"
+												class="selfPublishingDescriptionBtn"
+												data-record="{{ json_encode($publishing) }}">Read More</a>
+											@endif
 										</td>
 										<td>
 											<a href="{{ route('admin.self-publishing.download-manuscript', $publishing->id) }}">
@@ -1877,6 +1883,26 @@
 	</div>
 </div>
 
+<div id="selfPublishingDescriptionModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-md">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title"></h4>
+			</div>
+			<div class="modal-body">
+				<p style="white-space: pre-wrap; padding: 20px;"></p>
+
+				<button type="button" class="btn btn-default pull-right" data-dismiss="modal">
+					Close
+				</button>
+
+				<div class="clearfix"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="selfPublishingModal" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
@@ -2275,6 +2301,13 @@
         submit_btn.append('<i class="fa fa-spinner fa-pulse"></i> Please wait...');
         submit_btn.attr('disabled', 'disabled');
     }
+
+	$(".selfPublishingDescriptionBtn").click(function(){
+		let modal = $("#selfPublishingDescriptionModal");
+		let record = $(this).data('record');
+		modal.find('.modal-title').text(record.title);
+		modal.find(".modal-body").find("p").html(record.description);
+	});
 
 	$(".editSelfPublishingBtn").click(function() {
 		let modal = $("#selfPublishingModal");
