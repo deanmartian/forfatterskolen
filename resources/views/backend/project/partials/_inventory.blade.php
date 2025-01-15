@@ -49,7 +49,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    {{ $inventoryDelivered + $inventoryPhysicalItems + $inventoryReturns  }}
+                                    {{ $inventoryTotal  }}
                                 </td>
                                 <td>
                                     {{ $inventoryDelivered }}

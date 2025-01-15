@@ -1407,6 +1407,7 @@ class ProjectController extends Controller
                 // Add more cases as needed for other types
             }
         }
+        $inventoryTotal = $inventoryPhysicalItems + $inventoryDelivered + $inventoryReturns;
             
         $categories = ['quantity-sold', 'turned-over', 'free', 'commission', 'shredded'];
 
@@ -1440,17 +1441,20 @@ class ProjectController extends Controller
             ];
         }, array_keys($types), $types);
 
-        $totalBalance = array_reduce($yearlyData, function($sum, $data) {
-            return !in_array($data['name'], ['Turned Over', 'Free']) ? $sum + $data['value'] : $sum;
+        $calculatedBalance = array_reduce($yearlyData, function($sum, $data) {
+            //return !in_array($data['name'], ['Turned Over', 'Free']) ? $sum + $data['value'] : $sum;
+            return $sum + $data['value'];
         }, 0);
         
         // Find the value for "Free"
-        $freeValue = array_reduce($yearlyData, function($free, $data) {
+        /* $freeValue = array_reduce($yearlyData, function($free, $data) {
             return $data['name'] === 'Free' ? $data['value'] : $free;
         }, 0);
         
         // Deduct the "Free" value from the total balance
-        $totalBalance -= $freeValue;
+        $calculatedBalance -= $freeValue; */
+
+        $totalBalance = $inventoryTotal - $calculatedBalance;
 
         /* $yearlyData = [
             [
@@ -1505,7 +1509,7 @@ class ProjectController extends Controller
         'deleteBookRoute', 'saveDetailsRoute', 'saveVariousRoute', 'projectBook', 'saveDistributionRoute',
         'deleteDistributionRoute', 'bookSaleTypes', 'saveBookSaleRoute', 'importBookSaleRoute', 'deleteBookSaleRoute', 
         'centralISBNs', 'saveStorageSaleRoute', 'inventorySales', 'deleteStorageSaleRoute', array_keys($categories),
-        'inventoryPhysicalItems', 'inventoryDelivered', 'inventoryReturns', 'totalBalance'));
+        'inventoryPhysicalItems', 'inventoryDelivered', 'inventoryReturns', 'totalBalance', 'inventoryTotal'));
     }
 
     public function saveStorageBook($projectId, Request $request)
