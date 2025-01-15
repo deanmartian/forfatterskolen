@@ -12,12 +12,14 @@ use App\PilotReaderBookChapter;
 use App\PilotReaderBookReading;
 use App\PrivateGroupMember;
 use App\Project;
+use App\ProjectBookSale;
 use App\SelfPublishingOrder;
 use App\SelfPublishingPortalRequest;
 use App\Settings;
 use App\Staff;
 use App\User;
 use App\WebinarRegistrant;
+use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -1176,6 +1178,20 @@ class FrontendHelpers
     {
         $excessPerWordAmount = Settings::getDetailsByName('manuscript-excess-per-word-amount');
         return $excessPerWordAmount->setting_value;
+    }
+
+    public static function getLearnerSaleYear()
+    {
+        $learner = Auth::user(); 
+
+        $uniqueYears = ProjectBookSale::selectRaw('YEAR(date) as year')
+        ->leftJoin('project_books', 'project_book_sales.project_book_id', '=', 'project_books.id')
+        ->where('user_id', $learner->id)
+        ->distinct()
+        ->pluck('year');
+
+        $firstYear = $uniqueYears->first() ?? Carbon::now()->year;
+        return $firstYear;
     }
 
     /**
