@@ -2,7 +2,7 @@
     <div class="panel-body">
         <div class="col-md-6">
             @foreach ([
-                'quantity-sold' => $quantitySoldCount, 
+                //'quantity-sold' => $quantitySoldCount, 
                 'turned-over' => $turnedOverCount, 
                 'free' => $freeCount, 
                 'commission' => $commissionCount, 

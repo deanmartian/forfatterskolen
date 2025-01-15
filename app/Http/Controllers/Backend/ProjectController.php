@@ -1433,17 +1433,40 @@ class ProjectController extends Controller
             'counts' => 'Counts',
             //'returns' => 'Returns'
         ];
-        
-        $yearlyData = array_map(function($key, $name) use ($projectUserBook) {
+
+        $baseQuery = ProjectBookSale::leftJoin('project_books', 'project_book_sales.project_book_id', '=', 'project_books.id')
+            ->where('project_id', $projectId);
+
+        $quantitySold = (clone $baseQuery)
+            ->when(request()->filled('year') && request('year') != 'all', function ($query) {
+                $query->whereYear('date', request('year'));
+            })
+            ->when(request()->filled('month') && request('month') != 'all', function ($query) {
+                $query->whereMonth('date', request('month'));
+            })
+            ->sum('quantity');
+
+        $totalQuantitySold = (clone $baseQuery)->sum('quantity');
+
+        $dataMapper = function ($typeKey, $typeName, $field) use ($projectUserBook, $quantitySold) {
             return [
-                'name' => $name,
-                'value' => $projectUserBook ? $this->storageSalesByType($projectUserBook->id, $key) : 0
+                'name' => $typeName,
+                'value' => $typeKey == 'quantity-sold' 
+                    ? $quantitySold 
+                    : ($projectUserBook ? $this->storageSalesByType($projectUserBook->id, $typeKey)[$field] : 0),
             ];
+        };
+        
+        $yearlyData = array_map(function ($key, $name) use ($dataMapper) {
+            return $dataMapper($key, $name, 'yearly');
+        }, array_keys($types), $types);
+        
+        $overallData = array_map(function ($key, $name) use ($dataMapper) {
+            return $dataMapper($key, $name, 'overall');
         }, array_keys($types), $types);
 
-        $calculatedBalance = array_reduce($yearlyData, function($sum, $data) {
-            //return !in_array($data['name'], ['Turned Over', 'Free']) ? $sum + $data['value'] : $sum;
-            return $sum + $data['value'];
+        $calculatedBalance = array_reduce($overallData, function($sum, $data) {
+            return !in_array($data['name'], ['Quantity Sold']) ? $sum + $data['value'] : $sum;
         }, 0);
         
         // Find the value for "Free"
@@ -1454,7 +1477,7 @@ class ProjectController extends Controller
         // Deduct the "Free" value from the total balance
         $calculatedBalance -= $freeValue; */
 
-        $totalBalance = $inventoryTotal - $calculatedBalance;
+        $totalBalance = $inventoryTotal - ($calculatedBalance + $totalQuantitySold);
 
         /* $yearlyData = [
             [
@@ -1509,7 +1532,8 @@ class ProjectController extends Controller
         'deleteBookRoute', 'saveDetailsRoute', 'saveVariousRoute', 'projectBook', 'saveDistributionRoute',
         'deleteDistributionRoute', 'bookSaleTypes', 'saveBookSaleRoute', 'importBookSaleRoute', 'deleteBookSaleRoute', 
         'centralISBNs', 'saveStorageSaleRoute', 'inventorySales', 'deleteStorageSaleRoute', array_keys($categories),
-        'inventoryPhysicalItems', 'inventoryDelivered', 'inventoryReturns', 'totalBalance', 'inventoryTotal'));
+        'inventoryPhysicalItems', 'inventoryDelivered', 'inventoryReturns', 'totalBalance', 'inventoryTotal', 'quantitySold',
+        'totalQuantitySold'));
     }
 
     public function saveStorageBook($projectId, Request $request)
@@ -1968,14 +1992,24 @@ class ProjectController extends Controller
     }
 
     private function storageSalesByType($user_book_for_sale_id, $type) {
-        return StorageSale::where('project_book_id', $user_book_for_sale_id)
-        ->where('type', $type)
-        ->when(request()->filled('year') && request('year') != 'all', function ($query) {
-            $query->whereYear('date', request('year'));
-        })
-        ->when(request()->filled('month') && request('month') != 'all', function ($query) {
-            $query->whereMonth('date', request('month'));
-        })->sum('value');
+        $baseQuery = StorageSale::where('project_book_id', $user_book_for_sale_id)
+            ->where('type', $type);
+    
+        $sales = (clone $baseQuery)
+            ->when(request()->filled('year') && request('year') != 'all', function ($query) {
+                $query->whereYear('date', request('year'));
+            })
+            ->when(request()->filled('month') && request('month') != 'all', function ($query) {
+                $query->whereMonth('date', request('month'));
+            })
+            ->sum('value');
+    
+        $overallSales = (clone $baseQuery)->sum('value');
+    
+        return [
+            'yearly' => $sales,
+            'overall' => $overallSales,
+        ];
     }
 
     private function storageYearSalesByType($user_book_for_sale_id, $type) {
