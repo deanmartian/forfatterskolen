@@ -18,7 +18,7 @@
         </li>
 
         <li class="@if(Request::is('account/book-sale')) active @endif">
-            <a href=" {{ route('learner.book-sale') }} ">
+            <a href=" {{ route('learner.book-sale') . '?year=' . FrontendHelpers::getLearnerSaleYear() }} ">
                 <i class="fa fa-bar-chart"></i> {{ trans('site.author-portal-menu.sales') }}
             </a>
         </li>
