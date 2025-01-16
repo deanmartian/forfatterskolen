@@ -1257,4 +1257,22 @@ class CourseController extends Controller
         
         return view('backend.course.webinars.upcoming', compact('webinars'));
     }
+
+    public function exportCoursesWithNoCertificate()
+    {
+        $courses = Course::whereNotIn('id', function ($query) {
+            $query->select('course_id')
+                  ->from('course_certificates');
+        })->get();
+
+        $courseList = [];
+        $headers  = ['id', 'title'];
+
+        foreach($courses as $course) {
+            $courseList[] = [$course->id, $course->title];
+        }
+
+        $excel = \App::make('excel');
+        return $excel->download(new GenericExport($courseList, $headers), 'Course without Certificate.xlsx');
+    }
 }

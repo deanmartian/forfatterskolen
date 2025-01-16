@@ -842,6 +842,7 @@ Route::group([
         // Courses Route
         Route::get('course/get-all-learners', 'CourseController@getAllPaidLearners'); // get all learners that avail a paid course
         Route::get('course/webinars', 'CourseController@allUpcomingWebinars')->name('admin.course.all-upcoming-webinars');
+        Route::get('course/export-no-certificate', 'CourseController@exportCoursesWithNoCertificate');
         Route::resource('course', 'CourseController', [
             'names' => [
                 'index' => 'admin.course.index',
