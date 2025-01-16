@@ -21,6 +21,14 @@
     <div class="learner-container">
         <div class="container">
             <div class="row">
+                <div class="col-md-12 mb-3">
+                    @if ($projects->count() < 1)
+                        <button class="btn btn-primary projectBtn pull-right" data-toggle="modal" data-target="#projectModal">
+                            {{ trans('site.author-portal.add-book-project') }}
+                        </button>
+                    @endif
+                </div>
+                
                 <div class="col-md-12 dashboard-course no-left-padding">
                     <div class="card global-card">
                         <div class="card-header">
@@ -102,6 +110,39 @@
                         <div id="notes-container" style="white-space: pre;max-height: 500px;overflow: auto;"></div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="projectModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        {{ trans('site.author-portal.add-book-project') }}
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route('learner.save-project') }}" onsubmit="disableSubmit(this)" 
+                    enctype="multipart/form-data">
+                        {{ csrf_field() }}
+                        <div class="form-group">
+                            <label>{{ trans('site.author-portal.project-name') }}</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ trans('site.description') }}</label>
+                            <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
+                        </div>
+
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">{{ trans('site.save') }}</button>
+                        </div>
+                    </form>
+                </div>
+
             </div>
         </div>
     </div>

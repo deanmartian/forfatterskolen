@@ -124,16 +124,6 @@ frameborder="0"
                         </div>
 
                         <div class="form-group">
-                            <label>{{ trans('site.start-date') }}</label>
-                            <input type="date" class="form-control" name="start_date">
-                        </div>
-
-                        <div class="form-group">
-                            <label>{{ trans('site.end-date') }}</label>
-                            <input type="date" class="form-control" name="end_date">
-                        </div>
-
-                        <div class="form-group">
                             <label>{{ trans('site.description') }}</label>
                             <textarea name="description" cols="30" rows="10" class="form-control"></textarea>
                         </div>
