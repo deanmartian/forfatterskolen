@@ -41,10 +41,16 @@
                                         <?php $extension = explode('.', basename($correction->file)); ?>
                                         <tr>
                                             <td>
-                                                @if( end($extension) == 'pdf' || end($extension) == 'odt' )
-                                                    <a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
-                                                @elseif( end($extension) == 'docx' )
-                                                    <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+                                                @if (strpos($correction->file, 'Forfatterskolen_app'))
+                                                    <a href="/dropbox/shared-link/{{ $correction->file }}" target="_blank">
+                                                        {{ basename($correction->file) }}
+                                                    </a>
+                                                @else
+                                                    @if( end($extension) == 'pdf' || end($extension) == 'odt' )
+                                                        <a href="/js/ViewerJS/#../../{{ $correction->file }}">{{ basename($correction->file) }}</a>
+                                                    @elseif( end($extension) == 'docx' )
+                                                        <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$correction->file}}">{{ basename($correction->file) }}</a>
+                                                    @endif
                                                 @endif
                                             </td>
                                             <td>
@@ -143,10 +149,16 @@
                                             <?php $extension = explode('.', basename($editing->file)); ?>
                                             <tr>
                                                 <td>
-                                                    @if( end($extension) == 'pdf' || end($extension) == 'odt' )
-                                                        <a href="/js/ViewerJS/#../../{{ $editing->file }}">{{ basename($editing->file) }}</a>
-                                                    @elseif( end($extension) == 'docx' )
-                                                        <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$editing->file}}">{{ basename($editing->file) }}</a>
+                                                    @if (strpos($editing->file, 'Forfatterskolen_app'))
+                                                        <a href="/dropbox/shared-link/{{ $editing->file }}" target="_blank">
+                                                            {{ basename($editing->file) }}
+                                                        </a>
+                                                    @else
+                                                        @if( end($extension) == 'pdf' || end($extension) == 'odt' )
+                                                            <a href="/js/ViewerJS/#../../{{ $editing->file }}">{{ basename($editing->file) }}</a>
+                                                        @elseif( end($extension) == 'docx' )
+                                                            <a href="https://view.officeapps.live.com/op/embed.aspx?src={{url('')}}/{{$editing->file}}">{{ basename($editing->file) }}</a>
+                                                        @endif
                                                     @endif
                                                 </td>
                                                 <td>
