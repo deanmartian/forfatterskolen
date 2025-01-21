@@ -376,6 +376,11 @@ Route::group([
         Route::get('/self-publishing/list', 'SelfPublishingController@listSelfPublishing')->name('learner.self-publishing.list');
         Route::get('/self-publishing/copy-editing', 'SelfPublishingController@copyEditing')->name('learner.self-publishing.copy-editing');
         Route::get('/self-publishing/correction', 'SelfPublishingController@correction')->name('learner.self-publishing.correction');
+        Route::get('/self-publishing/cover', 'SelfPublishingController@cover')->name('learner.self-publishing.cover');
+        Route::get('/self-publishing/cover/{id}', 'SelfPublishingController@coverDetails')->name('learner.self-publishing.cover-show');
+        Route::post('/self-publishing/cover/{project_id}/save', 'SelfPublishingController@saveCover')
+        ->name('learner.self-publishing.save-cover');
+        Route::get('/self-publishing/page-format', 'SelfPublishingController@pageFormat')->name('learner.self-publishing.page-format');
         Route::get('/self-publishing/publishing/order', 'SelfPublishingController@publishingOrder')
             ->name('learner.self-publishing.publishing.order');
         Route::post('/self-publishing/publishing/order/validate', 'SelfPublishingController@validatePublishingOrder')

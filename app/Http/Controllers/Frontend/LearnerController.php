@@ -168,6 +168,7 @@ class LearnerController extends Controller
         $selfPublishingList = $standardProject 
             ? SelfPublishing::where('project_id', $standardProject->id)->latest()->get() 
             : [];        
+        $projects = Project::where('user_id', Auth::user()->id)->get();
 
         $dashboardCalendar = $this->dashboardCalendar();
         $freeCourses = FrontendHelpers::getFreeCourses();
@@ -177,7 +178,7 @@ class LearnerController extends Controller
             : 'frontend.learner.dashboard';
 
         return view($view, compact('surveys', 'assignments', 'selfPublishingList', 'coursesTaken', 'invoices',
-            'dashboardCalendar', 'freeCourses'));
+            'dashboardCalendar', 'freeCourses', 'projects'));
     }
 
 

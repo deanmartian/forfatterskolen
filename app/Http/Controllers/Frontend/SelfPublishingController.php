@@ -10,10 +10,13 @@ use App\Http\Controllers\Controller;
 use App\Http\PowerOffice;
 use App\Order;
 use App\PowerOfficeInvoice;
+use App\ProjectGraphicWork;
+use App\ProjectRegistration;
 use App\PublishingService;
 use App\SelfPublishing;
 use App\SelfPublishingFeedback;
 use App\SelfPublishingOrder;
+use App\Services\ProjectService;
 use App\Services\ShopManuscriptService;
 use App\ShopManuscript;
 use Auth;
@@ -233,6 +236,57 @@ class SelfPublishingController extends Controller
             }) */->latest('correction_manuscripts.created_at')->get() : [];
 
         return view('frontend.learner.self-publishing.correction', compact('corrections'));
+    }
+
+    public function cover()
+    {
+        $standardProject = FrontendHelpers::getLearnerStandardProject(auth()->user()->id);
+
+        $data = [
+            'isbns' => [],
+            'covers' => [],
+        ];
+
+        if ($standardProject) {
+            $data['isbns'] = ProjectRegistration::isbns()->where('project_id', $standardProject->id)->get();
+            $data['covers'] = ProjectGraphicWork::cover()->where('project_id', $standardProject->id)->get();
+        }
+
+        return view('frontend.learner.self-publishing.cover', $data);
+    }
+
+    public function coverDetails($cover_id)
+    {
+        $cover = ProjectGraphicWork::find($cover_id);
+        $standardProject = FrontendHelpers::getLearnerStandardProject(auth()->user()->id);
+        $isbns = $standardProject ? ProjectRegistration::isbns()->where('project_id', $standardProject->id)->get() : [];
+
+        return view('frontend.learner.self-publishing.cover-details', compact('cover', 'isbns'));
+    }
+
+    public function saveCover($project_id, Request $request, ProjectService $projectService)
+    {
+        $this->validate($request, [
+            'cover.*' => 'required|mimes:jpeg,jpg,png,gif',
+            'description' => 'required',
+            'isbn_id' => 'required'
+        ]);
+
+        $request->merge(['project_id' => $project_id]);
+
+        $projectService->saveGraphicWorks($request);
+
+        return redirect()->back()
+            ->with([
+                'errors' => AdminHelpers::createMessageBag(ucfirst(str_replace(['-', '_'],' ', $request->type)) 
+                    . ' saved successfully.'),
+                'alert_type' => 'success'
+            ]);
+    }
+
+    public function pageFormat()
+    {
+        return view('frontend.learner.self-publishing.page-format');
     }
 
     public function publishingOrder()

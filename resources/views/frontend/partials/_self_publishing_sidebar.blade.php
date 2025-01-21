@@ -49,6 +49,16 @@
                         {{ trans('site.author-portal-menu.correction') }}
                     </a>
                 </li>
+                <li class="@if(Request::is('account/self-publishing/cover')) active @endif">
+                    <a href="{{ route('learner.self-publishing.cover') }}">
+                        Cover
+                    </a>
+                </li>
+                {{-- <li class="@if(Request::is('account/self-publishing/page-format')) active @endif">
+                    <a href="{{ route('learner.self-publishing.page-format') }}">
+                        Page Format
+                    </a>
+                </li> --}}
             </ul>
         </li>
     </ul>
