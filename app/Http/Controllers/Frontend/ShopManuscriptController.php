@@ -964,7 +964,13 @@ class ShopManuscriptController extends Controller
             $suggestedPlan = ShopManuscript::where('max_words','>=', $new_word_count)
                 ->orderBy('max_words', 'ASC')->first();
             if ($suggestedPlan) {
+                
                 $price = $suggestedPlan->full_payment_price;
+                if ($new_word_count > 17500) {
+                    $excessPerWordAmount = FrontendHelpers::manuscriptExcessPerWordPrice();
+                    $excess_words = $new_word_count - 17500;
+                    $price = $suggestedPlan->full_payment_price + ($excess_words * $excessPerWordAmount);
+                }
                 $button_link = route($checkoutRoute, $suggestedPlan->id);
             }
 
