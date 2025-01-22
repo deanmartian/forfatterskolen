@@ -141,7 +141,7 @@ class ProjectService
             //$destinationPath = 'storage/project-book-formatting'; // upload path
 
             //AdminHelpers::createDirectory($destinationPath);
-            $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/book-formatting';
+            $destinationPath = 'Forfatterskolen_app/project/project-' . $request->project_id . '/graphic-work/book-formatting/';
             $filePath = $this->saveMultipleFileOrImageDropbox($destinationPath, 'file');
         endif;
 
