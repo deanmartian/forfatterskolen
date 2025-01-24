@@ -54,11 +54,11 @@
                         Cover
                     </a>
                 </li>
-                {{-- <li class="@if(Request::is('account/self-publishing/page-format')) active @endif">
+                <li class="@if(Request::is('account/self-publishing/page-format')) active @endif">
                     <a href="{{ route('learner.self-publishing.page-format') }}">
                         Page Format
                     </a>
-                </li> --}}
+                </li>
             </ul>
         </li>
     </ul>

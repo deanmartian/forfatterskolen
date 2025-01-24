@@ -381,6 +381,10 @@ Route::group([
         Route::post('/self-publishing/cover/{project_id}/save', 'SelfPublishingController@saveCover')
         ->name('learner.self-publishing.save-cover');
         Route::get('/self-publishing/page-format', 'SelfPublishingController@pageFormat')->name('learner.self-publishing.page-format');
+        Route::get('/self-publishing/page-format/{id}', 'SelfPublishingController@pageFormatDetails')
+        ->name('learner.self-publishing.page-format-show');
+        Route::post('/self-publishing/page-format/{project_id}/save', 'SelfPublishingController@savePageFormat')
+        ->name('learner.self-publishing.save-page-format');
         Route::get('/self-publishing/publishing/order', 'SelfPublishingController@publishingOrder')
             ->name('learner.self-publishing.publishing.order');
         Route::post('/self-publishing/publishing/order/validate', 'SelfPublishingController@validatePublishingOrder')

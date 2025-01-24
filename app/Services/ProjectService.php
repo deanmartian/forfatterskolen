@@ -173,7 +173,7 @@ class ProjectService
                 'project_id' => $request->project_id,
                 'file' => $filePath,
                 'corporate_page' => $corporatePage,
-                'designer_id' => $request->has('designer_id') ? $request->designer_id : NULL,
+                'designer_id' => $request->has('designer_id') ? $request->designer_id : NULL, 
                 'format' => $request->format,
                 'format_image' => $formatImage,
                 'description' => $request->description,

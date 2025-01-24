@@ -82,9 +82,9 @@ class ProjectBookFormatting extends Model
         $fileLink = '';
         $file = $this->attributes['corporate_page'];
         if ($file) {
-            $fileLink .= '<a href="'.route('dropbox.download_file', trim($file)).'">
+            $fileLink .= '<a href="'.url('/dropbox/download/' . trim($file)).'">
                     <i class="fa fa-download" aria-hidden="true"></i></a>';
-            $fileLink .= ' <a href="'.route('dropbox.shared_link', trim($file)).'" target="_blank">' . basename($file) . '</a>';
+            $fileLink .= ' <a href="'.url('/dropbox/shared-link/' . trim($file)).'" target="_blank">' . basename($file) . '</a>';
         }
 
         return $fileLink;
@@ -95,7 +95,7 @@ class ProjectBookFormatting extends Model
         $fileLink = '';
         $file = $this->attributes['format_image'];
         if ($file) {
-            $fileLink .= '<a href="'.route('dropbox.download_file', trim($file)).'">
+            $fileLink .= '<a href="'.url('/dropbox/download/' . trim($file)).'">
                     <i class="fa fa-download" aria-hidden="true"></i></a>';
             $fileLink .= ' ' . basename($file);
         }

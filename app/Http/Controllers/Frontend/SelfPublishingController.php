@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\PowerOffice;
 use App\Order;
 use App\PowerOfficeInvoice;
+use App\ProjectBookFormatting;
 use App\ProjectGraphicWork;
 use App\ProjectRegistration;
 use App\PublishingService;
@@ -286,7 +287,30 @@ class SelfPublishingController extends Controller
 
     public function pageFormat()
     {
-        return view('frontend.learner.self-publishing.page-format');
+        $standardProject = FrontendHelpers::getLearnerStandardProject(auth()->user()->id);
+        $bookFormattingList = $standardProject ? ProjectBookFormatting::where('project_id', $standardProject->id)->get() : [];
+        return view('frontend.learner.self-publishing.page-format', compact('bookFormattingList'));
+    }
+
+    public function savePageFormat($project_id, Request $request, ProjectService $projectService)
+    {
+        if (!$request->id) {
+            $this->validate($request, ['file.*' => 'required|mimes:doc,docx']);
+        } 
+        
+        $request->merge(['project_id' => $project_id]);
+        $projectService->saveBookFormatting($request);
+
+        return redirect()->back()->with([
+            'errors'                => AdminHelpers::createMessageBag('Book formatting saved successfully.'),
+            'alert_type'            => 'success',
+        ]);
+    }
+
+    public function pageFormatDetails($format_id)
+    {
+        $bookFormatting = ProjectBookFormatting::find($format_id);
+        return view('frontend.learner.self-publishing.page-format-details', compact('bookFormatting'));
     }
 
     public function publishingOrder()
