@@ -7,6 +7,10 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class CopyEditingManuscript extends Model {
+
+    const NotStarted = 0;
+    const Started = 1;
+    const Finished = 2;
     /**
      * The database table used by the model.
      *

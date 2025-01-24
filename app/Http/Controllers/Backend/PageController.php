@@ -95,8 +95,10 @@ class PageController extends Controller
         $pendingCoachingTimers = CoachingTimerManuscript::where('is_approved', '=', 0)
             ->where('status', '=', 0)
             ->orderBy('created_at','desc')->get();
-        $pendingCorrections = CorrectionManuscript::whereNull('editor_id')->orderBy('created_at','desc')->get();
-        $pendingCopyEditings = CopyEditingManuscript::whereNull('editor_id')->orderBy('created_at','desc')->get();
+        $pendingCorrections = CorrectionManuscript::whereNull('editor_id')
+            ->where('status', 1)->orderBy('created_at','desc')->get();
+        $pendingCopyEditings = CopyEditingManuscript::whereNull('editor_id')
+            ->where('status', 1)->orderBy('created_at','desc')->get();
 
         $singleCourses = Course::where('type', 'Single')
             ->where('id', '!=', 17)
