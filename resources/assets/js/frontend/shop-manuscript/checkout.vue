@@ -110,7 +110,7 @@
                                 </td>
                             </tr>
 
-                            <tr v-if="orderForm.is_pay_later">
+                            <tr v-if="orderForm.has_vat">
                                 <td>Mva 25%:</td>
                                 <td class="text-right">
                                     {{ orderForm.additional | currency('Kr', 2, currencyOptions) }}
@@ -412,7 +412,8 @@ import FileUpload from '../../components/FileUpload.vue';
                     coaching_time_later: false,
                     item_type: 2,
                     shop_manuscript_id: this.shopManuscript.id,
-                    is_pay_later: !this.userHasPaidCourse,
+                    has_vat: !this.userHasPaidCourse,
+                    //is_pay_later: !this.userHasPaidCourse,
                     additional: !this.userHasPaidCourse ? (this.shopManuscript.full_payment_price * .25) : 0,
                     excess_words_amount: 0
                 },

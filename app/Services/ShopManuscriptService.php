@@ -101,9 +101,10 @@ class ShopManuscriptService {
         );
 
 
+        /* removed because it's now showing as has_vat 
         if (filter_var($request->is_pay_later, FILTER_VALIDATE_BOOLEAN)) {
             return $this->processPayLaterOrder($request);
-        }
+        } */
 
         return $this->generateSveaCheckout($request);
     }
@@ -200,7 +201,7 @@ class ShopManuscriptService {
             $this->createOrderShopManuscript($orderRecord->id, $request);
         }
 
-        $calculatedPrice = $orderRecord->price - $orderRecord->discount;
+        $calculatedPrice = ($orderRecord->price + $orderRecord->additional) - $orderRecord->discount;
         $shopManuscript = ShopManuscript::find($orderRecord->item_id);
 
         $confirmationUrl = url('/shop-manuscript/' . $shopManuscript->id .'/thankyou?svea_ord='.$orderRecord->id);
