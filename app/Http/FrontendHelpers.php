@@ -1035,10 +1035,10 @@ class FrontendHelpers
      * Get the staffs order by sequence 0 last
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public static function getStaffs()
+    public static function getStaffs($role = 'staff')
     {
         // order by field zero comes last
-        $staffs = Staff::orderByRaw('sequence = 0, sequence')->get();
+        $staffs = Staff::where('role', $role)->orderByRaw('sequence = 0, sequence')->get();
         return $staffs;
     }
 

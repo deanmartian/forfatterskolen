@@ -94,14 +94,48 @@
                     </ul>
                 </div>
 
-                <div class="save-data-container">
+                <div class="h1">
+                    Redaktører
+                </div>
+                <div class="stab-row">
+                    <ul>
+                        @foreach(\App\Http\FrontendHelpers::getStaffs('editor') as $staff)
+                            <li>
+                                <div class="row">
+                                    <div class="col-md-3 stab-image">
+                                        <img data-src="https://www.forfatterskolen.no/{{ ($staff->image 
+                                            ? $staff->image : 'images/user.png')  }}" class="rounded-circle">
+                                    </div>
+                                    <div class="col-md-9">
+                                        <h2>
+                                            {{ $staff->name }}
+                                        </h2>
+    
+                                        <p>
+                                            {!! $staff->details !!}
+                                        </p>
+    
+                                        <i class="fa fa-envelope"></i>
+                                        <a href="mailto:{{ $staff->email }}">{{ $staff->email }}</a>
+                                        <br>
+                                        @if ($staff->teamviewer)
+                                            <i class="sprite team-viewer"></i>
+                                            <a href="{{ $staff->teamviewer }}">Fjernsupport</a>
+                                        @endif
+                                    </div>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+                {{-- <div class="save-data-container">
                     <div class="h1" style="font-size: 2.5rem; margin-bottom: .5rem; margin-top: 0">
                         {{ trans('site.front.contact-us.save-data-title') }}
                     </div>
                     <p>
                         {{ trans('site.front.contact-us.save-data-description') }}
                     </p>
-                </div>
+                </div> --}}
 
                 <div class="contact-info-container">
                     <p>

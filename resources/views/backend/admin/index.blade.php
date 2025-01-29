@@ -204,6 +204,7 @@
 							<th>Email</th>
 							<th width="500">Details</th>
 							<th>Teamviewer</th>
+							<th>Role</th>
 							<th>Order</th>
 							<th></th>
 						</tr>
@@ -218,6 +219,9 @@
 									</td>
 									<td>
 										{{ $staff->teamviewer }}
+									</td>
+									<td>
+										{{ ucfirst($staff->role) }}
 									</td>
 									<td>
 										{{ $staff->sequence }}
@@ -853,7 +857,7 @@
 				<h4 class="modal-title"></h4>
 			</div>
 			<div class="modal-body">
-				<form method="POST" action="" enctype="multipart/form-data">
+				<form method="POST" action="" enctype="multipart/form-data" onsubmit="disableSubmit(this)">
 					{{ csrf_field() }}
 					<div class="form-group">
 						<label>Name</label>
@@ -874,6 +878,13 @@
 					<div class="form-group">
 						<label>Image</label>
 						<input type="file" class="form-control" name="image">
+					</div>
+					<div class="form-group">
+						<label>Role</label>
+						<select name="role" class="form-control" required>
+							<option value="staff">Staff</option>
+							<option value="editor">Editor</option>
+						</select>
 					</div>
 					<div class="form-group">
 						<label>Order</label>
@@ -1182,6 +1193,7 @@
         modal.find("[name=email]").val(fields.email);
         modal.find("[name=details]").text(fields.details);
         modal.find("[name=teamviewer]").val(fields.teamviewer);
+        modal.find("[name=role]").val(fields.role);
         modal.find("[name=sequence]").val(fields.sequence);
     });
 
