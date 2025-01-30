@@ -1787,6 +1787,8 @@ Route::group([
         Route::get('/self-publishing/feedback/{feedback_id}/download', 'SelfPublishingController@downloadFeedback')->name('admin.self-publishing.download-feedback');
         Route::delete('/self-publishing/delete-learner/{learner_id}', 'SelfPublishingController@deleteLearner')->name('admin.self-publishing.delete-learner');
         Route::get('/self-publishing/orders', 'SelfPublishingController@orders')->name('admin.self-publishing.orders');
+        Route::post('/self-publishing/{id}/update-status', 'SelfPublishingController@updateStatus')
+        ->name('admin.self-publishing.update-status');
         Route::resource('/self-publishing', 'SelfPublishingController', [
             'except' => ['create', 'edit'],
             'names' => [

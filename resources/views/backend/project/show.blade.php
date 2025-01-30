@@ -159,6 +159,13 @@
                                     <a href="{{ route($selfPublishingLearnersRoute, $publishing->id) }}" class="btn btn-success btn-xs">
                                         <i class="fa fa-user"></i>
                                     </a>
+                                    @if ($publishing->status !== 'finished')
+                                        <button class="btn btn-warning btn-xs updatePublishingStatusBtn" type="button"
+                                                data-toggle="modal" data-target="#updatePublishingStatusModal"
+                                                data-status="finished"
+                                                data-action="{{ route('admin.self-publishing.update-status', 
+                                                ['id' => $publishing->id]) }}"><i class="fa fa-check"></i></button>
+                                    @endif
                                     <button class="btn btn-primary btn-xs editSelfPublishingBtn" data-toggle="modal"
                                             data-target="#selfPublishingModal" data-fields="{{ json_encode($publishing) }}"
                                             data-action="{{ route($selfPublishingUpdateRoute, $publishing->id) }}">
@@ -931,6 +938,31 @@
             </div>
         </div>
     </div>
+
+    <div id="updatePublishingStatusModal" class="modal fade" role="dialog" data-backdrop="static">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        Update Status
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="" onsubmit="disableSubmit(this)">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="status">
+                        <p>
+                            {{ trans('site.update-service-status-question') }}
+                        </p>
+                        <div class="text-right">
+                            <button class="btn btn-primary" type="submit">{{ trans('site.submit') }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('scripts')
@@ -1153,6 +1185,14 @@
             if (record) {
                 modal.find('[name=id]').val(record.id);
             }
+        });
+
+        $(".updatePublishingStatusBtn").click(function(){
+            let action = $(this).data('action');
+            let modal = $('#updatePublishingStatusModal');
+            let status = $(this).data('status');
+            modal.find('form').attr('action', action);
+            modal.find('[name=status]').val(status);
         });
 
         $(".deleteBtn").click(function(){

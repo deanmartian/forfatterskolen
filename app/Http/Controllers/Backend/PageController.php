@@ -136,7 +136,7 @@ class PageController extends Controller
         $selfPublishingList = SelfPublishing::whereNotIn('id', $selfPublishingApprovedFeedbacks)->get(); */
         $selfPublishingList = SelfPublishing::whereDoesntHave('feedback', function($query) {
             $query->where('is_approved', 1);
-        })->get();
+        })->whereNull('status')->get();
         $editors = AdminHelpers::editorList();
         $learners = User::without('preferredEditor')->where('role', 2)->get();
 

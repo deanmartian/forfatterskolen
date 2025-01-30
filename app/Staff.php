@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Staff extends Model
 {
     protected $table = 'staffs';
-    protected $fillable = ['name', 'email', 'details', 'teamviewer', 'image', 'sequence'];
+    protected $fillable = ['name', 'email', 'details', 'teamviewer', 'image', 'role', 'sequence'];
 
     public static function boot() {
         parent::boot();

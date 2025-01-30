@@ -10,7 +10,7 @@ class SelfPublishing extends Model
     
     protected $table = 'self_publishing';
     protected $fillable = ['title', 'description', 'manuscript', 'word_count', 'editor_id', 'project_id', 'price',
-        'editor_share', 'expected_finish'];
+        'editor_share', 'expected_finish', 'status'];
     protected $appends = ['file_link', 'file_link_with_download', 'dropbox_file_link_with_download'];
 
     public function learners()

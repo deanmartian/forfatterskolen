@@ -552,4 +552,17 @@ class SelfPublishingController extends Controller
 
         return view('backend.self-publishing.orders', compact('currentOrders', 'orderHistory', 'savedQuotes'));
     }
+
+    public function updateStatus($id, Request $request)
+    {
+        $selfPublishing = SelfPublishing::findOrFail($id);
+        $selfPublishing->status = $request->status;
+        $selfPublishing->save();
+        
+        return redirect()->back()->with([
+            'errors' => AdminHelpers::createMessageBag('Status updated successfully.'),
+            'alert_type' => 'success',
+            'not-former-courses' => true
+        ]);
+    }
 }
