@@ -245,7 +245,7 @@
                                 <div class="form-group">
                                     <label>{{ trans('site.details') }}</label>
                                     <textarea name="details" rows="12" id="editContentEditor"
-                                              class="form-control editor">{{ $contract['details'] }}</textarea>
+                                              class="form-control tinymce">{{ $contract['details'] }}</textarea>
                                 </div>
 
                                 <div class="form-group">

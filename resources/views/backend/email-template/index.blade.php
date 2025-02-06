@@ -11,7 +11,8 @@
     </div>
 
     <div class="col-md-12 margin-top">
-        <button class="btn btn-success addTemplateBtn" data-toggle="modal" data-target="#templateModal" data-courses = "{{ json_encode($courses) }}"
+        <button class="btn btn-success loadScriptButton addTemplateBtn" data-toggle="modal" data-target="#templateModal" 
+        data-courses = "{{ json_encode($courses) }}"
                 data-action="{{ route('admin.manuscript.add_email_template') }}">
             Add Template
         </button>
@@ -35,7 +36,7 @@
                                 {{ $template->subject }}
                             </td>
                             <td>
-                                <button class="btn btn-primary btn-xs editTemplateBtn"
+                                <button class="btn btn-primary btn-xs loadScriptButton editTemplateBtn"
                                         data-toggle="modal"
                                         data-target="#templateModal"
                                         data-action="{{ route('admin.manuscript.edit_email_template', $template->id) }}"

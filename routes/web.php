@@ -2058,7 +2058,7 @@ Route::group([
     });
 });
 
-
+Route::post('/tinymce-upload', 'Frontend\TinymceController@store');
 
 // File Manager routes
 /*Route::group(['middleware' => 'auth'], function () {

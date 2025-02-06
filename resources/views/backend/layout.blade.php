@@ -74,12 +74,14 @@
         <script src="https://Forfatterskolen.cdn.vooplayer.com/assets/vooplayer.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-        @if (!in_array(Route::currentRouteName(),['backend.dashboard', 'admin.learner.show',
-             'admin.free-manuscript.index']))
-            <script src="https://cdn.tiny.cloud/1/nek3obgwg98gkwb24kkslobuly8x3ul5l53agctoenes6nyb/tinymce/5/tinymce.min.js"
-                referrerpolicy="origin"></script>
-        @endif
+        {{-- @if (!in_array(Route::currentRouteName(),['backend.dashboard', 'admin.learner.show',
+             'admin.free-manuscript.index'])) --}}
+            {{-- <script src="https://cdn.tiny.cloud/1/nek3obgwg98gkwb24kkslobuly8x3ul5l53agctoenes6nyb/tinymce/5/tinymce.min.js"
+                referrerpolicy="origin"></script> --}}
+                <script src="{{ asset("js/tinymce/tinymce.min.js") }}"></script>
+        {{-- @endif --}}
         <script>
+            let currentTarget = "";
             $(".dt-table").DataTable({
                 "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
                 pageLength: 10,
@@ -99,17 +101,74 @@
                 path_absolute: "{{ URL::to('/') }}",
                 height: '500',
                 selector: '.tinymce',
-                plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
-                    'searchreplace wordcount visualblocks visualchars code fullscreen',
+                license_key: 'gpl',
+                plugins: 'advlist autolink lists link image charmap preview ' +
+                    'anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen ' +
                     'insertdatetime media nonbreaking save table directionality',
-                    'emoticons template paste textpattern'],
-                toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript ' +
+                toolbar1: 'blocks fontfamily fontSize | bold italic underline strikethrough subscript ' +
+                /* toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript ' + */
                 'superscript | forecolor backcolor | alignleft aligncenter alignright ' +
                 'alignjustify  | removeformat',
                 toolbar2: 'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code ' +
                 '| print fullscreen',
                 relative_urls: false,
-                file_picker_callback : function(callback, value, meta) {
+                extended_valid_elements: 'iframe[src|width|height|frameborder|allowfullscreen]',
+                media_live_embeds: true,
+                link_list: (success) => { // called on link dialog open
+                    success(); // show the link dialog first
+                    $(currentTarget).css('display', 'none');
+                },
+                images_upload_handler: function (blobInfo, progress) {
+                    return new Promise((resolve, reject) => { // Ensure it returns a Promise
+                        const xhr = new XMLHttpRequest();
+                        xhr.withCredentials = false;
+                        xhr.open('POST', '/tinymce-upload');
+
+                        let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                        xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+
+                        xhr.upload.onprogress = (e) => {
+                            progress(e.loaded / e.total * 100);
+                        };
+
+                        xhr.onload = () => {
+                            if (xhr.status === 403) {
+                                reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
+                                return;
+                            }
+
+                            if (xhr.status < 200 || xhr.status >= 300) {
+                                reject('HTTP Error: ' + xhr.status);
+                                return;
+                            }
+
+                            const json = JSON.parse(xhr.responseText);
+
+                            if (!json || typeof json.location != 'string') {
+                                reject('Invalid JSON: ' + xhr.responseText);
+                                return;
+                            }
+
+                            resolve(json.location);
+                        };
+
+                        xhr.onerror = () => {
+                            reject('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
+                        };
+
+                        const formData = new FormData();
+                        formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+                        xhr.send(formData);
+                    });
+                },
+                setup: function (editor) {
+                    editor.on('CloseWindow', function (e) { // dialog closed
+                        $(currentTarget).css('display', 'block');
+                    });
+                }
+
+                /* file_picker_callback : function(callback, value, meta) {
                     let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
                     let y = window.innerHeight|| document.documentElement.clientHeight|| document.getElementsByTagName('body')[0].clientHeight;
 
@@ -131,7 +190,7 @@
                             callback(message.content);
                         }
                     });
-                }
+                } */
             };
 
             function initTinyMCE() {
@@ -139,11 +198,20 @@
             }
 
             if (!['backend.dashboard', 'admin.learner.show', 'admin.free-manuscript.index'].includes(currentRoute)) {
+                document.querySelectorAll('.loadScriptButton').forEach(button => {
+                    button.addEventListener('click', function() {
+                        let currentBtn = $(this);
+                        currentTarget = currentBtn.data('target');
+                    });
+                });
                 initTinyMCE();
             } else {
                 document.querySelectorAll('.loadScriptButton').forEach(button => {
                     button.addEventListener('click', function() {
-                        if (typeof tinymce === 'undefined') {
+                        let currentBtn = $(this);
+                        currentTarget = currentBtn.data('target');
+                        initTinyMCE();
+                        /* if (typeof tinymce === 'undefined') {
                             var script = document.createElement('script');
                             script.src = "https://cdn.tiny.cloud/1/nek3obgwg98gkwb24kkslobuly8x3ul5l53agctoenes6nyb/tinymce/5/tinymce.min.js";
                             script.referrerPolicy = "origin";
@@ -151,7 +219,7 @@
                             document.body.appendChild(script);
                         } else {
                             initTinyMCE();
-                        }
+                        } */
                     });
                 });
             }

@@ -166,7 +166,8 @@
 			<div class="col-sm-7">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<button class="pull-right btn btn-xs btn-primary" data-toggle="modal" data-target="#editEmailModal">{{ trans('site.edit') }}</button>
+						<button class="pull-right btn btn-xs btn-primary loadScriptButton" data-toggle="modal" 
+						data-target="#editEmailModal">{{ trans('site.edit') }}</button>
 						<button class="pull-right btn btn-xs btn-success" data-toggle="modal" data-target="#sendEmailModal"
 								style="margin-right: 10px">
 							Send Email
