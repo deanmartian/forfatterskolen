@@ -1960,6 +1960,7 @@ Route::group([
         Route::post('sendRequestToEditor/{id}', 'LearnerController@sendRequestToEditor')->name('admin.send-request-to-editor');
         Route::post('headEditorToEditor/{editor_id}/{type}/{title}/{learner}', 'HeadEditorController@sendEmail')->name('admin.head-editor-to-editor');
 
+        Route::post('/tinymce-upload', 'TinymceController@store');
     });
 
 
@@ -2057,8 +2058,6 @@ Route::group([
         Route::post('login', 'LoginController@editorLogin')->name('editor.login.store');
     });
 });
-
-Route::post('/tinymce-upload', 'Frontend\TinymceController@store');
 
 // File Manager routes
 /*Route::group(['middleware' => 'auth'], function () {
