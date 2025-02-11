@@ -161,7 +161,7 @@ class LearnerController extends Controller
         $registeredWebinars = $learner->registeredWebinars()->latest()->get();
         $learnerGiftPurchases = $learner->giftPurchases->pluck('id');
         $assignmentTemplates = AssignmentTemplate::get();
-        $learnerSelfPublishingList = $learner->selfPublishingList;
+        $learnerSelfPublishingList = $learner->selfPublishingList()->whereHas('selfPublishing')->get();
         $timeRegisters = TimeRegister::where('user_id', $learner->id)->with('project')->get();
         $selfPublishingList = SelfPublishing::whereNotIn('id',
             $learner->selfPublishingList()->pluck('self_publishing_id')->toArray())->get();
