@@ -42,7 +42,7 @@ class TinymceController extends Controller {
 
     public function images()
     {
-        $folderPath = public_path('photos/1070'); // Change to your folder path
+        $folderPath = public_path('photos'); // Change to your folder path
         $files = File::allFiles($folderPath);
 
         $images = [];
