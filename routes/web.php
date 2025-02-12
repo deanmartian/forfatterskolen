@@ -1961,6 +1961,7 @@ Route::group([
         Route::post('headEditorToEditor/{editor_id}/{type}/{title}/{learner}', 'HeadEditorController@sendEmail')->name('admin.head-editor-to-editor');
 
         Route::post('/tinymce-upload', 'TinymceController@store');
+        Route::get('/tinymce/images', 'TinymceController@images')->name('admin.tinymce.images');
     });
 
 

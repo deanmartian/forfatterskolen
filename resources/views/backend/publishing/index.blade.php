@@ -63,6 +63,9 @@
 	<a class="btn btn-success margin-top" href="{{ route('admin.queue-jobs') }}">
 		Queue Jobs
 	</a>
+	<a class="btn btn-success margin-top" href="{{ route('admin.tinymce.images') }}">
+		Tinymce Images
+	</a>
 
 	<div class="table-users table-responsive">
 		<table class="table">

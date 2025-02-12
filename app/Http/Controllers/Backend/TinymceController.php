@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class TinymceController extends Controller {
 
@@ -37,6 +38,25 @@ class TinymceController extends Controller {
         return response()->json([
             'location' => asset('photos/1070/' . $fileName) // Correct public URL
         ]);
+    }
+
+    public function images()
+    {
+        $folderPath = public_path('photos/1070'); // Change to your folder path
+        $files = File::allFiles($folderPath);
+
+        $images = [];
+        foreach ($files as $file) {
+            if (in_array($file->getExtension(), ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                $relativePath = str_replace('\\', '/', str_replace(public_path(), '', $file->getRealPath()));
+                $images[] = [
+                    'name' => $file->getFilename(),
+                    'path' => asset($relativePath)
+                ];
+            }
+        }
+        
+        return view('backend.tinymce-page.image', compact('images'));
     }
 
 }
