@@ -75,8 +75,9 @@
         <script src="https://Forfatterskolen.cdn.vooplayer.com/assets/vooplayer.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-        <script src="https://cdn.tiny.cloud/1/winfkv7k6snl5zpwilziro7l9ch3eyhcjlyt30jutsbv5bta/tinymce/5/tinymce.min.js"
-                referrerpolicy="origin"></script>
+        {{-- <script src="https://cdn.tiny.cloud/1/winfkv7k6snl5zpwilziro7l9ch3eyhcjlyt30jutsbv5bta/tinymce/5/tinymce.min.js"
+                referrerpolicy="origin"></script> --}}
+        <script src="{{ asset("js/tinymce/tinymce.min.js") }}"></script>
         <script>
             $(".dt-table").DataTable({
                 "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
@@ -95,21 +96,78 @@
                 path_absolute: "{{ URL::to('/') }}",
                 height: '500',
                 selector: '.tinymce',
-                plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
-                    'searchreplace wordcount visualblocks visualchars code fullscreen',
+                license_key: 'gpl',
+                plugins: 'advlist autolink lists link image charmap preview ' +
+                    'anchor pagebreak searchreplace wordcount visualblocks visualchars code fullscreen ' +
                     'insertdatetime media nonbreaking save table directionality',
-                    'emoticons template paste textpattern'],
-                toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript ' +
-                'superscript | forecolor backcolor | link | alignleft aligncenter alignright ' +
+                toolbar1: 'blocks fontfamily fontSize | bold italic underline strikethrough subscript ' +
+                /* toolbar1: 'formatselect fontselect fontsizeselect | bold italic underline strikethrough subscript ' + */
+                'superscript | forecolor backcolor | alignleft aligncenter alignright ' +
                 'alignjustify  | removeformat',
                 toolbar2: 'undo redo | bullist numlist | outdent indent blockquote | link unlink anchor image media code ' +
                 '| print fullscreen',
                 relative_urls: false,
-                file_picker_callback : function(callback, value, meta) {
+                extended_valid_elements: 'iframe[src|width|height|frameborder|allowfullscreen]',
+                media_live_embeds: true,
+                link_list: (success) => { // called on link dialog open
+                    success(); // show the link dialog first
+                    $(currentTarget).css('display', 'none');
+                },
+                images_upload_handler: function (blobInfo, progress) {
+                    return new Promise((resolve, reject) => { // Ensure it returns a Promise
+                        const xhr = new XMLHttpRequest();
+                        xhr.withCredentials = false;
+                        xhr.open('POST', '/tinymce-upload');
+
+                        let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                        xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+
+                        xhr.upload.onprogress = (e) => {
+                            progress(e.loaded / e.total * 100);
+                        };
+
+                        xhr.onload = () => {
+                            if (xhr.status === 403) {
+                                reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
+                                return;
+                            }
+
+                            if (xhr.status < 200 || xhr.status >= 300) {
+                                reject('HTTP Error: ' + xhr.status);
+                                return;
+                            }
+
+                            const json = JSON.parse(xhr.responseText);
+
+                            if (!json || typeof json.location != 'string') {
+                                reject('Invalid JSON: ' + xhr.responseText);
+                                return;
+                            }
+
+                            resolve(json.location);
+                        };
+
+                        xhr.onerror = () => {
+                            reject('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
+                        };
+
+                        const formData = new FormData();
+                        formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+                        xhr.send(formData);
+                    });
+                },
+                setup: function (editor) {
+                    editor.on('CloseWindow', function (e) { // dialog closed
+                        $(currentTarget).css('display', 'block');
+                    });
+                }
+
+                /* file_picker_callback : function(callback, value, meta) {
                     let x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
                     let y = window.innerHeight|| document.documentElement.clientHeight|| document.getElementsByTagName('body')[0].clientHeight;
 
-                    let cmsURL = tiny_editor_config.path_absolute + '/laravel-filemanager?editor=tinymce5';
+                    let cmsURL = tiny_editor_config.path_absolute + '/filemanager?editor=tinymce5';
                     if (meta.filetype == 'image') {
                         cmsURL = cmsURL + "&type=Images";
                     } else {
@@ -127,7 +185,7 @@
                             callback(message.content);
                         }
                     });
-                }
+                } */
             };
             tinymce.init(tiny_editor_config);
 
