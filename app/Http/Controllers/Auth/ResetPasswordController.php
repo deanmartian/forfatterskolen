@@ -89,6 +89,37 @@ class ResetPasswordController extends Controller
         endif;
     }
 
+    public function adminStore(Request $request)
+    {
+        $this->validate($request, [
+            'email' => 'required|string|email|max:255'
+        ]);
+
+        $exists = User::where('email', $request->email)->where('role', 1)->first();
+
+        if ($exists) {
+            $i = 0;
+            while( $i == 0 ) :
+                $token = Str::random(60);
+                $token_used = PasswordReset::where('token', $token)->first();
+                if( !$token_used ) break;
+            endwhile;
+
+            $passwordReset = new PasswordReset();
+            $passwordReset->email = $request->email;
+            $passwordReset->token = $token;
+            $passwordReset->save();
+            
+            $actionUrl = route('admin.passwordreset.form', $token);
+            $to = $request->email;
+
+            $this->sendEmail($actionUrl, $to);
+
+            return $actionUrl;
+        }
+        
+        return redirect()->back()->withErrors("We can't find the email in our records.");
+    }
 
 
 
@@ -96,6 +127,12 @@ class ResetPasswordController extends Controller
     {
         $passwordReset = PasswordReset::where('token', $token)->firstOrFail();
         return view('frontend.auth.passwordreset', compact('passwordReset'));
+    }
+
+    public function adminResetForm($token)
+    {
+        $passwordReset = PasswordReset::where('token', $token)->firstOrFail();
+        return view('backend.auth.passwordreset', compact('passwordReset'));
     }
 
 
@@ -118,6 +155,23 @@ class ResetPasswordController extends Controller
         return redirect(route('frontend.login.store'));
     }
 
+    public function adminUpdatePassword($token, Request $request)
+    {
+        $passwordReset = PasswordReset::where('token', $token)->firstOrFail();
+        $validator = $this->update_validator($request->all());
+        if($validator->fails()) :
+            return redirect()->back()->withErrors($validator);
+        endif;
+
+        $user = User::where('email', $passwordReset->email)->firstOrFail();
+        $user->password = bcrypt($request->password);
+        $user->password;
+        $user->save();
+
+        $passwordReset = PasswordReset::where('email', $passwordReset->email)->delete();
+        return redirect()->to("/")->with(['password_change_success' => 'Password changed successfully.']);
+    }
+
     public function changePassword(ChangePasswordRequest $request)
     {
         $user = User::where('email',$request->email)->first();
@@ -135,5 +189,23 @@ class ResetPasswordController extends Controller
 
         return redirect()->route('auth.login.show', 't=password-change')
             ->with(['password_change_success' => 'Password changed successfully.']);
+    }
+
+    private function sendEmail($actionUrl, $to) {
+        // send password reset link to email
+        $actionText = 'Tilbakestille Passord';
+        $level = 'default';
+        $headers = "From: Forfatterskolen<no-reply@forfatterskolen.no>\r\n";
+        $headers .= "MIME-Version: 1.0\r\n";
+        $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+
+        $emailData = [
+            'email_subject' => 'Forespørsel om å tilbakestille passordet ditt',
+            'email_message' => view('emails.passwordreset', compact('actionText', 'actionUrl', 'level'))->render(),
+            'from_name' => '',
+            'from_email' => 'postmail@forfatterskolen.no',
+            'attach_file' => NULL
+        ];
+        \Mail::to($to)->queue(new SubjectBodyEmail($emailData));
     }
 }

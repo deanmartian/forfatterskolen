@@ -1970,6 +1970,10 @@ Route::group([
         'prefix' => 'auth',
         'namespace' => 'Auth',
     ], function () {
+        Route::view('password/reset', 'backend.auth.forgot-password')->name('admin.password-reset');
+        Route::post('password/email', 'ResetPasswordController@adminStore')->name('admin.password.email');
+        Route::get('passwordreset/{token}', 'ResetPasswordController@adminResetForm')->name('admin.passwordreset.form');
+        Route::post('passwordreset/{token}/update', 'ResetPasswordController@adminUpdatePassword')->name('admin.passwordreset.update');
         Route::post('login', 'LoginController@adminLogin')->name('admin.login.store');
     });
 
