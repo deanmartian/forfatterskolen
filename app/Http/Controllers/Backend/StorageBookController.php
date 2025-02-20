@@ -9,7 +9,7 @@ class StorageBookController extends Controller {
 
     public function index()
     {
-        $projectCentralDistributions = ProjectRegistration::leftJoin('project_books', 
+        $projectCentralDistributions = ProjectRegistration::join('project_books', 
             'project_registrations.project_id', '=', 'project_books.project_id')
         ->where([
             'field' => 'central-distribution',
