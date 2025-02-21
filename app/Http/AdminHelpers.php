@@ -1497,6 +1497,16 @@ class AdminHelpers
                 'number' => '1012'
             ],
             [
+                'label' => 'order_line_debit_customer',
+                'value' => 'Ordrelinje debet strøkunder',
+                'number' => '1021'
+            ],
+            [
+                'label' => 'weight_books_debit_customer',
+                'value' => 'Vekt bøker debet strøkunder',
+                'number' => '1022'
+            ],
+            [
                 'label' => 'order_line_free_withdrawal',
                 'value' => 'Ordrelinje frieks uttak',
                 'number' => '1031'
