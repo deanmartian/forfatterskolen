@@ -1497,6 +1497,11 @@ class AdminHelpers
                 'number' => '1012'
             ],
             [
+                'label' => 'orderline_ebook',
+                'value' => 'Ordrelinje e-bok',
+                'number' => '1014'
+            ],
+            [
                 'label' => 'order_line_debit_customer',
                 'value' => 'Ordrelinje debet strøkunder',
                 'number' => '1021'
