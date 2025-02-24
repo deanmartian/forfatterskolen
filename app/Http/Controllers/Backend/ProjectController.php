@@ -1518,6 +1518,69 @@ class ProjectController extends Controller
             ]
         ]; */
 
+        $startYear = 2024; // Change if needed
+        $currentYear = Carbon::now()->year;
+        $years = range($startYear, $currentYear);
+        $quarters = [1, 2, 3, 4]; // Define quarters
+
+        // Get Total Sales by Year and Quarter
+        $salesData = DB::table('project_books as books')
+        ->select(
+            DB::raw('YEAR(sales.date) as year'),
+            DB::raw('SUM(amount) as total_sales')
+        )
+        ->leftJoin('project_book_sales as sales', 'sales.project_book_id', '=', 'books.id')
+        ->whereBetween(DB::raw('YEAR(sales.date)'), [$startYear, $currentYear])
+        ->where('books.project_id', $project->id)
+        ->groupBy('year')
+        ->orderBy('year', 'ASC')
+        ->get()
+        ->keyBy('year'); // Store results by year for easy lookup
+
+        // Get Total Distributions by Year and Quarter
+        $distributionsData = DB::table('project_registrations as distribution')
+        ->select(
+            DB::raw('YEAR(distribution_costs.date) as year'),
+            DB::raw('QUARTER(distribution_costs.date) as quarter'),
+            DB::raw('SUM(amount) as total_distributions')
+        )
+        ->leftJoin('storage_distribution_costs as distribution_costs', 
+            'distribution_costs.project_book_id', '=', 'distribution.id')
+        ->where('distribution.id', $registration_id)
+        ->groupBy('year', 'quarter')
+        ->orderBy('year', 'ASC')
+        ->orderBy('quarter', 'ASC')
+        ->get()
+        ->groupBy('year'); // Store results by year for easy lookup
+
+        // Merge Data for Year and Quarter
+        $storageCosts = collect($years)->map(function ($year) use ($salesData, $distributionsData, $quarters) {
+            $sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
+            $distributions = [];
+        
+            // Initialize distribution values for all quarters
+            foreach ($quarters as $quarter) {
+                $distributions[$quarter] = isset($distributionsData[$year]) 
+                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0)
+                    : 0;
+            }
+        
+            // Calculate totals
+            $totalDistributions = array_sum($distributions);
+            $payout = $sales - $totalDistributions;
+        
+            return [
+                'year' => $year,
+                'q1_distributions' => $distributions[1],
+                'q2_distributions' => $distributions[2],
+                'q3_distributions' => $distributions[3],
+                'q4_distributions' => $distributions[4],
+                'total_sales' => $sales,
+                'total_distributions' => $totalDistributions,
+                'payout' => $payout,
+            ];
+        });
+
         if (AdminHelpers::isGiutbokPage()) {
             $layout = 'giutbok.layout';
             $backRoute = route('g-admin.project.show', $projectId);
@@ -1533,7 +1596,7 @@ class ProjectController extends Controller
         'deleteDistributionRoute', 'bookSaleTypes', 'saveBookSaleRoute', 'importBookSaleRoute', 'deleteBookSaleRoute', 
         'centralISBNs', 'saveStorageSaleRoute', 'inventorySales', 'deleteStorageSaleRoute', array_keys($categories),
         'inventoryPhysicalItems', 'inventoryDelivered', 'inventoryReturns', 'totalBalance', 'inventoryTotal', 'quantitySold',
-        'totalQuantitySold'));
+        'totalQuantitySold', 'storageCosts'));
     }
 
     public function saveStorageBook($projectId, Request $request)

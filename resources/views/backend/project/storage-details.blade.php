@@ -93,6 +93,9 @@
                 <li @if( Request::input('tab') == 'sales-report' ) class="active" @endif>
                     <a href="?tab=sales-report">Sales Report</a>
                 </li>
+                <li @if( Request::input('tab') == 'storage-cost' ) class="active" @endif>
+                    <a href="?tab=storage-cost">Book Sales - Storage Cost</a>
+                </li>
             </ul>
 
             <div class="tab-content">
@@ -107,6 +110,8 @@
                         @include('backend.project.partials._sales')
                     @elseif( Request::input('tab') == 'sales-report')
                         @include('backend.project.partials._sales_report')
+                    @elseif( Request::input('tab') == 'storage-cost')
+                        @include('backend.project.partials._storage_cost')
                     @else
                         @include('backend.project.partials._master')
                     @endif
