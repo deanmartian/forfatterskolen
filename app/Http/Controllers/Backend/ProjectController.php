@@ -225,9 +225,19 @@ class ProjectController extends Controller
             ->orderByRaw('identifier_numeric DESC')
             ->value('identifier') + 1;
 
+
+        $book = ProjectBook::updateOrCreate(
+            ['project_id' => $project->id],
+            [
+                'user_id' => $project->user_id,
+                'book_name' => $project->name
+            ]
+        );
+
         return response()->json([
             'nextProjectNumber' => $nextProjectNumber,
-            'project' => $project
+            'project' => $project,
+            'book' => $book
         ]);
     }
 
@@ -249,6 +259,25 @@ class ProjectController extends Controller
 
         $project->delete();
         return response()->json();
+    }
+
+    public function generateProjectBook()
+    {
+        $projects = Project::whereDoesntHave('book')->get();
+        
+        $counter = 0;
+        foreach ($projects as $project) {
+            ProjectBook::updateOrCreate(
+                ['project_id' => $project->id],
+                [
+                    'user_id' => $project->user_id,
+                    'book_name' => $project->name
+                ]
+            );
+            $counter++;
+        }
+
+        return "$counter total books created";
     }
 
     public function saveActivity( ProjectActivityRequest $request, ProjectService $projectService )

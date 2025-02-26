@@ -1280,6 +1280,7 @@ Route::group([
         Route::post('/project/save', 'ProjectController@saveProject');
         Route::get('/project/{id}', 'ProjectController@show')->name('admin.project.show');
         Route::delete('/project/{id}/delete', 'ProjectController@deleteProject');
+        Route::get('/project/book/generate', 'ProjectController@generateProjectBook');
 
         Route::get('/storage-books', 'StorageBookController@index')->name('admin.storage-books.index');
 

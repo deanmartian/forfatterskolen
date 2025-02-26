@@ -1,15 +1,15 @@
 <template>
     <div>
-         <button class="btn btn-success margin-top" @click="showFormModal()" v-if="books.length === 0">
+         <!-- <button class="btn btn-success margin-top" @click="showFormModal()" v-if="books.length === 0">
             Add
-        </button>
+        </button> -->
         <div class="table-users">
             <table class="table table-responsive">
                 <thead>
                 <tr>
                     <th>Author</th>
                     <th>Name of book</th>
-                    <th></th>
+                    <!-- <th></th> -->
                 </tr>
                 </thead>
                 <tbody>
@@ -20,14 +20,14 @@
                     <td>
                         {{ book.book_name }}
                     </td>
-                    <td>
+                    <!-- <td>
                         <button class="btn btn-xs btn-primary" @click="showFormModal(book)">
                             <i class="fa fa-edit"></i>
                         </button>
                         <button class="btn btn-xs btn-danger" @click="showDeleteModal(book)">
                             <i class="fa fa-trash"></i>
                         </button>
-                    </td>
+                    </td> -->
                 </tr>
                 </tbody>
             </table>

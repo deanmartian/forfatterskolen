@@ -296,14 +296,17 @@
                 this.isLoading = true;
                 this.removeValidationError();
                 axios.post('/project/save', this.projectForm).then(response => {
+                    console.log(response);
                     this.isLoading = false;
 
-                    this.project = response.data.project;
+                    //this.project = response.data.project;
                     this.$refs.projectFormModal.hide();
 
                     this.$toasted.global.showSuccessMsg({
                         message : 'Project added'
                     });
+
+                    location.reload();
                 }).catch(error => {
                     this.isLoading = false;
                     this.processError(error);
