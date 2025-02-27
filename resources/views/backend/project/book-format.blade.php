@@ -48,7 +48,9 @@
                             {!! $bookFormatting->corporate_page_link !!}
                         </td>
                         <td>
-                            {{ $bookFormatting->format ? AdminHelpers::projectFormats($bookFormatting->format) : null }}
+                            {{ !is_array(AdminHelpers::projectFormats($bookFormatting->format)) ?
+                                AdminHelpers::projectFormats($bookFormatting->format) 
+                                : ($bookFormatting->format ? $bookFormatting->format . ' mm' : null) }}
                         </td>
                         <td>
                             {!! $bookFormatting->format_image_link !!}
@@ -116,14 +118,26 @@
 
                         <div class="form-group">
                             <label>Størrelse (optional)</label>
-                            <select class="form-control" name="format">
-                                <option value="" selected disabled>Valgfri størrelse</option>
+                            <select class="form-control" name="format" id="format-select">
+                                <option value="">Valgfri størrelse</option>
                                     @foreach (AdminHelpers::projectFormats() as $format)
                                         <option value="{{ $format['id'] }}">
                                             {{ $format['option'] }}
                                         </option>
                                     @endforeach
                             </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Bredde (mm)</label>
+                            <input type="text" class="form-control" name="width" id="width-input" 
+                            onkeypress="return numeralsOnly(event)">
+                        </div>
+    
+                        <div class="form-group">
+                            <label>Høyde (mm)</label>
+                            <input type="text" class="form-control" name="height" id="height-input" 
+                            onkeypress="return numeralsOnly(event)">
                         </div>
 
                         <div class="form-group format-image-container hide">
@@ -161,11 +175,76 @@
             modal.find('[name=designer_id]').val(record.designer_id).change();
             modal.find('[name=format]').val(record.format).change();
             modal.find('[name=description]').val(record.description);
+
+            var formatSelect = document.getElementById('format-select');
+            var widthInput = document.getElementById('width-input');
+            var heightInput = document.getElementById('height-input');
+
+            var formatExists = false;
+
+            // Check if the format matches any predefined options
+            for (var i = 0; i < formatSelect.options.length; i++) {
+                if (formatSelect.options[i].value === record.format) {
+                    formatSelect.value = record.format;
+                    formatExists = true;
+
+                    // If it's a predefined format like '125x200', split it for width/height
+                    var dimensions = record.format.split('x');
+                    if (dimensions.length == 2) {
+                        widthInput.value = dimensions[0];
+                        heightInput.value = dimensions[1];
+                    }
+                    break;
+                }
+            }
+            
+            if (!formatExists) {
+                formatSelect.value = ''; // Select "other" option
+
+                // Assuming `printData` contains custom width and height
+                if (record.format) {
+                    var dimensions = record.format.split('x');
+                    if (dimensions.length == 2) {
+                        widthInput.value = dimensions[0];
+                        heightInput.value = dimensions[1];
+                    }
+                } else {
+                    // You can also fallback to width and height fields if needed
+                    widthInput.value = record.width || ''; // Use width from printData
+                    heightInput.value = record.height || ''; // Use height from printData
+                }
+            }
         }
     });
 
     $("#bookFormattingModal").find("[name=format]").change(function() {
         $("#bookFormattingModal").find(".format-image-container").removeClass('hide');
     });
+
+    $('#format-select').on('change', function () {
+        var selectedFormat = this.value;
+        var widthInput = document.getElementById('width-input');
+        var heightInput = document.getElementById('height-input');
+        
+        // If the selected value is "other", clear the width and height inputs
+        if (selectedFormat !== "") {
+            // Split the selected format (e.g., '125x200' => ['125', '200'])
+            var dimensions = selectedFormat.split('x');
+            widthInput.value = dimensions[0];  // Set the width
+            heightInput.value = dimensions[1]; // Set the height
+        } else {
+            widthInput.value = '';
+            heightInput.value = '';
+        }
+    });
+
+    function numeralsOnly(event) {
+        const charCode = event.which ? event.which : event.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            event.preventDefault();
+            return false;
+        }
+        return true;
+    }
 </script>
 @endsection

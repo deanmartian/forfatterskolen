@@ -157,12 +157,23 @@ class ProjectService
             $formatImage = $this->saveFileOrImageDropbox($destinationPath, 'format_image');
         }
 
+        $format = $request->input('format');
+        $customFormat = $request->width  . "x" . $request->height;
+
+        // If "Other" is selected, use the custom format
+        if ((empty($format) || is_null($format)) && !empty($request->width) && !empty($request->height)) {
+            $finalFormat = $customFormat;
+        } else {
+            // Use the selected predefined format
+            $finalFormat = $format;
+        }
+
         if ($request->id) {
             $bookPicture = ProjectBookFormatting::find($request->id);
             $bookPicture->file = $filePath ?? $bookPicture->file;
             $bookPicture->corporate_page = $corporatePage ?? $bookPicture->corporate_page;
             $bookPicture->designer_id = $request->designer_id ?? $bookPicture->designer_id;
-            $bookPicture->format = $request->format ?? $bookPicture->format;
+            $bookPicture->format = $finalFormat ?? $bookPicture->format;
             $bookPicture->format_image = $formatImage ?? $bookPicture->format_image;
             $bookPicture->description = $request->description ?? $bookPicture->description;
             $bookPicture->save();
@@ -174,7 +185,7 @@ class ProjectService
                 'file' => $filePath,
                 'corporate_page' => $corporatePage,
                 'designer_id' => $request->has('designer_id') ? $request->designer_id : NULL, 
-                'format' => $request->format,
+                'format' => $finalFormat,
                 'format_image' => $formatImage,
                 'description' => $request->description,
             ]);
