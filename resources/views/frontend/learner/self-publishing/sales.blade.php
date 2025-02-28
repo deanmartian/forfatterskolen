@@ -28,43 +28,114 @@
     <div class="learner-container">
         <div class="container">
             <div class="row">
-                <div class="col-md-12 dashboard-course no-left-padding">
-                    <div class="card global-card">
-                        <div class="card-header">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <h1>
-                                        {{ trans('site.author-portal-menu.sales') }}
-                                    </h1>
+                <div class="col-md-12 learner-assignment no-left-padding">
+                    <ul class="nav nav-tabs my-5">
+                        <li @if( Request::input('tab') == 'sales' || Request::input('tab') == '') class="active" @endif>
+                            <a href="?tab=sales&year={{ FrontendHelpers::getLearnerSaleYear() }}">Sales</a>
+                        </li>
+                        <li @if( Request::input('tab') == 'distribution' ) class="active" @endif>
+                            <a href="?tab=distribution">Distibution Cost</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade in active">
+                            @if( Request::input('tab') == 'distribution')
+                                <div class="card global-car">
+                                    <div class="card-body">
+                                        <table class="table margin-top">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nr</th>
+                                                    <th>Service</th>
+                                                    <th>Number</th>
+                                                    <th>Amount</th>
+                                                    <th>Learner Price</th>
+                                                    <th>Date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if ($projectUserBook)
+                                                    @foreach ($projectUserBook->distributionCosts as $distributionCost)
+                                                        <tr>
+                                                            <td>
+                                                                {{ $distributionCost->nr }}
+                                                            </td>
+                                                            <td>
+                                                                {{ AdminHelpers::distributionServices($distributionCost->service)['value'] }}
+                                                            </td>
+                                                            <td>
+                                                                {{ $distributionCost->number }}
+                                                            </td>
+                                                            <td>
+                                                                {{ AdminHelpers::currencyFormat($distributionCost->amount) }}
+                                                            </td>
+                                                            <td>
+                                                                {{ AdminHelpers::currencyFormat($distributionCost->learner_amount) }}
+                                                            </td>
+                                                            <td>
+                                                                {{ $distributionCost->date 
+                                                                ? FrontendHelpers::formatDate($distributionCost->date) : '' }}
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                    @if ($projectUserBook->distributionCosts()->count())
+                                                        <tr>
+                                                            <td colspan="3" style="font-weight: bold">
+                                                                Total
+                                                            </td>
+                                                            <td colspan="3">
+                                                                {{ FrontendHelpers::currencyFormat(
+                                                                    $projectUserBook->totalDistributionCost()) }}
+                                                            </td>
+                                                        </tr>
+                                                    @endif
+                                                @endif
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <form action="">
-                                        <div class="form-group">
-                                            <label>
-                                                {{ trans('site.year') }}
-                                            </label>
-            
-                                            <select name="year" id="yearSelector" class="form-control" onchange="this.form.submit()">
-                                                @foreach ($uniqueYears as $year)
-                                                    <option value="{{ $year }}" 
-                                                    @if (request()->get('year') == $year)
-                                                        selected
-                                                    @endif>
-                                                        {{ $year }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
+                            @else
+                                <div class="card global-card">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <h1>
+                                                    {{ trans('site.author-portal-menu.sales') }}
+                                                </h1>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <form action="">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            {{ trans('site.year') }}
+                                                        </label>
+                        
+                                                        <select name="year" id="yearSelector" class="form-control" 
+                                                        onchange="this.form.submit()">
+                                                            @foreach ($uniqueYears as $year)
+                                                                <option value="{{ $year }}" 
+                                                                @if (request()->get('year') == $year)
+                                                                    selected
+                                                                @endif>
+                                                                    {{ $year }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
-                                    </form>
+                                        
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart-container" style="position: relative; height:400px; width: 100%">
+                                        <canvas id="chart-line" width="299" height="200" class="chartjs-render-monitor"
+                                                style="display: block; width: 299px; height: 200px;"></canvas>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                        </div>
-                        <div class="card-body">
-                            <div class="chart-container" style="position: relative; height:400px; width: 100%">
-                            <canvas id="chart-line" width="299" height="200" class="chartjs-render-monitor"
-                                    style="display: block; width: 299px; height: 200px;"></canvas>
-                            </div>
+                            @endif
                         </div>
                     </div>
 

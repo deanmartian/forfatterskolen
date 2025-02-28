@@ -1982,7 +1982,16 @@ class LearnerController extends Controller
         ->distinct()
         ->pluck('year');
 
-        return view('frontend.learner.self-publishing.sales', compact('learner', 'uniqueYears'));
+        $standardProject = FrontendHelpers::getLearnerStandardProject(Auth::id());
+        $projectUserBook = null;
+        if ($standardProject) {
+            $registration = ProjectRegistration::centralDistributions()->where('in_storage', 1)
+                ->where('project_id', $standardProject->id)->first();
+
+            $projectUserBook = ProjectRegistration::find($registration->id);
+        }
+        
+        return view('frontend.learner.self-publishing.sales', compact('learner', 'uniqueYears', 'projectUserBook'));
     }
 
     public function bookForSale($id)
