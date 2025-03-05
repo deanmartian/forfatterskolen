@@ -29,7 +29,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12 learner-assignment no-left-padding">
-                    <ul class="nav nav-tabs my-5">
+                    <ul class="nav nav-tabs mb-5">
                         <li @if( Request::input('tab') == 'sales' || Request::input('tab') == '') class="active" @endif>
                             <a href="?tab=sales&year={{ FrontendHelpers::getLearnerSaleYear() }}">
                                 {{ trans('site.author-portal-menu.sales') }}
