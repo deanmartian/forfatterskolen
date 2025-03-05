@@ -31,10 +31,14 @@
                 <div class="col-md-12 learner-assignment no-left-padding">
                     <ul class="nav nav-tabs my-5">
                         <li @if( Request::input('tab') == 'sales' || Request::input('tab') == '') class="active" @endif>
-                            <a href="?tab=sales&year={{ FrontendHelpers::getLearnerSaleYear() }}">Sales</a>
+                            <a href="?tab=sales&year={{ FrontendHelpers::getLearnerSaleYear() }}">
+                                {{ trans('site.author-portal-menu.sales') }}
+                            </a>
                         </li>
                         <li @if( Request::input('tab') == 'distribution' ) class="active" @endif>
-                            <a href="?tab=distribution">Distibution Cost</a>
+                            <a href="?tab=distribution">
+                                {{ trans('site.author-portal.distribution-cost') }}
+                            </a>
                         </li>
                     </ul>
 
@@ -318,7 +322,7 @@
                     labels: monthAbbreviations,
                     datasets: [{
                         data: [],
-                        label: 'Total Sales: ', // label on top, this is being changed on ajax_chart
+                        label: i18n.site['author-portal.total-sales'] + ': ', // label on top, this is being changed on ajax_chart
                         borderColor: "#862736",
                         backgroundColor:'#862736',
                         fill: false

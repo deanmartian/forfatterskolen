@@ -25,7 +25,7 @@
 
         <li class="@if(Request::is('account/project')) active @endif">
             <a href=" {{ route('learner.project') }} ">
-                <i class="fa fa-file"></i> Projects
+                <i class="fa fa-file"></i> {{ trans('site.author-portal.project') }}
             </a>
         </li>
 
@@ -51,12 +51,12 @@
                 </li>
                 <li class="@if(Request::is('account/self-publishing/cover')) active @endif">
                     <a href="{{ route('learner.self-publishing.cover') }}">
-                        Cover
+                        {{ trans('site.homepage.illustration-cover-design') }}
                     </a>
                 </li>
                 <li class="@if(Request::is('account/self-publishing/page-format')) active @endif">
                     <a href="{{ route('learner.self-publishing.page-format') }}">
-                        Page Format
+                        {{ trans('site.author-portal.page-format') }}
                     </a>
                 </li>
             </ul>
