@@ -59,6 +59,16 @@
                         {{ trans('site.author-portal.page-format') }}
                     </a>
                 </li>
+                <li>
+                    <a href="#">
+                        Lydbok
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        Ebok
+                    </a>
+                </li>
             </ul>
         </li>
     </ul>
