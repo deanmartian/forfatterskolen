@@ -21,18 +21,20 @@
     <div class="learner-container">
         <div class="container">
             <div class="row">
-                <div class="col-md-12 mb-3">
-                    @if ($projects->count() < 1)
-                        <button class="btn btn-primary projectBtn pull-right" data-toggle="modal" data-target="#projectModal">
-                            {{ trans('site.author-portal.add-book-project') }}
-                        </button>
-                    @endif
+                <div class="col-md-12 mb-3">                    
 
                     <div class="card global-card">
                         <div class="card-header">
                             <h1 class="d-inline-block">
                                 {{ trans('site.author-portal.book-project') }}
                             </h1>
+
+                            {{-- @if ($projects->count() < 1) --}}
+                                <button class="btn btn-primary projectBtn pull-right" data-toggle="modal" 
+                                data-target="#projectModal">
+                                    {{ trans('site.author-portal.add-book-project') }}
+                                </button>
+                            {{-- @endif --}}
                         </div>
                         <div class="card-body">
                             <table class="table">
