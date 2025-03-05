@@ -29,12 +29,12 @@
                                 {{ trans('site.author-portal.book-project') }}
                             </h1>
 
-                            {{-- @if ($projects->count() < 1) --}}
+                            @if ($projects->count() < 1)
                                 <button class="btn btn-primary projectBtn pull-right" data-toggle="modal" 
                                 data-target="#projectModal">
                                     {{ trans('site.author-portal.add-book-project') }}
                                 </button>
-                            {{-- @endif --}}
+                            @endif
                         </div>
                         <div class="card-body">
                             <table class="table">
