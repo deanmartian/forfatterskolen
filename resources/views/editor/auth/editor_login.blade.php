@@ -20,6 +20,9 @@
                     <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
                 </div>
                 <button type="submit" name="submit" class="btn btn-block btn-primary m-t-10 waves-effect">Sign in</button>
+                <a href="{{ route('editor.password-reset') }}" class="text-center d-block" style="margin-top: 10px">
+                    Forgot Password
+                </a>
                 @if ( $errors->any() )
                 <br />
                 <div class="alert alert-danger no-bottom-margin">
@@ -29,6 +32,12 @@
                     @endforeach
                     </ul>
                 </div>
+                @endif
+
+                @if (session('password_change_success'))
+                    <div class="alert alert-success no-bottom-margin" style="margin-top: 20px">
+                        {{ session('password_change_success') }}
+                    </div>
                 @endif
             </form>    
         </div>

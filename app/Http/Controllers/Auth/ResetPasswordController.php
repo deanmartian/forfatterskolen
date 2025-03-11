@@ -115,7 +115,39 @@ class ResetPasswordController extends Controller
 
             $this->sendEmail($actionUrl, $to);
 
-            return $actionUrl;
+            return redirect()->back()->with(['status' => 'Vi har sendt en passord tilbakestillingslink til din epost.']);
+        }
+        
+        return redirect()->back()->withErrors("We can't find the email in our records.");
+    }
+
+    public function editorStore(Request $request)
+    {
+        $this->validate($request, [
+            'email' => 'required|string|email|max:255'
+        ]);
+
+        $exists = User::where('email', $request->email)->where('admin_with_editor_access', 1)->first();
+
+        if ($exists) {
+            $i = 0;
+            while( $i == 0 ) :
+                $token = Str::random(60);
+                $token_used = PasswordReset::where('token', $token)->first();
+                if( !$token_used ) break;
+            endwhile;
+
+            $passwordReset = new PasswordReset();
+            $passwordReset->email = $request->email;
+            $passwordReset->token = $token;
+            $passwordReset->save();
+            
+            $actionUrl = route('editor.passwordreset.form', $token);
+            $to = $request->email;
+
+            $this->sendEmail($actionUrl, $to);
+
+            return redirect()->back()->with(['status' => 'Vi har sendt en passord tilbakestillingslink til din epost.']);
         }
         
         return redirect()->back()->withErrors("We can't find the email in our records.");
@@ -135,6 +167,11 @@ class ResetPasswordController extends Controller
         return view('backend.auth.passwordreset', compact('passwordReset'));
     }
 
+    public function editorResetForm($token)
+    {
+        $passwordReset = PasswordReset::where('token', $token)->firstOrFail();
+        return view('editor.auth.passwordreset', compact('passwordReset'));
+    }
 
 
     public function updatePassword($token, Request $request)
@@ -156,6 +193,23 @@ class ResetPasswordController extends Controller
     }
 
     public function adminUpdatePassword($token, Request $request)
+    {
+        $passwordReset = PasswordReset::where('token', $token)->firstOrFail();
+        $validator = $this->update_validator($request->all());
+        if($validator->fails()) :
+            return redirect()->back()->withErrors($validator);
+        endif;
+
+        $user = User::where('email', $passwordReset->email)->firstOrFail();
+        $user->password = bcrypt($request->password);
+        $user->password;
+        $user->save();
+
+        $passwordReset = PasswordReset::where('email', $passwordReset->email)->delete();
+        return redirect()->to("/")->with(['password_change_success' => 'Password changed successfully.']);
+    }
+
+    public function editorUpdatePassword($token, Request $request)
     {
         $passwordReset = PasswordReset::where('token', $token)->firstOrFail();
         $validator = $this->update_validator($request->all());

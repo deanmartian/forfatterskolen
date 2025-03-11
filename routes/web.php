@@ -73,6 +73,8 @@ Route::group([
         Route::get('/vipps-order-status/{orderId}', 'HomeController@checkVippsOrderStatus');
         Route::get('/chat', 'ChatController@index');
         Route::post('/chat', 'ChatController@sendMessage');
+        Route::post('/ask-ai', 'ChatController@askAI');
+        Route::post('/ask-deepseek', 'ChatController@askDeepSeek');
         Route::get('/import-webinar-registrants', 'HomeController@importWebinarRegistrants');
         Route::post('/import-webinar-registrants', 'HomeController@processImportWebinarRegistrants')
             ->name('process-import-webinar-registrants');
@@ -80,6 +82,7 @@ Route::group([
         Route::post('/soknad2024', 'HomeController@application');
         Route::get('/export/course-taken/{year}', 'HomeController@exportCourseTakenByYear');
         Route::get('/export/shop-manuscripts-taken/{year}', 'HomeController@exportShopManuscriptsTakenByYear');
+        Route::get('/gpt-count-words', 'HomeController@countWordsUsingGPT');
 
         Route::get('/dropbox/redirect', 'DropboxController@redirectToDropbox')->name('dropbox.redirect');
         Route::get('/dropbox/callback', 'DropboxController@handleDropboxCallback')->name('dropbox.callback');
@@ -2060,6 +2063,10 @@ Route::group([
         'prefix' => 'auth',
         'namespace' => 'Auth',
     ], function () {
+        Route::view('password/reset', 'editor.auth.forgot-password')->name('editor.password-reset');
+        Route::post('password/email', 'ResetPasswordController@editorStore')->name('editor.password.email');
+        Route::get('passwordreset/{token}', 'ResetPasswordController@editorResetForm')->name('editor.passwordreset.form');
+        Route::post('passwordreset/{token}/update', 'ResetPasswordController@editorUpdatePassword')->name('editor.passwordreset.update');
         Route::get('login/editor-email/{email_hash}', 'LoginController@editorEmailLogin')->name('editor.login.email');
         Route::post('login', 'LoginController@editorLogin')->name('editor.login.store');
     });
