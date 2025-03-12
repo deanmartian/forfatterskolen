@@ -56,7 +56,7 @@
 							],
 							[
 								'name' => 'no-word-limit',
-								'label' => 'Redigering Årskurs'
+								'label' => trans('site.editing-year-course')
 							]
 						]
 					@endphp
