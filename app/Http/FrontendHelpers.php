@@ -24,6 +24,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Request as GlobalRequest;
+use ZipArchive;
 
 class FrontendHelpers
 {
@@ -1241,5 +1242,64 @@ class FrontendHelpers
         } catch (\Exception $ex) {
             return response()->json($ex->getMessage(), 400);
         }
+    }
+
+    public static function extractTextFromDocx($filePath)
+    {
+        $text = '';
+
+        // Open the DOCX file as a ZIP archive
+        $zip = new ZipArchive();
+        if ($zip->open($filePath) === true) {
+            // Locate document.xml inside the DOCX archive
+            $xmlIndex = $zip->locateName('word/document.xml');
+
+            if ($xmlIndex !== false) {
+                // Extract XML content
+                $xmlData = $zip->getFromIndex($xmlIndex);
+                $zip->close();
+
+                // Remove XML tags and extract plain text
+                $text = strip_tags($xmlData);
+
+                // Convert XML entities to readable text
+                $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
+            } else {
+                return [
+                    'error' => 'Error: document.xml not found in DOCX file',
+                    'word_count' => 0
+                ];
+            }
+        } else {
+            return [
+                'error' => 'Error: Unable to open DOCX file',
+                'word_count' => 0
+            ];
+        }
+
+        // Count words
+        $wordCount = FrontendHelpers::countWordsLikeOpenOffice($text);
+
+        return [
+            'text' => nl2br(e($text)), // Convert new lines to <br> for display
+            'word_count' => $wordCount
+        ];
+    }
+
+    public static function countWordsLikeOpenOffice($text) {
+        // Remove HTML tags
+        $text = strip_tags($text);
+    
+        // Normalize whitespace and remove special characters
+        //$text = preg_replace('/[\r\n\t]+/', ' ', $text);
+        //$text = preg_replace('/[^\p{L}\p{N}\s-]/u', '', $text); // Remove non-word characters except hyphens
+    
+        // Trim extra spaces
+        $text = trim($text);
+    
+        // Count words using whitespace as delimiter
+        $words = preg_split('/\s+/', $text, -1, PREG_SPLIT_NO_EMPTY);
+        
+        return count($words);
     }
 }
