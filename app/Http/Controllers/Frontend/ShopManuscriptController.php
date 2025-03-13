@@ -100,8 +100,8 @@ class ShopManuscriptController extends Controller
             $file = $request->file('manuscript');
             $extension = $file->getClientOriginalExtension();
 
-            if (!in_array($extension, ['odt', 'pdf', 'doc', 'docx'])) {
-                $customErrors = ['manuscript' => ['The manuscript must be a file of type: odt, pdf, doc, docx.']];
+            if (!in_array($extension, ['docx'])) { //'odt', 'pdf', 'doc', 
+                $customErrors = ['manuscript' => ['The manuscript must be a file of type: docx.']]; //odt, pdf, doc, 
                 $validator = FacadeValidator::make([], []); 
                 $validator->validate(); // Perform validation without rules
                 $validator->errors()->merge($customErrors);
@@ -117,10 +117,19 @@ class ShopManuscriptController extends Controller
         }
 
         $uploadedManuscript = $shopManuscriptService->uploadManuscriptTest( $request );
+        if ($uploadedManuscript['word_count'] == 0) {
+            $customErrors = ['manuscript' => ['The manuscript word count is invalid.']];
+            $validator = FacadeValidator::make([], []); 
+            $validator->validate(); // Perform validation without rules
+            $validator->errors()->merge($customErrors);
+
+            throw new ValidationException($validator);
+        }
+
         $shopManuscript = ShopManuscript::find($shop_manuscript_id);
         $word_count =  $uploadedManuscript['word_count'];
-        $word_to_deduct = $word_count * 0.02;
-        $new_word_count = ceil($word_count - $word_to_deduct);
+        //$word_to_deduct = $word_count * 0.02;
+        $new_word_count = $word_count;//ceil($word_count - $word_to_deduct);
         $excess_words = $new_word_count - 17500; // deduct the manusutvikling 1 max words
 
         // check if the uploaded file exceeds the plan max words

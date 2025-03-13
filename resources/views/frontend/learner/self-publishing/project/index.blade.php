@@ -72,7 +72,9 @@
                                             @elseif ($project->status === 'lead')
                                                 <span class="badge badge-warning">Lead</span>
                                             @elseif($project->status === 'finished')
-                                                <span class="badge badge-success">Finished</span>
+                                                <span class="badge badge-success">
+                                                    {{ trans('site.finish') }}
+                                                </span>
                                             @endif
                                         </td>
                                         <td>

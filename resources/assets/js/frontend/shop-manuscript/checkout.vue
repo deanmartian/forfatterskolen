@@ -36,9 +36,10 @@
                                 {{ trans('site.front.form.upload-manuscript') }}
                             </label>
 
+                            <!-- 'application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,' 
+                            + 'application/pdf, application/vnd.oasis.opendocument.text' -->
                             <FileUpload
-                            :accept="'application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,' 
-                            + 'application/pdf, application/vnd.oasis.opendocument.text'" 
+                            :accept="'application/vnd.openxmlformats-officedocument.wordprocessingml.document'" 
                             @fileSelected="handleFileSelected('manuscript', $event)"/>
                             <input type="hidden" name="manuscript">
 
@@ -385,7 +386,7 @@ import FileUpload from '../../components/FileUpload.vue';
             shopManuscript: Object,
             assignmentTypes: Array,
             userHasPaidCourse: Boolean,
-            originalPrice: Number
+            originalPrice: [Number, String]
         },
 
         data() {

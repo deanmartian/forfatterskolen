@@ -30,7 +30,7 @@ class ShopManuscriptService {
             $fileName = $time.'.'.$extension; // rename document
             $filepath = $destinationPath.$fileName;
             $request->manuscript->move($destinationPath, $fileName);
-            if($extension == "pdf") :
+            /* if($extension == "pdf") :
                 $pdf  =  new \PdfToText ( $destinationPath.$fileName ) ;
                 $pdf_content = $pdf->Text;
                 $word_count = FrontendHelpers::get_num_of_words($pdf_content);
@@ -45,9 +45,11 @@ class ShopManuscriptService {
                 $doc = odt2text($destinationPath.$fileName);
                 $word_count = FrontendHelpers::get_num_of_words($doc);
             endif;
-            $word_count = FrontendHelpers::wordCountByMargin((int) $word_count);
-            $word_to_deduct = $word_count * 0.02;
-            $word_count = ceil($word_count - $word_to_deduct);
+            $word_count = FrontendHelpers::wordCountByMargin((int) $word_count); */
+            $extractText = FrontendHelpers::extractTextFromDocx($destinationPath.$fileName);
+            $word_count = $extractText['word_count'];
+            /* $word_to_deduct = $word_count * 0.02;
+            $word_count = ceil($word_count - $word_to_deduct); */
         endif;
 
         return [
