@@ -48,6 +48,7 @@
                             <thead>
                                 <tr>
                                     <th>ISBN</th>
+                                    <th>Type</th>
                                     <th>
                                         Book name
                                     </th>
@@ -62,6 +63,9 @@
                                                 [$projectId, $projectCentralDistribution->id]) }}">
                                                 {{ $projectCentralDistribution->value }}
                                             </a>
+                                        </td>
+                                        <td>
+                                            {{ $projectCentralDistribution->isbn_type }}
                                         </td>
                                         <td>
                                             {{ $projectBook->book_name ?? '' }}
