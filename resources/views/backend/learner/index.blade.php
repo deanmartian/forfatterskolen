@@ -29,11 +29,11 @@
 			<label class="form-check-label" for="free-course">Free Course</label>
 		</div>
 
-		<div class="form-check form-inline">
+		{{-- <div class="form-check form-inline">
 			<input class="form-check-input" type="checkbox" name="workshop" value="1"
 				   @if (Request::has('workshop')) checked @endif>
 			<label class="form-check-label" for="workshop">Workshop</label>
-		</div>
+		</div> --}}
 
 		<div class="form-check form-inline">
 			<input class="form-check-input" type="checkbox" name="shop-manuscript" value="1"
