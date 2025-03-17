@@ -1401,8 +1401,8 @@ class ProjectController extends Controller
         $turnedOverList = [];
 
         if ($projectBook && $projectBook->sales) {
-            $totalBookSold = $projectBook->sales()->sum('quantity');
-            $totalBookSale = $projectBook->sales()->sum('amount');
+            $totalBookSold = $projectBook->sales()->where('project_registration_id', $registration_id)->sum('quantity');
+            $totalBookSale = $projectBook->sales()->where('project_registration_id', $registration_id)->sum('amount');
 
             $years = range($currentYear, $currentYear - 1);
         }
@@ -1464,6 +1464,7 @@ class ProjectController extends Controller
         ];
 
         $baseQuery = ProjectBookSale::leftJoin('project_books', 'project_book_sales.project_book_id', '=', 'project_books.id')
+            ->where('project_registration_id', $registration_id)
             ->where('project_id', $projectId);
 
         $quantitySold = (clone $baseQuery)
@@ -1619,13 +1620,17 @@ class ProjectController extends Controller
             $saveVariousRoute = 'g-admin.project.storage.save-various';
         }
 
+        $projectBookSales = $projectBook 
+            ? $projectBook->sales()->where('project_registration_id', $registration_id)->get() 
+            : [];
+
         return view('backend.project.storage-details', compact('backRoute', 'layout', 'projectId', 'project', 
         'projectUserBook', 'userBooksForSale', 'totalBookSold', 'totalBookSale', 'years', 'yearlyData', 'saveBookRoute',
         'deleteBookRoute', 'saveDetailsRoute', 'saveVariousRoute', 'projectBook', 'saveDistributionRoute',
         'deleteDistributionRoute', 'bookSaleTypes', 'saveBookSaleRoute', 'importBookSaleRoute', 'deleteBookSaleRoute', 
         'centralISBNs', 'saveStorageSaleRoute', 'inventorySales', 'deleteStorageSaleRoute', array_keys($categories),
         'inventoryPhysicalItems', 'inventoryDelivered', 'inventoryReturns', 'totalBalance', 'inventoryTotal', 'quantitySold',
-        'totalQuantitySold', 'storageCosts'));
+        'totalQuantitySold', 'storageCosts', 'registration_id', 'projectBookSales'));
     }
 
     public function saveStorageBook($projectId, Request $request)
@@ -1703,6 +1708,7 @@ class ProjectController extends Controller
         foreach ($formattedData as $importData) {
             ProjectBookSale::updateOrCreate([
                 'project_book_id' => $project_book_id,
+                'project_registration_id' => $request->project_registration_id,
                 'invoice_number' => $importData['faktnr'],
             ],
             [

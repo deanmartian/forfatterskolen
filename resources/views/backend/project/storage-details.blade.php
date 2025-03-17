@@ -253,6 +253,7 @@
                         onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
                         <input type="hidden" name="id">
+                        <input type="hidden" name="project_registration_id" value="{{ $registration_id }}">
     
                         <div class="form-group">
                             <label>Book</label>
@@ -332,6 +333,7 @@
                         onsubmit="disableSubmit(this)">
                         {{ csrf_field() }}
                         <input type="hidden" name="id">
+                        <input type="hidden" name="project_registration_id" value="{{ $registration_id }}">
     
                         <div class="form-group">
                             <input type="file" name="book_sale" class="form-control"

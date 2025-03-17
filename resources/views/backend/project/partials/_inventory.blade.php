@@ -181,44 +181,42 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if ($projectBook)
-                            @foreach($projectBook->sales as $bookSale)
-                                <tr>
-                                    <td>
-                                        {{ $bookSale->date }}
-                                    </td>
-                                    <td>
-                                        {{ $bookSale->customer_name }}
-                                    </td>
-                                    <td>
-                                        {{ $bookSale->quantity }}
-                                    </td>
-                                    <td>
-                                        {{ $bookSale->price_formatted }}
-                                    </td>
-                                    <td>
-                                        {{ $bookSale->discount_formatted }}
-                                    </td>
-                                    <td>
-                                        {{ $bookSale->total_amount_formatted }}
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-primary btn-xs bookSalesBtn" data-toggle="modal"
-                                                data-record="{{ json_encode($bookSale) }}"
-                                                data-target="#bookSalesModal">
-                                            <i class="fa fa-edit"></i>
-                                        </button>
+                        @foreach($projectBookSales as $bookSale)
+                            <tr>
+                                <td>
+                                    {{ $bookSale->date }}
+                                </td>
+                                <td>
+                                    {{ $bookSale->customer_name }}
+                                </td>
+                                <td>
+                                    {{ $bookSale->quantity }}
+                                </td>
+                                <td>
+                                    {{ $bookSale->price_formatted }}
+                                </td>
+                                <td>
+                                    {{ $bookSale->discount_formatted }}
+                                </td>
+                                <td>
+                                    {{ $bookSale->total_amount_formatted }}
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary btn-xs bookSalesBtn" data-toggle="modal"
+                                            data-record="{{ json_encode($bookSale) }}"
+                                            data-target="#bookSalesModal">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
 
-                                        <button class="btn btn-danger btn-xs deleteBtn" data-toggle="modal"
-                                                data-target="#deleteModal"
-                                                data-title="Delete Book Sale"
-                                                data-action="{{ route($deleteBookSaleRoute, $bookSale->id) }}">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        @endif
+                                    <button class="btn btn-danger btn-xs deleteBtn" data-toggle="modal"
+                                            data-target="#deleteModal"
+                                            data-title="Delete Book Sale"
+                                            data-action="{{ route($deleteBookSaleRoute, $bookSale->id) }}">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
