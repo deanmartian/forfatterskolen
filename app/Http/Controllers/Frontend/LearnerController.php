@@ -2193,6 +2193,15 @@ class LearnerController extends Controller
             'centralDistributions', 'mentorBookBases', 'uploadFilesToMentorBookBases'));
     }
 
+    public function marketing()
+    {
+        $standardProject = FrontendHelpers::getLearnerStandardProject(Auth::id());
+        $marketingPlans = $standardProject ? MarketingPlan::with(['questions.answers' => function($query) use ($standardProject) {
+            $query->where('marketing_plan_question_answers.project_id', $standardProject->id);
+        }])->get() : [];
+        return view('frontend.learner.self-publishing.marketing', compact('marketingPlans'));
+    }
+
     public function projectMarketing( $project_id )
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);

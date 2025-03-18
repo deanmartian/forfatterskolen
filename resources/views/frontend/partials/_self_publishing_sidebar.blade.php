@@ -29,6 +29,12 @@
             </a>
         </li>
 
+        <li class="@if(Request::is('account/marketing')) active @endif">
+            <a href=" {{ route('learner.marketing') }} ">
+                <i class="fa fa-file"></i> {{ trans('site.author-portal.marketing') }}
+            </a>
+        </li>
+
         <li>
             <a href="#">
                 {{ trans('site.author-portal-menu.editor-services') }}
