@@ -42,7 +42,9 @@
 </head>
 <body>
     <h2>{{ trans('site.distribution-cost-report') }}</h2>
-    <p><strong>{{ trans('site.date-generated') }}:</strong> {{ \Carbon\Carbon::now()->format('F j, Y') }}</p>
+    <p><strong>{{ trans('site.date-generated') }}:</strong>
+        {{ ucfirst(FrontendHelpers::convertMonthLanguage(\Carbon\Carbon::now()->format('m'))) }}
+        {{ \Carbon\Carbon::now()->format('j, Y') }}</p>
 
     <table>
         <thead>
