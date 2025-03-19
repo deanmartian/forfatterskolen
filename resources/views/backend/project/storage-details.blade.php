@@ -439,6 +439,7 @@
 @stop
 
 @section('scripts')
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script>
     $(".bookBtn").click(function() {
         let modal = $("#bookModal");
@@ -685,6 +686,23 @@
         var result = capitalizedWords.join(' ');
         
         return result;
+    }
+
+    function payoutToggle(self) {
+        let id = $(self).attr('data-id');
+        let year = $(self).attr('data-value');
+        let is_checked = $(self).prop('checked');
+        let check_val = is_checked ? 1 : 0;
+
+        $.ajax({
+            type:'POST',
+            url:'/project/registration/' + id + '/paid-year',
+            headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            data: { 'is_checked' : check_val, 'year': year },
+            success: function(data){
+                console.log(data);
+            }
+        });
     }
 
 </script>

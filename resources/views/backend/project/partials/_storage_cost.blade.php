@@ -11,6 +11,7 @@
                     <td>Sales</td>
                     <td>Total Storage Cost</td>
                     <td>Payout</td>
+                    <td></td>
                 </tr>
             </thead>
             <tbody>
@@ -39,6 +40,21 @@
                         </td>
                         <td>
                             {{ FrontendHelpers::currencyFormat($storageCost['payout']) }}
+                        </td>
+                        <td>
+                            <label for="">Is Payout paid?</label>
+                            <input type="checkbox" data-toggle="toggle" data-on="Yes"
+                                data-off="No" data-type="copy-editing" data-size="mini" data-value="{{ $storageCost['year'] }}"
+                                data-id="{{ $registration_id }}"
+                                onchange="payoutToggle(this)" 
+                                @if (in_array($storageCost['year'], $paidDistributionYears))
+                                    {{ 'checked' }}
+                                @endif> <br>
+                            <a href="{{ route('admin.project.storage-cost.export', 
+                                [$project->id, $registration_id, $storageCost['year']]) }}" 
+                                class="btn btn-primary btn-xs">
+                                Download
+                            </a>
                         </td>
                     </tr>
                 @endforeach
