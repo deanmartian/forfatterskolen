@@ -35,6 +35,7 @@ use App\ProjectInvoice;
 use App\ProjectManualInvoice;
 use App\ProjectMarketing;
 use App\ProjectRegistration;
+use App\ProjectRegistrationDistribution;
 use App\ProjectTask;
 use App\ProjectWholeBook;
 use App\SelfPublishing;
@@ -1624,13 +1625,16 @@ class ProjectController extends Controller
             ? $projectBook->sales()->where('project_registration_id', $registration_id)->get() 
             : [];
 
+        $registrationDistributionCosts = ProjectRegistrationDistribution::where('project_registration_id', $registration_id)->first();
+        $paidDistributionYears = $registrationDistributionCosts->years ?? [];
+
         return view('backend.project.storage-details', compact('backRoute', 'layout', 'projectId', 'project', 
         'projectUserBook', 'userBooksForSale', 'totalBookSold', 'totalBookSale', 'years', 'yearlyData', 'saveBookRoute',
         'deleteBookRoute', 'saveDetailsRoute', 'saveVariousRoute', 'projectBook', 'saveDistributionRoute',
         'deleteDistributionRoute', 'bookSaleTypes', 'saveBookSaleRoute', 'importBookSaleRoute', 'deleteBookSaleRoute', 
         'centralISBNs', 'saveStorageSaleRoute', 'inventorySales', 'deleteStorageSaleRoute', array_keys($categories),
         'inventoryPhysicalItems', 'inventoryDelivered', 'inventoryReturns', 'totalBalance', 'inventoryTotal', 'quantitySold',
-        'totalQuantitySold', 'storageCosts', 'registration_id', 'projectBookSales'));
+        'totalQuantitySold', 'storageCosts', 'registration_id', 'projectBookSales', 'paidDistributionYears'));
     }
 
     public function saveStorageBook($projectId, Request $request)
@@ -1829,6 +1833,102 @@ class ProjectController extends Controller
             ->with(['errors' => AdminHelpers::createMessageBag('Storage details saved successfully.'),
                 'alert_type' => 'success']);
     }
+
+    public function saveRegistrationPaidDistribution($registration_id, Request $request)
+    {
+        $model = ProjectRegistrationDistribution::where('project_registration_id', $registration_id)->first();
+
+        if (!$model) {
+            $model = new ProjectRegistrationDistribution();
+            $model->project_registration_id = $registration_id;
+            $model->years = [];
+        }
+
+        // Ensure $model->years is an array
+        $years = is_array($model->years) ? $model->years : [];
+
+        $year = $request->input('year');
+        $isChecked = $request->input('is_checked');
+
+        if ($isChecked == '1') {
+            // Add the year if not already in the array
+            if (!in_array($year, $years)) {
+                $years[] = $year;
+            }
+        } else {
+            // Remove the year if it exists
+            $years = array_filter($years, function ($y) use ($year) {
+                return $y != $year;
+            });
+        }
+
+        // Update and save
+        $model->years = array_values($years); // Reindex array
+        $model->save();
+
+        return response()->json(['message' => 'Updated successfully', 'years' => $model->years]);
+    }
+
+    public function exportStorageCost($project_id, $registration_id, $selectedYear)
+    {
+        $quarters = [1, 2, 3, 4];
+
+        // Fetch sales data
+        $salesData = DB::table('project_books as books')
+            ->select(DB::raw('YEAR(sales.date) as year'), DB::raw('SUM(amount) as total_sales'))
+            ->leftJoin('project_book_sales as sales', 'sales.project_book_id', '=', 'books.id')
+            ->whereRaw('YEAR(sales.date) = ?', [$selectedYear])
+            ->where('books.project_id', $project_id)
+            ->groupBy('year')
+            ->get()
+            ->keyBy('year');
+
+        // Fetch distributions data
+        $distributionsData = DB::table('project_registrations as distribution')
+            ->select(DB::raw('YEAR(distribution_costs.date) as year'), DB::raw('QUARTER(distribution_costs.date) as quarter'), 
+                DB::raw('SUM(amount) as total_distributions'))
+            ->leftJoin('storage_distribution_costs as distribution_costs', 
+                'distribution_costs.project_book_id', '=', 'distribution.id')
+            ->where('distribution.id', $registration_id)
+            ->whereRaw('YEAR(distribution_costs.date) = ?', [$selectedYear])
+            ->groupBy('year', 'quarter')
+            ->orderBy('year')
+            ->orderBy('quarter')
+            ->get()
+            ->groupBy('year');
+
+        // Process data
+        $data = collect([$selectedYear])->map(function ($year) use ($salesData, $distributionsData, $quarters) {
+            $sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
+            $distributions = [];
+
+            foreach ($quarters as $quarter) {
+                $distributions[$quarter] = isset($distributionsData[$year]) 
+                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0)
+                    : 0;
+            }
+
+            return [
+                'year' => $year,
+                'q1_distributions' => $distributions[1],
+                'q2_distributions' => $distributions[2],
+                'q3_distributions' => $distributions[3],
+                'q4_distributions' => $distributions[4],
+                'total_sales' => $sales,
+                'total_distributions' => array_sum($distributions),
+                'payout' => $sales - array_sum($distributions),
+            ];
+        });
+
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        $pdf->setPaper('letter', 'landscape');
+        $pdf->loadHTML(view('frontend.pdf.distribution-cost', compact('data')));
+        return $pdf->download('Distribution Cost Report.pdf');
+        //return $pdf->stream('distribution-cost.pdf');
+    }
+
+
 
     public function saveStorageVarious($book_id, Request $request)
     {

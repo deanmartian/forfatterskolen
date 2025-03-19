@@ -1263,6 +1263,9 @@ Route::group([
             ->name('admin.project.storage.import-book-sales');
         Route::delete('project/storage/book-sales/{book_id}/delete', 'ProjectController@deleteBookSales')->name('admin.project.storage.delete-book-sales');
         Route::post('/project/book/{id}/storage/save-details', 'ProjectController@saveStorageBookDetails')->name('admin.project.storage.save-details');
+        Route::post('project/registration/{id}/paid-year', 'ProjectController@saveRegistrationPaidDistribution');
+        Route::get('project/{project_id}/registration/{registration_id}/storage-cost/{year}/export', 'ProjectController@exportStorageCost')
+        ->name('admin.project.storage-cost.export');
         Route::post('/project/book/{id}/storage/save-various', 'ProjectController@saveStorageVarious')->name('admin.project.storage.save-various');
         Route::post('/project/book/{id}/storage/save-distribution-cost', 'ProjectController@saveDistributionCost')
             ->name('admin.project.storage.save-distribution-cost');

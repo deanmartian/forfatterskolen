@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Distribution Cost Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 10px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <h2>{{ trans('site.distribution-cost-report') }}</h2>
+    <p><strong>{{ trans('site.date-generated') }}:</strong> {{ \Carbon\Carbon::now()->format('F j, Y') }}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>{{ trans('site.year') }}</th>
+                <th>{{ trans('site.q1-cost') }}</th>
+                <th>{{ trans('site.q2-cost') }}</th>
+                <th>{{ trans('site.q3-cost') }}</th>
+                <th>{{ trans('site.q4-cost') }}</th>
+                <th>{{ trans('site.author-portal-menu.sales') }}</th>
+                <th>{{ trans('site.total-storage-cost') }}</th>
+                <th>{{ trans('site.payout') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($data as $storageCost)
+            <tr>
+                <td>{{ $storageCost['year'] }}</td>
+                <td>
+                    {{ FrontendHelpers::currencyFormat($storageCost['q1_distributions']) }}
+                </td>
+                <td>
+                    {{ FrontendHelpers::currencyFormat($storageCost['q2_distributions']) }}
+                </td>
+                <td>
+                    {{ FrontendHelpers::currencyFormat($storageCost['q3_distributions']) }}
+                </td>
+                <td>
+                    {{ FrontendHelpers::currencyFormat($storageCost['q4_distributions']) }}
+                </td>
+                <td>
+                    {{ FrontendHelpers::currencyFormat($storageCost['total_sales']) }}
+                </td>
+                <td>
+                    {{ FrontendHelpers::currencyFormat($storageCost['total_distributions']) }}
+                </td>
+                <td>
+                    {{ FrontendHelpers::currencyFormat($storageCost['payout']) }}
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>{{ trans('site.generated-by') }} | {{ \Carbon\Carbon::now()->toDateTimeString() }}</p>
+    </div>
+</body>
+</html>
