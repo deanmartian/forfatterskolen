@@ -130,6 +130,40 @@
 
         @yield('scripts')
 
+        <script>
+            checkWindowWidth();
+
+            // Add an event listener for the window resize event
+            window.addEventListener('resize', handleResize);
+
+            // Toggle sidebar on button click
+            $("#sidebarCollapse").click(function () {
+                $("#sidebar").toggleClass("hidden-xs hidden");
+                $("#main-container").toggleClass("enlarge");
+            });
+
+            $("#main-content").click(function() {
+                checkWindowWidth();
+            })
+
+            function handleResize() {
+                // Code to execute when the window is resized
+                checkWindowWidth();
+            }
+
+            function checkWindowWidth() {
+                var windowWidth = window.innerWidth;
+
+                if (windowWidth <= 1026) {
+                    $("#sidebar").addClass("hidden-xs hidden");
+                    $("#main-container").removeClass("enlarge");
+                } else {
+                    $("#sidebar").removeClass("hidden-xs hidden");
+                    $("#main-container").addClass("enlarge");
+                }
+            }
+        </script>
+
         <!-- Google Tag Manager (noscript) -->
         <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PBZBPBN2"
             height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
