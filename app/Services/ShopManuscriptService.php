@@ -197,6 +197,8 @@ class ShopManuscriptService {
     public function generateSveaCheckout( Request $request )
     {
         $orderRecord = $this->createOrder($request);
+        $userHasPaidCourse = FrontendHelpers::userHasPaidCourse();
+        $vatPercent = !$userHasPaidCourse ? 2500 : 0;  // 25% or 0
 
         if (!$request->has('order_type') ||
             ($request->has('order_type') && $request->order_type === Order::MANUSCRIPT_TYPE)) {
@@ -252,7 +254,8 @@ class ShopManuscriptService {
                             "name" => \Illuminate\Support\Str::limit($shopManuscript->title, 35),
                             "quantity" => 100,
                             "unitPrice" => $calculatedPrice*100,
-                            "unit" => "pc"
+                            "unit" => "pc",
+                            "vatPercent" => $vatPercent
                         )
                     )
                 ),
