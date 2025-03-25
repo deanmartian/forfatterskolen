@@ -40,12 +40,17 @@
                                 {{ trans('site.author-portal.distribution-cost') }}
                             </a>
                         </li>
+                        <li @if( Request::input('tab') == 'sales-distribution-cost' ) class="active" @endif>
+                            <a href="?tab=sales-distribution-cost">
+                                {{ trans('site.sales-distribution-cost') }}
+                            </a>
+                        </li>
                     </ul>
 
                     <div class="tab-content">
                         <div class="tab-pane fade in active">
                             @if( Request::input('tab') == 'distribution')
-                                <div class="card global-car">
+                                <div class="card global-card">
                                     <div class="card-body">
                                         <table class="table margin-top">
                                             <thead>
@@ -94,6 +99,68 @@
                                                             </td>
                                                         </tr>
                                                     @endif
+                                                @endif
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            @elseif( Request::input('tab') == 'sales-distribution-cost')
+                                <div class="card global-card">
+                                    <div class="card-body">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Year</th>
+                                                    <th>Q1 Cost ($)</th>
+                                                    <th>Q2 Cost ($)</th>
+                                                    <th>Q3 Cost ($)</th>
+                                                    <th>Q4 Cost ($)</th>
+                                                    <th>Sales</th>
+                                                    <th>Total Storage Cost</th>
+                                                    <th>Payout</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if ($registration)
+                                                    @foreach ($storageCosts as $storageCost)
+                                                        <tr>
+                                                            <td>
+                                                                {{ $storageCost['year'] }}
+                                                            </td>
+                                                            <td>
+                                                                {{ FrontendHelpers::currencyFormat($storageCost['q1_distributions']) }}
+                                                            </td>
+                                                            <td>
+                                                                {{ FrontendHelpers::currencyFormat($storageCost['q2_distributions']) }}
+                                                            </td>
+                                                            <td>
+                                                                {{ FrontendHelpers::currencyFormat($storageCost['q3_distributions']) }}
+                                                            </td>
+                                                            <td>
+                                                                {{ FrontendHelpers::currencyFormat($storageCost['q4_distributions']) }}
+                                                            </td>
+                                                            <td>
+                                                                {{ FrontendHelpers::currencyFormat($storageCost['total_sales']) }}
+                                                            </td>
+                                                            <td>
+                                                                {{ FrontendHelpers::currencyFormat($storageCost['total_distributions']) }}
+                                                            </td>
+                                                            <td>
+                                                                {{ FrontendHelpers::currencyFormat($storageCost['payout']) }}
+                                                            </td>
+                                                            <td>
+                                                                <label for="">Is Payout paid?</label>
+                                                                {{ in_array($storageCost['year'], $paidDistributionYears) 
+                                                                ? 'Yes' : 'No' }} <br>
+                                                                <a href="{{ route('learner.project.storage-cost.export', 
+                                                                    [$registration->project_id, $registration->id, $storageCost['year']]) }}" 
+                                                                    class="btn btn-primary btn-xs">
+                                                                    Download
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
                                                 @endif
                                             </tbody>
                                         </table>

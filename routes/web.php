@@ -352,6 +352,8 @@ Route::group([
         Route::get('/book-sale', 'LearnerController@bookSale')->name('learner.book-sale');
         Route::get('/book-for-sale/{id}', 'LearnerController@bookForSale')->name('learner.book-for-sale');
         Route::get('/book-sale/list-by-month/{year}', 'LearnerController@bookSaleByMonth');
+        Route::get('project/{project_id}/registration/{registration_id}/storage-cost/{year}/export', 'LearnerController@exportStorageCost')
+        ->name('learner.project.storage-cost.export');
         Route::post('/for-sale-books/save', 'LearnerController@saveForSaleBooks')->name('learner.save-for-sale-books');
         Route::delete('/for-sale-books/{id}/delete', 'LearnerController@deleteForSaleBooks')->name('learner.delete-for-sale-books');
 
@@ -1266,6 +1268,9 @@ Route::group([
         Route::post('project/registration/{id}/paid-year', 'ProjectController@saveRegistrationPaidDistribution');
         Route::get('project/{project_id}/registration/{registration_id}/storage-cost/{year}/export', 'ProjectController@exportStorageCost')
         ->name('admin.project.storage-cost.export');
+        Route::get('project/{project_id}/registration/{registration_id}/storage-cost/{year}/export-excel', 
+            'ProjectController@excelExportStorageCost')
+            ->name('admin.project.storage-cost.export-excel');
         Route::post('/project/book/{id}/storage/save-various', 'ProjectController@saveStorageVarious')->name('admin.project.storage.save-various');
         Route::post('/project/book/{id}/storage/save-distribution-cost', 'ProjectController@saveDistributionCost')
             ->name('admin.project.storage.save-distribution-cost');

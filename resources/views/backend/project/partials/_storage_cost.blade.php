@@ -55,6 +55,12 @@
                                 class="btn btn-primary btn-xs">
                                 Download
                             </a>
+
+                            <a href="{{ route('admin.project.storage-cost.export-excel', 
+                                [$project->id, $registration_id, $storageCost['year']]) }}" 
+                                class="btn btn-success btn-xs">
+                                Download Excel
+                            </a>
                         </td>
                     </tr>
                 @endforeach

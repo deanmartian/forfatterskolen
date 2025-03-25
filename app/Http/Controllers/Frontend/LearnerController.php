@@ -104,6 +104,7 @@ use App\Http\FrontendHelpers;
 use App\Jobs\UpdateFikenContactDetailsJob;
 use App\ProjectBookFormatting;
 use App\ProjectBookSale;
+use App\ProjectRegistrationDistribution;
 use App\PublishingService as AppPublishingService;
 use App\SelfPublishingPortalRequest;
 use App\ShopManuscript;
@@ -1984,14 +1985,145 @@ class LearnerController extends Controller
 
         $standardProject = FrontendHelpers::getLearnerStandardProject(Auth::id());
         $projectUserBook = null;
+        $storageCosts = [];
+        $paidDistributionYears = [];
+        $registration = [];
+
         if ($standardProject) {
             $registration = ProjectRegistration::centralDistributions()->where('in_storage', 1)
                 ->where('project_id', $standardProject->id)->first();
 
             $projectUserBook = ProjectRegistration::find($registration->id);
+
+            $startYear = 2024; // Change if needed
+            $currentYear = Carbon::now()->year;
+            $years = range($startYear, $currentYear);
+            $quarters = [1, 2, 3, 4]; // Define quarters
+
+            // Get Total Sales by Year and Quarter
+            $salesData = DB::table('project_books as books')
+            ->select(
+                DB::raw('YEAR(sales.date) as year'),
+                DB::raw('SUM(amount) as total_sales')
+            )
+            ->leftJoin('project_book_sales as sales', 'sales.project_book_id', '=', 'books.id')
+            ->whereBetween(DB::raw('YEAR(sales.date)'), [$startYear, $currentYear])
+            ->where('books.project_id', $standardProject->id)
+            ->groupBy('year')
+            ->orderBy('year', 'DESC')
+            ->get()
+            ->keyBy('year'); // Store results by year for easy lookup
+
+            // Get Total Distributions by Year and Quarter
+            $distributionsData = DB::table('project_registrations as distribution')
+            ->select(
+                DB::raw('YEAR(distribution_costs.date) as year'),
+                DB::raw('QUARTER(distribution_costs.date) as quarter'),
+                DB::raw('SUM(amount) as total_distributions')
+            )
+            ->leftJoin('storage_distribution_costs as distribution_costs', 
+                'distribution_costs.project_book_id', '=', 'distribution.id')
+            ->where('distribution.id', $registration->id)
+            ->groupBy('year', 'quarter')
+            ->orderBy('year', 'DESC')
+            ->orderBy('quarter', 'ASC')
+            ->get()
+            ->groupBy('year'); // Store results by year for easy lookup
+
+            // Merge Data for Year and Quarter
+            $storageCosts = collect($years)->map(function ($year) use ($salesData, $distributionsData, $quarters) {
+                $sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
+                $distributions = [];
+            
+                // Initialize distribution values for all quarters
+                foreach ($quarters as $quarter) {
+                    $distributions[$quarter] = isset($distributionsData[$year]) 
+                        ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0)
+                        : 0;
+                }
+            
+                // Calculate totals
+                $totalDistributions = array_sum($distributions);
+                $payout = $sales - $totalDistributions;
+            
+                return [
+                    'year' => $year,
+                    'q1_distributions' => $distributions[1],
+                    'q2_distributions' => $distributions[2],
+                    'q3_distributions' => $distributions[3],
+                    'q4_distributions' => $distributions[4],
+                    'total_sales' => $sales,
+                    'total_distributions' => $totalDistributions,
+                    'payout' => $payout,
+                ];
+            })->sortByDesc('year');
+
+            $registrationDistributionCosts = ProjectRegistrationDistribution::where('project_registration_id', $registration->id)
+                ->first();
+            $paidDistributionYears = $registrationDistributionCosts->years ?? [];
         }
         
-        return view('frontend.learner.self-publishing.sales', compact('learner', 'uniqueYears', 'projectUserBook'));
+        return view('frontend.learner.self-publishing.sales', compact('learner', 'uniqueYears', 'projectUserBook', 
+            'storageCosts', 'paidDistributionYears', 'registration'));
+    }
+
+    public function exportStorageCost($project_id, $registration_id, $selectedYear)
+    {
+        $quarters = [1, 2, 3, 4];
+
+        // Fetch sales data
+        $salesData = DB::table('project_books as books')
+            ->select(DB::raw('YEAR(sales.date) as year'), DB::raw('SUM(amount) as total_sales'))
+            ->leftJoin('project_book_sales as sales', 'sales.project_book_id', '=', 'books.id')
+            ->whereRaw('YEAR(sales.date) = ?', [$selectedYear])
+            ->where('books.project_id', $project_id)
+            ->groupBy('year')
+            ->get()
+            ->keyBy('year');
+
+        // Fetch distributions data
+        $distributionsData = DB::table('project_registrations as distribution')
+            ->select(DB::raw('YEAR(distribution_costs.date) as year'), DB::raw('QUARTER(distribution_costs.date) as quarter'), 
+                DB::raw('SUM(amount) as total_distributions'))
+            ->leftJoin('storage_distribution_costs as distribution_costs', 
+                'distribution_costs.project_book_id', '=', 'distribution.id')
+            ->where('distribution.id', $registration_id)
+            ->whereRaw('YEAR(distribution_costs.date) = ?', [$selectedYear])
+            ->groupBy('year', 'quarter')
+            ->orderBy('year')
+            ->orderBy('quarter')
+            ->get()
+            ->groupBy('year');
+
+        // Process data
+        $data = collect([$selectedYear])->map(function ($year) use ($salesData, $distributionsData, $quarters) {
+            $sales = isset($salesData[$year]) ? $salesData[$year]->total_sales : 0;
+            $distributions = [];
+
+            foreach ($quarters as $quarter) {
+                $distributions[$quarter] = isset($distributionsData[$year]) 
+                    ? ($distributionsData[$year]->firstWhere('quarter', $quarter)->total_distributions ?? 0)
+                    : 0;
+            }
+
+            return [
+                'year' => $year,
+                'q1_distributions' => $distributions[1],
+                'q2_distributions' => $distributions[2],
+                'q3_distributions' => $distributions[3],
+                'q4_distributions' => $distributions[4],
+                'total_sales' => $sales,
+                'total_distributions' => array_sum($distributions),
+                'payout' => $sales - array_sum($distributions),
+            ];
+        });
+
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        $pdf->setPaper('letter', 'landscape');
+        $pdf->loadHTML(view('frontend.pdf.distribution-cost', compact('data')));
+        return $pdf->download('Distribution Cost Report.pdf');
+        //return $pdf->stream('distribution-cost.pdf');
     }
 
     public function bookForSale($id)
