@@ -701,13 +701,14 @@
 											<td>
 												@if ($copyEditing->file)
 													@if (strpos($copyEditing->file, 'project-'))
-														<a href="{{ route('dropbox.download_file', trim($copyEditing->file)) }}">
+														<a href="{{ route('editor.dropbox.download_file', trim($copyEditing->file)) }}">
 															<i class="fa fa-download" aria-hidden="true"></i>
 														</a>&nbsp;
-														<a href="{{ route('dropbox.shared_link', trim($copyEditing->file)) }}" target="_blank">
+														<a href="{{ route('editor.dropbox.shared_link', trim($copyEditing->file)) }}" target="_blank">
 															{{ basename($copyEditing->file) }}
 														</a>
 													@else
+													else
 														<a href="{{ route('editor.other-service.download-doc', ['id' => $copyEditing->id, 'type' => 1]) }}"
 															download>
 															<i class="fa fa-download" aria-hidden="true"></i>

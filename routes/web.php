@@ -2079,6 +2079,13 @@ Route::group([
         Route::get('login/editor-email/{email_hash}', 'LoginController@editorEmailLogin')->name('editor.login.email');
         Route::post('login', 'LoginController@editorLogin')->name('editor.login.store');
     });
+
+    Route::get('/dropbox/shared-link/{path}', 'Frontend\DropboxController@createSharedLink')
+        ->where('path', '.*')
+        ->name('editor.dropbox.shared_link');
+    Route::get('/dropbox/download/{path}', 'Frontend\DropboxController@downloadFile')
+        ->where('path', '.*')
+        ->name('editor.dropbox.download_file');
 });
 
 // File Manager routes
