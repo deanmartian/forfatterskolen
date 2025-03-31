@@ -2697,7 +2697,7 @@ class LearnerController extends Controller
             ->leftJoin('packages','packages.id','=','course_certificates.package_id')
             ->leftJoin('courses_taken','courses_taken.package_id', '=','packages.id')
             ->select('course_certificates.*', 'courses.title as course_title')
-            ->whereNotNull('courses.completed_date')
+            ->where('courses.completed_date', '<=', Carbon::now())
             ->whereNotNull('courses.issue_date')
             ->whereNotNull('course_certificates.package_id')
             ->where('courses_taken.user_id', \Auth::user()->id)
