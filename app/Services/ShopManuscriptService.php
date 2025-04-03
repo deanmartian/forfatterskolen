@@ -374,9 +374,11 @@ class ShopManuscriptService {
                 $pdf_content = $pdf->Text;
                 $word_count = FrontendHelpers::get_num_of_words($pdf_content);
             elseif($extension == "docx") :
-                $docObj = new \Docx2Text($filePath);
+                /* $docObj = new \Docx2Text($filePath);
                 $docText= $docObj->convertToText();
-                $word_count = FrontendHelpers::get_num_of_words($docText);
+                $word_count = FrontendHelpers::get_num_of_words($docText); */
+                $extractText = FrontendHelpers::extractTextFromDocx($filePath);
+                $word_count = $extractText['word_count'];
             elseif($extension == "doc") :
                 $docText = FrontendHelpers::readWord($filePath);
                 $word_count = FrontendHelpers::get_num_of_words($docText);
