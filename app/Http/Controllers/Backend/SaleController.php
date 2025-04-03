@@ -87,7 +87,7 @@ class SaleController extends Controller {
                 return view('backend.sale.partials._pay-later', compact('payLaterOrders'));
             case 'power-office':
                 $invoices = PowerOfficeInvoice::wherehas('user')
-                    ->with('selfPublishing')
+                    ->whereHas('selfPublishing')
                     ->where('parent', 'self-publishing')->paginate(25);
 
                 return view('backend.sale.partials._power-office', compact('invoices'));
