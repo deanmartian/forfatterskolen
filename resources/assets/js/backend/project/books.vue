@@ -15,7 +15,9 @@
                 <tbody>
                 <tr v-for="book in books" :key="book.id">
                     <td>
-                        {{ project.user ? project.user.full_name : '' }}
+                        <a :href="'/learner/' + project.user_id" v-if="project.user">
+                            {{ project.user.full_name }}
+                        </a>
                     </td>
                     <td>
                         {{ book.book_name }}
