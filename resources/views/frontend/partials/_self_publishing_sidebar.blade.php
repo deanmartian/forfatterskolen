@@ -35,6 +35,12 @@
             </a>
         </li>
 
+        <li class="@if(Request::is('account/progress-plan')) active @endif">
+            <a href=" {{ route('learner.progress-plan') }} ">
+                <i class="fa fa-file"></i> Fremdriftsplan 
+            </a>
+        </li>
+
         <li>
             <a href="#">
                 {{ trans('site.author-portal-menu.editor-services') }}

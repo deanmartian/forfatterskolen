@@ -369,6 +369,8 @@ Route::group([
         Route::get('/self-publishing/feedback/{id}/download', 'SelfPublishingController@download')
         ->name('learner.self-publishing.feedback.download');
         Route::get('/marketing', 'LearnerController@marketing')->name('learner.marketing');
+        Route::get('/progress-plan', 'LearnerController@progressPlan')->name('learner.progress-plan');
+        Route::get('/progress-plan/{step}', 'LearnerController@progressPlanStep')->name('learner.progress-plan.step');
         Route::get('/self-publishing/order', 'SelfPublishingController@selfPublishingOrder')->name('learner.self-publishing.order');
         Route::post('/self-publishing/add-to-cart', 'SelfPublishingController@addToCart')->name('learner.self-publishing.add-to-cart');
         Route::get('/self-publishing/order/checkout', 'SelfPublishingController@checkoutOrder')->name('learner.self-publishing.checkout');
