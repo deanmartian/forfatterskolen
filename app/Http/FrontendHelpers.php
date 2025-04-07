@@ -1099,25 +1099,24 @@ class FrontendHelpers
     public static function checkIfLearnerHasBookSale($project_id = null)
     {
         $learner = Auth::user();
-        $standardProject = FrontendHelpers::getLearnerStandardProject($learner->id);
+        $project_id = $project_id ?? optional(FrontendHelpers::getLearnerStandardProject($learner->id))->id;
 
         if (!$project_id) {
-            $project_id = $standardProject->id;
+            return collect();
         }
 
-        $sales = ProjectBookSale::leftJoin('project_books', 'project_book_sales.project_book_id', '=', 'project_books.id')
+        return ProjectBookSale::leftJoin('project_books', 'project_book_sales.project_book_id', '=', 'project_books.id')
             ->select(
                 DB::raw('SUM(amount) as amount_total'),
-                DB::raw("DATE_FORMAT(date, '%m') as month"),
+                DB::raw("DATE_FORMAT(date, '%m') as month")
             )
-            ->whereYear('date', \Carbon\Carbon::now()->year)
-            //->where('user_id', $learner->id)
+            ->whereYear('date', now()->year)
             ->where('project_id', $project_id)
             ->groupBy('month')
-            ->orderBy('month', 'ASC')
+            ->orderBy('month')
             ->get();
-        return $sales;
     }
+
 
     public static function countFileWords($type, $request)
     {
