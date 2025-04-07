@@ -369,8 +369,10 @@ Route::group([
         Route::get('/self-publishing/feedback/{id}/download', 'SelfPublishingController@download')
         ->name('learner.self-publishing.feedback.download');
         Route::get('/marketing', 'LearnerController@marketing')->name('learner.marketing');
-        Route::get('/progress-plan', 'LearnerController@progressPlan')->name('learner.progress-plan');
-        Route::get('/progress-plan/{step}', 'LearnerController@progressPlanStep')->name('learner.progress-plan.step');
+        Route::get('/progress-plan', 'ProgressPlanController@index')->name('learner.progress-plan');
+        Route::get('/progress-plan/{step}', 'ProgressPlanController@planStep')->name('learner.progress-plan.step');
+        Route::post('/progress-plan/manuscripts/upload', 'ProgressPlanController@uploadManuscript')
+            ->name('learner.progress-plan.manuscript.upload');
         Route::get('/self-publishing/order', 'SelfPublishingController@selfPublishingOrder')->name('learner.self-publishing.order');
         Route::post('/self-publishing/add-to-cart', 'SelfPublishingController@addToCart')->name('learner.self-publishing.add-to-cart');
         Route::get('/self-publishing/order/checkout', 'SelfPublishingController@checkoutOrder')->name('learner.self-publishing.checkout');
@@ -1242,6 +1244,8 @@ Route::group([
         Route::post('/project/{id}/marketing/save', 'ProjectController@saveMarketing')->name('admin.project.save-marketing');
         Route::delete('/project/{id}/marketing/{marketing_id}/delete', 'ProjectController@deleteMarketing')->name('admin.project.delete-marketing');
         Route::get('/project/{id}/marketing-plan', 'ProjectController@marketingPlan')->name('admin.project.marketing-plan');
+        Route::get('/project/{id}/progress-plan', 'ProjectController@progressPlan')->name('admin.project.progress-plan');
+        Route::get('/project/{id}/progress-plan/{step}', 'ProjectController@progressPlanStep')->name('admin.project.progress-plan-step');
         Route::get('/project/{id}/contract', 'ProjectController@contract')->name('admin.project.contract');
         Route::post('/project/{id}/contract', 'ProjectController@storeContract')->name('admin.project.contract-store');
         Route::post('/project/{id}/contract/upload', 'ProjectController@uploadContract')->name('admin.project.contract-upload');

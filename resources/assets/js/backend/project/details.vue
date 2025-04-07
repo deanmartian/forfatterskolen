@@ -14,6 +14,9 @@
             <a :href="'/project/' + project.id + '/marketing-plan'" class="btn btn-primary btn-sm">
                 Marketing Plans
             </a>
+            <a :href="'/project/' + project.id + '/progress-plan'" class="btn btn-primary btn-sm">
+                Fremdriftsplan
+            </a>
             <a :href="'/project/' + project.id + '/contract'" class="btn btn-primary btn-sm">
                 Contract
             </a>

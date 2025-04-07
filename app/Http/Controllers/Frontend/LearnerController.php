@@ -2335,42 +2335,6 @@ class LearnerController extends Controller
         return view('frontend.learner.self-publishing.marketing', compact('marketingPlans'));
     }
 
-    public function progressPlan()
-    {
-        $standardProject = FrontendHelpers::getLearnerStandardProject(Auth::id());
-
-        $steps = [];
-
-        if ($standardProject) {
-            // Get saved steps from DB, keyed by step number
-            $saved = ProjectRoadmapStep::where('project_id', $standardProject->id)
-            ->get()
-            ->keyBy('step_number');
-
-            // Build full step list from constants
-            $steps = collect(ProjectRoadmapStep::STEPS)->map(function ($title, $number) use ($saved) {
-                $step = $saved->get($number);
-
-                return [
-                    'step_number' => $number,
-                    'title' => $title,
-                    'status' => $step->status ?? 'Ikke påbegynt',
-                    'expected_date' => $step->expected_date ?? null,
-                ];
-            });
-        }
-        
-        return view('frontend.learner.self-publishing.progress-plan', compact('steps'));
-    }
-
-    public function progressPlanStep($stepNumber)
-    {
-        $stepTitle = ProjectRoadmapStep::STEPS[$stepNumber] ?? 'Ukjent steg'; // Default if step doesn't exist
-        
-        return view('frontend.learner.self-publishing.progress-plan-step', compact('stepNumber', 'stepTitle'));
-        
-    }
-
     public function projectMarketing( $project_id )
     {
         $project = FrontendHelpers::userProject(Auth::user()->id, $project_id);

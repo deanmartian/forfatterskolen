@@ -34,9 +34,11 @@ use App\ProjectEbook;
 use App\ProjectGraphicWork;
 use App\ProjectInvoice;
 use App\ProjectManualInvoice;
+use App\ProjectManuscript;
 use App\ProjectMarketing;
 use App\ProjectRegistration;
 use App\ProjectRegistrationDistribution;
+use App\ProjectRoadmapStep;
 use App\ProjectTask;
 use App\ProjectWholeBook;
 use App\SelfPublishing;
@@ -1042,6 +1044,49 @@ class ProjectController extends Controller
         }
 
         return view('backend.project.marketing-plan', compact('layout', 'backRoute', 'project', 'marketingPlans'));
+    }
+
+    public function progressPlan( $project_id ) 
+    {
+        $project = Project::find($project_id);
+        $layout = 'backend.layout';
+        $backRoute = 'admin.project.show';
+
+        $saved = ProjectRoadmapStep::where('project_id', $project->id)
+            ->get()
+            ->keyBy('step_number');
+
+        $steps = collect(ProjectRoadmapStep::STEPS)->map(function ($title, $number) use ($saved) {
+            $step = $saved->get($number);
+
+            return [
+                'step_number' => $number,
+                'title' => $title,
+                'status' => $step->status ?? 'Ikke påbegynt',
+                'expected_date' => $step->expected_date ?? null,
+            ];
+        });
+
+        return view('backend.project.progress-plan.steps', compact('layout', 'backRoute', 'project', 'steps'));
+    }
+
+    public function progressPlanStep($project_id, $stepNumber)
+    {
+        $project = Project::find($project_id);
+        $layout = 'backend.layout';
+        $backRoute = 'admin.project.progress-plan';
+        $stepTitle = ProjectRoadmapStep::STEPS[$stepNumber] ?? 'Ukjent steg'; // Default if step doesn't exist
+
+        switch($stepNumber) {
+            case 1:
+                $manuscripts = ProjectManuscript::where('project_id', $project_id)->get();
+                $view = 'backend.project.progress-plan.manuscripts';
+                return view($view, compact('project', 'layout', 'backRoute', 'stepNumber', 'stepTitle', 'manuscripts',));
+                break;
+            default:
+                $view = 'frontend.learner.self-publishing.progress-plan-step';
+                break;
+        }
     }
 
     /**
