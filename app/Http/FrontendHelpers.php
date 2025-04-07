@@ -21,6 +21,7 @@ use App\User;
 use App\WebinarRegistrant;
 use Auth;
 use Carbon\Carbon;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Request as GlobalRequest;
@@ -1095,6 +1096,28 @@ class FrontendHelpers
         return $user->standardProject();
     }
 
+    public static function checkIfLearnerHasBookSale($project_id = null)
+    {
+        $learner = Auth::user();
+        $standardProject = FrontendHelpers::getLearnerStandardProject($learner->id);
+
+        if (!$project_id) {
+            $project_id = $standardProject->id;
+        }
+
+        $sales = ProjectBookSale::leftJoin('project_books', 'project_book_sales.project_book_id', '=', 'project_books.id')
+            ->select(
+                DB::raw('SUM(amount) as amount_total'),
+                DB::raw("DATE_FORMAT(date, '%m') as month"),
+            )
+            ->whereYear('date', \Carbon\Carbon::now()->year)
+            //->where('user_id', $learner->id)
+            ->where('project_id', $project_id)
+            ->groupBy('month')
+            ->orderBy('month', 'ASC')
+            ->get();
+        return $sales;
+    }
 
     public static function countFileWords($type, $request)
     {

@@ -54,7 +54,7 @@ class ProjectBookSale extends Model
     {
         return isset($this->attributes['amount']) && $this->attributes['amount']
             ? $this->attributes['amount']
-            : $this->book->price * $this->attributes['quantity'];
+            : ($this->book ? $this->book->price * $this->attributes['quantity'] : 0);
     }
 
     public function getTotalAmountFormattedAttribute()

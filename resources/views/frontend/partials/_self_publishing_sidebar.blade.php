@@ -18,7 +18,13 @@
         </li>
 
         <li class="@if(Request::is('account/book-sale')) active @endif">
-            <a href=" {{ route('learner.book-sale') . '?year=' . FrontendHelpers::getLearnerSaleYear() }} ">
+            @php $hasBookSale = FrontendHelpers::checkIfLearnerHasBookSale()->count() > 0; @endphp
+        
+            <a 
+                href="{{ $hasBookSale ? route('learner.book-sale') . '?year=' . FrontendHelpers::getLearnerSaleYear() 
+                    : 'javascript:void(0)' }}" 
+                style="{{ $hasBookSale ? '' : 'pointer-events: none; opacity: 0.6; cursor: not-allowed;' }}"
+            >
                 <i class="fa fa-bar-chart"></i> {{ trans('site.author-portal-menu.sales') }}
             </a>
         </li>
