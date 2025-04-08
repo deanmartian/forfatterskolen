@@ -68,7 +68,7 @@
 								<td>{{ $freeManuscript->hasPaidCourse ? 'Yes' : 'No' }}</td>
 								<td>
 									{{ \Illuminate\Support\Str::limit(strip_tags($freeManuscript->content), 120) }}<br>
-									<a href="#editContentModal" data-toggle="modal" class="editContentBtn"
+									<a href="#editContentModal" data-toggle="modal" class="loadScriptButton editContentBtn"
 									data-content="{{ $freeManuscript->content }}"
 									data-action="{{ route('admin.free-manuscript.edit-content', $freeManuscript->id) }}">
 										Her kan du også nå putte in ekstra tekst
@@ -420,7 +420,11 @@
         let modal = $('#editContentModal');
         modal.find('form').attr('action', action);
 
-        tinymce.get('editContentEditor').setContent(content);
+		setTimeout(() => {
+			setEditorContent('editContentEditor', content);
+		}, 500);
+
+        //tinymce.get('editContentEditor').setContent(content);
 	});
 
 	$(".sendFeedbackBtn").click(function(){
