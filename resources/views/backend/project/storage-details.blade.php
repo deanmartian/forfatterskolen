@@ -705,5 +705,44 @@
         });
     }
 
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('bookSalesModal');
+
+        if (modal) {
+            // Flag to detect if amount was changed manually
+            let isManual = false;
+
+            const quantityInput = modal.querySelector('input[name="quantity"]');
+            const priceInput = modal.querySelector('input[name="full_price"]');
+            const discountInput = modal.querySelector('input[name="discount"]');
+            const amountInput = modal.querySelector('input[name="amount"]');
+
+            // Mark the amount as manually changed if user types in it
+            amountInput.addEventListener('input', function () {
+                isManual = true;
+            });
+
+            // Function to auto-update the amount (only if not manually changed)
+            function updateAmount() {
+                if (isManual) return; // Don't update if user edited it manually
+
+                const quantity = parseFloat(quantityInput.value) || 0;
+                const price = parseFloat(priceInput.value) || 0;
+                const discount = parseFloat(discountInput.value) || 0;
+
+                const amount = (quantity * price) - discount;
+                amountInput.value = amount.toFixed(2);
+            }
+
+            // Attach input listeners
+            [quantityInput, priceInput, discountInput].forEach(input => {
+                input.addEventListener('input', function () {
+                    isManual = false; // Reset manual override when values change
+                    updateAmount();
+                });
+            });
+        }
+    });
+
 </script>
 @stop
