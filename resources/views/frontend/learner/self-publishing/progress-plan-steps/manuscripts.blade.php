@@ -15,7 +15,7 @@
                 <div class="card-header">
                     {{ $stepTitle }}
 
-                    <button type="button" class="btn red-global-btn uploadManuscriptBtn py-2 px-6 pull-right"
+                    <button type="button" class="btn btn-primary btn-xs uploadManuscriptBtn pull-right"
                         data-toggle="modal" data-target="#uploadManuscriptModal"
                         data-action="{{ route('learner.progress-plan.manuscript.upload') }}"
                         style="width: auto;">
